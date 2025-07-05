@@ -96,15 +96,7 @@ export class CylinderCreator extends BaseCreator {
       }
       // If pointing in the "air", try to calculate a reasonable good value, based on the ray.
       if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
-        const { center } = this._domainObject.cylinder;
-
-        // Create an intersection between a plane towards the ray and ray itself
-        // This will give the second point
-        const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, center);
-        const pointOnRay = ray.intersectPlane(plane, new Vector3());
-        if (pointOnRay !== null) {
-          return pointOnRay;
-        }
+        return undefined; // For horizontal cylinder, we cannot calculate a point without the ray direction
       } else {
         const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
         const pointOnRay = ray.intersectPlane(plane, new Vector3());
