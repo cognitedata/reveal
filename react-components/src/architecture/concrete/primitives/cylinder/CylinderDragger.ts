@@ -231,10 +231,15 @@ export class CylinderDragger extends BaseDragger {
     if (translation.length() < EPSILON) {
       return false; // Nothing has changed
     }
-    const { cylinder } = this._domainObject;
+
+    const { cylinder, primitiveType } = this._domainObject;
     const originalCylinder = this._originalCylinder;
     cylinder.copy(originalCylinder);
     const { centerA, centerB } = cylinder;
+
+    if (primitiveType === PrimitiveType.HorizontalCylinder) {
+      translation.z = 0;
+    }
 
     if (this._face.face === 2) {
       centerB.add(translation);
@@ -244,6 +249,7 @@ export class CylinderDragger extends BaseDragger {
         .subVectors(centerA, centerB)
         .normalize()
         .multiplyScalar(originalCylinder.height);
+
       centerB.subVectors(centerA, axis);
     } else {
       centerA.add(translation);

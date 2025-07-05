@@ -75,6 +75,7 @@ export function installToolbars(): void {
     new SetMeasurementTypeCommand(PrimitiveType.VerticalArea),
     new SetMeasurementTypeCommand(PrimitiveType.Box),
     new SetMeasurementTypeCommand(PrimitiveType.VerticalCylinder),
+    new SetMeasurementTypeCommand(PrimitiveType.HorizontalCylinder),
     new SetMeasurementTypeCommand(PrimitiveType.HorizontalCircle),
     separator,
     new UndoCommand(),
