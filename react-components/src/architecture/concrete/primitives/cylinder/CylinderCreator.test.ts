@@ -101,7 +101,7 @@ function clickMe(
 ): void {
   const direction = new Vector3(-1, -1, -1); // Point somewhere down
   point = point.clone();
-  const origin = point.clone().addScaledVector(direction, -3); // Origin of the ray
+  const origin = point.clone().addScaledVector(direction, -3); // Origin of the ray where the ray points from
 
   // Origin and direction is for the ray.
   // The point is the intersection point, but can optional dependent of the click order
