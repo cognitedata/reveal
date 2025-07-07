@@ -34,11 +34,11 @@ export const checkBooleanExpressionStatement = (
 
   switch (condition.type) {
     case 'equals': {
-      expressionResult = propertyTrigger === true;
+      expressionResult = propertyTrigger === condition.parameter;
       break;
     }
     case 'notEquals': {
-      expressionResult = propertyTrigger === false;
+      expressionResult = propertyTrigger !== condition.parameter;
       break;
     }
   }
