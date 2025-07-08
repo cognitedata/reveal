@@ -9,9 +9,13 @@ export type Use3dModelsDependencies = {
   useRevealDomainObjects: typeof useRevealDomainObjects;
 };
 
-export const Use3dModelsContext = createContext<Use3dModelsDependencies>({
+export const defaultUse3dModelsDependencies: Use3dModelsDependencies = {
   useRevealDomainObjects
-});
+};
+
+export const Use3dModelsContext = createContext<Use3dModelsDependencies>(
+  defaultUse3dModelsDependencies
+);
 
 /**
  * Returns DomainObjects corresponding to the CogniteModel model types in

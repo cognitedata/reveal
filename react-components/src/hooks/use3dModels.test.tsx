@@ -1,18 +1,18 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { renderHook } from '@testing-library/react';
 
 import { createCadMock } from '#test-utils/fixtures/cadModel';
-import { use3dModels, Use3dModelsContext } from './use3dModels';
+import { defaultUse3dModelsDependencies, use3dModels, Use3dModelsContext } from './use3dModels';
 import { type ReactElement, type PropsWithChildren } from 'react';
-import { type useRevealDomainObjects } from './useRevealDomainObjects';
 import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
 import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(use3dModels.name, () => {
-  const mockUseRevealDomainObjects = vi.fn<typeof useRevealDomainObjects>();
+  const dependencies = getMocksByDefaultDependencies(defaultUse3dModelsDependencies);
 
   const cadModelFixture = createCadMock();
   const pointCloudModelFixture = createPointCloudMock();
@@ -25,19 +25,17 @@ describe(use3dModels.name, () => {
   );
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <Use3dModelsContext.Provider value={{ useRevealDomainObjects: mockUseRevealDomainObjects }}>
-      {children}
-    </Use3dModelsContext.Provider>
+    <Use3dModelsContext.Provider value={dependencies}>{children}</Use3dModelsContext.Provider>
   );
 
   test('returns empty list if no Reveal domain objects are found', () => {
-    mockUseRevealDomainObjects.mockReturnValue([]);
+    dependencies.useRevealDomainObjects.mockReturnValue([]);
     const { result } = renderHook(() => use3dModels(), { wrapper });
     expect(result.current).toEqual([]);
   });
 
   test('returns Reveal CAD and point cloud models in the DomainObject graph', () => {
-    mockUseRevealDomainObjects.mockReturnValue([
+    dependencies.useRevealDomainObjects.mockReturnValue([
       cadDomainObjectFixture,
       pointCloudDomainObjectFixture,
       image360CollectionDomainObjectFixture
@@ -51,7 +49,7 @@ describe(use3dModels.name, () => {
   });
 
   test('return value should be stable until `useRevealDomainObjects` returns a new reference', () => {
-    mockUseRevealDomainObjects.mockReturnValue([cadDomainObjectFixture]);
+    dependencies.useRevealDomainObjects.mockReturnValue([cadDomainObjectFixture]);
 
     const { result, rerender } = renderHook(() => use3dModels(), { wrapper });
 
@@ -63,7 +61,7 @@ describe(use3dModels.name, () => {
 
     expect(secondResult).toBe(initialResult);
 
-    mockUseRevealDomainObjects.mockReturnValue([
+    dependencies.useRevealDomainObjects.mockReturnValue([
       cadDomainObjectFixture,
       pointCloudDomainObjectFixture
     ]);
