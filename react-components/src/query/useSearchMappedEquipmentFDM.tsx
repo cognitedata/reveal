@@ -113,7 +113,7 @@ export function useFilterNodesByMappedToModelsCallback(
 
       const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, [viewToSearch]);
 
-      const filterResult = await fdmDataProvider.filterInstancesByMappedTo3d(
+      const filterResult = await fdmDataProvider.filterNodesByMappedTo3d(
         [{ instances: nodes, view: viewDefinitions[0] }],
         models,
         [viewToSearch.space],
