@@ -19,8 +19,12 @@ export const useFdmAssetMappings = (
       fdmAssetExternalIds,
       models.map((model) => [model.modelId, model.revisionId])
     ],
-    queryFn: async () =>
-      await nodeCacheContent.getMappingsForFdmInstances(fdmAssetExternalIds, models),
+    queryFn: async () => {
+      if (nodeCacheContent === undefined) {
+        return [];
+      }
+      return await nodeCacheContent.getMappingsForFdmInstances(fdmAssetExternalIds, models);
+    },
     enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
     staleTime: DEFAULT_QUERY_STALE_TIME
   });

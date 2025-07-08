@@ -20,6 +20,11 @@ export function use3dRelatedDirectConnections(
     ],
     queryFn: async () => {
       assert(instance !== undefined);
+
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
         items: [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }]
@@ -74,7 +79,7 @@ export function use3dRelatedDirectConnections(
         const viewResultIndex = viewToDeduplicatedIndexMap.get(createViewKey(view));
         assert(viewResultIndex !== undefined);
         const propsForView = viewProps.items[viewResultIndex];
-        return fdmDataProvider.is3dView(propsForView);
+        return fdmDataProvider?.is3dView(propsForView) ?? false;
       });
 
       return threeDRelatedViews.map(([index, view]) => ({

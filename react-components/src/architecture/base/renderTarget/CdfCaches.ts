@@ -8,7 +8,6 @@ import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
-import { EmptyFdm3dDataProvider } from '../../../data-providers/EmptyFdm3dDataProvider';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
@@ -17,14 +16,14 @@ export type CdfCachesOptions = {
 
 export class CdfCaches {
   private readonly _assetMappingAndNode3dCache: AssetMappingAndNode3DCache;
-  private readonly _fdmNodeCache: FdmNodeCache;
+  private readonly _fdmNodeCache: FdmNodeCache | undefined;
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
   private readonly _image360AnnotationCache: Image360AnnotationCache;
 
   private readonly _coreDmOnly: boolean;
 
   private readonly _cogniteClient: CogniteClient;
-  private readonly _fdm3dDataProvider: Fdm3dDataProvider;
+  private readonly _fdm3dDataProvider: Fdm3dDataProvider | undefined;
 
   constructor(
     cdfClient: CogniteClient,
@@ -38,15 +37,17 @@ export class CdfCaches {
         return new CoreDm3dFdm3dDataProvider(fdmClient);
       } else if (enableLegacy3dFdm) {
         return new LegacyFdm3dDataProvider(fdmClient, cdfClient);
-      } else {
-        return new EmptyFdm3dDataProvider();
       }
+      return undefined;
     })();
 
     this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient);
-    this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
+
+    if (fdm3dDataProvider !== undefined) {
+      this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
+    }
 
     this._cogniteClient = cdfClient;
     this._fdm3dDataProvider = fdm3dDataProvider;
@@ -57,7 +58,7 @@ export class CdfCaches {
     return this._assetMappingAndNode3dCache;
   }
 
-  public get fdmNodeCache(): FdmNodeCache {
+  public get fdmNodeCache(): FdmNodeCache | undefined {
     return this._fdmNodeCache;
   }
 
@@ -73,7 +74,7 @@ export class CdfCaches {
     return this._cogniteClient;
   }
 
-  public get fdm3dDataProvider(): Fdm3dDataProvider {
+  public get fdm3dDataProvider(): Fdm3dDataProvider | undefined {
     return this._fdm3dDataProvider;
   }
 

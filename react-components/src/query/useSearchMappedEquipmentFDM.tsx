@@ -62,7 +62,7 @@ export const useSearchMappedEquipmentFDM = (
       limit
     ],
     queryFn: async () => {
-      if (models.length === 0) {
+      if (models.length === 0 || fdmDataProvider === undefined) {
         return [];
       }
 
@@ -107,9 +107,13 @@ export function useFilterNodesByMappedToModelsCallback(
 
   return useCallback(
     async (nodes: NodeItem[]) => {
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
       const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, [viewToSearch]);
 
-      const filterResult = await fdmDataProvider.filterNodesByMappedTo3d(
+      const filterResult = await fdmDataProvider.filterInstancesByMappedTo3d(
         [{ instances: nodes, view: viewDefinitions[0] }],
         models,
         [viewToSearch.space],
@@ -182,6 +186,10 @@ export const useAllMappedEquipmentFDM = (
   return useQuery({
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
     queryFn: async () => {
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
       const viewSources = createSourcesFromViews(viewsToSearch);
 
       const assetFilterForAllMapped = assetsInstanceFilterWithHasDataQuery(viewSources);
