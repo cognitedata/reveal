@@ -1,13 +1,13 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type ModelRevisionToConnectionMap } from '../../components/CacheProvider/types';
-import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
+import { useFdmCadNodeCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   fetchViews = false,
   enabled = true
 ): UseQueryResult<ModelRevisionToConnectionMap> => {
-  const fdmNodeCache = useFdmNodeCache();
+  const fdmNodeCache = useFdmCadNodeCache();
 
   return useQuery({
     queryKey: [

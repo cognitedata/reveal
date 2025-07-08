@@ -1,13 +1,13 @@
 import { type AnyIntersection } from '@cognite/reveal';
 import { type FdmNodeDataPromises } from '../../components/CacheProvider/types';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
+import { useFdmCadNodeCache } from '../../components/CacheProvider/CacheProvider';
 import assert from 'assert';
 
 export const useFdm3dNodeDataPromises = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<FdmNodeDataPromises> => {
-  const fdmNodeCache = useFdmNodeCache();
+  const fdmNodeCache = useFdmCadNodeCache();
 
   const isCadModel = intersection?.type === 'cad';
 

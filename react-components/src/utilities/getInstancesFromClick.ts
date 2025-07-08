@@ -123,11 +123,11 @@ async function getCadFdmDataPromise(
   intersection: CadIntersection,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
-  if (caches.fdmNodeCache === undefined) {
+  if (caches.fdmCadNodeCache === undefined) {
     return [];
   }
 
-  const fdmNodeDataPromises = caches.fdmNodeCache.getClosestParentDataPromises(
+  const fdmNodeDataPromises = caches.fdmCadNodeCache.getClosestParentDataPromises(
     intersection.model.modelId,
     intersection.model.revisionId,
     intersection.treeIndex
@@ -151,11 +151,12 @@ async function getAssetMappingPromise(
     caches.cogniteClient
   );
 
-  const nodeAssetResult = await caches.assetMappingAndNode3dCache.getAssetMappingsForLowestAncestor(
-    intersection.model.modelId,
-    intersection.model.revisionId,
-    ancestors
-  );
+  const nodeAssetResult =
+    await caches.classicCadAssetMappingCache.getAssetMappingsForLowestAncestor(
+      intersection.model.modelId,
+      intersection.model.revisionId,
+      ancestors
+    );
 
   return nodeAssetResult.mappings.map((mapping) => ({ id: mapping.assetId }));
 }
