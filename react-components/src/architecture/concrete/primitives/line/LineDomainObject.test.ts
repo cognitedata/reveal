@@ -10,7 +10,7 @@ import { expectEqualBox3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/vectorUtils';
 import { LineRenderStyle } from './LineRenderStyle';
 
 describe(LineDomainObject.name, () => {

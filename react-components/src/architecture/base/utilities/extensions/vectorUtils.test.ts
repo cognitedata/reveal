@@ -9,10 +9,10 @@ import {
   rotateHorizontal,
   rotatePiHalf,
   verticalDistanceTo
-} from './vectorExtensions';
+} from './vectorUtils';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
-describe('vectorExtensions', () => {
+describe('vectorUtils', () => {
   test('should calculate horizontal angle', () => {
     expect(horizontalAngle(new Vector3(1, 0))).toBe(0);
     expect(horizontalAngle(new Vector3(0, 1))).toBe(Math.PI / 2);

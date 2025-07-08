@@ -4,7 +4,7 @@ import {
   forceAngleAround0,
   forceBetween0AndPi,
   forceBetween0AndTwoPi
-} from '../extensions/mathExtensions';
+} from '../extensions/mathUtils';
 import { BoxUtils } from './BoxUtils';
 import { Primitive } from './Primitive';
 import { PrimitiveType } from './PrimitiveType';

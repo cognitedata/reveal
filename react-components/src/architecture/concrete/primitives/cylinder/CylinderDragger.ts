@@ -3,7 +3,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
@@ -13,7 +13,7 @@ import {
 import { Vector3Pool } from '@cognite/reveal';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isAbsEqual } from '../../../base/utilities/extensions/mathExtensions';
+import { isAbsEqual } from '../../../base/utilities/extensions/mathUtils';
 
 /**
  * The `CylinderDragger` class represents a utility for dragging and manipulating a cylinder in a 3D space.

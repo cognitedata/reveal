@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { count, filter, first, last, map } from './generatorUtils';
-import { isOdd } from './mathExtensions';
+import { isOdd } from './mathUtils';
 
 describe('generatorUtils', () => {
   describe(first.name, () => {
