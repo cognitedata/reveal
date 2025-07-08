@@ -20,7 +20,7 @@ import {
 } from '../../base/utilities/colors/create1DTexture';
 import { type TerrainRenderStyle } from './TerrainRenderStyle';
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
-import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
+import { WHITE_COLOR } from '../../base/utilities/colors/colorUtils';
 import { getColorMap } from '../../base/utilities/colors/colorMaps';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';

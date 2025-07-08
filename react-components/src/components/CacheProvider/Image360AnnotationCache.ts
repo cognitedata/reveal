@@ -12,7 +12,7 @@ import {
   type Image360Collection,
   type Image360Annotation
 } from '@cognite/reveal';
-import { fetchAssetsForAssetReferences } from './AnnotationModelUtils';
+import { fetchAssetsForAssetReferences } from './annotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { assetInstanceToKey } from '../../utilities/assetInstanceToKey';
 import { type InstanceReference } from '../../utilities/instanceIds';

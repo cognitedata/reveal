@@ -1,5 +1,5 @@
 import { type Vector3, type Vector2 } from 'three';
-import { square } from './mathExtensions';
+import { square } from './mathUtils';
 
 /**
  * Computes the horizontal angle in radians with respect to the positive x-axis.

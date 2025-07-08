@@ -1,6 +1,6 @@
 import { type CogniteClient } from '@cognite/sdk';
-import { AssetMappingAndNode3DCache } from '../../../components/CacheProvider/AssetMappingAndNode3DCache';
-import { FdmNodeCache } from '../../../components/CacheProvider/FdmNodeCache';
+import { ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicAssetMappingCache';
+import { FdmCadNodeCache } from '../../../components/CacheProvider/FdmCadNodeCache';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
 import { Image360AnnotationCache } from '../../../components/CacheProvider/Image360AnnotationCache';
@@ -14,8 +14,8 @@ export type CdfCachesOptions = {
 };
 
 export class CdfCaches {
-  private readonly _assetMappingAndNode3dCache: AssetMappingAndNode3DCache;
-  private readonly _fdmNodeCache: FdmNodeCache;
+  private readonly _assetMappingAndNode3dCache: ClassicCadAssetMappingCache;
+  private readonly _fdmCadNodeCache: FdmCadNodeCache;
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
   private readonly _image360AnnotationCache: Image360AnnotationCache;
 
@@ -35,8 +35,8 @@ export class CdfCaches {
       ? new CoreDm3dFdm3dDataProvider(fdmClient)
       : new LegacyFdm3dDataProvider(fdmClient, cdfClient);
 
-    this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient);
-    this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
+    this._assetMappingAndNode3dCache = new ClassicCadAssetMappingCache(cdfClient);
+    this._fdmCadNodeCache = new FdmCadNodeCache(cdfClient, fdm3dDataProvider);
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
 
@@ -45,12 +45,12 @@ export class CdfCaches {
     this._coreDmOnly = coreDmOnly;
   }
 
-  public get assetMappingAndNode3dCache(): AssetMappingAndNode3DCache {
+  public get classicCadAssetMappingCache(): ClassicCadAssetMappingCache {
     return this._assetMappingAndNode3dCache;
   }
 
-  public get fdmNodeCache(): FdmNodeCache {
-    return this._fdmNodeCache;
+  public get fdmCadNodeCache(): FdmCadNodeCache {
+    return this._fdmCadNodeCache;
   }
 
   public get pointCloudAnnotationCache(): PointCloudAnnotationCache {

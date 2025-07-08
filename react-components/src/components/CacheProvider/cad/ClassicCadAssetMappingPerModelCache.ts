@@ -1,17 +1,18 @@
 import { type CogniteClient } from '@cognite/sdk';
+import { type ModelId, type RevisionId, type ModelRevisionKey } from '../types';
+import { createModelRevisionKey } from '../idAndKeyTranslation';
 import {
-  type ModelId,
-  type RevisionId,
-  type ModelRevisionKey,
-  type CdfAssetMapping
-} from './types';
-import { isValidAssetMapping } from './utils';
-import { createModelRevisionKey } from './idAndKeyTranslation';
+  type ClassicCadAssetMapping,
+  isValidClassicCadAssetMapping
+} from './ClassicCadAssetMapping';
 
-export class AssetMappingPerModelCache {
+export class ClassicCadAssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<CdfAssetMapping[]>>();
+  private readonly _modelToAssetMappings = new Map<
+    ModelRevisionKey,
+    Promise<ClassicCadAssetMapping[]>
+  >();
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
@@ -19,21 +20,21 @@ export class AssetMappingPerModelCache {
 
   public setModelToAssetMappingCacheItems(
     key: ModelRevisionKey,
-    assetMappings: Promise<CdfAssetMapping[]>
+    assetMappings: Promise<ClassicCadAssetMapping[]>
   ): void {
     this._modelToAssetMappings.set(key, assetMappings);
   }
 
   public async getModelToAssetMappingCacheItems(
     key: ModelRevisionKey
-  ): Promise<CdfAssetMapping[] | undefined> {
+  ): Promise<ClassicCadAssetMapping[] | undefined> {
     return await this._modelToAssetMappings.get(key);
   }
 
   public async fetchAndCacheMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 
@@ -44,11 +45,11 @@ export class AssetMappingPerModelCache {
   private async fetchAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     const assetMapping3D = await this._sdk.assetMappings3D
       .list(modelId, revisionId, { limit: 1000 })
       .autoPagingToArray({ limit: Infinity });
 
-    return assetMapping3D.filter(isValidAssetMapping);
+    return assetMapping3D.filter(isValidClassicCadAssetMapping);
   }
 }

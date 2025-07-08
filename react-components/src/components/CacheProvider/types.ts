@@ -1,6 +1,5 @@
 import {
   type AnnotationsTypesImagesAssetLink,
-  type CogniteInternalId,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Node3D
@@ -46,7 +45,6 @@ export type RevisionId = number;
 export type NodeId = number;
 export type TreeIndex = number;
 export type AssetId = number;
-export type FdmId = DmsUniqueIdentifier;
 
 export type ModelRevisionId = { modelId: number; revisionId: number };
 
@@ -61,14 +59,6 @@ export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBou
 
 export type Image360AnnotationModel = AnnotationModel & {
   data: AnnotationsTypesImagesAssetLink;
-};
-
-export type CdfAssetMapping = {
-  treeIndex: number;
-  subtreeSize: number;
-  nodeId: CogniteInternalId;
-  assetId: CogniteInternalId;
-  assetInstanceId?: DmsUniqueIdentifier;
 };
 
 export type Image360AnnotationAssetInfo = {
