@@ -6,8 +6,10 @@ import { fdmNodeCacheContentMock } from '#test-utils/fixtures/fdmNodeCache';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { viewerMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { useCameraNavigation } from './useCameraNavigation';
+import { FdmCadNodeCache } from '../components/CacheProvider/FdmCadNodeCache';
 
 const renderTargetMock = createRenderTargetMock();
+const mockFdmNodeCache = vi.fn<() => FdmCadNodeCache | undefined>();
 
 vi.mock('../components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock,
@@ -15,13 +17,14 @@ vi.mock('../components/RevealCanvas/ViewerContext', () => ({
 }));
 
 vi.mock('../components/CacheProvider/NodeCacheProvider', () => ({
-  useFdmNodeCache: () => fdmNodeCacheContentMock
+  useFdmNodeCache: mockFdmNodeCache
 }));
 
 describe(useCameraNavigation.name, () => {
   beforeEach(() => {
     viewerMock.cameraManager.setCameraState = vi.fn();
     viewerMock.cameraManager.fitCameraToBoundingBox = vi.fn();
+    mockFdmNodeCache.mockReturnValue(fdmNodeCacheContentMock);
   });
 
   beforeAll(() => {
@@ -83,6 +86,16 @@ describe(useCameraNavigation.name, () => {
     });
 
     expect(fitCameraToModelNodeSpy).toHaveBeenCalledWith(456, 1);
+  });
+
+  test('fitCameraToInstances rejects when fdmNodeCache is undefined', async () => {
+    mockFdmNodeCache.mockReturnValue(fdmNodeCacheContentMock);
+
+    const { result } = renderHook(() => useCameraNavigation());
+
+    await expect(
+      result.current.fitCameraToInstances([{ externalId: 'ext1', space: 'space1' }])
+    ).rejects.toThrow();
   });
 
   test('fitCameraToInstances calls fitCameraToModelNodes with node ids', async () => {
