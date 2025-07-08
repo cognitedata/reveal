@@ -43,8 +43,12 @@ describe(useActiveReveal3dResources.name, () => {
     </QueryClientProvider>
   );
 
-  const CAD_CLASSIC_IDS = { modelId: 123, revisionId: 234 };
-  const POINT_CLOUD_CLASSIC_IDS = { modelId: 987, revisionId: 876 };
+  const CAD_CLASSIC_ID = { modelId: 123, revisionId: 234 };
+  const POINT_CLOUD_CLASSIC_ID = { modelId: 987, revisionId: 876 };
+  const pointCloudModelExternalId = createPointCloudModelExternalId(POINT_CLOUD_CLASSIC_ID.modelId);
+  const pointCloudRevisionExternalId = createPointCloudRevisionExternalId(
+    POINT_CLOUD_CLASSIC_ID.revisionId
+  );
 
   beforeEach(() => {
     dependencies.useFdmSdk.mockReturnValue(mockFdmSdk);
@@ -54,8 +58,8 @@ describe(useActiveReveal3dResources.name, () => {
     const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
     dependencies.useVisibleRevealDomainObjects.mockReturnValue([
-      new CadDomainObject(createCadMock(CAD_CLASSIC_IDS)),
-      new PointCloudDomainObject(createPointCloudMock(POINT_CLOUD_CLASSIC_IDS)),
+      new CadDomainObject(createCadMock(CAD_CLASSIC_ID)),
+      new PointCloudDomainObject(createPointCloudMock(POINT_CLOUD_CLASSIC_ID)),
       image360DomainObject
     ]);
 
@@ -65,21 +69,14 @@ describe(useActiveReveal3dResources.name, () => {
       expect(result.current.models.length + result.current.image360Collections.length).toBe(3);
     });
 
-    expect(result.current.models[0]).toEqual(CAD_CLASSIC_IDS);
-    expect(result.current.models[1]).toEqual(POINT_CLOUD_CLASSIC_IDS);
+    expect(result.current.models[0]).toEqual(CAD_CLASSIC_ID);
+    expect(result.current.models[1]).toEqual(POINT_CLOUD_CLASSIC_ID);
     expect(result.current.image360Collections[0]).toBe(image360DomainObject.model);
   });
 
   test('returns modelId/revisionId from FdmSDK for DM point cloud', async () => {
-    const pointCloudModelExternalId = createPointCloudModelExternalId(
-      POINT_CLOUD_CLASSIC_IDS.modelId
-    );
-    const pointCloudRevisionExternalId = createPointCloudRevisionExternalId(
-      POINT_CLOUD_CLASSIC_IDS.revisionId
-    );
-
     dependencies.useVisibleRevealDomainObjects.mockReturnValue([
-      new CadDomainObject(createCadMock(CAD_CLASSIC_IDS)),
+      new CadDomainObject(createCadMock(CAD_CLASSIC_ID)),
       new PointCloudDomainObject(
         createPointCloudDMMock({ revisionExternalId: pointCloudRevisionExternalId })
       )
@@ -95,16 +92,50 @@ describe(useActiveReveal3dResources.name, () => {
       expect(result.current.models.length + result.current.image360Collections.length).toBe(2);
     });
 
-    expect(result.current.models[0]).toEqual(CAD_CLASSIC_IDS);
-    expect(result.current.models[1]).toEqual(POINT_CLOUD_CLASSIC_IDS);
+    expect(result.current.models[0]).toEqual(CAD_CLASSIC_ID);
+    expect(result.current.models[1]).toEqual(POINT_CLOUD_CLASSIC_ID);
+  });
+
+  test('returns remaining models if not all model identifiers could be found', async () => {
+    const secondPointCloudId = { modelId: 1234, revisionId: 2345 };
+    const secondPointCloudModelExternalId = createPointCloudModelExternalId(
+      secondPointCloudId.modelId
+    );
+    const secondPointCloudRevisionExternalId = createPointCloudRevisionExternalId(
+      secondPointCloudId.revisionId
+    );
+    dependencies.useVisibleRevealDomainObjects.mockReturnValue([
+      new CadDomainObject(createCadMock(CAD_CLASSIC_ID)),
+      new PointCloudDomainObject(
+        createPointCloudDMMock({ revisionExternalId: pointCloudRevisionExternalId })
+      ),
+      new PointCloudDomainObject(
+        createPointCloudDMMock({ revisionExternalId: secondPointCloudRevisionExternalId })
+      )
+    ]);
+
+    mockQueryNodesAndEdges
+      .mockReturnValueOnce(Promise.reject(new Error('Error')))
+      .mockReturnValue(
+        Promise.resolve(createQueryResponseWithModelExternalId(secondPointCloudModelExternalId))
+      );
+
+    const { result } = renderHook(() => useActiveReveal3dResources({}), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.models.length + result.current.image360Collections.length).toBe(2);
+    });
+
+    expect(result.current.models[0]).toEqual(CAD_CLASSIC_ID);
+    expect(result.current.models[1]).toEqual(secondPointCloudId);
   });
 
   test('returned value is stable over rerenders', async () => {
     const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
     dependencies.useVisibleRevealDomainObjects.mockReturnValue([
-      new CadDomainObject(createCadMock(CAD_CLASSIC_IDS)),
-      new PointCloudDomainObject(createPointCloudMock(POINT_CLOUD_CLASSIC_IDS)),
+      new CadDomainObject(createCadMock(CAD_CLASSIC_ID)),
+      new PointCloudDomainObject(createPointCloudMock(POINT_CLOUD_CLASSIC_ID)),
       image360DomainObject
     ]);
 

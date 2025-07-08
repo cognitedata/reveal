@@ -77,15 +77,11 @@ export const useActiveReveal3dResources = (
       const modelPromises = visibleModels.map(async (model) => {
         if (model.type === 'pointcloud' && isDMPointCloudModel(model as CognitePointCloudModel)) {
           const pointCloudModel = model as CognitePointCloudModel<DMDataSourceType>;
-          const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
+          return await getModelIdAndRevisionIdFromExternalId(
             pointCloudModel.modelIdentifier.revisionExternalId,
             pointCloudModel.modelIdentifier.revisionSpace,
             fdmSdk
           );
-          return {
-            modelId,
-            revisionId
-          };
         }
 
         return {
@@ -94,7 +90,11 @@ export const useActiveReveal3dResources = (
         };
       });
 
-      return await Promise.all(modelPromises);
+      const modelResults = await Promise.allSettled(modelPromises);
+
+      return modelResults
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => result.value);
     },
     enabled: visibleModels.length > 0,
     staleTime: Infinity
