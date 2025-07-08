@@ -5,7 +5,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type PlaneDomainObject } from './PlaneDomainObject';
-import { rotatePiHalf } from '../../../base/utilities/extensions/vectorExtensions';
+import { rotatePiHalf } from '../../../base/utilities/extensions/vectorUtils';
 
 /**
  * Helper class for generate a PlaneDomainObject by clicking around

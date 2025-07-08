@@ -5,47 +5,52 @@ import {
   type ModelId,
   type RevisionId,
   type ChunkInCacheTypes,
-  type ModelAssetIdKey,
-  type CdfAssetMapping
-} from './types';
+  type ModelAssetIdKey
+} from '../types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { isValidAssetMapping } from './utils';
-import { modelRevisionNodesAssetToKey, createModelRevisionKey } from './idAndKeyTranslation';
-import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
-import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
-import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
-import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';
-import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
+import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKeyTranslation';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
+import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
+import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
+import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
+import {
+  isValidClassicCadAssetMapping,
+  type ClassicCadAssetMapping
+} from './ClassicCadAssetMapping';
 
-export type NodeAssetMappingResult = { node?: Node3D; mappings: CdfAssetMapping[] };
+export type ClassicCadNodeAssetMappingResult = {
+  node?: Node3D;
+  mappings: ClassicCadAssetMapping[];
+};
 
-export class AssetMappingAndNode3DCache {
+export class ClassicCadAssetMappingCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly modelToAssetMappingsCache: AssetMappingPerModelCache;
+  private readonly modelToAssetMappingsCache: ClassicCadAssetMappingPerModelCache;
 
-  private readonly assetIdsToAssetMappingCache: AssetMappingPerAssetIdCache;
+  private readonly assetIdsToAssetMappingCache: ClassicCadAssetMappingPerAssetIdCache;
 
-  private readonly nodeIdsToAssetMappingCache: AssetMappingPerNodeIdCache;
+  private readonly nodeIdsToAssetMappingCache: ClassicCadAssetMappingPerNodeIdCache;
 
-  private readonly nodeIdsToNode3DCache: Node3DPerNodeIdCache;
+  private readonly nodeIdsToNode3DCache: ClassicCadNode3DPerNodeIdCache;
 
   private readonly _amountOfAssetIdsChunks = 1;
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
-    this.assetIdsToAssetMappingCache = new AssetMappingPerAssetIdCache();
-    this.nodeIdsToAssetMappingCache = new AssetMappingPerNodeIdCache();
-    this.modelToAssetMappingsCache = new AssetMappingPerModelCache(this._sdk);
-    this.nodeIdsToNode3DCache = new Node3DPerNodeIdCache(this._sdk);
+    this.assetIdsToAssetMappingCache = new ClassicCadAssetMappingPerAssetIdCache();
+    this.nodeIdsToAssetMappingCache = new ClassicCadAssetMappingPerNodeIdCache();
+    this.modelToAssetMappingsCache = new ClassicCadAssetMappingPerModelCache(this._sdk);
+    this.nodeIdsToNode3DCache = new ClassicCadNode3DPerNodeIdCache(this._sdk);
   }
 
   public async getAssetMappingsForLowestAncestor(
     modelId: ModelId,
     revisionId: RevisionId,
     ancestors: Node3D[]
-  ): Promise<NodeAssetMappingResult> {
+  ): Promise<ClassicCadNodeAssetMappingResult> {
     if (ancestors.length === 0) {
       return { mappings: [] };
     }
@@ -150,7 +155,7 @@ export class AssetMappingAndNode3DCache {
   public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
@@ -166,8 +171,8 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId,
     type: string
-  ): Promise<ChunkInCacheTypes<CdfAssetMapping>> {
-    const chunkInCache: CdfAssetMapping[] = [];
+  ): Promise<ChunkInCacheTypes<ClassicCadAssetMapping>> {
+    const chunkInCache: ClassicCadAssetMapping[] = [];
     const chunkNotCached: number[] = [];
 
     await Promise.all(
@@ -188,7 +193,7 @@ export class AssetMappingAndNode3DCache {
   private async getItemCacheResult(
     type: string,
     key: ModelTreeIndexKey | ModelAssetIdKey
-  ): Promise<CdfAssetMapping[] | undefined> {
+  ): Promise<ClassicCadAssetMapping[] | undefined> {
     return type === 'nodeIds'
       ? await this.nodeIdsToAssetMappingCache.getNodeIdsToAssetMappingCacheItem(key)
       : await this.assetIdsToAssetMappingCache.getAssetIdsToAssetMappingCacheItem(key);
@@ -197,7 +202,7 @@ export class AssetMappingAndNode3DCache {
   private setItemCacheResult(
     type: string,
     key: ModelTreeIndexKey | ModelAssetIdKey,
-    item: CdfAssetMapping[] | undefined
+    item: ClassicCadAssetMapping[] | undefined
   ): void {
     const value = Promise.resolve(item ?? []);
     type === 'nodeIds'
@@ -210,7 +215,7 @@ export class AssetMappingAndNode3DCache {
     filterType: string,
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     if (currentChunk.length === 0) {
       return [];
     }
@@ -224,7 +229,7 @@ export class AssetMappingAndNode3DCache {
           filter
         })
         .autoPagingToArray({ limit: Infinity })
-    ).filter(isValidAssetMapping);
+    ).filter(isValidClassicCadAssetMapping);
 
     await Promise.all(
       assetMapping3D.map(async (item) => {
@@ -257,8 +262,8 @@ export class AssetMappingAndNode3DCache {
     filterType: string,
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMappingsList: CdfAssetMapping[]
-  ): Promise<CdfAssetMapping[]> {
+    assetMappingsList: ClassicCadAssetMapping[]
+  ): Promise<ClassicCadAssetMapping[]> {
     const assetMappings = await this.fetchAssetMappingsRequest(
       idChunks[index],
       filterType,
@@ -287,7 +292,7 @@ export class AssetMappingAndNode3DCache {
     revisionId: RevisionId,
     ids: number[],
     filterType: string
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     if (ids.length === 0) {
       return [];
     }
@@ -308,7 +313,7 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId,
     nodes: Node3D[]
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     const nodeIds = nodes.map((node) => node.id);
 
     const { chunkNotInCache, chunkInCache } = await this.splitChunkInCacheAssetMappings(
@@ -335,7 +340,7 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId,
     assetIds: number[]
-  ): Promise<CdfAssetMapping[]> {
+  ): Promise<ClassicCadAssetMapping[]> {
     const { chunkNotInCache, chunkInCache } = await this.splitChunkInCacheAssetMappings(
       assetIds,
       modelId,

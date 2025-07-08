@@ -1,5 +1,5 @@
 import { Color } from 'three';
-import { isEven } from '../extensions/mathExtensions';
+import { isEven } from '../extensions/mathUtils';
 
 let currentIndex = 0;
 let uniqueColors: Color[] | undefined;
