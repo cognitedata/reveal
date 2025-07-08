@@ -13,6 +13,10 @@ export const Use3dModelsContext = createContext<Use3dModelsDependencies>({
   useRevealDomainObjects
 });
 
+/**
+ * Returns DomainObjects corresponding to the CogniteModel model types in
+ * Reveal; i.e. CAD and Point clouds only
+ */
 export const use3dModels = (): Array<CogniteModel<DataSourceType>> => {
   const { useRevealDomainObjects } = useContext(Use3dModelsContext);
 
