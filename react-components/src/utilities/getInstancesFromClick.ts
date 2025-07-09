@@ -123,6 +123,10 @@ async function getCadFdmDataPromise(
   intersection: CadIntersection,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
+  if (caches.fdmCadNodeCache === undefined) {
+    return [];
+  }
+
   const fdmNodeDataPromises = caches.fdmCadNodeCache.getClosestParentDataPromises(
     intersection.model.modelId,
     intersection.model.revisionId,
