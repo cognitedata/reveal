@@ -1,6 +1,7 @@
 /**
  * Constructs a Map out of key-value tuples where the value are maps,
- * but merges the values for duplicate keys
+ * but merges the values for duplicate keys. The list values of the inner
+ * maps are concatenated for duplicated keys
  */
 export function mergeMapMapValues<Key, InnerKey, Value>(
   tuples: Array<readonly [Key, Map<InnerKey, Value[]>]>
