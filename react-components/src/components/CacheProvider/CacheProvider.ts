@@ -5,7 +5,7 @@ import { type PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from './Image360AnnotationCache';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 import { type CadInstanceMappingsCache } from './cad/CadInstanceMappingsCache';
-import { FdmCadNodeCache } from './cad/FdmCadNodeCache';
+import { type FdmCadNodeCache } from './cad/FdmCadNodeCache';
 
 const useCacheObject = (): CdfCaches => {
   const revealRenderTarget = useRenderTarget();

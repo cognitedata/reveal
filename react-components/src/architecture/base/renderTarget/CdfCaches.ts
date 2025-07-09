@@ -10,7 +10,7 @@ import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provi
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
 import { CadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCache';
-import { FdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCache';
+import { type FdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCache';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
