@@ -201,7 +201,7 @@ function useCalculateInstanceStyling(
     ],
     queryFn: async () => {
       const mappings = await cadCache.getMappingsForModelsAndInstances(
-        [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups.map((id) => ({ id }))],
+        [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
         models
       );
 

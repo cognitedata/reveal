@@ -6,6 +6,7 @@ import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
+import { AssetId } from '../types';
 
 describe(CadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =
@@ -50,11 +51,7 @@ describe(CadInstanceMappingsCache.name, () => {
     }
   ];
 
-  const CLASSIC_INSTANCES = [
-    { id: 13 },
-    { id: 42 },
-    { externalId: 'an-external-id' }
-  ] as const satisfies IdEither[];
+  const CLASSIC_INSTANCES = [13, 42] as const satisfies AssetId[];
 
   const DM_INSTANCES: DmsUniqueIdentifier[] = [
     { externalId: 'external-id0', space: 'space0' },
@@ -86,11 +83,11 @@ describe(CadInstanceMappingsCache.name, () => {
       mockClassicGetNodesForAssetIds
         .mockResolvedValueOnce(
           // First model
-          new Map([[CLASSIC_INSTANCES[0].id, [cadNodes[0], cadNodes[1]]]])
+          new Map([[CLASSIC_INSTANCES[0], [cadNodes[0], cadNodes[1]]]])
         )
         .mockResolvedValueOnce(
           // second model
-          new Map([[CLASSIC_INSTANCES[1].id, [cadNodes[2]]]])
+          new Map([[CLASSIC_INSTANCES[1], [cadNodes[2]]]])
         );
 
       const result = await cacheWrapper.getMappingsForModelsAndInstances(
@@ -103,12 +100,12 @@ describe(CadInstanceMappingsCache.name, () => {
       );
 
       expect(result.get(modelKeys[0])?.get(createFdmKey(DM_INSTANCES[0]))).toEqual([cadNodes[0]]);
-      expect(result.get(modelKeys[0])?.get(CLASSIC_INSTANCES[0].id)).toEqual([
+      expect(result.get(modelKeys[0])?.get(CLASSIC_INSTANCES[0])).toEqual([
         cadNodes[0],
         cadNodes[1]
       ]);
       expect(result.get(modelKeys[1])?.get(createFdmKey(DM_INSTANCES[1]))).toEqual([cadNodes[2]]);
-      expect(result.get(modelKeys[1])?.get(CLASSIC_INSTANCES[1].id)).toEqual([cadNodes[2]]);
+      expect(result.get(modelKeys[1])?.get(CLASSIC_INSTANCES[1])).toEqual([cadNodes[2]]);
     });
   });
 });

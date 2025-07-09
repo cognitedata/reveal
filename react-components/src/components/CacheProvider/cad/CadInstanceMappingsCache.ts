@@ -1,9 +1,5 @@
 import { type Node3D } from '@cognite/sdk';
-import {
-  type InstanceReference,
-  isDmsInstance,
-  isInternalId
-} from '../../../utilities/instanceIds';
+import { isDmsInstance } from '../../../utilities/instanceIds';
 import { type ThreeDModelFdmMappings } from '../../../hooks';
 import { type AssetId, type FdmKey, type ModelRevisionId, type ModelRevisionKey } from '../types';
 import { partition } from 'lodash';
@@ -13,6 +9,7 @@ import { isDefined } from '../../../utilities/isDefined';
 import { mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export type DmModelMappings = Map<ModelRevisionKey, Map<FdmKey, Node3D[]>>;
 
@@ -31,10 +28,10 @@ export class CadInstanceMappingsCache {
   }
 
   public async getMappingsForModelsAndInstances(
-    instances: InstanceReference[],
+    instances: Array<AssetId | DmsUniqueIdentifier>,
     models: ModelRevisionId[]
   ): Promise<CadModelMappings> {
-    const [dmsInstances, classicInstances] = partition(instances, isDmsInstance);
+    const [dmsInstances, internalIds] = partition(instances, isDmsInstance);
 
     const dmResults = await this._dmCache?.getMappingsForFdmInstances(dmsInstances, models);
 
@@ -42,7 +39,6 @@ export class CadInstanceMappingsCache {
 
     const classicResultsPromiseCallbacks = models.map((model) => async () => {
       // TODO: create cache for internal/external ID translation
-      const internalIds = classicInstances.filter(isInternalId).map((id) => id.id);
       const nodeResult = await this._classicCache.getNodesForAssetIds(
         model.modelId,
         model.revisionId,
@@ -51,6 +47,7 @@ export class CadInstanceMappingsCache {
 
       return [createModelRevisionKey(model.modelId, model.revisionId), nodeResult] as const;
     });
+
     const classicResultTuples = await executeParallel(classicResultsPromiseCallbacks, 2);
     const modelsToClassicMappingsMap = new Map(classicResultTuples.filter(isDefined));
 
