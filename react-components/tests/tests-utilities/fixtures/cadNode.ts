@@ -1,4 +1,4 @@
-import { Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 
 export function createCadNodeMock(params?: { id?: number; treeIndex?: number }): Node3D {
   return {

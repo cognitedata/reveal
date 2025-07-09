@@ -6,14 +6,8 @@ import {
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
-import { useFdmAssetMappings } from '../../../hooks/cad/useFdmAssetMappings';
 import { useMemo } from 'react';
-import {
-  type NodeId,
-  type FdmConnectionWithNode,
-  type AssetId,
-  type ModelRevisionAssetNodesResult
-} from '../../CacheProvider/types';
+import { type AssetId, type FdmConnectionWithNode } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
   type NodeStylingGroup,
@@ -23,20 +17,14 @@ import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../../utilities/StylingGroupUtils';
-import { type ThreeDModelFdmMappings } from '../../../hooks/types';
 import { isSameModel } from '../../../utilities/isSameModel';
-import {
-  useAssetMappedNodesForRevisions,
-  useMappedEdgesForRevisions,
-  useNodesForAssets
-} from '../../../hooks/cad';
+import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../../hooks/cad';
 import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
 import { useQuery } from '@tanstack/react-query';
 import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
 import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
-import { ClassicModelIdentifier } from '../../SceneContainer/sceneTypes';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 
 type ModelStyleGroup = {

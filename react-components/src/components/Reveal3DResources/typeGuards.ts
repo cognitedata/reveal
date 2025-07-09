@@ -4,9 +4,7 @@ import {
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
   type AddResourceOptions,
-  type ClassicAdd3DModelOptions,
-  FdmInstanceStylingGroup,
-  ClassicAssetStylingGroup
+  type ClassicAdd3DModelOptions
 } from './types';
 
 /**

@@ -1,4 +1,4 @@
-import { type CogniteClient, type Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 import {
   type InstanceReference,
   isDmsInstance,
@@ -10,7 +10,7 @@ import { partition } from 'lodash';
 import { createModelRevisionKey } from '../idAndKeyTranslation';
 import { executeParallel } from '../../../utilities/executeParallel';
 import { isDefined } from '../../../utilities/isDefined';
-import { mergeMapValues } from '../../../utilities/map/concatenateMapValues';
+import { mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 
@@ -54,7 +54,7 @@ export class CadInstanceMappingsCache {
     const classicResultTuples = await executeParallel(classicResultsPromiseCallbacks, 2);
     const modelsToClassicMappingsMap = new Map(classicResultTuples.filter(isDefined));
 
-    const mergedCadMappings = mergeMapValues<ModelRevisionKey, FdmKey | AssetId, Node3D>([
+    const mergedCadMappings = mergeMapMapValues<ModelRevisionKey, FdmKey | AssetId, Node3D>([
       ...modelsToClassicMappingsMap.entries(),
       ...(dmResultMap?.entries() ?? [])
     ]);

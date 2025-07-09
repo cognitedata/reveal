@@ -1,4 +1,4 @@
-import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
+import { type Node3D, type Asset } from '@cognite/sdk';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { type DmsUniqueIdentifier } from '../data-providers';
 import { type FdmNode } from '../data-providers/FdmSDK';

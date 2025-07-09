@@ -14,7 +14,7 @@ import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmS
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 import {
-  AssetId,
+  type AssetId,
   type PointCloudAnnotationModel,
   type PointCloudVolumeWithAsset
 } from '../CacheProvider/types';

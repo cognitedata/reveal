@@ -1,4 +1,4 @@
-import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteClient } from '@cognite/sdk';
 import { type Source, FdmSDK, type DmsUniqueIdentifier } from '../../../data-providers/FdmSDK';
 import { RevisionFdmNodeCache } from '../RevisionFdmNodeCache';
 import {

@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { CadInstanceMappingsCache } from './CadInstanceMappingsCache';
-import { FdmCadNodeCache } from './FdmCadNodeCache';
-import { ClassicCadAssetMapping } from './ClassicCadAssetMapping';
-import { ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
-import { IdEither, Node3D } from '@cognite/sdk';
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type FdmCadNodeCache } from './FdmCadNodeCache';
+import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
+import { type IdEither } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 
