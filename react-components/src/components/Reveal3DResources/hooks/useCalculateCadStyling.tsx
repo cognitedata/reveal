@@ -166,7 +166,8 @@ function useCalculateMappedStyling(
       (!isFDMEquipmentMappingsError &&
         isFDMEquipmentMappingsLoading &&
         !isFDMEquipmentMappingsFetched) ||
-      (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched)
+      (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched),
+    isError: isAssetMappingsError || isFDMEquipmentMappingsError
   };
 
   function getMappedCadModelsOptions(): CadModelOptions[] {
