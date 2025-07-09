@@ -2,11 +2,10 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { CadInstanceMappingsCache } from './CadInstanceMappingsCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
-import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import { AssetId } from '../types';
+import { type AssetId } from '../types';
 
 describe(CadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =
