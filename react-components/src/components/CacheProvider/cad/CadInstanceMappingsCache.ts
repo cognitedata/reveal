@@ -38,7 +38,6 @@ export class CadInstanceMappingsCache {
     const dmResultMap = createPerModelDmMappingsMap(dmResults);
 
     const classicResultsPromiseCallbacks = models.map((model) => async () => {
-      // TODO: create cache for internal/external ID translation
       const nodeResult = await this._classicCache.getNodesForAssetIds(
         model.modelId,
         model.revisionId,
