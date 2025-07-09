@@ -15,11 +15,7 @@ export const useFdm3dNodeDataPromises = (
     ? [intersection.model.modelId, intersection.model.revisionId, intersection.treeIndex]
     : [undefined, undefined, undefined];
 
-  const enableQuery =
-    fdmNodeCache !== undefined &&
-    isCadModel &&
-    treeIndex !== undefined &&
-    fdmNodeCache !== undefined;
+  const enableQuery = isCadModel && treeIndex !== undefined && fdmNodeCache !== undefined;
 
   const result = useQuery({
     queryKey: [

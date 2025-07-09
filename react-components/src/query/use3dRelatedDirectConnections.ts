@@ -79,7 +79,7 @@ export function use3dRelatedDirectConnections(
         const viewResultIndex = viewToDeduplicatedIndexMap.get(createViewKey(view));
         assert(viewResultIndex !== undefined);
         const propsForView = viewProps.items[viewResultIndex];
-        return fdmDataProvider?.is3dView(propsForView) ?? false;
+        return fdmDataProvider.is3dView(propsForView);
       });
 
       return threeDRelatedViews.map(([index, view]) => ({
