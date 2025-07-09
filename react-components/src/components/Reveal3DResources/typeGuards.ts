@@ -4,8 +4,14 @@ import {
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
   type AddResourceOptions,
-  type ClassicAdd3DModelOptions
+  type ClassicAdd3DModelOptions,
+  FdmInstanceStylingGroup,
+  ClassicAssetStylingGroup
 } from './types';
+
+/**
+ * Add options
+ */
 
 export function is360ImageAddOptions(
   addOptions: AddResourceOptions

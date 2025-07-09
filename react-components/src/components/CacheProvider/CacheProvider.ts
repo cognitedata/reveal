@@ -5,10 +5,15 @@ import { type FdmCadNodeCache } from './cad/FdmCadNodeCache';
 import { type PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from './Image360AnnotationCache';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { type CadInstanceMappingsCache } from './cad/CadInstanceMappingsCache';
 
 const useCacheObject = (): CdfCaches => {
   const revealRenderTarget = useRenderTarget();
   return revealRenderTarget.cdfCaches;
+};
+
+export const useCadMappingsCache = (): CadInstanceMappingsCache => {
+  return useCacheObject().cadMappingsCache;
 };
 
 export const useFdmCadNodeCache = (): FdmCadNodeCache | undefined => {

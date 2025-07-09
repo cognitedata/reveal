@@ -116,7 +116,7 @@ class FdmCadNodeCacheImpl implements FdmCadNodeCache {
 
     const mappings = createMapWithAccumulatedValues(
       relevantCachedConnectionData.map((data) => [
-        data.connection.instance.externalId,
+        createFdmKey(data.connection.instance),
         data.cadNode
       ])
     );
@@ -160,13 +160,13 @@ class FdmCadNodeCacheImpl implements FdmCadNodeCache {
     relevantFdmKeySet: Set<FdmKey>
   ): ThreeDModelFdmMappings {
     if (connections === undefined || connections.length === 0)
-      return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D[]>() };
+      return { modelId, revisionId, mappings: new Map<FdmKey, Node3D[]>() };
 
     const relevantConnections = intersectWithFdmKeySet(connections, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
       relevantConnections.map((connection) => [
-        connection.connection.instance.externalId,
+        createFdmKey(connection.connection.instance),
         connection.cadNode
       ])
     );

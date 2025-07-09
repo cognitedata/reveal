@@ -119,9 +119,9 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   public async getNodesForAssetIds(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetIds: CogniteInternalId[]
+    instanceIds: CogniteInternalId[]
   ): Promise<Map<AssetId, Node3D[]>> {
-    const relevantAssetIds = new Set(assetIds);
+    const relevantAssetIds = new Set(instanceIds);
 
     const assetIdsList = Array.from(relevantAssetIds);
     const chunkSize = Math.round(assetIdsList.length / this._amountOfAssetIdsChunks);

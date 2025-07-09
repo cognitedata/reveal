@@ -1,8 +1,8 @@
 import {
-  type AssetStylingGroup,
+  type ClassicAssetStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
-  type FdmAssetStylingGroup
+  type FdmInstanceStylingGroup
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
@@ -31,6 +31,13 @@ import {
   useNodesForAssets
 } from '../../../hooks/cad';
 import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
+import { useQuery } from '@tanstack/react-query';
+import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
+import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
+import { isDefined } from '../../../utilities/isDefined';
+import { getInstanceKeysFromStylingGroup } from '../utils';
+import { ClassicModelIdentifier } from '../../SceneContainer/sceneTypes';
+import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -54,7 +61,7 @@ export type StyledModel = {
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -184,18 +191,60 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>
 ): ModelStyleGroupWithMappingsFetched {
-  const { data: fdmAssetMappings } = useFdmAssetMappings(
-    instanceGroups
-      .filter(isFdmAssetStylingGroup)
-      .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds),
-    models
-  );
-
+  const dmIdsForInstanceGroups = instanceGroups
+    .filter(isFdmAssetStylingGroup)
+    .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds);
   const assetIdsFromInstanceGroups = instanceGroups
     .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
+
+  const cadCache = useCadMappingsCache();
+
+  const { data: modelStyleGroups } = useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'cad-asset-mappings',
+      dmIdsForInstanceGroups,
+      assetIdsFromInstanceGroups,
+      models.map((model) => [model.modelId, model.revisionId])
+    ],
+    queryFn: async () => {
+      const mappings = await cadCache.getMappingsForModelsAndInstances(
+        [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups.map((id) => ({ id }))],
+        models
+      );
+
+      const modelStyleGroups = models
+        .map((model) => {
+          const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
+          const modelMappings = mappings.get(modelKey);
+          if (modelMappings === undefined) {
+            return undefined;
+          }
+          return calculateInstanceCadModelStyling(model, instanceGroups, modelMappings);
+        })
+        .filter(isDefined);
+
+      return modelStyleGroups;
+    },
+    staleTime: DEFAULT_QUERY_STALE_TIME
+  });
+
+  return useMemo(() => {
+    if (modelStyleGroups === undefined) {
+      return {
+        combinedMappedStyleGroups: [],
+        isModelMappingsLoading: false
+      };
+    } else {
+      return { combinedMappedStyleGroups: modelStyleGroups, isModelMappingsLoading: true };
+    }
+  }, [modelStyleGroups]);
+
+  /* const { data: fdmAssetMappings } = useFdmAssetMappings(dmIdsForInstanceGroups, models);
 
   const {
     data: modelAssetMappings,
@@ -228,12 +277,12 @@ function useCalculateInstanceStyling(
   return {
     combinedMappedStyleGroups,
     isModelMappingsLoading: !isError && isModelMappingsLoading && !isModelMappingsFetched
-  };
+  }; */
 }
 
-function useAssetMappingInstanceStyleGroups(
+/* function useAssetMappingInstanceStyleGroups(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>,
   modelAssetMappings: ModelRevisionAssetNodesResult[] | undefined
 ): ModelStyleGroup[] {
   return useMemo(() => {
@@ -253,7 +302,7 @@ function useAssetMappingInstanceStyleGroups(
 
 function useFdmInstanceStyleGroups(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>,
   fdmAssetMappings: ThreeDModelFdmMappings[] | undefined
 ): ModelStyleGroup[] {
   return useMemo(() => {
@@ -273,7 +322,7 @@ function useFdmInstanceStyleGroups(
       return { model, styleGroup };
     });
   }, [models, instanceGroups, fdmAssetMappings]);
-}
+} */
 
 function useJoinStylingGroups(
   models: CadModelOptions[],
@@ -355,8 +404,36 @@ function getMappedStyleGroupFromAssetMappings(
   return { treeIndexSet: indexSet, style: nodeAppearance };
 }
 
-function calculateFdmCadModelStyling(
-  stylingGroups: FdmAssetStylingGroup[],
+function calculateInstanceCadModelStyling(
+  model: CadModelOptions,
+  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
+  mappings: Map<AssetId | CogniteExternalId, Node3D[]>
+): ModelStyleGroup {
+  const treeIndexSetsWithStyle = stylingGroups
+    .map((group) => {
+      const indexSet = new IndexSet();
+      getInstanceKeysFromStylingGroup(group).forEach((instanceKey) => {
+        const node3dList = mappings.get(instanceKey);
+        node3dList?.forEach((node) => {
+          indexSet.addRange(getNodeSubtreeNumericRange(node));
+        });
+      });
+
+      return {
+        treeIndexSet: indexSet,
+        style: group.style.cad
+      };
+    })
+    .filter((setWithStyle) => setWithStyle.treeIndexSet.count > 0);
+
+  return {
+    model,
+    styleGroup: treeIndexSetsWithStyle
+  };
+}
+
+/* function calculateFdmCadModelStyling(
+  stylingGroups: FdmInstanceStylingGroup[],
   mappings: ThreeDModelFdmMappings[],
   model: CadModelOptions
 ): TreeIndexStylingGroup[] {
@@ -385,7 +462,7 @@ function calculateFdmCadModelStyling(
 }
 
 function calculateAssetMappingCadModelStyling(
-  stylingGroups: AssetStylingGroup[],
+  stylingGroups: ClassicAssetStylingGroup[],
   nodeMap: Map<AssetId, Node3D[]>,
   model: CadModelOptions
 ): ModelStyleGroup {
@@ -395,11 +472,9 @@ function calculateAssetMappingCadModelStyling(
       group.assetIds
         .map((assetId) => nodeMap.get(assetId))
         .forEach((nodeList) =>
-          nodeList
-            ?.filter((node): node is Node3D => node !== undefined)
-            .forEach((node) => {
-              indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
-            })
+          nodeList?.filter(isDefined).forEach((node) => {
+            indexSet.addRange(getNodeSubtreeNumericRange(node));
+          })
         );
 
       return {
@@ -413,13 +488,13 @@ function calculateAssetMappingCadModelStyling(
     model,
     styleGroup: treeIndexSetsWithStyle
   };
-}
+} */
 
 function getNodeSubtreeNumericRange(node: Node3D): NumericRange {
   return new NumericRange(node.treeIndex, node.subtreeSize);
 }
 
-function getModelMappings(
+/* function getModelMappings(
   mappings: ThreeDModelFdmMappings[],
   model: CadModelOptions
 ): Map<CogniteExternalId, Map<NodeId, Node3D>> {
@@ -457,3 +532,4 @@ function mergeMapsWithDeduplicatedNodes(
     return map;
   }, targetMap);
 }
+ */
