@@ -190,7 +190,7 @@ function useCalculateInstanceStyling(
 
   const cadCache = useCadMappingsCache();
 
-  const { data: modelStyleGroups } = useQuery({
+  const { data: modelStyleGroups, isLoading: isModelMappingsLoading } = useQuery({
     queryKey: [
       'reveal',
       'react-components',
@@ -225,10 +225,10 @@ function useCalculateInstanceStyling(
     if (modelStyleGroups === undefined) {
       return {
         combinedMappedStyleGroups: [],
-        isModelMappingsLoading: false
+        isModelMappingsLoading
       };
     } else {
-      return { combinedMappedStyleGroups: modelStyleGroups, isModelMappingsLoading: true };
+      return { combinedMappedStyleGroups: modelStyleGroups, isModelMappingsLoading };
     }
   }, [modelStyleGroups]);
 }
