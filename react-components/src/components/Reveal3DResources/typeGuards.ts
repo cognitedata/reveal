@@ -7,10 +7,6 @@ import {
   type ClassicAdd3DModelOptions
 } from './types';
 
-/**
- * Add options
- */
-
 export function is360ImageAddOptions(
   addOptions: AddResourceOptions
 ): addOptions is AddImage360CollectionOptions {
