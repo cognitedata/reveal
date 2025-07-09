@@ -1,12 +1,7 @@
 import { type CogniteClient } from '@cognite/sdk';
-import {
-  type ClassicCadAssetMappingCache,
-  createClassicCadAssetMappingCache
-} from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
-import {
-  createFdmCadNodeCache,
-  type FdmCadNodeCache
-} from '../../../components/CacheProvider/cad/FdmCadNodeCache';
+import { createClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCacheImpl';
+import { type ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { createFdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCacheImpl';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
 import { Image360AnnotationCache } from '../../../components/CacheProvider/Image360AnnotationCache';
@@ -15,6 +10,7 @@ import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provi
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
 import { CadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCache';
+import { FdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCache';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
