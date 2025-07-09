@@ -222,14 +222,7 @@ function useCalculateInstanceStyling(
   });
 
   return useMemo(() => {
-    if (modelStyleGroups === undefined) {
-      return {
-        combinedMappedStyleGroups: [],
-        isModelMappingsLoading
-      };
-    } else {
-      return { combinedMappedStyleGroups: modelStyleGroups, isModelMappingsLoading };
-    }
+    return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading };
   }, [modelStyleGroups]);
 }
 
