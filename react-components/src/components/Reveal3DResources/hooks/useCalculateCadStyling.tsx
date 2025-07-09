@@ -35,6 +35,7 @@ type ModelStyleGroup = {
 type ModelStyleGroupWithMappingsFetched = {
   combinedMappedStyleGroups: ModelStyleGroup[];
   isModelMappingsLoading: boolean;
+  isError: boolean;
 };
 
 type StyledModelWithMappingsFetched = {
@@ -190,7 +191,11 @@ function useCalculateInstanceStyling(
 
   const cadCache = useCadMappingsCache();
 
-  const { data: modelStyleGroups, isLoading: isModelMappingsLoading } = useQuery({
+  const {
+    data: modelStyleGroups,
+    isLoading: isModelMappingsLoading,
+    isError
+  } = useQuery({
     queryKey: [
       'reveal',
       'react-components',
@@ -222,7 +227,7 @@ function useCalculateInstanceStyling(
   });
 
   return useMemo(() => {
-    return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading };
+    return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading, isError };
   }, [modelStyleGroups]);
 }
 
