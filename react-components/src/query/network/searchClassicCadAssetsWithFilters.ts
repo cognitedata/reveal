@@ -1,6 +1,6 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type CadModelOptions } from '../../components';
-import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
 import type { Asset, CogniteClient } from '@cognite/sdk';
 import { type AllAssetFilterProps } from './filters';

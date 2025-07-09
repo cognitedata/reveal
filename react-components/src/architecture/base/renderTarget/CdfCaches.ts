@@ -2,7 +2,7 @@ import { type CogniteClient } from '@cognite/sdk';
 import {
   ClassicCadAssetMappingCache,
   createClassicCadAssetMappingCache
-} from '../../../components/CacheProvider/cad/ClassicAssetMappingCache';
+} from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import {
   createFdmCadNodeCache,
   FdmCadNodeCache

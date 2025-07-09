@@ -3,7 +3,7 @@ import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { type DmsUniqueIdentifier } from '../data-providers';
 import { type FdmNode } from '../data-providers/FdmSDK';
 import { type AssetProperties } from '../data-providers/core-dm-provider/utils/filters';
-import { FdmKey } from '../components/CacheProvider/types';
+import { type FdmKey } from '../components/CacheProvider/types';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;

@@ -1,6 +1,6 @@
 import { type CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
 import { useRenderTarget } from '../RevealCanvas';
-import { type ClassicCadAssetMappingCache } from './cad/ClassicAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from './cad/ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './cad/FdmCadNodeCache';
 import { type PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from './Image360AnnotationCache';

@@ -11,7 +11,7 @@ import { createModelRevisionKey } from '../idAndKeyTranslation';
 import { executeParallel } from '../../../utilities/executeParallel';
 import { isDefined } from '../../../utilities/isDefined';
 import { mergeMapValues } from '../../../utilities/map/concatenateMapValues';
-import { type ClassicCadAssetMappingCache } from './ClassicAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 
 export type DmModelMappings = Map<ModelRevisionKey, Map<FdmKey, Node3D[]>>;

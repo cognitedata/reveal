@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/requests';
 import { type AnyIntersection } from '@cognite/reveal';
-import { type ClassicCadNodeAssetMappingResult } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
+import { type ClassicCadNodeAssetMappingResult } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 
