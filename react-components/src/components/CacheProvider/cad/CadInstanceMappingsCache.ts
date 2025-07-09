@@ -11,8 +11,6 @@ import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache'
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 
-export type DmModelMappings = Map<ModelRevisionKey, Map<FdmKey, Node3D[]>>;
-
 export type CadModelMappings = Map<ModelRevisionKey, Map<FdmKey | AssetId, Node3D[]>>;
 
 /**
@@ -20,9 +18,12 @@ export type CadModelMappings = Map<ModelRevisionKey, Map<FdmKey | AssetId, Node3
  */
 export class CadInstanceMappingsCache {
   private readonly _dmCache: FdmCadNodeCache | undefined;
-  private readonly _classicCache: ClassicCadAssetMappingCache;
+  private readonly _classicCache: ClassicCadAssetMappingCache | undefined;
 
-  constructor(classicCache: ClassicCadAssetMappingCache, dmCache: FdmCadNodeCache | undefined) {
+  constructor(
+    classicCache: ClassicCadAssetMappingCache | undefined,
+    dmCache: FdmCadNodeCache | undefined
+  ) {
     this._dmCache = dmCache;
     this._classicCache = classicCache;
   }
@@ -37,15 +38,21 @@ export class CadInstanceMappingsCache {
 
     const dmResultMap = createPerModelDmMappingsMap(dmResults);
 
-    const classicResultsPromiseCallbacks = models.map((model) => async () => {
-      const nodeResult = await this._classicCache.getNodesForAssetIds(
-        model.modelId,
-        model.revisionId,
-        internalIds
-      );
+    const classicResultsPromiseCallbacks = models
+      .map((model) => async () => {
+        const nodeResult = await this._classicCache?.getNodesForAssetIds(
+          model.modelId,
+          model.revisionId,
+          internalIds
+        );
 
-      return [createModelRevisionKey(model.modelId, model.revisionId), nodeResult] as const;
-    });
+        if (nodeResult === undefined) {
+          return undefined;
+        }
+
+        return [createModelRevisionKey(model.modelId, model.revisionId), nodeResult] as const;
+      })
+      .filter(isDefined);
 
     const classicResultTuples = await executeParallel(classicResultsPromiseCallbacks, 2);
     const modelsToClassicMappingsMap = new Map(classicResultTuples.filter(isDefined));
@@ -61,7 +68,7 @@ export class CadInstanceMappingsCache {
 
 function createPerModelDmMappingsMap(
   dmResultList: ThreeDModelFdmMappings[] | undefined
-): DmModelMappings | undefined {
+): CadModelMappings | undefined {
   if (dmResultList === undefined) {
     return undefined;
   }
