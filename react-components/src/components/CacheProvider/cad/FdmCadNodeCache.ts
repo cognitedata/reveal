@@ -1,6 +1,6 @@
 import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
-import { type Source, FdmSDK, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
+import { type Source, FdmSDK, type DmsUniqueIdentifier } from '../../../data-providers/FdmSDK';
+import { RevisionFdmNodeCache } from '../RevisionFdmNodeCache';
 import {
   type FdmConnectionWithNode,
   type FdmCadConnection,
@@ -12,23 +12,46 @@ import {
   type FdmKey,
   type FdmNodeDataPromises,
   type TreeIndex
-} from './types';
+} from '../types';
 
 import {
   createFdmKey,
   createModelTreeIndexKey,
   createModelRevisionKey,
   revisionKeyToIds
-} from './idAndKeyTranslation';
+} from '../idAndKeyTranslation';
 
 import { partition } from 'lodash';
 
 import assert from 'assert';
-import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from './requests';
-import { type ThreeDModelFdmMappings } from '../../hooks/types';
-import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from '../requests';
+import { type ThreeDModelFdmMappings } from '../../../hooks/types';
+import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
 
-export class FdmCadNodeCache {
+export type FdmCadNodeCache = {
+  getMappingsForFdmInstances: (
+    instances: DmsUniqueIdentifier[],
+    modelRevisionIds: ModelRevisionId[]
+  ) => Promise<ThreeDModelFdmMappings[]>;
+  getAllMappingExternalIds: (
+    modelRevisionIds: ModelRevisionId[],
+    fetchViews?: boolean
+  ) => Promise<ModelRevisionToConnectionMap>;
+  getClosestParentDataPromises: (
+    modelId: number,
+    revisionId: number,
+    treeIndex: number
+  ) => FdmNodeDataPromises;
+};
+
+export function createFdmCadNodeCache(
+  cdfClient: CogniteClient,
+  fdm3dDataProvider: Fdm3dDataProvider
+): FdmCadNodeCache {
+  return new FdmCadNodeCacheImpl(cdfClient, fdm3dDataProvider);
+}
+
+class FdmCadNodeCacheImpl implements FdmCadNodeCache {
   private readonly _revisionNodeCaches = new Map<ModelRevisionKey, RevisionFdmNodeCache>();
 
   private readonly _cdfClient: CogniteClient;

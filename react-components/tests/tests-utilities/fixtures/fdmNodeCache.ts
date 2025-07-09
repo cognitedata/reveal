@@ -1,5 +1,5 @@
 import { Mock } from 'moq.ts';
-import { type FdmCadNodeCache } from '../../../src/components/CacheProvider/FdmCadNodeCache';
+import { type FdmCadNodeCache } from '../../../src/components/CacheProvider/cad/FdmCadNodeCache';
 import { type Node3D } from '@cognite/sdk';
 import {
   type ModelRevisionId,

@@ -6,7 +6,7 @@ import { fdmNodeCacheContentMock } from '#test-utils/fixtures/fdmNodeCache';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { viewerMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { useCameraNavigation } from './useCameraNavigation';
-import { type FdmCadNodeCache } from '../components/CacheProvider/FdmCadNodeCache';
+import { type FdmCadNodeCache } from '../components/CacheProvider/cad/FdmCadNodeCache';
 
 const renderTargetMock = createRenderTargetMock();
 const mockFdmNodeCache = vi.fn<() => FdmCadNodeCache | undefined>();

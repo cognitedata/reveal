@@ -1,6 +1,6 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicAssetMappingCache';
-import { FdmCadNodeCache } from '../../../components/CacheProvider/FdmCadNodeCache';
+import { FdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCache';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
 import { Image360AnnotationCache } from '../../../components/CacheProvider/Image360AnnotationCache';

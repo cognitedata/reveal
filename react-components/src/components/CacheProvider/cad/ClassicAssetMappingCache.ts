@@ -25,7 +25,38 @@ export type ClassicCadNodeAssetMappingResult = {
   mappings: ClassicCadAssetMapping[];
 };
 
-export class ClassicCadAssetMappingCache {
+export type ClassicCadAssetMappingCache = {
+  getAssetMappingsForLowestAncestor: (
+    modelId: ModelId,
+    revisionId: RevisionId,
+    ancestors: Node3D[]
+  ) => Promise<ClassicCadNodeAssetMappingResult>;
+  getNodesForAssetIds: (
+    modelId: ModelId,
+    revisionId: RevisionId,
+    assetIds: CogniteInternalId[]
+  ) => Promise<Map<AssetId, Node3D[]>>;
+  generateNode3DCachePerItem: (
+    modelId: ModelId,
+    revisionId: RevisionId,
+    nodeIds: number[] | undefined
+  ) => Promise<void>;
+  generateAssetMappingsCachePerItemFromModelCache: (
+    modelId: ModelId,
+    revisionId: RevisionId,
+    assetMappingsPerModel: ModelWithAssetMappings[] | undefined
+  ) => Promise<void>;
+  getAssetMappingsForModel: (
+    modelId: ModelId,
+    revisionId: RevisionId
+  ) => Promise<ClassicCadAssetMapping[]>;
+};
+
+export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
+  return new ClassicCadAssetMappingCacheImpl(sdk);
+}
+
+class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   private readonly _sdk: CogniteClient;
 
   private readonly modelToAssetMappingsCache: ClassicCadAssetMappingPerModelCache;
