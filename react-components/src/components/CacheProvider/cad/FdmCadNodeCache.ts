@@ -35,7 +35,7 @@ export type FdmCadNodeCache = {
   ) => Promise<ThreeDModelFdmMappings[]>;
   getAllMappingExternalIds: (
     modelRevisionIds: ModelRevisionId[],
-    fetchViews?: boolean
+    fetchViews: boolean
   ) => Promise<ModelRevisionToConnectionMap>;
   getClosestParentDataPromises: (
     modelId: number,
