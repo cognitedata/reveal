@@ -14,6 +14,10 @@ import { It, Mock } from 'moq.ts';
 import { type QueryRequest } from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import {
+  createPointCloudModelExternalId,
+  createPointCloudRevisionExternalId
+} from '#test-utils/models/createExternalId';
 
 type RevisionDmsResponse = {
   items: { revision: Array<FdmNode<FdmPropertyType<{ model3D: DmsUniqueIdentifier }>>> };
@@ -24,10 +28,10 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
   const TEST_MODEL_ID1 = 234;
   const TEST_REVISION_ID0 = 3456;
   const TEST_REVISION_ID1 = 5678;
-  const TEST_MODEL_EXTERNAL_ID0 = createModelExternalId(TEST_MODEL_ID0);
-  const TEST_MODEL_EXTERNAL_ID1 = createModelExternalId(TEST_MODEL_ID1);
-  const TEST_REVISION_EXTERNAL_ID0 = createRevisionExternalId(TEST_REVISION_ID0);
-  const TEST_REVISION_EXTERNAL_ID1 = createRevisionExternalId(TEST_REVISION_ID1);
+  const TEST_MODEL_EXTERNAL_ID0 = createPointCloudModelExternalId(TEST_MODEL_ID0);
+  const TEST_MODEL_EXTERNAL_ID1 = createPointCloudModelExternalId(TEST_MODEL_ID1);
+  const TEST_REVISION_EXTERNAL_ID0 = createPointCloudRevisionExternalId(TEST_REVISION_ID0);
+  const TEST_REVISION_EXTERNAL_ID1 = createPointCloudRevisionExternalId(TEST_REVISION_ID1);
   const TEST_SPACE = 'some-space';
 
   const queryClient = new QueryClient();
@@ -193,12 +197,4 @@ function createDmsPointcloudRevisionResponse(
       ]
     }
   };
-}
-
-function createRevisionExternalId(revisionId: number): string {
-  return `cog_3d_revision_${revisionId}`;
-}
-
-function createModelExternalId(modelId: number): string {
-  return `cog_3d_model_${modelId}`;
 }
