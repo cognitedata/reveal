@@ -18,12 +18,21 @@ export const taggedPointCloudModelOptions = {
   addOptions: pointCloudModelOptions
 } as const satisfies TaggedAddPointCloudResourceOptions;
 
-export function createPointCloudMock(parameters?: { visible?: boolean }): CognitePointCloudModel {
+export function createPointCloudMock(parameters?: {
+  visible?: boolean;
+  modelId?: number;
+  revisionId?: number;
+}): CognitePointCloudModel {
+  const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
+  const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
+
   return new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
     .setup((p) => p.modelId)
-    .returns(pointCloudModelOptions.modelId)
+    .returns(modelId)
     .setup((p) => p.revisionId)
-    .returns(pointCloudModelOptions.revisionId)
+    .returns(revisionId)
+    .setup((p) => p.modelIdentifier)
+    .returns({ modelId, revisionId })
     .setup((p) => p.getModelTransformation())
     .returns(new Matrix4())
     .setup((p) => p.visible)

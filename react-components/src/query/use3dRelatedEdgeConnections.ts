@@ -19,7 +19,7 @@ export function use3dRelatedEdgeConnections(
       fdmId?.space
     ],
     queryFn: async () => {
-      if (fdmId === undefined) {
+      if (fdmId === undefined || fdmDataProvider === undefined) {
         return [];
       }
 
