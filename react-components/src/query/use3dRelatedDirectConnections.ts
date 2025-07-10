@@ -20,6 +20,11 @@ export function use3dRelatedDirectConnections(
     ],
     queryFn: async () => {
       assert(instance !== undefined);
+
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
         items: [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }]

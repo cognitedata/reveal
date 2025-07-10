@@ -1,5 +1,4 @@
 export { use3DModelName } from './use3DModelName';
-export { use3dNodeByExternalId } from './use3dNodeByExternalId';
 export { use3dRelatedDirectConnections } from './use3dRelatedDirectConnections';
 export { use3dRelatedEdgeConnections } from './use3dRelatedEdgeConnections';
 export { useAll3dDirectConnectionsWithProperties } from './useAll3dDirectConnectionsWithProperties';

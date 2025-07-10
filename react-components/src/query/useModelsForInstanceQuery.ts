@@ -33,6 +33,10 @@ export const useModelsForInstanceQuery = (
       }
 
       if (isDmsInstance(instance)) {
+        if (fdm3dDataProvider === undefined) {
+          return [];
+        }
+
         return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
       }
 

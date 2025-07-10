@@ -1,4 +1,6 @@
 export { use3dModels } from './use3dModels';
+export { useVisibleRevealDomainObjects } from './useVisibleRevealDomainObjects';
+export { useRevealDomainObjects } from './useRevealDomainObjects';
 export { useCameraNavigation } from './useCameraNavigation';
 export { useClickedNodeData } from './useClickedNode';
 export { useCreateAssetMappingsMapPerModel } from './useCreateAssetMappingsMapPerModel';
