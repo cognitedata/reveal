@@ -9,8 +9,9 @@ import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
-import { CadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCache';
+import { type CadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCache';
 import { type FdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCache';
+import { createCadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCacheImpl';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
@@ -55,7 +56,7 @@ export class CdfCaches {
       this._fdmCadNodeCache = createFdmCadNodeCache(cdfClient, fdm3dDataProvider);
     }
 
-    this._cadMappingsCache = new CadInstanceMappingsCache(
+    this._cadMappingsCache = createCadInstanceMappingsCache(
       this._classicCadNodeCache,
       this._fdmCadNodeCache
     );
