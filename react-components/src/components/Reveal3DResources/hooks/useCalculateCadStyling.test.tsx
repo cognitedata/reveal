@@ -67,7 +67,7 @@ describe(useCalculateCadStyling.name, () => {
     }));
 
     dependencies.useCadMappingsCache.mockReturnValue({
-      getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances,
+      getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances
     });
   });
 
