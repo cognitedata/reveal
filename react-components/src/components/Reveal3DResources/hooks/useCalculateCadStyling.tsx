@@ -6,8 +6,12 @@ import {
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
-import { useMemo } from 'react';
-import { type AssetId, type FdmConnectionWithNode } from '../../CacheProvider/types';
+import { createContext, useContext, useMemo } from 'react';
+import {
+  type ModelRevisionToConnectionMap,
+  type AssetId,
+  type FdmConnectionWithNode
+} from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
   type NodeStylingGroup,
@@ -26,6 +30,7 @@ import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -47,6 +52,35 @@ export type StyledModel = {
   model: CadModelOptions;
   styleGroups: CadStylingGroup[];
 };
+
+export type PartialUseQueryResult<T> = {
+  data: T | undefined;
+  isLoading: boolean;
+  isFetched: boolean;
+  isError: boolean;
+};
+
+export type UseCalculateCadStylingDependencies = {
+  useAssetMappedNodesForRevisions: (
+    cadModels: CadModelOptions[]
+  ) => PartialUseQueryResult<ModelWithAssetMappings[]>;
+  useMappedEdgesForRevisions: (
+    models: CadModelOptions[],
+    fetchViews?: boolean,
+    enabled?: boolean
+  ) => PartialUseQueryResult<ModelRevisionToConnectionMap>;
+  useCadMappingsCache: typeof useCadMappingsCache;
+};
+
+export const defaultUseCalculateCadStylingDependencies: UseCalculateCadStylingDependencies = {
+  useAssetMappedNodesForRevisions,
+  useMappedEdgesForRevisions,
+  useCadMappingsCache
+};
+
+export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylingDependencies>(
+  defaultUseCalculateCadStylingDependencies
+);
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
@@ -84,6 +118,11 @@ function useCalculateMappedStyling(
     () => getMappedCadModelsOptions(),
     [models, defaultMappedNodeAppearance]
   );
+
+  const { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } = useContext(
+    UseCalculateCadStylingContext
+  );
+
   const {
     data: mappedEquipmentEdges,
     isLoading: isFDMEquipmentMappingsLoading,
@@ -190,6 +229,8 @@ function useCalculateInstanceStyling(
     .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
+  const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
+
   const cadCache = useCadMappingsCache();
 
   const {
@@ -229,7 +270,7 @@ function useCalculateInstanceStyling(
 
   return useMemo(() => {
     return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading, isError };
-  }, [modelStyleGroups]);
+  }, [modelStyleGroups, isModelMappingsLoading, isError]);
 }
 
 function useJoinStylingGroups(
