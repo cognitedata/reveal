@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactElement } from 'react';
 
-import { beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { renderHook, waitFor } from '@testing-library/react';
 
@@ -20,10 +20,16 @@ import { type ClassicModelIdentifier } from '../../SceneContainer/sceneTypes';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type CadModelOptions } from '..';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
-import { type CadModelMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
+import {
+  CadInstanceMappingsCache,
+  type CadModelMappings
+} from '../../CacheProvider/cad/CadInstanceMappingsCache';
 
 describe(useCalculateCadStyling.name, () => {
   const dependencies = getMocksByDefaultDependencies(defaultUseCalculateCadStylingDependencies);
+
+  const mockGetMappingsForModelsAndInstances =
+    vi.fn<CadInstanceMappingsCache['getMappingsForModelsAndInstances']>();
 
   const queryClient = new QueryClient();
 
@@ -59,27 +65,82 @@ describe(useCalculateCadStyling.name, () => {
       isFetched: true,
       isError: false
     }));
+
+    dependencies.useCadMappingsCache.mockReturnValue({
+      getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances,
+    });
+  });
+
+  test('indicates that loading is not finished when `isLoading` is true for any request', async () => {
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(
+      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+    );
+    const classicMappingResult = [{ model: MODEL, assetMappings: [] }];
+    const fdmMappingResult = new Map([
+      [createModelRevisionKey(MODEL.modelId, MODEL.revisionId), []]
+    ]);
+
+    const { result, rerender } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
+
+    for (const [isLoadingClassic, isLoadingDm] of createAllBooleanPairs()) {
+      dependencies.useAssetMappedNodesForRevisions.mockReturnValue({
+        data: classicMappingResult,
+        isLoading: isLoadingClassic,
+        isFetched: !isLoadingClassic,
+        isError: false
+      });
+      dependencies.useMappedEdgesForRevisions.mockReturnValue({
+        data: fdmMappingResult,
+        isLoading: isLoadingDm,
+        isFetched: !isLoadingDm,
+        isError: false
+      });
+
+      rerender();
+
+      await waitFor(() => {
+        expect(result.current.isModelMappingsLoading).toBe(isLoadingDm || isLoadingClassic);
+      });
+    }
+  });
+
+  test('indicates that loading is finished finished when `isError` is true for any request', async () => {
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(
+      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+    );
+    const classicMappingResult = [{ model: MODEL, assetMappings: [] }];
+    const fdmMappingResult = new Map([
+      [createModelRevisionKey(MODEL.modelId, MODEL.revisionId), []]
+    ]);
+
+    const { result, rerender } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
+
+    for (const [isClassicError, isDmError] of createAllBooleanPairs()) {
+      dependencies.useAssetMappedNodesForRevisions.mockReturnValue({
+        data: classicMappingResult,
+        isLoading: !isClassicError,
+        isFetched: false,
+        isError: isClassicError
+      });
+      dependencies.useMappedEdgesForRevisions.mockReturnValue({
+        data: fdmMappingResult,
+        isLoading: !isDmError,
+        isFetched: false,
+        isError: isDmError
+      });
+
+      rerender();
+
+      await waitFor(() => {
+        expect(result.current.isModelMappingsLoading).toBe(!isClassicError || !isDmError);
+      });
+    }
   });
 
   test('returns empty style groups when no styling group is provided', async () => {
-    dependencies.useCadMappingsCache.mockReturnValue({
-      getMappingsForModelsAndInstances: async (_instances, models) =>
-        await Promise.resolve(
-          new Map(
-            models.map((model) => [
-              createModelRevisionKey(model.modelId, model.revisionId),
-              new Map()
-            ])
-          )
-        )
-    });
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
 
     const { result } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
-
-    expect(result.current).toEqual({
-      styledModels: [{ model: MODEL, styleGroups: [] }],
-      isModelMappingsLoading: true
-    });
 
     await waitFor(() => {
       expect(result.current.isModelMappingsLoading).toBeFalsy();
@@ -92,10 +153,9 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns objects with models and applicable style groups for classic asset', async () => {
-    dependencies.useCadMappingsCache.mockReturnValue({
-      getMappingsForModelsAndInstances: async () =>
-        await Promise.resolve(createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX))
-    });
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(
+      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+    );
 
     dependencies.useAssetMappedNodesForRevisions.mockReturnValue({
       data: createModelWithClassicAssetMappingList(MODEL, ASSET_ID, TREE_INDEX),
@@ -135,10 +195,9 @@ describe(useCalculateCadStyling.name, () => {
   test('returns objects with models and applicable style groups for DM instance', async () => {
     const someInstance = { externalId: 'external-id', space: 'space' };
 
-    dependencies.useCadMappingsCache.mockReturnValue({
-      getMappingsForModelsAndInstances: async () =>
-        await Promise.resolve(createModelToAssetMappingsMap(MODEL, 0, TREE_INDEX))
-    });
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(
+      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+    );
 
     dependencies.useMappedEdgesForRevisions.mockReturnValue({
       data: createModelToDmConnectionMap(MODEL, someInstance, TREE_INDEX),
@@ -215,4 +274,13 @@ function createModelToDmConnectionMap(
       ]
     ]
   ]);
+}
+
+function createAllBooleanPairs(): [boolean, boolean][] {
+  return [
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true]
+  ];
 }

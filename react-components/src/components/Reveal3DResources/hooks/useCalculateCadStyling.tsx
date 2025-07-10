@@ -53,7 +53,7 @@ export type StyledModel = {
   styleGroups: CadStylingGroup[];
 };
 
-export type PartialUseQueryResult<T> = {
+export type UseQueryResultWithLoadingAndError<T> = {
   data: T | undefined;
   isLoading: boolean;
   isFetched: boolean;
@@ -63,12 +63,12 @@ export type PartialUseQueryResult<T> = {
 export type UseCalculateCadStylingDependencies = {
   useAssetMappedNodesForRevisions: (
     cadModels: CadModelOptions[]
-  ) => PartialUseQueryResult<ModelWithAssetMappings[]>;
+  ) => UseQueryResultWithLoadingAndError<ModelWithAssetMappings[]>;
   useMappedEdgesForRevisions: (
     models: CadModelOptions[],
     fetchViews?: boolean,
     enabled?: boolean
-  ) => PartialUseQueryResult<ModelRevisionToConnectionMap>;
+  ) => UseQueryResultWithLoadingAndError<ModelRevisionToConnectionMap>;
   useCadMappingsCache: typeof useCadMappingsCache;
 };
 
