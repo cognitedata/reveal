@@ -21,7 +21,7 @@ import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type CadModelOptions } from '..';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
 import {
-  CadInstanceMappingsCache,
+  type CadInstanceMappingsCache,
   type CadModelMappings
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 
@@ -276,7 +276,7 @@ function createModelToDmConnectionMap(
   ]);
 }
 
-function createAllBooleanPairs(): [boolean, boolean][] {
+function createAllBooleanPairs(): Array<[boolean, boolean]> {
   return [
     [false, false],
     [false, true],
