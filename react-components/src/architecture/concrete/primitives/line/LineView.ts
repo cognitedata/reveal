@@ -194,7 +194,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       if (i > 0) {
         // create cylinder with length equal to the distance between successive vertices
         const distance = prevPoint.distanceTo(thisPoint);
-        const cylinder = new CylinderGeometry(radius, radius, distance, 6, 1);
+        const cylinder = new CylinderGeometry(radius, radius, distance, 8, 1);
 
         // use quaternion to orient cylinder to align along the vector formed between
         // the pair of vertices
@@ -363,11 +363,12 @@ function adjustLabel(
     point.y += (1.1 * spriteHeight) / 2 + style.pipeRadius;
   }
 }
+const RADIUS_FACTOR = 0.5;
 
 function getRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
-  return domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
+  return RADIUS_FACTOR * (domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius);
 }
 
 function getSelectRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
-  return 1.5 * style.selectedPipeRadius; // Added more to make it easier to pick
+  return RADIUS_FACTOR * 1.5 * style.selectedPipeRadius; // Added more to make it easier to pick
 }
