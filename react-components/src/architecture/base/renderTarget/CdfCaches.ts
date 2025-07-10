@@ -11,34 +11,43 @@ import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvide
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
+  enableLegacy3dFdm: boolean;
 };
 
 export class CdfCaches {
   private readonly _assetMappingAndNode3dCache: ClassicCadAssetMappingCache;
-  private readonly _fdmCadNodeCache: FdmCadNodeCache;
+  private readonly _fdmCadNodeCache: FdmCadNodeCache | undefined;
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
   private readonly _image360AnnotationCache: Image360AnnotationCache;
 
   private readonly _coreDmOnly: boolean;
 
   private readonly _cogniteClient: CogniteClient;
-  private readonly _fdm3dDataProvider: Fdm3dDataProvider;
+  private readonly _fdm3dDataProvider: Fdm3dDataProvider | undefined;
 
   constructor(
     cdfClient: CogniteClient,
     viewer: Cognite3DViewer<DataSourceType>,
-    { coreDmOnly }: CdfCachesOptions
+    { coreDmOnly, enableLegacy3dFdm }: CdfCachesOptions
   ) {
     const fdmClient = new FdmSDK(cdfClient);
 
-    const fdm3dDataProvider = coreDmOnly
-      ? new CoreDm3dFdm3dDataProvider(fdmClient)
-      : new LegacyFdm3dDataProvider(fdmClient, cdfClient);
+    const fdm3dDataProvider = (() => {
+      if (coreDmOnly) {
+        return new CoreDm3dFdm3dDataProvider(fdmClient);
+      } else if (enableLegacy3dFdm) {
+        return new LegacyFdm3dDataProvider(fdmClient, cdfClient);
+      }
+      return undefined;
+    })();
 
     this._assetMappingAndNode3dCache = new ClassicCadAssetMappingCache(cdfClient);
-    this._fdmCadNodeCache = new FdmCadNodeCache(cdfClient, fdm3dDataProvider);
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
+
+    if (fdm3dDataProvider !== undefined) {
+      this._fdmCadNodeCache = new FdmCadNodeCache(cdfClient, fdm3dDataProvider);
+    }
 
     this._cogniteClient = cdfClient;
     this._fdm3dDataProvider = fdm3dDataProvider;
@@ -49,7 +58,7 @@ export class CdfCaches {
     return this._assetMappingAndNode3dCache;
   }
 
-  public get fdmCadNodeCache(): FdmCadNodeCache {
+  public get fdmCadNodeCache(): FdmCadNodeCache | undefined {
     return this._fdmCadNodeCache;
   }
 
@@ -65,7 +74,7 @@ export class CdfCaches {
     return this._cogniteClient;
   }
 
-  public get fdm3dDataProvider(): Fdm3dDataProvider {
+  public get fdm3dDataProvider(): Fdm3dDataProvider | undefined {
     return this._fdm3dDataProvider;
   }
 

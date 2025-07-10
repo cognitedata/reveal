@@ -11,7 +11,7 @@ const useCacheObject = (): CdfCaches => {
   return revealRenderTarget.cdfCaches;
 };
 
-export const useFdmCadNodeCache = (): FdmCadNodeCache => {
+export const useFdmCadNodeCache = (): FdmCadNodeCache | undefined => {
   return useCacheObject().fdmCadNodeCache;
 };
 
@@ -27,6 +27,6 @@ export const useImage360AnnotationCache = (): Image360AnnotationCache => {
   return useCacheObject().image360Cache;
 };
 
-export const useFdm3dDataProvider = (): Fdm3dDataProvider => {
+export const useFdm3dDataProvider = (): Fdm3dDataProvider | undefined => {
   return useCacheObject().fdm3dDataProvider;
 };

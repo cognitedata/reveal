@@ -46,6 +46,12 @@ export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
 
+// New architecture: Reveal domain objects
+export { RevealDomainObject } from './concrete/reveal/RevealDomainObject';
+export { CadDomainObject } from './concrete/reveal/cad/CadDomainObject';
+export { PointCloudDomainObject } from './concrete/reveal/pointCloud/PointCloudDomainObject';
+export { Image360CollectionDomainObject } from './concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+
 // New architecture: renderStyles
 export { RenderStyle } from './base/renderStyles/RenderStyle';
 export { CommonRenderStyle } from './base/renderStyles/CommonRenderStyle';
