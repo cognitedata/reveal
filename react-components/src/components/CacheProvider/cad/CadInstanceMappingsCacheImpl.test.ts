@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { CadInstanceMappingsCache } from './CadInstanceMappingsCache';
+import { type CadInstanceMappingsCache } from './CadInstanceMappingsCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import { type AssetId } from '../types';
+import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
 
-describe(CadInstanceMappingsCache.name, () => {
+describe(createCadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =
     vi.fn<ClassicCadAssetMappingCache['getAssetMappingsForLowestAncestor']>();
   const mockClassicGetNodesForAssetIds =
@@ -60,7 +61,7 @@ describe(CadInstanceMappingsCache.name, () => {
   let cacheWrapper: CadInstanceMappingsCache;
 
   beforeEach(() => {
-    cacheWrapper = new CadInstanceMappingsCache(
+    cacheWrapper = createCadInstanceMappingsCache(
       mockClassicCadAssetMappingCache,
       mockFdmCadAssetMappingCache
     );
