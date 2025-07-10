@@ -1,8 +1,8 @@
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type FdmNode, type EdgeItem, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import {
-  type FdmAssetStylingGroup,
-  type AssetStylingGroup,
+  type FdmInstanceStylingGroup,
+  type ClassicAssetStylingGroup,
   type FdmPropertyType
 } from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries, type Node3D } from '@cognite/sdk';
@@ -282,17 +282,17 @@ export type RuleAndStyleIndex = {
 
 export type AssetStylingGroupAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
-  assetStylingGroup: AssetStylingGroup;
+  assetStylingGroup: ClassicAssetStylingGroup;
 };
 
 export type FdmStylingGroupAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
-  fdmStylingGroup: FdmAssetStylingGroup;
+  fdmStylingGroup: FdmInstanceStylingGroup;
 };
 
 export type AllRuleBasedStylingGroups = {
-  assetStylingGroup: AssetStylingGroup[];
-  fdmStylingGroup: FdmAssetStylingGroup[];
+  assetStylingGroup: ClassicAssetStylingGroup[];
+  fdmStylingGroup: FdmInstanceStylingGroup[];
 };
 
 export type AllMappingStylingGroupAndStyleIndex = {

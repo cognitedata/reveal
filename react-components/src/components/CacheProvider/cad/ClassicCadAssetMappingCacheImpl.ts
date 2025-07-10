@@ -19,13 +19,16 @@ import {
   isValidClassicCadAssetMapping,
   type ClassicCadAssetMapping
 } from './ClassicCadAssetMapping';
+import {
+  type ClassicCadNodeAssetMappingResult,
+  type ClassicCadAssetMappingCache
+} from './ClassicCadAssetMappingCache';
 
-export type ClassicCadNodeAssetMappingResult = {
-  node?: Node3D;
-  mappings: ClassicCadAssetMapping[];
-};
+export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
+  return new ClassicCadAssetMappingCacheImpl(sdk);
+}
 
-export class ClassicCadAssetMappingCache {
+class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   private readonly _sdk: CogniteClient;
 
   private readonly modelToAssetMappingsCache: ClassicCadAssetMappingPerModelCache;
