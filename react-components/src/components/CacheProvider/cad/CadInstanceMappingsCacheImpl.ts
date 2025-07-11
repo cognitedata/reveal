@@ -12,7 +12,7 @@ import { partition } from 'lodash';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import { executeParallel } from '../../../utilities/executeParallel';
 import { isDefined } from '../../../utilities/isDefined';
-import { concatenateMapValues, mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
+import { mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
@@ -21,6 +21,8 @@ import type {
   CadModelMappingsWithNodes,
   CadModelTreeIndexMappings
 } from './CadInstanceMappingsCache';
+import { concatenateMapValues } from '../../../utilities/map/concatenateMapValues';
+import { MAX_PARALLEL_QUERIES } from '../../../data-providers/utils/getDMSModelRevisionRefs';
 
 export function createCadInstanceMappingsCache(
   classicCache: ClassicCadAssetMappingCache | undefined,
@@ -74,7 +76,10 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
       })
       .filter(isDefined);
 
-    const classicResultTuples = await executeParallel(classicResultsPromiseCallbacks, 2);
+    const classicResultTuples = await executeParallel(
+      classicResultsPromiseCallbacks,
+      MAX_PARALLEL_QUERIES
+    );
     const modelsToClassicMappingsMap = new Map(classicResultTuples.filter(isDefined));
 
     const mergedCadMappings = mergeMapMapValues<ModelRevisionKey, FdmKey | AssetId, Node3D>([
@@ -100,7 +105,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
             )
           };
         }),
-        2
+        MAX_PARALLEL_QUERIES
       )
     )
       .filter(isDefined)
