@@ -1,6 +1,6 @@
 import { type CadModelOptions } from '../../components/Reveal3DResources/types';
 import {
-  ClassicCadAssetTreeIndexMapping,
+  type ClassicCadAssetTreeIndexMapping,
   type ClassicCadAssetMapping
 } from '../../components/CacheProvider/cad/ClassicCadAssetMapping';
 

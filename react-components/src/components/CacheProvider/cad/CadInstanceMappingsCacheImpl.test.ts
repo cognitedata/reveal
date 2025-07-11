@@ -5,7 +5,7 @@ import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache'
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import type { AssetId, CadNodeIdData, CadNodeTreeData, FdmKey } from '../types';
+import type { AssetId, CadNodeTreeData, FdmKey } from '../types';
 import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
 
 describe(createCadInstanceMappingsCache.name, () => {

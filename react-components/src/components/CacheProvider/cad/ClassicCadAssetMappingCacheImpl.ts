@@ -16,7 +16,7 @@ import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPe
 import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import {
-  ClassicCadAssetTreeIndexMapping,
+  type ClassicCadAssetTreeIndexMapping,
   isValidClassicCadAssetMapping,
   type ClassicCadAssetMapping
 } from './ClassicCadAssetMapping';

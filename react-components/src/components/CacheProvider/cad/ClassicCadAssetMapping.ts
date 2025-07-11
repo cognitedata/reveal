@@ -1,5 +1,5 @@
 import { type AssetMapping3D, type CogniteInternalId } from '@cognite/sdk';
-import { CadNodeIdData, CadNodeTreeData } from '../types';
+import { type CadNodeIdData, type CadNodeTreeData } from '../types';
 
 export type ClassicCadAssetMapping = CadNodeIdData & {
   assetId: CogniteInternalId;
