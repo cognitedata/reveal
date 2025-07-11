@@ -115,7 +115,7 @@ describe(createCadInstanceMappingsCache.name, () => {
       mockDmGetAllMappingExternalIds.mockResolvedValue(new Map());
     });
 
-    test('returns empty map when no models are provider', async () => {
+    test('returns empty map when no models are provided', async () => {
       const result = await cacheWrapper.getAllModelMappings([]);
       expect(result.size).toBe(0);
     });
