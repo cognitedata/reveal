@@ -269,5 +269,19 @@ describe(createCadInstanceMappingsCache.name, () => {
         ])
       );
     });
+
+    test('rejects if classic query rejects', async () => {
+      mockClassicGetAssetMappingsForModel.mockRejectedValue(new Error());
+      const resultPromise = cacheWrapper.getAllModelMappings(MODELS);
+
+      await expect(resultPromise).rejects.toThrow();
+    });
+
+    test('rejects if DM query rejects', async () => {
+      mockDmGetAllMappingExternalIds.mockRejectedValue(new Error());
+      const resultPromise = cacheWrapper.getAllModelMappings(MODELS);
+
+      await expect(resultPromise).rejects.toThrow();
+    });
   });
 });
