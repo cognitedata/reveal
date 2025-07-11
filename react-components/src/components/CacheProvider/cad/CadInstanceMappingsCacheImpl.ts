@@ -91,25 +91,27 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
   }
 
   public async getAllModelMappings(models: ModelRevisionId[]): Promise<CadModelTreeIndexMappings> {
-    const classicResultsWithModel = (
-      await executeParallel(
-        models.map((model) => async () => {
-          if (this._classicCache === undefined) {
-            return [];
-          }
-          return {
-            model,
-            mappings: await this._classicCache.getAssetMappingsForModel(
-              model.modelId,
-              model.revisionId
-            )
-          };
-        }),
-        MAX_PARALLEL_QUERIES
-      )
-    )
-      .filter(isDefined)
-      .flat();
+    const classicResultsPromise = executeParallel(
+      models.map((model) => async () => {
+        if (this._classicCache === undefined) {
+          return [];
+        }
+        return {
+          model,
+          mappings: await this._classicCache.getAssetMappingsForModel(
+            model.modelId,
+            model.revisionId
+          )
+        };
+      }),
+      MAX_PARALLEL_QUERIES
+    );
+
+    const dmResultsPromise = this._dmCache?.getAllMappingExternalIds(models, true);
+
+    // Let queries run in parallel
+    const classicResultsWithModel = (await classicResultsPromise).filter(isDefined).flat();
+    const dmResultsWithModel = await dmResultsPromise;
 
     const classicResultsMap = new Map(
       classicResultsWithModel.map(({ model, mappings }) => {
@@ -123,7 +125,6 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
       })
     );
 
-    const dmResultsWithModel = await this._dmCache?.getAllMappingExternalIds(models, true);
     const dmModelToInstanceToNodeMap = new Map(
       [...(dmResultsWithModel?.entries() ?? [])].map(([modelKey, fdmConnections]) => {
         const connectionMapEntries: Array<[FdmKey, CadNodeTreeData]> = fdmConnections.map(
