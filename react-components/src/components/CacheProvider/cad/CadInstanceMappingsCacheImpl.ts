@@ -1,16 +1,27 @@
 import { type Node3D } from '@cognite/sdk';
 import { isDmsInstance } from '../../../utilities/instanceIds';
 import { type ThreeDModelFdmMappings } from '../../../hooks';
-import { type AssetId, type FdmKey, type ModelRevisionId, type ModelRevisionKey } from '../types';
+import {
+  CadNodeTreeData,
+  type AssetId,
+  type FdmKey,
+  type ModelRevisionId,
+  type ModelRevisionKey
+} from '../types';
 import { partition } from 'lodash';
-import { createModelRevisionKey } from '../idAndKeyTranslation';
+import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import { executeParallel } from '../../../utilities/executeParallel';
 import { isDefined } from '../../../utilities/isDefined';
-import { mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
+import { concatenateMapValues, mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import type { CadInstanceMappingsCache, CadModelMappings } from './CadInstanceMappingsCache';
+import type {
+  CadInstanceMappingsCache,
+  CadModelMappings,
+  CadModelMappingsWithNodes,
+  CadModelTreeIndexMappings
+} from './CadInstanceMappingsCache';
 
 export function createCadInstanceMappingsCache(
   classicCache: ClassicCadAssetMappingCache | undefined,
@@ -37,7 +48,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
   public async getMappingsForModelsAndInstances(
     instances: Array<AssetId | DmsUniqueIdentifier>,
     models: ModelRevisionId[]
-  ): Promise<CadModelMappings> {
+  ): Promise<CadModelMappingsWithNodes> {
     if (models.length === 0 || instances.length === 0) {
       return new Map();
     }
@@ -74,11 +85,66 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
 
     return mergedCadMappings;
   }
+
+  public async getAllModelMappings(models: ModelRevisionId[]): Promise<CadModelTreeIndexMappings> {
+    const classicResultsWithModel = (
+      await executeParallel(
+        models.map((model) => async () => {
+          if (this._classicCache === undefined) {
+            return [];
+          }
+          return {
+            model,
+            mappings: await this._classicCache.getAssetMappingsForModel(
+              model.modelId,
+              model.revisionId
+            )
+          };
+        }),
+        2
+      )
+    )
+      .filter(isDefined)
+      .flat();
+
+    const classicResultsMap = new Map(
+      classicResultsWithModel.map(({ model, mappings }) => {
+        const mappingsMap = concatenateMapValues(
+          mappings.map((mapping) => {
+            const { assetId, ...nodeIdData } = mapping;
+            return [assetId, nodeIdData];
+          })
+        );
+        return [createModelRevisionKey(model.modelId, model.revisionId), mappingsMap];
+      })
+    );
+
+    const dmResultsWithModel = await this._dmCache?.getAllMappingExternalIds(models, true);
+    const dmModelToInstanceToNodeMap = new Map(
+      [...(dmResultsWithModel?.entries() ?? [])].map(([modelKey, fdmConnections]) => {
+        const connectionMapEntries: Array<[FdmKey, CadNodeTreeData]> = fdmConnections.map(
+          (connection) => [
+            createFdmKey(connection.connection.instance),
+            {
+              treeIndex: connection.cadNode.treeIndex,
+              subtreeSize: connection.cadNode.subtreeSize
+            }
+          ]
+        );
+        return [modelKey, concatenateMapValues(connectionMapEntries)];
+      })
+    );
+
+    return mergeMapMapValues<ModelRevisionKey, AssetId | FdmKey, CadNodeTreeData>([
+      ...classicResultsMap.entries(),
+      ...dmModelToInstanceToNodeMap.entries()
+    ]);
+  }
 }
 
 function createPerModelDmMappingsMap(
   dmResultList: ThreeDModelFdmMappings[] | undefined
-): CadModelMappings | undefined {
+): CadModelMappingsWithNodes | undefined {
   if (dmResultList === undefined) {
     return undefined;
   }

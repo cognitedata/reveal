@@ -2,7 +2,8 @@ import {
   type AnnotationsTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type Node3D
+  type Node3D,
+  CogniteInternalId
 } from '@cognite/sdk';
 import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
@@ -19,6 +20,15 @@ export type FdmConnectionWithNode = {
   connection: FdmCadConnection;
   cadNode: Node3D;
   views?: Source[];
+};
+
+export type CadNodeTreeData = {
+  treeIndex: number;
+  subtreeSize: number;
+};
+
+export type CadNodeIdData = CadNodeTreeData & {
+  nodeId: number;
 };
 
 export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };

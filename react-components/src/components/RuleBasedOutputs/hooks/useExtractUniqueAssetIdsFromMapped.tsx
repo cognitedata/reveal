@@ -1,5 +1,5 @@
 import { type InternalId } from '@cognite/sdk';
-import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import { useMemo } from 'react';
 import { uniqBy } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';

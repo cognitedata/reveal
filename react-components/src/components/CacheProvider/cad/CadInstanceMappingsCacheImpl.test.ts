@@ -5,7 +5,7 @@ import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache'
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import { type AssetId } from '../types';
+import type { AssetId, CadNodeIdData, CadNodeTreeData, FdmKey } from '../types';
 import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
 
 describe(createCadInstanceMappingsCache.name, () => {
@@ -106,6 +106,168 @@ describe(createCadInstanceMappingsCache.name, () => {
       ]);
       expect(result.get(modelKeys[1])?.get(createFdmKey(DM_INSTANCES[1]))).toEqual([cadNodes[2]]);
       expect(result.get(modelKeys[1])?.get(CLASSIC_INSTANCES[1])).toEqual([cadNodes[2]]);
+    });
+  });
+
+  describe('getAllModelMappings', () => {
+    beforeEach(() => {
+      mockClassicGetAssetMappingsForModel.mockResolvedValue([]);
+      mockDmGetAllMappingExternalIds.mockResolvedValue(new Map());
+    });
+
+    test('returns empty map when no models are provider', async () => {
+      const result = await cacheWrapper.getAllModelMappings([]);
+      expect(result).toHaveLength(0);
+    });
+
+    test('returns all model mappings from classic cache', async () => {
+      const cadNodeIdData: CadNodeTreeData = { treeIndex: 123, subtreeSize: 42 };
+
+      mockClassicGetAssetMappingsForModel.mockResolvedValue([
+        {
+          ...cadNodeIdData,
+          assetId: CLASSIC_INSTANCES[0]
+        }
+      ]);
+
+      const result = await cacheWrapper.getAllModelMappings([MODELS[0]]);
+      expect(result).toEqual(
+        new Map([
+          [
+            createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
+            new Map([[CLASSIC_INSTANCES[0], [cadNodeIdData]]])
+          ]
+        ])
+      );
+    });
+
+    test('returns all model mappings from dm cache', async () => {
+      const cadNodeIdData: CadNodeTreeData = { treeIndex: 123, subtreeSize: 42 };
+      const cadNode = createCadNodeMock(cadNodeIdData);
+
+      mockDmGetAllMappingExternalIds.mockResolvedValue(
+        new Map([
+          [
+            createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
+            [
+              {
+                cadNode,
+                connection: {
+                  instance: DM_INSTANCES[0],
+                  ...MODELS[0],
+                  treeIndex: cadNodeIdData.treeIndex
+                }
+              }
+            ]
+          ]
+        ])
+      );
+
+      const result = await cacheWrapper.getAllModelMappings([MODELS[0]]);
+      expect(result).toEqual(
+        new Map([
+          [
+            createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
+            new Map([[createFdmKey(DM_INSTANCES[0]), [cadNodeIdData]]])
+          ]
+        ])
+      );
+    });
+
+    test('returns all data associated with multiple classic and DM models', async () => {
+      const cadNodeData: CadNodeTreeData[] = [
+        { treeIndex: 1, subtreeSize: 15 },
+        { treeIndex: 2, subtreeSize: 16 },
+        { treeIndex: 3, subtreeSize: 17 }
+      ];
+
+      const cadNodes = cadNodeData.map(createCadNodeMock);
+
+      mockClassicGetAssetMappingsForModel
+        .mockResolvedValueOnce([
+          // First model
+          {
+            ...cadNodeData[0],
+            assetId: CLASSIC_INSTANCES[0]
+          },
+          {
+            ...cadNodeData[1],
+            assetId: CLASSIC_INSTANCES[1]
+          }
+        ])
+        .mockResolvedValueOnce([
+          // Second model
+          {
+            ...cadNodeData[2],
+            assetId: CLASSIC_INSTANCES[1]
+          },
+          {
+            ...cadNodeData[1],
+            assetId: CLASSIC_INSTANCES[1]
+          }
+        ]);
+
+      mockDmGetAllMappingExternalIds.mockResolvedValue(
+        new Map([
+          [
+            createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
+            [
+              {
+                cadNode: cadNodes[0],
+                connection: {
+                  instance: DM_INSTANCES[0],
+                  ...MODELS[0],
+                  treeIndex: cadNodeData[0].treeIndex
+                }
+              },
+              {
+                cadNode: cadNodes[2],
+                connection: {
+                  instance: DM_INSTANCES[1],
+                  ...MODELS[0],
+                  treeIndex: cadNodeData[2].treeIndex
+                }
+              }
+            ]
+          ],
+          [
+            createModelRevisionKey(MODELS[1].modelId, MODELS[1].revisionId),
+            [
+              {
+                cadNode: cadNodes[1],
+                connection: {
+                  instance: DM_INSTANCES[1],
+                  ...MODELS[0],
+                  treeIndex: cadNodeData[1].treeIndex
+                }
+              }
+            ]
+          ]
+        ])
+      );
+
+      const result = await cacheWrapper.getAllModelMappings(MODELS);
+
+      expect(result).toEqual(
+        new Map([
+          [
+            createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
+            new Map<AssetId | FdmKey, CadNodeTreeData[]>([
+              [CLASSIC_INSTANCES[0], [cadNodeData[0]]],
+              [CLASSIC_INSTANCES[1], [cadNodeData[1]]],
+              [createFdmKey(DM_INSTANCES[0]), [cadNodeData[0]]],
+              [createFdmKey(DM_INSTANCES[1]), [cadNodeData[2]]]
+            ])
+          ],
+          [
+            createModelRevisionKey(MODELS[1].modelId, MODELS[1].revisionId),
+            new Map<AssetId | FdmKey, CadNodeTreeData[]>([
+              [CLASSIC_INSTANCES[1], [cadNodeData[2], cadNodeData[1]]],
+              [createFdmKey(DM_INSTANCES[1]), [cadNodeData[1]]]
+            ])
+          ]
+        ])
+      );
     });
   });
 });

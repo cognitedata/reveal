@@ -10,12 +10,13 @@ import {
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
 import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
 import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
 import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import {
+  ClassicCadAssetTreeIndexMapping,
   isValidClassicCadAssetMapping,
   type ClassicCadAssetMapping
 } from './ClassicCadAssetMapping';
@@ -158,7 +159,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ClassicCadAssetMapping[]> {
+  ): Promise<ClassicCadAssetTreeIndexMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 

@@ -1,7 +1,10 @@
 import type { Node3D, CogniteInternalId } from '@cognite/sdk';
-import type { ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import type { ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import type { ModelId, RevisionId, AssetId } from '../types';
-import type { ClassicCadAssetMapping } from './ClassicCadAssetMapping';
+import type {
+  ClassicCadAssetTreeIndexMapping,
+  ClassicCadAssetMapping
+} from './ClassicCadAssetMapping';
 
 export type ClassicCadNodeAssetMappingResult = {
   node?: Node3D;
@@ -32,5 +35,5 @@ export type ClassicCadAssetMappingCache = {
   getAssetMappingsForModel: (
     modelId: ModelId,
     revisionId: RevisionId
-  ) => Promise<ClassicCadAssetMapping[]>;
+  ) => Promise<ClassicCadAssetTreeIndexMapping[]>;
 };
