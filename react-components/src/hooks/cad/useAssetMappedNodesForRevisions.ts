@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type CadModelOptions } from '../../components';
-import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from './modelWithAssetMappings';
 import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 import { useIsCoreDmOnly } from '../useIsCoreDmOnly';
 

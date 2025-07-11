@@ -21,6 +21,15 @@ export type FdmConnectionWithNode = {
   views?: Source[];
 };
 
+export type CadNodeTreeData = {
+  treeIndex: number;
+  subtreeSize: number;
+};
+
+export type CadNodeIdData = CadNodeTreeData & {
+  nodeId: number;
+};
+
 export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };
 export type CadNodeWithConnections = { cadNode: Node3D; connections: FdmCadConnection[] };
 export type FdmNodeDataPromises = {

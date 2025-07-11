@@ -19,10 +19,10 @@ import { type FdmConnectionWithNode, type ModelRevisionKey } from '../../CachePr
 import { type ClassicModelIdentifier } from '../../SceneContainer/sceneTypes';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type CadModelOptions } from '..';
-import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import {
   type CadInstanceMappingsCache,
-  type CadModelMappings
+  type CadModelMappingsWithNodes
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 
 describe(useCalculateCadStyling.name, () => {
@@ -30,6 +30,7 @@ describe(useCalculateCadStyling.name, () => {
 
   const mockGetMappingsForModelsAndInstances =
     vi.fn<CadInstanceMappingsCache['getMappingsForModelsAndInstances']>();
+  const mockGetAllModelMappings = vi.fn<CadInstanceMappingsCache['getAllModelMappings']>();
 
   const queryClient = new QueryClient();
 
@@ -67,7 +68,8 @@ describe(useCalculateCadStyling.name, () => {
     }));
 
     dependencies.useCadMappingsCache.mockReturnValue({
-      getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances
+      getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances,
+      getAllModelMappings: mockGetAllModelMappings
     });
   });
 
@@ -244,7 +246,7 @@ function createModelToAssetMappingsMap(
   model: ClassicModelIdentifier,
   assetId: number,
   treeIndex: number
-): CadModelMappings {
+): CadModelMappingsWithNodes {
   return new Map([
     [
       createModelRevisionKey(model.modelId, model.revisionId),

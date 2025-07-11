@@ -1,5 +1,5 @@
 import { type CadModelOptions } from '../../components';
-import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from './modelWithAssetMappings';
 import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 import { useMemo } from 'react';
 
