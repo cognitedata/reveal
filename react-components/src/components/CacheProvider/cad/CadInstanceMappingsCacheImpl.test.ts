@@ -117,7 +117,7 @@ describe(createCadInstanceMappingsCache.name, () => {
 
     test('returns empty map when no models are provider', async () => {
       const result = await cacheWrapper.getAllModelMappings([]);
-      expect(result).toHaveLength(0);
+      expect(result.size).toBe(0);
     });
 
     test('returns all model mappings from classic cache', async () => {
@@ -237,7 +237,7 @@ describe(createCadInstanceMappingsCache.name, () => {
                 cadNode: cadNodes[1],
                 connection: {
                   instance: DM_INSTANCES[1],
-                  ...MODELS[0],
+                  ...MODELS[1],
                   treeIndex: cadNodeData[1].treeIndex
                 }
               }
