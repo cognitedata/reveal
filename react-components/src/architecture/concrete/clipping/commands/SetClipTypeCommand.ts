@@ -7,6 +7,14 @@ import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIc
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type IconName } from '../../../base/utilities/IconName';
 
+export const CLIP_PRIMITIVE_TYPES = [
+  PrimitiveType.PlaneX,
+  PrimitiveType.PlaneY,
+  PrimitiveType.PlaneZ,
+  PrimitiveType.PlaneXY,
+  PrimitiveType.Box
+];
+
 export class SetClipTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
@@ -20,6 +28,9 @@ export class SetClipTypeCommand extends RenderTargetCommand {
 
   public constructor(primitiveType: PrimitiveType) {
     super();
+    if (!CLIP_PRIMITIVE_TYPES.includes(primitiveType)) {
+      throw new Error(`Invalid primitive type: ${primitiveType}`);
+    }
     this._primitiveType = primitiveType;
   }
 

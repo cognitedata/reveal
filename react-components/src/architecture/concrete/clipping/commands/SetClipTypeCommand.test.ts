@@ -4,7 +4,7 @@ import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRende
 import { getDefaultCommand } from '../../../../components/Architecture/utilities';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { lastElement } from '../../../base/utilities/extensions/arrayUtils';
-import { SetClipTypeCommand } from './SetClipTypeCommand';
+import { CLIP_PRIMITIVE_TYPES, SetClipTypeCommand } from './SetClipTypeCommand';
 import { SliceDomainObject } from '../SliceDomainObject';
 import {
   AlongAxisPlanePrimitiveTypes,
@@ -27,6 +27,12 @@ describe(SetClipTypeCommand.name, () => {
     }
     const last = lastElement(root.children);
     last?.setSelectedInteractive(true);
+  });
+
+  test('Should throw when illegal PrimitiveType is given in the constructor', () => {
+    expect(() => {
+      const _ = new SetClipTypeCommand(PrimitiveType.Line);
+    }).toThrow();
   });
 
   test('Should have tooltip and icon', () => {
@@ -86,10 +92,9 @@ describe(SetClipTypeCommand.name, () => {
 });
 
 function* getCommands(): Generator<SetClipTypeCommand> {
-  for (const primitiveType of PlanePrimitiveTypes) {
+  for (const primitiveType of CLIP_PRIMITIVE_TYPES) {
     yield new SetClipTypeCommand(primitiveType);
   }
-  yield new SetClipTypeCommand(PrimitiveType.Box);
 }
 
 function* getPlanesOfAllType(): Generator<DomainObject> {
