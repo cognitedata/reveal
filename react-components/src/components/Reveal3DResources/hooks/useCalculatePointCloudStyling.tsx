@@ -9,9 +9,9 @@ import {
 import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
-  type AssetStylingGroup,
+  type ClassicAssetStylingGroup,
   type TypedReveal3DModel,
-  type FdmAssetStylingGroup,
+  type FdmInstanceStylingGroup,
   type AnnotationModelDataResult,
   type StyledPointCloudModel
 } from '../types';
@@ -37,7 +37,7 @@ type PointCloudVolumeWithModel = {
 
 export const useCalculatePointCloudStyling = (
   models: TypedReveal3DModel[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledPointCloudModel[] => {
   const pointCloudModelOptions = useMemo(
@@ -66,7 +66,7 @@ export const useCalculatePointCloudStyling = (
 
 function useCalculateInstanceStyling(
   models: PointCloudModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>
 ): StyledPointCloudModel[] {
   const { data: pointCloudAnnotationMappings } = usePointCloudAnnotationMappingsForModels(models);
 
@@ -99,7 +99,7 @@ function useCalculateInstanceStyling(
 function useAnnotationMappingInstanceStyleGroups(
   annotationMappings: AnnotationModelDataResult[] | undefined,
   models: PointCloudModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (annotationMappings === undefined || annotationMappings.length === 0) {
@@ -115,7 +115,7 @@ function useAnnotationMappingInstanceStyleGroups(
 }
 
 function calculateAnnotationMappingModelStyling(
-  instanceGroups: AssetStylingGroup[],
+  instanceGroups: ClassicAssetStylingGroup[],
   annotationMapping: AnnotationModelDataResult
 ): StyledPointCloudModel {
   const styleGroups = instanceGroups
@@ -130,7 +130,7 @@ function calculateAnnotationMappingModelStyling(
 function useVolumeMappingInstanceStyleGroups(
   dmVolumeMappings: PointCloudVolumeWithModel[],
   models: PointCloudModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (dmVolumeMappings.length === 0) {
@@ -146,7 +146,7 @@ function useVolumeMappingInstanceStyleGroups(
 }
 
 function calculateVolumeMappingModelStyling(
-  instanceGroups: FdmAssetStylingGroup[],
+  instanceGroups: FdmInstanceStylingGroup[],
   dmVolumeMapping: PointCloudVolumeWithModel
 ): StyledPointCloudModel {
   const styleGroups = instanceGroups
@@ -158,7 +158,7 @@ function calculateVolumeMappingModelStyling(
 
 function getMappedStyleGroupFromAssetIds(
   annotationMapping: AnnotationModelDataResult,
-  instanceGroup: AssetStylingGroup
+  instanceGroup: ClassicAssetStylingGroup
 ): PointCloudVolumeStylingGroup | undefined {
   const uniqueAnnotationIds = new Set<number>();
   const assetIdsSet = new Set(instanceGroup.assetIds.map((id) => id));
@@ -185,7 +185,7 @@ function getMappedStyleGroupFromAssetIds(
 
 function getDMMappedStyleGroupFromAssetInstances(
   dmVolumeMapping: PointCloudVolumeWithModel,
-  instanceGroup: FdmAssetStylingGroup
+  instanceGroup: FdmInstanceStylingGroup
 ): PointCloudVolumeStylingGroup | undefined {
   const uniqueVolumeRefs = new Set<string>();
   const assetIdsSet = new Set(instanceGroup.fdmAssetExternalIds.map(createFdmKey));

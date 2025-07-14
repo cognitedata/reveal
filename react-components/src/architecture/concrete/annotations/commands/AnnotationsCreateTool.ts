@@ -182,7 +182,7 @@ export class AnnotationsCreateTool extends NavigationTool {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        return new CylinderCreator(gizmo, this.primitiveType, true);
+        return new CylinderCreator(gizmo, this.primitiveType);
       }
       default:
         return undefined;

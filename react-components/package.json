@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.82.1",
+  "version": "0.82.2",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -76,7 +76,7 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/react-resizable": "^3.0.7",
-    "@types/three": "^0.166.0",
+    "@types/three": "^0.176.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-v8": "^3.0.6",
@@ -102,7 +102,7 @@
     "storybook": "^8.3.5",
     "style-loader": "^4.0.0",
     "styled-components": "^6.1.12",
-    "three": "0.166.1",
+    "three": "0.176.0",
     "ts-loader": "^9.5.1",
     "typescript": "5.8.3",
     "vite": "^6.2.7",

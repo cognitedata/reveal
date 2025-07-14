@@ -1,6 +1,6 @@
 import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from './cad/modelWithAssetMappings';
 import { isDefined } from '../utilities/isDefined';
 import { type ClassicCadAssetMapping } from '../components/CacheProvider/cad/ClassicCadAssetMapping';
 

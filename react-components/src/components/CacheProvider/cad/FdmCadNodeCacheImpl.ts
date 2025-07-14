@@ -1,6 +1,6 @@
-import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
-import { type Source, FdmSDK, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
+import { type Node3D, type CogniteClient } from '@cognite/sdk';
+import { type Source, FdmSDK, type DmsUniqueIdentifier } from '../../../data-providers/FdmSDK';
+import { RevisionFdmNodeCache } from '../RevisionFdmNodeCache';
 import {
   type FdmConnectionWithNode,
   type FdmCadConnection,
@@ -12,23 +12,31 @@ import {
   type FdmKey,
   type FdmNodeDataPromises,
   type TreeIndex
-} from './types';
+} from '../types';
 
 import {
   createFdmKey,
   createModelTreeIndexKey,
   createModelRevisionKey,
   revisionKeyToIds
-} from './idAndKeyTranslation';
+} from '../idAndKeyTranslation';
 
 import { partition } from 'lodash';
 
 import assert from 'assert';
-import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from './requests';
-import { type ThreeDModelFdmMappings } from '../../hooks/types';
-import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from '../requests';
+import { type ThreeDModelFdmMappings } from '../../../hooks/types';
+import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
+import { type FdmCadNodeCache } from './FdmCadNodeCache';
 
-export class FdmCadNodeCache {
+export function createFdmCadNodeCache(
+  cdfClient: CogniteClient,
+  fdm3dDataProvider: Fdm3dDataProvider
+): FdmCadNodeCache {
+  return new FdmCadNodeCacheImpl(cdfClient, fdm3dDataProvider);
+}
+
+class FdmCadNodeCacheImpl implements FdmCadNodeCache {
   private readonly _revisionNodeCaches = new Map<ModelRevisionKey, RevisionFdmNodeCache>();
 
   private readonly _cdfClient: CogniteClient;
@@ -93,7 +101,7 @@ export class FdmCadNodeCache {
 
     const mappings = createMapWithAccumulatedValues(
       relevantCachedConnectionData.map((data) => [
-        data.connection.instance.externalId,
+        createFdmKey(data.connection.instance),
         data.cadNode
       ])
     );
@@ -137,13 +145,13 @@ export class FdmCadNodeCache {
     relevantFdmKeySet: Set<FdmKey>
   ): ThreeDModelFdmMappings {
     if (connections === undefined || connections.length === 0)
-      return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D[]>() };
+      return { modelId, revisionId, mappings: new Map<FdmKey, Node3D[]>() };
 
     const relevantConnections = intersectWithFdmKeySet(connections, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
       relevantConnections.map((connection) => [
-        connection.connection.instance.externalId,
+        createFdmKey(connection.connection.instance),
         connection.cadNode
       ])
     );
