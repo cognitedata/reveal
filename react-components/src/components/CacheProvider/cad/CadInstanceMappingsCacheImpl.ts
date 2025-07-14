@@ -94,7 +94,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
     const classicResultsPromise = executeParallel(
       models.map((model) => async () => {
         if (this._classicCache === undefined) {
-          return [];
+          return undefined;
         }
         return {
           model,
