@@ -21,6 +21,7 @@ import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type CadModelOptions } from '..';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import {
+  type CadModelTreeIndexMappings,
   type CadInstanceMappingsCache,
   type CadModelMappingsWithNodes
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
@@ -52,91 +53,53 @@ describe(useCalculateCadStyling.name, () => {
   const TREE_INDEX = 123;
 
   beforeEach(() => {
-    dependencies.useMappedEdgesForRevisions.mockImplementation((models) => ({
-      data: new Map(
-        models.map((model) => [createModelRevisionKey(model.modelId, model.revisionId), []])
-      ),
-      isLoading: false,
-      isFetched: true,
-      isError: false
-    }));
-    dependencies.useAssetMappedNodesForRevisions.mockImplementation((models) => ({
-      data: models.map((model) => ({ model, assetMappings: [] })),
-      isLoading: false,
-      isFetched: true,
-      isError: false
-    }));
-
     dependencies.useCadMappingsCache.mockReturnValue({
       getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances,
       getAllModelMappings: mockGetAllModelMappings
     });
+
+    mockGetAllModelMappings.mockResolvedValue(new Map());
   });
 
-  test('indicates that loading is not finished when `isLoading` is true for any request', async () => {
+  test('indicates that loading is not finished when `isLoading` is true for request', async () => {
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
     );
-    const classicMappingResult = [{ model: MODEL, assetMappings: [] }];
-    const fdmMappingResult = new Map([
-      [createModelRevisionKey(MODEL.modelId, MODEL.revisionId), []]
+    const mappinsgFromCache = new Map([
+      [createModelRevisionKey(MODEL.modelId, MODEL.revisionId), new Map()]
     ]);
 
-    const { result, rerender } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
+    const modelStyleGroupsResult = [
+      {
+        model: {
+          modelId: 123,
+          revisionId: 234,
+          type: 'cad'
+        },
+        styleGroups: []
+      }
+    ];
 
-    for (const [isLoadingClassic, isLoadingDm] of createAllBooleanPairs()) {
-      dependencies.useAssetMappedNodesForRevisions.mockReturnValue({
-        data: classicMappingResult,
-        isLoading: isLoadingClassic,
-        isFetched: !isLoadingClassic,
-        isError: false
-      });
-      dependencies.useMappedEdgesForRevisions.mockReturnValue({
-        data: fdmMappingResult,
-        isLoading: isLoadingDm,
-        isFetched: !isLoadingDm,
-        isError: false
-      });
+    let allMappingsPromiseResolver: (
+      value: CadModelTreeIndexMappings | PromiseLike<CadModelTreeIndexMappings>
+    ) => void = () => {};
+    const allMappingsPromise = new Promise<CadModelTreeIndexMappings>((resolve) => {
+      allMappingsPromiseResolver = resolve;
+    });
 
-      rerender();
+    mockGetAllModelMappings.mockReturnValue(allMappingsPromise);
 
-      await waitFor(() => {
-        expect(result.current.isModelMappingsLoading).toBe(isLoadingDm || isLoadingClassic);
-      });
-    }
-  });
+    const { result } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
 
-  test('indicates that loading is finished finished when `isError` is true for any request', async () => {
-    mockGetMappingsForModelsAndInstances.mockResolvedValue(
-      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
-    );
-    const classicMappingResult = [{ model: MODEL, assetMappings: [] }];
-    const fdmMappingResult = new Map([
-      [createModelRevisionKey(MODEL.modelId, MODEL.revisionId), []]
-    ]);
+    expect(result.current.isModelMappingsLoading).toBe(true);
+    expect(result.current.styledModels).toEqual(modelStyleGroupsResult);
 
-    const { result, rerender } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
+    allMappingsPromiseResolver(mappinsgFromCache);
 
-    for (const [isClassicError, isDmError] of createAllBooleanPairs()) {
-      dependencies.useAssetMappedNodesForRevisions.mockReturnValue({
-        data: classicMappingResult,
-        isLoading: !isClassicError,
-        isFetched: false,
-        isError: isClassicError
-      });
-      dependencies.useMappedEdgesForRevisions.mockReturnValue({
-        data: fdmMappingResult,
-        isLoading: !isDmError,
-        isFetched: false,
-        isError: isDmError
-      });
-
-      rerender();
-
-      await waitFor(() => {
-        expect(result.current.isModelMappingsLoading).toBe(!isClassicError || !isDmError);
-      });
-    }
+    await waitFor(() => {
+      expect(result.current.isModelMappingsLoading).toBe(false);
+    });
+    expect(result.current.styledModels).toEqual(modelStyleGroupsResult);
   });
 
   test('returns empty style groups when no styling group is provided', async () => {
@@ -158,13 +121,6 @@ describe(useCalculateCadStyling.name, () => {
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
     );
-
-    dependencies.useAssetMappedNodesForRevisions.mockReturnValue({
-      data: createModelWithClassicAssetMappingList(MODEL, ASSET_ID, TREE_INDEX),
-      isLoading: false,
-      isFetched: true,
-      isError: false
-    });
 
     const { result } = renderHook(
       () =>
@@ -195,18 +151,9 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns objects with models and applicable style groups for DM instance', async () => {
-    const someInstance = { externalId: 'external-id', space: 'space' };
-
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
     );
-
-    dependencies.useMappedEdgesForRevisions.mockReturnValue({
-      data: createModelToDmConnectionMap(MODEL, someInstance, TREE_INDEX),
-      isLoading: false,
-      isFetched: true,
-      isError: false
-    });
 
     const { result } = renderHook(
       () =>
@@ -229,19 +176,6 @@ describe(useCalculateCadStyling.name, () => {
   });
 });
 
-function createModelWithClassicAssetMappingList(
-  model: CadModelOptions,
-  assetId: number,
-  treeIndex: number
-): ModelWithAssetMappings[] {
-  return [
-    {
-      model,
-      assetMappings: [{ assetId, treeIndex, subtreeSize: 23, nodeId: 42 }]
-    }
-  ];
-}
-
 function createModelToAssetMappingsMap(
   model: ClassicModelIdentifier,
   assetId: number,
@@ -253,36 +187,4 @@ function createModelToAssetMappingsMap(
       new Map([[assetId, [createCadNodeMock({ treeIndex })]]])
     ]
   ]);
-}
-
-function createModelToDmConnectionMap(
-  model: ClassicModelIdentifier,
-  instance: DmsUniqueIdentifier,
-  treeIndex: number
-): Map<ModelRevisionKey, FdmConnectionWithNode[]> {
-  return new Map<ModelRevisionKey, FdmConnectionWithNode[]>([
-    [
-      createModelRevisionKey(model.modelId, model.revisionId),
-      [
-        {
-          connection: {
-            instance,
-            modelId: model.modelId,
-            revisionId: model.revisionId,
-            treeIndex
-          },
-          cadNode: createCadNodeMock({ treeIndex })
-        }
-      ]
-    ]
-  ]);
-}
-
-function createAllBooleanPairs(): Array<[boolean, boolean]> {
-  return [
-    [false, false],
-    [false, true],
-    [true, false],
-    [true, true]
-  ];
 }
