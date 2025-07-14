@@ -57,7 +57,7 @@ export class CdfCaches {
     }
 
     this._cadMappingsCache = createCadInstanceMappingsCache(
-      this._classicCadNodeCache,
+      coreDmOnly ? undefined : this._classicCadNodeCache,
       this._fdmCadNodeCache
     );
 

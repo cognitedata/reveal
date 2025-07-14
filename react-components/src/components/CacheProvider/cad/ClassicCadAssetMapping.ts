@@ -1,9 +1,11 @@
 import { type AssetMapping3D, type CogniteInternalId } from '@cognite/sdk';
+import { type CadNodeIdData, type CadNodeTreeData } from '../types';
 
-export type ClassicCadAssetMapping = {
-  treeIndex: number;
-  subtreeSize: number;
-  nodeId: CogniteInternalId;
+export type ClassicCadAssetMapping = CadNodeIdData & {
+  assetId: CogniteInternalId;
+};
+
+export type ClassicCadAssetTreeIndexMapping = CadNodeTreeData & {
   assetId: CogniteInternalId;
 };
 

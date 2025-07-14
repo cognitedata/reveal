@@ -30,7 +30,7 @@ import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
-import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
