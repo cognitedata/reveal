@@ -25,9 +25,8 @@ describe(LineView.name, () => {
     addView(domainObject, view);
   });
 
-  test('should have object', () => {
-    expect(view.object).toBeInstanceOf(Object3D);
-    checkChildren(view, 1, 1, 4);
+  test('should have initial state', () => {
+    checkVisibleChildren(view, 1, 1, 4);
   });
 
   test('should intersect', () => {
@@ -124,12 +123,13 @@ export function createLineDomainObject(): LineDomainObject {
   return domainObject;
 }
 
-function checkChildren(
+function checkVisibleChildren(
   view: LineView,
   lineCount: number,
   meshCount: number,
   spriteCount: number
 ): void {
+  expect(view.object).toBeInstanceOf(Object3D);
   expectVisibleChildrenOfType(view, Line, lineCount);
   expectVisibleChildrenOfType(view, Mesh, meshCount);
   expectVisibleChildrenOfType(view, Sprite, spriteCount);

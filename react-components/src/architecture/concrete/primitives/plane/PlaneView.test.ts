@@ -35,15 +35,13 @@ describe(PlaneView.name, () => {
     addView(domainObject, view);
   });
 
-  test('should have object and children of Line and Mesh when not selected', () => {
-    expect(view.object).toBeInstanceOf(Object3D);
-    checkChildren(view, 1, 2, 0);
+  test('should have initial state', () => {
+    checkVisibleChildren(view, 1, 2, 0);
   });
 
   test('should have object and children of Wireframe and Mesh when selected', () => {
     domainObject.setSelectedInteractive(true);
-    expect(view.object).toBeInstanceOf(Object3D);
-    checkChildren(view, 0, 2, 1);
+    checkVisibleChildren(view, 0, 2, 1);
   });
 
   test('should intersect', () => {
@@ -102,12 +100,13 @@ function getExpectedPoint(domainObject: PlaneDomainObject): Vector3 {
   return domainObject.plane.projectPoint(origin, new Vector3());
 }
 
-function checkChildren(
+function checkVisibleChildren(
   view: PlaneView,
   lineCount: number,
   meshCount: number,
   wireframeCount: number
 ): void {
+  expect(view.object).toBeInstanceOf(Object3D);
   expectVisibleChildrenOfType(view, Line, lineCount);
   expectVisibleChildrenOfType(view, Mesh, meshCount + wireframeCount); // Wireframe is also a mesh
   expectVisibleChildrenOfType(view, Wireframe, wireframeCount);

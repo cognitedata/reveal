@@ -2,7 +2,7 @@ import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { AxisDomainObject } from './AxisDomainObject';
 import { AxisThreeView } from './AxisThreeView';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
-import { Box3, LineSegments, Mesh, PerspectiveCamera, Sprite, Vector3 } from 'three';
+import { Box3, LineSegments, Mesh, Object3D, PerspectiveCamera, Sprite, Vector3 } from 'three';
 import {
   expectChildrenLength,
   expectChildrenOfTypeAndCount,
@@ -33,8 +33,7 @@ describe(AxisThreeView.name, () => {
   });
 
   test('should have initial state', () => {
-    expect(view.object).toBeDefined();
-    checkChildren(view, 42, 6, 144);
+    checkAllChildren(view, 42, 6, 144);
   });
 
   test('should look towards all 6 sides', () => {
@@ -94,18 +93,20 @@ function checkVisibleChildren(
   meshCount: number,
   spriteCount: number
 ): void {
+  expect(view.object).toBeInstanceOf(Object3D);
   expectVisibleChildrenOfType(view, LineSegments, lineSegmentCount);
   expectVisibleChildrenOfType(view, Mesh, meshCount);
   expectVisibleChildrenOfType(view, Sprite, spriteCount);
   expectVisibleChildren(view, lineSegmentCount + meshCount + spriteCount);
 }
 
-function checkChildren(
+function checkAllChildren(
   view: AxisThreeView,
   lineSegmentCount: number,
   meshCount: number,
   spriteCount: number
 ): void {
+  expect(view.object).toBeInstanceOf(Object3D);
   expectChildrenOfTypeAndCount(view, LineSegments, lineSegmentCount);
   expectChildrenOfTypeAndCount(view, Mesh, meshCount); // Wireframe is also a mesh
   expectChildrenOfTypeAndCount(view, Sprite, spriteCount);

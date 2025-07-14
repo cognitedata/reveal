@@ -23,9 +23,8 @@ describe(TerrainThreeView.name, () => {
     addView(domainObject, view);
   });
 
-  test('should have correct children in the view ', () => {
-    expect(view.object).toBeInstanceOf(Object3D);
-    checkChildren(view, 1, 1);
+  test('should have initial state', () => {
+    checkVisibleChildren(view, 1, 1);
   });
 
   test('should have correct bounding box', () => {
@@ -48,11 +47,11 @@ describe(TerrainThreeView.name, () => {
     }
     renderStyle.showContours = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 0, 1);
+    checkVisibleChildren(view, 0, 1);
 
     renderStyle.showContours = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 1, 1);
+    checkVisibleChildren(view, 1, 1);
   });
 
   test('children of the view should changed when toggle showSolid', () => {
@@ -63,11 +62,11 @@ describe(TerrainThreeView.name, () => {
     }
     renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 1, 0);
+    checkVisibleChildren(view, 1, 0);
 
     renderStyle.showSolid = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 1, 1);
+    checkVisibleChildren(view, 1, 1);
   });
 });
 
@@ -78,7 +77,12 @@ export function createTerrainDomainObject(): TerrainDomainObject {
   return domainObject;
 }
 
-function checkChildren(view: TerrainThreeView, lineSegmentCount: number, meshCount: number): void {
+function checkVisibleChildren(
+  view: TerrainThreeView,
+  lineSegmentCount: number,
+  meshCount: number
+): void {
+  expect(view.object).toBeInstanceOf(Object3D);
   expectVisibleChildrenOfType(view, LineSegments, lineSegmentCount);
   expectVisibleChildrenOfType(view, Mesh, meshCount);
   expectVisibleChildren(view, lineSegmentCount + meshCount);

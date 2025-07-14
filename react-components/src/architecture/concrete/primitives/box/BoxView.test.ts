@@ -31,7 +31,7 @@ describe(BoxView.name, () => {
     addView(domainObject, view);
   });
 
-  test('should have default visible children', () => {
+  test('should have initial state', () => {
     updateAndCheckVisibleChildren(view, 1, 1, 3);
   });
 
