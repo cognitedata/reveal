@@ -15,11 +15,7 @@ import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { IndexSet } from '@cognite/reveal';
-import { type FdmConnectionWithNode, type ModelRevisionKey } from '../../CacheProvider/types';
 import { type ClassicModelIdentifier } from '../../SceneContainer/sceneTypes';
-import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type CadModelOptions } from '..';
-import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import {
   type CadModelTreeIndexMappings,
   type CadInstanceMappingsCache,
