@@ -135,7 +135,7 @@ function useCalculateMappedStyling(
         return { model, styleGroup: [styleGroup] };
       })
       .filter(isDefined);
-  }, [models, defaultMappedNodeAppearance]);
+  }, [models, defaultMappedNodeAppearance, modelMappingsMap]);
 
   return {
     combinedMappedStyleGroups: styleGroupsWithModels,
