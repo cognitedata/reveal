@@ -1,18 +1,16 @@
 import {
-  type AssetStylingGroup,
+  type ClassicAssetStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
-  type FdmAssetStylingGroup
+  type FdmInstanceStylingGroup
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
-import { useFdmAssetMappings } from '../../../hooks/cad/useFdmAssetMappings';
-import { useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import {
-  type NodeId,
-  type FdmConnectionWithNode,
+  type ModelRevisionToConnectionMap,
   type AssetId,
-  type ModelRevisionAssetNodesResult
+  type FdmConnectionWithNode
 } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
@@ -23,14 +21,16 @@ import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../../utilities/StylingGroupUtils';
-import { type ThreeDModelFdmMappings } from '../../../hooks/types';
 import { isSameModel } from '../../../utilities/isSameModel';
-import {
-  useAssetMappedNodesForRevisions,
-  useMappedEdgesForRevisions,
-  useNodesForAssets
-} from '../../../hooks/cad';
+import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../../hooks/cad';
 import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
+import { useQuery } from '@tanstack/react-query';
+import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
+import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
+import { isDefined } from '../../../utilities/isDefined';
+import { getInstanceKeysFromStylingGroup } from '../utils';
+import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -40,6 +40,7 @@ type ModelStyleGroup = {
 type ModelStyleGroupWithMappingsFetched = {
   combinedMappedStyleGroups: ModelStyleGroup[];
   isModelMappingsLoading: boolean;
+  isError: boolean;
 };
 
 type StyledModelWithMappingsFetched = {
@@ -52,9 +53,38 @@ export type StyledModel = {
   styleGroups: CadStylingGroup[];
 };
 
+export type UseQueryResultWithLoadingAndError<T> = {
+  data: T | undefined;
+  isLoading: boolean;
+  isFetched: boolean;
+  isError: boolean;
+};
+
+export type UseCalculateCadStylingDependencies = {
+  useAssetMappedNodesForRevisions: (
+    cadModels: CadModelOptions[]
+  ) => UseQueryResultWithLoadingAndError<ModelWithAssetMappings[]>;
+  useMappedEdgesForRevisions: (
+    models: CadModelOptions[],
+    fetchViews?: boolean,
+    enabled?: boolean
+  ) => UseQueryResultWithLoadingAndError<ModelRevisionToConnectionMap>;
+  useCadMappingsCache: typeof useCadMappingsCache;
+};
+
+export const defaultUseCalculateCadStylingDependencies: UseCalculateCadStylingDependencies = {
+  useAssetMappedNodesForRevisions,
+  useMappedEdgesForRevisions,
+  useCadMappingsCache
+};
+
+export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylingDependencies>(
+  defaultUseCalculateCadStylingDependencies
+);
+
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -88,6 +118,11 @@ function useCalculateMappedStyling(
     () => getMappedCadModelsOptions(),
     [models, defaultMappedNodeAppearance]
   );
+
+  const { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } = useContext(
+    UseCalculateCadStylingContext
+  );
+
   const {
     data: mappedEquipmentEdges,
     isLoading: isFDMEquipmentMappingsLoading,
@@ -170,7 +205,8 @@ function useCalculateMappedStyling(
       (!isFDMEquipmentMappingsError &&
         isFDMEquipmentMappingsLoading &&
         !isFDMEquipmentMappingsFetched) ||
-      (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched)
+      (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched),
+    isError: isAssetMappingsError || isFDMEquipmentMappingsError
   };
 
   function getMappedCadModelsOptions(): CadModelOptions[] {
@@ -184,95 +220,57 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
+  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>
 ): ModelStyleGroupWithMappingsFetched {
-  const { data: fdmAssetMappings } = useFdmAssetMappings(
-    instanceGroups
-      .filter(isFdmAssetStylingGroup)
-      .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds),
-    models
-  );
-
+  const dmIdsForInstanceGroups = instanceGroups
+    .filter(isFdmAssetStylingGroup)
+    .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds);
   const assetIdsFromInstanceGroups = instanceGroups
     .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
+  const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
+
+  const cadCache = useCadMappingsCache();
+
   const {
-    data: modelAssetMappings,
+    data: modelStyleGroups,
     isLoading: isModelMappingsLoading,
-    isFetched: isModelMappingsFetched,
     isError
-  } = useNodesForAssets(models, assetIdsFromInstanceGroups);
-
-  const fdmModelInstanceStyleGroups = useFdmInstanceStyleGroups(
-    models,
-    instanceGroups,
-    fdmAssetMappings
-  );
-
-  const assetMappingInstanceStyleGroups = useAssetMappingInstanceStyleGroups(
-    models,
-    instanceGroups,
-    modelAssetMappings
-  );
-
-  const combinedMappedStyleGroups = useMemo(
-    () =>
-      groupStyleGroupByModel(models, [
-        ...fdmModelInstanceStyleGroups,
-        ...assetMappingInstanceStyleGroups
-      ]),
-    [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
-  );
-
-  return {
-    combinedMappedStyleGroups,
-    isModelMappingsLoading: !isError && isModelMappingsLoading && !isModelMappingsFetched
-  };
-}
-
-function useAssetMappingInstanceStyleGroups(
-  models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
-  modelAssetMappings: ModelRevisionAssetNodesResult[] | undefined
-): ModelStyleGroup[] {
-  return useMemo(() => {
-    if (modelAssetMappings === undefined || modelAssetMappings.length === 0) {
-      return [];
-    }
-
-    return models.map((model, index) => {
-      return calculateAssetMappingCadModelStyling(
-        instanceGroups.filter(isClassicAssetMappingStylingGroup),
-        modelAssetMappings[index].assetToNodeMap,
-        model
+  } = useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'cad-asset-mappings',
+      dmIdsForInstanceGroups,
+      assetIdsFromInstanceGroups,
+      models.map((model) => [model.modelId, model.revisionId])
+    ],
+    queryFn: async () => {
+      const mappings = await cadCache.getMappingsForModelsAndInstances(
+        [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
+        models
       );
-    });
-  }, [models, instanceGroups, modelAssetMappings]);
-}
 
-function useFdmInstanceStyleGroups(
-  models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
-  fdmAssetMappings: ThreeDModelFdmMappings[] | undefined
-): ModelStyleGroup[] {
+      const modelStyleGroups = models
+        .map((model) => {
+          const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
+          const modelMappings = mappings.get(modelKey);
+          if (modelMappings === undefined) {
+            return undefined;
+          }
+          return calculateInstanceCadModelStyling(model, instanceGroups, modelMappings);
+        })
+        .filter(isDefined);
+
+      return modelStyleGroups;
+    },
+    staleTime: DEFAULT_QUERY_STALE_TIME
+  });
+
   return useMemo(() => {
-    if (models.length === 0 || fdmAssetMappings === undefined) {
-      return [];
-    }
-
-    return models.map((model) => {
-      const styleGroup =
-        fdmAssetMappings !== undefined
-          ? calculateFdmCadModelStyling(
-              instanceGroups.filter(isFdmAssetStylingGroup),
-              fdmAssetMappings,
-              model
-            )
-          : [];
-      return { model, styleGroup };
-    });
-  }, [models, instanceGroups, fdmAssetMappings]);
+    return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading, isError };
+  }, [modelStyleGroups, isModelMappingsLoading, isError]);
 }
 
 function useJoinStylingGroups(
@@ -355,52 +353,20 @@ function getMappedStyleGroupFromAssetMappings(
   return { treeIndexSet: indexSet, style: nodeAppearance };
 }
 
-function calculateFdmCadModelStyling(
-  stylingGroups: FdmAssetStylingGroup[],
-  mappings: ThreeDModelFdmMappings[],
-  model: CadModelOptions
-): TreeIndexStylingGroup[] {
-  const modelMappings = getModelMappings(mappings, model);
-
-  return stylingGroups
-    .map((resourcesGroup) => {
-      const modelMappedNodeLists = resourcesGroup.fdmAssetExternalIds
-        .map((uniqueId) => modelMappings.get(uniqueId.externalId))
-        .filter((nodeMap): nodeMap is Map<NodeId, Node3D> => nodeMap !== undefined)
-        .map((nodeMap) => [...nodeMap.values()]);
-
-      const indexSet = new IndexSet();
-      modelMappedNodeLists.forEach((nodes) => {
-        nodes.forEach((n) => {
-          indexSet.addRange(getNodeSubtreeNumericRange(n));
-        });
-      });
-
-      return {
-        style: resourcesGroup.style.cad,
-        treeIndexSet: indexSet
-      };
-    })
-    .filter((group) => group.treeIndexSet.count > 0);
-}
-
-function calculateAssetMappingCadModelStyling(
-  stylingGroups: AssetStylingGroup[],
-  nodeMap: Map<AssetId, Node3D[]>,
-  model: CadModelOptions
+function calculateInstanceCadModelStyling(
+  model: CadModelOptions,
+  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
+  mappings: Map<AssetId | CogniteExternalId, Node3D[]>
 ): ModelStyleGroup {
   const treeIndexSetsWithStyle = stylingGroups
     .map((group) => {
       const indexSet = new IndexSet();
-      group.assetIds
-        .map((assetId) => nodeMap.get(assetId))
-        .forEach((nodeList) =>
-          nodeList
-            ?.filter((node): node is Node3D => node !== undefined)
-            .forEach((node) => {
-              indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
-            })
-        );
+      getInstanceKeysFromStylingGroup(group).forEach((instanceKey) => {
+        const node3dList = mappings.get(instanceKey);
+        node3dList?.forEach((node) => {
+          indexSet.addRange(getNodeSubtreeNumericRange(node));
+        });
+      });
 
       return {
         treeIndexSet: indexSet,
@@ -417,43 +383,4 @@ function calculateAssetMappingCadModelStyling(
 
 function getNodeSubtreeNumericRange(node: Node3D): NumericRange {
   return new NumericRange(node.treeIndex, node.subtreeSize);
-}
-
-function getModelMappings(
-  mappings: ThreeDModelFdmMappings[],
-  model: CadModelOptions
-): Map<CogniteExternalId, Map<NodeId, Node3D>> {
-  return mappings
-    .filter(
-      (mapping) => mapping.modelId === model.modelId && mapping.revisionId === model.revisionId
-    )
-    .reduce(
-      // reduce is added to avoid duplication of a models that span several pages.
-      (acc, mapping) => {
-        mergeMapsWithDeduplicatedNodes(acc.mappings, mapping.mappings);
-        return acc;
-      },
-      {
-        modelId: model.modelId,
-        revisionId: model.revisionId,
-        mappings: new Map<string, Map<NodeId, Node3D>>()
-      }
-    ).mappings;
-}
-
-function mergeMapsWithDeduplicatedNodes(
-  targetMap: Map<string, Map<NodeId, Node3D>>,
-  addedMap: Map<string, Node3D[]>
-): Map<string, Map<NodeId, Node3D>> {
-  return [...addedMap.entries()].reduce((map, [fdmKey, nodesToAdd]) => {
-    const targetSet = map.get(fdmKey);
-
-    if (targetSet !== undefined) {
-      nodesToAdd.forEach((node) => targetSet.set(node.id, node));
-    } else {
-      map.set(fdmKey, new Map(nodesToAdd.map((node) => [node.id, node])));
-    }
-
-    return map;
-  }, targetMap);
 }

@@ -10,22 +10,26 @@ import {
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
 import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
 import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
 import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import {
+  type ClassicCadAssetTreeIndexMapping,
   isValidClassicCadAssetMapping,
   type ClassicCadAssetMapping
 } from './ClassicCadAssetMapping';
+import {
+  type ClassicCadNodeAssetMappingResult,
+  type ClassicCadAssetMappingCache
+} from './ClassicCadAssetMappingCache';
 
-export type ClassicCadNodeAssetMappingResult = {
-  node?: Node3D;
-  mappings: ClassicCadAssetMapping[];
-};
+export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
+  return new ClassicCadAssetMappingCacheImpl(sdk);
+}
 
-export class ClassicCadAssetMappingCache {
+class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   private readonly _sdk: CogniteClient;
 
   private readonly modelToAssetMappingsCache: ClassicCadAssetMappingPerModelCache;
@@ -155,7 +159,7 @@ export class ClassicCadAssetMappingCache {
   public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ClassicCadAssetMapping[]> {
+  ): Promise<ClassicCadAssetTreeIndexMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 

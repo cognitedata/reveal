@@ -14,7 +14,7 @@ import {
 import { createAssetMock } from '#test-utils/fixtures/assets';
 import assert from 'assert';
 import { isInternalId } from '../../utilities/instanceIds';
-import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { type RevealRenderTarget } from '../../architecture';
 import { drop, take } from 'lodash';
 import { taggedPointCloudModelOptions } from '#test-utils/fixtures/pointCloud';

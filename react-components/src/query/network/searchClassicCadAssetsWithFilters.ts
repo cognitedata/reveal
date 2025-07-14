@@ -1,7 +1,7 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type CadModelOptions } from '../../components';
-import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
-import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type ModelWithAssetTreeIndexMappings } from '../../hooks/cad/modelWithAssetMappings';
 import type { Asset, CogniteClient } from '@cognite/sdk';
 import { type AllAssetFilterProps } from './filters';
 import { type SearchClassicCadAssetsResponse } from './types';
@@ -77,7 +77,7 @@ export async function searchClassicCadAssetsWithFilters(
 async function fetchAssetMappedNodesForRevisions(
   cadModels: CadModelOptions[],
   assetMappingAndNode3dCache: ClassicCadAssetMappingCache
-): Promise<ModelWithAssetMappings[]> {
+): Promise<ModelWithAssetTreeIndexMappings[]> {
   const fetchPromises = cadModels.map(async (model) => {
     const assetMappings = await assetMappingAndNode3dCache.getAssetMappingsForModel(
       model.modelId,
