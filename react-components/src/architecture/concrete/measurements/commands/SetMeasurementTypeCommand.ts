@@ -14,7 +14,8 @@ export const MEASURE_PRIMITIVE_TYPES = [
   PrimitiveType.HorizontalArea,
   PrimitiveType.Box,
   PrimitiveType.HorizontalCircle,
-  PrimitiveType.VerticalCylinder
+  PrimitiveType.VerticalCylinder,
+  PrimitiveType.HorizontalCylinder
 ];
 
 export class SetMeasurementTypeCommand extends RenderTargetCommand {

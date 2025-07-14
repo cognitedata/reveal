@@ -16,7 +16,7 @@ describe(installToolbars.name, () => {
     expect(getCommandsInToolbarCount(new AnnotationsSelectTool())).toBe(6);
     expect(getCommandsInToolbarCount(new ClipTool())).toBe(11);
     expect(getCommandsInToolbarCount(new ExampleTool())).toBe(5);
-    expect(getCommandsInToolbarCount(new MeasurementTool())).toBe(10);
+    expect(getCommandsInToolbarCount(new MeasurementTool())).toBe(11);
   });
 
   test('Should not install toolbar for navigation ', () => {
