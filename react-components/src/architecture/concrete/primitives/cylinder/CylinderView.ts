@@ -379,7 +379,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const radiusLabelA = this._group.getObjectByName(RADIUS_LABEL_A);
     const radiusLabelB = this._group.getObjectByName(RADIUS_LABEL_B);
     const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
-    if (radiusLabelB === undefined && radiusLabelA === undefined && heightLabel === undefined) {
+    if (radiusLabelA === undefined && radiusLabelB === undefined && heightLabel === undefined) {
       return;
     }
     const { domainObject } = this;

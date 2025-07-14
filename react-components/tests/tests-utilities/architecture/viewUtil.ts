@@ -3,9 +3,9 @@ import { type GroupThreeView, type DomainObject, type ThreeView } from '../../..
 import { createFullRenderTargetMock } from '../fixtures/createFullRenderTargetMock';
 import { PerspectiveCamera, Raycaster, Vector2, type Vector3 } from 'three';
 import { expect } from 'vitest';
-import { type Class, isInstanceOf } from '../../../src/advanced-tree-view/utilities/class';
 import { getRenderTarget } from '../../../src/architecture/base/domainObjects/getRoot';
 import { count } from '../../../src/architecture/base/utilities/extensions/arrayUtils';
+import { type Class } from '../../../src/architecture/base/domainObjectsHelpers/Class';
 
 export function expectChildrenLength(view: GroupThreeView, expectedLength: number): void {
   expect(view.object.children.length).toBe(expectedLength);
@@ -16,8 +16,8 @@ export function expectChildrenOfTypeAndCount<T>(
   classType: Class<T>,
   expectedCount: number
 ): void {
-  const actualCount = count(view.object.children, (child) => isInstanceOf(child, classType));
-  expect(actualCount).toBe(expectedCount);
+  const actualCount = count(view.object.children, (child) => child instanceof classType);
+  expect(actualCount, 'Expect ' + expectedCount + ' ' + classType.name).toBe(expectedCount);
 }
 
 export function expectVisibleChildren(view: GroupThreeView, expectedCount: number): void {
@@ -32,9 +32,9 @@ export function expectVisibleChildrenOfType<T>(
 ): void {
   const actualCount = count(
     view.object.children,
-    (child) => child.visible && isInstanceOf(child, classType)
+    (child) => child.visible && child instanceof classType
   );
-  expect(actualCount).toBe(expectedCount);
+  expect(actualCount, 'Expect ' + expectedCount + ' ' + classType.name).toBe(expectedCount);
 }
 
 export function addView(domainObject: DomainObject, view: ThreeView): void {
