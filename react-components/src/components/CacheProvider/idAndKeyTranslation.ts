@@ -1,6 +1,6 @@
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import type { InstanceId, InstanceKey } from '../../utilities/instanceIds/types';
-import { type isClassicInstanceId } from '../../utilities/instanceIds/typeGuards';
+import { isClassicInstanceId } from '../../utilities/instanceIds/typeGuards';
 import {
   type FdmKey,
   type ModelTreeIndexKey,
