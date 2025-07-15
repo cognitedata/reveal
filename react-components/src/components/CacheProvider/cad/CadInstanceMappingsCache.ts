@@ -8,14 +8,12 @@ import type {
   CadNodeIdData,
   CadNodeTreeData
 } from '../types';
+import type { InstanceKey } from '../../../utilities/instanceIds';
 
 export type CadModelMappingsWithNodes = Map<ModelRevisionKey, Map<FdmKey | AssetId, Node3D[]>>;
 
 export type CadModelMappings = Map<ModelRevisionKey, Map<FdmKey | AssetId, CadNodeIdData[]>>;
-export type CadModelTreeIndexMappings = Map<
-  ModelRevisionKey,
-  Map<FdmKey | AssetId, CadNodeTreeData[]>
->;
+export type CadModelTreeIndexMappings = Map<ModelRevisionKey, Map<InstanceKey, CadNodeTreeData[]>>;
 
 export type CadInstanceMappingsCache = {
   getMappingsForModelsAndInstances: (
