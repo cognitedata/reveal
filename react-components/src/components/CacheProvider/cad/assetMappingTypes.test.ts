@@ -13,6 +13,7 @@ import {
   isValidClassicCadAssetMapping
 } from './assetMappingTypes';
 import assert from 'assert';
+import { type AssetMapping3D } from '@cognite/sdk';
 
 describe('assetMappingTypes', () => {
   const DM_INSTANCE_ID = { externalId: 'externalId', space: 'space' };
@@ -89,7 +90,7 @@ describe('assetMappingTypes', () => {
     });
 
     test('asserts asset mapping to be ClassicCadAssetMapping', () => {
-      const mapping = classicAssetMapping as HybridCadAssetMapping;
+      const mapping = classicAssetMapping as AssetMapping3D;
       assert(isValidClassicCadAssetMapping(mapping));
       expectTypeOf<ClassicCadAssetMapping>(mapping);
     });
