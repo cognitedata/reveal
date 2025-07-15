@@ -7,6 +7,7 @@ import { MeasurementTool } from '../MeasurementTool';
 import { type IconName } from '../../../base/utilities/IconName';
 
 export const MEASURE_PRIMITIVE_TYPES = [
+  PrimitiveType.Point,
   PrimitiveType.Line,
   PrimitiveType.Polyline,
   PrimitiveType.Polygon,
@@ -98,6 +99,8 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
+    case PrimitiveType.Point:
+      return { key: 'MEASUREMENTS_ADD_LINE' };
     case PrimitiveType.Line:
       return { key: 'MEASUREMENTS_ADD_LINE' };
     case PrimitiveType.Polyline:

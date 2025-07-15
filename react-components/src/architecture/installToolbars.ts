@@ -13,8 +13,14 @@ import { MeasurementTool } from './concrete/measurements/MeasurementTool';
 import { NextOrPrevClippingCommand } from './concrete/clipping/commands/NextClippingCommand';
 import { PrimitiveType } from './base/utilities/primitives/PrimitiveType';
 import { ResetAllExamplesCommand } from './concrete/example/commands/ResetAllExamplesCommand';
-import { SetClipTypeCommand } from './concrete/clipping/commands/SetClipTypeCommand';
-import { SetMeasurementTypeCommand } from './concrete/measurements/commands/SetMeasurementTypeCommand';
+import {
+  CLIP_PRIMITIVE_TYPES,
+  SetClipTypeCommand
+} from './concrete/clipping/commands/SetClipTypeCommand';
+import {
+  MEASURE_PRIMITIVE_TYPES,
+  SetMeasurementTypeCommand
+} from './concrete/measurements/commands/SetMeasurementTypeCommand';
 import { ShowAllClippingCommand } from './concrete/clipping/commands/ShowAllClippingCommand';
 import { ShowAllExamplesCommand } from './concrete/example/commands/ShowAllExamplesCommand';
 import { ShowClippingOnTopCommand } from './concrete/clipping/commands/ShowClippingOnTopCommand';
@@ -44,12 +50,12 @@ export function installToolbars(): void {
     new UndoCommand()
   ]);
 
+  const setClipTypeCommands = CLIP_PRIMITIVE_TYPES.map(
+    (primitiveType) => new SetClipTypeCommand(primitiveType)
+  );
+
   installToolbar(ClipTool, [
-    new SetClipTypeCommand(PrimitiveType.PlaneX),
-    new SetClipTypeCommand(PrimitiveType.PlaneY),
-    new SetClipTypeCommand(PrimitiveType.PlaneZ),
-    new SetClipTypeCommand(PrimitiveType.PlaneXY),
-    new SetClipTypeCommand(PrimitiveType.Box),
+    ...setClipTypeCommands,
     separator,
     new UndoCommand(),
     new ApplyClipCommand(),
@@ -59,26 +65,22 @@ export function installToolbars(): void {
     new ShowClippingOnTopCommand()
   ]);
 
+  const setMeasurementTypeCommands = MEASURE_PRIMITIVE_TYPES.map(
+    (primitiveType) => new SetMeasurementTypeCommand(primitiveType)
+  );
+
+  installToolbar(MeasurementTool, [
+    ...setMeasurementTypeCommands,
+    separator,
+    new UndoCommand(),
+    new ShowMeasurementsOnTopCommand()
+  ]);
+
   installToolbar(ExampleTool, [
     new UndoCommand(),
     new ResetAllExamplesCommand(),
     new ShowAllExamplesCommand(),
     new DeleteAllExamplesCommand(),
     new ShowExamplesOnTopCommand()
-  ]);
-
-  installToolbar(MeasurementTool, [
-    new SetMeasurementTypeCommand(PrimitiveType.Line),
-    new SetMeasurementTypeCommand(PrimitiveType.Polyline),
-    new SetMeasurementTypeCommand(PrimitiveType.Polygon),
-    new SetMeasurementTypeCommand(PrimitiveType.HorizontalArea),
-    new SetMeasurementTypeCommand(PrimitiveType.VerticalArea),
-    new SetMeasurementTypeCommand(PrimitiveType.Box),
-    new SetMeasurementTypeCommand(PrimitiveType.VerticalCylinder),
-    new SetMeasurementTypeCommand(PrimitiveType.HorizontalCylinder),
-    new SetMeasurementTypeCommand(PrimitiveType.HorizontalCircle),
-    separator,
-    new UndoCommand(),
-    new ShowMeasurementsOnTopCommand()
   ]);
 }

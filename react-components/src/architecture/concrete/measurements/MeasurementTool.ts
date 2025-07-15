@@ -14,6 +14,8 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
 import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
+import { PointCreator } from '../primitives/point/PointCreator';
+import { MeasurePointDomainObject } from './MeasurePointDomainObject';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -43,6 +45,7 @@ export class MeasurementTool extends PrimitiveEditTool {
     const boundingBox = new Box3();
     for (const domainObject of this.getSelectable()) {
       if (
+        domainObject instanceof MeasurePointDomainObject ||
         domainObject instanceof MeasureBoxDomainObject ||
         domainObject instanceof MeasureLineDomainObject ||
         domainObject instanceof MeasureCylinderDomainObject
@@ -69,6 +72,7 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return (
+      domainObject instanceof MeasurePointDomainObject ||
       domainObject instanceof MeasureBoxDomainObject ||
       domainObject instanceof MeasureLineDomainObject ||
       domainObject instanceof MeasureCylinderDomainObject
@@ -92,6 +96,9 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   protected override createCreator(): BaseCreator | undefined {
     switch (this.primitiveType) {
+      case PrimitiveType.Point:
+        return new PointCreator(new MeasurePointDomainObject());
+
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:
       case PrimitiveType.Polygon:

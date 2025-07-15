@@ -1,5 +1,6 @@
 export enum PrimitiveType {
   None,
+  Point,
   Line,
   Polyline,
   Polygon,

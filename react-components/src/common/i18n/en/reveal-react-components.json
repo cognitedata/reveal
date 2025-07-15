@@ -103,6 +103,7 @@
   "NONE": "None",
   "PAN": "Pan",
   "PARABOLOID": "Paraboloid",
+  "POINT": "Point",
   "POINT_CLOUDS": "Point clouds",
   "POINT_COLOR": "Point color",
   "POINT_OF_INTEREST_CREATE": "Create Point of Interest",
