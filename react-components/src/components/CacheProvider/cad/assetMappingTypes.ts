@@ -18,13 +18,21 @@ export type HybridCadAssetMapping = ClassicCadAssetMapping | DmCadAssetMapping;
 export function isClassicCadAssetMapping(
   assetMapping: HybridCadAssetMapping
 ): assetMapping is ClassicCadAssetMapping {
-  return 'assetId' in assetMapping && assetMapping.assetId !== undefined;
+  return (
+    'assetId' in assetMapping &&
+    assetMapping.assetId !== undefined &&
+    !('instanceId' in assetMapping)
+  );
 }
 
 export function isDmCadAssetMapping(
   assetMapping: HybridCadAssetMapping
 ): assetMapping is DmCadAssetMapping {
-  return 'instanceId' in assetMapping && assetMapping.instanceId !== undefined;
+  return (
+    'instanceId' in assetMapping &&
+    assetMapping.instanceId !== undefined &&
+    !('assetId' in assetMapping)
+  );
 }
 
 /**
@@ -55,11 +63,11 @@ export type HybridCadAssetTreeIndexMapping =
 export function isClassicCadAssetTreeIndexMapping(
   mapping: HybridCadAssetTreeIndexMapping
 ): mapping is ClassicCadAssetTreeIndexMapping {
-  return 'assetId' in mapping && mapping.assetId !== undefined;
+  return 'assetId' in mapping && mapping.assetId !== undefined && !('instanceId' in mapping);
 }
 
 export function isDmCadAssetTreeIndexMapping(
   mapping: HybridCadAssetTreeIndexMapping
 ): mapping is DmCadAssetTreeIndexMapping {
-  return 'instanceId' in mapping && mapping.instanceId !== undefined;
+  return 'instanceId' in mapping && mapping.instanceId !== undefined && !('assetId' in mapping);
 }
