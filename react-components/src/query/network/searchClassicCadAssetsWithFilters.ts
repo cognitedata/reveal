@@ -7,6 +7,7 @@ import { type AllAssetFilterProps } from './filters';
 import { type SearchClassicCadAssetsResponse } from './types';
 import { getAssetsList } from '../../hooks/network/getAssetsList';
 import { isDefined } from '../../utilities/isDefined';
+import { isClassicCadAssetTreeIndexMapping } from '../../components/CacheProvider/cad/assetMappingTypes';
 
 export async function searchClassicCadAssetsWithFilters(
   models: Array<AddModelOptions<ClassicDataSourceType>>,
@@ -84,7 +85,7 @@ async function fetchAssetMappedNodesForRevisions(
       model.revisionId
     );
 
-    return { model, assetMappings };
+    return { model, assetMappings: assetMappings.filter(isClassicCadAssetTreeIndexMapping) };
   });
 
   return await Promise.all(fetchPromises);
