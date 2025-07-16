@@ -55,7 +55,8 @@ describe(createCadInstanceMappingsCache.name, () => {
 
   const DM_INSTANCES: DmsUniqueIdentifier[] = [
     { externalId: 'external-id0', space: 'space0' },
-    { externalId: 'external-id1', space: 'space1' }
+    { externalId: 'external-id1', space: 'space1' },
+    { externalId: 'external-id2', space: 'space2' }
   ];
 
   let cacheWrapper: CadInstanceMappingsCache;
@@ -174,7 +175,28 @@ describe(createCadInstanceMappingsCache.name, () => {
       );
     });
 
-    test('returns all data associated with multiple classic and DM models', async () => {
+    test('returns all DM model mappings from classic/hybrid cache', async () => {
+      const cadNodeIdData: CadNodeTreeData = { treeIndex: 123, subtreeSize: 42 };
+
+      mockClassicGetAssetMappingsForModel.mockResolvedValue([
+        {
+          ...cadNodeIdData,
+          instanceId: DM_INSTANCES[0]
+        }
+      ]);
+
+      const result = await cacheWrapper.getAllModelMappings([MODELS[0]]);
+      expect(result).toEqual(
+        new Map([
+          [
+            createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
+            new Map([[createFdmKey(DM_INSTANCES[0]), [cadNodeIdData]]])
+          ]
+        ])
+      );
+    });
+
+    test('returns all data associated with multiple hybrid/classic and DM models', async () => {
       const cadNodeData: CadNodeTreeData[] = [
         { treeIndex: 1, subtreeSize: 15 },
         { treeIndex: 2, subtreeSize: 16 },
@@ -204,6 +226,10 @@ describe(createCadInstanceMappingsCache.name, () => {
           {
             ...cadNodeData[1],
             assetId: CLASSIC_INSTANCES[1]
+          },
+          {
+            ...cadNodeData[0],
+            instanceId: DM_INSTANCES[2]
           }
         ]);
 
@@ -263,6 +289,7 @@ describe(createCadInstanceMappingsCache.name, () => {
             createModelRevisionKey(MODELS[1].modelId, MODELS[1].revisionId),
             new Map<AssetId | FdmKey, CadNodeTreeData[]>([
               [CLASSIC_INSTANCES[1], [cadNodeData[2], cadNodeData[1]]],
+              [createFdmKey(DM_INSTANCES[2]), [cadNodeData[0]]],
               [createFdmKey(DM_INSTANCES[1]), [cadNodeData[1]]]
             ])
           ]
