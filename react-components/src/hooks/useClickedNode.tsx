@@ -19,7 +19,8 @@ import {
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
 import { type UseQueryResult } from '@tanstack/react-query';
-import { type ClassicCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { isClassicCadAssetMapping } from '../components/CacheProvider/cad/assetMappingTypes';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -160,7 +161,7 @@ const useCombinedClickedNodeData = (
   mouseButton: MOUSE | undefined,
   position: Vector2 | undefined,
   fdmPromises: FdmNodeDataPromises | undefined,
-  assetMappings: ClassicCadNodeAssetMappingResult | undefined,
+  assetMappings: HybridCadNodeAssetMappingResult | undefined,
   pointCloudAssetMappingsResult: UseQueryResult<PointCloudAnnotationMappedAssetData[]>,
   pointCloudFdmVolumeMappingsResult: UseQueryResult<PointCloudFdmVolumeMappingWithViews[]>,
   intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType> | undefined
@@ -179,7 +180,9 @@ const useCombinedClickedNodeData = (
           ? null
           : {
               cadNode: assetMappings.node,
-              assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
+              assetIds: assetMappings.mappings
+                .filter(isClassicCadAssetMapping)
+                .map((mapping) => mapping.assetId)
             };
 
     const pointCloudAssetMappings = normalizeListDataResult(pointCloudAssetMappingsResult);
