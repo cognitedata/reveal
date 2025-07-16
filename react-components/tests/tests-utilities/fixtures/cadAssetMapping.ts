@@ -1,4 +1,4 @@
-import { type ClassicCadAssetMapping } from '../../../src/components/CacheProvider/cad/ClassicCadAssetMapping';
+import { type ClassicCadAssetMapping } from '../../../src/components/CacheProvider/cad/assetMappingTypes';
 
 export function createAssetMappingMock(params?: { assetId?: number }): ClassicCadAssetMapping {
   return {

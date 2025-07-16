@@ -16,14 +16,14 @@ import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPe
 import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import {
-  type ClassicCadAssetTreeIndexMapping,
-  isValidClassicCadAssetMapping,
-  type ClassicCadAssetMapping
-} from './ClassicCadAssetMapping';
-import {
   type ClassicCadNodeAssetMappingResult,
   type ClassicCadAssetMappingCache
 } from './ClassicCadAssetMappingCache';
+import {
+  type ClassicCadAssetMapping,
+  type ClassicCadAssetTreeIndexMapping,
+  isValidClassicCadAssetMapping
+} from './assetMappingTypes';
 
 export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
   return new ClassicCadAssetMappingCacheImpl(sdk);
