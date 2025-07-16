@@ -1,13 +1,14 @@
-import { type CogniteClient, type Node3D, type CogniteInternalId } from '@cognite/sdk';
+import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
   type ModelTreeIndexKey,
   type AssetId,
   type ModelId,
   type RevisionId,
   type ChunkInCacheTypes,
-  type ModelAssetIdKey
+  type ModelAssetIdKey,
+  type FdmKey
 } from '../types';
-import { chunk, maxBy } from 'lodash';
+import { chunk, maxBy, partition } from 'lodash';
 import assert from 'assert';
 import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
@@ -16,9 +17,10 @@ import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPe
 import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import {
-  type ClassicCadNodeAssetMappingResult,
+  type HybridCadNodeAssetMappingResult,
   type ClassicCadAssetMappingCache
 } from './ClassicCadAssetMappingCache';
+import { type InstanceId, isClassicInstanceId } from '../../../utilities/instanceIds';
 import {
   type ClassicCadAssetMapping,
   type ClassicCadAssetTreeIndexMapping,
@@ -54,7 +56,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId,
     ancestors: Node3D[]
-  ): Promise<ClassicCadNodeAssetMappingResult> {
+  ): Promise<HybridCadNodeAssetMappingResult> {
     if (ancestors.length === 0) {
       return { mappings: [] };
     }
@@ -92,8 +94,9 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   public async getNodesForAssetIds(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetIds: CogniteInternalId[]
-  ): Promise<Map<AssetId, Node3D[]>> {
+    instanceIds: InstanceId[]
+  ): Promise<Map<FdmKey | AssetId, Node3D[]>> {
+    const [assetIds, _dmIds] = partition(instanceIds, isClassicInstanceId);
     const relevantAssetIds = new Set(assetIds);
 
     const assetIdsList = Array.from(relevantAssetIds);

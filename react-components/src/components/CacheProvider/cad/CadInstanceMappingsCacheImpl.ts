@@ -1,5 +1,5 @@
 import { type Node3D } from '@cognite/sdk';
-import { isDmsInstance } from '../../../utilities/instanceIds';
+import { type InstanceKey, isDmsInstance } from '../../../utilities/instanceIds';
 import { type ThreeDModelFdmMappings } from '../../../hooks';
 import {
   type CadNodeTreeData,
@@ -23,6 +23,7 @@ import type {
 } from './CadInstanceMappingsCache';
 import { concatenateMapValues } from '../../../utilities/map/concatenateMapValues';
 import { MAX_PARALLEL_QUERIES } from '../../../data-providers/utils/getDMSModelRevisionRefs';
+import { isClassicCadAssetTreeIndexMapping } from './assetMappingTypes';
 
 export function createCadInstanceMappingsCache(
   classicCache: ClassicCadAssetMappingCache | undefined,
@@ -116,9 +117,14 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
     const classicResultsMap = new Map(
       classicResultsWithModel.map(({ model, mappings }) => {
         const mappingsMap = concatenateMapValues(
-          mappings.map((mapping) => {
-            const { assetId, ...nodeIdData } = mapping;
-            return [assetId, nodeIdData];
+          mappings.map((mapping): [InstanceKey, CadNodeTreeData] => {
+            if (isClassicCadAssetTreeIndexMapping(mapping)) {
+              const { assetId, ...nodeIdData } = mapping;
+              return [assetId, nodeIdData];
+            } else {
+              const { instanceId, ...nodeIdData } = mapping;
+              return [createFdmKey(instanceId), nodeIdData];
+            }
           })
         );
         return [createModelRevisionKey(model.modelId, model.revisionId), mappingsMap];
