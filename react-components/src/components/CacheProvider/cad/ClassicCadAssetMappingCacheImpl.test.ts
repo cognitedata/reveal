@@ -8,9 +8,9 @@ import {
 } from '#test-utils/fixtures/sdk';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
-import { InstanceId, isClassicInstanceId } from '../../../utilities/instanceIds';
-import { RawCdfHybridCadAssetMapping } from './rawAssetMappingTypes';
-import { AssetMapping3D, Node3D } from '@cognite/sdk';
+import { type InstanceId, isClassicInstanceId } from '../../../utilities/instanceIds';
+import { type RawCdfHybridCadAssetMapping } from './rawAssetMappingTypes';
+import { type AssetMapping3D, type Node3D } from '@cognite/sdk';
 
 describe(createClassicCadAssetMappingCache.name, () => {
   const MODEL_ID = 123;

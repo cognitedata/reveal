@@ -5,10 +5,8 @@ import {
   type HttpResponse,
   type HttpRequestOptions,
   type AssetMappings3DAPI,
-  AssetMappings3DListFilter,
-  Revision3D,
-  Nodes3DAPI,
-  Revisions3DAPI
+  type Nodes3DAPI,
+  type Revisions3DAPI
 } from '@cognite/sdk';
 import { vi } from 'vitest';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
@@ -39,7 +37,9 @@ export const assetMappings3DFilterMock = vi.fn<AssetMappings3DAPI['filter']>(() 
   createCursorAndAsyncIteratorMock({ items: [] })
 );
 
-export const nodes3dRetrieveMock = vi.fn<Nodes3DAPI['retrieve']>(() => Promise.resolve([]));
+export const nodes3dRetrieveMock = vi.fn<Nodes3DAPI['retrieve']>(
+  async () => await Promise.resolve([])
+);
 
 export const postMock = vi.fn<
   (
