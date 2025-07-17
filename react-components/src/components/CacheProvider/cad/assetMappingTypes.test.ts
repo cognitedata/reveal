@@ -9,8 +9,7 @@ import {
   isClassicCadAssetMapping,
   isClassicCadAssetTreeIndexMapping,
   isDmCadAssetMapping,
-  isDmCadAssetTreeIndexMapping,
-  isValidCdfHybridCadAssetMapping
+  isDmCadAssetTreeIndexMapping
 } from './assetMappingTypes';
 import assert from 'assert';
 import { type AssetMapping3D } from '@cognite/sdk';
@@ -87,16 +86,25 @@ describe('assetMappingTypes', () => {
       expect(
         isValidCdfHybridCadAssetMapping({ nodeId: 1, assetId: 12, subtreeSize: 3 })
       ).toBeFalsy();
+  describe(isDmCadAssetTreeIndexMapping.name, () => {
+    test('recognizes DM tree index mapping', () => {
+      expect(isDmCadAssetTreeIndexMapping(dmAssetTreeIndexMapping)).toBeTruthy();
     });
 
     test('recognizes asset mappings with all fields, and asserts type', () => {
       expect(isValidCdfHybridCadAssetMapping(classicAssetMapping)).toBeTruthy();
+    test('rejects classic tree index mapping', () => {
+      expect(isDmCadAssetTreeIndexMapping(classicAssetTreeIndexMapping)).toBeFalsy();
     });
 
     test('asserts asset mapping to be ClassicCadAssetMapping', () => {
       const mapping = classicAssetMapping as AssetMapping3D;
       assert(isValidCdfHybridCadAssetMapping(mapping));
       expectTypeOf<ClassicCadAssetMapping>(mapping);
+    test('asserts tree index mapping to be DmCadAssetTreeIndexMapping', () => {
+      const mapping = dmAssetTreeIndexMapping as HybridCadAssetTreeIndexMapping;
+      assert(isDmCadAssetTreeIndexMapping(mapping));
+      expectTypeOf<DmCadAssetTreeIndexMapping>(mapping);
     });
   });
 
@@ -113,22 +121,6 @@ describe('assetMappingTypes', () => {
       const mapping = classicAssetTreeIndexMapping as HybridCadAssetTreeIndexMapping;
       assert(isClassicCadAssetTreeIndexMapping(mapping));
       expectTypeOf<ClassicCadAssetTreeIndexMapping>(mapping);
-    });
-  });
-
-  describe(isDmCadAssetTreeIndexMapping.name, () => {
-    test('recognizes DM tree index mapping', () => {
-      expect(isDmCadAssetTreeIndexMapping(dmAssetTreeIndexMapping)).toBeTruthy();
-    });
-
-    test('rejects classic tree index mapping', () => {
-      expect(isDmCadAssetTreeIndexMapping(classicAssetTreeIndexMapping)).toBeFalsy();
-    });
-
-    test('asserts tree index mapping to be DmCadAssetTreeIndexMapping', () => {
-      const mapping = dmAssetTreeIndexMapping as HybridCadAssetTreeIndexMapping;
-      assert(isDmCadAssetTreeIndexMapping(mapping));
-      expectTypeOf<DmCadAssetTreeIndexMapping>(mapping);
     });
   });
 });

@@ -46,9 +46,7 @@ export function isClassicCadAssetMapping(
   return isClassicCadAssetMappingInstance(mapping);
 }
 
-export function isDmCadAssetAssetMapping(
-  mapping: HybridCadAssetMapping
-): mapping is DmCadAssetMapping {
+export function isDmCadAssetMapping(mapping: HybridCadAssetMapping): mapping is DmCadAssetMapping {
   return isDmCadAssetMappingInstance(mapping);
 }
 
@@ -68,7 +66,7 @@ export function isClassicCadAssetTreeIndexMapping(
   return isClassicCadAssetMappingInstance(mapping);
 }
 
-export function isDmCadAssetAssetTreeIndexMapping(
+export function isDmCadAssetTreeIndexMapping(
   mapping: HybridCadAssetTreeIndexMapping
 ): mapping is DmCadAssetTreeIndexMapping {
   return isDmCadAssetMappingInstance(mapping);
