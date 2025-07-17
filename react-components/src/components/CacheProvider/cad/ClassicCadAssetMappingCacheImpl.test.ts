@@ -147,7 +147,7 @@ describe(createClassicCadAssetMappingCache.name, () => {
         createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], ASSET_ID),
         createRawAssetMappingFromNodeAndInstance(CAD_NODES[2], 43)
       ];
-      assetMappings3DListMock.mockReturnValue(
+      assetMappings3DListMock.mockReturnValueOnce(
         createCursorAndAsyncIteratorMock({
           items: mappings as AssetMapping3D[]
         })
@@ -168,10 +168,14 @@ describe(createClassicCadAssetMappingCache.name, () => {
       const cache = createClassicCadAssetMappingCache(sdkMock);
 
       const result = await cache.getAssetMappingsForModel(MODEL_ID, REVISION_ID);
+
+      // The list endpoint is called twice, once for classic assets and once for DM
+      expect(assetMappings3DListMock).toHaveBeenCalledTimes(2);
+
       const result1 = await cache.getAssetMappingsForModel(MODEL_ID, REVISION_ID);
 
       expect(result).toEqual(result1);
-      expect(assetMappings3DListMock).toHaveBeenCalledTimes(1);
+      expect(assetMappings3DListMock).toHaveBeenCalledTimes(2);
     });
   });
 });

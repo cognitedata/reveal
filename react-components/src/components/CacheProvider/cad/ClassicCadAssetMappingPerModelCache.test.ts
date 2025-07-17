@@ -32,7 +32,7 @@ describe(ClassicCadAssetMappingPerModelCache.name, () => {
   beforeEach(() => {
     // We need to do an explicit casting because the `AssetMapping3D` SDK type requires
     // `assetId` to be defined, but this may not be true in real life
-    assetMappings3DListMock.mockReturnValue(
+    assetMappings3DListMock.mockReturnValueOnce(
       createCursorAndAsyncIteratorMock({ items: ASSET_MAPPINGS as AssetMapping3D[] })
     );
   });
@@ -70,10 +70,13 @@ describe(ClassicCadAssetMappingPerModelCache.name, () => {
 
     const result = await cache.fetchAndCacheMappingsForModel(MODEL_ID, REVISION_ID);
 
+    // List endpoint gets called twice, once for classic and once for DM
+    expect(assetMappings3DListMock).toHaveBeenCalledTimes(2);
+
     const gotResult = await cache.getModelToAssetMappingCacheItems(modelRevisionKey);
     expect(gotResult).toEqual(result);
 
-    expect(assetMappings3DListMock).toHaveBeenCalledTimes(1);
+    expect(assetMappings3DListMock).toHaveBeenCalledTimes(2);
   });
 
   test('results for different models are cached separately', async () => {

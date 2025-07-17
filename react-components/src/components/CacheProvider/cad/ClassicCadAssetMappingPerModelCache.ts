@@ -47,10 +47,13 @@ export class ClassicCadAssetMappingPerModelCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<HybridCadAssetMapping[]> {
-    const assetMapping3D: RawCdfHybridCadAssetMapping[] = await this._sdk.assetMappings3D
+    const classicAssetMappings: RawCdfHybridCadAssetMapping[] = await this._sdk.assetMappings3D
+      .list(modelId, revisionId, { limit: 1000 })
+      .autoPagingToArray({ limit: Infinity });
+    const dmAssetMappings: RawCdfHybridCadAssetMapping[] = await this._sdk.assetMappings3D
       .list(modelId, revisionId, { limit: 1000, getDmsInstances: true })
       .autoPagingToArray({ limit: Infinity });
 
-    return assetMapping3D.flatMap(extractHybridAssetMappings);
+    return [...classicAssetMappings, ...dmAssetMappings].flatMap(extractHybridAssetMappings);
   }
 }
