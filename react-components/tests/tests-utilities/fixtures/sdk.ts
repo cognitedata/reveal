@@ -6,7 +6,9 @@ import {
   type HttpRequestOptions,
   type AssetMappings3DAPI,
   type Nodes3DAPI,
-  type Revisions3DAPI
+  type Revisions3DAPI,
+  type CursorAndAsyncIterator,
+  type AssetMapping3D
 } from '@cognite/sdk';
 import { vi } from 'vitest';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
@@ -29,12 +31,12 @@ export const retrieveMock = vi.fn<AssetsAPI['retrieve']>(async (assetIds) => {
   );
 });
 
-export const assetMappings3DListMock = vi.fn<AssetMappings3DAPI['list']>(() =>
-  createCursorAndAsyncIteratorMock({ items: [] })
+export const assetMappings3DListMock = vi.fn<AssetMappings3DAPI['list']>(
+  (): CursorAndAsyncIterator<AssetMapping3D> => createCursorAndAsyncIteratorMock({ items: [] })
 );
 
-export const assetMappings3DFilterMock = vi.fn<AssetMappings3DAPI['filter']>(() =>
-  createCursorAndAsyncIteratorMock({ items: [] })
+export const assetMappings3DFilterMock = vi.fn<AssetMappings3DAPI['filter']>(
+  (): CursorAndAsyncIterator<AssetMapping3D> => createCursorAndAsyncIteratorMock({ items: [] })
 );
 
 export const nodes3dRetrieveMock = vi.fn<Nodes3DAPI['retrieve']>(
