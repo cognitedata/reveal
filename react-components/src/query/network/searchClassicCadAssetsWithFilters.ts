@@ -31,7 +31,9 @@ export async function searchClassicCadAssetsWithFilters(
 
   const mapped3dAssetIds = new Set(
     assetMappingList.flatMap((mapping) =>
-      mapping.assetMappings.map((assetMapping) => assetMapping.assetId)
+      mapping.assetMappings
+        .filter(isClassicCadAssetTreeIndexMapping)
+        .map((assetMapping) => assetMapping.assetId)
     )
   );
 

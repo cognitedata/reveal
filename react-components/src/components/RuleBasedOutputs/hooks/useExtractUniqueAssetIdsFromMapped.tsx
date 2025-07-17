@@ -3,6 +3,7 @@ import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMa
 import { useMemo } from 'react';
 import { uniqBy } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';
+import { isClassicCadAssetMapping } from '../../CacheProvider/cad/assetMappingTypes';
 
 export const useExtractUniqueAssetIdsFromMapped = (
   assetMappings: ModelWithAssetMappings[] | undefined
@@ -10,6 +11,7 @@ export const useExtractUniqueAssetIdsFromMapped = (
   return useMemo(() => {
     const mappings = assetMappings?.map((item) => item.assetMappings).flat() ?? [];
     const assetIds: InternalId[] = mappings
+      .filter(isClassicCadAssetMapping)
       .flatMap((item) => {
         return {
           id: item.assetId

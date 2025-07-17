@@ -17,6 +17,7 @@ import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import { useMemo } from 'react';
 import { getAssetsFromAssetMappings } from './network/getAssetsFromAssetMappings';
 import { buildClassicAssetQueryFilter } from './network/buildClassicAssetFilter';
+import { isClassicCadAssetMapping } from '../components/CacheProvider/cad/assetMappingTypes';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -51,7 +52,9 @@ export const useSearchMappedEquipmentAssetMappings = (
     if (assetMappingList === undefined) return new Set<number>();
     return new Set(
       assetMappingList.flatMap((mapping) =>
-        mapping.assetMappings.map((assetMapping) => assetMapping.assetId)
+        mapping.assetMappings
+          .filter(isClassicCadAssetMapping)
+          .map((assetMapping) => assetMapping.assetId)
       )
     );
   }, [assetMappingList]);

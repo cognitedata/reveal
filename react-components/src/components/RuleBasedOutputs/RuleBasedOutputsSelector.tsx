@@ -20,7 +20,10 @@ import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseries
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
 import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
-import { type ClassicCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
+import {
+  isClassicCadAssetMapping,
+  type ClassicCadAssetMapping
+} from '../CacheProvider/cad/assetMappingTypes';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -116,7 +119,7 @@ export function RuleBasedOutputsSelector({
           if (flatAssetsMappingsList.length === 0 && fdmMappings?.length === 0) return [];
 
           const mappingsStylings = await initializeRuleBasedOutputs({
-            assetMappings: flatAssetsMappingsList,
+            assetMappings: flatAssetsMappingsList.filter(isClassicCadAssetMapping),
             fdmMappings: fdmMappings ?? [],
             contextualizedAssetNodes,
             ruleSet,
