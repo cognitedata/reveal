@@ -19,7 +19,7 @@ export class ClassicCadAssetMappingPerModelCache {
     this._sdk = sdk;
   }
 
-  public setModelToAssetMappingCacheItems(
+  private setModelToAssetMappingCacheItems(
     key: ModelRevisionKey,
     assetMappings: Promise<HybridCadAssetMapping[]>
   ): void {

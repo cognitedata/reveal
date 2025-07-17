@@ -1,13 +1,13 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import {
   type ClassicCadAssetMapping,
-  ClassicCadAssetMappingInstance,
+  type ClassicCadAssetMappingInstance,
   type ClassicCadAssetTreeIndexMapping,
   type DmCadAssetMapping,
-  DmCadAssetMappingInstance,
+  type DmCadAssetMappingInstance,
   type DmCadAssetTreeIndexMapping,
   type HybridCadAssetMapping,
-  HybridCadAssetMappingInstance,
+  type HybridCadAssetMappingInstance,
   type HybridCadAssetTreeIndexMapping,
   isClassicCadAssetMapping,
   isClassicCadAssetMappingInstance,
