@@ -20,12 +20,14 @@ import {
   type HybridCadNodeAssetMappingResult,
   type ClassicCadAssetMappingCache
 } from './ClassicCadAssetMappingCache';
-import { type InstanceId, isClassicInstanceId } from '../../../utilities/instanceIds';
+import { type InstanceId, type InstanceKey } from '../../../utilities/instanceIds';
 import {
-  type ClassicCadAssetMapping,
-  type ClassicCadAssetTreeIndexMapping,
-  isValidClassicCadAssetMapping
+  getMappingInstanceId,
+  type HybridCadAssetMapping,
+  type HybridCadAssetTreeIndexMapping
 } from './assetMappingTypes';
+import { type HybridCadCacheIndexType } from './types';
+import { extractHybridAssetMappings } from './rawAssetMappingTypes';
 
 export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
   return new ClassicCadAssetMappingCacheImpl(sdk);
@@ -37,7 +39,6 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   private readonly modelToAssetMappingsCache: ClassicCadAssetMappingPerModelCache;
 
   private readonly assetIdsToAssetMappingCache: ClassicCadAssetMappingPerAssetIdCache;
-
   private readonly nodeIdsToAssetMappingCache: ClassicCadAssetMappingPerNodeIdCache;
 
   private readonly nodeIdsToNode3DCache: ClassicCadNode3DPerNodeIdCache;
@@ -95,16 +96,19 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId,
     instanceIds: InstanceId[]
-    const [assetIds, _dmIds] = partition(instanceIds, isClassicInstanceId);
-    const relevantAssetIds = new Set(assetIds);
   ): Promise<Map<InstanceKey, Node3D[]>> {
+    const relevantAssetIds = new Set(instanceIds.map(createInstanceKey));
 
     const assetIdsList = Array.from(relevantAssetIds);
     const chunkSize = Math.round(assetIdsList.length / this._amountOfAssetIdsChunks);
     const listChunks = chunk(assetIdsList, chunkSize);
 
     const allAssetMappingsReturned = listChunks.map(async (itemChunk) => {
-      const assetMappings = await this.getAssetMappingsForAssetIds(modelId, revisionId, itemChunk);
+      const assetMappings = await this.getAssetMappingsForInstanceIds(
+        modelId,
+        revisionId,
+        itemChunk
+      );
       return assetMappings;
     });
 
@@ -112,7 +116,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     const assetMappings = allAssetMappings.flat();
 
     const relevantAssetMappings = assetMappings.filter((mapping) =>
-      relevantAssetIds.has(mapping.assetId)
+      relevantAssetIds.has(createInstanceKey(getMappingInstanceId(mapping)))
     );
 
     const nodes = await this.nodeIdsToNode3DCache.getNodesForNodeIds(
@@ -122,7 +126,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     );
 
     return nodes.reduce((acc, node, index) => {
-      const key = relevantAssetMappings[index].assetId;
+      const key = createInstanceKey(getMappingInstanceId(relevantAssetMappings[index]));
       const nodesForAsset = acc.get(key);
 
       if (nodesForAsset !== undefined) {
@@ -132,7 +136,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       }
 
       return acc;
-    }, new Map<AssetId, Node3D[]>());
+    }, new Map<InstanceKey, Node3D[]>());
   }
 
   public async generateNode3DCachePerItem(
@@ -166,7 +170,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ClassicCadAssetTreeIndexMapping[]> {
+  ): Promise<HybridCadAssetTreeIndexMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
@@ -177,14 +181,14 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     return await this.modelToAssetMappingsCache.fetchAndCacheMappingsForModel(modelId, revisionId);
   }
 
-  private async splitChunkInCacheAssetMappings(
-    currentChunk: number[],
+  private async splitChunkInCacheAssetMappings<KeyType extends InstanceKey>(
+    currentChunk: KeyType[],
     modelId: ModelId,
     revisionId: RevisionId,
-    type: string
-  ): Promise<ChunkInCacheTypes<ClassicCadAssetMapping>> {
-    const chunkInCache: ClassicCadAssetMapping[] = [];
-    const chunkNotCached: number[] = [];
+    type: HybridCadCacheIndexType
+  ): Promise<ChunkInCacheTypes<HybridCadAssetMapping, KeyType>> {
+    const chunkInCache: HybridCadAssetMapping[] = [];
+    const chunkNotCached: KeyType[] = [];
 
     await Promise.all(
       currentChunk.map(async (id) => {
@@ -202,18 +206,18 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   }
 
   private async getItemCacheResult(
-    type: string,
-    key: ModelTreeIndexKey | ModelAssetIdKey
-  ): Promise<ClassicCadAssetMapping[] | undefined> {
+    type: HybridCadCacheIndexType,
+    key: ModelNodeIdKey | ModelInstanceIdKey
+  ): Promise<HybridCadAssetMapping[] | undefined> {
     return type === 'nodeIds'
       ? await this.nodeIdsToAssetMappingCache.getNodeIdsToAssetMappingCacheItem(key)
       : await this.assetIdsToAssetMappingCache.getAssetIdsToAssetMappingCacheItem(key);
   }
 
   private setItemCacheResult(
-    type: string,
-    key: ModelTreeIndexKey | ModelAssetIdKey,
-    item: ClassicCadAssetMapping[] | undefined
+    type: HybridCadCacheIndexType,
+    key: ModelNodeIdKey | ModelInstanceIdKey,
+    item: HybridCadAssetMapping[] | undefined
   ): void {
     const value = Promise.resolve(item ?? []);
     type === 'nodeIds'
@@ -222,12 +226,11 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   }
 
   private async fetchAssetMappingsRequest(
-    currentChunk: number[],
-    filterType: string,
+    currentChunk: InstanceKey[],
+    filterType: HybridCadCacheIndexType,
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ClassicCadAssetMapping[]> {
-    if (currentChunk.length === 0) {
+  ): Promise<HybridCadAssetMapping[]> {
       return [];
     }
     const filter =
@@ -243,15 +246,15 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     ).filter(isValidClassicCadAssetMapping);
 
     await Promise.all(
-      assetMapping3D.map(async (item) => {
+      assetMapping3D.map(async (assetMapping) => {
         const keyAssetId: ModelInstanceIdKey = createModelInstanceIdKey(
           modelId,
           revisionId,
-          item.assetId
+          createInstanceKey(getMappingInstanceId(assetMapping))
         );
-        const keyNodeId = modelRevisionNodesAssetToKey(modelId, revisionId, item.nodeId);
-        await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(keyAssetId, item);
-        await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, item);
+        const keyNodeId = createModelNodeIdKey(modelId, revisionId, assetMapping.nodeId);
+        await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(keyAssetId, assetMapping);
+        await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, assetMapping);
       })
     );
 
@@ -269,12 +272,12 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
 
   private async fetchMappingsInQueue(
     index: number,
-    idChunks: number[][],
-    filterType: string,
+    idChunks: Array<Array<InstanceKey | NodeId>>,
+    filterType: HybridCadCacheIndexType,
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMappingsList: ClassicCadAssetMapping[]
-  ): Promise<ClassicCadAssetMapping[]> {
+    assetMappingsList: HybridCadAssetMapping[]
+  ): Promise<HybridCadAssetMapping[]> {
     const assetMappings = await this.fetchAssetMappingsRequest(
       idChunks[index],
       filterType,
@@ -301,9 +304,9 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   private async fetchAndCacheMappingsForIds(
     modelId: ModelId,
     revisionId: RevisionId,
-    ids: number[],
-    filterType: string
-  ): Promise<ClassicCadAssetMapping[]> {
+    ids: InstanceKey[],
+    filterType: 'nodeIds' | 'assetIds'
+  ): Promise<HybridCadAssetMapping[]> {
     if (ids.length === 0) {
       return [];
     }
@@ -324,7 +327,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId,
     nodes: Node3D[]
-  ): Promise<ClassicCadAssetMapping[]> {
+  ): Promise<HybridCadAssetMapping[]> {
     const nodeIds = nodes.map((node) => node.id);
 
     const { chunkNotInCache, chunkInCache } = await this.splitChunkInCacheAssetMappings(
@@ -334,7 +337,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       'nodeIds'
     );
 
-    const notCachedNodeIds: number[] = chunkNotInCache;
+    const notCachedNodeIds: NodeId[] = chunkNotInCache;
 
     const assetMappings = await this.fetchAndCacheMappingsForIds(
       modelId,
@@ -347,19 +350,19 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     return allAssetMappings;
   }
 
-  private async getAssetMappingsForAssetIds(
+  private async getAssetMappingsForInstanceIds(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetIds: number[]
-  ): Promise<ClassicCadAssetMapping[]> {
+    instanceIds: InstanceKey[]
+  ): Promise<HybridCadAssetMapping[]> {
     const { chunkNotInCache, chunkInCache } = await this.splitChunkInCacheAssetMappings(
-      assetIds,
+      instanceIds,
       modelId,
       revisionId,
       'assetIds'
     );
 
-    const notCachedAssetIds: number[] = chunkNotInCache;
+    const notCachedAssetIds = chunkNotInCache;
 
     const assetMappings = await this.fetchAndCacheMappingsForIds(
       modelId,

@@ -1,15 +1,15 @@
 import { type CadModelOptions } from '../../components/Reveal3DResources/types';
 import {
-  type ClassicCadAssetTreeIndexMapping,
-  type ClassicCadAssetMapping
+  type HybridCadAssetMapping,
+  type HybridCadAssetTreeIndexMapping
 } from '../../components/CacheProvider/cad/assetMappingTypes';
 
 export type ModelWithAssetMappings = {
   model: CadModelOptions;
-  assetMappings: ClassicCadAssetMapping[];
+  assetMappings: HybridCadAssetMapping[];
 };
 
 export type ModelWithAssetTreeIndexMappings = {
   model: CadModelOptions;
-  assetMappings: ClassicCadAssetTreeIndexMapping[];
+  assetMappings: HybridCadAssetTreeIndexMapping[];
 };

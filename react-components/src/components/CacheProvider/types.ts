@@ -8,6 +8,7 @@ import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmS
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetInstance } from '../../utilities/instances';
+import { type InstanceKey } from '../../utilities/instanceIds';
 
 export type FdmCadConnection = {
   instance: DmsUniqueIdentifier;
@@ -59,8 +60,13 @@ export type ModelRevisionId = { modelId: number; revisionId: number };
 
 export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
+
 export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
+export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
+export type ModelFdmIdKey = `${ModelId}/${RevisionId}/${FdmKey}`;
+
+export type ModelInstanceIdKey = ModelAssetIdKey | ModelFdmIdKey;
 
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
@@ -78,9 +84,9 @@ export type Image360AnnotationAssetInfo = {
 
 export type AnnotationId = number;
 
-export type ChunkInCacheTypes<ObjectType> = {
+export type ChunkInCacheTypes<ObjectType, KeyType extends InstanceKey> = {
   chunkInCache: ObjectType[];
-  chunkNotInCache: number[];
+  chunkNotInCache: KeyType[];
 };
 
 type PointCloudVolume = {

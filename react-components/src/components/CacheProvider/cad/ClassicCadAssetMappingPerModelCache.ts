@@ -1,14 +1,18 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { type ModelId, type RevisionId, type ModelRevisionKey } from '../types';
 import { createModelRevisionKey } from '../idAndKeyTranslation';
-import { type ClassicCadAssetMapping, isValidClassicCadAssetMapping } from './assetMappingTypes';
+import { type HybridCadAssetMapping } from './assetMappingTypes';
+import {
+  extractHybridAssetMappings,
+  type RawCdfHybridCadAssetMapping
+} from './rawAssetMappingTypes';
 
 export class ClassicCadAssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;
 
   private readonly _modelToAssetMappings = new Map<
     ModelRevisionKey,
-    Promise<ClassicCadAssetMapping[]>
+    Promise<HybridCadAssetMapping[]>
   >();
 
   constructor(sdk: CogniteClient) {
@@ -17,21 +21,21 @@ export class ClassicCadAssetMappingPerModelCache {
 
   public setModelToAssetMappingCacheItems(
     key: ModelRevisionKey,
-    assetMappings: Promise<ClassicCadAssetMapping[]>
+    assetMappings: Promise<HybridCadAssetMapping[]>
   ): void {
     this._modelToAssetMappings.set(key, assetMappings);
   }
 
   public async getModelToAssetMappingCacheItems(
     key: ModelRevisionKey
-  ): Promise<ClassicCadAssetMapping[] | undefined> {
+  ): Promise<HybridCadAssetMapping[] | undefined> {
     return await this._modelToAssetMappings.get(key);
   }
 
   public async fetchAndCacheMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ClassicCadAssetMapping[]> {
+  ): Promise<HybridCadAssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 

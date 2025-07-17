@@ -1,9 +1,8 @@
 import { type Node3D } from '@cognite/sdk';
-import { type InstanceKey, isDmsInstance } from '../../../utilities/instanceIds';
+import { type InstanceId, type InstanceKey, isDmsInstance } from '../../../utilities/instanceIds';
 import { type ThreeDModelFdmMappings } from '../../../hooks';
 import {
   type CadNodeTreeData,
-  type AssetId,
   type FdmKey,
   type ModelRevisionId,
   type ModelRevisionKey
@@ -15,7 +14,6 @@ import { isDefined } from '../../../utilities/isDefined';
 import { mergeMapMapValues } from '../../../utilities/map/mergeMapMapValues';
 import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache';
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
-import { type DmsUniqueIdentifier } from '../../../data-providers';
 import type {
   CadInstanceMappingsCache,
   CadModelMappingsWithNodes,
@@ -48,7 +46,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
   }
 
   public async getMappingsForModelsAndInstances(
-    instances: Array<AssetId | DmsUniqueIdentifier>,
+    instances: InstanceId[],
     models: ModelRevisionId[]
   ): Promise<CadModelMappingsWithNodes> {
     if (models.length === 0 || instances.length === 0) {
@@ -83,7 +81,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
     );
     const modelsToClassicMappingsMap = new Map(classicResultTuples.filter(isDefined));
 
-    const mergedCadMappings = mergeMapMapValues<ModelRevisionKey, FdmKey | AssetId, Node3D>([
+    const mergedCadMappings = mergeMapMapValues<ModelRevisionKey, InstanceKey, Node3D>([
       ...modelsToClassicMappingsMap.entries(),
       ...(dmResultMap?.entries() ?? [])
     ]);
@@ -146,7 +144,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
       })
     );
 
-    return mergeMapMapValues<ModelRevisionKey, AssetId | FdmKey, CadNodeTreeData>([
+    return mergeMapMapValues<ModelRevisionKey, InstanceKey, CadNodeTreeData>([
       ...classicResultsMap.entries(),
       ...dmModelToInstanceToNodeMap.entries()
     ]);

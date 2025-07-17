@@ -10,7 +10,7 @@ import {
   isClassicCadAssetTreeIndexMapping,
   isDmCadAssetMapping,
   isDmCadAssetTreeIndexMapping,
-  isValidClassicCadAssetMapping
+  isValidCdfHybridCadAssetMapping
 } from './assetMappingTypes';
 import assert from 'assert';
 import { type AssetMapping3D } from '@cognite/sdk';
@@ -78,20 +78,24 @@ describe('assetMappingTypes', () => {
     });
   });
 
-  describe(isValidClassicCadAssetMapping.name, () => {
+  describe(isValidCdfHybridCadAssetMapping.name, () => {
     test('rejects asset mappings without treeIndex and subtreeSize', () => {
-      expect(isValidClassicCadAssetMapping({ nodeId: 1, assetId: 12 })).toBeFalsy();
-      expect(isValidClassicCadAssetMapping({ nodeId: 1, assetId: 12, treeIndex: 23 })).toBeFalsy();
-      expect(isValidClassicCadAssetMapping({ nodeId: 1, assetId: 12, subtreeSize: 3 })).toBeFalsy();
+      expect(isValidCdfHybridCadAssetMapping({ nodeId: 1, assetId: 12 })).toBeFalsy();
+      expect(
+        isValidCdfHybridCadAssetMapping({ nodeId: 1, assetId: 12, treeIndex: 23 })
+      ).toBeFalsy();
+      expect(
+        isValidCdfHybridCadAssetMapping({ nodeId: 1, assetId: 12, subtreeSize: 3 })
+      ).toBeFalsy();
     });
 
     test('recognizes asset mappings with all fields, and asserts type', () => {
-      expect(isValidClassicCadAssetMapping(classicAssetMapping)).toBeTruthy();
+      expect(isValidCdfHybridCadAssetMapping(classicAssetMapping)).toBeTruthy();
     });
 
     test('asserts asset mapping to be ClassicCadAssetMapping', () => {
       const mapping = classicAssetMapping as AssetMapping3D;
-      assert(isValidClassicCadAssetMapping(mapping));
+      assert(isValidCdfHybridCadAssetMapping(mapping));
       expectTypeOf<ClassicCadAssetMapping>(mapping);
     });
   });
