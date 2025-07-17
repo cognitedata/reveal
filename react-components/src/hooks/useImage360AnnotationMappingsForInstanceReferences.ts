@@ -38,10 +38,14 @@ export const useImage360AnnotationMappingsForInstanceReferences = (
       }
       const assetIdSet = new Set(assetIds.map(createInstanceReferenceKey));
 
-      const annotationAssetInfo = await image360AnnotationCache.getReveal360Annotations(siteIds);
+      const annotationAssetInfo = await image360AnnotationCache.getReveal360AnnotationsForAssets(
+        siteIds,
+        assetIds
+      );
+
       const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
         const annotationAssetKey = getAssetIdKeyForImage360Annotation(
-          annotationInfo.assetAnnotationImage360Info.annotationInfo
+          annotationInfo.assetAnnotationImage360Info.annotation.annotation
         );
 
         return annotationAssetKey !== undefined && assetIdSet.has(annotationAssetKey);

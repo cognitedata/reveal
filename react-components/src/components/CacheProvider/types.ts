@@ -5,7 +5,7 @@ import {
   type Node3D
 } from '@cognite/sdk';
 import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
+import { type Image360AnnotationAssetQueryResult, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetInstance } from '../../utilities/instances';
 
@@ -72,7 +72,7 @@ export type Image360AnnotationModel = AnnotationModel & {
 
 export type Image360AnnotationAssetInfo = {
   asset: AssetInstance;
-  assetAnnotationImage360Info: AssetAnnotationImage360Info<DataSourceType>;
+  assetAnnotationImage360Info: Image360AnnotationAssetQueryResult<DataSourceType>;
   position: Vector3;
 };
 
