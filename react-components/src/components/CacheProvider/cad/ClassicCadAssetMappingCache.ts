@@ -15,7 +15,7 @@ export type ClassicCadAssetMappingCache = {
     revisionId: RevisionId,
     ancestors: Node3D[]
   ) => Promise<HybridCadNodeAssetMappingResult>;
-  getNodesForAssetIds: (
+  getNodesForInstanceIds: (
     modelId: ModelId,
     revisionId: RevisionId,
     instanceIds: InstanceId[]

@@ -91,13 +91,13 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     return { node: nearestMappedAncestor, mappings: mappingsOfNearestAncestor };
   }
 
-  public async getNodesForAssetIds(
+  public async getNodesForInstanceIds(
     modelId: ModelId,
     revisionId: RevisionId,
     instanceIds: InstanceId[]
-  ): Promise<Map<FdmKey | AssetId, Node3D[]>> {
     const [assetIds, _dmIds] = partition(instanceIds, isClassicInstanceId);
     const relevantAssetIds = new Set(assetIds);
+  ): Promise<Map<InstanceKey, Node3D[]>> {
 
     const assetIdsList = Array.from(relevantAssetIds);
     const chunkSize = Math.round(assetIdsList.length / this._amountOfAssetIdsChunks);

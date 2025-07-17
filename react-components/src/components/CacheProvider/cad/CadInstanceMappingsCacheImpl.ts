@@ -63,7 +63,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
 
     const classicResultsPromiseCallbacks = models
       .map((model) => async () => {
-        const nodeResult = await this._classicCache?.getNodesForAssetIds(
+        const nodeResult = await this._classicCache?.getNodesForInstanceIds(
           model.modelId,
           model.revisionId,
           internalIds
