@@ -159,16 +159,18 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     if (assetMappingsPerModel === undefined) {
       return;
     }
-    assetMappingsPerModel.forEach(async (modelMapping) => {
-      modelMapping.assetMappings.forEach(async (item) => {
+    const promises = assetMappingsPerModel.flatMap((modelMapping) =>
+      modelMapping.assetMappings.map(async (item) => {
         const key = createModelInstanceIdKey(
           modelId,
           revisionId,
           createInstanceKey(getMappingInstanceId(item))
         );
         await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(key, item);
-      });
-    });
+      })
+    );
+
+    await Promise.all(promises);
   }
 
   public async getAssetMappingsForModel(
