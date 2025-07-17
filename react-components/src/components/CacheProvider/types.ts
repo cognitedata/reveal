@@ -84,7 +84,7 @@ export type Image360AnnotationAssetInfo = {
 
 export type AnnotationId = number;
 
-export type ChunkInCacheTypes<ObjectType, KeyType extends InstanceKey> = {
+export type ChunkInCacheTypes<ObjectType, KeyType extends InstanceKey | NodeId> = {
   chunkInCache: ObjectType[];
   chunkNotInCache: KeyType[];
 };
