@@ -153,7 +153,11 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     }
     assetMappingsPerModel.forEach(async (modelMapping) => {
       modelMapping.assetMappings.forEach(async (item) => {
-        const key = modelRevisionNodesAssetToKey(modelId, revisionId, item.assetId);
+        const key = createModelInstanceIdKey(
+          modelId,
+          revisionId,
+          createInstanceKey(getMappingInstanceId(item))
+        );
         await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(key, item);
       });
     });
@@ -184,7 +188,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
 
     await Promise.all(
       currentChunk.map(async (id) => {
-        const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
+        const key = createModelInstanceIdKey(modelId, revisionId, id);
         const cachedResult = await this.getItemCacheResult(type, key);
         if (cachedResult !== undefined) {
           chunkInCache.push(...cachedResult);
@@ -240,7 +244,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
 
     await Promise.all(
       assetMapping3D.map(async (item) => {
-        const keyAssetId: ModelAssetIdKey = modelRevisionNodesAssetToKey(
+        const keyAssetId: ModelInstanceIdKey = createModelInstanceIdKey(
           modelId,
           revisionId,
           item.assetId
@@ -252,7 +256,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     );
 
     currentChunk.forEach(async (id) => {
-      const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
+      const key = createModelInstanceIdKey(modelId, revisionId, id);
       const cachedResult = await this.getItemCacheResult(filterType, key);
 
       if (cachedResult === undefined) {
