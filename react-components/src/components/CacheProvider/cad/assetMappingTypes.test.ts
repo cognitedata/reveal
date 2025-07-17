@@ -75,7 +75,7 @@ describe('assetMappingTypes', () => {
     });
 
     test('asserts asset mapping to be ClassicCadAssetMapping', () => {
-      const mapping = classicAssetMapping as HybridCadAssetMappingInstance;
+      const mapping = dmAssetMapping as HybridCadAssetMappingInstance;
       assert(isDmCadAssetMappingInstance(mapping));
       expectTypeOf<DmCadAssetMappingInstance>(mapping);
     });
