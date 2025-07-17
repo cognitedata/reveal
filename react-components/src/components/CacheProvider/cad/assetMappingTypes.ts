@@ -1,4 +1,3 @@
-import { type AssetMapping3D, type CogniteInternalId } from '@cognite/sdk';
 import { type AssetId, type CadNodeIdData, type CadNodeTreeData } from '../types';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type InstanceId } from '../../../utilities/instanceIds';
@@ -20,6 +19,13 @@ export type HybridCadAssetMappingInstance =
   | ClassicCadAssetMappingInstance
   | DmCadAssetMappingInstance;
 
+/**
+ * These are reusable type guards that operate on any type that has an instance reference akin
+ * to the ones in the asset mappings (assetId or instanceId). Ideally, we could have used
+ * only these in place of the more specific ones defined further down in this file (e.g.
+ * `isClassicCadAssetMapping`), but the type checker was e.g. not able to infer the result type to be
+ * `ClassicCadAssetMapping[]` when using this inside a `.filter` on an array of `HybridCadAssetMapping`
+ */
 export function isClassicCadAssetMappingInstance(
   mapping: HybridCadAssetMappingInstance
 ): mapping is ClassicCadAssetMappingInstance {

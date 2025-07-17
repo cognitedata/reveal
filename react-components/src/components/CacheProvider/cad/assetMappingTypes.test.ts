@@ -1,18 +1,22 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import {
   type ClassicCadAssetMapping,
+  ClassicCadAssetMappingInstance,
   type ClassicCadAssetTreeIndexMapping,
   type DmCadAssetMapping,
+  DmCadAssetMappingInstance,
   type DmCadAssetTreeIndexMapping,
   type HybridCadAssetMapping,
+  HybridCadAssetMappingInstance,
   type HybridCadAssetTreeIndexMapping,
   isClassicCadAssetMapping,
+  isClassicCadAssetMappingInstance,
   isClassicCadAssetTreeIndexMapping,
   isDmCadAssetMapping,
+  isDmCadAssetMappingInstance,
   isDmCadAssetTreeIndexMapping
 } from './assetMappingTypes';
 import assert from 'assert';
-import { type AssetMapping3D } from '@cognite/sdk';
 
 describe('assetMappingTypes', () => {
   const DM_INSTANCE_ID = { externalId: 'externalId', space: 'space' };
@@ -44,6 +48,38 @@ describe('assetMappingTypes', () => {
     treeIndex: TREE_INDEX,
     subtreeSize: SUBTREE_SIZE
   };
+
+  describe(isClassicCadAssetMappingInstance.name, () => {
+    test('recognizes classic asset mapping', () => {
+      expect(isClassicCadAssetMappingInstance({ assetId: ASSET_ID })).toBeTruthy();
+    });
+
+    test('does not accept DM asset mapping', () => {
+      expect(isClassicCadAssetMappingInstance({ instanceId: DM_INSTANCE_ID })).toBeFalsy();
+    });
+
+    test('asserts asset mapping to be ClassicCadAssetMapping', () => {
+      const mapping = classicAssetMapping as HybridCadAssetMappingInstance;
+      assert(isClassicCadAssetMappingInstance(mapping));
+      expectTypeOf<ClassicCadAssetMappingInstance>(mapping);
+    });
+  });
+
+  describe(isDmCadAssetMappingInstance.name, () => {
+    test('recognizes DM asset mapping', () => {
+      expect(isDmCadAssetMappingInstance({ instanceId: DM_INSTANCE_ID })).toBeTruthy();
+    });
+
+    test('rejects classic asset mapping', () => {
+      expect(isDmCadAssetMappingInstance({ assetId: ASSET_ID })).toBeFalsy();
+    });
+
+    test('asserts asset mapping to be ClassicCadAssetMapping', () => {
+      const mapping = classicAssetMapping as HybridCadAssetMappingInstance;
+      assert(isDmCadAssetMappingInstance(mapping));
+      expectTypeOf<DmCadAssetMappingInstance>(mapping);
+    });
+  });
 
   describe(isClassicCadAssetMapping.name, () => {
     test('recognizes classic asset mapping', () => {
