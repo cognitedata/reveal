@@ -46,11 +46,11 @@ export class ClassicCadAssetMappingPerModelCache {
   private async fetchAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ClassicCadAssetMapping[]> {
-    const assetMapping3D = await this._sdk.assetMappings3D
-      .list(modelId, revisionId, { limit: 1000 })
+  ): Promise<HybridCadAssetMapping[]> {
+    const assetMapping3D: RawCdfHybridCadAssetMapping[] = await this._sdk.assetMappings3D
+      .list(modelId, revisionId, { limit: 1000, getDmsInstances: true })
       .autoPagingToArray({ limit: Infinity });
 
-    return assetMapping3D.filter(isValidClassicCadAssetMapping);
+    return assetMapping3D.flatMap(extractHybridAssetMappings);
   }
 }

@@ -1,16 +1,20 @@
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
-  type ModelTreeIndexKey,
-  type AssetId,
   type ModelId,
   type RevisionId,
   type ChunkInCacheTypes,
-  type ModelAssetIdKey,
-  type FdmKey
+  type NodeId,
+  type ModelInstanceIdKey,
+  type ModelNodeIdKey
 } from '../types';
-import { chunk, maxBy, partition } from 'lodash';
+import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKeyTranslation';
+import {
+  createModelInstanceIdKey,
+  createModelRevisionKey,
+  createInstanceKey,
+  createModelNodeIdKey
+} from '../idAndKeyTranslation';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
 import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
@@ -231,10 +235,14 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<HybridCadAssetMapping[]> {
+    // TODO(BND3D-5837): The asset mappings filter endpoint does not support lookups by DM ids, only assetIds + nodeIds
+    const numericalIdChunk = currentChunk.filter((key) => typeof key === 'number');
+    if (numericalIdChunk.length === 0) {
       return [];
     }
+
     const filter =
-      filterType === 'nodeIds' ? { nodeIds: currentChunk } : { assetIds: currentChunk };
+      filterType === 'nodeIds' ? { nodeIds: numericalIdChunk } : { assetIds: numericalIdChunk };
 
     const assetMapping3D = (
       await this._sdk.assetMappings3D
@@ -243,7 +251,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
           filter
         })
         .autoPagingToArray({ limit: Infinity })
-    ).filter(isValidClassicCadAssetMapping);
+    ).flatMap(extractHybridAssetMappings);
 
     await Promise.all(
       assetMapping3D.map(async (assetMapping) => {
