@@ -4,7 +4,11 @@ import {
   type CogniteClient,
   type HttpResponse,
   type HttpRequestOptions,
-  type AssetMappings3DAPI
+  type AssetMappings3DAPI,
+  AssetMappings3DListFilter,
+  Revision3D,
+  Nodes3DAPI,
+  Revisions3DAPI
 } from '@cognite/sdk';
 import { vi } from 'vitest';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
@@ -27,9 +31,15 @@ export const retrieveMock = vi.fn<AssetsAPI['retrieve']>(async (assetIds) => {
   );
 });
 
-export const assetMappings3DListMock = vi.fn<AssetMappings3DAPI['list']>(
-  async () => await createCursorAndAsyncIteratorMock({ items: [] })
+export const assetMappings3DListMock = vi.fn<AssetMappings3DAPI['list']>(() =>
+  createCursorAndAsyncIteratorMock({ items: [] })
 );
+
+export const assetMappings3DFilterMock = vi.fn<AssetMappings3DAPI['filter']>(() =>
+  createCursorAndAsyncIteratorMock({ items: [] })
+);
+
+export const nodes3dRetrieveMock = vi.fn<Nodes3DAPI['retrieve']>(() => Promise.resolve([]));
 
 export const postMock = vi.fn<
   (
@@ -84,6 +94,13 @@ export const assetRetrieveMock = new Mock<AssetsAPI>()
 export const assetMappingsMock = new Mock<AssetMappings3DAPI>()
   .setup((p) => p.list)
   .returns(assetMappings3DListMock)
+  .setup((p) => p.filter)
+  .returns(assetMappings3DFilterMock)
+  .object();
+
+export const revisions3dMock = new Mock<Revisions3DAPI>()
+  .setup((p) => p.retrieve3DNodes)
+  .returns(nodes3dRetrieveMock)
   .object();
 
 export const sdkMock = new Mock<CogniteClient>()
@@ -95,6 +112,8 @@ export const sdkMock = new Mock<CogniteClient>()
   .returns(assetRetrieveMock)
   .setup((p) => p.assetMappings3D)
   .returns(assetMappingsMock)
+  .setup((p) => p.revisions3D)
+  .returns(revisions3dMock)
   .setup((p) => p.post)
   .returns(postMock as <T>(path: string, options?: HttpRequestOptions) => Promise<HttpResponse<T>>)
   .setup((p) => p.models3D.retrieve)
