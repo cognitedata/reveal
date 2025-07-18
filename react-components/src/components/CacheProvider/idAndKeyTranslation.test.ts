@@ -4,8 +4,9 @@ import {
   createInstanceKey,
   createModelRevisionKey,
   createModelTreeIndexKey,
-  modelRevisionNodesAssetToKey,
-  revisionKeyToIds
+  createModelInstanceIdKey,
+  revisionKeyToIds,
+  createModelNodeIdKey
 } from './idAndKeyTranslation';
 
 describe('idAndKeyTranslation', () => {
@@ -13,6 +14,7 @@ describe('idAndKeyTranslation', () => {
   const REVISION_ID = 456;
   const INSTANCE = { externalId: 'externalId', space: 'space' };
   const ASSET_ID = 765;
+  const NODE_ID = 654;
 
   describe(createModelRevisionKey.name, () => {
     test('concatenates model and revision into key', () => {
@@ -60,10 +62,18 @@ describe('idAndKeyTranslation', () => {
     });
   });
 
-  describe(modelRevisionNodesAssetToKey.name, () => {
+  describe(createModelInstanceIdKey.name, () => {
     test('concatenates model ID, revision ID and asset ID into key', () => {
-      expect(modelRevisionNodesAssetToKey(MODEL_ID, REVISION_ID, ASSET_ID)).toBe(
+      expect(createModelInstanceIdKey(MODEL_ID, REVISION_ID, ASSET_ID)).toBe(
         `${MODEL_ID}/${REVISION_ID}/${ASSET_ID}`
+      );
+    });
+  });
+
+  describe(createModelNodeIdKey.name, () => {
+    test('concatenates model ID, revision ID and node ID into key', () => {
+      expect(createModelNodeIdKey(MODEL_ID, REVISION_ID, NODE_ID)).toBe(
+        `${MODEL_ID}/${REVISION_ID}/${NODE_ID}`
       );
     });
   });

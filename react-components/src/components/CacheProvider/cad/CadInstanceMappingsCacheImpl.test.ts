@@ -12,7 +12,7 @@ describe(createCadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =
     vi.fn<ClassicCadAssetMappingCache['getAssetMappingsForLowestAncestor']>();
   const mockClassicGetNodesForAssetIds =
-    vi.fn<ClassicCadAssetMappingCache['getNodesForAssetIds']>();
+    vi.fn<ClassicCadAssetMappingCache['getNodesForInstanceIds']>();
   const mockClassicGenerateNode3DCachePerItem =
     vi.fn<ClassicCadAssetMappingCache['generateNode3DCachePerItem']>();
   const mockClassicGenerateAssetMappingsCachePerItemFromModelCache =
@@ -22,7 +22,7 @@ describe(createCadInstanceMappingsCache.name, () => {
 
   const mockClassicCadAssetMappingCache: ClassicCadAssetMappingCache = {
     getAssetMappingsForLowestAncestor: mockClassicGetAssetMappingsForLowestAncestor,
-    getNodesForAssetIds: mockClassicGetNodesForAssetIds,
+    getNodesForInstanceIds: mockClassicGetNodesForAssetIds,
     generateNode3DCachePerItem: mockClassicGenerateNode3DCachePerItem,
     generateAssetMappingsCachePerItemFromModelCache:
       mockClassicGenerateAssetMappingsCachePerItemFromModelCache,

@@ -8,8 +8,9 @@ import {
   type TreeIndex,
   type RevisionId,
   type ModelId,
-  type ModelAssetIdKey,
-  type AssetId
+  type ModelInstanceIdKey,
+  type NodeId,
+  type ModelNodeIdKey
 } from './types';
 
 import { split } from 'lodash';
@@ -21,14 +22,6 @@ export function createModelRevisionKey(modelId: ModelId, revisionId: RevisionId)
 export function revisionKeyToIds(revisionKey: ModelRevisionKey): [ModelId, RevisionId] {
   const components = split(revisionKey, '/');
   return [Number(components[0]), Number(components[1])];
-}
-
-export function createModelTreeIndexKey(
-  modelId: ModelId,
-  revisionId: RevisionId,
-  treeIndex: TreeIndex
-): ModelTreeIndexKey {
-  return `${modelId}/${revisionId}/${treeIndex}`;
 }
 
 export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
@@ -43,10 +36,26 @@ export function createInstanceKey(id: InstanceId): InstanceKey {
   }
 }
 
-export function modelRevisionNodesAssetToKey(
+export function createModelTreeIndexKey(
   modelId: ModelId,
   revisionId: RevisionId,
-  id: AssetId
-): ModelAssetIdKey {
+  treeIndex: TreeIndex
+): ModelTreeIndexKey {
+  return `${modelId}/${revisionId}/${treeIndex}`;
+}
+
+export function createModelInstanceIdKey(
+  modelId: ModelId,
+  revisionId: RevisionId,
+  id: InstanceKey
+): ModelInstanceIdKey {
+  return `${modelId}/${revisionId}/${id}`;
+}
+
+export function createModelNodeIdKey(
+  modelId: ModelId,
+  revisionId: RevisionId,
+  id: NodeId
+): ModelNodeIdKey {
   return `${modelId}/${revisionId}/${id}`;
 }

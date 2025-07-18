@@ -1,8 +1,8 @@
 import type { Node3D } from '@cognite/sdk';
 import type { ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
-import type { AssetId, FdmKey, ModelId, RevisionId } from '../types';
+import type { ModelId, RevisionId } from '../types';
 import type { HybridCadAssetMapping, HybridCadAssetTreeIndexMapping } from './assetMappingTypes';
-import type { InstanceId } from '../../../utilities/instanceIds';
+import type { InstanceId, InstanceKey } from '../../../utilities/instanceIds';
 
 export type HybridCadNodeAssetMappingResult = {
   node?: Node3D;
@@ -15,11 +15,11 @@ export type ClassicCadAssetMappingCache = {
     revisionId: RevisionId,
     ancestors: Node3D[]
   ) => Promise<HybridCadNodeAssetMappingResult>;
-  getNodesForAssetIds: (
+  getNodesForInstanceIds: (
     modelId: ModelId,
     revisionId: RevisionId,
     instanceIds: InstanceId[]
-  ) => Promise<Map<FdmKey | AssetId, Node3D[]>>;
+  ) => Promise<Map<InstanceKey, Node3D[]>>;
   generateNode3DCachePerItem: (
     modelId: ModelId,
     revisionId: RevisionId,

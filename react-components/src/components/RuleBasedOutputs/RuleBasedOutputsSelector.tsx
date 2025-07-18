@@ -14,13 +14,16 @@ import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAnd
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
 import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
-import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAssetIdsFromMapped';
+import { useExtractUniqueClassicAssetIdsFromMapped } from './hooks/useExtractUniqueClassicAssetIdsFromMapped';
 import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
 import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
-import { type ClassicCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
+import {
+  isClassicCadAssetMapping,
+  type ClassicCadAssetMapping
+} from '../CacheProvider/cad/assetMappingTypes';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -50,7 +53,7 @@ export function RuleBasedOutputsSelector({
   const { data: assetMappings, isLoading: isAssetMappingsLoading } =
     useAssetMappedNodesForRevisions(cadModels);
 
-  const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
+  const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
   const {
     data: mappedAssets,
@@ -116,7 +119,7 @@ export function RuleBasedOutputsSelector({
           if (flatAssetsMappingsList.length === 0 && fdmMappings?.length === 0) return [];
 
           const mappingsStylings = await initializeRuleBasedOutputs({
-            assetMappings: flatAssetsMappingsList,
+            assetMappings: flatAssetsMappingsList.filter(isClassicCadAssetMapping),
             fdmMappings: fdmMappings ?? [],
             contextualizedAssetNodes,
             ruleSet,
