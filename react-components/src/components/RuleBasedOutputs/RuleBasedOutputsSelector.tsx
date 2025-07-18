@@ -14,7 +14,7 @@ import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAnd
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
 import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
-import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAssetIdsFromMapped';
+import { useExtractUniqueClassicAssetIdsFromMapped } from './hooks/useExtractUniqueClassicAssetIdsFromMapped';
 import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
@@ -53,7 +53,7 @@ export function RuleBasedOutputsSelector({
   const { data: assetMappings, isLoading: isAssetMappingsLoading } =
     useAssetMappedNodesForRevisions(cadModels);
 
-  const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
+  const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
   const {
     data: mappedAssets,

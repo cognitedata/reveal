@@ -5,7 +5,7 @@ import { uniqBy } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';
 import { isClassicCadAssetMapping } from '../../CacheProvider/cad/assetMappingTypes';
 
-export const useExtractUniqueAssetIdsFromMapped = (
+export const useExtractUniqueClassicAssetIdsFromMapped = (
   assetMappings: ModelWithAssetMappings[] | undefined
 ): InternalId[] => {
   return useMemo(() => {
