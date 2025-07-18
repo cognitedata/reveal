@@ -13,7 +13,7 @@ import {
 import { fetchAssetsForAssetReferences } from './annotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { assetInstanceToKey } from '../../utilities/assetInstanceToKey';
-import { type InstanceReference } from '../../utilities/instanceIds';
+import { isInternalId, type InstanceReference } from '../../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
 import { uniqBy } from 'lodash';
 import { type AssetInstance } from '../../utilities/instances';
@@ -72,7 +72,9 @@ export class Image360AnnotationCache {
         const results = await Promise.all(
           image360Collections.map(
             async (image360Collection) =>
-              await image360Collection.findImageAnnotations({ assetRef: assetInstance })
+              await image360Collection.findImageAnnotations({
+                assetRef: isInternalId(assetInstance) ? { id: assetInstance.id } : assetInstance
+              })
           )
         );
         return results.flat();
@@ -97,35 +99,37 @@ export class Image360AnnotationCache {
     const assetsArray = await fetchAssetsForAssetReferences(uniqueAssetIds, this._sdk);
     const assets = new Map(assetsArray.map((asset) => [assetInstanceToKey(asset), asset]));
 
-    return await this.getAssetWithAnnotationsMapped(image360AnnotationAssets, assets);
+    const assetsWithAnnotations = this.getAssetWithAnnotationsMapped(
+      image360AnnotationAssets,
+      assets
+    );
+
+    return assetsWithAnnotations;
   }
 
-  private async getAssetWithAnnotationsMapped(
+  private getAssetWithAnnotationsMapped(
     image360AnnotationAssets: Array<Image360AnnotationAssetQueryResult<DataSourceType>>,
     assets: Map<string, AssetInstance>
-  ): Promise<Image360AnnotationAssetInfo[]> {
-    const image360AnnotationAssetInfo = await Promise.all(
-      image360AnnotationAssets
-        .filter((image360AnnotationAsset) => {
-          const idRef = getAssetIdKeyForImage360Annotation(
-            image360AnnotationAsset.annotation.annotation
-          );
-          return idRef !== undefined && assets.has(idRef);
-        })
-        .map(
-          async (image360AnnotationAsset) =>
-            await createAnnotationInfoWithAsset(image360AnnotationAsset, assets)
-        )
-    );
+  ): Image360AnnotationAssetInfo[] {
+    const image360AnnotationAssetInfo = image360AnnotationAssets
+      .filter((image360AnnotationAsset) => {
+        const idRef = getAssetIdKeyForImage360Annotation(
+          image360AnnotationAsset.annotation.annotation
+        );
+        return idRef !== undefined && assets.has(idRef);
+      })
+      .map((image360AnnotationAsset) =>
+        createAnnotationInfoWithAsset(image360AnnotationAsset, assets)
+      );
 
     return image360AnnotationAssetInfo.filter(isDefined);
   }
 }
 
-async function createAnnotationInfoWithAsset(
+function createAnnotationInfoWithAsset(
   image360AnnotationAsset: Image360AnnotationAssetQueryResult<DataSourceType>,
   assets: Map<string, AssetInstance>
-): Promise<Image360AnnotationAssetInfo | undefined> {
+): Image360AnnotationAssetInfo | undefined {
   const idRef = getAssetIdKeyForImage360Annotation(image360AnnotationAsset.annotation.annotation);
   if (idRef === undefined) {
     return undefined;

@@ -1,60 +1,50 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Image360AnnotationCache } from './Image360AnnotationCache';
-import { type CogniteClient } from '@cognite/sdk';
-import { type InstanceReference } from '../../utilities/instanceIds';
-import { type Image360Collection } from '@cognite/reveal';
+import { viewerImage360CollectionsMock, viewerMock } from '#test-utils/fixtures/viewer';
+import { retrieveMock, sdkMock } from '#test-utils/fixtures/sdk';
+import { createImage360ClassicMock, findImageAnnotationsMock } from '#test-utils/fixtures/image360';
+import { type Asset } from '@cognite/sdk';
+import { type DataSourceType, type InstanceReference } from '@cognite/reveal';
+import { createAssetMock } from '#test-utils/fixtures/assets';
+import { mockImage360AnnotationAssetResult } from '#test-utils/fixtures/image360AssetWithAnnotation';
 
-function createMockViewer(collections: any[] = []) {
-  return {
-    get360ImageCollections: vi.fn(() => collections)
-  };
-}
-
-function createMockCollection(id: string, annotations: any[] = []) {
-  return {
-    id,
-    findImageAnnotations: vi.fn().mockResolvedValue(annotations)
-  };
-}
-
-const mockSdk = {} as CogniteClient;
-const mockAsset = { id: 'asset1' };
-const mockAssetInstance: InstanceReference = { id: 'asset1' };
-
-describe('Image360AnnotationCache', () => {
+describe(Image360AnnotationCache.name, () => {
   let cache: Image360AnnotationCache;
-  let mockViewer: any;
-  let mockCollection: any;
+  let assets: Asset[];
+  const mockImage360Collection = createImage360ClassicMock();
+
+  const mockAssetInstance: Array<InstanceReference<DataSourceType>> = [{ id: 1 }];
 
   beforeEach(() => {
-    mockCollection = createMockCollection('site1', [
-      { annotation: { annotation: { id: 'ann1' }, getCenter: () => ({ applyMatrix4: vi.fn(() => ({})) }) }, image: { transform: {} } }
-    ]);
-    mockViewer = createMockViewer([mockCollection]);
-    cache = new Image360AnnotationCache(mockSdk, mockViewer);
+    assets = [createAssetMock(1)];
+    viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
+    findImageAnnotationsMock.mockResolvedValue([mockImage360AnnotationAssetResult]);
   });
 
   it('returns empty array if viewer is undefined', async () => {
-    const cacheNoViewer = new Image360AnnotationCache(mockSdk, undefined);
-    const result = await cacheNoViewer.getReveal360AnnotationsForAssets(['site1'], [mockAssetInstance]);
+    const cacheNoViewer = new Image360AnnotationCache(sdkMock, undefined);
+    const result = await cacheNoViewer.getReveal360AnnotationsForAssets(
+      ['site1'],
+      mockAssetInstance
+    );
     expect(result).toEqual([]);
   });
 
-  it('returns cached result if available', async () => {
-    const key = [mockAssetInstance].map(a => a.id).sort().join();
-    (cache as any)._annotationToAssetMappingsWithAssetInstance.set(key, ['cached']);
-    const result = await cache.getReveal360AnnotationsForAssets(['site1'], [mockAssetInstance]);
-    expect(result).toEqual(['cached']);
+  it('fetches and maps annotations', async () => {
+    cache = new Image360AnnotationCache(sdkMock, viewerMock);
+    retrieveMock.mockResolvedValueOnce([assets[0]]);
+
+    const result = await cache.getReveal360AnnotationsForAssets(['siteId'], mockAssetInstance);
+    expect(mockImage360Collection.findImageAnnotations).toHaveBeenCalledTimes(1);
+    expect(result).toHaveLength(1);
+    expect(result[0].asset).toEqual(assets[0]);
   });
 
-  it('fetches and maps annotations', async () => {
-    // Mock fetchAssetsForAssetReferences to return the asset
-    vi.mock('./annotationModelUtils', () => ({
-      fetchAssetsForAssetReferences: vi.fn().mockResolvedValue([mockAsset])
-    }));
+  it('returns cached result if available', async () => {
+    const result = await cache.getReveal360AnnotationsForAssets(['siteId'], mockAssetInstance);
 
-    const result = await cache.getReveal360AnnotationsForAssets(['site1'], [mockAssetInstance]);
-    expect(Array.isArray(result)).toBe(true);
-    expect(mockCollection.findImageAnnotations).toHaveBeenCalled();
+    expect(mockImage360Collection.findImageAnnotations).not.toHaveBeenCalled();
+    expect(result).toHaveLength(1);
+    expect(result[0].asset).toEqual(assets[0]);
   });
 });
