@@ -315,7 +315,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId,
     ids: InstanceKey[],
-    filterType: 'nodeIds' | 'assetIds'
+    filterType: HybridCadCacheIndexType
   ): Promise<HybridCadAssetMapping[]> {
     if (ids.length === 0) {
       return [];
