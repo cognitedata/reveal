@@ -34,6 +34,9 @@ export class SettingsCommand extends BaseSettingsCommand {
     this.add(new SetQualitySliderCommand());
     this.add(new QualityWarningBannerCommand());
 
+    this.add(new DividerCommand());
+    this.add(new SetGhostModeCommand());
+
     // Point clouds
     this.add(new PointCloudDividerCommand());
     this.add(new SetPointSizeCommand());
@@ -62,9 +65,6 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new PointsOfInterestSectionCommand());
       this.add(new SetPointsOfInterestVisibleCommand());
     }
-
-    this.add(new DividerCommand());
-    this.add(new SetGhostModeCommand());
   }
 
   // ==================================================
