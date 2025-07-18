@@ -76,6 +76,8 @@ describe(createClassicCadAssetMappingCache.name, () => {
 
       assetMappings3DFilterMock.mockReturnValue(
         createCursorAndAsyncIteratorMock({
+          // SDK method uses `AssetMapping3D', but it is out of
+          // date with the API definition, so we need to cast
           items: mappings as AssetMapping3D[]
         })
       );
@@ -95,6 +97,8 @@ describe(createClassicCadAssetMappingCache.name, () => {
     test('returns empty map if no associated mapping exists', async () => {
       assetMappings3DFilterMock.mockReturnValue(
         createCursorAndAsyncIteratorMock({
+          // SDK method uses `AssetMapping3D', but it is out of
+          // date with the API definition, so we need to cast
           items: [
             createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], ASSET_ID)
           ] as AssetMapping3D[]
@@ -108,6 +112,8 @@ describe(createClassicCadAssetMappingCache.name, () => {
 
     test('returns map with relevant mappings for input instance', async () => {
       assetMappings3DFilterMock.mockReturnValue(
+        // SDK method uses `AssetMapping3D', but it is out of
+        // date with the API definition, so we need to cast
         createCursorAndAsyncIteratorMock({
           items: [
             createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], ASSET_ID)
@@ -147,6 +153,8 @@ describe(createClassicCadAssetMappingCache.name, () => {
       ];
       assetMappings3DListMock.mockReturnValueOnce(
         createCursorAndAsyncIteratorMock({
+          // SDK method uses `AssetMapping3D', but it is out of
+          // date with the API definition, so we need to cast
           items: mappings as AssetMapping3D[]
         })
       );
