@@ -14,6 +14,7 @@ import { isDM3DModelIdentifier } from '../components/Reveal3DResources/typeGuard
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference, isIdEither } from './instanceIds';
+import { isClassicCadAssetMapping } from '../components/CacheProvider/cad/assetMappingTypes';
 
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,
@@ -158,5 +159,7 @@ async function getAssetMappingPromise(
       ancestors
     );
 
-  return nodeAssetResult.mappings.map((mapping) => ({ id: mapping.assetId }));
+  return nodeAssetResult.mappings
+    .filter(isClassicCadAssetMapping)
+    .map((mapping) => ({ id: mapping.assetId }));
 }
