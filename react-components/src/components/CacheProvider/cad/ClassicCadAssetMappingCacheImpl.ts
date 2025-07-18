@@ -31,7 +31,8 @@ import {
   type HybridCadAssetTreeIndexMapping
 } from './assetMappingTypes';
 import { type HybridCadCacheIndexType } from './types';
-import { extractHybridAssetMappings } from './rawAssetMappingTypes';
+import { convertToHybridAssetMapping } from './rawAssetMappingTypes';
+import { isDefined } from '../../../utilities/isDefined';
 
 export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
   return new ClassicCadAssetMappingCacheImpl(sdk);
@@ -253,7 +254,9 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
           filter
         })
         .autoPagingToArray({ limit: Infinity })
-    ).flatMap(extractHybridAssetMappings);
+    )
+      .map(convertToHybridAssetMapping)
+      .filter(isDefined);
 
     await Promise.all(
       assetMapping3D.map(async (assetMapping) => {

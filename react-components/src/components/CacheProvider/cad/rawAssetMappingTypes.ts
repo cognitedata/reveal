@@ -64,45 +64,28 @@ function isRawDmAssetMappingInstance(
   );
 }
 
-export function extractHybridAssetMappings(
+export function convertToHybridAssetMapping(
   rawAssetMapping: RawCdfHybridCadAssetMapping
-): HybridCadAssetMapping[] {
+): HybridCadAssetMapping | undefined {
   if (!isValidCdfHybridCadAssetMapping(rawAssetMapping)) {
-    return [];
-  }
-
-  return [
-    extractClassicAssetMapping(rawAssetMapping),
-    extractDmAssetMapping(rawAssetMapping)
-  ].filter(isDefined);
-}
-
-function extractClassicAssetMapping(
-  validAssetMapping: ValidCdfHybridCadAssetMapping
-): ClassicCadAssetMapping | undefined {
-  if (!isRawClassicAssetMappingInstance(validAssetMapping)) {
     return undefined;
   }
 
-  return {
-    nodeId: validAssetMapping.nodeId,
-    treeIndex: validAssetMapping.treeIndex,
-    subtreeSize: validAssetMapping.subtreeSize,
-    assetId: validAssetMapping.assetId
-  };
-}
-
-function extractDmAssetMapping(
-  validAssetMapping: ValidCdfHybridCadAssetMapping
-): DmCadAssetMapping | undefined {
-  if (!isRawDmAssetMappingInstance(validAssetMapping)) {
-    return undefined;
+  if (isRawClassicAssetMappingInstance(rawAssetMapping)) {
+    return {
+      nodeId: rawAssetMapping.nodeId,
+      treeIndex: rawAssetMapping.treeIndex,
+      subtreeSize: rawAssetMapping.subtreeSize,
+      assetId: rawAssetMapping.assetId
+    };
   }
 
-  return {
-    nodeId: validAssetMapping.nodeId,
-    treeIndex: validAssetMapping.treeIndex,
-    subtreeSize: validAssetMapping.subtreeSize,
-    instanceId: validAssetMapping.assetInstanceId
-  };
+  if (isRawDmAssetMappingInstance(rawAssetMapping)) {
+    return {
+      nodeId: rawAssetMapping.nodeId,
+      treeIndex: rawAssetMapping.treeIndex,
+      subtreeSize: rawAssetMapping.subtreeSize,
+      instanceId: rawAssetMapping.assetInstanceId
+    };
+  }
 }

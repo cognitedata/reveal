@@ -3,9 +3,10 @@ import { type ModelId, type RevisionId, type ModelRevisionKey } from '../types';
 import { createModelRevisionKey } from '../idAndKeyTranslation';
 import { type HybridCadAssetMapping } from './assetMappingTypes';
 import {
-  extractHybridAssetMappings,
+  convertToHybridAssetMapping,
   type RawCdfHybridCadAssetMapping
 } from './rawAssetMappingTypes';
+import { isDefined } from '../../../utilities/isDefined';
 
 export class ClassicCadAssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;
@@ -54,6 +55,8 @@ export class ClassicCadAssetMappingPerModelCache {
       .list(modelId, revisionId, { limit: 1000, getDmsInstances: true })
       .autoPagingToArray({ limit: Infinity });
 
-    return [...classicAssetMappings, ...dmAssetMappings].flatMap(extractHybridAssetMappings);
+    return [...classicAssetMappings, ...dmAssetMappings]
+      .map(convertToHybridAssetMapping)
+      .filter(isDefined);
   }
 }
