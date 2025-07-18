@@ -3,10 +3,11 @@ import {
   type Image360AnnotationAssetInfo,
   type Image360AnnotationModel
 } from '../components/CacheProvider/types';
-import { useImage360AnnotationCache } from '../components/CacheProvider/CacheProvider';
 import { getAssetIdKeyForImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference } from '../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../utilities/instanceIds/toKey';
+import { Image360AnnotationMappingsContext } from './useImage360AnnotationMappingsForInstanceReferences.context';
+import { useContext } from 'react';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
@@ -17,6 +18,7 @@ export const useImage360AnnotationMappingsForInstanceReferences = (
   assetIds: InstanceReference[] | undefined,
   siteIds: string[] | undefined
 ): UseQueryResult<Image360AnnotationAssetInfo[]> => {
+  const { useImage360AnnotationCache } = useContext(Image360AnnotationMappingsContext);
   const image360AnnotationCache = useImage360AnnotationCache();
 
   return useQuery({
@@ -36,19 +38,23 @@ export const useImage360AnnotationMappingsForInstanceReferences = (
       ) {
         return [];
       }
+
       const assetIdSet = new Set(assetIds.map(createInstanceReferenceKey));
 
-      const annotationAssetInfo = await image360AnnotationCache.getReveal360Annotations(siteIds);
+      const annotationAssetInfo = await image360AnnotationCache.getReveal360AnnotationsForAssets(
+        siteIds,
+        assetIds
+      );
+
       const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
         const annotationAssetKey = getAssetIdKeyForImage360Annotation(
-          annotationInfo.assetAnnotationImage360Info.annotationInfo
+          annotationInfo.assetAnnotationImage360Info.annotation.annotation
         );
 
         return annotationAssetKey !== undefined && assetIdSet.has(annotationAssetKey);
       });
       return filteredAnnotationAssetInfo;
     },
-    staleTime: Infinity,
-    enabled: assetIds !== undefined && siteIds !== undefined
+    staleTime: Infinity
   });
 };

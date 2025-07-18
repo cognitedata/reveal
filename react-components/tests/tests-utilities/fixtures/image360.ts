@@ -32,6 +32,10 @@ export const taggedImage360DmOptions = {
   addOptions: image360DmOptions
 } as const satisfies TaggedAddImage360CollectionOptions;
 
+export const findImageAnnotationsMock = vi
+  .fn<Image360Collection<ClassicDataSourceType>['findImageAnnotations']>()
+  .mockResolvedValue([]);
+
 export function createImage360ClassicMock(parameters?: {
   visible?: boolean;
 }): Image360Collection<ClassicDataSourceType> {
@@ -61,6 +65,8 @@ export function createImage360ClassicMock(parameters?: {
     .returns(onEventMock)
     .setup((p) => p.off)
     .returns(offEventMock)
+    .setup((p) => p.findImageAnnotations)
+    .returns(findImageAnnotationsMock)
     .object();
 }
 
