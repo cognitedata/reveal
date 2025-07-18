@@ -1,11 +1,6 @@
 import type { DmsUniqueIdentifier } from '../../../data-providers';
-import { isDefined } from '../../../utilities/isDefined';
-import { AssetId, NodeId, TreeIndex } from '../types';
-import type {
-  ClassicCadAssetMapping,
-  DmCadAssetMapping,
-  HybridCadAssetMapping
-} from './assetMappingTypes';
+import { type AssetId, type NodeId, type TreeIndex } from '../types';
+import type { HybridCadAssetMapping } from './assetMappingTypes';
 
 /**
  * The raw CDF asset mapping type, including DM instance IDs
