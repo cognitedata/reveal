@@ -30,8 +30,8 @@ describe(ClassicCadAssetMappingPerModelCache.name, () => {
   ];
 
   beforeEach(() => {
-    // We need to do an explicit casting because the `AssetMapping3D` SDK type requires
-    // `assetId` to be defined, but this may not be true in real life
+    // SDK method uses `AssetMapping3D', but it is out of
+    // date with the API definition, so we need to cast
     assetMappings3DListMock.mockReturnValueOnce(
       createCursorAndAsyncIteratorMock({ items: ASSET_MAPPINGS as AssetMapping3D[] })
     );

@@ -51,8 +51,8 @@ describe(createClassicCadAssetMappingCache.name, () => {
 
       assetMappings3DFilterMock.mockReturnValue(
         createCursorAndAsyncIteratorMock({
-          // SDK method uses `AssetMapping3D', but its `assetId` may not always
-          // be defined in real usage
+          // SDK method uses `AssetMapping3D', but it is out of
+          // date with the API definition, so we need to cast
           items: [mapping] as AssetMapping3D[]
         })
       );
@@ -76,8 +76,6 @@ describe(createClassicCadAssetMappingCache.name, () => {
 
       assetMappings3DFilterMock.mockReturnValue(
         createCursorAndAsyncIteratorMock({
-          // SDK method uses `AssetMapping3D', but its `assetId` may not always
-          // be defined in real usage
           items: mappings as AssetMapping3D[]
         })
       );
