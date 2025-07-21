@@ -3,9 +3,7 @@ import {
   type Image360AnnotationAssetInfo,
   type Image360AnnotationModel
 } from '../components/CacheProvider/types';
-import { getAssetIdKeyForImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference } from '../utilities/instanceIds';
-import { createInstanceReferenceKey } from '../utilities/instanceIds/toKey';
 import { Image360AnnotationMappingsContext } from './useImage360AnnotationMappingsForInstanceReferences.context';
 import { useContext } from 'react';
 
@@ -39,21 +37,12 @@ export const useImage360AnnotationMappingsForInstanceReferences = (
         return [];
       }
 
-      const assetIdSet = new Set(assetIds.map(createInstanceReferenceKey));
-
       const annotationAssetInfo = await image360AnnotationCache.getReveal360AnnotationsForAssets(
         siteIds,
         assetIds
       );
 
-      const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
-        const annotationAssetKey = getAssetIdKeyForImage360Annotation(
-          annotationInfo.assetAnnotationImage360Info.annotation.annotation
-        );
-
-        return annotationAssetKey !== undefined && assetIdSet.has(annotationAssetKey);
-      });
-      return filteredAnnotationAssetInfo;
+      return annotationAssetInfo;
     },
     staleTime: Infinity
   });

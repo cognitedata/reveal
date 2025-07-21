@@ -44,9 +44,7 @@ const mockImage360AnnotationCache = new Image360AnnotationCache(sdkMock, viewerM
 describe(useImage360AnnotationMappingsForInstanceReferences.name, () => {
   beforeEach(() => {
     dependencies.useImage360AnnotationCache.mockReturnValue(mockImage360AnnotationCache);
-    mockImage360AnnotationCache.getReveal360AnnotationsForAssets = vi
-      .fn()
-      .mockResolvedValue(mockReveal360Annotations);
+    mockImage360AnnotationCache.getReveal360AnnotationsForAssets = vi.fn().mockResolvedValue([]);
   });
 
   test('returns empty array if assetIds or siteIds are undefined', async () => {
@@ -70,6 +68,9 @@ describe(useImage360AnnotationMappingsForInstanceReferences.name, () => {
   });
 
   test('returns filtered annotation asset info', async () => {
+    mockImage360AnnotationCache.getReveal360AnnotationsForAssets = vi
+      .fn()
+      .mockResolvedValue(mockReveal360Annotations);
     const { result } = renderHook(
       () => useImage360AnnotationMappingsForInstanceReferences([{ id: 3449 }], ['siteId1']),
       { wrapper }

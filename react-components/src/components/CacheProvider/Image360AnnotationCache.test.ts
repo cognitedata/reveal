@@ -41,9 +41,15 @@ describe(Image360AnnotationCache.name, () => {
   });
 
   it('returns cached result if available', async () => {
+    const cache = new Image360AnnotationCache(sdkMock, viewerMock);
+    retrieveMock.mockResolvedValueOnce([assets[0]]);
+
+    await cache.getReveal360AnnotationsForAssets(['siteId'], mockAssetInstance);
+    findImageAnnotationsMock.mockClear();
+
     const result = await cache.getReveal360AnnotationsForAssets(['siteId'], mockAssetInstance);
 
-    expect(mockImage360Collection.findImageAnnotations).not.toHaveBeenCalled();
+    expect(findImageAnnotationsMock).not.toHaveBeenCalled();
     expect(result).toHaveLength(1);
     expect(result[0].asset).toEqual(assets[0]);
   });
