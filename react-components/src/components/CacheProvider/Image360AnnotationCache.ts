@@ -15,7 +15,7 @@ import { isDefined } from '../../utilities/isDefined';
 import { assetInstanceToKey } from '../../utilities/assetInstanceToKey';
 import { isInternalId, type InstanceReference } from '../../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
-import { uniqBy } from 'lodash';
+import { chunk, uniqBy } from 'lodash';
 import { type AssetInstance } from '../../utilities/instances';
 
 export class Image360AnnotationCache {
@@ -35,7 +35,7 @@ export class Image360AnnotationCache {
     siteIds: string[],
     assetInstances: InstanceReference[]
   ): Promise<Image360AnnotationAssetInfo[]> {
-    if (this._viewer === undefined) {
+    if (this._viewer === undefined || siteIds.length === 0 || assetInstances.length === 0) {
       return [];
     }
     const image360Collections = this._viewer.get360ImageCollections();
@@ -68,17 +68,23 @@ export class Image360AnnotationCache {
     image360Collections: Array<Image360Collection<DataSourceType>>
   ): Promise<Image360AnnotationAssetInfo[]> {
     const image360AnnotationAssetNested = await Promise.all(
-      assetInstances.map(async (assetInstance) => {
-        const results = await Promise.all(
-          image360Collections.map(
-            async (image360Collection) =>
-              await image360Collection.findImageAnnotations({
-                assetRef: isInternalId(assetInstance) ? { id: assetInstance.id } : assetInstance
-              })
-          )
-        );
-        return results.flat();
-      })
+      chunk(assetInstances, 5).flatMap((assetInstancesChunk) =>
+        assetInstancesChunk.map(
+          async (assetInstance) =>
+            await Promise.all(
+              chunk(image360Collections, 5).flatMap((image360CollectionsChunk) =>
+                image360CollectionsChunk.map(
+                  async (image360Collection) =>
+                    await image360Collection.findImageAnnotations({
+                      assetRef: isInternalId(assetInstance)
+                        ? { id: assetInstance.id }
+                        : assetInstance
+                    })
+                )
+              )
+            ).then((results) => results.flat())
+        )
+      )
     );
     const image360AnnotationAssets = image360AnnotationAssetNested.flat();
 

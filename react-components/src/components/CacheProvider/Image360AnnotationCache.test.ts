@@ -47,4 +47,14 @@ describe(Image360AnnotationCache.name, () => {
     expect(result).toHaveLength(1);
     expect(result[0].asset).toEqual(assets[0]);
   });
+
+  it('throws if findImageAnnotations API request fails', async () => {
+    cache = new Image360AnnotationCache(sdkMock, viewerMock);
+    retrieveMock.mockResolvedValueOnce([assets[0]]);
+    findImageAnnotationsMock.mockRejectedValueOnce(new Error('API error'));
+
+    await expect(
+      cache.getReveal360AnnotationsForAssets(['siteId'], mockAssetInstance)
+    ).rejects.toThrow('API error');
+  });
 });
