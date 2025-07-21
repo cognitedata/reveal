@@ -33,8 +33,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2231774635735416,
-        revisionId: 912809199849811,
+        modelId: 6804308053946048,
+        revisionId: 6132207798738006,
         styling: {
           default: {
             color: new Color('#efefef')

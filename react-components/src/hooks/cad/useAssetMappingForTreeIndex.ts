@@ -39,6 +39,7 @@ export const useAssetMappingForTreeIndex = (
         treeIndex,
         cdfClient
       );
+      console.log('Ancestor Nodes:', ancestors);
 
       return await assetMappingAndNode3DCache.getAssetMappingsForLowestAncestor(
         modelId,
