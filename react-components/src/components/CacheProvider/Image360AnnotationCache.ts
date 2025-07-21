@@ -67,27 +67,30 @@ export class Image360AnnotationCache {
     assetInstances: InstanceReference[],
     image360Collections: Array<Image360Collection<DataSourceType>>
   ): Promise<Image360AnnotationAssetInfo[]> {
-    const image360AnnotationAssetNested = await Promise.all(
-      chunk(assetInstances, 5).flatMap((assetInstancesChunk) =>
-        assetInstancesChunk.map(
-          async (assetInstance) =>
-            await Promise.all(
-              chunk(image360Collections, 5).flatMap((image360CollectionsChunk) =>
-                image360CollectionsChunk.map(
-                  async (image360Collection) =>
-                    await image360Collection.findImageAnnotations({
-                      assetRef: isInternalId(assetInstance)
-                        ? { id: assetInstance.id }
-                        : assetInstance
-                    })
-                )
-              )
-            ).then((results) => results.flat())
-        )
-      )
-    );
-    const image360AnnotationAssets = image360AnnotationAssetNested.flat();
+    const assetInstanceChunks = chunk(assetInstances, 5);
+    const image360CollectionChunks = chunk(image360Collections, 5);
 
+    const image360AnnotationAssets: Array<Image360AnnotationAssetQueryResult<DataSourceType>> = [];
+
+    for (const assetChunk of assetInstanceChunks) {
+      for (const image360CollectionChunk of image360CollectionChunks) {
+        // For each batch of assets and collections, process all requests in parallel
+        const chunkResults = await Promise.all(
+          assetChunk.map(async (assetInstance) => {
+            const results = await Promise.all(
+              image360CollectionChunk.map(
+                async (image360Collection) =>
+                  await image360Collection.findImageAnnotations({
+                    assetRef: isInternalId(assetInstance) ? { id: assetInstance.id } : assetInstance
+                  })
+              )
+            );
+            return results.flat();
+          })
+        );
+        image360AnnotationAssets.push(...chunkResults.flat());
+      }
+    }
     const assetIds = image360AnnotationAssets.reduce<InstanceReference[]>(
       (acc, image360AnnotationAsset) => {
         const assetRef = getInstanceReferenceFromImage360Annotation(
