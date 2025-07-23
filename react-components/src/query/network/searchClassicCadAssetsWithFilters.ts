@@ -1,13 +1,19 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type CadModelOptions } from '../../components';
 import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
-import { type ModelWithAssetTreeIndexMappings } from '../../hooks/cad/modelWithAssetMappings';
 import type { Asset, CogniteClient } from '@cognite/sdk';
 import { type AllAssetFilterProps } from './filters';
 import { type SearchClassicCadAssetsResponse } from './types';
 import { getAssetsList } from '../../hooks/network/getAssetsList';
-import { isDefined } from '../../utilities/isDefined';
-import { isClassicCadAssetTreeIndexMapping } from '../../components/CacheProvider/cad/assetMappingTypes';
+import {
+  HybridCadAssetTreeIndexMapping,
+  isClassicCadAssetTreeIndexMapping
+} from '../../components/CacheProvider/cad/assetMappingTypes';
+
+type ModelWithHybridTreeIndexMappings = {
+  model: CadModelOptions;
+  assetMappings: HybridCadAssetTreeIndexMapping[];
+};
 
 export async function searchClassicCadAssetsWithFilters(
   models: Array<AddModelOptions<ClassicDataSourceType>>,

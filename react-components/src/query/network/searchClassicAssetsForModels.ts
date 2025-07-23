@@ -4,17 +4,13 @@ import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuar
 import { uniqBy } from 'lodash';
 import { searchClassicImage360Assets } from './searchClassicImage360Assets';
 
-import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { type AllAssetFilterProps } from './filters';
-
-export type SearchClassicAssetsResponse = {
-  nextCursor: string | undefined;
-  data: Asset[];
-};
+import { SearchClassicCadAssetsResponse } from './types';
 
 export type SearchQueryOptions = {
   limit: number;
@@ -32,7 +28,7 @@ export async function searchClassicAssetsForModels(
   { limit, cadAssetsCursor, filters }: SearchQueryOptions,
   sdk: CogniteClient,
   renderTarget: RevealRenderTarget
-): Promise<SearchClassicAssetsResponse> {
+): Promise<SearchClassicCadAssetsResponse> {
   const isFirstPage = cadAssetsCursor === undefined;
 
   const assetMappingAndNode3DCache = renderTarget.cdfCaches.classicCadAssetMappingCache;
