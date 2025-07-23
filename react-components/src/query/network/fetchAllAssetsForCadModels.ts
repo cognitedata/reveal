@@ -2,7 +2,6 @@ import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/revea
 import { type SearchClassicCadAssetsResponse } from './types';
 import { type AssetMapping3D, type ListResponse, type CogniteClient } from '@cognite/sdk';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
-import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
 import { isSameModel } from '../../utilities/isSameModel';
 import { chunk } from 'lodash';
 
