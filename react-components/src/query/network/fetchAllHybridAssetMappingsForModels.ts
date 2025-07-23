@@ -78,8 +78,7 @@ async function fetchAssetMappingsForModel<T extends HybridDataType>(
     return { mappings: { items: [] }, model };
   }
 
-  // TODO(BND3D-5844): avoid arbitration by instance type here by allowing cursoring in the
-  // cache's getAssetMappingsForModel
+  // TODO(BND3D-5844): enable using the Asset mapping cache here by implementing cursoring in the cache
   const mappings = (await sdk.assetMappings3D.list(model.modelId, model.revisionId, {
     cursor: cursorForModel,
     limit,
