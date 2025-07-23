@@ -21,6 +21,8 @@ export async function searchClassicCadAssetsWithFilters(
     return { data: [], nextCursor: undefined };
   }
 
+  const isFirstPage = cursor === undefined;
+
   // Assume models are of type CAD
   const cadModels = models.map((model) => ({ ...model, type: 'cad' as const }));
 
@@ -28,6 +30,30 @@ export async function searchClassicCadAssetsWithFilters(
     cadModels,
     assetMappingAndNode3dCache
   );
+
+  return await fetchAllAssetsForAssetMappings(
+    assetMappingList,
+    filters,
+    sdk,
+    limit,
+    cursor,
+    isFirstPage
+  );
+}
+
+async function fetchAllAssetsForAssetMappings(
+  assetMappingList: ModelWithHybridTreeIndexMappings[],
+  filters: AllAssetFilterProps | undefined,
+  sdk: CogniteClient,
+  limit: number,
+  cursor: string | undefined,
+  isFirstPage: boolean
+): Promise<SearchClassicCadAssetsResponse> {
+  if (!isFirstPage && cursor === undefined) {
+    return { data: [], nextCursor: undefined };
+  }
+
+  const mappedSearchedAssetIds = new Set<number>();
 
   const mapped3dAssetIds = new Set(
     assetMappingList.flatMap((mapping) =>
@@ -37,57 +63,43 @@ export async function searchClassicCadAssetsWithFilters(
     )
   );
 
-  const fetchAssets = async (
-    cursor: string | undefined,
-    accumulatedAssets: Asset[],
-    mappedSearchedAssetIds: Set<number>
-  ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
+  const accumulatedAssets: Asset[] = [];
+
+  let nextCursor: string | undefined = cursor;
+
+  do {
     const searchedAssetsResponse = await getAssetsList(sdk, {
       limit: 1000,
-      cursor,
+      cursor: nextCursor,
       filters
     });
 
-    const filteredSearchedAssets = searchedAssetsResponse.items.filter(isDefined);
-    const filteredMappedSearchedAssets = filteredSearchedAssets.filter(
+    const filteredMappedSearchedAssets = searchedAssetsResponse.items.filter(
       (asset) => mapped3dAssetIds.has(asset.id) && !mappedSearchedAssetIds.has(asset.id)
     );
 
-    accumulatedAssets.push(...filteredMappedSearchedAssets);
+    accumulatedAssets.push(...searchedAssetsResponse.items);
 
-    if (accumulatedAssets.length >= limit || searchedAssetsResponse.nextCursor === undefined) {
-      return { assets: accumulatedAssets, nextCursor: searchedAssetsResponse.nextCursor };
-    }
+    nextCursor = searchedAssetsResponse.nextCursor;
 
     filteredMappedSearchedAssets.forEach((asset) => {
       mappedSearchedAssetIds.add(asset.id);
     });
+  } while (accumulatedAssets.length < limit && nextCursor !== undefined);
 
-    return await fetchAssets(
-      searchedAssetsResponse.nextCursor,
-      accumulatedAssets,
-      mappedSearchedAssetIds
-    );
-  };
-
-  const mappedSearchedAssetIds = new Set<number>();
-
-  const { assets, nextCursor } = await fetchAssets(cursor, [], mappedSearchedAssetIds);
-
-  return { data: assets, nextCursor };
+  return { data: accumulatedAssets, nextCursor };
 }
 
 async function fetchAssetMappedNodesForRevisions(
   cadModels: CadModelOptions[],
   assetMappingAndNode3dCache: ClassicCadAssetMappingCache
-): Promise<ModelWithAssetTreeIndexMappings[]> {
+): Promise<ModelWithHybridTreeIndexMappings[]> {
   const fetchPromises = cadModels.map(async (model) => {
     const assetMappings = await assetMappingAndNode3dCache.getAssetMappingsForModel(
       model.modelId,
       model.revisionId
     );
-
-    return { model, assetMappings: assetMappings.filter(isClassicCadAssetTreeIndexMapping) };
+    return { model, assetMappings };
   });
 
   return await Promise.all(fetchPromises);
