@@ -290,7 +290,6 @@ function combineFdmCadData(
     return fdmData;
   }
 
-  // Data is still loading
   if (fdmData === undefined || hybridData === undefined) {
     return undefined;
   }
