@@ -60,7 +60,7 @@ export const Main: Story = {
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {
     return (
-      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} useCoreDm={true}>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <RevealCanvas>
           <StoryContent resources={resources} />
           <ReactQueryDevtools />

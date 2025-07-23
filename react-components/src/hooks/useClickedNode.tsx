@@ -176,12 +176,9 @@ const useCombinedClickedNodeData = (
     if (intersection === undefined) {
       return undefined;
     }
-    console.log('Clicked Node Data: Hybrid Asset Mappings', hybridAssetMappings);
 
     const combinedFdmCadData = combineFdmCadData(hybridAssetMappings, fdmData);
-    console.log('Combined FDM CAD Data:', combinedFdmCadData);
     const filteredClassicCadData = extractClassicCadData(hybridAssetMappings);
-    console.log('Filtered Classic CAD Data:', filteredClassicCadData);
 
     const pointCloudAssetMappings = normalizeListDataResult(pointCloudAssetMappingsResult);
     const pointCloudFdmVolumeMappings = normalizeListDataResult(pointCloudFdmVolumeMappingsResult);
