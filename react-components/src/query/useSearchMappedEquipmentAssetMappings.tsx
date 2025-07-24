@@ -174,7 +174,7 @@ export const useAllMappedEquipmentAssetMappings = (
           .filter(isDefined)
           .filter(isClassicCadAssetMapping);
 
-        return { mappings: { items: mappings }, model };
+        return { mappings: { items: mappings, nextCursor: rawMappings.nextCursor }, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
@@ -231,7 +231,7 @@ export const useMappingsForAssetIds = (
           .filter(isDefined)
           .filter(isClassicCadAssetMapping);
 
-        return { mappings: { items: mappings }, model };
+        return { mappings: { items: mappings, nextCursor: rawMappings.nextCursor }, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
