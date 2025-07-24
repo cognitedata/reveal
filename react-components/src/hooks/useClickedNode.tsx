@@ -4,20 +4,16 @@ import {
   type AnyIntersection,
   type DataSourceType
 } from '@cognite/reveal';
-import { useEffect, useMemo, useState } from 'react';
-import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
-import { type PointCloudAnnotationMappedAssetData } from './types';
-import { MOUSE, Vector2, type Vector3 } from 'three';
-import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
-import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
-import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
 import {
-  type PointCloudFdmVolumeMappingWithViews,
-  usePointCloudFdmVolumeMappingForIntersection
-} from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
-import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
+  type AssetMappingDataResult,
+  type ClickedNodeData,
+  type FdmNodeDataResult,
+  type PointCloudAnnotationMappedAssetData
+} from './types';
+import { MOUSE, Vector2, type Vector3 } from 'three';
+import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import {
@@ -25,57 +21,23 @@ import {
   isDmCadAssetMapping
 } from '../components/CacheProvider/cad/assetMappingTypes';
 import { isDmsInstance } from '../utilities/instanceIds';
-
-export type AssetMappingDataResult = {
-  cadNode: Node3D;
-  assetIds: CogniteInternalId[];
-};
-
-export type FdmNodeDataResult = {
-  fdmNodes: DmsUniqueIdentifier[];
-  cadNode: Node3D;
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  views?: Source[][] | null;
-};
-
-export type ClickedNodeData = {
-  mouseButton?: MOUSE;
-  position?: Vector2;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  fdmResult?: FdmNodeDataResult | null;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  assetMappingResult?: AssetMappingDataResult | null;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[] | null;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  pointCloudFdmVolumeMappingResult?: PointCloudFdmVolumeMappingWithViews[] | null;
-  intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType>;
-};
+import { UseClickedNodeDataContext } from './useClickedNode.context';
 
 export const useClickedNodeData = (options?: {
   leftClick?: boolean;
   rightClick?: boolean;
   disableOnEditTool?: boolean;
 }): ClickedNodeData | undefined => {
+  const {
+    useFdm3dNodeDataPromises,
+    useAssetMappingForTreeIndex,
+    usePointCloudAnnotationMappingForIntersection,
+    usePointCloudFdmVolumeMappingForIntersection,
+    useRenderTarget,
+    useReveal,
+    isActiveEditTool
+  } = useContext(UseClickedNodeDataContext);
+
   const leftClick = options?.leftClick ?? true;
   const rightClick = options?.rightClick ?? false;
   const disableOnEditTool = options?.disableOnEditTool ?? true;
