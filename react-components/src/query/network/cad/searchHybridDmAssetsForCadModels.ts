@@ -47,8 +47,6 @@ async function fetchAllHybridDmAssetsForCadModels(
     sdk
   );
 
-  // console.log('Asset mappings per model: ', assetMappingsPerModel.items[0].mappings);
-
   const fdmSdk = new FdmSDK(sdk);
 
   const instanceIds = assetMappingsPerModel.items.flatMap((mappingsForModel) =>

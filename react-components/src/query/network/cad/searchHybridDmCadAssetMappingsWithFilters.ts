@@ -31,8 +31,6 @@ export async function searchHybridDmCadAssetMappingsWithFilters(
     options.filter
   );
 
-  console.log('Result from search: ', searchResult);
-
   const instanceKeyToInstanceMap = new Map<InstanceKey, NodeItem>(
     searchResult.instances.map(
       (instance) => [createFdmKey(instance), instance] as [FdmKey, NodeItem]
@@ -63,8 +61,6 @@ export async function searchHybridDmCadAssetMappingsWithFilters(
 
     mappedInstances.push(...relevantInstancesForChunk);
   }
-
-  console.log('All mapped instances: ', mappedInstances);
 
   return mappedInstances;
 }
