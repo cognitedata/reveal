@@ -1,27 +1,20 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { searchHybridDmAssetsForModels } from './searchHybridDmAssetsForModels';
-import { COGNITE_ASSET_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
-import { sdkMock } from '#test-utils/fixtures/sdk';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { viewDefinitionMock } from '#test-utils/fixtures/dm/viewDefinitions';
 import { Mock } from 'moq.ts';
 import {
-  AssetMapping3D,
-  CogniteClient,
-  HttpResponse,
-  ListResponse,
-  TableExpressionFilterDefinition
+  type AssetMapping3D,
+  type CogniteClient,
+  type HttpResponse,
+  type ListResponse,
+  type TableExpressionFilterDefinition
 } from '@cognite/sdk';
-import { DmsUniqueIdentifier, NodeItem } from '../../data-providers';
+import { type DmsUniqueIdentifier, type NodeItem } from '../../data-providers';
 import { createDmsNodeItem } from '#test-utils/dms/createDmsNodeItem';
 import { restrictToViewReference } from '../../utilities/restrictToViewReference';
-import { ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
-import { HybridCadAssetMapping } from '../../components/CacheProvider/cad/assetMappingTypes';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
-import {
-  createAssetMappingMock,
-  createRawDmHybridAssetMappingMock
-} from '#test-utils/fixtures/cadAssetMapping';
+import { createRawDmHybridAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
 import { isDmsInstance } from '../../utilities/instanceIds';
 import { createFdmKey } from '../../components';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
@@ -64,12 +57,13 @@ describe(searchHybridDmAssetsForModels.name, () => {
     );
     const mockCadCacheGetNodesForInstanceIds = vi.fn<
       ClassicCadAssetMappingCache['getNodesForInstanceIds']
-    >((_modelId, _revisionId, instanceIds) =>
-      Promise.resolve(
-        new Map(
-          instanceIds.filter(isDmsInstance).map((id) => [createFdmKey(id), [createCadNodeMock()]])
+    >(
+      async (_modelId, _revisionId, instanceIds) =>
+        await Promise.resolve(
+          new Map(
+            instanceIds.filter(isDmsInstance).map((id) => [createFdmKey(id), [createCadNodeMock()]])
+          )
         )
-      )
     );
 
     const sdkMock = new Mock<CogniteClient>()
@@ -224,7 +218,7 @@ const defaultPostImplementation = async (
       | { query: string; filter: TableExpressionFilterDefinition };
   }
 ): Promise<HttpResponse<ListResponse<NodeItem[]>>> => {
-  if (path == instancesByExternalIdEndpointPath) {
+  if (path === instancesByExternalIdEndpointPath) {
     return {
       data: {
         items: (data?.data as { items: DmsUniqueIdentifier[] }).items.map(

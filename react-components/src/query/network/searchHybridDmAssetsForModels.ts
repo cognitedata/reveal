@@ -5,7 +5,7 @@ import {
   type TaggedAddResourceOptions
 } from '../../components/Reveal3DResources';
 import { searchHybridDmAssetsForCadModels } from './cad/searchHybridDmAssetsForCadModels';
-import { ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 
 export type SearchSort = {
   property: string[];

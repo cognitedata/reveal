@@ -1,6 +1,6 @@
-import { DmsUniqueIdentifier } from '../../../src';
+import { type DmsUniqueIdentifier } from '../../../src';
 import { type ClassicCadAssetMapping } from '../../../src/components/CacheProvider/cad/assetMappingTypes';
-import { RawCdfHybridDmCadAssetMapping } from '../../../src/components/CacheProvider/cad/rawAssetMappingTypes';
+import { type RawCdfHybridDmCadAssetMapping } from '../../../src/components/CacheProvider/cad/rawAssetMappingTypes';
 
 let globalIdCounter = 0;
 

@@ -1,4 +1,4 @@
-import { ViewDefinition } from '@cognite/sdk';
+import { type ViewDefinition } from '@cognite/sdk';
 import type { ViewItem } from '../../../../src/data-providers/FdmSDK';
 
 export const viewImplementingCogniteAsset: ViewItem = {

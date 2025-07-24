@@ -1,13 +1,11 @@
-import { CogniteClient, FilterDefinition, ViewDefinition } from '@cognite/sdk';
-import { ClassicAdd3DModelOptions } from '../../../components/Reveal3DResources/types';
-import { RevealRenderTarget } from '../../../architecture';
+import { type CogniteClient, type FilterDefinition, type ViewDefinition } from '@cognite/sdk';
+import { type ClassicAdd3DModelOptions } from '../../../components/Reveal3DResources/types';
 import { searchHybridDmCadAssetMappingsWithFilters } from './searchHybridDmCadAssetMappingsWithFilters';
-import { NodeItem } from '../../../data-providers';
+import { type NodeItem } from '../../../data-providers';
 import { fetchAllHybridAssetMappingsForModels } from './fetchAllHybridAssetMappingsForModels';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
-import { restrictToDmsId } from '../../../utilities/restrictToDmsId';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
-import { ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 
 export async function searchHybridDmAssetsForCadModels(
   models: ClassicAdd3DModelOptions[],

@@ -5,14 +5,13 @@ import { chunk } from 'lodash';
 import { isSameModel } from '../../../utilities/isSameModel';
 import {
   convertToHybridAssetMapping,
-  RawCdfHybridClassicCadAssetMapping,
-  RawCdfHybridDmCadAssetMapping
+  type RawCdfHybridClassicCadAssetMapping,
+  type RawCdfHybridDmCadAssetMapping
 } from '../../../components/CacheProvider/cad/rawAssetMappingTypes';
 import { isDefined } from '../../../utilities/isDefined';
 import {
-  ClassicCadAssetMapping,
-  DmCadAssetMapping,
-  HybridCadAssetMapping
+  type ClassicCadAssetMapping,
+  type DmCadAssetMapping
 } from '../../../components/CacheProvider/cad/assetMappingTypes';
 
 const MODEL_CHUNK_SIZE = 10;
