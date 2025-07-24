@@ -10,7 +10,7 @@ import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './cad/searchClassicAssetsForCadModels';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { type AllAssetFilterProps } from './common/filters';
-import { SearchClassicCadAssetsResponse } from './cad/types';
+import { type SearchClassicCadAssetsResponse } from './cad/types';
 
 export type SearchQueryOptions = {
   limit: number;

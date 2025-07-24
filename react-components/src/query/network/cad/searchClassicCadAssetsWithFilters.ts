@@ -6,7 +6,7 @@ import { type AllAssetFilterProps } from '../common/filters';
 import { type SearchClassicCadAssetsResponse } from './types';
 import { getAssetsList } from '../../../hooks/network/getAssetsList';
 import {
-  HybridCadAssetTreeIndexMapping,
+  type HybridCadAssetTreeIndexMapping,
   isClassicCadAssetTreeIndexMapping
 } from '../../../components/CacheProvider/cad/assetMappingTypes';
 
