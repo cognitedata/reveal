@@ -247,16 +247,12 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     const filter =
       filterType === 'nodeIds' ? { nodeIds: numericalIdChunk } : { assetIds: numericalIdChunk };
 
-    const classicAssetMapping3D = (
-      await this._sdk.assetMappings3D
-        .filter(modelId, revisionId, {
-          limit: 1000,
-          filter
-        })
-        .autoPagingToArray({ limit: Infinity })
-    )
-      .map(convertToHybridAssetMapping)
-      .filter(isDefined);
+    const classicPromise = this._sdk.assetMappings3D
+      .filter(modelId, revisionId, {
+        limit: 1000,
+        filter
+      })
+      .autoPagingToArray({ limit: Infinity });
 
     const filterOptions = {
       limit: 1000,
@@ -264,13 +260,14 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       getDmsInstances: true
     };
 
-    const hybridAssetMapping3D = (
-      await this._sdk.assetMappings3D
-        .filter(modelId, revisionId, filterOptions)
-        .autoPagingToArray({ limit: Infinity })
-    )
-      .map(convertToHybridAssetMapping)
-      .filter(isDefined);
+    const hybridPromise = this._sdk.assetMappings3D
+      .filter(modelId, revisionId, filterOptions)
+      .autoPagingToArray({ limit: Infinity });
+
+    const [classicResult, hybridResult] = await Promise.all([classicPromise, hybridPromise]);
+
+    const classicAssetMapping3D = classicResult.map(convertToHybridAssetMapping).filter(isDefined);
+    const hybridAssetMapping3D = hybridResult.map(convertToHybridAssetMapping).filter(isDefined);
 
     const assetMapping3D = [...classicAssetMapping3D, ...hybridAssetMapping3D];
 
