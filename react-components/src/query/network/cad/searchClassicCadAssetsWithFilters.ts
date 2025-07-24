@@ -27,8 +27,6 @@ export async function searchClassicCadAssetsWithFilters(
     return { data: [], nextCursor: undefined };
   }
 
-  const isFirstPage = cursor === undefined;
-
   // Assume models are of type CAD
   const cadModels = models.map((model) => ({ ...model, type: 'cad' as const }));
 
@@ -37,14 +35,7 @@ export async function searchClassicCadAssetsWithFilters(
     assetMappingAndNode3dCache
   );
 
-  return await fetchAllAssetsForAssetMappings(
-    assetMappingList,
-    filters,
-    sdk,
-    limit,
-    cursor,
-    isFirstPage
-  );
+  return await fetchAllAssetsForAssetMappings(assetMappingList, filters, sdk, limit, cursor);
 }
 
 async function fetchAllAssetsForAssetMappings(
@@ -52,13 +43,8 @@ async function fetchAllAssetsForAssetMappings(
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
   limit: number,
-  cursor: string | undefined,
-  isFirstPage: boolean
+  cursor: string | undefined
 ): Promise<SearchClassicCadAssetsResponse> {
-  if (!isFirstPage && cursor === undefined) {
-    return { data: [], nextCursor: undefined };
-  }
-
   const mappedSearchedAssetIds = new Set<number>();
 
   const mapped3dAssetIds = new Set(
