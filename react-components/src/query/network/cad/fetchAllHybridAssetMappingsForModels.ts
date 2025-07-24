@@ -4,8 +4,15 @@ import { type ModelRevisionId } from '../../../components/CacheProvider/types';
 import { chunk } from 'lodash';
 import { isSameModel } from '../../../utilities/isSameModel';
 import {
-  type ClassicCadAssetMapping,
-  type DmCadAssetMapping
+  convertToHybridAssetMapping,
+  RawCdfHybridClassicCadAssetMapping,
+  RawCdfHybridDmCadAssetMapping
+} from '../../../components/CacheProvider/cad/rawAssetMappingTypes';
+import { isDefined } from '../../../utilities/isDefined';
+import {
+  ClassicCadAssetMapping,
+  DmCadAssetMapping,
+  HybridCadAssetMapping
 } from '../../../components/CacheProvider/cad/assetMappingTypes';
 
 const MODEL_CHUNK_SIZE = 10;
@@ -13,11 +20,15 @@ const MODEL_CHUNK_SIZE = 10;
 export type HybridDataType = 'dm' | 'classic';
 
 export type RawHybridAssetMapping<T extends HybridDataType> = T extends 'dm'
+  ? RawCdfHybridDmCadAssetMapping
+  : RawCdfHybridClassicCadAssetMapping;
+
+export type HybridAssetMapping<T extends HybridDataType> = T extends 'dm'
   ? DmCadAssetMapping
   : ClassicCadAssetMapping;
 
 export type HybridAssetMappingsWithModel<T extends HybridDataType> = {
-  mappings: ListResponse<Array<RawHybridAssetMapping<T>>>;
+  mappings: ListResponse<Array<HybridAssetMapping<T>>>;
   model: ModelRevisionId;
 };
 
@@ -85,9 +96,11 @@ async function fetchAssetMappingsForModel<T extends HybridDataType>(
     getDmsInstances: dataType === 'dm'
   })) as ListResponse<Array<RawHybridAssetMapping<T>>>;
 
+  const transformedMappings = mappings.items.map(convertToHybridAssetMapping).filter(isDefined);
+
   return {
     mappings: {
-      items: mappings.items,
+      items: transformedMappings as Array<HybridAssetMapping<T>>,
       nextCursor: mappings.nextCursor
     },
     model
