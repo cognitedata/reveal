@@ -50,10 +50,11 @@ describe(searchHybridDmAssetsForModels.name, () => {
     const mockSdkPost = vi.fn<CogniteClient['post']>(
       defaultPostImplementation as CogniteClient['post']
     );
-    const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(() =>
-      createCursorAndAsyncIteratorMock({
-        items: HYBRID_ASSET_MAPPINGS as AssetMapping3D[]
-      })
+    const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(
+      async () =>
+        await createCursorAndAsyncIteratorMock({
+          items: HYBRID_ASSET_MAPPINGS as AssetMapping3D[]
+        })
     );
     const mockCadCacheGetNodesForInstanceIds = vi.fn<
       ClassicCadAssetMappingCache['getNodesForInstanceIds']
