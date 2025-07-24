@@ -31,8 +31,8 @@ export { usePointCloudVolumeMappingForAssetInstances } from './core-dm/usePointC
 export { useFilterOnClassicAssetsInScene } from './useFilterOnClassicAssetsInScene';
 
 export type {
-  ModelMappings,
-  ModelMappingsWithAssets,
+  ClassicCadModelMappings,
+  ClassicCadModelMappingsWithAssets,
   AssetPage,
   ModelAssetPage
 } from './useSearchMappedEquipmentAssetMappings';
