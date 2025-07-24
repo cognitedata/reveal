@@ -1,3 +1,4 @@
+import { ViewDefinition } from '@cognite/sdk';
 import type { ViewItem } from '../../../../src/data-providers/FdmSDK';
 
 export const viewImplementingCogniteAsset: ViewItem = {
@@ -215,4 +216,17 @@ export const viewImplementingCogniteAsset: ViewItem = {
       version: 'v1'
     }
   ]
+};
+
+export const viewDefinitionMock: ViewDefinition = {
+  externalId: 'ViewDefinition',
+  description: 'a view mock',
+  space: 'view-space',
+  version: 'v1',
+  createdTime: 0,
+  lastUpdatedTime: 0,
+  writable: false,
+  usedFor: 'node',
+  isGlobal: true,
+  properties: {}
 };
