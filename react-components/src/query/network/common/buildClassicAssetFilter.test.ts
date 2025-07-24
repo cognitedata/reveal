@@ -5,7 +5,7 @@ import {
   buildClassicAssetQueryFilter,
   combineClassicAssetFilters
 } from './buildClassicAssetFilter';
-import { toIdEither } from '../../utilities/instanceIds/toIdEither';
+import { toIdEither } from '../../../utilities/instanceIds/toIdEither';
 
 const TEST_INTERNAL_IDS = [1, 2, 3];
 const TEST_INTERNAL_ID_EITHERS = TEST_INTERNAL_IDS.map(toIdEither);
