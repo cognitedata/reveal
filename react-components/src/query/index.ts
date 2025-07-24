@@ -40,3 +40,4 @@ export type { InstancesWithView } from './useSearchMappedEquipmentFDM';
 export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
 
 export { searchClassicAssetsForModels } from './network/searchClassicAssetsForModels';
+export { searchHybridDmAssetsForModels } from './network/searchHybridDmAssetsForModels';
