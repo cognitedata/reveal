@@ -1,5 +1,5 @@
 import type { CogniteClient, CursorResponse, Asset } from '@cognite/sdk';
-import type { AllAssetFilterProps } from '../../query/network/filters';
+import type { AllAssetFilterProps } from '../../query/network/common/filters';
 
 export type AssetsListOptions = {
   cursor?: string;

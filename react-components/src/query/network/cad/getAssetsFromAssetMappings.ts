@@ -1,15 +1,19 @@
 import { type AddModelOptions } from '@cognite/reveal';
-import { type AssetMapping3D, type CogniteClient, type ListResponse } from '@cognite/sdk';
-import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
+import { type CogniteClient, type ListResponse } from '@cognite/sdk';
+import { type ClassicCadModelMappingsWithAssets } from '../../useSearchMappedEquipmentAssetMappings';
 import { chunk } from 'lodash';
+import { type ClassicCadAssetMapping } from '../../../components/CacheProvider/cad/assetMappingTypes';
 
 const MODELS_MAPPING_CHUNK_SIZE = 10;
 
 export async function getAssetsFromAssetMappings(
   sdk: CogniteClient,
-  modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
-): Promise<ModelMappingsWithAssets[]> {
-  const mappingsWithAssets: ModelMappingsWithAssets[] = [];
+  modelsMappings: Array<{
+    model: AddModelOptions;
+    mappings: ListResponse<ClassicCadAssetMapping[]>;
+  }>
+): Promise<ClassicCadModelMappingsWithAssets[]> {
+  const mappingsWithAssets: ClassicCadModelMappingsWithAssets[] = [];
 
   for (const modelsMappingsChunk of chunk(modelsMappings, MODELS_MAPPING_CHUNK_SIZE)) {
     const mappingsWithAssetsPromises = modelsMappingsChunk.map(async ({ mappings, model }) => {
