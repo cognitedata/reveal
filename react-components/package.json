@@ -26,7 +26,7 @@
     "typecheck:source": "tsc --noEmit --project tsconfig.build.json",
     "typecheck:test": "tsc --noEmit --project tsconfig.test.json",
     "lint": "eslint --cache --max-warnings 0 --ext=.tsx,.ts .",
-    "test": "vitest run --dom",
+    "test": "vitest run --dom --silent",
     "test:verbose": "vitest run --dom",
     "test:coverage": "vitest run --dom --coverage --silent",
     "test:playwright": "playwright test",
