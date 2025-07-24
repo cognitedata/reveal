@@ -45,7 +45,7 @@ async function fetchAllAssetsForAssetMappings(
   limit: number,
   cursor: string | undefined
 ): Promise<SearchClassicCadAssetsResponse> {
-  const mappedSearchedAssetIds = new Set<number>();
+  const resultIds = new Set<number>();
 
   const mapped3dAssetIds = new Set(
     assetMappingList.flatMap((mapping) =>
@@ -67,15 +67,15 @@ async function fetchAllAssetsForAssetMappings(
     });
 
     const filteredMappedSearchedAssets = searchedAssetsResponse.items.filter(
-      (asset) => mapped3dAssetIds.has(asset.id) && !mappedSearchedAssetIds.has(asset.id)
+      (asset) => mapped3dAssetIds.has(asset.id) && !resultIds.has(asset.id)
     );
 
-    accumulatedAssets.push(...searchedAssetsResponse.items);
+    accumulatedAssets.push(...filteredMappedSearchedAssets);
 
     nextCursor = searchedAssetsResponse.nextCursor;
 
     filteredMappedSearchedAssets.forEach((asset) => {
-      mappedSearchedAssetIds.add(asset.id);
+      resultIds.add(asset.id);
     });
   } while (accumulatedAssets.length < limit && nextCursor !== undefined);
 
