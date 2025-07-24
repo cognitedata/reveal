@@ -44,7 +44,7 @@ const TEST_POINT_CLOUD_ANNOTATIONS = TEST_ASSETS.map((asset) =>
 
 const TEST_PROJECT = 'test_project';
 
-const mockAssetMappings3dList = vi.fn<AssetMappings3DAPI['filter']>();
+const mockAssetMappings3dList = vi.fn<AssetMappings3DAPI['list']>();
 const mockAssetsRetrieve = vi.fn<AssetsAPI['retrieve']>();
 
 type PostAssetListFunction = (
