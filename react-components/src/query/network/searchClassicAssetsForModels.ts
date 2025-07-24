@@ -7,10 +7,10 @@ import { searchClassicImage360Assets } from './searchClassicImage360Assets';
 import { type CogniteClient } from '@cognite/sdk';
 
 import { type RevealRenderTarget } from '../../architecture';
-import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
+import { searchClassicAssetsForCadModels } from './cad/searchClassicAssetsForCadModels';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
-import { type AllAssetFilterProps } from './filters';
-import { SearchClassicCadAssetsResponse } from './types';
+import { type AllAssetFilterProps } from './common/filters';
+import { SearchClassicCadAssetsResponse } from './cad/types';
 
 export type SearchQueryOptions = {
   limit: number;

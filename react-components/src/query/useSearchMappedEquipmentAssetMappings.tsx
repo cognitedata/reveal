@@ -10,8 +10,8 @@ import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
 import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import { useMemo } from 'react';
-import { getAssetsFromAssetMappings } from './network/getAssetsFromAssetMappings';
-import { buildClassicAssetQueryFilter } from './network/buildClassicAssetFilter';
+import { getAssetsFromAssetMappings } from './network/cad/getAssetsFromAssetMappings';
+import { buildClassicAssetQueryFilter } from './network/common/buildClassicAssetFilter';
 import {
   type ClassicCadAssetMapping,
   isClassicCadAssetMapping

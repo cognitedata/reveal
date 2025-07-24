@@ -1,14 +1,14 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
-import { type CadModelOptions } from '../../components';
-import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type CadModelOptions } from '../../../components';
+import { type ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import type { Asset, CogniteClient } from '@cognite/sdk';
-import { type AllAssetFilterProps } from './filters';
+import { type AllAssetFilterProps } from '../common/filters';
 import { type SearchClassicCadAssetsResponse } from './types';
-import { getAssetsList } from '../../hooks/network/getAssetsList';
+import { getAssetsList } from '../../../hooks/network/getAssetsList';
 import {
   HybridCadAssetTreeIndexMapping,
   isClassicCadAssetTreeIndexMapping
-} from '../../components/CacheProvider/cad/assetMappingTypes';
+} from '../../../components/CacheProvider/cad/assetMappingTypes';
 
 type ModelWithHybridTreeIndexMappings = {
   model: CadModelOptions;

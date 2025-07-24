@@ -27,9 +27,9 @@ import {
 } from '#test-utils/fixtures/image360';
 import { createFileMock } from '#test-utils/fixtures/files';
 import { createClassic360AnnotationMock } from '#test-utils/fixtures/image360Annotations';
-import { buildClassicAssetQueryFilter } from './buildClassicAssetFilter';
+import { buildClassicAssetQueryFilter } from './common/buildClassicAssetFilter';
 import { filterIncludesFilterNode } from '#test-utils/query/assetFilter';
-import { type AssetAdvancedFilterProps } from './filters';
+import { type AssetAdvancedFilterProps } from './common/filters';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
 

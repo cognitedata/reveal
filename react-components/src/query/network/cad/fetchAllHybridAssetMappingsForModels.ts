@@ -1,12 +1,12 @@
 import { type CogniteClient, type ListResponse } from '@cognite/sdk';
 import { type CursorForModel } from './fetchAllAssetsForCadModels';
-import { type ModelRevisionId } from '../../components/CacheProvider/types';
+import { type ModelRevisionId } from '../../../components/CacheProvider/types';
 import { chunk } from 'lodash';
-import { isSameModel } from '../../utilities/isSameModel';
+import { isSameModel } from '../../../utilities/isSameModel';
 import {
   type ClassicCadAssetMapping,
   type DmCadAssetMapping
-} from '../../components/CacheProvider/cad/assetMappingTypes';
+} from '../../../components/CacheProvider/cad/assetMappingTypes';
 
 const MODEL_CHUNK_SIZE = 10;
 
