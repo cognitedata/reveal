@@ -29,7 +29,7 @@ describe(getCadModelsForHybridDmInstance.name, () => {
       },
       status: 200,
       headers: {}
-    }) as unknown as <T = unknown>() => Promise<HttpResponse<T>>;
+    }) as <T = unknown>() => Promise<HttpResponse<T>>;
 
     const sdkMock = sdkMockBase
       .setup((p) => p.post)
@@ -54,7 +54,7 @@ describe(getCadModelsForHybridDmInstance.name, () => {
       },
       status: 200,
       headers: {}
-    }) as unknown as <T = unknown>() => Promise<HttpResponse<T>>;
+    }) as <T = unknown>() => Promise<HttpResponse<T>>;
 
     const sdkMock = sdkMockBase
       .setup((p) => p.post)
