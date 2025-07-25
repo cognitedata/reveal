@@ -1,28 +1,28 @@
-import { type ModelTreeIndexKey } from '../types';
-import { type ClassicCadAssetMapping } from './ClassicCadAssetMapping';
+import { type ModelInstanceIdKey, type ModelNodeIdKey } from '../types';
+import { type HybridCadAssetMapping } from './assetMappingTypes';
 
 export class ClassicCadAssetMappingPerNodeIdCache {
   private readonly _nodeIdsToAssetMappings = new Map<
-    ModelTreeIndexKey,
-    Promise<ClassicCadAssetMapping[]>
+    ModelNodeIdKey | ModelInstanceIdKey,
+    Promise<HybridCadAssetMapping[]>
   >();
 
   public setNodeIdsToAssetMappingCacheItem(
-    key: ModelTreeIndexKey,
-    item: Promise<ClassicCadAssetMapping[]>
+    key: ModelNodeIdKey | ModelInstanceIdKey,
+    item: Promise<HybridCadAssetMapping[]>
   ): void {
     this._nodeIdsToAssetMappings.set(key, Promise.resolve(item));
   }
 
   public async getNodeIdsToAssetMappingCacheItem(
-    key: ModelTreeIndexKey
-  ): Promise<ClassicCadAssetMapping[] | undefined> {
+    key: ModelNodeIdKey | ModelInstanceIdKey
+  ): Promise<HybridCadAssetMapping[] | undefined> {
     return await this._nodeIdsToAssetMappings.get(key);
   }
 
   public async setAssetMappingsCacheItem(
-    key: ModelTreeIndexKey,
-    item: ClassicCadAssetMapping
+    key: ModelNodeIdKey | ModelInstanceIdKey,
+    item: HybridCadAssetMapping
   ): Promise<void> {
     const currentAssetMappings = this.getNodeIdsToAssetMappingCacheItem(key);
     this.setNodeIdsToAssetMappingCacheItem(

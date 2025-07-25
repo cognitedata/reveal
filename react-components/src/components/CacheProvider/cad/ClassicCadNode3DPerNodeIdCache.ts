@@ -3,31 +3,32 @@ import {
   type ChunkInCacheTypes,
   type ModelId,
   type RevisionId,
-  type ModelTreeIndexKey
+  type ModelNodeIdKey,
+  type NodeId
 } from '../types';
-import { modelRevisionNodesAssetToKey } from '../idAndKeyTranslation';
+import { createModelNodeIdKey } from '../idAndKeyTranslation';
 import { fetchNodesForNodeIds } from '../requests';
 
 export class ClassicCadNode3DPerNodeIdCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _nodeIdsToNode3D = new Map<ModelTreeIndexKey, Promise<Node3D>>();
+  private readonly _nodeIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
   }
 
   private async splitChunkInCacheNode3D(
-    currentChunk: number[],
+    currentChunk: NodeId[],
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ChunkInCacheTypes<Node3D>> {
+  ): Promise<ChunkInCacheTypes<Node3D, NodeId>> {
     const chunkInCache: Node3D[] = [];
-    const chunkNotCached: number[] = [];
+    const chunkNotCached: NodeId[] = [];
 
     await Promise.all(
       currentChunk.map(async (id) => {
-        const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
+        const key = createModelNodeIdKey(modelId, revisionId, id);
         const cachedResult = await this.getNodeIdToNode3DCacheItem(key);
         if (cachedResult !== undefined) {
           chunkInCache.push(cachedResult);
@@ -47,7 +48,7 @@ export class ClassicCadNode3DPerNodeIdCache {
   ): Promise<void> {
     const node3Ds = await this.getNodesForNodeIds(modelId, revisionId, nodeIds ?? []);
     node3Ds.forEach((node) => {
-      const key = modelRevisionNodesAssetToKey(modelId, revisionId, node.id);
+      const key = createModelNodeIdKey(modelId, revisionId, node.id);
       this.setNodeIdToNode3DCacheItem(key, Promise.resolve(node));
     });
   }
@@ -68,11 +69,11 @@ export class ClassicCadNode3DPerNodeIdCache {
     return allNodes;
   }
 
-  public async getNodeIdToNode3DCacheItem(key: ModelTreeIndexKey): Promise<Node3D | undefined> {
+  public async getNodeIdToNode3DCacheItem(key: ModelNodeIdKey): Promise<Node3D | undefined> {
     return await this._nodeIdsToNode3D.get(key);
   }
 
-  public setNodeIdToNode3DCacheItem(key: ModelTreeIndexKey, item: Promise<Node3D>): void {
+  public setNodeIdToNode3DCacheItem(key: ModelNodeIdKey, item: Promise<Node3D>): void {
     this._nodeIdsToNode3D.set(key, Promise.resolve(item));
   }
 }
