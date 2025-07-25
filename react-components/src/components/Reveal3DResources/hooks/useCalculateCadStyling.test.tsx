@@ -53,6 +53,9 @@ describe(useCalculateCadStyling.name, () => {
 
   const ASSET_ID = 987;
   const TREE_INDEX = 123;
+  const HYBRID_TREE_INDEX_1 = 456;
+  const HYBRID_TREE_INDEX_2 = 789;
+  const FDM_TREE_INDEX = 456;
   const INSTANCE_ID: DmsUniqueIdentifier = {
     externalId: 'default-external-id1',
     space: 'default-space'
@@ -166,7 +169,7 @@ describe(useCalculateCadStyling.name, () => {
     });
   });
 
-  test('returns objects with models and applicable style groups for DM instance', async () => {
+  test('returns objects with models and style groups for DM instance', async () => {
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
     );
@@ -201,11 +204,9 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns style groups for hybrid asset mappings when FDM mappings do not exist', async () => {
-    const hybridTreeIndex = 456;
-
     mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
     mockGetNodesForInstanceIds.mockResolvedValue(
-      createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex)
+      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
     );
 
     const { result } = renderHook(
@@ -233,14 +234,11 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('combines style groups from both FDM and hybrid mappings', async () => {
-    const hybridTreeIndex = 456;
-    const fdmTreeIndex = 789;
-
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
-      createModelToAssetMappingsMap(MODEL, ASSET_ID, fdmTreeIndex)
+      createModelToAssetMappingsMap(MODEL, ASSET_ID, FDM_TREE_INDEX)
     );
     mockGetNodesForInstanceIds.mockResolvedValue(
-      createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex)
+      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
     );
 
     const { result } = renderHook(
@@ -294,17 +292,15 @@ describe(useCalculateCadStyling.name, () => {
 
   test('processes multiple models with separate FDM and hybrid mappings', async () => {
     const MODEL2 = { modelId: 456, revisionId: 567, type: 'cad' } as const;
-    const hybridTreeIndex1 = 456;
-    const hybridTreeIndex2 = 789;
 
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
     );
     mockGetNodesForInstanceIds.mockImplementation(async (modelId, revisionId) => {
       if (modelId === MODEL.modelId && revisionId === MODEL.revisionId) {
-        return createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex1);
+        return createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1);
       } else if (modelId === MODEL2.modelId && revisionId === MODEL2.revisionId) {
-        return createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex2);
+        return createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_2);
       }
       return new Map();
     });
