@@ -1,6 +1,8 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
+import { uniq, uniqBy } from 'lodash';
+import { createAddOptionsKey } from '../../utilities/createAddOptionsKey';
 
 export type CadModelNode = {
   modelId: number;
@@ -8,7 +10,7 @@ export type CadModelNode = {
   nodeId: number;
 };
 
-export async function getCadModelsForHybrid(
+export async function getCadModelsForHybridDmInstance(
   dmsInstance: DmsUniqueIdentifier,
   sdk: CogniteClient
 ): Promise<TaggedAddCadResourceOptions[]> {
@@ -19,8 +21,9 @@ export async function getCadModelsForHybrid(
     }
   );
 
-  return result.data.items.map(({ modelId, revisionId }) => ({
+  const items: TaggedAddCadResourceOptions[] = result.data.items.map(({ modelId, revisionId }) => ({
     type: 'cad',
     addOptions: { modelId, revisionId }
   }));
+  return uniqBy(items, createAddOptionsKey);
 }
