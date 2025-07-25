@@ -13,6 +13,8 @@ import { getPointCloudModelsForAssetInstance } from '../hooks/network/getPointCl
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type InstanceReference, isDmsInstance, isInternalId } from '../utilities/instanceIds';
+import { getCadModelsForHybrid } from '../hooks/network/getCadModelsForHybrid';
+import { useIsCoreDmOnly } from '../hooks/useIsCoreDmOnly';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
@@ -20,6 +22,7 @@ export const useModelsForInstanceQuery = (
   const cogniteClient = useSDK();
   const fdm3dDataProvider = useFdm3dDataProvider();
   const fdmSdk = useFdmSdk();
+  const isCoreDm = useIsCoreDmOnly();
 
   return useQuery({
     queryKey: ['reveal', 'react-components', 'models-for-instance', instance],
@@ -33,11 +36,14 @@ export const useModelsForInstanceQuery = (
       }
 
       if (isDmsInstance(instance)) {
-        if (fdm3dDataProvider === undefined) {
-          return [];
+        if (isCoreDm) {
+           if (fdm3dDataProvider === undefined) {
+            return [];
+          }
+          return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
         }
+        return await getModelsForHybridInstance(instance, cogniteClient);
 
-        return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
       }
 
       throw Error(
@@ -72,6 +78,17 @@ async function getModelsForDmsInstance(
   const pointCloudModelsPromise = getPointCloudModelsForAssetInstance(instance, fdmSdk);
 
   const results = (await Promise.all([cadModelsPromise, pointCloudModelsPromise])).flat();
+
+  return uniqBy(results, createAddOptionsKey);
+}
+
+async function getModelsForHybridInstance(
+  instance: DmsUniqueIdentifier,
+  cogniteClient: CogniteClient,
+): Promise<TaggedAddResourceOptions[]> {
+  const cadModelsPromise = getCadModelsForHybrid(instance, cogniteClient);
+
+  const results = (await Promise.all([cadModelsPromise])).flat();
 
   return uniqBy(results, createAddOptionsKey);
 }
