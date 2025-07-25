@@ -1,22 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useModelsForInstanceQuery } from './useModelsForInstanceQuery';
-import { SDKProvider, useSDK } from '../components/RevealCanvas/SDKProvider';
+import { SDKProvider, useSDK, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { useIsCoreDmOnly } from '../hooks/useIsCoreDmOnly';
 import { getCadModelsForHybrid } from '../hooks/network/getCadModelsForHybrid';
-import { FdmSDK } from '../data-providers/FdmSDK';
+import { type FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
-import { Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
-import { RevealRenderTarget } from '../architecture';
-import { FC, PropsWithChildren } from 'react';
+import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
+import { type RevealRenderTarget } from '../architecture';
+import { type FC, type PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ViewerContext } from '../components/RevealCanvas/ViewerContext';
 import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
-import { CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { getPointCloudModelsForAssetInstance } from '../hooks/network/getPointCloudModelsForAssetInstance';
-import { TaggedAddResourceOptions } from '../components';
+import { type TaggedAddResourceOptions } from '../components';
 
 vi.mock(import('../hooks/network/getCadModelsForHybrid'), () => ({
   getCadModelsForHybrid: vi.fn()
@@ -27,14 +26,14 @@ vi.mock(import('../hooks/network/getPointCloudModelsForAssetInstance'), () => ({
 
 vi.mock(import('../components/RevealCanvas/SDKProvider'), async (importOriginal) => {
   return {
-    ...await importOriginal(),
+    ...(await importOriginal()),
     useFdmSdk: vi.fn(),
     useSDK: vi.fn()
   };
 });
 vi.mock(import('../components/CacheProvider/CacheProvider'), async (importOriginal) => {
   return {
-    ...await importOriginal(),
+    ...(await importOriginal()),
     useFdm3dDataProvider: vi.fn()
   };
 });
@@ -44,7 +43,7 @@ vi.mock(import('../hooks/useIsCoreDmOnly'), () => ({
 
 const queryClient = new QueryClient();
 
-const mockAddOptionsData1: TaggedAddResourceOptions[]= [
+const mockAddOptionsData1: TaggedAddResourceOptions[] = [
   { type: 'cad', addOptions: { modelId: 1, revisionId: 2 } }
 ];
 
@@ -70,8 +69,7 @@ const sdkMock = new Mock<CogniteClient>()
   .returns('test-project')
   .object();
 
-const fdmSdkMock = new Mock<FdmSDK>()
-  .object();
+const fdmSdkMock = new Mock<FdmSDK>().object();
 
 const renderTargetMock = new Mock<RevealRenderTarget>();
 
@@ -81,14 +79,11 @@ const wrapper: FC<PropsWithChildren> = ({ children }) => (
   <QueryClientProvider client={queryClient}>
     <SDKProvider sdk={sdkMock}>
       <ViewerContext.Provider value={renderTargetMock.object()}>
-        <FdmSdkContext.Provider value={{ fdmSdk: fdmSdkMock }}>
-          {children}
-        </FdmSdkContext.Provider>
+        <FdmSdkContext.Provider value={{ fdmSdk: fdmSdkMock }}>{children}</FdmSdkContext.Provider>
       </ViewerContext.Provider>
     </SDKProvider>
   </QueryClientProvider>
 );
-
 
 describe(useModelsForInstanceQuery.name, () => {
   const dmsInstance1 = { externalId: 'ext-id', space: 'space-id' };
@@ -118,7 +113,9 @@ describe(useModelsForInstanceQuery.name, () => {
   it('calls getModelsForDmsInstance if isCoreDm is true and fdm3dDataProvider is defined with the correct parameters', async () => {
     const mockFdm3dDataProvider = useFdm3dDataProvider();
     if (mockFdm3dDataProvider) {
-      vi.mocked(mockFdm3dDataProvider.getCadModelsForInstance).mockResolvedValue(mockAddOptionsData1);
+      vi.mocked(mockFdm3dDataProvider.getCadModelsForInstance).mockResolvedValue(
+        mockAddOptionsData1
+      );
     }
     vi.mocked(useIsCoreDmOnly).mockReturnValue(true);
     vi.mocked(getPointCloudModelsForAssetInstance).mockResolvedValue(mockAddOptionsData2);
@@ -128,7 +125,7 @@ describe(useModelsForInstanceQuery.name, () => {
 
     expect(mockGetCadModelsForInstance).toHaveBeenCalledWith(dmsInstance2);
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockModels)
+      expect(result.current.data).toEqual(mockModels);
     });
   });
 
@@ -139,8 +136,8 @@ describe(useModelsForInstanceQuery.name, () => {
 
     const { result } = renderHook(() => useModelsForInstanceQuery(dmsInstance1), { wrapper });
     expect(mockGetCadModelsForHybrid).toHaveBeenCalledWith(dmsInstance1, sdkMock);
-    await waitFor(() =>
-      expect(result.current.data).toEqual(mockModels)
-    );
+    await waitFor(() => {
+      expect(result.current.data).toEqual(mockModels);
+    });
   });
 });

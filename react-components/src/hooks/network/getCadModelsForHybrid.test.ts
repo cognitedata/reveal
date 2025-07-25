@@ -1,18 +1,16 @@
 import { describe, vi, it, expect } from 'vitest';
 import { getCadModelsForHybrid } from './getCadModelsForHybrid';
-import { CogniteClient, HttpResponse } from '@cognite/sdk';
+import { type CogniteClient, type HttpResponse } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 
 describe(getCadModelsForHybrid.name, () => {
-
   const dmsInstance = { externalId: 'ext-id', space: 'space-id' };
   const project = 'test-project';
 
   const mockUrl = `api/v1/projects/${project}/3d/mappings/modelnodes/filter`;
-  type MockResponseType = { items: { modelId: number; revisionId: number; nodeId: number }[] };
+  type MockResponseType = { items: Array<{ modelId: number; revisionId: number; nodeId: number }> };
 
-  const mockResponse = vi.fn().mockImplementation
-  (async () => {
+  const mockResponse = vi.fn().mockImplementation(async () => {
     return {
       data: {
         items: []
@@ -23,13 +21,13 @@ describe(getCadModelsForHybrid.name, () => {
   });
 
   const sdkMock = new Mock<CogniteClient>()
-  .setup((p) => p.getBaseUrl())
-  .returns('https://api.cognitedata.com')
-  .setup((p) => p.project)
-  .returns(project)
-  .setup((p) => p.post)
-  .returns(mockResponse)
-  .object();
+    .setup((p) => p.getBaseUrl())
+    .returns('https://api.cognitedata.com')
+    .setup((p) => p.project)
+    .returns(project)
+    .setup((p) => p.post)
+    .returns(mockResponse)
+    .object();
 
   it('should return mapped cad model options from sdk response', async () => {
     mockResponse.mockImplementation(async () => {
@@ -47,12 +45,9 @@ describe(getCadModelsForHybrid.name, () => {
 
     const result = await getCadModelsForHybrid(dmsInstance, sdkMock);
 
-    expect(sdkMock.post).toHaveBeenCalledWith(
-      mockUrl,
-      {
-        data: { limit: 1000, filter: { assetInstanceId: dmsInstance } }
-      }
-    );
+    expect(sdkMock.post).toHaveBeenCalledWith(mockUrl, {
+      data: { limit: 1000, filter: { assetInstanceId: dmsInstance } }
+    });
     expect(result).toEqual([
       { type: 'cad', addOptions: { modelId: 1, revisionId: 10 } },
       { type: 'cad', addOptions: { modelId: 2, revisionId: 20 } }
@@ -73,5 +68,4 @@ describe(getCadModelsForHybrid.name, () => {
 
     expect(result).toEqual([]);
   });
-
 });

@@ -37,13 +37,12 @@ export const useModelsForInstanceQuery = (
 
       if (isDmsInstance(instance)) {
         if (isCoreDm) {
-           if (fdm3dDataProvider === undefined) {
+          if (fdm3dDataProvider === undefined) {
             return [];
           }
           return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
         }
         return await getModelsForHybridInstance(instance, cogniteClient);
-
       }
 
       throw Error(
@@ -84,7 +83,7 @@ async function getModelsForDmsInstance(
 
 async function getModelsForHybridInstance(
   instance: DmsUniqueIdentifier,
-  cogniteClient: CogniteClient,
+  cogniteClient: CogniteClient
 ): Promise<TaggedAddResourceOptions[]> {
   const cadModelsPromise = await getCadModelsForHybrid(instance, cogniteClient);
 
