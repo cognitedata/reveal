@@ -203,10 +203,7 @@ function useCalculateInstanceStyling(
           const modelMappings = mappings.get(modelKey);
           const hybridMappings = hybridAssetMappings[index];
 
-          if (
-            modelMappings === undefined &&
-            (hybridMappings === undefined || hybridMappings.size === 0)
-          ) {
+          if (modelMappings === undefined && hybridMappings.size === 0) {
             return undefined;
           }
 
