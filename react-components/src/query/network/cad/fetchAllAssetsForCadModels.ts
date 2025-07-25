@@ -2,7 +2,7 @@ import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/revea
 import { type SearchClassicCadAssetsResponse } from './types';
 import { type CogniteClient } from '@cognite/sdk';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
-import { fetchAllHybridAssetMappingsForModels } from './fetchAllHybridAssetMappingsForModels';
+import { fetchHybridAssetMappingsForModels } from './fetchHybridAssetMappingsForModels';
 
 export type CursorForModel = {
   cursor: string | undefined;
@@ -15,7 +15,7 @@ export async function fetchAllAssetsForCadModels(
   cursorsForModels: CursorForModel[] | undefined,
   sdk: CogniteClient
 ): Promise<SearchClassicCadAssetsResponse> {
-  const currentPagesOfAssetMappings = await fetchAllHybridAssetMappingsForModels<'classic'>(
+  const currentPagesOfAssetMappings = await fetchHybridAssetMappingsForModels<'classic'>(
     'classic',
     models,
     limit,
