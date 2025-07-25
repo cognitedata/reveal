@@ -5,7 +5,7 @@ import {
   type FdmInstanceStylingGroup
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
-import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
 import { type AssetId, type FdmKey, type CadNodeTreeData } from '../../CacheProvider/types';
 import {
@@ -28,6 +28,7 @@ import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelTreeIndexMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
+import { type InstanceKey } from '../../../utilities/instanceIds';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -282,12 +283,12 @@ function getMappedStyleGroupFromInstanceToNodeMap(
 function calculateInstanceCadModelStyling(
   model: CadModelOptions,
   stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
-  mappings: Map<AssetId | CogniteExternalId, Node3D[]> | undefined,
-  hybridMappings: Map<AssetId | FdmKey, Node3D[]> | undefined
+  mappings: Map<InstanceKey, Node3D[]> | undefined,
+  hybridMappings: Map<InstanceKey, Node3D[]> | undefined
 ): ModelStyleGroup {
-  const fdmStyleGroups = createStyleGroupsFromFdmMappings(stylingGroups, mappings);
+  const fdmStyleGroups = createStyleGroupsFromMappings(stylingGroups, mappings);
 
-  const hybridStyleGroups = createStyleGroupsFromHybridMappings(stylingGroups, hybridMappings);
+  const hybridStyleGroups = createStyleGroupsFromMappings(stylingGroups, hybridMappings);
 
   const combinedStyleGroups = [...fdmStyleGroups, ...hybridStyleGroups];
 
@@ -297,56 +298,38 @@ function calculateInstanceCadModelStyling(
   };
 }
 
-function createStyleGroupsFromFdmMappings(
+function createStyleGroupsFromMappings(
   stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
-  mappings: Map<AssetId | CogniteExternalId, Node3D[]> | undefined
+  mappings?: Map<InstanceKey, Node3D[]>
 ): TreeIndexStylingGroup[] {
-  if (mappings === undefined) {
+  if (mappings === undefined || mappings.size === 0) {
     return [];
   }
 
   return stylingGroups
     .map((group) => {
       const indexSet = new IndexSet();
-      getInstanceKeysFromStylingGroup(group).forEach((instanceKey) => {
-        const node3dList = mappings.get(instanceKey);
-        node3dList?.forEach((node) => {
+      const style = group.style.cad;
+      const instanceKeys = getInstanceKeysFromStylingGroup(group);
+
+      if (style === undefined || instanceKeys.length === 0) {
+        return undefined;
+      }
+
+      for (const instanceKey of instanceKeys) {
+        const nodes = mappings.get(instanceKey);
+        if (nodes === undefined || nodes.length === 0) {
+          continue;
+        }
+
+        for (const node of nodes) {
           indexSet.addRange(getNodeSubtreeNumericRange(node));
-        });
-      });
+        }
+      }
 
-      return {
-        treeIndexSet: indexSet,
-        style: group.style.cad
-      };
+      return indexSet.count > 0 ? { treeIndexSet: indexSet, style } : undefined;
     })
-    .filter((setWithStyle) => setWithStyle.treeIndexSet.count > 0);
-}
-
-function createStyleGroupsFromHybridMappings(
-  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
-  mappings: Map<AssetId | FdmKey, Node3D[]> | undefined
-): TreeIndexStylingGroup[] {
-  if (mappings === undefined) {
-    return [];
-  }
-
-  return stylingGroups
-    .map((group) => {
-      const indexSet = new IndexSet();
-      getInstanceKeysFromStylingGroup(group).forEach((instanceKey) => {
-        const node3dList = mappings.get(instanceKey);
-        node3dList?.forEach((node) => {
-          indexSet.addRange(getNodeSubtreeNumericRange(node));
-        });
-      });
-
-      return {
-        treeIndexSet: indexSet,
-        style: group.style.cad
-      };
-    })
-    .filter((setWithStyle) => setWithStyle.treeIndexSet.count > 0);
+    .filter(isDefined);
 }
 
 function getNodeSubtreeNumericRange(node: CadNodeTreeData): NumericRange {

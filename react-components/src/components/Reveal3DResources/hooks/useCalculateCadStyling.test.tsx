@@ -53,9 +53,13 @@ describe(useCalculateCadStyling.name, () => {
 
   const ASSET_ID = 987;
   const TREE_INDEX = 123;
-  const INSTANCE_ID: DmsUniqueIdentifier = { externalId: 'test-fdm-id', space: 'test-space' };
+  const INSTANCE_ID: DmsUniqueIdentifier = {
+    externalId: 'default-external-id1',
+    space: 'default-space'
+  };
 
   beforeEach(() => {
+    queryClient.clear();
     dependencies.useCadMappingsCache.mockReturnValue({
       getMappingsForModelsAndInstances: mockGetMappingsForModelsAndInstances,
       getAllModelMappings: mockGetAllModelMappings
@@ -177,6 +181,15 @@ describe(useCalculateCadStyling.name, () => {
     );
 
     expect(result.current).toEqual({
+      styledModels: [{ model: MODEL, styleGroups: [] }],
+      isModelMappingsLoading: true
+    });
+
+    await waitFor(() => {
+      expect(result.current.isModelMappingsLoading).toBeFalsy();
+    });
+
+    expect(result.current).toEqual({
       styledModels: [
         {
           model: MODEL,
@@ -190,10 +203,7 @@ describe(useCalculateCadStyling.name, () => {
   test('returns style groups for hybrid asset mappings when FDM mappings do not exist', async () => {
     const hybridTreeIndex = 456;
 
-    // No FDM mappings
     mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
-
-    // But hybrid mappings exist
     mockGetNodesForInstanceIds.mockResolvedValue(
       createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex)
     );
@@ -226,11 +236,9 @@ describe(useCalculateCadStyling.name, () => {
     const hybridTreeIndex = 456;
     const fdmTreeIndex = 789;
 
-    // Both FDM and hybrid mappings exist
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, fdmTreeIndex)
     );
-
     mockGetNodesForInstanceIds.mockResolvedValue(
       createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex)
     );
@@ -255,7 +263,6 @@ describe(useCalculateCadStyling.name, () => {
     expect(result.current.styledModels[0].model).toEqual(MODEL);
     expect(result.current.styledModels[0].styleGroups).toHaveLength(2);
 
-    // Should have both style groups
     expect(result.current.styledModels[0].styleGroups).toEqual([
       { style: { renderGhosted: true }, treeIndexSet: expect.any(IndexSet) },
       { style: { renderInFront: true }, treeIndexSet: expect.any(IndexSet) }
@@ -263,19 +270,8 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns empty style groups when neither FDM nor hybrid mappings exist', async () => {
-    // No mappings exist
     mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
     mockGetNodesForInstanceIds.mockImplementation(async () => new Map());
-
-    // Create a fresh query client for this test to avoid caching issues
-    const freshQueryClient = new QueryClient();
-    const freshWrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <QueryClientProvider client={freshQueryClient}>
-        <UseCalculateCadStylingContext.Provider value={dependencies}>
-          {children}
-        </UseCalculateCadStylingContext.Provider>
-      </QueryClientProvider>
-    );
 
     const { result } = renderHook(
       () =>
@@ -283,7 +279,7 @@ describe(useCalculateCadStyling.name, () => {
           [MODEL],
           [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
         ),
-      { wrapper: freshWrapper }
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -301,12 +297,9 @@ describe(useCalculateCadStyling.name, () => {
     const hybridTreeIndex1 = 456;
     const hybridTreeIndex2 = 789;
 
-    // FDM mappings for first model only
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
       createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
     );
-
-    // Hybrid mappings for both models
     mockGetNodesForInstanceIds.mockImplementation(async (modelId, revisionId) => {
       if (modelId === MODEL.modelId && revisionId === MODEL.revisionId) {
         return createHybridAssetMappingsMap(INSTANCE_ID, hybridTreeIndex1);
@@ -334,11 +327,9 @@ describe(useCalculateCadStyling.name, () => {
 
     expect(result.current.styledModels).toHaveLength(2);
 
-    // First model should have both FDM and hybrid style groups
     expect(result.current.styledModels[0].model).toEqual(MODEL);
     expect(result.current.styledModels[0].styleGroups).toHaveLength(2);
 
-    // Second model should have only hybrid style group
     expect(result.current.styledModels[1].model).toEqual(MODEL2);
     expect(result.current.styledModels[1].styleGroups).toHaveLength(1);
     expect(result.current.styledModels[1].styleGroups[0]).toEqual({
