@@ -1,13 +1,17 @@
 import { describe, vi, it, expect } from 'vitest';
 import { getCadModelsForHybridDmInstance } from './getCadModelsForHybridDmInstance';
-import { type CogniteClient } from '@cognite/sdk';
-import { Mock } from 'moq.ts';
+import { HttpResponse, type CogniteClient } from '@cognite/sdk';
+import { It, Mock } from 'moq.ts';
 
 describe(getCadModelsForHybridDmInstance.name, () => {
   const dmsInstance = { externalId: 'ext-id', space: 'space-id' };
   const project = 'test-project';
 
   const mockUrl = `api/v1/projects/${project}/3d/mappings/modelnodes/filter`;
+
+  type MockResponseType = {
+    items: { modelId: number; revisionId: number; nodeId: number }[];
+  };
 
   const sdkMockBase = new Mock<CogniteClient>()
     .setup((p) => p.getBaseUrl())
@@ -16,16 +20,16 @@ describe(getCadModelsForHybridDmInstance.name, () => {
     .returns(project);
 
   it('should return mapped cad model options from sdk response', async () => {
-    const mockResponse = vi.fn().mockResolvedValue({
+    const mockResponse = vi.fn<() => Promise<HttpResponse<MockResponseType>>>().mockResolvedValue({
       data: {
         items: [
           { modelId: 1, revisionId: 10, nodeId: 100 },
           { modelId: 2, revisionId: 20, nodeId: 200 }
-        ]
-      },
-      status: 200,
-      headers: {}
-    });
+          ]
+        },
+        status: 200,
+        headers: {}
+      }) as unknown as <T = unknown>() => Promise<HttpResponse<T>>;
 
     const sdkMock = sdkMockBase
       .setup((p) => p.post)
@@ -44,13 +48,13 @@ describe(getCadModelsForHybridDmInstance.name, () => {
   });
 
   it('should return an empty array if sdk returns no items', async () => {
-    const mockResponse = vi.fn().mockResolvedValue({
+    const mockResponse = vi.fn<() => Promise<HttpResponse<MockResponseType>>>().mockResolvedValue({
       data: {
         items: []
-      },
-      status: 200,
-      headers: {}
-    });
+        },
+        status: 200,
+        headers: {}
+      }) as unknown as <T = unknown>() => Promise<HttpResponse<T>>;
 
     const sdkMock = sdkMockBase
       .setup((p) => p.post)
