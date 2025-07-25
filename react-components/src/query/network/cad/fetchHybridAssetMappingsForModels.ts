@@ -4,6 +4,12 @@ import { type ModelRevisionId } from '../../../components/CacheProvider/types';
 import { chunk } from 'lodash';
 import { isSameModel } from '../../../utilities/isSameModel';
 import {
+  convertToHybridAssetMapping,
+  type RawCdfHybridClassicCadAssetMapping,
+  type RawCdfHybridDmCadAssetMapping
+} from '../../../components/CacheProvider/cad/rawAssetMappingTypes';
+import { isDefined } from '../../../utilities/isDefined';
+import {
   type ClassicCadAssetMapping,
   type DmCadAssetMapping
 } from '../../../components/CacheProvider/cad/assetMappingTypes';
@@ -13,11 +19,15 @@ const MODEL_CHUNK_SIZE = 10;
 export type HybridDataType = 'dm' | 'classic';
 
 export type RawHybridAssetMapping<T extends HybridDataType> = T extends 'dm'
+  ? RawCdfHybridDmCadAssetMapping
+  : RawCdfHybridClassicCadAssetMapping;
+
+export type HybridAssetMapping<T extends HybridDataType> = T extends 'dm'
   ? DmCadAssetMapping
   : ClassicCadAssetMapping;
 
 export type HybridAssetMappingsWithModel<T extends HybridDataType> = {
-  mappings: ListResponse<Array<RawHybridAssetMapping<T>>>;
+  mappings: ListResponse<Array<HybridAssetMapping<T>>>;
   model: ModelRevisionId;
 };
 
@@ -26,7 +36,7 @@ export type HybridMappingsPerModelWithCursors<T extends HybridDataType> = {
   nextCursors: CursorForModel[];
 };
 
-export async function fetchAllHybridAssetMappingsForModels<T extends HybridDataType>(
+export async function fetchHybridAssetMappingsForModels<T extends HybridDataType>(
   dataType: T,
   models: ModelRevisionId[],
   limit: number,
@@ -85,9 +95,11 @@ async function fetchAssetMappingsForModel<T extends HybridDataType>(
     getDmsInstances: dataType === 'dm'
   })) as ListResponse<Array<RawHybridAssetMapping<T>>>;
 
+  const transformedMappings = mappings.items.map(convertToHybridAssetMapping).filter(isDefined);
+
   return {
     mappings: {
-      items: mappings.items,
+      items: transformedMappings as Array<HybridAssetMapping<T>>,
       nextCursor: mappings.nextCursor
     },
     model

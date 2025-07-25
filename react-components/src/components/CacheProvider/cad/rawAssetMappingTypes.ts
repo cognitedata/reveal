@@ -17,14 +17,24 @@ export type RawCdfCadAssetMappingHybridInstance =
 
 export type RawCdfHybridCadAssetMappingBase = {
   nodeId: NodeId;
-} & RawCdfCadAssetMappingHybridInstance;
-
-export type RawCdfHybridCadAssetMapping = RawCdfHybridCadAssetMappingBase & {
   treeIndex?: TreeIndex;
   subtreeSize?: number;
 };
 
-type ValidCdfHybridCadAssetMapping = RawCdfHybridCadAssetMappingBase & {
+export type RawCdfHybridClassicCadAssetMapping = RawCdfHybridCadAssetMappingBase &
+  RawCdfCadAssetMappingClassicInstance;
+export type RawCdfHybridDmCadAssetMapping = RawCdfHybridCadAssetMappingBase &
+  RawCdfCadAssetMappingDmInstance;
+
+export type RawCdfHybridCadAssetMapping =
+  | RawCdfHybridClassicCadAssetMapping
+  | RawCdfHybridDmCadAssetMapping;
+
+type ValidCdfHybridCadAssetMapping = (
+  | RawCdfCadAssetMappingClassicInstance
+  | RawCdfCadAssetMappingDmInstance
+) & {
+  nodeId: NodeId;
   treeIndex: TreeIndex;
   subtreeSize: number;
 };
