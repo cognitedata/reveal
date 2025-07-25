@@ -186,24 +186,31 @@ function useCalculateInstanceStyling(
         [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
         models
       );
-      const hybridAssetMappings = await Promise.all(
-        models.map(async (model) => {
-          return await classicCadAssetMappingCache.getNodesForInstanceIds(
-            model.modelId,
-            model.revisionId,
-            dmIdsForInstanceGroups
-          );
-        })
+      const hybridAssetMappingsByModelKey = new Map(
+        await Promise.all(
+          models.map(async (model) => {
+            const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
+            const mappings = await classicCadAssetMappingCache.getNodesForInstanceIds(
+              model.modelId,
+              model.revisionId,
+              dmIdsForInstanceGroups
+            );
+            return [modelKey, mappings] as const;
+          })
+        )
       );
 
       const modelStyleGroups = models
-        .map((model, index) => {
+        .map((model) => {
           const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
 
           const modelMappings = mappings.get(modelKey);
-          const hybridMappings = hybridAssetMappings[index];
+          const hybridMappings = hybridAssetMappingsByModelKey.get(modelKey);
 
-          if (modelMappings === undefined && hybridMappings.size === 0) {
+          if (
+            (modelMappings === undefined || modelMappings.size === 0) &&
+            (hybridMappings === undefined || hybridMappings.size === 0)
+          ) {
             return undefined;
           }
 
