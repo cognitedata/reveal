@@ -86,9 +86,7 @@ async function getModelsForHybridInstance(
   instance: DmsUniqueIdentifier,
   cogniteClient: CogniteClient,
 ): Promise<TaggedAddResourceOptions[]> {
-  const cadModelsPromise = getCadModelsForHybrid(instance, cogniteClient);
+  const cadModelsPromise = await getCadModelsForHybrid(instance, cogniteClient);
 
-  const results = (await Promise.all([cadModelsPromise])).flat();
-
-  return uniqBy(results, createAddOptionsKey);
+  return uniqBy(cadModelsPromise, createAddOptionsKey);
 }
