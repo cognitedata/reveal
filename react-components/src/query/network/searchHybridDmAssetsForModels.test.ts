@@ -3,6 +3,7 @@ import { searchHybridDmAssetsForModels } from './searchHybridDmAssetsForModels';
 import { viewDefinitionMock } from '#test-utils/fixtures/dm/viewDefinitions';
 import { Mock } from 'moq.ts';
 import {
+  type CursorAndAsyncIterator,
   type AssetMapping3D,
   type CogniteClient,
   type HttpResponse,
@@ -51,8 +52,8 @@ describe(searchHybridDmAssetsForModels.name, () => {
       defaultPostImplementation as CogniteClient['post']
     );
     const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(
-      async () =>
-        await createCursorAndAsyncIteratorMock({
+      (): CursorAndAsyncIterator<AssetMapping3D> =>
+        createCursorAndAsyncIteratorMock({
           items: HYBRID_ASSET_MAPPINGS as AssetMapping3D[]
         })
     );

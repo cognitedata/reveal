@@ -36,7 +36,7 @@ export type HybridMappingsPerModelWithCursors<T extends HybridDataType> = {
   nextCursors: CursorForModel[];
 };
 
-export async function fetchAllHybridAssetMappingsForModels<T extends HybridDataType>(
+export async function fetchHybridAssetMappingsForModels<T extends HybridDataType>(
   dataType: T,
   models: ModelRevisionId[],
   limit: number,

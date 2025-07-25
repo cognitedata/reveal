@@ -2,7 +2,7 @@ import { type CogniteClient, type FilterDefinition, type ViewDefinition } from '
 import { type ClassicAdd3DModelOptions } from '../../../components/Reveal3DResources/types';
 import { searchHybridDmCadAssetMappingsWithFilters } from './searchHybridDmCadAssetMappingsWithFilters';
 import { type NodeItem } from '../../../data-providers';
-import { fetchAllHybridAssetMappingsForModels } from './fetchAllHybridAssetMappingsForModels';
+import { fetchHybridAssetMappingsForModels } from './fetchHybridAssetMappingsForModels';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
 import { type ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
@@ -19,7 +19,7 @@ export async function searchHybridDmAssetsForCadModels(
   classicCadCache: ClassicCadAssetMappingCache
 ): Promise<NodeItem[]> {
   if ((options.query === undefined || options.query === '') && options.filter === undefined) {
-    return await fetchAllHybridDmAssetsForCadModels(models, options.limit ?? 1000, view, sdk);
+    return await fetchHybridDmAssetsForCadModels(models, options.limit ?? 1000, view, sdk);
   }
 
   return await searchHybridDmCadAssetMappingsWithFilters(
@@ -31,13 +31,13 @@ export async function searchHybridDmAssetsForCadModels(
   );
 }
 
-async function fetchAllHybridDmAssetsForCadModels(
+async function fetchHybridDmAssetsForCadModels(
   models: ClassicAdd3DModelOptions[],
   limit: number,
   view: ViewDefinition,
   sdk: CogniteClient
 ): Promise<NodeItem[]> {
-  const assetMappingsPerModel = await fetchAllHybridAssetMappingsForModels<'dm'>(
+  const assetMappingsPerModel = await fetchHybridAssetMappingsForModels<'dm'>(
     'dm',
     models,
     limit,
