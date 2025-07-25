@@ -240,7 +240,7 @@ function combineFdmCadData(
   if (
     hybridData !== undefined &&
     hybridData.node !== undefined &&
-    hybridData.mappings.some(isDmsInstance)
+    hybridData.mappings.some(isDmCadAssetMapping)
   ) {
     const instances = hybridData.mappings
       .filter(isDmCadAssetMapping)
