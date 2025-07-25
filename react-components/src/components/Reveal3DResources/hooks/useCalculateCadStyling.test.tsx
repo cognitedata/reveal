@@ -169,7 +169,7 @@ describe(useCalculateCadStyling.name, () => {
     });
   });
 
-  test('returns objects with models and style groups for DM instance', async () => {
+  test('returns loading state for DM instance style group', async () => {
     mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
     mockGetNodesForInstanceIds.mockResolvedValue(
       createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
@@ -188,6 +188,22 @@ describe(useCalculateCadStyling.name, () => {
       styledModels: [{ model: MODEL, styleGroups: [] }],
       isModelMappingsLoading: true
     });
+  });
+
+  test('returns objects with models and style groups for DM instance after loading', async () => {
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
+    mockGetNodesForInstanceIds.mockResolvedValue(
+      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
+    );
+
+    const { result } = renderHook(
+      () =>
+        useCalculateCadStyling(
+          [MODEL],
+          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
+        ),
+      { wrapper }
+    );
 
     await waitFor(() => {
       expect(result.current.isModelMappingsLoading).toBeFalsy();

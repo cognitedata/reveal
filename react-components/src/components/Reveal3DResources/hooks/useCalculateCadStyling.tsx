@@ -7,7 +7,12 @@ import {
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
-import { type AssetId, type FdmKey, type CadNodeTreeData } from '../../CacheProvider/types';
+import {
+  type AssetId,
+  type FdmKey,
+  type CadNodeTreeData,
+  type ModelRevisionKey
+} from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
   type NodeStylingGroup,
@@ -29,6 +34,7 @@ import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelTreeIndexMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 import { type InstanceKey } from '../../../utilities/instanceIds';
+import { chunk } from 'lodash';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -186,18 +192,10 @@ function useCalculateInstanceStyling(
         [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
         models
       );
-      const hybridAssetMappingsByModelKey = new Map(
-        await Promise.all(
-          models.map(async (model) => {
-            const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
-            const mappings = await classicCadAssetMappingCache.getNodesForInstanceIds(
-              model.modelId,
-              model.revisionId,
-              dmIdsForInstanceGroups
-            );
-            return [modelKey, mappings] as const;
-          })
-        )
+      const hybridAssetMappingsByModelKey = await getChunkedHybridMappings(
+        models,
+        dmIdsForInstanceGroups,
+        classicCadAssetMappingCache
       );
 
       const modelStyleGroups = models
@@ -231,6 +229,34 @@ function useCalculateInstanceStyling(
   return useMemo(() => {
     return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading, isError };
   }, [modelStyleGroups, isModelMappingsLoading, isError]);
+}
+
+async function getChunkedHybridMappings(
+  models: CadModelOptions[],
+  instanceIds: Array<{ externalId: string; space: string }>,
+  mappingCache: ReturnType<typeof useClassicCadAssetMappingCache>,
+  chunkSize = 10
+): Promise<Map<ModelRevisionKey, Map<InstanceKey, Node3D[]>>> {
+  const modelChunks = chunk(models, chunkSize);
+  const hybridMappingsEntries: Array<[ModelRevisionKey, Map<InstanceKey, Node3D[]>]> = [];
+
+  for (const modelBatch of modelChunks) {
+    const chunkResults = await Promise.all(
+      modelBatch.map(async (model): Promise<[ModelRevisionKey, Map<InstanceKey, Node3D[]>]> => {
+        const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
+        const mappings = await mappingCache.getNodesForInstanceIds(
+          model.modelId,
+          model.revisionId,
+          instanceIds
+        );
+        return [modelKey, mappings];
+      })
+    );
+
+    hybridMappingsEntries.push(...chunkResults);
+  }
+
+  return new Map(hybridMappingsEntries);
 }
 
 function useJoinStylingGroups(
