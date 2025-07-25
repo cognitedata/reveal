@@ -20,7 +20,6 @@ import {
   isClassicCadAssetMapping,
   isDmCadAssetMapping
 } from '../components/CacheProvider/cad/assetMappingTypes';
-import { isDmsInstance } from '../utilities/instanceIds';
 import { UseClickedNodeDataContext } from './useClickedNode.context';
 
 export const useClickedNodeData = (options?: {
