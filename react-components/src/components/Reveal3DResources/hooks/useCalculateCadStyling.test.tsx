@@ -170,15 +170,16 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns objects with models and style groups for DM instance', async () => {
-    mockGetMappingsForModelsAndInstances.mockResolvedValue(
-      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
+    mockGetNodesForInstanceIds.mockResolvedValue(
+      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
     );
 
     const { result } = renderHook(
       () =>
         useCalculateCadStyling(
           [MODEL],
-          [{ assetIds: [ASSET_ID], style: { cad: { renderGhosted: true } } }]
+          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
         ),
       { wrapper }
     );
