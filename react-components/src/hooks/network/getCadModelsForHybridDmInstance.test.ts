@@ -13,8 +13,7 @@ describe(getCadModelsForHybridDmInstance.name, () => {
     .setup((p) => p.getBaseUrl())
     .returns('https://api.cognitedata.com')
     .setup((p) => p.project)
-    .returns(project)
-
+    .returns(project);
 
   it('should return mapped cad model options from sdk response', async () => {
     const mockResponse = vi.fn().mockResolvedValue({
@@ -28,7 +27,10 @@ describe(getCadModelsForHybridDmInstance.name, () => {
       headers: {}
     });
 
-    const sdkMock = sdkMockBase.setup((p) => p.post).returns(mockResponse).object();
+    const sdkMock = sdkMockBase
+      .setup((p) => p.post)
+      .returns(mockResponse)
+      .object();
 
     const result = await getCadModelsForHybridDmInstance(dmsInstance, sdkMock);
 
@@ -50,7 +52,10 @@ describe(getCadModelsForHybridDmInstance.name, () => {
       headers: {}
     });
 
-    const sdkMock = sdkMockBase.setup((p) => p.post).returns(mockResponse).object();
+    const sdkMock = sdkMockBase
+      .setup((p) => p.post)
+      .returns(mockResponse)
+      .object();
     const result = await getCadModelsForHybridDmInstance(dmsInstance, sdkMock);
 
     expect(result).toEqual([]);

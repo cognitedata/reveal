@@ -1,7 +1,7 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
-import { uniq, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import { createAddOptionsKey } from '../../utilities/createAddOptionsKey';
 
 export type CadModelNode = {

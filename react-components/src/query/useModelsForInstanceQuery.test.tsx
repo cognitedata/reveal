@@ -30,7 +30,7 @@ const mockAddOptionsData3: TaggedAddResourceOptions[] = [
 
 const mockFdmDataProvider = new Mock<Fdm3dDataProvider>()
   .setup((p) => p.getCadModelsForInstance)
-  .returns(() => Promise.resolve(mockAddOptionsData1))
+  .returns(async () => await Promise.resolve(mockAddOptionsData1))
   .object();
 
 const sdkMock = new Mock<CogniteClient>()
@@ -64,7 +64,9 @@ describe(useModelsForInstanceQuery.name, () => {
     defaultDependencies.useFdmSdk.mockReturnValue(fdmSdkMock);
     defaultDependencies.useFdm3dDataProvider.mockReturnValue(mockFdmDataProvider);
     defaultDependencies.useIsCoreDmOnly.mockReturnValue(true);
-    defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(mockGetCadModelsForHybrid);
+    defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(
+      mockGetCadModelsForHybrid
+    );
     defaultDependencies.getPointCloudModelsForAssetInstance.mockResolvedValue([]);
   });
 
@@ -80,7 +82,6 @@ describe(useModelsForInstanceQuery.name, () => {
   });
 
   it('calls getModelsForDmsInstance if isCoreDm is true and fdm3dDataProvider is defined with the correct parameters', async () => {
-
     defaultDependencies.useIsCoreDmOnly.mockReturnValue(true);
     defaultDependencies.getPointCloudModelsForAssetInstance.mockResolvedValue(mockAddOptionsData2);
     const mockModels = mockAddOptionsData1.concat(mockAddOptionsData2);
