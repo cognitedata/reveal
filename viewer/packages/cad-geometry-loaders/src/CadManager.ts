@@ -235,7 +235,16 @@ export class CadManager {
   private setCacheSizeForModel(model: CadNode, budget: CadModelBudget) {
     // This gives cache size of 200 on desktop on default budget
     const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
-    model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
+
+    console.log('setCacheSizeForModel .......');
+    console.log(defaultDesktopCadModelBudget.maximumRenderCost);
+    console.log(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO);
+    console.log(budget.maximumRenderCost);
+
+    const f = Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost);
+    console.log(f);
+    console.log(budget.maximumRenderCost);
+    model.setCacheSize(f);
   }
 
   private markNeedsRedraw(): void {

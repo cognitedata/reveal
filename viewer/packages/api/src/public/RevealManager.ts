@@ -154,6 +154,7 @@ export class RevealManager {
 
   public set cadBudget(budget: CadModelBudget) {
     this._cadManager.budget = budget;
+    console.log('RevealManager: ' + this._cadManager.budget);
   }
 
   public get cadLoadedStatistics(): CadModelSectorLoadStatistics {

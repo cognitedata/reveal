@@ -14,11 +14,17 @@ export function initialCadBudgetUi(viewer: Cognite3DViewer<DataSourceType>, uiFo
     factor: 200.0
   };
   const defaultCadBudget = { ...viewer.cadBudget };
+
+  console.log('');
+  console.log('Default');
+  console.log(defaultCadBudget.maximumRenderCost);
+
   const onCadBudgetSettingsChanged = () => {
-    const scale = state.factor / 100.0;
+    const maximumRenderCost =
+      state.factor > 490 ? Infinity : (defaultCadBudget.maximumRenderCost * state.factor) / 10000.0;
     viewer.cadBudget = {
-      highDetailProximityThreshold: defaultCadBudget.highDetailProximityThreshold * scale,
-      maximumRenderCost: defaultCadBudget.maximumRenderCost * scale
+      highDetailProximityThreshold: 0,
+      maximumRenderCost: maximumRenderCost
     };
   };
   uiFolder.add(state, 'factor', 1, 500, 1).name('Budget factor (%)').onChange(onCadBudgetSettingsChanged);

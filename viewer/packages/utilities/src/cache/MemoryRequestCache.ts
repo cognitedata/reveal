@@ -112,6 +112,13 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     this._maxElementsInCache = cacheSize;
     this._defaultCleanupCount = Math.max(cacheSize * MemoryRequestCache.CLEANUP_COUNT_TO_CAPACITY_RATIO, 1);
 
+    console.log('resize begin');
+    console.log(cacheSize);
+    console.log(cacheSize * MemoryRequestCache.CLEANUP_COUNT_TO_CAPACITY_RATIO);
+    console.log(this._defaultCleanupCount);
+    console.log(this._maxElementsInCache);
+    console.log('resize end');
+
     if (this.isFull()) {
       this.cleanCache(this._data.size - this._maxElementsInCache);
     }
