@@ -20,7 +20,10 @@ import {
 import { isSameModel } from '../../../utilities/isSameModel';
 import { useQuery } from '@tanstack/react-query';
 import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
-import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
+import {
+  useCadMappingsCache,
+  useClassicCadAssetMappingCache
+} from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
@@ -49,10 +52,12 @@ export type StyledModel = {
 
 export type UseCalculateCadStylingDependencies = {
   useCadMappingsCache: typeof useCadMappingsCache;
+  useClassicCadAssetMappingCache: typeof useClassicCadAssetMappingCache;
 };
 
 export const defaultUseCalculateCadStylingDependencies: UseCalculateCadStylingDependencies = {
-  useCadMappingsCache
+  useCadMappingsCache,
+  useClassicCadAssetMappingCache
 };
 
 export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylingDependencies>(
@@ -155,9 +160,12 @@ function useCalculateInstanceStyling(
     .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
-  const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
+  const { useCadMappingsCache, useClassicCadAssetMappingCache } = useContext(
+    UseCalculateCadStylingContext
+  );
 
   const cadCache = useCadMappingsCache();
+  const classicCadAssetMappingCache = useClassicCadAssetMappingCache();
 
   const {
     data: modelStyleGroups,
@@ -177,16 +185,36 @@ function useCalculateInstanceStyling(
         [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
         models
       );
+      const hybridAssetMappings = await Promise.all(
+        models.map(async (model) => {
+          return await classicCadAssetMappingCache.getNodesForInstanceIds(
+            model.modelId,
+            model.revisionId,
+            dmIdsForInstanceGroups
+          );
+        })
+      );
 
       const modelStyleGroups = models
-        .map((model) => {
+        .map((model, index) => {
           const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
 
           const modelMappings = mappings.get(modelKey);
-          if (modelMappings === undefined) {
+          const hybridMappings = hybridAssetMappings[index];
+
+          if (
+            modelMappings === undefined &&
+            (hybridMappings === undefined || hybridMappings.size === 0)
+          ) {
             return undefined;
           }
-          return calculateInstanceCadModelStyling(model, instanceGroups, modelMappings);
+
+          return calculateInstanceCadModelStyling(
+            model,
+            instanceGroups,
+            modelMappings,
+            hybridMappings
+          );
         })
         .filter(isDefined);
 
@@ -254,9 +282,30 @@ function getMappedStyleGroupFromInstanceToNodeMap(
 function calculateInstanceCadModelStyling(
   model: CadModelOptions,
   stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
-  mappings: Map<AssetId | CogniteExternalId, Node3D[]>
+  mappings: Map<AssetId | CogniteExternalId, Node3D[]> | undefined,
+  hybridMappings: Map<AssetId | FdmKey, Node3D[]> | undefined
 ): ModelStyleGroup {
-  const treeIndexSetsWithStyle = stylingGroups
+  const fdmStyleGroups = createStyleGroupsFromFdmMappings(stylingGroups, mappings);
+
+  const hybridStyleGroups = createStyleGroupsFromHybridMappings(stylingGroups, hybridMappings);
+
+  const combinedStyleGroups = [...fdmStyleGroups, ...hybridStyleGroups];
+
+  return {
+    model,
+    styleGroup: combinedStyleGroups
+  };
+}
+
+function createStyleGroupsFromFdmMappings(
+  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
+  mappings: Map<AssetId | CogniteExternalId, Node3D[]> | undefined
+): TreeIndexStylingGroup[] {
+  if (mappings === undefined) {
+    return [];
+  }
+
+  return stylingGroups
     .map((group) => {
       const indexSet = new IndexSet();
       getInstanceKeysFromStylingGroup(group).forEach((instanceKey) => {
@@ -272,11 +321,32 @@ function calculateInstanceCadModelStyling(
       };
     })
     .filter((setWithStyle) => setWithStyle.treeIndexSet.count > 0);
+}
 
-  return {
-    model,
-    styleGroup: treeIndexSetsWithStyle
-  };
+function createStyleGroupsFromHybridMappings(
+  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
+  mappings: Map<AssetId | FdmKey, Node3D[]> | undefined
+): TreeIndexStylingGroup[] {
+  if (mappings === undefined) {
+    return [];
+  }
+
+  return stylingGroups
+    .map((group) => {
+      const indexSet = new IndexSet();
+      getInstanceKeysFromStylingGroup(group).forEach((instanceKey) => {
+        const node3dList = mappings.get(instanceKey);
+        node3dList?.forEach((node) => {
+          indexSet.addRange(getNodeSubtreeNumericRange(node));
+        });
+      });
+
+      return {
+        treeIndexSet: indexSet,
+        style: group.style.cad
+      };
+    })
+    .filter((setWithStyle) => setWithStyle.treeIndexSet.count > 0);
 }
 
 function getNodeSubtreeNumericRange(node: CadNodeTreeData): NumericRange {
