@@ -3,11 +3,11 @@ import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/r
 import { type AnyIntersection } from '@cognite/reveal';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
-import { type ClassicCadNodeAssetMappingResult } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type HybridCadNodeAssetMappingResult } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 
 export const useAssetMappingForTreeIndex = (
   intersection: AnyIntersection | undefined
-): UseQueryResult<ClassicCadNodeAssetMappingResult> => {
+): UseQueryResult<HybridCadNodeAssetMappingResult> => {
   const assetMappingAndNode3DCache = useClassicCadAssetMappingCache();
   const cdfClient = useSDK();
 
