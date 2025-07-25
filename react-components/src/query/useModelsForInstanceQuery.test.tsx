@@ -112,7 +112,7 @@ describe(useModelsForInstanceQuery.name, () => {
 
   it('calls getModelsForDmsInstance if isCoreDm is true and fdm3dDataProvider is defined with the correct parameters', async () => {
     const mockFdm3dDataProvider = useFdm3dDataProvider();
-    if (mockFdm3dDataProvider) {
+    if (mockFdm3dDataProvider !== undefined) {
       vi.mocked(mockFdm3dDataProvider.getCadModelsForInstance).mockResolvedValue(
         mockAddOptionsData1
       );

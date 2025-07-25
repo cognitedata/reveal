@@ -17,7 +17,7 @@ describe(getCadModelsForHybrid.name, () => {
       },
       status: 200,
       headers: {}
-    } as HttpResponse<MockResponseType>;
+    } as const as HttpResponse<MockResponseType>;
   });
 
   const sdkMock = new Mock<CogniteClient>()
@@ -40,7 +40,7 @@ describe(getCadModelsForHybrid.name, () => {
         },
         status: 200,
         headers: {}
-      } as HttpResponse<MockResponseType>;
+      } as const as HttpResponse<MockResponseType>;
     });
 
     const result = await getCadModelsForHybrid(dmsInstance, sdkMock);
@@ -62,7 +62,7 @@ describe(getCadModelsForHybrid.name, () => {
         },
         status: 200,
         headers: {}
-      } as HttpResponse<MockResponseType>;
+      } as const as HttpResponse<MockResponseType>;
     });
     const result = await getCadModelsForHybrid(dmsInstance, sdkMock);
 
