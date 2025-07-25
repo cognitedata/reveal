@@ -290,7 +290,7 @@ describe(useClickedNodeData.name, () => {
     expect(result.current).toBeUndefined();
   });
 
-  test('do nothing when right click is true', async () => {
+  test('returns intersection data for right-click events when rightClick option is true', async () => {
     viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
     const { result } = renderHook(() => useClickedNodeData({ rightClick: true }), { wrapper });
@@ -318,7 +318,7 @@ describe(useClickedNodeData.name, () => {
     });
   });
 
-  test('respects disableOnEditTool option when provided', async () => {
+  test('do nothing when disableOnEditTool option is true', async () => {
     viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
     mockDependencies.isActiveEditTool = vi.fn().mockReturnValue(true);
 
