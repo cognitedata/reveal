@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type PropsWithChildren, type ReactElement } from 'react';
 import { Vector3, MOUSE, Vector2 } from 'three';
@@ -32,7 +32,7 @@ describe(useClickedNodeData.name, () => {
   let viewer: Cognite3DViewer<DataSourceType>;
   let mockDependencies: UseClickedNodeDataDependencies;
 
-  const createMockNode3D = (): Node3D => ({
+  const mockNode3D: Node3D = {
     id: 123,
     name: 'Test Node',
     treeIndex: 456,
@@ -40,33 +40,35 @@ describe(useClickedNodeData.name, () => {
     parentId: 0,
     depth: 1,
     subtreeSize: 1
-  });
+  };
 
-  const createMockCadIntersection = (): CadIntersection => ({
+  const mockCadIntersection: CadIntersection = {
     type: 'cad',
     model: cadMock,
     point: new Vector3(1, 2, 3),
     distanceToCamera: 10,
     treeIndex: 123
-  });
+  };
 
-  const createMockFdmNodeDataPromises = (): FdmNodeDataPromises => ({
+  const mockFdmNodeDataPromises: FdmNodeDataPromises = {
     cadAndFdmNodesPromise: Promise.resolve({
-      cadNode: createMockNode3D(),
+      cadNode: mockNode3D,
       fdmIds: [{ space: 'test', externalId: 'test-1' }]
     }),
     viewsPromise: Promise.resolve([
       [{ space: 'test', externalId: 'view-1', version: '1', type: 'view' }]
     ])
-  });
+  };
 
-  const createMockHybridAssetMappingResult = (): HybridCadNodeAssetMappingResult => ({
-    node: createMockNode3D(),
+  const mockHybridAssetMappingResult: HybridCadNodeAssetMappingResult = {
+    node: mockNode3D,
     mappings: [
       { assetId: 111, treeIndex: 123, subtreeSize: 1, nodeId: 501 },
       { assetId: 222, treeIndex: 124, subtreeSize: 1, nodeId: 502 }
     ]
-  });
+  };
+
+  const mockScreenPositionOnClick = new Vector2(100, 200);
 
   const mockUseFdm3dNodeDataPromises =
     vi.fn<UseClickedNodeDataDependencies['useFdm3dNodeDataPromises']>();
@@ -120,66 +122,70 @@ describe(useClickedNodeData.name, () => {
     };
   });
 
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
-
   test('returns asset mapping result when intersection and data are available', async () => {
-    const mockAssetMapping = createMockHybridAssetMappingResult();
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
-
-    mockUseAssetMappingForTreeIndex.mockReturnValue(createMockQueryResult(mockAssetMapping));
+    mockUseAssetMappingForTreeIndex.mockReturnValue(
+      createMockQueryResult(mockHybridAssetMappingResult)
+    );
 
     const { result } = renderHook(() => useClickedNodeData(), { wrapper });
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     await waitFor(async () => {
       expect(result.current).not.toBeUndefined();
       expect(result.current).toEqual({
         mouseButton: MOUSE.LEFT,
-        position: new Vector2(100, 200),
+        position: mockScreenPositionOnClick,
         fdmResult: undefined,
         assetMappingResult: {
-          cadNode: mockAssetMapping.node,
+          cadNode: mockHybridAssetMappingResult.node,
           assetIds: [111, 222]
         },
         pointCloudAnnotationMappingResult: null,
         pointCloudFdmVolumeMappingResult: null,
-        intersection: createMockCadIntersection()
+        intersection: mockCadIntersection
       });
     });
   });
 
   test('verifies FDM data processing readiness and dependency data structure', async () => {
-    const mockFdmPromises = createMockFdmNodeDataPromises();
-
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
-    mockUseFdm3dNodeDataPromises.mockReturnValue(createMockQueryResult(mockFdmPromises));
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
+    mockUseFdm3dNodeDataPromises.mockReturnValue(createMockQueryResult(mockFdmNodeDataPromises));
 
     const { result } = renderHook(() => useClickedNodeData(), { wrapper });
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     await waitFor(async () => {
       expect(result.current).not.toBeUndefined();
       expect(result.current).toEqual({
         mouseButton: MOUSE.LEFT,
-        position: new Vector2(100, 200),
+        position: mockScreenPositionOnClick,
         fdmResult: {
-          fdmNodes: (await mockFdmPromises.cadAndFdmNodesPromise)?.fdmIds,
-          cadNode: (await mockFdmPromises.cadAndFdmNodesPromise)?.cadNode,
-          views: await mockFdmPromises.viewsPromise
+          fdmNodes: (await mockFdmNodeDataPromises.cadAndFdmNodesPromise)?.fdmIds,
+          cadNode: (await mockFdmNodeDataPromises.cadAndFdmNodesPromise)?.cadNode,
+          views: await mockFdmNodeDataPromises.viewsPromise
         },
         assetMappingResult: undefined,
         pointCloudAnnotationMappingResult: null,
         pointCloudFdmVolumeMappingResult: null,
-        intersection: createMockCadIntersection()
+        intersection: mockCadIntersection
       });
     });
   });
@@ -187,7 +193,7 @@ describe(useClickedNodeData.name, () => {
   test('returns point cloud annotation mapping result when intersection and data are available', async () => {
     const mockPointCloudData = [{ annotationId: 1, asset: createAssetMock(333, 'Test Asset') }];
 
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
     mockUsePointCloudAnnotationMappingForIntersection.mockReturnValue(
       createMockQueryResult(mockPointCloudData, false)
@@ -197,18 +203,23 @@ describe(useClickedNodeData.name, () => {
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     await waitFor(async () => {
       expect(result.current).not.toBeUndefined();
       expect(result.current).toEqual({
         mouseButton: MOUSE.LEFT,
-        position: new Vector2(100, 200),
+        position: mockScreenPositionOnClick,
         fdmResult: undefined,
         assetMappingResult: undefined,
         pointCloudAnnotationMappingResult: mockPointCloudData,
         pointCloudFdmVolumeMappingResult: null,
-        intersection: createMockCadIntersection()
+        intersection: mockCadIntersection
       });
     });
   });
@@ -218,7 +229,7 @@ describe(useClickedNodeData.name, () => {
       { assetInstance: { space: 'test', externalId: 'volume-1' }, views: [] }
     ];
 
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
     mockUsePointCloudFdmVolumeMappingForIntersection.mockReturnValue(
       createMockQueryResult(mockVolumeData, false)
@@ -228,18 +239,23 @@ describe(useClickedNodeData.name, () => {
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     await waitFor(async () => {
       expect(result.current).not.toBeUndefined();
       expect(result.current).toEqual({
         mouseButton: MOUSE.LEFT,
-        position: new Vector2(100, 200),
+        position: mockScreenPositionOnClick,
         fdmResult: undefined,
         assetMappingResult: undefined,
         pointCloudAnnotationMappingResult: null,
         pointCloudFdmVolumeMappingResult: mockVolumeData,
-        intersection: createMockCadIntersection()
+        intersection: mockCadIntersection
       });
     });
   });
@@ -257,43 +273,53 @@ describe(useClickedNodeData.name, () => {
     expect(result.current).toBeUndefined();
   });
 
-  test('respects leftClick option when provided', async () => {
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
+  test('do nothing when left click is false', async () => {
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
     const { result } = renderHook(() => useClickedNodeData({ leftClick: false }), { wrapper });
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     expect(result.current).toBeUndefined();
   });
 
-  test('respects rightClick option when provided', async () => {
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
+  test('do nothing when right click is true', async () => {
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
     const { result } = renderHook(() => useClickedNodeData({ rightClick: true }), { wrapper });
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.RIGHT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.RIGHT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     await waitFor(async () => {
       expect(result.current).not.toBeUndefined();
       expect(result.current).toEqual({
         mouseButton: MOUSE.RIGHT,
-        position: new Vector2(100, 200),
+        position: mockScreenPositionOnClick,
         fdmResult: undefined,
         assetMappingResult: undefined,
         pointCloudAnnotationMappingResult: null,
         pointCloudFdmVolumeMappingResult: null,
-        intersection: createMockCadIntersection()
+        intersection: mockCadIntersection
       });
     });
   });
 
   test('respects disableOnEditTool option when provided', async () => {
-    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(createMockCadIntersection());
+    viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
     mockDependencies.isActiveEditTool = vi.fn().mockReturnValue(true);
 
     const { result } = renderHook(() => useClickedNodeData({ disableOnEditTool: true }), {
@@ -302,7 +328,12 @@ describe(useClickedNodeData.name, () => {
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     expect(result.current).toBeUndefined();
   });
@@ -315,7 +346,12 @@ describe(useClickedNodeData.name, () => {
 
     const clickCallback = getClickCallback(viewer);
 
-    await simulateClick(clickCallback, MOUSE.LEFT);
+    await simulateClick(
+      clickCallback,
+      MOUSE.LEFT,
+      mockScreenPositionOnClick.x,
+      mockScreenPositionOnClick.y
+    );
 
     expect(result.current).toBeUndefined();
   });
