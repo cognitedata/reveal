@@ -34,10 +34,10 @@ describe(PointView.name, () => {
     const style = domainObject.renderStyle;
     const oldRadius = view.boundingBox.getSize(new Vector3()).z / 2;
     const child = view.object.children[0];
-    expect(oldRadius).toBeCloseTo(style.radius);
+    expect(oldRadius).toBeCloseTo(domainObject.radius);
 
     // Double the radius
-    style.radius *= 2;
+    domainObject.radius *= 2;
     view.update(new DomainObjectChange(Changes.renderStyle));
 
     const newRadius = view.boundingBox.getSize(new Vector3()).z / 2;

@@ -44,7 +44,7 @@ export class PointView extends GroupThreeView<PointDomainObject> {
   protected override addChildren(): void {
     const { domainObject, style, renderTarget } = this;
 
-    const geometry = new SphereGeometry(style.radius, 32, 16);
+    const geometry = new SphereGeometry(domainObject.radius, 32, 16);
     const material = new MeshPhongMaterial({
       color: domainObject.color,
       emissive: WHITE_COLOR,
@@ -67,12 +67,12 @@ export class PointView extends GroupThreeView<PointDomainObject> {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const { domainObject, style } = this;
+    const { domainObject } = this;
 
     const ray = intersectInput.raycaster.ray;
     const center = domainObject.point.clone();
     center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    const sphere = new Sphere(center, style.radius);
+    const sphere = new Sphere(center, domainObject.radius);
     const point = ray.intersectSphere(sphere, new Vector3());
     if (point === null) {
       return undefined;
