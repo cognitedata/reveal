@@ -100,7 +100,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.Point:
-      return { key: 'MEASUREMENTS_ADD_LINE' };
+      return { key: 'MEASUREMENTS_ADD_POINT' };
     case PrimitiveType.Line:
       return { key: 'MEASUREMENTS_ADD_LINE' };
     case PrimitiveType.Polyline:
