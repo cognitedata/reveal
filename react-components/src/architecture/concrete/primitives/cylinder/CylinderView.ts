@@ -40,9 +40,7 @@ import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { getRoot } from '../../../base/domainObjects/getRoot';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
@@ -251,7 +249,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     if (!isFaceVisible(face)) {
       return undefined;
     }
-    const { domainObject, style } = this;
+    const { domainObject } = this;
     const { focusType } = domainObject;
     const radius = this.getFaceRadius();
 
@@ -260,13 +258,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(
-      material,
-      domainObject,
-      style,
-      focusType === FocusType.Rotation,
-      this.useDepthTest
-    );
+    updateMarkerMaterial(material, focusType === FocusType.Rotation, this.useDepthTest);
     const result = new Mesh(geometry, material);
     result.renderOrder = RENDER_ORDER;
 
@@ -306,13 +298,13 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
 
   private addEdgeCircles(matrix: Matrix4): void {
-    const { domainObject, style } = this;
+    const { domainObject } = this;
     let selectedFace = domainObject.focusFace;
     if (this.domainObject.focusType !== FocusType.Face) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
+    updateMarkerMaterial(material, false, this.useDepthTest);
     for (const boxFace of BoxFace.getAllFaces()) {
       if (!isFaceVisible(boxFace)) {
         continue;
@@ -323,7 +315,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     }
     if (selectedFace !== undefined && isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
+      updateMarkerMaterial(material, true, this.useDepthTest);
       this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
     }
   }
@@ -375,13 +367,9 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     return 2 * style.relativeTextSize * domainObject.cylinder.height;
   }
 
-  private createLabel(name: string, value: number, labelHeight: number): Sprite | undefined {
-    const unitSystem = this.getUnitSystem();
-    const text = unitSystem.toStringWithUnit(value, Quantity.Length);
+  private createLabel(name: string, value: number, labelHeight: number): Sprite {
+    const text = this.getUnitSystem().toStringWithUnit(value, Quantity.Length);
     const sprite = createSprite(text, this.style, labelHeight);
-    if (sprite === undefined) {
-      return undefined;
-    }
     sprite.name = name;
     sprite.renderOrder = LABEL_RENDER_ORDER;
     return sprite;
@@ -391,7 +379,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const radiusLabelA = this._group.getObjectByName(RADIUS_LABEL_A);
     const radiusLabelB = this._group.getObjectByName(RADIUS_LABEL_B);
     const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
-    if (radiusLabelB === undefined && radiusLabelA === undefined && heightLabel === undefined) {
+    if (radiusLabelA === undefined && radiusLabelB === undefined && heightLabel === undefined) {
       return;
     }
     const { domainObject } = this;
@@ -470,10 +458,6 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return FocusType.Face;
     }
     return FocusType.Body;
-  }
-
-  private getUnitSystem(): UnitSystem {
-    return getRoot(this.domainObject)?.unitSystem ?? new UnitSystem();
   }
 }
 

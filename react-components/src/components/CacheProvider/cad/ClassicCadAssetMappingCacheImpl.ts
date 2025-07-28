@@ -247,16 +247,29 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     const filter =
       filterType === 'nodeIds' ? { nodeIds: numericalIdChunk } : { assetIds: numericalIdChunk };
 
-    const assetMapping3D = (
-      await this._sdk.assetMappings3D
-        .filter(modelId, revisionId, {
-          limit: 1000,
-          filter
-        })
-        .autoPagingToArray({ limit: Infinity })
-    )
-      .map(convertToHybridAssetMapping)
-      .filter(isDefined);
+    const classicPromise = this._sdk.assetMappings3D
+      .filter(modelId, revisionId, {
+        limit: 1000,
+        filter
+      })
+      .autoPagingToArray({ limit: Infinity });
+
+    const filterOptions = {
+      limit: 1000,
+      filter,
+      getDmsInstances: true
+    };
+
+    const hybridPromise = this._sdk.assetMappings3D
+      .filter(modelId, revisionId, filterOptions)
+      .autoPagingToArray({ limit: Infinity });
+
+    const [classicResult, hybridResult] = await Promise.all([classicPromise, hybridPromise]);
+
+    const classicAssetMapping3D = classicResult.map(convertToHybridAssetMapping).filter(isDefined);
+    const hybridAssetMapping3D = hybridResult.map(convertToHybridAssetMapping).filter(isDefined);
+
+    const assetMapping3D = [...classicAssetMapping3D, ...hybridAssetMapping3D];
 
     await Promise.all(
       assetMapping3D.map(async (assetMapping) => {

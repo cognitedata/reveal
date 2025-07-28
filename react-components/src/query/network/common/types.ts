@@ -1,10 +1,3 @@
-import type { Asset } from '@cognite/sdk';
-
-export type SearchClassicCadAssetsResponse = {
-  nextCursor: string | undefined;
-  data: Asset[];
-};
-
 export type AssetAdvancedFilterAnd = {
   and: AssetAdvancedFilterProps[];
 };

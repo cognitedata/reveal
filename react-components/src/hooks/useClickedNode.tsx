@@ -4,74 +4,39 @@ import {
   type AnyIntersection,
   type DataSourceType
 } from '@cognite/reveal';
-import { useEffect, useMemo, useState } from 'react';
-import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
-import { type PointCloudAnnotationMappedAssetData } from './types';
-import { MOUSE, Vector2, type Vector3 } from 'three';
-import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
-import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
-import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
 import {
-  type PointCloudFdmVolumeMappingWithViews,
-  usePointCloudFdmVolumeMappingForIntersection
-} from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
-import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
+  type AssetMappingDataResult,
+  type ClickedNodeData,
+  type FdmNodeDataResult,
+  type PointCloudAnnotationMappedAssetData
+} from './types';
+import { MOUSE, Vector2, type Vector3 } from 'three';
+import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
-import { isClassicCadAssetMapping } from '../components/CacheProvider/cad/assetMappingTypes';
-
-export type AssetMappingDataResult = {
-  cadNode: Node3D;
-  assetIds: CogniteInternalId[];
-};
-
-export type FdmNodeDataResult = {
-  fdmNodes: DmsUniqueIdentifier[];
-  cadNode: Node3D;
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  views?: Source[][] | null;
-};
-
-export type ClickedNodeData = {
-  mouseButton?: MOUSE;
-  position?: Vector2;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  fdmResult?: FdmNodeDataResult | null;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  assetMappingResult?: AssetMappingDataResult | null;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[] | null;
-
-  /**
-   * A value of `undefined` means it's not yet finished evaluating.
-   * A value of `null` means there was no result
-   */
-  pointCloudFdmVolumeMappingResult?: PointCloudFdmVolumeMappingWithViews[] | null;
-  intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType>;
-};
+import {
+  isClassicCadAssetMapping,
+  isDmCadAssetMapping
+} from '../components/CacheProvider/cad/assetMappingTypes';
+import { UseClickedNodeDataContext } from './useClickedNode.context';
 
 export const useClickedNodeData = (options?: {
   leftClick?: boolean;
   rightClick?: boolean;
   disableOnEditTool?: boolean;
 }): ClickedNodeData | undefined => {
+  const {
+    useFdm3dNodeDataPromises,
+    useAssetMappingForTreeIndex,
+    usePointCloudAnnotationMappingForIntersection,
+    usePointCloudFdmVolumeMappingForIntersection,
+    useRenderTarget,
+    useReveal,
+    isActiveEditTool
+  } = useContext(UseClickedNodeDataContext);
+
   const leftClick = options?.leftClick ?? true;
   const rightClick = options?.rightClick ?? false;
   const disableOnEditTool = options?.disableOnEditTool ?? true;
@@ -138,7 +103,7 @@ export const useClickedNodeData = (options?: {
 
   const { data: nodeDataPromises } = useFdm3dNodeDataPromises(intersection);
 
-  const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
+  const { data: hybridAssetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
   const pointCloudAnnotationMappingResult =
     usePointCloudAnnotationMappingForIntersection(intersection);
@@ -150,7 +115,7 @@ export const useClickedNodeData = (options?: {
     mouseButton,
     position,
     nodeDataPromises,
-    assetMappingResult,
+    hybridAssetMappingResult,
     pointCloudAnnotationMappingResult,
     pointCloudFdmVolumeMappingResult,
     image360AnnotationIntersection ?? intersection
@@ -161,7 +126,7 @@ const useCombinedClickedNodeData = (
   mouseButton: MOUSE | undefined,
   position: Vector2 | undefined,
   fdmPromises: FdmNodeDataPromises | undefined,
-  assetMappings: HybridCadNodeAssetMappingResult | undefined,
+  hybridAssetMappings: HybridCadNodeAssetMappingResult | undefined,
   pointCloudAssetMappingsResult: UseQueryResult<PointCloudAnnotationMappedAssetData[]>,
   pointCloudFdmVolumeMappingsResult: UseQueryResult<PointCloudFdmVolumeMappingWithViews[]>,
   intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType> | undefined
@@ -173,17 +138,8 @@ const useCombinedClickedNodeData = (
       return undefined;
     }
 
-    const assetMappingData =
-      assetMappings === undefined
-        ? undefined
-        : assetMappings.node === undefined
-          ? null
-          : {
-              cadNode: assetMappings.node,
-              assetIds: assetMappings.mappings
-                .filter(isClassicCadAssetMapping)
-                .map((mapping) => mapping.assetId)
-            };
+    const combinedFdmCadData = combineFdmCadData(hybridAssetMappings, fdmData);
+    const filteredClassicCadData = extractClassicCadData(hybridAssetMappings);
 
     const pointCloudAssetMappings = normalizeListDataResult(pointCloudAssetMappingsResult);
     const pointCloudFdmVolumeMappings = normalizeListDataResult(pointCloudFdmVolumeMappingsResult);
@@ -191,8 +147,8 @@ const useCombinedClickedNodeData = (
     return {
       mouseButton,
       position,
-      fdmResult: fdmData,
-      assetMappingResult: assetMappingData,
+      fdmResult: combinedFdmCadData,
+      assetMappingResult: filteredClassicCadData,
       pointCloudAnnotationMappingResult: pointCloudAssetMappings,
       pointCloudFdmVolumeMappingResult: pointCloudFdmVolumeMappings,
       intersection
@@ -200,7 +156,7 @@ const useCombinedClickedNodeData = (
   }, [
     intersection,
     fdmData,
-    assetMappings?.node,
+    hybridAssetMappings?.node,
     pointCloudAssetMappingsResult.data,
     pointCloudAssetMappingsResult.isFetching,
     pointCloudFdmVolumeMappingsResult.data,
@@ -274,4 +230,47 @@ export function getClickedNodeDataIntersectionPosition(
   }
 
   return intersection.point;
+}
+
+function combineFdmCadData(
+  hybridData: HybridCadNodeAssetMappingResult | undefined,
+  fdmData: FdmNodeDataResult | undefined | null
+): FdmNodeDataResult | undefined | null {
+  if (
+    hybridData !== undefined &&
+    hybridData.node !== undefined &&
+    hybridData.mappings.some(isDmCadAssetMapping)
+  ) {
+    const instances = hybridData.mappings
+      .filter(isDmCadAssetMapping)
+      .map((mapping) => mapping.instanceId);
+    return { cadNode: hybridData.node, fdmNodes: instances };
+  }
+
+  if (fdmData !== null && fdmData !== undefined) {
+    return fdmData;
+  }
+
+  if (fdmData === undefined || hybridData === undefined) {
+    return undefined;
+  }
+
+  return null;
+}
+
+function extractClassicCadData(
+  hybridData: HybridCadNodeAssetMappingResult | undefined
+): AssetMappingDataResult | undefined | null {
+  if (hybridData === undefined) {
+    return undefined;
+  }
+
+  if (hybridData.node === undefined) {
+    return null;
+  }
+
+  return {
+    cadNode: hybridData.node,
+    assetIds: hybridData.mappings.filter(isClassicCadAssetMapping).map((mapping) => mapping.assetId)
+  };
 }
