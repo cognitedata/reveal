@@ -44,13 +44,19 @@ export abstract class BoxDomainObject extends SolidDomainObject {
         return { key: 'VERTICAL_AREA' };
       case PrimitiveType.Box:
         return { key: 'VOLUME' };
+      case PrimitiveType.Point:
+        return { key: 'POINT' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new SolidPrimitiveRenderStyle();
+    const style = new SolidPrimitiveRenderStyle();
+    style.showLabel = this.primitiveType !== PrimitiveType.Point;
+    style.showLines = this.primitiveType !== PrimitiveType.Point;
+    style.solidOpacityUse = this.primitiveType !== PrimitiveType.Point;
+    return style;
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
@@ -68,9 +74,16 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     const { primitiveType } = this;
-    const isFinished = this.focusType !== FocusType.Pending;
     const { box } = this;
+
+    if (primitiveType === PrimitiveType.Point) {
+      add({ key: 'X:COORDINATE' }, box.center.x, Quantity.Length);
+      add({ key: 'Y_COORDINATE' }, box.center.y, Quantity.Length);
+      add({ key: 'Z_COORDINATE' }, box.center.z, Quantity.Length);
+      return info;
+    }
     const { size } = box;
+    const isFinished = this.focusType !== FocusType.Pending;
 
     const hasX = Box.isValidSize(size.x);
     const hasY = Box.isValidSize(size.y);
@@ -160,7 +173,14 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
 
   public canRotateComponent(component: number): boolean {
+    if (this.primitiveType === PrimitiveType.Point) {
+      return false; // Points cannot be rotated
+    }
     return component === 2;
+  }
+
+  public canMoveCorners(): boolean {
+    return this.primitiveType !== PrimitiveType.Point;
   }
 
   // ==================================================
@@ -174,11 +194,10 @@ export abstract class BoxDomainObject extends SolidDomainObject {
         return box.horizontalArea;
       case PrimitiveType.VerticalArea:
         return box.verticalArea;
-      case PrimitiveType.Box: {
+      case PrimitiveType.Box:
         return box.area;
-      }
       default:
-        throw new Error('Unknown MeasureType type');
+        return 0;
     }
   }
 

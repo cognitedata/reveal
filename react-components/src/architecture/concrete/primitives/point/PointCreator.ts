@@ -3,20 +3,20 @@ import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type PointDomainObject } from './PointDomainObject';
+import { type BoxDomainObject } from '../box/BoxDomainObject';
 
 export class PointCreator extends BaseCreator {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _domainObject: PointDomainObject;
+  private readonly _domainObject: BoxDomainObject;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(domainObject: PointDomainObject) {
+  public constructor(domainObject: BoxDomainObject) {
     super();
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
@@ -47,7 +47,7 @@ export class PointCreator extends BaseCreator {
     if (point === undefined) {
       return false;
     }
-    domainObject.point.copy(point);
+    domainObject.box.center.copy(point);
     this.addRawPoint(point, isPending);
     domainObject.notify(Changes.geometry);
     domainObject.setFocusInteractive(FocusType.Focus);

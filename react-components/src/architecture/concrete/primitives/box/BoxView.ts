@@ -44,7 +44,7 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { Box } from '../../../base/utilities/primitives/Box';
 
-const RELATIVE_RESIZE_RADIUS = 0.15;
+const RELATIVE_RESIZE_RADIUS = 0.33;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const TOP_FACE = new BoxFace(2);
@@ -512,14 +512,15 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length();
 
-    outputCornerSign.copy(this.getCornerSign(realPosition, face));
-    const corner = this.getCorner(outputCornerSign, face);
-
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
       return FocusType.Face;
     }
-    if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
-      return FocusType.Corner;
+    if (domainObject.canMoveCorners()) {
+      outputCornerSign.copy(this.getCornerSign(realPosition, face));
+      const corner = this.getCorner(outputCornerSign, face);
+      if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
+        return FocusType.Corner;
+      }
     }
     if (domainObject.canRotateComponent(face.index)) {
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
@@ -610,6 +611,7 @@ export function updateSolidMaterial(
   material.color = color;
   material.opacity = style.getSolidOpacity(domainObject.isSelected);
   material.transparent = true;
+  material.shininess = 100;
   material.emissive = color;
   material.emissiveIntensity = 0.2;
   material.side = DoubleSide;

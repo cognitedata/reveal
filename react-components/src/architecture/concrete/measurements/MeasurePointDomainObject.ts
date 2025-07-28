@@ -1,15 +1,17 @@
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Color } from 'three';
-import { PointDomainObject } from '../primitives/point/PointDomainObject';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
+import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 
-export class MeasurePointDomainObject extends PointDomainObject {
+export class MeasurePointDomainObject extends BoxDomainObject {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor() {
-    super();
-    this.color = new Color(Color.NAMES.magenta);
+    super(PrimitiveType.Point);
+    this.color = new Color(Color.NAMES.deepskyblue);
+    this.box.size.setScalar(1);
   }
 
   // ==================================================

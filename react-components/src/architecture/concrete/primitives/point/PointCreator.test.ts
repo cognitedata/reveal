@@ -6,18 +6,19 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { click } from '#test-utils/architecture/baseCreatorUtil';
 import { MeasurePointDomainObject } from '../../measurements/MeasurePointDomainObject';
 
-const direction = new Vector3(1, 0, -1);
-
 describe(PointCreator.name, () => {
   test('Create Point by mimics the user clicking', () => {
     const domainObject = new MeasurePointDomainObject();
     const creator = new PointCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    click(creator, new Vector3(0, 0, 1), direction, false, new Vector3(0, 0, 0));
+    const expectedCenter = new Vector3(2, 3, 4);
+    const rayOrigin = new Vector3(2, 3, 6);
+    const rayDirection = new Vector3(0, 0, -1);
+    click(creator, rayOrigin, rayDirection, true, expectedCenter);
 
     expect(creator.domainObject).toBe(domainObject);
-    expectEqualVector3(domainObject.point, new Vector3(2, 1, 1));
+    expectEqualVector3(domainObject.box.center, expectedCenter);
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 });
