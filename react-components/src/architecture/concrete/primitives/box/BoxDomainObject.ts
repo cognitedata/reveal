@@ -53,9 +53,11 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
-    style.showLabel = this.primitiveType !== PrimitiveType.Point;
-    style.showLines = this.primitiveType !== PrimitiveType.Point;
-    style.solidOpacityUse = this.primitiveType !== PrimitiveType.Point;
+    if (this.primitiveType === PrimitiveType.Point) {
+      style.showLabel = false;
+      style.showLines = false;
+      style.solidOpacityUse = false;
+    }
     return style;
   }
 
