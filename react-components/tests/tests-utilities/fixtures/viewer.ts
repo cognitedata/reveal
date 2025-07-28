@@ -31,6 +31,12 @@ export const fitCameraToVisualSceneBoundingBoxMock =
   vi.fn<Cognite3DViewer['fitCameraToVisualSceneBoundingBox']>();
 export const fitCameraToModelsMock = vi.fn<Cognite3DViewer['fitCameraToModels']>();
 
+// Intersection
+export const viewerGetAnyIntersectionFromPixelMock =
+  vi.fn<Cognite3DViewer['getAnyIntersectionFromPixel']>();
+export const viewerGet360AnnotationIntersectionFromPixelMock =
+  vi.fn<Cognite3DViewer['get360AnnotationIntersectionFromPixel']>();
+
 // The Cognite3DViewer class misses the setSceneBoundingBox method, so declare it here
 export type ViewerMock = Cognite3DViewer<DataSourceType> & {
   setSceneBoundingBox: (box: Box3) => void;
@@ -134,6 +140,10 @@ export function createViewerMock(): ViewerMock {
       .returns((planes: Plane[]) => {
         clippingPlanes = planes;
       })
+      .setup((p) => p.getAnyIntersectionFromPixel)
+      .returns(viewerGetAnyIntersectionFromPixelMock)
+      .setup((p) => p.get360AnnotationIntersectionFromPixel)
+      .returns(viewerGet360AnnotationIntersectionFromPixelMock)
       .object()
   );
 }
