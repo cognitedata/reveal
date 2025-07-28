@@ -1,15 +1,15 @@
 import { describe, expect, test } from 'vitest';
-import { PointCreator } from './PointCreator';
+import { MeasurePointCreator } from './MeasurePointCreator';
 import { Vector3 } from 'three';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
-import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { click } from '#test-utils/architecture/baseCreatorUtil';
-import { MeasurePointDomainObject } from '../../measurements/MeasurePointDomainObject';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { MeasurePointDomainObject } from './MeasurePointDomainObject';
 
-describe(PointCreator.name, () => {
+describe(MeasurePointCreator.name, () => {
   test('Create Point by mimics the user clicking', () => {
     const domainObject = new MeasurePointDomainObject();
-    const creator = new PointCreator(domainObject);
+    const creator = new MeasurePointCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
     const expectedCenter = new Vector3(2, 3, 4);
@@ -18,7 +18,7 @@ describe(PointCreator.name, () => {
     click(creator, rayOrigin, rayDirection, true, expectedCenter);
 
     expect(creator.domainObject).toBe(domainObject);
-    expectEqualVector3(domainObject.box.center, expectedCenter);
+    expectEqualVector3(domainObject.point, expectedCenter);
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 });

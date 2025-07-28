@@ -14,8 +14,8 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
 import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
-import { PointCreator } from '../primitives/point/PointCreator';
 import { MeasurePointDomainObject } from './MeasurePointDomainObject';
+import { MeasurePointCreator } from './MeasurePointCreator';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -97,7 +97,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   protected override createCreator(): BaseCreator | undefined {
     switch (this.primitiveType) {
       case PrimitiveType.Point:
-        return new PointCreator(new MeasurePointDomainObject());
+        return new MeasurePointCreator(new MeasurePointDomainObject());
 
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:

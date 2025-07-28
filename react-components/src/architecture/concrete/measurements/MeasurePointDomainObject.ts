@@ -1,5 +1,5 @@
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { Color } from 'three';
+import { Color, type Vector3 } from 'three';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
@@ -58,8 +58,6 @@ export class MeasurePointDomainObject extends BoxDomainObject {
 
     style.selectedSolidOpacity = 1;
     style.solidOpacity = 0.5;
-
-    //    style.solidOpacityUse = false;
     return style;
   }
 
@@ -73,5 +71,13 @@ export class MeasurePointDomainObject extends BoxDomainObject {
 
   public set pointSize(value: number) {
     this.box.size.setScalar(value);
+  }
+
+  public get point(): Vector3 {
+    return this.box.center;
+  }
+
+  public set point(value: Vector3) {
+    this.box.center.copy(value);
   }
 }
