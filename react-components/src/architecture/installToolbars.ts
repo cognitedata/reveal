@@ -50,31 +50,9 @@ export function installToolbars(): void {
     new UndoCommand()
   ]);
 
-  const setClipTypeCommands = CLIP_PRIMITIVE_TYPES.map(
-    (primitiveType) => new SetClipTypeCommand(primitiveType)
-  );
+  installClipTool();
 
-  installToolbar(ClipTool, [
-    ...setClipTypeCommands,
-    separator,
-    new UndoCommand(),
-    new ApplyClipCommand(),
-    new NextOrPrevClippingCommand(false),
-    new NextOrPrevClippingCommand(true),
-    new ShowAllClippingCommand(),
-    new ShowClippingOnTopCommand()
-  ]);
-
-  const setMeasurementTypeCommands = MEASURE_PRIMITIVE_TYPES.map(
-    (primitiveType) => new SetMeasurementTypeCommand(primitiveType)
-  );
-
-  installToolbar(MeasurementTool, [
-    ...setMeasurementTypeCommands,
-    separator,
-    new UndoCommand(),
-    new ShowMeasurementsOnTopCommand()
-  ]);
+  installMeasurementTool();
 
   installToolbar(ExampleTool, [
     new UndoCommand(),
@@ -83,4 +61,32 @@ export function installToolbars(): void {
     new DeleteAllExamplesCommand(),
     new ShowExamplesOnTopCommand()
   ]);
+
+  function installClipTool(): void {
+    const commands = CLIP_PRIMITIVE_TYPES.map(
+      (primitiveType) => new SetClipTypeCommand(primitiveType)
+    );
+    installToolbar(ClipTool, [
+      ...commands,
+      separator,
+      new UndoCommand(),
+      new ApplyClipCommand(),
+      new NextOrPrevClippingCommand(false),
+      new NextOrPrevClippingCommand(true),
+      new ShowAllClippingCommand(),
+      new ShowClippingOnTopCommand()
+    ]);
+  }
+
+  function installMeasurementTool(): void {
+    const commands = MEASURE_PRIMITIVE_TYPES.map(
+      (primitiveType) => new SetMeasurementTypeCommand(primitiveType)
+    );
+    installToolbar(MeasurementTool, [
+      ...commands,
+      separator,
+      new UndoCommand(),
+      new ShowMeasurementsOnTopCommand()
+    ]);
+  }
 }

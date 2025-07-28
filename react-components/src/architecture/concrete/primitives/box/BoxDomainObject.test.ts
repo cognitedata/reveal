@@ -44,6 +44,13 @@ describe(BoxDomainObject.name, () => {
     expect(domainObject.canMoveCorners()).toBe(false);
   });
 
+  test('Should check point size', () => {
+    const domainObject = new MeasurePointDomainObject();
+    const expectedPointSize = 3.14;
+    domainObject.pointSize = expectedPointSize;
+    expect(domainObject.pointSize).toBe(expectedPointSize);
+  });
+
   test('Should clone box', () => {
     const domainObject = createDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();

@@ -44,7 +44,6 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { Box } from '../../../base/utilities/primitives/Box';
 
-const RELATIVE_RESIZE_RADIUS = 0.33;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const TOP_FACE = new BoxFace(2);
@@ -333,7 +332,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!Box.isValidSize(adjacentSize2)) {
       return undefined;
     }
-    const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
+    const radius = getRelativeResizeRadius(domainObject) * this.getFaceRadius(face);
     const geometry = new CircleGeometry(radius, CIRCULAR_SEGMENTS);
     material.transparent = true;
     material.depthWrite = false;
@@ -512,7 +511,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length();
 
-    if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
+    if (relativeDistance < getRelativeResizeRadius(domainObject)) {
       return FocusType.Face;
     }
     if (domainObject.canMoveCorners()) {
@@ -723,4 +722,11 @@ export function createSprite(text: string, style: PrimitiveRenderStyle, height: 
 const VECTOR_POOL = new Vector3Pool();
 function newVector3(copyFrom?: Vector3): Vector3 {
   return VECTOR_POOL.getNext(copyFrom);
+}
+
+function getRelativeResizeRadius(domainObject: BoxDomainObject): number {
+  if (domainObject.primitiveType === PrimitiveType.Point) {
+    return 0.5;
+  }
+  return 0.15;
 }

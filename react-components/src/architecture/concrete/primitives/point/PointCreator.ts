@@ -30,6 +30,10 @@ export class PointCreator extends BaseCreator {
     return this._domainObject;
   }
 
+  public override get preferIntersection(): boolean {
+    return true;
+  }
+
   public override get minimumPointCount(): number {
     return 1;
   }

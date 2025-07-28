@@ -172,14 +172,11 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // VIRTUAL METHODS
   // ==================================================
 
-  public canRotateComponent(component: number): boolean {
-    if (this.primitiveType === PrimitiveType.Point) {
-      return false; // Points cannot be rotated
-    }
-    return component === 2;
+  public canMoveCorners(): boolean {
+    return this.primitiveType !== PrimitiveType.Point;
   }
 
-  public canMoveCorners(): boolean {
+  public canRotateComponent(_component: number): boolean {
     return this.primitiveType !== PrimitiveType.Point;
   }
 
