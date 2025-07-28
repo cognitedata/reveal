@@ -1,6 +1,6 @@
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers';
-import { InstanceReference } from './instanceIds';
+import { type InstanceReference } from './instanceIds';
 
 export const queryKeys = {
   all: ['cdf'] as const,
@@ -42,7 +42,7 @@ export const queryKeys = {
     [...revisions, 'model-revision-id', revisionKeys] as const,
   timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const,
   modelsForAssetPerInstanceReference: (instance: InstanceReference | undefined) =>
-    ['react-components', 'models-for-assets-per-instance-reference', instance] as const,
+    ['react-components', 'models-for-assets-per-instance-reference', instance] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];

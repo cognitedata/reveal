@@ -80,7 +80,7 @@ describe(getCadModelsForHybridDmInstance.name, () => {
       .object();
 
     await expect(getCadModelsForHybridDmInstance(dmsInstance, sdkMock)).rejects.toThrow(
-      `Failed to fetch CAD models for DMS instance ${dmsInstance}. Status: 500`
+      `Failed to fetch CAD models for DMS instance ${dmsInstance.externalId}. Status: 500`
     );
   });
 });

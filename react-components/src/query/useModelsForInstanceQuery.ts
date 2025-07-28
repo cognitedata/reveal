@@ -9,7 +9,7 @@ import { type FdmSDK } from '../data-providers/FdmSDK';
 import { type InstanceReference, isDmsInstance, isInternalId } from '../utilities/instanceIds';
 import { useContext } from 'react';
 import { UseModelsForInstanceQueryContext } from './useModelsForInstanceQuery.context';
-import { ModelsForAssetParams } from '../hooks/network/types';
+import { type ModelsForAssetParams } from '../hooks/network/types';
 import { queryKeys } from '../utilities/queryKeys';
 
 export const useModelsForInstanceQuery = (
@@ -69,7 +69,7 @@ export const useModelsForInstanceQuery = (
       );
     },
     enabled: instance !== undefined,
-    staleTime: Infinity,
+    staleTime: Infinity
   });
 };
 

@@ -6,7 +6,11 @@ import { Mock } from 'moq.ts';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { type FC, type PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type TaggedAddResourceOptions, type TaggedAddCadResourceOptions, TaggedAddPointCloudResourceOptions } from '../components';
+import {
+  type TaggedAddResourceOptions,
+  type TaggedAddCadResourceOptions,
+  type TaggedAddPointCloudResourceOptions
+} from '../components';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
   defaultModelsForInstanceQueryDependencies,
@@ -35,7 +39,9 @@ const mockFdmDataProvider = new Mock<Fdm3dDataProvider>()
 
 const fdmSdkMock = new FdmSDK(sdkMock);
 
-const mockGetCadModelsForHybrid = vi.fn<() => Promise<TaggedAddCadResourceOptions[]>>().mockResolvedValue(mockAddOptionsData3);
+const mockGetCadModelsForHybrid = vi
+  .fn<() => Promise<TaggedAddCadResourceOptions[]>>()
+  .mockResolvedValue(mockAddOptionsData3);
 const defaultDependencies = getMocksByDefaultDependencies(
   defaultModelsForInstanceQueryDependencies
 );
@@ -57,8 +63,8 @@ describe(useModelsForInstanceQuery.name, () => {
     defaultDependencies.useFdmSdk.mockReturnValue(fdmSdkMock);
     defaultDependencies.useFdm3dDataProvider.mockReturnValue(mockFdmDataProvider);
     defaultDependencies.useIsCoreDmOnly.mockReturnValue(true);
-    defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(() =>
-      mockGetCadModelsForHybrid()
+    defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(
+      async () => await mockGetCadModelsForHybrid()
     );
     defaultDependencies.getPointCloudModelsForAssetInstance.mockResolvedValue([]);
   });

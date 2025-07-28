@@ -21,8 +21,10 @@ export async function getCadModelsForHybridDmInstance(
     }
   );
 
-  if(result.status !== 200) {
-    throw new Error(`Failed to fetch CAD models for DMS instance ${dmsInstance}. Status: ${result.status}`);
+  if (result.status !== 200) {
+    throw new Error(
+      `Failed to fetch CAD models for DMS instance ${dmsInstance.externalId}. Status: ${result.status}`
+    );
   }
 
   const items: TaggedAddCadResourceOptions[] = result.data.items.map(({ modelId, revisionId }) => ({

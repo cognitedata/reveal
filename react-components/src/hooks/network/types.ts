@@ -1,4 +1,4 @@
-import { CogniteClient } from "@cognite/sdk";
+import { type CogniteClient } from '@cognite/sdk';
 
 export type OutputTypes =
   | 'model-from-points:1'
