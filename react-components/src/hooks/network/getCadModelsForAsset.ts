@@ -1,5 +1,6 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
+import { ModelsForAssetParams } from './types';
 
 export type CadModelNode = {
   modelId: number;
@@ -8,8 +9,7 @@ export type CadModelNode = {
 };
 
 export async function getCadModelsForAsset(
-  assetId: number,
-  sdk: CogniteClient
+  { assetId, sdk }: ModelsForAssetParams
 ): Promise<TaggedAddCadResourceOptions[]> {
   const result = await sdk.get<{ items: CadModelNode[] }>(
     `api/v1/projects/${sdk.project}/3d/mappings/${assetId}/modelnodes`,

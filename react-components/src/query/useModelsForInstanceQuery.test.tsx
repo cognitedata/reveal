@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useModelsForInstanceQuery } from './useModelsForInstanceQuery';
-import { type FdmSDK } from '../data-providers/FdmSDK';
+import { FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { type FC, type PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type CogniteClient } from '@cognite/sdk';
-import { type TaggedAddResourceOptions } from '../components';
+import { type TaggedAddResourceOptions, type TaggedAddCadResourceOptions, TaggedAddPointCloudResourceOptions } from '../components';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
   defaultModelsForInstanceQueryDependencies,
   UseModelsForInstanceQueryContext
 } from './useModelsForInstanceQuery.context';
+import { sdkMock } from '#test-utils/fixtures/sdk';
 
 const queryClient = new QueryClient();
 
@@ -20,11 +20,11 @@ const mockAddOptionsData1: TaggedAddResourceOptions[] = [
   { type: 'cad', addOptions: { modelId: 1, revisionId: 2 } }
 ];
 
-const mockAddOptionsData2: TaggedAddResourceOptions[] = [
+const mockAddOptionsData2: TaggedAddPointCloudResourceOptions[] = [
   { type: 'pointcloud', addOptions: { modelId: 3, revisionId: 4 } }
 ];
 
-const mockAddOptionsData3: TaggedAddResourceOptions[] = [
+const mockAddOptionsData3: TaggedAddCadResourceOptions[] = [
   { type: 'cad', addOptions: { modelId: 5, revisionId: 6 } }
 ];
 
@@ -33,16 +33,9 @@ const mockFdmDataProvider = new Mock<Fdm3dDataProvider>()
   .returns(async () => await Promise.resolve(mockAddOptionsData1))
   .object();
 
-const sdkMock = new Mock<CogniteClient>()
-  .setup((p) => p.getBaseUrl())
-  .returns('https://api.cognitedata.com')
-  .setup((p) => p.project)
-  .returns('test-project')
-  .object();
+const fdmSdkMock = new FdmSDK(sdkMock);
 
-const fdmSdkMock = new Mock<FdmSDK>().object();
-
-const mockGetCadModelsForHybrid = vi.fn().mockResolvedValue(mockAddOptionsData3);
+const mockGetCadModelsForHybrid = vi.fn<() => Promise<TaggedAddCadResourceOptions[]>>().mockResolvedValue(mockAddOptionsData3);
 const defaultDependencies = getMocksByDefaultDependencies(
   defaultModelsForInstanceQueryDependencies
 );
@@ -64,8 +57,8 @@ describe(useModelsForInstanceQuery.name, () => {
     defaultDependencies.useFdmSdk.mockReturnValue(fdmSdkMock);
     defaultDependencies.useFdm3dDataProvider.mockReturnValue(mockFdmDataProvider);
     defaultDependencies.useIsCoreDmOnly.mockReturnValue(true);
-    defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(
-      mockGetCadModelsForHybrid
+    defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(() =>
+      mockGetCadModelsForHybrid()
     );
     defaultDependencies.getPointCloudModelsForAssetInstance.mockResolvedValue([]);
   });

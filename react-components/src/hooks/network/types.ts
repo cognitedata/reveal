@@ -1,3 +1,5 @@
+import { CogniteClient } from "@cognite/sdk";
+
 export type OutputTypes =
   | 'model-from-points:1'
   | 'tiles-directory:1'
@@ -30,4 +32,9 @@ export type ModelWithRevisionInfo = {
     id: number;
     createdTime: Date;
   };
+};
+
+export type ModelsForAssetParams = {
+  assetId: number;
+  sdk: CogniteClient;
 };

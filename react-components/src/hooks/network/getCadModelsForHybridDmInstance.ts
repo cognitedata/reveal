@@ -4,7 +4,7 @@ import { type DmsUniqueIdentifier } from '../../data-providers';
 import { uniqBy } from 'lodash';
 import { createAddOptionsKey } from '../../utilities/createAddOptionsKey';
 
-export type CadModelNode = {
+type CadModelNode = {
   modelId: number;
   revisionId: number;
   nodeId: number;
@@ -20,6 +20,10 @@ export async function getCadModelsForHybridDmInstance(
       data: { limit: 1000, filter: { assetInstanceId: dmsInstance } }
     }
   );
+
+  if(result.status !== 200) {
+    throw new Error(`Failed to fetch CAD models for DMS instance ${dmsInstance}. Status: ${result.status}`);
+  }
 
   const items: TaggedAddCadResourceOptions[] = result.data.items.map(({ modelId, revisionId }) => ({
     type: 'cad',

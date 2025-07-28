@@ -2,11 +2,13 @@ import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@co
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
+import { ModelsForAssetParams } from './types';
 
 export async function getImage360CollectionsForAsset(
-  assetId: number,
-  sdk: CogniteClient
-): Promise<TaggedAddImage360CollectionOptions[]> {
+  {
+    assetId,
+    sdk
+  }: ModelsForAssetParams): Promise<TaggedAddImage360CollectionOptions[]> {
   const fileRefsResult = await sdk.annotations.reverseLookup({
     filter: { annotatedResourceType: 'file', data: { assetRef: { id: assetId } } },
     limit: 1000

@@ -64,4 +64,23 @@ describe(getCadModelsForHybridDmInstance.name, () => {
 
     expect(result).toEqual([]);
   });
+
+  it('should throw an error if the response status is not 200', async () => {
+    const mockResponse = vi.fn<() => Promise<HttpResponse<MockResponseType>>>().mockResolvedValue({
+      data: {
+        items: []
+      },
+      status: 500,
+      headers: {}
+    }) as <T = unknown>() => Promise<HttpResponse<T>>;
+
+    const sdkMock = sdkMockBase
+      .setup((p) => p.post)
+      .returns(mockResponse)
+      .object();
+
+    await expect(getCadModelsForHybridDmInstance(dmsInstance, sdkMock)).rejects.toThrow(
+      `Failed to fetch CAD models for DMS instance ${dmsInstance}. Status: 500`
+    );
+  });
 });

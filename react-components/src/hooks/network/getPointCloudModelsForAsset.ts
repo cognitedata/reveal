@@ -1,10 +1,13 @@
 import { type Revision3D, type CogniteClient } from '@cognite/sdk';
 import { chunk } from 'lodash';
 import { type TaggedAddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';
+import { ModelsForAssetParams } from './types';
 
 export async function getPointCloudModelsForAsset(
-  assetId: number,
-  sdk: CogniteClient
+  {
+    sdk,
+    assetId
+  }: ModelsForAssetParams
 ): Promise<TaggedAddPointCloudResourceOptions[]> {
   const modelIdResult = await sdk.annotations
     .reverseLookup({

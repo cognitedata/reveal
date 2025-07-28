@@ -9,6 +9,8 @@ import { type FdmSDK } from '../data-providers/FdmSDK';
 import { type InstanceReference, isDmsInstance, isInternalId } from '../utilities/instanceIds';
 import { useContext } from 'react';
 import { UseModelsForInstanceQueryContext } from './useModelsForInstanceQuery.context';
+import { ModelsForAssetParams } from '../hooks/network/types';
+import { queryKeys } from '../utilities/queryKeys';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
@@ -31,7 +33,7 @@ export const useModelsForInstanceQuery = (
   const isCoreDm = useIsCoreDmOnly();
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'models-for-instance', instance],
+    queryKey: queryKeys.modelsForAssetPerInstanceReference(instance),
     queryFn: async () => {
       if (instance === undefined) {
         return undefined;
@@ -66,29 +68,30 @@ export const useModelsForInstanceQuery = (
         `Can not fetch models for instance: ${JSON.stringify(instance)}. InternalId or DMS ID required`
       );
     },
-    enabled: instance !== undefined
+    enabled: instance !== undefined,
+    staleTime: Infinity,
   });
 };
 
 async function getModelsForAssetInstance(
   instance: InternalId,
   sdk: CogniteClient,
-  getCadModelsForAsset: (
-    assetId: number,
-    sdk: CogniteClient
-  ) => Promise<TaggedAddResourceOptions[]>,
-  getPointCloudModelsForAsset: (
-    assetId: number,
-    sdk: CogniteClient
-  ) => Promise<TaggedAddResourceOptions[]>,
-  getImage360CollectionsForAsset: (
-    assetId: number,
-    sdk: CogniteClient
-  ) => Promise<TaggedAddResourceOptions[]>
+  getCadModelsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>,
+  getPointCloudModelsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>,
+  getImage360CollectionsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>
 ): Promise<TaggedAddResourceOptions[]> {
-  const cadModelsPromise = getCadModelsForAsset(instance.id, sdk);
-  const pointCloudModelsPromise = getPointCloudModelsForAsset(instance.id, sdk);
-  const image360CollectionsPromise = getImage360CollectionsForAsset(instance.id, sdk);
+  const cadModelsPromise = getCadModelsForAsset({ assetId: instance.id, sdk });
+  const pointCloudModelsPromise = getPointCloudModelsForAsset({ assetId: instance.id, sdk });
+  const image360CollectionsPromise = getImage360CollectionsForAsset({ assetId: instance.id, sdk });
 
   const results = (
     await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
