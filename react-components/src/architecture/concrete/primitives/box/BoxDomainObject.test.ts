@@ -7,6 +7,7 @@ import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { BoxDomainObject } from './BoxDomainObject';
+import { MeasurePointDomainObject } from '../../measurements/MeasurePointDomainObject';
 
 describe(BoxDomainObject.name, () => {
   test('should initialize with correct default values', () => {
@@ -15,9 +16,10 @@ describe(BoxDomainObject.name, () => {
       PrimitiveType.HorizontalArea,
       PrimitiveType.VerticalArea
     ]) {
-      const domainObject = createBoxDomainObject(primitiveType);
+      const isPoint = primitiveType === PrimitiveType.Point;
+      const domainObject = createDomainObject(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
-      expect(domainObject.color.getHex()).toBe(0xff00ff);
+      expect(domainObject.color.getHex()).toBe(isPoint ? 0x00bfff : 0xff00ff);
       expect(domainObject.box).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
       expect(isEmpty(domainObject.typeName)).toBe(false);
@@ -26,22 +28,45 @@ describe(BoxDomainObject.name, () => {
     }
   });
 
-  test('Should check canRotateComponent', () => {
-    const domainObject = createBoxDomainObject(PrimitiveType.Box);
+  test('Should check edit constrains for box', () => {
+    const domainObject = createDomainObject(PrimitiveType.Box);
     expect(domainObject.canRotateComponent(0)).toBe(false);
     expect(domainObject.canRotateComponent(1)).toBe(false);
     expect(domainObject.canRotateComponent(2)).toBe(true);
+    expect(domainObject.canMoveCorners()).toBe(true);
   });
 
-  test('Should be cloned', () => {
-    const domainObject = createBoxDomainObject(PrimitiveType.Box);
+  test('Should check edit constrains for point', () => {
+    const domainObject = createDomainObject(PrimitiveType.Point);
+    expect(domainObject.canRotateComponent(0)).toBe(false);
+    expect(domainObject.canRotateComponent(1)).toBe(false);
+    expect(domainObject.canRotateComponent(2)).toBe(false);
+    expect(domainObject.canMoveCorners()).toBe(false);
+  });
+
+  test('Should clone box', () => {
+    const domainObject = createDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureBoxDomainObject);
     expect(clone).not.toBe(domainObject);
-    if (!(clone instanceof MeasureBoxDomainObject)) {
-      return;
-    }
+    assert(clone instanceof MeasureBoxDomainObject);
+
+    expect(clone.box).toStrictEqual(domainObject.box);
+    expect(clone.color).toStrictEqual(domainObject.color);
+    expect(clone.uniqueId).toBe(domainObject.uniqueId);
+    expect(clone.name).toBe(domainObject.name);
+    expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
+  });
+
+  test('Should clone point', () => {
+    const domainObject = createDomainObject(PrimitiveType.Point);
+    const clone = domainObject.clone();
+
+    expect(clone).toBeInstanceOf(MeasurePointDomainObject);
+    expect(clone).not.toBe(domainObject);
+    assert(clone instanceof MeasurePointDomainObject);
+
     expect(clone.box).toStrictEqual(domainObject.box);
     expect(clone.color).toStrictEqual(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
@@ -54,15 +79,24 @@ describe(BoxDomainObject.name, () => {
     testMe(PrimitiveType.Box, Quantity.Area, 1);
     testMe(PrimitiveType.Box, Quantity.Volume, 1);
     testMe(PrimitiveType.Box, Quantity.Angle, 1);
+
     testMe(PrimitiveType.HorizontalArea, Quantity.Length, 2);
     testMe(PrimitiveType.HorizontalArea, Quantity.Area, 1);
+    testMe(PrimitiveType.HorizontalArea, Quantity.Volume, 0);
     testMe(PrimitiveType.HorizontalArea, Quantity.Angle, 1);
+
     testMe(PrimitiveType.VerticalArea, Quantity.Length, 2);
     testMe(PrimitiveType.VerticalArea, Quantity.Area, 1);
+    testMe(PrimitiveType.VerticalArea, Quantity.Volume, 0);
     testMe(PrimitiveType.VerticalArea, Quantity.Angle, 1);
 
+    testMe(PrimitiveType.Point, Quantity.Length, 3);
+    testMe(PrimitiveType.Point, Quantity.Area, 0);
+    testMe(PrimitiveType.Point, Quantity.Volume, 0);
+    testMe(PrimitiveType.Point, Quantity.Angle, 0);
+
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
-      const domainObject = createBoxDomainObject(primitiveType);
+      const domainObject = createDomainObject(primitiveType);
       expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
@@ -72,7 +106,12 @@ describe(BoxDomainObject.name, () => {
   });
 });
 
-function createBoxDomainObject(primitiveType: PrimitiveType): BoxDomainObject {
+function createDomainObject(primitiveType: PrimitiveType): BoxDomainObject {
+  if (primitiveType === PrimitiveType.Point) {
+    const domainObject = new MeasurePointDomainObject();
+    domainObject.box.center.copy(createBox().center);
+    return domainObject;
+  }
   const domainObject = new MeasureBoxDomainObject(primitiveType);
   switch (primitiveType) {
     case PrimitiveType.HorizontalArea:

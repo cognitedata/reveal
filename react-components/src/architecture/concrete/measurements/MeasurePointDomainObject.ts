@@ -11,7 +11,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   public constructor() {
     super(PrimitiveType.Point);
     this.color = new Color(Color.NAMES.deepskyblue);
-    this.box.size.setScalar(1);
+    this.pointSize = 1;
   }
 
   // ==================================================
@@ -22,5 +22,17 @@ export class MeasurePointDomainObject extends BoxDomainObject {
     const clone = new MeasurePointDomainObject();
     clone.copyFrom(this, what);
     return clone;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public get pointSize(): number {
+    return this.box.size.x;
+  }
+
+  public set pointSize(value: number) {
+    this.box.size.setScalar(value);
   }
 }
