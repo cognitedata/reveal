@@ -52,13 +52,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    const style = new SolidPrimitiveRenderStyle();
-    if (this.primitiveType === PrimitiveType.Point) {
-      style.showLabel = false;
-      style.showLines = false;
-      style.solidOpacityUse = false;
-    }
-    return style;
+    return new SolidPrimitiveRenderStyle();
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
@@ -78,12 +72,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     const { primitiveType } = this;
     const { box } = this;
 
-    if (primitiveType === PrimitiveType.Point) {
-      add({ key: 'X:COORDINATE' }, box.center.x, Quantity.Length);
-      add({ key: 'Y_COORDINATE' }, box.center.y, Quantity.Length);
-      add({ key: 'Z_COORDINATE' }, box.center.z, Quantity.Length);
-      return info;
-    }
     const { size } = box;
     const isFinished = this.focusType !== FocusType.Pending;
 
@@ -175,11 +163,11 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
 
   public canMoveCorners(): boolean {
-    return this.primitiveType !== PrimitiveType.Point;
+    return true;
   }
 
   public canRotateComponent(_component: number): boolean {
-    return this.primitiveType !== PrimitiveType.Point;
+    return true;
   }
 
   // ==================================================

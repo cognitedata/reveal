@@ -2,6 +2,11 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Color } from 'three';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
+import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 
 export class MeasurePointDomainObject extends BoxDomainObject {
   // ==================================================
@@ -11,7 +16,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   public constructor() {
     super(PrimitiveType.Point);
     this.color = new Color(Color.NAMES.deepskyblue);
-    this.pointSize = 1;
+    this.pointSize = 0.05;
   }
 
   // ==================================================
@@ -22,6 +27,40 @@ export class MeasurePointDomainObject extends BoxDomainObject {
     const clone = new MeasurePointDomainObject();
     clone.copyFrom(this, what);
     return clone;
+  }
+
+  public override canMoveCorners(): boolean {
+    return false;
+  }
+
+  public override canRotateComponent(_component: number): boolean {
+    return false;
+  }
+
+  public override getPanelInfo(): PanelInfo | undefined {
+    const info = new PanelInfo();
+    const { box } = this;
+
+    add({ key: 'X:COORDINATE' }, box.center.x, Quantity.Length);
+    add({ key: 'Y_COORDINATE' }, box.center.y, Quantity.Length);
+    add({ key: 'Z_COORDINATE' }, box.center.z, Quantity.Length);
+    return info;
+
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
+    }
+  }
+
+  public override createRenderStyle(): RenderStyle | undefined {
+    const style = new SolidPrimitiveRenderStyle();
+    style.showLabel = false;
+    style.showLines = false;
+
+    style.selectedSolidOpacity = 1;
+    style.solidOpacity = 0.5;
+
+    //    style.solidOpacityUse = false;
+    return style;
   }
 
   // ==================================================

@@ -5,6 +5,11 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BoxDomainObject } from '../box/BoxDomainObject';
 
+/**
+ * The `PointCreator` is responsible for handling the creation of a single point,
+ * updating its initial positionIt extends the `BaseCreator` class and
+ * operates on a `BoxDomainObject`, and setting the center of this.
+ */
 export class PointCreator extends BaseCreator {
   // ==================================================
   // INSTANCE FIELDS

@@ -14,7 +14,8 @@ describe(BoxDomainObject.name, () => {
     for (const primitiveType of [
       PrimitiveType.Box,
       PrimitiveType.HorizontalArea,
-      PrimitiveType.VerticalArea
+      PrimitiveType.VerticalArea,
+      PrimitiveType.Point
     ]) {
       const isPoint = primitiveType === PrimitiveType.Point;
       const domainObject = createDomainObject(primitiveType);
@@ -22,6 +23,7 @@ describe(BoxDomainObject.name, () => {
       expect(domainObject.color.getHex()).toBe(isPoint ? 0x00bfff : 0xff00ff);
       expect(domainObject.box).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
+      expect(domainObject.label).toBeDefined();
       expect(isEmpty(domainObject.typeName)).toBe(false);
       expect(domainObject.renderStyle).toBeInstanceOf(SolidPrimitiveRenderStyle);
       expect(domainObject.createTransaction(Changes.geometry)).toBeDefined();
