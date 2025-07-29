@@ -111,24 +111,21 @@ describe(useHybridMappingsForAssetInstances.name, () => {
       expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
     });
 
-    expect(result.current.data).toHaveLength(2);
-    expect(result.current.data?.[0]).toMatchObject({
-      modelId: modelsMock[0].modelId,
-      revisionId: modelsMock[0].revisionId,
-      mappings: firstMappingsMock
-    });
-    expect(result.current.data?.[1]).toMatchObject({
-      modelId: modelsMock[1].modelId,
-      revisionId: modelsMock[1].revisionId,
-      mappings: secondMappingsMock
-    });
-
     modelsMock.forEach((model) => {
       expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledWith(
         model.modelId,
         model.revisionId,
         assetInstanceIdsMock
       );
+    });
+
+    expect(result.current.data).toHaveLength(2);
+    result.current.data?.forEach((item, idx) => {
+      expect(item).toMatchObject({
+        modelId: modelsMock[idx].modelId,
+        revisionId: modelsMock[idx].revisionId,
+        mappings: idx === 0 ? firstMappingsMock : secondMappingsMock
+      });
     });
   });
 
@@ -138,34 +135,11 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data).toHaveLength(modelsMock.length);
-      result.current.data?.forEach((item, idx) => {
-        expect(item).toMatchObject({
-          modelId: modelsMock[idx].modelId,
-          revisionId: modelsMock[idx].revisionId,
-          mappings: emptyMappingsMock
-        });
-      });
+      expect(result.current.data).toBeUndefined();
     });
 
-    expect(result.current.data).toHaveLength(modelsMock.length);
-    result.current.data?.forEach((item, idx) => {
-      expect(item).toMatchObject({
-        mappings: emptyMappingsMock,
-        modelId: modelsMock[idx].modelId,
-        revisionId: modelsMock[idx].revisionId
-      });
-    });
-
-    expect(result.current.data).toHaveLength(modelsMock.length);
-    result.current.data?.forEach((item, idx) => {
-      expect(item).toMatchObject({
-        mappings: emptyMappingsMock,
-        modelId: modelsMock[idx].modelId,
-        revisionId: modelsMock[idx].revisionId
-      });
-    });
-
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isError).toBe(false);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).not.toHaveBeenCalled();
   });
 
@@ -217,7 +191,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
         expect(item).toMatchObject({
           modelId: modelsMock[idx].modelId,
           revisionId: modelsMock[idx].revisionId,
-          mappings: new Map()
+          mappings: emptyMappingsMock
         });
       });
     });
@@ -302,15 +276,12 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     });
 
     expect(result.current.data).toHaveLength(2);
-    expect(result.current.data![0]).toMatchObject({
-      modelId: modelsMock[0].modelId,
-      revisionId: modelsMock[0].revisionId,
-      mappings: firstMappingsMock
-    });
-    expect(result.current.data![1]).toMatchObject({
-      modelId: modelsMock[1].modelId,
-      revisionId: modelsMock[1].revisionId,
-      mappings: secondMappingsMock
+    result.current.data?.forEach((item, idx) => {
+      expect(item).toMatchObject({
+        modelId: modelsMock[idx].modelId,
+        revisionId: modelsMock[idx].revisionId,
+        mappings: idx === 0 ? firstMappingsMock : secondMappingsMock
+      });
     });
 
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledTimes(2);
