@@ -18,6 +18,7 @@ export {
   useSearchMappedEquipmentAssetMappings,
   useMappingsForAssetIds
 } from './useSearchMappedEquipmentAssetMappings';
+export { useHybridMappingsForAssetInstances } from './useHybridMappingsForAssetInstances';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
