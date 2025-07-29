@@ -55,7 +55,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
     const style = new SolidPrimitiveRenderStyle();
     style.showLabel = false;
     style.showLines = false;
-
+    style.solidOpacityUse = false;
     style.selectedSolidOpacity = 1;
     style.solidOpacity = 0.5;
     return style;
