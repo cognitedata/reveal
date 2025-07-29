@@ -3,7 +3,7 @@ import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResou
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { uniqBy } from 'lodash';
 import { createAddOptionsKey } from '../../utilities/createAddOptionsKey';
-import { CadModelNode } from './types';
+import { type CadModelNode } from './types';
 
 export async function getCadModelsForHybridDmInstance(
   dmsInstance: DmsUniqueIdentifier,
