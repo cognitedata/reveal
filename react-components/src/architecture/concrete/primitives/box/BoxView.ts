@@ -45,6 +45,7 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { Box } from '../../../base/utilities/primitives/Box';
 
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
+const RELATIVE_CORNER_DISTANCE = 0.2;
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
@@ -517,7 +518,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (domainObject.canMoveCorners()) {
       outputCornerSign.copy(this.getCornerSign(realPosition, face));
       const corner = this.getCorner(outputCornerSign, face);
-      if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
+      if (realPosition.distanceTo(corner) < RELATIVE_CORNER_DISTANCE * this.getFaceRadius(face)) {
         return FocusType.Corner;
       }
     }

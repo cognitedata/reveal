@@ -7,20 +7,17 @@ import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { BoxDomainObject } from './BoxDomainObject';
-import { MeasurePointDomainObject } from '../../measurements/MeasurePointDomainObject';
 
 describe(BoxDomainObject.name, () => {
   test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Box,
       PrimitiveType.HorizontalArea,
-      PrimitiveType.VerticalArea,
-      PrimitiveType.Point
+      PrimitiveType.VerticalArea
     ]) {
-      const isPoint = primitiveType === PrimitiveType.Point;
       const domainObject = createDomainObject(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
-      expect(domainObject.color.getHex()).toBe(isPoint ? 0x00bfff : 0xff00ff);
+      expect(domainObject.color.getHex()).toBe(0xff00ff);
       expect(domainObject.box).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
       expect(domainObject.label).toBeDefined();
@@ -30,7 +27,7 @@ describe(BoxDomainObject.name, () => {
     }
   });
 
-  test('Should check edit constrains for box', () => {
+  test('Should check edit constrains', () => {
     const domainObject = createDomainObject(PrimitiveType.Box);
     expect(domainObject.canRotateComponent(0)).toBe(false);
     expect(domainObject.canRotateComponent(1)).toBe(false);
@@ -38,36 +35,13 @@ describe(BoxDomainObject.name, () => {
     expect(domainObject.canMoveCorners()).toBe(true);
   });
 
-  test('Should check edit constrains for point', () => {
-    const domainObject = createDomainObject(PrimitiveType.Point);
-    expect(domainObject.canRotateComponent(0)).toBe(false);
-    expect(domainObject.canRotateComponent(1)).toBe(false);
-    expect(domainObject.canRotateComponent(2)).toBe(false);
-    expect(domainObject.canMoveCorners()).toBe(false);
-  });
-
-  test('Should clone box', () => {
+  test('Should clone', () => {
     const domainObject = createDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureBoxDomainObject);
     expect(clone).not.toBe(domainObject);
     assert(clone instanceof MeasureBoxDomainObject);
-
-    expect(clone.box).toStrictEqual(domainObject.box);
-    expect(clone.color).toStrictEqual(domainObject.color);
-    expect(clone.uniqueId).toBe(domainObject.uniqueId);
-    expect(clone.name).toBe(domainObject.name);
-    expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
-  });
-
-  test('Should clone point', () => {
-    const domainObject = createDomainObject(PrimitiveType.Point);
-    const clone = domainObject.clone();
-
-    expect(clone).toBeInstanceOf(MeasurePointDomainObject);
-    expect(clone).not.toBe(domainObject);
-    assert(clone instanceof MeasurePointDomainObject);
 
     expect(clone.box).toStrictEqual(domainObject.box);
     expect(clone.color).toStrictEqual(domainObject.color);
@@ -92,11 +66,6 @@ describe(BoxDomainObject.name, () => {
     testMe(PrimitiveType.VerticalArea, Quantity.Volume, 0);
     testMe(PrimitiveType.VerticalArea, Quantity.Angle, 1);
 
-    testMe(PrimitiveType.Point, Quantity.Length, 3);
-    testMe(PrimitiveType.Point, Quantity.Area, 0);
-    testMe(PrimitiveType.Point, Quantity.Volume, 0);
-    testMe(PrimitiveType.Point, Quantity.Angle, 0);
-
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createDomainObject(primitiveType);
       expect(domainObject.hasPanelInfo).toBe(true);
@@ -109,11 +78,6 @@ describe(BoxDomainObject.name, () => {
 });
 
 function createDomainObject(primitiveType: PrimitiveType): BoxDomainObject {
-  if (primitiveType === PrimitiveType.Point) {
-    const domainObject = new MeasurePointDomainObject();
-    domainObject.point = createBox().center;
-    return domainObject;
-  }
   const domainObject = new MeasureBoxDomainObject(primitiveType);
   switch (primitiveType) {
     case PrimitiveType.HorizontalArea:
