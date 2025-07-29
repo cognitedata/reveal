@@ -16,8 +16,8 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
-import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 import { getToolbar, type Toolbar } from './factory/ToolbarFactory';
+import { signal, type Signal } from '@cognite/signals';
 
 /**
  * Base class for interactions in the 3D viewer
@@ -55,8 +55,8 @@ export abstract class BaseTool extends RenderTargetCommand {
     return 'default';
   }
 
-  public getAnchoredDialogContent(): AnchoredDialogContent | undefined {
-    return undefined;
+  public getAnchoredDialogContent(): Signal<AnchoredDialogContent | undefined> {
+    return signal<AnchoredDialogContent | undefined>();
   }
 
   public getToolbarStyle(): PopupStyle {
@@ -250,18 +250,14 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   private async openContextMenu(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-
     if (this._renderTarget === undefined) {
       return;
     }
-
-    this._renderTarget.contextMenuController.contextMenuPositionData = {
+    this._renderTarget.contextMenuController.data = {
       clickEvent: event,
       position: new Vector2(event.layerX, event.layerY),
       intersection
     };
-
-    ContextMenuUpdater.update();
   }
 
   private async closeContextMenu(): Promise<void> {
@@ -269,11 +265,11 @@ export abstract class BaseTool extends RenderTargetCommand {
       return;
     }
 
-    this._renderTarget.contextMenuController.contextMenuPositionData = undefined;
+    this._renderTarget.contextMenuController.data = undefined;
   }
 
   private isContextMenuOpen(): boolean {
-    return this._renderTarget?.contextMenuController.contextMenuPositionData !== undefined;
+    return this._renderTarget?.contextMenuController.data !== undefined;
   }
 }
 
