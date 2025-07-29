@@ -8,7 +8,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 
 describe(MeasurePointDomainObject.name, () => {
   test('should initialize with correct default values', () => {
-    const domainObject = createDomainObject();
+    const domainObject = createMeasurePointDomainObject();
     expect(domainObject.primitiveType).toBe(PrimitiveType.Point);
     expect(domainObject.color.getHex()).toBe(0x00bfff);
     expect(domainObject.icon).toBe('Waypoint');
@@ -18,21 +18,21 @@ describe(MeasurePointDomainObject.name, () => {
   });
 
   test('Should set and get the point', () => {
-    const domainObject = new MeasurePointDomainObject();
+    const domainObject = createMeasurePointDomainObject();
     const expectedPoint = new Vector3(2, 3, 4);
     domainObject.point = expectedPoint;
     expect(domainObject.point).toStrictEqual(expectedPoint);
   });
 
   test('Should set and get the point size', () => {
-    const domainObject = new MeasurePointDomainObject();
+    const domainObject = createMeasurePointDomainObject();
     const expectedPointSize = 3.14;
     domainObject.pointSize = expectedPointSize;
     expect(domainObject.pointSize).toBe(expectedPointSize);
   });
 
   test('Should check edit constrains', () => {
-    const domainObject = createDomainObject();
+    const domainObject = createMeasurePointDomainObject();
     expect(domainObject.canRotateComponent(0)).toBe(false);
     expect(domainObject.canRotateComponent(1)).toBe(false);
     expect(domainObject.canRotateComponent(2)).toBe(false);
@@ -40,7 +40,7 @@ describe(MeasurePointDomainObject.name, () => {
   });
 
   test('Should clone point', () => {
-    const domainObject = createDomainObject();
+    const domainObject = createMeasurePointDomainObject();
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasurePointDomainObject);
@@ -55,7 +55,7 @@ describe(MeasurePointDomainObject.name, () => {
   });
 
   test('Should create info', () => {
-    const domainObject = createDomainObject();
+    const domainObject = createMeasurePointDomainObject();
     expect(domainObject.hasPanelInfo).toBe(true);
     const info = domainObject.getPanelInfo();
     expect(info).toBeDefined();
@@ -68,7 +68,7 @@ describe(MeasurePointDomainObject.name, () => {
   });
 });
 
-function createDomainObject(): MeasurePointDomainObject {
+function createMeasurePointDomainObject(): MeasurePointDomainObject {
   const domainObject = new MeasurePointDomainObject();
   domainObject.point = new Vector3(4, 5, 6);
   return domainObject;

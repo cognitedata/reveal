@@ -1,7 +1,10 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
@@ -29,6 +32,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   protected constructor(primitiveType: PrimitiveType = PrimitiveType.Box) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -69,11 +73,10 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
+    const isFinished = this.focusType !== FocusType.Pending;
     const { primitiveType } = this;
     const { box } = this;
-
     const { size } = box;
-    const isFinished = this.focusType !== FocusType.Pending;
 
     const hasX = Box.isValidSize(size.x);
     const hasY = Box.isValidSize(size.y);
@@ -192,3 +195,10 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     this.box.expandBoundingBox(boundingBox);
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.Point,
+  PrimitiveType.VerticalArea,
+  PrimitiveType.HorizontalArea,
+  PrimitiveType.Box
+];

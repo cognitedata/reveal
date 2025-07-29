@@ -15,7 +15,7 @@ describe(BoxDomainObject.name, () => {
       PrimitiveType.HorizontalArea,
       PrimitiveType.VerticalArea
     ]) {
-      const domainObject = createDomainObject(primitiveType);
+      const domainObject = createBoxDomainObject(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
       expect(domainObject.color.getHex()).toBe(0xff00ff);
       expect(domainObject.box).toBeDefined();
@@ -28,7 +28,7 @@ describe(BoxDomainObject.name, () => {
   });
 
   test('Should check edit constrains', () => {
-    const domainObject = createDomainObject(PrimitiveType.Box);
+    const domainObject = createBoxDomainObject(PrimitiveType.Box);
     expect(domainObject.canRotateComponent(0)).toBe(false);
     expect(domainObject.canRotateComponent(1)).toBe(false);
     expect(domainObject.canRotateComponent(2)).toBe(true);
@@ -36,7 +36,7 @@ describe(BoxDomainObject.name, () => {
   });
 
   test('Should clone', () => {
-    const domainObject = createDomainObject(PrimitiveType.Box);
+    const domainObject = createBoxDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureBoxDomainObject);
@@ -67,7 +67,7 @@ describe(BoxDomainObject.name, () => {
     testMe(PrimitiveType.VerticalArea, Quantity.Angle, 1);
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
-      const domainObject = createDomainObject(primitiveType);
+      const domainObject = createBoxDomainObject(primitiveType);
       expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
@@ -77,7 +77,7 @@ describe(BoxDomainObject.name, () => {
   });
 });
 
-function createDomainObject(primitiveType: PrimitiveType): BoxDomainObject {
+function createBoxDomainObject(primitiveType: PrimitiveType): BoxDomainObject {
   const domainObject = new MeasureBoxDomainObject(primitiveType);
   switch (primitiveType) {
     case PrimitiveType.HorizontalArea:

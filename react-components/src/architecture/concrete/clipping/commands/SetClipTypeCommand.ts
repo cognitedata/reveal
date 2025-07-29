@@ -1,6 +1,9 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { ClipTool } from '../ClipTool';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
@@ -28,9 +31,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
 
   public constructor(primitiveType: PrimitiveType) {
     super();
-    if (!CLIP_PRIMITIVE_TYPES.includes(primitiveType)) {
-      throw new Error(`Invalid primitive type: ${primitiveType}`);
-    }
+    verifyPrimitiveType(CLIP_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
