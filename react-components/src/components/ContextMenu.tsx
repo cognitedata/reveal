@@ -20,7 +20,7 @@ export const ContextMenu = ({
     <StyledDiv
       $position={contextMenuData.position}
       onClick={() => {
-        renderTarget.contextMenuController.data = undefined;
+        renderTarget.contextMenuController.data(undefined);
       }}>
       <Content contextMenuData={contextMenuData} />
     </StyledDiv>

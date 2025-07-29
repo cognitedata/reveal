@@ -14,8 +14,4 @@ export class ContextMenuController {
   public get data(): Signal<ContextMenuData | undefined> {
     return this._data;
   }
-
-  public set data(data: ContextMenuData | undefined) {
-    this._data(data);
-  }
 }

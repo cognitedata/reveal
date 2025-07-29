@@ -253,11 +253,11 @@ export abstract class BaseTool extends RenderTargetCommand {
     if (this._renderTarget === undefined) {
       return;
     }
-    this._renderTarget.contextMenuController.data = {
+    this._renderTarget.contextMenuController.data({
       clickEvent: event,
       position: new Vector2(event.layerX, event.layerY),
       intersection
-    };
+    });
   }
 
   private async closeContextMenu(): Promise<void> {
@@ -265,11 +265,11 @@ export abstract class BaseTool extends RenderTargetCommand {
       return;
     }
 
-    this._renderTarget.contextMenuController.data = undefined;
+    this._renderTarget.contextMenuController.data(undefined);
   }
 
   private isContextMenuOpen(): boolean {
-    return this._renderTarget?.contextMenuController.data !== undefined;
+    return this._renderTarget?.contextMenuController.data() !== undefined;
   }
 }
 
