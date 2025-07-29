@@ -53,6 +53,7 @@ export class MeasurePointCreator extends BaseCreator {
       return false;
     }
     domainObject.point = point;
+    domainObject.size = ray.origin.distanceTo(point) * 0.03; // Set size based on distance
     this.addRawPoint(point, isPending);
     domainObject.notify(Changes.geometry);
     domainObject.setFocusInteractive(FocusType.Focus);
