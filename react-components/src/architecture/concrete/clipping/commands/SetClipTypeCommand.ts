@@ -118,25 +118,15 @@ export class SetClipTypeCommand extends RenderTargetCommand {
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.PlaneX:
-      return {
-        key: 'ADD_SLICE_X'
-      };
+      return { key: 'ADD_SLICE_X' };
     case PrimitiveType.PlaneY:
-      return {
-        key: 'ADD_SLICE_Y'
-      };
+      return { key: 'ADD_SLICE_Y' };
     case PrimitiveType.PlaneZ:
-      return {
-        key: 'ADD_SLICE_Z'
-      };
+      return { key: 'ADD_SLICE_Z' };
     case PrimitiveType.PlaneXY:
-      return {
-        key: 'ADD_SLICE_XY'
-      };
+      return { key: 'ADD_SLICE_XY' };
     case PrimitiveType.Box:
-      return {
-        key: 'ADD_CROP_BOX'
-      };
+      return { key: 'ADD_CROP_BOX' };
     default:
       throw new Error('Unknown PrimitiveType');
   }
