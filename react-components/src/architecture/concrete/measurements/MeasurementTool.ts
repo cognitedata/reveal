@@ -14,8 +14,8 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
 import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
-import { MeasurePointDomainObject } from './MeasurePointDomainObject';
-import { MeasurePointCreator } from './MeasurePointCreator';
+import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
+import { MeasurePointCreator } from './point/MeasurePointCreator';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================

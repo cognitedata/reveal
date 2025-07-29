@@ -1,12 +1,12 @@
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { Color, type Vector3 } from 'three';
-import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
-import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { BoxDomainObject } from '../../primitives/box/BoxDomainObject';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { SolidPrimitiveRenderStyle } from '../../primitives/common/SolidPrimitiveRenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 
 export class MeasurePointDomainObject extends BoxDomainObject {
   // ==================================================

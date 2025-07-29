@@ -1,10 +1,10 @@
 import { assert, describe, expect, test } from 'vitest';
 import { MeasurePointDomainObject } from './MeasurePointDomainObject';
 import { Vector3 } from 'three';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
-import { isEmpty } from '../../base/utilities/TranslateInput';
-import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { SolidPrimitiveRenderStyle } from '../../primitives/common/SolidPrimitiveRenderStyle';
+import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 describe(MeasurePointDomainObject.name, () => {
   test('should initialize with correct default values', () => {

@@ -1,8 +1,8 @@
 import { type Ray, type Vector3 } from 'three';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type MeasurePointDomainObject } from './MeasurePointDomainObject';
 
 /**

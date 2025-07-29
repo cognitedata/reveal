@@ -5,7 +5,7 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
-import { MeasurePointDomainObject } from '../MeasurePointDomainObject';
+import { MeasurePointDomainObject } from '../point/MeasurePointDomainObject';
 
 export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
