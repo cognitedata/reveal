@@ -53,6 +53,8 @@ const secondMappingsMock = new Map<FdmKey, Node3D[]>([
   ['test-space/instance-2', [secondNode3DMock]]
 ]);
 
+const emptyMappingsMock = new Map<FdmKey, Node3D[]>();
+
 const mockThreeDModelFdmMappings: ThreeDModelFdmMappings[] = [
   {
     modelId: modelsMock[0].modelId,
@@ -136,23 +138,31 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data).toEqual([
-        {
-          mappings: { items: [] },
-          model: modelsMock[0]
-        },
-        {
-          mappings: { items: [] },
-          model: modelsMock[1]
-        }
-      ]);
+      expect(result.current.data).toHaveLength(modelsMock.length);
+      result.current.data?.forEach((item, idx) => {
+        expect(item).toMatchObject({
+          modelId: modelsMock[idx].modelId,
+          revisionId: modelsMock[idx].revisionId,
+          mappings: emptyMappingsMock
+        });
+      });
     });
 
     expect(result.current.data).toHaveLength(modelsMock.length);
     result.current.data?.forEach((item, idx) => {
       expect(item).toMatchObject({
-        mappings: { items: [] },
-        model: modelsMock[idx]
+        mappings: emptyMappingsMock,
+        modelId: modelsMock[idx].modelId,
+        revisionId: modelsMock[idx].revisionId
+      });
+    });
+
+    expect(result.current.data).toHaveLength(modelsMock.length);
+    result.current.data?.forEach((item, idx) => {
+      expect(item).toMatchObject({
+        mappings: emptyMappingsMock,
+        modelId: modelsMock[idx].modelId,
+        revisionId: modelsMock[idx].revisionId
       });
     });
 
