@@ -16,6 +16,8 @@ import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
 import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -64,6 +66,23 @@ export class MeasurementTool extends PrimitiveEditTool {
   public override onDeactivate(): void {
     super.onDeactivate();
     this.setAllVisible(false);
+  }
+
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    const intersection = await this.getIntersection(event);
+    const domainObject = this.getIntersectedSelectableDomainObject(
+      intersection
+    ) as MeasurePointDomainObject;
+
+    if (domainObject === undefined || domainObject.focusType === FocusType.None) {
+      await super.onWheel(event, delta);
+      return;
+    }
+    // Change size
+    this.addTransaction(domainObject.createTransaction(Changes.geometry));
+    const factor = 1 - Math.sign(delta) * 0.1;
+    domainObject.size *= factor;
+    domainObject.notify(Changes.geometry);
   }
 
   // ==================================================

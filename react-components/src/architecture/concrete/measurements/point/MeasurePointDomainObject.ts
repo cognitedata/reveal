@@ -16,7 +16,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   public constructor() {
     super(PrimitiveType.Point);
     this.color = new Color(Color.NAMES.deepskyblue);
-    this.pointSize = 0.05;
+    this.size = 0.05;
   }
 
   // ==================================================
@@ -39,11 +39,12 @@ export class MeasurePointDomainObject extends BoxDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    const { box } = this;
+    const { point, size } = this;
 
-    add({ key: 'X:COORDINATE' }, box.center.x, Quantity.Length);
-    add({ key: 'Y_COORDINATE' }, box.center.y, Quantity.Length);
-    add({ key: 'Z_COORDINATE' }, box.center.z, Quantity.Length);
+    add({ key: 'X:COORDINATE' }, point.x, Quantity.Length);
+    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length);
+    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length);
+    add({ key: 'POINT_SIZE' }, size, Quantity.Length);
     return info;
 
     function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
@@ -54,8 +55,8 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
     style.showLabel = false;
-    style.showLines = false;
-    style.solidOpacityUse = false;
+    style.showLines = true;
+    style.solidOpacityUse = true;
     style.selectedSolidOpacity = 1;
     style.solidOpacity = 0.5;
     return style;
@@ -65,11 +66,11 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public get pointSize(): number {
+  public get size(): number {
     return this.box.size.x;
   }
 
-  public set pointSize(value: number) {
+  public set size(value: number) {
     this.box.size.setScalar(value);
   }
 

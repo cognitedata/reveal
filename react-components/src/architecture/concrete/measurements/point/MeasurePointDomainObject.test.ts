@@ -26,9 +26,9 @@ describe(MeasurePointDomainObject.name, () => {
 
   test('Should set and get the point size', () => {
     const domainObject = createMeasurePointDomainObject();
-    const expectedPointSize = 3.14;
-    domainObject.pointSize = expectedPointSize;
-    expect(domainObject.pointSize).toBe(expectedPointSize);
+    const expectedSize = 3.14;
+    domainObject.size = expectedSize;
+    expect(domainObject.size).toBe(expectedSize);
   });
 
   test('Should check edit constrains', () => {
@@ -61,7 +61,7 @@ describe(MeasurePointDomainObject.name, () => {
     expect(info).toBeDefined();
     assert(info !== undefined);
 
-    expect(info.getItemsByQuantity(Quantity.Length)).toHaveLength(3);
+    expect(info.getItemsByQuantity(Quantity.Length)).toHaveLength(4);
     expect(info.getItemsByQuantity(Quantity.Area)).toHaveLength(0);
     expect(info.getItemsByQuantity(Quantity.Volume)).toHaveLength(0);
     expect(info.getItemsByQuantity(Quantity.Angle)).toHaveLength(0);
