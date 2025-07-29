@@ -38,3 +38,9 @@ export type ModelsForAssetParams = {
   assetId: number;
   sdk: CogniteClient;
 };
+
+export type CadModelNode = {
+  modelId: number;
+  revisionId: number;
+  nodeId: number;
+};

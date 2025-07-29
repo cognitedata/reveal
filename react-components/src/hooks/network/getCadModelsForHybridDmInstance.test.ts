@@ -19,8 +19,8 @@ describe(getCadModelsForHybridDmInstance.name, () => {
             version: 1,
             space: 'space-id',
             externalId: 'ext-id-1',
-            createdTime: Date.now(),
-            lastUpdatedTime: Date.now(),
+            createdTime: 12121212,
+            lastUpdatedTime: 13131313,
             properties: {}
           },
           {
@@ -31,8 +31,8 @@ describe(getCadModelsForHybridDmInstance.name, () => {
             version: 1,
             space: 'space-id',
             externalId: 'ext-id-2',
-            createdTime: Date.now(),
-            lastUpdatedTime: Date.now(),
+            createdTime: 12121212,
+            lastUpdatedTime: 13131313,
             properties: {}
           }
         ]

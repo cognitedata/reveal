@@ -1,11 +1,5 @@
 import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
-import { type ModelsForAssetParams } from './types';
-
-export type CadModelNode = {
-  modelId: number;
-  revisionId: number;
-  nodeId: number;
-};
+import { CadModelNode, type ModelsForAssetParams } from './types';
 
 export async function getCadModelsForAsset({
   assetId,
