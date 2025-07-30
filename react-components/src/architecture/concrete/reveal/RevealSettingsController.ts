@@ -51,8 +51,12 @@ export class RevealSettingsController {
     }
   }
 
+  protected addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
+  }
+
   private addEffect(effectFunction: () => void): void {
-    this._disposables.push(
+    this.addDisposable(
       effect(() => {
         effectFunction();
       })

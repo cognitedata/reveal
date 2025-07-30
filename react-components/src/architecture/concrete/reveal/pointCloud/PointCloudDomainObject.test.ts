@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { PointCloudDomainObject } from './PointCloudDomainObject';
 import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
-import { PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { type CognitePointCloudModel } from '@cognite/reveal';
@@ -24,7 +23,6 @@ describe(PointCloudDomainObject.name, () => {
     expect(domainObject.typeName).toEqual({ untranslated: 'PointCloud' });
     expect(domainObject.icon).toEqual('PointCloud');
     expect(domainObject.hasIconColor).toEqual(false);
-    expect(domainObject.createRenderStyle()).toBeInstanceOf(PointCloudRenderStyle);
   });
 
   test('should be removed', async () => {

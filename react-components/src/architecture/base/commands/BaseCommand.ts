@@ -1,3 +1,4 @@
+import { effect } from '@cognite/signals';
 import { type IconName } from '../utilities/IconName';
 import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayUtils';
@@ -188,6 +189,14 @@ export abstract class BaseCommand {
 
   protected addDisposable(disposable: () => void): void {
     this._disposables.push(disposable);
+  }
+
+  protected addEffect(effectFunction: () => void): void {
+    this.addDisposable(
+      effect(() => {
+        effectFunction();
+      })
+    );
   }
 
   public getShortCutKeys(): string[] | undefined {

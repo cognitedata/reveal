@@ -1,4 +1,4 @@
-import { effect, type Signal } from '@cognite/signals';
+import { type Signal } from '@cognite/signals';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
@@ -29,12 +29,10 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
 
-    this.addDisposable(
-      effect(() => {
-        this.renderTarget.revealSettingsController.cameraKeyBoardSpeed();
-        this.update();
-      })
-    );
+    this.addEffect(() => {
+      this.renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+      this.update();
+    });
   }
 }
 

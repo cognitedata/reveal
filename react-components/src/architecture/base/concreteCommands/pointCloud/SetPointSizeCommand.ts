@@ -1,5 +1,7 @@
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
+import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { first } from '../../utilities/extensions/generatorUtils';
 
 const DEFAULT_POINT_SIZE = 2;
 const MIN_POINT_SIZE = 0.0;
@@ -24,18 +26,25 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.getPointClouds().next().value !== undefined;
+    return first(this.getDomainObjects()) !== undefined;
   }
 
   public override get value(): number {
     // Let the first PointCloud decide the point size
-    const pointCloud = this.renderTarget.getPointClouds().next().value;
-    return pointCloud?.pointSize ?? DEFAULT_POINT_SIZE;
+    const pointCloud = first(this.getDomainObjects());
+    return pointCloud?.pointSize() ?? DEFAULT_POINT_SIZE;
   }
 
   public override set value(value: number) {
-    for (const pointCloud of this.renderTarget.getPointClouds()) {
-      pointCloud.pointSize = value;
+    for (const pointCloud of this.getDomainObjects()) {
+      pointCloud.pointSize(value);
     }
+  }
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  private *getDomainObjects(): Generator<PointCloudDomainObject> {
+    yield* this.rootDomainObject.getDescendantsByType(PointCloudDomainObject);
   }
 }

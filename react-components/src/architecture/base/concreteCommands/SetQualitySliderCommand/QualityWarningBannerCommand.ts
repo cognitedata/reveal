@@ -1,4 +1,3 @@
-import { effect } from '@cognite/signals';
 import { BannerStatus, BaseBannerCommand } from '../../commands/BaseBannerCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { getClosestFidelity, MAX_FIDELITY } from './fidelityLevels';
@@ -28,11 +27,9 @@ export class QualityWarningBannerCommand extends BaseBannerCommand {
     super.attach(renderTarget);
 
     // Until `isVisible` becomes a signal, we have to propagate setting updates like this
-    this.addDisposable(
-      effect(() => {
-        this.renderTarget.revealSettingsController.renderQuality();
-        this.update();
-      })
-    );
+    this.addEffect(() => {
+      this.renderTarget.revealSettingsController.renderQuality();
+      this.update();
+    });
   }
 }

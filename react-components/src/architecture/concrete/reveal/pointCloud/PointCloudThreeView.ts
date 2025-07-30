@@ -1,4 +1,3 @@
-import { type PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { type PointCloudDomainObject } from './PointCloudDomainObject';
 import { Box3 } from 'three';
 import { ThreeView } from '../../../base/views/ThreeView';
@@ -10,10 +9,6 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  protected override get style(): PointCloudRenderStyle {
-    return super.style as PointCloudRenderStyle;
-  }
 
   private get model(): PointCloud | undefined {
     const domainObject = this.domainObject;

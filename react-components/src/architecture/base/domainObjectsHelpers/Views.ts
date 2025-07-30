@@ -76,7 +76,7 @@ export class Views {
     }
   }
 
-  public clear(): void {
+  public dispose(): void {
     this.removeEventListeners();
     this.removeAllViews();
   }
