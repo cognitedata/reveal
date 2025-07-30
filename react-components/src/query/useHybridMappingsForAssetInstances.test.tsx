@@ -185,7 +185,9 @@ describe(useHybridMappingsForAssetInstances.name, () => {
   });
 
   it('should handle cache returning empty mappings', async () => {
-    vi.mocked(mockClassicCadAssetMappingCache.getNodesForInstanceIds).mockResolvedValue(new Map());
+    vi.mocked(mockClassicCadAssetMappingCache.getNodesForInstanceIds).mockResolvedValue(
+      emptyMappingsMock
+    );
 
     const { result } = renderHook(
       () => useHybridMappingsForAssetInstances(modelsMock, assetInstanceIdsMock),
