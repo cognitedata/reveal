@@ -42,7 +42,9 @@ export const queryKeys = {
     [...revisions, 'model-revision-id', revisionKeys] as const,
   timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const,
   modelsForAssetPerInstanceReference: (instance: InstanceReference | undefined) =>
-    ['react-components', 'models-for-assets-per-instance-reference', instance] as const
+    ['react-components', 'models-for-assets-per-instance-reference', instance] as const,
+  hybridDmAssetMappingsForInstances: (modelKeys: string[], instances: DmsUniqueIdentifier[]) =>
+    ['react-components', 'hybrid-dm-asset-mappings-for-instances', modelKeys, instances] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];
