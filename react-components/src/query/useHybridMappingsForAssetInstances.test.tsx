@@ -3,8 +3,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { type AddModelOptions } from '@cognite/reveal';
 import { useHybridMappingsForAssetInstances } from './useHybridMappingsForAssetInstances';
 import {
-  UseHybridMappingsForAssetInstancesContext,
-  type UseHybridMappingsForAssetInstancesDependencies
+  defaultUseHybridMappingsForAssetInstancesDependencies,
+  UseHybridMappingsForAssetInstancesContext
 } from './useHybridMappingsForAssetInstances.context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type DmsUniqueIdentifier } from '../data-providers';
@@ -14,84 +14,86 @@ import { Mock } from 'moq.ts';
 import type { FC, PropsWithChildren } from 'react';
 import { type FdmKey } from '../components/CacheProvider/types';
 import { type Node3D } from '@cognite/sdk';
-
-const queryClient = new QueryClient();
-
-const modelsMock: AddModelOptions[] = [
-  { modelId: 456, revisionId: 789 },
-  { modelId: 123, revisionId: 456 }
-];
-
-const assetInstanceIdsMock: DmsUniqueIdentifier[] = [
-  { space: 'test-space', externalId: 'instance-1' },
-  { space: 'test-space', externalId: 'instance-2' }
-];
-
-const firstNode3DMock: Node3D = {
-  id: 123,
-  name: 'Test Node',
-  treeIndex: 456,
-  boundingBox: { min: [0, 0, 0], max: [1, 1, 1] },
-  parentId: 0,
-  depth: 1,
-  subtreeSize: 1
-};
-
-const secondNode3DMock: Node3D = {
-  id: 987,
-  name: 'Test Node',
-  treeIndex: 789,
-  boundingBox: { min: [0, 0, 0], max: [1, 1, 1] },
-  parentId: 0,
-  depth: 1,
-  subtreeSize: 1
-};
-
-const firstMappingsMock = new Map<FdmKey, Node3D[]>([['test-space/instance-1', [firstNode3DMock]]]);
-
-const secondMappingsMock = new Map<FdmKey, Node3D[]>([
-  ['test-space/instance-2', [secondNode3DMock]]
-]);
-
-const emptyMappingsMock = new Map<FdmKey, Node3D[]>();
-
-const mockThreeDModelFdmMappings: ThreeDModelFdmMappings[] = [
-  {
-    modelId: modelsMock[0].modelId,
-    revisionId: modelsMock[0].revisionId,
-    mappings: firstMappingsMock
-  },
-  {
-    modelId: modelsMock[1].modelId,
-    revisionId: modelsMock[1].revisionId,
-    mappings: secondMappingsMock
-  }
-];
-
-const mockClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
-  .setup((p) => p.getNodesForInstanceIds)
-  .returns(vi.fn<() => Promise<Map<FdmKey, Node3D[]>>>())
-  .object();
-
-const mockUseClassicCadAssetMappingCache = vi.fn<() => ClassicCadAssetMappingCache>();
-
-const mockDependencies: UseHybridMappingsForAssetInstancesDependencies = {
-  useClassicCadAssetMappingCache: mockUseClassicCadAssetMappingCache
-};
-
-const wrapper: FC<PropsWithChildren> = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    <UseHybridMappingsForAssetInstancesContext.Provider value={mockDependencies}>
-      {children}
-    </UseHybridMappingsForAssetInstancesContext.Provider>
-  </QueryClientProvider>
-);
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(useHybridMappingsForAssetInstances.name, () => {
+  const queryClient = new QueryClient();
+
+  const modelsMock: AddModelOptions[] = [
+    { modelId: 456, revisionId: 789 },
+    { modelId: 123, revisionId: 456 }
+  ];
+
+  const assetInstanceIdsMock: DmsUniqueIdentifier[] = [
+    { space: 'test-space', externalId: 'instance-1' },
+    { space: 'test-space', externalId: 'instance-2' }
+  ];
+
+  const firstNode3DMock: Node3D = {
+    id: 123,
+    name: 'Test Node',
+    treeIndex: 456,
+    boundingBox: { min: [0, 0, 0], max: [1, 1, 1] },
+    parentId: 0,
+    depth: 1,
+    subtreeSize: 1
+  };
+
+  const secondNode3DMock: Node3D = {
+    id: 987,
+    name: 'Test Node',
+    treeIndex: 789,
+    boundingBox: { min: [0, 0, 0], max: [1, 1, 1] },
+    parentId: 0,
+    depth: 1,
+    subtreeSize: 1
+  };
+
+  const firstMappingsMock = new Map<FdmKey, Node3D[]>([
+    ['test-space/instance-1', [firstNode3DMock]]
+  ]);
+
+  const secondMappingsMock = new Map<FdmKey, Node3D[]>([
+    ['test-space/instance-2', [secondNode3DMock]]
+  ]);
+
+  const emptyMappingsMock = new Map<FdmKey, Node3D[]>();
+
+  const mockThreeDModelFdmMappings: ThreeDModelFdmMappings[] = [
+    {
+      modelId: modelsMock[0].modelId,
+      revisionId: modelsMock[0].revisionId,
+      mappings: firstMappingsMock
+    },
+    {
+      modelId: modelsMock[1].modelId,
+      revisionId: modelsMock[1].revisionId,
+      mappings: secondMappingsMock
+    }
+  ];
+
+  const mockClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
+    .setup((p) => p.getNodesForInstanceIds)
+    .returns(vi.fn<() => Promise<Map<FdmKey, Node3D[]>>>())
+    .object();
+
+  const mockDependencies = getMocksByDefaultDependencies(
+    defaultUseHybridMappingsForAssetInstancesDependencies
+  );
+
+  const wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <QueryClientProvider client={queryClient}>
+      <UseHybridMappingsForAssetInstancesContext.Provider value={mockDependencies}>
+        {children}
+      </UseHybridMappingsForAssetInstancesContext.Provider>
+    </QueryClientProvider>
+  );
   beforeEach(() => {
     queryClient.clear();
 
-    mockUseClassicCadAssetMappingCache.mockReturnValue(mockClassicCadAssetMappingCache);
+    mockDependencies.useClassicCadAssetMappingCache.mockReturnValue(
+      mockClassicCadAssetMappingCache
+    );
     vi.mocked(mockClassicCadAssetMappingCache.getNodesForInstanceIds).mockResolvedValue(
       firstMappingsMock
     );
@@ -108,7 +110,17 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
+    expect(result.current.data).toHaveLength(2);
+    result.current.data?.forEach((item, idx) => {
+      expect(item).toMatchObject({
+        modelId: modelsMock[idx].modelId,
+        revisionId: modelsMock[idx].revisionId,
+        mappings: idx === 0 ? firstMappingsMock : secondMappingsMock
+      });
     });
 
     modelsMock.forEach((model) => {
@@ -118,15 +130,6 @@ describe(useHybridMappingsForAssetInstances.name, () => {
         assetInstanceIdsMock
       );
     });
-
-    expect(result.current.data).toHaveLength(2);
-    result.current.data?.forEach((item, idx) => {
-      expect(item).toMatchObject({
-        modelId: modelsMock[idx].modelId,
-        revisionId: modelsMock[idx].revisionId,
-        mappings: idx === 0 ? firstMappingsMock : secondMappingsMock
-      });
-    });
   });
 
   it('should handle empty asset instance IDs', async () => {
@@ -135,10 +138,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data).toBeUndefined();
+      expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.isLoading).toBe(false);
+    expect(result.current.data).toBeUndefined();
     expect(result.current.isError).toBe(false);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).not.toHaveBeenCalled();
   });
@@ -150,8 +153,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toEqual([]);
+      expect(result.current.isLoading).toBe(false);
     });
+
+    expect(result.current.data).toEqual([]);
 
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).not.toHaveBeenCalled();
   });
@@ -166,8 +171,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(expectedResult);
+      expect(result.current.isLoading).toBe(false);
     });
+
+    expect(result.current.data).toEqual(expectedResult);
 
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledTimes(1);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledWith(
@@ -186,13 +193,15 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toHaveLength(2);
-      result.current.data?.forEach((item, idx) => {
-        expect(item).toMatchObject({
-          modelId: modelsMock[idx].modelId,
-          revisionId: modelsMock[idx].revisionId,
-          mappings: emptyMappingsMock
-        });
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.data).toHaveLength(2);
+    result.current.data?.forEach((item, idx) => {
+      expect(item).toMatchObject({
+        modelId: modelsMock[idx].modelId,
+        revisionId: modelsMock[idx].revisionId,
+        mappings: emptyMappingsMock
       });
     });
 
@@ -212,14 +221,13 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
     });
 
-    expect(mockUseClassicCadAssetMappingCache).toHaveBeenCalled();
-
+    expect(result.current.data).toBeDefined();
     expect(result.current.data).toHaveLength(2);
-    expect(result.current.isLoading).toBe(false);
     expect(result.current.isError).toBe(false);
+    expect(mockDependencies.useClassicCadAssetMappingCache).toHaveBeenCalled();
   });
 
   it('should have infinite staleTime', async () => {
@@ -229,9 +237,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.data).toBeDefined();
     expect(result.current.isStale).toBe(false);
   });
 
@@ -251,9 +260,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledWith(
       modelsMock[0].modelId,
       modelsMock[0].revisionId,
@@ -272,9 +282,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.data).toBeDefined();
     expect(result.current.data).toHaveLength(2);
     result.current.data?.forEach((item, idx) => {
       expect(item).toMatchObject({
@@ -314,17 +325,20 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toEqual([mockThreeDModelFdmMappings[0]]);
+      expect(result.current.isLoading).toBe(false);
     });
+
+    expect(result.current.data).toEqual([mockThreeDModelFdmMappings[0]]);
 
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledTimes(1);
 
     rerender({ models: modelsMock });
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledTimes(3);
   });
 
@@ -345,9 +359,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledWith(
       modelsMock[0].modelId,
       modelsMock[0].revisionId,
@@ -357,9 +372,10 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     rerender({ instanceIds: assetInstanceIdsMock });
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
     expect(mockClassicCadAssetMappingCache.getNodesForInstanceIds).toHaveBeenCalledWith(
       modelsMock[0].modelId,
       modelsMock[0].revisionId,
