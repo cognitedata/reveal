@@ -111,7 +111,6 @@ export class RevealModelsUtils {
         .add360ImageSet('events', { site_id: options.siteId }, { preMultipliedRotation: false })
         .then((model) => {
           const domainObject = new Image360CollectionDomainObject(model);
-          domainObject.name = model.label;
           root.addChildInteractive(domainObject);
           if (model.getIconsVisibility()) {
             domainObject.setVisibleInteractive(true);
@@ -127,7 +126,6 @@ export class RevealModelsUtils {
         })
         .then((model) => {
           const domainObject = new Image360CollectionDomainObject(model);
-          domainObject.name = model.label;
           root.addChildInteractive(domainObject);
           if (model.getIconsVisibility()) {
             domainObject.setVisibleInteractive(true);

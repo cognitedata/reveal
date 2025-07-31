@@ -23,7 +23,6 @@ describe(PointCloudDomainObject.name, () => {
     expect(domainObject.model).toBe(model);
     expect(domainObject.typeName).toEqual({ untranslated: 'PointCloud' });
     expect(domainObject.icon).toEqual('PointCloud');
-    expect(domainObject.name).toEqual('Model Name');
     expect(domainObject.hasIconColor).toEqual(false);
     expect(domainObject.createRenderStyle()).toBeInstanceOf(PointCloudRenderStyle);
   });
