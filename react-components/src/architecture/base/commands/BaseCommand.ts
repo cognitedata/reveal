@@ -3,7 +3,7 @@ import { isTranslatedString, type TranslationInput } from '../utilities/Translat
 import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { isMacOs } from '../utilities/extensions/isMacOs';
 import { translate } from '../utilities/translateUtils';
-import { type ButtonType, type UniqueId } from '../utilities/types';
+import { generateUniqueId, type ButtonType, type UniqueId } from '../utilities/types';
 
 /**
  * Represents a delegate function for updating a command.
@@ -41,7 +41,7 @@ export abstract class BaseCommand {
   // ==================================================
 
   public constructor() {
-    this._uniqueId = crypto.randomUUID();
+    this._uniqueId = generateUniqueId();
   }
 
   // ==================================================

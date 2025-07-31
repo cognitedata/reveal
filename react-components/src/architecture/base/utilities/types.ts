@@ -1,3 +1,7 @@
+export type ButtonType = 'ghost' | 'ghost-destructive' | 'primary';
+
 export type UniqueId = string;
 
-export type ButtonType = 'ghost' | 'ghost-destructive' | 'primary';
+export function generateUniqueId(): UniqueId {
+  return crypto.randomUUID();
+}

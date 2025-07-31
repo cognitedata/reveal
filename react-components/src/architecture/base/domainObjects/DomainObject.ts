@@ -31,7 +31,7 @@ import {
 } from '../../../advanced-tree-view';
 import { getRenderTarget } from './getRoot';
 import { translate } from '../utilities/translateUtils';
-import { type UniqueId } from '../utilities/types';
+import { generateUniqueId, type UniqueId } from '../utilities/types';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -83,7 +83,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public constructor() {
-    this._uniqueId = crypto.randomUUID();
+    this._uniqueId = generateUniqueId();
   }
 
   // ==================================================
