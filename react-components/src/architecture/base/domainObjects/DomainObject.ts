@@ -91,7 +91,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public get id(): string {
-    return this.uniqueId.toString();
+    return this.uniqueId;
   }
 
   public get isVisibleInTree(): boolean {
