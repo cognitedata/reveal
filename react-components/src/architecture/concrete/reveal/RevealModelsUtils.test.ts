@@ -1,6 +1,11 @@
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
-import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
+import {
+  createImage360ClassicMock,
+  createImage360DmMock,
+  image360ClassicOptions,
+  image360DmOptions
+} from '#test-utils/fixtures/image360';
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { viewerMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
@@ -77,7 +82,7 @@ describe(RevealModelsUtils.name, () => {
     expect(domainObject.name).toBe('Model Name');
   });
 
-  test('should add Image360Collection', async () => {
+  test('should add Classic Image360Collection', async () => {
     const model = createImage360ClassicMock();
     const addFn = vi.fn().mockResolvedValue(model);
     viewerMock.add360ImageSet = addFn;
@@ -87,13 +92,33 @@ describe(RevealModelsUtils.name, () => {
       image360ClassicOptions
     );
     expect(result).toBe(model);
-    const siteId = image360ClassicOptions.siteId;
     expect(addFn).toHaveBeenCalledWith(
       'events',
-      { site_id: siteId },
+      { site_id: image360ClassicOptions.siteId },
       { preMultipliedRotation: false }
     );
 
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('360 Model Name');
+  });
+
+  test('should add DM Image360Collection', async () => {
+    const model = createImage360DmMock();
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.add360ImageSet = addFn;
+
+    const result = await RevealModelsUtils.addImage360Collection(
+      renderTargetMock,
+      image360DmOptions
+    );
+    expect(result).toBe(model);
+    expect(addFn).toHaveBeenCalledWith('datamodels', {
+      source: 'cdm',
+      image360CollectionExternalId: image360DmOptions.externalId,
+      space: image360DmOptions.space
+    });
     const domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeDefined();
     assert(domainObject !== undefined);
