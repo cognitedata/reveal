@@ -23,6 +23,7 @@ describe(CadDomainObject.name, () => {
     expect(domainObject.model).toBe(model);
     expect(domainObject.typeName).toEqual({ untranslated: 'CAD' });
     expect(domainObject.icon).toEqual('Cubes');
+    expect(domainObject.name).toEqual('Model Name');
     expect(domainObject.hasIconColor).toEqual(false);
     expect(domainObject.createRenderStyle()).toBeInstanceOf(CadRenderStyle);
   });
