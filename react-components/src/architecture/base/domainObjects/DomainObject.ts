@@ -31,6 +31,7 @@ import {
 } from '../../../advanced-tree-view';
 import { getRenderTarget } from './getRoot';
 import { translate } from '../utilities/translateUtils';
+import { type UniqueId } from '../utilities/types';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -66,15 +67,14 @@ export abstract class DomainObject implements TreeNodeType {
   // Views and listeners
   public readonly views: Views = new Views();
 
-  // Unique index for the domain object, used as soft reference
-  private _uniqueId: number;
-  private static _counter: number = 0; // Counter for the unique index
+  // Unique guid for the domain object, used as soft reference
+  private _uniqueId: UniqueId;
 
-  public get uniqueId(): number {
+  public get uniqueId(): UniqueId {
     return this._uniqueId;
   }
 
-  public set uniqueId(value: number) {
+  protected set uniqueId(value: UniqueId) {
     this._uniqueId = value;
   }
 
@@ -83,8 +83,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public constructor() {
-    DomainObject._counter++;
-    this._uniqueId = DomainObject._counter;
+    this._uniqueId = crypto.randomUUID();
   }
 
   // ==================================================
@@ -788,7 +787,7 @@ export abstract class DomainObject implements TreeNodeType {
     return undefined;
   }
 
-  public getThisOrDescendantByUniqueId(uniqueId: number): DomainObject | undefined {
+  public getThisOrDescendantByUniqueId(uniqueId: UniqueId): DomainObject | undefined {
     for (const descendant of this.getThisAndDescendants()) {
       if (descendant.uniqueId === uniqueId) {
         return descendant;

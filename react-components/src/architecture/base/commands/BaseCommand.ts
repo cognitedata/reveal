@@ -3,6 +3,7 @@ import { isTranslatedString, type TranslationInput } from '../utilities/Translat
 import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { isMacOs } from '../utilities/extensions/isMacOs';
 import { translate } from '../utilities/translateUtils';
+import { type ButtonType, type UniqueId } from '../utilities/types';
 
 /**
  * Represents a delegate function for updating a command.
@@ -20,8 +21,6 @@ export type CommandUpdateDelegate = (command: BaseCommand, change?: symbol) => v
  */
 
 export abstract class BaseCommand {
-  private static _counter: number = 0; // Counter for the unique index
-
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -31,9 +30,9 @@ export abstract class BaseCommand {
 
   // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
-  private readonly _uniqueId: number;
+  private readonly _uniqueId: UniqueId;
 
-  public get uniqueId(): number {
+  public get uniqueId(): UniqueId {
     return this._uniqueId;
   }
 
@@ -42,8 +41,7 @@ export abstract class BaseCommand {
   // ==================================================
 
   public constructor() {
-    BaseCommand._counter++;
-    this._uniqueId = BaseCommand._counter;
+    this._uniqueId = crypto.randomUUID();
   }
 
   // ==================================================
@@ -81,7 +79,7 @@ export abstract class BaseCommand {
     return undefined; // Means no icon
   }
 
-  public get buttonType(): string {
+  public get buttonType(): ButtonType {
     return 'ghost';
   }
 
