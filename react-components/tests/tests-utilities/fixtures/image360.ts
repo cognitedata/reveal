@@ -59,6 +59,8 @@ export function createImage360ClassicMock(parameters?: {
     .returns('siteId')
     .setup((p) => p.getIconsVisibility)
     .returns(getIconsVisibilityMock)
+    .setup((p) => p.label)
+    .returns('360 Model Name')
     .setup((p) => p.setIconsVisibility)
     .returns(setIconsVisibilityMock)
     .setup((p) => p.on)

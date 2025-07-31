@@ -1,4 +1,3 @@
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import {
   type AddModelOptions,
   CogniteCadModel,
@@ -13,26 +12,27 @@ import { type RevealModel } from './RevealTypes';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { type AddImage360CollectionOptions } from '../../..';
+import { type RevealDomainObject } from './RevealDomainObject';
 
 export class RevealModelsUtils {
   public static getByRevealModel(
     root: RootDomainObject,
     model: RevealModel
-  ): DomainObject | undefined {
+  ): RevealDomainObject | undefined {
     if (model instanceof CogniteCadModel) {
-      for (const child of root.getChildrenByType(CadDomainObject)) {
+      for (const child of root.getDescendantsByType(CadDomainObject)) {
         if (child.model === model) {
           return child;
         }
       }
     } else if (model instanceof CognitePointCloudModel) {
-      for (const child of root.getChildrenByType(PointCloudDomainObject)) {
+      for (const child of root.getDescendantsByType(PointCloudDomainObject)) {
         if (child.model === model) {
           return child;
         }
       }
     } else {
-      for (const child of root.getChildrenByType(Image360CollectionDomainObject)) {
+      for (const child of root.getDescendantsByType(Image360CollectionDomainObject)) {
         if (child.model === model) {
           return child;
         }
@@ -49,14 +49,24 @@ export class RevealModelsUtils {
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
-    return await renderTarget.viewer.addCadModel(options).then((model) => {
-      const domainObject = new CadDomainObject(model);
+    let domainObject: CadDomainObject | undefined;
+    const model = await renderTarget.viewer.addCadModel(options).then((model) => {
+      domainObject = new CadDomainObject(model);
       root.addChildInteractive(domainObject);
       if (model.visible) {
         domainObject.setVisibleInteractive(true);
       }
       return model;
     });
+    if (domainObject !== undefined) {
+      const sdk = renderTarget.rootDomainObject.sdk;
+      await sdk.models3D.retrieve(model.modelId).then((model) => {
+        if (domainObject !== undefined) {
+          domainObject.name = model.name;
+        }
+      });
+    }
+    return model;
   }
 
   public static async addPointCloud(
@@ -67,14 +77,24 @@ export class RevealModelsUtils {
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
-    return await renderTarget.viewer.addPointCloudModel(options).then((model) => {
-      const domainObject = new PointCloudDomainObject(model);
+    let domainObject: PointCloudDomainObject | undefined;
+    const model = await renderTarget.viewer.addPointCloudModel(options).then((model) => {
+      domainObject = new PointCloudDomainObject(model);
       root.addChildInteractive(domainObject);
       if (model.visible) {
         domainObject.setVisibleInteractive(true);
       }
       return model;
     });
+    if (domainObject !== undefined) {
+      const sdk = renderTarget.rootDomainObject.sdk;
+      await sdk.models3D.retrieve(model.modelId).then((model) => {
+        if (domainObject !== undefined) {
+          domainObject.name = model.name;
+        }
+      });
+    }
+    return model;
   }
 
   public static async addImage360Collection(
@@ -91,6 +111,7 @@ export class RevealModelsUtils {
         .add360ImageSet('events', { site_id: options.siteId }, { preMultipliedRotation: false })
         .then((model) => {
           const domainObject = new Image360CollectionDomainObject(model);
+          domainObject.name = model.label;
           root.addChildInteractive(domainObject);
           if (model.getIconsVisibility()) {
             domainObject.setVisibleInteractive(true);
@@ -106,6 +127,7 @@ export class RevealModelsUtils {
         })
         .then((model) => {
           const domainObject = new Image360CollectionDomainObject(model);
+          domainObject.name = model.label;
           root.addChildInteractive(domainObject);
           if (model.getIconsVisibility()) {
             domainObject.setVisibleInteractive(true);

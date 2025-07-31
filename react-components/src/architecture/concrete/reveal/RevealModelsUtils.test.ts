@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
@@ -55,6 +55,11 @@ describe(RevealModelsUtils.name, () => {
     const result = await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
     expect(result).toBe(model);
     expect(addFn).toHaveBeenCalledWith(cadModelOptions);
+
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('Model Name');
   });
 
   test('should add PointCloud model', async () => {
@@ -65,6 +70,11 @@ describe(RevealModelsUtils.name, () => {
     const result = await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
     expect(result).toBe(model);
     expect(addFn).toHaveBeenCalledWith(pointCloudModelOptions);
+
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('Model Name');
   });
 
   test('should add Image360Collection', async () => {
@@ -83,6 +93,11 @@ describe(RevealModelsUtils.name, () => {
       { site_id: siteId },
       { preMultipliedRotation: false }
     );
+
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('360 Model Name');
   });
 
   test('should remove the CAD model', async () => {
