@@ -7,8 +7,7 @@ import {
   CDF_TO_VIEWER_TRANSFORMATION,
   Image360Action,
   type DataSourceType,
-  CogniteCadModel,
-  CognitePointCloudModel
+  CogniteCadModel
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -37,7 +36,7 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
+import { type Image360Model } from '../../concrete/reveal/RevealTypes';
 import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 import { type UniqueId } from '../utilities/types';
 
@@ -199,14 +198,6 @@ export class RevealRenderTarget {
   // ==================================================
   // INSTANCE METHODS: Get models from the viewer
   // ==================================================
-
-  public *getPointClouds(): Generator<PointCloud> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
-        yield model;
-      }
-    }
-  }
 
   public *getCadModels(): Generator<CogniteCadModel> {
     for (const model of this.viewer.models) {
