@@ -49,8 +49,8 @@ export class PointCloudDomainObject extends RevealDomainObject {
     return new PointCloudRenderStyle();
   }
 
-  protected override removeCore(): void {
-    super.removeCore();
+  protected override dispose(): void {
+    super.dispose();
     const viewer = getRenderTarget(this)?.viewer;
     if (viewer?.models?.includes(this._model) ?? false) {
       viewer?.removeModel(this._model);
