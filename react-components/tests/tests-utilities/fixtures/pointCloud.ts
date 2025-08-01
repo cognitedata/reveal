@@ -28,9 +28,9 @@ export function createPointCloudMock(parameters?: {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
 
-  let pointSize = 2;
-  let pointColorType = PointColorType.Rgb;
-  let pointShape = PointShape.Square;
+  const pointSize = 2;
+  const pointColorType = PointColorType.Rgb;
+  const pointShape = PointShape.Square;
 
   return (
     new Mock<CognitePointCloudModel<ClassicDataSourceType>>()

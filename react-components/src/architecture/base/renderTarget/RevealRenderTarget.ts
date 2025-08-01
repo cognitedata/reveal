@@ -5,7 +5,6 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CogniteCadModel,
   Image360Action,
   type DataSourceType
 } from '@cognite/reveal';
