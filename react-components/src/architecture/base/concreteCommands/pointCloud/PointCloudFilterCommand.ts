@@ -48,13 +48,15 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     if (domainObject === undefined) {
       return [];
     }
-    const classes = domainObject.model.getClasses();
-    if (classes === undefined || classes.length === 0) {
+    if (!hasSomeClasses(domainObject.model)) {
       return [];
     }
     const children = [];
-    for (const c of classes) {
-      const pointClass = new PointClass(c.name, c.code, c.color);
+    for (const item of domainObject.model.getClasses()) {
+      if (!domainObject.model.hasClass(item.code)) {
+        continue;
+      }
+      const pointClass = new PointClass(item.name, item.code, item.color);
       children.push(new FilterItemCommand(pointClass, domainObject.uniqueId));
     }
     return children;
@@ -76,13 +78,12 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
       return false;
     }
     const pointCloud = domainObject.model;
-    const isAllChecked = isAllClassesVisible(pointCloud);
-    const classes = pointCloud.getClasses();
-    if (classes === undefined || classes.length === 0) {
+    if (!hasSomeClasses(pointCloud)) {
       return false;
     }
-    for (const c of classes) {
-      pointCloud.setClassVisible(c.code, !isAllChecked);
+    const isAllChecked = isAllClassesVisible(pointCloud);
+    for (const item of pointCloud.getClasses()) {
+      pointCloud.setClassVisible(item.code, !isAllChecked);
     }
     return true;
   }
@@ -101,7 +102,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
 
 // Note: This is not exported, as it is only used internally
 
-export class FilterItemCommand extends BaseFilterItemCommand {
+class FilterItemCommand extends BaseFilterItemCommand {
   private readonly _pointClass: PointClass;
   private readonly _currentUniqueId: UniqueId;
 
@@ -152,7 +153,7 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   // ==================================================
 }
 
-export class PointClass {
+class PointClass {
   name: string;
   code: number | WellKnownAsprsPointClassCodes;
   color: Color;
@@ -181,11 +182,9 @@ export class PointClass {
 
 function getFirstPointCloudWithClasses(root: RootDomainObject): PointCloudDomainObject | undefined {
   for (const domainObject of root.getDescendantsByType(PointCloudDomainObject)) {
-    const classes = domainObject.model.getClasses();
-    if (classes === undefined || classes.length === 0) {
-      continue;
+    if (hasSomeClasses(domainObject.model)) {
+      return domainObject;
     }
-    return domainObject;
   }
   return undefined;
 }
@@ -202,14 +201,21 @@ function getCurrentDomainObject(
 }
 
 function isAllClassesVisible(pointCloud: PointCloud): boolean {
-  const classes = pointCloud.getClasses();
-  if (classes === undefined || classes.length === 0) {
+  if (!hasSomeClasses(pointCloud)) {
     return false;
   }
-  for (const c of classes) {
-    if (!pointCloud.isClassVisible(c.code)) {
+  for (const item of pointCloud.getClasses()) {
+    if (pointCloud.hasClass(item.code) && !pointCloud.isClassVisible(item.code)) {
       return false;
     }
   }
   return true;
+}
+
+function hasSomeClasses(pointCloud: PointCloud): boolean {
+  const classes = pointCloud.getClasses();
+  if (classes === undefined || classes.length === 0) {
+    return false;
+  }
+  return classes.some((item) => pointCloud.hasClass(item.code));
 }
