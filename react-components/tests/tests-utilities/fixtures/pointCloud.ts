@@ -21,18 +21,14 @@ export const taggedPointCloudModelOptions = {
 } as const satisfies TaggedAddPointCloudResourceOptions;
 
 export const pointCloudClasses = [
-  { name: 'Class 0', code: 0, color: new Color(1, 0, 0) },
-  { name: 'Class 1', code: 1, color: new Color(0, 1, 0) },
-  { name: 'Class 2', code: 2, color: new Color(0, 0, 1) },
-  { name: 'Class 3', code: 3, color: new Color(1, 1, 0) },
-  { name: 'Class 4', code: 4, color: new Color(0, 1, 1) },
-  { name: 'Class 5', code: 5, color: new Color(1, 0, 1) },
-  { name: 'Unused ', code: 6, color: new Color(1, 0, 1) }
+  { name: 'Class 0', code: 0, color: new Color(1, 0, 0), visible: true, hasClass: true },
+  { name: 'Class 1', code: 1, color: new Color(0, 1, 0), visible: true, hasClass: true },
+  { name: 'Class 2', code: 2, color: new Color(0, 0, 1), visible: true, hasClass: true },
+  { name: 'Class 3', code: 3, color: new Color(1, 1, 0), visible: true, hasClass: true },
+  { name: 'Class 4', code: 4, color: new Color(0, 1, 1), visible: true, hasClass: true },
+  { name: 'Class 5', code: 5, color: new Color(1, 0, 1), visible: true, hasClass: true },
+  { name: 'Unused ', code: 6, color: new Color(1, 0, 1), visible: false, hasClass: false } // THe Unused class last, to simplify the test logic
 ];
-
-export const pointCloudClassVisible = [true, true, true, true, true, true, false];
-
-export const hasPointCloudClass = [true, true, true, true, true, true, false];
 
 export function createPointCloudMock(parameters?: {
   visible?: boolean;
@@ -88,15 +84,15 @@ export function createPointCloudMock(parameters?: {
       // Mock classes
       .setup((p) => p.hasClass)
       .returns((pointClass: number) => {
-        return hasPointCloudClass[pointClass];
+        return pointCloudClasses[pointClass].hasClass;
       })
       .setup((p) => p.isClassVisible)
       .returns((pointClass: number) => {
-        return pointCloudClassVisible[pointClass];
+        return pointCloudClasses[pointClass].visible;
       })
       .setup((p) => p.setClassVisible)
       .returns((pointClass: number, visible: boolean) => {
-        pointCloudClassVisible[pointClass] = visible;
+        pointCloudClasses[pointClass].visible = visible;
       })
       .setup((p) => p.getClasses)
       .returns(() => {

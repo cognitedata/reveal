@@ -5,9 +5,7 @@ import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 import {
   createPointCloudMock,
-  hasPointCloudClass,
-  pointCloudClasses,
-  pointCloudClassVisible
+  pointCloudClasses
 } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
 import { count } from '../../utilities/extensions/arrayUtils';
 
@@ -30,7 +28,7 @@ describe(PointCloudFilterCommand.name, () => {
     expect(command.children).toHaveLength(6);
   });
 
-  test('should not have any checked', () => {
+  test('should have none checked', () => {
     assert(command.children !== undefined);
     for (const option of command.children) {
       option.setChecked(false);
@@ -65,9 +63,10 @@ describe(PointCloudFilterCommand.name, () => {
 
   test('should have label and color at all options', () => {
     assert(command.children !== undefined);
-    for (const option of command.children) {
-      expect(option.label).not.toBe('');
-      expect(option.color).toBeDefined();
+    for (let i = 0; i < command.children.length; i++) {
+      const option = command.children[i];
+      expect(option.label).toBe(pointCloudClasses[i].name);
+      expect(option.color).toBe(pointCloudClasses[i].color);
     }
   });
   test('should be checked after invoke', () => {
@@ -82,21 +81,9 @@ describe(PointCloudFilterCommand.name, () => {
 });
 
 function visibleCount(): number {
-  let count = 0;
-  for (let i = 0; i < pointCloudClasses.length; i++) {
-    if (hasPointCloudClass[i] && pointCloudClassVisible[i]) {
-      count++;
-    }
-  }
-  return count;
+  return count(pointCloudClasses, (item) => item.hasClass && item.visible);
 }
 
 function classesCount(): number {
-  let count = 0;
-  for (let i = 0; i < pointCloudClasses.length; i++) {
-    if (hasPointCloudClass[i]) {
-      count++;
-    }
-  }
-  return count;
+  return count(pointCloudClasses, (item) => item.hasClass);
 }
