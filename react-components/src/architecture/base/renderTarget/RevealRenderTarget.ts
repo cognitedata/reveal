@@ -39,6 +39,7 @@ import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
 import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
+import { type UniqueId } from '../utilities/types';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -63,7 +64,7 @@ export class RevealRenderTarget {
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _clippedBoundingBox: Box3 | undefined;
-  private _cropBoxUniqueId: number | undefined = undefined;
+  private _cropBoxUniqueId: UniqueId | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
 
