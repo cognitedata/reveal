@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import type { CogniteCadModel } from '@cognite/reveal';
 import { createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
-import { CadRenderStyle } from './CadRenderStyle';
 import { CadDomainObject } from './CadDomainObject';
 import type { RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { viewerModelsMock } from '#test-utils/fixtures/viewer';
@@ -24,7 +23,6 @@ describe(CadDomainObject.name, () => {
     expect(domainObject.typeName).toEqual({ untranslated: 'CAD' });
     expect(domainObject.icon).toEqual('Cubes');
     expect(domainObject.hasIconColor).toEqual(false);
-    expect(domainObject.createRenderStyle()).toBeInstanceOf(CadRenderStyle);
   });
 
   test('should be removed', async () => {

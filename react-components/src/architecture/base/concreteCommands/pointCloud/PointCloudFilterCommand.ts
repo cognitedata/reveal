@@ -2,16 +2,18 @@ import { type WellKnownAsprsPointClassCodes } from '@cognite/reveal';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFilterCommand';
-import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 import { type PointCloud } from '../../../concrete/reveal/RevealTypes';
+import { type RootDomainObject } from '../../domainObjects/RootDomainObject';
+import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 
 export class PointCloudFilterCommand extends BaseFilterCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private _modelId: number | undefined = undefined;
-  private _revisionId: number | undefined = undefined;
+  // Keep a soft reference to the last used PointCloudDomainObject (the first one)
+  // If the user removed this, the next PointCloudDomainObject will be used instead.
+  private _currentUniqueId: number | undefined = undefined;
 
   // ==================================================
   // OVERRIDES
@@ -22,58 +24,57 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.getPointCloud() !== undefined;
+    return this.getCurrentDomainObject() !== undefined;
   }
 
   public override initializeChildrenIfNeeded(): void {
-    const pointCloud = getFirstPointCloudWithClasses({ renderTarget: this.renderTarget });
-    if (pointCloud === undefined) {
+    const domainObject = getFirstPointCloudWithClasses(this.rootDomainObject);
+    if (domainObject === undefined) {
       this._children = undefined;
-      this._modelId = undefined;
-      this._revisionId = undefined;
+      this._currentUniqueId = undefined;
       return;
     }
-    if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
+    if (this._currentUniqueId === domainObject.uniqueId) {
       return; // Nothing changed
     }
-    this._modelId = pointCloud.modelId;
-    this._revisionId = pointCloud.revisionId;
+    this._currentUniqueId = domainObject.uniqueId;
     this._children = undefined;
     super.initializeChildrenIfNeeded();
   }
 
   protected override createChildren(): FilterItemCommand[] {
-    const pointCloud = this.getPointCloud();
-    if (pointCloud === undefined) {
+    const domainObject = this.getCurrentDomainObject();
+    if (domainObject === undefined) {
       return [];
     }
-    const classes = pointCloud.getClasses();
+    const classes = domainObject.model.getClasses();
     if (classes === undefined || classes.length === 0) {
       return [];
     }
     const children = [];
     for (const c of classes) {
       const pointClass = new PointClass(c.name, c.code, c.color);
-      children.push(new FilterItemCommand(pointClass, pointCloud.modelId, pointCloud.revisionId));
+      children.push(new FilterItemCommand(pointClass, domainObject.uniqueId));
     }
     return children;
   }
 
   public override get isAllChecked(): boolean {
     // Override the default implementation to optimize the logic
-    const pointCloud = this.getPointCloud();
-    if (pointCloud === undefined) {
+    const domainObject = this.getCurrentDomainObject();
+    if (domainObject === undefined) {
       return false;
     }
-    return isAllClassesVisible(pointCloud);
+    return isAllClassesVisible(domainObject.model);
   }
 
   protected override toggleAllCheckedCore(): boolean {
     // Override the default implementation to optimize the logic
-    const pointCloud = this.getPointCloud();
-    if (pointCloud === undefined) {
+    const domainObject = this.getCurrentDomainObject();
+    if (domainObject === undefined) {
       return false;
     }
+    const pointCloud = domainObject.model;
     const isAllChecked = isAllClassesVisible(pointCloud);
     const classes = pointCloud.getClasses();
     if (classes === undefined || classes.length === 0) {
@@ -89,35 +90,28 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private getPointCloud(): PointCloud | undefined {
-    if (this._modelId === undefined || this._revisionId === undefined) {
+  private getCurrentDomainObject(): PointCloudDomainObject | undefined {
+    if (this._currentUniqueId === undefined) {
       return undefined;
     }
-    for (const pointCloud of this.renderTarget.getPointClouds()) {
-      if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
-        return pointCloud;
-      }
-    }
-    return undefined;
+    return getCurrentDomainObject(this.rootDomainObject, this._currentUniqueId);
   }
 }
 
 // Note: This is not exported, as it is only used internally
 
 export class FilterItemCommand extends BaseFilterItemCommand {
-  private readonly _modelId: number;
-  private readonly _revisionId: number;
   private readonly _pointClass: PointClass;
+  private readonly _currentUniqueId: number;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(pointClass: PointClass, modelId: number, revisionId: number) {
+  public constructor(pointClass: PointClass, currentUniqueId: number) {
     super();
-    this._modelId = modelId;
-    this._revisionId = revisionId;
     this._pointClass = pointClass;
+    this._currentUniqueId = currentUniqueId;
   }
 
   // ==================================================
@@ -129,11 +123,11 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   public override get isChecked(): boolean {
-    const pointCloud = this.getPointCloud();
-    if (pointCloud === undefined) {
+    const domainObject = getCurrentDomainObject(this.rootDomainObject, this._currentUniqueId);
+    if (domainObject === undefined) {
       return false;
     }
-    return pointCloud.isClassVisible(this._pointClass.code);
+    return domainObject.model.isClassVisible(this._pointClass.code);
   }
 
   public override get color(): Color | undefined {
@@ -141,29 +135,20 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   protected override setCheckedCore(value: boolean): boolean {
-    const pointCloud = this.getPointCloud();
-    if (pointCloud === undefined) {
+    const domainObject = getCurrentDomainObject(this.rootDomainObject, this._currentUniqueId);
+    if (domainObject === undefined) {
       return false;
     }
-    if (pointCloud.isClassVisible(this._pointClass.code) === value) {
+    if (domainObject.model.isClassVisible(this._pointClass.code) === value) {
       return false;
     }
-    pointCloud.setClassVisible(this._pointClass.code, value);
+    domainObject.model.setClassVisible(this._pointClass.code, value);
     return true;
   }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
-
-  private getPointCloud(): PointCloud | undefined {
-    for (const pointCloud of this.renderTarget.getPointClouds()) {
-      if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
-        return pointCloud;
-      }
-    }
-    return undefined;
-  }
 }
 
 export class PointClass {
@@ -193,19 +178,26 @@ export class PointClass {
 // PRIVATE FUNCTIONS
 // ==================================================
 
-function getFirstPointCloudWithClasses({
-  renderTarget
-}: {
-  renderTarget: RevealRenderTarget;
-}): PointCloud | undefined {
-  for (const pointCloud of renderTarget.getPointClouds()) {
-    const classes = pointCloud.getClasses();
+function getFirstPointCloudWithClasses(root: RootDomainObject): PointCloudDomainObject | undefined {
+  for (const domainObject of root.getDescendantsByType(PointCloudDomainObject)) {
+    const classes = domainObject.model.getClasses();
     if (classes === undefined || classes.length === 0) {
       continue;
     }
-    return pointCloud;
+    return domainObject;
   }
   return undefined;
+}
+
+function getCurrentDomainObject(
+  root: RootDomainObject,
+  uniqueId: number
+): PointCloudDomainObject | undefined {
+  const domainObject = root.getThisOrDescendantByUniqueId(uniqueId);
+  if (domainObject === undefined) {
+    return undefined;
+  }
+  return domainObject as PointCloudDomainObject;
 }
 
 function isAllClassesVisible(pointCloud: PointCloud): boolean {

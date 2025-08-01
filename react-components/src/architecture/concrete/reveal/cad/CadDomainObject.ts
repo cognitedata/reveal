@@ -1,8 +1,6 @@
 import { type CogniteCadModel } from '@cognite/reveal';
-import { CadRenderStyle } from './CadRenderStyle';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type IconName } from '../../../base/utilities/IconName';
-import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { RevealDomainObject } from '../RevealDomainObject';
 
@@ -17,7 +15,7 @@ export class CadDomainObject extends RevealDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): CogniteCadModel | undefined {
+  public get model(): CogniteCadModel {
     return this._model;
   }
 
@@ -44,10 +42,6 @@ export class CadDomainObject extends RevealDomainObject {
 
   public override get hasIconColor(): boolean {
     return false;
-  }
-
-  public override createRenderStyle(): RenderStyle | undefined {
-    return new CadRenderStyle();
   }
 
   protected override dispose(): void {
