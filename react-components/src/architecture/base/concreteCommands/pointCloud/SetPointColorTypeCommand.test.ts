@@ -8,7 +8,7 @@ import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtu
 describe(SetPointColorTypeCommand.name, () => {
   let command: SetPointColorTypeCommand;
   const renderTarget = createFullRenderTargetMock();
-  const domainObject = new PointCloudDomainObject(createPointCloudMock()); // Uncomment and use if needed
+  const domainObject = new PointCloudDomainObject(createPointCloudMock());
   renderTarget.rootDomainObject.addChildInteractive(domainObject);
 
   beforeEach(() => {

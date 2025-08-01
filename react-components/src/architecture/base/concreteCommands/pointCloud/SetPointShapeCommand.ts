@@ -28,7 +28,7 @@ export class SetPointShapeCommand extends BaseOptionCommand {
   }
 
   public override get isEnabled(): boolean {
-    return first(this.rootDomainObject.getDescendantsByType(PointCloudDomainObject)) !== undefined;
+    return this.rootDomainObject.getDescendantByType(PointCloudDomainObject) !== undefined;
   }
 }
 
