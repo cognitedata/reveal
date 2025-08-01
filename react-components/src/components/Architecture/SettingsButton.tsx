@@ -9,7 +9,7 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { DropdownButton } from './DropdownButton';
 import { FilterButton } from './FilterButton';
-import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
+import { getFlexDirection, getTooltipPlacement } from './utilities';
 import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
@@ -71,7 +71,7 @@ export const SettingsButton = ({
         enterDelay={TOOLTIP_DELAY}
         placement={getTooltipPlacement(placement)}>
         <Button
-          type={getButtonType(command)}
+          type={command.buttonType}
           icon={<IconComponent iconName={icon} />}
           disabled={!isEnabled}
           toggled={isOpen}
