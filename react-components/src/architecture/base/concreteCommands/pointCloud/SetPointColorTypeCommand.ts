@@ -2,8 +2,6 @@ import { PointColorType } from '@cognite/reveal';
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
-import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
-import { first } from '../../utilities/extensions/generatorUtils';
 
 const DEFAULT_OPTIONS: PointColorType[] = [
   PointColorType.Rgb,
@@ -34,7 +32,7 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
   }
 
   public override get isEnabled(): boolean {
-    return first(this.rootDomainObject.getDescendantsByType(PointCloudDomainObject)) !== undefined;
+    return this.renderTarget.getPointClouds().next().value !== undefined;
   }
 }
 
@@ -54,26 +52,18 @@ class OptionItemCommand extends RenderTargetCommand {
 
   public override get isChecked(): boolean {
     // Let the first PointCloud decide the color type
-    const pointCloud = first(this.getDomainObjects());
+    const pointCloud = this.renderTarget.getPointClouds().next().value;
     if (pointCloud === undefined) {
       return false;
     }
-    return pointCloud.pointColorType() === this._value;
+    return pointCloud.pointColorType === this._value;
   }
 
   public override invokeCore(): boolean {
-    for (const pointCloud of this.getDomainObjects()) {
-      pointCloud.pointColorType(this._value);
+    for (const pointCloud of this.renderTarget.getPointClouds()) {
+      pointCloud.pointColorType = this._value;
     }
     return true;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private *getDomainObjects(): Generator<PointCloudDomainObject> {
-    yield* this.rootDomainObject.getDescendantsByType(PointCloudDomainObject);
   }
 }
 
