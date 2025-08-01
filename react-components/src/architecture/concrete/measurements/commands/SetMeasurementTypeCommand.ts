@@ -1,12 +1,16 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasurementTool } from '../MeasurementTool';
 import { type IconName } from '../../../base/utilities/IconName';
 
 export const MEASURE_PRIMITIVE_TYPES = [
+  PrimitiveType.Point,
   PrimitiveType.Line,
   PrimitiveType.Polyline,
   PrimitiveType.Polygon,
@@ -30,9 +34,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 
   public constructor(primitiveType: PrimitiveType) {
     super();
-    if (!MEASURE_PRIMITIVE_TYPES.includes(primitiveType)) {
-      throw new Error(`Invalid primitive type: ${primitiveType}`);
-    }
+    verifyPrimitiveType(MEASURE_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -98,6 +100,8 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
+    case PrimitiveType.Point:
+      return { key: 'MEASUREMENTS_ADD_POINT' };
     case PrimitiveType.Line:
       return { key: 'MEASUREMENTS_ADD_LINE' };
     case PrimitiveType.Polyline:

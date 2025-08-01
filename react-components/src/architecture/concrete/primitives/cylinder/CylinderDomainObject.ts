@@ -1,7 +1,10 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
@@ -29,6 +32,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 
   protected constructor(primitiveType: PrimitiveType = PrimitiveType.Cylinder) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -169,3 +173,10 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     this.cylinder.expandBoundingBox(boundingBox);
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.Cylinder,
+  PrimitiveType.HorizontalCircle,
+  PrimitiveType.HorizontalCylinder,
+  PrimitiveType.VerticalCylinder
+];

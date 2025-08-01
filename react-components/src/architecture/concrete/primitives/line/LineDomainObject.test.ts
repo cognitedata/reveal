@@ -75,7 +75,7 @@ describe(LineDomainObject.name, () => {
   });
 
   test('should be cloned', () => {
-    const domainObject = createLineDomainObject(PrimitiveType.Box);
+    const domainObject = createLineDomainObject(PrimitiveType.Polygon);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureLineDomainObject);

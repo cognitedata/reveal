@@ -74,14 +74,6 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   }
 
   // ==================================================
-  // OVERRIDES of BoxDomainObject
-  // ==================================================
-
-  public override canRotateComponent(_component: number): boolean {
-    return true;
-  }
-
-  // ==================================================
   // INSTANCE METHODS
   // ==================================================
 

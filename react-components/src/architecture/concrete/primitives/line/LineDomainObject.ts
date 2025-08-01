@@ -1,6 +1,9 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Box3, type Vector3 } from 'three';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
   horizontalDistanceTo,
@@ -65,6 +68,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   protected constructor(primitiveType: PrimitiveType) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -254,3 +258,5 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [PrimitiveType.Line, PrimitiveType.Polyline, PrimitiveType.Polygon];
