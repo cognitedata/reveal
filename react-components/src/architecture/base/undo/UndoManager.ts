@@ -1,4 +1,5 @@
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
+import { type UniqueId } from '../utilities/types';
 import { type Transaction } from './Transaction';
 
 export class UndoManager {
@@ -56,7 +57,7 @@ export class UndoManager {
     return this._transactions.length > 0;
   }
 
-  public hasUniqueId(uniqueId: number): boolean {
+  public hasUniqueId(uniqueId: UniqueId): boolean {
     return this._transactions.find((a) => a.uniqueId === uniqueId) !== undefined;
   }
 }
