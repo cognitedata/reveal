@@ -5,6 +5,7 @@ import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFil
 import { type PointCloud } from '../../../concrete/reveal/RevealTypes';
 import { type RootDomainObject } from '../../domainObjects/RootDomainObject';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { type UniqueId } from '../../utilities/types';
 
 export class PointCloudFilterCommand extends BaseFilterCommand {
   // ==================================================
@@ -13,7 +14,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
 
   // Keep a soft reference to the last used PointCloudDomainObject (the first one)
   // If the user removed this, the next PointCloudDomainObject will be used instead.
-  private _currentUniqueId: number | undefined = undefined;
+  private _currentUniqueId: UniqueId | undefined = undefined;
 
   // ==================================================
   // OVERRIDES
@@ -102,13 +103,13 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
 
 export class FilterItemCommand extends BaseFilterItemCommand {
   private readonly _pointClass: PointClass;
-  private readonly _currentUniqueId: number;
+  private readonly _currentUniqueId: UniqueId;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(pointClass: PointClass, currentUniqueId: number) {
+  public constructor(pointClass: PointClass, currentUniqueId: UniqueId) {
     super();
     this._pointClass = pointClass;
     this._currentUniqueId = currentUniqueId;
@@ -191,7 +192,7 @@ function getFirstPointCloudWithClasses(root: RootDomainObject): PointCloudDomain
 
 function getCurrentDomainObject(
   root: RootDomainObject,
-  uniqueId: number
+  uniqueId: UniqueId
 ): PointCloudDomainObject | undefined {
   const domainObject = root.getThisOrDescendantByUniqueId(uniqueId);
   if (domainObject === undefined) {

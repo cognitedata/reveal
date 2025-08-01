@@ -25,13 +25,13 @@ describe(CadDomainObject.name, () => {
     expect(domainObject.hasIconColor).toEqual(false);
   });
 
-  test('should be removed', async () => {
+  test('should be removed', () => {
     viewerModelsMock.mockReturnValue([model]);
     domainObject.removeInteractive();
     expect(renderTarget.viewer.removeModel).toHaveBeenCalledWith(model);
   });
 
-  test('should be set visible', async () => {
+  test('should be set visible', () => {
     expect(domainObject.isVisible()).toBe(false);
     expect(model.visible).toBe(false);
     expect(renderTarget.viewer.requestRedraw).not.toHaveBeenCalled();

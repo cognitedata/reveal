@@ -199,14 +199,6 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Get models from the viewer
   // ==================================================
 
-  public *getCadModels(): Generator<CogniteCadModel> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CogniteCadModel) {
-        yield model;
-      }
-    }
-  }
-
   public *get360ImageCollections(): Generator<Image360Model> {
     for (const collection of this.viewer.get360ImageCollections()) {
       yield collection;
