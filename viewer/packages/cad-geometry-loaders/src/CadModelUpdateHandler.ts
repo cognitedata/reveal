@@ -147,8 +147,10 @@ export class CadModelUpdateHandler {
   get budget(): CadModelBudget {
     return this._budget;
   }
+
   set budget(b: CadModelBudget) {
     this._budget = b;
+    console.log('CadModelUpdateHandler: ' + this._budget.maximumRenderCost);
     this._budgetSubject.next(b);
   }
 
