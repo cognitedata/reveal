@@ -11,10 +11,11 @@ import { count } from '../../utilities/extensions/arrayUtils';
 
 describe(PointCloudFilterCommand.name, () => {
   let command: PointCloudFilterCommand;
+  let domainObject: PointCloudDomainObject;
 
   beforeEach(() => {
     const renderTarget = createFullRenderTargetMock();
-    const domainObject = new PointCloudDomainObject(createPointCloudMock());
+    domainObject = new PointCloudDomainObject(createPointCloudMock());
     renderTarget.rootDomainObject.addChildInteractive(domainObject);
 
     command = new PointCloudFilterCommand();
@@ -24,8 +25,24 @@ describe(PointCloudFilterCommand.name, () => {
 
   test('should have children', () => {
     assert(command.children !== undefined);
+    expect(command.isEnabled).toBe(true);
     expect(command.children).toHaveLength(classesCount());
     expect(command.children).toHaveLength(6);
+  });
+
+  test('should have children even when initializeChildrenIfNeeded is called twice', () => {
+    command.initializeChildrenIfNeeded();
+    expect(command.isEnabled).toBe(true);
+    assert(command.children !== undefined);
+    expect(command.children).toHaveLength(classesCount());
+    expect(command.children).toHaveLength(6);
+  });
+
+  test('should not have children when no point cloud is present', () => {
+    domainObject.removeInteractive();
+    command.initializeChildrenIfNeeded();
+    expect(command.isEnabled).toBe(false);
+    expect(command.children).toBeUndefined();
   });
 
   test('should have none checked', () => {
@@ -51,7 +68,7 @@ describe(PointCloudFilterCommand.name, () => {
     expect(visibleCount()).lessThan(classesCount());
   });
 
-  test('should have all checked', () => {
+  test('should have all checked, and then toggle all checked', () => {
     assert(command.children !== undefined);
     for (const option of command.children) {
       option.setChecked(true);
@@ -59,6 +76,11 @@ describe(PointCloudFilterCommand.name, () => {
     expect(command.isAllChecked).toBe(true);
     expect(command.isSomeChecked).toBe(true);
     expect(visibleCount()).toBe(classesCount());
+
+    command.toggleAllChecked();
+    expect(visibleCount()).toBe(0);
+    expect(command.isAllChecked).toBe(false);
+    expect(command.isSomeChecked).toBe(false);
   });
 
   test('should have label and color at all options', () => {
