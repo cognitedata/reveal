@@ -1,5 +1,6 @@
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers';
+import { type InstanceReference } from './instanceIds';
 
 export const queryKeys = {
   all: ['cdf'] as const,
@@ -39,7 +40,11 @@ export const queryKeys = {
     [...assets, 'point-cloud-dm-volume-asset-mappings-with-views', assetRefKeys] as const,
   modelRevisionId: (revisionKeys: string[]) =>
     [...revisions, 'model-revision-id', revisionKeys] as const,
-  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const
+  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const,
+  modelsForAssetPerInstanceReference: (instance: InstanceReference | undefined) =>
+    ['react-components', 'models-for-assets-per-instance-reference', instance] as const,
+  hybridDmAssetMappingsForInstances: (modelKeys: string[], instances: DmsUniqueIdentifier[]) =>
+    ['react-components', 'hybrid-dm-asset-mappings-for-instances', modelKeys, instances] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];

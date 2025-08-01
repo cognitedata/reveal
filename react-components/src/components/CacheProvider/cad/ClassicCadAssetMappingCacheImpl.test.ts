@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { createClassicCadAssetMappingCache } from './ClassicCadAssetMappingCacheImpl';
 import {
   assetMappings3DFilterMock,
@@ -9,7 +9,10 @@ import {
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { type InstanceId, isClassicInstanceId } from '../../../utilities/instanceIds';
-import { type RawCdfHybridCadAssetMapping } from './rawAssetMappingTypes';
+import {
+  convertToHybridAssetMapping,
+  type RawCdfHybridCadAssetMapping
+} from './rawAssetMappingTypes';
 import { type AssetMapping3D, type Node3D } from '@cognite/sdk';
 
 describe(createClassicCadAssetMappingCache.name, () => {
@@ -49,7 +52,7 @@ describe(createClassicCadAssetMappingCache.name, () => {
     test('returns relevant mappings if exist', async () => {
       const mapping = createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], ASSET_ID);
 
-      assetMappings3DFilterMock.mockReturnValue(
+      assetMappings3DFilterMock.mockReturnValueOnce(
         createCursorAndAsyncIteratorMock({
           // SDK method uses `AssetMapping3D', but it is out of
           // date with the API definition, so we need to cast
@@ -74,7 +77,7 @@ describe(createClassicCadAssetMappingCache.name, () => {
         createRawAssetMappingFromNodeAndInstance(CAD_NODES[2], 3)
       ];
 
-      assetMappings3DFilterMock.mockReturnValue(
+      assetMappings3DFilterMock.mockReturnValueOnce(
         createCursorAndAsyncIteratorMock({
           // SDK method uses `AssetMapping3D', but it is out of
           // date with the API definition, so we need to cast
@@ -90,6 +93,69 @@ describe(createClassicCadAssetMappingCache.name, () => {
       );
 
       expect(result).toEqual({ node: CAD_NODES[2], mappings: [mappings[2]] });
+    });
+
+    test('returns relevant mappings from hybrid call if classic returns nothing', async () => {
+      const mappingWithAssetInstanceId = createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], {
+        externalId: 'asset-external-id1',
+        space: 'asset-space1'
+      });
+      const hybridMapping = convertToHybridAssetMapping(mappingWithAssetInstanceId);
+      assert(hybridMapping !== undefined);
+
+      // First call (classic): returns []
+      assetMappings3DFilterMock.mockReturnValueOnce(
+        createCursorAndAsyncIteratorMock({
+          items: [] as AssetMapping3D[]
+        })
+      );
+      // Second call (hybrid): returns [mapping]
+      assetMappings3DFilterMock.mockReturnValueOnce(
+        createCursorAndAsyncIteratorMock({
+          items: [mappingWithAssetInstanceId] as AssetMapping3D[]
+        })
+      );
+
+      const cache = createClassicCadAssetMappingCache(sdkMock);
+      const result = await cache.getAssetMappingsForLowestAncestor(
+        MODEL_ID,
+        REVISION_ID,
+        CAD_NODES
+      );
+
+      expect(result).toEqual({ node: CAD_NODES[0], mappings: [hybridMapping] });
+    });
+
+    test('returns relevant mappings from hybrid call with both classic and DM', async () => {
+      const mappingWithAssetInstanceId = createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], {
+        externalId: 'asset-external-id1',
+        space: 'asset-space1'
+      });
+      const classicMapping = createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], ASSET_ID);
+      const hybridMapping = convertToHybridAssetMapping(mappingWithAssetInstanceId);
+      assert(hybridMapping !== undefined);
+
+      // First call (classic): returns [mappingWithAssetId]
+      assetMappings3DFilterMock.mockReturnValueOnce(
+        createCursorAndAsyncIteratorMock({
+          items: [classicMapping] as AssetMapping3D[]
+        })
+      );
+      // Second call (hybrid): returns [mapping]
+      assetMappings3DFilterMock.mockReturnValueOnce(
+        createCursorAndAsyncIteratorMock({
+          items: [mappingWithAssetInstanceId] as AssetMapping3D[]
+        })
+      );
+
+      const cache = createClassicCadAssetMappingCache(sdkMock);
+      const result = await cache.getAssetMappingsForLowestAncestor(
+        MODEL_ID,
+        REVISION_ID,
+        CAD_NODES
+      );
+
+      expect(result).toEqual({ node: CAD_NODES[0], mappings: [classicMapping, hybridMapping] });
     });
   });
 
@@ -200,5 +266,8 @@ function createRawAssetMappingFromNodeAndInstance(
     return { ...assetMappingBase, assetId: instanceId };
   }
 
-  return { ...assetMappingBase, assetInstanceId: instanceId };
+  return {
+    ...assetMappingBase,
+    assetInstanceId: instanceId
+  };
 }
