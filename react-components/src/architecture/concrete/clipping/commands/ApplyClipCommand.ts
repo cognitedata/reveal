@@ -5,6 +5,7 @@ import { SliceDomainObject } from '../SliceDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type IconName } from '../../../base/utilities/IconName';
 import { setClippingPlanes } from './setClippingPlanes';
+import { type ButtonType } from '../../../base/utilities/types';
 
 export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================
@@ -21,7 +22,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
     return 'Crop';
   }
 
-  public override get buttonType(): string {
+  public override get buttonType(): ButtonType {
     return 'primary';
   }
 

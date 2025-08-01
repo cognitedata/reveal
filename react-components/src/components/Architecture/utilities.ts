@@ -1,7 +1,7 @@
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
-import { type PlacementType, type ButtonType, type FlexDirection } from './types';
+import { type PlacementType, type FlexDirection } from './types';
 
 export function getFlexDirection(placement: PlacementType): FlexDirection {
   return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
@@ -25,11 +25,6 @@ export function getTooltipPlacement(toolbarPlacement: PlacementType): PlacementT
     default:
       return 'top';
   }
-}
-
-export function getButtonType(command: BaseCommand): ButtonType {
-  // This was the only way it went through compiler: (more button types will be added in the future)
-  return command.buttonType as ButtonType;
 }
 
 export function getDefaultCommand<T extends BaseCommand>(
