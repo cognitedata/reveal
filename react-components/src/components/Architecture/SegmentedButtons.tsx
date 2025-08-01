@@ -3,7 +3,6 @@ import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { TOOLTIP_DELAY } from './constants';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { type PlacementType } from './types';
 import { type ReactElement } from 'react';
@@ -11,6 +10,7 @@ import { useCommand } from './hooks/useCommand';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { useCommandProps } from './hooks/useCommandProps';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
+import { type UniqueId } from '../../architecture/base/utilities/types';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -22,7 +22,7 @@ export const SegmentedButtons = ({
   const renderTarget = useRenderTarget();
   const command = useCommand(inputCommand);
   const { uniqueId, isVisible, isEnabled } = useCommandProps(command);
-  const selected = useCommandProperty(command, () => getSelectedKey(command));
+  const selectedUniqueId = useCommandProperty(command, () => getSelectedKey(command));
 
   if (!isVisible || command.children === undefined) {
     return <></>;
@@ -38,14 +38,14 @@ export const SegmentedButtons = ({
       <SegmentedControl
         key={uniqueId}
         disabled={!isEnabled}
-        currentKey={selected}
+        currentKey={selectedUniqueId}
         fullWidth
-        onButtonClicked={(selectedKey: string) => {
+        onButtonClicked={(selectedUniqueId: UniqueId) => {
           if (command.children === undefined) {
             return;
           }
           for (const child of command.children) {
-            if (getKey(child) === selectedKey) {
+            if (child.uniqueId === selectedUniqueId) {
               child.invoke();
               renderTarget.domElement.focus();
               break;
@@ -54,7 +54,7 @@ export const SegmentedButtons = ({
         }}>
         {command.children.map((child) => (
           <SegmentedControl.Button
-            key={getKey(child)}
+            key={child.uniqueId}
             icon={<IconComponent iconName={child.icon} />}
             disabled={!isEnabled}
             aria-label={child.label}>
@@ -68,14 +68,10 @@ export const SegmentedButtons = ({
 
 // Note: It should use number, but it didn't work.
 
-function getSelectedKey(command: BaseOptionCommand): string {
+function getSelectedKey(command: BaseOptionCommand): UniqueId {
   const child = command.selectedChild;
   if (child === undefined) {
     return 'undefined';
   }
-  return getKey(child);
-}
-
-function getKey(command: BaseCommand): string {
-  return command.uniqueId.toString();
+  return child.uniqueId;
 }
