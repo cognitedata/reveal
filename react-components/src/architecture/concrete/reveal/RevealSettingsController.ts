@@ -14,7 +14,7 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
-  private readonly _root: DomainObject;
+  private readonly _root?: DomainObject;
   private readonly _disposables: Array<() => void> = [];
 
   // The settings
@@ -31,7 +31,7 @@ export class RevealSettingsController {
   private _pointShapeInitialized = false;
   private _pointColorTypeInitialized = false;
 
-  constructor(viewer: Cognite3DViewer<DataSourceType>, root: DomainObject) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, root?: DomainObject) {
     this._viewer = viewer;
     this._root = root;
 
@@ -175,31 +175,31 @@ function setCameraControlsTypeOnViewer<T extends DataSourceType>(
   }
 }
 
-function setPointSizeOnViewer(value: number, root: DomainObject): void {
+function setPointSizeOnViewer(value: number, root?: DomainObject): void {
   for (const domainObject of getPointClouds(root)) {
     domainObject.pointSize(value);
   }
 }
 
-function setPointShapeOnViewer(value: PointShape, root: DomainObject): void {
+function setPointShapeOnViewer(value: PointShape, root?: DomainObject): void {
   for (const domainObject of getPointClouds(root)) {
     domainObject.pointShape(value);
   }
 }
-function setPointColorTypeOnViewer(value: PointColorType, root: DomainObject): void {
+function setPointColorTypeOnViewer(value: PointColorType, root?: DomainObject): void {
   for (const domainObject of getPointClouds(root)) {
     domainObject.pointColorType(value);
   }
 }
 
-function* getPointClouds(root: DomainObject | undefined): Generator<PointCloudDomainObject> {
+function* getPointClouds(root?: DomainObject): Generator<PointCloudDomainObject> {
   if (root === undefined) {
     return;
   }
   yield* root.getDescendantsByType(PointCloudDomainObject);
 }
 
-function getFirstPointCloud(root: DomainObject | undefined): PointCloudDomainObject | undefined {
+function getFirstPointCloud(root?: DomainObject): PointCloudDomainObject | undefined {
   if (root === undefined) {
     return undefined;
   }
