@@ -4,37 +4,61 @@ import { DEFAULT_REVEAL_QUALITY_SETTINGS } from './constants';
 import {
   FlexibleControlsType,
   isFlexibleCameraManager,
+  type PointShape,
   type Cognite3DViewer,
-  type DataSourceType
+  type DataSourceType,
+  type PointColorType
 } from '@cognite/reveal';
+import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
+  private readonly _root: DomainObject;
   private readonly _disposables: Array<() => void> = [];
 
   // The settings
-  private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  private readonly _renderQuality = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
   private readonly _cameraKeyBoardSpeed = signal<number>(1);
   private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
 
-  constructor(viewer: Cognite3DViewer<DataSourceType>) {
+  // Settings for the point cloud
+  private readonly _pointSize = signal<number>(2);
+  private readonly _pointShape = signal<PointShape>(0);
+  private readonly _pointColorType = signal<PointColorType>(0);
+
+  private _pointSizeInitialized = false;
+  private _pointShapeInitialized = false;
+  private _pointColorTypeInitialized = false;
+
+  constructor(viewer: Cognite3DViewer<DataSourceType>, root: DomainObject) {
     this._viewer = viewer;
+    this._root = root;
 
     this.copyDefaultValuesFromViewer();
 
     this.addEffect(() => {
-      setQualityOnViewer(this._renderQualitySignal(), this._viewer);
+      setQualityOnViewer(this.renderQuality(), this._viewer);
     });
     this.addEffect(() => {
-      setCameraKeyBoardSpeedOnViewer(this._cameraKeyBoardSpeed(), this._viewer);
+      setCameraKeyBoardSpeedOnViewer(this.cameraKeyBoardSpeed(), this._viewer);
     });
     this.addEffect(() => {
-      setCameraControlsTypeOnViewer(this._cameraControlsType(), this._viewer);
+      setCameraControlsTypeOnViewer(this.cameraControlsType(), this._viewer);
+    });
+    this.addEffect(() => {
+      setPointSizeOnViewer(this.pointSize(), this._root);
+    });
+    this.addEffect(() => {
+      setPointShapeOnViewer(this.pointShape(), this._root);
+    });
+    this.addEffect(() => {
+      setPointColorTypeOnViewer(this.pointColorType(), this._root);
     });
   }
 
   public get renderQuality(): Signal<QualitySettings> {
-    return this._renderQualitySignal;
+    return this._renderQuality;
   }
 
   public get cameraKeyBoardSpeed(): Signal<number> {
@@ -43,6 +67,42 @@ export class RevealSettingsController {
 
   public get cameraControlsType(): Signal<FlexibleControlsType> {
     return this._cameraControlsType;
+  }
+
+  public get pointSize(): Signal<number> {
+    // Let the first PointCloud decide the default value
+    if (!this._pointSizeInitialized) {
+      const domainObject = getFirstPointCloud(this._root);
+      if (domainObject !== undefined) {
+        this._pointSize(domainObject.pointSize());
+        this._pointSizeInitialized = true;
+      }
+    }
+    return this._pointSize;
+  }
+
+  public get pointShape(): Signal<PointShape> {
+    // Let the first PointCloud decide the default value
+    if (!this._pointShapeInitialized) {
+      const domainObject = getFirstPointCloud(this._root);
+      if (domainObject !== undefined) {
+        this._pointShape(domainObject.pointShape());
+        this._pointShapeInitialized = true;
+      }
+    }
+    return this._pointShape;
+  }
+
+  public get pointColorType(): Signal<PointColorType> {
+    // Let the first PointCloud decide the default value
+    if (!this._pointColorTypeInitialized) {
+      const domainObject = getFirstPointCloud(this._root);
+      if (domainObject !== undefined) {
+        this._pointColorType(domainObject.pointColorType());
+        this._pointColorTypeInitialized = true;
+      }
+    }
+    return this._pointColorType;
   }
 
   public dispose(): void {
@@ -64,7 +124,6 @@ export class RevealSettingsController {
   }
 
   private copyDefaultValuesFromViewer(): void {
-    // Set default camera speed
     const cameraManager = this._viewer.cameraManager;
     if (isFlexibleCameraManager(cameraManager)) {
       this._cameraKeyBoardSpeed(cameraManager.options.keyboardSpeed);
@@ -114,4 +173,35 @@ function setCameraControlsTypeOnViewer<T extends DataSourceType>(
   if (isFlexibleCameraManager(cameraManager)) {
     cameraManager.options.controlsType = value;
   }
+}
+
+function setPointSizeOnViewer(value: number, root: DomainObject): void {
+  for (const domainObject of getPointClouds(root)) {
+    domainObject.pointSize(value);
+  }
+}
+
+function setPointShapeOnViewer(value: PointShape, root: DomainObject): void {
+  for (const domainObject of getPointClouds(root)) {
+    domainObject.pointShape(value);
+  }
+}
+function setPointColorTypeOnViewer(value: PointColorType, root: DomainObject): void {
+  for (const domainObject of getPointClouds(root)) {
+    domainObject.pointColorType(value);
+  }
+}
+
+function* getPointClouds(root: DomainObject | undefined): Generator<PointCloudDomainObject> {
+  if (root === undefined) {
+    return;
+  }
+  yield* root.getDescendantsByType(PointCloudDomainObject);
+}
+
+function getFirstPointCloud(root: DomainObject | undefined): PointCloudDomainObject | undefined {
+  if (root === undefined) {
+    return undefined;
+  }
+  return root.getDescendantByType(PointCloudDomainObject);
 }

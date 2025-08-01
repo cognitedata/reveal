@@ -3,7 +3,6 @@ import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
-import { first } from '../../utilities/extensions/generatorUtils';
 
 const DEFAULT_OPTIONS: PointColorType[] = [
   PointColorType.Rgb,
@@ -53,27 +52,12 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    // Let the first PointCloud decide the color type
-    const domainObject = first(this.getDomainObjects());
-    if (domainObject === undefined) {
-      return false;
-    }
-    return domainObject.pointColorType() === this._value;
+    return this.renderTarget.revealSettingsController.pointColorType() === this._value;
   }
 
   public override invokeCore(): boolean {
-    for (const domainObject of this.getDomainObjects()) {
-      domainObject.pointColorType(this._value);
-    }
+    this.renderTarget.revealSettingsController.pointColorType(this._value);
     return true;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private *getDomainObjects(): Generator<PointCloudDomainObject> {
-    yield* this.rootDomainObject.getDescendantsByType(PointCloudDomainObject);
   }
 }
 
