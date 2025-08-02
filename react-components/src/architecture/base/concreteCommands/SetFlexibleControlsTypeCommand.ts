@@ -92,6 +92,6 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   }
 
   private get currentControlsType(): Signal<FlexibleControlsType> {
-    return this.renderTarget.revealSettingsController.cameraControlsType;
+    return this.settingsController.cameraControlsType;
   }
 }

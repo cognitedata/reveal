@@ -58,7 +58,7 @@ export class RevealSettingsController {
     clear(this._disposables);
   }
 
-  protected addDisposable(disposable: () => void): void {
+  private addDisposable(disposable: () => void): void {
     this._disposables.push(disposable);
   }
 

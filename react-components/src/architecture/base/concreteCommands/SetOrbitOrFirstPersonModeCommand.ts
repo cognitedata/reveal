@@ -27,7 +27,7 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
     super.attach(renderTarget);
 
     this.addEffect(() => {
-      this.renderTarget.revealSettingsController.cameraControlsType();
+      this.settingsController.cameraControlsType();
       this.update();
     });
   }
