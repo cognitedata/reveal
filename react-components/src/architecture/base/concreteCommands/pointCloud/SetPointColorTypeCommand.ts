@@ -3,6 +3,7 @@ import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 const DEFAULT_OPTIONS: PointColorType[] = [
   PointColorType.Rgb,
@@ -35,6 +36,14 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
   public override get isEnabled(): boolean {
     return this.rootDomainObject.getDescendantByType(PointCloudDomainObject) !== undefined;
   }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.addEffect(() => {
+      this.settingsController.pointShape();
+      this.update();
+    });
+  }
 }
 
 // Note: This is not exported, as it is only used internally
@@ -52,11 +61,11 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.renderTarget.revealSettingsController.pointColorType() === this._value;
+    return this.settingsController.pointColorType() === this._value;
   }
 
   public override invokeCore(): boolean {
-    this.renderTarget.revealSettingsController.pointColorType(this._value);
+    this.settingsController.pointColorType(this._value);
     return true;
   }
 }

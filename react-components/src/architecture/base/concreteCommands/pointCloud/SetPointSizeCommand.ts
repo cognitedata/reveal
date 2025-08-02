@@ -1,6 +1,7 @@
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 const MIN_POINT_SIZE = 0.0;
 const MAX_POINT_SIZE = 4;
@@ -28,10 +29,18 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override get value(): number {
-    return this.renderTarget.revealSettingsController.pointSize();
+    return this.settingsController.pointSize();
   }
 
   public override set value(value: number) {
-    this.renderTarget.revealSettingsController.pointSize(value);
+    this.settingsController.pointSize(value);
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.addEffect(() => {
+      this.settingsController.pointSize();
+      this.update();
+    });
   }
 }

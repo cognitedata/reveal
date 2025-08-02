@@ -25,6 +25,8 @@ export class RevealSettingsController {
 
   // The settings
   private readonly _renderQuality = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+
+  // Settings for the camera
   private readonly _cameraKeyBoardSpeed = signal<number>(1);
   private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
 
