@@ -6,7 +6,7 @@ import { type UndoManager } from '../undo/UndoManager';
 import { type Transaction } from '../undo/Transaction';
 import { type BaseTool } from './BaseTool';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
-import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
+import { type RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 
 /**
  * Represents a base class where the render target is known.
