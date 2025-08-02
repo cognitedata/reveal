@@ -53,7 +53,7 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
     return false;
   }
 
-  protected override dispose(): void {
+  public override dispose(): void {
     super.dispose();
     getRenderTarget(this)?.viewer?.remove360ImageSet(this._model);
 
