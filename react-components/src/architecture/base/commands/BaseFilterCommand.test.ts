@@ -38,7 +38,7 @@ describe(BaseFilterCommand.name, () => {
       expect(command.hasChildren).toBe(true);
     });
 
-    test('should not have any checked', () => {
+    test('should have none checked', () => {
       assert(command.children !== undefined);
       for (const option of command.children) {
         option.setChecked(false);

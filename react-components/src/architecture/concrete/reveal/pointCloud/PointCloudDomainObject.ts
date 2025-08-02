@@ -1,10 +1,10 @@
+import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type PointCloud } from '../RevealTypes';
-import { PointCloudRenderStyle } from './PointCloudRenderStyle';
+import { type PointColorType, type PointShape } from '@cognite/reveal';
 
 export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
@@ -12,12 +12,15 @@ export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
 
   private readonly _model: PointCloud;
+  public readonly pointSize = signal(0);
+  public readonly pointShape = signal<PointShape>(0);
+  public readonly pointColorType = signal<PointColorType>(0);
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): PointCloud | undefined {
+  public get model(): PointCloud {
     return this._model;
   }
   // ==================================================
@@ -27,6 +30,16 @@ export class PointCloudDomainObject extends RevealDomainObject {
   public constructor(model: PointCloud) {
     super();
     this._model = model;
+    this.pointSize(model.pointSize);
+    this.pointShape(model.pointShape);
+    this.pointColorType(model.pointColorType);
+
+    // This updated the point cloud on reveal side when the signals change.
+    this.addEffect(() => {
+      this._model.pointSize = this.pointSize();
+      this._model.pointShape = this.pointShape();
+      this._model.pointColorType = this.pointColorType();
+    });
   }
 
   // ==================================================
@@ -43,10 +56,6 @@ export class PointCloudDomainObject extends RevealDomainObject {
 
   public override get hasIconColor(): boolean {
     return false;
-  }
-
-  public override createRenderStyle(): RenderStyle | undefined {
-    return new PointCloudRenderStyle();
   }
 
   public override dispose(): void {

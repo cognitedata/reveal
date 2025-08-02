@@ -3,7 +3,6 @@ import { Image360CollectionDomainObject } from './Image360CollectionDomainObject
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { waitFor } from '@testing-library/react';
-import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 
 describe(Image360CollectionDomainObject.name, () => {
@@ -16,7 +15,6 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(domainObject.typeName).toEqual({ untranslated: 'Image360' });
     expect(domainObject.icon).toEqual('View360');
     expect(domainObject.hasIconColor).toEqual(false);
-    expect(domainObject.createRenderStyle()).toBeInstanceOf(Image360CollectionRenderStyle);
   });
 
   test('should register event listeners for entering and exiting, which calls the command updater', async () => {
