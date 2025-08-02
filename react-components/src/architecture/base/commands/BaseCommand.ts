@@ -29,6 +29,11 @@ export abstract class BaseCommand {
   private readonly _listeners: CommandUpdateDelegate[] = [];
   private readonly _disposables: Array<() => void> = [];
 
+  public get disposableCount(): number {
+    // Added for testing purposes
+    return this._disposables.length;
+  }
+
   // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
   private readonly _uniqueId: UniqueId;
@@ -142,6 +147,12 @@ export abstract class BaseCommand {
     return this.invokeCore();
   }
 
+  /**
+   * Removes the core functionality of the command
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @remarks
+   * Always call `super.dispose()` in the overrides.
+   */
   public dispose(): void {
     for (const child of this.getChildren()) {
       child.dispose();
@@ -149,6 +160,7 @@ export abstract class BaseCommand {
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
     this.removeEventListeners();
   }
 

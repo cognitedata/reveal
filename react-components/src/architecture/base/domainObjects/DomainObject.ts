@@ -69,6 +69,11 @@ export abstract class DomainObject implements TreeNodeType {
   public readonly views: Views = new Views();
   private readonly _disposables: Array<() => void> = [];
 
+  public get disposableCount(): number {
+    // Added for testing purposes
+    return this._disposables.length;
+  }
+
   // Unique guid for the domain object, used as soft reference
   private _uniqueId: UniqueId;
 
@@ -483,16 +488,17 @@ export abstract class DomainObject implements TreeNodeType {
 
   /**
    * Removes the core functionality of the domain object.
+   * This will automatically be called when the domain object is removed from its parent, by the function DomainObject.remove()
    * This method should be overridden in derived classes to provide custom implementation.
    * @remarks
    * Always call `super.dispose()` in the overrides.
    */
-  protected dispose(): void {
+  public dispose(): void {
     this.views.dispose();
-
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
   }
 
   // ==================================================
