@@ -33,7 +33,7 @@ __metadata:
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     "@types/stats.js": "npm:^0.17.0"
-    "@types/three": "npm:^0.176.0"
+    "@types/three": "npm:^0.178.0"
     buffer: "npm:^6.0.3"
     css-loader: "npm:^7.0.0"
     dat.gui: "npm:^0.7.7"
@@ -45,7 +45,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     stats.js: "npm:0.17.0"
     styled-components: "npm:6.1.13"
-    three: "npm:0.176.0"
+    three: "npm:0.179.1"
     ts-loader: "npm:9.5.1"
     typescript: "npm:^5.0.4"
     webpack: "npm:^5.76.0"
@@ -67,7 +67,7 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@dimforge/rapier3d-compat@npm:^0.12.0":
+"@dimforge/rapier3d-compat@npm:~0.12.0":
   version: 0.12.0
   resolution: "@dimforge/rapier3d-compat@npm:0.12.0"
   checksum: 10/56cd538b59d534d2ed91de3eb7efd804af5defe146f65294e8ce81982a4bd6c27d61c1014c15a77bb5f5eff0de7a12fbc9b16bf895a2ec56ea5496fd80c78e26
@@ -527,18 +527,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.176.0":
-  version: 0.176.0
-  resolution: "@types/three@npm:0.176.0"
+"@types/three@npm:^0.178.0":
+  version: 0.178.1
+  resolution: "@types/three@npm:0.178.1"
   dependencies:
-    "@dimforge/rapier3d-compat": "npm:^0.12.0"
+    "@dimforge/rapier3d-compat": "npm:~0.12.0"
     "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/e3aae7e9137e9f2c5eaba1b594e5848d09a81f02ef1fcf70aa0d21374c1a7d5f1d4f8514e9b1def577a3f971c5df016713ba1178aa5690be55c9777d96b3ed6d
+  checksum: 10/03620715835f31a2c7b79f16f12f840f8b7e69e9c1669a56cea903dcf8dadab1002abd920b4e45f8c92ec1c69fbbf6234689bda5c89dbe6e69ea637b5a39d676
   languageName: node
   linkType: hard
 
@@ -4084,10 +4084,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.176.0":
-  version: 0.176.0
-  resolution: "three@npm:0.176.0"
-  checksum: 10/b4081a211a9672bc38563ec75e8131f388f18d2d03672ccbc78dd1c4783018b0d490a67b02f5dcca5d7c8d0fa9d82b3a617d0e5ae0398877cdfe77e39f63dde0
+"three@npm:0.179.1":
+  version: 0.179.1
+  resolution: "three@npm:0.179.1"
+  checksum: 10/7abe91805f5aa5376fb1c3f47fb888a32a26b38c983cd9c11dc436db4e10c787b37fa8cc2d2dd36e108b27ee05a6515ea0a7c2cf848aeefb4d81f2647ffad84a
   languageName: node
   linkType: hard
 
