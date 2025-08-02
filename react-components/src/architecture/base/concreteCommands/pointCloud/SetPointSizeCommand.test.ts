@@ -1,0 +1,32 @@
+import { SetPointSizeCommand } from './SetPointSizeCommand';
+import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { beforeEach, describe, expect, test } from 'vitest';
+import { isEmpty } from '../../utilities/TranslateInput';
+import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
+
+describe(SetPointSizeCommand.name, () => {
+  let command: SetPointSizeCommand;
+  const renderTarget = createFullRenderTargetMock();
+  const domainObject = new PointCloudDomainObject(createPointCloudMock());
+  renderTarget.rootDomainObject.addChildInteractive(domainObject);
+
+  beforeEach(() => {
+    command = new SetPointSizeCommand();
+    command.attach(renderTarget);
+  });
+
+  test('Should have correct initial state', () => {
+    expect(isEmpty(command.tooltip)).toBe(false);
+    expect(command.isEnabled).toBe(true);
+  });
+
+  test('Should change pointSize', () => {
+    const value = command.value;
+    expect(value).toBe(domainObject.pointSize());
+
+    const expectedValue = 3;
+    command.value = expectedValue;
+    expect(domainObject.pointSize()).toBe(expectedValue);
+  });
+});
