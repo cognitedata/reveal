@@ -44,7 +44,6 @@ export class CadDomainObject extends RevealDomainObject {
     return false;
   }
 
-
   public override dispose(): void {
     super.dispose();
     const viewer = getRenderTarget(this)?.viewer;
