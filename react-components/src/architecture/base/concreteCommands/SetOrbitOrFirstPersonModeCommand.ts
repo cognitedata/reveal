@@ -25,10 +25,6 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-
-    this.addEffect(() => {
-      this.settingsController.cameraControlsType();
-      this.update();
-    });
+    this.listenTo(this.settingsController.cameraControlsType);
   }
 }

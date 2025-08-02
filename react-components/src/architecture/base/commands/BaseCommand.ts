@@ -1,4 +1,4 @@
-import { effect } from '@cognite/signals';
+import { effect, type Signal } from '@cognite/signals';
 import { type IconName } from '../utilities/IconName';
 import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayUtils';
@@ -207,6 +207,13 @@ export abstract class BaseCommand {
         effectFunction();
       })
     );
+  }
+
+  protected listenTo<T>(signal: Signal<T>): void {
+    this.addEffect(() => {
+      signal();
+      this.update();
+    });
   }
 
   public getShortCutKeys(): string[] | undefined {
