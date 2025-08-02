@@ -38,9 +38,6 @@ export class SetPointSizeCommand extends BaseSliderCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    this.addEffect(() => {
-      this.settingsController.pointSize();
-      this.update();
-    });
+    this.listenTo(this.settingsController.pointSize);
   }
 }
