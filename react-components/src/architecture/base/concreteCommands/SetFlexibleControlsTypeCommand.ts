@@ -85,10 +85,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     if (!this._standAlone) {
       return; // Done by parent
     }
-    this.addEffect(() => {
-      this.currentControlsType();
-      this.update();
-    });
+    this.listenTo(this.currentControlsType);
   }
 
   private get currentControlsType(): Signal<FlexibleControlsType> {
