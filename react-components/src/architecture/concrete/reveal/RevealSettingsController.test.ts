@@ -27,4 +27,11 @@ describe(RevealSettingsController.name, () => {
       testQualitySettings.resolutionOptions
     );
   });
+
+  test('Should dispose', () => {
+    const settingsController = new RevealSettingsController(viewerMock);
+    expect(settingsController.disposableCount).toBeGreaterThan(0);
+    settingsController.dispose();
+    expect(settingsController.disposableCount).toBe(0);
+  });
 });

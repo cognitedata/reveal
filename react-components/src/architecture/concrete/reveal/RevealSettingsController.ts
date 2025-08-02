@@ -7,10 +7,16 @@ import {
   type Cognite3DViewer,
   type DataSourceType
 } from '@cognite/reveal';
+import { clear } from '../../base/utilities/extensions/arrayUtils';
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _disposables: Array<() => void> = [];
+
+  public get disposableCount(): number {
+    // Added for testing purposes
+    return this._disposables.length;
+  }
 
   // The settings
   private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
@@ -49,10 +55,15 @@ export class RevealSettingsController {
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
+  }
+
+  private addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
   }
 
   private addEffect(effectFunction: () => void): void {
-    this._disposables.push(
+    this.addDisposable(
       effect(() => {
         effectFunction();
       })

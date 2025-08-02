@@ -6,6 +6,7 @@ import { type UndoManager } from '../undo/UndoManager';
 import { type Transaction } from '../undo/Transaction';
 import { type BaseTool } from './BaseTool';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
+import { type RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 
 /**
  * Represents a base class where the render target is known.
@@ -31,6 +32,10 @@ export abstract class RenderTargetCommand extends BaseCommand {
 
   protected get rootDomainObject(): RootDomainObject {
     return this.renderTarget.rootDomainObject;
+  }
+
+  protected get settingsController(): RevealSettingsController {
+    return this.renderTarget.revealSettingsController;
   }
 
   protected get activeTool(): BaseTool | undefined {
