@@ -44,7 +44,8 @@ export class CadDomainObject extends RevealDomainObject {
     return false;
   }
 
-  protected override dispose(): void {
+
+  public override dispose(): void {
     super.dispose();
     const viewer = getRenderTarget(this)?.viewer;
     if (viewer?.models?.includes(this._model) ?? false) {

@@ -30,7 +30,7 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
     super.attach(renderTarget);
 
     this.addEffect(() => {
-      this.renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+      this.settingsController.cameraKeyBoardSpeed();
       this.update();
     });
   }
@@ -62,6 +62,6 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   private get currentKeyBoardSpeed(): Signal<number> {
-    return this.renderTarget.revealSettingsController.cameraKeyBoardSpeed;
+    return this.settingsController.cameraKeyBoardSpeed;
   }
 }

@@ -11,11 +11,17 @@ import {
 } from '@cognite/reveal';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { clear } from '../../base/utilities/extensions/arrayUtils';
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _root?: DomainObject;
   private readonly _disposables: Array<() => void> = [];
+
+  public get disposableCount(): number {
+    // Added for testing purposes
+    return this._disposables.length;
+  }
 
   // The settings
   private readonly _renderQuality = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
@@ -109,9 +115,10 @@ export class RevealSettingsController {
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
   }
 
-  protected addDisposable(disposable: () => void): void {
+  private addDisposable(disposable: () => void): void {
     this._disposables.push(disposable);
   }
 

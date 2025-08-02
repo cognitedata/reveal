@@ -9,9 +9,7 @@ export class QualityWarningBannerCommand extends BaseBannerCommand {
   // ==================================================
 
   public override get isVisible(): boolean {
-    const closestFidelity = getClosestFidelity(
-      this.renderTarget.revealSettingsController.renderQuality()
-    );
+    const closestFidelity = getClosestFidelity(this.settingsController.renderQuality());
     return closestFidelity === MAX_FIDELITY;
   }
 
@@ -28,7 +26,7 @@ export class QualityWarningBannerCommand extends BaseBannerCommand {
 
     // Until `isVisible` becomes a signal, we have to propagate setting updates like this
     this.addEffect(() => {
-      this.renderTarget.revealSettingsController.renderQuality();
+      this.settingsController.renderQuality();
       this.update();
     });
   }
