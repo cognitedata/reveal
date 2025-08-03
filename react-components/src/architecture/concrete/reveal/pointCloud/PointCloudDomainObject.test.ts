@@ -57,7 +57,7 @@ describe(PointCloudDomainObject.name, () => {
     expect(model.pointShape).toBe(expectedValue);
   });
 
-  test('should set point color', () => {
+  test('should set point color type', () => {
     const expectedValue = PointColorType.Intensity;
     expect(model.pointColorType).not.toBe(expectedValue);
     domainObject.pointColorType(expectedValue);
