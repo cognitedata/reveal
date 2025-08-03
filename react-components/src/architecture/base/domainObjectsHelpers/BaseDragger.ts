@@ -4,7 +4,7 @@ import {
   type CreateDraggerProps
 } from '../domainObjects/VisualDomainObject';
 import { type Transaction } from '../undo/Transaction';
-import { UnitSystem } from '../renderTarget/UnitSystem';
+import { UNDEFINED_UNIT_SYSTEM, type UnitSystem } from '../renderTarget/UnitSystem';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Quantity } from './Quantity';
 import { round, roundIncrement } from '../utilities/extensions/mathUtils';
@@ -50,7 +50,7 @@ export abstract class BaseDragger {
   protected constructor(props: CreateDraggerProps, domainObject: DomainObject) {
     this.point = props.point;
     this.ray = props.ray;
-    this._unitSystem = getRoot(domainObject)?.unitSystem ?? new UnitSystem();
+    this._unitSystem = getRoot(domainObject)?.unitSystem ?? UNDEFINED_UNIT_SYSTEM;
   }
 
   // ==================================================
