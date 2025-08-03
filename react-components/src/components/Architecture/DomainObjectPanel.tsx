@@ -35,11 +35,8 @@ export const DomainObjectPanel = (): ReactElement => {
     return <></>;
   }
   const info = domainObject.getPanelInfo();
-  if (info === undefined) {
-    return <></>;
-  }
   const style = domainObject.getPanelInfoStyle();
-  if (style === undefined) {
+  if (style === undefined || info === undefined) {
     return <></>;
   }
 
