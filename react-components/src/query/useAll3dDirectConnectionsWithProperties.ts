@@ -160,7 +160,7 @@ export function useAll3dDirectConnectionsWithProperties(
               connectionWithNodeAndViewMap.delete(fdmKey);
               return connectionsFound?.map((connectionFound) => {
                 return {
-                  instanceType: 'node',
+                  instanceType: 'node' as const,
                   ...connectionFound,
                   ...itemsData
                 };
