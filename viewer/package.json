@@ -158,6 +158,6 @@
   ],
   "packageManager": "yarn@4.5.2",
   "resolutions": {
-    "binary-install/axios": "^0.30.0"
+    "binary-install/axios": "^1.0.0"
   }
 }
