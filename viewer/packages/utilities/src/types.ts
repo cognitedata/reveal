@@ -9,15 +9,15 @@
  * the type of these is not number which causes some type interference problems.
  */
 export type TypedArray =
-  | Int8Array
-  | Uint8Array
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Uint8ClampedArray
-  | Float32Array
-  | Float64Array;
+  | Int8Array<ArrayBuffer>
+  | Uint8Array<ArrayBuffer>
+  | Int16Array<ArrayBuffer>
+  | Uint16Array<ArrayBuffer>
+  | Int32Array<ArrayBuffer>
+  | Uint32Array<ArrayBuffer>
+  | Uint8ClampedArray<ArrayBuffer>
+  | Float32Array<ArrayBuffer>
+  | Float64Array<ArrayBuffer>;
 
 export type TypedArrayConstructor =
   | Int8ArrayConstructor
