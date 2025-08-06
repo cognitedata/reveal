@@ -9,7 +9,7 @@ export type CadModelTreeIndexMappings = Map<ModelRevisionKey, Map<InstanceKey, C
 
 export type CadInstanceMappingsCache = {
   getMappingsForModelsAndInstances: (
-    instances: Array<InstanceId>,
+    instances: InstanceId[],
     models: ModelRevisionId[]
   ) => Promise<CadModelMappingsWithNodes>;
   getAllModelMappings: (models: ModelRevisionId[]) => Promise<CadModelTreeIndexMappings>;

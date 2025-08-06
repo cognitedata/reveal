@@ -21,7 +21,7 @@ import {
   type CadInstanceMappingsCache,
   type CadModelMappingsWithNodes
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
-import { AssetId } from '../../CacheProvider/types';
+import { type AssetId } from '../../CacheProvider/types';
 import { type DmsUniqueIdentifier } from '../../../data-providers/FdmSDK';
 
 describe(useCalculateCadStyling.name, () => {
