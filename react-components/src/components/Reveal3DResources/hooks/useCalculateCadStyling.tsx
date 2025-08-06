@@ -7,12 +7,7 @@ import {
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
-import {
-  type AssetId,
-  type FdmKey,
-  type CadNodeTreeData,
-  type ModelRevisionKey
-} from '../../CacheProvider/types';
+import { type AssetId, type FdmKey, type CadNodeTreeData } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
   type NodeStylingGroup,
@@ -25,16 +20,12 @@ import {
 import { isSameModel } from '../../../utilities/isSameModel';
 import { useQuery } from '@tanstack/react-query';
 import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
-import {
-  useCadMappingsCache,
-  useClassicCadAssetMappingCache
-} from '../../CacheProvider/CacheProvider';
+import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelTreeIndexMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 import { type InstanceKey } from '../../../utilities/instanceIds';
-import { chunk } from 'lodash';
 import { useIsCoreDmOnly } from '../../../hooks/useIsCoreDmOnly';
 
 type ModelStyleGroup = {
@@ -60,12 +51,10 @@ export type StyledModel = {
 
 export type UseCalculateCadStylingDependencies = {
   useCadMappingsCache: typeof useCadMappingsCache;
-  useClassicCadAssetMappingCache: typeof useClassicCadAssetMappingCache;
 };
 
 export const defaultUseCalculateCadStylingDependencies: UseCalculateCadStylingDependencies = {
-  useCadMappingsCache,
-  useClassicCadAssetMappingCache
+  useCadMappingsCache
 };
 
 export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylingDependencies>(
@@ -168,12 +157,9 @@ function useCalculateInstanceStyling(
     .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
-  const { useCadMappingsCache, useClassicCadAssetMappingCache } = useContext(
-    UseCalculateCadStylingContext
-  );
+  const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
 
   const cadCache = useCadMappingsCache();
-  const classicCadAssetMappingCache = useClassicCadAssetMappingCache();
   const isCoreDm = useIsCoreDmOnly();
 
   const {
@@ -212,8 +198,6 @@ function useCalculateInstanceStyling(
           };
         })
         .filter(isDefined);
-
-      console.log('Mapped over models ', models, ' to form style groups', modelStyleGroups);
 
       return modelStyleGroups;
     },

@@ -1,4 +1,4 @@
-import { Filter3DAssetMappingsQuery, type CogniteClient, type Node3D } from '@cognite/sdk';
+import { type Filter3DAssetMappingsQuery, type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
   type ModelId,
   type RevisionId,
@@ -34,8 +34,8 @@ import {
 import { type HybridCadCacheIndexType } from './types';
 import { convertToHybridAssetMapping } from './rawAssetMappingTypes';
 import { isDefined } from '../../../utilities/isDefined';
-import { DmsUniqueIdentifier } from '../../../data-providers';
-import { RawHybridAssetMapping } from '../../../query/network/cad/fetchHybridAssetMappingsForModels';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type RawHybridAssetMapping } from '../../../query/network/cad/fetchHybridAssetMappingsForModels';
 
 export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
   return new ClassicCadAssetMappingCacheImpl(sdk);
@@ -241,11 +241,11 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<HybridCadAssetMapping[]> {
-    const rawAssetMappings = await (() => {
+    const rawAssetMappings = await (async () => {
       if (filterType === 'nodeIds') {
-        return this.fetchAssetMappingsByNodeIds(currentChunk, modelId, revisionId);
+        return await this.fetchAssetMappingsByNodeIds(currentChunk, modelId, revisionId);
       } else {
-        return this.fetchAssetMappingsByInstanceIds(currentChunk, modelId, revisionId);
+        return await this.fetchAssetMappingsByInstanceIds(currentChunk, modelId, revisionId);
       }
     })();
 

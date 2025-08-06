@@ -53,9 +53,11 @@ export const useModelsForInstanceQuery = (
         if (!isCoreDm) {
           return await getCadModelsForHybridDmInstance(instance, cogniteClient);
         }
+
         if (fdm3dDataProvider === undefined) {
           return [];
         }
+
         return await getModelsForDmsInstance(
           instance,
           fdmSdk,
