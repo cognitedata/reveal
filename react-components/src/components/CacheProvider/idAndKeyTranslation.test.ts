@@ -6,7 +6,8 @@ import {
   createModelTreeIndexKey,
   createModelInstanceIdKey,
   revisionKeyToIds,
-  createModelNodeIdKey
+  createModelNodeIdKey,
+  fdmKeyToId
 } from './idAndKeyTranslation';
 
 describe('idAndKeyTranslation', () => {
@@ -47,6 +48,20 @@ describe('idAndKeyTranslation', () => {
   describe(createFdmKey.name, () => {
     test('concatenates externalId and space into key', () => {
       expect(createFdmKey(INSTANCE)).toBe(`${INSTANCE.space}/${INSTANCE.externalId}`);
+    });
+  });
+
+  describe(fdmKeyToId.name, () => {
+    test('splits up fdm key into externalId and space', () => {
+      expect(fdmKeyToId('some-space/some-externalId')).toEqual({
+        space: 'some-space',
+        externalId: 'some-externalId'
+      });
+    });
+
+    test('reverses `createFdmKey`', () => {
+      const id = { externalId: 'another-externalId', space: 'another-space' };
+      expect(fdmKeyToId(createFdmKey(id))).toEqual(id);
     });
   });
 
