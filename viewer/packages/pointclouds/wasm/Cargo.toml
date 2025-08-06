@@ -37,4 +37,4 @@ rand = "0.9.0"
 rand_chacha = "0.9.0"
 
 # Only used in rand, but need to add `js` feature for wasm compatibility
-getrandom = { version = "0.3.0", features = ["js"] }
+getrandom = { version = "0.3.0", features = ["wasm_js"] }
