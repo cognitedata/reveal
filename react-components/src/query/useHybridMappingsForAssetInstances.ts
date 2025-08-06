@@ -5,8 +5,8 @@ import { type ThreeDModelFdmMappings } from '../hooks';
 import { queryKeys } from '../utilities/queryKeys';
 import { UseHybridMappingsForAssetInstancesContext } from './useHybridMappingsForAssetInstances.context';
 import { useContext } from 'react';
-import { FdmKey } from '../components/CacheProvider/types';
-import { Node3D } from '@cognite/sdk';
+import { type FdmKey } from '../components/CacheProvider/types';
+import { type Node3D } from '@cognite/sdk';
 
 export const useHybridMappingsForAssetInstances = (
   models: AddModelOptions[],

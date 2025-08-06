@@ -1,7 +1,7 @@
 import type { Node3D } from '@cognite/sdk';
 import type { ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import type { ModelId, RevisionId } from '../types';
-import type { HybridCadAssetMapping, HybridCadAssetTreeIndexMapping } from './assetMappingTypes';
+import type { HybridCadAssetMapping } from './assetMappingTypes';
 import type { InstanceId, InstanceKey } from '../../../utilities/instanceIds';
 
 export type HybridCadNodeAssetMappingResult = {

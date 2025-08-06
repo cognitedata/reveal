@@ -161,7 +161,7 @@ export function useAll3dDirectConnectionsWithProperties(
           if (connectionFound === undefined) return [];
 
           return {
-            instanceType: "node" as const,
+            instanceType: 'node' as const,
             ...connectionFound,
             ...itemsData
           };
