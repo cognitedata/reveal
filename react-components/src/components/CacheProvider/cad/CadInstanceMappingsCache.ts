@@ -1,23 +1,15 @@
 import type { Node3D } from '@cognite/sdk';
-import type { DmsUniqueIdentifier } from '../../../data-providers';
-import type {
-  ModelRevisionKey,
-  FdmKey,
-  AssetId,
-  ModelRevisionId,
-  CadNodeIdData,
-  CadNodeTreeData
-} from '../types';
-import type { InstanceKey } from '../../../utilities/instanceIds';
+import type { ModelRevisionKey, ModelRevisionId, CadNodeIdData, CadNodeTreeData } from '../types';
+import type { InstanceId, InstanceKey } from '../../../utilities/instanceIds';
 
-export type CadModelMappingsWithNodes = Map<ModelRevisionKey, Map<FdmKey | AssetId, Node3D[]>>;
+export type CadModelMappingsWithNodes = Map<ModelRevisionKey, Map<InstanceKey, Node3D[]>>;
 
-export type CadModelMappings = Map<ModelRevisionKey, Map<FdmKey | AssetId, CadNodeIdData[]>>;
+export type CadModelMappings = Map<ModelRevisionKey, Map<InstanceKey, CadNodeIdData[]>>;
 export type CadModelTreeIndexMappings = Map<ModelRevisionKey, Map<InstanceKey, CadNodeTreeData[]>>;
 
 export type CadInstanceMappingsCache = {
   getMappingsForModelsAndInstances: (
-    instances: Array<AssetId | DmsUniqueIdentifier>,
+    instances: Array<InstanceId>,
     models: ModelRevisionId[]
   ) => Promise<CadModelMappingsWithNodes>;
   getAllModelMappings: (models: ModelRevisionId[]) => Promise<CadModelTreeIndexMappings>;
