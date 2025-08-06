@@ -21,8 +21,8 @@ import {
   type CadInstanceMappingsCache,
   type CadModelMappingsWithNodes
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
-import { type AssetId } from '../../CacheProvider/types';
 import { type DmsUniqueIdentifier } from '../../../data-providers/FdmSDK';
+import { type InstanceId } from '../../../utilities/instanceIds';
 
 describe(useCalculateCadStyling.name, () => {
   const dependencies = getMocksByDefaultDependencies(defaultUseCalculateCadStylingDependencies);
@@ -316,7 +316,7 @@ describe(useCalculateCadStyling.name, () => {
 
 function createModelToAssetMappingsMap(
   model: ClassicModelIdentifier,
-  instanceId: AssetId | DmsUniqueIdentifier,
+  instanceId: InstanceId,
   treeIndex: number
 ): CadModelMappingsWithNodes {
   return new Map([
