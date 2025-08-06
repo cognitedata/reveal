@@ -27,12 +27,17 @@ export function useAll3dDirectConnectionsWithProperties(
   }, [connectionWithNodeAndView]);
 
   const connectionWithNodeAndViewMap = useMemo(() => {
-    return new Map(
-      connectionWithNodeAndView.map((item) => {
-        const fdmKey = createFdmKey(item.connection.instance);
-        return [fdmKey, item];
-      })
-    );
+    const dataMap = new Map<string, FdmConnectionWithNode[]>();
+    connectionWithNodeAndView.forEach((item) => {
+      const fdmKey = createFdmKey(item.connection.instance);
+      const currentMap = dataMap.get(fdmKey);
+      if (currentMap !== undefined) {
+        currentMap.push(item);
+      } else {
+        dataMap.set(fdmKey, [item]);
+      }
+    });
+    return dataMap;
   }, [connectionWithNodeAndView]);
 
   return useQuery({
@@ -145,27 +150,25 @@ export function useAll3dDirectConnectionsWithProperties(
           )
           .filter((item) => item.items.length > 0);
 
-      const instanceWithData =
-        instanceItemsAndTyping?.flatMap((itemsData) => {
-          let connectionFound: FdmConnectionWithNode | undefined;
-
-          itemsData.items.every((itemData) => {
+      const instanceWithData = instanceItemsAndTyping.flatMap(
+        (itemsData) => {
+          let connectionsFound: FdmConnectionWithNode[] | undefined;
+          const dataFound = itemsData.items.map((itemData) => {
             const fdmKey = createFdmKey(itemData);
             if (connectionWithNodeAndViewMap.has(fdmKey)) {
-              connectionFound = connectionWithNodeAndViewMap.get(fdmKey);
-              return false;
+              connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
+              connectionWithNodeAndViewMap.delete(fdmKey);
+              return connectionsFound?.map((connectionFound) => {
+                return {
+                  ...connectionFound,
+                  ...itemsData
+                };
+              });
             }
-            return true;
-          });
-
-          if (connectionFound === undefined) return [];
-
-          return {
-            instanceType: 'node' as const,
-            ...connectionFound,
-            ...itemsData
-          };
-        }) ?? [];
+          }).flat().filter(isDefined);
+          return dataFound;
+        }
+      ) ?? [];
 
       return instanceWithData;
     },
