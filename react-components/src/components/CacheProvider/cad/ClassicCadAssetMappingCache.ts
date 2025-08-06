@@ -33,5 +33,5 @@ export type ClassicCadAssetMappingCache = {
   getAssetMappingsForModel: (
     modelId: ModelId,
     revisionId: RevisionId
-  ) => Promise<HybridCadAssetTreeIndexMapping[]>;
+  ) => Promise<HybridCadAssetMapping[]>;
 };

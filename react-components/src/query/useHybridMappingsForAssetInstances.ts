@@ -5,6 +5,8 @@ import { type ThreeDModelFdmMappings } from '../hooks';
 import { queryKeys } from '../utilities/queryKeys';
 import { UseHybridMappingsForAssetInstancesContext } from './useHybridMappingsForAssetInstances.context';
 import { useContext } from 'react';
+import { FdmKey } from '../components/CacheProvider/types';
+import { Node3D } from '@cognite/sdk';
 
 export const useHybridMappingsForAssetInstances = (
   models: AddModelOptions[],
@@ -26,7 +28,11 @@ export const useHybridMappingsForAssetInstances = (
           assetInstanceIds
         );
 
-        return { modelId: model.modelId, revisionId: model.revisionId, mappings };
+        return {
+          modelId: model.modelId,
+          revisionId: model.revisionId,
+          mappings: mappings as Map<FdmKey, Node3D[]>
+        };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);

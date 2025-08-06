@@ -177,7 +177,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<HybridCadAssetTreeIndexMapping[]> {
+  ): Promise<HybridCadAssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
