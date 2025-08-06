@@ -198,7 +198,6 @@ describe(createClassicCadAssetMappingCache.name, () => {
       const cache = createClassicCadAssetMappingCache(sdkMock);
       await cache.getNodesForInstanceIds(MODEL_ID, REVISION_ID, [ASSET_ID]);
       expect(assetMappings3DFilterMock).toHaveBeenCalledWith(MODEL_ID, REVISION_ID, {
-        limit: 1000,
         filter: { assetIds: [ASSET_ID] }
       });
     });

@@ -11,7 +11,7 @@ import {
 } from './useCalculateCadStyling';
 
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
-import { createFdmKey, createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
+import { createInstanceKey, createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { IndexSet } from '@cognite/reveal';
@@ -21,11 +21,8 @@ import {
   type CadInstanceMappingsCache,
   type CadModelMappingsWithNodes
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
-import { type ClassicCadAssetMappingCache } from '../../CacheProvider/cad/ClassicCadAssetMappingCache';
-import { type FdmKey } from '../../CacheProvider/types';
+import { AssetId } from '../../CacheProvider/types';
 import { type DmsUniqueIdentifier } from '../../../data-providers/FdmSDK';
-import { type Node3D } from '@cognite/sdk';
-import { type InstanceKey } from '../../../utilities/instanceIds';
 
 describe(useCalculateCadStyling.name, () => {
   const dependencies = getMocksByDefaultDependencies(defaultUseCalculateCadStylingDependencies);
@@ -33,7 +30,6 @@ describe(useCalculateCadStyling.name, () => {
   const mockGetMappingsForModelsAndInstances =
     vi.fn<CadInstanceMappingsCache['getMappingsForModelsAndInstances']>();
   const mockGetAllModelMappings = vi.fn<CadInstanceMappingsCache['getAllModelMappings']>();
-  const mockGetNodesForInstanceIds = vi.fn<ClassicCadAssetMappingCache['getNodesForInstanceIds']>();
 
   const queryClient = new QueryClient();
 
@@ -53,9 +49,7 @@ describe(useCalculateCadStyling.name, () => {
 
   const ASSET_ID = 987;
   const TREE_INDEX = 123;
-  const HYBRID_TREE_INDEX_1 = 456;
-  const HYBRID_TREE_INDEX_2 = 789;
-  const FDM_TREE_INDEX = 456;
+  const DM_TREE_INDEX = 456;
   const INSTANCE_ID: DmsUniqueIdentifier = {
     externalId: 'default-external-id1',
     space: 'default-space'
@@ -68,16 +62,7 @@ describe(useCalculateCadStyling.name, () => {
       getAllModelMappings: mockGetAllModelMappings
     });
 
-    dependencies.useClassicCadAssetMappingCache.mockReturnValue({
-      getNodesForInstanceIds: mockGetNodesForInstanceIds,
-      getAssetMappingsForLowestAncestor: vi.fn(),
-      generateNode3DCachePerItem: vi.fn(),
-      generateAssetMappingsCachePerItemFromModelCache: vi.fn(),
-      getAssetMappingsForModel: vi.fn()
-    });
-
     mockGetAllModelMappings.mockResolvedValue(new Map());
-    mockGetNodesForInstanceIds.mockResolvedValue(new Map());
   });
 
   test('indicates that loading is not finished when `isLoading` is true for request', async () => {
@@ -122,9 +107,33 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns empty style groups when no styling group is provided', async () => {
-    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(
+      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+    );
 
     const { result } = renderHook(() => useCalculateCadStyling([MODEL], []), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isModelMappingsLoading).toBeFalsy();
+    });
+
+    expect(result.current).toEqual({
+      styledModels: [{ model: MODEL, styleGroups: [] }],
+      isModelMappingsLoading: false
+    });
+  });
+
+  test('returns empty style groups when no mappings exist', async () => {
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
+
+    const { result } = renderHook(
+      () =>
+        useCalculateCadStyling(
+          [MODEL],
+          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
+        ),
+      { wrapper }
+    );
 
     await waitFor(() => {
       expect(result.current.isModelMappingsLoading).toBeFalsy();
@@ -171,9 +180,6 @@ describe(useCalculateCadStyling.name, () => {
 
   test('returns loading state for DM instance style group', async () => {
     mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
-    mockGetNodesForInstanceIds.mockResolvedValue(
-      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
-    );
 
     const { result } = renderHook(
       () =>
@@ -191,71 +197,45 @@ describe(useCalculateCadStyling.name, () => {
   });
 
   test('returns objects with models and style groups for DM instance after loading', async () => {
-    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
-    mockGetNodesForInstanceIds.mockResolvedValue(
-      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
-    );
-
-    const { result } = renderHook(
-      () =>
-        useCalculateCadStyling(
-          [MODEL],
-          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
-        ),
-      { wrapper }
-    );
-
-    await waitFor(() => {
-      expect(result.current.isModelMappingsLoading).toBeFalsy();
-    });
-
-    expect(result.current).toEqual({
-      styledModels: [
-        {
-          model: MODEL,
-          styleGroups: [{ style: { renderGhosted: true }, treeIndexSet: expect.any(IndexSet) }]
-        }
-      ],
-      isModelMappingsLoading: false
-    });
-  });
-
-  test('returns style groups for hybrid asset mappings when FDM mappings do not exist', async () => {
-    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
-    mockGetNodesForInstanceIds.mockResolvedValue(
-      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
-    );
-
-    const { result } = renderHook(
-      () =>
-        useCalculateCadStyling(
-          [MODEL],
-          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
-        ),
-      { wrapper }
-    );
-
-    await waitFor(() => {
-      expect(result.current.isModelMappingsLoading).toBeFalsy();
-    });
-
-    expect(result.current).toEqual({
-      styledModels: [
-        {
-          model: MODEL,
-          styleGroups: [{ style: { renderGhosted: true }, treeIndexSet: expect.any(IndexSet) }]
-        }
-      ],
-      isModelMappingsLoading: false
-    });
-  });
-
-  test('combines style groups from both FDM and hybrid mappings', async () => {
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
-      createModelToAssetMappingsMap(MODEL, ASSET_ID, FDM_TREE_INDEX)
+      createModelToAssetMappingsMap(MODEL, INSTANCE_ID, DM_TREE_INDEX)
     );
-    mockGetNodesForInstanceIds.mockResolvedValue(
-      createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1)
+
+    const { result } = renderHook(
+      () =>
+        useCalculateCadStyling(
+          [MODEL],
+          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
+        ),
+      { wrapper }
+    );
+
+    await waitFor(() => {
+      expect(result.current.isModelMappingsLoading).toBeFalsy();
+    });
+
+    expect(result.current).toEqual({
+      styledModels: [
+        {
+          model: MODEL,
+          styleGroups: [{ style: { renderGhosted: true }, treeIndexSet: expect.any(IndexSet) }]
+        }
+      ],
+      isModelMappingsLoading: false
+    });
+  });
+
+  test('combines style groups from both FDM and hybrid/classic mappings', async () => {
+    mockGetMappingsForModelsAndInstances.mockResolvedValue(
+      new Map([
+        [
+          createModelRevisionKey(MODEL.modelId, MODEL.revisionId),
+          new Map([
+            [createInstanceKey(INSTANCE_ID), [createCadNodeMock({ treeIndex: TREE_INDEX })]],
+            [createInstanceKey(ASSET_ID), [createCadNodeMock({ treeIndex: DM_TREE_INDEX })]]
+          ])
+        ]
+      ])
     );
 
     const { result } = renderHook(
@@ -283,44 +263,26 @@ describe(useCalculateCadStyling.name, () => {
       { style: { renderInFront: true }, treeIndexSet: expect.any(IndexSet) }
     ]);
   });
-
-  test('returns empty style groups when neither FDM nor hybrid mappings exist', async () => {
-    mockGetMappingsForModelsAndInstances.mockResolvedValue(new Map());
-    mockGetNodesForInstanceIds.mockImplementation(async () => new Map());
-
-    const { result } = renderHook(
-      () =>
-        useCalculateCadStyling(
-          [MODEL],
-          [{ fdmAssetExternalIds: [INSTANCE_ID], style: { cad: { renderGhosted: true } } }]
-        ),
-      { wrapper }
-    );
-
-    await waitFor(() => {
-      expect(result.current.isModelMappingsLoading).toBeFalsy();
-    });
-
-    expect(result.current).toEqual({
-      styledModels: [{ model: MODEL, styleGroups: [] }],
-      isModelMappingsLoading: false
-    });
-  });
-
   test('processes multiple models with separate FDM and hybrid mappings', async () => {
     const MODEL2 = { modelId: 456, revisionId: 567, type: 'cad' } as const;
 
     mockGetMappingsForModelsAndInstances.mockResolvedValue(
-      createModelToAssetMappingsMap(MODEL, ASSET_ID, TREE_INDEX)
+      new Map([
+        [
+          createModelRevisionKey(MODEL.modelId, MODEL.revisionId),
+          new Map([
+            [createInstanceKey(ASSET_ID), [createCadNodeMock({ treeIndex: TREE_INDEX })]],
+            [createInstanceKey(INSTANCE_ID), [createCadNodeMock({ treeIndex: DM_TREE_INDEX })]]
+          ])
+        ],
+        [
+          createModelRevisionKey(MODEL2.modelId, MODEL2.revisionId),
+          new Map([
+            [createInstanceKey(INSTANCE_ID), [createCadNodeMock({ treeIndex: DM_TREE_INDEX })]]
+          ])
+        ]
+      ])
     );
-    mockGetNodesForInstanceIds.mockImplementation(async (modelId, revisionId) => {
-      if (modelId === MODEL.modelId && revisionId === MODEL.revisionId) {
-        return createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_1);
-      } else if (modelId === MODEL2.modelId && revisionId === MODEL2.revisionId) {
-        return createHybridAssetMappingsMap(INSTANCE_ID, HYBRID_TREE_INDEX_2);
-      }
-      return new Map();
-    });
 
     const { result } = renderHook(
       () =>
@@ -354,21 +316,13 @@ describe(useCalculateCadStyling.name, () => {
 
 function createModelToAssetMappingsMap(
   model: ClassicModelIdentifier,
-  assetId: number,
+  instanceId: AssetId | DmsUniqueIdentifier,
   treeIndex: number
 ): CadModelMappingsWithNodes {
   return new Map([
     [
       createModelRevisionKey(model.modelId, model.revisionId),
-      new Map([[assetId, [createCadNodeMock({ treeIndex })]]])
+      new Map([[createInstanceKey(instanceId), [createCadNodeMock({ treeIndex })]]])
     ]
   ]);
-}
-
-function createHybridAssetMappingsMap(
-  fdmInstance: DmsUniqueIdentifier,
-  treeIndex: number
-): Map<InstanceKey, Node3D[]> {
-  const fdmKey: FdmKey = createFdmKey(fdmInstance);
-  return new Map([[fdmKey, [createCadNodeMock({ treeIndex })]]]);
 }
