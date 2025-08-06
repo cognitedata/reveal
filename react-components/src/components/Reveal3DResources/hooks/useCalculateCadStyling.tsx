@@ -35,6 +35,7 @@ import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation'
 import { type CadModelTreeIndexMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 import { type InstanceKey } from '../../../utilities/instanceIds';
 import { chunk } from 'lodash';
+import { useIsCoreDmOnly } from '../../../hooks/useIsCoreDmOnly';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -173,6 +174,7 @@ function useCalculateInstanceStyling(
 
   const cadCache = useCadMappingsCache();
   const classicCadAssetMappingCache = useClassicCadAssetMappingCache();
+  const isCoreDm = useIsCoreDmOnly();
 
   const {
     data: modelStyleGroups,
@@ -185,6 +187,7 @@ function useCalculateInstanceStyling(
       'cad-asset-mappings',
       dmIdsForInstanceGroups,
       assetIdsFromInstanceGroups,
+      isCoreDm,
       models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async () => {
@@ -192,34 +195,25 @@ function useCalculateInstanceStyling(
         [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
         models
       );
-      const hybridAssetMappingsByModelKey = await getChunkedHybridMappings(
-        models,
-        dmIdsForInstanceGroups,
-        classicCadAssetMappingCache
-      );
 
       const modelStyleGroups = models
         .map((model) => {
           const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
 
           const modelMappings = mappings.get(modelKey);
-          const hybridMappings = hybridAssetMappingsByModelKey.get(modelKey);
 
-          if (
-            (modelMappings === undefined || modelMappings.size === 0) &&
-            (hybridMappings === undefined || hybridMappings.size === 0)
-          ) {
+          if (modelMappings === undefined || modelMappings.size === 0) {
             return undefined;
           }
 
-          return calculateInstanceCadModelStyling(
+          return {
             model,
-            instanceGroups,
-            modelMappings,
-            hybridMappings
-          );
+            styleGroup: createStyleGroupsFromMappings(instanceGroups, modelMappings)
+          };
         })
         .filter(isDefined);
+
+      console.log('Mapped over models ', models, ' to form style groups', modelStyleGroups);
 
       return modelStyleGroups;
     },
@@ -229,34 +223,6 @@ function useCalculateInstanceStyling(
   return useMemo(() => {
     return { combinedMappedStyleGroups: modelStyleGroups ?? [], isModelMappingsLoading, isError };
   }, [modelStyleGroups, isModelMappingsLoading, isError]);
-}
-
-async function getChunkedHybridMappings(
-  models: CadModelOptions[],
-  instanceIds: Array<{ externalId: string; space: string }>,
-  mappingCache: ReturnType<typeof useClassicCadAssetMappingCache>,
-  chunkSize = 10
-): Promise<Map<ModelRevisionKey, Map<InstanceKey, Node3D[]>>> {
-  const modelChunks = chunk(models, chunkSize);
-  const hybridMappingsEntries: Array<[ModelRevisionKey, Map<InstanceKey, Node3D[]>]> = [];
-
-  for (const modelBatch of modelChunks) {
-    const chunkResults = await Promise.all(
-      modelBatch.map(async (model): Promise<[ModelRevisionKey, Map<InstanceKey, Node3D[]>]> => {
-        const modelKey = createModelRevisionKey(model.modelId, model.revisionId);
-        const mappings = await mappingCache.getNodesForInstanceIds(
-          model.modelId,
-          model.revisionId,
-          instanceIds
-        );
-        return [modelKey, mappings];
-      })
-    );
-
-    hybridMappingsEntries.push(...chunkResults);
-  }
-
-  return new Map(hybridMappingsEntries);
 }
 
 function useJoinStylingGroups(
@@ -308,24 +274,6 @@ function getMappedStyleGroupFromInstanceToNodeMap(
   });
 
   return { treeIndexSet: indexSet, style };
-}
-
-function calculateInstanceCadModelStyling(
-  model: CadModelOptions,
-  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
-  mappings: Map<InstanceKey, Node3D[]> | undefined,
-  hybridMappings: Map<InstanceKey, Node3D[]> | undefined
-): ModelStyleGroup {
-  const fdmStyleGroups = createStyleGroupsFromMappings(stylingGroups, mappings);
-
-  const hybridStyleGroups = createStyleGroupsFromMappings(stylingGroups, hybridMappings);
-
-  const combinedStyleGroups = [...fdmStyleGroups, ...hybridStyleGroups];
-
-  return {
-    model,
-    styleGroup: combinedStyleGroups
-  };
 }
 
 function createStyleGroupsFromMappings(

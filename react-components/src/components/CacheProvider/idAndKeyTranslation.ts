@@ -28,6 +28,11 @@ export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
   return `${id.space}/${id.externalId}`;
 }
 
+export function fdmKeyToId(fdmKey: FdmKey): DmsUniqueIdentifier {
+  const components = split(fdmKey, '/');
+  return { space: components[0], externalId: components[1] };
+}
+
 export function createInstanceKey(id: InstanceId): InstanceKey {
   if (isClassicInstanceId(id)) {
     return id;

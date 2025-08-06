@@ -1,4 +1,4 @@
-import { type CogniteClient, type Node3D } from '@cognite/sdk';
+import { Filter3DAssetMappingsQuery, type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
   type ModelId,
   type RevisionId,
@@ -7,13 +7,14 @@ import {
   type ModelInstanceIdKey,
   type ModelNodeIdKey
 } from '../types';
-import { chunk, maxBy } from 'lodash';
+import { chunk, maxBy, partition } from 'lodash';
 import assert from 'assert';
 import {
   createModelInstanceIdKey,
   createModelRevisionKey,
   createInstanceKey,
-  createModelNodeIdKey
+  createModelNodeIdKey,
+  fdmKeyToId
 } from '../idAndKeyTranslation';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
 import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
@@ -33,6 +34,8 @@ import {
 import { type HybridCadCacheIndexType } from './types';
 import { convertToHybridAssetMapping } from './rawAssetMappingTypes';
 import { isDefined } from '../../../utilities/isDefined';
+import { DmsUniqueIdentifier } from '../../../data-providers';
+import { RawHybridAssetMapping } from '../../../query/network/cad/fetchHybridAssetMappingsForModels';
 
 export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
   return new ClassicCadAssetMappingCacheImpl(sdk);
@@ -238,41 +241,18 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<HybridCadAssetMapping[]> {
-    // TODO(BND3D-5837): The asset mappings filter endpoint does not support lookups by DM ids, only assetIds + nodeIds
-    const numericalIdChunk = currentChunk.filter((key) => typeof key === 'number');
-    if (numericalIdChunk.length === 0) {
-      return [];
-    }
+    const rawAssetMappings = await (() => {
+      if (filterType === 'nodeIds') {
+        return this.fetchAssetMappingsByNodeIds(currentChunk, modelId, revisionId);
+      } else {
+        return this.fetchAssetMappingsByInstanceIds(currentChunk, modelId, revisionId);
+      }
+    })();
 
-    const filter =
-      filterType === 'nodeIds' ? { nodeIds: numericalIdChunk } : { assetIds: numericalIdChunk };
-
-    const classicPromise = this._sdk.assetMappings3D
-      .filter(modelId, revisionId, {
-        limit: 1000,
-        filter
-      })
-      .autoPagingToArray({ limit: Infinity });
-
-    const filterOptions = {
-      limit: 1000,
-      filter,
-      getDmsInstances: true
-    };
-
-    const hybridPromise = this._sdk.assetMappings3D
-      .filter(modelId, revisionId, filterOptions)
-      .autoPagingToArray({ limit: Infinity });
-
-    const [classicResult, hybridResult] = await Promise.all([classicPromise, hybridPromise]);
-
-    const classicAssetMapping3D = classicResult.map(convertToHybridAssetMapping).filter(isDefined);
-    const hybridAssetMapping3D = hybridResult.map(convertToHybridAssetMapping).filter(isDefined);
-
-    const assetMapping3D = [...classicAssetMapping3D, ...hybridAssetMapping3D];
+    const assetMappings = rawAssetMappings.map(convertToHybridAssetMapping).filter(isDefined);
 
     await Promise.all(
-      assetMapping3D.map(async (assetMapping) => {
+      assetMappings.map(async (assetMapping) => {
         const keyAssetId: ModelInstanceIdKey = createModelInstanceIdKey(
           modelId,
           revisionId,
@@ -293,7 +273,75 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       }
     });
 
-    return assetMapping3D;
+    return assetMappings;
+  }
+
+  private async fetchAssetMappingsByInstanceIds(
+    currentChunk: InstanceKey[],
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Promise<RawHybridAssetMapping[]> {
+    const [assetIdChunk, dmKeys] = partition(currentChunk, (key) => typeof key === 'number');
+
+    const dmIds = dmKeys.map(fdmKeyToId);
+    const classicPromise =
+      assetIdChunk.length === 0
+        ? []
+        : await this.fetchMappingsWithFilter(modelId, revisionId, {
+            filter: { assetIds: assetIdChunk }
+          });
+
+    const hybridPromise =
+      dmIds.length === 0
+        ? []
+        : await this.fetchMappingsWithFilter(modelId, revisionId, {
+            filter: { assetInstanceIds: dmIds },
+            getDmsInstances: true
+          });
+
+    const [classicResult, hybridResult] = await Promise.all([classicPromise, hybridPromise]);
+
+    return [...classicResult, ...hybridResult];
+  }
+
+  private async fetchAssetMappingsByNodeIds(
+    currentChunk: InstanceKey[],
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Promise<RawHybridAssetMapping[]> {
+    const nodeIds = currentChunk.filter((key) => typeof key === 'number');
+
+    if (nodeIds.length === 0) {
+      return [];
+    }
+
+    const filter = { nodeIds };
+
+    const classicPromise = await this.fetchMappingsWithFilter(modelId, revisionId, {
+      filter
+    });
+
+    const hybridPromise = await this.fetchMappingsWithFilter(modelId, revisionId, {
+      filter,
+      getDmsInstances: true
+    });
+
+    const [classicResult, hybridResult] = await Promise.all([classicPromise, hybridPromise]);
+
+    return [...classicResult, ...hybridResult];
+  }
+
+  private async fetchMappingsWithFilter(
+    modelId: ModelId,
+    revisionId: RevisionId,
+    filter: (
+      | Filter3DAssetMappingsQuery
+      | { filter: { assetInstanceIds: DmsUniqueIdentifier[] }; limit?: number }
+    ) & { getDmsInstances?: boolean }
+  ): Promise<RawHybridAssetMapping[]> {
+    return await this._sdk.assetMappings3D
+      .filter(modelId, revisionId, filter as unknown as Filter3DAssetMappingsQuery)
+      .autoPagingToArray({ limit: Infinity });
   }
 
   private async fetchMappingsInQueue(
@@ -396,6 +444,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       notCachedAssetIds,
       'assetIds'
     );
+
     const allAssetMappings = chunkInCache.concat(assetMappings);
     return allAssetMappings;
   }
