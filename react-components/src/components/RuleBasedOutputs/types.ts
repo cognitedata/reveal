@@ -438,15 +438,9 @@ export type FdmTyping = Record<
 
 export type FdmInstanceNodeWithConnectionAndProperties = {
   instanceType: 'node';
-  version: number;
-  space: string;
-  externalId: string;
-  createdTime: number;
-  lastUpdatedTime: number;
-  deletedTime: number;
   items: FdmInstanceWithProperties[];
-  connection?: FdmCadConnection | undefined;
-  cadNode?: Node3D | undefined;
-  view?: Source | undefined;
   typing: FdmTyping;
+  connection: FdmCadConnection;
+  cadNode: Node3D;
+  views?: Source[];
 };
