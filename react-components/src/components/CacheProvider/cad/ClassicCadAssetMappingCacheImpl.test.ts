@@ -14,6 +14,7 @@ import {
   type RawCdfHybridCadAssetMapping
 } from './rawAssetMappingTypes';
 import { type AssetMapping3D, type Node3D } from '@cognite/sdk';
+import { createFdmKey } from '../idAndKeyTranslation';
 
 describe(createClassicCadAssetMappingCache.name, () => {
   const MODEL_ID = 123;
@@ -26,6 +27,7 @@ describe(createClassicCadAssetMappingCache.name, () => {
   ];
 
   const ASSET_ID = 42;
+  const DM_INSTANCE_ID = { externalId: 'an-external-id', space: 'a-space' };
 
   describe('getAssetMappingsForLowestAncestor', () => {
     test('returns no mappings when no nodes were supplied', async () => {
@@ -176,7 +178,7 @@ describe(createClassicCadAssetMappingCache.name, () => {
       expect(result).toEqual(new Map());
     });
 
-    test('returns map with relevant mappings for input instance', async () => {
+    test('returns map with relevant classic mappings for input instance', async () => {
       assetMappings3DFilterMock.mockReturnValue(
         // SDK method uses `AssetMapping3D', but it is out of
         // date with the API definition, so we need to cast
@@ -194,11 +196,34 @@ describe(createClassicCadAssetMappingCache.name, () => {
       expect(result).toEqual(new Map([[ASSET_ID, [CAD_NODES[0]]]]));
     });
 
-    test('calls asset mappings mock with model and asset IDs', async () => {
+    test('returns map with relevant DM mappings for input instance', async () => {
+      assetMappings3DFilterMock.mockReturnValue(
+        // SDK method uses `AssetMapping3D', but it is out of
+        // date with the API definition, so we need to cast
+        createCursorAndAsyncIteratorMock({
+          items: [
+            createRawAssetMappingFromNodeAndInstance(CAD_NODES[0], DM_INSTANCE_ID)
+          ] as AssetMapping3D[]
+        })
+      );
+
+      nodes3dRetrieveMock.mockResolvedValue([CAD_NODES[0]]);
       const cache = createClassicCadAssetMappingCache(sdkMock);
-      await cache.getNodesForInstanceIds(MODEL_ID, REVISION_ID, [ASSET_ID]);
+      const result = await cache.getNodesForInstanceIds(MODEL_ID, REVISION_ID, [DM_INSTANCE_ID]);
+
+      expect(result).toEqual(new Map([[createFdmKey(DM_INSTANCE_ID), [CAD_NODES[0]]]]));
+    });
+
+    test('calls asset mappings mock with model and instance IDs', async () => {
+      const cache = createClassicCadAssetMappingCache(sdkMock);
+      await cache.getNodesForInstanceIds(MODEL_ID, REVISION_ID, [ASSET_ID, DM_INSTANCE_ID]);
+      expect(assetMappings3DFilterMock).toHaveBeenCalledTimes(2);
       expect(assetMappings3DFilterMock).toHaveBeenCalledWith(MODEL_ID, REVISION_ID, {
         filter: { assetIds: [ASSET_ID] }
+      });
+      expect(assetMappings3DFilterMock).toHaveBeenCalledWith(MODEL_ID, REVISION_ID, {
+        filter: { assetInstanceIds: [DM_INSTANCE_ID] },
+        getDmsInstances: true
       });
     });
   });
