@@ -444,7 +444,6 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       notCachedAssetIds,
       'assetIds'
     );
-
     const allAssetMappings = chunkInCache.concat(assetMappings);
     return allAssetMappings;
   }
