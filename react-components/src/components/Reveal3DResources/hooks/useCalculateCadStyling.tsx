@@ -26,7 +26,6 @@ import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelTreeIndexMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 import { type InstanceKey } from '../../../utilities/instanceIds';
-import { useIsCoreDmOnly } from '../../../hooks/useIsCoreDmOnly';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -160,7 +159,6 @@ function useCalculateInstanceStyling(
   const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
 
   const cadCache = useCadMappingsCache();
-  const isCoreDm = useIsCoreDmOnly();
 
   const {
     data: modelStyleGroups,
@@ -173,7 +171,6 @@ function useCalculateInstanceStyling(
       'cad-asset-mappings',
       dmIdsForInstanceGroups,
       assetIdsFromInstanceGroups,
-      isCoreDm,
       models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async () => {
