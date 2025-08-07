@@ -3,6 +3,7 @@ import { isEmpty } from '../utilities/TranslateInput';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { SetOrbitOrFirstPersonModeCommand } from './SetOrbitOrFirstPersonModeCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
+import { type CommandUpdateDelegate } from '../commands/BaseCommand';
 
 describe(SetOrbitOrFirstPersonModeCommand.name, () => {
   let command: SetOrbitOrFirstPersonModeCommand;
@@ -29,14 +30,14 @@ describe(SetOrbitOrFirstPersonModeCommand.name, () => {
   test('Should listen when cameraControlsType change in RevealSettingsController', () => {
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.Orbit);
 
-    const mock = vi.fn();
-    command.addEventListener(mock);
+    const mockEventListener = vi.fn<CommandUpdateDelegate>();
+    command.addEventListener(mockEventListener);
 
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.FirstPerson);
-    expect(mock).toHaveBeenCalledOnce();
+    expect(mockEventListener).toHaveBeenCalledOnce();
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.FirstPerson);
-    expect(mock).toHaveBeenCalledOnce(); // No change
+    expect(mockEventListener).toHaveBeenCalledOnce(); // No change
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.Orbit);
-    expect(mock).toHaveBeenCalledTimes(2);
+    expect(mockEventListener).toHaveBeenCalledTimes(2);
   });
 });
