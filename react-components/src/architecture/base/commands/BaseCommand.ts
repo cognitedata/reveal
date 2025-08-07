@@ -30,7 +30,6 @@ export abstract class BaseCommand {
   private readonly _disposables: Array<() => void> = [];
 
   public get disposableCount(): number {
-    // Added for testing purposes
     return this._disposables.length;
   }
 

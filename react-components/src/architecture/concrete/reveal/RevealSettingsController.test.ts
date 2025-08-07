@@ -17,7 +17,7 @@ describe(RevealSettingsController.name, () => {
       resolutionOptions: { maxRenderResolution: 1.3e4, movingCameraResolutionFactor: 0.3 }
     };
 
-    settingsController.renderQuality(testQualitySettings);
+    settingsController.qualitySettings(testQualitySettings);
 
     expect(viewerSetCadModelBudgetMock).toHaveBeenCalledWith(testQualitySettings.cadBudget);
     expect(viewerSetPointCloudModelBudgetMock).toHaveBeenCalledWith(

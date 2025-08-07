@@ -70,7 +70,6 @@ export abstract class DomainObject implements TreeNodeType {
   private readonly _disposables: Array<() => void> = [];
 
   public get disposableCount(): number {
-    // Added for testing purposes
     return this._disposables.length;
   }
 
