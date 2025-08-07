@@ -41,7 +41,7 @@ describe(SetPointShapeCommand.name, () => {
     assert(command.children !== undefined);
     for (const option of command.children) {
       if (option.isChecked) {
-        continue; // Already check
+        continue; // Already checked
       }
       const oldValue = domainObject.pointShape();
       expect(option.invoke()).toBe(true);
