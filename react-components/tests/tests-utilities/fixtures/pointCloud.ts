@@ -2,9 +2,7 @@ import {
   type AddModelOptions,
   CognitePointCloudModel,
   type ClassicDataSourceType,
-  type DMDataSourceType,
-  PointColorType,
-  PointShape
+  type DMDataSourceType
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Color, Matrix4 } from 'three';
@@ -38,10 +36,6 @@ export function createPointCloudMock(parameters?: {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
 
-  const pointSize = 2;
-  const pointColorType = PointColorType.Rgb;
-  const pointShape = PointShape.Square;
-
   return (
     new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
       .setup((p) => p.modelId)
@@ -56,30 +50,6 @@ export function createPointCloudMock(parameters?: {
       .returns(parameters?.visible ?? true)
       .setup((p) => p.type)
       .returns('pointcloud')
-
-      // Mock pointSize
-      .setup((p) => p.pointSize)
-      .returns(pointSize)
-      .setup((p) => {
-        p.pointSize = pointSize;
-      })
-      .returns(true as any)
-
-      // Mock pointColorType
-      .setup((p) => p.pointColorType)
-      .returns(pointColorType)
-      .setup((p) => {
-        p.pointColorType = pointColorType;
-      })
-      .returns(true as any)
-
-      // Mock pointShape
-      .setup((p) => p.pointShape)
-      .returns(pointShape)
-      .setup((p) => {
-        p.pointShape = pointShape;
-      })
-      .returns(true as any)
 
       // Mock classes
       .setup((p) => p.hasClass)

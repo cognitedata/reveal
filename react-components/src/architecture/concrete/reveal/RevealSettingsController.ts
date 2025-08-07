@@ -19,12 +19,11 @@ export class RevealSettingsController {
   private readonly _disposables: Array<() => void> = [];
 
   public get disposableCount(): number {
-    // Added for testing purposes
     return this._disposables.length;
   }
 
   // The settings
-  private readonly _renderQuality = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  private readonly _qualitySettings = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
 
   // Settings for the camera
   private readonly _cameraKeyBoardSpeed = signal<number>(1);
@@ -46,7 +45,7 @@ export class RevealSettingsController {
     this.copyDefaultValuesFromViewer();
 
     this.addEffect(() => {
-      setQualityOnViewer(this.renderQuality(), this._viewer);
+      setQualityOnViewer(this._qualitySettings(), this._viewer);
     });
     this.addEffect(() => {
       setCameraKeyBoardSpeedOnViewer(this.cameraKeyBoardSpeed(), this._viewer);
@@ -65,8 +64,8 @@ export class RevealSettingsController {
     });
   }
 
-  public get renderQuality(): Signal<QualitySettings> {
-    return this._renderQuality;
+  public get qualitySettings(): Signal<QualitySettings> {
+    return this._qualitySettings;
   }
 
   public get cameraKeyBoardSpeed(): Signal<number> {
