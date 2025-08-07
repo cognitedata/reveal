@@ -29,8 +29,8 @@ export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
 }
 
 export function fdmKeyToId(fdmKey: FdmKey): DmsUniqueIdentifier {
-  const components = split(fdmKey, '/');
-  return { space: components[0], externalId: components[1] };
+  const [space, ...externalIdComponents] = split(fdmKey, '/');
+  return { space, externalId: externalIdComponents.join('/') };
 }
 
 export function createInstanceKey(id: InstanceId): InstanceKey {
