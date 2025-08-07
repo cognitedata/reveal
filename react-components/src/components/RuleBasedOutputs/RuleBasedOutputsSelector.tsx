@@ -70,10 +70,11 @@ export function RuleBasedOutputsSelector({
   const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
     useMappedEdgesForRevisions(cadModels, true);
 
-  const { data: dmConnectionWithNodeFromHybridDataList } = useGetDMConnectionWithNodeFromHybridMappingsQuery(
-    nodeWithDmIdsFromHybridMappings ?? [],
-    cadModels
-  );
+  const { data: dmConnectionWithNodeFromHybridDataList } =
+    useGetDMConnectionWithNodeFromHybridMappingsQuery(
+      nodeWithDmIdsFromHybridMappings ?? [],
+      cadModels
+    );
 
   const fdmConnectionWithNodeAndViewList = useMemo(() => {
     return fdmMappedEquipmentEdges !== undefined
