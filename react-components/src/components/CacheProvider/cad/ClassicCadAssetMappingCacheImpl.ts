@@ -282,18 +282,18 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   }
 
   private async fetchAssetMappingsByInstanceIds(
-    currentChunk: InstanceKey[],
+    instanceKeys: InstanceKey[],
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<RawHybridAssetMapping[]> {
-    const [assetIdChunk, dmKeys] = partition(currentChunk, (key) => typeof key === 'number');
+    const [assetIds, dmKeys] = partition(instanceKeys, (key) => typeof key === 'number');
 
     const dmIds = dmKeys.map(fdmKeyToId);
     const classicPromise =
-      assetIdChunk.length === 0
+      assetIds.length === 0
         ? Promise.resolve([])
         : this.fetchMappingsWithFilter(modelId, revisionId, {
-            filter: { assetIds: assetIdChunk }
+            filter: { assetIds: assetIds }
           });
 
     const hybridPromise =
@@ -310,11 +310,11 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   }
 
   private async fetchAssetMappingsByNodeIds(
-    currentChunk: InstanceKey[],
+    instanceKeys: InstanceKey[],
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<RawHybridAssetMapping[]> {
-    const nodeIds = currentChunk.filter((key) => typeof key === 'number');
+    const nodeIds = instanceKeys.filter((key) => typeof key === 'number');
 
     if (nodeIds.length === 0) {
       return [];
