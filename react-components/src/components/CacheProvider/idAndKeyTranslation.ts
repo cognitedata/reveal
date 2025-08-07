@@ -1,5 +1,5 @@
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import type { InstanceId, InstanceKey } from '../../utilities/instanceIds/types';
+import type { InstanceId, InstanceKey, InstanceReference } from '../../utilities/instanceIds/types';
 import { isClassicInstanceId } from '../../utilities/instanceIds/typeGuards';
 import {
   type FdmKey,
@@ -33,6 +33,14 @@ export function createInstanceKey(id: InstanceId): InstanceKey {
     return id;
   } else {
     return createFdmKey(id);
+  }
+}
+
+export function instanceIdToInstanceReference(id: InstanceId): InstanceReference {
+  if (isClassicInstanceId(id)) {
+    return { id };
+  } else {
+    return id;
   }
 }
 
