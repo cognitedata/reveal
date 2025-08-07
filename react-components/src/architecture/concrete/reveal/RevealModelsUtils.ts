@@ -3,7 +3,9 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
   type DataSourceType,
-  type Image360Collection
+  type Image360Collection,
+  isClassicPointCloudModel,
+  isDMPointCloudModel
 } from '@cognite/reveal';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
@@ -41,7 +43,7 @@ export class RevealModelsUtils {
     return undefined;
   }
 
-  public static async addModel(
+  public static async addCadModel(
     renderTarget: RevealRenderTarget,
     options: AddModelOptions
   ): Promise<CogniteCadModel> {
@@ -49,22 +51,16 @@ export class RevealModelsUtils {
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
-    let domainObject: CadDomainObject | undefined;
-    const model = await renderTarget.viewer.addCadModel(options).then((model) => {
-      domainObject = new CadDomainObject(model);
-      root.addChildInteractive(domainObject);
-      if (model.visible) {
-        domainObject.setVisibleInteractive(true);
-      }
-      return model;
-    });
-    if (domainObject !== undefined) {
-      const sdk = renderTarget.rootDomainObject.sdk;
-      await sdk.models3D.retrieve(model.modelId).then((model) => {
-        if (domainObject !== undefined) {
-          domainObject.name = model.name;
-        }
-      });
+    const model = await renderTarget.viewer.addCadModel(options);
+    const domainObject = new CadDomainObject(model);
+    root.addChildInteractive(domainObject);
+
+    const sdk = renderTarget.rootDomainObject.sdk;
+    const model3D = await sdk.models3D.retrieve(model.modelId);
+    domainObject.name = model3D.name;
+
+    if (model.visible) {
+      domainObject.setVisibleInteractive(true);
     }
     return model;
   }
@@ -77,22 +73,20 @@ export class RevealModelsUtils {
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
-    let domainObject: PointCloudDomainObject | undefined;
-    const model = await renderTarget.viewer.addPointCloudModel(options).then((model) => {
-      domainObject = new PointCloudDomainObject(model);
-      root.addChildInteractive(domainObject);
-      if (model.visible) {
-        domainObject.setVisibleInteractive(true);
-      }
-      return model;
-    });
-    if (domainObject !== undefined) {
-      const sdk = renderTarget.rootDomainObject.sdk;
-      await sdk.models3D.retrieve(model.modelId).then((model) => {
-        if (domainObject !== undefined) {
-          domainObject.name = model.name;
-        }
-      });
+    const model = await renderTarget.viewer.addPointCloudModel(options);
+    const domainObject = new PointCloudDomainObject(model);
+    root.addChildInteractive(domainObject);
+
+    const sdk = renderTarget.rootDomainObject.sdk;
+
+    if (isDMPointCloudModel(model)) {
+      domainObject.name = model.modelIdentifier.revisionExternalId;
+    } else if (isClassicPointCloudModel(model)) {
+      const model3D = await sdk.models3D.retrieve(model.modelIdentifier.modelId);
+      domainObject.name = model3D.name;
+    }
+    if (model.visible) {
+      domainObject.setVisibleInteractive(true);
     }
     return model;
   }

@@ -57,7 +57,7 @@ describe(RevealModelsUtils.name, () => {
     const addFn = vi.fn().mockResolvedValue(model);
     viewerMock.addCadModel = addFn;
 
-    const result = await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+    const result = await RevealModelsUtils.addCadModel(renderTargetMock, cadModelOptions);
     expect(result).toBe(model);
     expect(addFn).toHaveBeenCalledWith(cadModelOptions);
 
@@ -133,7 +133,7 @@ describe(RevealModelsUtils.name, () => {
     viewerMock.addCadModel = addFn;
 
     // Add model
-    await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+    await RevealModelsUtils.addCadModel(renderTargetMock, cadModelOptions);
 
     viewerModelsMock.mockReturnValue([model]);
 
@@ -157,7 +157,7 @@ describe(RevealModelsUtils.name, () => {
 
     viewerModelsMock.mockReturnValue([]);
 
-    await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+    await RevealModelsUtils.addCadModel(renderTargetMock, cadModelOptions);
 
     expect(() => {
       RevealModelsUtils.remove(renderTargetMock, model);
