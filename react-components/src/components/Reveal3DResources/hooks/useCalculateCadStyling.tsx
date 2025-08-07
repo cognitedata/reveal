@@ -32,7 +32,10 @@ import {
 import { isDefined } from '../../../utilities/isDefined';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
-import { type CadModelTreeIndexMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
+import {
+  CadModelMappings,
+  type CadModelTreeIndexMappings
+} from '../../CacheProvider/cad/CadInstanceMappingsCache';
 import { type InstanceKey } from '../../../utilities/instanceIds';
 import { chunk } from 'lodash';
 
@@ -111,7 +114,7 @@ function useCalculateMappedStyling(
     data: modelMappingsMap,
     isLoading,
     isError
-  } = useQuery<CadModelTreeIndexMappings>({
+  } = useQuery<CadModelMappings>({
     queryKey: [
       'reveal',
       'react-components',

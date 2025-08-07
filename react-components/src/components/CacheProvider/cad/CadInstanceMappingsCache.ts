@@ -20,5 +20,5 @@ export type CadInstanceMappingsCache = {
     instances: Array<AssetId | DmsUniqueIdentifier>,
     models: ModelRevisionId[]
   ) => Promise<CadModelMappingsWithNodes>;
-  getAllModelMappings: (models: ModelRevisionId[]) => Promise<CadModelTreeIndexMappings>;
+  getAllModelMappings: (models: ModelRevisionId[]) => Promise<CadModelMappings>;
 };

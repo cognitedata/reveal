@@ -7,6 +7,7 @@ import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import type { AssetId, CadNodeIdData, CadNodeTreeData, FdmKey } from '../types';
 import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
+import { InstanceKey } from '../../../utilities/instanceIds';
 
 describe(createCadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =
@@ -144,7 +145,7 @@ describe(createCadInstanceMappingsCache.name, () => {
 
     test('returns all model mappings from dm cache', async () => {
       const cadNodeIdData: CadNodeIdData = { treeIndex: 123, subtreeSize: 42, nodeId: 876 };
-      const cadNode = createCadNodeMock(cadNodeIdData);
+      const cadNode = createCadNodeMock({ ...cadNodeIdData, id: cadNodeIdData.nodeId });
 
       mockDmGetAllMappingExternalIds.mockResolvedValue(
         new Map([
@@ -203,7 +204,7 @@ describe(createCadInstanceMappingsCache.name, () => {
         { treeIndex: 3, subtreeSize: 17, nodeId: 654 }
       ];
 
-      const cadNodes = cadNodeData.map(createCadNodeMock);
+      const cadNodes = cadNodeData.map((data) => createCadNodeMock({ ...data, id: data.nodeId }));
 
       mockClassicGetAssetMappingsForModel
         .mockResolvedValueOnce([
@@ -278,7 +279,7 @@ describe(createCadInstanceMappingsCache.name, () => {
         new Map([
           [
             createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
-            new Map<AssetId | FdmKey, CadNodeTreeData[]>([
+            new Map<InstanceKey, CadNodeTreeData[]>([
               [CLASSIC_INSTANCES[0], [cadNodeData[0]]],
               [CLASSIC_INSTANCES[1], [cadNodeData[1]]],
               [createFdmKey(DM_INSTANCES[0]), [cadNodeData[0]]],
@@ -287,7 +288,7 @@ describe(createCadInstanceMappingsCache.name, () => {
           ],
           [
             createModelRevisionKey(MODELS[1].modelId, MODELS[1].revisionId),
-            new Map<AssetId | FdmKey, CadNodeTreeData[]>([
+            new Map<InstanceKey, CadNodeTreeData[]>([
               [CLASSIC_INSTANCES[1], [cadNodeData[2], cadNodeData[1]]],
               [createFdmKey(DM_INSTANCES[2]), [cadNodeData[0]]],
               [createFdmKey(DM_INSTANCES[1]), [cadNodeData[1]]]
