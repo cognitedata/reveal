@@ -28,6 +28,7 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
   public constructor(model: Image360Model) {
     super();
     this._model = model;
+    this.name = model.label;
 
     this._updateCallback = () => {
       CommandsUpdater.update(getRenderTarget(this));
