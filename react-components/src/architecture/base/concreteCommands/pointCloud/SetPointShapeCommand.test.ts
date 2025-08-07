@@ -21,7 +21,7 @@ describe(SetPointShapeCommand.name, () => {
     expect(command.isEnabled).toBe(true);
   });
 
-  test('Should have have options with correct initial state', () => {
+  test('Should have options with correct initial state', () => {
     expect(command.hasChildren).toBe(true);
     assert(command.children !== undefined);
     expect(command.children.length).greaterThan(1);
