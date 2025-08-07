@@ -63,6 +63,11 @@ describe('idAndKeyTranslation', () => {
       const id = { externalId: 'another-externalId', space: 'another-space' };
       expect(fdmKeyToId(createFdmKey(id))).toEqual(id);
     });
+
+    test('tackles externalIds with slash', () => {
+      const id = { externalId: 'another/externalId', space: 'another-space' };
+      expect(fdmKeyToId(createFdmKey(id))).toEqual(id);
+    });
   });
 
   describe(createInstanceKey.name, () => {
