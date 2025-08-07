@@ -7,6 +7,8 @@ import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import type { AssetId, CadNodeTreeData, FdmKey } from '../types';
 import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
+import { type Node3D } from '@cognite/sdk';
+import { type InstanceKey } from '../../../utilities/instanceIds';
 
 describe(createCadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =
@@ -84,11 +86,14 @@ describe(createCadInstanceMappingsCache.name, () => {
       mockClassicGetNodesForAssetIds
         .mockResolvedValueOnce(
           // First model
-          new Map([[CLASSIC_INSTANCES[0], [cadNodes[0], cadNodes[1]]]])
+          new Map([[CLASSIC_INSTANCES[0], [cadNodes[0]]]])
         )
         .mockResolvedValueOnce(
           // second model
-          new Map([[CLASSIC_INSTANCES[1], [cadNodes[2]]]])
+          new Map<InstanceKey, Node3D[]>([
+            [CLASSIC_INSTANCES[1], [cadNodes[2]]],
+            [createFdmKey(DM_INSTANCES[2]), [cadNodes[1]]]
+          ])
         );
 
       const result = await cacheWrapper.getMappingsForModelsAndInstances(
@@ -101,11 +106,9 @@ describe(createCadInstanceMappingsCache.name, () => {
       );
 
       expect(result.get(modelKeys[0])?.get(createFdmKey(DM_INSTANCES[0]))).toEqual([cadNodes[0]]);
-      expect(result.get(modelKeys[0])?.get(CLASSIC_INSTANCES[0])).toEqual([
-        cadNodes[0],
-        cadNodes[1]
-      ]);
+      expect(result.get(modelKeys[0])?.get(CLASSIC_INSTANCES[0])).toEqual([cadNodes[0]]);
       expect(result.get(modelKeys[1])?.get(createFdmKey(DM_INSTANCES[1]))).toEqual([cadNodes[2]]);
+      expect(result.get(modelKeys[1])?.get(createFdmKey(DM_INSTANCES[2]))).toEqual([cadNodes[1]]);
       expect(result.get(modelKeys[1])?.get(CLASSIC_INSTANCES[1])).toEqual([cadNodes[2]]);
     });
   });

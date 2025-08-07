@@ -22,4 +22,8 @@ export class MeasureBoxDomainObject extends BoxDomainObject {
     clone.copyFrom(this, what);
     return clone;
   }
+
+  public override canRotateComponent(component: number): boolean {
+    return component === 2;
+  }
 }
