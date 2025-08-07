@@ -14,10 +14,7 @@ import { isDM3DModelIdentifier } from '../components/Reveal3DResources/typeGuard
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference, isIdEither } from './instanceIds';
-import {
-  getMappingInstanceId,
-  isClassicCadAssetMapping
-} from '../components/CacheProvider/cad/assetMappingTypes';
+import { getMappingInstanceId } from '../components/CacheProvider/cad/assetMappingTypes';
 import { instanceIdToInstanceReference } from '../components/CacheProvider/idAndKeyTranslation';
 
 export async function getInstancesFromClick(
