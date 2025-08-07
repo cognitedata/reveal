@@ -5,9 +5,9 @@ import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache'
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import type { AssetId, CadNodeIdData, CadNodeTreeData, FdmKey } from '../types';
+import type { AssetId, CadNodeIdData, CadNodeTreeData } from '../types';
 import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
-import { InstanceKey } from '../../../utilities/instanceIds';
+import { type InstanceKey } from '../../../utilities/instanceIds';
 
 describe(createCadInstanceMappingsCache.name, () => {
   const mockClassicGetAssetMappingsForLowestAncestor =

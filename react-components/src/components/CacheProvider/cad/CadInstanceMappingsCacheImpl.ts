@@ -2,8 +2,7 @@ import { type Node3D } from '@cognite/sdk';
 import { type InstanceId, type InstanceKey, isDmsInstance } from '../../../utilities/instanceIds';
 import { type ThreeDModelFdmMappings } from '../../../hooks';
 import {
-  CadNodeIdData,
-  type CadNodeTreeData,
+  type CadNodeIdData,
   type FdmKey,
   type ModelRevisionId,
   type ModelRevisionKey
@@ -18,8 +17,7 @@ import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import type {
   CadInstanceMappingsCache,
   CadModelMappings,
-  CadModelMappingsWithNodes,
-  CadModelTreeIndexMappings
+  CadModelMappingsWithNodes
 } from './CadInstanceMappingsCache';
 import { concatenateMapValues } from '../../../utilities/map/concatenateMapValues';
 import { MAX_PARALLEL_QUERIES } from '../../../data-providers/utils/getDMSModelRevisionRefs';
