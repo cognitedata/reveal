@@ -37,6 +37,7 @@ import { isDefined } from '../../../utilities/isDefined';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type RawHybridAssetMapping } from '../../../query/network/cad/fetchHybridAssetMappingsForModels';
 
+// TODO(BND3D-5911): The SDK typing is out of date, so we define our own filter type
 type HybridAssetMappingFilter = (
   | Filter3DAssetMappingsQuery
   | { filter: { assetInstanceIds: DmsUniqueIdentifier[] }; limit?: number }
@@ -342,6 +343,8 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     filter: HybridAssetMappingFilter
   ): Promise<RawHybridAssetMapping[]> {
     return await this._sdk.assetMappings3D
+      // TODO(BND3D-5911): The SDK typing is out of date and
+      // doesn't recognize the hybrid-related fields of the filter
       .filter(modelId, revisionId, filter as unknown as Filter3DAssetMappingsQuery)
       .autoPagingToArray({ limit: Infinity });
   }

@@ -29,6 +29,7 @@ export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
 }
 
 export function fdmKeyToId(fdmKey: FdmKey): DmsUniqueIdentifier {
+  // In DM, external IDs can contain '/', but spaces cannot
   const [space, ...externalIdComponents] = split(fdmKey, '/');
   return { space, externalId: externalIdComponents.join('/') };
 }
