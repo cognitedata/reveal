@@ -104,7 +104,7 @@ describe(BoxView.name, () => {
     checkVisibleChildren(view, 1, 9, 3);
   });
 
-  test('should intersect', () => {
+  test('should intersect at body', () => {
     const intersectInput = createLookingDownIntersectInput();
     const intersection = view.intersectIfCloser(intersectInput, undefined);
     expect(intersection).toBeDefined();
@@ -115,6 +115,35 @@ describe(BoxView.name, () => {
     expect(intersection.customObject).toBe(view);
     expect(intersection.distanceToCamera).toBe(1);
     expect(intersection.userData).toBeInstanceOf(PrimitivePickInfo);
+
+    assert(intersection.userData instanceof PrimitivePickInfo);
+    expect(intersection.userData.focusType).toBe(FocusType.Face);
+    expect(intersection.userData.face.face).toBe(2);
+
+    if (isDomainObjectIntersection(intersection)) {
+      expect(intersection.domainObject).toBe(domainObject);
+    }
+  });
+
+  test('should intersect at corner', () => {
+    const relativeXy = 0.99; // Close to the corner
+    const origin = new Vector3(relativeXy, relativeXy, 2);
+    const direction = new Vector3(0, 0, -1);
+    const intersectInput = createIntersectInput(origin, direction);
+
+    const intersection = view.intersectIfCloser(intersectInput, undefined);
+    expect(intersection).toBeDefined();
+    assert(intersection !== undefined);
+
+    intersection.point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.invert());
+    expectEqualVector3(intersection.point, new Vector3(relativeXy, relativeXy, 1));
+    expect(intersection.customObject).toBe(view);
+    expect(intersection.distanceToCamera).toBe(1);
+    expect(intersection.userData).toBeInstanceOf(PrimitivePickInfo);
+
+    assert(intersection.userData instanceof PrimitivePickInfo);
+    expect(intersection.userData.focusType).toBe(FocusType.Corner);
+    expect(intersection.userData.face.face).toBe(2);
 
     if (isDomainObjectIntersection(intersection)) {
       expect(intersection.domainObject).toBe(domainObject);
