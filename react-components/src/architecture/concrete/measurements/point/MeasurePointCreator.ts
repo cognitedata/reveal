@@ -5,6 +5,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type MeasurePointDomainObject } from './MeasurePointDomainObject';
 
+const INITIAL_POINT_SIZE_FACTOR = 0.03;
 /**
  * The `PointCreator` is responsible for handling the creation of a single point,
  * updating its initial positionIt extends the `BaseCreator` class and
@@ -48,12 +49,12 @@ export class MeasurePointCreator extends BaseCreator {
     point: Vector3 | undefined,
     isPending: boolean
   ): boolean {
-    const domainObject = this._domainObject;
     if (point === undefined) {
       return false;
     }
+    const domainObject = this._domainObject;
     domainObject.point = point;
-    domainObject.size = ray.origin.distanceTo(point) * 0.03; // Set size based on distance
+    domainObject.size = ray.origin.distanceTo(point) * INITIAL_POINT_SIZE_FACTOR; // Set size based on distance
     this.addRawPoint(point, isPending);
     domainObject.notify(Changes.geometry);
     domainObject.setFocusInteractive(FocusType.Focus);

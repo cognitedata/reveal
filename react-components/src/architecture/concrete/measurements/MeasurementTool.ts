@@ -70,11 +70,12 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
     const intersection = await this.getIntersection(event);
-    const domainObject = this.getIntersectedSelectableDomainObject(
-      intersection
-    ) as MeasurePointDomainObject;
-
-    if (domainObject === undefined || domainObject.focusType === FocusType.None) {
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
+    if (!(domainObject instanceof MeasurePointDomainObject)) {
+      await super.onWheel(event, delta);
+      return;
+    }
+    if (domainObject.focusType === FocusType.None) {
       await super.onWheel(event, delta);
       return;
     }

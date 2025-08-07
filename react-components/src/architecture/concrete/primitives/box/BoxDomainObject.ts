@@ -180,14 +180,16 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public get area(): number {
     const { box } = this;
     switch (this.primitiveType) {
-      case PrimitiveType.HorizontalArea:
-        return box.horizontalArea;
+      case PrimitiveType.Point:
+        return 0;
       case PrimitiveType.VerticalArea:
         return box.verticalArea;
+      case PrimitiveType.HorizontalArea:
+        return box.horizontalArea;
       case PrimitiveType.Box:
         return box.area;
       default:
-        return 0;
+        throw new Error(`Area calculation not implemented for : ${this.primitiveType}`);
     }
   }
 

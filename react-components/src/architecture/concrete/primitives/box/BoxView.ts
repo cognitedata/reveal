@@ -46,6 +46,9 @@ import { Box } from '../../../base/utilities/primitives/Box';
 
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 const RELATIVE_CORNER_DISTANCE = 0.2;
+const RELATIVE_RESIZE_RADIUS_FOR_POINT = 0.5;
+const RELATIVE_RESIZE_RADIUS_BOX = 0.15;
+
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
@@ -727,7 +730,7 @@ function newVector3(copyFrom?: Vector3): Vector3 {
 
 function getRelativeResizeRadius(domainObject: BoxDomainObject): number {
   if (domainObject.primitiveType === PrimitiveType.Point) {
-    return 0.5;
+    return RELATIVE_RESIZE_RADIUS_FOR_POINT;
   }
-  return 0.15;
+  return RELATIVE_RESIZE_RADIUS_BOX;
 }

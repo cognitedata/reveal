@@ -8,6 +8,7 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../../primitives/common/SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 
+const DEFAULT_POINT_SIZE = 0.05;
 export class MeasurePointDomainObject extends BoxDomainObject {
   // ==================================================
   // CONSTRUCTOR
@@ -16,7 +17,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   public constructor() {
     super(PrimitiveType.Point);
     this.color = new Color(Color.NAMES.deepskyblue);
-    this.size = 0.05;
+    this.size = DEFAULT_POINT_SIZE;
   }
 
   // ==================================================
