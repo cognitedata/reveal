@@ -294,7 +294,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
       assetIds.length === 0
         ? Promise.resolve([])
         : this.fetchMappingsWithFilter(modelId, revisionId, {
-            filter: { assetIds: assetIds }
+            filter: { assetIds }
           });
 
     const hybridPromise =
