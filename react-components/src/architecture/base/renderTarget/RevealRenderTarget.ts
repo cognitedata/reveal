@@ -40,6 +40,7 @@ import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
 import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 import { type UniqueId } from '../utilities/types';
+import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -60,6 +61,7 @@ export class RevealRenderTarget {
   private readonly _cdfCaches: CdfCaches;
   private readonly _instanceStylingController: InstanceStylingController;
   private readonly _revealSettingsController: RevealSettingsController;
+  private readonly _panelUpdater: DomainObjectPanelUpdater;
 
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
@@ -90,6 +92,7 @@ export class RevealRenderTarget {
     this._contextmenuController = new ContextMenuController();
     this._instanceStylingController = new InstanceStylingController();
     this._revealSettingsController = new RevealSettingsController(viewer);
+    this._panelUpdater = new DomainObjectPanelUpdater();
     this._rootDomainObject = new RootDomainObject(this, sdk);
     this._rootDomainObject.isExpanded = true;
 
@@ -149,6 +152,10 @@ export class RevealRenderTarget {
 
   public get revealSettingsController(): RevealSettingsController {
     return this._revealSettingsController;
+  }
+
+  public get panelUpdater(): DomainObjectPanelUpdater {
+    return this._panelUpdater;
   }
 
   public get cursor(): string {

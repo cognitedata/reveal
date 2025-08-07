@@ -11,11 +11,10 @@ import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { count, first, last } from '../utilities/extensions/generatorUtils';
+import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 
 describe(DomainObject.name, () => {
   test('should have following default behavior', () => {
@@ -276,7 +275,7 @@ describe(DomainObject.name, () => {
 
   test('should test notify on CommandsUpdater', () => {
     const domainObject = new ChildDomainObject();
-    const renderTarget = createRenderTargetMock();
+    const renderTarget = createFullRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
 
     expect(CommandsUpdater.needUpdate).toBe(false);
@@ -317,14 +316,18 @@ describe(DomainObject.name, () => {
 
   test('should notify notify descendants..... style root', () => {
     const child = new ChildDomainObject();
+    const renderTarget = createFullRenderTargetMock();
+    renderTarget.rootDomainObject.addChild(child);
+    const { panelUpdater } = renderTarget;
+
     child.isSelected = true;
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBeUndefined();
+    expect(panelUpdater.selectedDomainObject()).toBeUndefined();
     child.notify(Changes.selected);
 
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBe(child);
+    expect(panelUpdater.selectedDomainObject()).toBe(child);
     child.isSelected = false;
     child.notify(Changes.selected);
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBeUndefined();
+    expect(panelUpdater.selectedDomainObject()).toBeUndefined();
   });
 
   test('should get style for the render target root', () => {

@@ -7,14 +7,14 @@ export class DomainObjectPanelUpdater {
   // STATIC FIELDS
   // ==================================================
 
-  public static readonly selectedDomainObject = signal<DomainObject | undefined>();
-  public static readonly update = signal(0); // This increment by one when something happens with the domain object
+  public readonly selectedDomainObject = signal<DomainObject | undefined>();
+  public readonly update = signal(0); // This increment by one when something happens with the domain object
 
   // ==================================================
   // STATIC METHODS
   // ==================================================
 
-  public static show(domainObject: DomainObject | undefined): void {
+  public show(domainObject: DomainObject | undefined): void {
     if (domainObject !== undefined) {
       if (!domainObject.hasPanelInfo) {
         return;
@@ -25,11 +25,11 @@ export class DomainObjectPanelUpdater {
     }
   }
 
-  public static hide(): void {
+  public hide(): void {
     this.selectedDomainObject(undefined);
   }
 
-  public static notify(domainObject: DomainObject, change: DomainObjectChange): void {
+  public notify(domainObject: DomainObject, change: DomainObjectChange): void {
     if (!domainObject.hasPanelInfo) {
       return;
     }
