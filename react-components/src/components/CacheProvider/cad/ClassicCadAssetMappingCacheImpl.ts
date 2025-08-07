@@ -286,15 +286,15 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
     const dmIds = dmKeys.map(fdmKeyToId);
     const classicPromise =
       assetIdChunk.length === 0
-        ? []
-        : await this.fetchMappingsWithFilter(modelId, revisionId, {
+        ? Promise.resolve([])
+        : this.fetchMappingsWithFilter(modelId, revisionId, {
             filter: { assetIds: assetIdChunk }
           });
 
     const hybridPromise =
       dmIds.length === 0
-        ? []
-        : await this.fetchMappingsWithFilter(modelId, revisionId, {
+        ? Promise.resolve([])
+        : this.fetchMappingsWithFilter(modelId, revisionId, {
             filter: { assetInstanceIds: dmIds },
             getDmsInstances: true
           });
@@ -317,11 +317,11 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
 
     const filter = { nodeIds };
 
-    const classicPromise = await this.fetchMappingsWithFilter(modelId, revisionId, {
+    const classicPromise = this.fetchMappingsWithFilter(modelId, revisionId, {
       filter
     });
 
-    const hybridPromise = await this.fetchMappingsWithFilter(modelId, revisionId, {
+    const hybridPromise = this.fetchMappingsWithFilter(modelId, revisionId, {
       filter,
       getDmsInstances: true
     });
