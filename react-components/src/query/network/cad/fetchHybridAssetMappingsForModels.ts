@@ -18,7 +18,7 @@ const MODEL_CHUNK_SIZE = 10;
 
 export type HybridDataType = 'dm' | 'classic';
 
-export type RawHybridAssetMapping<T extends HybridDataType> = T extends 'dm'
+export type RawHybridAssetMapping<T extends HybridDataType = HybridDataType> = T extends 'dm'
   ? RawCdfHybridDmCadAssetMapping
   : RawCdfHybridClassicCadAssetMapping;
 
