@@ -18,7 +18,7 @@ export class RevealSettingsController {
   }
 
   // The settings
-  private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  private readonly _qualitySettings = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
   private readonly _cameraKeyBoardSpeed = signal<number>(1);
   private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
 
@@ -28,7 +28,7 @@ export class RevealSettingsController {
     this.copyDefaultValuesFromViewer();
 
     this.addEffect(() => {
-      setQualityOnViewer(this._renderQualitySignal(), this._viewer);
+      setQualityOnViewer(this._qualitySettings(), this._viewer);
     });
     this.addEffect(() => {
       setCameraKeyBoardSpeedOnViewer(this._cameraKeyBoardSpeed(), this._viewer);
@@ -39,7 +39,7 @@ export class RevealSettingsController {
   }
 
   public get qualitySettings(): Signal<QualitySettings> {
-    return this._renderQualitySignal;
+    return this._qualitySettings;
   }
 
   public get cameraKeyBoardSpeed(): Signal<number> {
