@@ -1,12 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
-import { BaseCommand } from './BaseCommand';
+import { BaseCommand, type CommandUpdateDelegate } from './BaseCommand';
 import { signal } from '@cognite/signals';
 
 describe(BaseCommand.name, () => {
   test('should call event listeners when signal change', async () => {
     const command = new DisposableCommand();
 
-    const mockEventListener = vi.fn();
+    const mockEventListener = vi.fn<CommandUpdateDelegate>();
     command.addEventListener(mockEventListener);
     expect(mockEventListener).toHaveBeenCalledTimes(0);
 
@@ -20,7 +20,7 @@ describe(BaseCommand.name, () => {
   test('should not call event listeners when signal change after dispose', async () => {
     const command = new DisposableCommand();
 
-    const mockEventListener = vi.fn();
+    const mockEventListener = vi.fn<CommandUpdateDelegate>();
     command.addEventListener(mockEventListener);
 
     command.dispose();
