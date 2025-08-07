@@ -15,6 +15,7 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(domainObject.model).toBe(image360Collection);
     expect(domainObject.typeName).toEqual({ untranslated: 'Image360' });
     expect(domainObject.icon).toEqual('View360');
+    expect(domainObject.name).toEqual('360 Model Name');
     expect(domainObject.hasIconColor).toEqual(false);
     expect(domainObject.createRenderStyle()).toBeInstanceOf(Image360CollectionRenderStyle);
   });
