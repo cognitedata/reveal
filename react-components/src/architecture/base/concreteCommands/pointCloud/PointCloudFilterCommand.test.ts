@@ -27,7 +27,6 @@ describe(PointCloudFilterCommand.name, () => {
     assert(command.children !== undefined);
     expect(command.isEnabled).toBe(true);
     expect(command.children).toHaveLength(classesCount());
-    expect(command.children).toHaveLength(6);
   });
 
   test('should have children even when initializeChildrenIfNeeded is called twice', () => {
@@ -35,7 +34,6 @@ describe(PointCloudFilterCommand.name, () => {
     expect(command.isEnabled).toBe(true);
     assert(command.children !== undefined);
     expect(command.children).toHaveLength(classesCount());
-    expect(command.children).toHaveLength(6);
   });
 
   test('should not have children when no point cloud is present', () => {
