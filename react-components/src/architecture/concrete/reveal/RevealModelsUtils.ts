@@ -101,7 +101,7 @@ export class RevealModelsUtils {
     try {
       domainObject.name = await RevealModelsUtils.getName(renderTarget.rootDomainObject.sdk, model);
     } catch (error) {
-      console.error('Can not get name if point cloud', error);
+      console.error('Can not get name of point cloud', error);
     }
     return model;
   }
