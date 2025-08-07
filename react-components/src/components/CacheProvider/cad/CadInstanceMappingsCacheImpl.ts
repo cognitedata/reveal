@@ -7,7 +7,6 @@ import {
   type ModelRevisionId,
   type ModelRevisionKey
 } from '../types';
-import { partition } from 'lodash';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import { executeParallel } from '../../../utilities/executeParallel';
 import { isDefined } from '../../../utilities/isDefined';
@@ -53,7 +52,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
       return new Map();
     }
 
-    const [dmsInstances, internalIds] = partition(instances, isDmsInstance);
+    const dmsInstances = instances.filter(isDmsInstance);
 
     const dmResults = await this._dmCache?.getMappingsForFdmInstances(dmsInstances, models);
 
@@ -64,7 +63,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
         const nodeResult = await this._classicCache?.getNodesForInstanceIds(
           model.modelId,
           model.revisionId,
-          internalIds
+          instances
         );
 
         if (nodeResult === undefined) {

@@ -14,6 +14,10 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
 import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
+import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
+import { MeasurePointCreator } from './point/MeasurePointCreator';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -43,6 +47,7 @@ export class MeasurementTool extends PrimitiveEditTool {
     const boundingBox = new Box3();
     for (const domainObject of this.getSelectable()) {
       if (
+        domainObject instanceof MeasurePointDomainObject ||
         domainObject instanceof MeasureBoxDomainObject ||
         domainObject instanceof MeasureLineDomainObject ||
         domainObject instanceof MeasureCylinderDomainObject
@@ -63,12 +68,31 @@ export class MeasurementTool extends PrimitiveEditTool {
     this.setAllVisible(false);
   }
 
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    const intersection = await this.getIntersection(event);
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
+    if (!(domainObject instanceof MeasurePointDomainObject)) {
+      await super.onWheel(event, delta);
+      return;
+    }
+    if (domainObject.focusType === FocusType.None) {
+      await super.onWheel(event, delta);
+      return;
+    }
+    // Change size
+    this.addTransaction(domainObject.createTransaction(Changes.geometry));
+    const factor = 1 - Math.sign(delta) * 0.1;
+    domainObject.size *= factor;
+    domainObject.notify(Changes.geometry);
+  }
+
   // ==================================================
   // OVERRIDES of BaseEditTool
   // ==================================================
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return (
+      domainObject instanceof MeasurePointDomainObject ||
       domainObject instanceof MeasureBoxDomainObject ||
       domainObject instanceof MeasureLineDomainObject ||
       domainObject instanceof MeasureCylinderDomainObject
@@ -92,6 +116,9 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   protected override createCreator(): BaseCreator | undefined {
     switch (this.primitiveType) {
+      case PrimitiveType.Point:
+        return new MeasurePointCreator(new MeasurePointDomainObject());
+
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:
       case PrimitiveType.Polygon:
