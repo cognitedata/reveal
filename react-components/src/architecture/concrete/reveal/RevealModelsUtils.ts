@@ -78,7 +78,7 @@ export class RevealModelsUtils {
     try {
       domainObject.name = await RevealModelsUtils.getName(renderTarget.rootDomainObject.sdk, model);
     } catch (error) {
-      console.error('Can not get Cad model name', error);
+      console.error('Can not get name of Cad model', error);
     }
     return model;
   }
@@ -101,7 +101,7 @@ export class RevealModelsUtils {
     try {
       domainObject.name = await RevealModelsUtils.getName(renderTarget.rootDomainObject.sdk, model);
     } catch (error) {
-      console.error('Can not get model name', error);
+      console.error('Can not get name if point cloud', error);
     }
     return model;
   }
