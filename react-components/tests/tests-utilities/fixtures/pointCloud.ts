@@ -63,7 +63,7 @@ export function createPointCloudMock(parameters?: {
       .setup((p) => {
         p.pointSize = pointSize;
       })
-      .returns(true as any)
+      .returns()
 
       // Mock pointColorType
       .setup((p) => p.pointColorType)
@@ -71,7 +71,7 @@ export function createPointCloudMock(parameters?: {
       .setup((p) => {
         p.pointColorType = pointColorType;
       })
-      .returns(true as any)
+      .returns()
 
       // Mock pointShape
       .setup((p) => p.pointShape)
@@ -79,7 +79,7 @@ export function createPointCloudMock(parameters?: {
       .setup((p) => {
         p.pointShape = pointShape;
       })
-      .returns(true as any)
+      .returns()
 
       // Mock classes
       .setup((p) => p.hasClass)
