@@ -17,9 +17,9 @@ import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { IndexSet } from '@cognite/reveal';
 import { type ClassicModelIdentifier } from '../../SceneContainer/sceneTypes';
 import {
-  type CadModelTreeIndexMappings,
   type CadInstanceMappingsCache,
-  type CadModelMappingsWithNodes
+  type CadModelMappingsWithNodes,
+  type CadModelMappings
 } from '../../CacheProvider/cad/CadInstanceMappingsCache';
 import { type ClassicCadAssetMappingCache } from '../../CacheProvider/cad/ClassicCadAssetMappingCache';
 import { type FdmKey } from '../../CacheProvider/types';
@@ -100,9 +100,9 @@ describe(useCalculateCadStyling.name, () => {
     ];
 
     let allMappingsPromiseResolver: (
-      value: CadModelTreeIndexMappings | PromiseLike<CadModelTreeIndexMappings>
+      value: CadModelMappings | PromiseLike<CadModelMappings>
     ) => void = () => {};
-    const allMappingsPromise = new Promise<CadModelTreeIndexMappings>((resolve) => {
+    const allMappingsPromise = new Promise<CadModelMappings>((resolve) => {
       allMappingsPromiseResolver = resolve;
     });
 
