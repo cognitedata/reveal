@@ -14,7 +14,6 @@ export class RevealSettingsController {
   private readonly _disposables: Array<() => void> = [];
 
   public get disposableCount(): number {
-    // Added for testing purposes
     return this._disposables.length;
   }
 
@@ -39,7 +38,7 @@ export class RevealSettingsController {
     });
   }
 
-  public get renderQuality(): Signal<QualitySettings> {
+  public get qualitySettings(): Signal<QualitySettings> {
     return this._renderQualitySignal;
   }
 
