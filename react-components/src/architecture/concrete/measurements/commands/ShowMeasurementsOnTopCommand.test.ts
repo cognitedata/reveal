@@ -9,7 +9,6 @@ import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
-import { isInstanceOf } from '../../../base/domainObjectsHelpers/Class';
 import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 import { count } from '../../../base/utilities/extensions/generatorUtils';
 
@@ -71,9 +70,9 @@ function addSomeMeasurementDomainObjects(root: DomainObject): void {
 function* getAllRenderStylesForAllMeasurements(root: DomainObject): Generator<CommonRenderStyle> {
   for (const descendant of root.getDescendants()) {
     if (
-      isInstanceOf(descendant, MeasureBoxDomainObject) ||
-      isInstanceOf(descendant, MeasureLineDomainObject) ||
-      isInstanceOf(descendant, MeasureCylinderDomainObject)
+      descendant instanceof MeasureBoxDomainObject ||
+      descendant instanceof MeasureLineDomainObject ||
+      descendant instanceof MeasureCylinderDomainObject
     ) {
       const style = descendant.getRenderStyle();
       assert(style instanceof CommonRenderStyle, 'Render style should be CommonRenderStyle');

@@ -1,7 +1,10 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   VisualDomainObject,
@@ -60,6 +63,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public constructor(primitiveType: PrimitiveType) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -223,3 +227,10 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     }
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.PlaneX,
+  PrimitiveType.PlaneY,
+  PrimitiveType.PlaneZ,
+  PrimitiveType.PlaneXY
+];
