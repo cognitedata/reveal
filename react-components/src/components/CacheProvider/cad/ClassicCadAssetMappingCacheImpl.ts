@@ -37,6 +37,11 @@ import { isDefined } from '../../../utilities/isDefined';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type RawHybridAssetMapping } from '../../../query/network/cad/fetchHybridAssetMappingsForModels';
 
+type HybridAssetMappingFilter = (
+  | Filter3DAssetMappingsQuery
+  | { filter: { assetInstanceIds: DmsUniqueIdentifier[] }; limit?: number }
+) & { getDmsInstances?: boolean };
+
 export function createClassicCadAssetMappingCache(sdk: CogniteClient): ClassicCadAssetMappingCache {
   return new ClassicCadAssetMappingCacheImpl(sdk);
 }
@@ -334,10 +339,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   private async fetchMappingsWithFilter(
     modelId: ModelId,
     revisionId: RevisionId,
-    filter: (
-      | Filter3DAssetMappingsQuery
-      | { filter: { assetInstanceIds: DmsUniqueIdentifier[] }; limit?: number }
-    ) & { getDmsInstances?: boolean }
+    filter: HybridAssetMappingFilter
   ): Promise<RawHybridAssetMapping[]> {
     return await this._sdk.assetMappings3D
       .filter(modelId, revisionId, filter as unknown as Filter3DAssetMappingsQuery)
