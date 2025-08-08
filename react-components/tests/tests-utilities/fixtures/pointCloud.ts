@@ -5,7 +5,7 @@ import {
   type DMDataSourceType
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
-import { Matrix4 } from 'three';
+import { Color, Matrix4 } from 'three';
 import { type TaggedAddPointCloudResourceOptions } from '../../../src/components/Reveal3DResources/types';
 
 export const pointCloudModelOptions: AddModelOptions<ClassicDataSourceType> = {
@@ -18,6 +18,16 @@ export const taggedPointCloudModelOptions = {
   addOptions: pointCloudModelOptions
 } as const satisfies TaggedAddPointCloudResourceOptions;
 
+export const pointCloudClasses = [
+  { name: 'Class 0', code: 0, color: new Color(1, 0, 0), visible: true, hasClass: true },
+  { name: 'Class 1', code: 1, color: new Color(0, 1, 0), visible: true, hasClass: true },
+  { name: 'Class 2', code: 2, color: new Color(0, 0, 1), visible: true, hasClass: true },
+  { name: 'Class 3', code: 3, color: new Color(1, 1, 0), visible: true, hasClass: true },
+  { name: 'Class 4', code: 4, color: new Color(0, 1, 1), visible: true, hasClass: true },
+  { name: 'Class 5', code: 5, color: new Color(1, 0, 1), visible: true, hasClass: true },
+  { name: 'Unused ', code: 6, color: new Color(1, 0, 1), visible: false, hasClass: false } // THe Unused class last, to simplify the test logic
+];
+
 export function createPointCloudMock(parameters?: {
   visible?: boolean;
   modelId?: number;
@@ -26,21 +36,41 @@ export function createPointCloudMock(parameters?: {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
 
-  return new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
-    .setup((p) => p.modelId)
-    .returns(modelId)
-    .setup((p) => p.revisionId)
-    .returns(revisionId)
-    .setup((p) => p.modelIdentifier)
-    .returns({ modelId, revisionId })
-    .setup((p) => p.getModelTransformation())
-    .returns(new Matrix4())
-    .setup((p) => p.visible)
-    .returns(parameters?.visible ?? true)
-    .setup((p) => p.type)
-    .returns('pointcloud')
-    .prototypeof(CognitePointCloudModel.prototype)
-    .object();
+  return (
+    new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
+      .setup((p) => p.modelId)
+      .returns(modelId)
+      .setup((p) => p.revisionId)
+      .returns(revisionId)
+      .setup((p) => p.modelIdentifier)
+      .returns({ modelId, revisionId })
+      .setup((p) => p.getModelTransformation())
+      .returns(new Matrix4())
+      .setup((p) => p.visible)
+      .returns(parameters?.visible ?? true)
+      .setup((p) => p.type)
+      .returns('pointcloud')
+
+      // Mock classes
+      .setup((p) => p.hasClass)
+      .returns((pointClass: number) => {
+        return pointCloudClasses[pointClass].hasClass;
+      })
+      .setup((p) => p.isClassVisible)
+      .returns((pointClass: number) => {
+        return pointCloudClasses[pointClass].visible;
+      })
+      .setup((p) => p.setClassVisible)
+      .returns((pointClass: number, visible: boolean) => {
+        pointCloudClasses[pointClass].visible = visible;
+      })
+      .setup((p) => p.getClasses)
+      .returns(() => {
+        return pointCloudClasses;
+      })
+      .prototypeof(CognitePointCloudModel.prototype)
+      .object()
+  );
 }
 
 export function createPointCloudDMMock(parameters?: {

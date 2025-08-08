@@ -5,10 +5,10 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CogniteCadModel,
-  CognitePointCloudModel,
   Image360Action,
-  type DataSourceType
+  type DataSourceType,
+  CogniteCadModel,
+  CognitePointCloudModel
 } from '@cognite/reveal';
 import {
   Vector3,
