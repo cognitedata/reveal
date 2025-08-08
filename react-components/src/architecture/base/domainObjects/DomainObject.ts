@@ -31,6 +31,7 @@ import {
 } from '../../../advanced-tree-view';
 import { getRenderTarget } from './getRoot';
 import { translate } from '../utilities/translateUtils';
+import { effect } from '@cognite/signals';
 import { generateUniqueId, type UniqueId } from '../utilities/types';
 
 /**
@@ -66,6 +67,11 @@ export abstract class DomainObject implements TreeNodeType {
 
   // Views and listeners
   public readonly views: Views = new Views();
+  private readonly _disposables: Array<() => void> = [];
+
+  public get disposableCount(): number {
+    return this._disposables.length;
+  }
 
   // Unique guid for the domain object, used as soft reference
   private _uniqueId: UniqueId;
@@ -481,12 +487,17 @@ export abstract class DomainObject implements TreeNodeType {
 
   /**
    * Removes the core functionality of the domain object.
+   * This will automatically be called when the domain object is removed from its parent, by the function DomainObject.remove()
    * This method should be overridden in derived classes to provide custom implementation.
    * @remarks
-   * Always call `super.removeCore()` in the overrides.
+   * Always call `super.dispose()` in the overrides.
    */
-  protected removeCore(): void {
-    this.views.clear();
+  public dispose(): void {
+    this.views.dispose();
+    for (const disposable of this._disposables) {
+      disposable();
+    }
+    clear(this._disposables);
   }
 
   // ==================================================
@@ -893,7 +904,7 @@ export abstract class DomainObject implements TreeNodeType {
       throw Error(`The child ${this.getTypeName()} is not child of it's parent`);
     }
     clear(this._children);
-    this.removeCore();
+    this.dispose();
 
     if (this.parent !== undefined) {
       removeAt(this.parent.children, childIndex);
@@ -992,5 +1003,21 @@ export abstract class DomainObject implements TreeNodeType {
         return BLACK_COLOR;
     }
     return WHITE_COLOR;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Miscellaneous
+  // ==================================================
+
+  protected addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
+  }
+
+  protected addEffect(effectFunction: () => void): void {
+    this.addDisposable(
+      effect(() => {
+        effectFunction();
+      })
+    );
   }
 }
