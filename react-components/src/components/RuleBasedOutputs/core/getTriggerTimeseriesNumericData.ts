@@ -13,5 +13,6 @@ export const getTriggerTimeseriesNumericData = (
 
   const datapoint = dataFound?.datapoints[dataFound?.datapoints.length - 1]?.value;
 
+  if (datapoint === undefined) return;
   return Number(datapoint);
 };
