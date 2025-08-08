@@ -10,13 +10,18 @@ import {
 import { type ClassicCadAssetMappingCache } from '../../CacheProvider/cad/ClassicCadAssetMappingCache';
 import { Mock } from 'moq.ts';
 import { type Node3D } from '@cognite/sdk';
-import { type FdmSDK, type InspectResultList } from '../../../data-providers/FdmSDK';
+import {
+  DmsUniqueIdentifier,
+  type FdmSDK,
+  type InspectResultList
+} from '../../../data-providers/FdmSDK';
 import { type DmCadAssetMapping } from '../../CacheProvider/cad/assetMappingTypes';
 import { type CadModelOptions } from '../../Reveal3DResources';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ViewerContext } from '../../RevealCanvas/ViewerContext';
 import { type RevealRenderTarget } from '../../../architecture';
 import { type InstanceKey } from '../../../utilities/instanceIds';
+import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 
 describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   const queryClient = new QueryClient();
@@ -29,27 +34,17 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     }
   ];
 
-  const firstNode3DMock: Node3D = {
+  const firstNode3DMock = createCadNodeMock({
     id: 111,
-    name: 'Test Node',
     treeIndex: 222,
-    boundingBox: { min: [0, 0, 0], max: [1, 1, 1] },
-    parentId: 0,
-    depth: 1,
-    subtreeSize: 1,
-    properties: {}
-  };
+    subtreeSize: 1
+  });
 
-  const secondNode3DMock: Node3D = {
+  const secondNode3DMock = createCadNodeMock({
     id: 333,
-    name: 'Test Node',
     treeIndex: 444,
-    boundingBox: { min: [0, 0, 0], max: [1, 1, 1] },
-    parentId: 0,
-    depth: 1,
-    subtreeSize: 1,
-    properties: {}
-  };
+    subtreeSize: 1
+  });
 
   const mockDmCadAssetMappings: DmCadAssetMapping[] = [
     {
@@ -72,21 +67,18 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     }
   ];
 
-  const mockAssetMappingData = new Map<InstanceKey, Node3D[]>([
-    [
-      `${mockDmCadAssetMappings[0].instanceId.space}/${mockDmCadAssetMappings[0].instanceId.externalId}` as InstanceKey,
-      [firstNode3DMock]
-    ],
-    [
-      `${mockDmCadAssetMappings[1].instanceId.space}/${mockDmCadAssetMappings[1].instanceId.externalId}` as InstanceKey,
-      [secondNode3DMock]
-    ]
-  ]);
+  const mockAssetMappingData = createAssetMappingDataMapMock(
+    mockDmCadAssetMappings.map((mapping) => mapping.instanceId),
+    [firstNode3DMock, secondNode3DMock]
+  );
 
-  const mockNoMatchedAssetMappingData = new Map<InstanceKey, Node3D[]>([
-    ['test-space/other-instance-1', [firstNode3DMock]],
-    ['test-space/other-instance-2', [secondNode3DMock]]
-  ]);
+  const mockNoMatchedAssetMappingData = createAssetMappingDataMapMock(
+    [
+      { space: 'test-space', externalId: 'other-instance-1' },
+      { space: 'test-space', externalId: 'other-instance-2' }
+    ],
+    [firstNode3DMock, secondNode3DMock]
+  );
 
   const mockDmNodesInspectList: InspectResultList = {
     items: [
@@ -143,7 +135,7 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   });
 
   it('should return an empty array if no matched asset mappings are found from the mappings cache', async () => {
-    const mockClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
+    const mockClassicCadAssetMappingCache: ClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getNodesForInstanceIds)
       .returns(vi.fn(async () => await Promise.resolve(mockNoMatchedAssetMappingData)))
       .object();
@@ -213,25 +205,11 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
             externalId: mockDmCadAssetMappings[0].instanceId.externalId,
             space: mockDmCadAssetMappings[0].instanceId.space
           },
-          instanceType: 'node',
           modelId: modelsMock[0].modelId,
           revisionId: modelsMock[0].revisionId,
           treeIndex: firstNode3DMock.treeIndex
         },
-        cadNode: {
-          id: firstNode3DMock.id,
-          parentId: firstNode3DMock.parentId,
-          depth: firstNode3DMock.depth,
-          name: 'Test Node',
-          modelId: modelsMock[0].modelId,
-          revisionId: modelsMock[0].revisionId,
-          nodeId: firstNode3DMock.id,
-          treeIndex: firstNode3DMock.treeIndex,
-          subtreeSize: firstNode3DMock.subtreeSize,
-          instanceType: 'node',
-          version: 1,
-          properties: {}
-        },
+        cadNode: firstNode3DMock,
         views: mockDmNodesInspectList.items[0].inspectionResults.involvedViews
       },
       {
@@ -240,25 +218,11 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
             externalId: mockDmCadAssetMappings[1].instanceId.externalId,
             space: mockDmCadAssetMappings[1].instanceId.space
           },
-          instanceType: 'node',
           modelId: modelsMock[0].modelId,
           revisionId: modelsMock[0].revisionId,
           treeIndex: secondNode3DMock.treeIndex
         },
-        cadNode: {
-          id: secondNode3DMock.id,
-          parentId: secondNode3DMock.parentId,
-          depth: secondNode3DMock.depth,
-          name: 'Test Node',
-          modelId: modelsMock[0].modelId,
-          revisionId: modelsMock[0].revisionId,
-          nodeId: secondNode3DMock.id,
-          treeIndex: secondNode3DMock.treeIndex,
-          subtreeSize: secondNode3DMock.subtreeSize,
-          instanceType: 'node',
-          version: 1,
-          properties: {}
-        },
+        cadNode: secondNode3DMock,
         views: mockDmNodesInspectList.items[1].inspectionResults.involvedViews
       }
     ];
@@ -267,3 +231,14 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     });
   });
 });
+
+function createAssetMappingDataMapMock(
+  instanceIds: DmsUniqueIdentifier[],
+  node3D: Node3D[]
+): Map<InstanceKey, Node3D[]> {
+  const map = new Map<InstanceKey, Node3D[]>();
+  instanceIds.forEach((instanceId, index) => {
+    map.set(`${instanceId.space}/${instanceId.externalId}` as const, [node3D[index]]);
+  });
+  return map;
+}
