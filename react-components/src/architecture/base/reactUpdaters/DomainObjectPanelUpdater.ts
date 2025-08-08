@@ -2,6 +2,18 @@ import { signal } from '@cognite/signals';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
+/**
+ * Manages the state and updates for a domain object's panel in a React application.
+ *
+ * The `DomainObjectPanelUpdater` class is responsible for tracking the currently selected domain object,
+ * handling visibility of the domain object panel, and notifying the UI of relevant changes to the domain object.
+ * It uses signals to manage reactivity and trigger updates when the domain object changes.
+ *
+ * @remarks
+ * - The panel is only shown for domain objects that have panel information (`hasPanelInfo`).
+ * - The `update` signal is incremented to force UI updates when certain changes occur.
+ *
+ */
 export class DomainObjectPanelUpdater {
   // ==================================================
   // STATIC FIELDS

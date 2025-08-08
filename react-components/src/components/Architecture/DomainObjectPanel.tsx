@@ -22,6 +22,7 @@ export const DomainObjectPanel = (): ReactElement => {
   const renderTarget = useRenderTarget();
   const panelUpdater = renderTarget.panelUpdater;
   const domainObject = useSignalValue(panelUpdater.selectedDomainObject);
+  useSignalValue(panelUpdater.update);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
 
   if (domainObject === undefined || commands === undefined) {
