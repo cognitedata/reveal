@@ -2,6 +2,7 @@ import { assert, beforeEach, describe, expect, test, vi } from 'vitest';
 import { isEmpty } from '../utilities/TranslateInput';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { KeyboardSpeedCommand } from './KeyboardSpeedCommand';
+import { type CommandUpdateDelegate } from '../commands/BaseCommand';
 
 describe(KeyboardSpeedCommand.name, () => {
   let command: KeyboardSpeedCommand;
@@ -54,14 +55,14 @@ describe(KeyboardSpeedCommand.name, () => {
   test('Should listen when cameraKeyBoardSpeed change in RevealSettingsController', () => {
     renderTarget.revealSettingsController.cameraKeyBoardSpeed(1);
 
-    const mock = vi.fn();
-    command.addEventListener(mock);
+    const mockEventListener = vi.fn<CommandUpdateDelegate>();
+    command.addEventListener(mockEventListener);
 
     renderTarget.revealSettingsController.cameraKeyBoardSpeed(2);
-    expect(mock).toHaveBeenCalledOnce();
+    expect(mockEventListener).toHaveBeenCalledOnce();
     renderTarget.revealSettingsController.cameraKeyBoardSpeed(2);
-    expect(mock).toHaveBeenCalledOnce(); // No change
+    expect(mockEventListener).toHaveBeenCalledOnce(); // No change
     renderTarget.revealSettingsController.cameraKeyBoardSpeed(3);
-    expect(mock).toHaveBeenCalledTimes(2);
+    expect(mockEventListener).toHaveBeenCalledTimes(2);
   });
 });
