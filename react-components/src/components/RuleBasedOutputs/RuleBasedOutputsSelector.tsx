@@ -26,6 +26,7 @@ import {
   type ClassicCadAssetMapping
 } from '../CacheProvider/cad/assetMappingTypes';
 import { useGetDMConnectionWithNodeFromHybridMappingsQuery } from './hooks/useGetDMConnectionWithNodeFromHybridMappingsQuery';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -72,7 +73,7 @@ export function RuleBasedOutputsSelector({
 
   const { data: dmConnectionWithNodeFromHybridDataList } =
     useGetDMConnectionWithNodeFromHybridMappingsQuery(
-      nodeWithDmIdsFromHybridMappings ?? [],
+      nodeWithDmIdsFromHybridMappings ?? EMPTY_ARRAY,
       cadModels
     );
 
@@ -82,10 +83,12 @@ export function RuleBasedOutputsSelector({
       : [];
   }, [fdmMappedEquipmentEdges]);
 
+  const allFdmConnections = useMemo(() => {
+    return fdmConnectionWithNodeAndViewList.concat(dmConnectionWithNodeFromHybridDataList ?? []);
+  }, [fdmConnectionWithNodeAndViewList, dmConnectionWithNodeFromHybridDataList]);
+
   const { data: fdmMappings, isLoading: isFdmMappingsLoading } =
-    useAll3dDirectConnectionsWithProperties(
-      fdmConnectionWithNodeAndViewList.concat(dmConnectionWithNodeFromHybridDataList ?? [])
-    );
+    useAll3dDirectConnectionsWithProperties(allFdmConnections);
 
   const allMappingsLoaded =
     !isAssetMappingsLoading &&
