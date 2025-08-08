@@ -20,7 +20,7 @@ describe(SetQualitySliderCommand.name, () => {
 
     expect(command.value).not.toEqual(testQualitySetting);
 
-    renderTarget.revealSettingsController.renderQuality(testQualitySetting);
+    renderTarget.revealSettingsController.qualitySettings(testQualitySetting);
 
     expect(command.value).toEqual(testFidelityLevel);
   });
@@ -29,19 +29,19 @@ describe(SetQualitySliderCommand.name, () => {
     const testFidelityLevel = 3;
     const testQualitySetting = getQualityForFidelityLevel(testFidelityLevel);
 
-    expect(renderTarget.revealSettingsController.renderQuality()).not.toEqual(testQualitySetting);
+    expect(renderTarget.revealSettingsController.qualitySettings()).not.toEqual(testQualitySetting);
 
     command.value = testFidelityLevel;
 
-    expect(renderTarget.revealSettingsController.renderQuality()).toEqual(testQualitySetting);
+    expect(renderTarget.revealSettingsController.qualitySettings()).toEqual(testQualitySetting);
   });
 
   test('ignores invalid inputs', () => {
-    const originalQuality = renderTarget.revealSettingsController.renderQuality();
+    const originalQuality = renderTarget.revealSettingsController.qualitySettings();
 
     command.value = 100;
 
-    expect(renderTarget.revealSettingsController.renderQuality()).toEqual(originalQuality);
+    expect(renderTarget.revealSettingsController.qualitySettings()).toEqual(originalQuality);
   });
 
   test('contains a mark for every fidelity level', () => {

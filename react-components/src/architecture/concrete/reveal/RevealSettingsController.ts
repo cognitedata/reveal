@@ -7,13 +7,18 @@ import {
   type Cognite3DViewer,
   type DataSourceType
 } from '@cognite/reveal';
+import { clear } from '../../base/utilities/extensions/arrayUtils';
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _disposables: Array<() => void> = [];
 
+  public get disposableCount(): number {
+    return this._disposables.length;
+  }
+
   // The settings
-  private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  private readonly _qualitySettings = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
   private readonly _cameraKeyBoardSpeed = signal<number>(1);
   private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
 
@@ -23,7 +28,7 @@ export class RevealSettingsController {
     this.copyDefaultValuesFromViewer();
 
     this.addEffect(() => {
-      setQualityOnViewer(this._renderQualitySignal(), this._viewer);
+      setQualityOnViewer(this._qualitySettings(), this._viewer);
     });
     this.addEffect(() => {
       setCameraKeyBoardSpeedOnViewer(this._cameraKeyBoardSpeed(), this._viewer);
@@ -33,8 +38,8 @@ export class RevealSettingsController {
     });
   }
 
-  public get renderQuality(): Signal<QualitySettings> {
-    return this._renderQualitySignal;
+  public get qualitySettings(): Signal<QualitySettings> {
+    return this._qualitySettings;
   }
 
   public get cameraKeyBoardSpeed(): Signal<number> {
@@ -49,10 +54,15 @@ export class RevealSettingsController {
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
+  }
+
+  private addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
   }
 
   private addEffect(effectFunction: () => void): void {
-    this._disposables.push(
+    this.addDisposable(
       effect(() => {
         effectFunction();
       })
