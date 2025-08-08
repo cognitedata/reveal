@@ -53,15 +53,7 @@ export class DomainObjectPanelUpdater {
       if (change.isChanged(Changes.selected)) {
         this.show(domainObject);
       }
-      if (
-        change.isChanged(
-          Changes.selected,
-          Changes.geometry,
-          Changes.dragging,
-          Changes.naming,
-          Changes.unit
-        )
-      ) {
+      if (change.isChanged(Changes.geometry, Changes.dragging, Changes.naming, Changes.unit)) {
         this.update(this.update() + 1); // Force update
       }
     } else {

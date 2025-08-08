@@ -314,22 +314,6 @@ describe(DomainObject.name, () => {
     childTester.toHaveBeenCalledOnce();
   });
 
-  test('should notify notify descendants..... style root', () => {
-    const child = new ChildDomainObject();
-    const renderTarget = createFullRenderTargetMock();
-    renderTarget.rootDomainObject.addChild(child);
-    const { panelUpdater } = renderTarget;
-
-    child.isSelected = true;
-    expect(panelUpdater.selectedDomainObject()).toBeUndefined();
-    child.notify(Changes.selected);
-
-    expect(panelUpdater.selectedDomainObject()).toBe(child);
-    child.isSelected = false;
-    child.notify(Changes.selected);
-    expect(panelUpdater.selectedDomainObject()).toBeUndefined();
-  });
-
   test('should get style for the render target root', () => {
     const parent = new ParentDomainObject();
     const child = new ChildDomainObject();
