@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { FdmKey, type FdmConnectionWithNode } from '../components/CacheProvider/types';
+import { type FdmKey, type FdmConnectionWithNode } from '../components/CacheProvider/types';
 import { type InstanceType } from '@cognite/sdk';
 import { chunk, uniqBy } from 'lodash';
 import {
@@ -144,29 +144,27 @@ export function useAll3dDirectConnectionsWithProperties(
           )
           .filter((item) => item.items.length > 0);
 
-      const instanceWithData =
-        instanceItemsAndTyping.flatMap((itemsData) => {
-          const dataFound = itemsData.items
-            .map((itemData) => {
-              const fdmKey = createFdmKey(itemData);
+      const instanceWithData = instanceItemsAndTyping.flatMap((itemsData) => {
+        const dataFound = itemsData.items
+          .map((itemData) => {
+            const fdmKey = createFdmKey(itemData);
 
-              if (!connectionWithNodeAndViewMap.has(fdmKey)) return undefined;
+            if (!connectionWithNodeAndViewMap.has(fdmKey)) return undefined;
 
-              const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
-              connectionWithNodeAndViewMap.delete(fdmKey);
-              return connectionsFound?.map((connectionFound) => {
-                return {
-                  instanceType: 'node' as const,
-                  ...connectionFound,
-                  ...itemsData
-                };
-              });
-
-            })
-            .flat()
-            .filter(isDefined);
-          return dataFound;
-        });
+            const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
+            connectionWithNodeAndViewMap.delete(fdmKey);
+            return connectionsFound?.map((connectionFound) => {
+              return {
+                instanceType: 'node' as const,
+                ...connectionFound,
+                ...itemsData
+              };
+            });
+          })
+          .flat()
+          .filter(isDefined);
+        return dataFound;
+      });
 
       return instanceWithData;
     },

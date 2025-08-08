@@ -7,9 +7,9 @@ import { inspectNodes } from '../../CacheProvider/requests';
 import { uniqBy } from 'lodash';
 import { useContext, useMemo } from 'react';
 import { UseGetDMConnectionWithNodeFromHybridMappingsQueryContext } from './useGetDMConnectionWithNodeFromHybridMappingsQuery.context';
-import { InspectResultList } from '../../../data-providers/FdmSDK';
-import { InstanceKey } from '../../../utilities/instanceIds';
-import { Node3D } from '@cognite/sdk';
+import { type InspectResultList } from '../../../data-providers/FdmSDK';
+import { type InstanceKey } from '../../../utilities/instanceIds';
+import { type Node3D } from '@cognite/sdk';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { restrictToDmsId } from '../../../utilities/restrictToDmsId';
 

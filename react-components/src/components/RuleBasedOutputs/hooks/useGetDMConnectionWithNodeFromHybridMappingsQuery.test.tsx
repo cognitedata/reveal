@@ -11,7 +11,7 @@ import { type ClassicCadAssetMappingCache } from '../../CacheProvider/cad/Classi
 import { Mock } from 'moq.ts';
 import { type Node3D } from '@cognite/sdk';
 import {
-  DmsUniqueIdentifier,
+  type DmsUniqueIdentifier,
   type FdmSDK,
   type InspectResultList
 } from '../../../data-providers/FdmSDK';
@@ -135,10 +135,11 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   });
 
   it('should return an empty array if no matched asset mappings are found from the mappings cache', async () => {
-    const mockClassicCadAssetMappingCache: ClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
-      .setup((p) => p.getNodesForInstanceIds)
-      .returns(vi.fn(async () => await Promise.resolve(mockNoMatchedAssetMappingData)))
-      .object();
+    const mockClassicCadAssetMappingCache: ClassicCadAssetMappingCache =
+      new Mock<ClassicCadAssetMappingCache>()
+        .setup((p) => p.getNodesForInstanceIds)
+        .returns(vi.fn(async () => await Promise.resolve(mockNoMatchedAssetMappingData)))
+        .object();
 
     mockDependencies.useClassicCadAssetMappingCache.mockReturnValue(
       mockClassicCadAssetMappingCache
