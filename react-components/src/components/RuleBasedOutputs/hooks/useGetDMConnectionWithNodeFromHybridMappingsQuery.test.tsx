@@ -46,33 +46,20 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     subtreeSize: 1
   });
 
-  const mockDmCadAssetMappings: DmCadAssetMapping[] = [
-    {
-      instanceId: {
-        space: 'test-space',
-        externalId: 'instance-1'
-      },
-      treeIndex: firstNode3DMock.treeIndex,
-      nodeId: firstNode3DMock.id,
-      subtreeSize: firstNode3DMock.subtreeSize
-    },
-    {
-      instanceId: {
-        space: 'test-space',
-        externalId: 'instance-2'
-      },
-      treeIndex: secondNode3DMock.treeIndex,
-      nodeId: secondNode3DMock.id,
-      subtreeSize: secondNode3DMock.subtreeSize
-    }
-  ];
-
-  const mockAssetMappingData = createAssetMappingDataMapMock(
-    mockDmCadAssetMappings.map((mapping) => mapping.instanceId),
+  const mockDmCadAssetMappingsList = createDMCadAssetMappingListMock(
+    [
+      { space: 'test-space', externalId: 'instance-1' },
+      { space: 'test-space', externalId: 'instance-2' }
+    ],
     [firstNode3DMock, secondNode3DMock]
   );
 
-  const mockNoMatchedAssetMappingData = createAssetMappingDataMapMock(
+  const mockAssetMappingDataMap = createAssetMappingDataMapMock(
+    mockDmCadAssetMappingsList.map((mapping) => mapping.instanceId),
+    [firstNode3DMock, secondNode3DMock]
+  );
+
+  const mockNoMatchedAssetMappingDataMap = createAssetMappingDataMapMock(
     [
       { space: 'test-space', externalId: 'other-instance-1' },
       { space: 'test-space', externalId: 'other-instance-2' }
@@ -83,8 +70,8 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   const mockDmNodesInspectList: InspectResultList = {
     items: [
       {
-        space: mockDmCadAssetMappings[0].instanceId.space,
-        externalId: mockDmCadAssetMappings[0].instanceId.externalId,
+        space: mockDmCadAssetMappingsList[0].instanceId.space,
+        externalId: mockDmCadAssetMappingsList[0].instanceId.externalId,
         inspectionResults: {
           involvedViews: [
             { type: 'view', version: '1', space: 'test-space', externalId: 'view-external-id-1' }
@@ -94,8 +81,8 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
         instanceType: 'node'
       },
       {
-        space: mockDmCadAssetMappings[1].instanceId.space,
-        externalId: mockDmCadAssetMappings[1].instanceId.externalId,
+        space: mockDmCadAssetMappingsList[1].instanceId.space,
+        externalId: mockDmCadAssetMappingsList[1].instanceId.externalId,
         inspectionResults: {
           involvedViews: [
             { type: 'view', version: '1', space: 'test-space', externalId: 'view-external-id-2' }
@@ -138,38 +125,25 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     const mockClassicCadAssetMappingCache: ClassicCadAssetMappingCache =
       new Mock<ClassicCadAssetMappingCache>()
         .setup((p) => p.getNodesForInstanceIds)
-        .returns(vi.fn(async () => await Promise.resolve(mockNoMatchedAssetMappingData)))
+        .returns(vi.fn(async () => await Promise.resolve(mockNoMatchedAssetMappingDataMap)))
         .object();
 
     mockDependencies.useClassicCadAssetMappingCache.mockReturnValue(
       mockClassicCadAssetMappingCache
     );
 
-    const mockNoMatchedDmCadAssetMappings: DmCadAssetMapping[] = [
-      {
-        instanceId: {
-          space: 'test-space',
-          externalId: 'instance-555'
-        },
-        treeIndex: firstNode3DMock.treeIndex,
-        nodeId: firstNode3DMock.id,
-        subtreeSize: firstNode3DMock.subtreeSize
-      },
-      {
-        instanceId: {
-          space: 'test-space',
-          externalId: 'instance-666'
-        },
-        treeIndex: secondNode3DMock.treeIndex,
-        nodeId: secondNode3DMock.id,
-        subtreeSize: secondNode3DMock.subtreeSize
-      }
-    ];
+    const mockNoMatchedDmCadAssetMappingsList = createDMCadAssetMappingListMock(
+      [
+        { space: 'test-space', externalId: 'other-instance-1' },
+        { space: 'test-space', externalId: 'other-instance-2' }
+      ],
+      [firstNode3DMock, secondNode3DMock]
+    );
 
     const { result } = renderHook(
       () =>
         useGetDMConnectionWithNodeFromHybridMappingsQuery(
-          mockNoMatchedDmCadAssetMappings,
+          mockNoMatchedDmCadAssetMappingsList,
           modelsMock
         ),
       {
@@ -185,7 +159,7 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   it('should return mapped connections and nodes for valid asset mappings', async () => {
     const mockClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getNodesForInstanceIds)
-      .returns(vi.fn(async () => await Promise.resolve(mockAssetMappingData)))
+      .returns(vi.fn(async () => await Promise.resolve(mockAssetMappingDataMap)))
       .object();
 
     mockDependencies.useClassicCadAssetMappingCache.mockReturnValue(
@@ -193,7 +167,8 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     );
 
     const { result } = renderHook(
-      () => useGetDMConnectionWithNodeFromHybridMappingsQuery(mockDmCadAssetMappings, modelsMock),
+      () =>
+        useGetDMConnectionWithNodeFromHybridMappingsQuery(mockDmCadAssetMappingsList, modelsMock),
       {
         wrapper
       }
@@ -203,8 +178,8 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
       {
         connection: {
           instance: {
-            externalId: mockDmCadAssetMappings[0].instanceId.externalId,
-            space: mockDmCadAssetMappings[0].instanceId.space
+            externalId: mockDmCadAssetMappingsList[0].instanceId.externalId,
+            space: mockDmCadAssetMappingsList[0].instanceId.space
           },
           modelId: modelsMock[0].modelId,
           revisionId: modelsMock[0].revisionId,
@@ -216,8 +191,8 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
       {
         connection: {
           instance: {
-            externalId: mockDmCadAssetMappings[1].instanceId.externalId,
-            space: mockDmCadAssetMappings[1].instanceId.space
+            externalId: mockDmCadAssetMappingsList[1].instanceId.externalId,
+            space: mockDmCadAssetMappingsList[1].instanceId.space
           },
           modelId: modelsMock[0].modelId,
           revisionId: modelsMock[0].revisionId,
@@ -242,4 +217,16 @@ function createAssetMappingDataMapMock(
     map.set(`${instanceId.space}/${instanceId.externalId}` as const, [node3D[index]]);
   });
   return map;
+}
+
+function createDMCadAssetMappingListMock(
+  instanceIds: DmsUniqueIdentifier[],
+  node3ds: Node3D[]
+): DmCadAssetMapping[] {
+  return instanceIds.map((instanceId, index) => ({
+    instanceId,
+    treeIndex: node3ds[index].treeIndex,
+    nodeId: node3ds[index].id,
+    subtreeSize: node3ds[index].subtreeSize
+  }));
 }
