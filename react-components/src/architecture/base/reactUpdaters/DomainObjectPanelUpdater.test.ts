@@ -37,33 +37,33 @@ describe(DomainObjectPanelUpdater.name, () => {
   });
 
   test('should signal updates when the domain object is selected, geometry has changed or remove', () => {
-    let selectedSignalUpdates = 0;
+    let selectedDomainObjectUpdates = 0;
     effect(() => {
       panelUpdater.selectedDomainObject();
-      selectedSignalUpdates++;
+      selectedDomainObjectUpdates++;
     });
-    let updateSignalUpdates = 0;
+    let domainObjectChangedUpdates = 0;
     effect(() => {
-      panelUpdater.update();
-      updateSignalUpdates++;
+      panelUpdater.domainObjectChanged();
+      domainObjectChangedUpdates++;
     });
-    selectedSignalUpdates = 0;
-    updateSignalUpdates = 0;
+    selectedDomainObjectUpdates = 0;
+    domainObjectChangedUpdates = 0;
 
     // Expect only selected signal to update when selecting
     domainObject.setSelectedInteractive(true);
-    expect(selectedSignalUpdates).toBe(1);
-    expect(updateSignalUpdates).toBe(0);
+    expect(selectedDomainObjectUpdates).toBe(1);
+    expect(domainObjectChangedUpdates).toBe(0);
 
     // Expect only update signal to update when geometry change
     domainObject.notify(Changes.geometry);
-    expect(selectedSignalUpdates).toBe(1);
-    expect(updateSignalUpdates).toBe(1);
+    expect(selectedDomainObjectUpdates).toBe(1);
+    expect(domainObjectChangedUpdates).toBe(1);
 
     // Expect only selected signal to update when domain object is removed
     domainObject.removeInteractive();
-    expect(selectedSignalUpdates).toBe(2);
-    expect(updateSignalUpdates).toBe(1);
+    expect(selectedDomainObjectUpdates).toBe(2);
+    expect(domainObjectChangedUpdates).toBe(1);
   });
 });
 

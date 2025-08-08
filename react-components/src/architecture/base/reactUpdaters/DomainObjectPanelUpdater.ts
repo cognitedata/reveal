@@ -20,7 +20,7 @@ export class DomainObjectPanelUpdater {
   // ==================================================
 
   public readonly selectedDomainObject = signal<DomainObject | undefined>();
-  public readonly update = signal(0); // This increment by one when something happens with the domain object
+  public readonly domainObjectChanged = signal(0); // This increment by one when something happens with the domain object
 
   // ==================================================
   // STATIC METHODS
@@ -54,7 +54,7 @@ export class DomainObjectPanelUpdater {
         this.show(domainObject);
       }
       if (change.isChanged(Changes.geometry, Changes.dragging, Changes.naming, Changes.unit)) {
-        this.update(this.update() + 1); // Force update
+        this.domainObjectChanged(this.domainObjectChanged() + 1); // Force update
       }
     } else {
       if (change.isChanged(Changes.selected)) {
