@@ -85,7 +85,7 @@
     "@microsoft/api-extractor": "^7.43.1",
     "@types/dat.gui": "^0.7.13",
     "@types/gl": "^6.0.5",
-    "@types/glob": "^8.1.0",
+    "@types/glob": "^9.0.0",
     "@types/jest": "^29.5.12",
     "@types/jest-environment-puppeteer": "^5.0.6",
     "@types/jest-image-snapshot": "^6.4.0",
