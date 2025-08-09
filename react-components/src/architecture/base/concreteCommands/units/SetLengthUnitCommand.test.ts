@@ -44,9 +44,9 @@ describe(SetLengthUnitCommand.name, () => {
         continue; // Already check
       }
       const unitSystem = renderTarget.rootDomainObject.unitSystem;
-      const oldValue = unitSystem.lengthUnit;
+      const oldValue = unitSystem.lengthUnit();
       expect(option.invoke()).toBe(true);
-      const newValue = unitSystem.lengthUnit;
+      const newValue = unitSystem.lengthUnit();
       expect(oldValue).not.toBe(newValue);
       expect(option.isChecked).toBe(true);
       expect(command.checkedCount).toBe(1);

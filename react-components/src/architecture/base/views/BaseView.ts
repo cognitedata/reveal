@@ -1,7 +1,7 @@
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { getRoot } from '../domainObjects/getRoot';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
-import { UnitSystem } from '../renderTarget/UnitSystem';
+import { UNDEFINED_UNIT_SYSTEM, type UnitSystem } from '../renderTarget/UnitSystem';
 
 /**
  * Represents the observer in the Observer pattern
@@ -95,6 +95,6 @@ export abstract class BaseView<DomainObjectType extends DomainObject = DomainObj
   }
 
   protected getUnitSystem(): UnitSystem {
-    return getRoot(this.domainObject)?.unitSystem ?? new UnitSystem();
+    return getRoot(this.domainObject)?.unitSystem ?? UNDEFINED_UNIT_SYSTEM;
   }
 }
