@@ -1,7 +1,7 @@
 import { type TranslationInput } from '../utilities/TranslateInput';
 
 import { describe, test, expect, beforeEach } from 'vitest';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { DomainObjectPanelUpdater } from './DomainObjectPanelUpdater';
 import { DomainObject } from '../domainObjects/DomainObject';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
