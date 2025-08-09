@@ -2,7 +2,9 @@ import {
   type AddModelOptions,
   CognitePointCloudModel,
   type ClassicDataSourceType,
-  type DMDataSourceType
+  type DMDataSourceType,
+  PointShape,
+  PointColorType
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Color, Matrix4 } from 'three';
@@ -36,41 +38,46 @@ export function createPointCloudMock(parameters?: {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
 
-  return (
-    new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
-      .setup((p) => p.modelId)
-      .returns(modelId)
-      .setup((p) => p.revisionId)
-      .returns(revisionId)
-      .setup((p) => p.modelIdentifier)
-      .returns({ modelId, revisionId })
-      .setup((p) => p.getModelTransformation())
-      .returns(new Matrix4())
-      .setup((p) => p.visible)
-      .returns(parameters?.visible ?? true)
-      .setup((p) => p.type)
-      .returns('pointcloud')
+  const pointCloud = new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
+    .setup((p) => p.modelId)
+    .returns(modelId)
+    .setup((p) => p.revisionId)
+    .returns(revisionId)
+    .setup((p) => p.modelIdentifier)
+    .returns({ modelId, revisionId })
+    .setup((p) => p.getModelTransformation())
+    .returns(new Matrix4())
+    .setup((p) => p.visible)
+    .returns(parameters?.visible ?? true)
+    .setup((p) => p.type)
+    .returns('pointcloud')
 
-      // Mock classes
-      .setup((p) => p.hasClass)
-      .returns((pointClass: number) => {
-        return pointCloudClasses[pointClass].hasClass;
-      })
-      .setup((p) => p.isClassVisible)
-      .returns((pointClass: number) => {
-        return pointCloudClasses[pointClass].visible;
-      })
-      .setup((p) => p.setClassVisible)
-      .returns((pointClass: number, visible: boolean) => {
-        pointCloudClasses[pointClass].visible = visible;
-      })
-      .setup((p) => p.getClasses)
-      .returns(() => {
-        return pointCloudClasses;
-      })
-      .prototypeof(CognitePointCloudModel.prototype)
-      .object()
-  );
+    // Mock classes
+    .setup((p) => p.hasClass)
+    .returns((pointClass: number) => {
+      return pointCloudClasses[pointClass].hasClass;
+    })
+    .setup((p) => p.isClassVisible)
+    .returns((pointClass: number) => {
+      return pointCloudClasses[pointClass].visible;
+    })
+    .setup((p) => p.setClassVisible)
+    .returns((pointClass: number, visible: boolean) => {
+      pointCloudClasses[pointClass].visible = visible;
+    })
+    .setup((p) => p.getClasses)
+    .returns(() => {
+      return pointCloudClasses;
+    })
+    .prototypeof(CognitePointCloudModel.prototype)
+    .object();
+
+  // Set default values on some properties (otherwise they will be undefined)
+  pointCloud.pointShape = PointShape.Circle;
+  pointCloud.pointSize = 1;
+  pointCloud.pointColorType = PointColorType.Rgb;
+
+  return pointCloud;
 }
 
 export function createPointCloudDMMock(parameters?: {
