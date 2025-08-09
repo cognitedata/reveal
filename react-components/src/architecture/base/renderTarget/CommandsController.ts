@@ -205,8 +205,8 @@ export class CommandsController extends PointerEvents {
 
   /**
    * Updates all registered commands by invoking their `update` method.
-   * Do not call this directly, instead use the deferredUpdate(), which will be called
-   * only once, even if called multiple times.
+   * Do not call this directly,  (except in test code), instead use the deferredUpdate(), which will be called
+   * this function only once, even if called multiple times.
    */
   public update(): void {
     for (const command of this._commands) {
