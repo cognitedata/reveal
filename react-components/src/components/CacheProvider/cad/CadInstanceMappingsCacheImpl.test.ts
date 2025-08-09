@@ -5,7 +5,7 @@ import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache'
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createFdmKey, createModelRevisionKey } from '../idAndKeyTranslation';
-import type { AssetId, CadNodeTreeData, FdmKey } from '../types';
+import type { AssetId, CadNodeIdData, CadNodeTreeData } from '../types';
 import { createCadInstanceMappingsCache } from './CadInstanceMappingsCacheImpl';
 import { type Node3D } from '@cognite/sdk';
 import { type InstanceKey } from '../../../utilities/instanceIds';
@@ -125,7 +125,7 @@ describe(createCadInstanceMappingsCache.name, () => {
     });
 
     test('returns all model mappings from classic cache', async () => {
-      const cadNodeIdData: CadNodeTreeData = { treeIndex: 123, subtreeSize: 42 };
+      const cadNodeIdData: CadNodeIdData = { treeIndex: 123, subtreeSize: 42, nodeId: 876 };
 
       mockClassicGetAssetMappingsForModel.mockResolvedValue([
         {
@@ -146,8 +146,8 @@ describe(createCadInstanceMappingsCache.name, () => {
     });
 
     test('returns all model mappings from dm cache', async () => {
-      const cadNodeIdData: CadNodeTreeData = { treeIndex: 123, subtreeSize: 42 };
-      const cadNode = createCadNodeMock(cadNodeIdData);
+      const cadNodeIdData: CadNodeIdData = { treeIndex: 123, subtreeSize: 42, nodeId: 876 };
+      const cadNode = createCadNodeMock({ ...cadNodeIdData, id: cadNodeIdData.nodeId });
 
       mockDmGetAllMappingExternalIds.mockResolvedValue(
         new Map([
@@ -179,7 +179,7 @@ describe(createCadInstanceMappingsCache.name, () => {
     });
 
     test('returns all DM model mappings from classic/hybrid cache', async () => {
-      const cadNodeIdData: CadNodeTreeData = { treeIndex: 123, subtreeSize: 42 };
+      const cadNodeIdData: CadNodeIdData = { treeIndex: 123, subtreeSize: 42, nodeId: 876 };
 
       mockClassicGetAssetMappingsForModel.mockResolvedValue([
         {
@@ -200,13 +200,13 @@ describe(createCadInstanceMappingsCache.name, () => {
     });
 
     test('returns all data associated with multiple hybrid/classic and DM models', async () => {
-      const cadNodeData: CadNodeTreeData[] = [
-        { treeIndex: 1, subtreeSize: 15 },
-        { treeIndex: 2, subtreeSize: 16 },
-        { treeIndex: 3, subtreeSize: 17 }
+      const cadNodeData: CadNodeIdData[] = [
+        { treeIndex: 1, subtreeSize: 15, nodeId: 876 },
+        { treeIndex: 2, subtreeSize: 16, nodeId: 765 },
+        { treeIndex: 3, subtreeSize: 17, nodeId: 654 }
       ];
 
-      const cadNodes = cadNodeData.map(createCadNodeMock);
+      const cadNodes = cadNodeData.map((data) => createCadNodeMock({ ...data, id: data.nodeId }));
 
       mockClassicGetAssetMappingsForModel
         .mockResolvedValueOnce([
@@ -281,7 +281,7 @@ describe(createCadInstanceMappingsCache.name, () => {
         new Map([
           [
             createModelRevisionKey(MODELS[0].modelId, MODELS[0].revisionId),
-            new Map<AssetId | FdmKey, CadNodeTreeData[]>([
+            new Map<InstanceKey, CadNodeTreeData[]>([
               [CLASSIC_INSTANCES[0], [cadNodeData[0]]],
               [CLASSIC_INSTANCES[1], [cadNodeData[1]]],
               [createFdmKey(DM_INSTANCES[0]), [cadNodeData[0]]],
@@ -290,7 +290,7 @@ describe(createCadInstanceMappingsCache.name, () => {
           ],
           [
             createModelRevisionKey(MODELS[1].modelId, MODELS[1].revisionId),
-            new Map<AssetId | FdmKey, CadNodeTreeData[]>([
+            new Map<InstanceKey, CadNodeTreeData[]>([
               [CLASSIC_INSTANCES[1], [cadNodeData[2], cadNodeData[1]]],
               [createFdmKey(DM_INSTANCES[2]), [cadNodeData[0]]],
               [createFdmKey(DM_INSTANCES[1]), [cadNodeData[1]]]

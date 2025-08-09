@@ -38,7 +38,7 @@ export const usePointCloudDMVolumes = (
             fdmSdk
           );
           return {
-            model,
+            model: { ...model, type: 'pointcloud' as const },
             pointCloudDMVolumeWithAsset
           };
         })

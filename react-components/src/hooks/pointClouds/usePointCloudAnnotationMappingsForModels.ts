@@ -27,7 +27,7 @@ export const usePointCloudAnnotationMappingsForModels = (
             model.revisionId
           );
           return {
-            model,
+            model: { ...model, type: 'pointcloud' as const },
             annotationModel
           };
         })
