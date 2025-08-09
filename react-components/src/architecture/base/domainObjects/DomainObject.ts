@@ -12,7 +12,6 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
@@ -403,7 +402,8 @@ export abstract class DomainObject implements TreeNodeType {
       renderTarget?.updateAllCommands();
     }
     if (this.hasPanelInfo) {
-      DomainObjectPanelUpdater.notify(this, change);
+      const renderTarget = getRenderTarget(this);
+      renderTarget?.panelUpdater.notify(this, change);
     }
     this.updateTreeNodeListeners();
   }
