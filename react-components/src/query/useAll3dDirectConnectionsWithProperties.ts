@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
+import { type FdmKey, type FdmConnectionWithNode } from '../components/CacheProvider/types';
 import { type InstanceType } from '@cognite/sdk';
 import { chunk, uniqBy } from 'lodash';
 import {
@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { createFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
 import { executeParallel } from '../utilities/executeParallel';
 import { isDefined } from '../utilities/isDefined';
+import { concatenateMapValues } from '../utilities/map/concatenateMapValues';
 
 const MAX_PARALLEL_QUERIES = 4;
 
@@ -27,12 +28,10 @@ export function useAll3dDirectConnectionsWithProperties(
   }, [connectionWithNodeAndView]);
 
   const connectionWithNodeAndViewMap = useMemo(() => {
-    return new Map(
-      connectionWithNodeAndView.map((item) => {
-        const fdmKey = createFdmKey(item.connection.instance);
-        return [fdmKey, item];
-      })
-    );
+    const connectionMapEntries: Array<[FdmKey, FdmConnectionWithNode]> =
+      connectionWithNodeAndView.map((item) => [createFdmKey(item.connection.instance), item]);
+    const dataMap = concatenateMapValues(connectionMapEntries);
+    return dataMap;
   }, [connectionWithNodeAndView]);
 
   return useQuery({
@@ -145,24 +144,27 @@ export function useAll3dDirectConnectionsWithProperties(
           )
           .filter((item) => item.items.length > 0);
 
-      const instanceWithData =
-        instanceItemsAndTyping?.flatMap((itemsData) => {
-          let connectionFound: FdmConnectionWithNode | undefined;
-
-          itemsData.items.every((itemData) => {
+      const instanceWithData = instanceItemsAndTyping.flatMap((itemsData) => {
+        const dataFound = itemsData.items
+          .map((itemData) => {
             const fdmKey = createFdmKey(itemData);
-            if (connectionWithNodeAndViewMap.has(fdmKey)) {
-              connectionFound = connectionWithNodeAndViewMap.get(fdmKey);
-              return false;
-            }
-            return true;
-          });
 
-          return {
-            ...connectionFound,
-            ...itemsData
-          };
-        }) ?? [];
+            if (!connectionWithNodeAndViewMap.has(fdmKey)) return undefined;
+
+            const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
+            connectionWithNodeAndViewMap.delete(fdmKey);
+            return connectionsFound?.map((connectionFound) => {
+              return {
+                instanceType: 'node' as const,
+                ...connectionFound,
+                ...itemsData
+              };
+            });
+          })
+          .flat()
+          .filter(isDefined);
+        return dataFound;
+      });
 
       return instanceWithData;
     },

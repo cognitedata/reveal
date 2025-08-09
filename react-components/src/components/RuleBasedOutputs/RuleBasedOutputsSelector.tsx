@@ -22,8 +22,11 @@ import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
 import {
   isClassicCadAssetMapping,
+  isDmCadAssetMapping,
   type ClassicCadAssetMapping
 } from '../CacheProvider/cad/assetMappingTypes';
+import { useGetDMConnectionWithNodeFromHybridMappingsQuery } from './hooks/useGetDMConnectionWithNodeFromHybridMappingsQuery';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -55,6 +58,10 @@ export function RuleBasedOutputsSelector({
 
   const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
+  const nodeWithDmIdsFromHybridMappings = useMemo(() => {
+    return assetMappings?.flatMap((item) => item.assetMappings.filter(isDmCadAssetMapping));
+  }, [assetMappings]);
+
   const {
     data: mappedAssets,
     isLoading: isAssetMappedLoading,
@@ -64,14 +71,24 @@ export function RuleBasedOutputsSelector({
   const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
     useMappedEdgesForRevisions(cadModels, true);
 
+  const { data: dmConnectionWithNodeFromHybridDataList } =
+    useGetDMConnectionWithNodeFromHybridMappingsQuery(
+      nodeWithDmIdsFromHybridMappings ?? EMPTY_ARRAY,
+      cadModels
+    );
+
   const fdmConnectionWithNodeAndViewList = useMemo(() => {
     return fdmMappedEquipmentEdges !== undefined
       ? Array.from(fdmMappedEquipmentEdges.values()).flat()
       : [];
   }, [fdmMappedEquipmentEdges]);
 
+  const allFdmConnections = useMemo(() => {
+    return fdmConnectionWithNodeAndViewList.concat(dmConnectionWithNodeFromHybridDataList ?? []);
+  }, [fdmConnectionWithNodeAndViewList, dmConnectionWithNodeFromHybridDataList]);
+
   const { data: fdmMappings, isLoading: isFdmMappingsLoading } =
-    useAll3dDirectConnectionsWithProperties(fdmConnectionWithNodeAndViewList);
+    useAll3dDirectConnectionsWithProperties(allFdmConnections);
 
   const allMappingsLoaded =
     !isAssetMappingsLoading &&
@@ -137,12 +154,9 @@ export function RuleBasedOutputsSelector({
         onRuleSetChanged(filteredStylings);
       }
     };
-    if (!ruleSetStylingCache.has(ruleSet.id)) {
-      void ruleBasedInitilization();
-    } else {
-      onAllMappingsFetched(true);
-      if (onRuleSetChanged !== undefined) onRuleSetChanged(ruleSetStylingCache.get(ruleSet.id));
-    }
+    void ruleBasedInitilization();
+    onAllMappingsFetched(true);
+    if (onRuleSetChanged !== undefined) onRuleSetChanged(ruleSetStylingCache.get(ruleSet.id));
   }, [
     ruleSet,
     assetMappings,
