@@ -14,7 +14,7 @@ import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { count, first, last } from '../utilities/extensions/generatorUtils';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(DomainObject.name, () => {
   test('should have following default behavior', () => {
