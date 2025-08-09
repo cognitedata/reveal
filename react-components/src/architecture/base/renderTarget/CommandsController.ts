@@ -2,7 +2,7 @@ import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
-import { type Signal, signal } from '@cognite/signals';
+import { effect, type Signal, signal } from '@cognite/signals';
 
 /**
  * The main purpose of the command controller is to give the correct event to the correct command,
@@ -23,6 +23,7 @@ export class CommandsController extends PointerEvents {
   // ==================================================
 
   private readonly _activeTool = signal<BaseTool | undefined>();
+  private readonly _updateTrigger = signal(0);
   private _defaultTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
@@ -37,6 +38,11 @@ export class CommandsController extends PointerEvents {
     super();
     this._domElement = domElement;
     this._pointerEventsTarget = new PointerEventsTarget(this._domElement, this);
+
+    effect(() => {
+      this._updateTrigger();
+      this.update();
+    });
   }
 
   // ==================================================
@@ -197,10 +203,24 @@ export class CommandsController extends PointerEvents {
     return true;
   }
 
+  /**
+   * Updates all registered commands by invoking their `update` method.
+   * Do not call this directly, instead use the deferredUpdate(), which will be called
+   * only once, even if called multiple times.
+   */
   public update(): void {
     for (const command of this._commands) {
       command.update();
     }
+  }
+
+  /**
+   * Triggers a deferred update by incrementing the internal update trigger.
+   * This method is typically used to signal that a re-render or update should occur,
+   * without performing the update immediately.
+   */
+  public deferredUpdate(): void {
+    this._updateTrigger(this._updateTrigger() + 1);
   }
 
   public dispose(): void {

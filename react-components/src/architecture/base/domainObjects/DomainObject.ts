@@ -12,7 +12,6 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
@@ -398,12 +397,10 @@ export abstract class DomainObject implements TreeNodeType {
         Changes.childDeleted
       )
     ) {
+      // Update all the command buttons (in the toolbars).
+      // This goes fast and will not slow the system down.
       const renderTarget = getRenderTarget(this);
-      if (renderTarget !== undefined) {
-        // Update all the command buttons (in the toolbars).
-        // This goes fast and will not slow the system down.
-        CommandsUpdater.update(renderTarget);
-      }
+      renderTarget?.updateAllCommands();
     }
     if (this.hasPanelInfo) {
       DomainObjectPanelUpdater.notify(this, change);

@@ -12,7 +12,6 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { count, first, last } from '../utilities/extensions/generatorUtils';
@@ -279,10 +278,13 @@ describe(DomainObject.name, () => {
     const renderTarget = createRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    expect(CommandsUpdater.needUpdate).toBe(false);
+    const updateMock = vi.fn();
+    renderTarget.commandsController.update = updateMock;
+
+    expect(updateMock).toHaveBeenCalledTimes(0);
     const change = Changes.selected;
     domainObject.notify(change);
-    expect(CommandsUpdater.needUpdate).toBe(true);
+    expect(updateMock).toHaveBeenCalledTimes(1);
   });
 
   test('should test notify descendants', () => {

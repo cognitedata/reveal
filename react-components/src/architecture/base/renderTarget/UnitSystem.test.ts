@@ -19,7 +19,6 @@ describe(UnitSystem.name, () => {
 
         const convertedBack = unitSystem.convertFromUnit(converted, quantity);
         expect(convertedBack).not.toBeCloseTo(converted);
-
         expect(convertedBack).toBeCloseTo(value);
       }
     }

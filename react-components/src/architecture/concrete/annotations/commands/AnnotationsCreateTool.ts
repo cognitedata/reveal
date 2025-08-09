@@ -1,7 +1,6 @@
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
@@ -218,7 +217,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   private setSelectTool(): void {
     if (this.renderTarget.commandsController.setActiveToolByType(AnnotationsSelectTool)) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 
