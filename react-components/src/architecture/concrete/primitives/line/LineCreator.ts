@@ -8,7 +8,6 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type LineDomainObject } from './LineDomainObject';
 import { type UndoManager } from '../../../base/undo/UndoManager';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 
 /**
  * Helper class for generate a LineDomainObject by clicking around
@@ -89,7 +88,7 @@ export class LineCreator extends BaseCreator {
         domainObject.createTransaction(exists ? Changes.geometry : Changes.added)
       );
       if (needsUpdate) {
-        CommandsUpdater.update(getRenderTarget(domainObject));
+        getRenderTarget(domainObject)?.updateAllCommands();
       }
     }
     copy(domainObject.points, this.points);

@@ -3,7 +3,6 @@ import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type IconName } from '../../utilities/IconName';
 import { type BaseCommand } from '../../commands/BaseCommand';
-import { CommandsUpdater } from '../../reactUpdaters/CommandsUpdater';
 
 export class Image360ActionCommand extends RenderTargetCommand {
   private readonly _action: Image360Action;
@@ -56,7 +55,7 @@ export class Image360ActionCommand extends RenderTargetCommand {
 
   public override invokeCore(): boolean {
     void this.renderTarget.viewer.image360Action(this._action).then(() => {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     });
     return false; // Do not need another update
   }

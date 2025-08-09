@@ -9,7 +9,6 @@ import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { Image360AnnotationSelectTool } from './Image360AnnotationSelectTool';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
@@ -166,7 +165,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
 
   private setSelectTool(): void {
     if (this.renderTarget.commandsController.setActiveToolByType(Image360AnnotationSelectTool)) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 }

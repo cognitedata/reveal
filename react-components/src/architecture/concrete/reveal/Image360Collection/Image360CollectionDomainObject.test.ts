@@ -33,18 +33,18 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(onEventType0).toBe('image360Entered');
     expect(onEventType1).toBe('image360Exited');
 
-    expect(renderTargetMock.commandsController.update).not.toHaveBeenCalled();
+    expect(renderTargetMock.updateAllCommands).not.toHaveBeenCalled();
 
     registeredCallback0();
 
     await waitFor(async () => {
-      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(1);
+      expect(renderTargetMock.updateAllCommands).toHaveBeenCalledTimes(1);
     });
 
     registeredCallback1();
 
     await waitFor(async () => {
-      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(2);
+      expect(renderTargetMock.updateAllCommands).toHaveBeenCalledTimes(2);
     });
   });
 

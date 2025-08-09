@@ -230,7 +230,7 @@ describe(CommandsController.name, () => {
   });
 
   describe('Test update', () => {
-    test('Should all commands when the command controller updates', () => {
+    test('Should update all commands', () => {
       const mockCommand = new MockCommand();
       const mockTool = createMockTool1();
       controller.add(mockCommand);
@@ -244,6 +244,27 @@ describe(CommandsController.name, () => {
       controller.update();
       expect(updateTester1.calledTimes).toBe(1);
       expect(updateTester2.calledTimes).toBe(1);
+    });
+
+    test('Should defer update of all commands', () => {
+      vi.useFakeTimers();
+      const mockCommand = new MockCommand();
+      controller.add(mockCommand);
+
+      const updateTester = new UpdateTester(mockCommand);
+
+      expect(updateTester.calledTimes).toBe(0);
+
+      controller.deferredUpdate();
+      controller.deferredUpdate();
+      controller.deferredUpdate();
+
+      expect(updateTester.calledTimes).toBe(0);
+
+      // This simulate OnIdle
+      vi.advanceTimersByTime(1);
+
+      expect(updateTester.calledTimes).toBe(1);
     });
 
     test('Should not update wnen disposed', () => {

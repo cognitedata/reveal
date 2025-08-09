@@ -1,7 +1,6 @@
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type IconName } from '../utilities/IconName';
 import { translate } from '../utilities/translateUtils';
 
@@ -118,7 +117,7 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
     if (!this.toggleAllCheckedCore()) {
       return false;
     }
-    CommandsUpdater.update(this._renderTarget);
+    this._renderTarget?.updateAllCommands();
     return true;
   }
 
@@ -162,7 +161,7 @@ export abstract class BaseFilterItemCommand extends RenderTargetCommand {
 
   public setChecked(value: boolean): void {
     if (this.setCheckedCore(value)) {
-      CommandsUpdater.update(this._renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 }
