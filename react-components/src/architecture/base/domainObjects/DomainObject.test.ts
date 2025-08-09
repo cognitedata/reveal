@@ -279,7 +279,7 @@ describe(DomainObject.name, () => {
     renderTarget.rootDomainObject.addChild(domainObject);
 
     const updateMock = vi.fn();
-    renderTarget.commandsController.update = updateMock;
+    renderTarget.updateAllCommands = updateMock;
 
     expect(updateMock).toHaveBeenCalledTimes(0);
     const change = Changes.selected;

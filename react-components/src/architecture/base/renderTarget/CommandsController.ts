@@ -2,7 +2,7 @@ import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
-import { effect, type Signal, signal } from '@cognite/signals';
+import { debouncedComputed, effect, type Signal, signal } from '@cognite/signals';
 
 /**
  * The main purpose of the command controller is to give the correct event to the correct command,
@@ -23,12 +23,15 @@ export class CommandsController extends PointerEvents {
   // ==================================================
 
   private readonly _activeTool = signal<BaseTool | undefined>();
-  private readonly _updateTrigger = signal(0);
   private _defaultTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
   private readonly _commands = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
+
+  // For updating
+  private readonly _updateTrigger = signal(0);
+  private readonly _updateTriggerDebounced = debouncedComputed(() => this._updateTrigger(), 1);
 
   // ==================================================
   // CONSTRUCTOR
@@ -40,7 +43,9 @@ export class CommandsController extends PointerEvents {
     this._pointerEventsTarget = new PointerEventsTarget(this._domElement, this);
 
     effect(() => {
-      this._updateTrigger();
+      // Use _updateTriggerDebounced to trigger updates
+      // This will ensure that the update is called only once per frame
+      this._updateTriggerDebounced.value();
       this.update();
     });
   }
@@ -227,6 +232,7 @@ export class CommandsController extends PointerEvents {
     for (const command of this._commands) {
       command.dispose();
     }
+    this._updateTriggerDebounced.dispose();
   }
 
   // ================================================
