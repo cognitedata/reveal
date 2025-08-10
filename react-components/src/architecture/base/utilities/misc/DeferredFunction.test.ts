@@ -1,8 +1,16 @@
-import { describe, expect, test, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import { DeferredFunction } from './DeferredFunction';
 
 describe(DeferredFunction.name, () => {
-  test('Should not be called', () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
+  test('Should be called once when on idle', () => {
     const func = vi.fn();
     const deferredFunc = new DeferredFunction(func);
 
@@ -11,16 +19,6 @@ describe(DeferredFunction.name, () => {
     deferredFunc.trigger();
 
     expect(func).toHaveBeenCalledTimes(0);
-  });
-
-  test('Should be called once when on idle', () => {
-    vi.useFakeTimers();
-    const func = vi.fn();
-    const deferredFunc = new DeferredFunction(func);
-
-    deferredFunc.trigger();
-    deferredFunc.trigger();
-    deferredFunc.trigger();
 
     // This simulate OnIdle
     vi.advanceTimersByTime(1);
@@ -28,7 +26,6 @@ describe(DeferredFunction.name, () => {
   });
 
   test('Should not be called when disposed', () => {
-    vi.useFakeTimers();
     const func = vi.fn();
     const deferredFunc = new DeferredFunction(func);
 

@@ -265,6 +265,7 @@ describe(CommandsController.name, () => {
       vi.advanceTimersByTime(1);
 
       expect(updateTester.calledTimes).toBe(1);
+      vi.useRealTimers();
     });
 
     test('Should not update wnen disposed', () => {
