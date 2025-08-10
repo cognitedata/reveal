@@ -13,8 +13,9 @@ export class DeferredFunction {
     this._disposeEffect = effect(() => {
       // Use _debouncedTrigger to trigger the function
       // This will ensure that the function is called only once per frame
-      this._debouncedTrigger.value();
-      func();
+      if (this._debouncedTrigger.value() > 0) {
+        func();
+      }
     });
   }
 
