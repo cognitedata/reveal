@@ -2,7 +2,8 @@ import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
-import { debouncedComputed, effect, type Signal, signal } from '@cognite/signals';
+import { type Signal, signal } from '@cognite/signals';
+import { DeferredFunction } from '../utilities/misc/DeferredFunction';
 
 /**
  * The main purpose of the command controller is to give the correct event to the correct command,
@@ -28,10 +29,7 @@ export class CommandsController extends PointerEvents {
   private readonly _domElement: HTMLElement;
   private readonly _commands = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
-
-  // For updating
-  private readonly _updateTrigger = signal(0);
-  private readonly _updateTriggerDebounced = debouncedComputed(() => this._updateTrigger(), 1);
+  private readonly _deferredUpdate: DeferredFunction;
 
   // ==================================================
   // CONSTRUCTOR
@@ -41,13 +39,7 @@ export class CommandsController extends PointerEvents {
     super();
     this._domElement = domElement;
     this._pointerEventsTarget = new PointerEventsTarget(this._domElement, this);
-
-    effect(() => {
-      // Use _updateTriggerDebounced to trigger updates
-      // This will ensure that the update is called only once per frame
-      this._updateTriggerDebounced.value();
-      this.update();
-    });
+    this._deferredUpdate = new DeferredFunction(this.update);
   }
 
   // ==================================================
@@ -210,29 +202,29 @@ export class CommandsController extends PointerEvents {
 
   /**
    * Updates all registered commands by invoking their `update` method.
-   * Do not call this directly,  (except in test code), instead use the deferredUpdate(), which will be called
+   * Do not call this directly, (except in test code), instead use the deferredUpdate(), which will be called
    * this function only once, even if called multiple times.
    */
-  public update(): void {
+  public update = (): void => {
     for (const command of this._commands) {
       command.update();
     }
-  }
+  };
 
   /**
-   * Triggers a deferred update by incrementing the internal update trigger.
-   * This method is typically used to signal that a re-render or update should occur,
-   * without performing the update immediately.
+   * Triggers a deferred update operation by delegating to the internal deferred updater.
+   * This method schedules an update to be performed at a later time, optimizing performance
+   * by batching multiple changes together.
    */
   public deferredUpdate(): void {
-    this._updateTrigger(this._updateTrigger() + 1);
+    this._deferredUpdate.trigger();
   }
 
   public dispose(): void {
     for (const command of this._commands) {
       command.dispose();
     }
-    this._updateTriggerDebounced.dispose();
+    this._deferredUpdate.dispose();
   }
 
   // ================================================
