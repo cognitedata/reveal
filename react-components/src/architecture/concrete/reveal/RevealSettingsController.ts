@@ -66,43 +66,43 @@ export class RevealSettingsController {
       setCameraControlsTypeOnViewer(this.cameraControlsType(), this._viewer);
     });
     this.addEffect(() => {
-      const value = this._pointSize();
+      const value = this.pointSize();
       this.forEachPointCloud((domainObject) => {
         domainObject.pointSize(value);
       });
     });
     this.addEffect(() => {
-      const value = this._pointShape();
+      const value = this.pointShape();
       this.forEachPointCloud((domainObject) => {
         domainObject.pointShape(value);
       });
     });
     this.addEffect(() => {
-      const value = this._pointColorType();
+      const value = this.pointColorType();
       this.forEachPointCloud((domainObject) => {
         domainObject.pointColorType(value);
       });
     });
     this.addEffect(() => {
-      const value = this._isIconsVisible();
+      const value = this.isIconsVisible();
       this.forEachImage360Collection((domainObject) => {
         domainObject.isIconsVisible(value);
       });
     });
     this.addEffect(() => {
-      const value = this._isOccludedIconsVisible();
+      const value = this.isOccludedIconsVisible();
       this.forEachImage360Collection((domainObject) => {
         domainObject.isOccludedIconsVisible(value);
       });
     });
     this.addEffect(() => {
-      const value = this._iconsOpacity();
+      const value = this.iconsOpacity();
       this.forEachImage360Collection((domainObject) => {
         domainObject.iconsOpacity(value);
       });
     });
     this.addEffect(() => {
-      const value = this._imagesOpacity();
+      const value = this.imagesOpacity();
       this.forEachImage360Collection((domainObject) => {
         domainObject.imagesOpacity(value);
       });
