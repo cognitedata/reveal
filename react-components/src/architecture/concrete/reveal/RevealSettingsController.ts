@@ -66,38 +66,45 @@ export class RevealSettingsController {
       setCameraControlsTypeOnViewer(this.cameraControlsType(), this._viewer);
     });
     this.addEffect(() => {
+      const value = this._pointSize();
       this.forEachPointCloud((domainObject) => {
-        domainObject.pointSize(this._pointSize());
+        domainObject.pointSize(value);
       });
     });
     this.addEffect(() => {
+      const value = this._pointShape();
       this.forEachPointCloud((domainObject) => {
-        domainObject.pointShape(this._pointShape());
+        domainObject.pointShape(value);
       });
     });
     this.addEffect(() => {
+      const value = this._pointColorType();
       this.forEachPointCloud((domainObject) => {
-        domainObject.pointColorType(this._pointColorType());
+        domainObject.pointColorType(value);
       });
     });
     this.addEffect(() => {
+      const value = this._isIconsVisible();
       this.forEachImage360Collection((domainObject) => {
-        domainObject.isIconsVisible(this._isIconsVisible());
+        domainObject.isIconsVisible(value);
       });
     });
     this.addEffect(() => {
+      const value = this._isOccludedIconsVisible();
       this.forEachImage360Collection((domainObject) => {
-        domainObject.isOccludedIconsVisible(this._isOccludedIconsVisible());
+        domainObject.isOccludedIconsVisible(value);
       });
     });
     this.addEffect(() => {
+      const value = this._iconsOpacity();
       this.forEachImage360Collection((domainObject) => {
-        domainObject.iconsOpacity(this._iconsOpacity());
+        domainObject.iconsOpacity(value);
       });
     });
     this.addEffect(() => {
+      const value = this._imagesOpacity();
       this.forEachImage360Collection((domainObject) => {
-        domainObject.imagesOpacity(this._imagesOpacity());
+        domainObject.imagesOpacity(value);
       });
     });
   }
