@@ -1,7 +1,7 @@
 import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { PointCloudFilterCommand } from './PointCloudFilterCommand';
 import { isOdd } from '../../utilities/extensions/mathUtils';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 import {
   createPointCloudMock,
