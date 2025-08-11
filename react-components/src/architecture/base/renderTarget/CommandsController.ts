@@ -39,7 +39,13 @@ export class CommandsController extends PointerEvents {
     super();
     this._domElement = domElement;
     this._pointerEventsTarget = new PointerEventsTarget(this._domElement, this);
-    this._deferredUpdate = new DeferredFunction(this.update);
+
+    const updateAllCommands = (): void => {
+      for (const command of this._commands) {
+        command.update();
+      }
+    };
+    this._deferredUpdate = new DeferredFunction(updateAllCommands);
   }
 
   // ==================================================
@@ -199,17 +205,6 @@ export class CommandsController extends PointerEvents {
     this._activeTool()?.onActivate();
     return true;
   }
-
-  /**
-   * Updates all registered commands by invoking their `update` method.
-   * Do not call this directly, (except in test code), instead use the deferredUpdate(), which will be called
-   * this function only once, even if called multiple times.
-   */
-  public update = (): void => {
-    for (const command of this._commands) {
-      command.update();
-    }
-  };
 
   /**
    * Triggers a deferred update operation by delegating to the internal deferred updater.
