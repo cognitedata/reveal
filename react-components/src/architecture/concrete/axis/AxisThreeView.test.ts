@@ -1,7 +1,7 @@
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { AxisDomainObject } from './AxisDomainObject';
 import { AxisThreeView } from './AxisThreeView';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { Box3, LineSegments, Mesh, Object3D, PerspectiveCamera, Sprite, Vector3 } from 'three';
 import {
   expectChildrenLength,

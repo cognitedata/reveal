@@ -11,7 +11,7 @@ describe(UnitSystem.name, () => {
     const unitSystem = new UnitSystem();
 
     for (const lengthUnit of lengthUnits) {
-      unitSystem.lengthUnit = lengthUnit;
+      unitSystem.lengthUnit(lengthUnit);
       for (const quantity of quantities) {
         const value = 1;
         const converted = unitSystem.convertToUnit(value, quantity);
@@ -48,7 +48,7 @@ describe(UnitSystem.name, () => {
 
   test('Should get length, area and volume as string in ft', () => {
     const unitSystem = new UnitSystem();
-    unitSystem.lengthUnit = LengthUnit.Feet;
+    unitSystem.lengthUnit(LengthUnit.Feet);
     expect(unitSystem.toStringWithUnit(1, Quantity.Length)).toBe('3.28 ft');
     expect(unitSystem.toStringWithUnit(1, Quantity.Area)).toBe('10.76 ft²');
     expect(unitSystem.toStringWithUnit(1, Quantity.Volume)).toBe('35.31 ft³');
@@ -56,7 +56,7 @@ describe(UnitSystem.name, () => {
 
   test('Should get length, area and volume as string in inch', () => {
     const unitSystem = new UnitSystem();
-    unitSystem.lengthUnit = LengthUnit.Inch;
+    unitSystem.lengthUnit(LengthUnit.Inch);
     expect(unitSystem.toStringWithUnit(1, Quantity.Length)).toBe('39.25 in');
     expect(unitSystem.toStringWithUnit(1, Quantity.Area)).toBe('1,550.00 in²');
     expect(unitSystem.toStringWithUnit(1, Quantity.Volume)).toBe('61,023.75 in³');

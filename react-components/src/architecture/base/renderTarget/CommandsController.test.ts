@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CommandsController } from './CommandsController';
 import { BaseTool } from '../commands/BaseTool';
 import { type RevealRenderTarget } from './RevealRenderTarget';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { BaseCommand } from '../commands/BaseCommand';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
 import { MOUSE } from 'three';
