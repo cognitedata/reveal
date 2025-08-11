@@ -14,6 +14,7 @@ import { generateUniqueId, type ButtonType, type UniqueId } from '../utilities/t
  * if not set, anything can be changed. See changes is CommandChanges for common legal changes.
  */
 export type CommandUpdateDelegate = (command: BaseCommand, change?: symbol) => void;
+type Position = { x: number; y: number };
 
 /**
  * Base class for all command and tools. These are object that can do a
@@ -28,6 +29,7 @@ export abstract class BaseCommand {
 
   private readonly _listeners: CommandUpdateDelegate[] = [];
   private readonly _disposables: Array<() => void> = [];
+  public position?: Position;
 
   public get disposableCount(): number {
     return this._disposables.length;

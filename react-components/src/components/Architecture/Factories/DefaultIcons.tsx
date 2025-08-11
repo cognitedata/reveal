@@ -52,9 +52,9 @@ import {
   VectorZigzagIcon,
   View360Icon,
   WaypointIcon,
-  GraphTreeIcon,
   FolderFilledIcon,
-  CubesIcon
+  CubesIcon,
+  TreeIcon
 } from '@cognite/cogs.js';
 
 import { type IconName } from '../../../architecture/base/utilities/IconName';
@@ -93,7 +93,7 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Folder', FolderIcon],
   ['FolderFilled', FolderFilledIcon],
   ['Grab', GrabIcon],
-  ['GraphTree', GraphTreeIcon],
+  ['TreeIcon', TreeIcon],
   ['Info', InfoIcon],
   ['Leaf', LeafIcon],
   ['Location', LocationIcon],
