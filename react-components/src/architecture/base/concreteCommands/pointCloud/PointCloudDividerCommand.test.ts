@@ -1,5 +1,5 @@
 import { PointCloudDividerCommand } from './PointCloudDividerCommand';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { describe, expect, test } from 'vitest';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
