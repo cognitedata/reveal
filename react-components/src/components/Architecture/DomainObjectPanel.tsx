@@ -1,7 +1,6 @@
 import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useMemo, type ReactElement } from 'react';
-import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
@@ -16,15 +15,18 @@ import {
 } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
 import { type DomainObject } from '../../architecture';
-import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 import { useSignalValue } from '@cognite/signals/react';
+import { useRenderTarget } from '../RevealCanvas';
+import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
-  useSignalValue(DomainObjectPanelUpdater.update);
-  const domainObject = useSignalValue(DomainObjectPanelUpdater.selectedDomainObject);
+  const renderTarget = useRenderTarget();
+  const panelUpdater = renderTarget.panelUpdater;
+  const domainObject = useSignalValue(panelUpdater.selectedDomainObject);
+  useSignalValue(panelUpdater.domainObjectChanged);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
   const root = domainObject === undefined ? undefined : getRoot(domainObject);
   const unitSystem = root === undefined ? UNDEFINED_UNIT_SYSTEM : root.unitSystem;
