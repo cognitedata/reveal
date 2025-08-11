@@ -6,6 +6,7 @@ import { queryKeys } from '../utilities/queryKeys';
 import { UseHybridMappingsForAssetInstancesContext } from './useHybridMappingsForAssetInstances.context';
 import { useContext } from 'react';
 import { isFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
+import { isDefined } from '../utilities/isDefined';
 
 export const useHybridMappingsForAssetInstances = (
   models: AddModelOptions[],
@@ -27,7 +28,15 @@ export const useHybridMappingsForAssetInstances = (
           assetInstanceIds
         );
 
-        const fdmMappings = new Map([...mappings.entries()].filter(([key, _]) => isFdmKey(key)));
+        const fdmMappings = new Map(
+          [...mappings.keys()]
+            .filter(isFdmKey)
+            .map((key) => {
+              const value = mappings.get(key);
+              return value === undefined ? undefined : ([key, value] as const);
+            })
+            .filter(isDefined)
+        );
 
         return {
           modelId: model.modelId,
