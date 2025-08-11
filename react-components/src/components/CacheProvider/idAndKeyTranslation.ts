@@ -14,6 +14,7 @@ import {
 } from './types';
 
 import { split } from 'lodash';
+import { assertNever } from '../../utilities/assertNever';
 
 export function createModelRevisionKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {
   return `${modelId}/${revisionId}`;
@@ -40,6 +41,18 @@ export function createInstanceKey(id: InstanceId): InstanceKey {
   } else {
     return createFdmKey(id);
   }
+}
+
+export function isFdmKey(key: InstanceKey): key is FdmKey {
+  if (typeof key === 'string' && key.includes('/')) {
+    return true;
+  }
+
+  if (typeof key === 'number') {
+    return false;
+  }
+
+  assertNever(key);
 }
 
 export function createModelTreeIndexKey(

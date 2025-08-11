@@ -5,8 +5,7 @@ import { type ThreeDModelFdmMappings } from '../hooks';
 import { queryKeys } from '../utilities/queryKeys';
 import { UseHybridMappingsForAssetInstancesContext } from './useHybridMappingsForAssetInstances.context';
 import { useContext } from 'react';
-import { type FdmKey } from '../components/CacheProvider/types';
-import { type Node3D } from '@cognite/sdk';
+import { isFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
 
 export const useHybridMappingsForAssetInstances = (
   models: AddModelOptions[],
@@ -28,10 +27,12 @@ export const useHybridMappingsForAssetInstances = (
           assetInstanceIds
         );
 
+        const fdmMappings = new Map([...mappings.entries()].filter(([key, _]) => isFdmKey(key)));
+
         return {
           modelId: model.modelId,
           revisionId: model.revisionId,
-          mappings: mappings as Map<FdmKey, Node3D[]>
+          mappings: fdmMappings
         };
       });
 
