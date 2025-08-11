@@ -16,7 +16,7 @@ import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DomainObjectPanel } from './DomainObjectPanel';
 import { type IconName } from '../../architecture/base/utilities/IconName';
-import { createFullRenderTargetMock } from '../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(DomainObjectPanel.name, () => {
   test('should not be visible for no domain object', async () => {
