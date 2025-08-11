@@ -5,7 +5,7 @@ import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image36
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 
 describe(Image360ImagesDividerCommand.name, () => {
-  test('Should be visible only when having point clouds', () => {
+  test('Should be visible only when having 360 images', () => {
     const command = new Image360ImagesDividerCommand();
     const renderTarget = createFullRenderTargetMock();
     command.attach(renderTarget);
