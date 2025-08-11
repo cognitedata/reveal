@@ -11,7 +11,7 @@ import {
   isFdmKey
 } from './idAndKeyTranslation';
 import assert from 'assert';
-import { FdmKey } from './types';
+import { type FdmKey } from './types';
 
 describe('idAndKeyTranslation', () => {
   const MODEL_ID = 123;
