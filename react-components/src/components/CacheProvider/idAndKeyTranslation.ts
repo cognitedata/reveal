@@ -14,7 +14,6 @@ import {
 } from './types';
 
 import { split } from 'lodash';
-import { assertNever } from '../../utilities/assertNever';
 
 export function createModelRevisionKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {
   return `${modelId}/${revisionId}`;
