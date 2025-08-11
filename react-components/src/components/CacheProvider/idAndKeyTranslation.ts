@@ -44,15 +44,7 @@ export function createInstanceKey(id: InstanceId): InstanceKey {
 }
 
 export function isFdmKey(key: InstanceKey): key is FdmKey {
-  if (typeof key === 'string' && key.includes('/')) {
-    return true;
-  }
-
-  if (typeof key === 'number') {
-    return false;
-  }
-
-  assertNever(key);
+  return typeof key === 'string' && key.includes('/');
 }
 
 export function createModelTreeIndexKey(
