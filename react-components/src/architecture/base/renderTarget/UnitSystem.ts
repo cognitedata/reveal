@@ -22,6 +22,11 @@ export class UnitSystem {
   // ==================================================
 
   public readonly lengthUnit = signal<LengthUnit>(LengthUnit.Meter);
+  public readonly _language;
+
+  public constructor(language: string = 'default') {
+    this._language = language;
+  }
 
   // ==================================================
   // INSTANCE METHODS: Convert number
@@ -50,7 +55,7 @@ export class UnitSystem {
       convertedValue = round(convertedValue, 0.25);
     }
     // This ensures the number with commas as thousands separators
-    return convertedValue.toLocaleString('default', {
+    return convertedValue.toLocaleString(this._language, {
       maximumFractionDigits: fractionDigits,
       minimumFractionDigits: fractionDigits
     });
