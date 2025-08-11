@@ -3,7 +3,7 @@ import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/TranslateInput';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
 describe(SetPointShapeCommand.name, () => {
   let command: SetPointShapeCommand;
