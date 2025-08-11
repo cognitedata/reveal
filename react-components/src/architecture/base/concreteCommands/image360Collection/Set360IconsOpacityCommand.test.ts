@@ -2,7 +2,7 @@ import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRende
 import { beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/TranslateInput';
 import { Set360IconsOpacityCommand } from './Set360IconsOpacityCommand';
-import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
+import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 
 describe(Set360IconsOpacityCommand.name, () => {
