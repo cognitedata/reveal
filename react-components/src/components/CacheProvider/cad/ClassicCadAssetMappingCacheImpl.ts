@@ -26,11 +26,7 @@ import {
   type ClassicCadAssetMappingCache
 } from './ClassicCadAssetMappingCache';
 import { type InstanceId, type InstanceKey } from '../../../utilities/instanceIds';
-import {
-  getMappingInstanceId,
-  type HybridCadAssetMapping,
-  type HybridCadAssetTreeIndexMapping
-} from './assetMappingTypes';
+import { getMappingInstanceId, type HybridCadAssetMapping } from './assetMappingTypes';
 import { type HybridCadCacheIndexType } from './types';
 import { convertToHybridAssetMapping } from './rawAssetMappingTypes';
 import { isDefined } from '../../../utilities/isDefined';
@@ -186,7 +182,7 @@ class ClassicCadAssetMappingCacheImpl implements ClassicCadAssetMappingCache {
   public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<HybridCadAssetTreeIndexMapping[]> {
+  ): Promise<HybridCadAssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
