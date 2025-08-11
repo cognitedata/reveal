@@ -197,7 +197,7 @@ function getCurrentDomainObject(
   if (domainObject === undefined) {
     return undefined;
   }
-  return domainObject as PointCloudDomainObject;
+  return domainObject instanceof PointCloudDomainObject ? domainObject : undefined;
 }
 
 function isAllClassesVisible(pointCloud: PointCloud): boolean {

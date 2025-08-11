@@ -3,10 +3,7 @@ import { PointCloudFilterCommand } from './PointCloudFilterCommand';
 import { isOdd } from '../../utilities/extensions/mathUtils';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
-import {
-  createPointCloudMock,
-  pointCloudClasses
-} from '../../../../../tests/tests-utilities/fixtures/pointCloud';
+import { createPointCloudMock, pointCloudClasses } from '#test-utils/fixtures/pointCloud';
 import { count } from '../../utilities/extensions/arrayUtils';
 
 describe(PointCloudFilterCommand.name, () => {

@@ -3,7 +3,7 @@ import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { describe, expect, test } from 'vitest';
 import { useGhostMode } from './useGhostMode';
 import { ViewerContextProvider } from '../components/RevealCanvas/ViewerContext';
-import { createFullRenderTargetMock } from '../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
 import { getDefaultCommand } from '../components/Architecture/utilities';
 
