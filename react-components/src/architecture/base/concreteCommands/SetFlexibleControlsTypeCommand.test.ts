@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand';
 import { isEmpty } from '../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { count } from '../utilities/extensions/arrayUtils';
 import { type CommandUpdateDelegate } from '../commands/BaseCommand';

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import type { CogniteCadModel } from '@cognite/reveal';
-import { createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { CadDomainObject } from './CadDomainObject';
 import type { RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { viewerModelsMock } from '#test-utils/fixtures/viewer';

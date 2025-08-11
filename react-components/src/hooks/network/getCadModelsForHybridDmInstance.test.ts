@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getCadModelsForHybridDmInstance } from './getCadModelsForHybridDmInstance';
-import { sdkMock, postMock } from '../../../tests/tests-utilities/fixtures/sdk';
+import { sdkMock, postMock } from '#test-utils/fixtures/sdk';
 
 describe(getCadModelsForHybridDmInstance.name, () => {
   const dmsInstance = { externalId: 'ext-id', space: 'space-id' };

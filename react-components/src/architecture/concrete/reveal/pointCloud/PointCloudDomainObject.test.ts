@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { PointCloudDomainObject } from './PointCloudDomainObject';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { PointColorType, PointShape, type CognitePointCloudModel } from '@cognite/reveal';
 import { viewerModelsMock } from '#test-utils/fixtures/viewer';
@@ -57,7 +57,7 @@ describe(PointCloudDomainObject.name, () => {
     expect(model.pointShape).toBe(expectedValue);
   });
 
-  test('should set point color', () => {
+  test('should set point color type', () => {
     const expectedValue = PointColorType.Intensity;
     expect(model.pointColorType).not.toBe(expectedValue);
     domainObject.pointColorType(expectedValue);

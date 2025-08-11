@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { isEmpty } from '../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { SetOrbitOrFirstPersonModeCommand } from './SetOrbitOrFirstPersonModeCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type CommandUpdateDelegate } from '../commands/BaseCommand';
