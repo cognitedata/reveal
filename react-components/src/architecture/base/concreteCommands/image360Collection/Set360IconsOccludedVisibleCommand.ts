@@ -1,6 +1,7 @@
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   // ==================================================
@@ -20,13 +21,18 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.settingsController._isOccludedIconsVisible();
+    return this.settingsController.isOccludedIconsVisible();
   }
 
   protected override invokeCore(): boolean {
-    this.settingsController._isOccludedIconsVisible(
-      !this.settingsController._isOccludedIconsVisible()
+    this.settingsController.isOccludedIconsVisible(
+      !this.settingsController.isOccludedIconsVisible()
     );
     return true;
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.settingsController.isOccludedIconsVisible);
   }
 }

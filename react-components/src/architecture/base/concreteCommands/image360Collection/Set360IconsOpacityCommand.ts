@@ -1,6 +1,7 @@
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class Set360IconsOpacityCommand extends FractionSliderCommand {
   // ==================================================
@@ -15,14 +16,19 @@ export class Set360IconsOpacityCommand extends FractionSliderCommand {
     if (this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) === undefined) {
       return false;
     }
-    return this.settingsController._isIconsVisible();
+    return this.settingsController.isIconsVisible();
   }
 
   public override get value(): number {
-    return this.settingsController._iconsOpacity();
+    return this.settingsController.iconsOpacity();
   }
 
   public override set value(value: number) {
-    this.settingsController._iconsOpacity(value);
+    this.settingsController.iconsOpacity(value);
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.settingsController.iconsOpacity);
   }
 }

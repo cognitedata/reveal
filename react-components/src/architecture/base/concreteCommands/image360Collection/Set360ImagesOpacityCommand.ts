@@ -1,6 +1,7 @@
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   // ==================================================
@@ -16,10 +17,15 @@ export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   }
 
   public override get value(): number {
-    return this.settingsController._imagesOpacity();
+    return this.settingsController.imagesOpacity();
   }
 
   public override set value(value: number) {
-    this.settingsController._imagesOpacity(value);
+    this.settingsController.imagesOpacity(value);
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.settingsController.imagesOpacity);
   }
 }

@@ -40,10 +40,10 @@ export class RevealSettingsController {
   private _pointColorTypeInitialized = false;
 
   // Settings for the 360 images
-  public readonly _isIconsVisible = signal(false);
-  public readonly _isOccludedIconsVisible = signal(false);
-  public readonly _iconsOpacity = signal(0);
-  public readonly _imagesOpacity = signal(0);
+  private readonly _isIconsVisible = signal(false);
+  private readonly _isOccludedIconsVisible = signal(false);
+  private readonly _iconsOpacity = signal(0);
+  private readonly _imagesOpacity = signal(0);
 
   private _isIconsVisibleInitialized = false;
   private _isOccludedIconsVisibleInitialized = false;
