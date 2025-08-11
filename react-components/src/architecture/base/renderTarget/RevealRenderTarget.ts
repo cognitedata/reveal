@@ -5,10 +5,9 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CogniteCadModel,
-  CognitePointCloudModel,
   Image360Action,
-  type DataSourceType
+  type DataSourceType,
+  CogniteCadModel
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -37,9 +36,10 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
+import { type Image360Model } from '../../concrete/reveal/RevealTypes';
 import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 import { type UniqueId } from '../utilities/types';
+import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -60,6 +60,7 @@ export class RevealRenderTarget {
   private readonly _cdfCaches: CdfCaches;
   private readonly _instanceStylingController: InstanceStylingController;
   private readonly _revealSettingsController: RevealSettingsController;
+  private readonly _panelUpdater: DomainObjectPanelUpdater;
 
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
@@ -89,9 +90,10 @@ export class RevealRenderTarget {
     this._commandsController.addEventListeners();
     this._contextmenuController = new ContextMenuController();
     this._instanceStylingController = new InstanceStylingController();
-    this._revealSettingsController = new RevealSettingsController(viewer);
+    this._panelUpdater = new DomainObjectPanelUpdater();
     this._rootDomainObject = new RootDomainObject(this, sdk);
     this._rootDomainObject.isExpanded = true;
+    this._revealSettingsController = new RevealSettingsController(viewer, this._rootDomainObject);
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -151,6 +153,10 @@ export class RevealRenderTarget {
     return this._revealSettingsController;
   }
 
+  public get panelUpdater(): DomainObjectPanelUpdater {
+    return this._panelUpdater;
+  }
+
   public get cursor(): string {
     return this.domElement.style.cursor;
   }
@@ -199,14 +205,6 @@ export class RevealRenderTarget {
   // ==================================================
   // INSTANCE METHODS: Get models from the viewer
   // ==================================================
-
-  public *getPointClouds(): Generator<PointCloud> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
-        yield model;
-      }
-    }
-  }
 
   public *getCadModels(): Generator<CogniteCadModel> {
     for (const model of this.viewer.models) {
