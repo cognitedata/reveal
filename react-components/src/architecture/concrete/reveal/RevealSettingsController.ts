@@ -12,6 +12,7 @@ import {
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { clear } from '../../base/utilities/extensions/arrayUtils';
+import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
@@ -38,6 +39,17 @@ export class RevealSettingsController {
   private _pointShapeInitialized = false;
   private _pointColorTypeInitialized = false;
 
+  // Settings for the 360 images
+  public readonly _isIconsVisible = signal(false);
+  public readonly _isOccludedIconsVisible = signal(false);
+  public readonly _iconsOpacity = signal(0);
+  public readonly _imagesOpacity = signal(0);
+
+  private _isIconsVisibleInitialized = false;
+  private _isOccludedIconsVisibleInitialized = false;
+  private _iconsOpacityInitialized = false;
+  private _imagesOpacityInitialized = false;
+
   constructor(viewer: Cognite3DViewer<DataSourceType>, root?: DomainObject) {
     this._viewer = viewer;
     this._root = root;
@@ -54,13 +66,39 @@ export class RevealSettingsController {
       setCameraControlsTypeOnViewer(this.cameraControlsType(), this._viewer);
     });
     this.addEffect(() => {
-      setPointSizeOnViewer(this.pointSize(), this._root);
+      this.forEachPointCloud((domainObject) => {
+        domainObject.pointSize(this._pointSize());
+      });
     });
     this.addEffect(() => {
-      setPointShapeOnViewer(this.pointShape(), this._root);
+      this.forEachPointCloud((domainObject) => {
+        domainObject.pointShape(this._pointShape());
+      });
     });
     this.addEffect(() => {
-      setPointColorTypeOnViewer(this.pointColorType(), this._root);
+      this.forEachPointCloud((domainObject) => {
+        domainObject.pointColorType(this._pointColorType());
+      });
+    });
+    this.addEffect(() => {
+      this.forEachImage360Collection((domainObject) => {
+        domainObject.isIconsVisible(this._isIconsVisible());
+      });
+    });
+    this.addEffect(() => {
+      this.forEachImage360Collection((domainObject) => {
+        domainObject.isOccludedIconsVisible(this._isOccludedIconsVisible());
+      });
+    });
+    this.addEffect(() => {
+      this.forEachImage360Collection((domainObject) => {
+        domainObject.iconsOpacity(this._iconsOpacity());
+      });
+    });
+    this.addEffect(() => {
+      this.forEachImage360Collection((domainObject) => {
+        domainObject.imagesOpacity(this._imagesOpacity());
+      });
     });
   }
 
@@ -112,6 +150,54 @@ export class RevealSettingsController {
     return this._pointColorType;
   }
 
+  public get isIconsVisible(): Signal<boolean> {
+    // Let the first PointCloud decide the default value
+    if (!this._isIconsVisibleInitialized) {
+      const domainObject = getFirstImage360Collection(this._root);
+      if (domainObject !== undefined) {
+        this._isIconsVisible(domainObject.isIconsVisible());
+        this._isIconsVisibleInitialized = true;
+      }
+    }
+    return this._isIconsVisible;
+  }
+
+  public get isOccludedIconsVisible(): Signal<boolean> {
+    // Let the first PointCloud decide the default value
+    if (!this._isOccludedIconsVisibleInitialized) {
+      const domainObject = getFirstImage360Collection(this._root);
+      if (domainObject !== undefined) {
+        this._isOccludedIconsVisible(domainObject.isOccludedIconsVisible());
+        this._isOccludedIconsVisibleInitialized = true;
+      }
+    }
+    return this._isOccludedIconsVisible;
+  }
+
+  public get iconsOpacity(): Signal<number> {
+    // Let the first PointCloud decide the default value
+    if (!this._iconsOpacityInitialized) {
+      const domainObject = getFirstImage360Collection(this._root);
+      if (domainObject !== undefined) {
+        this._iconsOpacity(domainObject.iconsOpacity());
+        this._iconsOpacityInitialized = true;
+      }
+    }
+    return this._iconsOpacity;
+  }
+
+  public get imagesOpacity(): Signal<number> {
+    // Let the first 360 image decide the default value
+    if (!this._imagesOpacityInitialized) {
+      const domainObject = getFirstImage360Collection(this._root);
+      if (domainObject !== undefined) {
+        this._imagesOpacity(domainObject.imagesOpacity());
+        this._imagesOpacityInitialized = true;
+      }
+    }
+    return this._imagesOpacity;
+  }
+
   public dispose(): void {
     for (const disposable of this._disposables) {
       disposable();
@@ -152,6 +238,24 @@ export class RevealSettingsController {
       this._cameraControlsType(cameraManager.options.controlsType);
     }
   };
+
+  private forEachPointCloud(func: (arg: PointCloudDomainObject) => void): void {
+    if (this._root === undefined) {
+      return;
+    }
+    for (const domainObject of this._root.getDescendantsByType(PointCloudDomainObject)) {
+      func(domainObject);
+    }
+  }
+
+  private forEachImage360Collection(func: (arg: Image360CollectionDomainObject) => void): void {
+    if (this._root === undefined) {
+      return;
+    }
+    for (const domainObject of this._root.getDescendantsByType(Image360CollectionDomainObject)) {
+      func(domainObject);
+    }
+  }
 }
 
 function setQualityOnViewer<T extends DataSourceType>(
@@ -183,33 +287,18 @@ function setCameraControlsTypeOnViewer<T extends DataSourceType>(
   }
 }
 
-function setPointSizeOnViewer(value: number, root?: DomainObject): void {
-  for (const domainObject of getPointClouds(root)) {
-    domainObject.pointSize(value);
-  }
-}
-
-function setPointShapeOnViewer(value: PointShape, root?: DomainObject): void {
-  for (const domainObject of getPointClouds(root)) {
-    domainObject.pointShape(value);
-  }
-}
-function setPointColorTypeOnViewer(value: PointColorType, root?: DomainObject): void {
-  for (const domainObject of getPointClouds(root)) {
-    domainObject.pointColorType(value);
-  }
-}
-
-function* getPointClouds(root?: DomainObject): Generator<PointCloudDomainObject> {
-  if (root === undefined) {
-    return;
-  }
-  yield* root.getDescendantsByType(PointCloudDomainObject);
-}
-
 function getFirstPointCloud(root?: DomainObject): PointCloudDomainObject | undefined {
   if (root === undefined) {
     return undefined;
   }
   return root.getDescendantByType(PointCloudDomainObject);
+}
+
+function getFirstImage360Collection(
+  root?: DomainObject
+): Image360CollectionDomainObject | undefined {
+  if (root === undefined) {
+    return undefined;
+  }
+  return root.getDescendantByType(Image360CollectionDomainObject);
 }

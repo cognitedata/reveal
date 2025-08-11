@@ -1,3 +1,4 @@
+import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type IconName } from '../../../base/utilities/IconName';
@@ -11,6 +12,10 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
 
   private readonly _model: Image360Model;
+  public readonly isIconsVisible = signal(false);
+  public readonly isOccludedIconsVisible = signal(false);
+  public readonly iconsOpacity = signal(0);
+  public readonly imagesOpacity = signal(0);
   private readonly _updateCallback: () => void;
 
   // ==================================================
@@ -29,6 +34,19 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
     super();
     this._model = model;
     this.name = model.label;
+
+    this.isIconsVisible(model.getIconsVisibility());
+    this.isOccludedIconsVisible(model.isOccludedIconsVisible());
+    this.iconsOpacity(model.getIconsOpacity());
+    this.imagesOpacity(model.getImagesOpacity());
+
+    // This updated the point cloud on reveal side when the signals change.
+    this.addEffect(() => {
+      this._model.setIconsVisibility(this.isIconsVisible());
+      this._model.setOccludedIconsVisible(this.isOccludedIconsVisible());
+      this._model.setIconsOpacity(this.iconsOpacity());
+      this._model.setImagesOpacity(this.imagesOpacity());
+    });
 
     this._updateCallback = () => {
       CommandsUpdater.update(getRenderTarget(this));

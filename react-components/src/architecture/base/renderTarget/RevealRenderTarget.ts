@@ -6,8 +6,7 @@ import {
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
   Image360Action,
-  type DataSourceType,
-  CogniteCadModel
+  type DataSourceType
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -36,7 +35,6 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type Image360Model } from '../../concrete/reveal/RevealTypes';
 import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 import { type UniqueId } from '../utilities/types';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
@@ -200,24 +198,6 @@ export class RevealRenderTarget {
 
   public get visualSceneBoundingBox(): Box3 {
     return this.viewer.getVisualSceneBoundingBox();
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Get models from the viewer
-  // ==================================================
-
-  public *getCadModels(): Generator<CogniteCadModel> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CogniteCadModel) {
-        yield model;
-      }
-    }
-  }
-
-  public *get360ImageCollections(): Generator<Image360Model> {
-    for (const collection of this.viewer.get360ImageCollections()) {
-      yield collection;
-    }
   }
 
   // ==================================================

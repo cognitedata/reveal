@@ -1,6 +1,6 @@
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
-import { type Image360Model } from '../../../concrete/reveal/RevealTypes';
+import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 
 export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   // ==================================================
@@ -12,20 +12,14 @@ export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.firstCollection !== undefined;
+    return this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) !== undefined;
   }
 
   public override get value(): number {
-    return this.firstCollection?.getImagesOpacity() ?? 1;
+    return this.settingsController._imagesOpacity();
   }
 
   public override set value(value: number) {
-    for (const collection of this.renderTarget.get360ImageCollections()) {
-      collection.setImagesOpacity(value);
-    }
-  }
-
-  private get firstCollection(): Image360Model | undefined {
-    return this.renderTarget.get360ImageCollections().next().value;
+    this.settingsController._imagesOpacity(value);
   }
 }

@@ -7,7 +7,7 @@ import { SetPointColorTypeCommand } from './pointCloud/SetPointColorTypeCommand'
 import { SetPointShapeCommand } from './pointCloud/SetPointShapeCommand';
 import { PointCloudFilterCommand } from './pointCloud/PointCloudFilterCommand';
 import { PointCloudDividerCommand } from './pointCloud/PointCloudDividerCommand';
-import { Image360CollectionDividerCommand } from './image360Collection/Image360CollectionDividerCommand';
+import { Image360ImagesDividerCommand } from './image360Collection/Image360ImagesDividerCommand';
 import { Set360ImagesSectionCommand } from './image360Collection/Set360ImagesSectionCommand';
 import { Set360ImagesOpacityCommand } from './image360Collection/Set360ImagesOpacityCommand';
 import { Set360IconsSectionCommand } from './image360Collection/Set360IconsSectionCommand';
@@ -46,7 +46,7 @@ export class SettingsCommand extends BaseSettingsCommand {
 
     if (include360Images) {
       // 360 Images
-      this.add(new Image360CollectionDividerCommand());
+      this.add(new Image360ImagesDividerCommand());
       this.add(new Set360ImagesSectionCommand());
       this.add(new Set360ImagesOpacityCommand());
 
