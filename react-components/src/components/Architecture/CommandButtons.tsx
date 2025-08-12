@@ -3,7 +3,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type PlacementType } from './types';
 import { type ButtonProp } from './RevealButtons';
 import { createReactElement } from './Factories/ReactElementFactory';
-import { createDivider } from './DividerCreator';
+import { createDividerByKey } from './DividerCreator';
 
 export function createButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
@@ -24,7 +24,7 @@ export const CommandButtons = ({
     <>
       {commands.map((command, index): ReactElement => {
         if (command === undefined) {
-          return createDivider(`undefined${index.toString()}`, placement);
+          return createDividerByKey(`undefined${index.toString()}`, placement);
         }
         return createReactElement(command, placement);
       })}
