@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
-import { BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { type PlacementType } from './types';
