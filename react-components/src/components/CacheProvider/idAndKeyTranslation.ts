@@ -42,6 +42,10 @@ export function createInstanceKey(id: InstanceId): InstanceKey {
   }
 }
 
+export function isFdmKey(key: InstanceKey): key is FdmKey {
+  return typeof key === 'string' && key.includes('/');
+}
+
 export function createModelTreeIndexKey(
   modelId: ModelId,
   revisionId: RevisionId,
