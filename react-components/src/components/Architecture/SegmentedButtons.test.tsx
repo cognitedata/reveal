@@ -10,14 +10,13 @@ import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
-import { CommandButton } from './CommandButton';
 import { OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { SegmentedButtons } from './SegmentedButtons';
 import userEvent from '@testing-library/user-event';
 
 const TEST_ID = 'segmented-control-button';
 
-describe(CommandButton.name, () => {
+describe(SegmentedButtons.name, () => {
   test('should render with default values', () => {
     const command = new MockSegmentedCommand();
     renderSegmentedButtons(command);

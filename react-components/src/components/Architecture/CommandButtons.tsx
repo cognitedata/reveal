@@ -24,7 +24,7 @@ export const CommandButtons = ({
     <>
       {commands.map((command, index): ReactElement => {
         if (command === undefined) {
-          return createDivider(index, placement);
+          return createDivider(`undefined${index.toString()}`, placement);
         }
         return createReactElement(command, placement);
       })}

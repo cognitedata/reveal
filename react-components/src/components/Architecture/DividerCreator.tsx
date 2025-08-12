@@ -10,20 +10,13 @@ import { type IReactElementCreator } from './Factories/IReactElementCreator';
 export class DividerCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
     if (command instanceof DividerCommand || command instanceof SectionCommand) {
-      return createDivider(command, placement);
+      return createDivider(command.uniqueId, placement);
     }
     return undefined;
   }
 }
 
-export function createDivider(id: BaseCommand | number, placement: PlacementType): ReactElement {
+export function createDivider(key: string, placement: PlacementType): ReactElement {
   const direction = getDividerDirection(placement);
-  return <Divider weight="2px" length="24px" direction={direction} key={getKey(id)} />;
-}
-
-function getKey(id: BaseCommand | number): string {
-  if (id instanceof BaseCommand) {
-    return id.uniqueId;
-  }
-  return `undefined${id.toString()}`;
+  return <Divider weight="2px" length="24px" direction={direction} key={key} />;
 }
