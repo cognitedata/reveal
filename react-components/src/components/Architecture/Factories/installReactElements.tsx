@@ -4,7 +4,7 @@ import { DividerCreator } from '../DividerCreator';
 import { DropdownButtonCreator } from '../DropdownButton';
 import { FilterButtonCreator } from '../FilterButton';
 import { InputFieldCreator } from '../InputField';
-import { installReactElement, installFallbackReactElement } from './ReactElementFactory';
+import { installReactElement } from './ReactElementFactory';
 import { SegmentedButtonsCreator } from '../SegmentedButtons';
 import { SettingsButtonCreator } from '../SettingsButton';
 
@@ -16,5 +16,5 @@ export function installReactElements(): void {
   installReactElement(new InputFieldCreator());
   installReactElement(new CustomInputFieldCreator());
   installReactElement(new DividerCreator());
-  installFallbackReactElement(new ButtonCreator());
+  installReactElement(new ButtonCreator(), Number.MAX_SAFE_INTEGER); // Ensure this will be added last in the list of creators
 }
