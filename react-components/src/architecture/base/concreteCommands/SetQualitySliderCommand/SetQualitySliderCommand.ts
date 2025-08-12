@@ -28,8 +28,8 @@ export class SetQualitySliderCommand extends BaseSliderCommand {
   }
 
   public override get value(): FidelityLevel {
-    const viewerQualitySettings = this.renderTarget.revealSettingsController.renderQuality();
-    return getClosestFidelity(viewerQualitySettings);
+    const qualitySettings = this.settingsController.qualitySettings();
+    return getClosestFidelity(qualitySettings);
   }
 
   public override set value(value: number) {
@@ -41,7 +41,7 @@ export class SetQualitySliderCommand extends BaseSliderCommand {
     }
 
     const qualitySettings = getQualityForFidelityLevel(rounded);
-    this.renderTarget.revealSettingsController.renderQuality(qualitySettings);
+    this.settingsController.qualitySettings(qualitySettings);
   }
 
   public override get marks(): Record<number, { label: string }> | undefined {

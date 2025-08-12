@@ -17,7 +17,7 @@ describe(RevealSettingsController.name, () => {
       resolutionOptions: { maxRenderResolution: 1.3e4, movingCameraResolutionFactor: 0.3 }
     };
 
-    settingsController.renderQuality(testQualitySettings);
+    settingsController.qualitySettings(testQualitySettings);
 
     expect(viewerSetCadModelBudgetMock).toHaveBeenCalledWith(testQualitySettings.cadBudget);
     expect(viewerSetPointCloudModelBudgetMock).toHaveBeenCalledWith(
@@ -26,5 +26,12 @@ describe(RevealSettingsController.name, () => {
     expect(viewerSetResolutionOptionsMock).toHaveBeenCalledWith(
       testQualitySettings.resolutionOptions
     );
+  });
+
+  test('Should dispose', () => {
+    const settingsController = new RevealSettingsController(viewerMock);
+    expect(settingsController.disposableCount).toBeGreaterThan(0);
+    settingsController.dispose();
+    expect(settingsController.disposableCount).toBe(0);
   });
 });

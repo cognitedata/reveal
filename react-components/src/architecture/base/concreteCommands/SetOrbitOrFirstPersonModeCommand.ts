@@ -3,7 +3,6 @@ import { FlexibleControlsType } from '@cognite/reveal';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { BaseOptionCommand, OptionType } from '../commands/BaseOptionCommand';
 import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand';
-import { effect } from '@cognite/signals';
 
 export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
   // ==================================================
@@ -26,12 +25,6 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-
-    this.addDisposable(
-      effect(() => {
-        this.renderTarget.revealSettingsController.cameraControlsType();
-        this.update();
-      })
-    );
+    this.listenTo(this.settingsController.cameraControlsType);
   }
 }

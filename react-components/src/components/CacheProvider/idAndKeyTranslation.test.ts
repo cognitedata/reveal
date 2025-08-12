@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { assertType, describe, expect, test } from 'vitest';
 import {
   createFdmKey,
   createInstanceKey,
@@ -8,8 +8,11 @@ import {
   revisionKeyToIds,
   createModelNodeIdKey,
   instanceIdToInstanceReference,
-  fdmKeyToId
+  fdmKeyToId,
+  isFdmKey
 } from './idAndKeyTranslation';
+import assert from 'assert';
+import { type FdmKey } from './types';
 
 describe('idAndKeyTranslation', () => {
   const MODEL_ID = 123;
@@ -90,6 +93,23 @@ describe('idAndKeyTranslation', () => {
 
     test('correctly preserves DM ID', () => {
       expect(instanceIdToInstanceReference(INSTANCE)).toEqual(INSTANCE);
+    });
+  });
+
+  describe(isFdmKey.name, () => {
+    const fdmKey = createFdmKey({ externalId: 'some-externalId', space: 'some-space' });
+
+    test('returns true for fdm key', () => {
+      expect(isFdmKey(fdmKey)).toBeTruthy();
+    });
+
+    test('type-guard asserts fdm type', () => {
+      assert(isFdmKey(fdmKey));
+      assertType<FdmKey>(fdmKey);
+    });
+
+    test('returns false for non-fdm key', () => {
+      expect(isFdmKey(42)).toBeFalsy();
     });
   });
 

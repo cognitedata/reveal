@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 import { round } from '../utilities/extensions/mathUtils';
+import { signal } from '@cognite/signals';
 
 const METER_TO_FT = 1 / 0.3048;
 const METER_TO_INCH = 12 * METER_TO_FT;
@@ -15,13 +16,17 @@ export enum LengthUnit {
  * Represents a unit system that handles conversions and formatting of values.
  * This is a very basic unit system, but could be extended in the future to cover all use cases.
  */
-
 export class UnitSystem {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public lengthUnit: LengthUnit = LengthUnit.Meter;
+  public readonly lengthUnit = signal<LengthUnit>(LengthUnit.Meter);
+  public readonly _language;
+
+  public constructor(language: string = 'default') {
+    this._language = language;
+  }
 
   // ==================================================
   // INSTANCE METHODS: Convert number
@@ -46,11 +51,11 @@ export class UnitSystem {
     let convertedValue = this.convertToUnit(value, quantity);
 
     // For inch the precision should be 0.25, which is about 1 cm
-    if (this.lengthUnit === LengthUnit.Inch) {
+    if (this.lengthUnit() === LengthUnit.Inch) {
       convertedValue = round(convertedValue, 0.25);
     }
     // This ensures the number with commas as thousands separators
-    return convertedValue.toLocaleString('default', {
+    return convertedValue.toLocaleString(this._language, {
       maximumFractionDigits: fractionDigits,
       minimumFractionDigits: fractionDigits
     });
@@ -100,7 +105,7 @@ export class UnitSystem {
   }
 
   private getConversionFactorForLengthUnit(): number {
-    switch (this.lengthUnit) {
+    switch (this.lengthUnit()) {
       case LengthUnit.Feet:
         return METER_TO_FT;
       case LengthUnit.Inch:
@@ -111,7 +116,7 @@ export class UnitSystem {
   }
 
   private getTextForLengthUnit(): string {
-    switch (this.lengthUnit) {
+    switch (this.lengthUnit()) {
       case LengthUnit.Feet:
         return 'ft';
       case LengthUnit.Inch:
@@ -152,3 +157,5 @@ function convert(value: number, factor: number, quantity: Quantity): number {
       return value;
   }
 }
+
+export const UNDEFINED_UNIT_SYSTEM = new UnitSystem(); // Used when root is not present

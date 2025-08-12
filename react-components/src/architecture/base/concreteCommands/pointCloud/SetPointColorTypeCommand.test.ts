@@ -1,24 +1,24 @@
+import { SetPointColorTypeCommand } from './SetPointColorTypeCommand';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { SetLengthUnitCommand } from './SetLengthUnitCommand';
-import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';
-import { Changes } from '../../domainObjectsHelpers/Changes';
+import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
-describe(SetLengthUnitCommand.name, () => {
+describe(SetPointColorTypeCommand.name, () => {
+  let command: SetPointColorTypeCommand;
   const renderTarget = createFullRenderTargetMock();
-  let command: SetLengthUnitCommand;
+  const domainObject = new PointCloudDomainObject(createPointCloudMock());
+  renderTarget.rootDomainObject.addChildInteractive(domainObject);
 
   beforeEach(() => {
-    command = new SetLengthUnitCommand();
+    command = new SetPointColorTypeCommand();
     command.attach(renderTarget);
   });
 
   test('Should have correct initial state', () => {
     expect(isEmpty(command.tooltip)).toBe(false);
     expect(command.isEnabled).toBe(true);
-    expect(command.isToggle).toBe(false);
-    expect(command.isChecked).toBe(false);
   });
 
   test('Should have have options with correct initial state', () => {
@@ -37,32 +37,19 @@ describe(SetLengthUnitCommand.name, () => {
     expect(command.selectedChild).toBeDefined();
   });
 
-  test('Should change the unit', () => {
+  test('Should change the pointColorType on the point cloud', () => {
     assert(command.children !== undefined);
     for (const option of command.children) {
       if (option.isChecked) {
-        continue; // Already check
+        continue; // Already checked
       }
-      const unitSystem = renderTarget.rootDomainObject.unitSystem;
-      const oldValue = unitSystem.lengthUnit();
+      const oldValue = domainObject.pointColorType();
       expect(option.invoke()).toBe(true);
-      const newValue = unitSystem.lengthUnit();
+      const newValue = domainObject.pointColorType();
       expect(oldValue).not.toBe(newValue);
       expect(option.isChecked).toBe(true);
       expect(command.checkedCount).toBe(1);
       expect(command.selectedChild).toBe(option);
-    }
-  });
-
-  test('Should notify when unit change', () => {
-    assert(command.children !== undefined);
-    for (const option of command.children) {
-      if (option.isChecked) {
-        continue; // Already check
-      }
-      const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
-      expect(option.invoke()).toBe(true);
-      tester.toHaveBeenCalledOnce();
     }
   });
 });

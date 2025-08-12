@@ -1,11 +1,9 @@
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
-import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type Image360Model } from '../RevealTypes';
-import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 
 export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
@@ -19,7 +17,7 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): Image360Model | undefined {
+  public get model(): Image360Model {
     return this._model;
   }
 
@@ -56,12 +54,8 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
     return false;
   }
 
-  public override createRenderStyle(): RenderStyle | undefined {
-    return new Image360CollectionRenderStyle();
-  }
-
-  protected override removeCore(): void {
-    super.removeCore();
+  public override dispose(): void {
+    super.dispose();
     getRenderTarget(this)?.viewer?.remove360ImageSet(this._model);
 
     this._model.off('image360Entered', this._updateCallback);
