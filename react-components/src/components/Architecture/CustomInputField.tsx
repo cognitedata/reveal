@@ -17,18 +17,16 @@ import {
   type FieldContent
 } from '../../architecture/base/commands/CustomBaseInputCommand';
 import styled from 'styled-components';
-import { type IReactElementCreator } from './Factories/IReactElementCreator';
 import { type PlacementType } from './types';
 
-export class CustomInputFieldCreator implements IReactElementCreator {
-  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
-    if (command instanceof CustomBaseInputCommand) {
-      return (
-        <CustomInputField key={command.uniqueId} inputCommand={command} placement={placement} />
-      );
-    }
-    return undefined;
+export function createCustomInputField(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof CustomBaseInputCommand) {
+    return <CustomInputField key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
+  return undefined;
 }
 
 export const CustomInputField = ({

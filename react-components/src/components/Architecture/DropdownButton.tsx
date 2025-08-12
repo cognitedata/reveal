@@ -12,15 +12,15 @@ import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps } from './hooks/useCommandProps';
-import { type IReactElementCreator } from './Factories/IReactElementCreator';
 
-export class DropdownButtonCreator implements IReactElementCreator {
-  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
-    if (command instanceof BaseOptionCommand && command.optionType === OptionType.Dropdown) {
-      return <DropdownButton key={command.uniqueId} inputCommand={command} placement={placement} />;
-    }
-    return undefined;
+export function createDropdownButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseOptionCommand && command.optionType === OptionType.Dropdown) {
+    return <DropdownButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
+  return undefined;
 }
 
 export const DropdownButton = ({

@@ -21,15 +21,15 @@ import { type ReactNode, useState, type ReactElement } from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
-import { type IReactElementCreator } from './Factories/IReactElementCreator';
 
-export class SettingsButtonCreator implements IReactElementCreator {
-  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
-    if (command instanceof BaseSettingsCommand) {
-      return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
-    }
-    return undefined;
+export function createSettingsButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseSettingsCommand) {
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
+  return undefined;
 }
 
 export const SettingsButton = ({

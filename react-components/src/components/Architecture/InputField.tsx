@@ -6,16 +6,13 @@ import { type BaseCommand, type TranslationInput } from '../../architecture';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
 import { useCommandProperty } from './hooks/useCommandProperty';
-import { type IReactElementCreator } from './Factories/IReactElementCreator';
 import { type PlacementType } from './types';
 
-export class InputFieldCreator implements IReactElementCreator {
-  create(command: BaseCommand, _: PlacementType): ReactElement | undefined {
-    if (command instanceof BaseInputCommand) {
-      return <InputField key={command.uniqueId} inputCommand={command} />;
-    }
-    return undefined;
+export function createInputField(command: BaseCommand, _: PlacementType): ReactElement | undefined {
+  if (command instanceof BaseInputCommand) {
+    return <InputField key={command.uniqueId} inputCommand={command} />;
   }
+  return undefined;
 }
 
 export const InputField = ({ inputCommand }: { inputCommand: BaseInputCommand }): ReactNode => {

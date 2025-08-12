@@ -12,17 +12,15 @@ import { useCommandProps } from './hooks/useCommandProps';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type UniqueId } from '../../architecture/base/utilities/types';
 import { type BaseCommand } from '../../architecture';
-import { type IReactElementCreator } from './Factories/IReactElementCreator';
 
-export class SegmentedButtonsCreator implements IReactElementCreator {
-  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
-    if (command instanceof BaseOptionCommand && command.optionType === OptionType.Segmented) {
-      return (
-        <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />
-      );
-    }
-    return undefined;
+export function createSegmentedButtons(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseOptionCommand && command.optionType === OptionType.Segmented) {
+    return <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
+  return undefined;
 }
 
 export const SegmentedButtons = ({
