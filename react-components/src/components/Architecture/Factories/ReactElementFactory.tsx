@@ -6,12 +6,14 @@ import { type IReactElementCreator } from './IReactElementCreator';
 const _creators = new Array<IReactElementCreator>();
 let _fallbackCreator: IReactElementCreator | undefined;
 
-export function installReactElement(creator: IReactElementCreator): void {
-  _creators.push(creator);
+export function installReactElement<T extends IReactElementCreator>(Creator: new () => T): void {
+  _creators.push(new Creator());
 }
 
-export function installFallbackReactElement(creator: IReactElementCreator): void {
-  _fallbackCreator = creator;
+export function installFallbackReactElement<T extends IReactElementCreator>(
+  Creator: new () => T
+): void {
+  _fallbackCreator = new Creator();
 }
 
 export function createReactElement(command: BaseCommand, placement: PlacementType): ReactElement {
