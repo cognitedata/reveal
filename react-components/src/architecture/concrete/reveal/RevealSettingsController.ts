@@ -24,20 +24,16 @@ export class RevealSettingsController {
   }
 
   // The settings
-  private readonly _qualitySettings = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  private readonly _qualitySettings = signal(DEFAULT_REVEAL_QUALITY_SETTINGS);
 
   // Settings for the camera
-  private readonly _cameraKeyBoardSpeed = signal<number>(1);
-  private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
+  private readonly _cameraKeyBoardSpeed = signal(1);
+  private readonly _cameraControlsType = signal(FlexibleControlsType.Orbit);
 
   // Settings for the point cloud
-  private readonly _pointSize = signal<number>(2);
+  private readonly _pointSize = signal<number>(0);
   private readonly _pointShape = signal<PointShape>(0);
   private readonly _pointColorType = signal<PointColorType>(0);
-
-  private _pointSizeInitialized = false;
-  private _pointShapeInitialized = false;
-  private _pointColorTypeInitialized = false;
 
   // Settings for the 360 images
   private readonly _isIconsVisible = signal(false);
@@ -45,10 +41,8 @@ export class RevealSettingsController {
   private readonly _iconsOpacity = signal(0);
   private readonly _imagesOpacity = signal(0);
 
-  private _isIconsVisibleInitialized = false;
-  private _isOccludedIconsVisibleInitialized = false;
-  private _iconsOpacityInitialized = false;
-  private _imagesOpacityInitialized = false;
+  // If the signal is the set, the signal is initialized with a value from the first domain object of that type.
+  private readonly _isInitialized = new Set<Signal<any>>();
 
   constructor(viewer: Cognite3DViewer<DataSourceType>, root?: DomainObject) {
     this._viewer = viewer;
@@ -122,87 +116,87 @@ export class RevealSettingsController {
   }
 
   public get pointSize(): Signal<number> {
-    // Let the first PointCloud decide the default value
-    if (!this._pointSizeInitialized) {
+    const value = this._pointSize;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstPointCloud(this._root);
       if (domainObject !== undefined) {
-        this._pointSize(domainObject.pointSize());
-        this._pointSizeInitialized = true;
+        value(domainObject.pointSize());
+        this._isInitialized.add(value);
       }
     }
-    return this._pointSize;
+    return value;
   }
 
   public get pointShape(): Signal<PointShape> {
-    // Let the first PointCloud decide the default value
-    if (!this._pointShapeInitialized) {
+    const value = this._pointShape;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstPointCloud(this._root);
       if (domainObject !== undefined) {
-        this._pointShape(domainObject.pointShape());
-        this._pointShapeInitialized = true;
+        value(domainObject.pointShape());
+        this._isInitialized.add(value);
       }
     }
-    return this._pointShape;
+    return value;
   }
 
   public get pointColorType(): Signal<PointColorType> {
-    // Let the first PointCloud decide the default value
-    if (!this._pointColorTypeInitialized) {
+    const value = this._pointColorType;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstPointCloud(this._root);
       if (domainObject !== undefined) {
-        this._pointColorType(domainObject.pointColorType());
-        this._pointColorTypeInitialized = true;
+        value(domainObject.pointColorType());
+        this._isInitialized.add(value);
       }
     }
-    return this._pointColorType;
+    return value;
   }
 
   public get isIconsVisible(): Signal<boolean> {
-    // Let the first PointCloud decide the default value
-    if (!this._isIconsVisibleInitialized) {
+    const value = this._isIconsVisible;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstImage360Collection(this._root);
       if (domainObject !== undefined) {
-        this._isIconsVisible(domainObject.isIconsVisible());
-        this._isIconsVisibleInitialized = true;
+        value(domainObject.isIconsVisible());
+        this._isInitialized.add(value);
       }
     }
-    return this._isIconsVisible;
+    return value;
   }
 
   public get isOccludedIconsVisible(): Signal<boolean> {
-    // Let the first PointCloud decide the default value
-    if (!this._isOccludedIconsVisibleInitialized) {
+    const value = this._isOccludedIconsVisible;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstImage360Collection(this._root);
       if (domainObject !== undefined) {
-        this._isOccludedIconsVisible(domainObject.isOccludedIconsVisible());
-        this._isOccludedIconsVisibleInitialized = true;
+        value(domainObject.isOccludedIconsVisible());
+        this._isInitialized.add(value);
       }
     }
-    return this._isOccludedIconsVisible;
+    return value;
   }
 
   public get iconsOpacity(): Signal<number> {
-    // Let the first PointCloud decide the default value
-    if (!this._iconsOpacityInitialized) {
+    const value = this._iconsOpacity;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstImage360Collection(this._root);
       if (domainObject !== undefined) {
-        this._iconsOpacity(domainObject.iconsOpacity());
-        this._iconsOpacityInitialized = true;
+        value(domainObject.iconsOpacity());
+        this._isInitialized.add(value);
       }
     }
-    return this._iconsOpacity;
+    return value;
   }
 
   public get imagesOpacity(): Signal<number> {
-    // Let the first 360 image decide the default value
-    if (!this._imagesOpacityInitialized) {
+    const value = this._imagesOpacity;
+    if (!this._isInitialized.has(value)) {
       const domainObject = getFirstImage360Collection(this._root);
       if (domainObject !== undefined) {
-        this._imagesOpacity(domainObject.imagesOpacity());
-        this._imagesOpacityInitialized = true;
+        value(domainObject.imagesOpacity());
+        this._isInitialized.add(value);
       }
     }
-    return this._imagesOpacity;
+    return value;
   }
 
   public dispose(): void {
@@ -295,17 +289,11 @@ function setCameraControlsTypeOnViewer<T extends DataSourceType>(
 }
 
 function getFirstPointCloud(root?: DomainObject): PointCloudDomainObject | undefined {
-  if (root === undefined) {
-    return undefined;
-  }
-  return root.getDescendantByType(PointCloudDomainObject);
+  return root !== undefined ? root.getDescendantByType(PointCloudDomainObject) : undefined;
 }
 
 function getFirstImage360Collection(
   root?: DomainObject
 ): Image360CollectionDomainObject | undefined {
-  if (root === undefined) {
-    return undefined;
-  }
-  return root.getDescendantByType(Image360CollectionDomainObject);
+  return root !== undefined ? root.getDescendantByType(Image360CollectionDomainObject) : undefined;
 }
