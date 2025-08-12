@@ -13,6 +13,7 @@ import { type PlacementType } from './types';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps } from './hooks/useCommandProps';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
+import { installReactElement } from './Factories/ReactElementFactory';
 
 export class DropdownButtonCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
@@ -22,6 +23,8 @@ export class DropdownButtonCreator implements IReactElementCreator {
     return undefined;
   }
 }
+
+installReactElement(new DropdownButtonCreator());
 
 export const DropdownButton = ({
   inputCommand,

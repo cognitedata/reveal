@@ -1,11 +1,12 @@
 import { type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
-import { BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { type PlacementType } from './types';
 import { getDividerDirection } from './utilities';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
+import { installReactElement } from './Factories/ReactElementFactory';
 
 export class DividerCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
@@ -15,6 +16,8 @@ export class DividerCreator implements IReactElementCreator {
     return undefined;
   }
 }
+
+installReactElement(new DividerCreator());
 
 export function createDivider(key: string, placement: PlacementType): ReactElement {
   const direction = getDividerDirection(placement);

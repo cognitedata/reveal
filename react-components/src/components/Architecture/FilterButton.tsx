@@ -30,6 +30,7 @@ import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
 import { type BaseCommand } from '../../architecture';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
+import { installReactElement } from './Factories/ReactElementFactory';
 
 export class FilterButtonCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
@@ -39,6 +40,8 @@ export class FilterButtonCreator implements IReactElementCreator {
     return undefined;
   }
 }
+
+installReactElement(new FilterButtonCreator());
 
 export const FilterButton = ({
   inputCommand,

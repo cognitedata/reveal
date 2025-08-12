@@ -13,6 +13,7 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type UniqueId } from '../../architecture/base/utilities/types';
 import { type BaseCommand } from '../../architecture';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
+import { installReactElement } from './Factories/ReactElementFactory';
 
 export class SegmentedButtonsCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
@@ -24,6 +25,8 @@ export class SegmentedButtonsCreator implements IReactElementCreator {
     return undefined;
   }
 }
+
+installReactElement(new SegmentedButtonsCreator());
 
 export const SegmentedButtons = ({
   inputCommand,
