@@ -3,9 +3,9 @@ import { useRenderTarget } from '../RevealCanvas';
 import { AnchoredDialogUpdater } from '../../architecture/base/reactUpdaters/AnchoredDialogUpdater';
 import { ViewerAnchor } from '../ViewerAnchor/ViewerAnchor';
 import { Menu } from '@cognite/cogs.js';
-import { createButton } from './CommandButtons';
 import styled from 'styled-components';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { createReactElement } from './Factories/ReactElementFactory';
 
 export const AnchoredDialog = (): ReactNode => {
   const [activeToolUpdate, setActiveToolUpdater] = useState<number>(0);
@@ -39,7 +39,7 @@ export const AnchoredDialog = (): ReactNode => {
   return (
     <ViewerAnchor position={dialogContent?.position}>
       <SuppressedMenu>
-        {dialogContent.contentCommands.map((command) => createButton(command, 'right'))}
+        {dialogContent.contentCommands.map((command) => createReactElement(command, 'right'))}
       </SuppressedMenu>
     </ViewerAnchor>
   );

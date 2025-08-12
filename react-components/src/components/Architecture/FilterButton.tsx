@@ -28,6 +28,17 @@ import { type PlacementType } from './types';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
+import { type BaseCommand } from '../../architecture';
+import { type IReactElementCreator } from './Factories/IReactElementCreator';
+
+export class FilterButtonCreator implements IReactElementCreator {
+  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
+    if (command instanceof BaseFilterCommand) {
+      return <FilterButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+    }
+    return undefined;
+  }
+}
 
 export const FilterButton = ({
   inputCommand,

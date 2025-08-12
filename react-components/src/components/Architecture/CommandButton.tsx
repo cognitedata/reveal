@@ -9,6 +9,13 @@ import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
+import { type IReactElementCreator } from './Factories/IReactElementCreator';
+
+export class CommandButtonCreator implements IReactElementCreator {
+  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
+    return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+}
 
 export const CommandButton = ({
   inputCommand,

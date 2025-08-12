@@ -3,7 +3,7 @@ import { Menu, Option, Select } from '@cognite/cogs-lab';
 import { useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { BaseOptionCommand, OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
@@ -12,6 +12,16 @@ import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps } from './hooks/useCommandProps';
+import { type IReactElementCreator } from './Factories/IReactElementCreator';
+
+export class DropdownButtonCreator implements IReactElementCreator {
+  create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
+    if (command instanceof BaseOptionCommand && command.optionType === OptionType.Dropdown) {
+      return <DropdownButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+    }
+    return undefined;
+  }
+}
 
 export const DropdownButton = ({
   inputCommand,
