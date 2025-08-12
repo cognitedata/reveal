@@ -9,12 +9,12 @@ import { SegmentedButtonsCreator } from '../SegmentedButtons';
 import { SettingsButtonCreator } from '../SettingsButtonCreator';
 
 export function installReactElements(): void {
-  installReactElement(FilterButtonCreator);
-  installReactElement(SettingsButtonCreator);
-  installReactElement(DropdownButtonCreator);
-  installReactElement(SegmentedButtonsCreator);
-  installReactElement(InputFieldCreator);
-  installReactElement(CustomInputFieldCreator);
-  installReactElement(DividerCreator);
-  installFallbackReactElement(ButtonCreator);
+  installReactElement(new FilterButtonCreator());
+  installReactElement(new SettingsButtonCreator());
+  installReactElement(new DropdownButtonCreator());
+  installReactElement(new SegmentedButtonsCreator());
+  installReactElement(new InputFieldCreator());
+  installReactElement(new CustomInputFieldCreator());
+  installReactElement(new DividerCreator());
+  installFallbackReactElement(new ButtonCreator());
 }
