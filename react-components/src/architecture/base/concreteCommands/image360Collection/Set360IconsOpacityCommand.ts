@@ -13,10 +13,10 @@ export class Set360IconsOpacityCommand extends FractionSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    if (this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) === undefined) {
-      return false;
-    }
-    return this.settingsController.isIconsVisible();
+    return (
+      this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) !== undefined &&
+      this.settingsController.isIconsVisible()
+    );
   }
 
   public override get value(): number {
