@@ -1,3 +1,5 @@
+import { installReactElements } from './Architecture/Factories/installReactElements';
+
 export { RevealContainer } from './RevealContainer/RevealContainer';
 export { Image360HistoricalDetails } from './Image360HistoricalDetails/Image360HistoricalDetails';
 export { Image360Details } from './Image360Details/Image360Details';
@@ -20,3 +22,5 @@ export * from './RevealToolbar';
 export * from './SceneContainer';
 export * from './RuleBasedOutputs';
 export * from './CacheProvider';
+
+installReactElements();
