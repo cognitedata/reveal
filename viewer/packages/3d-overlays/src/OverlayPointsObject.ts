@@ -190,6 +190,7 @@ export class OverlayPointsObject extends Group {
   public dispose(): void {
     this._frontMaterial.dispose();
     this._geometry.dispose();
+    this.children.splice(0);
   }
 
   private initializePoints(geometry: BufferGeometry, material: ShaderMaterial): Points {

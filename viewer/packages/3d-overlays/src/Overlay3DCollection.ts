@@ -242,6 +242,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
    */
   public dispose(): void {
     this._overlays.forEach(overlay => overlay.dispose());
+    this._overlays.splice(0);
 
     this._overlayPoints.dispose();
     this._sharedTextures.color.dispose();
