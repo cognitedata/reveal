@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import {
   BufferGeometry,
   Color,
@@ -121,20 +124,23 @@ function createPerspectiveCamera(): PerspectiveCamera {
 
 function runOnBeforeRenderWithMocks(object: Object3D, renderSize: number, camera: PerspectiveCamera): void {
   const resolution = new Vector2(renderSize, renderSize);
+
+  const rendererMock = new Mock<WebGLRenderer>()
+    .setup(p => p.getSize(It.IsAny()))
+    .callback(({ args }) => args[0].copy(resolution))
+    .setup(p => p.getDrawingBufferSize(It.IsAny()))
+    .callback(({ args }) => args[0].copy(resolution))
+    .setup(p => p.domElement)
+    .returns(
+      new Mock<HTMLCanvasElement>()
+        .setup(p => p.clientWidth)
+        .returns(renderSize)
+        .object()
+    )
+    .object();
+
   object.onBeforeRender(
-    new Mock<WebGLRenderer>()
-      .setup(p => p.getSize(It.IsAny()))
-      .callback(({ args }) => args[0].copy(resolution))
-      .setup(p => p.getDrawingBufferSize(It.IsAny()))
-      .callback(({ args }) => args[0].copy(resolution))
-      .setup(p => p.domElement)
-      .returns(
-        new Mock<HTMLCanvasElement>()
-          .setup(p => p.clientWidth)
-          .returns(renderSize)
-          .object()
-      )
-      .object(),
+    rendererMock,
     new Mock<Scene>().object(),
     camera,
     new Mock<BufferGeometry>().object(),
