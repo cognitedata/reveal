@@ -1,12 +1,12 @@
-import { DropdownButtonCreator } from '../DropdownButton';
 import { ButtonCreator } from '../CommandButton';
-import { SettingsButtonCreator } from '../SettingsButton';
-import { FilterButtonCreator } from '../FilterButton';
-import { SegmentedButtonsCreator } from '../SegmentedButtons';
-import { InputFieldCreator } from '../InputField';
 import { CustomInputFieldCreator } from '../CustomInputField';
-import { installReactElement, installFallbackReactElement } from './ReactElementFactory';
 import { DividerCreator } from '../DividerCreator';
+import { DropdownButtonCreator } from '../DropdownButton';
+import { FilterButtonCreator } from '../FilterButton';
+import { InputFieldCreator } from '../InputField';
+import { installReactElement, installFallbackReactElement } from './ReactElementFactory';
+import { SegmentedButtonsCreator } from '../SegmentedButtons';
+import { SettingsButtonCreator } from '../SettingsButtonCreator';
 
 export function installReactElements(): void {
   installReactElement(new FilterButtonCreator());
