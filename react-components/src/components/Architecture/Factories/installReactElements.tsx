@@ -1,5 +1,5 @@
 import { DropdownButtonCreator } from '../DropdownButton';
-import { CommandButtonCreator } from '../CommandButton';
+import { ButtonCreator } from '../CommandButton';
 import { SettingsButtonCreator } from '../SettingsButton';
 import { FilterButtonCreator } from '../FilterButton';
 import { SegmentedButtonsCreator } from '../SegmentedButtons';
@@ -16,5 +16,5 @@ export function installReactElements(): void {
   installReactElement(new InputFieldCreator());
   installReactElement(new CustomInputFieldCreator());
   installReactElement(new DividerCreator());
-  installFallbackReactElement(new CommandButtonCreator());
+  installFallbackReactElement(new ButtonCreator());
 }
