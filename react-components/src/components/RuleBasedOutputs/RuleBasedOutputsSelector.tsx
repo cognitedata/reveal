@@ -9,7 +9,10 @@ import {
 import { use3dModels } from '../../hooks/use3dModels';
 import { type Datapoints, type Asset } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
-import { AssetIdsAndTimeseriesData, type AssetIdsAndTimeseries } from '../../data-providers/types';
+import {
+  type AssetIdsAndTimeseriesData,
+  type AssetIdsAndTimeseries
+} from '../../data-providers/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
@@ -111,15 +114,14 @@ export function RuleBasedOutputsSelector({
   const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
 
   const uniqueRuleSetKey = useMemo(() => {
-    return (generateUniqueRuleSetKey({
+    return generateUniqueRuleSetKey({
       ruleSet,
       assetMappings,
       fdmMappings,
       contextualizedAssetNodes,
       assetIdsWithTimeseriesData,
       timeseriesExternalIds
-    })
-    );
+    });
   }, [
     ruleSet.id,
     assetMappings,
@@ -188,13 +190,13 @@ export function RuleBasedOutputsSelector({
 
     if (ruleSetStylingCache.has(uniqueRuleSetKey)) {
       const cachedStylings = ruleSetStylingCache.get(uniqueRuleSetKey);
-      if (cachedStylings && onRuleSetChanged) {
+      if (cachedStylings !== undefined && onRuleSetChanged !== undefined) {
         onRuleSetChanged(cachedStylings);
       }
       onAllMappingsFetched(true);
       return;
     }
-    ruleBasedInitilization();
+    void ruleBasedInitilization();
   }, [
     uniqueRuleSetKey,
     ruleSet,
@@ -278,7 +280,7 @@ function isReadyToInitializeRules({
   models: Array<CogniteModel<DataSourceType>> | undefined;
 }): boolean {
   if (
-    allClassicAssetConnections &&
+    allClassicAssetConnections !== undefined &&
     allClassicAssetConnections.length > 0 &&
     assetMappings === undefined
   )
