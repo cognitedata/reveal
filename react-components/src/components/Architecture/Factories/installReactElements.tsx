@@ -6,7 +6,7 @@ import { FilterButtonCreator } from '../FilterButton';
 import { InputFieldCreator } from '../InputField';
 import { installReactElement, installFallbackReactElement } from './ReactElementFactory';
 import { SegmentedButtonsCreator } from '../SegmentedButtons';
-import { SettingsButtonCreator } from '../SettingsButtonCreator';
+import { SettingsButtonCreator } from '../SettingsButton';
 
 export function installReactElements(): void {
   installReactElement(new FilterButtonCreator());
