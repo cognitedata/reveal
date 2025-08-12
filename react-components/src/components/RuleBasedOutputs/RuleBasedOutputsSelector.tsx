@@ -243,24 +243,26 @@ function isReadyToInitializeRules(
   allFdmConnections: FdmConnectionWithNode[],
   models: Array<CogniteModel<DataSourceType>> | undefined
 ): boolean {
-  const modelsReady = models === undefined || models.length === 0;
-  if (!modelsReady) return false;
+  const modelsNotReady = models === undefined || models.length === 0;
 
-  if (ruleSet === undefined) return false;
-
-  if (!allDataLoaded) return false;
-
-  const classicAssetMappingsReady =
+  const classicAssetMappingsNotReady =
     allClassicAssetConnections !== undefined &&
     allClassicAssetConnections.length > 0 &&
     assetMappings === undefined;
-  if (!classicAssetMappingsReady) return false;
 
-  const fdmAssetMappingsReady = allFdmConnections.length > 0 && fdmMappings === undefined;
-  if (!fdmAssetMappingsReady) return false;
+  const fdmAssetMappingsNotReady = allFdmConnections.length > 0 && fdmMappings === undefined;
 
-  const timeseriesReady = timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData;
-  if (!timeseriesReady) return false;
+  const timeseriesNotReady = timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData;
+
+  if (
+    modelsNotReady ||
+    ruleSet === undefined ||
+    !allDataLoaded ||
+    classicAssetMappingsNotReady ||
+    fdmAssetMappingsNotReady ||
+    timeseriesNotReady
+  )
+    return false;
 
   return true;
 }
