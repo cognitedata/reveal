@@ -21,11 +21,9 @@ export function createReactElement(command: BaseCommand, placement: PlacementTyp
       return element;
     }
   }
-  if (_fallbackCreator !== undefined) {
-    const element = _fallbackCreator.create(command, placement);
-    if (element !== undefined) {
-      return element;
-    }
+  const element = _fallbackCreator?.create(command, placement);
+  if (element !== undefined) {
+    return element;
   }
   throw new Error(`No element creator found for command: ${command.constructor.name}`);
 }

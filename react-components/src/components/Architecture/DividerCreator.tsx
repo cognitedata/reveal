@@ -10,7 +10,7 @@ import { type IReactElementCreator } from './Factories/IReactElementCreator';
 export class DividerCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
     if (command instanceof DividerCommand || command instanceof SectionCommand) {
-      createDivider(command, placement);
+      return createDivider(command, placement);
     }
     return undefined;
   }

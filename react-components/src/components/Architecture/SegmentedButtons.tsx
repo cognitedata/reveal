@@ -17,7 +17,9 @@ import { type IReactElementCreator } from './Factories/IReactElementCreator';
 export class SegmentedButtonsCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
     if (command instanceof BaseOptionCommand && command.optionType === OptionType.Segmented) {
-      <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />;
+      return (
+        <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />
+      );
     }
     return undefined;
   }
