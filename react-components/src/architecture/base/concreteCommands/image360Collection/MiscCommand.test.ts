@@ -1,4 +1,4 @@
-import { Image360ImagesDividerCommand } from './Image360ImagesDividerCommand';
+import { Image360CollectionDividerCommand } from './Image360CollectionDividerCommand';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { describe, expect, test } from 'vitest';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
@@ -9,7 +9,7 @@ import { Set360ImagesSectionCommand } from './Set360ImagesSectionCommand';
 describe('Misc 360 images commands', () => {
   test('Should be visible only when having 360 images', () => {
     const commands = [
-      new Image360ImagesDividerCommand(),
+      new Image360CollectionDividerCommand(),
       new Set360IconsSectionCommand(),
       new Set360ImagesSectionCommand()
     ];
