@@ -32,9 +32,11 @@ export const taggedImage360DmOptions = {
   addOptions: image360DmOptions
 } as const satisfies TaggedAddImage360CollectionOptions;
 
-export function createImage360ClassicMock(parameters?: {
-  visible?: boolean;
-}): Image360Collection<ClassicDataSourceType> {
+export const findImageAnnotationsMock = vi
+  .fn<Image360Collection<ClassicDataSourceType>['findImageAnnotations']>()
+  .mockResolvedValue([]);
+
+export function createImage360ClassicMock(parameters?: { visible?: boolean }): Image360Collection {
   const getIconsVisibilityMock = vi
     .fn<Image360Collection['getIconsVisibility']>()
     .mockReturnValue(parameters?.visible ?? true);
@@ -53,6 +55,8 @@ export function createImage360ClassicMock(parameters?: {
   return new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((p) => p.id)
     .returns('siteId')
+    .setup((p) => p.label)
+    .returns('360 Model Name')
     .setup((p) => p.getIconsVisibility)
     .returns(getIconsVisibilityMock)
     .setup((p) => p.setIconsVisibility)
@@ -61,12 +65,41 @@ export function createImage360ClassicMock(parameters?: {
     .returns(onEventMock)
     .setup((p) => p.off)
     .returns(offEventMock)
+    .setup((p) => p.findImageAnnotations)
+    .returns(findImageAnnotationsMock)
     .object();
 }
 
-export function createImage360DmMock(): Image360Collection<DMDataSourceType> {
+export function createImage360DmMock(parameters?: {
+  visible?: boolean;
+}): Image360Collection<DMDataSourceType> {
+  const getIconsVisibilityMock = vi
+    .fn<Image360Collection['getIconsVisibility']>()
+    .mockReturnValue(parameters?.visible ?? true);
+
+  const setIconsVisibilityMock = vi
+    .fn<Image360Collection['setIconsVisibility']>()
+    .mockImplementation((visible) => {
+      getIconsVisibilityMock.mockReturnValue(visible);
+    });
+
+  const onEventMock =
+    vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
+  const offEventMock =
+    vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
+
   return new Mock<Image360Collection<DMDataSourceType>>()
     .setup((p) => p.id)
     .returns('testImage360ExternalId')
+    .setup((p) => p.label)
+    .returns('360 Model Name')
+    .setup((p) => p.getIconsVisibility)
+    .returns(getIconsVisibilityMock)
+    .setup((p) => p.setIconsVisibility)
+    .returns(setIconsVisibilityMock)
+    .setup((p) => p.on)
+    .returns(onEventMock)
+    .setup((p) => p.off)
+    .returns(offEventMock)
     .object();
 }

@@ -7,7 +7,7 @@ export const useMappedEdgesForRevisions = (
   fetchViews = false,
   enabled = true
 ): UseQueryResult<ModelRevisionToConnectionMap> => {
-  const content = useFdmCadNodeCache();
+  const fdmNodeCache = useFdmCadNodeCache();
 
   return useQuery({
     queryKey: [
@@ -16,7 +16,12 @@ export const useMappedEdgesForRevisions = (
       ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort(),
       fetchViews
     ],
-    queryFn: async () => await content.getAllMappingExternalIds(modelRevisionIds, fetchViews),
+    queryFn: async () => {
+      if (fdmNodeCache === undefined) {
+        return new Map();
+      }
+      return await fdmNodeCache.getAllMappingExternalIds(modelRevisionIds, fetchViews);
+    },
     staleTime: Infinity,
     enabled: enabled && modelRevisionIds.length > 0
   });

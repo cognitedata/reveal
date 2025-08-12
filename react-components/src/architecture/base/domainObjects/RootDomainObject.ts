@@ -6,6 +6,7 @@ import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../utilities/IconName';
 import { AxisDomainObject } from '../../concrete/axis/AxisDomainObject';
+import { Changes } from '../domainObjectsHelpers/Changes';
 
 export class RootDomainObject extends DomainObject {
   // ==================================================
@@ -43,6 +44,14 @@ export class RootDomainObject extends DomainObject {
     this._sdk = sdk;
     this._fdmSdk = new FdmSDK(sdk);
     this.addChild(new AxisDomainObject());
+
+    this.addEffect(() => {
+      this.unitSystem.lengthUnit();
+
+      // Make sure all views are notified when unit change
+      this.notify(Changes.unit);
+      this.notifyDescendants(Changes.unit);
+    });
   }
 
   // ==================================================

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { isEmpty } from '../../base/utilities/TranslateInput';
 import { addImage360Annotations, getNumberOfImage360Annotations } from './testUtilities';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';

@@ -4,7 +4,11 @@ import { Range3 } from '../../base/utilities/geometry/Range3';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { LineSegments, Mesh, Object3D, Vector3 } from 'three';
 import { TerrainThreeView } from './TerrainThreeView';
-import { addView, expectChildrenOfTypeAndCount } from '#test-utils/architecture/viewUtil';
+import {
+  addView,
+  expectVisibleChildren,
+  expectVisibleChildrenOfType
+} from '#test-utils/architecture/viewUtil';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -19,10 +23,8 @@ describe(TerrainThreeView.name, () => {
     addView(domainObject, view);
   });
 
-  test('should have correct children in the view ', () => {
-    expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenOfTypeAndCount(view, LineSegments, 1);
-    expectChildrenOfTypeAndCount(view, Mesh, 1);
+  test('should have initial state', () => {
+    checkVisibleChildren(view, 1, 1);
   });
 
   test('should have correct bounding box', () => {
@@ -45,13 +47,11 @@ describe(TerrainThreeView.name, () => {
     }
     renderStyle.showContours = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenOfTypeAndCount(view, LineSegments, 0);
-    expectChildrenOfTypeAndCount(view, Mesh, 1);
+    checkVisibleChildren(view, 0, 1);
 
     renderStyle.showContours = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenOfTypeAndCount(view, LineSegments, 1);
-    expectChildrenOfTypeAndCount(view, Mesh, 1);
+    checkVisibleChildren(view, 1, 1);
   });
 
   test('children of the view should changed when toggle showSolid', () => {
@@ -62,13 +62,11 @@ describe(TerrainThreeView.name, () => {
     }
     renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenOfTypeAndCount(view, LineSegments, 1);
-    expectChildrenOfTypeAndCount(view, Mesh, 0);
+    checkVisibleChildren(view, 1, 0);
 
     renderStyle.showSolid = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenOfTypeAndCount(view, LineSegments, 1);
-    expectChildrenOfTypeAndCount(view, Mesh, 1);
+    checkVisibleChildren(view, 1, 1);
   });
 });
 
@@ -77,4 +75,15 @@ export function createTerrainDomainObject(): TerrainDomainObject {
   const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
   domainObject.grid = createFractalRegularGrid2(range, 4, 0.3);
   return domainObject;
+}
+
+function checkVisibleChildren(
+  view: TerrainThreeView,
+  lineSegmentCount: number,
+  meshCount: number
+): void {
+  expect(view.object).toBeInstanceOf(Object3D);
+  expectVisibleChildrenOfType(view, LineSegments, lineSegmentCount);
+  expectVisibleChildrenOfType(view, Mesh, meshCount);
+  expectVisibleChildren(view, lineSegmentCount + meshCount);
 }

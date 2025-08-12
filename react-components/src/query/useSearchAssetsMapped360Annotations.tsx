@@ -39,7 +39,7 @@ export const useSearchAssetsMapped360Annotations = (
   sdk: CogniteClient,
   query: string,
   image360AnnotationFilterOptions?: Image360AnnotationFilterOptions
-): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
+): UseQueryResult<Image360AnnotationMappedAssetData[] | null> => {
   const { data: assetAnnotationMappings, isFetched } = useAllAssetsMapped360Annotations(
     sdk,
     siteIds,
@@ -57,7 +57,7 @@ export const useSearchAssetsMapped360Annotations = (
     ],
     queryFn: async () => {
       if (query === '') {
-        return assetAnnotationMappings;
+        return assetAnnotationMappings ?? null;
       }
 
       const assetMappings = assetAnnotationMappings?.map((mapping) => mapping.asset) ?? [];

@@ -1,15 +1,15 @@
 import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';
+import { type ModelWithAssetMappings } from './cad/modelWithAssetMappings';
 import { isDefined } from '../utilities/isDefined';
-import { type ClassicCadAssetMapping } from '../components/CacheProvider/cad/ClassicCadAssetMapping';
+import { type HybridCadAssetMapping } from '../components/CacheProvider/cad/assetMappingTypes';
 
 export const useCreateAssetMappingsMapPerModel = (
   models: Array<CogniteModel<DataSourceType>>,
   assetMappings: ModelWithAssetMappings[] | undefined
-): Map<CogniteCadModel, ClassicCadAssetMapping[] | undefined> => {
+): Map<CogniteCadModel, HybridCadAssetMapping[] | undefined> => {
   return useMemo(() => {
-    const mappingsPerModel = new Map<CogniteCadModel, ClassicCadAssetMapping[] | undefined>();
+    const mappingsPerModel = new Map<CogniteCadModel, HybridCadAssetMapping[] | undefined>();
     models.forEach((model) => {
       if (!(model instanceof CogniteCadModel)) {
         return;

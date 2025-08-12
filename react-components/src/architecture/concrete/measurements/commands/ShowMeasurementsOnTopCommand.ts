@@ -5,6 +5,7 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
+import { MeasurePointDomainObject } from '../point/MeasurePointDomainObject';
 
 export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
@@ -23,7 +24,8 @@ export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand 
     return (
       domainObject instanceof MeasureBoxDomainObject ||
       domainObject instanceof MeasureLineDomainObject ||
-      domainObject instanceof MeasureCylinderDomainObject
+      domainObject instanceof MeasureCylinderDomainObject ||
+      domainObject instanceof MeasurePointDomainObject
     );
   }
 }

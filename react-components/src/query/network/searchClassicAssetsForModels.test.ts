@@ -14,7 +14,7 @@ import {
 import { createAssetMock } from '#test-utils/fixtures/assets';
 import assert from 'assert';
 import { isInternalId } from '../../utilities/instanceIds';
-import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { type RevealRenderTarget } from '../../architecture';
 import { drop, take } from 'lodash';
 import { taggedPointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
@@ -27,9 +27,9 @@ import {
 } from '#test-utils/fixtures/image360';
 import { createFileMock } from '#test-utils/fixtures/files';
 import { createClassic360AnnotationMock } from '#test-utils/fixtures/image360Annotations';
-import { buildClassicAssetQueryFilter } from './buildClassicAssetFilter';
+import { buildClassicAssetQueryFilter } from './common/buildClassicAssetFilter';
 import { filterIncludesFilterNode } from '#test-utils/query/assetFilter';
-import { type AssetAdvancedFilterProps } from './filters';
+import { type AssetAdvancedFilterProps } from './common/filters';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
 
@@ -44,7 +44,7 @@ const TEST_POINT_CLOUD_ANNOTATIONS = TEST_ASSETS.map((asset) =>
 
 const TEST_PROJECT = 'test_project';
 
-const mockAssetMappings3dFilter = vi.fn<AssetMappings3DAPI['filter']>();
+const mockAssetMappings3dList = vi.fn<AssetMappings3DAPI['list']>();
 const mockAssetsRetrieve = vi.fn<AssetsAPI['retrieve']>();
 
 type PostAssetListFunction = (
@@ -61,8 +61,8 @@ const mockFilesList = vi.fn<FilesAPI['list']>();
 const mockSdk = new Mock<CogniteClient>()
   .setup((p) => p.annotations.list)
   .returns(mockAnnotationsList)
-  .setup((p) => p.assetMappings3D.filter)
-  .returns(mockAssetMappings3dFilter)
+  .setup((p) => p.assetMappings3D.list)
+  .returns(mockAssetMappings3dList)
   .setup((p) => p.assets.retrieve)
   .returns(mockAssetsRetrieve)
   .setup((p) => p.files.list)
@@ -94,7 +94,7 @@ const mockRenderTarget = new Mock<RevealRenderTarget>()
 
 describe(searchClassicAssetsForModels.name, () => {
   beforeEach(() => {
-    mockAssetMappings3dFilter.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
+    mockAssetMappings3dList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
     mockPostAssetList.mockResolvedValue(createHttpResponseObject({ items: [] }));
   });
 
@@ -114,16 +114,16 @@ describe(searchClassicAssetsForModels.name, () => {
           mockRenderTarget
         );
 
-        expect(mockAssetMappings3dFilter).toHaveBeenCalledWith(
+        expect(mockAssetMappings3dList).toHaveBeenCalledWith(
           cadModelOptions.modelId,
           cadModelOptions.revisionId,
-          { cursor: undefined, limit: ARBITRARY_SEARCH_LIMIT }
+          { cursor: undefined, limit: ARBITRARY_SEARCH_LIMIT, getDmsInstances: false }
         );
         expect(results).toEqual({ nextCursor: undefined, data: [] });
       });
 
       test('returns relevant mapped data when models have contextualization', async () => {
-        mockAssetMappings3dFilter.mockReturnValue(
+        mockAssetMappings3dList.mockReturnValue(
           createCursorAndAsyncIteratorMock({
             items: TEST_ASSETS.map((asset) => createAssetMappingMock({ assetId: asset.id }))
           })
@@ -159,7 +159,7 @@ describe(searchClassicAssetsForModels.name, () => {
           )
         };
 
-        mockAssetMappings3dFilter
+        mockAssetMappings3dList
           .mockReturnValueOnce(createCursorAndAsyncIteratorMock(assetMappingFilterResponse0))
           .mockReturnValueOnce(createCursorAndAsyncIteratorMock(assetMappingFilterResponse1));
 
@@ -185,7 +185,7 @@ describe(searchClassicAssetsForModels.name, () => {
 
         expect(nextPageResults.nextCursor).toBeUndefined();
 
-        expect(mockAssetMappings3dFilter).toHaveBeenCalledWith(
+        expect(mockAssetMappings3dList).toHaveBeenCalledWith(
           cadModelOptions.modelId,
           cadModelOptions.revisionId,
           expect.objectContaining({ cursor: secondPageCursor })

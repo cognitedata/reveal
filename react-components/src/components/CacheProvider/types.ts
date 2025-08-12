@@ -5,9 +5,10 @@ import {
   type Node3D
 } from '@cognite/sdk';
 import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
+import { type Image360AnnotationAssetQueryResult, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetInstance } from '../../utilities/instances';
+import { type InstanceKey } from '../../utilities/instanceIds';
 
 export type FdmCadConnection = {
   instance: DmsUniqueIdentifier;
@@ -19,6 +20,15 @@ export type FdmConnectionWithNode = {
   connection: FdmCadConnection;
   cadNode: Node3D;
   views?: Source[];
+};
+
+export type CadNodeTreeData = {
+  treeIndex: number;
+  subtreeSize: number;
+};
+
+export type CadNodeIdData = CadNodeTreeData & {
+  nodeId: number;
 };
 
 export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };
@@ -50,8 +60,13 @@ export type ModelRevisionId = { modelId: number; revisionId: number };
 
 export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
+
 export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
+export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
+export type ModelFdmIdKey = `${ModelId}/${RevisionId}/${FdmKey}`;
+
+export type ModelInstanceIdKey = ModelAssetIdKey | ModelFdmIdKey;
 
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
@@ -63,15 +78,15 @@ export type Image360AnnotationModel = AnnotationModel & {
 
 export type Image360AnnotationAssetInfo = {
   asset: AssetInstance;
-  assetAnnotationImage360Info: AssetAnnotationImage360Info<DataSourceType>;
+  assetAnnotationImage360Info: Image360AnnotationAssetQueryResult<DataSourceType>;
   position: Vector3;
 };
 
 export type AnnotationId = number;
 
-export type ChunkInCacheTypes<ObjectType> = {
+export type ChunkInCacheTypes<ObjectType, KeyType extends InstanceKey | NodeId> = {
   chunkInCache: ObjectType[];
-  chunkNotInCache: number[];
+  chunkNotInCache: KeyType[];
 };
 
 type PointCloudVolume = {

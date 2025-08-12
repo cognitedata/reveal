@@ -43,10 +43,12 @@ import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderSt
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { Box } from '../../../base/utilities/primitives/Box';
-import { getRoot } from '../../../base/domainObjects/getRoot';
 
-const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
+const RELATIVE_CORNER_DISTANCE = 0.2;
+const RELATIVE_RESIZE_RADIUS_FOR_POINT = 0.5;
+const RELATIVE_RESIZE_RADIUS_BOX = 0.15;
+
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
@@ -267,19 +269,12 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!domainObject.canRotateComponent(face.index)) {
       return undefined;
     }
-    const root = getRoot(domainObject);
-    if (root === undefined) {
-      return undefined;
-    }
     const degrees = domainObject.box.getRotationInDegrees(face.index);
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
-    const text = root.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
+    const text = this.getUnitSystem().toStringWithUnit(degrees, Quantity.Angle);
     const sprite = createSprite(text, this.style, spriteHeight);
-    if (sprite === undefined) {
-      return undefined;
-    }
     const faceCenter = face.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
     adjustLabel(faceCenter, domainObject, spriteHeight);
@@ -296,9 +291,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       return undefined;
     }
     const sprite = createSprite('Pending', this.style, spriteHeight);
-    if (sprite === undefined) {
-      return undefined;
-    }
     const faceCenter = face.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
     adjustLabel(faceCenter, this.domainObject, spriteHeight);
@@ -344,7 +336,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!Box.isValidSize(adjacentSize2)) {
       return undefined;
     }
-    const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
+    const radius = getRelativeResizeRadius(domainObject) * this.getFaceRadius(face);
     const geometry = new CircleGeometry(radius, CIRCULAR_SEGMENTS);
     material.transparent = true;
     material.depthWrite = false;
@@ -365,28 +357,21 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
   private addLabels(matrix: Matrix4): void {
     const { domainObject, style } = this;
-    const root = getRoot(domainObject);
-    if (root === undefined) {
-      return undefined;
-    }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     clear(this._sprites);
+
+    const unitSystem = this.getUnitSystem();
     for (let index = 0; index < 3; index++) {
       const size = domainObject.box.size.getComponent(index);
       if (!Box.isValidSize(size)) {
         this._sprites.push(undefined);
         continue;
       }
-      const text = root.unitSystem.toStringWithUnit(size, Quantity.Length);
+      const text = unitSystem.toStringWithUnit(size, Quantity.Length);
       const sprite = createSprite(text, style, spriteHeight);
-      if (sprite === undefined) {
-        this._sprites.push(undefined);
-        continue;
-      }
       this._sprites.push(sprite);
       this.addChild(sprite);
     }
-    this.updateLabels(this.renderTarget.camera);
     const { focusType } = domainObject;
     if (focusType === FocusType.Pending && domainObject.box.hasArea) {
       this.addChild(this.createPendingLabel(matrix, spriteHeight, TOP_FACE));
@@ -459,13 +444,13 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   }
 
   private addEdgeCircles(matrix: Matrix4, rotationMatrix: Matrix4): void {
-    const { domainObject, style } = this;
+    const { domainObject } = this;
     let selectedFace = domainObject.focusFace;
     if (this.domainObject.focusType !== FocusType.Face) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
+    updateMarkerMaterial(material, false, this.useDepthTest);
     for (const face of BoxFace.getAllFaces()) {
       if (!this.isFaceVisible(face)) {
         continue;
@@ -477,13 +462,13 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
+      updateMarkerMaterial(material, true, this.useDepthTest);
       this.addChild(this.createEdgeCircle(matrix, rotationMatrix, material, selectedFace));
     }
   }
 
   private addRotationRing(matrix: Matrix4, rotationMatrix: Matrix4): void {
-    const { domainObject, style } = this;
+    const { domainObject } = this;
     let selectedFace = domainObject.focusFace;
     if (this.domainObject.focusType !== FocusType.Rotation) {
       selectedFace = undefined;
@@ -501,13 +486,13 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         continue;
       }
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
+      updateMarkerMaterial(material, false, this.useDepthTest);
       material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
       this.addChild(this.createRotationRing(matrix, rotationMatrix, material, face));
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
+      updateMarkerMaterial(material, true, this.useDepthTest);
       material.clippingPlanes = BoxFace.createClippingPlanes(matrix, selectedFace.index);
       this.addChild(this.createRotationRing(matrix, rotationMatrix, material, selectedFace));
     }
@@ -530,14 +515,15 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length();
 
-    outputCornerSign.copy(this.getCornerSign(realPosition, face));
-    const corner = this.getCorner(outputCornerSign, face);
-
-    if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
+    if (relativeDistance < getRelativeResizeRadius(domainObject)) {
       return FocusType.Face;
     }
-    if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
-      return FocusType.Corner;
+    if (domainObject.canMoveCorners()) {
+      outputCornerSign.copy(this.getCornerSign(realPosition, face));
+      const corner = this.getCorner(outputCornerSign, face);
+      if (realPosition.distanceTo(corner) < RELATIVE_CORNER_DISTANCE * this.getFaceRadius(face)) {
+        return FocusType.Corner;
+      }
     }
     if (domainObject.canRotateComponent(face.index)) {
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
@@ -628,6 +614,7 @@ export function updateSolidMaterial(
   material.color = color;
   material.opacity = style.getSolidOpacity(domainObject.isSelected);
   material.transparent = true;
+  material.shininess = 100;
   material.emissive = color;
   material.emissiveIntensity = 0.2;
   material.side = DoubleSide;
@@ -667,8 +654,6 @@ export function updateWireframeMaterial(
 
 export function updateMarkerMaterial(
   material: MeshPhongMaterial,
-  domainObject: DomainObject,
-  style: SolidPrimitiveRenderStyle,
   hasFocus: boolean,
   depthTest: boolean
 ): void {
@@ -725,15 +710,8 @@ export function rotateEdgeCircle(mesh: Mesh, face: BoxFace, rotationMatrix: Matr
   }
 }
 
-export function createSprite(
-  text: string,
-  style: PrimitiveRenderStyle,
-  height: number
-): Sprite | undefined {
+export function createSprite(text: string, style: PrimitiveRenderStyle, height: number): Sprite {
   const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
-  if (result === undefined) {
-    return undefined;
-  }
   result.material.transparent = true;
   result.material.opacity = style.labelOpacity;
   result.material.depthTest = style.depthTest;
@@ -748,4 +726,11 @@ export function createSprite(
 const VECTOR_POOL = new Vector3Pool();
 function newVector3(copyFrom?: Vector3): Vector3 {
   return VECTOR_POOL.getNext(copyFrom);
+}
+
+function getRelativeResizeRadius(domainObject: BoxDomainObject): number {
+  if (domainObject.primitiveType === PrimitiveType.Point) {
+    return RELATIVE_RESIZE_RADIUS_FOR_POINT;
+  }
+  return RELATIVE_RESIZE_RADIUS_BOX;
 }

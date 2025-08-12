@@ -622,7 +622,7 @@ __metadata:
     "@storybook/react": "npm:8.4.5"
     "@storybook/react-vite": "npm:8.4.5"
     "@storybook/test": "npm:8.4.5"
-    "@tanstack/react-query": "npm:^5.32.0"
+    "@tanstack/react-query": "npm:^5.84.1"
     "@tanstack/react-query-devtools": "npm:^5.32.0"
     "@testing-library/react": "npm:^16.0.0"
     "@tippyjs/react": "npm:4.2.6"
@@ -631,7 +631,7 @@ __metadata:
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-resizable": "npm:^3.0.7"
-    "@types/three": "npm:^0.166.0"
+    "@types/three": "npm:^0.176.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.8.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     "@vitest/coverage-v8": "npm:^3.0.6"
@@ -661,7 +661,7 @@ __metadata:
     storybook: "npm:^8.3.5"
     style-loader: "npm:^4.0.0"
     styled-components: "npm:^6.1.12"
-    three: "npm:0.166.1"
+    three: "npm:0.176.0"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:5.8.3"
     vite: "npm:^6.2.7"
@@ -785,6 +785,13 @@ __metadata:
     gonzales-pe: "npm:^4.3.0"
     node-source-walk: "npm:^7.0.1"
   checksum: 10/647d4427f6aad119bdfea607ab19ca30be827f7f0462677b5a538d8f8ab4ebda2c05ece60fceb5d3abb093e69ab3393e24a8e966936d2745b07421cfd014b14f
+  languageName: node
+  linkType: hard
+
+"@dimforge/rapier3d-compat@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@dimforge/rapier3d-compat@npm:0.12.0"
+  checksum: 10/56cd538b59d534d2ed91de3eb7efd804af5defe146f65294e8ce81982a4bd6c27d61c1014c15a77bb5f5eff0de7a12fbc9b16bf895a2ec56ea5496fd80c78e26
   languageName: node
   linkType: hard
 
@@ -2755,10 +2762,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.60.6":
-  version: 5.60.6
-  resolution: "@tanstack/query-core@npm:5.60.6"
-  checksum: 10/a87613d85b3a280f2fef69037dd0ad512052d49b8dc979ed289ee538452d331926a720678bbd3b4485a8b38d5baf65c42869179f2fdeefa3f7b6dda04e878e56
+"@tanstack/query-core@npm:5.83.1":
+  version: 5.83.1
+  resolution: "@tanstack/query-core@npm:5.83.1"
+  checksum: 10/531650bafd70e2b5219ec79dd487461414e4ed8040067d8e3206d237ee39dd0b34a2573d20f751dfd1413b3d8df0b023fe22469c98765e3c8fab8391acf2f3c8
   languageName: node
   linkType: hard
 
@@ -2781,14 +2788,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^5.32.0":
-  version: 5.61.0
-  resolution: "@tanstack/react-query@npm:5.61.0"
+"@tanstack/react-query@npm:^5.84.1":
+  version: 5.84.1
+  resolution: "@tanstack/react-query@npm:5.84.1"
   dependencies:
-    "@tanstack/query-core": "npm:5.60.6"
+    "@tanstack/query-core": "npm:5.83.1"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10/e98d1396cd157626f29fb0d0d10c75dbdde6e2efa55463540c9d8e33b58ec4b72eeb58b7d2eea6e625a8316235777f128222adeb10533ddfade77b23ec209872
+  checksum: 10/b0d195df16d61acddf6bc5ef7acc34a335adcb9658f1f24a229965a7d8ca50fc60040a1dfb871e6f625004ffae26fa16a293d12fb30d9286e5ba35b2fb56ec05
   languageName: node
   linkType: hard
 
@@ -2906,7 +2913,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:~23.1.2":
+"@tweenjs/tween.js@npm:~23.1.3":
   version: 23.1.3
   resolution: "@tweenjs/tween.js@npm:23.1.3"
   checksum: 10/10ecaf311c975162459bd016ef7eb1f3118a257050c4886de9737dee823fc829100a0887f3fc298f7a5577140eac054f9609b823eb0748ca7b653ec85ffba75e
@@ -3129,16 +3136,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.166.0":
-  version: 0.166.0
-  resolution: "@types/three@npm:0.166.0"
+"@types/three@npm:^0.176.0":
+  version: 0.176.0
+  resolution: "@types/three@npm:0.176.0"
   dependencies:
-    "@tweenjs/tween.js": "npm:~23.1.2"
+    "@dimforge/rapier3d-compat": "npm:^0.12.0"
+    "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
+    "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/5e929d5870305fdb99420447006cf51119508c9f5a9d496a092dac6aaf0d1ef757bb04fd12f2585fab71699e8a25ceea5228f51befbe54c7c6dd0206c1631a06
+  checksum: 10/e3aae7e9137e9f2c5eaba1b594e5848d09a81f02ef1fcf70aa0d21374c1a7d5f1d4f8514e9b1def577a3f971c5df016713ba1178aa5690be55c9777d96b3ed6d
   languageName: node
   linkType: hard
 
@@ -3718,6 +3727,13 @@ __metadata:
   version: 3.5.13
   resolution: "@vue/shared@npm:3.5.13"
   checksum: 10/5c0c24f443533392dde08c3e4272ff2e19af9762f90baeaa808850e05106537bbd9e2d2ad2081d979b8c4bc89902395b46036b67f74c60b76025924de37833b1
+  languageName: node
+  linkType: hard
+
+"@webgpu/types@npm:*":
+  version: 0.1.63
+  resolution: "@webgpu/types@npm:0.1.63"
+  checksum: 10/9b4e02ee1109f8ee253d6c81abc2791d0333d88e6f6d5d4a12e54c3edf302570dc02fa9624149247e009b1edca3f45aba04030d0207b2bd7b4fa2b1afc4b5420
   languageName: node
   linkType: hard
 
@@ -4451,12 +4467,12 @@ __metadata:
   linkType: hard
 
 "brace-expansion@npm:^1.1.7":
-  version: 1.1.11
-  resolution: "brace-expansion@npm:1.1.11"
+  version: 1.1.12
+  resolution: "brace-expansion@npm:1.1.12"
   dependencies:
     balanced-match: "npm:^1.0.0"
     concat-map: "npm:0.0.1"
-  checksum: 10/faf34a7bb0c3fcf4b59c7808bc5d2a96a40988addf2e7e09dfbb67a2251800e0d14cd2bfc1aa79174f2f5095c54ff27f46fb1289fe2d77dac755b5eb3434cc07
+  checksum: 10/12cb6d6310629e3048cadb003e1aca4d8c9bb5c67c3c321bafdd7e7a50155de081f78ea3e0ed92ecc75a9015e784f301efc8132383132f4f7904ad1ac529c562
   languageName: node
   linkType: hard
 
@@ -11683,10 +11699,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.166.1":
-  version: 0.166.1
-  resolution: "three@npm:0.166.1"
-  checksum: 10/10f36702ab0f6b7f03a45f46437157a00ece42a1760d70b1c24db5e8d3f02b7b522a117377e7c8ad7ec504e2008a8776ccb4fa16512d455d431b66390f23a2ed
+"three@npm:0.176.0":
+  version: 0.176.0
+  resolution: "three@npm:0.176.0"
+  checksum: 10/b4081a211a9672bc38563ec75e8131f388f18d2d03672ccbc78dd1c4783018b0d490a67b02f5dcca5d7c8d0fa9d82b3a617d0e5ae0398877cdfe77e39f63dde0
   languageName: node
   linkType: hard
 

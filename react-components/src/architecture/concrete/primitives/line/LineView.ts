@@ -34,8 +34,6 @@ import { square } from '../../../base/utilities/extensions/mathUtils';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { createSprite } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
-import { getRoot } from '../../../base/domainObjects/getRoot';
-import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
@@ -196,7 +194,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       if (i > 0) {
         // create cylinder with length equal to the distance between successive vertices
         const distance = prevPoint.distanceTo(thisPoint);
-        const cylinder = new CylinderGeometry(radius, radius, distance, 6, 1);
+        const cylinder = new CylinderGeometry(radius, radius, distance, 8, 1);
 
         // use quaternion to orient cylinder to align along the vector formed between
         // the pair of vertices
@@ -286,7 +284,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (spriteHeight <= 0) {
       spriteHeight = 1;
     }
-    const unitSystem = getRoot(domainObject)?.unitSystem ?? new UnitSystem();
+    const unitSystem = this.getUnitSystem();
     const center = new Vector3();
     let prevPoint = domainObject.isClosed
       ? domainObject.getTransformedPoint(domainObject.lastPoint)
@@ -302,11 +300,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 
         const text = unitSystem.toStringWithUnit(distance, Quantity.Length);
         const sprite = createSprite(text, style, spriteHeight);
-        if (sprite !== undefined) {
-          adjustLabel(center, domainObject, style, spriteHeight);
-          sprite.position.copy(center);
-          this.addChild(sprite);
-        }
+        adjustLabel(center, domainObject, style, spriteHeight);
+        sprite.position.copy(center);
+        this.addChild(sprite);
       }
       prevPoint = transformedPoint;
     }
@@ -367,11 +363,12 @@ function adjustLabel(
     point.y += (1.1 * spriteHeight) / 2 + style.pipeRadius;
   }
 }
+const RADIUS_FACTOR = 0.5;
 
 function getRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
-  return domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
+  return RADIUS_FACTOR * (domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius);
 }
 
 function getSelectRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
-  return 1.5 * style.selectedPipeRadius; // Added more to make it easier to pick
+  return RADIUS_FACTOR * 1.5 * style.selectedPipeRadius; // Added more to make it easier to pick
 }

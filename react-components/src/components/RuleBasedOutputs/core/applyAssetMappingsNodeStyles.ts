@@ -4,10 +4,10 @@ import {
   type RuleAndStyleIndex
 } from '../types';
 import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
-import { type AssetStylingGroup } from '../../Reveal3DResources';
+import { type ClassicAssetStylingGroup } from '../../Reveal3DResources';
 import { Color } from 'three';
 import { createRuleStyling } from './createRuleStyling';
-import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/assetMappingTypes';
 
 export const applyAssetMappingsNodeStyles = (
   treeNodes: ClassicCadAssetMapping[],
@@ -35,7 +35,7 @@ export const applyAssetMappingsNodeStyles = (
     color: new Color(outputSelected.fill)
   });
 
-  const assetStylingGroup: AssetStylingGroup = {
+  const assetStylingGroup: ClassicAssetStylingGroup = {
     assetIds,
     style: { cad: nodeAppearance, pointcloud: nodeAppearance }
   };

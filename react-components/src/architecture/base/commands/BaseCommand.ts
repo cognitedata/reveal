@@ -1,8 +1,10 @@
+import { effect, type Signal } from '@cognite/signals';
 import { type IconName } from '../utilities/IconName';
 import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { isMacOs } from '../utilities/extensions/isMacOs';
 import { translate } from '../utilities/translateUtils';
+import { generateUniqueId, type ButtonType, type UniqueId } from '../utilities/types';
 
 /**
  * Represents a delegate function for updating a command.
@@ -20,8 +22,6 @@ export type CommandUpdateDelegate = (command: BaseCommand, change?: symbol) => v
  */
 
 export abstract class BaseCommand {
-  private static _counter: number = 0; // Counter for the unique index
-
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -29,11 +29,15 @@ export abstract class BaseCommand {
   private readonly _listeners: CommandUpdateDelegate[] = [];
   private readonly _disposables: Array<() => void> = [];
 
+  public get disposableCount(): number {
+    return this._disposables.length;
+  }
+
   // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
-  private readonly _uniqueId: number;
+  private readonly _uniqueId: UniqueId;
 
-  public get uniqueId(): number {
+  public get uniqueId(): UniqueId {
     return this._uniqueId;
   }
 
@@ -42,8 +46,7 @@ export abstract class BaseCommand {
   // ==================================================
 
   public constructor() {
-    BaseCommand._counter++;
-    this._uniqueId = BaseCommand._counter;
+    this._uniqueId = generateUniqueId();
   }
 
   // ==================================================
@@ -81,7 +84,7 @@ export abstract class BaseCommand {
     return undefined; // Means no icon
   }
 
-  public get buttonType(): string {
+  public get buttonType(): ButtonType {
     return 'ghost';
   }
 
@@ -143,6 +146,12 @@ export abstract class BaseCommand {
     return this.invokeCore();
   }
 
+  /**
+   * Removes the core functionality of the command
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @remarks
+   * Always call `super.dispose()` in the overrides.
+   */
   public dispose(): void {
     for (const child of this.getChildren()) {
       child.dispose();
@@ -150,6 +159,7 @@ export abstract class BaseCommand {
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
     this.removeEventListeners();
   }
 
@@ -188,6 +198,21 @@ export abstract class BaseCommand {
 
   protected addDisposable(disposable: () => void): void {
     this._disposables.push(disposable);
+  }
+
+  protected addEffect(effectFunction: () => void): void {
+    this.addDisposable(
+      effect(() => {
+        effectFunction();
+      })
+    );
+  }
+
+  protected listenTo<T>(signal: Signal<T>): void {
+    this.addEffect(() => {
+      signal();
+      this.update();
+    });
   }
 
   public getShortCutKeys(): string[] | undefined {

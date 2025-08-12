@@ -1,4 +1,6 @@
 export { use3dModels } from './use3dModels';
+export { useVisibleRevealDomainObjects } from './useVisibleRevealDomainObjects';
+export { useRevealDomainObjects } from './useRevealDomainObjects';
 export { useCameraNavigation } from './useCameraNavigation';
 export { useClickedNodeData } from './useClickedNode';
 export { useCreateAssetMappingsMapPerModel } from './useCreateAssetMappingsMapPerModel';
@@ -16,13 +18,14 @@ export { useGhostMode } from './useGhostMode';
 
 export type { SceneData } from './scenes/types';
 export type { CameraNavigationActions } from './useCameraNavigation';
-export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';
 export type {
   PointCloudAnnotationMappedAssetData,
   Image360AnnotationMappedAssetData,
   ClassicImage360AnnotationMappedData,
   DmImage360AnnotationMappedData,
-  ThreeDModelFdmMappings
+  ThreeDModelFdmMappings,
+  ClickedNodeData,
+  FdmNodeDataResult
 } from './types';
 export type { ModelWithRevisionInfo } from './network/types';
 

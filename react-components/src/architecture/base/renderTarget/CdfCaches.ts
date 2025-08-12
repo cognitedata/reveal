@@ -1,6 +1,7 @@
 import { type CogniteClient } from '@cognite/sdk';
-import { ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicAssetMappingCache';
-import { FdmCadNodeCache } from '../../../components/CacheProvider/FdmCadNodeCache';
+import { createClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCacheImpl';
+import { type ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { createFdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCacheImpl';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
 import { Image360AnnotationCache } from '../../../components/CacheProvider/Image360AnnotationCache';
@@ -8,48 +9,72 @@ import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
+import { type CadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCache';
+import { type FdmCadNodeCache } from '../../../components/CacheProvider/cad/FdmCadNodeCache';
+import { createCadInstanceMappingsCache } from '../../../components/CacheProvider/cad/CadInstanceMappingsCacheImpl';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
+  enableLegacy3dFdm: boolean;
 };
 
 export class CdfCaches {
-  private readonly _assetMappingAndNode3dCache: ClassicCadAssetMappingCache;
-  private readonly _fdmCadNodeCache: FdmCadNodeCache;
+  private readonly _cadMappingsCache: CadInstanceMappingsCache;
+  private readonly _classicCadNodeCache: ClassicCadAssetMappingCache;
+  private readonly _fdmCadNodeCache: FdmCadNodeCache | undefined;
+
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
   private readonly _image360AnnotationCache: Image360AnnotationCache;
 
   private readonly _coreDmOnly: boolean;
 
   private readonly _cogniteClient: CogniteClient;
-  private readonly _fdm3dDataProvider: Fdm3dDataProvider;
+  private readonly _fdm3dDataProvider: Fdm3dDataProvider | undefined;
 
   constructor(
     cdfClient: CogniteClient,
     viewer: Cognite3DViewer<DataSourceType>,
-    { coreDmOnly }: CdfCachesOptions
+    { coreDmOnly, enableLegacy3dFdm }: CdfCachesOptions
   ) {
     const fdmClient = new FdmSDK(cdfClient);
 
-    const fdm3dDataProvider = coreDmOnly
-      ? new CoreDm3dFdm3dDataProvider(fdmClient)
-      : new LegacyFdm3dDataProvider(fdmClient, cdfClient);
+    const fdm3dDataProvider = (() => {
+      if (coreDmOnly) {
+        return new CoreDm3dFdm3dDataProvider(fdmClient);
+      } else if (enableLegacy3dFdm) {
+        return new LegacyFdm3dDataProvider(fdmClient, cdfClient);
+      }
+      return undefined;
+    })();
 
-    this._assetMappingAndNode3dCache = new ClassicCadAssetMappingCache(cdfClient);
-    this._fdmCadNodeCache = new FdmCadNodeCache(cdfClient, fdm3dDataProvider);
+    this._classicCadNodeCache = createClassicCadAssetMappingCache(cdfClient);
+
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
+
+    if (fdm3dDataProvider !== undefined) {
+      this._fdmCadNodeCache = createFdmCadNodeCache(cdfClient, fdm3dDataProvider);
+    }
+
+    this._cadMappingsCache = createCadInstanceMappingsCache(
+      coreDmOnly ? undefined : this._classicCadNodeCache,
+      this._fdmCadNodeCache
+    );
 
     this._cogniteClient = cdfClient;
     this._fdm3dDataProvider = fdm3dDataProvider;
     this._coreDmOnly = coreDmOnly;
   }
 
-  public get classicCadAssetMappingCache(): ClassicCadAssetMappingCache {
-    return this._assetMappingAndNode3dCache;
+  public get cadMappingsCache(): CadInstanceMappingsCache {
+    return this._cadMappingsCache;
   }
 
-  public get fdmCadNodeCache(): FdmCadNodeCache {
+  public get classicCadAssetMappingCache(): ClassicCadAssetMappingCache {
+    return this._classicCadNodeCache;
+  }
+
+  public get fdmCadNodeCache(): FdmCadNodeCache | undefined {
     return this._fdmCadNodeCache;
   }
 
@@ -65,7 +90,7 @@ export class CdfCaches {
     return this._cogniteClient;
   }
 
-  public get fdm3dDataProvider(): Fdm3dDataProvider {
+  public get fdm3dDataProvider(): Fdm3dDataProvider | undefined {
     return this._fdm3dDataProvider;
   }
 

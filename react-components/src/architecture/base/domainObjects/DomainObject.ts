@@ -13,7 +13,6 @@ import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
@@ -31,6 +30,8 @@ import {
 } from '../../../advanced-tree-view';
 import { getRenderTarget } from './getRoot';
 import { translate } from '../utilities/translateUtils';
+import { effect } from '@cognite/signals';
+import { generateUniqueId, type UniqueId } from '../utilities/types';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -65,16 +66,20 @@ export abstract class DomainObject implements TreeNodeType {
 
   // Views and listeners
   public readonly views: Views = new Views();
+  private readonly _disposables: Array<() => void> = [];
 
-  // Unique index for the domain object, used as soft reference
-  private _uniqueId: number;
-  private static _counter: number = 0; // Counter for the unique index
+  public get disposableCount(): number {
+    return this._disposables.length;
+  }
 
-  public get uniqueId(): number {
+  // Unique guid for the domain object, used as soft reference
+  private _uniqueId: UniqueId;
+
+  public get uniqueId(): UniqueId {
     return this._uniqueId;
   }
 
-  public set uniqueId(value: number) {
+  protected set uniqueId(value: UniqueId) {
     this._uniqueId = value;
   }
 
@@ -83,8 +88,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public constructor() {
-    DomainObject._counter++;
-    this._uniqueId = DomainObject._counter;
+    this._uniqueId = generateUniqueId();
   }
 
   // ==================================================
@@ -92,7 +96,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public get id(): string {
-    return this.uniqueId.toString();
+    return this.uniqueId;
   }
 
   public get isVisibleInTree(): boolean {
@@ -401,7 +405,8 @@ export abstract class DomainObject implements TreeNodeType {
       }
     }
     if (this.hasPanelInfo) {
-      DomainObjectPanelUpdater.notify(this, change);
+      const renderTarget = getRenderTarget(this);
+      renderTarget?.panelUpdater.notify(this, change);
     }
     this.updateTreeNodeListeners();
   }
@@ -482,12 +487,17 @@ export abstract class DomainObject implements TreeNodeType {
 
   /**
    * Removes the core functionality of the domain object.
+   * This will automatically be called when the domain object is removed from its parent, by the function DomainObject.remove()
    * This method should be overridden in derived classes to provide custom implementation.
    * @remarks
-   * Always call `super.removeCore()` in the overrides.
+   * Always call `super.dispose()` in the overrides.
    */
-  protected removeCore(): void {
-    this.views.clear();
+  public dispose(): void {
+    this.views.dispose();
+    for (const disposable of this._disposables) {
+      disposable();
+    }
+    clear(this._disposables);
   }
 
   // ==================================================
@@ -788,7 +798,7 @@ export abstract class DomainObject implements TreeNodeType {
     return undefined;
   }
 
-  public getThisOrDescendantByUniqueId(uniqueId: number): DomainObject | undefined {
+  public getThisOrDescendantByUniqueId(uniqueId: UniqueId): DomainObject | undefined {
     for (const descendant of this.getThisAndDescendants()) {
       if (descendant.uniqueId === uniqueId) {
         return descendant;
@@ -894,7 +904,7 @@ export abstract class DomainObject implements TreeNodeType {
       throw Error(`The child ${this.getTypeName()} is not child of it's parent`);
     }
     clear(this._children);
-    this.removeCore();
+    this.dispose();
 
     if (this.parent !== undefined) {
       removeAt(this.parent.children, childIndex);
@@ -993,5 +1003,21 @@ export abstract class DomainObject implements TreeNodeType {
         return BLACK_COLOR;
     }
     return WHITE_COLOR;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Miscellaneous
+  // ==================================================
+
+  protected addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
+  }
+
+  protected addEffect(effectFunction: () => void): void {
+    this.addDisposable(
+      effect(() => {
+        effectFunction();
+      })
+    );
   }
 }
