@@ -5,6 +5,8 @@ import { type ThreeDModelFdmMappings } from '../hooks';
 import { queryKeys } from '../utilities/queryKeys';
 import { UseHybridMappingsForAssetInstancesContext } from './useHybridMappingsForAssetInstances.context';
 import { useContext } from 'react';
+import { isFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
+import { isDefined } from '../utilities/isDefined';
 
 export const useHybridMappingsForAssetInstances = (
   models: AddModelOptions[],
@@ -26,7 +28,21 @@ export const useHybridMappingsForAssetInstances = (
           assetInstanceIds
         );
 
-        return { modelId: model.modelId, revisionId: model.revisionId, mappings };
+        const fdmMappings = new Map(
+          [...mappings.keys()]
+            .filter(isFdmKey)
+            .map((key) => {
+              const value = mappings.get(key);
+              return value === undefined ? undefined : ([key, value] as const);
+            })
+            .filter(isDefined)
+        );
+
+        return {
+          modelId: model.modelId,
+          revisionId: model.revisionId,
+          mappings: fdmMappings
+        };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);

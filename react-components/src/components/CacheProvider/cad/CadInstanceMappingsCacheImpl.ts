@@ -2,7 +2,7 @@ import { type Node3D } from '@cognite/sdk';
 import { type InstanceId, type InstanceKey, isDmsInstance } from '../../../utilities/instanceIds';
 import { type ThreeDModelFdmMappings } from '../../../hooks';
 import {
-  type CadNodeTreeData,
+  type CadNodeIdData,
   type FdmKey,
   type ModelRevisionId,
   type ModelRevisionKey
@@ -15,8 +15,8 @@ import { type ClassicCadAssetMappingCache } from './ClassicCadAssetMappingCache'
 import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import type {
   CadInstanceMappingsCache,
-  CadModelMappingsWithNodes,
-  CadModelTreeIndexMappings
+  CadModelMappings,
+  CadModelMappingsWithNodes
 } from './CadInstanceMappingsCache';
 import { concatenateMapValues } from '../../../utilities/map/concatenateMapValues';
 import { MAX_PARALLEL_QUERIES } from '../../../data-providers/utils/getDMSModelRevisionRefs';
@@ -88,7 +88,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
     return mergedCadMappings;
   }
 
-  public async getAllModelMappings(models: ModelRevisionId[]): Promise<CadModelTreeIndexMappings> {
+  public async getAllModelMappings(models: ModelRevisionId[]): Promise<CadModelMappings> {
     const classicResultsPromise = executeParallel(
       models.map((model) => async () => {
         if (this._classicCache === undefined) {
@@ -114,7 +114,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
     const classicResultsMap = new Map(
       classicResultsWithModel.map(({ model, mappings }) => {
         const mappingsMap = concatenateMapValues(
-          mappings.map((mapping): [InstanceKey, CadNodeTreeData] => {
+          mappings.map((mapping): [InstanceKey, CadNodeIdData] => {
             if (isClassicCadAssetTreeIndexMapping(mapping)) {
               const { assetId, ...nodeIdData } = mapping;
               return [assetId, nodeIdData];
@@ -130,12 +130,13 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
 
     const dmModelToInstanceToNodeMap = new Map(
       [...(dmResultsWithModel?.entries() ?? [])].map(([modelKey, fdmConnections]) => {
-        const connectionMapEntries: Array<[FdmKey, CadNodeTreeData]> = fdmConnections.map(
+        const connectionMapEntries: Array<[FdmKey, CadNodeIdData]> = fdmConnections.map(
           (connection) => [
             createFdmKey(connection.connection.instance),
             {
               treeIndex: connection.cadNode.treeIndex,
-              subtreeSize: connection.cadNode.subtreeSize
+              subtreeSize: connection.cadNode.subtreeSize,
+              nodeId: connection.cadNode.id
             }
           ]
         );
@@ -143,7 +144,7 @@ class CadInstanceMappingsCacheImpl implements CadInstanceMappingsCache {
       })
     );
 
-    return mergeMapMapValues<ModelRevisionKey, InstanceKey, CadNodeTreeData>([
+    return mergeMapMapValues<ModelRevisionKey, InstanceKey, CadNodeIdData>([
       ...classicResultsMap.entries(),
       ...dmModelToInstanceToNodeMap.entries()
     ]);
