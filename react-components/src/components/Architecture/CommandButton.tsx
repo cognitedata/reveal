@@ -10,15 +10,12 @@ import { TOOLTIP_DELAY } from './constants';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
-import { installFallbackReactElement } from './Factories/ReactElementFactory';
 
 export class ButtonCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
     return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
 }
-
-installFallbackReactElement(new ButtonCreator());
 
 export const CommandButton = ({
   inputCommand,

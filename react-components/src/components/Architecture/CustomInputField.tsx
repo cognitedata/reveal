@@ -19,7 +19,6 @@ import {
 import styled from 'styled-components';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
 import { type PlacementType } from './types';
-import { installReactElement } from './Factories/ReactElementFactory';
 
 export class CustomInputFieldCreator implements IReactElementCreator {
   create(command: BaseCommand, placement: PlacementType): ReactElement | undefined {
@@ -31,8 +30,6 @@ export class CustomInputFieldCreator implements IReactElementCreator {
     return undefined;
   }
 }
-
-installReactElement(new CustomInputFieldCreator());
 
 export const CustomInputField = ({
   inputCommand

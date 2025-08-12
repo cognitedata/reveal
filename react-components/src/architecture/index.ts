@@ -1,3 +1,4 @@
+import { installReactElements } from '../components/Architecture/Factories/installReactElements';
 import { installThreeViews } from './installThreeViews';
 import { installToolbars } from './installToolbars';
 
@@ -127,3 +128,4 @@ export type { AnnotationStatus } from './concrete/annotation360/types';
 
 installThreeViews();
 installToolbars();
+installReactElements();

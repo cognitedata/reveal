@@ -8,7 +8,6 @@ import { useCommandProps } from './hooks/useCommandProps';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { type IReactElementCreator } from './Factories/IReactElementCreator';
 import { type PlacementType } from './types';
-import { installReactElement } from './Factories/ReactElementFactory';
 
 export class InputFieldCreator implements IReactElementCreator {
   create(command: BaseCommand, _: PlacementType): ReactElement | undefined {
@@ -18,8 +17,6 @@ export class InputFieldCreator implements IReactElementCreator {
     return undefined;
   }
 }
-
-installReactElement(new InputFieldCreator());
 
 export const InputField = ({ inputCommand }: { inputCommand: BaseInputCommand }): ReactNode => {
   const { t } = useTranslation();
