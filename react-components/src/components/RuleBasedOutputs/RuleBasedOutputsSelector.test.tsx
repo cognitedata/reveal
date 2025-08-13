@@ -32,7 +32,7 @@ import { type DmCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { type ClassicAssetStylingGroup } from '../Reveal3DResources';
 
-describe('RuleBasedOutputsSelector', () => {
+describe(RuleBasedOutputsSelector.name, () => {
   const queryClient = new QueryClient();
   const renderTargetMock = createRenderTargetMock();
 
