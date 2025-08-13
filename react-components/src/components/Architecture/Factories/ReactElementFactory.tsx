@@ -1,6 +1,7 @@
 import { type ReactElement } from 'react';
 import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
 import { type PlacementType } from '../types';
+import { clear } from '../../../architecture/base/utilities/extensions/arrayUtils';
 
 const _items = new Array<{ createFunc: CreateReactElementFunc; order: number }>();
 
@@ -8,6 +9,10 @@ export type CreateReactElementFunc = (
   command: BaseCommand,
   placement: PlacementType
 ) => ReactElement | undefined;
+
+export function clearInstalledReactElements(): void {
+  clear(_items);
+}
 
 export function installReactElement(createFunc: CreateReactElementFunc, order: number = 0): void {
   _items.push({ createFunc, order });

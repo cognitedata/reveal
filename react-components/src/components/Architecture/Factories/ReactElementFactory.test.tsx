@@ -1,6 +1,10 @@
 import { BaseInputCommand } from '../../../architecture/base/commands/BaseInputCommand';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { createReactElement, installReactElement } from './ReactElementFactory';
+import {
+  clearInstalledReactElements,
+  createReactElement,
+  installReactElement
+} from './ReactElementFactory';
 import { CustomBaseInputCommand } from '../../../architecture/base/commands/CustomBaseInputCommand';
 import { DividerCommand } from '../../../architecture/base/commands/DividerCommand';
 import { installReactElements } from './installReactElements';
@@ -16,7 +20,9 @@ import { createDivider } from '../DividerCreator';
 const DEFAULT_PLACEMENT = 'left'; // Example placement, adjust as needed
 
 describe('ReactElementFactory', () => {
-  beforeEach(() => {});
+  beforeEach(() => {
+    clearInstalledReactElements();
+  });
 
   test('should not create React element when no React element is installed', () => {
     for (const command of getCommands()) {
