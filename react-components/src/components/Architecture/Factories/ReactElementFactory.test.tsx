@@ -12,13 +12,15 @@ import { OptionType } from '../../../architecture/base/commands/BaseOptionComman
 import { SectionCommand } from '../../../architecture/base/commands/SectionCommand';
 import { type TranslationInput, type BaseCommand } from '../../../architecture';
 
+const DEFAULT_PLACEMENT = 'left'; // Example placement, adjust as needed
+
 describe('ReactElementFactory', () => {
   beforeEach(() => {});
 
   test('should not create React element when not installed', () => {
     for (const command of getCommands()) {
       expect(() => {
-        createReactElement(command, 'left');
+        createReactElement(command, DEFAULT_PLACEMENT);
       }).toThrow();
     }
   });
@@ -26,7 +28,7 @@ describe('ReactElementFactory', () => {
   test('should create React element when installed', () => {
     installReactElements();
     for (const command of getCommands()) {
-      expect(createReactElement(command, 'left')).toBeDefined();
+      expect(createReactElement(command, DEFAULT_PLACEMENT)).toBeDefined();
     }
   });
 });
