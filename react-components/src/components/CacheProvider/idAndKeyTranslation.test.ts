@@ -86,7 +86,7 @@ describe('idAndKeyTranslation', () => {
     });
   });
 
-  describe(instanceIdToInstanceReference, () => {
+  describe(instanceIdToInstanceReference.name, () => {
     test('correctly translates classic ID', () => {
       expect(instanceIdToInstanceReference(ASSET_ID)).toEqual({ id: ASSET_ID });
     });
