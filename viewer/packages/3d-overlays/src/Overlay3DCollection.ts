@@ -225,7 +225,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   }
 
   private updatePointScale(renderer: WebGLRenderer, camera: Camera): void {
-    if (!isPerspectiveCamera(camera)) {
+    if (!(camera instanceof PerspectiveCamera)) {
       return;
     }
 
@@ -292,8 +292,4 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       mask: maskTexture
     };
   }
-}
-
-function isPerspectiveCamera(camera: Camera): camera is PerspectiveCamera {
-  return (camera as PerspectiveCamera).isPerspectiveCamera;
 }
