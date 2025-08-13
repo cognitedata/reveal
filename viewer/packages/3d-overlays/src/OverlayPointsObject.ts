@@ -42,6 +42,7 @@ export const DEFAULT_OVERLAY_BACK_OPACITY = 0.5;
 export class OverlayPointsObject extends Group {
   private readonly _geometry: BufferGeometry;
   private readonly _frontMaterial: RawShaderMaterial;
+  private readonly _backMaterial: RawShaderMaterial;
   private readonly _positionBuffer: Float32Array;
   private readonly _positionAttribute: BufferAttribute;
   private readonly _colorBuffer: Float32Array;
@@ -109,6 +110,7 @@ export class OverlayPointsObject extends Group {
 
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
+    this._backMaterial = backMaterial;
     this._points = { frontPoints, backPoints };
     this._onBeforeRender = onBeforeRender;
   }
@@ -189,6 +191,7 @@ export class OverlayPointsObject extends Group {
 
   public dispose(): void {
     this._frontMaterial.dispose();
+    this._backMaterial.dispose();
     this._geometry.dispose();
     this.children.splice(0);
   }
