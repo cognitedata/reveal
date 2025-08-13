@@ -116,16 +116,13 @@ export class OverlayPointsObject extends Group {
   }
 
   public getOpacity(): number {
-    const frontMaterial = this._points.frontPoints.material as ShaderMaterial;
-    return frontMaterial.uniforms.collectionOpacity.value;
+    return this._frontMaterial.uniforms.collectionOpacity.value;
     return 1;
   }
 
   public setOpacity(value: number): void {
-    const frontMaterial = this._points.frontPoints.material as ShaderMaterial;
-    frontMaterial.uniforms.collectionOpacity.value = value;
-    const backMaterial = this._points.backPoints.material as ShaderMaterial;
-    backMaterial.uniforms.collectionOpacity.value = value / 2;
+    this._frontMaterial.uniforms.collectionOpacity.value = value;
+    this._backMaterial.uniforms.collectionOpacity.value = value / 2;
   }
 
   public isBackPointsVisible(): boolean {
