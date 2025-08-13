@@ -24,7 +24,6 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
@@ -220,6 +219,10 @@ export class RevealRenderTarget {
   // INSTANCE METHODS
   // ==================================================
 
+  public updateAllCommands(): void {
+    this._commandsController.deferredUpdate();
+  }
+
   public setDefaultTool(tool: BaseTool): boolean {
     const defaultTool = this.commandsController.defaultTool;
     if (defaultTool !== undefined && tool.equals(defaultTool)) {
@@ -251,7 +254,7 @@ export class RevealRenderTarget {
 
   public onStartup(): void {
     this._config?.onStartup(this);
-    CommandsUpdater.update(this);
+    this.updateAllCommands();
   }
 
   public dispose(): void {
@@ -266,7 +269,6 @@ export class RevealRenderTarget {
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
     this._revealSettingsController.dispose();
-    CommandsUpdater.dispose();
   }
 
   public invalidate(): void {

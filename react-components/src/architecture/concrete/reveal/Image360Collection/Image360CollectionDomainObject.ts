@@ -1,6 +1,5 @@
 import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { RevealDomainObject } from '../RevealDomainObject';
@@ -49,7 +48,7 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
     });
 
     this._updateCallback = () => {
-      CommandsUpdater.update(getRenderTarget(this));
+      getRenderTarget(this)?.updateAllCommands();
     };
 
     this._model.on('image360Entered', this._updateCallback);
