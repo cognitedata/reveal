@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement, useState, useMemo } from 'react';
+import { useEffect, type ReactElement, useState, useMemo, useContext } from 'react';
 
 import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import {
@@ -6,7 +6,6 @@ import {
   type AllMappingStylingGroupAndStyleIndex,
   type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
-import { use3dModels } from '../../hooks/use3dModels';
 import { type Datapoints, type Asset } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
 import {
@@ -15,23 +14,19 @@ import {
 } from '../../data-providers/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
 import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
 import { useExtractUniqueClassicAssetIdsFromMapped } from './hooks/useExtractUniqueClassicAssetIdsFromMapped';
 import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
-import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
-import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
-import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
 import {
   isClassicCadAssetMapping,
   isDmCadAssetMapping,
   type ClassicCadAssetMapping
 } from '../CacheProvider/cad/assetMappingTypes';
-import { useGetDMConnectionWithNodeFromHybridMappingsQuery } from './hooks/useGetDMConnectionWithNodeFromHybridMappingsQuery';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type ModelWithAssetMappings } from '../../hooks/cad/modelWithAssetMappings';
 import { type FdmConnectionWithNode } from '../CacheProvider/types';
+import { RuleBasedOutputsSelectorContext } from './RuleBasedOutputsSelector.context';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -47,6 +42,16 @@ export function RuleBasedOutputsSelector({
   onAllMappingsFetched
 }: ColorOverlayProps): ReactElement | undefined {
   if (ruleSet === undefined) return;
+
+  const {
+    use3dModels,
+    useAssetMappedNodesForRevisions,
+    useMappedEdgesForRevisions,
+    useAssetsByIdsQuery,
+    useAll3dDirectConnectionsWithProperties,
+    useGetDMConnectionWithNodeFromHybridMappingsQuery,
+    generateRuleBasedOutputs
+  } = useContext(RuleBasedOutputsSelectorContext);
 
   const models = use3dModels();
 
@@ -165,7 +170,8 @@ export function RuleBasedOutputsSelector({
             contextualizedAssetNodes,
             ruleSet,
             assetIdsWithTimeseriesData?.assetIdsWithTimeseries ?? [],
-            assetIdsWithTimeseriesData?.timeseriesDatapoints ?? []
+            assetIdsWithTimeseriesData?.timeseriesDatapoints ?? [],
+            generateRuleBasedOutputs
           );
 
           return mappingsStylings;
@@ -207,7 +213,15 @@ async function initializeRuleBasedOutputs(
   contextualizedAssetNodes: Asset[],
   ruleSet: RuleOutputSet,
   assetIdsAndTimeseries: AssetIdsAndTimeseries[],
-  timeseriesDatapoints: Datapoints[] | undefined
+  timeseriesDatapoints: Datapoints[] | undefined,
+  generateRuleBasedOutputs: (params: {
+    contextualizedAssetNodes: Asset[];
+    assetMappings: ClassicCadAssetMapping[];
+    fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
+    ruleSet: RuleOutputSet;
+    assetIdsAndTimeseries: AssetIdsAndTimeseries[];
+    timeseriesDatapoints: Datapoints[] | undefined;
+  }) => Promise<AllMappingStylingGroupAndStyleIndex[]>
 ): Promise<AllMappingStylingGroupAndStyleIndex[]> {
   const collectionStylings = await generateRuleBasedOutputs({
     contextualizedAssetNodes,
