@@ -189,7 +189,7 @@ export class OverlayPointsObject extends Group {
     this._geometry.dispose();
     this._points.frontPoints.material.dispose();
     this._points.backPoints.material.dispose();
-    this.children.splice(0);
+    this.clear();
   }
 
   private initializePoints(

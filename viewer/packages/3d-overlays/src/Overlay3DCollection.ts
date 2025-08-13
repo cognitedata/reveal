@@ -249,6 +249,8 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._overlayPoints.dispose();
     this._sharedTextures.color.dispose();
     this._sharedTextures.mask?.dispose();
+
+    this.clear();
   }
 
   private createCircleTextures(): {
