@@ -41,13 +41,14 @@ export const DEFAULT_OVERLAY_BACK_OPACITY = 0.5;
 
 export class OverlayPointsObject extends Group {
   private readonly _geometry: BufferGeometry;
-  private readonly _frontMaterial: RawShaderMaterial;
-  private readonly _backMaterial: RawShaderMaterial;
   private readonly _positionBuffer: Float32Array;
   private readonly _positionAttribute: BufferAttribute;
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
-  private readonly _points: { frontPoints: Points; backPoints: Points };
+  private readonly _points: {
+    frontPoints: Points<BufferGeometry, RawShaderMaterial>;
+    backPoints: Points<BufferGeometry, RawShaderMaterial>;
+  };
   private readonly _onBeforeRender?: Object3D['onBeforeRender'];
   private _modelTransform: Matrix4;
 
@@ -109,20 +110,18 @@ export class OverlayPointsObject extends Group {
     this.add(frontPoints);
 
     this._geometry = geometry;
-    this._frontMaterial = frontMaterial;
-    this._backMaterial = backMaterial;
     this._points = { frontPoints, backPoints };
     this._onBeforeRender = onBeforeRender;
   }
 
   public getOpacity(): number {
-    return this._frontMaterial.uniforms.collectionOpacity.value;
+    return this._points.frontPoints.material.uniforms.collectionOpacity.value;
     return 1;
   }
 
   public setOpacity(value: number): void {
-    this._frontMaterial.uniforms.collectionOpacity.value = value;
-    this._backMaterial.uniforms.collectionOpacity.value = value / 2;
+    this._points.frontPoints.material.uniforms.collectionOpacity.value = value;
+    this._points.backPoints.material.uniforms.collectionOpacity.value = value / 2;
   }
 
   public isBackPointsVisible(): boolean {
@@ -187,13 +186,16 @@ export class OverlayPointsObject extends Group {
   }
 
   public dispose(): void {
-    this._frontMaterial.dispose();
-    this._backMaterial.dispose();
     this._geometry.dispose();
+    this._points.frontPoints.material.dispose();
+    this._points.backPoints.material.dispose();
     this.children.splice(0);
   }
 
-  private initializePoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
+  private initializePoints(
+    geometry: BufferGeometry,
+    material: RawShaderMaterial
+  ): Points<BufferGeometry, RawShaderMaterial> {
     const points = createPoints(geometry, material);
     points.onBeforeRender = (renderer, ...rest) => {
       this._onBeforeRender?.(renderer, ...rest);
@@ -202,7 +204,10 @@ export class OverlayPointsObject extends Group {
 
     return points;
 
-    function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
+    function createPoints(
+      geometry: BufferGeometry,
+      material: RawShaderMaterial
+    ): Points<BufferGeometry, RawShaderMaterial> {
       const points = new Points(geometry, material);
       points.frustumCulled = false;
       points.renderOrder = 4;
