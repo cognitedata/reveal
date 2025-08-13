@@ -141,8 +141,10 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     _scene: Scene,
     camera: Camera
   ) => {
-    this._cameraChangeDebouncer.call(camera, () => this.sortOverlaysRelativeToCamera(camera));
-    this.updatePointScale(renderer, camera);
+    this._cameraChangeDebouncer.call(camera, () => {
+      this.sortOverlaysRelativeToCamera(camera);
+      this.updatePointScale(renderer, camera);
+    });
   };
 
   private sortOverlaysRelativeToCamera(camera: Camera): void {
