@@ -27,19 +27,19 @@ describe(CycleLengthUnitsCommand.name, () => {
     const unitSystem = renderTarget.rootDomainObject.unitSystem;
 
     // Check initial state
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Meter);
+    expect(unitSystem.lengthUnit()).toBe(LengthUnit.Meter);
 
     // Toggle it and check the new state
     expect(command.invoke()).toBe(true);
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Feet);
+    expect(unitSystem.lengthUnit()).toBe(LengthUnit.Feet);
 
     // Toggle it again and check the new state
     expect(command.invoke()).toBe(true);
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Inch);
+    expect(unitSystem.lengthUnit()).toBe(LengthUnit.Inch);
 
     // Toggle it again and check the new state
     expect(command.invoke()).toBe(true);
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Meter);
+    expect(unitSystem.lengthUnit()).toBe(LengthUnit.Meter);
   });
 
   test('should toggle between metric and imperial units and notify domain objects twice', async () => {

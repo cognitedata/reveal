@@ -49,7 +49,7 @@
     "@cognite/cogs.js": "^10.36.0",
     "@cognite/signals": "^0.0.4",
     "@floating-ui/dom": "^1.0.0",
-    "@tanstack/react-query": "^5.32.0",
+    "@tanstack/react-query": "^5.84.1",
     "assert": "^2.1.0",
     "lodash": "^4.17.21",
     "react-draggable": "^4.4.6",

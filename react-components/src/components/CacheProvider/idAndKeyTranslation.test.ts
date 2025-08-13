@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { assertType, describe, expect, test } from 'vitest';
 import {
   createFdmKey,
   createInstanceKey,
@@ -6,8 +6,12 @@ import {
   createModelTreeIndexKey,
   createModelInstanceIdKey,
   revisionKeyToIds,
-  createModelNodeIdKey
+  createModelNodeIdKey,
+  fdmKeyToId,
+  isFdmKey
 } from './idAndKeyTranslation';
+import assert from 'assert';
+import { type FdmKey } from './types';
 
 describe('idAndKeyTranslation', () => {
   const MODEL_ID = 123;
@@ -50,6 +54,25 @@ describe('idAndKeyTranslation', () => {
     });
   });
 
+  describe(fdmKeyToId.name, () => {
+    test('splits up fdm key into externalId and space', () => {
+      expect(fdmKeyToId('some-space/some-externalId')).toEqual({
+        space: 'some-space',
+        externalId: 'some-externalId'
+      });
+    });
+
+    test('reverses `createFdmKey`', () => {
+      const id = { externalId: 'another-externalId', space: 'another-space' };
+      expect(fdmKeyToId(createFdmKey(id))).toEqual(id);
+    });
+
+    test('tackles externalIds with slash', () => {
+      const id = { externalId: 'another/externalId', space: 'another-space' };
+      expect(fdmKeyToId(createFdmKey(id))).toEqual(id);
+    });
+  });
+
   describe(createInstanceKey.name, () => {
     test('returns classic ID untouched', () => {
       expect(createInstanceKey(ASSET_ID)).toBe(ASSET_ID);
@@ -59,6 +82,23 @@ describe('idAndKeyTranslation', () => {
       const result = createInstanceKey(INSTANCE);
       expect(result).toBeTypeOf('string');
       expect(result).toBe(createFdmKey(INSTANCE));
+    });
+  });
+
+  describe(isFdmKey.name, () => {
+    const fdmKey = createFdmKey({ externalId: 'some-externalId', space: 'some-space' });
+
+    test('returns true for fdm key', () => {
+      expect(isFdmKey(fdmKey)).toBeTruthy();
+    });
+
+    test('type-guard asserts fdm type', () => {
+      assert(isFdmKey(fdmKey));
+      assertType<FdmKey>(fdmKey);
+    });
+
+    test('returns false for non-fdm key', () => {
+      expect(isFdmKey(42)).toBeFalsy();
     });
   });
 

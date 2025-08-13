@@ -18,7 +18,7 @@ export const useSearchAssetsMappedPointCloudAnnotations = (
   models: AddModelOptions[],
   sdk: CogniteClient,
   query: string
-): UseQueryResult<Asset[]> => {
+): UseQueryResult<Asset[] | null> => {
   const { data: assetMappings, isFetched } = useAllAssetsMappedPointCloudAnnotations(sdk, models);
 
   return useQuery({
@@ -31,7 +31,7 @@ export const useSearchAssetsMappedPointCloudAnnotations = (
     ],
     queryFn: async () => {
       if (query === '') {
-        return assetMappings;
+        return assetMappings ?? null;
       }
 
       const filteredSearchedAssets =
