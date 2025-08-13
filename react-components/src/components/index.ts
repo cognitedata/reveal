@@ -7,7 +7,6 @@ export { ViewerAnchor } from './ViewerAnchor/ViewerAnchor';
 export { RevealKeepAlive } from './RevealKeepAlive/RevealKeepAlive';
 
 export { AxisGizmo, AxisGizmoOptions } from './AxisGizmo';
-export { WindowWidget } from './Widgets/WindowWidget';
 export { ContextMenu } from './ContextMenu';
 
 export * from './Architecture';
