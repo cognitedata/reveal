@@ -114,8 +114,8 @@ function createTightBoundingBox(data: ParsedEptData): THREE.Box3 {
   );
 }
 
-function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
-  const geometry = new THREE.BufferGeometry();
+function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry<{ [x: string]: THREE.BufferAttribute }> {
+  const geometry = new THREE.BufferGeometry<{ [x: string]: THREE.BufferAttribute }>();
 
   function addAttributeIfPresent(
     typedArrayConstructor: { new (data: ArrayBuffer): THREE.TypedArray },

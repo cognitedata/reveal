@@ -1,4 +1,4 @@
-import { Box3, BufferGeometry, EventDispatcher, Points, Sphere } from 'three';
+import { Box3, BufferGeometry, EventDispatcher, Points, Sphere, type BufferAttribute } from 'three';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
@@ -18,6 +18,10 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     this.geometryNode = geometryNode;
     this.sceneNode = sceneNode;
     this.children = geometryNode.children.slice();
+  }
+
+  getPositionAttribute(): BufferAttribute | undefined {
+    return this.geometryNode.getPositionAttribute();
   }
 
   dispose(): void {

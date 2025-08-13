@@ -17,6 +17,7 @@ import {
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
 import { ModelDataProvider } from '@reveal/data-providers';
+import assert from 'assert';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
@@ -43,7 +44,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   private _isLeafNode: boolean;
 
-  private _geometry: THREE.BufferGeometry | undefined;
+  private _geometry: THREE.BufferGeometry<{ [x: string]: THREE.BufferAttribute }> | undefined;
 
   private _oneTimeDisposeHandlers: (() => void)[];
 
@@ -172,6 +173,16 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._loaded;
   }
 
+  getPositionAttribute(): THREE.BufferAttribute | undefined {
+    if (!this.isLoaded) {
+      return;
+    }
+    assert(this._geometry, 'Geometry should be defined when getting position attribute');
+    const positionAttribute = this._geometry.getAttribute('position');
+    assert(positionAttribute, 'Position attribute should be defined on the geometry');
+    return positionAttribute;
+  }
+
   getBoundingSphere(): THREE.Sphere {
     return this._boundingSphere;
   }
@@ -204,12 +215,30 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return children;
   }
 
-  traverse(callback: (node: IPointCloudTreeNodeBase) => void, includeSelf: boolean = true): void {
+  traverseByIntersectingBox(
+    callback: (node: IPointCloudTreeNodeBase) => void,
+    box: THREE.Box3,
+    includeSelf: boolean = true
+  ): void {
+    this.traverse(callback, includeSelf, node => !node.boundingBox.intersectsBox(box));
+  }
+
+  traverse(
+    callback: (node: IPointCloudTreeNodeBase) => void,
+    includeSelf: boolean = true,
+    pruneSubTree: (node: IPointCloudTreeNodeBase) => boolean = () => false
+  ): void {
     const stack: IPointCloudTreeNodeBase[] = includeSelf ? [this] : [];
+
+    if (includeSelf && pruneSubTree(this)) {
+      return;
+    }
 
     let current: IPointCloudTreeNodeBase | undefined;
     while ((current = stack.pop())) {
       callback(current);
+
+      if (pruneSubTree(current)) continue;
 
       for (const child of current.children) {
         if (child) {
@@ -289,7 +318,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   }
 
   doneLoading(
-    bufferGeometry: THREE.BufferGeometry,
+    bufferGeometry: THREE.BufferGeometry<{ [x: string]: THREE.BufferAttribute }>,
     _tightBoundingBox: THREE.Box3,
     np: number,
     _mean: THREE.Vector3

@@ -20,8 +20,9 @@ import { ClassificationHandler } from './ClassificationHandler';
 
 import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
-import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
+import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer, Vector3 } from 'three';
 import { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
+import type { IPointCloudTreeNodeBase } from './potree-three-loader/tree/IPointCloudTreeNodeBase';
 
 export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -211,6 +212,27 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
 
   getCdfToDefaultModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this._sourceTransform);
+  }
+
+  getSubtreePointsByBox(box: Box3): Vector3[] {
+    const points: Vector3[] = [];
+    this.octree.root?.traverse(getPositionsIntersectingBox, true, node => node.boundingBox.intersectsBox(box));
+    return points;
+
+    function getPositionsIntersectingBox(node: IPointCloudTreeNodeBase): Vector3[] {
+      const positionAttribute = node.getPositionAttribute();
+      if (!positionAttribute) {
+        return [];
+      }
+      const positions: Vector3[] = [];
+      for (let i = 0; i < positionAttribute.count; i++) {
+        const position = new Vector3().fromBufferAttribute(positionAttribute, i);
+        if (box.containsPoint(position)) {
+          positions.push(position);
+        }
+      }
+      return positions;
+    }
   }
 
   get stylableVolumeMetadata(): Iterable<PointCloudObjectMetadata<T>> {

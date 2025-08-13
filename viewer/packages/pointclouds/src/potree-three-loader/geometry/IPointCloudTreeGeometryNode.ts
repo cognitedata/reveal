@@ -10,7 +10,7 @@ export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
   oneTimeDisposeHandlers: (() => void)[];
 
   doneLoading: (
-    bufferGeometry: THREE.BufferGeometry,
+    bufferGeometry: THREE.BufferGeometry<{ [x: string]: THREE.BufferAttribute }>,
     _tightBoundingBox: THREE.Box3,
     np: number,
     _mean: THREE.Vector3

@@ -17,5 +17,11 @@ export interface IPointCloudTreeNodeBase {
 
   dispose(): void;
 
-  traverse(cb: (node: IPointCloudTreeNodeBase) => void, includeSelf?: boolean): void;
+  getPositionAttribute(): THREE.BufferAttribute | undefined;
+
+  traverse(
+    cb: (node: IPointCloudTreeNodeBase) => void,
+    includeSelf?: boolean,
+    pruneSubTree?: (node: IPointCloudTreeNodeBase) => boolean
+  ): void;
 }
