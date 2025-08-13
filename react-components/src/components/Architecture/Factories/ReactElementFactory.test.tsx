@@ -1,6 +1,6 @@
 import { BaseInputCommand } from '../../../architecture/base/commands/BaseInputCommand';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { createReactElement } from './ReactElementFactory';
+import { createReactElement, installReactElement } from './ReactElementFactory';
 import { CustomBaseInputCommand } from '../../../architecture/base/commands/CustomBaseInputCommand';
 import { DividerCommand } from '../../../architecture/base/commands/DividerCommand';
 import { installReactElements } from './installReactElements';
@@ -11,13 +11,14 @@ import { MockSettingsCommand } from '../../../../tests/tests-utilities/architect
 import { OptionType } from '../../../architecture/base/commands/BaseOptionCommand';
 import { SectionCommand } from '../../../architecture/base/commands/SectionCommand';
 import { type TranslationInput, type BaseCommand } from '../../../architecture';
+import { createDivider } from '../DividerCreator';
 
 const DEFAULT_PLACEMENT = 'left'; // Example placement, adjust as needed
 
 describe('ReactElementFactory', () => {
   beforeEach(() => {});
 
-  test('should not create React element when not installed', () => {
+  test('should not create React element when no React element is installed', () => {
     for (const command of getCommands()) {
       expect(() => {
         createReactElement(command, DEFAULT_PLACEMENT);
@@ -25,7 +26,17 @@ describe('ReactElementFactory', () => {
     }
   });
 
-  test('should create React element when installed', () => {
+  test('should not create React element when the matching React element is not installed', () => {
+    installReactElement(createDivider);
+
+    expect(createReactElement(new DividerCommand(), DEFAULT_PLACEMENT)).toBeDefined();
+
+    expect(() => {
+      createReactElement(new MockActionCommand(), DEFAULT_PLACEMENT);
+    }).toThrow();
+  });
+
+  test('should create React element when all React elements is installed', () => {
     installReactElements();
     for (const command of getCommands()) {
       expect(createReactElement(command, DEFAULT_PLACEMENT)).toBeDefined();
