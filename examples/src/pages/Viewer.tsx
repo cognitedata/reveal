@@ -18,7 +18,8 @@ import {
   AnnotationIdPointCloudObjectCollection,
   PointCloudDMVolumeCollection,
   DataSourceType,
-  isDMPointCloudModel
+  isDMPointCloudModel,
+  PointColorType
 } from '@cognite/reveal';
 import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -428,6 +429,15 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
+      const pointCloudModel = viewer.models[0] as CognitePointCloudModel;
+      pointCloudModel.pointColorType = PointColorType.Height; 
+
+      const asd = new THREE.Vector3(-0.03882899980014991, 0.0004739990041809222, -0.17094000449162292);
+      const box = new THREE.Box3().setFromCenterAndSize(asd, new THREE.Vector3(0.01, 0.01, 0.01));
+      const helper = new THREE.Box3Helper(box, 'red');
+      viewer.addObject3D(helper);
+      console.log('points: ' + JSON.stringify(pointCloudModel.getPointsByBoundingBox(box)));
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         const start = performance.now();
@@ -474,13 +484,15 @@ export function Viewer() {
                     color: new THREE.Color('red')
                   });
                 } else {
-                  const sphere = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.1),
-                    new THREE.MeshBasicMaterial({ color: 'red' })
-                  );
+                  // const sphere = new THREE.Mesh(
+                  //   new THREE.SphereGeometry(0.01),
+                  //   new THREE.MeshBasicMaterial({ color: 'red' })
+                  // );
 
-                  sphere.position.copy(point);
-                  viewer.addObject3D(sphere);
+                  // sphere.position.copy(point);
+                  // viewer.addObject3D(sphere);
+
+                  
 
                   pointCloudObjectsUi.createModelAnnotation(point, model);
                 }

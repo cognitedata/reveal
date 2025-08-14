@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CameraConfiguration } from '@reveal/utilities';
+import { CameraConfiguration, CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 
 import { ClassificationInfo, PointCloudOctree, PickPoint } from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
@@ -23,6 +23,7 @@ import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer, Vector3 } from 'three';
 import { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 import type { IPointCloudTreeNodeBase } from './potree-three-loader/tree/IPointCloudTreeNodeBase';
+import { visitBox3CornerPoints } from '@reveal/utilities';
 
 export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -48,6 +49,8 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     cameraConfiguration?: CameraConfiguration
   ) {
     super();
+
+    console.log('sourceTransform', sourceTransform);
 
     this._octree = octree;
     this.add(this._octree);
@@ -215,23 +218,44 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   getSubtreePointsByBox(box: Box3): Vector3[] {
+    // console.log(JSON.stringify(box.min.toArray()), JSON.stringify(box.max.toArray()));
+    const viewerToCdfTransform = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+    // console.log('viewerToCdfTransform', viewerToCdfTransform);
     const points: Vector3[] = [];
-    this.octree.root?.traverse(getPositionsIntersectingBox, true, node => node.boundingBox.intersectsBox(box));
+    const cdfSpaceBox = transformBoxToCdfSpace(box);
+    console.log(JSON.stringify(cdfSpaceBox.min.toArray()), JSON.stringify(cdfSpaceBox.max.toArray()));
+    this.octree.root?.traverse(getPositionsIntersectingBox, true, node => node.boundingBox.intersectsBox(cdfSpaceBox));
     return points;
 
-    function getPositionsIntersectingBox(node: IPointCloudTreeNodeBase): Vector3[] {
+    function transformBoxToCdfSpace(box: Box3): Box3 {
+      const transformedCorners: Vector3[] = [];
+      visitBox3CornerPoints(box, corner => {
+        const transformedCorner = corner.clone().applyMatrix4(viewerToCdfTransform);
+        transformedCorners.push(transformedCorner);
+      });
+      const minX = Math.min(...transformedCorners.map(c => c.x));
+      const minY = Math.min(...transformedCorners.map(c => c.y));
+      const minZ = Math.min(...transformedCorners.map(c => c.z));
+
+      const maxX = Math.max(...transformedCorners.map(c => c.x));
+      const maxY = Math.max(...transformedCorners.map(c => c.y));
+      const maxZ = Math.max(...transformedCorners.map(c => c.z));
+
+      return new Box3(new Vector3(minX, minY, minZ), new Vector3(maxX, maxY, maxZ));
+    }
+
+    function getPositionsIntersectingBox(node: IPointCloudTreeNodeBase): void {
       const positionAttribute = node.getPositionAttribute();
       if (!positionAttribute) {
-        return [];
+        return;
       }
-      const positions: Vector3[] = [];
       for (let i = 0; i < positionAttribute.count; i++) {
         const position = new Vector3().fromBufferAttribute(positionAttribute, i);
-        if (box.containsPoint(position)) {
-          positions.push(position);
+        console.log('position', position);
+        if (cdfSpaceBox.containsPoint(position)) {
+          points.push(position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION));
         }
       }
-      return positions;
     }
   }
 
