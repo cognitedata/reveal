@@ -108,7 +108,6 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   });
 
   it('should return an empty array if no matched asset mappings are found from the mappings cache', async () => {
-
     const mockNoMatchedAssetMappingDataMap = createAssetMappingDataMapMock(
       [
         { space: 'test-space', externalId: 'other-instance-1' },
@@ -152,7 +151,6 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   });
 
   it('should return mapped connections and nodes for valid asset mappings', async () => {
-
     const mockAssetMappingDataMap = createAssetMappingDataMapMock(
       mockDmCadAssetMappingsList.map((mapping) => mapping.instanceId),
       [firstNode3DMock, secondNode3DMock]

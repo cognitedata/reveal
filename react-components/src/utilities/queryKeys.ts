@@ -1,7 +1,7 @@
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers';
 import { type InstanceReference } from './instanceIds';
-import { CadModelOptions } from '../components';
+import { type CadModelOptions } from '../components';
 
 export const queryKeys = {
   all: ['cdf'] as const,
@@ -30,7 +30,7 @@ export const queryKeys = {
       relationshipResourceTypes,
       assetExternalIds
     ] as const,
-    // FDM CONNECTION WITH NODE BY DM IDS
+  // FDM CONNECTION WITH NODE BY DM IDS
   fdmConnectionWithNode: (dmIds: DmsUniqueIdentifier[], models: CadModelOptions[]) =>
     ['fdm-connection-with-node', dmIds, models] as const,
   // Point Cloud Annotations
