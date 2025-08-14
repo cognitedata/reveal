@@ -22,6 +22,7 @@ import { ViewerContext } from '../../RevealCanvas/ViewerContext';
 import { type RevealRenderTarget } from '../../../architecture';
 import { type InstanceKey } from '../../../utilities/instanceIds';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
+import { createFdmKey } from '../../CacheProvider';
 
 describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   const queryClient = new QueryClient();
@@ -50,19 +51,6 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
     [
       { space: 'test-space', externalId: 'instance-1' },
       { space: 'test-space', externalId: 'instance-2' }
-    ],
-    [firstNode3DMock, secondNode3DMock]
-  );
-
-  const mockAssetMappingDataMap = createAssetMappingDataMapMock(
-    mockDmCadAssetMappingsList.map((mapping) => mapping.instanceId),
-    [firstNode3DMock, secondNode3DMock]
-  );
-
-  const mockNoMatchedAssetMappingDataMap = createAssetMappingDataMapMock(
-    [
-      { space: 'test-space', externalId: 'other-instance-1' },
-      { space: 'test-space', externalId: 'other-instance-2' }
     ],
     [firstNode3DMock, secondNode3DMock]
   );
@@ -120,6 +108,15 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   });
 
   it('should return an empty array if no matched asset mappings are found from the mappings cache', async () => {
+
+    const mockNoMatchedAssetMappingDataMap = createAssetMappingDataMapMock(
+      [
+        { space: 'test-space', externalId: 'other-instance-1' },
+        { space: 'test-space', externalId: 'other-instance-2' }
+      ],
+      [firstNode3DMock, secondNode3DMock]
+    );
+
     const mockClassicCadAssetMappingCache: ClassicCadAssetMappingCache =
       new Mock<ClassicCadAssetMappingCache>()
         .setup((p) => p.getNodesForInstanceIds)
@@ -155,6 +152,12 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   });
 
   it('should return mapped connections and nodes for valid asset mappings', async () => {
+
+    const mockAssetMappingDataMap = createAssetMappingDataMapMock(
+      mockDmCadAssetMappingsList.map((mapping) => mapping.instanceId),
+      [firstNode3DMock, secondNode3DMock]
+    );
+
     const mockClassicCadAssetMappingCache = new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getNodesForInstanceIds)
       .returns(vi.fn(async () => await Promise.resolve(mockAssetMappingDataMap)))
@@ -206,7 +209,7 @@ function createAssetMappingDataMapMock(
 ): Map<InstanceKey, Node3D[]> {
   const map = new Map<InstanceKey, Node3D[]>();
   instanceIds.forEach((instanceId, index) => {
-    map.set(`${instanceId.space}/${instanceId.externalId}` as const, [node3D[index]]);
+    map.set(createFdmKey(instanceId), [node3D[index]]);
   });
   return map;
 }
