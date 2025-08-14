@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
-import { BaseCommand } from './BaseCommand';
+import { BaseCommand, type CommandUpdateDelegate } from './BaseCommand';
 import { isUntranslatedString } from '../utilities/TranslateInput';
 import { count } from '../utilities/extensions/generatorUtils';
 
@@ -64,8 +64,8 @@ describe(BaseCommand.name, () => {
     const command = new DefaultCommand();
 
     // Add 2 event listeners
-    const mockEventListener1 = vi.fn();
-    const mockEventListener2 = vi.fn();
+    const mockEventListener1 = vi.fn<CommandUpdateDelegate>();
+    const mockEventListener2 = vi.fn<CommandUpdateDelegate>();
     command.addEventListener(mockEventListener1);
     command.addEventListener(mockEventListener2);
 
@@ -82,8 +82,8 @@ describe(BaseCommand.name, () => {
     const command = new DefaultCommand();
 
     // Add 2 event listeners
-    const mockEventListener1 = vi.fn();
-    const mockEventListener2 = vi.fn();
+    const mockEventListener1 = vi.fn<CommandUpdateDelegate>();
+    const mockEventListener2 = vi.fn<CommandUpdateDelegate>();
     command.addEventListener(mockEventListener1);
     command.addEventListener(mockEventListener2);
 
@@ -98,8 +98,8 @@ describe(BaseCommand.name, () => {
     const command = new DefaultCommand();
 
     // Add 2 event listeners
-    const mockEventListener1 = vi.fn();
-    const mockEventListener2 = vi.fn();
+    const mockEventListener1 = vi.fn<CommandUpdateDelegate>();
+    const mockEventListener2 = vi.fn<CommandUpdateDelegate>();
     command.addEventListener(mockEventListener1);
     command.addEventListener(mockEventListener2);
 

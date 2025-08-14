@@ -14,7 +14,7 @@ import { queryKeys } from '../utilities/queryKeys';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
-): UseQueryResult<TaggedAddResourceOptions[]> => {
+): UseQueryResult<TaggedAddResourceOptions[] | null> => {
   const {
     useSDK,
     useFdmSdk,
@@ -36,7 +36,7 @@ export const useModelsForInstanceQuery = (
     queryKey: queryKeys.modelsForAssetPerInstanceReference(instance),
     queryFn: async () => {
       if (instance === undefined) {
-        return undefined;
+        return null;
       }
 
       if (isInternalId(instance)) {

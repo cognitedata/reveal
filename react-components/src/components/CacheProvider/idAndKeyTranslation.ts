@@ -28,12 +28,22 @@ export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
   return `${id.space}/${id.externalId}`;
 }
 
+export function fdmKeyToId(fdmKey: FdmKey): DmsUniqueIdentifier {
+  // In DM, external IDs can contain '/', but spaces cannot
+  const [space, ...externalIdComponents] = split(fdmKey, '/');
+  return { space, externalId: externalIdComponents.join('/') };
+}
+
 export function createInstanceKey(id: InstanceId): InstanceKey {
   if (isClassicInstanceId(id)) {
     return id;
   } else {
     return createFdmKey(id);
   }
+}
+
+export function isFdmKey(key: InstanceKey): key is FdmKey {
+  return typeof key === 'string' && key.includes('/');
 }
 
 export function createModelTreeIndexKey(
