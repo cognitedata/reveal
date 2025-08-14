@@ -655,8 +655,6 @@ __metadata:
     prettier: "npm:^3.2.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-draggable: "npm:^4.4.6"
-    react-resizable: "npm:^3.0.5"
     react-router-dom: "npm:^6.23.0"
     storybook: "npm:^8.3.5"
     style-loader: "npm:^4.0.0"
@@ -9562,7 +9560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:15.x, prop-types@npm:^15.5.8, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.5.8, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -10303,19 +10301,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-draggable@npm:^4.0.3, react-draggable@npm:^4.4.6":
-  version: 4.4.6
-  resolution: "react-draggable@npm:4.4.6"
-  dependencies:
-    clsx: "npm:^1.1.1"
-    prop-types: "npm:^15.8.1"
-  peerDependencies:
-    react: ">= 16.3.0"
-    react-dom: ">= 16.3.0"
-  checksum: 10/51b9ac7f913797fc1cebc30ae383f346883033c45eb91e9b0b92e9ebd224bb1545b4ae2391825b649b798cc711a38351a5f41be24d949c64c6703ebc24eba661
-  languageName: node
-  linkType: hard
-
 "react-i18next@npm:^11.15.6":
   version: 11.18.6
   resolution: "react-i18next@npm:11.18.6"
@@ -10377,18 +10362,6 @@ __metadata:
   version: 0.14.2
   resolution: "react-refresh@npm:0.14.2"
   checksum: 10/512abf97271ab8623486061be04b608c39d932e3709f9af1720b41573415fa4993d0009fa5138b6705b60a98f4102f744d4e26c952b14f41a0e455521c6be4cc
-  languageName: node
-  linkType: hard
-
-"react-resizable@npm:^3.0.5":
-  version: 3.0.5
-  resolution: "react-resizable@npm:3.0.5"
-  dependencies:
-    prop-types: "npm:15.x"
-    react-draggable: "npm:^4.0.3"
-  peerDependencies:
-    react: ">= 16.3"
-  checksum: 10/745fad6ac827857b3a80d1d648b8d6723aa72fc17d5410a01707073f3d37b4adf6e0354dfe3cc33dee34d6e546a3fbd5603ef73e385dfc5218a425a39bf96275
   languageName: node
   linkType: hard
 
@@ -11811,9 +11784,9 @@ __metadata:
   linkType: hard
 
 "tmp@npm:^0.2.0":
-  version: 0.2.3
-  resolution: "tmp@npm:0.2.3"
-  checksum: 10/7b13696787f159c9754793a83aa79a24f1522d47b87462ddb57c18ee93ff26c74cbb2b8d9138f571d2e0e765c728fb2739863a672b280528512c6d83d511c6fa
+  version: 0.2.4
+  resolution: "tmp@npm:0.2.4"
+  checksum: 10/6fa6c4e6749824e51cb45f0b050090f0fec6b037cfd327d328ebaf3eae80b7e1a53c6651f9bc36f1fa80cf367ec9dc05067fc1a14034fcfbba96d3a2aaa5c732
   languageName: node
   linkType: hard
 

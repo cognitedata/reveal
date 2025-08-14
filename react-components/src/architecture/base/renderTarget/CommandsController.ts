@@ -3,6 +3,7 @@ import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 import { type Signal, signal } from '@cognite/signals';
+import { DeferredFunction } from '../utilities/misc/DeferredFunction';
 
 /**
  * The main purpose of the command controller is to give the correct event to the correct command,
@@ -28,6 +29,7 @@ export class CommandsController extends PointerEvents {
   private readonly _domElement: HTMLElement;
   private readonly _commands = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
+  private readonly _deferredUpdate: DeferredFunction;
 
   // ==================================================
   // CONSTRUCTOR
@@ -37,6 +39,13 @@ export class CommandsController extends PointerEvents {
     super();
     this._domElement = domElement;
     this._pointerEventsTarget = new PointerEventsTarget(this._domElement, this);
+
+    const updateAllCommands = (): void => {
+      for (const command of this._commands) {
+        command.update();
+      }
+    };
+    this._deferredUpdate = new DeferredFunction(updateAllCommands);
   }
 
   // ==================================================
@@ -197,16 +206,20 @@ export class CommandsController extends PointerEvents {
     return true;
   }
 
-  public update(): void {
-    for (const command of this._commands) {
-      command.update();
-    }
+  /**
+   * Triggers a deferred update operation by delegating to the internal deferred updater.
+   * This method schedules an update to be performed at a later time, optimizing performance
+   * by batching multiple changes together.
+   */
+  public deferredUpdate(): void {
+    this._deferredUpdate.trigger();
   }
 
   public dispose(): void {
     for (const command of this._commands) {
       command.dispose();
     }
+    this._deferredUpdate.dispose();
   }
 
   // ================================================
