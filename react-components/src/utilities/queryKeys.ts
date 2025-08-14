@@ -16,6 +16,19 @@ export const queryKeys = {
   timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
   // TIMESERIES RELATIONSHIPS WITH ASSETS
   timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const,
+  // ASSETS AND TIMESERIES LINKAGE DATA
+  assetsAndTimeseriesLinkageData: (
+    timeseriesExternalIds: string[],
+    relationshipResourceTypes: string[],
+    assetExternalIds: string[]
+  ) =>
+    [
+      ...timeseries,
+      'assets-and-timeseries-linkage-data',
+      timeseriesExternalIds,
+      relationshipResourceTypes,
+      assetExternalIds
+    ] as const,
   // Point Cloud Annotations
   pointCloudAnnotationMappings: (modelKeys: string[]) =>
     [...models, 'point-cloud-annotation-mappings', modelKeys] as const,
