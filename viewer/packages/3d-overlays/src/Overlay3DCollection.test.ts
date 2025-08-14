@@ -105,7 +105,7 @@ describe(Overlay3DCollection.name, () => {
 
     const RENDER_SIZE = 1024;
 
-    // run onBeforeRender on bockPoints in `OverlayPointsObject`
+    // run onBeforeRender on backPoints in `OverlayPointsObject`
     runOnBeforeRenderWithMocks(collection.children[0].children[0], RENDER_SIZE, camera);
     // run onBeforeRender on frontPoints in `OverlayPointsObject`
     runOnBeforeRenderWithMocks(collection.children[0].children[1], RENDER_SIZE, camera);
