@@ -10,8 +10,9 @@ import { type PropsWithChildren, type ReactElement } from 'react';
 import { cadMock } from '#test-utils/fixtures/cadModel';
 import { type ModelWithAssetMappings } from '../../hooks/cad/modelWithAssetMappings';
 import { QueryClient, QueryClientProvider, type UseQueryResult } from '@tanstack/react-query';
-import { type Asset, type Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 import {
+  type ModelRevisionKey,
   type CadNodeIdData,
   type FdmCadConnection,
   type FdmConnectionWithNode,
@@ -29,8 +30,10 @@ import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type DmCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
-import { TreeIndexNodeCollection } from '@cognite/reveal';
+import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type ClassicAssetStylingGroup } from '../Reveal3DResources';
+import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
+import { createAssetMock } from '#test-utils/fixtures/assets';
 
 describe(RuleBasedOutputsSelector.name, () => {
   const queryClient = new QueryClient();
@@ -51,23 +54,17 @@ describe(RuleBasedOutputsSelector.name, () => {
     assetMappings: [{ assetId: 1, treeIndex: 100, subtreeSize: 1, nodeId: 100 }]
   };
 
-  const node3d1: Node3D = {
+  const node3d1 = createCadNodeMock({
     id: 100,
     treeIndex: 100,
-    subtreeSize: 1,
-    parentId: 0,
-    depth: 0,
-    name: ''
-  };
+    subtreeSize: 1
+  });
 
-  const node3d2: Node3D = {
+  const node3d2 = createCadNodeMock({
     id: 200,
     treeIndex: 200,
-    subtreeSize: 1,
-    parentId: 0,
-    depth: 0,
-    name: ''
-  };
+    subtreeSize: 1
+  });
 
   const cadNode1: CadNodeIdData = {
     nodeId: 200,
@@ -94,26 +91,8 @@ describe(RuleBasedOutputsSelector.name, () => {
       }
     ]
   };
-  const mockClassicAssetConnections: Asset[] = [
-    {
-      id: 1,
-      externalId: 'asset-1',
-      name: 'Asset 1',
-      description: '',
-      lastUpdatedTime: new Date(),
-      createdTime: new Date(),
-      rootId: 0
-    },
-    {
-      id: 2,
-      externalId: 'asset-2',
-      name: 'Asset 2',
-      description: '',
-      lastUpdatedTime: new Date(),
-      createdTime: new Date(),
-      rootId: 0
-    }
-  ];
+
+  const mockClassicAssetConnections = [createAssetMock(1), createAssetMock(2)];
 
   const mockFdmCadConnections: FdmCadConnection[] = [
     {
@@ -140,38 +119,18 @@ describe(RuleBasedOutputsSelector.name, () => {
       cadNode: node3d2
     }
   ];
+
+  const modelIdentifier1: ModelRevisionKey = `${cadMock.modelId}/${cadMock.revisionId}`;
+
   const mockFdmMappedEquipmentEdges: ModelRevisionToConnectionMap = new Map([
-    ['1/10', [{ connection: fdmConnections[0].connection, cadNode: fdmConnections[0].cadNode }]],
-    ['2/20', [{ connection: fdmConnections[1].connection, cadNode: fdmConnections[1].cadNode }]]
+    [modelIdentifier1, [fdmConnections[0]]],
+    [modelIdentifier1, [fdmConnections[1]]]
   ]);
-  const mockDmConnectionWithNodeFromHybridDataList: FdmConnectionWithNode[] = [
-    { connection: fdmConnections[1].connection, cadNode: fdmConnections[1].cadNode }
-  ];
-  const mockFdmMappings: FdmInstanceNodeWithConnectionAndProperties[] = [
-    {
-      instanceType: 'node',
-      items: [],
-      typing: {},
-      connection: {
-        instance: dmUniqueIdentifier1,
-        modelId: cadMock.modelId,
-        revisionId: cadMock.revisionId,
-        treeIndex: node3d1.treeIndex
-      },
-      cadNode: node3d1
-    },
-    {
-      instanceType: 'node',
-      items: [],
-      typing: {},
-      connection: {
-        instance: dmUniqueIdentifier2,
-        modelId: cadMock.modelId,
-        revisionId: cadMock.revisionId,
-        treeIndex: node3d2.treeIndex
-      },
-      cadNode: node3d2
-    }
+  const mockDmConnectionWithNodeFromHybridDataList: FdmConnectionWithNode[] = [fdmConnections[1]];
+
+  const mockFdmMappings = [
+    createFdmInstanceNodeDataMock(dmUniqueIdentifier1, cadMock, node3d1),
+    createFdmInstanceNodeDataMock(dmUniqueIdentifier2, cadMock, node3d2)
   ];
 
   const nodeCollection = new TreeIndexNodeCollection([0]);
@@ -227,7 +186,7 @@ describe(RuleBasedOutputsSelector.name, () => {
       isLoading: false
     };
     defaultDependencies.useAssetMappedNodesForRevisions.mockReturnValue(
-      mockuseAssetMappedNodesForRevisionsResult as UseQueryResult<ModelWithAssetMappings[]>
+      mockuseAssetMappedNodesForRevisionsResult
     );
 
     const mockUseAssetsByIdsQueryResult = {
@@ -235,9 +194,7 @@ describe(RuleBasedOutputsSelector.name, () => {
       isLoading: false,
       isFetched: true
     };
-    defaultDependencies.useAssetsByIdsQuery.mockReturnValue(
-      mockUseAssetsByIdsQueryResult as UseQueryResult<Asset[]>
-    );
+    defaultDependencies.useAssetsByIdsQuery.mockReturnValue(mockUseAssetsByIdsQueryResult);
 
     const mockUseMappedEdgesForRevisionsResult = {
       data: mockFdmMappedEquipmentEdges,
@@ -245,7 +202,7 @@ describe(RuleBasedOutputsSelector.name, () => {
     };
 
     defaultDependencies.useMappedEdgesForRevisions.mockReturnValue(
-      mockUseMappedEdgesForRevisionsResult as UseQueryResult<ModelRevisionToConnectionMap>
+      mockUseMappedEdgesForRevisionsResult
     );
 
     const mockUseGetDMConnectionWithNodeFromHybridMappingsQueryReturn = {
@@ -253,9 +210,7 @@ describe(RuleBasedOutputsSelector.name, () => {
       isLoading: false
     };
     defaultDependencies.useGetDMConnectionWithNodeFromHybridMappingsQuery.mockReturnValue(
-      mockUseGetDMConnectionWithNodeFromHybridMappingsQueryReturn as UseQueryResult<
-        FdmConnectionWithNode[]
-      >
+      mockUseGetDMConnectionWithNodeFromHybridMappingsQueryReturn
     );
 
     const mockUseAll3dDirectConnectionsWithPropertiesReturn = {
@@ -263,9 +218,7 @@ describe(RuleBasedOutputsSelector.name, () => {
       isLoading: false
     };
     defaultDependencies.useAll3dDirectConnectionsWithProperties.mockReturnValue(
-      mockUseAll3dDirectConnectionsWithPropertiesReturn as UseQueryResult<
-        FdmInstanceNodeWithConnectionAndProperties[]
-      >
+      mockUseAll3dDirectConnectionsWithPropertiesReturn
     );
 
     defaultDependencies.generateRuleBasedOutputs.mockResolvedValue(mockStylings);
@@ -365,3 +318,22 @@ describe(RuleBasedOutputsSelector.name, () => {
     });
   });
 });
+
+function createFdmInstanceNodeDataMock(
+  instance: { externalId: string; space: string },
+  cadModel: CogniteCadModel,
+  cadNode: Node3D
+): FdmInstanceNodeWithConnectionAndProperties {
+  return {
+    instanceType: 'node',
+    items: [],
+    typing: {},
+    connection: {
+      instance,
+      modelId: cadModel.modelId,
+      revisionId: cadModel.revisionId,
+      treeIndex: cadNode.treeIndex
+    },
+    cadNode
+  };
+}

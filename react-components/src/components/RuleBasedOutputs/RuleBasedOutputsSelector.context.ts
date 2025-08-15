@@ -7,14 +7,33 @@ import {
 import { useAssetsByIdsQuery, useAll3dDirectConnectionsWithProperties } from '../../query';
 import { useGetDMConnectionWithNodeFromHybridMappingsQuery } from './hooks/useGetDMConnectionWithNodeFromHybridMappingsQuery';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
+import { type CadModelOptions } from '../Reveal3DResources';
+import { type IdEither } from '@cognite/sdk';
+import { type DmCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
+import { type FdmConnectionWithNode } from '../CacheProvider/types';
 
 export type RuleBasedOutputsSelectorDependencies = {
   use3dModels: typeof use3dModels;
-  useAssetsByIdsQuery: typeof useAssetsByIdsQuery;
-  useAssetMappedNodesForRevisions: typeof useAssetMappedNodesForRevisions;
-  useMappedEdgesForRevisions: typeof useMappedEdgesForRevisions;
-  useAll3dDirectConnectionsWithProperties: typeof useAll3dDirectConnectionsWithProperties;
-  useGetDMConnectionWithNodeFromHybridMappingsQuery: typeof useGetDMConnectionWithNodeFromHybridMappingsQuery;
+  useAssetsByIdsQuery: (
+    ids: IdEither[]
+  ) => Pick<ReturnType<typeof useAssetsByIdsQuery>, 'data' | 'isLoading' | 'isFetched'>;
+  useAssetMappedNodesForRevisions: (
+    cadModels: CadModelOptions[]
+  ) => Pick<ReturnType<typeof useAssetMappedNodesForRevisions>, 'data' | 'isLoading'>;
+  useMappedEdgesForRevisions: (
+    cadModels: CadModelOptions[],
+    enabled: boolean
+  ) => Pick<ReturnType<typeof useMappedEdgesForRevisions>, 'data' | 'isLoading'>;
+  useAll3dDirectConnectionsWithProperties: (
+    connectionWithNodeAndView: FdmConnectionWithNode[]
+  ) => Pick<ReturnType<typeof useAll3dDirectConnectionsWithProperties>, 'data' | 'isLoading'>;
+  useGetDMConnectionWithNodeFromHybridMappingsQuery: (
+    nodeWithDmIdsFromHybridMappings: DmCadAssetMapping[],
+    models: CadModelOptions[]
+  ) => Pick<
+    ReturnType<typeof useGetDMConnectionWithNodeFromHybridMappingsQuery>,
+    'data' | 'isLoading'
+  >;
   generateRuleBasedOutputs: typeof generateRuleBasedOutputs;
 };
 
