@@ -14,6 +14,7 @@ import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { restrictToDmsId } from '../../../utilities/restrictToDmsId';
 import { createFdmKey } from '../../CacheProvider';
 import { executeParallel } from '../../../utilities/executeParallel';
+import { queryKeys } from '../../../utilities/queryKeys';
 
 export function useGetDMConnectionWithNodeFromHybridMappingsQuery(
   nodeWithDmIdsFromHybridMappings: DmCadAssetMapping[],
@@ -30,7 +31,7 @@ export function useGetDMConnectionWithNodeFromHybridMappingsQuery(
   );
 
   return useQuery({
-    queryKey: ['fdm-mappings', dmIds, models],
+    queryKey: queryKeys.fdmConnectionWithNode(dmIds, models),
     queryFn: async () => {
       if (dmIds.length === 0 || models.length === 0) {
         return EMPTY_ARRAY;
