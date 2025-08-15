@@ -436,6 +436,7 @@ export function Viewer() {
       const box = new THREE.Box3().setFromCenterAndSize(asd, new THREE.Vector3(0.01, 0.01, 0.01));
       const helper = new THREE.Box3Helper(box, 'red');
       viewer.addObject3D(helper);
+      await new Promise(resolve => setTimeout(resolve, 2000));
       console.log('points: ' + JSON.stringify(pointCloudModel.getPointsByBoundingBox(box)));
 
       viewer.on('click', async event => {

@@ -4,7 +4,7 @@
 
 import { CameraConfiguration, CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 
-import { ClassificationInfo, PointCloudOctree, PickPoint } from './potree-three-loader';
+import { ClassificationInfo, PointCloudOctree, PickPoint, PointCloudOctreeNode } from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
@@ -224,7 +224,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     const points: Vector3[] = [];
     const cdfSpaceBox = transformBoxToCdfSpace(box);
     console.log(JSON.stringify(cdfSpaceBox.min.toArray()), JSON.stringify(cdfSpaceBox.max.toArray()));
-    this.octree.root?.traverse(getPositionsIntersectingBox, true, node => node.boundingBox.intersectsBox(cdfSpaceBox));
+    this.octree.root?.traverse(getPositionsIntersectingBox, true);
     return points;
 
     function transformBoxToCdfSpace(box: Box3): Box3 {
@@ -245,6 +245,11 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     }
 
     function getPositionsIntersectingBox(node: IPointCloudTreeNodeBase): void {
+      console.log(node);
+      if (!(node instanceof PointCloudOctreeNode)) {
+        return;
+      }
+      console.log(node.sceneNode.matrixWorld);
       const positionAttribute = node.getPositionAttribute();
       if (!positionAttribute) {
         return;
