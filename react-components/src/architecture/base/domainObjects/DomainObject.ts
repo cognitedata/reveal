@@ -78,7 +78,7 @@ export abstract class DomainObject implements TreeNodeType {
     return this._uniqueId;
   }
 
-  protected set uniqueId(value: UniqueId) {
+  public set uniqueId(value: UniqueId) {
     this._uniqueId = value;
   }
 
