@@ -63,4 +63,6 @@ function expectToBeUrlLink(element: Element, expectedUrl: string): void {
   expect(element.tagName).toBe('A');
   expect(element.getAttribute('href')).toBe(expectedUrl);
   expect(element.textContent).toBe(expectedUrl);
+  expect(element.getAttribute('target')).toBe('_blank');
+  expect(element.getAttribute('rel')).toBe('noopener noreferrer');
 }

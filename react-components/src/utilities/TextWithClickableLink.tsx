@@ -35,7 +35,10 @@ export function TextWithClickableLink({ content }: { content: string }): ReactEl
   return <span>{urlComponents}</span>;
 }
 
-const LinkText = styled.a`
+const LinkText = styled.a.attrs({
+  target: '_blank',
+  rel: 'noopener noreferrer'
+})`
   text-decoration: underline;
   cursor: pointer;
 `;
