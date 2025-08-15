@@ -4,10 +4,10 @@ import { type PointOfInterest } from '../../../architecture';
 import { CreatePoiCommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoiCommentCommand';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { useTranslation } from '../../i18n/I18n';
-import { createButton } from '../CommandButtons';
 import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { useSelectedPoi } from './useSelectedPoi';
 import styled from 'styled-components';
+import { createReactElement } from '../Factories/ReactElementFactory';
 
 export const PoiCommentSection = (): ReactNode => {
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ export const CreateCommentField = ({
     };
     return command;
   }, [poi]);
-  return createButton(command, 'right');
+  return createReactElement(command, 'right');
 };
 
 const StyledCreateCommentField = styled(CreateCommentField)`

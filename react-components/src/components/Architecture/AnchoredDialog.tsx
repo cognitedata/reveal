@@ -2,9 +2,9 @@ import { type ReactNode, useEffect } from 'react';
 import { useRenderTarget } from '../RevealCanvas';
 import { ViewerAnchor } from '../ViewerAnchor/ViewerAnchor';
 import { Menu } from '@cognite/cogs.js';
-import { createButton } from './CommandButtons';
 import styled from 'styled-components';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { createReactElement } from './Factories/ReactElementFactory';
 import { useSignalValue } from '@cognite/signals/react';
 import { signal } from '@cognite/signals';
 import { type AnchoredDialogContent } from '../../architecture/base/commands/BaseTool';
@@ -37,7 +37,7 @@ export const AnchoredDialog = (): ReactNode => {
   return (
     <ViewerAnchor position={dialogContent?.position}>
       <SuppressedMenu>
-        {dialogContent.contentCommands.map((command) => createButton(command, 'right'))}
+        {dialogContent.contentCommands.map((command) => createReactElement(command, 'right'))}
       </SuppressedMenu>
     </ViewerAnchor>
   );
