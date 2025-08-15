@@ -19,7 +19,6 @@
   "scripts": {
     "build": "vite build",
     "build:watch": "vite build --watch",
-    "build:watch:yalc": "YALC=true vite build --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --test",
     "tsc": "tsc",
