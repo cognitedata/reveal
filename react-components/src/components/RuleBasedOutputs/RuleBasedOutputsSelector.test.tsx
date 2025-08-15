@@ -12,7 +12,6 @@ import { type ModelWithAssetMappings } from '../../hooks/cad/modelWithAssetMappi
 import { QueryClient, QueryClientProvider, type UseQueryResult } from '@tanstack/react-query';
 import { type Node3D } from '@cognite/sdk';
 import {
-  type ModelRevisionKey,
   type CadNodeIdData,
   type FdmCadConnection,
   type FdmConnectionWithNode,
@@ -34,10 +33,14 @@ import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type ClassicAssetStylingGroup } from '../Reveal3DResources';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { createAssetMock } from '#test-utils/fixtures/assets';
+import { createModelRevisionKey } from '../CacheProvider/idAndKeyTranslation';
 
 describe(RuleBasedOutputsSelector.name, () => {
   const queryClient = new QueryClient();
   const renderTargetMock = createRenderTargetMock();
+
+  const ARBITRARY_CAD_MODEL_ID = 111;
+  const ARBITRARY_CAD_REVISION_ID = 222;
 
   const mockRuleSet: RuleOutputSet = {
     id: 'rule-set-1',
@@ -120,11 +123,9 @@ describe(RuleBasedOutputsSelector.name, () => {
     }
   ];
 
-  const modelIdentifier1: ModelRevisionKey = `${cadMock.modelId}/${cadMock.revisionId}`;
-
   const mockFdmMappedEquipmentEdges: ModelRevisionToConnectionMap = new Map([
-    [modelIdentifier1, [fdmConnections[0]]],
-    [modelIdentifier1, [fdmConnections[1]]]
+    [createModelRevisionKey(cadMock.modelId, cadMock.revisionId), [fdmConnections[0]]],
+    [createModelRevisionKey(ARBITRARY_CAD_MODEL_ID, ARBITRARY_CAD_REVISION_ID), [fdmConnections[1]]]
   ]);
   const mockDmConnectionWithNodeFromHybridDataList: FdmConnectionWithNode[] = [fdmConnections[1]];
 
