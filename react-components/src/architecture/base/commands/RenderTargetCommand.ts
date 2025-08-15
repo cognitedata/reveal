@@ -1,7 +1,6 @@
 import { BaseCommand } from './BaseCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../domainObjects/RootDomainObject';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type UndoManager } from '../undo/UndoManager';
 import { type Transaction } from '../undo/Transaction';
 import { type BaseTool } from './BaseTool';
@@ -54,7 +53,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
   public override invoke(): boolean {
     const success = this.invokeCore();
     if (success) {
-      CommandsUpdater.update(this._renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
     return success;
   }
@@ -98,7 +97,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
       return;
     }
     if (undoManager.addTransaction(transaction)) {
-      CommandsUpdater.update(this.renderTarget); // This refresh the undo button!
+      this._renderTarget?.updateAllCommands(); // This refresh the undo button!
     }
   }
 }
