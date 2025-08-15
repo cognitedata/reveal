@@ -1,6 +1,7 @@
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
-import { type Image360Model } from '../../../concrete/reveal/RevealTypes';
+import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class Set360IconsOpacityCommand extends FractionSliderCommand {
   // ==================================================
@@ -12,20 +13,22 @@ export class Set360IconsOpacityCommand extends FractionSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.firstCollection?.getIconsVisibility() ?? false;
+    return (
+      this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) !== undefined &&
+      this.settingsController.isIconsVisible()
+    );
   }
 
   public override get value(): number {
-    return this.firstCollection?.getIconsOpacity() ?? 1;
+    return this.settingsController.iconsOpacity();
   }
 
   public override set value(value: number) {
-    for (const collection of this.renderTarget.get360ImageCollections()) {
-      collection.setIconsOpacity(value);
-    }
+    this.settingsController.iconsOpacity(value);
   }
 
-  private get firstCollection(): Image360Model | undefined {
-    return this.renderTarget.get360ImageCollections().next().value;
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.settingsController.iconsOpacity);
   }
 }

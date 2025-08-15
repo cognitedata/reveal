@@ -47,8 +47,6 @@ export function createPointCloudMock(parameters?: {
     .returns({ modelId, revisionId })
     .setup((p) => p.getModelTransformation())
     .returns(new Matrix4())
-    .setup((p) => p.visible)
-    .returns(parameters?.visible ?? true)
     .setup((p) => p.type)
     .returns('pointcloud')
 
@@ -73,6 +71,7 @@ export function createPointCloudMock(parameters?: {
     .object();
 
   // Set default values on some properties (otherwise they will be undefined)
+  pointCloud.visible = parameters?.visible ?? true;
   pointCloud.pointShape = PointShape.Circle;
   pointCloud.pointSize = 1;
   pointCloud.pointColorType = PointColorType.Rgb;

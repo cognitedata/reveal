@@ -37,13 +37,19 @@ export const findImageAnnotationsMock = vi
   .mockResolvedValue([]);
 
 export function createImage360ClassicMock(parameters?: { visible?: boolean }): Image360Collection {
+  let isIconsVisibility = parameters?.visible ?? true;
+  let isOccludedIconsVisible = true;
+  let iconsOpacity = 1;
+  let imagesOpacity = 1;
+
   const getIconsVisibilityMock = vi
     .fn<Image360Collection['getIconsVisibility']>()
-    .mockReturnValue(parameters?.visible ?? true);
+    .mockReturnValue(isIconsVisibility);
 
   const setIconsVisibilityMock = vi
     .fn<Image360Collection['setIconsVisibility']>()
     .mockImplementation((visible) => {
+      isIconsVisibility = visible;
       getIconsVisibilityMock.mockReturnValue(visible);
     });
 
@@ -52,34 +58,70 @@ export function createImage360ClassicMock(parameters?: { visible?: boolean }): I
   const offEventMock =
     vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
 
-  return new Mock<Image360Collection<ClassicDataSourceType>>()
-    .setup((p) => p.id)
-    .returns('siteId')
-    .setup((p) => p.label)
-    .returns('360 Model Name')
-    .setup((p) => p.getIconsVisibility)
-    .returns(getIconsVisibilityMock)
-    .setup((p) => p.setIconsVisibility)
-    .returns(setIconsVisibilityMock)
-    .setup((p) => p.on)
-    .returns(onEventMock)
-    .setup((p) => p.off)
-    .returns(offEventMock)
-    .setup((p) => p.findImageAnnotations)
-    .returns(findImageAnnotationsMock)
-    .object();
+  return (
+    new Mock<Image360Collection<ClassicDataSourceType>>()
+      .setup((p) => p.id)
+      .returns('siteId')
+      .setup((p) => p.label)
+      .returns('360 Model Name')
+      .setup((p) => p.getIconsVisibility)
+      .returns(getIconsVisibilityMock)
+      .setup((p) => p.setIconsVisibility)
+      .returns(setIconsVisibilityMock)
+      .setup((p) => p.on)
+      .returns(onEventMock)
+      .setup((p) => p.off)
+      .returns(offEventMock)
+      .setup((p) => p.findImageAnnotations)
+      .returns(findImageAnnotationsMock)
+
+      // Get and set OccludedIconsVisible
+      .setup((p) => p.isOccludedIconsVisible)
+      .callback(() => {
+        return () => isOccludedIconsVisible;
+      })
+      .setup((p) => p.setOccludedIconsVisible)
+      .returns((value: boolean) => {
+        isOccludedIconsVisible = value;
+      })
+      // Get and set IconsOpacity
+      .setup((p) => p.getIconsOpacity)
+      .callback(() => {
+        return () => iconsOpacity;
+      })
+      .setup((p) => p.setIconsOpacity)
+      .returns((value: number) => {
+        iconsOpacity = value;
+      })
+      // Get and set ImagesOpacity
+      .setup((p) => p.getImagesOpacity)
+      .callback(() => {
+        return () => imagesOpacity;
+      })
+      .setup((p) => p.setImagesOpacity)
+      .returns((value: number) => {
+        imagesOpacity = value;
+      })
+      .object()
+  );
 }
 
 export function createImage360DmMock(parameters?: {
   visible?: boolean;
 }): Image360Collection<DMDataSourceType> {
+  let isIconsVisibility = parameters?.visible ?? true;
+  let isOccludedIconsVisible = true;
+  let iconsOpacity = 1;
+  let imagesOpacity = 1;
+
   const getIconsVisibilityMock = vi
     .fn<Image360Collection['getIconsVisibility']>()
-    .mockReturnValue(parameters?.visible ?? true);
+    .mockReturnValue(isIconsVisibility);
 
   const setIconsVisibilityMock = vi
     .fn<Image360Collection['setIconsVisibility']>()
     .mockImplementation((visible) => {
+      isIconsVisibility = visible;
       getIconsVisibilityMock.mockReturnValue(visible);
     });
 
@@ -88,18 +130,49 @@ export function createImage360DmMock(parameters?: {
   const offEventMock =
     vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
 
-  return new Mock<Image360Collection<DMDataSourceType>>()
-    .setup((p) => p.id)
-    .returns('testImage360ExternalId')
-    .setup((p) => p.label)
-    .returns('360 Model Name')
-    .setup((p) => p.getIconsVisibility)
-    .returns(getIconsVisibilityMock)
-    .setup((p) => p.setIconsVisibility)
-    .returns(setIconsVisibilityMock)
-    .setup((p) => p.on)
-    .returns(onEventMock)
-    .setup((p) => p.off)
-    .returns(offEventMock)
-    .object();
+  return (
+    new Mock<Image360Collection<DMDataSourceType>>()
+      .setup((p) => p.id)
+      .returns('testImage360ExternalId')
+      .setup((p) => p.label)
+      .returns('360 Model Name')
+      .setup((p) => p.getIconsVisibility)
+      .returns(getIconsVisibilityMock)
+      .setup((p) => p.setIconsVisibility)
+      .returns(setIconsVisibilityMock)
+      .setup((p) => p.on)
+      .returns(onEventMock)
+      .setup((p) => p.off)
+      .returns(offEventMock)
+
+      // Get and set OccludedIconsVisible
+      .setup((p) => p.isOccludedIconsVisible)
+      .callback(() => {
+        return () => isOccludedIconsVisible;
+      })
+      .setup((p) => p.setOccludedIconsVisible)
+      .returns((value: boolean) => {
+        isOccludedIconsVisible = value;
+      })
+      // Get and set IconsOpacity
+      .setup((p) => p.getIconsOpacity)
+      .callback(() => {
+        return () => iconsOpacity;
+      })
+      .setup((p) => p.setIconsOpacity)
+      .returns((value: number) => {
+        iconsOpacity = value;
+      })
+      // Get and set ImagesOpacity
+      .setup((p) => p.getImagesOpacity)
+      .callback(() => {
+        return () => imagesOpacity;
+      })
+      .setup((p) => p.setImagesOpacity)
+      .returns((value: number) => {
+        imagesOpacity = value;
+      })
+
+      .object()
+  );
 }
