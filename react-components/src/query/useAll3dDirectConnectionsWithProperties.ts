@@ -145,24 +145,17 @@ export function useAll3dDirectConnectionsWithProperties(
           .filter((item) => item.items.length > 0);
 
       const instanceWithData = instanceItemsAndTyping.flatMap((itemsData) => {
-        const dataFound = itemsData.items
-          .map((itemData) => {
-            const fdmKey = createFdmKey(itemData);
+        return itemsData.items.flatMap((itemData) => {
+          const fdmKey = createFdmKey(itemData);
+          const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
+          if (!connectionsFound) return [];
 
-            if (!connectionWithNodeAndViewMap.has(fdmKey)) return undefined;
-
-            const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
-            return connectionsFound?.map((connectionFound) => {
-              return {
-                instanceType: 'node' as const,
-                ...connectionFound,
-                ...itemsData
-              };
-            });
-          })
-          .flat()
-          .filter(isDefined);
-        return dataFound;
+          return connectionsFound.map((connectionFound) => ({
+            instanceType: 'node' as const,
+            ...connectionFound,
+            ...itemsData,
+          }));
+        });
       });
 
       return instanceWithData;
