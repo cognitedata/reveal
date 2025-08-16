@@ -8,8 +8,7 @@ import {
 } from './types';
 import { type Asset } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
-import {
-  type AssetIdsAndTimeseriesData} from '../../data-providers/types';
+import { type AssetIdsAndTimeseriesData } from '../../data-providers/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
@@ -18,7 +17,8 @@ import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMeta
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 import {
   isClassicCadAssetMapping,
-  isDmCadAssetMapping} from '../CacheProvider/cad/assetMappingTypes';
+  isDmCadAssetMapping
+} from '../CacheProvider/cad/assetMappingTypes';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type ModelWithAssetMappings } from '../../hooks/cad/modelWithAssetMappings';
 import { type FdmConnectionWithNode } from '../CacheProvider/types';
@@ -211,24 +211,26 @@ function generateUniqueRuleSetKey(
   assetIdsWithTimeseriesData: AssetIdsAndTimeseriesData | undefined,
   timeseriesExternalIds: string[]
 ): string {
-
-  const assetMappingsString = assetMappings?.map((item) =>
-  {
-    const mappings = item.assetMappings.map((mapping) => mapping.nodeId).sort();
+  const assetMappingsString = assetMappings?.map((item) => {
+    const mappings = item.assetMappings.map((mapping) => mapping.nodeId).sort((a, b) => a - b);
     const models = item.model.modelId + '/' + item.model.revisionId;
     return `${models}:${mappings.join(',')}`;
   });
-  const fdmMappingsString = fdmMappings?.map((item) => {
-    return `${item.cadNode.id}/${item.connection.instance.space}/${item.connection.instance.externalId}`;
-  }).sort();
+  const fdmMappingsString = fdmMappings
+    ?.map((item) => {
+      return `${item.cadNode.id}/${item.connection.instance.space}/${item.connection.instance.externalId}`;
+    })
+    .sort();
 
-  const contextualizedAssetNodesString = contextualizedAssetNodes.map((item) => String(item.id)).sort();
+  const contextualizedAssetNodesString = contextualizedAssetNodes
+    .map((item) => String(item.id))
+    .sort();
   const assetIdsWithTimeseriesString = assetIdsWithTimeseriesData?.assetIdsWithTimeseries
     .map((item) => item.assetIds?.externalId + '/' + item.timeseries?.id)
     .sort();
 
-    const payload = [
-      ruleSet.id,
+  const payload = [
+    ruleSet.id,
     ...(assetMappingsString ?? []),
     ...(fdmMappingsString ?? []),
     ...contextualizedAssetNodesString,

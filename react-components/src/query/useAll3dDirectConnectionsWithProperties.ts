@@ -148,12 +148,12 @@ export function useAll3dDirectConnectionsWithProperties(
         return itemsData.items.flatMap((itemData) => {
           const fdmKey = createFdmKey(itemData);
           const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
-          if (!connectionsFound) return [];
+          if (connectionsFound === undefined) return [];
 
           return connectionsFound.map((connectionFound) => ({
             instanceType: 'node' as const,
             ...connectionFound,
-            ...itemsData,
+            ...itemsData
           }));
         });
       });

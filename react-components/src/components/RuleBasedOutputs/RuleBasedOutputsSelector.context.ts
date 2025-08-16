@@ -47,4 +47,6 @@ export const defaultRuleBasedOutputsSelectorDependencies: RuleBasedOutputsSelect
   generateRuleBasedOutputs
 };
 
-export const RuleBasedOutputsSelectorContext = createContext<RuleBasedOutputsSelectorDependencies>(defaultRuleBasedOutputsSelectorDependencies);
+export const RuleBasedOutputsSelectorContext = createContext<RuleBasedOutputsSelectorDependencies>(
+  defaultRuleBasedOutputsSelectorDependencies
+);

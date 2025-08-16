@@ -94,15 +94,9 @@ describe(createSimpleHash.name, () => {
 
   test('should pad short hashes with zeros', () => {
     // Test various inputs to ensure consistent 8-character output
-    const inputs = [
-      ['short'],
-      ['a'],
-      ['1'],
-      [''],
-      ['test', '123']
-    ];
+    const inputs = [['short'], ['a'], ['1'], [''], ['test', '123']];
 
-    inputs.forEach(input => {
+    inputs.forEach((input) => {
       const result = createSimpleHash(input);
       expect(result).toHaveLength(8);
       expect(result).toMatch(/^[0-9a-f]{8}$/);
