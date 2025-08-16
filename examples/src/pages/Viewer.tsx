@@ -431,8 +431,9 @@ export function Viewer() {
 
       const pointCloudModel = viewer.models[0] as CognitePointCloudModel;
       pointCloudModel.pointColorType = PointColorType.Height; 
-
-      const asd = new THREE.Vector3(-0.03882899980014991, 0.0004739990041809222, -0.17094000449162292);
+      
+      const asd = new THREE.Vector3(-0.013828997564975729, -0.011525999237482057, -0.16393999775629806);
+      // const asd = new THREE.Vector3(-0.03882899980014991, 0.0004739990041809222, -0.17094000449162292);
       const box = new THREE.Box3().setFromCenterAndSize(asd, new THREE.Vector3(0.01, 0.01, 0.01));
       const helper = new THREE.Box3Helper(box, 'red');
       viewer.addObject3D(helper);
