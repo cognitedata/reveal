@@ -47,12 +47,4 @@ export const defaultRuleBasedOutputsSelectorDependencies: RuleBasedOutputsSelect
   generateRuleBasedOutputs
 };
 
-export const RuleBasedOutputsSelectorContext = createContext<RuleBasedOutputsSelectorDependencies>({
-  use3dModels,
-  useAssetsByIdsQuery,
-  useAssetMappedNodesForRevisions,
-  useMappedEdgesForRevisions,
-  useAll3dDirectConnectionsWithProperties,
-  useGetDMConnectionWithNodeFromHybridMappingsQuery,
-  generateRuleBasedOutputs
-});
+export const RuleBasedOutputsSelectorContext = createContext<RuleBasedOutputsSelectorDependencies>(defaultRuleBasedOutputsSelectorDependencies);
