@@ -61,7 +61,6 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
     views: [{ space: 'view-space', externalId: 'view-id', version: '1', type: 'view' as const }]
   };
 
-
   const mockConnectionWithNode2: FdmConnectionWithNode = {
     connection: {
       instance: { space: 'test-space', externalId: 'test-id-2' },
@@ -141,7 +140,11 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
 
   it('should process connections and return multiple instance data', async () => {
     const { result } = renderHook(
-      () => useAll3dDirectConnectionsWithProperties([mockConnectionWithNode, mockConnectionWithNodeSameInstance]),
+      () =>
+        useAll3dDirectConnectionsWithProperties([
+          mockConnectionWithNode,
+          mockConnectionWithNodeSameInstance
+        ]),
       { wrapper }
     );
 
