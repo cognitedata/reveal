@@ -22,6 +22,11 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
   const ARBITRARY_MODEL_ID = 123;
   const ARBITRARY_REVISION_ID = 456;
 
+  const baseDmsUniqueIdentifier = {
+    space: 'test-space',
+    externalId: 'test-id'
+  };
+
   const node3d1 = createCadNodeMock({
     id: 100,
     treeIndex: ARBITRARY_TREE_INDEX,
@@ -36,7 +41,7 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
 
   const mockConnectionWithNode: FdmConnectionWithNode = {
     connection: {
-      instance: { space: 'test-space', externalId: 'test-id' },
+      instance: baseDmsUniqueIdentifier,
       modelId: ARBITRARY_MODEL_ID,
       revisionId: ARBITRARY_REVISION_ID,
       treeIndex: ARBITRARY_TREE_INDEX
@@ -44,6 +49,18 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
     cadNode: node3d1,
     views: [{ space: 'view-space', externalId: 'view-id', version: '1', type: 'view' as const }]
   };
+
+  const mockConnectionWithNodeSameInstance: FdmConnectionWithNode = {
+    connection: {
+      instance: baseDmsUniqueIdentifier,
+      modelId: ARBITRARY_MODEL_ID,
+      revisionId: ARBITRARY_REVISION_ID,
+      treeIndex: ARBITRARY_TREE_INDEX + 1
+    },
+    cadNode: node3d2,
+    views: [{ space: 'view-space', externalId: 'view-id', version: '1', type: 'view' as const }]
+  };
+
 
   const mockConnectionWithNode2: FdmConnectionWithNode = {
     connection: {
@@ -57,9 +74,8 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
   };
 
   const mockFdmInstanceData = {
+    ...baseDmsUniqueIdentifier,
     instanceType: 'node' as const,
-    space: 'test-space',
-    externalId: 'test-id',
     version: 1,
     createdTime: 11111,
     lastUpdatedTime: 11111,
@@ -67,9 +83,8 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
   };
 
   const mockInspectResultItem = {
+    ...baseDmsUniqueIdentifier,
     instanceType: 'node' as const,
-    space: 'test-space',
-    externalId: 'test-id',
     inspectionResults: {
       involvedViews: [
         { space: 'view-space', externalId: 'view-id', version: '1', type: 'view' as const }
@@ -124,9 +139,9 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it('should process connections and return instance data', async () => {
+  it('should process connections and return multiple instance data', async () => {
     const { result } = renderHook(
-      () => useAll3dDirectConnectionsWithProperties([mockConnectionWithNode]),
+      () => useAll3dDirectConnectionsWithProperties([mockConnectionWithNode, mockConnectionWithNodeSameInstance]),
       { wrapper }
     );
 
@@ -142,6 +157,14 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
         connection: mockConnectionWithNode.connection,
         cadNode: mockConnectionWithNode.cadNode,
         views: mockConnectionWithNode.views,
+        items: [mockFdmInstanceData],
+        instanceType: 'node' as const,
+        typing: {}
+      },
+      {
+        connection: mockConnectionWithNodeSameInstance.connection,
+        cadNode: mockConnectionWithNodeSameInstance.cadNode,
+        views: mockConnectionWithNodeSameInstance.views,
         items: [mockFdmInstanceData],
         instanceType: 'node' as const,
         typing: {}
