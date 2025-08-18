@@ -42,7 +42,7 @@ export async function assignPoints(
         input_shapes,
         input_points,
         input_bounding_box,
-        new Float64Array([...input_point_offset])
+        new Float64Array(input_point_offset)
       ) as Uint16Array<ArrayBuffer>
   );
 }
