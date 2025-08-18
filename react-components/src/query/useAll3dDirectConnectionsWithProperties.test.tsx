@@ -7,12 +7,18 @@ import {
   UseAll3dDirectConnectionsWithPropertiesContext
 } from './useAll3dDirectConnectionsWithProperties.context';
 import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
-import { type FdmSDK } from '../data-providers/FdmSDK';
+import {
+  type ExternalIdsResultList,
+  type InspectResultList,
+  type NodeItem,
+  type FdmSDK
+} from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import type { FC, PropsWithChildren } from 'react';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
+import { type FdmInstanceNodeWithConnectionAndProperties } from '../components/RuleBasedOutputs/types';
 
 describe(useAll3dDirectConnectionsWithProperties.name, () => {
   const queryClient = new QueryClient();
@@ -96,21 +102,18 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
 
   const mockFdmSdk = new Mock<FdmSDK>()
     .setup((p) => p.getByExternalIds)
-    .returns(vi.fn())
+    .returns(vi.fn<() => Promise<ExternalIdsResultList<any>>>())
     .setup((p) => p.inspectInstances)
-    .returns(vi.fn())
+    .returns(vi.fn<() => Promise<InspectResultList>>())
     .object();
 
   const mockDependencies = getMocksByDefaultDependencies(
     defaultUseAll3dDirectConnectionsWithPropertiesDependencies
   );
 
-  mockDependencies.useFdmSdk.mockReturnValue(mockFdmSdk);
-
   const wrapper: FC<PropsWithChildren<unknown>> = ({ children }) => (
     <QueryClientProvider client={queryClient}>
       <FdmSdkContext.Provider value={{ fdmSdk: mockFdmSdk }}>
-        {children}
         <UseAll3dDirectConnectionsWithPropertiesContext.Provider value={mockDependencies}>
           {children}
         </UseAll3dDirectConnectionsWithPropertiesContext.Provider>
@@ -120,6 +123,8 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
 
   beforeEach(() => {
     queryClient.clear();
+
+    mockDependencies.useFdmSdk.mockReturnValue(mockFdmSdk);
 
     vi.mocked(mockFdmSdk.getByExternalIds).mockResolvedValue({
       items: [mockFdmInstanceData],
@@ -148,38 +153,21 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
       { wrapper }
     );
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-    await waitFor(() => {
-      expect(mockFdmSdk.getByExternalIds).toHaveBeenCalled();
-    });
-
     const expectedData = [
-      {
-        connection: mockConnectionWithNode.connection,
-        cadNode: mockConnectionWithNode.cadNode,
-        views: mockConnectionWithNode.views,
-        items: [mockFdmInstanceData],
-        instanceType: 'node' as const,
-        typing: {}
-      },
-      {
-        connection: mockConnectionWithNodeSameInstance.connection,
-        cadNode: mockConnectionWithNodeSameInstance.cadNode,
-        views: mockConnectionWithNodeSameInstance.views,
-        items: [mockFdmInstanceData],
-        instanceType: 'node' as const,
-        typing: {}
-      }
+      createFdmInstanceNodeWithConnectionDataMock(mockConnectionWithNode, mockFdmInstanceData),
+      createFdmInstanceNodeWithConnectionDataMock(
+        mockConnectionWithNodeSameInstance,
+        mockFdmInstanceData
+      )
     ];
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(expectedData);
+      expect(result.current.isSuccess).toBe(true);
     });
-    await waitFor(() => {
-      expect(mockFdmSdk.inspectInstances).toHaveBeenCalled();
-    });
+
+    expect(mockFdmSdk.getByExternalIds).toHaveBeenCalled();
+    expect(mockFdmSdk.inspectInstances).toHaveBeenCalled();
+    expect(result.current.data).toEqual(expectedData);
   });
 
   it('should handle empty instance data response', async () => {
@@ -254,6 +242,9 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
   });
 
   it('should refetch when connections change', async () => {
+    const initialCallCount = 1; // Initial call to getByExternalIds
+    const extraCallCount = 3; // After rerender with new connections
+
     const { result, rerender } = renderHook(
       ({ connections }) => useAll3dDirectConnectionsWithProperties(connections),
       {
@@ -266,7 +257,7 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    const initialCallCount = vi.mocked(mockFdmSdk.getByExternalIds).mock.calls.length;
+    expect(vi.mocked(mockFdmSdk.getByExternalIds).mock.calls.length).toEqual(initialCallCount);
 
     rerender({ connections: [mockConnectionWithNode, mockConnectionWithNode2] });
 
@@ -274,8 +265,18 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(vi.mocked(mockFdmSdk.getByExternalIds).mock.calls.length).toBeGreaterThan(
-      initialCallCount
-    );
+    expect(vi.mocked(mockFdmSdk.getByExternalIds).mock.calls.length).toEqual(extraCallCount);
   });
 });
+
+function createFdmInstanceNodeWithConnectionDataMock(
+  connection: FdmConnectionWithNode,
+  mockFdmInstanceData: NodeItem<unknown>
+): FdmInstanceNodeWithConnectionAndProperties {
+  return {
+    ...connection,
+    items: [mockFdmInstanceData],
+    instanceType: 'node' as const,
+    typing: {}
+  };
+}
