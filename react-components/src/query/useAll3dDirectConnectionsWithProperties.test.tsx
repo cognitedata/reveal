@@ -257,7 +257,7 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(vi.mocked(mockFdmSdk.getByExternalIds).mock.calls.length).toEqual(initialCallCount);
+    expect(vi.mocked(mockFdmSdk.getByExternalIds)).toHaveBeenCalledTimes(initialCallCount);
 
     rerender({ connections: [mockConnectionWithNode, mockConnectionWithNode2] });
 
@@ -265,7 +265,7 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(vi.mocked(mockFdmSdk.getByExternalIds).mock.calls.length).toEqual(extraCallCount);
+    expect(vi.mocked(mockFdmSdk.getByExternalIds)).toHaveBeenCalledTimes(extraCallCount);
   });
 });
 
