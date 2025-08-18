@@ -1,22 +1,24 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
+import { type FdmKey, type FdmConnectionWithNode } from '../components/CacheProvider/types';
 import { type InstanceType } from '@cognite/sdk';
 import { chunk, uniqBy } from 'lodash';
 import {
   type FdmInstanceNodeWithConnectionAndProperties,
   type FdmInstanceWithPropertiesAndTyping
 } from '../components/RuleBasedOutputs/types';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { createFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
 import { executeParallel } from '../utilities/executeParallel';
 import { isDefined } from '../utilities/isDefined';
+import { concatenateMapValues } from '../utilities/map/concatenateMapValues';
+import { UseAll3dDirectConnectionsWithPropertiesContext } from './useAll3dDirectConnectionsWithProperties.context';
 
 const MAX_PARALLEL_QUERIES = 4;
 
 export function useAll3dDirectConnectionsWithProperties(
   connectionWithNodeAndView: FdmConnectionWithNode[]
 ): UseQueryResult<FdmInstanceNodeWithConnectionAndProperties[]> {
+  const { useFdmSdk } = useContext(UseAll3dDirectConnectionsWithPropertiesContext);
   const fdmSdk = useFdmSdk();
 
   const connectionKeys = useMemo(() => {
@@ -27,12 +29,10 @@ export function useAll3dDirectConnectionsWithProperties(
   }, [connectionWithNodeAndView]);
 
   const connectionWithNodeAndViewMap = useMemo(() => {
-    return new Map(
-      connectionWithNodeAndView.map((item) => {
-        const fdmKey = createFdmKey(item.connection.instance);
-        return [fdmKey, item];
-      })
-    );
+    const connectionMapEntries: Array<[FdmKey, FdmConnectionWithNode]> =
+      connectionWithNodeAndView.map((item) => [createFdmKey(item.connection.instance), item]);
+    const dataMap = concatenateMapValues(connectionMapEntries);
+    return dataMap;
   }, [connectionWithNodeAndView]);
 
   return useQuery({
@@ -145,27 +145,19 @@ export function useAll3dDirectConnectionsWithProperties(
           )
           .filter((item) => item.items.length > 0);
 
-      const instanceWithData =
-        instanceItemsAndTyping?.flatMap((itemsData) => {
-          let connectionFound: FdmConnectionWithNode | undefined;
+      const instanceWithData = instanceItemsAndTyping.flatMap((itemsData) => {
+        return itemsData.items.flatMap((itemData) => {
+          const fdmKey = createFdmKey(itemData);
+          const connectionsFound = connectionWithNodeAndViewMap.get(fdmKey);
+          if (connectionsFound === undefined) return [];
 
-          itemsData.items.every((itemData) => {
-            const fdmKey = createFdmKey(itemData);
-            if (connectionWithNodeAndViewMap.has(fdmKey)) {
-              connectionFound = connectionWithNodeAndViewMap.get(fdmKey);
-              return false;
-            }
-            return true;
-          });
-
-          if (connectionFound === undefined) return [];
-
-          return {
+          return connectionsFound.map((connectionFound) => ({
             instanceType: 'node' as const,
             ...connectionFound,
             ...itemsData
-          };
-        }) ?? [];
+          }));
+        });
+      });
 
       return instanceWithData;
     },
