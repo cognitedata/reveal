@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CameraConfiguration, CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
+import { CameraConfiguration } from '@reveal/utilities';
 
 import { ClassificationInfo, PointCloudOctree, PickPoint, PointCloudOctreeNode } from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
@@ -221,7 +221,8 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
       return [];
     }
 
-    const cdfSpaceBox = box.clone().applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    const sourceTransform = this._sourceTransform;
+    const cdfSpaceBox = box.clone().applyMatrix4(sourceTransform.clone().invert());
     root.traverseOctreeNodes(getPositionsIntersectingBox, true, node => !cdfSpaceBox.intersectsBox(node.boundingBox));
 
     return points;
@@ -229,7 +230,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     function getPositionsIntersectingBox(node: PointCloudOctreeNode): void {
       const tileOffset = node.sceneNode.matrix;
 
-      const viewerTileLocalMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().multiply(tileOffset);
+      const viewerTileLocalMatrix = sourceTransform.clone().multiply(tileOffset);
       const boxLocalCdf = box.clone().applyMatrix4(viewerTileLocalMatrix.clone().invert());
 
       const positionAttribute = node.sceneNode.geometry.getAttribute('position');
