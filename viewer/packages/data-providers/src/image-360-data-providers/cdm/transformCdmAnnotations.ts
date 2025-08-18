@@ -22,11 +22,22 @@ export function transformAnnotations(
 
     const properties = annotation.properties['cdf_cdm']['Cognite360ImageAnnotation/v1'];
 
-    const euler = new Euler(
-      connectedImage.eulerRotationX,
-      connectedImage.eulerRotationY,
-      connectedImage.eulerRotationZ
-    );
+    let euler: Euler;
+    if (properties.formatVersion === '1.0.1') {
+      euler = new Euler(
+        connectedImage.eulerRotationX,
+        connectedImage.eulerRotationY,
+        connectedImage.eulerRotationZ,
+        'XZY'
+      );
+    } else {
+      euler = new Euler(
+        connectedImage.eulerRotationX,
+        connectedImage.eulerRotationY,
+        connectedImage.eulerRotationZ,
+        'XYZ'
+      );
+    }
     const quaternion = new Quaternion().setFromEuler(euler);
 
     const polarCoordinates: Spherical[] = [];
