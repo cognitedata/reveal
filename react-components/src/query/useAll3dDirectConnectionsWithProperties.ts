@@ -1,5 +1,4 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type FdmKey, type FdmConnectionWithNode } from '../components/CacheProvider/types';
 import { type InstanceType } from '@cognite/sdk';
 import { chunk, uniqBy } from 'lodash';
@@ -7,17 +6,19 @@ import {
   type FdmInstanceNodeWithConnectionAndProperties,
   type FdmInstanceWithPropertiesAndTyping
 } from '../components/RuleBasedOutputs/types';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { createFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
 import { executeParallel } from '../utilities/executeParallel';
 import { isDefined } from '../utilities/isDefined';
 import { concatenateMapValues } from '../utilities/map/concatenateMapValues';
+import { UseAll3dDirectConnectionsWithPropertiesContext } from './useAll3dDirectConnectionsWithProperties.context';
 
 const MAX_PARALLEL_QUERIES = 4;
 
 export function useAll3dDirectConnectionsWithProperties(
   connectionWithNodeAndView: FdmConnectionWithNode[]
 ): UseQueryResult<FdmInstanceNodeWithConnectionAndProperties[]> {
+  const { useFdmSdk } = useContext(UseAll3dDirectConnectionsWithPropertiesContext);
   const fdmSdk = useFdmSdk();
 
   const connectionKeys = useMemo(() => {
