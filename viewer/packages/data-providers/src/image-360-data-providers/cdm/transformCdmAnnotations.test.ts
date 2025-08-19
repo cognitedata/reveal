@@ -6,7 +6,7 @@ import { transformAnnotations } from './transformCdmAnnotations';
 import { mockGetImage360WithAnnotationsFromRevisionResponse } from '../../../../../test-utilities/src/fixtures/dmsResponses/mockGetImage360WithAnnotationsFromRevisionResponse';
 import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
 
-describe('transformAnnotations', () => {
+describe(transformAnnotations.name, () => {
   it.each([undefined, '', 'not-a-semantic-version', '0.1.0', '1.0.0'])(
     'transforms annotation correctly with formatVersion being %s',
     formatVersion => {

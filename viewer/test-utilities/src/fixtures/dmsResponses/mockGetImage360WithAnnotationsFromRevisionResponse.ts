@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { GetImage360FromRevisionResponse } from '@reveal/data-providers/src/image-360-data-providers/cdm/fetchCoreDm360AnnotationsForRevision';
+import { GetImage360FromRevisionResponse } from '../../../../packages/data-providers/src/image-360-data-providers/cdm/fetchCoreDm360AnnotationsForRevision';
 
 export const mockGetImage360WithAnnotationsFromRevisionResponse = {
   items: {
