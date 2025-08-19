@@ -1,30 +1,24 @@
 import { type ReactElement, useMemo } from 'react';
 import styled from 'styled-components';
 import { isDefined } from './isDefined';
+import { getUrlRegex } from './urlRegex';
 
 export function TextWithClickableLink({ content }: { content: string }): ReactElement {
-  // Adapted from https://gist.github.com/kiennt2/c9a489369562c424c793b8883b98802e
-  const URL_REGEX = /(https?:\/\/[-A-Z0-9+&@#/%?=~_|!:,.;()]+[-A-Z0-9+&@#/%=~_|()])/gi;
-
   const urlComponents = useMemo(
     () =>
       content
-        .split(URL_REGEX)
+        .split(getUrlRegex())
+        .filter((element) => element !== '')
         .map((word, index) => {
-          const match = word.match(URL_REGEX);
+          const match = getUrlRegex().test(word);
 
-          if (word === '') {
-            return undefined;
-          }
-
-          if (match === null) {
+          if (!match) {
             return <span key={index}>{word}</span>;
           }
 
-          const url = match[0];
           return (
-            <LinkText href={url} key={index}>
-              {url}
+            <LinkText href={word} key={index}>
+              {word}
             </LinkText>
           );
         })
