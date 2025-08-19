@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isEmpty } from '../utilities/TranslateInput';
+import { isEmpty } from '../utilities/translation/TranslateInput';
 import { SettingsCommand } from './SettingsCommand';
 
 describe(SettingsCommand.name, () => {

@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';

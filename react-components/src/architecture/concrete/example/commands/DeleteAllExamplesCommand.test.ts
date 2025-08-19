@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { DeleteAllExamplesCommand } from './DeleteAllExamplesCommand';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';

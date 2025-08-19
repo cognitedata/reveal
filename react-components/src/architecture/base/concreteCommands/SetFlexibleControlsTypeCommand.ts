@@ -2,8 +2,8 @@ import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../commands/BaseCommand';
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../utilities/IconName';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '..utilities/types';
 import { type Signal } from '@cognite/signals';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {

@@ -1,6 +1,6 @@
 import { describe, test, beforeAll, expect } from 'vitest';
 import { VisualDomainObject } from './VisualDomainObject';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { installThreeView } from '../views/ThreeViewFactory';
 import { ThreeView } from '../views/ThreeView';
 import { Box3 } from 'three';

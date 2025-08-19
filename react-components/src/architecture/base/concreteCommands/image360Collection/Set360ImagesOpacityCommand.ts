@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
 import { type Image360Model } from '../../../concrete/reveal/RevealTypes';
 

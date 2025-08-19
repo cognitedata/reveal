@@ -1,5 +1,5 @@
-import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { type IconName } from '../../../../src/architecture/base/utilities/types';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
 
 export class MockActionCommand extends RenderTargetCommand {

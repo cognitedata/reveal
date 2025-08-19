@@ -1,7 +1,7 @@
-import { type IconName } from '../../utilities/IconName';
+import { type IconName } from '../..utilities/types';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { LengthUnit } from '../../renderTarget/UnitSystem';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class CycleLengthUnitsCommand extends RenderTargetCommand {

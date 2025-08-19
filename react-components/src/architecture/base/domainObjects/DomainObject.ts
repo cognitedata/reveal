@@ -12,12 +12,12 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
+import { isTranslatedString, type TranslationInput } from '../utilities/translation/TranslateInput';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { CycleLengthUnitsCommand } from '../concreteCommands/units/CycleLengthUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import {
@@ -28,7 +28,7 @@ import {
   type TreeNodeType
 } from '../../../advanced-tree-view';
 import { getRenderTarget } from './getRoot';
-import { translate } from '../utilities/translateUtils';
+import { translate } from '../utilities/translation/translateUtils';
 import { effect } from '@cognite/signals';
 import { generateUniqueId, type UniqueId } from '../utilities/types';
 

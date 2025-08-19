@@ -15,12 +15,12 @@ import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIc
 import { getComplementary } from '../../../base/utilities/colors/colorUtils';
 import { horizontalAngle, rotateHorizontal } from '../../../base/utilities/extensions/vectorUtils';
 import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathUtils';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { getRoot } from '../../../base/domainObjects/getRoot';

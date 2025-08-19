@@ -1,5 +1,5 @@
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { type Image360Model } from '../../../concrete/reveal/RevealTypes';
 
 export class Set360IconsVisibleCommand extends RenderTargetCommand {

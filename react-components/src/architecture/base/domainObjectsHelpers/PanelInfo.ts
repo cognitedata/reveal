@@ -1,6 +1,6 @@
-import { type IconName } from '../utilities/IconName';
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { translate } from '../utilities/translateUtils';
+import { type IconName } from '..utilities/types';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { translate } from '../utilities/translation/translateUtils';
 import { Quantity } from './Quantity';
 
 type PanelItemProps = {

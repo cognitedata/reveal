@@ -1,5 +1,5 @@
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { Euler, Matrix4, Vector3 } from 'three';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
@@ -11,7 +11,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Annotation } from '../helpers/Annotation';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { Box } from '../../../base/utilities/primitives/Box';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export class AnnotationsCreateMockCommand extends InstanceCommand {
   // ==================================================

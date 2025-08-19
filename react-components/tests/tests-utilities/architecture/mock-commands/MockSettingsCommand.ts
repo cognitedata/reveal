@@ -1,5 +1,5 @@
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
-import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
+import { type IconName } from '../../../../src/architecture/base/utilities/types';
 
 import { BaseSettingsCommand } from '../../../../src/architecture/base/commands/BaseSettingsCommand';
 import { MockActionCommand } from './MockActionCommand';
