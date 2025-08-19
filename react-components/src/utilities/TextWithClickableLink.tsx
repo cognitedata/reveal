@@ -4,7 +4,7 @@ import { isDefined } from './isDefined';
 
 export function TextWithClickableLink({ content }: { content: string }): ReactElement {
   // Adapted from https://gist.github.com/kiennt2/c9a489369562c424c793b8883b98802e
-  const URL_REGEX = /(https?:\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]+[-A-Z0-9+&@#/%=~_|])/gi;
+  const URL_REGEX = /(https?:\/\/[-A-Z0-9+&@#/%?=~_|!:,.;()]+[-A-Z0-9+&@#/%=~_|()])/gi;
 
   const urlComponents = useMemo(
     () =>
