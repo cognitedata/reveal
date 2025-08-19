@@ -7,6 +7,7 @@ import {
   createModelInstanceIdKey,
   revisionKeyToIds,
   createModelNodeIdKey,
+  instanceIdToInstanceReference,
   fdmKeyToId,
   isFdmKey
 } from './idAndKeyTranslation';
@@ -82,6 +83,16 @@ describe('idAndKeyTranslation', () => {
       const result = createInstanceKey(INSTANCE);
       expect(result).toBeTypeOf('string');
       expect(result).toBe(createFdmKey(INSTANCE));
+    });
+  });
+
+  describe(instanceIdToInstanceReference.name, () => {
+    test('correctly translates classic ID', () => {
+      expect(instanceIdToInstanceReference(ASSET_ID)).toEqual({ id: ASSET_ID });
+    });
+
+    test('correctly preserves DM ID', () => {
+      expect(instanceIdToInstanceReference(INSTANCE)).toEqual(INSTANCE);
     });
   });
 
