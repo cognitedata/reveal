@@ -4,7 +4,7 @@ import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
-import { type IconName } from '..utilities/types';
+import { type IconName } from '../utilities/types';
 import { AxisDomainObject } from '../../concrete/axis/AxisDomainObject';
 import { Changes } from '../domainObjectsHelpers/Changes';
 

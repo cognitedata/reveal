@@ -1,7 +1,7 @@
 import { Image360Action } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/translation/TranslateInput';
-import { type IconName } from '../..utilities/types';
+import { type IconName } from '../../utilities/types';
 import { type BaseCommand } from '../../commands/BaseCommand';
 
 export class Image360ActionCommand extends RenderTargetCommand {

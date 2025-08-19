@@ -1,4 +1,4 @@
-import { type IconName } from '..utilities/types';
+import { type IconName } from '../utilities/types';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { DomainObject } from './DomainObject';
 

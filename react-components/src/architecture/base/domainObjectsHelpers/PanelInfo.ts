@@ -1,4 +1,4 @@
-import { type IconName } from '..utilities/types';
+import { type IconName } from '../utilities/types';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { translate } from '../utilities/translation/translateUtils';
 import { Quantity } from './Quantity';

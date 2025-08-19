@@ -1,5 +1,5 @@
 import { type Signal, signal } from '@cognite/signals';
-import { type IconName } from '..utilities/types';
+import { type IconName } from '../utilities/types';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';

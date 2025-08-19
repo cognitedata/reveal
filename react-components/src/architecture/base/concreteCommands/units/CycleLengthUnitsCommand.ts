@@ -1,4 +1,4 @@
-import { type IconName } from '../..utilities/types';
+import { type IconName } from '../../utilities/types';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { LengthUnit } from '../../renderTarget/UnitSystem';
 import { type TranslationInput } from '../../utilities/translation/TranslateInput';
