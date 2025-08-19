@@ -26,7 +26,7 @@ export function transformAnnotations(
       const properties = annotation.properties['cdf_cdm']['Cognite360ImageAnnotation/v1'];
       assert(properties.polygon, 'Polygon must be defined in annotation properties');
 
-      const formatVersion = properties.formatVersion || '1.0.0'; // Default to '1.0.0' if not defined
+      const formatVersion = properties.formatVersion ?? '1.0.0'; // Default to '1.0.0' if not defined
       const rotationOrder = getEulerRotationOrderFromFormatVersion(formatVersion);
       const euler = new Euler(
         connectedImage.eulerRotationX,
