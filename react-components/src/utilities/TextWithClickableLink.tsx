@@ -1,6 +1,5 @@
 import { type ReactElement, useMemo } from 'react';
 import styled from 'styled-components';
-import { isDefined } from './isDefined';
 import { getUrlRegex } from './getUrlRegex';
 
 export function TextWithClickableLink({ content }: { content: string }): ReactElement {
@@ -12,17 +11,25 @@ export function TextWithClickableLink({ content }: { content: string }): ReactEl
         .map((word, index) => {
           const match = getUrlRegex().test(word);
 
-          if (!match) {
-            return <span key={index}>{word}</span>;
+          const isValidUrl = (() => {
+            try {
+              const urlObject = new URL(word);
+              return true;
+            } catch (e) {
+              return false;
+            }
+          })();
+
+          if (match && isValidUrl) {
+            return (
+              <LinkText href={word} key={index}>
+                {word}
+              </LinkText>
+            );
           }
 
-          return (
-            <LinkText href={word} key={index}>
-              {word}
-            </LinkText>
-          );
-        })
-        .filter(isDefined),
+          return <span key={index}>{word}</span>;
+        }),
     [content]
   );
 
