@@ -23,4 +23,8 @@ describe(getUrlRegex.name, () => {
   test('recognizes URL before human language string', () => {
     expect(getUrlRegex().test('https://example.com was a URL.')).toBeTruthy();
   });
+
+  test('Should not recognize malformed URLs', () => {
+    expect(getUrlRegex().test('http:// shouldnotlink.com')).toBeFalsy();
+  });
 });
