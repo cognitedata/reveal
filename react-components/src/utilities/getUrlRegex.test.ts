@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { getUrlRegex } from './urlRegex';
+import { getUrlRegex } from './getUrlRegex';
 
 describe(getUrlRegex.name, () => {
   test('does not recognize a human language string', () => {

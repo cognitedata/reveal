@@ -1,7 +1,7 @@
 import { type ReactElement, useMemo } from 'react';
 import styled from 'styled-components';
 import { isDefined } from './isDefined';
-import { getUrlRegex } from './urlRegex';
+import { getUrlRegex } from './getUrlRegex';
 
 export function TextWithClickableLink({ content }: { content: string }): ReactElement {
   const urlComponents = useMemo(
