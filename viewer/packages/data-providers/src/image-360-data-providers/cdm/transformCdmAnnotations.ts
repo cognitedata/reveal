@@ -7,6 +7,7 @@ import { CoreDmImage360Annotation } from './types';
 import { getObject3dAssetMap } from './getObject3dAssetMap';
 import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
 import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
+import assert from 'assert';
 
 export function transformAnnotations(
   queryResponse: GetImage360AnnotationsFromCollectionResponse | GetImage360FromRevisionResponse
@@ -21,23 +22,16 @@ export function transformAnnotations(
     const connectedImage = image360Map[annotation.endNode.externalId][annotation.endNode.space];
 
     const properties = annotation.properties['cdf_cdm']['Cognite360ImageAnnotation/v1'];
+    assert(properties.polygon, 'Polygon must be defined in annotation properties');
 
-    let euler: Euler;
-    if (properties.formatVersion === '1.0.1') {
-      euler = new Euler(
-        connectedImage.eulerRotationX,
-        connectedImage.eulerRotationY,
-        connectedImage.eulerRotationZ,
-        'XZY'
-      );
-    } else {
-      euler = new Euler(
-        connectedImage.eulerRotationX,
-        connectedImage.eulerRotationY,
-        connectedImage.eulerRotationZ,
-        'XYZ'
-      );
-    }
+    const formatVersion = properties.formatVersion || '1.0.0'; // Default to '1.0.0' if not defined
+    const rotationOrder = getEulerRotationOrderFromFormatVersion(formatVersion);
+    const euler = new Euler(
+      connectedImage.eulerRotationX,
+      connectedImage.eulerRotationY,
+      connectedImage.eulerRotationZ,
+      rotationOrder
+    );
     const quaternion = new Quaternion().setFromEuler(euler);
 
     const polarCoordinates: Spherical[] = [];
@@ -69,4 +63,40 @@ export function transformAnnotations(
       polygon: transformedVectors
     } satisfies CoreDmImage360Annotation;
   });
+}
+
+function getEulerRotationOrderFromFormatVersion(formatVersion: string): 'XYZ' | 'XZY' {
+  const semanticVersionNumber = semanticVersionToNumber(formatVersion);
+
+  if (semanticVersionNumber <= 1_000_000) {
+    return 'XYZ';
+  }
+  return 'XZY';
+}
+
+/**
+ * Converts a semantic version string to a comparable number.
+ * @param version The semantic version string (e.g., "1.0.0").
+ * @returns A number representing the semantic version, or 0 if invalid.
+ */
+function semanticVersionToNumber(version: string): number {
+  if (!isSemanticVersion(version)) {
+    // Non semantic version defaults to 0
+    return 0;
+  }
+
+  const [major, minor, patch] = version.split('.').map(Number);
+
+  // Convert to single number: major * 1_000_000 + minor * 1_000 + patch
+  return major * 1_000_000 + minor * 1_000 + patch;
+}
+
+/**
+ * Checks if a string is a valid semantic version.
+ * @param version The semantic version string (e.g., "1.0.0").
+ * @returns True if the version is valid, false otherwise.
+ */
+function isSemanticVersion(version: string): boolean {
+  const semverRegex: RegExp = /^([1-9]\d*|0)(\.(([1-9]\d*)|0)){2}$/;
+  return semverRegex.test(version);
 }
