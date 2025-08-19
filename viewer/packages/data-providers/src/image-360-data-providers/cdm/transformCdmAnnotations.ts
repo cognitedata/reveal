@@ -68,7 +68,9 @@ export function transformAnnotations(
 }
 
 function getEulerRotationOrderFromFormatVersion(formatVersion: string): 'XYZ' | 'XZY' {
-  if (isSemanticVersionGreaterThanOrEqual(formatVersion, '1.0.1')) {
+  const semanticVersion = isSemanticVersion(formatVersion) ? formatVersion : '1.0.0';
+
+  if (isSemanticVersionGreaterThanOrEqual(semanticVersion, '1.0.1')) {
     return 'XZY';
   }
   return 'XYZ';
@@ -92,11 +94,7 @@ function isSemanticVersion(version: string): version is SemanticVersion {
  * @param targetVersion The target semantic version string (e.g., "1.0.1").
  * @returns True if formatVersion >= targetVersion, false otherwise.
  */
-function isSemanticVersionGreaterThanOrEqual(formatVersion: string, targetVersion: SemanticVersion): boolean {
-  if (!isSemanticVersion(formatVersion)) {
-    return false;
-  }
-
+function isSemanticVersionGreaterThanOrEqual(formatVersion: SemanticVersion, targetVersion: SemanticVersion): boolean {
   const [major, minor, patch] = formatVersion.split('.').map(Number);
   const [targetMajor, targetMinor, targetPatch] = targetVersion.split('.').map(Number);
 
