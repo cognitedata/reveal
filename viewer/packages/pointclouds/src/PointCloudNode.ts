@@ -231,12 +231,12 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
       const tileOffset = node.sceneNode.matrix;
 
       const viewerTileLocalMatrix = sourceTransform.clone().multiply(tileOffset);
-      const boxLocalCdf = box.clone().applyMatrix4(viewerTileLocalMatrix.clone().invert());
+      const localCdfBoundingBox = box.clone().applyMatrix4(viewerTileLocalMatrix.clone().invert());
 
       const positionAttribute = node.sceneNode.geometry.getAttribute('position');
       for (let i = 0; i < positionAttribute.count; i++) {
         const position = new Vector3().fromBufferAttribute(positionAttribute, i);
-        if (boxLocalCdf.containsPoint(position)) {
+        if (localCdfBoundingBox.containsPoint(position)) {
           points.push(position.applyMatrix4(viewerTileLocalMatrix));
         }
       }
