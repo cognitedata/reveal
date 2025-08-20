@@ -54,7 +54,7 @@ function translateByKey(key: TranslationKey): string {
 }
 
 async function loadTranslationFile(language: string): Promise<Translations> {
-  const result = await import(`../../../common/i18n/${language}/reveal-react-components.json`);
+  const result = await import(`../../../../common/i18n/${language}/reveal-react-components.json`);
   const translationModule = result as { default: Translations };
   return translationModule.default;
 }
