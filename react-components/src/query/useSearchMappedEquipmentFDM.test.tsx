@@ -54,7 +54,10 @@ const renderTargetMock = new Mock<RevealRenderTarget>();
 
 const wrapper: FC<PropsWithChildren> = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    <ViewerContext.Provider value={renderTargetMock.object()}>
+    <ViewerContext.Provider
+      value={{
+        renderTarget: renderTargetMock.object()
+      }}>
       <FdmSdkContext.Provider value={{ fdmSdk: fdmSdkMock }}>{children}</FdmSdkContext.Provider>
     </ViewerContext.Provider>
   </QueryClientProvider>

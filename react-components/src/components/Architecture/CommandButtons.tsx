@@ -2,15 +2,16 @@ import { useMemo, type ReactElement } from 'react';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type PlacementType } from './types';
 import { type ButtonProp } from './RevealButtons';
-import { createReactElement } from './Factories/ReactElementFactory';
 import { createDividerByKey } from './DividerCreator';
+import { useComponentFactory } from '../RevealCanvas/ViewerContext';
 
 export function createButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
   prop: ButtonProp
 ): ReactElement {
   const command = useMemo(commandConstructor, []);
-  return createReactElement(command, prop.toolbarPlacement ?? 'left');
+  const factory = useComponentFactory();
+  return factory.createElement(command, prop.toolbarPlacement ?? 'left');
 }
 
 export const CommandButtons = ({
@@ -20,13 +21,14 @@ export const CommandButtons = ({
   commands: Array<BaseCommand | undefined>;
   placement: PlacementType;
 }): ReactElement => {
+  const factory = useComponentFactory();
   return (
     <>
       {commands.map((command, index): ReactElement => {
         if (command === undefined) {
           return createDividerByKey(`undefined${index.toString()}`, placement);
         }
-        return createReactElement(command, placement);
+        return factory.createElement(command, placement);
       })}
     </>
   );

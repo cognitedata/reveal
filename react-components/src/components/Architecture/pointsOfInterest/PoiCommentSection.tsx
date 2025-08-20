@@ -7,8 +7,8 @@ import { useTranslation } from '../../i18n/I18n';
 import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { useSelectedPoi } from './useSelectedPoi';
 import styled from 'styled-components';
-import { createReactElement } from '../Factories/ReactElementFactory';
 import { TextWithClickableLink } from '../../../utilities/TextWithClickableLink';
+import { useComponentFactory } from '../../RevealCanvas/ViewerContext';
 
 export const PoiCommentSection = (): ReactNode => {
   const { t } = useTranslation();
@@ -56,7 +56,9 @@ export const CreateCommentField = ({
     };
     return command;
   }, [poi]);
-  return createReactElement(command, 'right');
+
+  const factory = useComponentFactory();
+  return factory.createElement(command, 'right');
 };
 
 const StyledCreateCommentField = styled(CreateCommentField)`

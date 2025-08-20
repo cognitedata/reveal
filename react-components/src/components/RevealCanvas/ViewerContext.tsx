@@ -2,22 +2,34 @@ import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { remove } from 'lodash';
+import { type ComponentFactory } from '../Architecture/Factories/ComponentFactory';
 
-export const ViewerContext = createContext<RevealRenderTarget | null>(null);
+type ViewerContextContent = {
+  renderTarget?: RevealRenderTarget;
+  componentFactory?: ComponentFactory;
+};
+
+export const ViewerContext = createContext<ViewerContextContent | null>(null);
 
 export type ViewerContextProviderProps = {
-  value: RevealRenderTarget | null;
+  renderTarget?: RevealRenderTarget;
+  componentFactory?: ComponentFactory;
   children: ReactNode;
 };
 
 export const ViewerContextProvider = ({
-  value,
+  renderTarget,
+  componentFactory,
   children
 }: ViewerContextProviderProps): ReactElement => {
-  useExposeRenderTargetAndViewerSingletons(value ?? undefined);
-  useAddRenderTargetToWindowList(value ?? undefined);
+  useExposeRenderTargetAndViewerSingletons(renderTarget ?? undefined);
+  useAddRenderTargetToWindowList(renderTarget ?? undefined);
 
-  return <ViewerContext.Provider value={value}>{children}</ViewerContext.Provider>;
+  return (
+    <ViewerContext.Provider value={{ renderTarget, componentFactory }}>
+      {children}
+    </ViewerContext.Provider>
+  );
 };
 
 export const useReveal = (): Cognite3DViewer<DataSourceType> => {
@@ -26,11 +38,19 @@ export const useReveal = (): Cognite3DViewer<DataSourceType> => {
 };
 
 export const useRenderTarget = (): RevealRenderTarget => {
-  const renderTarget = useContext(ViewerContext);
-  if (renderTarget === null) {
+  const renderTarget = useContext(ViewerContext)?.renderTarget;
+  if (renderTarget === undefined) {
     throw new Error('useRenderTarget must be used within a ViewerProvider');
   }
   return renderTarget;
+};
+
+export const useComponentFactory = (): ComponentFactory => {
+  const componentFactory = useContext(ViewerContext)?.componentFactory;
+  if (componentFactory === undefined) {
+    throw new Error('useComponentFactory must be used within a ViewerProvider');
+  }
+  return componentFactory;
 };
 
 function useAddRenderTargetToWindowList(renderTarget: RevealRenderTarget | undefined): void {

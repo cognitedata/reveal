@@ -1,13 +1,9 @@
 import { BaseInputCommand } from '../../../architecture/base/commands/BaseInputCommand';
-import { beforeEach, describe, expect, test } from 'vitest';
-import {
-  clearInstalledReactElements,
-  createReactElement,
-  installReactElement
-} from './ReactElementFactory';
+import { describe, expect, test } from 'vitest';
+import { ComponentFactory } from './ComponentFactory';
 import { CustomBaseInputCommand } from '../../../architecture/base/commands/CustomBaseInputCommand';
 import { DividerCommand } from '../../../architecture/base/commands/DividerCommand';
-import { installReactElements } from './installReactElements';
+import { createComponentFactory } from './createComponentFactory';
 import { MockActionCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockActionCommand';
 import { MockEnumOptionCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockEnumOptionCommand';
 import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
@@ -19,33 +15,31 @@ import { createDivider } from '../DividerCreator';
 
 const DEFAULT_PLACEMENT = 'left'; // Example placement, adjust as needed
 
-describe('ReactElementFactory', () => {
-  beforeEach(() => {
-    clearInstalledReactElements();
-  });
-
+describe(ComponentFactory.name, () => {
   test('should not create React element when no React element is installed', () => {
+    const factory = new ComponentFactory();
     for (const command of getCommands()) {
       expect(() => {
-        createReactElement(command, DEFAULT_PLACEMENT);
+        factory.createElement(command, DEFAULT_PLACEMENT);
       }).toThrow();
     }
   });
 
   test('should not create React element when the matching React element is not installed', () => {
-    installReactElement(createDivider);
+    const factory = new ComponentFactory();
+    factory.installElement(createDivider);
 
-    expect(createReactElement(new DividerCommand(), DEFAULT_PLACEMENT)).toBeDefined();
+    expect(factory.createElement(new DividerCommand(), DEFAULT_PLACEMENT)).toBeDefined();
 
     expect(() => {
-      createReactElement(new MockActionCommand(), DEFAULT_PLACEMENT);
+      factory.createElement(new MockActionCommand(), DEFAULT_PLACEMENT);
     }).toThrow();
   });
 
   test('should create React element when all React elements is installed', () => {
-    installReactElements();
+    const factory = createComponentFactory();
     for (const command of getCommands()) {
-      expect(createReactElement(command, DEFAULT_PLACEMENT)).toBeDefined();
+      expect(factory.createElement(command, DEFAULT_PLACEMENT)).toBeDefined();
     }
   });
 });

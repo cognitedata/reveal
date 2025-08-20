@@ -108,7 +108,7 @@ function renderCommandButton(command: BaseCommand): void {
   const renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+    <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
   );
   render(<CommandButton inputCommand={command} placement={'top'} />, {
     wrapper

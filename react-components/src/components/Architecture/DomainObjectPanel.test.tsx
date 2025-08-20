@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -17,13 +17,9 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DomainObjectPanel } from './DomainObjectPanel';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { installReactElements } from './Factories/installReactElements';
+import { createComponentFactory } from './Factories/createComponentFactory';
 
 describe(DomainObjectPanel.name, () => {
-  beforeEach(() => {
-    installReactElements();
-  });
-
   test('should not be visible for no domain object', async () => {
     renderDomainObjectPanel(undefined);
     const buttons = screen.queryAllByRole('button');
@@ -109,7 +105,9 @@ function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
     renderTarget.panelUpdater.show(domainObject);
   }
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
+    <ViewerContextProvider renderTarget={renderTarget} componentFactory={createComponentFactory()}>
+      {children}
+    </ViewerContextProvider>
   );
   render(<DomainObjectPanel />, {
     wrapper
