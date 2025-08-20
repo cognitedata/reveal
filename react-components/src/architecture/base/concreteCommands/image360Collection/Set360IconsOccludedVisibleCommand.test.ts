@@ -28,7 +28,7 @@ describe(Set360IconsOccludedVisibleCommand.name, () => {
   test('Should change occluded icons visible at the 360 image', () => {
     const oldValue = domainObject.isOccludedIconsVisible();
     command.invoke();
-    expect(domainObject.isOccludedIconsVisible()).not.toBe(oldValue);
+    expect(domainObject.isOccludedIconsVisible()).toBe(!oldValue);
     command.invoke();
     expect(domainObject.isOccludedIconsVisible()).toBe(oldValue);
   });

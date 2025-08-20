@@ -28,7 +28,7 @@ describe(Set360IconsVisibleCommand.name, () => {
   test('Should change icons visible at the 360 image', () => {
     const oldValue = domainObject.isIconsVisible();
     command.invoke();
-    expect(domainObject.isIconsVisible()).not.toBe(oldValue);
+    expect(domainObject.isIconsVisible()).toBe(!oldValue);
     command.invoke();
     expect(domainObject.isIconsVisible()).toBe(oldValue);
   });
