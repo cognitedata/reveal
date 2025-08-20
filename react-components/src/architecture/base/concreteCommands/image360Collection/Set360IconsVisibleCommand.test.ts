@@ -1,6 +1,6 @@
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../utilities/TranslateInput';
+import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { Set360IconsVisibleCommand } from './Set360IconsVisibleCommand';
 import { createImage360ClassicMock } from '#test-utils//fixtures/image360';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
@@ -28,7 +28,7 @@ describe(Set360IconsVisibleCommand.name, () => {
   test('Should change icons visible at the 360 image', () => {
     const oldValue = domainObject.isIconsVisible();
     command.invoke();
-    expect(domainObject.isIconsVisible()).toBe(!oldValue);
+    expect(domainObject.isIconsVisible()).not.toBe(oldValue);
     command.invoke();
     expect(domainObject.isIconsVisible()).toBe(oldValue);
   });
