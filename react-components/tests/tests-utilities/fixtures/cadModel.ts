@@ -22,7 +22,7 @@ export function createCadMock(parameters?: {
   modelId?: number;
   revisionId?: number;
 }): CogniteCadModel {
-  return new Mock<CogniteCadModel>()
+  const cad = new Mock<CogniteCadModel>()
     .setup((p) => p.modelId)
     .returns(parameters?.modelId ?? cadModelOptions.modelId)
     .setup((p) => p.revisionId)
@@ -31,10 +31,11 @@ export function createCadMock(parameters?: {
     .returns(new Matrix4())
     .setup(async (p) => await p.getBoundingBoxesByNodeIds(It.IsAny()))
     .returns(Promise.resolve([nodeBoundingBox]))
-    .setup((p) => p.visible)
-    .returns(parameters?.visible ?? true)
     .setup((p) => p.type)
     .returns('cad')
     .prototypeof(CogniteCadModel.prototype)
     .object();
+
+  cad.visible = parameters?.visible ?? true;
+  return cad;
 }

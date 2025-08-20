@@ -48,6 +48,31 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     this.geometryNode.traverse(cb, includeSelf);
   }
 
+  traverseOctreeNodes(
+    callback: (node: PointCloudOctreeNode) => void,
+    includeSelf: boolean = true,
+    shouldCullSubTree: (node: PointCloudOctreeNode) => boolean = () => false
+  ): void {
+    const stack: PointCloudOctreeNode[] = includeSelf ? [this] : [];
+
+    if (includeSelf && shouldCullSubTree(this)) {
+      return;
+    }
+
+    let current: PointCloudOctreeNode | undefined;
+    while ((current = stack.pop())) {
+      callback(current);
+
+      if (shouldCullSubTree(current)) continue;
+
+      for (const child of current.children) {
+        if (child && child instanceof PointCloudOctreeNode) {
+          stack.push(child);
+        }
+      }
+    }
+  }
+
   get id(): number {
     return this.geometryNode.id;
   }
