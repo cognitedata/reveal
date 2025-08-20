@@ -13,8 +13,8 @@ export function TextWithClickableLink({ content }: { content: string }): ReactEl
 
           const isValidUrl = (() => {
             try {
-              new URL(word);
-              return true;
+              const url = new URL(word);
+              return url !== undefined;
             } catch (e) {
               return false;
             }
