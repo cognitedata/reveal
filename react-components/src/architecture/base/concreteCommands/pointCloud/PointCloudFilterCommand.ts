@@ -102,7 +102,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
 
 // Note: This is not exported, as it is only used internally
 
-class FilterItemCommand extends BaseFilterItemCommand {
+export class FilterItemCommand extends BaseFilterItemCommand {
   private readonly _pointClass: PointClass;
   private readonly _currentUniqueId: UniqueId;
 
@@ -153,7 +153,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
   // ==================================================
 }
 
-class PointClass {
+export class PointClass {
   name: string;
   code: number | WellKnownAsprsPointClassCodes;
   color: Color;

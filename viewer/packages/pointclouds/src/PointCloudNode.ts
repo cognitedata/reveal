@@ -4,7 +4,7 @@
 
 import { CameraConfiguration } from '@reveal/utilities';
 
-import { ClassificationInfo, PointCloudOctree, PickPoint } from './potree-three-loader';
+import { ClassificationInfo, PointCloudOctree, PickPoint, PointCloudOctreeNode } from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
@@ -20,7 +20,7 @@ import { ClassificationHandler } from './ClassificationHandler';
 
 import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
-import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
+import { Matrix4, Group, Box3, Color, Vector3, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 import { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 
 export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
@@ -211,6 +211,36 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
 
   getCdfToDefaultModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this._sourceTransform);
+  }
+
+  getSubtreePointsByBox(box: Box3): Vector3[] {
+    const points: Vector3[] = [];
+    const root = this.octree.root;
+
+    if (root === undefined || !(root instanceof PointCloudOctreeNode)) {
+      return [];
+    }
+
+    const sourceTransform = this._sourceTransform;
+    const cdfSpaceBox = box.clone().applyMatrix4(sourceTransform.clone().invert());
+    root.traverseOctreeNodes(getPositionsIntersectingBox, true, node => !cdfSpaceBox.intersectsBox(node.boundingBox));
+
+    return points;
+
+    function getPositionsIntersectingBox(node: PointCloudOctreeNode): void {
+      const tileOffset = node.sceneNode.matrix;
+
+      const viewerTileLocalMatrix = sourceTransform.clone().multiply(tileOffset);
+      const localCdfBoundingBox = box.clone().applyMatrix4(viewerTileLocalMatrix.clone().invert());
+
+      const positionAttribute = node.sceneNode.geometry.getAttribute('position');
+      for (let i = 0; i < positionAttribute.count; i++) {
+        const position = new Vector3().fromBufferAttribute(positionAttribute, i);
+        if (localCdfBoundingBox.containsPoint(position)) {
+          points.push(position.applyMatrix4(viewerTileLocalMatrix));
+        }
+      }
+    }
   }
 
   get stylableVolumeMetadata(): Iterable<PointCloudObjectMetadata<T>> {
