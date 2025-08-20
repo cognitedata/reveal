@@ -39,7 +39,7 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    this.listenTo(this.settingsController.pointShape);
+    this.listenTo(this.settingsController.pointColorType);
   }
 }
 

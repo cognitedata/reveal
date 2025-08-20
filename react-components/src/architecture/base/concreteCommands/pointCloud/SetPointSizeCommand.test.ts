@@ -25,7 +25,7 @@ describe(SetPointSizeCommand.name, () => {
     expect(command.value).toBe(domainObject.pointSize());
   });
 
-  test('Should change pointSize at the the point cloud', () => {
+  test('Should change pointSize at the point cloud', () => {
     const expectedValue = 3;
     expect(domainObject.pointSize()).not.toBe(expectedValue);
     command.value = expectedValue;
