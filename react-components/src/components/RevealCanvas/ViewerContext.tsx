@@ -1,8 +1,16 @@
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
-import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
+import {
+  createContext,
+  type ReactElement,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useMemo
+} from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { remove } from 'lodash';
 import { type ComponentFactory } from '../Architecture/Factories/ComponentFactory';
+import { createComponentFactory } from '../Architecture/Factories/createComponentFactory';
 
 type ViewerContextContent = {
   renderTarget?: RevealRenderTarget;
@@ -19,12 +27,11 @@ export type ViewerContextProviderProps = {
 
 export const ViewerContextProvider = ({
   renderTarget,
-  componentFactory,
   children
 }: ViewerContextProviderProps): ReactElement => {
   useExposeRenderTargetAndViewerSingletons(renderTarget ?? undefined);
   useAddRenderTargetToWindowList(renderTarget ?? undefined);
-
+  const componentFactory = useMemo(() => createComponentFactory(), []);
   return (
     <ViewerContext.Provider value={{ renderTarget, componentFactory }}>
       {children}

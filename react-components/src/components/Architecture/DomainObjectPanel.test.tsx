@@ -17,7 +17,6 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DomainObjectPanel } from './DomainObjectPanel';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { createComponentFactory } from './Factories/createComponentFactory';
 
 describe(DomainObjectPanel.name, () => {
   test('should not be visible for no domain object', async () => {
@@ -105,9 +104,7 @@ function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
     renderTarget.panelUpdater.show(domainObject);
   }
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider renderTarget={renderTarget} componentFactory={createComponentFactory()}>
-      {children}
-    </ViewerContextProvider>
+    <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
   );
   render(<DomainObjectPanel />, {
     wrapper
