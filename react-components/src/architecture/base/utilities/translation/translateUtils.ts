@@ -1,4 +1,4 @@
-import { getLanguage } from '../../../components/i18n/utils';
+import { getLanguage } from '../../../../components/i18n/utils';
 import {
   type TranslationInput,
   isTranslatedString,
@@ -6,7 +6,7 @@ import {
   type Translations
 } from './TranslateInput';
 
-import englishTranslation from '../../../common/i18n/en/reveal-react-components.json';
+import englishTranslation from '../../../../common/i18n/en/reveal-react-components.json';
 
 const ENGLISH_LANGUAGE = 'en';
 let currentLanguage: string = ENGLISH_LANGUAGE;
@@ -54,7 +54,7 @@ function translateByKey(key: TranslationKey): string {
 }
 
 async function loadTranslationFile(language: string): Promise<Translations> {
-  const result = await import(`../../../common/i18n/${language}/reveal-react-components.json`);
+  const result = await import(`../../../../common/i18n/${language}/reveal-react-components.json`);
   const translationModule = result as { default: Translations };
   return translationModule.default;
 }

@@ -1,6 +1,6 @@
 import { assert, describe, expect, test } from 'vitest';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { CylinderDomainObject } from './CylinderDomainObject';

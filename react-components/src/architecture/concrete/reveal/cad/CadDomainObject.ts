@@ -1,6 +1,6 @@
 import { type CogniteCadModel } from '@cognite/reveal';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
+import { type IconName } from '../../../base/utilities/types';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { RevealDomainObject } from '../RevealDomainObject';
 

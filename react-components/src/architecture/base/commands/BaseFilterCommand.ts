@@ -1,8 +1,8 @@
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
-import { type IconName } from '../utilities/IconName';
-import { translate } from '../utilities/translateUtils';
+import { translate } from '../utilities/translation/translateUtils';
+import { type IconName } from '../utilities/types';
 
 export abstract class BaseFilterCommand extends RenderTargetCommand {
   // ==================================================

@@ -1,5 +1,6 @@
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 

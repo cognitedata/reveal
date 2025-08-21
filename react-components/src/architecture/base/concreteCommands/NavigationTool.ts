@@ -1,7 +1,7 @@
 import { BaseTool } from '../commands/BaseTool';
 import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../../base/utilities/IconName';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '../../base/utilities/types';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.

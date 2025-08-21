@@ -1,6 +1,6 @@
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { BaseOptionCommand, OptionType } from '../commands/BaseOptionCommand';
 import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand';
 

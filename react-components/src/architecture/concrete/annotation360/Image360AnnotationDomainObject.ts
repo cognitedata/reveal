@@ -1,14 +1,14 @@
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { Color, Vector3 } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 import { type AnnotationIdentifier, type AssetIdentifier, type AnnotationStatus } from './types';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 
 const DEFAULT_VECTOR_LENGTH = 5;
 

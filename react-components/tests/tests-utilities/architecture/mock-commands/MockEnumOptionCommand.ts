@@ -3,7 +3,7 @@ import {
   OptionType
 } from '../../../../src/architecture/base/commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 
 enum MockEnum {
   Red = 'Red',

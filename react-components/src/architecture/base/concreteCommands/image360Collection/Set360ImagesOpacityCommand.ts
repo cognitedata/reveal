@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';

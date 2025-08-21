@@ -1,6 +1,6 @@
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -13,7 +13,7 @@ import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescrip
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { AnnotationUtils } from './helpers/AnnotationUtils';
 import { Annotation } from './helpers/Annotation';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { getRoot } from '../../base/domainObjects/getRoot';
 
 type GizmoDomainObject = BoxGizmoDomainObject | CylinderGizmoDomainObject;

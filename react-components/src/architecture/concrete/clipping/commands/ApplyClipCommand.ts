@@ -1,11 +1,10 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName, type ButtonType } from '../../../base/utilities/types';
 import { setClippingPlanes } from './setClippingPlanes';
-import { type ButtonType } from '../../../base/utilities/types';
 
 export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================

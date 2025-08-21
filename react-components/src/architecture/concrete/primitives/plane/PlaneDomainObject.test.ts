@@ -3,7 +3,7 @@ import {
   PlanePrimitiveTypes,
   PrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PlaneDomainObject } from './PlaneDomainObject';

@@ -1,4 +1,4 @@
-import { type IconName } from '../IconName';
+import { type IconName } from '../types';
 import { PrimitiveType } from './PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {

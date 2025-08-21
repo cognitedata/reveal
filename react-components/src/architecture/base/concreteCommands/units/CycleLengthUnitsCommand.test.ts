@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { CycleLengthUnitsCommand } from './CycleLengthUnitsCommand';
-import { isEmpty } from '../../utilities/TranslateInput';
+import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 import { Changes } from '../../domainObjectsHelpers/Changes';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';

@@ -2,7 +2,7 @@ import { type Signal } from '@cognite/signals';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 const DEFAULT_OPTIONS = [0.5, 1, 2, 5, 10, 20];
 
