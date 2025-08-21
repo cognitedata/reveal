@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { type Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';

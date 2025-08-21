@@ -1,7 +1,7 @@
 import { PointColorType } from '@cognite/reveal';
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 

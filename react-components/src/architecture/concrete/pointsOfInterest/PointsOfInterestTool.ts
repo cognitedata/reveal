@@ -1,7 +1,7 @@
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { isPointsOfInterestIntersection } from './types';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { PointsOfInterestAdsProvider } from './ads/PointsOfInterestAdsProvider';
 import { type Vector3 } from 'three';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';

@@ -1,9 +1,9 @@
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { AnnotationsCreateTool } from './AnnotationsCreateTool';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 
 export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {

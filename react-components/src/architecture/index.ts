@@ -88,8 +88,8 @@ export { TrianglesBuffers } from './base/utilities/geometry/TrianglesBuffers';
 export { getNextColor } from './base/utilities/colors/getNextColor';
 export { getNextColorByIndex } from './base/utilities/colors/getNextColor';
 export { getResizeCursor } from './base/utilities/geometry/getResizeCursor';
-export type { TranslateDelegate } from './base/utilities/TranslateInput';
-export type { TranslationInput } from './base/utilities/TranslateInput';
+export type { TranslateDelegate } from './base/utilities/translation/TranslateInput';
+export type { TranslationInput } from './base/utilities/translation/TranslateInput';
 export type { QualitySettings } from './base/utilities/quality/QualitySettings';
 
 // New architecture: views

@@ -1,7 +1,7 @@
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { ShowDomainObjectsOnTopCommand } from '../../../base/commands/ShowDomainObjectsOnTopCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';

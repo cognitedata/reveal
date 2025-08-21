@@ -1,6 +1,6 @@
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { LengthUnit, UnitSystem } from '../../renderTarget/UnitSystem';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
