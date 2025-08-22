@@ -1,6 +1,6 @@
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { SectionCommand } from '../../commands/SectionCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 
 export class Set360IconsSectionCommand extends SectionCommand {
   public override get isVisible(): boolean {

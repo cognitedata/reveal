@@ -1,5 +1,5 @@
 import { assert, beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../utilities/TranslateInput';
+import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { SetLengthUnitCommand } from './SetLengthUnitCommand';
 import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';

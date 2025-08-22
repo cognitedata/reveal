@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
 import { BaseCommand, type CommandUpdateDelegate } from './BaseCommand';
-import { isUntranslatedString } from '../utilities/TranslateInput';
+import { isUntranslatedString } from '../utilities/translation/TranslateInput';
 import { count } from '../utilities/extensions/generatorUtils';
 
 describe(BaseCommand.name, () => {

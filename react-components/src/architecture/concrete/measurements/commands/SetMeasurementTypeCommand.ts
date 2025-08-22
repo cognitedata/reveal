@@ -5,9 +5,9 @@ import {
   verifyPrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { MeasurementTool } from '../MeasurementTool';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export const MEASURE_PRIMITIVE_TYPES = [
   PrimitiveType.Point,

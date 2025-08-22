@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../utilities/TranslateInput';
+import { isEmpty } from '../utilities/translation/TranslateInput';
 import { FitViewCommand } from './FitViewCommand';
 import { fitCameraToBoundingBoxMock } from '#test-utils/fixtures/viewer';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';

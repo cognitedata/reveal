@@ -1,7 +1,7 @@
 import { SetPointSizeCommand } from './SetPointSizeCommand';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../utilities/TranslateInput';
+import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 

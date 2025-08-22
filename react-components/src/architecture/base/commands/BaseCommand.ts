@@ -1,10 +1,14 @@
 import { effect, type Signal } from '@cognite/signals';
-import { type IconName } from '../utilities/IconName';
-import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
+import { isTranslatedString, type TranslationInput } from '../utilities/translation/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { isMacOs } from '../utilities/extensions/isMacOs';
-import { translate } from '../utilities/translateUtils';
-import { generateUniqueId, type ButtonType, type UniqueId } from '../utilities/types';
+import { translate } from '../utilities/translation/translateUtils';
+import {
+  generateUniqueId,
+  type IconName,
+  type ButtonType,
+  type UniqueId
+} from '../utilities/types';
 
 /**
  * Represents a delegate function for updating a command.

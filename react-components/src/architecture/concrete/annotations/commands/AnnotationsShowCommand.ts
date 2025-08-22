@@ -1,6 +1,6 @@
 import { ShowAllDomainObjectsCommand } from '../../../base/commands/ShowAllDomainObjectsCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { isAnnotationsOrGizmo } from './isGizmo';
 
 export class AnnotationsShowCommand extends ShowAllDomainObjectsCommand {

@@ -1,5 +1,5 @@
 import { type WellKnownAsprsPointClassCodes } from '@cognite/reveal';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { type Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFilterCommand';
 import { type PointCloud } from '../../../concrete/reveal/RevealTypes';

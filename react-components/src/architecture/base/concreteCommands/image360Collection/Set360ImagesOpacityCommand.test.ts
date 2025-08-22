@@ -1,6 +1,6 @@
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../utilities/TranslateInput';
+import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { Set360ImagesOpacityCommand } from './Set360ImagesOpacityCommand';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';

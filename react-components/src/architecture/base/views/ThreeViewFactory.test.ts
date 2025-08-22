@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeAll } from 'vitest';
 import { DomainObject } from '../domainObjects/DomainObject';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import {
   canCreateThreeView,
   createThreeView,
