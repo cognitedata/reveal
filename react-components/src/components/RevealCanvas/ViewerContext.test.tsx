@@ -19,7 +19,7 @@ describe(ViewerContextProvider.name, () => {
     };
 
     const result = render(
-      <ViewerContextProvider value={null}>
+      <ViewerContextProvider value={undefined}>
         <TestComponent />
       </ViewerContextProvider>
     );
@@ -98,7 +98,7 @@ describe(ViewerContextProvider.name, () => {
   test('mounting `null` renderTarget does not occupy viewer slot on window', () => {
     const renderTargetMock = createRenderTargetMock();
     render(
-      <ViewerContextProvider value={null}>
+      <ViewerContextProvider value={undefined}>
         <></>
       </ViewerContextProvider>
     );
@@ -117,7 +117,7 @@ describe(ViewerContextProvider.name, () => {
     const renderTargetMock1 = createRenderTargetMock();
 
     const { rerender } = render(
-      <ViewerContextProvider value={null}>
+      <ViewerContextProvider value={undefined}>
         <></>
       </ViewerContextProvider>
     );
