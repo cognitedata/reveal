@@ -1,8 +1,8 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { DomainObjectCommand } from '../commands/DomainObjectCommand';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { type ButtonType } from '../utilities/types';
 
 export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject> {

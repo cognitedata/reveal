@@ -6,8 +6,7 @@ import {
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
   Image360Action,
-  type DataSourceType,
-  CogniteCadModel
+  type DataSourceType
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -25,7 +24,6 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
@@ -36,7 +34,6 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type Image360Model } from '../../concrete/reveal/RevealTypes';
 import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 import { type UniqueId } from '../utilities/types';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
@@ -203,24 +200,6 @@ export class RevealRenderTarget {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Get models from the viewer
-  // ==================================================
-
-  public *getCadModels(): Generator<CogniteCadModel> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CogniteCadModel) {
-        yield model;
-      }
-    }
-  }
-
-  public *get360ImageCollections(): Generator<Image360Model> {
-    for (const collection of this.viewer.get360ImageCollections()) {
-      yield collection;
-    }
-  }
-
-  // ==================================================
   // INSTANCE METHODS: Convert back and from Viewer coordinates
   // ==================================================
 
@@ -239,6 +218,10 @@ export class RevealRenderTarget {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public updateAllCommands(): void {
+    this._commandsController.deferredUpdate();
+  }
 
   public setDefaultTool(tool: BaseTool): boolean {
     const defaultTool = this.commandsController.defaultTool;
@@ -271,7 +254,7 @@ export class RevealRenderTarget {
 
   public onStartup(): void {
     this._config?.onStartup(this);
-    CommandsUpdater.update(this);
+    this.updateAllCommands();
   }
 
   public dispose(): void {
@@ -286,7 +269,6 @@ export class RevealRenderTarget {
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
     this._revealSettingsController.dispose();
-    CommandsUpdater.dispose();
   }
 
   public invalidate(): void {

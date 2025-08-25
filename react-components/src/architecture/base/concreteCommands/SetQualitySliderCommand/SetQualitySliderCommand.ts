@@ -7,7 +7,7 @@ import {
   MIN_FIDELITY
 } from './fidelityLevels';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { Changes } from '../../domainObjectsHelpers/Changes';
 
 export class SetQualitySliderCommand extends BaseSliderCommand {

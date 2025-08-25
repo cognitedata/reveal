@@ -9,7 +9,7 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';

@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 import { describe, test, expect, beforeAll, vi } from 'vitest';
 import { DomainObject } from './DomainObject';
@@ -11,7 +11,6 @@ import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { count, first, last } from '../utilities/extensions/generatorUtils';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
@@ -278,10 +277,13 @@ describe(DomainObject.name, () => {
     const renderTarget = createFullRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    expect(CommandsUpdater.needUpdate).toBe(false);
+    const updateMock = vi.fn();
+    renderTarget.updateAllCommands = updateMock;
+
+    expect(updateMock).toHaveBeenCalledTimes(0);
     const change = Changes.selected;
     domainObject.notify(change);
-    expect(CommandsUpdater.needUpdate).toBe(true);
+    expect(updateMock).toHaveBeenCalledTimes(1);
   });
 
   test('should test notify descendants', () => {

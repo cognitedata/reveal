@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { type TranslationInput } from './TranslateInput';
 
-import english from '../../../common/i18n/en/reveal-react-components.json';
+import english from '../../../../common/i18n/en/reveal-react-components.json';
 import { setCurrentLanguage, translate } from './translateUtils';
-import { getLanguage } from '../../../components/i18n/utils';
+import { getLanguage } from '../../../../components/i18n/utils';
 
 describe('translateUtils', () => {
   beforeEach(() => {});

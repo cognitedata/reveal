@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { lastElement } from '../../../base/utilities/extensions/arrayUtils';
 import { PlanePrimitiveTypes } from '../../../base/utilities/primitives/PrimitiveType';
 import { ShowAllClippingCommand } from './ShowAllClippingCommand';

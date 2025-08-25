@@ -4,7 +4,7 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type FidelityLevel, getQualityForFidelityLevel, MAX_FIDELITY } from './fidelityLevels';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 import { BannerStatus } from '../../commands/BaseBannerCommand';
-import { isTranslatedString } from '../../utilities/TranslateInput';
+import { isTranslatedString } from '../../utilities/translation/TranslateInput';
 
 describe(QualityWarningBannerCommand.name, () => {
   let renderTargetMock: RevealRenderTarget;

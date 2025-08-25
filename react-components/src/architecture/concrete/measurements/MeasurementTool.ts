@@ -1,5 +1,5 @@
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
@@ -8,7 +8,7 @@ import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { Box3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';

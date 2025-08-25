@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.83.0",
+  "version": "0.85.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -26,9 +26,9 @@
     "typecheck:source": "tsc --noEmit --project tsconfig.build.json",
     "typecheck:test": "tsc --noEmit --project tsconfig.test.json",
     "lint": "eslint --cache --max-warnings 0 --ext=.tsx,.ts .",
-    "test": "vitest run --dom --silent",
+    "test": "vitest run --dom --silent=true",
     "test:verbose": "vitest run --dom",
-    "test:coverage": "vitest run --dom --coverage --silent",
+    "test:coverage": "vitest run --dom --coverage --silent=true",
     "test:playwright": "playwright test",
     "test:watch": "vitest watch --dom",
     "check-circular-deps": "madge --circular --extensions ts,tsx --exclude 'setClippingPlanes.ts$|CommandButtons.tsx$' ./src",
@@ -38,7 +38,7 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/reveal": "4.25.3",
+    "@cognite/reveal": "4.25.4",
     "@cognite/sdk": "^10.0.0",
     "react": ">=18",
     "react-dom": ">=18",
@@ -49,25 +49,23 @@
     "@cognite/cogs.js": "^10.36.0",
     "@cognite/signals": "^0.0.4",
     "@floating-ui/dom": "^1.0.0",
-    "@tanstack/react-query": "^5.32.0",
+    "@tanstack/react-query": "^5.84.1",
     "assert": "^2.1.0",
-    "lodash": "^4.17.21",
-    "react-draggable": "^4.4.6",
-    "react-resizable": "^3.0.5"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/reveal": "4.25.3",
+    "@cognite/reveal": "4.25.4",
     "@cognite/sdk": "^10.0.0",
-    "@playwright/test": "1.49.0",
-    "@storybook/addon-essentials": "8.4.5",
-    "@storybook/addon-interactions": "8.4.5",
-    "@storybook/addon-links": "8.4.5",
-    "@storybook/blocks": "8.4.5",
-    "@storybook/react": "8.4.5",
-    "@storybook/react-vite": "8.4.5",
-    "@storybook/test": "8.4.5",
+    "@playwright/test": "1.54.2",
+    "@storybook/addon-essentials": "8.6.14",
+    "@storybook/addon-interactions": "8.6.14",
+    "@storybook/addon-links": "8.6.14",
+    "@storybook/blocks": "8.6.14",
+    "@storybook/react": "8.6.14",
+    "@storybook/react-vite": "8.6.14",
+    "@storybook/test": "8.6.14",
     "@tanstack/react-query-devtools": "^5.32.0",
     "@testing-library/react": "^16.0.0",
     "@tippyjs/react": "4.2.6",
@@ -94,7 +92,7 @@
     "locize-cli": "^8.0.1",
     "madge": "^8.0.0",
     "moq.ts": "10.0.8",
-    "playwright": "1.49.0",
+    "playwright": "1.54.2",
     "prettier": "^3.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -104,13 +102,13 @@
     "styled-components": "^6.1.12",
     "three": "0.176.0",
     "ts-loader": "^9.5.1",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "vite": "^6.2.7",
     "vite-plugin-dts": "^4.0.0",
-    "vite-plugin-externalize-deps": "^0.8.0",
+    "vite-plugin-externalize-deps": "^0.9.0",
     "vitest": "^3.0.6"
   },
-  "packageManager": "yarn@4.5.2",
+  "packageManager": "yarn@4.9.2",
   "files": [
     "dist"
   ]

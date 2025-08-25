@@ -1,5 +1,5 @@
 import { BannerStatus, BaseBannerCommand } from '../../commands/BaseBannerCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { getClosestFidelity, MAX_FIDELITY } from './fidelityLevels';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 

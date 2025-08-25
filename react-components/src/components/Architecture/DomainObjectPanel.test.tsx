@@ -15,7 +15,7 @@ import {
 import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DomainObjectPanel } from './DomainObjectPanel';
-import { type IconName } from '../../architecture/base/utilities/IconName';
+import { type IconName } from '../../architecture/base/utilities/types';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(DomainObjectPanel.name, () => {
