@@ -1,13 +1,41 @@
-import { useMemo } from 'react';
-import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesInfoContext';
+import { createContext, useContext, useMemo } from 'react';
 import { type CogniteModel, type DataSourceType } from '@cognite/reveal';
-import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import { useRevealDomainObjects } from './useRevealDomainObjects';
+import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';
+import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
+import { isDefined } from '../utilities/isDefined';
 
+export type Use3dModelsDependencies = {
+  useRevealDomainObjects: typeof useRevealDomainObjects;
+};
+
+export const defaultUse3dModelsDependencies: Use3dModelsDependencies = {
+  useRevealDomainObjects
+};
+
+export const Use3dModelsContext = createContext<Use3dModelsDependencies>(
+  defaultUse3dModelsDependencies
+);
+
+/**
+ * Returns DomainObjects corresponding to the CogniteModel model types in
+ * Reveal; i.e. CAD and Point clouds only
+ */
 export const use3dModels = (): Array<CogniteModel<DataSourceType>> => {
-  const viewer = useReveal();
-  const { reveal3DResourcesCount: resourceCount } = useReveal3DResourcesCount();
+  const { useRevealDomainObjects } = useContext(Use3dModelsContext);
 
-  return useMemo(() => {
-    return viewer.models;
-  }, [viewer, resourceCount]);
+  const domainObjects = useRevealDomainObjects();
+
+  return useMemo(
+    () =>
+      domainObjects
+        .filter(
+          (domainObject) =>
+            domainObject instanceof PointCloudDomainObject ||
+            domainObject instanceof CadDomainObject
+        )
+        .map((domainObject) => domainObject.model)
+        .filter(isDefined),
+    [domainObjects]
+  );
 };

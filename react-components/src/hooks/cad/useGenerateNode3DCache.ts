@@ -1,13 +1,13 @@
 import { type CadModelOptions } from '../../components';
-import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
-import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { type ModelWithAssetMappings } from './modelWithAssetMappings';
+import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 import { useMemo } from 'react';
 
 export const useGenerateNode3DCache = (
   cadModelOptions: CadModelOptions[],
   assetMappings: ModelWithAssetMappings[] | undefined
 ): void => {
-  const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
+  const assetMappingAndNode3DCache = useClassicCadAssetMappingCache();
 
   useMemo(() => {
     cadModelOptions.forEach(async ({ modelId, revisionId }) => {

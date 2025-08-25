@@ -33,8 +33,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2231774635735416,
-        revisionId: 912809199849811,
+        modelId: 6804308053946048,
+        revisionId: 6132207798738006,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -60,7 +60,7 @@ export const Main: Story = {
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {
     return (
-      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} useCoreDm={true}>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <RevealCanvas>
           <StoryContent resources={resources} />
           <ReactQueryDevtools />

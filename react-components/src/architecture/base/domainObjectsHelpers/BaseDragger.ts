@@ -4,10 +4,10 @@ import {
   type CreateDraggerProps
 } from '../domainObjects/VisualDomainObject';
 import { type Transaction } from '../undo/Transaction';
-import { type UnitSystem } from '../renderTarget/UnitSystem';
+import { UNDEFINED_UNIT_SYSTEM, type UnitSystem } from '../renderTarget/UnitSystem';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Quantity } from './Quantity';
-import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
+import { round, roundIncrement } from '../utilities/extensions/mathUtils';
 import { Changes } from './Changes';
 import { getRoot } from '../domainObjects/getRoot';
 
@@ -24,7 +24,7 @@ export abstract class BaseDragger {
   protected readonly point: Vector3; // Intersection point at pointer down in CDF coordinates
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
   private _transaction?: Transaction;
-  protected readonly _unitSystem: UnitSystem | undefined = undefined;
+  protected readonly _unitSystem: UnitSystem;
   public isChanged = false;
 
   // ==================================================
@@ -50,11 +50,7 @@ export abstract class BaseDragger {
   protected constructor(props: CreateDraggerProps, domainObject: DomainObject) {
     this.point = props.point;
     this.ray = props.ray;
-
-    const root = getRoot(domainObject);
-    if (root !== undefined) {
-      this._unitSystem = root.unitSystem;
-    }
+    this._unitSystem = getRoot(domainObject)?.unitSystem ?? UNDEFINED_UNIT_SYSTEM;
   }
 
   // ==================================================
@@ -98,7 +94,7 @@ export abstract class BaseDragger {
     if (value < minValue) {
       value = minValue;
     }
-    if (!isShiftPressed || this._unitSystem === undefined) {
+    if (!isShiftPressed) {
       return value;
     }
     const convertedValue = this._unitSystem.convertToUnit(value, Quantity.Length);

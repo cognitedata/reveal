@@ -1,8 +1,8 @@
-import { effect, type Signal } from '@cognite/signals';
+import { type Signal } from '@cognite/signals';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 const DEFAULT_OPTIONS = [0.5, 1, 2, 5, 10, 20];
 
@@ -28,13 +28,7 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-
-    this.addDisposable(
-      effect(() => {
-        this.renderTarget.revealSettingsController.cameraKeyBoardSpeed();
-        this.update();
-      })
-    );
+    this.listenTo(this.settingsController.cameraKeyBoardSpeed);
   }
 }
 
@@ -64,6 +58,6 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   private get currentKeyBoardSpeed(): Signal<number> {
-    return this.renderTarget.revealSettingsController.cameraKeyBoardSpeed;
+    return this.settingsController.cameraKeyBoardSpeed;
   }
 }

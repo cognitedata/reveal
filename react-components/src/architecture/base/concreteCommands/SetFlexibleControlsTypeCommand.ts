@@ -2,9 +2,9 @@ import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../commands/BaseCommand';
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../utilities/IconName';
-import { effect, type Signal } from '@cognite/signals';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '../utilities/types';
+import { type Signal } from '@cognite/signals';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _value: FlexibleControlsType;
@@ -85,15 +85,10 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     if (!this._standAlone) {
       return; // Done by parent
     }
-    this.addDisposable(
-      effect(() => {
-        this.currentControlsType();
-        this.update();
-      })
-    );
+    this.listenTo(this.currentControlsType);
   }
 
   private get currentControlsType(): Signal<FlexibleControlsType> {
-    return this.renderTarget.revealSettingsController.cameraControlsType;
+    return this.settingsController.cameraControlsType;
   }
 }

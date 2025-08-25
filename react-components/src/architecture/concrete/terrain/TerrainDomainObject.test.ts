@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { createTerrainDomainObject } from './TerrainThreeView.test';
-import { isEmpty } from '../../base/utilities/TranslateInput';
-import { isGreyScale } from '../../base/utilities/colors/colorExtensions';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
+import { isGreyScale } from '../../base/utilities/colors/colorUtils';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
 
 describe(TerrainDomainObject.name, () => {

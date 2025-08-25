@@ -1,8 +1,8 @@
 export { Reveal3DResources } from './Reveal3DResources';
 export type {
   Reveal3DResourcesProps,
-  FdmAssetStylingGroup,
-  AssetStylingGroup,
+  FdmInstanceStylingGroup,
+  ClassicAssetStylingGroup,
   DefaultResourceStyling,
   Image360AssetStylingGroup,
   Image360DMAssetStylingGroup,

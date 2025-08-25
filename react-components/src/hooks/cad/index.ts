@@ -5,4 +5,3 @@ export { useFdmAssetMappings } from './useFdmAssetMappings';
 export { useGenerateAssetMappingCachePerItemFromModelCache } from './useGenerateAssetMappingCachePerItemFromModelCache';
 export { useGenerateNode3DCache } from './useGenerateNode3DCache';
 export { useMappedEdgesForRevisions } from './useMappedEdgesForRevisions';
-export { useNodesForAssets } from './useNodesForAssets';

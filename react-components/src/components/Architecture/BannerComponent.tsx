@@ -5,7 +5,7 @@ import { Infobox } from '@cognite/cogs.js';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible } from './hooks/useCommandProps';
-import { translate } from '../../architecture/base/utilities/translateUtils';
+import { translate } from '../../architecture/base/utilities/translation/translateUtils';
 
 export const BannerComponent = ({
   command: inputCommand

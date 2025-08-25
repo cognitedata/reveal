@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { CopyToClipboardCommand } from './CopyToClipboardCommand';
-import { isEmpty } from '../utilities/TranslateInput';
+import { isEmpty } from '../utilities/translation/TranslateInput';
 
 describe(CopyToClipboardCommand.name, () => {
   test('should have following default behavior', () => {

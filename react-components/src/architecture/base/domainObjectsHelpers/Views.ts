@@ -1,6 +1,6 @@
 import { type DomainObjectChange } from './DomainObjectChange';
 import { isInstanceOf, type Class } from './Class';
-import { clear, remove } from '../utilities/extensions/arrayExtensions';
+import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { type BaseView } from '../views/BaseView';
 import { type DomainObject } from '../domainObjects/DomainObject';
 
@@ -22,14 +22,10 @@ export class Views {
    * @param change - The change that occurred in the domain object.
    */
   public notify(domainObject: DomainObject, change: DomainObjectChange): void {
-    for (const listener of this._listeners) {
-      listener(domainObject, change);
-    }
+    this.notifyListeners(domainObject, change);
     const root = domainObject.root;
     if (root !== undefined && root !== domainObject) {
-      for (const listener of root.views._listeners) {
-        listener(domainObject, change);
-      }
+      root.views.notifyListeners(domainObject, change);
     }
     for (const view of this._views) {
       view.update(change);
@@ -74,7 +70,13 @@ export class Views {
     clear(this._listeners);
   }
 
-  public clear(): void {
+  public notifyListeners(domainObject: DomainObject, change: DomainObjectChange): void {
+    for (const listener of this._listeners) {
+      listener(domainObject, change);
+    }
+  }
+
+  public dispose(): void {
     this.removeEventListeners();
     this.removeAllViews();
   }

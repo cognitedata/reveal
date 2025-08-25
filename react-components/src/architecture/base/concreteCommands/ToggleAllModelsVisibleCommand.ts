@@ -1,6 +1,6 @@
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { type IconName } from '../utilities/IconName';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type IconName } from '../utilities/types';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 export class ToggleAllModelsVisibleCommand extends RenderTargetCommand {
   // ==================================================

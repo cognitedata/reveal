@@ -8,9 +8,9 @@ import {
 } from '@cognite/sdk';
 import { chunk, uniq } from 'lodash';
 import { type AddPointCloudResourceOptions } from '../../components';
-import { getAssetsForIds } from './getAssetsForIds';
+import { getAssetsForIds } from './common/getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
-import { type AllAssetFilterProps } from './filters';
+import { type AllAssetFilterProps } from './common/filters';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,

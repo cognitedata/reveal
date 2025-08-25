@@ -6,10 +6,10 @@ import { type TranslationInput } from '../../architecture';
 import {
   isTranslatedString,
   type Translations
-} from '../../architecture/base/utilities/TranslateInput';
+} from '../../architecture/base/utilities/translation/TranslateInput';
 
 import english from '../../common/i18n/en/reveal-react-components.json';
-import { setCurrentLanguage } from '../../architecture/base/utilities/translateUtils';
+import { setCurrentLanguage } from '../../architecture/base/utilities/translation/translateUtils';
 
 const I18nContext = createContext<I18nContent | null>(null);
 

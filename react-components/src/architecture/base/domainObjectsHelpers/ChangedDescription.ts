@@ -1,4 +1,4 @@
-import { equalsIgnoreCaseAndSpace } from '../utilities/extensions/stringExtensions';
+import { equalsIgnoreCaseAndSpace } from '../utilities/extensions/stringUtils';
 
 export class ChangedDescription {
   public change: symbol;

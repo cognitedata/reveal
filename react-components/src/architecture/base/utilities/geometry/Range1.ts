@@ -1,4 +1,4 @@
-import { ceil, floor, isIncrement, roundIncrement } from '../extensions/mathExtensions';
+import { ceil, floor, isIncrement, roundIncrement } from '../extensions/mathUtils';
 
 const MAX_NUMBER_OF_TICKS = 1000;
 export class Range1 {

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { describe, expect, test } from 'vitest';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { Box3, Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';

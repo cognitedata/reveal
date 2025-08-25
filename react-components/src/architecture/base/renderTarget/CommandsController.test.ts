@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CommandsController } from './CommandsController';
 import { BaseTool } from '../commands/BaseTool';
 import { type RevealRenderTarget } from './RevealRenderTarget';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { BaseCommand } from '../commands/BaseCommand';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
 import { MOUSE } from 'three';
@@ -230,7 +230,15 @@ describe(CommandsController.name, () => {
   });
 
   describe('Test update', () => {
-    test('Should all commands when the command controller updates', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test('Should update all commands', () => {
       const mockCommand = new MockCommand();
       const mockTool = createMockTool1();
       controller.add(mockCommand);
@@ -241,9 +249,34 @@ describe(CommandsController.name, () => {
 
       expect(updateTester1.calledTimes).toBe(0);
       expect(updateTester2.calledTimes).toBe(0);
-      controller.update();
+
+      controller.deferredUpdate();
+
+      // This simulate OnIdle
+      vi.advanceTimersByTime(1);
+
       expect(updateTester1.calledTimes).toBe(1);
       expect(updateTester2.calledTimes).toBe(1);
+    });
+
+    test('Should defer update of all commands', () => {
+      const mockCommand = new MockCommand();
+      controller.add(mockCommand);
+
+      const updateTester = new UpdateTester(mockCommand);
+
+      expect(updateTester.calledTimes).toBe(0);
+
+      controller.deferredUpdate();
+      controller.deferredUpdate();
+      controller.deferredUpdate();
+
+      expect(updateTester.calledTimes).toBe(0);
+
+      // This simulate OnIdle
+      vi.advanceTimersByTime(1);
+
+      expect(updateTester.calledTimes).toBe(1);
     });
 
     test('Should not update wnen disposed', () => {
@@ -254,7 +287,11 @@ describe(CommandsController.name, () => {
 
       expect(updateTester.calledTimes).toBe(0);
       controller.dispose();
-      controller.update();
+      controller.deferredUpdate();
+
+      // This simulate OnIdle
+      vi.advanceTimersByTime(1);
+
       expect(updateTester.calledTimes).toBe(0);
     });
   });

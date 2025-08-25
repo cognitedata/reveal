@@ -9,7 +9,7 @@ import {
 import { generateTimeseriesAndDatapointsFromTheAsset } from './generateTimeseriesAndDatapointsFromTheAsset';
 import { traverseExpression } from './traverseExpression';
 import { applyAssetMappingsNodeStyles } from './applyAssetMappingsNodeStyles';
-import { type CdfAssetMapping } from '../../CacheProvider/types';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/assetMappingTypes';
 
 export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,
@@ -22,11 +22,11 @@ export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes: Asset[];
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
-  assetMappings: CdfAssetMapping[];
+  assetMappings: ClassicCadAssetMapping[];
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
-  const allAssetMappingsTreeNodes: CdfAssetMapping[][] = [];
+  const allAssetMappingsTreeNodes: ClassicCadAssetMapping[][] = [];
 
   for (const contextualizedAssetNode of contextualizedAssetNodes) {
     const triggerData: TriggerTypeData[] = [];

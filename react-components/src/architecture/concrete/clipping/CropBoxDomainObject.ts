@@ -4,11 +4,11 @@ import { BoxFace } from '../primitives/common/BoxFace';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Plane } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { setClippingPlanes } from './commands/setClippingPlanes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { getRenderTarget, getRoot } from '../../base/domainObjects/getRoot';
 
@@ -46,13 +46,13 @@ export class CropBoxDomainObject extends BoxDomainObject {
     if (
       change.isChanged(
         Changes.selected,
-        Changes.deleted,
+        Changes.deleting,
         Changes.added,
         Changes.geometry,
         Changes.dragging
       )
     ) {
-      if (change.isChanged(Changes.deleted)) {
+      if (change.isChanged(Changes.deleting)) {
         this.focusType = FocusType.Pending; // Make sure that the crop box is not used in clipping anymore
       }
       this.updateClippingPlanes(change);
@@ -124,7 +124,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
     const isGlobalCropBox = renderTarget.isGlobalCropBox(this);
     if (isGlobalCropBox) {
       if (
-        change.isChanged(Changes.deleted) ||
+        change.isChanged(Changes.deleting) ||
         (change.isChanged(Changes.selected) && !this.isSelected)
       ) {
         setClippingPlanes(root);

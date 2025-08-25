@@ -47,7 +47,7 @@ export class GeometryBufferUtils {
       attribute: InterleavedBufferAttribute;
     }[],
     bufferGeometry: BufferGeometry,
-    backingBuffer: ArrayBufferLike
+    backingBuffer: ArrayBuffer
   ): void {
     instanceAttributes.forEach(instanceAttribute => {
       const { name, attribute } = instanceAttribute;

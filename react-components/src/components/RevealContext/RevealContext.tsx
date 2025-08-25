@@ -28,6 +28,7 @@ export type RevealContextProps = {
   appLanguage?: string;
   children?: ReactNode;
   useCoreDm?: boolean;
+  enableLegacy3dFdm?: boolean;
   cameraState?: CameraStateParameters;
   setCameraState?: (cameraState?: CameraStateParameters) => void;
   viewerOptions?: Pick<
@@ -96,7 +97,8 @@ const useRevealFromKeepAlive = ({
   color,
   sdk,
   viewerOptions,
-  useCoreDm
+  useCoreDm,
+  enableLegacy3dFdm
 }: RevealContextProps): RevealRenderTarget | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
@@ -112,7 +114,10 @@ const useRevealFromKeepAlive = ({
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
-      renderTarget = new RevealRenderTarget(viewer, sdk, { coreDmOnly: useCoreDm });
+      renderTarget = new RevealRenderTarget(viewer, sdk, {
+        coreDmOnly: useCoreDm,
+        enableLegacy3dFdm
+      });
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }

@@ -57,7 +57,7 @@ export class SectorNode extends THREE.Group {
   }
 
   dereference(): void {
-    if (this._group !== undefined) {
+    if (this._group !== undefined && !this._group.isDisposed()) {
       this._group.dereference();
     }
   }

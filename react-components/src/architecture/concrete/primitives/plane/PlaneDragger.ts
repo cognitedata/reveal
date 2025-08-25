@@ -7,9 +7,9 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
 import { getRoot } from '../../../base/domainObjects/getRoot';
-import { isAbsEqual } from '../../../base/utilities/extensions/mathExtensions';
+import { isAbsEqual } from '../../../base/utilities/extensions/mathUtils';
 
 /**
  * The `PlaneDragger` class represents a utility for dragging and manipulating a plane in a 3D space.

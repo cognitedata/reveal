@@ -1,7 +1,6 @@
 import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useMemo, type ReactElement } from 'react';
-import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
@@ -9,31 +8,39 @@ import {
 import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
+import {
+  type LengthUnit,
+  UNDEFINED_UNIT_SYSTEM,
+  type UnitSystem
+} from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
 import { type DomainObject } from '../../architecture';
-import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 import { useSignalValue } from '@cognite/signals/react';
+import { useRenderTarget } from '../RevealCanvas';
+import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
-  useSignalValue(DomainObjectPanelUpdater.update);
-  const domainObject = useSignalValue(DomainObjectPanelUpdater.selectedDomainObject);
+  const renderTarget = useRenderTarget();
+  const panelUpdater = renderTarget.panelUpdater;
+  const domainObject = useSignalValue(panelUpdater.selectedDomainObject);
+  useSignalValue(panelUpdater.domainObjectChanged);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
+  const root = domainObject === undefined ? undefined : getRoot(domainObject);
+  const unitSystem = root === undefined ? UNDEFINED_UNIT_SYSTEM : root.unitSystem;
 
-  if (domainObject === undefined || commands === undefined) {
+  useSignalValue<LengthUnit>(unitSystem.lengthUnit);
+
+  if (domainObject === undefined || commands === undefined || root === undefined) {
     return <></>;
   }
   const info = domainObject.getPanelInfo();
   const style = domainObject.getPanelInfoStyle();
-  const root = getRoot(domainObject);
-
-  if (root === undefined || info === undefined || style === undefined) {
+  if (style === undefined || info === undefined) {
     return <></>;
   }
-  const unitSystem = root.unitSystem;
 
   // Force the getString to be updated
   for (const command of commands) {

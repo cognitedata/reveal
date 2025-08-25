@@ -1,6 +1,6 @@
 import { type Vector3 } from 'three';
-import { type IconName } from '../../base/utilities/IconName';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type IconName } from '../../base/utilities/types';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { PointsOfInterestTool } from './PointsOfInterestTool';
 

@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { I18nContextProvider } from './I18n';
 import { render, waitFor } from '@testing-library/react';
-import { setCurrentLanguage, translate } from '../../architecture/base/utilities/translateUtils';
+import {
+  setCurrentLanguage,
+  translate
+} from '../../architecture/base/utilities/translation/translateUtils';
 
 describe(I18nContextProvider.name, () => {
   beforeEach(async () => {

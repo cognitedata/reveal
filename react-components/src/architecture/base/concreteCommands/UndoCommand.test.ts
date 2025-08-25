@@ -1,10 +1,10 @@
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { DeleteDomainObjectCommand } from './DeleteDomainObjectCommand';
 import { FolderDomainObject } from '../domainObjects/FolderDomainObject';
-import { isEmpty } from '../utilities/TranslateInput';
+import { isEmpty } from '../utilities/translation/TranslateInput';
 import { UndoCommand } from './UndoCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { ExampleDomainObject } from '../../concrete/example/ExampleDomainObject';
 
 describe(DeleteDomainObjectCommand.name, () => {

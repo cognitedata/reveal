@@ -1,5 +1,5 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../utilities/IconName';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '../utilities/types';
 
 import { BaseSettingsCommand } from '../commands/BaseSettingsCommand';
 import { SetPointSizeCommand } from './pointCloud/SetPointSizeCommand';
@@ -21,6 +21,7 @@ import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
 import { SetQualitySliderCommand } from './SetQualitySliderCommand/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from './SetQualitySliderCommand/QualityWarningBannerCommand';
 import { DividerCommand } from '../commands/DividerCommand';
+import { SetLengthUnitCommand } from './units/SetLengthUnitCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -32,14 +33,16 @@ export class SettingsCommand extends BaseSettingsCommand {
 
     this.add(new SetQualitySliderCommand());
     this.add(new QualityWarningBannerCommand());
+
     this.add(new DividerCommand());
     this.add(new SetGhostModeCommand());
 
-    if (includePois) {
-      this.add(new PointsOfInterestDividerCommand());
-      this.add(new PointsOfInterestSectionCommand());
-      this.add(new SetPointsOfInterestVisibleCommand());
-    }
+    // Point clouds
+    this.add(new PointCloudDividerCommand());
+    this.add(new SetPointSizeCommand());
+    this.add(new SetPointColorTypeCommand());
+    this.add(new SetPointShapeCommand());
+    this.add(new PointCloudFilterCommand());
 
     if (include360Images) {
       // 360 Images
@@ -53,12 +56,15 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new Set360IconsOccludedVisibleCommand());
       this.add(new Set360IconsOpacityCommand());
     }
-    // Point clouds
-    this.add(new PointCloudDividerCommand());
-    this.add(new SetPointSizeCommand());
-    this.add(new SetPointColorTypeCommand());
-    this.add(new SetPointShapeCommand());
-    this.add(new PointCloudFilterCommand());
+
+    this.add(new DividerCommand());
+    this.add(new SetLengthUnitCommand());
+
+    if (includePois) {
+      this.add(new PointsOfInterestDividerCommand());
+      this.add(new PointsOfInterestSectionCommand());
+      this.add(new SetPointsOfInterestVisibleCommand());
+    }
   }
 
   // ==================================================

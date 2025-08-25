@@ -1,7 +1,7 @@
 import { Color } from 'three';
 import { PlaneDomainObject } from '../primitives/plane/PlaneDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';
 import { setClippingPlanes } from './commands/setClippingPlanes';
@@ -53,13 +53,13 @@ export class SliceDomainObject extends PlaneDomainObject {
     if (
       change.isChanged(
         Changes.selected,
-        Changes.deleted,
+        Changes.deleting,
         Changes.added,
         Changes.geometry,
         Changes.dragging
       )
     ) {
-      if (change.isChanged(Changes.deleted)) {
+      if (change.isChanged(Changes.deleting)) {
         this.focusType = FocusType.Pending; // Make sure that the slice is not used in clipping anymore
       }
       this.updateClippingPlanes();
