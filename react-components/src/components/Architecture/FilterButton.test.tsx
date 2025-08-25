@@ -24,7 +24,7 @@ describe(FilterButton.name, () => {
     filterCommand.attach(renderTargetMock);
 
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
     );
   });
 

@@ -8,7 +8,7 @@ import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { useSelectedPoi } from './useSelectedPoi';
 import styled from 'styled-components';
 import { TextWithClickableLink } from '../../../utilities/TextWithClickableLink';
-import { useComponentFactory } from '../../RevealCanvas/ViewerContext';
+import { useComponentFactory } from '../../RevealCanvas/ComponentFactoryContext';
 
 export const PoiCommentSection = (): ReactNode => {
   const { t } = useTranslation();

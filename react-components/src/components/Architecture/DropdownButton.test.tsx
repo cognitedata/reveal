@@ -18,7 +18,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
     renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
     );
     testCommand = new MockEnumOptionCommand();
     render(<DropdownButton inputCommand={testCommand} placement={'top'} usedInSettings={false} />, {

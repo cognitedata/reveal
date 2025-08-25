@@ -107,7 +107,7 @@ function renderSegmentedButtons(command: BaseOptionCommand): void {
   const renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
+    <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
   );
   render(<SegmentedButtons inputCommand={command} placement={'top'} />, {
     wrapper

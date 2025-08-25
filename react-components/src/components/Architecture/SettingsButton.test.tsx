@@ -24,7 +24,7 @@ describe(SettingsButton.name, () => {
   beforeEach(() => {
     renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
     );
 
     settingsCommand = new TestSettingsCommand();

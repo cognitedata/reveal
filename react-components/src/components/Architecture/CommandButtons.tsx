@@ -3,7 +3,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type PlacementType } from './types';
 import { type ButtonProp } from './RevealButtons';
 import { createDividerByKey } from './DividerCreator';
-import { useComponentFactory } from '../RevealCanvas/ViewerContext';
+import { useComponentFactory } from '../RevealCanvas/ComponentFactoryContext';
 
 export function createButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,

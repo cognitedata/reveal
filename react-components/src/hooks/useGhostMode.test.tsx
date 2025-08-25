@@ -6,26 +6,21 @@ import { ViewerContextProvider } from '../components/RevealCanvas/ViewerContext'
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
 import { getDefaultCommand } from '../components/Architecture/utilities';
+import { ComponentFactoryContextProvider } from '../components/RevealCanvas/ComponentFactoryContext';
 
 describe(useGhostMode.name, () => {
   test('should not have ghostMode', () => {
     const renderTarget = createFullRenderTargetMock();
     const command = getDefaultCommand(new SetGhostModeCommand(), renderTarget);
 
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
-    );
     command.setChecked(false);
-    const { result } = renderHook(() => useGhostMode(), {
-      wrapper
-    });
-    expect(result.current).toBe(false);
+    const checked = render();
+    expect(checked).toBe(false);
   });
-
   test('should not have ghostMode when the command is not added to the RenderTarget ', () => {
     const renderTarget = createFullRenderTargetMock();
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
+      <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
     );
     const { result } = renderHook(() => useGhostMode(), {
       wrapper
@@ -37,7 +32,7 @@ describe(useGhostMode.name, () => {
     const renderTarget = createFullRenderTargetMock();
     const command = getDefaultCommand(new SetGhostModeCommand(), renderTarget);
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
+      <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
     );
     const { result } = renderHook(() => useGhostMode(), {
       wrapper
@@ -56,3 +51,16 @@ describe(useGhostMode.name, () => {
     expect(result.current).toBe(false);
   });
 });
+
+function render(): boolean {
+  const renderTarget = createFullRenderTargetMock();
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
+    <ComponentFactoryContextProvider>
+      <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
+    </ComponentFactoryContextProvider>
+  );
+  const { result } = renderHook(() => useGhostMode(), {
+    wrapper
+  });
+  return result.current;
+}

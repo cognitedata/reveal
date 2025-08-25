@@ -94,10 +94,7 @@ describe(useGetDMConnectionWithNodeFromHybridMappingsQuery.name, () => {
   const wrapper: FC<PropsWithChildren> = ({ children }) => (
     <QueryClientProvider client={queryClient}>
       <UseGetDMConnectionWithNodeFromHybridMappingsQueryContext.Provider value={mockDependencies}>
-        <ViewerContext.Provider
-          value={{
-            renderTarget: renderTargetMock.object()
-          }}>
+        <ViewerContext.Provider value={renderTargetMock.object()}>
           {children}
         </ViewerContext.Provider>
       </UseGetDMConnectionWithNodeFromHybridMappingsQueryContext.Provider>

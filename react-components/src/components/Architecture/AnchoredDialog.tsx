@@ -7,7 +7,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { useSignalValue } from '@cognite/signals/react';
 import { signal } from '@cognite/signals';
 import { type AnchoredDialogContent } from '../../architecture/base/commands/BaseTool';
-import { useComponentFactory } from '../RevealCanvas/ViewerContext';
+import { useComponentFactory } from '../RevealCanvas/ComponentFactoryContext';
 
 const UNDEFINED_SIGNAL = signal<AnchoredDialogContent | undefined>();
 

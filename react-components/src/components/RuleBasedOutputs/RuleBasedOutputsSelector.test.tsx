@@ -167,7 +167,7 @@ describe(RuleBasedOutputsSelector.name, () => {
     return (
       <SDKProvider sdk={sdkMock}>
         <QueryClientProvider client={queryClient}>
-          <ViewerContextProvider renderTarget={renderTargetMock}>
+          <ViewerContextProvider value={renderTargetMock}>
             <RuleBasedOutputsSelectorContext.Provider value={defaultDependencies}>
               {children}
             </RuleBasedOutputsSelectorContext.Provider>
