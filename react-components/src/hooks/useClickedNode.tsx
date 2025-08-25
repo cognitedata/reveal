@@ -99,7 +99,14 @@ export const useClickedNodeData = (options?: {
     return () => {
       viewer.off('click', callback);
     };
-  }, [viewer, leftClick, rightClick, disableOnEditTool, renderTarget.commandsController]);
+  }, [
+    viewer,
+    leftClick,
+    rightClick,
+    disableOnEditTool,
+    renderTarget.commandsController,
+    isActiveEditTool
+  ]);
 
   const { data: nodeDataPromises } = useFdm3dNodeDataPromises(intersection);
 
@@ -156,11 +163,11 @@ const useCombinedClickedNodeData = (
   }, [
     intersection,
     fdmData,
-    hybridAssetMappings?.node,
-    pointCloudAssetMappingsResult.data,
-    pointCloudAssetMappingsResult.isFetching,
-    pointCloudFdmVolumeMappingsResult.data,
-    pointCloudFdmVolumeMappingsResult.isFetching
+    hybridAssetMappings,
+    mouseButton,
+    pointCloudAssetMappingsResult,
+    pointCloudFdmVolumeMappingsResult,
+    position
   ]);
 
   function normalizeListDataResult<T>(result: UseQueryResult<T[]>): T[] | undefined | null {

@@ -98,15 +98,7 @@ export const RuleBasedOutputsButton = ({
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
     },
-    [
-      ruleInstances,
-      emptyRuleSelected,
-      onRuleSetStylingChanged,
-      onRuleSetSelectedChanged,
-      t,
-      emptyRuleSelected,
-      onRuleSetSelectedChanged
-    ]
+    [ruleInstances, onRuleSetStylingChanged, t]
   );
 
   const ruleSetStylingChanged = (

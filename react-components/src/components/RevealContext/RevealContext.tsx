@@ -125,7 +125,7 @@ const useRevealFromKeepAlive = ({
     renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
     setRenderTarget(renderTarget);
     return renderTarget;
-  }, [color, sdk, viewerOptions, useCoreDm, revealKeepAliveData]);
+  }, [color, sdk, viewerOptions, useCoreDm, revealKeepAliveData, enableLegacy3dFdm]);
 
   useEffect(() => {
     const renderTarget = getOrInitializeRenderTarget();

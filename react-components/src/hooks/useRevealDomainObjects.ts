@@ -19,14 +19,13 @@ export function useRevealDomainObjects(
   const { useRenderTarget } = useContext(UseRevealDomainObjectsContext);
 
   const renderTarget = useRenderTarget();
+  const depAdditionalFlag = additionalChangeFlags
+    ?.map((changeFlag) => changeFlag.toString())
+    .join(',');
 
   const disposableSignal = useMemo(
     () => getRevealDomainUpdateSignal(renderTarget, predicate, additionalChangeFlags),
-    [
-      renderTarget,
-      predicate,
-      additionalChangeFlags?.map((changeFlag) => changeFlag.toString()).join(',')
-    ]
+    [renderTarget, predicate, depAdditionalFlag]
   );
 
   return useDisposableSignal(disposableSignal);

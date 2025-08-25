@@ -88,7 +88,9 @@ export function CadModelContainer({
     onLoad,
     onLoadError,
     setRevealResourcesCount,
-    setReveal3DResourceLoadFailCount
+    setReveal3DResourceLoadFailCount,
+    addModel,
+    removeModel
   ]);
 
   useEffect(() => {

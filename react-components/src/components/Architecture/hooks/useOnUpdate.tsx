@@ -1,38 +1,35 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
 import { type DomainObject } from '../../../architecture';
 
 export const useOnUpdate = (command: BaseCommand | undefined, update: () => void): void => {
-  const memoizedUpdate = useCallback(update, [command]);
   useEffect(() => {
     if (command === undefined) {
       return;
     }
 
-    memoizedUpdate();
+    update();
 
-    command.addEventListener(memoizedUpdate);
+    command.addEventListener(update);
     return () => {
-      command.removeEventListener(memoizedUpdate);
+      command.removeEventListener(update);
     };
-  }, [command, memoizedUpdate]);
+  }, [command, update]);
 };
 
 export const useOnUpdateDomainObject = (
   object: DomainObject | undefined,
   update: () => void
 ): void => {
-  const memoizedUpdate = useCallback(update, [object]);
-
   useEffect(() => {
     if (object === undefined) {
       return;
     }
 
-    memoizedUpdate();
-    object.views.addEventListener(memoizedUpdate);
+    update();
+    object.views.addEventListener(update);
     return () => {
-      object.views.removeEventListener(memoizedUpdate);
+      object.views.removeEventListener(update);
     };
-  }, [object, memoizedUpdate]);
+  }, [object, update]);
 };
