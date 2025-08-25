@@ -78,13 +78,26 @@ export function CadModelContainer({
         callback();
       });
     };
-  }, [modelId, revisionId, geometryFilter]);
+  }, [
+    modelId,
+    revisionId,
+    geometryFilter,
+    transform,
+    addModelOptions,
+    viewer,
+    onLoad,
+    onLoadError,
+    setRevealResourcesCount,
+    setReveal3DResourceLoadFailCount,
+    addModel,
+    removeModel
+  ]);
 
   useEffect(() => {
     if (!modelExists(model, viewer) || transform === undefined) return;
 
     model.setModelTransformation(transform);
-  }, [transform, model]);
+  }, [transform, model, viewer]);
 
   useApplyCadModelStyling(model, styling);
 

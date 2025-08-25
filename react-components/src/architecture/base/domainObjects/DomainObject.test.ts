@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 import { describe, test, expect, beforeAll, vi } from 'vitest';
 import { DomainObject } from './DomainObject';
@@ -9,13 +9,11 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { count, first, last } from '../utilities/extensions/generatorUtils';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(DomainObject.name, () => {
   test('should have following default behavior', () => {
@@ -209,7 +207,7 @@ describe(DomainObject.name, () => {
     expect(child.parent).toBe(parent);
 
     const tester1 = new EventChangeTester(parent, Changes.childDeleted);
-    const tester2 = new EventChangeTester(child, Changes.deleted);
+    const tester2 = new EventChangeTester(child, Changes.deleting);
     child.removeInteractive();
     tester1.toHaveBeenCalledOnce();
     tester2.toHaveBeenCalledOnce();
@@ -276,13 +274,16 @@ describe(DomainObject.name, () => {
 
   test('should test notify on CommandsUpdater', () => {
     const domainObject = new ChildDomainObject();
-    const renderTarget = createRenderTargetMock();
+    const renderTarget = createFullRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    expect(CommandsUpdater.needUpdate).toBe(false);
+    const updateMock = vi.fn();
+    renderTarget.updateAllCommands = updateMock;
+
+    expect(updateMock).toHaveBeenCalledTimes(0);
     const change = Changes.selected;
     domainObject.notify(change);
-    expect(CommandsUpdater.needUpdate).toBe(true);
+    expect(updateMock).toHaveBeenCalledTimes(1);
   });
 
   test('should test notify descendants', () => {
@@ -313,18 +314,6 @@ describe(DomainObject.name, () => {
     const childTester = new EventChangeTester(child, change);
     parent.notify(change);
     childTester.toHaveBeenCalledOnce();
-  });
-
-  test('should notify notify descendants..... style root', () => {
-    const child = new ChildDomainObject();
-    child.isSelected = true;
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBeUndefined();
-    child.notify(Changes.selected);
-
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBe(child);
-    child.isSelected = false;
-    child.notify(Changes.selected);
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBeUndefined();
   });
 
   test('should get style for the render target root', () => {

@@ -3,7 +3,6 @@ import { Image360CollectionDomainObject } from './Image360CollectionDomainObject
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { waitFor } from '@testing-library/react';
-import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 
 describe(Image360CollectionDomainObject.name, () => {
@@ -15,8 +14,8 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(domainObject.model).toBe(image360Collection);
     expect(domainObject.typeName).toEqual({ untranslated: 'Image360' });
     expect(domainObject.icon).toEqual('View360');
+    expect(domainObject.name).toEqual('360 Model Name');
     expect(domainObject.hasIconColor).toEqual(false);
-    expect(domainObject.createRenderStyle()).toBeInstanceOf(Image360CollectionRenderStyle);
   });
 
   test('should register event listeners for entering and exiting, which calls the command updater', async () => {
@@ -34,18 +33,18 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(onEventType0).toBe('image360Entered');
     expect(onEventType1).toBe('image360Exited');
 
-    expect(renderTargetMock.commandsController.update).not.toHaveBeenCalled();
+    expect(renderTargetMock.updateAllCommands).not.toHaveBeenCalled();
 
     registeredCallback0();
 
     await waitFor(async () => {
-      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(1);
+      expect(renderTargetMock.updateAllCommands).toHaveBeenCalledTimes(1);
     });
 
     registeredCallback1();
 
     await waitFor(async () => {
-      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(2);
+      expect(renderTargetMock.updateAllCommands).toHaveBeenCalledTimes(2);
     });
   });
 

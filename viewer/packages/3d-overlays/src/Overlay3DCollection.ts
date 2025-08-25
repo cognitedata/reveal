@@ -2,7 +2,18 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Color, Texture, Object3D, Camera, Vector2, Raycaster, WebGLRenderer, Scene } from 'three';
+import {
+  CanvasTexture,
+  Color,
+  Texture,
+  Object3D,
+  Camera,
+  Vector2,
+  Raycaster,
+  WebGLRenderer,
+  Scene,
+  PerspectiveCamera
+} from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
@@ -126,11 +137,14 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   }
 
   private readonly onBeforeRenderDelegate: Object3D['onBeforeRender'] = (
-    _renderer: WebGLRenderer,
+    renderer: WebGLRenderer,
     _scene: Scene,
     camera: Camera
   ) => {
-    this._cameraChangeDebouncer.call(camera, () => this.sortOverlaysRelativeToCamera(camera));
+    this._cameraChangeDebouncer.call(camera, () => {
+      this.sortOverlaysRelativeToCamera(camera);
+      this.updatePointScale(renderer, camera);
+    });
   };
 
   private sortOverlaysRelativeToCamera(camera: Camera): void {
@@ -210,15 +224,33 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     });
   }
 
+  private updatePointScale(renderer: WebGLRenderer, camera: Camera): void {
+    if (!(camera instanceof PerspectiveCamera)) {
+      return;
+    }
+
+    const renderSize = new Vector2();
+    this._overlays.forEach(icon =>
+      icon.updateAdaptiveScale({
+        camera,
+        renderSize: renderer.getSize(renderSize),
+        domElement: renderer.domElement
+      })
+    );
+  }
+
   /**
    * Dispose this collection and icons with all associated resources
    */
   public dispose(): void {
     this._overlays.forEach(overlay => overlay.dispose());
+    this._overlays.splice(0);
 
     this._overlayPoints.dispose();
     this._sharedTextures.color.dispose();
     this._sharedTextures.mask?.dispose();
+
+    this.clear();
   }
 
   private createCircleTextures(): {

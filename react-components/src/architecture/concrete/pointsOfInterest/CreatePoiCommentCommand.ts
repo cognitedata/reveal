@@ -1,6 +1,6 @@
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type PointOfInterest } from './types';
 

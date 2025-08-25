@@ -1,6 +1,6 @@
 import { type Color } from 'three';
 import { ColorInterpolation } from './ColorInterpolation';
-import { getHslMixedColor, getMixedColor } from './colorExtensions';
+import { getHslMixedColor, getMixedColor } from './colorUtils';
 
 export class ColorMapItem {
   // ==================================================

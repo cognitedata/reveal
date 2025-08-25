@@ -13,12 +13,12 @@ import {
   Flex
 } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
-import { getButtonType, getTooltipPlacement } from './utilities';
+import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
 import { DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
-import { type IconName } from '../../architecture/base/utilities/IconName';
+import { type IconName } from '../../architecture/base/utilities/types';
 import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
@@ -113,7 +113,7 @@ const FilterMenu = ({
           disabled={isOpen || label === undefined}
           placement={placement}>
           <Button
-            type={getButtonType(command)}
+            type={command.buttonType}
             icon={<IconComponent iconName={iconName} />}
             disabled={!isEnabled}
             toggled={isOpen}

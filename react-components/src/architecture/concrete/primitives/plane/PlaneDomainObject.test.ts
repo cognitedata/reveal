@@ -3,14 +3,14 @@ import {
   PlanePrimitiveTypes,
   PrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PlaneDomainObject } from './PlaneDomainObject';
 import { Vector3 } from 'three';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { isGreyScale } from '../../../base/utilities/colors/colorExtensions';
+import { isGreyScale } from '../../../base/utilities/colors/colorUtils';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(PlaneDomainObject.name, () => {

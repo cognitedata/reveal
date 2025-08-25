@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
 
 describe(Image360AnnotationFolder.name, () => {

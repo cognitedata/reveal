@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { DeleteDomainObjectCommand } from './DeleteDomainObjectCommand';
 import { DomainObject } from '../domainObjects/DomainObject';
 import { FolderDomainObject } from '../domainObjects/FolderDomainObject';
-import { isEmpty, type TranslationInput } from '../utilities/TranslateInput';
+import { isEmpty, type TranslationInput } from '../utilities/translation/TranslateInput';
 
 describe(DeleteDomainObjectCommand.name, () => {
   test('should have following default behavior', async () => {

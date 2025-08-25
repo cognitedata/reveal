@@ -1,25 +1,27 @@
+import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
-import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type IconName } from '../../../base/utilities/IconName';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type IconName } from '../../../base/utilities/types';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
+import { RevealDomainObject } from '../RevealDomainObject';
 import { type Image360Model } from '../RevealTypes';
-import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 
-export class Image360CollectionDomainObject extends VisualDomainObject {
+export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: Image360Model;
-  readonly _updateCallback: () => void;
+  private readonly _model: Image360Model;
+  public readonly isIconsVisible = signal(false);
+  public readonly isOccludedIconsVisible = signal(false);
+  public readonly iconsOpacity = signal(0);
+  public readonly imagesOpacity = signal(0);
+  private readonly _updateCallback: () => void;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): Image360Model | undefined {
+  public get model(): Image360Model {
     return this._model;
   }
 
@@ -30,9 +32,23 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   public constructor(model: Image360Model) {
     super();
     this._model = model;
+    this.name = model.label;
+
+    this.isIconsVisible(model.getIconsVisibility());
+    this.isOccludedIconsVisible(model.isOccludedIconsVisible());
+    this.iconsOpacity(model.getIconsOpacity());
+    this.imagesOpacity(model.getImagesOpacity());
+
+    // This updated the point cloud on reveal side when the signals change.
+    this.addEffect(() => {
+      this._model.setIconsVisibility(this.isIconsVisible());
+      this._model.setOccludedIconsVisible(this.isOccludedIconsVisible());
+      this._model.setIconsOpacity(this.iconsOpacity());
+      this._model.setImagesOpacity(this.imagesOpacity());
+    });
 
     this._updateCallback = () => {
-      CommandsUpdater.update(getRenderTarget(this));
+      getRenderTarget(this)?.updateAllCommands();
     };
 
     this._model.on('image360Entered', this._updateCallback);
@@ -55,12 +71,8 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
     return false;
   }
 
-  public override createRenderStyle(): RenderStyle | undefined {
-    return new Image360CollectionRenderStyle();
-  }
-
-  protected override removeCore(): void {
-    super.removeCore();
+  public override dispose(): void {
+    super.dispose();
     getRenderTarget(this)?.viewer?.remove360ImageSet(this._model);
 
     this._model.off('image360Entered', this._updateCallback);

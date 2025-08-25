@@ -2,7 +2,7 @@ import { ColorInterpolation } from './ColorInterpolation';
 import { ColorMap } from './ColorMap';
 import { Color } from 'three';
 import { ColorMapType } from './ColorMapType';
-import { getColorFromBytes as getFromBytes } from './colorExtensions';
+import { getColorFromBytes as getFromBytes } from './colorUtils';
 
 let colorMaps: Map<ColorMapType, ColorMap> | undefined; // Act as a singleton
 

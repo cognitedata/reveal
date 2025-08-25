@@ -2,14 +2,16 @@ import { type Asset } from '@cognite/sdk';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
 import { type ExternalIdsResultList, type NodeItem } from '../../../src/data-providers/FdmSDK';
 
+const fixedDate = new Date('2025-01-01T00:00:00.000Z');
+
 export function createAssetMock(id: number, name?: string, description?: string): Asset {
   return {
     id,
     name: name ?? `asset-${id}`,
     description: description ?? `asset-${id}`,
     parentId: 0,
-    createdTime: new Date(),
-    lastUpdatedTime: new Date(),
+    createdTime: fixedDate,
+    lastUpdatedTime: fixedDate,
     rootId: 0,
     externalId: 'external-id-123',
     metadata: { key: 'value' },

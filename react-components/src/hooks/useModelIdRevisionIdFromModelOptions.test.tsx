@@ -1,61 +1,48 @@
-import { describe, expect, test, beforeEach, assert } from 'vitest';
-import { type ReactElement, type ReactNode } from 'react';
+import { describe, expect, test, assert, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { type UseQueryResult } from '@tanstack/react-query';
 
 import { useModelIdRevisionIdFromModelOptions } from './useModelIdRevisionIdFromModelOptions';
 import {
   isClassicIdentifier,
   isDM3DModelIdentifier
 } from '../components/Reveal3DResources/typeGuards';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
   defaultModelIdRevisionIdFromModelOptionsDependencies,
   ModelIdRevisionIdFromModelOptionsContext
 } from './useModelIdRevisionIdFromModelOptions.context';
-import { Mock } from 'moq.ts';
-import { sdkMock } from '#test-utils/fixtures/sdk';
+import { type ReactElement, type ReactNode } from 'react';
 import { FdmSDK } from '../data-providers/FdmSDK';
-import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
-import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import { sdkMock } from '#test-utils/fixtures/sdk';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-describe(useModelIdRevisionIdFromModelOptions.name, () => {
-  const classicModelOption = {
-    modelId: 123,
-    revisionId: 456
-  };
-  const dmModelOption = {
-    revisionExternalId: 'default-revision-external-id1',
-    revisionSpace: 'default-revision-space'
-  };
+const classicModelOption = {
+  modelId: 123,
+  revisionId: 456
+};
+const dmModelOption = {
+  revisionExternalId: 'default-revision-external-id1',
+  revisionSpace: 'default-revision-space'
+};
 
-  const mockClassicModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-    .setup((p) => p.data)
-    .returns(classicModelOption)
-    .object();
+const dependencies = getMocksByDefaultDependencies(
+  defaultModelIdRevisionIdFromModelOptionsDependencies
+);
 
-  const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-    .setup((p) => p.data)
-    .returns({
-      modelId: 987,
-      revisionId: 654
-    })
-    .object();
+const queryClient = new QueryClient();
 
-  const dependencies = getMocksByDefaultDependencies(
-    defaultModelIdRevisionIdFromModelOptionsDependencies
-  );
-
-  const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
+const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
+  <QueryClientProvider client={queryClient}>
     <ModelIdRevisionIdFromModelOptionsContext.Provider value={dependencies}>
       {children}
     </ModelIdRevisionIdFromModelOptionsContext.Provider>
-  );
+  </QueryClientProvider>
+);
 
+describe(useModelIdRevisionIdFromModelOptions.name, () => {
   beforeEach(() => {
     dependencies.useFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
-    dependencies.useQueriedAddModelOptions.mockReturnValue([]);
   });
-
   test('returns empty array if input is undefined', () => {
     const { result } = renderHook(() => useModelIdRevisionIdFromModelOptions(undefined), {
       wrapper
@@ -64,120 +51,69 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   });
 
   test('returns modelId & revisionId for classic model option', async () => {
-    dependencies.useQueriedAddModelOptions.mockReturnValue([mockClassicModelResult]);
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption]),
-      { wrapper }
+      {
+        wrapper
+      }
     );
 
     await waitFor(() => {
       expect(result.current.length).toBeGreaterThan(0);
-      expect(result.current[0].data).toBeDefined();
+      expect(result.current[0]).toBeDefined();
     });
 
-    assert(result.current[0]?.data !== undefined);
+    assert(result.current[0] !== undefined);
 
-    expect(isClassicIdentifier(result.current[0].data)).toBe(true);
-    expect(result.current[0]?.data).toMatchObject(classicModelOption);
+    expect(isClassicIdentifier(result.current[0])).toBe(true);
+    expect(result.current[0]).toMatchObject(classicModelOption);
   });
 
   test('returns modelId & revisionId for dm model option', async () => {
-    dependencies.useQueriedAddModelOptions.mockReturnValue([mockDMModelResult]);
+    dependencies.getModelIdAndRevisionIdFromExternalId.mockReturnValue(
+      Promise.resolve({
+        modelId: 987,
+        revisionId: 654
+      })
+    );
     const { result } = renderHook(() => useModelIdRevisionIdFromModelOptions([dmModelOption]), {
       wrapper
     });
 
     await waitFor(() => {
       expect(result.current.length).toBeGreaterThan(0);
-      expect(result.current[0].data).toBeDefined();
+      expect(result.current[0]).toBeDefined();
     });
 
     expect(isDM3DModelIdentifier(dmModelOption)).toBe(true);
-    expect(result.current[0]?.data).toMatchObject({
+    expect(result.current[0]).toMatchObject({
       modelId: 987,
       revisionId: 654
     });
   });
 
-  test('returns empty array if any query is still fetching', () => {
-    const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-      .setup((p) => p.data)
-      .returns({
+  test('returns correct modelId & revisionId for mixed classic and dm model options', async () => {
+    dependencies.getModelIdAndRevisionIdFromExternalId.mockReturnValue(
+      Promise.resolve({
         modelId: 987,
         revisionId: 654
       })
-      .setup((p) => p.isFetching)
-      .returns(true)
-      .object();
-
-    dependencies.useQueriedAddModelOptions.mockReturnValue([mockDMModelResult]);
-
+    );
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
       { wrapper }
     );
 
-    expect(result.current).toEqual([]);
-  });
+    await waitFor(() => {
+      expect(result.current.length).toBe(2);
+    });
 
-  test('returns empty array if any query is still loading', () => {
-    const mockClassicModelResult = new Mock<
-      UseQueryResult<AddModelOptions<ClassicDataSourceType>>
-    >()
-      .setup((p) => p.data)
-      .returns(classicModelOption)
-      .setup((p) => p.isLoading)
-      .returns(true)
-      .object();
+    expect(result.current.every(isClassicIdentifier)).toBe(true);
+    expect(result.current[0]).toMatchObject(classicModelOption);
 
-    dependencies.useQueriedAddModelOptions.mockReturnValue([mockClassicModelResult]);
-
-    const { result } = renderHook(
-      () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
-      { wrapper }
-    );
-
-    expect(result.current).toEqual([]);
-  });
-
-  test('returns empty array if any query contains error status', () => {
-    const mockClassicModelResult = new Mock<
-      UseQueryResult<AddModelOptions<ClassicDataSourceType>>
-    >()
-      .setup((p) => p.data)
-      .returns(classicModelOption)
-      .setup((p) => p.isError)
-      .returns(true)
-      .object();
-
-    dependencies.useQueriedAddModelOptions.mockReturnValue([mockClassicModelResult]);
-
-    const { result } = renderHook(
-      () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
-      { wrapper }
-    );
-
-    expect(result.current).toEqual([]);
-  });
-
-  test('returns empty array if any query is still refetching', () => {
-    const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-      .setup((p) => p.data)
-      .returns({
-        modelId: 987,
-        revisionId: 654
-      })
-      .setup((p) => p.isRefetching)
-      .returns(true)
-      .object();
-
-    dependencies.useQueriedAddModelOptions.mockReturnValue([mockDMModelResult]);
-
-    const { result } = renderHook(
-      () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
-      { wrapper }
-    );
-
-    expect(result.current).toEqual([]);
+    expect(result.current[1]).toMatchObject({
+      modelId: 987,
+      revisionId: 654
+    });
   });
 });

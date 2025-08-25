@@ -1,4 +1,4 @@
-import { count } from '../utilities/extensions/arrayExtensions';
+import { count } from '../utilities/extensions/arrayUtils';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 

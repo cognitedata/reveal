@@ -50,14 +50,11 @@ const fdmSdkMock = new Mock<FdmSDK>()
   .returns(mockFdmSdk.getViewsByIds)
   .object();
 
-const renderTargetMock = new Mock<RevealRenderTarget>()
-  .setup((p) => p.cdfCaches.fdm3dDataProvider)
-  .returns(mockFdmDataProvider)
-  .object();
+const renderTargetMock = new Mock<RevealRenderTarget>();
 
 const wrapper: FC<PropsWithChildren> = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    <ViewerContext.Provider value={renderTargetMock}>
+    <ViewerContext.Provider value={renderTargetMock.object()}>
       <FdmSdkContext.Provider value={{ fdmSdk: fdmSdkMock }}>{children}</FdmSdkContext.Provider>
     </ViewerContext.Provider>
   </QueryClientProvider>
@@ -89,6 +86,30 @@ describe(useSearchMappedEquipmentFDM.name, () => {
 
     mockListMappedFdmNodes.mockResolvedValue(cadNodesFixtures);
     mockFilterNodesByMappedTo3d.mockResolvedValue(mockInstancesWithView);
+
+    renderTargetMock.setup((p) => p.cdfCaches.fdm3dDataProvider).returns(mockFdmDataProvider);
+  });
+
+  it('should return empty result if fdm3dDataProvider is undefined', async () => {
+    renderTargetMock.setup((p) => p.cdfCaches.fdm3dDataProvider).returns(undefined);
+
+    const { result } = renderHook(
+      () =>
+        useSearchMappedEquipmentFDM(
+          'query',
+          mockViewsToSearch,
+          mockModels,
+          mockInstancesFilter,
+          100
+        ),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual([]);
+    });
   });
 
   it('should return empty results when models are empty', async () => {

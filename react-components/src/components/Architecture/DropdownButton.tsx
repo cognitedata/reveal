@@ -4,7 +4,7 @@ import { useState, type ReactElement, type SetStateAction, type Dispatch } from 
 
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getTooltipPlacement } from './utilities';
+import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
@@ -70,7 +70,7 @@ const DropdownElement = ({
             style={{
               padding: '8px 4px'
             }}
-            type={getButtonType(command)}
+            type={command.buttonType}
             icon={<OpenButtonIcon />}
             key={uniqueId}
             disabled={!isEnabled}

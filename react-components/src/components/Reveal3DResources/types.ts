@@ -14,6 +14,7 @@ import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmS
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 import {
+  type AssetId,
   type PointCloudAnnotationModel,
   type PointCloudVolumeWithAsset
 } from '../CacheProvider/types';
@@ -102,7 +103,7 @@ export type NodeDataResult = {
   cadNode: Node3D;
 };
 
-export type FdmAssetStylingGroup = {
+export type FdmInstanceStylingGroup = {
   fdmAssetExternalIds: DmsUniqueIdentifier[];
   style: {
     cad?: NodeAppearance;
@@ -110,8 +111,8 @@ export type FdmAssetStylingGroup = {
   };
 };
 
-export type AssetStylingGroup = {
-  assetIds: CogniteInternalId[];
+export type ClassicAssetStylingGroup = {
+  assetIds: AssetId[];
   style: {
     cad?: NodeAppearance;
     pointcloud?: NodeAppearance;
@@ -129,8 +130,8 @@ export type Image360DMAssetStylingGroup = {
 };
 
 export type InstanceStylingGroup =
-  | FdmAssetStylingGroup
-  | AssetStylingGroup
+  | FdmInstanceStylingGroup
+  | ClassicAssetStylingGroup
   | Image360AssetStylingGroup
   | Image360DMAssetStylingGroup;
 

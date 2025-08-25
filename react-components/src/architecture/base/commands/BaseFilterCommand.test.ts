@@ -1,8 +1,8 @@
 import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { BaseFilterCommand } from './BaseFilterCommand';
 import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
-import { isOdd } from '../utilities/extensions/mathExtensions';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { isOdd } from '../utilities/extensions/mathUtils';
 
 describe(BaseFilterCommand.name, () => {
   let command: MockFilterCommand;
@@ -38,7 +38,7 @@ describe(BaseFilterCommand.name, () => {
       expect(command.hasChildren).toBe(true);
     });
 
-    test('should not have any checked', () => {
+    test('should have none checked', () => {
       assert(command.children !== undefined);
       for (const option of command.children) {
         option.setChecked(false);

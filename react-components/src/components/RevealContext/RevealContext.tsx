@@ -1,6 +1,13 @@
 import { Cognite3DViewer, type DataSourceType, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk';
-import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
+import {
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactElement,
+  useCallback
+} from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
@@ -21,6 +28,7 @@ export type RevealContextProps = {
   appLanguage?: string;
   children?: ReactNode;
   useCoreDm?: boolean;
+  enableLegacy3dFdm?: boolean;
   cameraState?: CameraStateParameters;
   setCameraState?: (cameraState?: CameraStateParameters) => void;
   viewerOptions?: Pick<
@@ -89,12 +97,35 @@ const useRevealFromKeepAlive = ({
   color,
   sdk,
   viewerOptions,
-  useCoreDm
+  useCoreDm,
+  enableLegacy3dFdm
 }: RevealContextProps): RevealRenderTarget | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
   // Double bookkeeping to satisfy test
   const [renderTarget, setRenderTarget] = useState<RevealRenderTarget | null>(null);
+
+  const getOrInitializeRenderTarget = useCallback((): RevealRenderTarget => {
+    let renderTarget = revealKeepAliveData?.renderTargetRef.current;
+    if (renderTarget === undefined) {
+      const viewer = new Cognite3DViewer<DataSourceType>({
+        ...viewerOptions,
+        sdk,
+        useFlexibleCameraManager: true,
+        hasEventListeners: false
+      });
+      renderTarget = new RevealRenderTarget(viewer, sdk, {
+        coreDmOnly: useCoreDm,
+        enableLegacy3dFdm
+      });
+      if (revealKeepAliveData !== undefined) {
+        revealKeepAliveData.renderTargetRef.current = renderTarget;
+      }
+    }
+    renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
+    setRenderTarget(renderTarget);
+    return renderTarget;
+  }, [color, sdk, viewerOptions, useCoreDm, revealKeepAliveData, enableLegacy3dFdm]);
 
   useEffect(() => {
     const renderTarget = getOrInitializeRenderTarget();
@@ -109,26 +140,7 @@ const useRevealFromKeepAlive = ({
       }
       revealKeepAliveData.isRevealContainerMountedRef.current = false;
     };
-  }, []);
+  }, [revealKeepAliveData, getOrInitializeRenderTarget]);
 
   return renderTarget;
-
-  function getOrInitializeRenderTarget(): RevealRenderTarget {
-    let renderTarget = revealKeepAliveData?.renderTargetRef.current;
-    if (renderTarget === undefined) {
-      const viewer = new Cognite3DViewer<DataSourceType>({
-        ...viewerOptions,
-        sdk,
-        useFlexibleCameraManager: true,
-        hasEventListeners: false
-      });
-      renderTarget = new RevealRenderTarget(viewer, sdk, { coreDmOnly: useCoreDm });
-      if (revealKeepAliveData !== undefined) {
-        revealKeepAliveData.renderTargetRef.current = renderTarget;
-      }
-    }
-    renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
-    setRenderTarget(renderTarget);
-    return renderTarget;
-  }
 };

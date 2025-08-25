@@ -1,5 +1,4 @@
 export { use3DModelName } from './use3DModelName';
-export { use3dNodeByExternalId } from './use3dNodeByExternalId';
 export { use3dRelatedDirectConnections } from './use3dRelatedDirectConnections';
 export { use3dRelatedEdgeConnections } from './use3dRelatedEdgeConnections';
 export { useAll3dDirectConnectionsWithProperties } from './useAll3dDirectConnectionsWithProperties';
@@ -19,6 +18,7 @@ export {
   useSearchMappedEquipmentAssetMappings,
   useMappingsForAssetIds
 } from './useSearchMappedEquipmentAssetMappings';
+export { useHybridMappingsForAssetInstances } from './useHybridMappingsForAssetInstances';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
@@ -32,8 +32,8 @@ export { usePointCloudVolumeMappingForAssetInstances } from './core-dm/usePointC
 export { useFilterOnClassicAssetsInScene } from './useFilterOnClassicAssetsInScene';
 
 export type {
-  ModelMappings,
-  ModelMappingsWithAssets,
+  ClassicCadModelMappings,
+  ClassicCadModelMappingsWithAssets,
   AssetPage,
   ModelAssetPage
 } from './useSearchMappedEquipmentAssetMappings';
@@ -41,3 +41,4 @@ export type { InstancesWithView } from './useSearchMappedEquipmentFDM';
 export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
 
 export { searchClassicAssetsForModels } from './network/searchClassicAssetsForModels';
+export { searchHybridDmAssetsForModels } from './network/searchHybridDmAssetsForModels';

@@ -3,7 +3,7 @@ import {
   isAndFilter,
   isLeafFilter,
   isOrFilter
-} from '../../../src/query/network/filters';
+} from '../../../src/query/network/common/filters';
 
 import { isEqual } from 'lodash';
 import { assertNever } from '../../../src/utilities/assertNever';

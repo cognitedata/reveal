@@ -10,7 +10,7 @@ import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterC
 import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
 import assert from 'assert';
 import { expectAwaitToFail } from '#test-utils/expect/expectAwaitToThrow';
-import { translate } from '../../architecture/base/utilities/translateUtils';
+import { translate } from '../../architecture/base/utilities/translation/translateUtils';
 
 describe(FilterButton.name, () => {
   let renderTargetMock: RevealRenderTarget;

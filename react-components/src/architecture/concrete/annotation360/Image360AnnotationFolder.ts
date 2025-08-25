@@ -1,5 +1,5 @@
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { FolderDomainObject } from '../../base/domainObjects/FolderDomainObject';
 
 export class Image360AnnotationFolder extends FolderDomainObject {

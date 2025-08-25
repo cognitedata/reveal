@@ -1,7 +1,6 @@
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
@@ -11,7 +10,7 @@ import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
 import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
 import { type Annotation } from '../helpers/Annotation';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -182,7 +181,7 @@ export class AnnotationsCreateTool extends NavigationTool {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        return new CylinderCreator(gizmo, this.primitiveType, true);
+        return new CylinderCreator(gizmo, this.primitiveType);
       }
       default:
         return undefined;
@@ -218,7 +217,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   private setSelectTool(): void {
     if (this.renderTarget.commandsController.setActiveToolByType(AnnotationsSelectTool)) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 

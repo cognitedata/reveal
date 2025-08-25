@@ -1,5 +1,5 @@
 import { BaseCommand, type TranslationInput } from '../../../../src/architecture';
-import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { type IconName } from '../../../../src/architecture/base/utilities/types';
 
 export class TestButtonCommand extends BaseCommand {
   private readonly _delegate: (() => void) | undefined;

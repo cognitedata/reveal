@@ -38,7 +38,7 @@ describe(CylinderDragger.name, () => {
 
     const expectedBox = clone(domainObject.cylinder);
     const dragger = domainObject.createDragger(
-      createDraggerPropsMock(domainObject, startRay, focusType, 2) // face=2 is the the top cap of the cylinder.
+      createDraggerPropsMock(domainObject, startRay, focusType, 2) // face=2 is the top cap of the cylinder.
     );
     assert(dragger !== undefined);
     expect(dragger).instanceOf(CylinderDragger);
@@ -63,7 +63,7 @@ describe(CylinderDragger.name, () => {
         expectedCylinder.centerA.add(delta);
         expectedCylinder.centerB.add(delta);
       }
-      // face=2 is the the top cap of the cylinder, face 5 is the base cap.
+      // face=2 is the top cap of the cylinder, face 5 is the base cap.
       const dragger = domainObject.createDragger(
         createDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
       );

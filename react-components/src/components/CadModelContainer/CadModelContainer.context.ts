@@ -14,7 +14,7 @@ export type CadModelContextDependencies = {
   useReveal3DResourcesCount: typeof useReveal3DResourcesCount;
   useReveal3DResourceLoadFailCount: typeof useReveal3DResourceLoadFailCount;
   useApplyCadModelStyling: typeof useApplyCadModelStyling;
-  createCadDomainObject: typeof RevealModelsUtils.addModel;
+  createCadDomainObject: typeof RevealModelsUtils.addCadModel;
   removeCadDomainObject: typeof RevealModelsUtils.remove;
 };
 
@@ -24,7 +24,7 @@ export const defaultCadModelContextDependencies: CadModelContextDependencies = {
   useReveal3DResourcesCount,
   useReveal3DResourceLoadFailCount,
   useApplyCadModelStyling,
-  createCadDomainObject: RevealModelsUtils.addModel.bind(this),
+  createCadDomainObject: RevealModelsUtils.addCadModel.bind(this),
   removeCadDomainObject: RevealModelsUtils.remove.bind(this)
 };
 

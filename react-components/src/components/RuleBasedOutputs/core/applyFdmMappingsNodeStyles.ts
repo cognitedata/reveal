@@ -8,7 +8,7 @@ import {
 import { createRuleStyling } from './createRuleStyling';
 import { Color } from 'three';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type FdmAssetStylingGroup } from '../../Reveal3DResources';
+import { type FdmInstanceStylingGroup } from '../../Reveal3DResources';
 
 export const applyFdmMappingsNodeStyles = (
   treeNodes: FdmInstanceNodeWithConnectionAndProperties[],
@@ -43,7 +43,7 @@ export const applyFdmMappingsNodeStyles = (
 
   ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
 
-  const fdmStylingGroup: FdmAssetStylingGroup = {
+  const fdmStylingGroup: FdmInstanceStylingGroup = {
     fdmAssetExternalIds,
     style: { cad: nodeAppearance, pointcloud: nodeAppearance }
   };

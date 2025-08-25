@@ -35,6 +35,6 @@ export type CoreDmImage360Properties = {
 };
 
 export type CoreDmImage360AnnotationProperties = {
-  polygon: number[];
-  formatVersion: string;
+  polygon?: number[];
+  formatVersion?: string;
 };

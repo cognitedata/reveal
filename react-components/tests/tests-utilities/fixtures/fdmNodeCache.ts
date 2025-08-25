@@ -1,5 +1,5 @@
 import { Mock } from 'moq.ts';
-import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
+import { type FdmCadNodeCache } from '../../../src/components/CacheProvider/cad/FdmCadNodeCache';
 import { type Node3D } from '@cognite/sdk';
 import {
   type ModelRevisionId,
@@ -7,8 +7,10 @@ import {
   type FdmConnectionWithNode
 } from '../../../src/components/CacheProvider/types';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers';
+import { createCadNodeMock } from './cadNode';
+import { createFdmKey } from '../../../src/components/CacheProvider';
 
-const fdmNodeCacheMock = new Mock<FdmNodeCache>()
+const fdmCadNodeCacheMock = new Mock<FdmCadNodeCache>()
   .setup((instance) => instance.getAllMappingExternalIds.bind(instance))
   .returns(
     async (
@@ -26,14 +28,7 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
                 revisionId,
                 treeIndex: 1
               } satisfies FdmCadConnection,
-              cadNode: {
-                id: 1,
-                treeIndex: 1,
-                parentId: 0,
-                depth: 0,
-                name: 'node-name',
-                subtreeSize: 1
-              } satisfies Node3D
+              cadNode: createCadNodeMock()
             } satisfies FdmConnectionWithNode
           ]
         ])
@@ -57,11 +52,11 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
       return modelRevisionIds.map((model) => ({
         modelId: model.modelId,
         revisionId: model.revisionId,
-        mappings: new Map(fdmAssetExternalIds.map((id) => [JSON.stringify(id), [] as Node3D[]]))
+        mappings: new Map(fdmAssetExternalIds.map((id) => [createFdmKey(id), [] as Node3D[]]))
       }));
     }
   );
 
-const fdmNodeCacheContentMock = fdmNodeCacheMock.object();
+const fdmNodeCacheContentMock = fdmCadNodeCacheMock.object();
 
 export { fdmNodeCacheContentMock };

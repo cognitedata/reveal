@@ -29,11 +29,8 @@ export function createSpriteWithText(
   worldHeight: number,
   color: Color,
   bgColor?: Color
-): Sprite | undefined {
+): Sprite {
   const canvas = createCanvasWithText(text, color, bgColor);
-  if (canvas === undefined) {
-    return undefined;
-  }
   return createSprite(canvas, worldHeight);
 }
 
@@ -92,11 +89,7 @@ function createTexture(canvas: HTMLCanvasElement): Texture {
   return texture;
 }
 
-function createCanvasWithText(
-  text: string,
-  color: Color,
-  bgColor?: Color
-): HTMLCanvasElement | undefined {
+function createCanvasWithText(text: string, color: Color, bgColor?: Color): HTMLCanvasElement {
   // https://www.javascripture.com/CanvasRenderingContext2D
   const borderSize = 2;
   const fontSize = 60; // This gives the resolution of the sprite, not real font side.
@@ -104,19 +97,22 @@ function createCanvasWithText(
 
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  if (context === null) {
-    return undefined;
-  }
 
-  // Measure how long the name will be
-  context.font = font;
-  const textWidth = context.measureText(text).width;
+  if (context !== null) {
+    context.font = font;
+  }
+  const textWidth = context === null ? text.length * 10 : context.measureText(text).width;
   const doubleBorderSize = borderSize * 2;
   const width = textWidth + 2 * doubleBorderSize;
   const height = fontSize + doubleBorderSize;
-
-  canvas.width = width;
+  canvas.width = textWidth + 2 * doubleBorderSize;
   canvas.height = height;
+  if (context === null) {
+    // If context is null, we cannot draw anything
+    // This will happen when having unit test in the Views, since the views doesn't assume
+    // there is a browser. It will make the unit test more realistic.
+    return canvas;
+  }
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   // Draw optional rounded rectangle

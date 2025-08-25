@@ -3,7 +3,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
@@ -13,7 +13,7 @@ import {
 import { Vector3Pool } from '@cognite/reveal';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isAbsEqual } from '../../../base/utilities/extensions/mathExtensions';
+import { isAbsEqual } from '../../../base/utilities/extensions/mathUtils';
 
 /**
  * The `CylinderDragger` class represents a utility for dragging and manipulating a cylinder in a 3D space.
@@ -231,10 +231,15 @@ export class CylinderDragger extends BaseDragger {
     if (translation.length() < EPSILON) {
       return false; // Nothing has changed
     }
-    const { cylinder } = this._domainObject;
+
+    const { cylinder, primitiveType } = this._domainObject;
     const originalCylinder = this._originalCylinder;
     cylinder.copy(originalCylinder);
     const { centerA, centerB } = cylinder;
+
+    if (primitiveType === PrimitiveType.HorizontalCylinder) {
+      translation.z = 0;
+    }
 
     if (this._face.face === 2) {
       centerB.add(translation);
@@ -244,6 +249,7 @@ export class CylinderDragger extends BaseDragger {
         .subVectors(centerA, centerB)
         .normalize()
         .multiplyScalar(originalCylinder.height);
+
       centerB.subVectors(centerA, axis);
     } else {
       centerA.add(translation);

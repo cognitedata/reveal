@@ -1,12 +1,15 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
@@ -29,6 +32,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   protected constructor(primitiveType: PrimitiveType = PrimitiveType.Box) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -44,6 +48,8 @@ export abstract class BoxDomainObject extends SolidDomainObject {
         return { key: 'VERTICAL_AREA' };
       case PrimitiveType.Box:
         return { key: 'VOLUME' };
+      case PrimitiveType.Point:
+        return { key: 'POINT' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -67,8 +73,8 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    const { primitiveType } = this;
     const isFinished = this.focusType !== FocusType.Pending;
+    const { primitiveType } = this;
     const { box } = this;
     const { size } = box;
 
@@ -159,8 +165,12 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // VIRTUAL METHODS
   // ==================================================
 
-  public canRotateComponent(component: number): boolean {
-    return component === 2;
+  public canMoveCorners(): boolean {
+    return true;
+  }
+
+  public canRotateComponent(_component: number): boolean {
+    return true;
   }
 
   // ==================================================
@@ -170,15 +180,16 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public get area(): number {
     const { box } = this;
     switch (this.primitiveType) {
-      case PrimitiveType.HorizontalArea:
-        return box.horizontalArea;
+      case PrimitiveType.Point:
+        return 0;
       case PrimitiveType.VerticalArea:
         return box.verticalArea;
-      case PrimitiveType.Box: {
+      case PrimitiveType.HorizontalArea:
+        return box.horizontalArea;
+      case PrimitiveType.Box:
         return box.area;
-      }
       default:
-        throw new Error('Unknown MeasureType type');
+        throw new Error(`Area calculation not implemented for : ${this.primitiveType}`);
     }
   }
 
@@ -186,3 +197,10 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     this.box.expandBoundingBox(boundingBox);
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.Point,
+  PrimitiveType.VerticalArea,
+  PrimitiveType.HorizontalArea,
+  PrimitiveType.Box
+];

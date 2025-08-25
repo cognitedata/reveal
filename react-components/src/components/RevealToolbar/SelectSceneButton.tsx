@@ -32,7 +32,7 @@ export const SelectSceneButton = ({
       onSceneChange(scene);
       setSceneName(scene?.name);
     },
-    [setSceneName]
+    [setSceneName, onSceneChange]
   );
 
   // Don't display anything if there are no scenes

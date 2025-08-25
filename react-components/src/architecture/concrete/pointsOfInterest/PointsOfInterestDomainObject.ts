@@ -1,5 +1,5 @@
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
@@ -13,7 +13,7 @@ import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 import { DefaultNodeAppearance } from '@cognite/reveal';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { getRenderTarget, getRoot } from '../../base/domainObjects/getRoot';
 
 const SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL = Symbol(

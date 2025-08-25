@@ -35,7 +35,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
     expect(testCommand.value).toBe(expectedValue);
     expect(button.textContent).toBe(expectedValue);
 
-    // Check that the the option menu is closed
+    // Check that the option menu is closed
 
     const menuItems = screen.queryAllByRole('menuitem'); // this doesn't crash when nothing found
     expect(menuItems).toHaveLength(0);

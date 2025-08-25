@@ -1,6 +1,6 @@
 import {
-  type FdmAssetStylingGroup,
-  type AssetStylingGroup,
+  type FdmInstanceStylingGroup,
+  type ClassicAssetStylingGroup,
   type Image360AssetStylingGroup,
   type InstanceStylingGroup,
   type Image360DMAssetStylingGroup
@@ -8,14 +8,14 @@ import {
 
 export function isFdmAssetStylingGroup(
   instanceGroup: InstanceStylingGroup
-): instanceGroup is FdmAssetStylingGroup {
-  return (instanceGroup as FdmAssetStylingGroup).fdmAssetExternalIds !== undefined;
+): instanceGroup is FdmInstanceStylingGroup {
+  return (instanceGroup as FdmInstanceStylingGroup).fdmAssetExternalIds !== undefined;
 }
 
 export function isClassicAssetMappingStylingGroup(
   instanceGroup: InstanceStylingGroup
-): instanceGroup is AssetStylingGroup {
-  return (instanceGroup as AssetStylingGroup).assetIds !== undefined;
+): instanceGroup is ClassicAssetStylingGroup {
+  return (instanceGroup as ClassicAssetStylingGroup).assetIds !== undefined;
 }
 
 export function isImage360AssetStylingGroup(
@@ -38,6 +38,6 @@ export function isImage360AssetMappingStylingGroup(
 
 export function isAssetMappingStylingGroup(
   instanceGroup: InstanceStylingGroup
-): instanceGroup is FdmAssetStylingGroup | AssetStylingGroup {
+): instanceGroup is FdmInstanceStylingGroup | ClassicAssetStylingGroup {
   return isClassicAssetMappingStylingGroup(instanceGroup) || isFdmAssetStylingGroup(instanceGroup);
 }

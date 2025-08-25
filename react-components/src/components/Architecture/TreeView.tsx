@@ -1,7 +1,7 @@
 import { type ReactElement, type FC } from 'react';
 import { type IconProps } from '@cognite/cogs.js';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { type IconName } from '../../architecture/base/utilities/IconName';
+import { type IconName } from '../../architecture/base/utilities/types';
 import { IconFactory } from './Factories/IconFactory';
 
 import { AdvancedTreeView, type TreeNodeType } from '../../advanced-tree-view';

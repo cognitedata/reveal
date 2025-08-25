@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { type RegularGrid2 } from './RegularGrid2';
-import { isAbsEqual, isBetween } from '../../../base/utilities/extensions/mathExtensions';
+import { isAbsEqual, isBetween } from '../../../base/utilities/extensions/mathUtils';
 
 export class ContouringService {
   // ==================================================

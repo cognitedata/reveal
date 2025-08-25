@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand';
-import { isEmpty } from '../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { isEmpty } from '../utilities/translation/TranslateInput';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { count } from '../utilities/extensions/arrayExtensions';
+import { count } from '../utilities/extensions/arrayUtils';
+import { type CommandUpdateDelegate } from '../commands/BaseCommand';
 
 describe(SetFlexibleControlsTypeCommand.name, () => {
   let commands: SetFlexibleControlsTypeCommand[];
@@ -56,15 +57,15 @@ describe(SetFlexibleControlsTypeCommand.name, () => {
 
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.Orbit);
 
-    const mock = vi.fn();
-    command.addEventListener(mock);
+    const mockEventListener = vi.fn<CommandUpdateDelegate>();
+    command.addEventListener(mockEventListener);
 
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.FirstPerson);
-    expect(mock).toHaveBeenCalledOnce();
+    expect(mockEventListener).toHaveBeenCalledOnce();
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.FirstPerson);
-    expect(mock).toHaveBeenCalledOnce(); // No change
+    expect(mockEventListener).toHaveBeenCalledOnce(); // No change
     renderTarget.revealSettingsController.cameraControlsType(FlexibleControlsType.Orbit);
-    expect(mock).toHaveBeenCalledTimes(2);
+    expect(mockEventListener).toHaveBeenCalledTimes(2);
   });
 
   function getCheckedCount(): number {

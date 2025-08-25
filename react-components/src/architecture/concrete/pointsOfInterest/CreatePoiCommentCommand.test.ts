@@ -6,7 +6,7 @@ import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { waitFor } from '@testing-library/react';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
-import { translate } from '../../base/utilities/translateUtils';
+import { translate } from '../../base/utilities/translation/translateUtils';
 
 const TEST_POINT_OF_INTEREST = createTestPointOfInterest();
 

@@ -127,6 +127,22 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
   }
 
   /**
+   * Retrieves all points from the point cloud that are contained within the specified bounding box.
+   * @param box The THREE.Box3 bounding box used to filter points, defined in local model coordinates.
+   * @returns Array of THREE.Vector3 points that are located within the provided bounding box in local model coordinates.
+   * @example
+   * ```js
+   * const boundingBox = new THREE.Box3(new THREE.Vector3(-10, -10, -10), new THREE.Vector3(10, 10, 10));
+   * const pointsInBox = model.getPointsByBoundingBox(boundingBox);
+   * console.log(`Found ${pointsInBox.length} points in the bounding box`);
+   * ```
+   */
+
+  getPointsByBoundingBox(box: THREE.Box3): THREE.Vector3[] {
+    return this.pointCloudNode.getSubtreePointsByBox(box);
+  }
+
+  /**
    * Map point from CDF to model space, taking the model's custom transformation into account
    * @param point Point to compute transformation from
    * @param out Optional pre-allocated point

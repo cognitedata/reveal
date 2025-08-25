@@ -1,5 +1,5 @@
 import { Box3, Vector3 } from 'three';
-import { getHorizontalCrossProduct } from '../extensions/vectorExtensions';
+import { getHorizontalCrossProduct } from '../extensions/vectorUtils';
 
 export class Vector3ArrayUtils {
   public static getSignedHorizontalArea(polygon: Vector3[]): number {

@@ -3,7 +3,7 @@ import { Vector3 } from 'three';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ANNOTATION_STATUSES } from './types';
 import {

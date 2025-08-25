@@ -1,7 +1,7 @@
 import { Vector2 } from 'three';
 import { type Range3 } from '../../../base/utilities/geometry/Range3';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
-import { getRandomGaussian } from '../../../base/utilities/extensions/mathExtensions';
+import { getRandomGaussian } from '../../../base/utilities/extensions/mathUtils';
 import { RegularGrid2 } from './RegularGrid2';
 
 export function createFractalRegularGrid2(

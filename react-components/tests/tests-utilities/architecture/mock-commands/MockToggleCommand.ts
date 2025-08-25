@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
 
 export class MockToggleCommand extends RenderTargetCommand {

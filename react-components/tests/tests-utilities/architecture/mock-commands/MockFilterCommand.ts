@@ -3,7 +3,7 @@ import {
   BaseFilterCommand,
   BaseFilterItemCommand
 } from '../../../../src/architecture/base/commands/BaseFilterCommand';
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 
 export class MockFilterCommand extends BaseFilterCommand {
   // ==================================================

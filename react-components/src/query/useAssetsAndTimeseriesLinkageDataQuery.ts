@@ -43,9 +43,11 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
 
   return useQuery({
     queryKey: [
-      queryKeys.timeseriesLinkedToAssets(),
-      timeseriesExternalIds,
-      relationshipResourceTypes
+      queryKeys.assetsAndTimeseriesLinkageData(
+        timeseriesExternalIds,
+        relationshipResourceTypes,
+        assetNodes.map((asset) => asset.externalId).filter(isDefined)
+      )
     ],
     queryFn: async () => {
       const externalIds: ExternalId[] = timeseriesExternalIds.map((externalId) => {

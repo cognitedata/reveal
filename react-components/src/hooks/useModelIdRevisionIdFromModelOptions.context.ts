@@ -1,16 +1,16 @@
 import { createContext } from 'react';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { useQueriedAddModelOptions } from './useQueriedAddModelOptions';
+import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
 
 export type ModelIdRevisionIdFromModelOptionsDependencies = {
-  useQueriedAddModelOptions: typeof useQueriedAddModelOptions;
   useFdmSdk: typeof useFdmSdk;
+  getModelIdAndRevisionIdFromExternalId: typeof getModelIdAndRevisionIdFromExternalId;
 };
 
 export const defaultModelIdRevisionIdFromModelOptionsDependencies: ModelIdRevisionIdFromModelOptionsDependencies =
   {
-    useQueriedAddModelOptions,
-    useFdmSdk
+    useFdmSdk,
+    getModelIdAndRevisionIdFromExternalId
   };
 
 export const ModelIdRevisionIdFromModelOptionsContext =

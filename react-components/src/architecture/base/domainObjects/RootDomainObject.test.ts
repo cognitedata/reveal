@@ -5,7 +5,7 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { DomainObject } from './DomainObject';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { Changes } from '../domainObjectsHelpers/Changes';
 
 describe(RootDomainObject.name, () => {

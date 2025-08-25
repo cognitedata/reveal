@@ -1,4 +1,4 @@
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { CommonRenderStyle } from '../renderStyles/CommonRenderStyle';
 import { InstanceCommand } from './InstanceCommand';

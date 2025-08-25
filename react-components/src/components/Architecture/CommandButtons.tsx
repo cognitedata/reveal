@@ -1,4 +1,4 @@
-import { useMemo, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { DropdownButton } from './DropdownButton';
@@ -18,6 +18,7 @@ import { InputField } from './InputField';
 import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
 import { CustomBaseInputCommand } from '../../architecture/base/commands/CustomBaseInputCommand';
 import { CustomInputField } from './CustomInputField';
+import { type UniqueId } from '../../architecture/base/utilities/types';
 
 export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {
@@ -56,7 +57,7 @@ export function CreateButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
   prop: ButtonProp
 ): ReactElement {
-  const command = useMemo(commandConstructor, []);
+  const command = commandConstructor();
   return createButton(command, prop.toolbarPlacement ?? 'left');
 }
 
@@ -82,9 +83,9 @@ export const CommandButtons = ({
   );
 };
 
-function getKey(command: BaseCommand | undefined, index: number): number {
+function getKey(command: BaseCommand | undefined, index: number): UniqueId {
   if (command === undefined) {
-    return -index;
+    return `undefined${index.toString()}`;
   }
   return command.uniqueId;
 }

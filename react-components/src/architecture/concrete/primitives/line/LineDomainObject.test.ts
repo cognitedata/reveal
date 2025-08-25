@@ -1,6 +1,6 @@
 import { assert, describe, expect, test } from 'vitest';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { LineDomainObject } from './LineDomainObject';
@@ -10,7 +10,7 @@ import { expectEqualBox3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/vectorUtils';
 import { LineRenderStyle } from './LineRenderStyle';
 
 describe(LineDomainObject.name, () => {
@@ -75,7 +75,7 @@ describe(LineDomainObject.name, () => {
   });
 
   test('should be cloned', () => {
-    const domainObject = createLineDomainObject(PrimitiveType.Box);
+    const domainObject = createLineDomainObject(PrimitiveType.Polygon);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureLineDomainObject);
