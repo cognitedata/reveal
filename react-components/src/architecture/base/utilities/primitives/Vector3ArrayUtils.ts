@@ -30,6 +30,17 @@ export class Vector3ArrayUtils {
     return boundingBox.getCenter(new Vector3());
   }
 
+  public static getCenterOfMass(points: Vector3[]): Vector3 {
+    const result = new Vector3();
+    if (points.length === 0) {
+      return result;
+    }
+    for (const point of points) {
+      result.add(point);
+    }
+    return result.divideScalar(points.length);
+  }
+
   public static getBoundingBox(points: Vector3[]): Box3 | undefined {
     if (points.length === 0) {
       return undefined;

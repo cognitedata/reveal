@@ -91,6 +91,7 @@
     "happy-dom": "^17.0.0",
     "locize-cli": "^8.0.1",
     "madge": "^8.0.0",
+    "ml-matrix": "^6.12.1",
     "moq.ts": "10.0.8",
     "playwright": "1.54.2",
     "prettier": "^3.2.5",

@@ -6,6 +6,7 @@ import {
   forceAngleAround0,
   forceBetween0AndPi,
   forceBetween0AndTwoPi,
+  getRandomFloatBetween,
   getRandomGaussian,
   getRandomInt,
   getRandomIntByMax,
@@ -21,6 +22,7 @@ import {
   roundIncrement,
   square
 } from './mathUtils';
+import { Range1 } from '../geometry/Range1';
 
 describe('mathUtils', () => {
   describe(isZero.name, () => {
@@ -209,6 +211,14 @@ describe('mathUtils', () => {
       expect(isInteger(value)).toBe(true);
       expect(value).toBeGreaterThanOrEqual(0);
       expect(value).toBeLessThan(exclusiveMax);
+    }
+  });
+
+  test('should get a random float number between min and max', () => {
+    const range = new Range1(42, 66);
+    for (let i = 0; i < 10; i++) {
+      const value = getRandomFloatBetween(range.min, range.max);
+      expect(range.isInside(value)).toBe(true);
     }
   });
 
