@@ -215,11 +215,15 @@ describe('mathUtils', () => {
   });
 
   test('should get a random float number between min and max', () => {
+    const NUMBER_OF_UNIQUE_NUMBERS = 100;
     const range = new Range1(42, 66);
+    const uniqueNumbers = new Set<number>();
     for (let i = 0; i < 10; i++) {
       const value = getRandomFloatBetween(range.min, range.max);
       expect(range.isInside(value)).toBe(true);
+      uniqueNumbers.add(value);
     }
+    expect(uniqueNumbers.size).toBe(NUMBER_OF_UNIQUE_NUMBERS);
   });
 
   test('should get random numbers from gaussian distribution', () => {
