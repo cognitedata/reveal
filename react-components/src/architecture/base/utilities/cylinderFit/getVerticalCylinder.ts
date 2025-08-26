@@ -34,7 +34,7 @@ export function getVerticalCylinder(points: Vector3[], matrix: Matrix4): Cylinde
   const center = new Vector3(x[0], x[1], zRange.center);
   const radius = Math.sqrt(horizontalLengthSq(center) - x[2]);
   if (radius <= 0) {
-    return undefined;
+    return undefined; // Should be impossible, but you never know...
   }
   const height = Math.max(zRange.delta, radius / 100); // Just give a small height if all points are in a plane
   return new Cylinder(center, UP_VECTOR, radius, height);

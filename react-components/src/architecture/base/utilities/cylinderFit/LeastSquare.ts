@@ -64,9 +64,6 @@ export class LeastSquare {
  * @throws {Error} If the provided matrix is not square (quadratic).
  */
 function makeSymmetric(matrix: Matrix): void {
-  if (!matrix.isSquare()) {
-    throw new Error('The Matrix must be quadratic.');
-  }
   for (let row = 1; row < matrix.rows; row++) {
     for (let col = 0; col < row; col++) {
       matrix.set(col, row, matrix.get(row, col));

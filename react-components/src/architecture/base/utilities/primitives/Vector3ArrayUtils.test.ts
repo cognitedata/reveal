@@ -12,7 +12,7 @@ describe(Vector3ArrayUtils.name, () => {
     new Vector3(2, 3, 0),
     new Vector3(0, 3, 0)
   ];
-  const emptyPolygon: Vector3[] = [];
+  const emptyPoints: Vector3[] = [];
 
   test('should calculate area', () => {
     const actualArea = Vector3ArrayUtils.getSignedHorizontalArea(polygon);
@@ -45,22 +45,22 @@ describe(Vector3ArrayUtils.name, () => {
   });
 
   test('should calculate area on empty polygon', () => {
-    const actualArea = Vector3ArrayUtils.getSignedHorizontalArea(emptyPolygon);
+    const actualArea = Vector3ArrayUtils.getSignedHorizontalArea(emptyPoints);
     expect(actualArea).toBe(0);
   });
 
   test('should calculate center on empty points', () => {
-    const actualCenter = Vector3ArrayUtils.getCenter(emptyPolygon);
+    const actualCenter = Vector3ArrayUtils.getCenter(emptyPoints);
     expect(actualCenter).toBeUndefined();
   });
 
   test('should calculate center of mass on empty points', () => {
-    const actualCenter = Vector3ArrayUtils.getCenter(emptyPolygon);
+    const actualCenter = Vector3ArrayUtils.getCenterOfMass(emptyPoints);
     expect(actualCenter).toBeUndefined();
   });
 
   test('should calculate bounding box on empty points', () => {
-    const actualBoundingBox = Vector3ArrayUtils.getBoundingBox(emptyPolygon);
+    const actualBoundingBox = Vector3ArrayUtils.getBoundingBox(emptyPoints);
     expect(actualBoundingBox).toBeUndefined();
   });
 });
