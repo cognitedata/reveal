@@ -37,8 +37,8 @@ describe(Cylinder.name, () => {
     centerB.applyMatrix4(matrix);
 
     // Check that the cylinder now is aligned with Z axis and centered at origin
-    // expectEqualVector3(center, new Vector3(0, 0, 0));
-    // expectEqualVector3(centerA, new Vector3(0, 0, +expectedHeight / 2));
-    // expectEqualVector3(centerB, new Vector3(0, 0, -expectedHeight / 2));
+    expectEqualVector3(center, new Vector3(0, 0, 0));
+    expectEqualVector3(centerA, new Vector3(0, 0, +expectedHeight / 2));
+    expectEqualVector3(centerB, new Vector3(0, 0, -expectedHeight / 2));
   });
 });
