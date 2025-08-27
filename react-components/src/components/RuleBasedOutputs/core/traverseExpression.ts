@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type Expression, type TriggerTypeData } from '../types';
 import { checkBooleanExpressionStatement } from './checkBooleanExpressionStatement';
 import { checkDatetimeExpressionStatement } from './checkDatetimeExpressionStatement';

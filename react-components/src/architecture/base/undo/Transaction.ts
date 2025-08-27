@@ -1,10 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
+import { type UniqueId } from '../utilities/types';
 
 export abstract class Transaction {
   // ==================================================
@@ -12,8 +9,8 @@ export abstract class Transaction {
   // ==================================================
 
   public readonly changed: symbol;
-  public readonly uniqueId: number;
-  private readonly _parentUniqueId?: number;
+  public readonly uniqueId: UniqueId;
+  private readonly _parentUniqueId?: UniqueId;
   public readonly timeStamp = Date.now();
 
   // ==================================================

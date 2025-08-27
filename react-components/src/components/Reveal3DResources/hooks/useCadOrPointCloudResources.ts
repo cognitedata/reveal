@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useMemo } from 'react';
 import { is360ImageAddOptions } from '../typeGuards';
 import {

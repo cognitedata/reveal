@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import {
   type CursorResponse,
   type Model3D,

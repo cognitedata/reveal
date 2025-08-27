@@ -1,21 +1,18 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { useModelHandlers } from './useModelHandlers';
 import { renderHook } from '@testing-library/react';
 import {
   viewerImage360CollectionsMock,
   viewerMock,
   viewerModelsMock
-} from '../../../../../tests/tests-utilities/fixtures/viewer';
+} from '#test-utils/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
-import { cadMock, createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
-import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
-import { wrapper } from '../../../../../tests/tests-utilities/fixtures/wrapper';
+import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
+import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
+import { wrapper } from '#test-components/fixtures/wrapper';
 import { type LayersUrlStateParam } from '../types';
 import { type Dispatch, type SetStateAction } from 'react';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { type use3DModelName } from '../../../../query';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { Mock } from 'moq.ts';
@@ -23,10 +20,6 @@ import { Mock } from 'moq.ts';
 const use3DModelNameMock = vi.fn<typeof use3DModelName>();
 
 describe(useModelHandlers.name, () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   test('returns model handlers and update callback', () => {
     const mockNameQueryResult = createUseQueryModelNameResult(['model0', 'model1']);
     use3DModelNameMock.mockReturnValue(mockNameQueryResult);

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { ColorPaletteIcon, Flex, LoaderIcon } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { type ReactElement } from 'react';

@@ -1,11 +1,6 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   CadModelContainer,
-  type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
   useCameraNavigation,
@@ -22,6 +17,7 @@ import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 import { type AddModelOptions } from '@cognite/reveal';
 import { LayersButtonStrip } from '../src/components/RevealToolbar/LayersButton/components/LayersButtonsStrip';
+import { type QualitySettings } from '../src/architecture';
 
 const meta = {
   title: 'Example/Toolbar',

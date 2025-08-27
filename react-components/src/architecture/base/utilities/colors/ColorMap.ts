@@ -1,19 +1,9 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type ColorInterpolation } from './ColorInterpolation';
 import { type Color } from 'three';
 import { ColorMapItem } from './ColorMapItem';
-import { compare } from '../extensions/mathExtensions';
+import { compare } from '../extensions/mathUtils';
 import { ColorMapType } from './ColorMapType';
-import {
-  BLACK_COLOR,
-  MAX_BYTE,
-  WHITE_COLOR,
-  fractionToByte,
-  getMixedColor
-} from './colorExtensions';
+import { BLACK_COLOR, MAX_BYTE, WHITE_COLOR, fractionToByte, getMixedColor } from './colorUtils';
 import { type Range1 } from '../geometry/Range1';
 
 export const BYTE_PR_COLOR = 4; // RGBA

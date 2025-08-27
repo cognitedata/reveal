@@ -207,9 +207,17 @@ export class RevealManager {
     }
   }
 
+  public getResolutionThreshold(): number {
+    return this._resizeHandler.getStoppedCameraResolutionThreshold();
+  }
+
   public setResolutionThreshold(threshold: number): void {
     this._resizeHandler.setResolutionThreshold(threshold);
     this.requestRedraw();
+  }
+
+  public getMovingCameraResolutionFactor(): number {
+    return this._resizeHandler.getMovingCameraResolutionFactor();
   }
 
   public setMovingCameraResolutionFactor(factor: number): void {

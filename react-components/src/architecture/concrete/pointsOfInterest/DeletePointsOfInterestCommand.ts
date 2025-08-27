@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type ButtonType } from '../../../components/Architecture/types';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName, type ButtonType } from '../../base/utilities/types';
 
 export class DeleteSelectedPointsOfInterestCommand<
   PoiIdType

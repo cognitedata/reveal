@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { useCallback, useEffect } from 'react';
 
 import { type TreeNodeType } from '../model/tree-node-type';

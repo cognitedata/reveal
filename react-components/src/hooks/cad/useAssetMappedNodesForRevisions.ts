@@ -1,16 +1,13 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type CadModelOptions } from '../../components';
-import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
-import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { type ModelWithAssetMappings } from './modelWithAssetMappings';
+import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 import { useIsCoreDmOnly } from '../useIsCoreDmOnly';
 
 export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
-  const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
+  const assetMappingCache = useClassicCadAssetMappingCache();
 
   const isCoreDmOnly = useIsCoreDmOnly();
 
@@ -24,7 +21,7 @@ export const useAssetMappedNodesForRevisions = (
     queryFn: async () => {
       const fetchPromises = cadModels.map(
         async (model) =>
-          await assetMappingAndNode3DCache
+          await assetMappingCache
             .getAssetMappingsForModel(model.modelId, model.revisionId)
             .then((assetMappings) => ({ model, assetMappings }))
       );

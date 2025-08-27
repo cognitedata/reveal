@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import {
   type QueryEdgeTableExpressionV3,
   type QueryNodeTableExpressionV3,
@@ -117,10 +114,13 @@ function getObject3dRelation(visualizableTableName: string): QueryTableExpressio
   };
 }
 
+// We want to preserve most of the typing of the object returned here,
+// as it gives us better types in the result of the query call later on
+// Specifying a type here would either mean losing valuable type information
+// or an enourmous type
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createCheck3dConnectedEquipmentQuery(
   initialNodes: DmsUniqueIdentifier[],
-  initialDirectNodes: DmsUniqueIdentifier[],
   revisionRefs: DmsUniqueIdentifier[]
 ) {
   return {
@@ -137,18 +137,17 @@ export function createCheck3dConnectedEquipmentQuery(
           }
         }
       },
-      directly_referenced_nodes: {
-        nodes: {
-          filter: {
-            and: [
-              hasIdFilter(initialDirectNodes),
-              {
-                hasData: [COGNITE_VISUALIZABLE_SOURCE]
-              }
-            ]
-          }
-        }
-      },
+      initial_nodes_object_3ds: getObject3dRelation('initial_nodes'),
+      initial_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('initial_nodes_object_3ds'),
+      initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
+      initial_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
+        'initial_nodes_object_3ds'
+      ),
+      initial_nodes_360_images: getRevisionImage360Images(
+        'initial_edges_360_image_annotations',
+        revisionRefs
+      ),
+
       indirectly_referenced_edges: {
         edges: {
           from: 'initial_nodes',
@@ -163,25 +162,6 @@ export function createCheck3dConnectedEquipmentQuery(
           from: 'indirectly_referenced_edges'
         }
       },
-      initial_nodes_object_3ds: getObject3dRelation('initial_nodes'),
-      initial_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('initial_nodes_object_3ds'),
-      initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
-      initial_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
-        'initial_nodes_object_3ds'
-      ),
-      initial_nodes_360_images: getRevisionImage360Images(
-        'initial_edges_360_image_annotations',
-        revisionRefs
-      ),
-      direct_nodes_object_3ds: getObject3dRelation('directly_referenced_nodes'),
-      direct_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('direct_nodes_object_3ds'),
-      direct_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('direct_nodes_object_3ds'),
-      direct_edges_360_image_annotations:
-        getRevisionImage360AnnotationEdges('direct_nodes_object_3ds'),
-      direct_nodes_360_images: getRevisionImage360Images(
-        'direct_edges_360_image_annotations',
-        revisionRefs
-      ),
       indirect_nodes_object_3ds: getObject3dRelation('indirectly_referenced_nodes'),
       indirect_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('indirect_nodes_object_3ds'),
       indirect_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes(
@@ -202,12 +182,7 @@ export function createCheck3dConnectedEquipmentQuery(
       initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
       initial_edges_360_image_annotations: {},
       initial_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
-      direct_nodes_cad_nodes: {
-        sources: cadNodeSourceWithProperties
-      },
-      direct_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-      direct_edges_360_image_annotations: {},
-      direct_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
+
       indirect_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },

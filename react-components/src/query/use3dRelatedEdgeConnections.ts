@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
@@ -23,7 +19,7 @@ export function use3dRelatedEdgeConnections(
       fdmId?.space
     ],
     queryFn: async () => {
-      if (fdmId === undefined) {
+      if (fdmId === undefined || fdmDataProvider === undefined) {
         return [];
       }
 

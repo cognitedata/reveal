@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactNode, type ReactElement, useRef, useEffect } from 'react';
 import { RevealKeepAliveContext } from './RevealKeepAliveContext';
 import { type SceneIdentifiers } from '../SceneContainer/sceneTypes';

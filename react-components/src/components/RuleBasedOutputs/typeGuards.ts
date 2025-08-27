@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type FdmRuleTrigger, type MetadataRuleTrigger, type TimeseriesRuleTrigger } from './types';
 
 export const isMetadataTrigger = (

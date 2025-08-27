@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AddModelOptions } from '@cognite/reveal';
 import { type FdmSDK, type InstanceFilter, type NodeItem, type Source } from '../FdmSDK';
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
@@ -14,10 +10,10 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { type Transaction } from '../../base/undo/Transaction';
 import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';

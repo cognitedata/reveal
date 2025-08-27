@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type DataTexture,
   DoubleSide,
@@ -24,7 +20,7 @@ import {
 } from '../../base/utilities/colors/create1DTexture';
 import { type TerrainRenderStyle } from './TerrainRenderStyle';
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
-import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
+import { WHITE_COLOR } from '../../base/utilities/colors/colorUtils';
 import { getColorMap } from '../../base/utilities/colors/colorMaps';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -101,12 +97,8 @@ export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
     if (range.isEmpty) {
       return new Box3().makeEmpty();
     }
-    const boundingBox = new Box3();
-    boundingBox.min.set(range.x.min, range.y.min, range.z.min);
-    boundingBox.max.set(range.x.max, range.y.max, range.z.max);
-
-    // Convert to viewer space
-    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    const boundingBox = range.getBox();
+    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION); // Convert to viewer space
     return boundingBox;
   }
 

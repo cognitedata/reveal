@@ -1,8 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { type PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { type PointCloudDomainObject } from './PointCloudDomainObject';
 import { Box3 } from 'three';
 import { ThreeView } from '../../../base/views/ThreeView';
@@ -15,11 +10,7 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get style(): PointCloudRenderStyle {
-    return super.style as PointCloudRenderStyle;
-  }
-
-  private get model(): PointCloud | undefined {
+  private get model(): PointCloud {
     const domainObject = this.domainObject;
     return domainObject.model;
   }
@@ -37,18 +28,12 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
 
   public override onShow(): void {
     const pointCloud = this.model;
-    if (pointCloud === undefined) {
-      return;
-    }
     super.onShow();
     pointCloud.visible = true;
   }
 
   public override onHide(): void {
     const pointCloud = this.model;
-    if (pointCloud === undefined) {
-      return;
-    }
     pointCloud.visible = false;
     super.onHide();
   }
@@ -59,9 +44,6 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
 
   protected override calculateBoundingBox(): Box3 {
     const pointCloud = this.model;
-    if (pointCloud === undefined) {
-      return new Box3().makeEmpty();
-    }
     const boundingBox = new Box3();
     return pointCloud.getModelBoundingBox(boundingBox);
   }

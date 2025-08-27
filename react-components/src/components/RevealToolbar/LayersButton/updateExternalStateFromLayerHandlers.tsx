@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Dispatch, type SetStateAction } from 'react';
 import { type LayersUrlStateParam, type ModelLayerHandlers } from './types';
 

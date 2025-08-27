@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, LayersIcon, Tooltip } from '@cognite/cogs.js';
@@ -23,6 +19,7 @@ export const LayersButton = ({
   defaultLayerConfiguration
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
+
   const { modelLayerHandlers, updateCallback, ModelLayerSelection } = useLayersButtonViewModel(
     setExternalLayersState,
     defaultLayerConfiguration,
@@ -31,11 +28,7 @@ export const LayersButton = ({
 
   return (
     <>
-      <SelectPanel
-        placement="right"
-        appendTo={'parent'}
-        hideOnOutsideClick
-        offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
+      <SelectPanel placement="right" hideOnOutsideClick offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
         <SelectPanel.Trigger>
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}

@@ -1,11 +1,9 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { PointColorType } from '@cognite/reveal';
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
+import { PointCloudDomainObject } from '../../../concrete/reveal/pointCloud/PointCloudDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 const DEFAULT_OPTIONS: PointColorType[] = [
   PointColorType.Rgb,
@@ -36,7 +34,12 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.getPointClouds().next().value !== undefined;
+    return this.rootDomainObject.getDescendantByType(PointCloudDomainObject) !== undefined;
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.settingsController.pointColorType);
   }
 }
 
@@ -55,18 +58,11 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    // Let the first PointCloud decide the color type
-    const pointCloud = this.renderTarget.getPointClouds().next().value;
-    if (pointCloud === undefined) {
-      return false;
-    }
-    return pointCloud.pointColorType === this._value;
+    return this.settingsController.pointColorType() === this._value;
   }
 
   public override invokeCore(): boolean {
-    for (const pointCloud of this.renderTarget.getPointClouds()) {
-      pointCloud.pointColorType = this._value;
-    }
+    this.settingsController.pointColorType(this._value);
     return true;
   }
 }

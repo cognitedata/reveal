@@ -1,29 +1,30 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { Image360AnnotationCreator } from './Image360AnnotationCreator';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { Image360AnnotationSelectTool } from './Image360AnnotationSelectTool';
-import { EDIT_WITHOUT_IMAGE } from './constants';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type Vector3 } from 'three';
+import assert from 'assert';
 
 export class Image360AnnotationCreateTool extends PrimitiveEditTool {
+  private readonly _mustBeInside360Image: boolean;
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor() {
+  public constructor(mustBeInside360Image = true) {
     super(PrimitiveType.Polygon);
+    this._mustBeInside360Image = mustBeInside360Image;
   }
 
   // ==================================================
@@ -41,7 +42,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   }
 
   public override get isEnabled(): boolean {
-    return EDIT_WITHOUT_IMAGE ? true : this.renderTarget.isInside360Image;
+    return this._mustBeInside360Image ? this.renderTarget.isInside360Image : true;
   }
 
   public override update(): void {
@@ -127,7 +128,23 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   // ==================================================
 
   protected override createCreator(): BaseCreator | undefined {
-    return new Image360AnnotationCreator(this);
+    const imageId: DmsUniqueIdentifier | string | undefined = this._mustBeInside360Image
+      ? this.renderTarget.active360ImageId
+      : 'NotConnectedToImageId';
+    assert(imageId !== undefined, 'Image360AnnotationCreator: image360Id is undefined');
+
+    const domainObject = new Image360AnnotationDomainObject(imageId);
+    domainObject.center.copy(getCameraPositionInCDFCoordinates(this.renderTarget));
+    return new Image360AnnotationCreator(domainObject);
+
+    function getCameraPositionInCDFCoordinates(renderTarget: RevealRenderTarget): Vector3 {
+      // Get the camera position in CDF coordinates
+      const { position } = renderTarget.cameraManager.getCameraState();
+      assert(position !== undefined, 'Camera position unknown');
+
+      const center = position.clone();
+      return center.applyMatrix4(renderTarget.fromViewerMatrix);
+    }
   }
 
   protected override getOrCreateParent(): DomainObject {
@@ -148,7 +165,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
 
   private setSelectTool(): void {
     if (this.renderTarget.commandsController.setActiveToolByType(Image360AnnotationSelectTool)) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 }

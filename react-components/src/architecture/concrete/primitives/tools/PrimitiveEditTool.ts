@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type CustomObjectIntersection } from '@cognite/reveal';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -10,7 +6,6 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BaseEditTool } from '../../../base/commands/BaseEditTool';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -65,7 +60,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   public override onEscapeKey(): void {
     const wasSelectMode = this.isSelectMode;
     this.escape();
-    CommandsUpdater.update(this.renderTarget);
+    this._renderTarget?.updateAllCommands();
     if (wasSelectMode) {
       super.onEscapeKey();
     }
@@ -287,7 +282,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return false;
     }
     this.primitiveType = this._defaultPrimitiveType;
-    CommandsUpdater.update(this.renderTarget);
+    this._renderTarget?.updateAllCommands();
     return true;
   }
 

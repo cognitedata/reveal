@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactElement, type ReactNode } from 'react';
 import { type ModelHandler } from '../ModelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';

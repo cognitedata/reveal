@@ -408,17 +408,29 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
+   * Get resolution options that are set on the viewer. This includes
+   * settings for max resolution and limiting resolution when moving the camera.
+   * @returns Options Options that are applied.
+   */
+  getResolutionOptions(): ResolutionOptions {
+    return {
+      maxRenderResolution: this.revealManager.getResolutionThreshold(),
+      movingCameraResolutionFactor: this.revealManager.getMovingCameraResolutionFactor()
+    };
+  }
+
+  /**
    * Set options to control resolution of the viewer. This includes
    * settings for max resolution and limiting resolution when moving the camera.
    * @param options Options to apply.
    */
   setResolutionOptions(options: ResolutionOptions): void {
     if (options.maxRenderResolution) {
-      this._revealManagerHelper.revealManager.setResolutionThreshold(options.maxRenderResolution);
+      this.revealManager.setResolutionThreshold(options.maxRenderResolution);
     }
 
     if (options.movingCameraResolutionFactor) {
-      this._revealManagerHelper.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
+      this.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
     }
   }
 

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type DMDataSourceType, type AddModelOptions } from '@cognite/reveal';
 import {
   type AddImage360CollectionEventsOptions,

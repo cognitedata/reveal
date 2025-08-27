@@ -1,16 +1,14 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   type NodeItem,
   type FdmSDK,
   type Source,
   type InstanceFilter,
-  type SimpleSource
+  type SimpleSource,
+  type ViewItem
 } from '../data-providers/FdmSDK';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
@@ -18,9 +16,16 @@ import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
+import { assetsInstanceFilterWithHasDataQuery } from '../data-providers/core-dm-provider/assetsInstanceFilterWithHasDataQuery';
+import { transformViewItemToSource } from '../data-providers/core-dm-provider/utils/transformViewItemToSource';
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
+  instances: Array<NodeItem<PropertyType>>;
+};
+
+export type InstancesWithViewDefinition<PropertyType = Record<string, unknown>> = {
+  view: ViewItem;
   instances: Array<NodeItem<PropertyType>>;
 };
 
@@ -37,6 +42,7 @@ export const useSearchMappedEquipmentFDM = (
 
   const fdmSdk = useFdmSdk();
   const fdmDataProvider = useFdm3dDataProvider();
+  const queryClient = useQueryClient();
 
   const spacesToSearch = useMemo(
     () => uniq(viewsToSearch.map((view) => view.space)),
@@ -56,18 +62,20 @@ export const useSearchMappedEquipmentFDM = (
       limit
     ],
     queryFn: async () => {
-      if (models.length === 0) {
+      if (models.length === 0 || fdmDataProvider === undefined) {
         return [];
       }
-      const sources = createSourcesFromViews(viewsToSearch);
-      const chunkedSources = chunk(sources, 10);
-      if (chunkedSources.length === 0) {
-        chunkedSources.push([]);
+
+      const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, viewsToSearch);
+
+      const chunkedViews = chunk(viewDefinitions, 10);
+      if (chunkedViews.length === 0) {
+        chunkedViews.push([]);
       }
 
       const queryResults: InstancesWithView[] = [];
 
-      for (const sourceChunk of chunkedSources) {
+      for (const sourceChunk of chunkedViews) {
         const chunkResult = await searchNodesWithViewsAndModels(
           query,
           spacesToSearch,
@@ -87,10 +95,41 @@ export const useSearchMappedEquipmentFDM = (
   });
 };
 
+export function useFilterNodesByMappedToModelsCallback(
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
+  viewToSearch: SimpleSource,
+  includeIndirectRelations: boolean
+): (identifiers: NodeItem[]) => Promise<NodeItem[]> {
+  const fdmDataProvider = useFdm3dDataProvider();
+
+  const fdmSdk = useFdmSdk();
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    async (nodes: NodeItem[]) => {
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
+      const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, [viewToSearch]);
+
+      const filterResult = await fdmDataProvider.filterNodesByMappedTo3d(
+        [{ instances: nodes, view: viewDefinitions[0] }],
+        models,
+        [viewToSearch.space],
+        includeIndirectRelations
+      );
+
+      return filterResult.flatMap((result) => result.instances);
+    },
+    [includeIndirectRelations, models, viewToSearch, fdmDataProvider, fdmSdk, queryClient]
+  );
+}
+
 const searchNodesWithViewsAndModels = async (
   query: string,
   spacesToSearch: string[],
-  sourcesToSearch: Source[],
+  sourcesToSearch: ViewItem[],
   models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
   instancesFilter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
@@ -107,7 +146,7 @@ const searchNodesWithViewsAndModels = async (
     const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(nodeItems);
 
     const combinedWithOtherViews = sourcesToSearch.map((view) => ({
-      view,
+      view: transformViewItemToSource(view),
       instances:
         transformedResults.find(
           (result) => result.view.externalId === view.externalId && result.view.space === view.space
@@ -117,10 +156,16 @@ const searchNodesWithViewsAndModels = async (
     return combinedWithOtherViews;
   }
 
-  const searchResults: InstancesWithView[] = [];
+  const searchResults: InstancesWithViewDefinition[] = [];
 
   for (const view of sourcesToSearch) {
-    const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
+    const result = await fdmSdk.searchInstances(
+      transformViewItemToSource(view),
+      query,
+      'node',
+      limit,
+      instancesFilter
+    );
 
     searchResults.push({
       view,
@@ -128,23 +173,34 @@ const searchNodesWithViewsAndModels = async (
     });
   }
 
-  return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
+  return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch, true);
 };
 
 export const useAllMappedEquipmentFDM = (
-  models: AddModelOptions[],
-  viewsToSearch: SimpleSource[]
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
+  viewsToSearch: SimpleSource[],
+  enabled: boolean = true
 ): UseQueryResult<NodeItem[]> => {
   const fdmDataProvider = useFdm3dDataProvider();
 
   return useQuery({
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
     queryFn: async () => {
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
       const viewSources = createSourcesFromViews(viewsToSearch);
 
-      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
+      const assetFilterForAllMapped = assetsInstanceFilterWithHasDataQuery(viewSources);
+      return await fdmDataProvider.listAllMappedFdmNodes(
+        models,
+        viewSources,
+        assetFilterForAllMapped
+      );
     },
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled
   });
 };
 
@@ -199,4 +255,29 @@ function createSourcesFromViews(viewsToSearch: SimpleSource[]): Source[] {
     ...view,
     type: 'view'
   }));
+}
+
+async function fetchViewDefinitions(
+  queryClient: ReturnType<typeof useQueryClient>,
+  fdmSdk: FdmSDK,
+  viewsToSearch: SimpleSource[]
+): Promise<ViewItem[]> {
+  return await queryClient.fetchQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'search-mapped-fdm',
+      'get-view-definitions-from-simple-source',
+      viewsToSearch
+    ],
+    queryFn: async () => {
+      const chunkedSources = chunk(viewsToSearch, 1000);
+      const views: ViewItem[] = [];
+      for (const chunk of chunkedSources) {
+        const res = await fdmSdk.getViewsByIds(createSourcesFromViews(chunk));
+        views.push(...res.items);
+      }
+      return views;
+    }
+  });
 }

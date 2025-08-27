@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type TaggedAddResourceOptions } from '../../components';
 import { type COGNITE_POINT_CLOUD_VOLUME_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
 import { pointCloudModelsForInstanceQuery } from '../../data-providers/core-dm-provider/pointCloudModelsForInstanceQuery';

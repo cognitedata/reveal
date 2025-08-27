@@ -1,13 +1,5 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type AddModelOptions } from '@cognite/reveal';
-import {
-  type Asset,
-  type AssetMapping3D,
-  type CogniteClient,
-  type ListResponse
-} from '@cognite/sdk';
+import { type Asset, type CogniteClient, type ListResponse } from '@cognite/sdk';
 import {
   type UseInfiniteQueryResult,
   useInfiniteQuery,
@@ -18,13 +10,23 @@ import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
 import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import { useMemo } from 'react';
+import { getAssetsFromAssetMappings } from './network/cad/getAssetsFromAssetMappings';
+import { buildClassicAssetQueryFilter } from './network/common/buildClassicAssetFilter';
+import {
+  type ClassicCadAssetMapping,
+  isClassicCadAssetMapping
+} from '../components/CacheProvider/cad/assetMappingTypes';
+import {
+  convertToHybridAssetMapping,
+  type RawCdfHybridCadAssetMapping
+} from '../components/CacheProvider/cad/rawAssetMappingTypes';
 
-export type ModelMappings = {
+export type ClassicCadModelMappings = {
   model: AddModelOptions;
-  mappings: ListResponse<AssetMapping3D[]>;
+  mappings: ListResponse<ClassicCadAssetMapping[]>;
 };
 
-export type ModelMappingsWithAssets = ModelMappings & {
+export type ClassicCadModelMappingsWithAssets = ClassicCadModelMappings & {
   assets: Asset[];
 };
 
@@ -34,7 +36,7 @@ export type AssetPage = {
 };
 
 export type ModelAssetPage = {
-  modelsAssets: ModelMappingsWithAssets[];
+  modelsAssets: ClassicCadModelMappingsWithAssets[];
   nextCursor: string | undefined;
 };
 
@@ -52,7 +54,9 @@ export const useSearchMappedEquipmentAssetMappings = (
     if (assetMappingList === undefined) return new Set<number>();
     return new Set(
       assetMappingList.flatMap((mapping) =>
-        mapping.assetMappings.map((assetMapping) => assetMapping.assetId)
+        mapping.assetMappings
+          .filter(isClassicCadAssetMapping)
+          .map((assetMapping) => assetMapping.assetId)
       )
     );
   }, [assetMappingList]);
@@ -73,10 +77,13 @@ export const useSearchMappedEquipmentAssetMappings = (
     accumulatedAssets: Asset[],
     mappedSearchedAssetIds: Set<number>
   ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
+    const advancedFilter = buildClassicAssetQueryFilter(query);
     const searchedAssetsResponse = await getAssetsList(sdk, {
-      query,
       limit: 1000,
-      cursor
+      cursor,
+      filters: {
+        advancedFilter
+      }
     });
 
     const filteredSearchedAssets = searchedAssetsResponse.items.filter(isDefined);
@@ -131,7 +138,7 @@ export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient,
   limit: number = 1000
-): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
+): UseInfiniteQueryResult<InfiniteData<ClassicCadModelMappingsWithAssets[]>, Error> => {
   const sdk = useSDK(userSdk);
 
   return useInfiniteQuery({
@@ -157,12 +164,17 @@ export const useAllMappedEquipmentAssetMappings = (
           return { mappings: { items: [] }, model };
         }
 
-        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        const rawMappings = (await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
           limit
-        });
+        })) as ListResponse<RawCdfHybridCadAssetMapping[]>;
 
-        return { mappings, model };
+        const mappings = rawMappings.items
+          .map(convertToHybridAssetMapping)
+          .filter(isDefined)
+          .filter(isClassicCadAssetMapping);
+
+        return { mappings: { items: mappings, nextCursor: rawMappings.nextCursor }, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
@@ -180,7 +192,7 @@ export const useAllMappedEquipmentAssetMappings = (
 export const useMappingsForAssetIds = (
   models: AddModelOptions[],
   assetIds: number[]
-): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
+): UseInfiniteQueryResult<InfiniteData<ClassicCadModelMappingsWithAssets[]>, Error> => {
   const sdk = useSDK();
 
   return useInfiniteQuery({
@@ -208,20 +220,23 @@ export const useMappingsForAssetIds = (
           return { mappings: { items: [] }, model };
         }
 
-        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        const rawMappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
           limit: 1000,
           filter: { assetIds }
         });
 
-        return { mappings, model };
+        const mappings = rawMappings.items
+          .map(convertToHybridAssetMapping)
+          .filter(isDefined)
+          .filter(isClassicCadAssetMapping);
+
+        return { mappings: { items: mappings, nextCursor: rawMappings.nextCursor }, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
 
-      const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
-
-      return modelsAssets;
+      return await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
     },
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
@@ -230,7 +245,7 @@ export const useMappingsForAssetIds = (
 };
 
 function getNextPageParam(
-  lastPage: ModelMappingsWithAssets[]
+  lastPage: ClassicCadModelMappingsWithAssets[]
 ): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined {
   const nextCursors = lastPage
     .map(({ mappings, model }) => ({ cursor: mappings.nextCursor, model }))
@@ -239,28 +254,4 @@ function getNextPageParam(
     return undefined;
   }
   return nextCursors;
-}
-
-async function getAssetsFromAssetMappings(
-  sdk: CogniteClient,
-  modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
-): Promise<ModelMappingsWithAssets[]> {
-  const mappingsWithAssetsPromises = modelsMappings.map(async ({ mappings, model }) => {
-    if (mappings.items.length === 0) {
-      return { model, assets: [], mappings };
-    }
-
-    const deduplicatedAssetIds = Array.from(
-      new Set(mappings.items.map((mapping) => mapping.assetId))
-    );
-    const assetIdObjects = deduplicatedAssetIds.map((id) => ({ id }));
-
-    const assets = await sdk.assets.retrieve(assetIdObjects, { ignoreUnknownIds: true });
-
-    return { model, assets, mappings };
-  });
-
-  const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
-
-  return mappingsWithAssets;
 }

@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -15,7 +11,7 @@ import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRe
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
-import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { CycleLengthUnitsCommand } from '../../base/concreteCommands/units/CycleLengthUnitsCommand';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 import { Annotation } from './helpers/Annotation';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
@@ -63,7 +59,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   public override getPanelToolbar(): BaseCommand[] {
-    return [new CopyToClipboardCommand(), new ToggleMetricUnitsCommand()];
+    return [new CopyToClipboardCommand(), new CycleLengthUnitsCommand()];
   }
 
   public override get isVisibleInTree(): boolean {

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useMemo, type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -22,34 +18,39 @@ import { InputField } from './InputField';
 import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
 import { CustomBaseInputCommand } from '../../architecture/base/commands/CustomBaseInputCommand';
 import { CustomInputField } from './CustomInputField';
+import { type UniqueId } from '../../architecture/base/utilities/types';
 
 export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {
-    return <FilterButton inputCommand={command} placement={placement} />;
+    return <FilterButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseSettingsCommand) {
-    return <SettingsButton inputCommand={command} placement={placement} />;
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseOptionCommand) {
     switch (command.optionType) {
       case OptionType.Dropdown:
-        return <DropdownButton inputCommand={command} placement={placement} />;
+        return (
+          <DropdownButton key={command.uniqueId} inputCommand={command} placement={placement} />
+        );
       case OptionType.Segmented:
-        return <SegmentedButtons inputCommand={command} placement={placement} />;
+        return (
+          <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />
+        );
       default:
         return <></>;
     }
   }
 
   if (command instanceof BaseInputCommand) {
-    return <InputField key={command.uniqueId} inputCommand={command} placement={placement} />;
+    return <InputField key={command.uniqueId} inputCommand={command} />;
   }
 
   if (command instanceof CustomBaseInputCommand) {
     return <CustomInputField key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
 
-  return <CommandButton inputCommand={command} placement={placement} />;
+  return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
 }
 
 export function createButtonFromCommandConstructor(
@@ -82,9 +83,9 @@ export const CommandButtons = ({
   );
 };
 
-function getKey(command: BaseCommand | undefined, index: number): number {
+function getKey(command: BaseCommand | undefined, index: number): UniqueId {
   if (command === undefined) {
-    return -index;
+    return `undefined${index.toString()}`;
   }
   return command.uniqueId;
 }

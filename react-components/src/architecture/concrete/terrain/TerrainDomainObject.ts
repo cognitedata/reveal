@@ -1,12 +1,8 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { type RegularGrid2 } from './geometry/RegularGrid2';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 
 export class TerrainDomainObject extends VisualDomainObject {
   // ==================================================

@@ -1,32 +1,33 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
-  useMemo,
   useState,
   type ReactElement,
   type MouseEvent,
   type Dispatch,
   type SetStateAction
 } from 'react';
-import { Button, ChevronDownIcon, ChevronUpIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Tooltip as CogsTooltip,
+  Flex
+} from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
+import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
-import { OPTION_MIN_WIDTH, DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
-import { type IconName } from '../../architecture/base/utilities/IconName';
+import { DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
+import { type IconName } from '../../architecture/base/utilities/types';
 import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useOnUpdate } from './useOnUpdate';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProps } from './hooks/useCommandProps';
 
 export const FilterButton = ({
   inputCommand,
@@ -37,39 +38,14 @@ export const FilterButton = ({
   placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseFilterCommand>(
-    () => getDefaultCommand<BaseFilterCommand>(inputCommand, renderTarget),
-    []
-  );
-
+  const command = useCommand(inputCommand);
   command.initializeChildrenIfNeeded();
 
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-  const [icon, setIcon] = useState<IconName>(undefined);
+  const { icon, isVisible, isEnabled } = useCommandProps(command);
+  const isAllChecked = useCommandProperty(command, () => command.isAllChecked);
+  const isSomeChecked = useCommandProperty(command, () => command.isSomeChecked);
+  const selectedLabel = useCommandProperty(command, () => command.getSelectedLabel());
   const [isOpen, setOpen] = useState(false);
-  const [isAllChecked, setAllChecked] = useState(false);
-  const [isSomeChecked, setSomeChecked] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState('');
-
-  const { t } = useTranslation();
-  const label = command.getLabel(t);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
-    setIcon(command.icon);
-    if (command instanceof BaseFilterCommand) {
-      setAllChecked(command.isAllChecked);
-      setSomeChecked(command.children?.some((child) => child.isChecked) === true);
-      setSelectedLabel(command.getSelectedLabel(t));
-    }
-  });
-  // @end
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {
@@ -80,13 +56,13 @@ export const FilterButton = ({
       command={command}
       isAllChecked={isAllChecked}
       isSomeChecked={isSomeChecked}
-      label={label}
+      label={command.label}
     />
   );
 
   return usedInSettings ? (
     <FilterDropdown
-      label={label}
+      label={command.label}
       selectedLabel={selectedLabel}
       isOpen={isOpen}
       setOpen={setOpen}
@@ -97,11 +73,10 @@ export const FilterButton = ({
       command={command}
       placement={getTooltipPlacement(placement)}
       iconName={icon}
-      label={label}
+      label={command.label}
       isOpen={isOpen}
       setOpen={setOpen}
       isEnabled={isEnabled}
-      uniqueId={uniqueId}
       PanelContent={PanelContent}
     />
   );
@@ -115,7 +90,6 @@ const FilterMenu = ({
   isEnabled,
   placement,
   iconName,
-  uniqueId,
   PanelContent
 }: {
   command: BaseFilterCommand;
@@ -125,11 +99,8 @@ const FilterMenu = ({
   isEnabled: boolean;
   placement: PlacementType;
   iconName: IconName;
-  uniqueId: number;
   PanelContent: ReactElement;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   return (
     <Menu
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
@@ -142,13 +113,12 @@ const FilterMenu = ({
           disabled={isOpen || label === undefined}
           placement={placement}>
           <Button
-            type={getButtonType(command)}
+            type={command.buttonType}
             icon={<IconComponent iconName={iconName} />}
-            key={uniqueId}
             disabled={!isEnabled}
             toggled={isOpen}
             iconPlacement="left"
-            aria-label={command.getLabel(t)}
+            aria-label={command.label}
             {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
               event.stopPropagation();
@@ -179,28 +149,25 @@ const FilterDropdown = ({
 }): ReactElement => {
   return (
     <StyledDropdownRow>
-      <label>{label}</label>
-      <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
+      <StyledLabel>{label}</StyledLabel>
+      <StyledSelectPanel placement={'right-end'} visible={isOpen}>
         <SelectPanel.Trigger>
-          <Button
+          <StyledSelectPanelButton
             color="#000044"
             type="tertiary"
-            style={{
-              justifyContent: 'space-between',
-              minWidth: OPTION_MIN_WIDTH,
-              paddingRight: '8px',
-              paddingLeft: '8px'
-            }}
+            toggled={isOpen}
             onClick={() => {
               setOpen((prev) => !prev);
             }}>
-            <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
-            {isOpen ? (
-              <ChevronUpIcon color={SELECT_DROPDOWN_ICON_COLOR} />
-            ) : (
-              <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
-            )}
-          </Button>
+            <StyledPanelButtonContent>
+              <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
+              {isOpen ? (
+                <ChevronUpIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+              ) : (
+                <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+              )}
+            </StyledPanelButtonContent>
+          </StyledSelectPanelButton>
         </SelectPanel.Trigger>
         <SelectPanel.Body style={{ overflow: 'hidden' }}>{PanelContent}</SelectPanel.Body>
       </StyledSelectPanel>
@@ -219,8 +186,6 @@ const FilterSelectPanelContent = ({
   isAllChecked: boolean;
   isSomeChecked: boolean;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   const children = command.children;
 
   return (
@@ -234,8 +199,8 @@ const FilterSelectPanelContent = ({
           onClick={() => {
             command.toggleAllChecked();
           }}
-          label={BaseFilterCommand.getAllString(t)}>
-          {BaseFilterCommand.getAllString(t)}
+          label={BaseFilterCommand.getAllString()}>
+          {BaseFilterCommand.getAllString()}
         </SelectPanel.Item>
       </SelectPanel.Section>
       <SelectPanel.Body style={{ maxHeight: '300px' }}>
@@ -251,19 +216,42 @@ const FilterSelectPanelContent = ({
 
 const StyledDropdownRow = styled.div`
   display: flex;
+  align-self: stretch;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+
   padding: ${DEFAULT_PADDING};
+`;
+
+const StyledLabel = styled.label`
+  flex: 2 2;
+`;
+
+const StyledSelectPanelButton = styled(Button)`
+  width: 100%;
+  padding: 0px 0px;
+`;
+
+const StyledPanelButtonContent = styled(Flex).attrs({ direction: 'row' })`
+  width: 100%;
+  justify-content: space-between;
 `;
 
 const StyledSelectPanel = styled(SelectPanel)`
   display: flex;
+  flex: 2 2;
   display-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+
+  .cogs-v10.cogs-button {
+    padding: 7px 8px;
+  }
+
+  .cogs-lab.cogs-dropdown__anchor-el {
+    width: inherit;
+  }
 `;
 
 const StyledDropdownSelectionLabel = styled.label`

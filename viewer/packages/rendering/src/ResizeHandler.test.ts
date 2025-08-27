@@ -49,6 +49,32 @@ describe(ResizeHandler.name, () => {
     jest.clearAllMocks();
   });
 
+  test('set resolution threshold is persisted as stoppedCameraResolutionThreshold', () => {
+    const resolutionThreshold0 = 1.5e6;
+    const resolutionThreshold1 = 4.5e6;
+
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+
+    resizeHandler.setResolutionThreshold(resolutionThreshold0);
+    expect(resizeHandler.getStoppedCameraResolutionThreshold()).toBe(resolutionThreshold0);
+
+    resizeHandler.setResolutionThreshold(resolutionThreshold1);
+    expect(resizeHandler.getStoppedCameraResolutionThreshold()).toBe(resolutionThreshold1);
+  });
+
+  test('set move resolution factor is persisted', () => {
+    const resolutionFactor0 = 0.8;
+    const resolutionFactor1 = 0.23;
+
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+
+    resizeHandler.setMovingCameraResolutionFactor(resolutionFactor0);
+    expect(resizeHandler.getMovingCameraResolutionFactor()).toBe(resolutionFactor0);
+
+    resizeHandler.setMovingCameraResolutionFactor(resolutionFactor1);
+    expect(resizeHandler.getMovingCameraResolutionFactor()).toBe(resolutionFactor1);
+  });
+
   test('signals redraw on resolution update', () => {
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
 

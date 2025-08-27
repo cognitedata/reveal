@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type ILazyLoader } from './i-lazy-loader';
 import { type TreeNodeType } from './tree-node-type';
 

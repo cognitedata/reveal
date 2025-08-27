@@ -1,11 +1,7 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { Box3 } from 'three';
-import { useFdmNodeCache } from '../components/CacheProvider/CacheProvider';
+import { useFdmCadNodeCache } from '../components/CacheProvider/CacheProvider';
 
 export type CameraNavigationActions = {
   fitCameraToVisualSceneBoundingBox: (duration?: number) => void;
@@ -18,7 +14,7 @@ export type CameraNavigationActions = {
 };
 
 export const useCameraNavigation = (): CameraNavigationActions => {
-  const fdmNodeCache = useFdmNodeCache();
+  const fdmNodeCache = useFdmCadNodeCache();
   const viewer = useReveal();
 
   const fitCameraToVisualSceneBoundingBox = (duration?: number): void => {
@@ -61,8 +57,8 @@ export const useCameraNavigation = (): CameraNavigationActions => {
     }));
 
     const modelMappings = (
-      await fdmNodeCache.getMappingsForFdmInstances(instances, modelsRevisionIds)
-    ).find((model) => model.mappings.size > 0);
+      await fdmNodeCache?.getMappingsForFdmInstances(instances, modelsRevisionIds)
+    )?.find((model) => model.mappings.size > 0);
 
     const nodeIds = [...(modelMappings?.mappings.values() ?? [])].flat().map((node) => node.id);
 

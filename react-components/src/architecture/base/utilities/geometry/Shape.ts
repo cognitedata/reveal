@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Range1 } from './Range1';
 import { Range3 } from './Range3';
 
@@ -26,10 +22,6 @@ export abstract class Shape {
       this.expandBoundingBox(this._boundingBox);
     }
     return this._boundingBox;
-  }
-
-  public set boundingBox(boundingBox) {
-    this._boundingBox = boundingBox.clone();
   }
 
   // ==================================================

@@ -108,17 +108,18 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   }
 
   /**
-   * Sets camera state. All parameters are optional. Rotation and target can't be set at the same time,
-   * if so, error will be thrown. Set rotation is preserved until next call of setCameraState with
-   * empty rotation field.
+   * Sets camera state. All parameters are optional. If rotation and target are set at the same time,
+   * the target determines the position of the pivot point, while the rotation determines what
+   * direction the camera is facing.
    * @param state Camera state.
    * **/
   public setCameraState(state: CameraState): void {
-    if (state.rotation && state.target) {
-      throw new Error(`Rotation and target can't be set at the same time`);
-    }
     const position = state.position ?? this.getPosition();
-    if (state.target) {
+
+    if (state.rotation && state.target) {
+      this.controls.setTarget(state.target);
+      this.controls.setPositionAndRotation(position, state.rotation);
+    } else if (state.target) {
       this.controls.setPositionAndTarget(position, state.target);
     } else if (state.rotation) {
       this.controls.setPositionAndRotation(position, state.rotation);

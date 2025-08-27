@@ -1,25 +1,21 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 import { describe, test, expect, beforeAll, vi } from 'vitest';
 import { DomainObject } from './DomainObject';
-import { Color } from 'three/src/math/Color.js';
+import { Color } from 'three';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
+import { count, first, last } from '../utilities/extensions/generatorUtils';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
-describe('DomainObject', () => {
+describe(DomainObject.name, () => {
   test('should have following default behavior', () => {
     const domainObject = new DefaultDomainObject();
     expect(domainObject.icon).toBeUndefined();
@@ -76,11 +72,7 @@ describe('DomainObject', () => {
   test('should have color', () => {
     const domainObject = new ChildDomainObject();
     const color = domainObject.color;
-    const isGreyScale = color.r === color.g && color.r === color.b;
-    const rgbSum = color.r + color.g + color.b;
-    expect(isGreyScale).toBe(false);
-    expect(rgbSum).greaterThan(0);
-    expect(rgbSum).lessThan(3);
+    expect(isGreyScale(color)).toBe(false);
   });
 
   test('should set color', () => {
@@ -215,7 +207,7 @@ describe('DomainObject', () => {
     expect(child.parent).toBe(parent);
 
     const tester1 = new EventChangeTester(parent, Changes.childDeleted);
-    const tester2 = new EventChangeTester(child, Changes.deleted);
+    const tester2 = new EventChangeTester(child, Changes.deleting);
     child.removeInteractive();
     tester1.toHaveBeenCalledOnce();
     tester2.toHaveBeenCalledOnce();
@@ -232,7 +224,7 @@ describe('DomainObject', () => {
     destination.copyFrom(source);
 
     expect(destination.uniqueId).toBe(source.uniqueId);
-    expect(destination.color).toBe(source.color);
+    expect(destination.color).toStrictEqual(source.color);
     expect(destination.name).toBe(source.name);
     expect(destination.getRenderStyle()).toStrictEqual(source.getRenderStyle());
   });
@@ -282,13 +274,16 @@ describe('DomainObject', () => {
 
   test('should test notify on CommandsUpdater', () => {
     const domainObject = new ChildDomainObject();
-    const renderTarget = createRenderTargetMock();
+    const renderTarget = createFullRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    expect(CommandsUpdater.needUpdate).toBe(false);
+    const updateMock = vi.fn();
+    renderTarget.updateAllCommands = updateMock;
+
+    expect(updateMock).toHaveBeenCalledTimes(0);
     const change = Changes.selected;
     domainObject.notify(change);
-    expect(CommandsUpdater.needUpdate).toBe(true);
+    expect(updateMock).toHaveBeenCalledTimes(1);
   });
 
   test('should test notify descendants', () => {
@@ -319,18 +314,6 @@ describe('DomainObject', () => {
     const childTester = new EventChangeTester(child, change);
     parent.notify(change);
     childTester.toHaveBeenCalledOnce();
-  });
-
-  test('should notify notify descendants..... style root', () => {
-    const child = new ChildDomainObject();
-    child.isSelected = true;
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBeUndefined();
-    child.notify(Changes.selected);
-
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBe(child);
-    child.isSelected = false;
-    child.notify(Changes.selected);
-    expect(DomainObjectPanelUpdater.selectedDomainObject()).toBeUndefined();
   });
 
   test('should get style for the render target root', () => {
@@ -543,34 +526,6 @@ class RootDomainObject extends DomainObject {
   }
 }
 
-export class EventChangeTester {
-  private _times = 0;
-
-  // Set isCalled to true if the change is detected
-  public constructor(domainObject: DomainObject, change: symbol) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
-    function listener(_domainObject: DomainObject, inputChange: DomainObjectChange): void {
-      if (inputChange.isChanged(change)) {
-        self._times++;
-      }
-    }
-    domainObject.views.addEventListener(listener);
-  }
-
-  public toHaveBeenCalledTimes(expected: number): void {
-    expect(this._times).toHaveBeenCalledTimes(expected);
-  }
-
-  public toHaveBeenCalledOnce(): void {
-    expect(this._times).toBe(1);
-  }
-
-  public toHaveNotBeenCalled(): void {
-    expect(this._times).toBe(0);
-  }
-}
-
 function createHierarchy(): DomainObject {
   const root = new RootDomainObject();
   const parent1 = new ParentDomainObject();
@@ -584,24 +539,4 @@ function createHierarchy(): DomainObject {
   parent2.addChild(new ChildDomainObject());
   root.addChild(parent2);
   return root;
-}
-
-export function count<T>(iterable: Generator<T>): number {
-  let count = 0;
-  for (const _item of iterable) {
-    count++;
-  }
-  return count;
-}
-
-export function last<T>(iterable: Generator<T>): T | undefined {
-  let lastItem: T | undefined;
-  for (const item of iterable) {
-    lastItem = item;
-  }
-  return lastItem;
-}
-
-export function first<T>(iterable: Generator<T>): T | undefined {
-  return iterable.next().value;
 }

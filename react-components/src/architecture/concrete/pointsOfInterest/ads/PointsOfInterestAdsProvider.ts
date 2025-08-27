@@ -1,12 +1,8 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CogniteClient } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type ExternalId } from '../../../../data-providers/FdmSDK';
 import { type CommentProperties, type PointsOfInterestInstance } from '../models';
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
-import { v4 as uuid } from 'uuid';
 import {
   type PoiExternalAssetRef,
   type PoiExternalDMRef,
@@ -158,7 +154,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 
   public createNewId(): ExternalId {
-    return uuid();
+    return crypto.randomUUID();
   }
 }
 

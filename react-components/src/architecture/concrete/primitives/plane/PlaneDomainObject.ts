@@ -1,11 +1,10 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   VisualDomainObject,
@@ -13,18 +12,15 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { PlaneDragger } from './PlaneDragger';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { getComplementary } from '../../../base/utilities/colors/colorExtensions';
-import {
-  horizontalAngle,
-  rotateHorizontal
-} from '../../../base/utilities/extensions/vectorExtensions';
-import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { getComplementary } from '../../../base/utilities/colors/colorUtils';
+import { horizontalAngle, rotateHorizontal } from '../../../base/utilities/extensions/vectorUtils';
+import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathUtils';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { getRoot } from '../../../base/domainObjects/getRoot';
@@ -40,7 +36,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public readonly plane = new Plane();
   private readonly _primitiveType: PrimitiveType;
-  private _backSideColor: Color | undefined = undefined;
+  protected _backSideColor: Color | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -61,16 +57,13 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     return this._backSideColor;
   }
 
-  public set backSideColor(color: Color) {
-    this._backSideColor = color;
-  }
-
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor(primitiveType: PrimitiveType) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -175,7 +168,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
-  public get coordinate(): number {
+  private get coordinate(): number {
     const pointOnPlane = this.plane.projectPoint(ORIGIN, new Vector3());
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
@@ -204,8 +197,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public flip(): void {
     const { plane } = this;
-    plane.normal.negate();
-    plane.constant = -plane.constant;
+    plane.negate();
   }
 
   public makeFlippingConsistent(): void {
@@ -235,3 +227,10 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     }
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.PlaneX,
+  PrimitiveType.PlaneY,
+  PrimitiveType.PlaneZ,
+  PrimitiveType.PlaneXY
+];

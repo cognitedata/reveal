@@ -1,17 +1,13 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render, fireEvent } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { ModelLayersButton } from './ModelLayersButton';
-import { createCadHandlerMock } from '../../../../../tests/tests-utilities/fixtures/modelHandler';
+import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
 import { type ModelHandler } from '../ModelHandler';
 
 describe(ModelLayersButton.name, () => {
   let mockCadHandler: ModelHandler;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     mockCadHandler = createCadHandlerMock();
   });
 

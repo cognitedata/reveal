@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type DomainObject } from '../domainObjects/DomainObject';
 

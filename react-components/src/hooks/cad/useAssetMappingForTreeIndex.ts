@@ -1,17 +1,14 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/requests';
 import { type AnyIntersection } from '@cognite/reveal';
-import { type NodeAssetMappingResult } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
-import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
+import { type HybridCadNodeAssetMappingResult } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 
 export const useAssetMappingForTreeIndex = (
   intersection: AnyIntersection | undefined
-): UseQueryResult<NodeAssetMappingResult> => {
-  const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
+): UseQueryResult<HybridCadNodeAssetMappingResult> => {
+  const assetMappingAndNode3DCache = useClassicCadAssetMappingCache();
   const cdfClient = useSDK();
 
   const isCadModel = intersection?.type === 'cad';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import {
   type InstanceFilter,
   type NodeItem,
@@ -9,7 +6,10 @@ import {
   type ViewItem
 } from './FdmSDK';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
-import { type InstancesWithView } from '../query/useSearchMappedEquipmentFDM';
+import {
+  type InstancesWithView,
+  type InstancesWithViewDefinition
+} from '../query/useSearchMappedEquipmentFDM';
 import { type FdmCadConnection } from '../components/CacheProvider/types';
 import {
   type AddImage360CollectionDatamodelsOptions,
@@ -32,7 +32,7 @@ export type Fdm3dDataProvider = {
 
   listMappedFdmNodes: (
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    sourcesToSearch: Source[],
+    sourcesToSearch: ViewItem[],
     instancesFilter: InstanceFilter | undefined,
     limit: number
   ) => Promise<NodeItem[]>;
@@ -44,9 +44,10 @@ export type Fdm3dDataProvider = {
   ) => Promise<NodeItem[]>;
 
   filterNodesByMappedTo3d: (
-    nodes: InstancesWithView[],
+    nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ) => Promise<InstancesWithView[]>;
 
   getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>;

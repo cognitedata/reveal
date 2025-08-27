@@ -1,23 +1,23 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useRenderTarget } from '../RevealCanvas';
-import { AnchoredDialogUpdater } from '../../architecture/base/reactUpdaters/AnchoredDialogUpdater';
 import { ViewerAnchor } from '../ViewerAnchor/ViewerAnchor';
 import { Menu } from '@cognite/cogs.js';
 import { createButton } from './CommandButtons';
 import styled from 'styled-components';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { useSignalValue } from '@cognite/signals/react';
+import { signal } from '@cognite/signals';
+import { type AnchoredDialogContent } from '../../architecture/base/commands/BaseTool';
+
+const UNDEFINED_SIGNAL = signal<AnchoredDialogContent | undefined>();
 
 export const AnchoredDialog = (): ReactNode => {
-  const [activeToolUpdate, setActiveToolUpdater] = useState<number>(0);
-
-  AnchoredDialogUpdater.setCounterDelegate(setActiveToolUpdater);
-
   const renderTarget = useRenderTarget();
-  const activeTool = renderTarget.commandsController.activeTool;
-  const dialogContent = useMemo(() => activeTool?.getAnchoredDialogContent(), [activeToolUpdate]);
+  const activeTool = useSignalValue(renderTarget.commandsController.activeToolSignal);
+  const dialogContentSignal =
+    activeTool !== undefined ? activeTool.getAnchoredDialogContent() : UNDEFINED_SIGNAL;
+
+  const dialogContent = useSignalValue(dialogContentSignal);
   const isSomeEnabled = dialogContent?.contentCommands.some((command) => command.isEnabled);
 
   useEffect(() => {
@@ -34,11 +34,6 @@ export const AnchoredDialog = (): ReactNode => {
   if (dialogContent === undefined || isSomeEnabled !== true) {
     return undefined;
   }
-
-  if (renderTarget === undefined || activeTool === undefined) {
-    return <></>;
-  }
-
   return (
     <ViewerAnchor position={dialogContent?.position}>
       <SuppressedMenu>

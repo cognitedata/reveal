@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Button, Input } from '@cognite/cogs.js';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo, useState } from 'react';

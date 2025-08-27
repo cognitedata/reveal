@@ -1,11 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { cloneDeep } from 'lodash';
 import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { BLACK_COLOR, WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
+import { BLACK_COLOR, WHITE_COLOR } from '../../../base/utilities/colors/colorUtils';
 import { type Color } from 'three';
 
 export class SolidPrimitiveRenderStyle extends PrimitiveRenderStyle {

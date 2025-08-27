@@ -1,8 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { type Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 import { type Image360CollectionDomainObject } from './Image360CollectionDomainObject';
 import { Box3, Vector3 } from 'three';
 import { ThreeView } from '../../../base/views/ThreeView';
@@ -15,11 +10,7 @@ export class Image360CollectionThreeView extends ThreeView<Image360CollectionDom
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get style(): Image360CollectionRenderStyle {
-    return super.style as Image360CollectionRenderStyle;
-  }
-
-  public get model(): Image360Model | undefined {
+  public get model(): Image360Model {
     const domainObject = this.domainObject;
     return domainObject.model;
   }
@@ -37,18 +28,12 @@ export class Image360CollectionThreeView extends ThreeView<Image360CollectionDom
 
   public override onShow(): void {
     const model = this.model;
-    if (model === undefined) {
-      return;
-    }
     super.onShow();
     model.setIconsVisibility(true);
   }
 
   public override onHide(): void {
     const model = this.model;
-    if (model === undefined) {
-      return;
-    }
     model.setIconsVisibility(false);
     super.onHide();
   }
@@ -59,9 +44,6 @@ export class Image360CollectionThreeView extends ThreeView<Image360CollectionDom
 
   protected override calculateBoundingBox(): Box3 {
     const model = this.model;
-    if (model === undefined) {
-      return new Box3().makeEmpty();
-    }
     const boundingBox = new Box3().makeEmpty();
     const position = new Vector3();
     for (const entity of model.image360Entities) {

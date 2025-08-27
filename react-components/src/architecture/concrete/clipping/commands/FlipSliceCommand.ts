@@ -1,13 +1,9 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type SliceDomainObject } from '../SliceDomainObject';
 import { DomainObjectCommand } from '../../../base/commands/DomainObjectCommand';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
   // ==================================================

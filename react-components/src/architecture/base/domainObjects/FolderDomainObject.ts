@@ -1,9 +1,5 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../utilities/IconName';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type IconName } from '../utilities/types';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { DomainObject } from './DomainObject';
 
 export class FolderDomainObject extends DomainObject {

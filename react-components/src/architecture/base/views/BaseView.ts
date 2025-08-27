@@ -1,9 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { getRoot } from '../domainObjects/getRoot';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
+import { UNDEFINED_UNIT_SYSTEM, type UnitSystem } from '../renderTarget/UnitSystem';
 
 /**
  * Represents the observer in the Observer pattern
@@ -94,5 +92,9 @@ export abstract class BaseView<DomainObjectType extends DomainObject = DomainObj
 
   public setDomainObject(domainObject: DomainObjectType): void {
     this._domainObject = domainObject;
+  }
+
+  protected getUnitSystem(): UnitSystem {
+    return getRoot(this.domainObject)?.unitSystem ?? UNDEFINED_UNIT_SYSTEM;
   }
 }

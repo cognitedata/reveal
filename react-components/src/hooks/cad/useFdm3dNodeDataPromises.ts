@@ -1,16 +1,13 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AnyIntersection } from '@cognite/reveal';
 import { type FdmNodeDataPromises } from '../../components/CacheProvider/types';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
+import { useFdmCadNodeCache } from '../../components/CacheProvider/CacheProvider';
 import assert from 'assert';
 
 export const useFdm3dNodeDataPromises = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<FdmNodeDataPromises> => {
-  const content = useFdmNodeCache();
+  const fdmNodeCache = useFdmCadNodeCache();
 
   const isCadModel = intersection?.type === 'cad';
 
@@ -18,7 +15,7 @@ export const useFdm3dNodeDataPromises = (
     ? [intersection.model.modelId, intersection.model.revisionId, intersection.treeIndex]
     : [undefined, undefined, undefined];
 
-  const enableQuery = content !== undefined && isCadModel && treeIndex !== undefined;
+  const enableQuery = isCadModel && treeIndex !== undefined && fdmNodeCache !== undefined;
 
   const result = useQuery({
     queryKey: [
@@ -31,7 +28,7 @@ export const useFdm3dNodeDataPromises = (
     ],
     queryFn: async () => {
       assert(enableQuery);
-      return content.getClosestParentDataPromises(modelId, revisionId, treeIndex);
+      return fdmNodeCache.getClosestParentDataPromises(modelId, revisionId, treeIndex);
     },
 
     enabled: enableQuery

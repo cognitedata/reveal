@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type FdmPropertyType } from '../../Reveal3DResources/types';
 import { type TriggerTypeData, type DatetimeExpression } from '../types';
 import { getFdmPropertyTrigger } from './getFdmPropertyTrigger';

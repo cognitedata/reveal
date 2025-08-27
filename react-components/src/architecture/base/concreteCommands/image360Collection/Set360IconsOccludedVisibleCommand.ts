@@ -1,10 +1,8 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
-import { type Image360Model } from '../../../concrete/reveal/RevealTypes';
+
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
+import { Image360CollectionDomainObject } from '../../../concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   // ==================================================
@@ -16,7 +14,7 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.firstCollection?.getIconsVisibility() ?? false;
+    return this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) !== undefined;
   }
 
   public override get isToggle(): boolean {
@@ -24,18 +22,18 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.firstCollection?.isOccludedIconsVisible() ?? true;
+    return this.settingsController.isOccludedIconsVisible();
   }
 
   protected override invokeCore(): boolean {
-    const visible = !this.isChecked;
-    for (const collection of this.renderTarget.get360ImageCollections()) {
-      collection.setOccludedIconsVisible(visible);
-    }
+    this.settingsController.isOccludedIconsVisible(
+      !this.settingsController.isOccludedIconsVisible()
+    );
     return true;
   }
 
-  private get firstCollection(): Image360Model | undefined {
-    return this.renderTarget.get360ImageCollections().next().value;
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.settingsController.isOccludedIconsVisible);
   }
 }

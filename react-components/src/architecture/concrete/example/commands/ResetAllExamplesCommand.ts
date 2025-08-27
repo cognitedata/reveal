@@ -1,13 +1,9 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ExampleDomainObject } from '../ExampleDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export class ResetAllExamplesCommand extends InstanceCommand {
   // ==================================================

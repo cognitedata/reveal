@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
@@ -24,6 +20,11 @@ export function use3dRelatedDirectConnections(
     ],
     queryFn: async () => {
       assert(instance !== undefined);
+
+      if (fdmDataProvider === undefined) {
+        return [];
+      }
+
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
         items: [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }]

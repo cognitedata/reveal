@@ -1,10 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Vector2 } from 'three';
 import { type Range3 } from '../../../base/utilities/geometry/Range3';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
-import { getRandomGaussian } from '../../../base/utilities/extensions/mathExtensions';
+import { getRandomGaussian } from '../../../base/utilities/extensions/mathUtils';
 import { RegularGrid2 } from './RegularGrid2';
 
 export function createFractalRegularGrid2(
@@ -37,8 +34,8 @@ export function createFractalRegularGrid2(
   grid.increment.x = boundingBox.x.delta / grid.cellSize.i;
   grid.increment.y = boundingBox.y.delta / grid.cellSize.j;
 
-  grid.normalizeZ(boundingBox.z);
   grid.smoothSimple(smoothNumberOfPasses);
+  grid.normalizeZ(boundingBox.z);
   return grid;
 }
 

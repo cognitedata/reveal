@@ -58,10 +58,18 @@ export class ResizeHandler {
     this._shouldResize = false;
   }
 
+  public getStoppedCameraResolutionThreshold(): number {
+    return this._stoppedCameraResolutionThreshold;
+  }
+
   public setResolutionThreshold(threshold: number): void {
     this._stoppedCameraResolutionThreshold = threshold;
     this._currentResolutionThreshold = threshold;
     this._shouldResize = true;
+  }
+
+  public getMovingCameraResolutionFactor(): number {
+    return this._movingResolutionFactor;
   }
 
   public setMovingCameraResolutionFactor(factor: number): void {

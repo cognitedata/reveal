@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type CogniteClient, type Revision3D } from '@cognite/sdk';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 

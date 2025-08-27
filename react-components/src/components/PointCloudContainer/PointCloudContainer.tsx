@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import {
   type CognitePointCloudModel,
   type AddModelOptions,
@@ -48,10 +45,10 @@ export function PointCloudContainer({
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
 
-  const [{ data: addModelOptionsResult }] = useModelIdRevisionIdFromModelOptions([addModelOptions]);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions([addModelOptions]);
 
-  const modelId = addModelOptionsResult?.modelId;
-  const revisionId = addModelOptionsResult?.revisionId;
+  const modelId = classicAddModelOptions[0]?.modelId;
+  const revisionId = classicAddModelOptions[0]?.revisionId;
 
   useEffect(() => {
     if (

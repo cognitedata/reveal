@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test } from 'vitest';
 import { executeParallel } from './executeParallel';
 import { delay } from 'lodash';

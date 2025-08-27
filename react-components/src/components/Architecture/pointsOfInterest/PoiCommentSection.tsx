@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Flex, Avatar, TextLabel } from '@cognite/cogs.js';
 import { type ReactNode, useMemo } from 'react';
 import { type PointOfInterest } from '../../../architecture';
@@ -12,6 +8,7 @@ import { createButton } from '../CommandButtons';
 import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { useSelectedPoi } from './useSelectedPoi';
 import styled from 'styled-components';
+import { TextWithClickableLink } from '../../../utilities/TextWithClickableLink';
 
 export const PoiCommentSection = (): ReactNode => {
   const { t } = useTranslation();
@@ -40,7 +37,7 @@ export const SingleCommentDisplay = ({ comment }: { comment: CommentProperties }
   return (
     <Flex direction="row" gap={8} alignContent="center" alignItems="center">
       <Avatar text={comment.ownerId} />
-      {comment.content}
+      <TextWithClickableLink content={comment.content} />
     </Flex>
   );
 };

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Ray, Vector3 } from 'three';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
@@ -9,7 +5,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type PlaneDomainObject } from './PlaneDomainObject';
-import { rotatePiHalf } from '../../../base/utilities/extensions/vectorExtensions';
+import { rotatePiHalf } from '../../../base/utilities/extensions/vectorUtils';
 
 /**
  * Helper class for generate a PlaneDomainObject by clicking around

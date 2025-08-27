@@ -1,9 +1,5 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { beforeEach, describe, expect, test } from 'vitest';
-import { Object3D, Vector3 } from 'three';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
+import { Line, Mesh, Object3D, Sprite, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
@@ -14,11 +10,12 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import {
   addView,
   createIntersectInput,
-  expectChildrenLength
+  expectVisibleChildren,
+  expectVisibleChildrenOfType
 } from '#test-utils/architecture/viewUtil';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 
-describe('LineView', () => {
+describe(LineView.name, () => {
   let domainObject: LineDomainObject;
   let view: LineView;
 
@@ -28,9 +25,8 @@ describe('LineView', () => {
     addView(domainObject, view);
   });
 
-  test('should have object', () => {
-    expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 2);
+  test('should have initial state', () => {
+    checkVisibleChildren(view, 1, 1, 4);
   });
 
   test('should intersect', () => {
@@ -45,9 +41,8 @@ describe('LineView', () => {
       const intersectInput = createLookingDownIntersectInput(expectedPoint);
       const intersection = view.intersectIfCloser(intersectInput, undefined);
       expect(intersection).toBeDefined();
-      if (intersection === undefined) {
-        return;
-      }
+      assert(intersection !== undefined);
+
       const actualPoint = intersection.point;
       actualPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.invert());
       expectEqualVector3(actualPoint, expectedPoint);
@@ -126,4 +121,17 @@ export function createLineDomainObject(): LineDomainObject {
     point.z += 23.951;
   }
   return domainObject;
+}
+
+function checkVisibleChildren(
+  view: LineView,
+  lineCount: number,
+  meshCount: number,
+  spriteCount: number
+): void {
+  expect(view.object).toBeInstanceOf(Object3D);
+  expectVisibleChildrenOfType(view, Line, lineCount);
+  expectVisibleChildrenOfType(view, Mesh, meshCount);
+  expectVisibleChildrenOfType(view, Sprite, spriteCount);
+  expectVisibleChildren(view, lineCount + meshCount + spriteCount);
 }

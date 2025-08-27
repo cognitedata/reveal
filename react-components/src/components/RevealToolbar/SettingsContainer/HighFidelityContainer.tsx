@@ -1,11 +1,8 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, useState } from 'react';
 import { Menu } from '@cognite/cogs-lab';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { type QualitySettings, type QualityProps } from './types';
+import { type QualityProps } from './types';
+import { type QualitySettings } from '../../../architecture/base/utilities/quality/QualitySettings';
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { useTranslation } from '../../i18n/I18n';
 

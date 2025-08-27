@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { BaseCommand } from '../commands/BaseCommand';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 type GetStringDelegate = () => string;
 

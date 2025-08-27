@@ -1,2 +1,9 @@
 ignore:
     - "viewer/packages/pointclouds/src/potree-three-loader"
+
+flag_management:
+  default_rules:
+    carryforward: true
+    paths:
+      - viewer/
+      - react-components/

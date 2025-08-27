@@ -1,8 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers';
+import { type InstanceReference } from './instanceIds';
+import { type CadModelOptions } from '../components';
 
 export const queryKeys = {
   all: ['cdf'] as const,
@@ -18,6 +17,22 @@ export const queryKeys = {
   timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
   // TIMESERIES RELATIONSHIPS WITH ASSETS
   timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const,
+  // ASSETS AND TIMESERIES LINKAGE DATA
+  assetsAndTimeseriesLinkageData: (
+    timeseriesExternalIds: string[],
+    relationshipResourceTypes: string[],
+    assetExternalIds: string[]
+  ) =>
+    [
+      ...timeseries,
+      'assets-and-timeseries-linkage-data',
+      timeseriesExternalIds,
+      relationshipResourceTypes,
+      assetExternalIds
+    ] as const,
+  // FDM CONNECTION WITH NODE BY DM IDS
+  fdmConnectionWithNode: (dmIds: DmsUniqueIdentifier[], models: CadModelOptions[]) =>
+    ['fdm-connection-with-node', dmIds, models] as const,
   // Point Cloud Annotations
   pointCloudAnnotationMappings: (modelKeys: string[]) =>
     [...models, 'point-cloud-annotation-mappings', modelKeys] as const,
@@ -42,7 +57,11 @@ export const queryKeys = {
     [...assets, 'point-cloud-dm-volume-asset-mappings-with-views', assetRefKeys] as const,
   modelRevisionId: (revisionKeys: string[]) =>
     [...revisions, 'model-revision-id', revisionKeys] as const,
-  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const
+  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const,
+  modelsForAssetPerInstanceReference: (instance: InstanceReference | undefined) =>
+    ['react-components', 'models-for-assets-per-instance-reference', instance] as const,
+  hybridDmAssetMappingsForInstances: (modelKeys: string[], instances: DmsUniqueIdentifier[]) =>
+    ['react-components', 'hybrid-dm-asset-mappings-for-instances', modelKeys, instances] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];

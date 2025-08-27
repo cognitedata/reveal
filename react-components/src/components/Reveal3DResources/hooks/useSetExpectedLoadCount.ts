@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useEffect } from 'react';
 import { type AddResourceOptions } from '..';
 import {

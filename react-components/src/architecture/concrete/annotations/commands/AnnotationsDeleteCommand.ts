@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type IconName } from '../../../base/utilities/IconName';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type IconName, type ButtonType } from '../../../base/utilities/types';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
 export class AnnotationsDeleteCommand extends RenderTargetCommand {
@@ -20,7 +16,7 @@ export class AnnotationsDeleteCommand extends RenderTargetCommand {
     return 'Delete';
   }
 
-  public override get buttonType(): string {
+  public override get buttonType(): ButtonType {
     return 'ghost-destructive';
   }
 

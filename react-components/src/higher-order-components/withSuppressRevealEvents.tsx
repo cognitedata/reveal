@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { useRef, useEffect, type ReactElement, type FunctionComponent } from 'react';
 
 export function withSuppressRevealEvents<T extends object>(

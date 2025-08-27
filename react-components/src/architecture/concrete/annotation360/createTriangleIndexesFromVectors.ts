@@ -1,9 +1,5 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Quaternion, type Vector2Like, Vector3 } from 'three';
-import { Vector3ArrayUtils } from '../../base/utilities/primitives/PointsUtils';
+import { Vector3ArrayUtils } from '../../base/utilities/primitives/Vector3ArrayUtils';
 
 const DOWN_VECTOR = new Vector3(0, 0, -1);
 const MIN_ANGLE = Math.PI / 1000;
@@ -13,6 +9,9 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
     return undefined;
   }
   const dominateVector = Vector3ArrayUtils.getCenter(vectors);
+  if (dominateVector === undefined) {
+    return undefined;
+  }
   dominateVector.normalize();
 
   // Rotate to down, so the center of the vectors points down.

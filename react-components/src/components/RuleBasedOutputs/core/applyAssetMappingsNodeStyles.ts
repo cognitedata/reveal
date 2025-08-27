@@ -1,19 +1,16 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import {
   type AssetStylingGroupAndStyleIndex,
   type ColorRuleOutput,
   type RuleAndStyleIndex
 } from '../types';
 import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
-import { type AssetStylingGroup } from '../../Reveal3DResources';
+import { type ClassicAssetStylingGroup } from '../../Reveal3DResources';
 import { Color } from 'three';
 import { createRuleStyling } from './createRuleStyling';
-import { type CdfAssetMapping } from '../../CacheProvider/types';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/assetMappingTypes';
 
 export const applyAssetMappingsNodeStyles = (
-  treeNodes: CdfAssetMapping[],
+  treeNodes: ClassicCadAssetMapping[],
   outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
   const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
@@ -38,7 +35,7 @@ export const applyAssetMappingsNodeStyles = (
     color: new Color(outputSelected.fill)
   });
 
-  const assetStylingGroup: AssetStylingGroup = {
+  const assetStylingGroup: ClassicAssetStylingGroup = {
     assetIds,
     style: { cad: nodeAppearance, pointcloud: nodeAppearance }
   };

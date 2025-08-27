@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { isDefined } from '../../../utilities/isDefined';
 import {

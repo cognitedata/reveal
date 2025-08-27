@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { createContext } from 'react';
 import { useModelHandlers } from './hooks/useModelHandlers';
 import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';
@@ -16,10 +13,14 @@ export type LayersButtonDependencies = {
   use3dModels: typeof use3dModels;
 };
 
-export const LayersButtonContext = createContext<LayersButtonDependencies>({
+export const defaultLayersButtonDependencies: LayersButtonDependencies = {
   useModelHandlers,
   useSyncExternalLayersState,
   ModelLayerSelection,
   useReveal,
   use3dModels
-});
+};
+
+export const LayersButtonContext = createContext<LayersButtonDependencies>(
+  defaultLayersButtonDependencies
+);

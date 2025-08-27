@@ -1,9 +1,5 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
@@ -11,7 +7,7 @@ import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { ClipFolder } from './ClipFolder';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 

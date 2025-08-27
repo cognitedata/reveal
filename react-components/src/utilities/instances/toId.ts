@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { assertNever } from '../assertNever';
 import { type InstanceReference } from '../instanceIds';
 import { type AssetInstance } from './AssetInstance';

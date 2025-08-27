@@ -1,11 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type IconName } from '../../base/utilities/IconName';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type IconName } from '../../base/utilities/types';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { AxisRenderStyle } from './AxisRenderStyle';
 
 export class AxisDomainObject extends VisualDomainObject {

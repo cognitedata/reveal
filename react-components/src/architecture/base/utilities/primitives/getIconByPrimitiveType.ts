@@ -1,12 +1,10 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../IconName';
+import { type IconName } from '../types';
 import { PrimitiveType } from './PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
   switch (primitiveType) {
+    case PrimitiveType.Point:
+      return 'Waypoint';
     case PrimitiveType.Line:
       return 'VectorLine';
     case PrimitiveType.Polyline:

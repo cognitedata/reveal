@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactNode } from 'react';
 import { type CommonResourceContainerProps } from '../Reveal3DResources/types';
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';

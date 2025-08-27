@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 export const TOOLTIP_DELAY = 500;
 export const TEXT_COLOR = 'black';
 export const CARET_COLOR = 'gray';

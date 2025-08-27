@@ -1,9 +1,5 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { SectionCommand } from '../../base/commands/SectionCommand';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 
 export class PointsOfInterestSectionCommand extends SectionCommand {
   public override get tooltip(): TranslationInput {

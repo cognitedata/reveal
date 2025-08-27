@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { remove } from 'lodash';
 import { type InstanceStylingGroup } from '../../../components/Reveal3DResources/types';
 

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   AngleIcon,
   ArrowLeftIcon,
@@ -61,7 +57,7 @@ import {
   CubesIcon
 } from '@cognite/cogs.js';
 
-import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { type IconName } from '../../../architecture/base/utilities/types';
 import { type IconType } from './IconType';
 
 export const DefaultIcons: Array<[IconName, IconType]> = [

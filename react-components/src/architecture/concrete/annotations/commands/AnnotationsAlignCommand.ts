@@ -1,16 +1,12 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
   private readonly _horizontal: boolean;

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type CadIntersection,
   type ClassicDataSourceType,
@@ -18,6 +14,8 @@ import { isDM3DModelIdentifier } from '../components/Reveal3DResources/typeGuard
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference, isIdEither } from './instanceIds';
+import { getMappingInstanceId } from '../components/CacheProvider/cad/assetMappingTypes';
+import { instanceIdToInstanceReference } from '../components/CacheProvider/idAndKeyTranslation';
 
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,
@@ -127,7 +125,11 @@ async function getCadFdmDataPromise(
   intersection: CadIntersection,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
-  const fdmNodeDataPromises = caches.fdmNodeCache.getClosestParentDataPromises(
+  if (caches.fdmCadNodeCache === undefined) {
+    return [];
+  }
+
+  const fdmNodeDataPromises = caches.fdmCadNodeCache.getClosestParentDataPromises(
     intersection.model.modelId,
     intersection.model.revisionId,
     intersection.treeIndex
@@ -151,11 +153,14 @@ async function getAssetMappingPromise(
     caches.cogniteClient
   );
 
-  const nodeAssetResult = await caches.assetMappingAndNode3dCache.getAssetMappingsForLowestAncestor(
-    intersection.model.modelId,
-    intersection.model.revisionId,
-    ancestors
-  );
+  const nodeAssetResult =
+    await caches.classicCadAssetMappingCache.getAssetMappingsForLowestAncestor(
+      intersection.model.modelId,
+      intersection.model.revisionId,
+      ancestors
+    );
 
-  return nodeAssetResult.mappings.map((mapping) => ({ id: mapping.assetId }));
+  return nodeAssetResult.mappings.map((mapping) =>
+    instanceIdToInstanceReference(getMappingInstanceId(mapping))
+  );
 }

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type ModelRevisionKey,
   type ModelId,
@@ -11,7 +7,7 @@ import {
 } from './types';
 import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
-import { fetchPointCloudAnnotationAssets } from './AnnotationModelUtils';
+import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 

@@ -1,25 +1,24 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Box3, type Vector3 } from 'three';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/vectorUtils';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
-import { clear } from '../../../base/utilities/extensions/arrayExtensions';
-import { type IconName } from '../../../base/utilities/IconName';
-import { Vector3ArrayUtils } from '../../../base/utilities/primitives/PointsUtils';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
+import { clear } from '../../../base/utilities/extensions/arrayUtils';
+import { type IconName } from '../../../base/utilities/types';
+import { Vector3ArrayUtils } from '../../../base/utilities/primitives/Vector3ArrayUtils';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
 
@@ -69,6 +68,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   protected constructor(primitiveType: PrimitiveType) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -258,3 +258,5 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [PrimitiveType.Line, PrimitiveType.Polyline, PrimitiveType.Polygon];

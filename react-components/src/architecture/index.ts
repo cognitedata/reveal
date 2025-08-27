@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { installThreeViews } from './installThreeViews';
 import { installToolbars } from './installToolbars';
 
@@ -33,8 +29,9 @@ export { SetPointShapeCommand } from './base/concreteCommands/pointCloud/SetPoin
 export { SetPointSizeCommand } from './base/concreteCommands/pointCloud/SetPointSizeCommand';
 export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
 export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
-export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';
+export { CycleLengthUnitsCommand } from './base/concreteCommands/units/CycleLengthUnitsCommand';
 export { UndoCommand } from './base/concreteCommands/UndoCommand';
+export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './base/domainObjects/DomainObject';
@@ -48,6 +45,12 @@ export { type ContextMenuData } from './base/renderTarget/ContextMenuController'
 export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
+
+// New architecture: Reveal domain objects
+export { RevealDomainObject } from './concrete/reveal/RevealDomainObject';
+export { CadDomainObject } from './concrete/reveal/cad/CadDomainObject';
+export { PointCloudDomainObject } from './concrete/reveal/pointCloud/PointCloudDomainObject';
+export { Image360CollectionDomainObject } from './concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 
 // New architecture: renderStyles
 export { RenderStyle } from './base/renderStyles/RenderStyle';
@@ -85,8 +88,9 @@ export { TrianglesBuffers } from './base/utilities/geometry/TrianglesBuffers';
 export { getNextColor } from './base/utilities/colors/getNextColor';
 export { getNextColorByIndex } from './base/utilities/colors/getNextColor';
 export { getResizeCursor } from './base/utilities/geometry/getResizeCursor';
-export type { TranslateDelegate } from './base/utilities/TranslateInput';
-export type { TranslationInput } from './base/utilities/TranslateInput';
+export type { TranslateDelegate } from './base/utilities/translation/TranslateInput';
+export type { TranslationInput } from './base/utilities/translation/TranslateInput';
+export type { QualitySettings } from './base/utilities/quality/QualitySettings';
 
 // New architecture: views
 export { BaseView } from './base/views/BaseView';

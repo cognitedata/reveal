@@ -1,73 +1,76 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { useQueries, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
-import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
-import { queryKeys } from '../utilities/queryKeys';
 import {
   type ClassicDataSourceType,
   type AddModelOptions,
   type DataSourceType
 } from '@cognite/reveal';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
+import { useContext, useMemo } from 'react';
+import { type FdmSDK } from '../data-providers/FdmSDK';
+import { useQuery } from '@tanstack/react-query';
+import { getModelKeys } from '../utilities/getModelKeys';
+import { queryKeys } from '../utilities/queryKeys';
 import {
   isClassicIdentifier,
   isDM3DModelIdentifier
 } from '../components/Reveal3DResources/typeGuards';
-
-import { type FdmSDK } from '../data-providers/FdmSDK';
-import { EMPTY_ARRAY } from '../utilities/constants';
-import { getModelKeys } from '../utilities/getModelKeys';
+import { ModelIdRevisionIdFromModelOptionsContext } from './useModelIdRevisionIdFromModelOptions.context';
 
 export const useModelIdRevisionIdFromModelOptions = (
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
-): Array<UseQueryResult<AddModelOptions<ClassicDataSourceType>>> => {
+): Array<AddModelOptions<ClassicDataSourceType>> => {
+  const { getModelIdAndRevisionIdFromExternalId, useFdmSdk } = useContext(
+    ModelIdRevisionIdFromModelOptionsContext
+  );
   const fdmSdk = useFdmSdk();
+  const keys = getModelKeys(addModelOptionsArray ?? []);
 
-  return useQueries({
-    queries:
-      addModelOptionsArray?.map((addModelOptions) => createQueryConfig(addModelOptions, fdmSdk)) ??
-      EMPTY_ARRAY
-  });
-};
-
-const createQueryConfig = (
-  addModelOptions: AddModelOptions<DataSourceType>,
-  fdmSdk: FdmSDK
-): UseQueryOptions<AddModelOptions<ClassicDataSourceType>> => {
-  const modelKeys = getModelKeys([addModelOptions]);
-  if (isClassicIdentifier(addModelOptions)) {
-    return {
-      queryKey: [queryKeys.modelRevisionId(modelKeys)],
-      queryFn: async () => await Promise.resolve(addModelOptions),
-      staleTime: Infinity
-    };
-  }
-
-  if (isDM3DModelIdentifier(addModelOptions)) {
-    return {
-      queryKey: [queryKeys.modelRevisionId(modelKeys)],
-      queryFn: async () => {
-        const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
-          addModelOptions.revisionExternalId,
-          addModelOptions.revisionSpace,
-          fdmSdk
-        );
-        return {
-          ...addModelOptions,
-          modelId,
-          revisionId
-        };
-      },
-      staleTime: Infinity
-    };
-  }
-
-  return {
-    queryKey: [queryKeys.modelRevisionId(modelKeys)],
-    queryFn: async () => await Promise.reject(new Error('Unknown identifier type')),
+  const queriedAddModelOptions = useQuery({
+    queryKey: [queryKeys.modelRevisionId(keys)],
+    queryFn: async () => {
+      if (addModelOptionsArray === undefined || addModelOptionsArray.length === 0) {
+        return [];
+      }
+      return await Promise.all(
+        addModelOptionsArray.map(
+          async (option) =>
+            await fetchClassicModelOption(option, fdmSdk, getModelIdAndRevisionIdFromExternalId)
+        )
+      );
+    },
     staleTime: Infinity
-  };
+  });
+
+  return useMemo(() => {
+    if (queriedAddModelOptions.data === undefined) {
+      return [];
+    }
+    return queriedAddModelOptions.data;
+  }, [queriedAddModelOptions]);
 };
+
+async function fetchClassicModelOption(
+  addModelOptions: AddModelOptions<DataSourceType>,
+  fdmSdk: FdmSDK,
+  getModelIdAndRevisionIdFromExternalId: (
+    revisionExternalId: string,
+    revisionSpace: string,
+    fdmSdk: FdmSDK
+  ) => Promise<{ modelId: number; revisionId: number }>
+): Promise<AddModelOptions<ClassicDataSourceType>> {
+  if (isClassicIdentifier(addModelOptions)) {
+    return addModelOptions;
+  }
+  if (isDM3DModelIdentifier(addModelOptions)) {
+    const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
+      addModelOptions.revisionExternalId,
+      addModelOptions.revisionSpace,
+      fdmSdk
+    );
+    return {
+      ...addModelOptions,
+      modelId,
+      revisionId
+    };
+  }
+  throw new Error('Unknown identifier type');
+}

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type SourceSelectorV3 } from '@cognite/sdk';
 import { COGNITE_3D_OBJECT_SOURCE } from './dataModels';
 import { cogniteDescribableSourceWithProperties } from './cogniteDescribableSourceWithProperties';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useMemo, type ReactElement } from 'react';

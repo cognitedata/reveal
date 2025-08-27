@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 export class FitViewCommand extends RenderTargetCommand {
   public override get icon(): IconName {

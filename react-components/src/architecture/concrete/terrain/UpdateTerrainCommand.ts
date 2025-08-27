@@ -1,15 +1,11 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { Vector3 } from 'three';
 import { Range3 } from '../../base/utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type IconName } from '../../base/utilities/IconName';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
+import { type IconName } from '../../base/utilities/types';
 
 export class UpdateTerrainCommand extends RenderTargetCommand {
   // ==================================================

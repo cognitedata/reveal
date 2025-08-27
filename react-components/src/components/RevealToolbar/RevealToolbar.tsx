@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
@@ -11,7 +7,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { HelpButton } from './HelpButton';
 import { ShareButton } from './ShareButton';
 import { ResetCameraButton } from './ResetCameraButton';
-import { type QualitySettings } from './SettingsContainer/types';
+import { type QualitySettings } from '../../architecture/base/utilities/quality/QualitySettings';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
 import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';

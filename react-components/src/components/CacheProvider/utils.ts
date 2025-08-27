@@ -1,12 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type AnnotationsTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type AssetMapping3D,
   type IdEither
 } from '@cognite/sdk';
 import { type CoreDmImage360Annotation, type DataSourceType } from '@cognite/reveal';
@@ -16,7 +11,6 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
-import { type CdfAssetMapping } from './types';
 
 export function getInstanceReferenceFromPointCloudAnnotation(
   annotation: AnnotationModel
@@ -65,8 +59,4 @@ function isCoreDmImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
 ): annotation is CoreDmImage360Annotation {
   return (annotation as CoreDmImage360Annotation).annotationIdentifier?.externalId !== undefined;
-}
-
-export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is CdfAssetMapping {
-  return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
 }

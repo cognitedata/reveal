@@ -1,0 +1,10 @@
+import { describe, expect, test } from 'vitest';
+import { ClipFolder } from './ClipFolder';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
+
+describe(ClipFolder.name, () => {
+  test('Should have typename', () => {
+    const domainObject = new ClipFolder();
+    expect(isEmpty(domainObject.typeName)).toBe(false);
+  });
+});

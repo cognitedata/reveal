@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ColorType } from '../../../base/domainObjectsHelpers/ColorType';
 import { Color } from 'three';
-import { WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
+import { WHITE_COLOR } from '../../../base/utilities/colors/colorUtils';
 import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 
 export abstract class PrimitiveRenderStyle extends CommonRenderStyle {
@@ -17,6 +13,7 @@ export abstract class PrimitiveRenderStyle extends CommonRenderStyle {
 
   // For labels only
   public showLabel = true;
+  public addLabels: boolean = true;
   public labelColor = WHITE_COLOR.clone();
   public labelBgColor = new Color('#232323');
   public labelOpacity = 0.9;

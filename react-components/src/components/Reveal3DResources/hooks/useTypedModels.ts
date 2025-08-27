@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
   type AddModelOptions,
@@ -15,9 +12,9 @@ import {
   type AddCadResourceOptions
 } from '../types';
 import { useCadOrPointCloudResources } from './useCadOrPointCloudResources';
-import { useClassicModelOptions } from './useClassicModelOptions';
 import { useEffect } from 'react';
 import { useReveal3DResourceLoadFailCount } from '../Reveal3DResourcesInfoContext';
+import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
 
 export const useTypedModels = (
   viewer: Cognite3DViewer<DataSourceType>,
@@ -25,13 +22,13 @@ export const useTypedModels = (
   onLoadFail?: (resource: AddResourceOptions, error: any) => void
 ): UseQueryResult<TypedReveal3DModel[]> => {
   const cadOrPointCloudResources = useCadOrPointCloudResources(resources);
-  const classicModelOptions = useClassicModelOptions(cadOrPointCloudResources);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(cadOrPointCloudResources);
   const typeResult = useQuery({
-    queryKey: ['typedModels', classicModelOptions, cadOrPointCloudResources],
+    queryKey: ['typedModels', classicAddModelOptions, cadOrPointCloudResources],
     queryFn: async () =>
-      await getTypedModels(classicModelOptions, viewer, cadOrPointCloudResources, onLoadFail),
+      await getTypedModels(classicAddModelOptions, viewer, cadOrPointCloudResources, onLoadFail),
     staleTime: Infinity,
-    enabled: classicModelOptions.length > 0 && cadOrPointCloudResources.length > 0
+    enabled: classicAddModelOptions.length > 0 && cadOrPointCloudResources.length > 0
   });
 
   useRegisterFailedResources(typeResult, cadOrPointCloudResources);

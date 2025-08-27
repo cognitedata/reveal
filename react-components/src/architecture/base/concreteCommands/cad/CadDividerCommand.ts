@@ -1,10 +1,8 @@
-/*!
- * Copyright 2024 Cognite AS
- */
+import { CadDomainObject } from '../../../concrete/reveal/cad/CadDomainObject';
 import { DividerCommand } from '../../commands/DividerCommand';
 
 export class CadDividerCommand extends DividerCommand {
   public override get isVisible(): boolean {
-    return this.renderTarget.getCadModels().next().value !== undefined;
+    return this.rootDomainObject.getDescendantByType(CadDomainObject) !== undefined;
   }
 }

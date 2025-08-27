@@ -1,12 +1,14 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
-import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
+import {
+  createImage360ClassicMock,
+  createImage360DmMock,
+  image360ClassicOptions,
+  image360DmOptions
+} from '#test-utils/fixtures/image360';
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { viewerMock } from '#test-utils/fixtures/viewer';
+import { viewerMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
@@ -14,12 +16,11 @@ import { RevealModelsUtils } from './RevealModelsUtils';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 
-describe('RevealModelsUtils', () => {
+describe(RevealModelsUtils.name, () => {
   let renderTargetMock: RevealRenderTarget;
   let root: RootDomainObject;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     renderTargetMock = createRenderTargetMock();
     root = renderTargetMock.rootDomainObject;
   });
@@ -56,9 +57,14 @@ describe('RevealModelsUtils', () => {
     const addFn = vi.fn().mockResolvedValue(model);
     viewerMock.addCadModel = addFn;
 
-    const result = await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+    const result = await RevealModelsUtils.addCadModel(renderTargetMock, cadModelOptions);
     expect(result).toBe(model);
     expect(addFn).toHaveBeenCalledWith(cadModelOptions);
+
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('Model Name');
   });
 
   test('should add PointCloud model', async () => {
@@ -69,9 +75,14 @@ describe('RevealModelsUtils', () => {
     const result = await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
     expect(result).toBe(model);
     expect(addFn).toHaveBeenCalledWith(pointCloudModelOptions);
+
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('Model Name');
   });
 
-  test('should add Image360Collection', async () => {
+  test('should add Classic Image360Collection', async () => {
     const model = createImage360ClassicMock();
     const addFn = vi.fn().mockResolvedValue(model);
     viewerMock.add360ImageSet = addFn;
@@ -81,15 +92,37 @@ describe('RevealModelsUtils', () => {
       image360ClassicOptions
     );
     expect(result).toBe(model);
-    const siteId =
-      image360ClassicOptions.source === 'events'
-        ? image360ClassicOptions.siteId
-        : image360ClassicOptions.externalId;
     expect(addFn).toHaveBeenCalledWith(
       'events',
-      { site_id: siteId },
+      { site_id: image360ClassicOptions.siteId },
       { preMultipliedRotation: false }
     );
+
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('360 Model Name');
+  });
+
+  test('should add DM Image360Collection', async () => {
+    const model = createImage360DmMock();
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.add360ImageSet = addFn;
+
+    const result = await RevealModelsUtils.addImage360Collection(
+      renderTargetMock,
+      image360DmOptions
+    );
+    expect(result).toBe(model);
+    expect(addFn).toHaveBeenCalledWith('datamodels', {
+      source: 'cdm',
+      image360CollectionExternalId: image360DmOptions.externalId,
+      space: image360DmOptions.space
+    });
+    const domainObject = RevealModelsUtils.getByRevealModel(root, model);
+    expect(domainObject).toBeDefined();
+    assert(domainObject !== undefined);
+    expect(domainObject.name).toBe('360 Model Name');
   });
 
   test('should remove the CAD model', async () => {
@@ -100,7 +133,10 @@ describe('RevealModelsUtils', () => {
     viewerMock.addCadModel = addFn;
 
     // Add model
-    await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+    await RevealModelsUtils.addCadModel(renderTargetMock, cadModelOptions);
+
+    viewerModelsMock.mockReturnValue([model]);
+
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeDefined();
 
@@ -108,6 +144,42 @@ describe('RevealModelsUtils', () => {
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
+  });
+
+  test('should not throw when removing a non-existing CAD model', async () => {
+    const model = createCadMock();
+    const removeFn = vi.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addCadModel = addFn;
+
+    viewerModelsMock.mockReturnValue([]);
+
+    await RevealModelsUtils.addCadModel(renderTargetMock, cadModelOptions);
+
+    expect(() => {
+      RevealModelsUtils.remove(renderTargetMock, model);
+    }).not.toThrow();
+  });
+
+  test('should not throw when removing a non-existing Point Cloud model', async () => {
+    const model = createPointCloudMock();
+    const removeFn = vi.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addPointCloudModel = addFn;
+
+    viewerModelsMock.mockReturnValue([]);
+
+    await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
+
+    expect(() => {
+      RevealModelsUtils.remove(renderTargetMock, model);
+    }).not.toThrow();
   });
 
   test('should remove the PointCloud model', async () => {
@@ -119,6 +191,9 @@ describe('RevealModelsUtils', () => {
 
     // Add model
     await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
+
+    viewerModelsMock.mockReturnValue([model]);
+
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeDefined();
 

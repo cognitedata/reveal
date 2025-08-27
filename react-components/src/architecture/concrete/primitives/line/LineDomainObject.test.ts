@@ -1,24 +1,20 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type LineDomainObject } from './LineDomainObject';
+import { LineDomainObject } from './LineDomainObject';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 import { Box3, Vector3 } from 'three';
 import { expectEqualBox3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/vectorUtils';
 import { LineRenderStyle } from './LineRenderStyle';
 
-describe('LineDomainObject', () => {
-  test('should be empty', () => {
+describe(LineDomainObject.name, () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Line,
       PrimitiveType.Polyline,
@@ -79,7 +75,7 @@ describe('LineDomainObject', () => {
   });
 
   test('should be cloned', () => {
-    const domainObject = createLineDomainObject(PrimitiveType.Box);
+    const domainObject = createLineDomainObject(PrimitiveType.Polygon);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureLineDomainObject);
@@ -89,7 +85,7 @@ describe('LineDomainObject', () => {
     }
     expect(clone.primitiveType).toStrictEqual(domainObject.primitiveType);
     expect(clone.points).toStrictEqual(domainObject.points);
-    expect(clone.color).toBe(domainObject.color);
+    expect(clone.color).toStrictEqual(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
     expect(clone.name).toBe(domainObject.name);
     expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
@@ -105,12 +101,11 @@ describe('LineDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createLineDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
-      if (info === undefined) {
-        return;
-      }
-      expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
+      assert(info !== undefined);
+      expect(info.getItemsByQuantity(quantity)).toHaveLength(expectedItems);
     }
   });
 });

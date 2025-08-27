@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { chunk } from 'lodash';
 import {
   type CreateInstanceItem,

@@ -1,11 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { setClippingPlanes } from './setClippingPlanes';

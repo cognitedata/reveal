@@ -1,9 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AnyIntersection } from '@cognite/reveal';
-import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 import { type Vector2 } from 'three';
+import { type Signal, signal } from '@cognite/signals';
 
 export type ContextMenuData = {
   clickEvent: PointerEvent;
@@ -12,14 +9,9 @@ export type ContextMenuData = {
 };
 
 export class ContextMenuController {
-  private _contextMenuPosition: ContextMenuData | undefined = undefined;
+  private readonly _data = signal<ContextMenuData | undefined>(undefined);
 
-  public get contextMenuPositionData(): ContextMenuData | undefined {
-    return this._contextMenuPosition;
-  }
-
-  public set contextMenuPositionData(data: ContextMenuData | undefined) {
-    this._contextMenuPosition = data;
-    ContextMenuUpdater.update();
+  public get data(): Signal<ContextMenuData | undefined> {
+    return this._data;
   }
 }

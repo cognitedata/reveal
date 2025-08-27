@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactElement } from 'react';
 import { type RuleOutput } from '../types';
 import styled from 'styled-components';

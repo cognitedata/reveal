@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Node3D, type QueryRequest } from '@cognite/sdk';
 import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';

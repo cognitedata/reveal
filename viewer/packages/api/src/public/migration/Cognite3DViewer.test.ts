@@ -15,6 +15,7 @@ import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRende
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
 
 import { jest } from '@jest/globals';
+import { ResolutionOptions } from './types';
 
 const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { assert: { type: 'json' } })).default;
 
@@ -278,5 +279,15 @@ describe('Cognite3DViewer', () => {
     const cameraState = viewer.cameraManager.getCameraState();
     expect(cameraState.position).not.toEqual(originalCameraPosition);
     expect(cameraState.target).not.toEqual(originalCameraTarget);
+  });
+
+  test('resolution options are persisted when set', () => {
+    const resolutionOptions: ResolutionOptions = { movingCameraResolutionFactor: 0.35, maxRenderResolution: 4e6 };
+
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+
+    viewer.setResolutionOptions(resolutionOptions);
+
+    expect(viewer.getResolutionOptions()).toEqual(resolutionOptions);
   });
 });

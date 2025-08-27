@@ -1,18 +1,15 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Ray, Plane, type Box3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type PlaneDomainObject } from './PlaneDomainObject';
-import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
 import { getRoot } from '../../../base/domainObjects/getRoot';
+import { isAbsEqual } from '../../../base/utilities/extensions/mathUtils';
 
 /**
  * The `PlaneDragger` class represents a utility for dragging and manipulating a plane in a 3D space.
@@ -67,10 +64,16 @@ export class PlaneDragger extends BaseDragger {
     if (this._boundingBox !== undefined && !this._boundingBox.containsPoint(newPoint)) {
       return false;
     }
+    const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
+    if (
+      newPlane.equals(this._domainObject.plane) ||
+      isAbsEqual(newPlane.constant, this._domainObject.plane.constant, EPSILON)
+    ) {
+      return false; // No change
+    }
     if (this.transaction === undefined) {
       this.transaction = this._domainObject.createTransaction(Changes.geometry);
     }
-    const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
     this._domainObject.plane.copy(newPlane);
     this._domainObject.makeFlippingConsistent();
     this.domainObject.notify(Changes.dragging);

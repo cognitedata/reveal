@@ -1,11 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 export class UndoCommand extends RenderTargetCommand {
   // ==================================================
@@ -48,7 +43,7 @@ export class UndoCommand extends RenderTargetCommand {
     const couldUndo = undoManager.canUndo;
     const undone = undoManager.undo(this.renderTarget);
     if (couldUndo !== undoManager.canUndo) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
     this.activeTool?.onUndo();
     return undone;

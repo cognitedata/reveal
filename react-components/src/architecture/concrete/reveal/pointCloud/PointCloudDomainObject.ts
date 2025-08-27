@@ -1,27 +1,26 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
+import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type IconName } from '../../../base/utilities/IconName';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type IconName } from '../../../base/utilities/types';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
+import { RevealDomainObject } from '../RevealDomainObject';
 import { type PointCloud } from '../RevealTypes';
-import { PointCloudRenderStyle } from './PointCloudRenderStyle';
+import { type PointColorType, type PointShape } from '@cognite/reveal';
 
-export class PointCloudDomainObject extends VisualDomainObject {
+export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: PointCloud;
+  private readonly _model: PointCloud;
+  public readonly pointSize = signal(0);
+  public readonly pointShape = signal<PointShape>(0);
+  public readonly pointColorType = signal<PointColorType>(0);
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): PointCloud | undefined {
+  public get model(): PointCloud {
     return this._model;
   }
   // ==================================================
@@ -31,6 +30,16 @@ export class PointCloudDomainObject extends VisualDomainObject {
   public constructor(model: PointCloud) {
     super();
     this._model = model;
+    this.pointSize(model.pointSize);
+    this.pointShape(model.pointShape);
+    this.pointColorType(model.pointColorType);
+
+    // This updated the point cloud on reveal side when the signals change.
+    this.addEffect(() => {
+      this._model.pointSize = this.pointSize();
+      this._model.pointShape = this.pointShape();
+      this._model.pointColorType = this.pointColorType();
+    });
   }
 
   // ==================================================
@@ -49,12 +58,11 @@ export class PointCloudDomainObject extends VisualDomainObject {
     return false;
   }
 
-  public override createRenderStyle(): RenderStyle | undefined {
-    return new PointCloudRenderStyle();
-  }
-
-  protected override removeCore(): void {
-    super.removeCore();
-    getRenderTarget(this)?.viewer?.removeModel(this._model);
+  public override dispose(): void {
+    super.dispose();
+    const viewer = getRenderTarget(this)?.viewer;
+    if (viewer?.models?.includes(this._model) ?? false) {
+      viewer?.removeModel(this._model);
+    }
   }
 }

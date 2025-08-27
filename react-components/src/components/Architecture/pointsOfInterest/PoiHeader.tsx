@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import {
   Flex,
   WaypointIcon,
@@ -40,7 +37,9 @@ export const PoiHeader = (): ReactNode => {
         </Flex>
         <Divider direction="vertical" weight="2px" />
         <Flex direction="row" justifyContent="flex-start">
-          <Dropdown placement="bottom-end" content={<PoiSharePanel />}>
+          {/* zIndex is set to 10000 to ensure the dropdown appears above other elements
+              This is temporary fix until we have styleScope configured */}
+          <Dropdown placement="bottom-end" content={<PoiSharePanel />} zIndex={10000}>
             <Tooltip placement="top-end" content={t({ key: 'SHARE' })}>
               <Button icon={<ShareIcon />} type="ghost" />
             </Tooltip>

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type PointCloudAppearance, type DMInstanceRef } from '@cognite/reveal';
 
 export type PointCloudVolumeStylingGroup = {

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 import { RULE_BASED_OUTPUTS_VIEW } from '../constants';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';

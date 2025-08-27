@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type Class, isInstanceOf } from '../utilities/class';
 
 import { type ILazyLoader } from './i-lazy-loader';

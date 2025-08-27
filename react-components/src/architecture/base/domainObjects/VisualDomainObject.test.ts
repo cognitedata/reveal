@@ -1,10 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, test, beforeAll, expect } from 'vitest';
 import { VisualDomainObject } from './VisualDomainObject';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { installThreeView } from '../views/ThreeViewFactory';
 import { ThreeView } from '../views/ThreeView';
 import { Box3 } from 'three';
@@ -12,13 +8,13 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { FocusType } from '../domainObjectsHelpers/FocusType';
-import { EventChangeTester } from './DomainObject.test';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { FolderDomainObject } from './FolderDomainObject';
 import { type DomainObject } from './DomainObject';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
-describe('VisualDomainObject', () => {
+describe(VisualDomainObject.name, () => {
   let renderTarget: RevealRenderTarget;
   beforeAll(() => {
     renderTarget = createRenderTargetMock();

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import {
@@ -26,7 +22,7 @@ import { CylinderUtils } from '../../base/utilities/primitives/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/primitives/BoxUtils';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { ALL_STATUSES, Status } from './helpers/Status';
-import { isPartOfBoxVisibleByPlanes } from '../../base/utilities/geometry/isBoxVisibleByPlanes';
+import { isAnyCornersVisibleByPlanes } from '../../base/utilities/geometry/isBoxVisibleByPlanes';
 import { type Annotation } from './helpers/Annotation';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 
@@ -171,7 +167,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         tempBoundingBox.makeEmpty();
         annotation.expandBoundingBox(tempBoundingBox);
         tempBoundingBox.applyMatrix4(this.globalMatrix);
-        if (isPartOfBoxVisibleByPlanes(clippingPlanes, tempBoundingBox)) {
+        if (isAnyCornersVisibleByPlanes(clippingPlanes, tempBoundingBox)) {
           boundingBox.union(tempBoundingBox);
         }
       }
@@ -201,7 +197,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         boundingBox.makeEmpty();
         annotation.expandBoundingBox(boundingBox);
         boundingBox.applyMatrix4(this.globalMatrix);
-        return isPartOfBoxVisibleByPlanes(clippingPlanes, boundingBox);
+        return isAnyCornersVisibleByPlanes(clippingPlanes, boundingBox);
       });
 
       for (let startIndex = 0; startIndex < filteredAnnotation.length; startIndex += GROUP_SIZE) {

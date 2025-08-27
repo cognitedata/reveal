@@ -1,10 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Button, Comment, Flex, Input, Textarea } from '@cognite/cogs.js';
 import { type BaseSyntheticEvent, type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '../i18n/I18n';
-import { useOnUpdate } from './useOnUpdate';
+import { useOnUpdate } from './hooks/useOnUpdate';
 import { getDefaultCommand } from './utilities';
 import { useRenderTarget } from '../RevealCanvas';
 import { type TranslationInput } from '../../architecture';

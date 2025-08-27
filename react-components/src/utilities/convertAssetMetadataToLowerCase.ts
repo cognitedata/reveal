@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Asset } from '@cognite/sdk';
 
 export function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type DataSourceType } from '@cognite/reveal';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Class<T> = Function & { prototype: T };
 

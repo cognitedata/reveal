@@ -1,8 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { type CadRenderStyle } from './CadRenderStyle';
 import { type CadDomainObject } from './CadDomainObject';
 import { Box3 } from 'three';
 import { type CogniteCadModel } from '@cognite/reveal';
@@ -15,11 +10,7 @@ export class CadThreeView extends ThreeView<CadDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get style(): CadRenderStyle {
-    return super.style as CadRenderStyle;
-  }
-
-  public get model(): CogniteCadModel | undefined {
+  public get model(): CogniteCadModel {
     const domainObject = this.domainObject;
     return domainObject.model;
   }
@@ -37,18 +28,12 @@ export class CadThreeView extends ThreeView<CadDomainObject> {
 
   public override onShow(): void {
     const model = this.model;
-    if (model === undefined) {
-      return;
-    }
     super.onShow();
     model.visible = true;
   }
 
   public override onHide(): void {
     const model = this.model;
-    if (model === undefined) {
-      return;
-    }
     model.visible = false;
     super.onHide();
   }
@@ -59,9 +44,6 @@ export class CadThreeView extends ThreeView<CadDomainObject> {
 
   protected override calculateBoundingBox(): Box3 {
     const model = this.model;
-    if (model === undefined) {
-      return new Box3().makeEmpty();
-    }
     const boundingBox = new Box3();
     return model.getModelBoundingBox(boundingBox, true);
   }

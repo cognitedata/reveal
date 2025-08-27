@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type CameraManager,
   CustomObject,
@@ -9,8 +5,6 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CogniteCadModel,
-  CognitePointCloudModel,
   Image360Action,
   type DataSourceType
 } from '@cognite/reveal';
@@ -24,13 +18,12 @@ import {
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { getOctant } from '../utilities/extensions/vectorExtensions';
+import { getOctant } from '../utilities/extensions/vectorUtils';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
@@ -41,12 +34,15 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
+import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
+import { type UniqueId } from '../utilities/types';
+import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
 export type RevealRenderTargetOptions = {
   coreDmOnly?: boolean;
+  enableLegacy3dFdm?: boolean;
 };
 
 export class RevealRenderTarget {
@@ -60,11 +56,13 @@ export class RevealRenderTarget {
   private readonly _contextmenuController: ContextMenuController;
   private readonly _cdfCaches: CdfCaches;
   private readonly _instanceStylingController: InstanceStylingController;
+  private readonly _revealSettingsController: RevealSettingsController;
+  private readonly _panelUpdater: DomainObjectPanelUpdater;
 
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _clippedBoundingBox: Box3 | undefined;
-  private _cropBoxUniqueId: number | undefined = undefined;
+  private _cropBoxUniqueId: UniqueId | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
 
@@ -83,13 +81,16 @@ export class RevealRenderTarget {
   ) {
     this._viewer = viewer;
     const coreDmOnly = options?.coreDmOnly ?? false;
-    this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly });
+    const enableLegacy3dFdm = options?.coreDmOnly ?? true;
+    this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly, enableLegacy3dFdm });
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
     this._contextmenuController = new ContextMenuController();
     this._instanceStylingController = new InstanceStylingController();
+    this._panelUpdater = new DomainObjectPanelUpdater();
     this._rootDomainObject = new RootDomainObject(this, sdk);
     this._rootDomainObject.isExpanded = true;
+    this._revealSettingsController = new RevealSettingsController(viewer, this._rootDomainObject);
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -145,6 +146,14 @@ export class RevealRenderTarget {
     return this._instanceStylingController;
   }
 
+  public get revealSettingsController(): RevealSettingsController {
+    return this._revealSettingsController;
+  }
+
+  public get panelUpdater(): DomainObjectPanelUpdater {
+    return this._panelUpdater;
+  }
+
   public get cursor(): string {
     return this.domElement.style.cursor;
   }
@@ -191,32 +200,6 @@ export class RevealRenderTarget {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Get models from the viewer
-  // ==================================================
-
-  public *getPointClouds(): Generator<PointCloud> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
-        yield model;
-      }
-    }
-  }
-
-  public *getCadModels(): Generator<CogniteCadModel> {
-    for (const model of this.viewer.models) {
-      if (model instanceof CogniteCadModel) {
-        yield model;
-      }
-    }
-  }
-
-  public *get360ImageCollections(): Generator<Image360Model> {
-    for (const collection of this.viewer.get360ImageCollections()) {
-      yield collection;
-    }
-  }
-
-  // ==================================================
   // INSTANCE METHODS: Convert back and from Viewer coordinates
   // ==================================================
 
@@ -235,6 +218,10 @@ export class RevealRenderTarget {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public updateAllCommands(): void {
+    this._commandsController.deferredUpdate();
+  }
 
   public setDefaultTool(tool: BaseTool): boolean {
     const defaultTool = this.commandsController.defaultTool;
@@ -267,7 +254,7 @@ export class RevealRenderTarget {
 
   public onStartup(): void {
     this._config?.onStartup(this);
-    CommandsUpdater.update(this);
+    this.updateAllCommands();
   }
 
   public dispose(): void {
@@ -281,7 +268,7 @@ export class RevealRenderTarget {
     this.commandsController.removeEventListeners();
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
-    CommandsUpdater.dispose();
+    this._revealSettingsController.dispose();
   }
 
   public invalidate(): void {
@@ -336,10 +323,16 @@ export class RevealRenderTarget {
   // ==================================================
 
   public getGlobalClippingPlanes(): Plane[] {
+    if (this.viewer.getGlobalClippingPlanes === undefined) {
+      return [];
+    }
     return this.viewer.getGlobalClippingPlanes();
   }
 
   public get isGlobalClippingActive(): boolean {
+    if (this.viewer.getGlobalClippingPlanes === undefined) {
+      return false;
+    }
     return this.getGlobalClippingPlanes().length > 0;
   }
 

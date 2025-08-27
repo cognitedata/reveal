@@ -1,14 +1,10 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Box3, Euler, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import {
   forceAngleAround0,
   forceBetween0AndPi,
   forceBetween0AndTwoPi
-} from '../extensions/mathExtensions';
+} from '../extensions/mathUtils';
 import { BoxUtils } from './BoxUtils';
 import { Primitive } from './Primitive';
 import { PrimitiveType } from './PrimitiveType';

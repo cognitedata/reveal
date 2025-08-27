@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum ColorType {
   Specified, // Use the color of the domain object itself
   Parent, // Use the color of the parent domain object

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type FdmPropertyType } from '../../Reveal3DResources/types';
 import { type FdmRuleTrigger } from '../types';
 

@@ -1,13 +1,10 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-import { type ReactNode, useState, type ReactElement } from 'react';
+import { type ReactNode, type ReactElement } from 'react';
 import { type Vector2 } from 'three';
 import styled from 'styled-components';
 import { useRenderTarget } from './RevealCanvas';
-import { ContextMenuUpdater } from '../architecture/base/reactUpdaters/ContextMenuUpdater';
 import { withSuppressRevealEvents } from '../higher-order-components/withSuppressRevealEvents';
 import { type ContextMenuData } from '../architecture/base/renderTarget/ContextMenuController';
+import { useSignalValue } from '@cognite/signals/react';
 
 export const ContextMenu = ({
   Content
@@ -15,21 +12,15 @@ export const ContextMenu = ({
   Content: ({ contextMenuData }: { contextMenuData: ContextMenuData }) => ReactNode;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
-
-  const [_update, setUpdate] = useState<number>(0);
-  ContextMenuUpdater.setCounterDelegate(setUpdate);
-
-  const contextMenuData = renderTarget.contextMenuController.contextMenuPositionData;
-
+  const contextMenuData = useSignalValue(renderTarget.contextMenuController.data);
   if (contextMenuData === undefined) {
     return <></>;
   }
-
   return (
     <StyledDiv
       $position={contextMenuData.position}
       onClick={() => {
-        renderTarget.contextMenuController.contextMenuPositionData = undefined;
+        renderTarget.contextMenuController.data(undefined);
       }}>
       <Content contextMenuData={contextMenuData} />
     </StyledDiv>

@@ -1,16 +1,28 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-import { useMemo } from 'react';
-import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import { createContext, useContext, useMemo } from 'react';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
-import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesInfoContext';
+import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { useRevealDomainObjects } from './useRevealDomainObjects';
+import { isDefined } from '../utilities/isDefined';
+
+export type UseImage360CollectionsDependencies = {
+  useRevealDomainObjects: typeof useRevealDomainObjects;
+};
+
+export const UseImage360CollectionsContext = createContext<UseImage360CollectionsDependencies>({
+  useRevealDomainObjects
+});
 
 export const useImage360Collections = (): Array<Image360Collection<DataSourceType>> => {
-  const viewer = useReveal();
-  const { reveal3DResourcesCount: resourceCount } = useReveal3DResourcesCount();
+  const { useRevealDomainObjects } = useContext(UseImage360CollectionsContext);
 
-  return useMemo(() => {
-    return viewer.get360ImageCollections();
-  }, [viewer, resourceCount]);
+  const domainObjects = useRevealDomainObjects();
+
+  return useMemo(
+    () =>
+      domainObjects
+        .filter((domainObject) => domainObject instanceof Image360CollectionDomainObject)
+        .map((domainObject) => domainObject.model)
+        .filter(isDefined),
+    [domainObjects]
+  );
 };

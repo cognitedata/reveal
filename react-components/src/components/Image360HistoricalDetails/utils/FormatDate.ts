@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 export const formatDate = (date: Date | undefined): string => {
   if (date === undefined) {
     return '';

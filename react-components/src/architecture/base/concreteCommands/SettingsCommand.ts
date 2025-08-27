@@ -1,12 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../utilities/IconName';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '../utilities/types';
 
 import { BaseSettingsCommand } from '../commands/BaseSettingsCommand';
-import { SetQualityCommand } from './SetQualityCommand';
 import { SetPointSizeCommand } from './pointCloud/SetPointSizeCommand';
 import { SetPointColorTypeCommand } from './pointCloud/SetPointColorTypeCommand';
 import { SetPointShapeCommand } from './pointCloud/SetPointShapeCommand';
@@ -23,6 +18,10 @@ import { SetPointsOfInterestVisibleCommand } from '../../concrete/pointsOfIntere
 import { PointsOfInterestDividerCommand } from '../../concrete/pointsOfInterest/PointsOfInterestDividerCommand';
 import { PointsOfInterestSectionCommand } from '../../concrete/pointsOfInterest/PointsOfInterestSectionCommand';
 import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
+import { SetQualitySliderCommand } from './SetQualitySliderCommand/SetQualitySliderCommand';
+import { QualityWarningBannerCommand } from './SetQualitySliderCommand/QualityWarningBannerCommand';
+import { DividerCommand } from '../commands/DividerCommand';
+import { SetLengthUnitCommand } from './units/SetLengthUnitCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -32,14 +31,18 @@ export class SettingsCommand extends BaseSettingsCommand {
   public constructor(include360Images: boolean = true, includePois: boolean = false) {
     super();
 
-    this.add(new SetQualityCommand());
+    this.add(new SetQualitySliderCommand());
+    this.add(new QualityWarningBannerCommand());
+
+    this.add(new DividerCommand());
     this.add(new SetGhostModeCommand());
 
-    if (includePois) {
-      this.add(new PointsOfInterestDividerCommand());
-      this.add(new PointsOfInterestSectionCommand());
-      this.add(new SetPointsOfInterestVisibleCommand());
-    }
+    // Point clouds
+    this.add(new PointCloudDividerCommand());
+    this.add(new SetPointSizeCommand());
+    this.add(new SetPointColorTypeCommand());
+    this.add(new SetPointShapeCommand());
+    this.add(new PointCloudFilterCommand());
 
     if (include360Images) {
       // 360 Images
@@ -53,12 +56,15 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new Set360IconsOccludedVisibleCommand());
       this.add(new Set360IconsOpacityCommand());
     }
-    // Point clouds
-    this.add(new PointCloudDividerCommand());
-    this.add(new SetPointSizeCommand());
-    this.add(new SetPointColorTypeCommand());
-    this.add(new SetPointShapeCommand());
-    this.add(new PointCloudFilterCommand());
+
+    this.add(new DividerCommand());
+    this.add(new SetLengthUnitCommand());
+
+    if (includePois) {
+      this.add(new PointsOfInterestDividerCommand());
+      this.add(new PointsOfInterestSectionCommand());
+      this.add(new SetPointsOfInterestVisibleCommand());
+    }
   }
 
   // ==================================================

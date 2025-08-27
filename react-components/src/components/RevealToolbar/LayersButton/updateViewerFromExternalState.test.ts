@@ -1,7 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
 import {
   viewerImage360CollectionsMock,
@@ -14,10 +11,6 @@ import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
 describe(updateViewerFromExternalState.name, () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   test('updates viewer with external layers state', () => {
     const layersState = {
       cadLayers: [{ revisionId: 456, applied: true, index: 0 }],

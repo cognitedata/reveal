@@ -1,9 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum PrimitiveType {
   None,
+  Point,
   Line,
   Polyline,
   Polygon,
@@ -18,4 +15,21 @@ export enum PrimitiveType {
   PlaneY,
   PlaneZ,
   PlaneXY
+}
+
+export const AlongAxisPlanePrimitiveTypes = [
+  PrimitiveType.PlaneX,
+  PrimitiveType.PlaneY,
+  PrimitiveType.PlaneZ
+];
+
+export const PlanePrimitiveTypes = [...AlongAxisPlanePrimitiveTypes, PrimitiveType.PlaneXY];
+
+export function verifyPrimitiveType(
+  legalTypes: PrimitiveType[],
+  primitiveType: PrimitiveType
+): void {
+  if (!legalTypes.includes(primitiveType)) {
+    throw new Error(`Invalid primitive type: ${primitiveType}`);
+  }
 }

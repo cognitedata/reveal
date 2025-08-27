@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import {
@@ -46,9 +43,11 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
 
   return useQuery({
     queryKey: [
-      queryKeys.timeseriesLinkedToAssets(),
-      timeseriesExternalIds,
-      relationshipResourceTypes
+      queryKeys.assetsAndTimeseriesLinkageData(
+        timeseriesExternalIds,
+        relationshipResourceTypes,
+        assetNodes.map((asset) => asset.externalId).filter(isDefined)
+      )
     ],
     queryFn: async () => {
       const externalIds: ExternalId[] = timeseriesExternalIds.map((externalId) => {

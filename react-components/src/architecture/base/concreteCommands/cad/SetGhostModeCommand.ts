@@ -1,9 +1,5 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 
 export class SetGhostModeCommand extends RenderTargetCommand {
   // ==================================================
@@ -24,6 +20,10 @@ export class SetGhostModeCommand extends RenderTargetCommand {
 
   public override get isChecked(): boolean {
     return this.renderTarget.ghostMode;
+  }
+
+  public setChecked(checked: boolean): void {
+    this.renderTarget.ghostMode = checked;
   }
 
   protected override invokeCore(): boolean {

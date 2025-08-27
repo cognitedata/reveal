@@ -1,13 +1,9 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Box3 } from 'three';
 import { type Primitive } from '../../../base/utilities/primitives/Primitive';
 import { type AnnotationStatus } from '@cognite/sdk';
 import { Status } from './Status';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { remove } from '../../../base/utilities/extensions/arrayExtensions';
+import { remove } from '../../../base/utilities/extensions/arrayUtils';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 

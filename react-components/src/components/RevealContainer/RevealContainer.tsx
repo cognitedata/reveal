@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactElement } from 'react';
 import { RevealContext, type RevealContextProps } from '../RevealContext/RevealContext';
 import { RevealCanvas } from '../RevealCanvas';

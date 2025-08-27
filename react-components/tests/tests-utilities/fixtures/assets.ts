@@ -1,35 +1,24 @@
 import { type Asset } from '@cognite/sdk';
-import { Mock } from 'moq.ts';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
 import { type ExternalIdsResultList, type NodeItem } from '../../../src/data-providers/FdmSDK';
 
+const fixedDate = new Date('2025-01-01T00:00:00.000Z');
+
 export function createAssetMock(id: number, name?: string, description?: string): Asset {
-  return new Mock<Asset>()
-    .setup((p) => p.id)
-    .returns(id)
-    .setup((p) => p.name)
-    .returns(name ?? `asset-${id}`)
-    .setup((p) => p.description)
-    .returns(description)
-    .setup((p) => p.parentId)
-    .returns(0)
-    .setup((p) => p.createdTime)
-    .returns(new Date())
-    .setup((p) => p.lastUpdatedTime)
-    .returns(new Date())
-    .setup((p) => p.rootId)
-    .returns(0)
-    .setup((p) => p.externalId)
-    .returns('external-id-123')
-    .setup((p) => p.metadata)
-    .returns({ key: 'value' })
-    .setup((p) => p.source)
-    .returns('source')
-    .setup((p) => p.dataSetId)
-    .returns(0)
-    .setup((p) => p.labels)
-    .returns([])
-    .object();
+  return {
+    id,
+    name: name ?? `asset-${id}`,
+    description: description ?? `asset-${id}`,
+    parentId: 0,
+    createdTime: fixedDate,
+    lastUpdatedTime: fixedDate,
+    rootId: 0,
+    externalId: 'external-id-123',
+    metadata: { key: 'value' },
+    source: 'source',
+    dataSetId: 0,
+    labels: []
+  };
 }
 
 export function createDMAssetMock(externalId: string): ExternalIdsResultList<AssetProperties> {

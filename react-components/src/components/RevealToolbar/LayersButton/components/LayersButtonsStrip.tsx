@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import styled from 'styled-components';
 import { ModelLayersButton } from './ModelLayersButton';
 

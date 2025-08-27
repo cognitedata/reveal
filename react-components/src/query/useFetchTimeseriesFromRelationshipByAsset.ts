@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type RelationshipResourceType, type Asset, type Timeseries } from '@cognite/sdk';
 import { isUndefined } from 'lodash';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';

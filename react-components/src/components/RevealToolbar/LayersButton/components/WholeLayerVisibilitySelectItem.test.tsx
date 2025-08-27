@@ -1,10 +1,7 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render, fireEvent } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
-import { createCadHandlerMock } from '../../../../../tests/tests-utilities/fixtures/modelHandler';
+import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { type ModelHandler } from '../ModelHandler';
 
@@ -12,7 +9,6 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
   let mockCadHandler: ModelHandler;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     mockCadHandler = createCadHandlerMock();
   });
 

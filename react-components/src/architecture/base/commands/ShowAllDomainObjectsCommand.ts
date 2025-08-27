@@ -1,9 +1,5 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type IconName } from '../../base/utilities/IconName';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type IconName } from '../../base/utilities/types';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { InstanceCommand } from './InstanceCommand';
 
 export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {

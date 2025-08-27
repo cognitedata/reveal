@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { type QueryRequest, type CogniteClient } from '@cognite/sdk';

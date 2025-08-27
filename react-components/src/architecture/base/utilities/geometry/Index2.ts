@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export class Index2 {
   // ==================================================
   // INSTANCE FIELDS
@@ -39,7 +35,7 @@ export class Index2 {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  public getAt(dimension: number): number {
+  public getComponent(dimension: number): number {
     switch (dimension) {
       case 0:
         return this.i;
@@ -58,7 +54,7 @@ export class Index2 {
   // INSTANCE METHODS: Operations
   // ==================================================
 
-  public copy(value: Index2): this {
+  public copyFrom(value: Index2): this {
     this.i = value.i;
     this.j = value.j;
     return this;
@@ -70,7 +66,7 @@ export class Index2 {
     return this;
   }
 
-  public sub(value: Index2): this {
+  public subtract(value: Index2): this {
     this.i -= value.i;
     this.j -= value.j;
     return this;

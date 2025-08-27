@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type DataSourceType, type AddModelOptions, type DMDataSourceType } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
@@ -12,7 +9,10 @@ import {
   type Source,
   type ViewItem
 } from '../FdmSDK';
-import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import {
+  type InstancesWithView,
+  type InstancesWithViewDefinition
+} from '../../query/useSearchMappedEquipmentFDM';
 import {
   type ClassicAdd3DModelOptions,
   type AddImage360CollectionDatamodelsOptions,
@@ -37,6 +37,7 @@ import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { partition, zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { transformViewItemToSource } from './utils/transformViewItemToSource';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -140,7 +141,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
   async listMappedFdmNodes(
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    sourcesToSearch: Source[],
+    sourcesToSearch: ViewItem[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
@@ -148,7 +149,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
     return await listMappedFdmNodes(
       revisionRefs,
-      sourcesToSearch,
+      sourcesToSearch.map((view) => transformViewItemToSource(view)),
       instanceFilter,
       limit,
       this._fdmSdk
@@ -166,13 +167,20 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async filterNodesByMappedTo3d(
-    nodes: InstancesWithView[],
+    nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ): Promise<InstancesWithView[]> {
     const revisionRefs = await this.getRevisionRefs(models);
 
-    return await filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
+    return await filterNodesByMappedTo3d(
+      nodes,
+      revisionRefs,
+      spacesToSearch,
+      this._fdmSdk,
+      includeIndirectRelations
+    );
   }
 
   async getCadModelsForInstance(
@@ -184,15 +192,15 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async getCadConnectionsForRevisions(
     modelOptions: Array<AddModelOptions<DataSourceType>>
   ): Promise<FdmCadConnection[]> {
-    const isClassicModels = modelOptions.every((model) => isClassicIdentifier(model));
-    if (!isClassicModels) {
+    const classicModels = modelOptions.filter(isClassicIdentifier);
+    if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    const modelRefs = await this.getDMSModelsForIds(modelOptions.map((model) => model.modelId));
+    const modelRefs = await this.getDMSModelsForIds(classicModels.map((model) => model.modelId));
 
     const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
       modelRefs,
-      modelOptions.map((model) => model.revisionId)
+      classicModels.map((model) => model.revisionId)
     );
 
     const modelRevisions = zip(modelRefs, revisionRefs).filter(
