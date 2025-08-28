@@ -32,3 +32,4 @@ export type { ModelWithRevisionInfo } from './network/types';
 export * from './cad';
 export * from './pointClouds';
 export { useImage360AnnotationMappingsForInstanceReferences } from './useImage360AnnotationMappingsForInstanceReferences';
+export { useModelIdRevisionIdFromModelOptions } from './useModelIdRevisionIdFromModelOptions';
