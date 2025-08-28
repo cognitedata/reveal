@@ -201,7 +201,7 @@ function computeGaussNewton(points: Vector3[], cylinder: Cylinder): boolean {
       if (rms > firstRms) {
         return false; // No solution found and worse than the first attempt
       }
-      break; // Better solution is found
+      break; // Use the solution in previous iteration
     }
     axis.set(x[2], x[3], 1);
     axis.normalize();
@@ -228,9 +228,9 @@ function computeGaussNewton(points: Vector3[], cylinder: Cylinder): boolean {
     }
     if (iterationCount >= maxIterationCount) {
       if (rms > firstRms) {
-        return false;
+        return false; // No solution found and worse than the first attempt
       }
-      break; // Better solution is found
+      break; // Solution is found
     }
   }
   if (radius <= 0) {
