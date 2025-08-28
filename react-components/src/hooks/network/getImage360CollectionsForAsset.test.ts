@@ -1,8 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { getImage360CollectionsForAsset } from './getImage360CollectionsForAsset';
-import { sdkMock } from '#test-utils/fixtures/sdk';
-import { Mock, It } from 'moq.ts';
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import { Mock } from 'moq.ts';
+import { type CogniteClient, type FileInfo } from '@cognite/sdk';
 
 describe(getImage360CollectionsForAsset.name, () => {
   const ASSET_ID = 123;

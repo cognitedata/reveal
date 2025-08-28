@@ -1,4 +1,3 @@
-import { type AnnotationsAssetRef, type IdEither } from '@cognite/sdk';
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
