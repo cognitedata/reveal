@@ -167,7 +167,7 @@ function createPoints(
       radius += radius * relativeError;
     }
     const scale = new Vector3(radius, radius, height / 2);
-    // Make sure that we get points at the top and bottom, and some in between
+    // Make sure that we get points at the top and bottom, and the rest in between
     let z;
     if (i === 0) {
       z = -1;
