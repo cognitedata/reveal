@@ -265,6 +265,7 @@ function getSumSquared(values: number[]): number {
 }
 
 function createMainAxis(): Vector3[] {
+  // These are bi directional vectors, so we only need one direction
   const axises = [
     new Vector3(1, 0, 0),
     new Vector3(0, 1, 0),
