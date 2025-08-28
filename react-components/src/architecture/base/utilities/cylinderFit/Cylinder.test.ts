@@ -22,7 +22,7 @@ describe(Cylinder.name, () => {
   test('should construct a vertical cylinder with axis going down', () => {
     const inputAxis = new Vector3(1, 2, -3);
     const expectedAxis = inputAxis.clone().normalize().negate();
-    const cylinder = new Cylinder(new Vector3(1, 2, 3), inputAxis, 5, 6);
+    const cylinder = new Cylinder(new Vector3(1, 2, -3), inputAxis, 5, 6);
     expectEqualVector3(cylinder.axis, expectedAxis);
   });
 
