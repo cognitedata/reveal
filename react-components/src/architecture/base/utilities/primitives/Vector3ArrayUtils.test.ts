@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { Vector3ArrayUtils } from './Vector3ArrayUtils';
 import { Box3, Vector3 } from 'three';
 import { expectEqualBox3, expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
@@ -12,7 +12,6 @@ describe(Vector3ArrayUtils.name, () => {
     new Vector3(2, 3, 0),
     new Vector3(0, 3, 0)
   ];
-  const emptyPoints: Vector3[] = [];
 
   test('should calculate area', () => {
     const actualArea = Vector3ArrayUtils.getSignedHorizontalArea(polygon);
@@ -20,47 +19,40 @@ describe(Vector3ArrayUtils.name, () => {
   });
 
   test('should calculate center', () => {
-    const expectedCenter = new Vector3(1, 1.5, 0);
     const actualCenter = Vector3ArrayUtils.getCenter(polygon);
-    expectEqualVector3(actualCenter, expectedCenter);
+    expectEqualVector3(actualCenter, new Vector3(1, 1.5, 0));
   });
 
-  test('should calculate center of mass box', () => {
+  test('should calculate center of mass', () => {
     const actualCenter = Vector3ArrayUtils.getCenterOfMass(polygon);
-    expect(actualCenter).not.toBeUndefined();
-    if (actualCenter === undefined) {
-      return;
-    }
     expectEqualVector3(actualCenter, new Vector3(7 / 6, 7 / 6, 0));
   });
 
   test('should calculate bounding box', () => {
     const actualBoundingBox = Vector3ArrayUtils.getBoundingBox(polygon);
     expect(actualBoundingBox).not.toBeUndefined();
-    if (actualBoundingBox === undefined) {
-      return;
-    }
+    assert(actualBoundingBox !== undefined);
     const expectedBoundingBox = new Box3(new Vector3(0, 0, 0), new Vector3(2, 3, 0));
     expectEqualBox3(actualBoundingBox, expectedBoundingBox);
   });
 
-  test('should calculate area on empty polygon', () => {
-    const actualArea = Vector3ArrayUtils.getSignedHorizontalArea(emptyPoints);
+  test('should return 0 when calculate area on empty polygon', () => {
+    const actualArea = Vector3ArrayUtils.getSignedHorizontalArea([]);
     expect(actualArea).toBe(0);
   });
 
-  test('should calculate center on empty points', () => {
-    const actualCenter = Vector3ArrayUtils.getCenter(emptyPoints);
+  test('should return undefined when calculation center on empty points', () => {
+    const actualCenter = Vector3ArrayUtils.getCenter([]);
     expect(actualCenter).toBeUndefined();
   });
 
-  test('should calculate center of mass on empty points', () => {
-    const actualCenter = Vector3ArrayUtils.getCenterOfMass(emptyPoints);
+  test('should return undefined when calculation center of mass on empty points', () => {
+    const actualCenter = Vector3ArrayUtils.getCenterOfMass([]);
     expect(actualCenter).toBeUndefined();
   });
 
-  test('should calculate bounding box on empty points', () => {
-    const actualBoundingBox = Vector3ArrayUtils.getBoundingBox(emptyPoints);
+  test('should return undefined when calculation bounding box on empty points', () => {
+    const actualBoundingBox = Vector3ArrayUtils.getBoundingBox([]);
     expect(actualBoundingBox).toBeUndefined();
   });
 });
