@@ -8,37 +8,41 @@ import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
 
 export const MAIN_AXISES = createMainAxis();
 
-export function bestFitCylinder(points: Vector3[]): Cylinder | undefined {
+type AcceptCylinder = (cylinder: Cylinder) => boolean;
+
+/**
+ * Computes the best-fit cylinder for a given set of 3D points.
+ *
+ * Iterates through a set of main axes, attempting to fit a cylinder to the points
+ * for each axis, and returns the cylinder with the lowest root mean square (RMS) error.
+ * Optionally, an acceptance function can be provided to filter out cylinders that do not meet certain criteria.
+ *
+ * @param points - An array of `Vector3` points representing the 3D coordinates to fit the cylinder to.
+ * @param accept - (Optional) A predicate function that takes a `Cylinder` and returns `true` if the cylinder is acceptable.
+ * @returns The best-fit `Cylinder` object with the lowest RMS error, or `undefined` if no suitable cylinder is found.
+ */
+export function bestFitCylinder(points: Vector3[], accept?: AcceptCylinder): Cylinder | undefined {
   const massCenter = Vector3ArrayUtils.getCenterOfMass(points);
   if (massCenter === undefined) {
     return undefined;
   }
-  const boundingBox = Vector3ArrayUtils.getBoundingBox(points);
-  if (boundingBox === undefined) {
-    return undefined;
-  }
-  const diagonal = boundingBox.max.distanceTo(boundingBox.min);
   let bestCylinder: Cylinder | undefined;
 
-  // Try all available axis as a starting point
+  // Try with all available axis as a starting point, and keep the best one
   for (const axis of MAIN_AXISES) {
     const cylinder = getCylinderByInitialAxis(points, axis, massCenter);
     if (cylinder === undefined) {
       continue;
     }
-
-    if (cylinder.radius > 10 * diagonal || cylinder.height > 10 * diagonal) {
-      // Ignore very flat cylinders, they are probably not correct because cylinder with
-      // large radius are easy to fit with the points as one single plane.
+    // Calculate the Root mean square error
+    cylinder.rms = getRms(points, cylinder);
+    if (accept !== undefined && !accept(cylinder)) {
       continue;
     }
-    // Calculate the Root mean square error
-    const rms = getRms(points, cylinder);
-    if (bestCylinder !== undefined && rms >= bestCylinder.rms) {
+    if (bestCylinder !== undefined && cylinder.rms >= bestCylinder.rms) {
       continue;
     }
     bestCylinder = cylinder;
-    bestCylinder.rms = rms;
   }
   return bestCylinder;
 }
