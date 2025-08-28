@@ -4,7 +4,7 @@ import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primiti
 import { Cylinder } from './Cylinder';
 
 describe(Cylinder.name, () => {
-  test('should construct a vertical cylinder', () => {
+  test('should construct a cylinder', () => {
     const expectedAxis = new Vector3(0, 0, 1);
     const expectedCenter = new Vector3(1, 2, 3);
     const expectedHeight = 5;
@@ -19,7 +19,7 @@ describe(Cylinder.name, () => {
     expect(cylinder.radius).toBe(expectedRadius);
   });
 
-  test('should construct a vertical cylinder with axis going down', () => {
+  test('should construct a cylinder with axis going down', () => {
     const inputAxis = new Vector3(1, 2, -3);
     const expectedAxis = inputAxis.clone().normalize().negate();
     const cylinder = new Cylinder(new Vector3(1, 2, -3), inputAxis, 5, 6);
