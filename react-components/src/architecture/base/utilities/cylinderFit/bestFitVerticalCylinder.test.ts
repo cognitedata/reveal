@@ -44,6 +44,13 @@ describe(bestFitVerticalCylinder.name, () => {
     expectEqualVector3(center, expectedCenter);
   });
 
+  test('should not get a vertical cylinder when no points', () => {
+    const matrix = new Matrix4().identity();
+    const points: Vector3[] = [];
+    const cylinder = bestFitVerticalCylinder(points, matrix);
+    expect(cylinder).toBeUndefined();
+  });
+
   test('should not get a vertical cylinder when too few points', () => {
     const matrix = new Matrix4().identity();
     const points = [new Vector3(1, 2, 3), new Vector3(4, 5, 6)];

@@ -282,9 +282,6 @@ function createMainAxis(): Vector3[] {
   ];
   for (const axis of axises) {
     axis.normalize();
-    if (axis.z < 0) {
-      axis.negate();
-    }
   }
   return axises;
 }
