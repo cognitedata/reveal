@@ -9,7 +9,11 @@ export async function getImage360CollectionsForAsset({
   sdk
 }: ModelsForAssetParams): Promise<TaggedAddImage360CollectionOptions[]> {
   const fileRefsResult = await sdk.annotations.reverseLookup({
-    filter: { annotatedResourceType: 'file', data: { assetRef: { id: assetId } } },
+    filter: {
+      annotatedResourceType: 'file',
+      annotationType: 'images.AssetLink',
+      data: { assetRef: { id: assetId } }
+    },
     limit: 1000
   });
 
