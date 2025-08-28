@@ -16,7 +16,6 @@ describe(bestFitCylinder.name, () => {
 
   test('should get the cylinder for main axis', () => {
     for (const axis of MAIN_AXISES) {
-      // Make an arbitrary oriented cylinder and sample points on it
       const expectedCylinder = new Cylinder(new Vector3(1, 2, 3), axis, 3, 6);
       const points = createPoints(expectedCylinder, 100, random);
       checkCorrectness(bestFitCylinder(points), expectedCylinder);
@@ -131,9 +130,7 @@ function getAxisError(actual: Cylinder, expected: Cylinder): number {
   if (dotProduct < 0) {
     dotProduct = -dotProduct;
   }
-  if (dotProduct > 1) {
-    dotProduct = 1;
-  }
+  dotProduct = Math.min(dotProduct, 1); // This can happen due to numerical inaccuracies
   const acos = Math.acos(dotProduct);
   const angle = Math.abs(acos);
   return angle / maxError;
