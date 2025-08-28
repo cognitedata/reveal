@@ -10,8 +10,8 @@ describe(getImage360CollectionsForAsset.name, () => {
 
   const mockFileInfo: FileInfo = {
     id: FILE_ID,
-    createdTime: new Date(),
-    lastUpdatedTime: new Date(),
+    createdTime: new Date('2025-05-05'),
+    lastUpdatedTime: new Date('2025-05-05'),
     uploaded: true,
     name: 'a-file',
     metadata: {
