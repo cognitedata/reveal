@@ -65,7 +65,7 @@ describe(bestFitCylinder.name, () => {
     expect(cylinder).toBeUndefined();
   });
 
-  test('should not get a cylinder if the rms is too large', () => {
+  test('should not get a cylinder if the root mean square error (RMS) is too large', () => {
     const expectedCylinder = getRandomCylinder(random);
     const points = createPoints(expectedCylinder, 10, random, 0.4, 1);
     const accept = (cylinder: Cylinder): boolean => cylinder.rms < 0.1;
@@ -87,10 +87,10 @@ function checkCorrectness(
   const centerError = getCenterError(actualCylinder, expectedCylinder);
   const axisError = getAxisError(actualCylinder, expectedCylinder);
 
-  expect(radiusError).lessThan(tolerance, 'Cylinder Radius is off');
-  expect(axisError).lessThan(tolerance, 'Cylinder Axis is off');
-  expect(centerError).lessThan(tolerance, 'Cylinder Center is off');
-  expect(heightError).lessThan(tolerance, 'Cylinder Height is off');
+  expect(radiusError).lessThan(tolerance, 'Cylinder radius is off');
+  expect(axisError).lessThan(tolerance, 'Cylinder axis is off');
+  expect(centerError).lessThan(tolerance, 'Cylinder center is off');
+  expect(heightError).lessThan(tolerance, 'Cylinder height is off');
 }
 
 function getError(actual: number, expected: number): number {
@@ -137,7 +137,7 @@ function getAxisError(actual: Cylinder, expected: Cylinder): number {
 }
 
 /**
- * Generates an array of random points distributed on the surface of a cylinder.
+ * Generates an array of random points distributed on or close to the surface of a cylinder.
  *
  * @param cylinder - The cylinder object containing height, radius, and transformation matrix.
  * @param count - The number of points to generate.
@@ -163,19 +163,21 @@ function createPoints(
 
     let radius = cylinder.radius;
     if (relativeRadiusError > 0) {
-      radius += radius * random.floatBetween(-relativeRadiusError, relativeRadiusError);
+      const relativeError = random.floatBetween(-relativeRadiusError, relativeRadiusError);
+      radius += radius * relativeError;
     }
+    const scale = new Vector3(radius, radius, height / 2);
     // Make sure that we get points at the top and bottom, and some in between
     let z;
     if (i === 0) {
-      z = -0.5;
+      z = -1;
     } else if (i === 1) {
-      z = 0.5;
+      z = 1;
     } else {
-      z = random.floatBetween(-0.5, 0.5);
+      z = random.floatBetween(-1, 1);
     }
-    z *= height;
-    const point = new Vector3(radius * Math.cos(angle), radius * Math.sin(angle), z);
+    const point = new Vector3(Math.cos(angle), Math.sin(angle), z);
+    point.multiply(scale);
     point.applyMatrix4(matrix);
     points[i] = point;
   }
@@ -184,7 +186,7 @@ function createPoints(
 
 function getRandomCylinder(random: Random): Cylinder {
   const axis = getRandomUnitVector(random);
-  const center = getRandomPoint(random);
+  const center = getRandomPoint(random, -10, 10);
   const radius = getRandomFloatBetween(1, 5);
   const height = getRandomFloatBetween(1, 5) * radius;
   return new Cylinder(center, axis, radius, height);
@@ -194,9 +196,7 @@ function getRandomUnitVector(random: Random): Vector3 {
   return new Vector3(random.random(), random.random(), random.random()).normalize();
 }
 
-function getRandomPoint(random: Random): Vector3 {
-  const min = -10;
-  const max = 10;
+function getRandomPoint(random: Random, min: number, max: number): Vector3 {
   return new Vector3(
     random.floatBetween(min, max),
     random.floatBetween(min, max),
