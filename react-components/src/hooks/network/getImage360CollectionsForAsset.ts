@@ -3,6 +3,7 @@ import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
 import { type ModelsForAssetParams } from './types';
+import { isIdEither } from '../../utilities/instanceIds';
 
 export async function getImage360CollectionsForAsset({
   assetId,
@@ -31,8 +32,4 @@ export async function getImage360CollectionsForAsset({
     type: 'image360',
     addOptions: { source: 'events', siteId }
   }));
-}
-
-function isIdEither(ref: AnnotationsAssetRef): ref is IdEither {
-  return ref.externalId !== undefined || ref.id !== undefined;
 }
