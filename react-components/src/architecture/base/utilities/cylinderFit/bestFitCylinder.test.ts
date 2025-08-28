@@ -50,8 +50,7 @@ describe(bestFitCylinder.name, () => {
   });
 
   test('should not get a vertical cylinder when no points', () => {
-    const points: Vector3[] = [];
-    const cylinder = bestFitCylinder(points);
+    const cylinder = bestFitCylinder([]);
     expect(cylinder).toBeUndefined();
   });
 
