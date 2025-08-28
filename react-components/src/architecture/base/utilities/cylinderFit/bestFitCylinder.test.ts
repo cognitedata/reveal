@@ -60,6 +60,14 @@ describe(bestFitCylinder.name, () => {
     const cylinder = bestFitCylinder(points);
     expect(cylinder).toBeUndefined();
   });
+
+  test('should not get a cylinder if the rms is too large', () => {
+    const expectedCylinder = getRandomCylinder(random);
+    const points = createPoints(expectedCylinder, 10, random, 0.4, 1);
+    const accept = (cylinder: Cylinder): boolean => cylinder.rms < 0.1;
+    const cylinder = bestFitCylinder(points, accept);
+    expect(cylinder).toBeUndefined();
+  });
 });
 
 function checkCorrectness(
