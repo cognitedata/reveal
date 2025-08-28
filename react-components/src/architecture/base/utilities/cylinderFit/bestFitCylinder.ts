@@ -63,7 +63,7 @@ function getCylinderByInitialAxis(
   cylinder.axis.copy(axis);
   cylinder.center.applyMatrix4(matrix);
 
-  // Find a better solution, keep the old one if failed
+  // Find a better solution
   if (!computeGaussNewton(points, cylinder)) {
     return cylinder;
   }
