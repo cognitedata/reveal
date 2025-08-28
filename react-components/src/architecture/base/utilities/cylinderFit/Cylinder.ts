@@ -3,10 +3,12 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
 export const UP_VECTOR = new Vector3(0, 0, 1);
 
 export class Cylinder {
-  public height: number; // Must be > 0
-  public radius: number; // Must be > 0
+  public height: number;
+  public radius: number;
   public readonly center: Vector3 = new Vector3();
   private readonly _axis: Vector3 = new Vector3(); // Will be normalized with Z >= 0
+
+  public rms = 0; // Root mean square of the fit, 0 is perfect fit
 
   get axis(): Vector3 {
     return this._axis;
@@ -29,12 +31,6 @@ export class Cylinder {
   }
 
   constructor(center: Vector3, axis: Vector3, radius: number, height: number) {
-    if (radius <= 0) {
-      throw new Error('Cylinder radius must be > 0');
-    }
-    if (height <= 0) {
-      throw new Error('Cylinder height must be > 0');
-    }
     this.center.copy(center);
     this.axis = axis;
     this.radius = radius;

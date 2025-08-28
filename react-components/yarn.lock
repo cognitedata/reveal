@@ -614,6 +614,7 @@ __metadata:
     "@tippyjs/react": "npm:4.2.6"
     "@types/lodash": "npm:^4.17.0"
     "@types/node": "npm:^22.0.0"
+    "@types/random-seed": "npm:^0.3.5"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-resizable": "npm:^3.0.7"
@@ -640,6 +641,7 @@ __metadata:
     moq.ts: "npm:10.0.8"
     playwright: "npm:1.54.2"
     prettier: "npm:^3.2.5"
+    random-seed: "npm:^0.3.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^6.23.0"
@@ -3076,6 +3078,13 @@ __metadata:
   version: 15.7.14
   resolution: "@types/prop-types@npm:15.7.14"
   checksum: 10/d0c5407b9ccc3dd5fae0ccf9b1007e7622ba5e6f1c18399b4f24dff33619d469da4b9fa918a374f19dc0d9fe6a013362aab0b844b606cfc10676efba3f5f736d
+  languageName: node
+  linkType: hard
+
+"@types/random-seed@npm:^0.3.5":
+  version: 0.3.5
+  resolution: "@types/random-seed@npm:0.3.5"
+  checksum: 10/360ffc711c2e2b2f2bb4a43fe77759d1bd4110fc06820f77cc6d1d9009f8ea476b3b029bb4a10462dd3010a54803e8acd4f8d5da2ee72a5b899a2b98a3e5edad
   languageName: node
   linkType: hard
 

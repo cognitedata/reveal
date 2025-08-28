@@ -20,6 +20,16 @@ export class LeastSquare {
     this._aTb.fill(0);
   }
 
+  /**
+   * Computes the least squares solution for the current data.
+   *
+   * @returns An array of numbers representing the solution vector if the computation is successful
+   * and there are enough samples otherwise, returns `undefined`.
+   *
+   * The method first checks if the number of samples is sufficient to solve the system.
+   * It then attempts to solve the symmetric linear system using the stored matrices.
+   * If the computation fails (e.g., due to a singular matrix), it returns `undefined`.
+   */
   public compute(): number[] | undefined {
     if (this._sampleCount < this._aTa.rows) {
       return undefined;
