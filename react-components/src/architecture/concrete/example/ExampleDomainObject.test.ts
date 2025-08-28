@@ -1,5 +1,5 @@
 import { assert, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ExampleDomainObject } from './ExampleDomainObject';

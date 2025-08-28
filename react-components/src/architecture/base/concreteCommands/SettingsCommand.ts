@@ -1,5 +1,5 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../utilities/IconName';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '../utilities/types';
 
 import { BaseSettingsCommand } from '../commands/BaseSettingsCommand';
 import { SetPointSizeCommand } from './pointCloud/SetPointSizeCommand';

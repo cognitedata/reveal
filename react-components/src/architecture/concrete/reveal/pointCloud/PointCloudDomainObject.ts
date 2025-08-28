@@ -1,7 +1,7 @@
 import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { type IconName } from '../../../base/utilities/IconName';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type IconName } from '../../../base/utilities/types';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type PointCloud } from '../RevealTypes';
 import { type PointColorType, type PointShape } from '@cognite/reveal';

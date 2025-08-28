@@ -4,11 +4,11 @@ import {
   PrimitiveType,
   verifyPrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { ClipTool } from '../ClipTool';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { SliceDomainObject } from '../SliceDomainObject';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export const CLIP_PRIMITIVE_TYPES = [
   PrimitiveType.PlaneX,

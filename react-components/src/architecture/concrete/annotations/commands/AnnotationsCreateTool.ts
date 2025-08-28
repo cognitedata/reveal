@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
@@ -10,7 +10,7 @@ import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
 import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
 import { type Annotation } from '../helpers/Annotation';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 

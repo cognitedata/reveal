@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export type FieldContent =

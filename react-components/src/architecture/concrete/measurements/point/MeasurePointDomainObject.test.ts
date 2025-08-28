@@ -3,7 +3,7 @@ import { MeasurePointDomainObject } from './MeasurePointDomainObject';
 import { Vector3 } from 'three';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { SolidPrimitiveRenderStyle } from '../../primitives/common/SolidPrimitiveRenderStyle';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 describe(MeasurePointDomainObject.name, () => {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { getDefaultCommand } from '../../../../components/Architecture/utilities';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { MEASURE_PRIMITIVE_TYPES, SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
