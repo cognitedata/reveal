@@ -27,12 +27,12 @@ export function bestFitVerticalCylinder(points: Vector3[], matrix: Matrix4): Cyl
       horizontalLengthSq(transformed)
     );
   }
-  const x = leastSquare.compute();
-  if (x === undefined) {
+  const solution = leastSquare.compute();
+  if (solution === undefined) {
     return undefined;
   }
-  const center = new Vector3(x[0], x[1], zRange.center);
-  const radius = Math.sqrt(horizontalLengthSq(center) - x[2]);
+  const center = new Vector3(solution[0], solution[1], zRange.center);
+  const radius = Math.sqrt(horizontalLengthSq(center) - solution[2]);
   if (radius <= 0) {
     return undefined; // Should be impossible, but you never know...
   }
