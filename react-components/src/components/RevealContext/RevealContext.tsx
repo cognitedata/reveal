@@ -62,7 +62,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
             <ComponentFactoryContextProvider>
-              <ViewerContextProvider value={renderTarget}>
+              <ViewerContextProvider renderTarget={renderTarget}>
                 <ViewerControls
                   cameraState={props.cameraState}
                   setCameraState={props.setCameraState}

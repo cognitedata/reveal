@@ -11,12 +11,8 @@ export function createDivider(
   placement: PlacementType
 ): ReactElement | undefined {
   if (command instanceof DividerCommand || command instanceof SectionCommand) {
-    return createDividerByKey(command.uniqueId, placement);
+    const direction = getDividerDirection(placement);
+    return <Divider weight="2px" length="24px" direction={direction} key={command.uniqueId} />;
   }
   return undefined;
-}
-
-export function createDividerByKey(key: string, placement: PlacementType): ReactElement {
-  const direction = getDividerDirection(placement);
-  return <Divider weight="2px" length="24px" direction={direction} key={key} />;
 }

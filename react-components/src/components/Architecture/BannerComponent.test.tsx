@@ -19,7 +19,7 @@ describe(BannerComponent.name, () => {
 
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
       <ComponentFactoryContextProvider>
-        <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+        <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
       </ComponentFactoryContextProvider>
     );
   });

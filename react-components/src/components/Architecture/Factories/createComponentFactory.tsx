@@ -14,7 +14,7 @@ export function createComponentFactory(): ComponentFactory {
   return componentFactory;
 }
 
-export function installReactElements(factory: ComponentFactory): void {
+function installReactElements(factory: ComponentFactory): void {
   factory.installElement(createCustomInputField);
   factory.installElement(createDivider);
   factory.installElement(createDropdownButton);

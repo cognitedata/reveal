@@ -6,7 +6,6 @@ import { ViewerContextProvider } from '../components/RevealCanvas/ViewerContext'
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
 import { getDefaultCommand } from '../components/Architecture/utilities';
-import { ComponentFactoryContextProvider } from '../components/RevealCanvas/ComponentFactoryContext';
 
 describe(useGhostMode.name, () => {
   test('should not have ghostMode', () => {
@@ -15,9 +14,7 @@ describe(useGhostMode.name, () => {
     command.setChecked(false);
 
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ComponentFactoryContextProvider>
-        <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
-      </ComponentFactoryContextProvider>
+      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
     );
     const { result } = renderHook(() => useGhostMode(), { wrapper });
 
@@ -27,9 +24,7 @@ describe(useGhostMode.name, () => {
   test('should not have ghostMode when the command is not added to the RenderTarget ', () => {
     const renderTarget = createFullRenderTargetMock();
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ComponentFactoryContextProvider>
-        <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
-      </ComponentFactoryContextProvider>
+      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
     );
     const { result } = renderHook(() => useGhostMode(), { wrapper });
     expect(result.current).toBe(false);
@@ -39,9 +34,7 @@ describe(useGhostMode.name, () => {
     const renderTarget = createFullRenderTargetMock();
     const command = getDefaultCommand(new SetGhostModeCommand(), renderTarget);
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ComponentFactoryContextProvider>
-        <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
-      </ComponentFactoryContextProvider>
+      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
     );
     const { result } = renderHook(() => useGhostMode(), { wrapper });
 

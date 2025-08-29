@@ -106,7 +106,7 @@ function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
   }
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <ComponentFactoryContextProvider>
-      <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
+      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
     </ComponentFactoryContextProvider>
   );
   render(<DomainObjectPanel />, {

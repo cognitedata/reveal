@@ -12,7 +12,7 @@ export class ComponentFactory {
 
   public installElement(createFunc: CreateElementFunc, order: number = 0): void {
     this._items.push({ createFunc, order });
-    this._items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    this._items.sort((a, b) => a.order - b.order);
   }
 
   public createElement(command: BaseCommand, placement: PlacementType): ReactElement {

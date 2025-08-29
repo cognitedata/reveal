@@ -1,30 +1,32 @@
-import { createContext, type ReactElement, type ReactNode, useContext, useMemo } from 'react';
+import {
+  createContext,
+  type PropsWithChildren,
+  type ReactElement,
+  useContext,
+  useMemo
+} from 'react';
 import { type ComponentFactory } from '../Architecture/Factories/ComponentFactory';
 import { createComponentFactory } from '../Architecture/Factories/createComponentFactory';
 
 type ComponentFactoryContextContent = {
-  value?: ComponentFactory;
+  componentFactory: ComponentFactory;
 };
 
 export const ComponentFactoryContext = createContext<ComponentFactoryContextContent | undefined>(
   undefined
 );
 
-export const ComponentFactoryContextProvider = ({
-  children
-}: {
-  children: ReactNode;
-}): ReactElement => {
+export const ComponentFactoryContextProvider = ({ children }: PropsWithChildren): ReactElement => {
   const componentFactory = useMemo(() => createComponentFactory(), []);
   return (
-    <ComponentFactoryContext.Provider value={{ value: componentFactory }}>
+    <ComponentFactoryContext.Provider value={{ componentFactory }}>
       {children}
     </ComponentFactoryContext.Provider>
   );
 };
 
 export const useComponentFactory = (): ComponentFactory => {
-  const componentFactory = useContext(ComponentFactoryContext)?.value;
+  const componentFactory = useContext(ComponentFactoryContext)?.componentFactory;
   if (componentFactory === undefined) {
     throw new Error('useComponentFactory must be used within a ComponentFactoryContextProvider');
   }

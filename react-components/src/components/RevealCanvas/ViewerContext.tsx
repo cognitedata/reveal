@@ -6,12 +6,12 @@ import { remove } from 'lodash';
 export const ViewerContext = createContext<RevealRenderTarget | undefined>(undefined);
 
 export type ViewerContextProviderProps = {
-  value?: RevealRenderTarget;
+  renderTarget: RevealRenderTarget;
   children: ReactNode;
 };
 
 export const ViewerContextProvider = ({
-  value,
+  renderTarget: value,
   children
 }: ViewerContextProviderProps): ReactElement => {
   useExposeRenderTargetAndViewerSingletons(value ?? undefined);
