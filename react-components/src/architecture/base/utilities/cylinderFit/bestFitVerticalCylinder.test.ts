@@ -2,7 +2,7 @@ import { assert, describe, expect, test } from 'vitest';
 import { Matrix4, Vector3 } from 'three';
 import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
-import { getTranslationRotationMatrix, UP_VECTOR } from './Cylinder';
+import { getTranslationRotationMatrix, UP_VECTOR } from './LeastSquareCylinderResult';
 
 describe(bestFitVerticalCylinder.name, () => {
   test('should get a vertical cylinder for 3 points', () => {

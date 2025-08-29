@@ -2,7 +2,7 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
 
 export const UP_VECTOR = new Vector3(0, 0, 1);
 
-export class Cylinder {
+export class LeastSquareCylinderResult {
   public height: number;
   public radius: number;
   public readonly center: Vector3 = new Vector3();
