@@ -83,8 +83,10 @@ function updateHeightAndCenter(cylinder: LeastSquareCylinderResult, points: Vect
   const matrix = cylinder.getTranslationRotationMatrix();
   const invMatrix = matrix.clone().invert();
   const zRange = new Range1();
+  const transformed = new Vector3();
   for (const point of points) {
-    const transformed = point.clone().applyMatrix4(invMatrix);
+    transformed.copy(point);
+    transformed.applyMatrix4(invMatrix);
     zRange.add(transformed.z);
   }
   cylinder.height = zRange.delta;
@@ -179,8 +181,10 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
     try {
       const invMatrix = matrix.clone().invert();
+      const transformed = new Vector3();
       for (const point of points) {
-        const transformed = point.clone().applyMatrix4(invMatrix);
+        transformed.copy(point);
+        transformed.applyMatrix4(invMatrix);
         const distanceToCenter = horizontalLength(transformed);
         if (distanceToCenter < EPSILON) {
           continue; // Skip this in the calculation to avoid instability
@@ -259,8 +263,11 @@ function getRms(points: Vector3[], cylinder: LeastSquareCylinderResult): number 
   const matrix = cylinder.getTranslationRotationMatrix();
   const invMatrix = matrix.clone().invert();
   let sumError = 0;
+  const transformed = new Vector3();
   for (const point of points) {
-    const transformed = point.clone().applyMatrix4(invMatrix);
+    transformed.copy(point);
+    transformed.applyMatrix4(invMatrix);
+
     // Find relative radius error
     const radius = horizontalLength(transformed);
     const error = cylinder.radius > EPSILON ? 1 - radius / cylinder.radius : radius;
@@ -279,7 +286,7 @@ function getSumSquared(values: number[]): number {
 
 function createMainAxes(): Vector3[] {
   // These are bi directional vectors, so we only need one direction
-  const axises = [
+  const axes = [
     new Vector3(1, 0, 0),
     new Vector3(0, 1, 0),
     new Vector3(0, 0, 1),
@@ -294,8 +301,8 @@ function createMainAxes(): Vector3[] {
     new Vector3(1, -1, 1),
     new Vector3(-1, -1, 1)
   ];
-  for (const axis of axises) {
+  for (const axis of axes) {
     axis.normalize();
   }
-  return axises;
+  return axes;
 }
