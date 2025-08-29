@@ -9,9 +9,11 @@ import { Vector3ArrayUtils } from '../primitives/Vector3ArrayUtils';
 import { horizontalLength } from '../extensions/vectorUtils';
 import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
 
-export const MAIN_AXISES = createMainAxis();
+export const MAIN_AXES = createMainAxes();
 
-type AcceptCylinder = (cylinder: LeastSquareCylinderResult) => boolean;
+export type AcceptCylinder = (cylinder: LeastSquareCylinderResult) => boolean;
+
+const EPSILON = 1e-9;
 
 /**
  * Computes the best-fit cylinder for a given set of 3D points.
@@ -35,7 +37,7 @@ export function bestFitCylinder(
   let bestCylinder: LeastSquareCylinderResult | undefined;
 
   // Try with all available axis as a starting point, and keep the best one
-  for (const axis of MAIN_AXISES) {
+  for (const axis of MAIN_AXES) {
     const cylinder = getCylinderByInitialAxis(points, axis, massCenter);
     if (cylinder === undefined) {
       continue;
@@ -153,12 +155,14 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
   // Z0 = -P1*P3 - P2*P4
 
+  const minSumSquare = 0.0001;
+  const maxIterationCount = points.length < 100 ? 30 : 10;
+  const minIterationCount = points.length < 100 ? 5 : 3;
+
   const axis = cylinder.axis.clone();
   const center = cylinder.center.clone();
   let radius = cylinder.radius;
 
-  const maxIterationCount = points.length < 100 ? 30 : 10;
-  const minIterationCount = points.length < 100 ? 5 : 3;
   const normalEquation = new LeastSquare(5);
   const leftHandSide = new Array<number>(5); // Uses as temp array to avoid creating many arrays
   let firstRms = 0;
@@ -167,7 +171,7 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
     const matrix = getTranslationRotationMatrix(axis, center);
     matrix.multiply(new Matrix4().makeScale(radius, radius, radius));
 
-    if (Math.abs(matrix.determinant()) < 1e-12) {
+    if (Math.abs(matrix.determinant()) < EPSILON) {
       return false;
     }
     normalEquation.clear();
@@ -178,6 +182,9 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
       for (const point of points) {
         const transformed = point.clone().applyMatrix4(invMatrix);
         const distanceToCenter = horizontalLength(transformed);
+        if (distanceToCenter < EPSILON) {
+          continue; // Skip this in the calculation to avoid instability
+        }
         const error = 1 - distanceToCenter;
 
         leftHandSide[0] = -transformed.x / distanceToCenter; // dD/dX0
@@ -229,7 +236,7 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
     // Check for convergence, the sum of squared changes is small, then we are done
     const sumSquared = getSumSquared(x);
-    if (sumSquared < 0.0001 && iterationCount >= minIterationCount) {
+    if (sumSquared < minSumSquare && iterationCount >= minIterationCount) {
       break; // Better solution is found
     }
     if (iterationCount >= maxIterationCount) {
@@ -256,7 +263,7 @@ function getRms(points: Vector3[], cylinder: LeastSquareCylinderResult): number 
     const transformed = point.clone().applyMatrix4(invMatrix);
     // Find relative radius error
     const radius = horizontalLength(transformed);
-    const error = 1 - radius / cylinder.radius;
+    const error = cylinder.radius > EPSILON ? 1 - radius / cylinder.radius : radius;
     sumError += error * error;
   }
   return Math.sqrt(sumError / points.length);
@@ -270,7 +277,7 @@ function getSumSquared(values: number[]): number {
   return sumSquared;
 }
 
-function createMainAxis(): Vector3[] {
+function createMainAxes(): Vector3[] {
   // These are bi directional vectors, so we only need one direction
   const axises = [
     new Vector3(1, 0, 0),

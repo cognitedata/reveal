@@ -1,9 +1,8 @@
-import { assert, describe, expect, test } from 'vitest';
+import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { Vector3 } from 'three';
-import { bestFitCylinder, MAIN_AXISES } from './bestFitCylinder';
+import { bestFitCylinder, MAIN_AXES } from './bestFitCylinder';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 import { getRandomFloatBetween } from '../extensions/mathUtils';
-import { beforeEach } from 'node:test';
 import SeededRandom from 'random-seed';
 
 type Random = SeededRandom.RandomSeed;
@@ -15,7 +14,7 @@ describe(bestFitCylinder.name, () => {
   });
 
   test('should get the cylinder for main axis', () => {
-    for (const axis of MAIN_AXISES) {
+    for (const axis of MAIN_AXES) {
       const expectedCylinder = new LeastSquareCylinderResult(new Vector3(1, 2, 3), axis, 3, 6);
       const points = createPoints(expectedCylinder, 100, random);
       checkCorrectness(bestFitCylinder(points), expectedCylinder);
@@ -44,7 +43,7 @@ describe(bestFitCylinder.name, () => {
     for (let i = 0; i < 20; i++) {
       const expectedCylinder = getRandomCylinder(random);
       const points = createPoints(expectedCylinder, 100, random, relativeRadiusError, arcFraction);
-      checkCorrectness(bestFitCylinder(points), expectedCylinder, 0.2);
+      checkCorrectness(bestFitCylinder(points), expectedCylinder, 0.1);
     }
   });
 
@@ -67,7 +66,7 @@ describe(bestFitCylinder.name, () => {
 
   test('should not get a cylinder if the root mean square error (RMS) is too large', () => {
     const expectedCylinder = getRandomCylinder(random);
-    const points = createPoints(expectedCylinder, 10, random, 0.4, 1);
+    const points = createPoints(expectedCylinder, 10, random, 0.5, 1);
     const accept = (cylinder: LeastSquareCylinderResult): boolean => cylinder.rms < 0.1;
     const cylinder = bestFitCylinder(points, accept);
     expect(cylinder).toBeUndefined();
@@ -77,7 +76,7 @@ describe(bestFitCylinder.name, () => {
 function checkCorrectness(
   actualCylinder: LeastSquareCylinderResult | undefined,
   expectedCylinder: LeastSquareCylinderResult,
-  tolerance = 0.1
+  tolerance = 0.05
 ): void {
   expect(actualCylinder).toBeDefined();
   assert(actualCylinder !== undefined);
@@ -94,7 +93,10 @@ function checkCorrectness(
 }
 
 function getError(actual: number, expected: number): number {
-  return Math.abs((actual - expected) / actual);
+  if (expected === 0) {
+    return Math.abs(actual);
+  }
+  return Math.abs((actual - expected) / expected);
 }
 
 /**
@@ -111,7 +113,11 @@ function getCenterError(
   actual: LeastSquareCylinderResult,
   expected: LeastSquareCylinderResult
 ): number {
-  return actual.center.distanceTo(expected.center) / expected.radius;
+  const distance = actual.center.distanceTo(expected.center);
+  if (expected.radius === 0) {
+    return distance;
+  }
+  return distance / expected.radius;
 }
 
 /**
