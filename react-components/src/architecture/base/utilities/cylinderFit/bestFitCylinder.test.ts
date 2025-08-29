@@ -1,7 +1,7 @@
 import { assert, describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
 import { bestFitCylinder, MAIN_AXISES } from './bestFitCylinder';
-import { Cylinder } from './Cylinder';
+import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 import { getRandomFloatBetween } from '../extensions/mathUtils';
 import { beforeEach } from 'node:test';
 import SeededRandom from 'random-seed';
@@ -16,7 +16,7 @@ describe(bestFitCylinder.name, () => {
 
   test('should get the cylinder for main axis', () => {
     for (const axis of MAIN_AXISES) {
-      const expectedCylinder = new Cylinder(new Vector3(1, 2, 3), axis, 3, 6);
+      const expectedCylinder = new LeastSquareCylinderResult(new Vector3(1, 2, 3), axis, 3, 6);
       const points = createPoints(expectedCylinder, 100, random);
       checkCorrectness(bestFitCylinder(points), expectedCylinder);
     }
@@ -68,15 +68,15 @@ describe(bestFitCylinder.name, () => {
   test('should not get a cylinder if the root mean square error (RMS) is too large', () => {
     const expectedCylinder = getRandomCylinder(random);
     const points = createPoints(expectedCylinder, 10, random, 0.4, 1);
-    const accept = (cylinder: Cylinder): boolean => cylinder.rms < 0.1;
+    const accept = (cylinder: LeastSquareCylinderResult): boolean => cylinder.rms < 0.1;
     const cylinder = bestFitCylinder(points, accept);
     expect(cylinder).toBeUndefined();
   });
 });
 
 function checkCorrectness(
-  actualCylinder: Cylinder | undefined,
-  expectedCylinder: Cylinder,
+  actualCylinder: LeastSquareCylinderResult | undefined,
+  expectedCylinder: LeastSquareCylinderResult,
   tolerance = 0.1
 ): void {
   expect(actualCylinder).toBeDefined();
@@ -107,7 +107,10 @@ function getError(actual: number, expected: number): number {
  * @param expected - The reference cylinder to compare against.
  * @returns The normalized center error as a number.
  */
-function getCenterError(actual: Cylinder, expected: Cylinder): number {
+function getCenterError(
+  actual: LeastSquareCylinderResult,
+  expected: LeastSquareCylinderResult
+): number {
   return actual.center.distanceTo(expected.center) / expected.radius;
 }
 
@@ -122,7 +125,10 @@ function getCenterError(actual: Cylinder, expected: Cylinder): number {
  * @param expected - The reference cylinder to compare against.
  * @returns The normalized axis error as a number between 0 and 1.
  */
-function getAxisError(actual: Cylinder, expected: Cylinder): number {
+function getAxisError(
+  actual: LeastSquareCylinderResult,
+  expected: LeastSquareCylinderResult
+): number {
   const maxError = Math.PI / 2; // This is the worst case scenario, when the axis are perpendicular
 
   // Calculate the bidirectional angle between the two axis
@@ -147,7 +153,7 @@ function getAxisError(actual: Cylinder, expected: Cylinder): number {
  * @returns An array of `Vector3` points positioned on the surface of the cylinder.
  */
 function createPoints(
-  cylinder: Cylinder,
+  cylinder: LeastSquareCylinderResult,
   count: number,
   random: Random,
   relativeRadiusError = 0,
@@ -184,12 +190,12 @@ function createPoints(
   return points;
 }
 
-function getRandomCylinder(random: Random): Cylinder {
+function getRandomCylinder(random: Random): LeastSquareCylinderResult {
   const axis = getRandomUnitVector(random);
   const center = getRandomPoint(random, -10, 10);
   const radius = getRandomFloatBetween(1, 5);
   const height = getRandomFloatBetween(1, 5) * radius;
-  return new Cylinder(center, axis, radius, height);
+  return new LeastSquareCylinderResult(center, axis, radius, height);
 }
 
 function getRandomUnitVector(random: Random): Vector3 {

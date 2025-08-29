@@ -1,5 +1,8 @@
 import { Matrix4, Vector3 } from 'three';
-import { getTranslationRotationMatrix, type Cylinder } from './Cylinder';
+import {
+  getTranslationRotationMatrix,
+  type LeastSquareCylinderResult
+} from './LeastSquareCylinderResult';
 import { Range1 } from '../geometry/Range1';
 import { LeastSquare } from './LeastSquare';
 import { Vector3ArrayUtils } from '../primitives/Vector3ArrayUtils';
@@ -8,7 +11,7 @@ import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
 
 export const MAIN_AXISES = createMainAxis();
 
-type AcceptCylinder = (cylinder: Cylinder) => boolean;
+type AcceptCylinder = (cylinder: LeastSquareCylinderResult) => boolean;
 
 /**
  * Computes the best-fit cylinder for a given set of 3D points.
@@ -21,12 +24,15 @@ type AcceptCylinder = (cylinder: Cylinder) => boolean;
  * @param accept - (Optional) A predicate function that takes a `Cylinder` and returns `true` if the cylinder is acceptable.
  * @returns The best-fit `Cylinder` object with the lowest RMS error, or `undefined` if no suitable cylinder is found.
  */
-export function bestFitCylinder(points: Vector3[], accept?: AcceptCylinder): Cylinder | undefined {
+export function bestFitCylinder(
+  points: Vector3[],
+  accept?: AcceptCylinder
+): LeastSquareCylinderResult | undefined {
   const massCenter = Vector3ArrayUtils.getCenterOfMass(points);
   if (massCenter === undefined) {
     return undefined;
   }
-  let bestCylinder: Cylinder | undefined;
+  let bestCylinder: LeastSquareCylinderResult | undefined;
 
   // Try with all available axis as a starting point, and keep the best one
   for (const axis of MAIN_AXISES) {
@@ -51,7 +57,7 @@ function getCylinderByInitialAxis(
   points: Vector3[],
   axis: Vector3,
   massCenter: Vector3
-): Cylinder | undefined {
+): LeastSquareCylinderResult | undefined {
   const matrix = getTranslationRotationMatrix(axis, massCenter);
   const invMatrix = matrix.clone().invert();
 
@@ -71,7 +77,7 @@ function getCylinderByInitialAxis(
   return cylinder;
 }
 
-function updateHeightAndCenter(cylinder: Cylinder, points: Vector3[]): void {
+function updateHeightAndCenter(cylinder: LeastSquareCylinderResult, points: Vector3[]): void {
   const matrix = cylinder.getTranslationRotationMatrix();
   const invMatrix = matrix.clone().invert();
   const zRange = new Range1();
@@ -84,7 +90,7 @@ function updateHeightAndCenter(cylinder: Cylinder, points: Vector3[]): void {
   cylinder.center.applyMatrix4(matrix);
 }
 
-function computeGaussNewton(points: Vector3[], cylinder: Cylinder): boolean {
+function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResult): boolean {
   // Gauss-Newton algorithm:
   //
   // Min S(X) = Sum(Residual_i(X))
@@ -242,7 +248,7 @@ function computeGaussNewton(points: Vector3[], cylinder: Cylinder): boolean {
   return true;
 }
 
-function getRms(points: Vector3[], cylinder: Cylinder): number {
+function getRms(points: Vector3[], cylinder: LeastSquareCylinderResult): number {
   const matrix = cylinder.getTranslationRotationMatrix();
   const invMatrix = matrix.clone().invert();
   let sumError = 0;
