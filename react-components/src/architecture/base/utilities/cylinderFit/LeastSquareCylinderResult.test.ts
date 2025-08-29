@@ -1,16 +1,21 @@
 import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
-import { Cylinder } from './Cylinder';
+import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 
-describe(Cylinder.name, () => {
+describe(LeastSquareCylinderResult.name, () => {
   test('should construct a cylinder', () => {
     const expectedAxis = new Vector3(0, 0, 1);
     const expectedCenter = new Vector3(1, 2, 3);
     const expectedHeight = 5;
     const expectedRadius = 4;
 
-    const cylinder = new Cylinder(expectedCenter, expectedAxis, expectedRadius, expectedHeight);
+    const cylinder = new LeastSquareCylinderResult(
+      expectedCenter,
+      expectedAxis,
+      expectedRadius,
+      expectedHeight
+    );
     expectEqualVector3(cylinder.axis, expectedAxis.normalize());
     expectEqualVector3(cylinder.center, expectedCenter);
     expectEqualVector3(cylinder.centerA, new Vector3(1, 2, 3 + expectedHeight / 2));
@@ -22,7 +27,7 @@ describe(Cylinder.name, () => {
   test('should construct a cylinder with axis going down', () => {
     const inputAxis = new Vector3(1, 2, -3);
     const expectedAxis = inputAxis.clone().normalize().negate();
-    const cylinder = new Cylinder(new Vector3(1, 2, -3), inputAxis, 5, 6);
+    const cylinder = new LeastSquareCylinderResult(new Vector3(1, 2, -3), inputAxis, 5, 6);
     expectEqualVector3(cylinder.axis, expectedAxis);
   });
 
@@ -31,7 +36,7 @@ describe(Cylinder.name, () => {
     const expectedCenter = new Vector3(1, 2, 3);
     const expectedHeight = 5;
 
-    const cylinder = new Cylinder(expectedCenter, expectedAxis, 5, expectedHeight);
+    const cylinder = new LeastSquareCylinderResult(expectedCenter, expectedAxis, 5, expectedHeight);
     const matrix = cylinder.getTranslationRotationMatrix();
     matrix.invert();
 

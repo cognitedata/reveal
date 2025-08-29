@@ -1,5 +1,5 @@
 import { type Matrix4, Vector3 } from 'three';
-import { Cylinder, UP_VECTOR } from './Cylinder';
+import { LeastSquareCylinderResult, UP_VECTOR } from './LeastSquareCylinderResult';
 import { LeastSquare } from './LeastSquare';
 import { Range1 } from '../geometry/Range1';
 import { horizontalLengthSq } from '../extensions/vectorUtils';
@@ -15,7 +15,10 @@ import { horizontalLengthSq } from '../extensions/vectorUtils';
  * @param matrix - A transformation matrix (`Matrix4`) applied to each point before fitting.
  * @returns The fitted `Cylinder` object if successful, or `undefined` if the fit fails.
  */
-export function bestFitVerticalCylinder(points: Vector3[], matrix: Matrix4): Cylinder | undefined {
+export function bestFitVerticalCylinder(
+  points: Vector3[],
+  matrix: Matrix4
+): LeastSquareCylinderResult | undefined {
   const leastSquare = new LeastSquare(3);
   const zRange = new Range1();
 
@@ -37,5 +40,5 @@ export function bestFitVerticalCylinder(points: Vector3[], matrix: Matrix4): Cyl
     return undefined; // Should be impossible, but you never know...
   }
   const height = Math.max(zRange.delta, radius / 100); // Just give a small height if all points are in a plane
-  return new Cylinder(center, UP_VECTOR, radius, height);
+  return new LeastSquareCylinderResult(center, UP_VECTOR, radius, height);
 }
