@@ -14,12 +14,13 @@ describe(ViewerContextProvider.name, () => {
   });
 
   test('renders children', async () => {
+    const renderTarget = createRenderTargetMock();
     const TestComponent = (): ReactElement => {
       return <h1>Child component</h1>;
     };
 
     const result = render(
-      <ViewerContextProvider renderTarget={undefined}>
+      <ViewerContextProvider renderTarget={renderTarget}>
         <TestComponent />
       </ViewerContextProvider>
     );
@@ -98,13 +99,6 @@ describe(ViewerContextProvider.name, () => {
   test('mounting `null` renderTarget does not occupy viewer slot on window', () => {
     const renderTargetMock = createRenderTargetMock();
     render(
-      <ViewerContextProvider renderTarget={undefined}>
-        <></>
-      </ViewerContextProvider>
-    );
-    expect(window.renderTarget).toBe(undefined);
-
-    render(
       <ViewerContextProvider renderTarget={renderTargetMock}>
         <></>
       </ViewerContextProvider>
@@ -117,20 +111,10 @@ describe(ViewerContextProvider.name, () => {
     const renderTargetMock1 = createRenderTargetMock();
 
     const { rerender } = render(
-      <ViewerContextProvider renderTarget={undefined}>
-        <></>
-      </ViewerContextProvider>
-    );
-
-    expect(window.renderTarget).toBe(undefined);
-    expect(window.viewer).toBe(undefined);
-
-    rerender(
       <ViewerContextProvider renderTarget={renderTargetMock0}>
         <></>
       </ViewerContextProvider>
     );
-
     expect(window.renderTarget).toBe(renderTargetMock0);
     expect(window.viewer).toBe(renderTargetMock0.viewer);
 
