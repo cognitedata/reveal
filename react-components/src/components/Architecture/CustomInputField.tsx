@@ -1,15 +1,14 @@
 import { Button, Comment, Flex, Input, Textarea } from '@cognite/cogs.js';
 import { type BaseSyntheticEvent, type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useTranslation } from '../i18n/I18n';
-import { useOnUpdate } from './hooks/useOnUpdate';
-import { getDefaultCommand } from './utilities';
-import { useRenderTarget } from '../RevealCanvas';
-import { type TranslationInput } from '../../architecture';
 import {
-  type FieldContent,
-  type CustomBaseInputCommand
+  type CustomBaseInputCommand,
+  type FieldContent
 } from '../../architecture/base/commands/CustomBaseInputCommand';
 import styled from 'styled-components';
+import { useCommandEnable } from './hooks/useCommandProps';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { translateIfExists } from '../../architecture/base/utilities/translation/translateUtils';
 
 export const CustomInputField = ({
   inputCommand
@@ -17,20 +16,18 @@ export const CustomInputField = ({
   inputCommand: CustomBaseInputCommand;
   placement: string;
 }): ReactNode => {
-  const { t } = useTranslation();
-  const translateIfExists = (translationInput: TranslationInput | undefined): string | undefined =>
-    translationInput !== undefined ? t(translationInput) : undefined;
-
-  const renderTarget = useRenderTarget();
-
-  const command = useMemo(() => getDefaultCommand(inputCommand, renderTarget), [inputCommand]);
-  const [enabled, setEnabled] = useState<boolean>(command.isEnabled);
-  const [postLabel, setPostLabel] = useState<string | undefined>(
+  const command = useCommand(inputCommand);
+  const isEnabled = useCommandEnable(command);
+  const postLabel = useCommandProperty(command, () =>
     translateIfExists(command.getPostButtonLabel())
   );
-  const [cancelLabel, setCancelLabel] = useState<string | undefined>(
+  const cancelLabel = useCommandProperty(command, () =>
     translateIfExists(command.getCancelButtonLabel())
   );
+  const placeholders = useCommandProperty(command, () => {
+    return command.getAllPlaceholders()?.map((placeholder) => translateIfExists(placeholder));
+  });
+
   const [postButtonDisabled, setPostButtonDisabled] = useState(true);
 
   const initialContents = useMemo(() => {
@@ -46,23 +43,6 @@ export const CustomInputField = ({
   }, [command]);
 
   const [contents, setContents] = useState<FieldContent[]>(initialContents);
-
-  const initialPlaceholderLabels = command
-    .getAllPlaceholders()
-    ?.map((placeholder) => translateIfExists(placeholder));
-
-  const [placeholders, setPlaceholders] = useState<Array<string | undefined> | undefined>(
-    initialPlaceholderLabels
-  );
-
-  useOnUpdate(command, () => {
-    setPostLabel(translateIfExists(command.getPostButtonLabel()));
-    setCancelLabel(translateIfExists(command.getCancelButtonLabel()));
-    setPlaceholders(
-      command.getAllPlaceholders()?.map((placeholder) => translateIfExists(placeholder))
-    );
-    setEnabled(command.isEnabled);
-  });
 
   const handleSetContents = useCallback(
     (index: number, data: string) => {
@@ -85,7 +65,7 @@ export const CustomInputField = ({
         <Input
           key={index}
           value={fieldContent.content}
-          disabled={!enabled}
+          disabled={!isEnabled}
           onChange={(data: BaseSyntheticEvent) => {
             handleSetContents(index, data.target.value as string);
           }}
@@ -113,7 +93,7 @@ export const CustomInputField = ({
         <Flex key={index} gap={8}>
           <Button
             type="secondary"
-            disabled={!enabled}
+            disabled={!isEnabled}
             onClick={() => {
               command.onCancel?.();
               setContents([]);
@@ -122,7 +102,7 @@ export const CustomInputField = ({
           </Button>
           <Button
             type="primary"
-            disabled={postButtonDisabled || !enabled}
+            disabled={postButtonDisabled || !isEnabled}
             onClick={() => {
               command.invokeWithContent(contents ?? []);
               setContents([]);
@@ -146,7 +126,7 @@ export const CustomInputField = ({
             setContents([]);
           }}
           postButtonText={postLabel}
-          postButtonDisabled={postButtonDisabled || !enabled}
+          postButtonDisabled={postButtonDisabled || !isEnabled}
           cancelButtonText={cancelLabel}
           cancelButtonDisabled={false}
           onCancel={command.onCancel}
