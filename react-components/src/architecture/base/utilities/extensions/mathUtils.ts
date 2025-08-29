@@ -189,6 +189,10 @@ export function getRandomIntByMax(exclusiveMax: number): number {
   return Math.floor(Math.random() * exclusiveMax);
 }
 
+export function getRandomFloatBetween(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
+}
+
 export function getRandomGaussian(mean = 0, stdDev = 1): number {
   for (;;) {
     const a = Math.random();
