@@ -22,8 +22,10 @@ export function bestFitVerticalCylinder(
   const leastSquare = new LeastSquare(3);
   const zRange = new Range1();
 
+  const transformed = new Vector3();
   for (const point of points) {
-    const transformed = point.clone().applyMatrix4(matrix);
+    transformed.copy(point);
+    transformed.applyMatrix4(matrix);
     zRange.add(transformed.z);
     leastSquare.addEquation(
       [2 * transformed.x, 2 * transformed.y, -1],
