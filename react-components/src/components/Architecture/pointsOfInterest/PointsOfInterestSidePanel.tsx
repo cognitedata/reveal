@@ -13,7 +13,7 @@ export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): Reac
 
   const tool = renderTarget.commandsController.getToolByType(PointsOfInterestTool);
 
-  const [enabled, setEnabled] = useState<boolean>(tool?.isEnabled ?? false);
+  const [enabled, setEnabled] = useState(tool?.isEnabled ?? false);
 
   useOnUpdate(tool, () => {
     if (tool === undefined) {
