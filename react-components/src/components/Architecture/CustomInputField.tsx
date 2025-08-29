@@ -1,33 +1,14 @@
 import { Button, Comment, Flex, Input, Textarea } from '@cognite/cogs.js';
+import { type BaseSyntheticEvent, type ReactNode, useCallback, useMemo, useState } from 'react';
 import {
-  type BaseSyntheticEvent,
-  type ReactElement,
-  type ReactNode,
-  useCallback,
-  useMemo,
-  useState
-} from 'react';
-import { type BaseCommand } from '../../architecture';
-import {
-  CustomBaseInputCommand,
+  type CustomBaseInputCommand,
   type FieldContent
 } from '../../architecture/base/commands/CustomBaseInputCommand';
 import styled from 'styled-components';
-import { type PlacementType } from './types';
 import { useCommandEnable } from './hooks/useCommandProps';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { translateIfExists } from '../../architecture/base/utilities/translation/translateUtils';
-
-export function createCustomInputField(
-  command: BaseCommand,
-  placement: PlacementType
-): ReactElement | undefined {
-  if (command instanceof CustomBaseInputCommand) {
-    return <CustomInputField key={command.uniqueId} inputCommand={command} placement={placement} />;
-  }
-  return undefined;
-}
 
 export const CustomInputField = ({
   inputCommand
