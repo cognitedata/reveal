@@ -158,6 +158,7 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
   // Z0 = -P1*P3 - P2*P4
 
   const minSumSquare = 0.0001;
+  const relativeRmsThresholdForDiverging = 20;
   const maxIterationCount = points.length < 100 ? 30 : 10;
   const minIterationCount = points.length < 100 ? 5 : 3;
 
@@ -167,6 +168,7 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
   const normalEquation = new LeastSquare(5);
   const leftHandSide = new Array<number>(5); // Uses as temp array to avoid creating many arrays
+  const transformed = new Vector3(); // Reused to avoid too many allocations
   let firstRms = 0;
 
   for (let iterationCount = 0; ; iterationCount++) {
@@ -181,7 +183,6 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
     try {
       const invMatrix = matrix.clone().invert();
-      const transformed = new Vector3();
       for (const point of points) {
         transformed.copy(point);
         transformed.applyMatrix4(invMatrix);
@@ -207,7 +208,7 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
     const rms = Math.sqrt(sumErrorSquared / points.length);
     if (iterationCount === 0) {
       firstRms = rms;
-    } else if (rms > 20 * firstRms) {
+    } else if (rms > relativeRmsThresholdForDiverging * firstRms) {
       return false; // Diverging, give up
     }
     const x = normalEquation.compute();
