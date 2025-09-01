@@ -3,7 +3,7 @@ import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { TOOLTIP_DELAY } from './constants';
-import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { BaseOptionCommand, OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { type PlacementType } from './types';
 import { type ReactElement } from 'react';
 import { useCommand } from './hooks/useCommand';
@@ -11,6 +11,17 @@ import { useCommandProperty } from './hooks/useCommandProperty';
 import { useCommandProps } from './hooks/useCommandProps';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type UniqueId } from '../../architecture/base/utilities/types';
+import { type BaseCommand } from '../../architecture';
+
+export function createSegmentedButtons(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseOptionCommand && command.optionType === OptionType.Segmented) {
+    return <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+  return undefined;
+}
 
 export const SegmentedButtons = ({
   inputCommand,

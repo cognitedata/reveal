@@ -3,14 +3,14 @@ import { AxisDomainObject } from './AxisDomainObject';
 import { AxisThreeView } from './AxisThreeView';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { Box3, LineSegments, Mesh, Object3D, PerspectiveCamera, Sprite, Vector3 } from 'three';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { isViewerMock } from '#test-utils/fixtures/viewer';
 import {
   expectChildrenLength,
   expectChildrenOfTypeAndCount,
   expectVisibleChildren,
   expectVisibleChildrenOfType
-} from '../../../../tests/tests-utilities/architecture/viewUtil';
-import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
-import { isViewerMock } from '#test-utils/fixtures/viewer';
+} from '#test-utils/architecture/viewUtil';
 
 describe(AxisThreeView.name, () => {
   let view: AxisThreeView;
