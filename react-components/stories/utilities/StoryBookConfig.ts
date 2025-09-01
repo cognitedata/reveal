@@ -1,22 +1,22 @@
 import { type BaseCommand } from '../../src/architecture/base/commands/BaseCommand';
 import { SetTerrainVisibleCommand } from '../../src/architecture/concrete/terrain/SetTerrainVisibleCommand';
 import { UpdateTerrainCommand } from '../../src/architecture/concrete/terrain/UpdateTerrainCommand';
-import { FitViewCommand } from '../../src/architecture/base/concreteCommands/naviagation/FitViewCommand';
+import { FitViewCommand } from '../../src/architecture/base/concreteCommands/navigation/FitViewCommand';
 import { SetAxisVisibleCommand } from '../../src/architecture/concrete/axis/SetAxisVisibleCommand';
 import { ExampleTool } from '../../src/architecture/concrete/example/ExampleTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../src/architecture/base/renderTarget/BaseRevealConfig';
 import { type RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
-import { NavigationTool } from '../../src/architecture/base/concreteCommands/naviagation/NavigationTool';
+import { NavigationTool } from '../../src/architecture/base/concreteCommands/navigation/NavigationTool';
 import { type BaseTool } from '../../src/architecture/base/commands/BaseTool';
 import { MeasurementTool } from '../../src/architecture/concrete/measurements/MeasurementTool';
 import { ClipTool } from '../../src/architecture/concrete/clipping/ClipTool';
-import { KeyboardSpeedCommand } from '../../src/architecture/base/concreteCommands/naviagation/KeyboardSpeedCommand';
+import { KeyboardSpeedCommand } from '../../src/architecture/base/concreteCommands/navigation/KeyboardSpeedCommand';
 import { SettingsCommand } from '../../src/architecture/base/concreteCommands/general/SettingsCommand';
 import { MockSettingsCommand } from '#test-utils/architecture/mock-commands/MockSettingsCommand';
 import { MockFilterCommand } from '#test-utils/architecture/mock-commands/MockFilterCommand';
 import { ToggleAllModelsVisibleCommand } from '../../src/architecture/base/concreteCommands/general/ToggleAllModelsVisibleCommand';
-import { SetOrbitOrFirstPersonModeCommand } from '../../src/architecture/base/concreteCommands/naviagation/SetOrbitOrFirstPersonModeCommand';
+import { SetOrbitOrFirstPersonModeCommand } from '../../src/architecture/base/concreteCommands/navigation/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsCreateTool } from '../../src/architecture/concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsShowCommand } from '../../src/architecture/concrete/annotations/commands/AnnotationsShowCommand';

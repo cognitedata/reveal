@@ -20,9 +20,9 @@ export { ShowDomainObjectsOnTopCommand } from './base/commands/ShowDomainObjects
 // New architecture: concreteCommands
 export { CopyToClipboardCommand } from './base/concreteCommands/general/CopyToClipboardCommand';
 export { DeleteDomainObjectCommand } from './base/concreteCommands/general/DeleteDomainObjectCommand';
-export { FitViewCommand } from './base/concreteCommands/naviagation/FitViewCommand';
-export { KeyboardSpeedCommand } from './base/concreteCommands/naviagation/KeyboardSpeedCommand';
-export { NavigationTool } from './base/concreteCommands/naviagation/NavigationTool';
+export { FitViewCommand } from './base/concreteCommands/navigation/FitViewCommand';
+export { KeyboardSpeedCommand } from './base/concreteCommands/navigation/KeyboardSpeedCommand';
+export { NavigationTool } from './base/concreteCommands/navigation/NavigationTool';
 export { PointCloudFilterCommand } from './concrete/reveal/pointCloud/commands/PointCloudFilterCommand';
 export { SetPointColorTypeCommand } from './concrete/reveal/pointCloud/commands/SetPointColorTypeCommand';
 export { SetPointShapeCommand } from './concrete/reveal/pointCloud/commands/SetPointShapeCommand';

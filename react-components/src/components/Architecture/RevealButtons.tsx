@@ -5,17 +5,17 @@ import { type Vector3 } from 'three';
 
 import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
 
-import { NavigationTool } from '../../architecture/base/concreteCommands/naviagation/NavigationTool';
-import { FitViewCommand } from '../../architecture/base/concreteCommands/naviagation/FitViewCommand';
-import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/naviagation/SetFlexibleControlsTypeCommand';
+import { NavigationTool } from '../../architecture/base/concreteCommands/navigation/NavigationTool';
+import { FitViewCommand } from '../../architecture/base/concreteCommands/navigation/FitViewCommand';
+import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/navigation/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
-import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/naviagation/KeyboardSpeedCommand';
+import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/navigation/KeyboardSpeedCommand';
 import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/general/SettingsCommand';
-import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/naviagation/SetOrbitOrFirstPersonModeCommand';
+import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/navigation/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
