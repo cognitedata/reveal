@@ -3,12 +3,10 @@ import { type Reveal3DResourcesProps, type CadModelOptions, AddResourceOptions }
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { is360ImageAddOptions, isClassicIdentifier, isDM3DModelIdentifier } from './typeGuards';
+import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
 import { use3DResourcesViewModel } from './Reveal3DResources.viewmodel';
-import { useModelIdRevisionIdFromModelOptions } from '../../hooks';
-import { AddModelOptions, DataSourceType } from '@cognite/reveal';
 
 export const Reveal3DResources = ({
   resources,
