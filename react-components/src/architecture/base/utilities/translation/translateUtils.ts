@@ -14,10 +14,6 @@ let currentTranslation: Translations = englishTranslation;
 
 void initialize();
 
-export function translateIfExists(input: TranslationInput | undefined): string | undefined {
-  return input !== undefined ? translate(input) : undefined;
-}
-
 export function translate(input: TranslationInput): string {
   if (isTranslatedString(input)) {
     return translateByKey(input.key);
