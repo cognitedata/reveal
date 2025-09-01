@@ -1,12 +1,14 @@
 import { type ReactElement, useEffect, useMemo } from 'react';
-import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
+import { type Reveal3DResourcesProps, type CadModelOptions, AddResourceOptions } from './types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
+import { is360ImageAddOptions, isClassicIdentifier, isDM3DModelIdentifier } from './typeGuards';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
 import { use3DResourcesViewModel } from './Reveal3DResources.viewmodel';
+import { useModelIdRevisionIdFromModelOptions } from '../../hooks';
+import { AddModelOptions, DataSourceType } from '@cognite/reveal';
 
 export const Reveal3DResources = ({
   resources,
@@ -23,9 +25,11 @@ export const Reveal3DResources = ({
   const renderTarget = hooks.useRenderTarget();
   const viewer = hooks.useReveal();
 
-  hooks.useRemoveNonReferencedModels(resources, renderTarget);
-
   const { data: reveal3DModels } = hooks.useTypedModels(viewer, resources, onResourceLoadError);
+
+  const reveal3DModelAsAddOptions: AddResourceOptions[] = reveal3DModels ?? [];
+
+  hooks.useRemoveNonReferencedModels(reveal3DModelAsAddOptions, renderTarget);
 
   hooks.useSetExpectedLoadCount(resources);
   hooks.useCallCallbackOnFinishedLoading(resources, onResourcesAdded);

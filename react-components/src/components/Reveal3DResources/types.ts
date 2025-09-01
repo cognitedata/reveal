@@ -78,7 +78,7 @@ export type AddPointCloudResourceOptions<T extends DataSourceType = DataSourceTy
     styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
   };
 
-export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
+export type AddCadResourceOptions = AddModelOptions & {
   transform?: Matrix4;
   styling?: {
     default?: NodeAppearance;
