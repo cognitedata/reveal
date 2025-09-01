@@ -4,14 +4,14 @@ import { ComponentFactory } from './ComponentFactory';
 import { CustomBaseInputCommand } from '../../../architecture/base/commands/CustomBaseInputCommand';
 import { DividerCommand } from '../../../architecture/base/commands/DividerCommand';
 import { createComponentFactory } from './createComponentFactory';
-import { MockActionCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockActionCommand';
-import { MockEnumOptionCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockEnumOptionCommand';
-import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
-import { MockSettingsCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockSettingsCommand';
 import { OptionType } from '../../../architecture/base/commands/BaseOptionCommand';
 import { SectionCommand } from '../../../architecture/base/commands/SectionCommand';
 import { type TranslationInput, type BaseCommand } from '../../../architecture';
 import { createDivider } from '../DividerCreator';
+import { MockActionCommand } from '#test-utils//architecture/mock-commands/MockActionCommand';
+import { MockEnumOptionCommand } from '#test-utils//architecture/mock-commands/MockEnumOptionCommand';
+import { MockFilterCommand } from '#test-utils//architecture/mock-commands/MockFilterCommand';
+import { MockSettingsCommand } from '#test-utils//architecture/mock-commands/MockSettingsCommand';
 
 const DEFAULT_PLACEMENT = 'left'; // Example placement, adjust as needed
 

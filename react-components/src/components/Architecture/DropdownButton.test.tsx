@@ -6,7 +6,7 @@ import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DropdownButton } from './DropdownButton';
-import { MockEnumOptionCommand } from '../../../tests/tests-utilities/architecture/mock-commands/MockEnumOptionCommand';
+import { MockEnumOptionCommand } from '#test-utils/architecture/mock-commands/MockEnumOptionCommand';
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
