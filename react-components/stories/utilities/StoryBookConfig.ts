@@ -1,34 +1,34 @@
 import { type BaseCommand } from '../../src/architecture/base/commands/BaseCommand';
 import { SetTerrainVisibleCommand } from '../../src/architecture/concrete/terrain/SetTerrainVisibleCommand';
 import { UpdateTerrainCommand } from '../../src/architecture/concrete/terrain/UpdateTerrainCommand';
-import { FitViewCommand } from '../../src/architecture/base/concreteCommands/FitViewCommand';
+import { FitViewCommand } from '../../src/architecture/base/concreteCommands/naviagation/FitViewCommand';
 import { SetAxisVisibleCommand } from '../../src/architecture/concrete/axis/SetAxisVisibleCommand';
 import { ExampleTool } from '../../src/architecture/concrete/example/ExampleTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../src/architecture/base/renderTarget/BaseRevealConfig';
 import { type RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
-import { NavigationTool } from '../../src/architecture/base/concreteCommands/NavigationTool';
+import { NavigationTool } from '../../src/architecture/base/concreteCommands/naviagation/NavigationTool';
 import { type BaseTool } from '../../src/architecture/base/commands/BaseTool';
 import { MeasurementTool } from '../../src/architecture/concrete/measurements/MeasurementTool';
 import { ClipTool } from '../../src/architecture/concrete/clipping/ClipTool';
-import { KeyboardSpeedCommand } from '../../src/architecture/base/concreteCommands/KeyboardSpeedCommand';
-import { SettingsCommand } from '../../src/architecture/base/concreteCommands/SettingsCommand';
+import { KeyboardSpeedCommand } from '../../src/architecture/base/concreteCommands/naviagation/KeyboardSpeedCommand';
+import { SettingsCommand } from '../../src/architecture/base/concreteCommands/general/SettingsCommand';
 import { MockSettingsCommand } from '#test-utils/architecture/mock-commands/MockSettingsCommand';
 import { MockFilterCommand } from '#test-utils/architecture/mock-commands/MockFilterCommand';
-import { ToggleAllModelsVisibleCommand } from '../../src/architecture/base/concreteCommands/ToggleAllModelsVisibleCommand';
-import { SetOrbitOrFirstPersonModeCommand } from '../../src/architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
+import { ToggleAllModelsVisibleCommand } from '../../src/architecture/base/concreteCommands/general/ToggleAllModelsVisibleCommand';
+import { SetOrbitOrFirstPersonModeCommand } from '../../src/architecture/base/concreteCommands/naviagation/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsCreateTool } from '../../src/architecture/concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsShowCommand } from '../../src/architecture/concrete/annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../../src/architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsSelectTool } from '../../src/architecture/concrete/annotations/commands/AnnotationsSelectTool';
 import { PointsOfInterestTool } from '../../src/architecture/concrete/pointsOfInterest/PointsOfInterestTool';
-import { Image360ActionCommand } from '../../src/architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
+import { Image360ActionCommand } from '../../src/architecture/concrete/reveal/Image360Collection/commands/Image360ActionCommand';
 import { Image360Action } from '@cognite/reveal';
 import { type ExternalId } from '../../src/data-providers/FdmSDK';
 import { Image360AnnotationSelectTool } from '../../src/architecture/concrete/annotation360/Image360AnnotationSelectTool';
 import { Image360AnnotationCreateTool } from '../../src/architecture/concrete/annotation360/Image360AnnotationCreateTool';
-import { ShowTreeViewCommand } from '../../src/architecture/base/concreteCommands/ShowTreeViewCommand';
+import { ShowTreeViewCommand } from '../../src/architecture/base/concreteCommands/general/ShowTreeViewCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================

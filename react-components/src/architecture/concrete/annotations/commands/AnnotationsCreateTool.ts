@@ -7,7 +7,7 @@ import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
-import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
+import { NavigationTool } from '../../../base/concreteCommands/naviagation/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
 import { type Annotation } from '../helpers/Annotation';
 import { type IconName } from '../../../base/utilities/types';

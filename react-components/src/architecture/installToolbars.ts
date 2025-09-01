@@ -26,7 +26,7 @@ import { ShowAllExamplesCommand } from './concrete/example/commands/ShowAllExamp
 import { ShowClippingOnTopCommand } from './concrete/clipping/commands/ShowClippingOnTopCommand';
 import { ShowExamplesOnTopCommand } from './concrete/example/commands/ShowExamplesOnTopCommand';
 import { ShowMeasurementsOnTopCommand } from './concrete/measurements/commands/ShowMeasurementsOnTopCommand';
-import { UndoCommand } from './base/concreteCommands/UndoCommand';
+import { UndoCommand } from './base/concreteCommands/general/UndoCommand';
 
 export function installToolbars(): void {
   const separator = undefined;
