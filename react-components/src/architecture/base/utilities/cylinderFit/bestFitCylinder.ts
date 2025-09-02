@@ -238,7 +238,9 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
     center.addScaledVector(deltaCenter, length);
 
     radius += radius * x[4];
-
+    if (radius <= 0) {
+      return false; // Should be impossible, but you never know...
+    }
     // Check for convergence, the sum of squared changes is small, then we are done
     const sumSquared = getSumSquared(x);
     if (sumSquared < minSumSquare && iterationCount >= minIterationCount) {
@@ -250,9 +252,6 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
       }
       break; // Solution is found
     }
-  }
-  if (radius <= 0) {
-    return false; // Should be impossible, but you never know...
   }
   cylinder.axis.copy(axis);
   cylinder.center.copy(center);
