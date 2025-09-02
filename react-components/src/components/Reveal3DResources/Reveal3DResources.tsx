@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect, useMemo } from 'react';
-import { type Reveal3DResourcesProps, type CadModelOptions, AddResourceOptions } from './types';
+import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
@@ -25,18 +25,19 @@ export const Reveal3DResources = ({
 
   const { data: reveal3DModels } = hooks.useTypedModels(viewer, resources, onResourceLoadError);
 
-  const reveal3DModelAsAddOptions: AddResourceOptions[] = reveal3DModels ?? [];
+  const { image360CollectionAddOptions, image360CollectionOptionsWithSettings } = useMemo(() => {
+    const image360CollectionAddOptions = resources.filter(is360ImageAddOptions);
+    const image360CollectionOptionsWithSettings = image360CollectionAddOptions.map((options) => ({ ...image360Settings, ...options }));
+    return {
+      image360CollectionAddOptions,
+      image360CollectionOptionsWithSettings
+    }
+  }, [resources, image360Settings]);
 
-  hooks.useRemoveNonReferencedModels(reveal3DModelAsAddOptions, renderTarget);
+  hooks.useRemoveNonReferencedModels(reveal3DModels ?? EMPTY_ARRAY, image360CollectionAddOptions, renderTarget);
 
   hooks.useSetExpectedLoadCount(resources);
   hooks.useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
-
-  const image360CollectionAddOptions = useMemo(() => {
-    return resources
-      .filter(is360ImageAddOptions)
-      .map((options) => ({ ...image360Settings, ...options }));
-  }, [resources, image360Settings]);
 
   const cadModelOptions = useMemo(() => {
     if (reveal3DModels === undefined) {
@@ -116,7 +117,7 @@ export const Reveal3DResources = ({
           />
         );
       })}
-      {image360CollectionAddOptions.map((addModelOption) => {
+      {image360CollectionOptionsWithSettings.map((addModelOption) => {
         const image360Styling: ImageCollectionModelStyling = {
           defaultStyle: defaultResourceStyling?.image360?.default,
           groups: image360StyledGroup

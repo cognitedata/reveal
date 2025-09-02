@@ -4,7 +4,7 @@ import {
   type CogniteModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { type AddResourceOptions } from '../types';
+import { AddImage360CollectionOptions, type AddResourceOptions } from '../types';
 import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,
@@ -18,25 +18,26 @@ import { type RevealRenderTarget } from '../../../architecture';
 import { RevealModelsUtils } from '../../../architecture/concrete/reveal/RevealModelsUtils';
 
 export function useRemoveNonReferencedModels(
-  addOptions: AddResourceOptions[],
+  reveal3DModelAddOptions: AddResourceOptions[],
+  addImage360CollectionOptions: AddImage360CollectionOptions[],
   renderTarget: RevealRenderTarget
 ): void {
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   useEffect(() => {
     const viewer = renderTarget.viewer;
-    const nonReferencedModels = findNonReferencedModels(addOptions, viewer);
+    const nonReferencedModels = findNonReferencedModels(reveal3DModelAddOptions, viewer);
 
     nonReferencedModels.forEach((model) => {
       RevealModelsUtils.remove(renderTarget, model);
     });
 
-    const nonReferencedCollections = findNonReferencedCollections(addOptions, viewer);
+    const nonReferencedCollections = findNonReferencedCollections(addImage360CollectionOptions, viewer);
 
     nonReferencedCollections.forEach((model) => {
       RevealModelsUtils.remove(renderTarget, model);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));
-  }, [addOptions]);
+  }, [reveal3DModelAddOptions,addImage360CollectionOptions]);
 }
 
 function findNonReferencedModels(
@@ -76,13 +77,12 @@ function findNonReferencedModels(
 }
 
 function findNonReferencedCollections(
-  addOptions: AddResourceOptions[],
+  addCollectionOptions: AddImage360CollectionOptions[],
   viewer: Cognite3DViewer<DataSourceType>
 ): Array<Image360Collection<DataSourceType>> {
-  const image360CollectionAddOptions = addOptions.filter(is360ImageAddOptions);
 
   const collections = viewer.get360ImageCollections();
-  const collectionAddOptionsSet = new Set(image360CollectionAddOptions);
+  const collectionAddOptionsSet = new Set(addCollectionOptions);
 
   return collections.filter((collection) => {
     const correspondingAddOptions = (() => {

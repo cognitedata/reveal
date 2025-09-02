@@ -28,7 +28,7 @@ describe(useRemoveNonReferencedModels.name, () => {
     expect(() =>
       renderHook(
         () => {
-          useRemoveNonReferencedModels(EMPTY_ARRAY, renderTarget);
+          useRemoveNonReferencedModels(EMPTY_ARRAY, EMPTY_ARRAY, renderTarget);
         },
         { wrapper }
       )
@@ -41,7 +41,7 @@ describe(useRemoveNonReferencedModels.name, () => {
     viewerImage360CollectionsMock.mockReturnValue([]);
     renderHook(
       () => {
-        useRemoveNonReferencedModels(EMPTY_ARRAY, renderTarget);
+        useRemoveNonReferencedModels(EMPTY_ARRAY, EMPTY_ARRAY, renderTarget);
       },
       { wrapper }
     );
@@ -58,7 +58,7 @@ describe(useRemoveNonReferencedModels.name, () => {
     const mockAddOptions = [pointCloudModelOptions, cadModelOptions, image360ClassicOptions];
     renderHook(
       () => {
-        useRemoveNonReferencedModels(mockAddOptions, renderTarget);
+        useRemoveNonReferencedModels(mockAddOptions, EMPTY_ARRAY, renderTarget);
       },
       { wrapper }
     );
@@ -72,13 +72,12 @@ describe(useRemoveNonReferencedModels.name, () => {
     const image360Mock = createImage360ClassicMock();
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);
-    const mockAddOptions = [cadModelOptions, image360ClassicOptions];
     renderHook(
       () => {
-        useRemoveNonReferencedModels(mockAddOptions, renderTarget);
+        useRemoveNonReferencedModels([cadModelOptions], [image360ClassicOptions], renderTarget);
       },
       { wrapper }
     );
-    // expect(viewerRemoveModelsMock).toHaveBeenCalledWith(pointCloudMock);
+    expect(viewerRemoveModelsMock).toHaveBeenCalledWith(pointCloudMock);
   });
 });
