@@ -1,10 +1,19 @@
 import { Comment } from '@cognite/cogs.js';
-import { type BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
-import { type ReactNode } from 'react';
+import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
+import { type ReactElement, type ReactNode } from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { translateIfExists } from '../../architecture/base/utilities/translation/translateUtils';
+import { type BaseCommand } from '../../architecture';
+import { type PlacementType } from './types';
+
+export function createInputField(command: BaseCommand, _: PlacementType): ReactElement | undefined {
+  if (command instanceof BaseInputCommand) {
+    return <InputField key={command.uniqueId} inputCommand={command} />;
+  }
+  return undefined;
+}
 
 export const InputField = ({ inputCommand }: { inputCommand: BaseInputCommand }): ReactNode => {
   const command = useCommand(inputCommand);
