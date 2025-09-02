@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/translation/TranslateInput';
-import { SettingsCommand } from '../SettingsCommand';
+import { SettingsCommand } from './SettingsCommand';
 
 describe(SettingsCommand.name, () => {
   test('should have following default behavior', () => {
