@@ -5,7 +5,7 @@ import {
   type PanelInfo,
   type NumberPanelItem
 } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
-import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
+import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/general/CopyToClipboardCommand';
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import {

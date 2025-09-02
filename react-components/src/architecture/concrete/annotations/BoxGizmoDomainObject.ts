@@ -10,7 +10,7 @@ import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
-import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
+import { CopyToClipboardCommand } from '../../base/concreteCommands/general/CopyToClipboardCommand';
 import { CycleLengthUnitsCommand } from '../../base/concreteCommands/units/CycleLengthUnitsCommand';
 import { Box } from '../../base/utilities/primitives/Box';
 import { Annotation } from './helpers/Annotation';
