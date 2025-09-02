@@ -3,6 +3,7 @@ import { LeastSquareCylinderResult, UP_VECTOR } from './LeastSquareCylinderResul
 import { LeastSquare } from './LeastSquare';
 import { Range1 } from '../geometry/Range1';
 import { horizontalLengthSq } from '../extensions/vectorUtils';
+import { getTransformedPoints } from './getTransformedPoints';
 
 /**
  * Computes the best-fit vertical cylinder for a set of 3D points.
@@ -22,15 +23,9 @@ export function bestFitVerticalCylinder(
   const leastSquare = new LeastSquare(3);
   const zRange = new Range1();
 
-  const transformed = new Vector3();
-  for (const point of points) {
-    transformed.copy(point);
-    transformed.applyMatrix4(matrix);
-    zRange.add(transformed.z);
-    leastSquare.addEquation(
-      [2 * transformed.x, 2 * transformed.y, -1],
-      horizontalLengthSq(transformed)
-    );
+  for (const point of getTransformedPoints(points, matrix, false)) {
+    zRange.add(point.z);
+    leastSquare.addEquation([2 * point.x, 2 * point.y, -1], horizontalLengthSq(point));
   }
   const solution = leastSquare.compute();
   if (solution === undefined) {

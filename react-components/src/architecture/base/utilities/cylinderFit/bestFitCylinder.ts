@@ -8,6 +8,7 @@ import { LeastSquare } from './LeastSquare';
 import { Vector3ArrayUtils } from '../primitives/Vector3ArrayUtils';
 import { horizontalLength } from '../extensions/vectorUtils';
 import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
+import { getTransformedPoints } from './getTransformedPoints';
 
 export const MAIN_AXES = createMainAxes();
 
@@ -81,13 +82,9 @@ function getCylinderByInitialAxis(
 
 function updateHeightAndCenter(cylinder: LeastSquareCylinderResult, points: Vector3[]): void {
   const matrix = cylinder.getTranslationRotationMatrix();
-  const invMatrix = matrix.clone().invert();
   const zRange = new Range1();
-  const transformed = new Vector3();
-  for (const point of points) {
-    transformed.copy(point);
-    transformed.applyMatrix4(invMatrix);
-    zRange.add(transformed.z);
+  for (const point of getTransformedPoints(points, matrix)) {
+    zRange.add(point.z);
   }
   cylinder.height = zRange.delta;
   cylinder.center.set(0, 0, zRange.center);
@@ -168,7 +165,6 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
   const normalEquation = new LeastSquare(5);
   const leftHandSide = new Array<number>(5); // Uses as temp array to avoid creating many arrays
-  const transformed = new Vector3(); // Reused to avoid too many allocations
   let firstRms = 0;
 
   for (let iterationCount = 0; ; iterationCount++) {
@@ -182,20 +178,17 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
     let sumErrorSquared = 0;
 
     try {
-      const invMatrix = matrix.clone().invert();
-      for (const point of points) {
-        transformed.copy(point);
-        transformed.applyMatrix4(invMatrix);
-        const distanceToCenter = horizontalLength(transformed);
+      for (const point of getTransformedPoints(points, matrix)) {
+        const distanceToCenter = horizontalLength(point);
         if (distanceToCenter < EPSILON) {
           continue; // Skip this in the calculation to avoid instability
         }
         const error = 1 - distanceToCenter;
 
-        leftHandSide[0] = -transformed.x / distanceToCenter; // dD/dX0
-        leftHandSide[1] = -transformed.y / distanceToCenter; // dD/dY0
-        leftHandSide[2] = (-transformed.x * transformed.z) / distanceToCenter; // dD/dA
-        leftHandSide[3] = (-transformed.y * transformed.z) / distanceToCenter; // dD/dB
+        leftHandSide[0] = -point.x / distanceToCenter; // dD/dX0
+        leftHandSide[1] = -point.y / distanceToCenter; // dD/dY0
+        leftHandSide[2] = (-point.x * point.z) / distanceToCenter; // dD/dA
+        leftHandSide[3] = (-point.y * point.z) / distanceToCenter; // dD/dB
         leftHandSide[4] = -1; // dD/dR
 
         normalEquation.addEquation(leftHandSide, error);
@@ -261,15 +254,10 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 
 function getRms(points: Vector3[], cylinder: LeastSquareCylinderResult): number {
   const matrix = cylinder.getTranslationRotationMatrix();
-  const invMatrix = matrix.clone().invert();
   let sumError = 0;
-  const transformed = new Vector3();
-  for (const point of points) {
-    transformed.copy(point);
-    transformed.applyMatrix4(invMatrix);
-
+  for (const point of getTransformedPoints(points, matrix)) {
     // Find relative radius error
-    const radius = horizontalLength(transformed);
+    const radius = horizontalLength(point);
     const error = cylinder.radius > EPSILON ? 1 - radius / cylinder.radius : radius;
     sumError += error * error;
   }
