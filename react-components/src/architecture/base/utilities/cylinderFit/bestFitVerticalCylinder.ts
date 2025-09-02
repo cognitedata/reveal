@@ -38,7 +38,7 @@ export function bestFitVerticalCylinder(
   }
   const center = new Vector3(solution[0], solution[1], zRange.center);
   const radius = Math.sqrt(horizontalLengthSq(center) - solution[2]);
-  if (radius <= 0) {
+  if (radius <= 0 || !isFinite(radius)) {
     return undefined; // Should be impossible, but you never know...
   }
   const height = Math.max(zRange.delta, radius / 100); // Just give a small height if all points are in a plane

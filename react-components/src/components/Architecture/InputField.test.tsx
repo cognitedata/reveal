@@ -19,7 +19,7 @@ describe(InputField.name, () => {
     renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
     );
   });
 
