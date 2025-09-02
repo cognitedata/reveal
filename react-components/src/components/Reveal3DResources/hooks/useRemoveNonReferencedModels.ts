@@ -4,7 +4,7 @@ import {
   type CogniteModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { AddImage360CollectionOptions, type AddResourceOptions } from '../types';
+import { type AddImage360CollectionOptions, type AddResourceOptions } from '../types';
 import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,
@@ -31,13 +31,16 @@ export function useRemoveNonReferencedModels(
       RevealModelsUtils.remove(renderTarget, model);
     });
 
-    const nonReferencedCollections = findNonReferencedCollections(addImage360CollectionOptions, viewer);
+    const nonReferencedCollections = findNonReferencedCollections(
+      addImage360CollectionOptions,
+      viewer
+    );
 
     nonReferencedCollections.forEach((model) => {
       RevealModelsUtils.remove(renderTarget, model);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));
-  }, [reveal3DModelAddOptions,addImage360CollectionOptions]);
+  }, [reveal3DModelAddOptions, addImage360CollectionOptions]);
 }
 
 function findNonReferencedModels(
@@ -80,7 +83,6 @@ function findNonReferencedCollections(
   addCollectionOptions: AddImage360CollectionOptions[],
   viewer: Cognite3DViewer<DataSourceType>
 ): Array<Image360Collection<DataSourceType>> {
-
   const collections = viewer.get360ImageCollections();
   const collectionAddOptionsSet = new Set(addCollectionOptions);
 

@@ -27,14 +27,21 @@ export const Reveal3DResources = ({
 
   const { image360CollectionAddOptions, image360CollectionOptionsWithSettings } = useMemo(() => {
     const image360CollectionAddOptions = resources.filter(is360ImageAddOptions);
-    const image360CollectionOptionsWithSettings = image360CollectionAddOptions.map((options) => ({ ...image360Settings, ...options }));
+    const image360CollectionOptionsWithSettings = image360CollectionAddOptions.map((options) => ({
+      ...image360Settings,
+      ...options
+    }));
     return {
       image360CollectionAddOptions,
       image360CollectionOptionsWithSettings
-    }
+    };
   }, [resources, image360Settings]);
 
-  hooks.useRemoveNonReferencedModels(reveal3DModels ?? EMPTY_ARRAY, image360CollectionAddOptions, renderTarget);
+  hooks.useRemoveNonReferencedModels(
+    reveal3DModels ?? EMPTY_ARRAY,
+    image360CollectionAddOptions,
+    renderTarget
+  );
 
   hooks.useSetExpectedLoadCount(resources);
   hooks.useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
