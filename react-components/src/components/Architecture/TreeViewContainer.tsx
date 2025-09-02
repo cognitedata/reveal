@@ -2,7 +2,7 @@ import { type ReactElement } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import styled from 'styled-components';
 
-import { ShowTreeViewCommand } from '../../architecture/base/concreteCommands/ShowTreeViewCommand';
+import { ShowTreeViewCommand } from '../../architecture/base/concreteCommands/general/ShowTreeViewCommand';
 import { useSignalValue } from '@cognite/signals/react';
 import { TreeView } from './TreeView';
 
