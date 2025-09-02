@@ -1,4 +1,4 @@
-import { NavigationTool } from '../concreteCommands/NavigationTool';
+import { NavigationTool } from '../concreteCommands/navigation/NavigationTool';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
