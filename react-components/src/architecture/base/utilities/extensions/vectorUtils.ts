@@ -36,6 +36,12 @@ export function horizontalLength(vector: Vector3): number {
   return Math.sqrt(horizontalLengthSq(vector));
 }
 
+/**
+ * Calculates the squared horizontal length of a 3D vector, ignoring the z-axis.
+ *
+ * @param vector - The vector.
+ * @returns The squared length.
+ */
 export function horizontalLengthSq(vector: Vector3): number {
   return square(vector.x) + square(vector.y);
 }
