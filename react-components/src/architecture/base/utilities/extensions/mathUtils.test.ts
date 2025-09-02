@@ -21,7 +21,6 @@ import {
   roundIncrement,
   square
 } from './mathUtils';
-import { Range1 } from '../geometry/Range1';
 
 describe('mathUtils', () => {
   describe(isZero.name, () => {
