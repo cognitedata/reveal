@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 import { useGhostMode } from './useGhostMode';
 import { ViewerContextProvider } from '../components/RevealCanvas/ViewerContext';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
+import { SetGhostModeCommand } from '../architecture/concrete/reveal/cad/commands/SetGhostModeCommand';
 import { getDefaultCommand } from '../components/Architecture/utilities';
 
 describe(useGhostMode.name, () => {
