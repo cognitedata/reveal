@@ -32,6 +32,7 @@ export { SettingsCommand } from './base/concreteCommands/general/SettingsCommand
 export { CycleLengthUnitsCommand } from './base/concreteCommands/units/CycleLengthUnitsCommand';
 export { UndoCommand } from './base/concreteCommands/general/UndoCommand';
 export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
+export { SetQualitySliderCommand } from './base/concreteCommands/quality/SetQualitySliderCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './base/domainObjects/DomainObject';
