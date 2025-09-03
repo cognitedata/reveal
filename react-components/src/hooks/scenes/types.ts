@@ -144,38 +144,21 @@ export const transformationSourceWithProperties = [
 export const sceneSourceWithProperties = [
   {
     source: SCENE_SOURCE,
-    properties: [
-      'name',
-      'skybox',
-      'cameraTranslationX',
-      'cameraTranslationY',
-      'cameraTranslationZ',
-      'cameraEulerRotationX',
-      'cameraEulerRotationY',
-      'cameraEulerRotationZ',
-      'cameraTargetX',
-      'cameraTargetY',
-      'cameraTargetZ',
-      'updatedAt'
-    ]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
 export const revisionSourceWithProperties = [
   {
     source: REVISION_SOURCE,
-    properties: ['revisionId', ...transformationSourceWithProperties[0].properties]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
 export const image360CollectionSourceWithProperties = [
   {
     source: IMAGE_360_COLLECTION_SOURCE,
-    properties: [
-      'image360CollectionExternalId',
-      'image360CollectionSpace',
-      ...transformationSourceWithProperties[0].properties
-    ]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 

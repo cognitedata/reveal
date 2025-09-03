@@ -82,12 +82,14 @@ export const use3dScenes = (
         ]
       >(scenesQuery);
 
-      allScenes.scenes.push(...response.items.scenes);
-      allScenes.sceneModels.push(...response.items.sceneModels);
-      allScenes.scene360Collections.push(...response.items.scene360Collections);
-      allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
-      allScenes.sceneGroundPlaneEdges.push(...response.items.sceneGroundPlaneEdges);
-      allScenes.sceneSkybox.push(...response.items.sceneSkybox);
+      // Must do an unsafe cast as we get properties by '*' instead of explicitly asking for them
+      // as we need to support multiple versions of the scene data model
+      allScenes.scenes.push(...response.items.scenes as unknown as Array<NodeItem<SceneConfigurationProperties>>);
+      allScenes.sceneModels.push(...response.items.sceneModels as unknown as Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>);
+      allScenes.scene360Collections.push(...response.items.scene360Collections as unknown as Array<EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>>);
+      allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes as unknown as Array<NodeItem<GroundPlaneProperties>>);
+      allScenes.sceneGroundPlaneEdges.push(...response.items.sceneGroundPlaneEdges as unknown as Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>);
+      allScenes.sceneSkybox.push(...response.items.sceneSkybox as unknown as Array<NodeItem<SkyboxProperties>>);
 
       cursor = response.nextCursor?.scenes;
       hasMore = SCENE_QUERY_LIMIT === response.items.scenes.length && cursor !== undefined;

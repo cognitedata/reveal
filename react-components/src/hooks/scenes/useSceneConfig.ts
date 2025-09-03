@@ -86,7 +86,9 @@ export const useSceneConfig = (
         ]
       >(query);
 
-      const sceneResponse = queryResult;
+      // Must do an unsafe cast as we get properties by '*' instead of explicitly asking for them
+      // as we need to support multiple versions of the scene data model
+      const sceneResponse = queryResult as unknown as SceneResponse;
       const sceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
         sceneResponse.items.myScene[0]?.properties
       );
