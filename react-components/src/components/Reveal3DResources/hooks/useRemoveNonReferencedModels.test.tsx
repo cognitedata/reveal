@@ -16,7 +16,11 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { cadMock, cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
-import { CadDomainObject, Image360CollectionDomainObject, PointCloudDomainObject } from '../../../architecture';
+import {
+  CadDomainObject,
+  Image360CollectionDomainObject,
+  PointCloudDomainObject
+} from '../../../architecture';
 
 describe(useRemoveNonReferencedModels.name, () => {
   const wrapper = ({ children }: { children: React.ReactNode }): JSX.Element => (
@@ -60,7 +64,9 @@ describe(useRemoveNonReferencedModels.name, () => {
 
     renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
     renderTarget.rootDomainObject.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
-    renderTarget.rootDomainObject.addChildInteractive(new Image360CollectionDomainObject(image360Mock));
+    renderTarget.rootDomainObject.addChildInteractive(
+      new Image360CollectionDomainObject(image360Mock)
+    );
 
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);
@@ -76,7 +82,6 @@ describe(useRemoveNonReferencedModels.name, () => {
   });
 
   test('removes only relevant model', () => {
-
     const renderTarget = createRenderTargetMock();
 
     const pointCloudMock = createPointCloudMock();
@@ -85,7 +90,9 @@ describe(useRemoveNonReferencedModels.name, () => {
 
     renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
     renderTarget.rootDomainObject.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
-    renderTarget.rootDomainObject.addChildInteractive(new Image360CollectionDomainObject(image360Mock));
+    renderTarget.rootDomainObject.addChildInteractive(
+      new Image360CollectionDomainObject(image360Mock)
+    );
 
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);
@@ -95,6 +102,6 @@ describe(useRemoveNonReferencedModels.name, () => {
       },
       { wrapper }
     );
-   expect(viewerRemoveModelsMock).toHaveBeenCalledWith(pointCloudMock);
+    expect(viewerRemoveModelsMock).toHaveBeenCalledWith(pointCloudMock);
   });
 });
