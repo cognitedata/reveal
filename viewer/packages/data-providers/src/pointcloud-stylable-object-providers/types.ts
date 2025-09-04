@@ -12,6 +12,7 @@ import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
 type VolumeAnnotation = {
   annotationId: number;
   asset?: AnnotationsAssetRef;
+  assetInstanceRef?: DMInstanceRef;
 };
 type VolumeDMReference = {
   instanceRef: DMInstanceRef;
