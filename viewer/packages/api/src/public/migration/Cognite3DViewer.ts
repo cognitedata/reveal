@@ -231,6 +231,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
+    console.log('Cognite3DViewer: ' + this.revealManager.cadBudget.maximumRenderCost);
   }
 
   /**
