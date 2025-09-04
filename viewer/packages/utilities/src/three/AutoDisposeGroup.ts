@@ -15,10 +15,14 @@ export class AutoDisposeGroup extends THREE.Group {
   private _isDisposed = false;
   private _referenceCount = 0;
 
-  private _textures: THREE.Texture[] = [];
+  private readonly _textures: THREE.Texture[] = [];
 
-  public addTexture(texture: THREE.Texture) {
+  public addTexture(texture: THREE.Texture): void {
     this._textures.push(texture);
+  }
+
+  public get textures(): THREE.Texture[] {
+    return this._textures;
   }
 
   isDisposed(): boolean {

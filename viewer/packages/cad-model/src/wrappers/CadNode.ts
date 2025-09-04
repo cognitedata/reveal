@@ -14,10 +14,25 @@ import {
   StyledTreeIndexSets
 } from '@reveal/rendering';
 
-import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+import {
+  Group,
+  Object3D,
+  Plane,
+  Matrix4,
+  Object3DEventMap,
+  BufferGeometry,
+  Mesh,
+  RawShaderMaterial,
+  Sphere,
+  BufferAttribute,
+  Box3
+} from 'three';
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import { AutoDisposeGroup, incrementOrInsertIndex } from '@reveal/utilities';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { ParsedMeshGeometry } from '@reveal/cad-parsers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -207,6 +222,83 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public removeBatchedSectorGeometries(sectorId: number): void {
     this._geometryBatchingManager?.removeSectorBatches(sectorId);
+  }
+
+  public createMeshesFromParsedGeometries(
+    parsedMeshGeometries: ParsedMeshGeometry[],
+    sectorId: number
+  ): AutoDisposeGroup {
+    const group = new AutoDisposeGroup();
+    const materials = this._materialManager.getModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
+
+    parsedMeshGeometries.forEach(geometryData => {
+      if (geometryData.type === RevealGeometryCollectionType.TriangleMesh) {
+        // Create basic triangle mesh
+        this.createMeshFromGeometry(
+          group,
+          geometryData.geometryBuffer,
+          materials.triangleMesh,
+          geometryData.wholeSectorBoundingBox
+        );
+      } else if (geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh && geometryData.texture) {
+        // Create textured triangle mesh with model-specific material
+        const texturedMaterial = this._materialManager.addTexturedMeshMaterial(
+          this._cadModelMetadata.modelIdentifier.revealInternalId,
+          sectorId,
+          geometryData.texture
+        );
+
+        this.createMeshFromGeometry(
+          group,
+          geometryData.geometryBuffer,
+          texturedMaterial,
+          geometryData.wholeSectorBoundingBox
+        );
+
+        // Add texture to group for proper disposal
+        group.addTexture(geometryData.texture);
+      }
+    });
+
+    return group;
+  }
+
+  private createMeshFromGeometry(
+    group: AutoDisposeGroup,
+    geometry: BufferGeometry,
+    material: RawShaderMaterial,
+    geometryBoundingBox: Box3
+  ): void {
+    // Assigns an approximate bounding-sphere to the geometry to avoid recalculating this on first render
+    geometry.boundingSphere = geometryBoundingBox.getBoundingSphere(new Sphere());
+
+    const mesh = new Mesh(geometry, material);
+    group.add(mesh);
+    mesh.frustumCulled = false; // Note: Frustum culling does not play well with node-transforms
+
+    mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
+
+    if (material.uniforms.inverseModelMatrix === undefined) return;
+
+    mesh.onBeforeRender = () => {
+      const inverseModelMatrix: Matrix4 = material.uniforms.inverseModelMatrix.value;
+      inverseModelMatrix.copy(mesh.matrixWorld).invert();
+    };
+  }
+
+  private createTreeIndexSet(geometry: BufferGeometry): Map<number, number> {
+    const treeIndexAttribute = geometry.attributes['treeIndex'];
+    if (!treeIndexAttribute) {
+      return new Map();
+    }
+
+    const treeIndexSet = new Map<number, number>();
+
+    for (let i = 0; i < treeIndexAttribute.count; i++) {
+      incrementOrInsertIndex(treeIndexSet, (treeIndexAttribute as BufferAttribute).getX(i));
+    }
+
+    return treeIndexSet;
   }
 
   public setCacheSize(sectorCount: number): void {
