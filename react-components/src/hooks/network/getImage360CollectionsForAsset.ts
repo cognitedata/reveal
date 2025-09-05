@@ -1,15 +1,19 @@
-import { type AnnotationsAssetRef, type IdEither } from '@cognite/sdk';
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
 import { type ModelsForAssetParams } from './types';
+import { isIdEither } from '../../utilities/instanceIds';
 
 export async function getImage360CollectionsForAsset({
   assetId,
   sdk
 }: ModelsForAssetParams): Promise<TaggedAddImage360CollectionOptions[]> {
   const fileRefsResult = await sdk.annotations.reverseLookup({
-    filter: { annotatedResourceType: 'file', data: { assetRef: { id: assetId } } },
+    filter: {
+      annotatedResourceType: 'file',
+      annotationType: 'images.AssetLink',
+      data: { assetRef: { id: assetId } }
+    },
     limit: 1000
   });
 
@@ -27,8 +31,4 @@ export async function getImage360CollectionsForAsset({
     type: 'image360',
     addOptions: { source: 'events', siteId }
   }));
-}
-
-function isIdEither(ref: AnnotationsAssetRef): ref is IdEither {
-  return ref.externalId !== undefined || ref.id !== undefined;
 }

@@ -6,6 +6,8 @@ import {
   getOctant,
   horizontalAngle,
   horizontalDistanceTo,
+  horizontalLength,
+  horizontalLengthSq,
   rotateHorizontal,
   rotatePiHalf,
   verticalDistanceTo
@@ -24,17 +26,39 @@ describe('vectorUtils', () => {
   test('should calculate horizontal distance', () => {
     const p1 = new Vector3(426.8, 123.8, 0);
     const p2 = new Vector3(845.8, 623.2, 0);
-    expect(horizontalDistanceTo(p1, p2)).toBe(p1.distanceTo(p2));
+    const expected = p1.distanceTo(p2);
+    p1.z = 245.12;
+    p2.z = 313.77;
+    expect(horizontalDistanceTo(p1, p2)).toBe(expected);
     p1.negate();
-    expect(horizontalDistanceTo(p1, p2)).toBe(p1.distanceTo(p2));
+    p2.negate();
+    expect(horizontalDistanceTo(p1, p2)).toBe(expected);
+  });
+
+  test('should calculate horizontal length', () => {
+    const p1 = new Vector3(426.8, 123.8, 0);
+    const expected = p1.length();
+    p1.z = 245.12;
+    expect(horizontalLength(p1)).toBe(expected);
+    p1.negate();
+    expect(horizontalLength(p1)).toBe(expected);
+  });
+
+  test('should calculate horizontal square of length', () => {
+    const p1 = new Vector3(426.8, 123.8, 0);
+    const expected = p1.lengthSq();
+    p1.z = 245.12;
+    expect(horizontalLengthSq(p1)).toBe(expected);
+    p1.negate();
+    expect(horizontalLengthSq(p1)).toBe(expected);
   });
 
   test('should calculate vertical distance', () => {
-    const p1 = new Vector3(0, 0, 426.8);
-    const p2 = new Vector3(0, 0, 845.8);
-    expect(verticalDistanceTo(p1, p2)).toBe(p1.distanceTo(p2));
+    const p1 = new Vector3(426.8, 123.8, 426.8);
+    const p2 = new Vector3(845.8, 623.2, 845.8);
+    expect(verticalDistanceTo(p1, p2)).toBe(Math.abs(p1.z - p2.z));
     p1.negate();
-    expect(verticalDistanceTo(p1, p2)).toBe(p1.distanceTo(p2));
+    expect(verticalDistanceTo(p1, p2)).toBe(Math.abs(p1.z - p2.z));
   });
 
   test('should rotate horizontal', () => {
