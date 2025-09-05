@@ -47,11 +47,11 @@ export class Random {
 
   public getRandomGaussian(mean = 0, stdDev = 1): number {
     for (;;) {
-      const a = Math.random();
+      const a = this.random();
       if (a <= Number.EPSILON) {
         continue;
       }
-      const b = Math.random();
+      const b = this.random();
       if (b <= Number.EPSILON) {
         continue;
       }
