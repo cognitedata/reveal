@@ -8,7 +8,7 @@ import { PointCloudObject, CdfPointCloudObjectAnnotation, isVolumeDMReference } 
 import { StylableObject } from './StylableObject';
 import { DataSourceType } from '../DataSourceType';
 
-export function cdfAnnotationsToObjectInfo<T extends DataSourceType>(
+export function cdfAnnotationsToObjects<T extends DataSourceType>(
   cdfAnnotations: CdfPointCloudObjectAnnotation[]
 ): PointCloudObject<T>[] {
   return cdfAnnotations.map((cdfAnnotation, index) => {

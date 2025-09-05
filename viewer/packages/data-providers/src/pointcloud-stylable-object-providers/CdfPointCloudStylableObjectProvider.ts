@@ -14,7 +14,7 @@ import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
 import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 
 import * as THREE from 'three';
-import { cdfAnnotationsToObjectInfo } from './cdfAnnotationsToObjects';
+import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
 import { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
 
 // The SDK type is out of date with the API. This type more accurately reflects the type of annotation
@@ -83,6 +83,6 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
   async getPointCloudObjects(modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const annotations = await this.fetchAnnotations(modelIdentifier);
 
-    return cdfAnnotationsToObjectInfo(annotations);
+    return cdfAnnotationsToObjects(annotations);
   }
 }
