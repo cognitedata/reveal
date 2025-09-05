@@ -13,7 +13,7 @@ import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-t
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
 import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
-import { PointCloudObject } from '@reveal/data-providers';
+import { PointCloudObject } from '../../packages/data-providers';
 
 export function createPointCloudModel<T extends DataSourceType>(
   modelId: number,
