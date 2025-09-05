@@ -14,10 +14,25 @@ import {
   StyledTreeIndexSets
 } from '@reveal/rendering';
 
-import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+import {
+  Group,
+  Object3D,
+  Plane,
+  Matrix4,
+  Object3DEventMap,
+  BufferGeometry,
+  Mesh,
+  RawShaderMaterial,
+  Sphere,
+  BufferAttribute,
+  Box3
+} from 'three';
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import { AutoDisposeGroup, incrementOrInsertIndex } from '@reveal/utilities';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { ParsedMeshGeometry } from '@reveal/cad-parsers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -51,10 +66,10 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
-    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier);
-    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier);
-    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier);
-    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier);
+    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier.revealInternalId);
+    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier.revealInternalId);
+    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier.revealInternalId);
+    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier.revealInternalId);
 
     this._styledTreeIndexSets = {
       back,
@@ -66,7 +81,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._batchedGeometryMeshGroup = new Group();
     this._batchedGeometryMeshGroup.name = 'Batched Geometry';
 
-    const materials = materialManager.getModelMaterials(model.modelIdentifier);
+    const materials = materialManager.getModelMaterials(model.modelIdentifier.revealInternalId);
     this._geometryBatchingManager = new MultiBufferBatchingManager(
       this._batchedGeometryMeshGroup,
       materials,
@@ -103,36 +118,41 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
-    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {
-    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelNodeAppearanceProvider(
+      this._cadModelMetadata.modelIdentifier.revealInternalId
+    );
   }
 
   get defaultNodeAppearance(): NodeAppearance {
-    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
-    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
+    this._materialManager.setModelDefaultNodeAppearance(
+      this._cadModelMetadata.modelIdentifier.revealInternalId,
+      appearance
+    );
     this.setModelRenderLayers();
   }
 
   get clippingPlanes(): Plane[] {
-    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier, planes);
+    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId, planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
     return this._cadModelMetadata;
   }
 
-  get cadModelIdentifier(): string {
-    return this._cadModelMetadata.modelIdentifier;
+  get cadModelIdentifier(): symbol {
+    return this._cadModelMetadata.modelIdentifier.revealInternalId;
   }
 
   get sectorScene(): SectorScene {
@@ -204,6 +224,83 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._geometryBatchingManager?.removeSectorBatches(sectorId);
   }
 
+  public createMeshesFromParsedGeometries(
+    parsedMeshGeometries: ParsedMeshGeometry[],
+    sectorId: number
+  ): AutoDisposeGroup {
+    const group = new AutoDisposeGroup();
+    const materials = this._materialManager.getModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
+
+    parsedMeshGeometries.forEach(geometryData => {
+      if (geometryData.type === RevealGeometryCollectionType.TriangleMesh) {
+        // Create basic triangle mesh
+        this.createMeshFromGeometry(
+          group,
+          geometryData.geometryBuffer,
+          materials.triangleMesh,
+          geometryData.wholeSectorBoundingBox
+        );
+      } else if (geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh && geometryData.texture) {
+        // Create textured triangle mesh with model-specific material
+        const texturedMaterial = this._materialManager.addTexturedMeshMaterial(
+          this._cadModelMetadata.modelIdentifier.revealInternalId,
+          sectorId,
+          geometryData.texture
+        );
+
+        this.createMeshFromGeometry(
+          group,
+          geometryData.geometryBuffer,
+          texturedMaterial,
+          geometryData.wholeSectorBoundingBox
+        );
+
+        // Add texture to group for proper disposal
+        group.addTexture(geometryData.texture);
+      }
+    });
+
+    return group;
+  }
+
+  private createMeshFromGeometry(
+    group: AutoDisposeGroup,
+    geometry: BufferGeometry,
+    material: RawShaderMaterial,
+    geometryBoundingBox: Box3
+  ): void {
+    // Assigns an approximate bounding-sphere to the geometry to avoid recalculating this on first render
+    geometry.boundingSphere = geometryBoundingBox.getBoundingSphere(new Sphere());
+
+    const mesh = new Mesh(geometry, material);
+    group.add(mesh);
+    mesh.frustumCulled = false; // Note: Frustum culling does not play well with node-transforms
+
+    mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
+
+    if (material.uniforms.inverseModelMatrix === undefined) return;
+
+    mesh.onBeforeRender = () => {
+      const inverseModelMatrix: Matrix4 = material.uniforms.inverseModelMatrix.value;
+      inverseModelMatrix.copy(mesh.matrixWorld).invert();
+    };
+  }
+
+  private createTreeIndexSet(geometry: BufferGeometry): Map<number, number> {
+    const treeIndexAttribute = geometry.attributes['treeIndex'];
+    if (!treeIndexAttribute) {
+      return new Map();
+    }
+
+    const treeIndexSet = new Map<number, number>();
+
+    for (let i = 0; i < treeIndexAttribute.count; i++) {
+      incrementOrInsertIndex(treeIndexSet, (treeIndexAttribute as BufferAttribute).getX(i));
+    }
+
+    return treeIndexSet;
+  }
+
   public setCacheSize(sectorCount: number): void {
     this._sectorRepository.setCacheSize(sectorCount);
   }
@@ -211,8 +308,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
     this.materialManager.off('materialsChanged', this._setModelRenderLayers);
-    this._sectorRepository.clearCache();
-    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
+    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
     this._geometryBatchingManager?.dispose();
     this._rootSector?.dereferenceAllNodes();
     this._rootSector?.clear();

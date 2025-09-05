@@ -15,13 +15,14 @@ import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { AutoDisposeGroup } from '@reveal/utilities';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
-  private readonly _cadModelMap: Map<string, CadNode> = new Map();
+  private readonly _cadModelMap: Map<symbol, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
   private _compatibleFileFormat:
     | {
@@ -68,7 +69,7 @@ export class CadManager {
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
-      const cadModel = this._cadModelMap.get(sector.modelIdentifier);
+      const cadModel = this._cadModelMap.get(sector.modelIdentifier.revealInternalId);
       if (!cadModel) {
         // Model has been removed - results can come in for a period just after removal
         return;
@@ -84,18 +85,26 @@ export class CadManager {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
       }
 
+      // Create meshes from parsedMeshGeometries data
+      let meshGroup: AutoDisposeGroup | undefined = undefined;
+      if (sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0) {
+        meshGroup = cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id);
+      }
+
       const sectorNodeParent = cadModel.rootSector;
       const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
       if (!sectorNode) {
         throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
       }
-      if (sector.group) {
-        sectorNode.add(sector.group);
-      }
-      sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
 
-      if (sector.group) {
-        cadModel.setModelRenderLayers(sectorNode.group);
+      // Use meshGroup from parsed geometries, or fallback to sector.group for backward compatibility
+      if (meshGroup) {
+        sectorNode.add(meshGroup);
+      }
+      sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
+
+      if (meshGroup) {
+        cadModel.setModelRenderLayers(meshGroup);
       }
 
       this.markNeedsRedraw();
@@ -207,7 +216,7 @@ export class CadManager {
 
   removeModel(model: CadNode): void {
     if (!this._cadModelMap.delete(model.cadModelIdentifier)) {
-      throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
+      throw new Error(`Could not remove model ${String(model.cadModelIdentifier)} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
@@ -233,8 +242,8 @@ export class CadManager {
    * @param budget The budget to calculate cache size by
    */
   private setCacheSizeForModel(model: CadNode, budget: CadModelBudget) {
-    // This gives cache size of 200 on desktop on default budget
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
+    // This gives cache size of 300 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 300 / defaultDesktopCadModelBudget.maximumRenderCost;
     model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
   }
 
@@ -251,18 +260,8 @@ export class CadManager {
       return;
     }
 
-    if (sector.group?.children.length !== 1) {
+    if (sector.parsedMeshGeometries?.length !== 1) {
       return;
     }
-
-    const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
-    if (!treeIndices) {
-      return;
-    }
-
-    for (const treeIndex of treeIndices.keys()) {
-      cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
-    }
-    cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }

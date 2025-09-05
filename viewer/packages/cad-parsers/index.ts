@@ -18,6 +18,13 @@ export { LevelOfDetail } from './src/cad/LevelOfDetail';
 
 export { filterGeometryOutsideClipBox } from './src/cad/filterPrimitivesV9';
 
-export { InstancedMeshFile, InstancedMesh, TriangleMesh, WantedSector, ConsumedSector } from './src/cad/types';
+export {
+  InstancedMeshFile,
+  InstancedMesh,
+  TriangleMesh,
+  WantedSector,
+  ConsumedSector,
+  ParsedMeshGeometry
+} from './src/cad/types';
 
 export { getDistanceToMeterConversionFactor } from './src/utilities/types';
