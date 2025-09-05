@@ -1,4 +1,4 @@
-import { type Box3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
+import { type Box3, Line3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { Range3 } from '../geometry/Range3';
 import { square } from '../extensions/mathUtils';
 import { Primitive } from './Primitive';
@@ -90,6 +90,24 @@ export class Cylinder extends Primitive {
       return false;
     }
     return true;
+  }
+
+  public getPointsInside(points: Vector3[]): Vector3[] {
+    // I could have reused Cylinder.isPointInside
+    const centerLine = new Line3(this.centerA, this.centerB);
+    const target = new Vector3();
+    return points.filter((point) => {
+      const t = centerLine.closestPointToPointParameter(point, false);
+      if (t < 0 || t > 1) {
+        return false; // Not on line
+      }
+      const closestPoint = centerLine.at(t, target);
+      const distanceToAxis = closestPoint.distanceTo(point);
+      if (distanceToAxis > this.radius) {
+        return false; // Outside radius
+      }
+      return true;
+    });
   }
 
   public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined {
