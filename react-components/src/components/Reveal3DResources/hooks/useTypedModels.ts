@@ -54,7 +54,7 @@ const getTypedModels = async (
     const typedModel = {
       ...cadOrPointCloudResources[index],
       type,
-      ...(type === 'cad' && { modelId, revisionId })
+      ...((type === 'cad' || type === 'pointcloud') && { modelId, revisionId })
     };
     return typedModel;
   });

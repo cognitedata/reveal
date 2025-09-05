@@ -16,6 +16,11 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { cadMock, cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
+import {
+  CadDomainObject,
+  Image360CollectionDomainObject,
+  PointCloudDomainObject
+} from '../../../architecture';
 
 describe(useRemoveNonReferencedModels.name, () => {
   const wrapper = ({ children }: { children: React.ReactNode }): JSX.Element => (
@@ -28,7 +33,7 @@ describe(useRemoveNonReferencedModels.name, () => {
     expect(() =>
       renderHook(
         () => {
-          useRemoveNonReferencedModels(EMPTY_ARRAY, renderTarget);
+          useRemoveNonReferencedModels(EMPTY_ARRAY, EMPTY_ARRAY, renderTarget);
         },
         { wrapper }
       )
@@ -37,15 +42,18 @@ describe(useRemoveNonReferencedModels.name, () => {
 
   test('removes models when empty ', () => {
     const renderTarget = createRenderTargetMock();
+    renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
+
     viewerModelsMock.mockReturnValue([cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([]);
     renderHook(
       () => {
-        useRemoveNonReferencedModels(EMPTY_ARRAY, renderTarget);
+        useRemoveNonReferencedModels(EMPTY_ARRAY, EMPTY_ARRAY, renderTarget);
       },
       { wrapper }
     );
-    // expect(viewerRemoveModelsMock).toHaveBeenCalledOnce();
+
+    expect(viewerRemoveModelsMock).toHaveBeenCalledOnce();
   });
 
   test('does not remove models when in addOptions', () => {
@@ -53,12 +61,20 @@ describe(useRemoveNonReferencedModels.name, () => {
     const pointCloudMock = createPointCloudMock();
     const cadMock = createCadMock();
     const image360Mock = createImage360ClassicMock();
+
+    renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
+    renderTarget.rootDomainObject.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
+    renderTarget.rootDomainObject.addChildInteractive(
+      new Image360CollectionDomainObject(image360Mock)
+    );
+
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);
-    const mockAddOptions = [pointCloudModelOptions, cadModelOptions, image360ClassicOptions];
+    const mockModelAddOptions = [pointCloudModelOptions, cadModelOptions];
+    const mockImage360AddOptions = [image360ClassicOptions];
     renderHook(
       () => {
-        useRemoveNonReferencedModels(mockAddOptions, renderTarget);
+        useRemoveNonReferencedModels(mockModelAddOptions, mockImage360AddOptions, renderTarget);
       },
       { wrapper }
     );
@@ -67,18 +83,25 @@ describe(useRemoveNonReferencedModels.name, () => {
 
   test('removes only relevant model', () => {
     const renderTarget = createRenderTargetMock();
+
     const pointCloudMock = createPointCloudMock();
     const cadMock = createCadMock();
     const image360Mock = createImage360ClassicMock();
+
+    renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
+    renderTarget.rootDomainObject.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
+    renderTarget.rootDomainObject.addChildInteractive(
+      new Image360CollectionDomainObject(image360Mock)
+    );
+
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);
-    const mockAddOptions = [cadModelOptions, image360ClassicOptions];
     renderHook(
       () => {
-        useRemoveNonReferencedModels(mockAddOptions, renderTarget);
+        useRemoveNonReferencedModels([cadModelOptions], [image360ClassicOptions], renderTarget);
       },
       { wrapper }
     );
-    // expect(viewerRemoveModelsMock).toHaveBeenCalledWith(pointCloudMock);
+    expect(viewerRemoveModelsMock).toHaveBeenCalledWith(pointCloudMock);
   });
 });
