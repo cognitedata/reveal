@@ -388,6 +388,7 @@ export type ClassicDataSourceType = {
     pointCloudVolumeMetadata: {
         annotationId: number;
         assetRef?: AnnotationsAssetRef;
+        instanceRef?: DMInstanceRef;
     };
     pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
     image360Identifier: {
