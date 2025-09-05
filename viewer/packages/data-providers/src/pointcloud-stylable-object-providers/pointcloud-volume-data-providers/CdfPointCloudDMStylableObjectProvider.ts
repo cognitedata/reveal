@@ -6,7 +6,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { DataModelsSdk } from '../../DataModelsSdk';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
 import { getDMPointCloudObjects } from './getDMPointCloudObjects';
-import { cdfAnnotationsToObjectInfo } from '../cdfAnnotationsToObjects';
+import { cdfAnnotationsToObjects } from '../cdfAnnotationsToObjects';
 import { PointCloudObject } from '../types';
 import { DMDataSourceType, DMModelIdentifierType } from '../../DataSourceType';
 
@@ -23,6 +23,6 @@ export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylable
     }
     const annotations = await getDMPointCloudObjects(this._dmsSdk, modelIdentifier);
 
-    return cdfAnnotationsToObjectInfo<DMDataSourceType>(annotations);
+    return cdfAnnotationsToObjects<DMDataSourceType>(annotations);
   }
 }
