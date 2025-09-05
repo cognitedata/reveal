@@ -8,7 +8,6 @@ import {
   forceBetween0AndTwoPi,
   getRandomGaussian,
   getRandomInt,
-  getRandomIntByMax,
   isAbsEqual,
   isBetween,
   isEqual,
@@ -200,16 +199,6 @@ describe('mathUtils', () => {
   test('should get a random integer numbers', () => {
     expect(isInteger(getRandomInt())).toBe(true);
     expect(isInteger(getRandomInt())).toBe(true);
-  });
-
-  test('should get a random integer numbers less than max', () => {
-    const exclusiveMax = 10;
-    for (let i = 0; i < 10; i++) {
-      const value = getRandomIntByMax(exclusiveMax);
-      expect(isInteger(value)).toBe(true);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(exclusiveMax);
-    }
   });
 
   test('should get random numbers from gaussian distribution', () => {
