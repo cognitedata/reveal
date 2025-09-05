@@ -93,7 +93,8 @@ export class Cylinder extends Primitive {
   }
 
   public getPointsInside(points: Vector3[]): Vector3[] {
-    // I could have reused Cylinder.isPointInside
+    // It could reused Cylinder.isPointInside, but this is a lot faster for many points
+    // as it avoids a extra memory allocations
     const centerLine = new Line3(this.centerA, this.centerB);
     const target = new Vector3();
     return points.filter((point) => {
