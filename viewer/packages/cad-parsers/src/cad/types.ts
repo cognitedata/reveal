@@ -4,8 +4,6 @@
 
 import * as THREE from 'three';
 
-import { AutoDisposeGroup } from '@reveal/utilities';
-
 import { SectorMetadata } from '../metadata/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { ParsedGeometry } from '@reveal/sector-parser';

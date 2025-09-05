@@ -5,10 +5,9 @@
 import { GltfSectorRepository } from '../src/GltfSectorRepository';
 import { createBinaryFileProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
-import { IMock, Mock } from 'moq.ts';
+import { IMock } from 'moq.ts';
 
 import { BinaryFileProvider } from '@reveal/data-providers';
-import { CadMaterialManager } from '@reveal/rendering';
 import { WantedSector } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 
@@ -22,13 +21,9 @@ describe(GltfSectorRepository.name, () => {
   beforeEach(() => {
     binaryFileProvider = createBinaryFileProviderMock();
 
-    const materialManager = new CadMaterialManager();
-
     wantedSectorMock = createWantedSectorMock();
 
-    materialManager.addModelMaterials(wantedSectorMock.object().modelIdentifier.revealInternalId, 1);
-
-    sectorRepository = new GltfSectorRepository(binaryFileProvider.object(), materialManager);
+    sectorRepository = new GltfSectorRepository(binaryFileProvider.object());
   });
 
   test('loadSector returns sector metadata with right id and modelidentifier', async () => {
@@ -52,9 +47,8 @@ describe(GltfSectorRepository.name, () => {
     Log.setLevel('silent');
 
     const binaryFileProvider = createBinaryFileProviderMock();
-    const materialManager = new Mock<CadMaterialManager>();
 
-    const sectorRepository = new GltfSectorRepository(binaryFileProvider.object(), materialManager.object());
+    const sectorRepository = new GltfSectorRepository(binaryFileProvider.object());
 
     //Sector loader will throw since there is no valid materials for given object
     await expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();

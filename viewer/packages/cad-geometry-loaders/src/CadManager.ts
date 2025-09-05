@@ -263,15 +263,5 @@ export class CadManager {
     if (sector.parsedMeshGeometries?.length !== 1) {
       return;
     }
-
-    // const treeIndices = sector.parsedMeshGeometries[0].userData?.treeIndices as Map<number, number> | undefined;
-    // if (!treeIndices) {
-    //   return;
-    // }
-
-    // for (const treeIndex of treeIndices.keys()) {
-    //   cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
-    // }
-    // cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }
