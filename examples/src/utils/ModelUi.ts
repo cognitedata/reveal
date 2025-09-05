@@ -5,7 +5,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   ViewerState,
-  DataSourceType,
+  DataSourceType
 } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
@@ -29,7 +29,7 @@ export class ModelUi {
       position: Vector3;
       rotation: Quaternion;
       scale: Vector3;
-    }
+    };
   };
 
   private readonly _geometryFilterGui: dat.GUI;
@@ -66,16 +66,19 @@ export class ModelUi {
       },
       addModel: () => {
         const transformMatrix = this.createTransformMatrix(this._guiState.transform);
-        this.addModel({
-          modelId: this._guiState.modelId,
-          revisionId: this._guiState.revisionId,
-          geometryFilter: this._guiState.geometryFilter.enabled
-            ? createGeometryFilterFromState(this._guiState.geometryFilter)
-            : undefined,
-          revisionExternalId:
-            this._guiState.revisionExternalId.length !== 0 ? this._guiState.revisionExternalId : undefined,
-          revisionSpace: this._guiState.revisionSpace.length !== 0 ? this._guiState.revisionSpace : undefined,
-        }, transformMatrix);
+        this.addModel(
+          {
+            modelId: this._guiState.modelId,
+            revisionId: this._guiState.revisionId,
+            geometryFilter: this._guiState.geometryFilter.enabled
+              ? createGeometryFilterFromState(this._guiState.geometryFilter)
+              : undefined,
+            revisionExternalId:
+              this._guiState.revisionExternalId.length !== 0 ? this._guiState.revisionExternalId : undefined,
+            revisionSpace: this._guiState.revisionSpace.length !== 0 ? this._guiState.revisionSpace : undefined
+          },
+          transformMatrix
+        );
       },
       fitToModel: () => {
         // const model = this._cadModels[0] || this._pointCloudModels[0];
@@ -138,11 +141,14 @@ export class ModelUi {
     url.searchParams.set('modelState', JSON.stringify(modelState));
 
     // Also save current transform state
-    url.searchParams.set('transform', JSON.stringify({
-      position: this._guiState.transform.position,
-      rotation: this._guiState.transform.rotation,
-      scale: this._guiState.transform.scale
-    }));
+    url.searchParams.set(
+      'transform',
+      JSON.stringify({
+        position: this._guiState.transform.position,
+        rotation: this._guiState.transform.rotation,
+        scale: this._guiState.transform.scale
+      })
+    );
 
     // Update URL without reloading
     window.history.replaceState(null, document.title, url.toString());
@@ -182,25 +188,34 @@ export class ModelUi {
       const modelId = modelIdStr !== null ? Number.parseInt(modelIdStr, 10) : undefined;
       const revisionId = revisionIdStr !== null ? Number.parseInt(revisionIdStr, 10) : undefined;
       if (modelId !== undefined && revisionId !== undefined) {
-        await this.addModel({
-          modelId,
-          revisionId,
-          geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
-        }, transformMatrix);
+        await this.addModel(
+          {
+            modelId,
+            revisionId,
+            geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
+          },
+          transformMatrix
+        );
       } else if (revisionExternalIdStr !== null && revisionSpace !== null) {
-        await this.addModel({
-          geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter),
-          revisionExternalId: revisionExternalIdStr,
-          revisionSpace: revisionSpace
-        }, transformMatrix);
+        await this.addModel(
+          {
+            geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter),
+            revisionExternalId: revisionExternalIdStr,
+            revisionSpace: revisionSpace
+          },
+          transformMatrix
+        );
       }
     } else if (modelUrl) {
-      await this.addModel({
-        modelId: -1,
-        revisionId: -1,
-        localPath: modelUrl,
-        geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
-      }, transformMatrix);
+      await this.addModel(
+        {
+          modelId: -1,
+          revisionId: -1,
+          localPath: modelUrl,
+          geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
+        },
+        transformMatrix
+      );
     }
   }
 
@@ -254,7 +269,10 @@ export class ModelUi {
     console.log('Transform applied to', this._cadModels.length + this._pointCloudModels.length, 'models');
   }
 
-  private initializeTransformGui(transformGui: dat.GUI, transform: { position: Vector3; rotation: Quaternion; scale: Vector3 }): void {
+  private initializeTransformGui(
+    transformGui: dat.GUI,
+    transform: { position: Vector3; rotation: Quaternion; scale: Vector3 }
+  ): void {
     const positionGui = transformGui.addFolder('Position');
     positionGui.add(transform.position, 'x', -10000, 10000, 0.1).name('X');
     positionGui.add(transform.position, 'y', -10000, 10000, 0.1).name('Y');
