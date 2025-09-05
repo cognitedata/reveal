@@ -254,7 +254,8 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
         return {
           ...baseObject,
           annotationId: a.annotationId,
-          assetRef: a.assetRef
+          assetRef: a.assetRef,
+          instanceRef: a.instanceRef
         };
       } else if (isDMPointCloudVolumeObject(a)) {
         return {
