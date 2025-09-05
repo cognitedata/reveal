@@ -8,7 +8,7 @@ import {
 } from '#test-utils/primitives/primitiveTestUtil';
 import { Cylinder } from './Cylinder';
 import { count } from '../extensions/arrayUtils';
-import { Random } from './Random';
+import { Random } from '../misc/Random';
 
 describe(Cylinder.name, () => {
   test('Should test all properties on regular primitive', () => {

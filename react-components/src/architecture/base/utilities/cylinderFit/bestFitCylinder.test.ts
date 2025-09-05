@@ -2,7 +2,7 @@ import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { Vector3 } from 'three';
 import { bestFitCylinder, MAIN_AXES } from './bestFitCylinder';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
-import { Random } from '../primitives/Random';
+import { Random } from '../misc/Random';
 
 describe(bestFitCylinder.name, () => {
   const random = new Random();
