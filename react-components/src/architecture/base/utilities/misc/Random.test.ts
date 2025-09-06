@@ -50,7 +50,7 @@ describe(Random.name, () => {
     let sum = 0;
     let sumSquared = 0;
     for (let i = 0; i < n; i++) {
-      const value = random.getRandomGaussian(expectedMean, expectedStdDev);
+      const value = random.getGaussian(expectedMean, expectedStdDev);
       sum += value;
       sumSquared += value * value;
     }

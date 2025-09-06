@@ -12,6 +12,7 @@ import {
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { Random } from '../../base/utilities/misc/Random';
 
 describe(TerrainThreeView.name, () => {
   let domainObject: TerrainDomainObject;
@@ -71,9 +72,10 @@ describe(TerrainThreeView.name, () => {
 });
 
 export function createTerrainDomainObject(): TerrainDomainObject {
+  const random = new Random();
   const domainObject = new TerrainDomainObject();
   const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
-  domainObject.grid = createFractalRegularGrid2(range, 4, 0.3);
+  domainObject.grid = createFractalRegularGrid2(range, random, 4, 0.3);
   return domainObject;
 }
 

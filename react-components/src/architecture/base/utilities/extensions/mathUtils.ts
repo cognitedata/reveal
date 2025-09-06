@@ -184,18 +184,3 @@ export function compare(a: number, b: number): number {
 export function getRandomInt(): number {
   return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 }
-
-export function getRandomGaussian(mean = 0, stdDev = 1): number {
-  for (;;) {
-    const a = Math.random();
-    if (a <= Number.EPSILON) {
-      continue;
-    }
-    const b = Math.random();
-    if (b <= Number.EPSILON) {
-      continue;
-    }
-    const gaussian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
-    return gaussian * stdDev + mean;
-  }
-}

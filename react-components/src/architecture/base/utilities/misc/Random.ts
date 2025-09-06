@@ -1,4 +1,4 @@
-import { type Box3, Vector3 } from 'three';
+import { type Box3, Color, Vector3 } from 'three';
 import SeededRandom from 'random-seed';
 
 /**
@@ -45,7 +45,7 @@ export class Random {
     return this._random.floatBetween(min, max);
   }
 
-  public getRandomGaussian(mean = 0, stdDev = 1): number {
+  public getGaussian(mean = 0, stdDev = 1): number {
     for (;;) {
       const a = this.random();
       if (a <= Number.EPSILON) {
@@ -62,6 +62,10 @@ export class Random {
 
   public getUnitVector(): Vector3 {
     return new Vector3(this.random(), this.random(), this.random()).normalize();
+  }
+
+  public getColor(): Color {
+    return new Color(this.random(), this.random(), this.random());
   }
 
   public getPointInsideBox(boundingBox: Box3): Vector3 {
