@@ -1,11 +1,12 @@
 import { Vector2 } from 'three';
 import { type Range3 } from '../../../base/utilities/geometry/Range3';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
-import { getRandomGaussian } from '../../../base/utilities/extensions/mathUtils';
 import { RegularGrid2 } from './RegularGrid2';
+import { type Random } from '../../../base/utilities/misc/Random';
 
 export function createFractalRegularGrid2(
   boundingBox: Range3,
+  random: Random,
   powerOf2: number = 8,
   damping: number = 0.7,
   smoothNumberOfPasses: number = 2,
@@ -22,12 +23,12 @@ export function createFractalRegularGrid2(
   const i1 = grid.cellSize.i;
   const j1 = grid.cellSize.j;
 
-  grid.setZ(i0, j0, getRandomGaussian(0, stdDev));
-  grid.setZ(i1, j0, getRandomGaussian(0, stdDev));
-  grid.setZ(i0, j1, getRandomGaussian(0, stdDev));
-  grid.setZ(i1, j1, getRandomGaussian(0, stdDev));
+  grid.setZ(i0, j0, random.getGaussian(0, stdDev));
+  grid.setZ(i1, j0, random.getGaussian(0, stdDev));
+  grid.setZ(i0, j1, random.getGaussian(0, stdDev));
+  grid.setZ(i1, j1, random.getGaussian(0, stdDev));
 
-  subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, damping);
+  subDivide(grid, random, i0, j0, i1, j1, stdDev, powerOf2, damping);
 
   grid.origin.x = boundingBox.x.min;
   grid.origin.y = boundingBox.y.min;
@@ -45,6 +46,7 @@ export function createFractalRegularGrid2(
 
 function setValueBetween(
   grid: RegularGrid2,
+  random: Random,
   i0: number,
   j0: number,
   i2: number,
@@ -62,13 +64,14 @@ function setValueBetween(
   if (zMean === undefined) {
     zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;
   }
-  const newZ = getRandomGaussian(zMean, stdDev);
+  const newZ = random.getGaussian(zMean, stdDev);
   grid.setZ(i1, j1, newZ);
   return newZ;
 }
 
 function subDivide(
   grid: RegularGrid2,
+  random: Random,
   i0: number,
   j0: number,
   i2: number,
@@ -85,12 +88,12 @@ function subDivide(
   }
   stdDev *= damping;
   let z = 0;
-  z += setValueBetween(grid, i0, j0, i2, j0, stdDev);
-  z += setValueBetween(grid, i0, j2, i2, j2, stdDev);
-  z += setValueBetween(grid, i0, j0, i0, j2, stdDev);
-  z += setValueBetween(grid, i2, j0, i2, j2, stdDev);
+  z += setValueBetween(grid, random, i0, j0, i2, j0, stdDev);
+  z += setValueBetween(grid, random, i0, j2, i2, j2, stdDev);
+  z += setValueBetween(grid, random, i0, j0, i0, j2, stdDev);
+  z += setValueBetween(grid, random, i2, j0, i2, j2, stdDev);
 
-  setValueBetween(grid, i0, j0, i2, j2, stdDev, z / 4);
+  setValueBetween(grid, random, i0, j0, i2, j2, stdDev, z / 4);
 
   level -= 1;
   if (level === 0) {
@@ -99,8 +102,8 @@ function subDivide(
   const i1 = Math.trunc((i0 + i2) / 2);
   const j1 = Math.trunc((j0 + j2) / 2);
 
-  subDivide(grid, i0, j0, i1, j1, stdDev, level, damping);
-  subDivide(grid, i0, j1, i1, j2, stdDev, level, damping);
-  subDivide(grid, i1, j0, i2, j1, stdDev, level, damping);
-  subDivide(grid, i1, j1, i2, j2, stdDev, level, damping);
+  subDivide(grid, random, i0, j0, i1, j1, stdDev, level, damping);
+  subDivide(grid, random, i0, j1, i1, j2, stdDev, level, damping);
+  subDivide(grid, random, i1, j0, i2, j1, stdDev, level, damping);
+  subDivide(grid, random, i1, j1, i2, j2, stdDev, level, damping);
 }

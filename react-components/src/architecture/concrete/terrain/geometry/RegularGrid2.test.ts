@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
 import { RegularGrid2 } from './RegularGrid2';
 import { Vector2, Vector3 } from 'three';
@@ -6,8 +6,14 @@ import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { createFractalRegularGrid2 } from './createFractalRegularGrid2';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { expectEqualRange1, expectEqualRange2 } from '#test-utils/primitives/primitiveTestUtil';
+import { Random } from '../../../base/utilities/misc/Random';
 
 describe(RegularGrid2.name, () => {
+  const random = new Random(234);
+  beforeEach(() => {
+    random.seed = 231;
+  });
+
   test('Should create a flat terrain with and without rotation', () => {
     const nodeSize = new Index2(10, 12);
     const origin = new Vector2(2, 3);
@@ -53,13 +59,13 @@ describe(RegularGrid2.name, () => {
 
   test('Should clone', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 2);
+    const terrain = createFractalRegularGrid2(initialRange, random, 4, 0.7, 2);
     expect(terrain.clone()).toStrictEqual(terrain);
   });
 
   test('Should have bounding box', () => {
     const expectedRange = new Range3(new Vector3(0, 0, 20), new Vector3(100, 100, 40));
-    const terrain = createFractalRegularGrid2(expectedRange, 4, 0.7);
+    const terrain = createFractalRegularGrid2(expectedRange, random, 4, 0.7);
 
     const cornerRange = terrain.getCornerRange();
     const boundingBox = terrain.boundingBox;
@@ -70,7 +76,7 @@ describe(RegularGrid2.name, () => {
 
   test('Should create a fractal surface', () => {
     const expectedRange = new Range3(new Vector3(0, 0, 20), new Vector3(100, 100, 40));
-    const terrain = createFractalRegularGrid2(expectedRange, 4, 0.7);
+    const terrain = createFractalRegularGrid2(expectedRange, random, 4, 0.7);
 
     // Testing each node
     const actualPosition = new Vector3();
@@ -101,7 +107,7 @@ describe(RegularGrid2.name, () => {
 
   test('Should smooth a surface', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 0);
+    const terrain = createFractalRegularGrid2(initialRange, random, 4, 0.7, 0);
 
     const oldRange = terrain.boundingBox.clone();
     terrain.smoothSimple(10);
@@ -113,7 +119,7 @@ describe(RegularGrid2.name, () => {
 
   test('Should not smooth a surface', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 0);
+    const terrain = createFractalRegularGrid2(initialRange, random, 4, 0.7, 0);
 
     terrain.smoothSimple(0);
 
@@ -123,7 +129,7 @@ describe(RegularGrid2.name, () => {
 
   test('Should normalize a surface', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7);
+    const terrain = createFractalRegularGrid2(initialRange, random, 4, 0.7);
 
     const expectedZRange = new Range1(100, 200);
     terrain.normalizeZ(expectedZRange);
