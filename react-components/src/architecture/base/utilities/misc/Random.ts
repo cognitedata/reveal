@@ -60,12 +60,12 @@ export class Random {
     }
   }
 
-  public getUnitVector(): Vector3 {
-    return new Vector3(this.random(), this.random(), this.random()).normalize();
-  }
-
   public getColor(): Color {
     return new Color(this.random(), this.random(), this.random());
+  }
+
+  public getUnitVector(): Vector3 {
+    return new Vector3(this.random(), this.random(), this.random()).normalize();
   }
 
   public getPointInsideBox(boundingBox: Box3): Vector3 {
@@ -83,5 +83,13 @@ export class Random {
       this.floatBetween(minCoordinate, maxCoordinate),
       this.floatBetween(minCoordinate, maxCoordinate)
     );
+  }
+
+  public getPointsInsideBox(count: number, boundingBox: Box3): Vector3[] {
+    const points = new Array<Vector3>(count);
+    for (let i = 0; i < count; i++) {
+      points[i] = this.getPointInsideBox(boundingBox);
+    }
+    return points;
   }
 }

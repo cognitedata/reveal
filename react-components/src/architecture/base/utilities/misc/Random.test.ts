@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { Random } from './Random';
 import { isInteger } from '../extensions/mathUtils';
-import { Box3, Vector3 } from 'three';
+import { Box3, type Color, Vector3 } from 'three';
 import { Range1 } from '../geometry/Range1';
+import { Vector3ArrayUtils } from '../primitives/Vector3ArrayUtils';
+import { expectEqualBox3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe(Random.name, () => {
   const random = new Random();
@@ -74,6 +76,15 @@ describe(Random.name, () => {
     }
   });
 
+  test('should get different random colors', () => {
+    const unique = new Set<Color>();
+    for (let i = 0; i < 10; i++) {
+      const value = random.getColor();
+      expect(unique.has(value)).toBe(false);
+      unique.add(value);
+    }
+  });
+
   test('should get different random points', () => {
     const unique = new Set<Vector3>();
     const range = new Range1(10, 100);
@@ -96,5 +107,20 @@ describe(Random.name, () => {
       expect(unique.has(value)).toBe(false);
       unique.add(value);
     }
+  });
+  test('should get different random points inside a box', () => {
+    const expectedCount = 1000;
+    const expectedBoundingBox = new Box3(new Vector3(0, 1, 2), new Vector3(3, 4, 5));
+    const actualBoundingBox = new Box3();
+    const points = random.getPointsInsideBox(expectedCount, expectedBoundingBox);
+    expect(points.length).toBe(expectedCount);
+    for (const point of points) {
+      actualBoundingBox.expandByPoint(point);
+    }
+    // Check the actual bounding box is roughly correct
+    expect(expectedBoundingBox.containsBox(actualBoundingBox)).toBe(true);
+    const expectedSize = expectedBoundingBox.getSize(new Vector3());
+    const actualSize = actualBoundingBox.getSize(new Vector3());
+    expect(expectedSize.distanceTo(actualSize)).lessThan(0.01);
   });
 });
