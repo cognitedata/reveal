@@ -5,7 +5,9 @@ import SeededRandom from 'random-seed';
  * Utility class for generating pseudo-random numbers and vectors with a seed-able random number generator.
  *
  * The reason for making this class was that the SeededRandom library was hard to use directly
- * and collect all random function in one place.
+ * and to collect all random function in one place.
+ *
+ * It sets the seed in the constructor, so the random numbers are predictable when writing tests.
  *
  * @remarks
  * This class wraps a seeded random number generator, allowing for reproducible random sequences.
@@ -45,6 +47,14 @@ export class Random {
     return this._random.floatBetween(min, max);
   }
 
+  /**
+   * Generates a random number following a Gaussian (normal) distribution
+   * using the Box-Muller transform.
+   *
+   * @param mean - The mean (μ) of the distribution. Defaults to 0.
+   * @param stdDev - The standard deviation (σ) of the distribution. Defaults to 1.
+   * @returns A random number sampled from the specified normal distribution.
+   */
   public getGaussian(mean = 0, stdDev = 1): number {
     for (;;) {
       const a = this.random();

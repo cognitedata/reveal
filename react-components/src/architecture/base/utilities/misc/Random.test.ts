@@ -3,8 +3,6 @@ import { Random } from './Random';
 import { isInteger } from '../extensions/mathUtils';
 import { Box3, type Color, Vector3 } from 'three';
 import { Range1 } from '../geometry/Range1';
-import { Vector3ArrayUtils } from '../primitives/Vector3ArrayUtils';
-import { expectEqualBox3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe(Random.name, () => {
   const random = new Random();
@@ -108,7 +106,7 @@ describe(Random.name, () => {
       unique.add(value);
     }
   });
-  test('should get different random points inside a box', () => {
+  test('should get an array of random points inside a box', () => {
     const expectedCount = 1000;
     const expectedBoundingBox = new Box3(new Vector3(0, 1, 2), new Vector3(3, 4, 5));
     const actualBoundingBox = new Box3();
