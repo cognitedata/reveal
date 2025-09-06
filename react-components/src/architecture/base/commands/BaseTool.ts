@@ -145,7 +145,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   // INSTANCE METHODS: Intersections
   // ==================================================
 
-  protected async getIntersection(
+  public async getIntersection(
     event: PointerEvent | WheelEvent,
     domainObjectPredicate?: (domainObject: DomainObject) => boolean
   ): Promise<AnyIntersection | undefined> {

@@ -18,6 +18,9 @@ import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { MeasureRadiusDomainObject } from './MeasureRadiusDomainObject';
+import { updateMarker, updateMeasureRadius } from './radius/measureRadiusToolUtils';
+import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -36,6 +39,24 @@ export class MeasurementTool extends PrimitiveEditTool {
   // OVERRIDES of BaseTool
   // ==================================================
 
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
+    if (this.primitiveType === PrimitiveType.Radius) {
+      if (await updateMarker(this, event)) {
+        return;
+      }
+    }
+    await super.onHoverByDebounce(event);
+  }
+
+  public override async onClick(event: PointerEvent): Promise<void> {
+    if (this.primitiveType === PrimitiveType.Radius) {
+      if (await updateMeasureRadius(this, event)) {
+        return;
+      }
+    }
+    await super.onClick(event);
+  }
+
   public override onActivate(): void {
     super.onActivate();
 
@@ -50,7 +71,8 @@ export class MeasurementTool extends PrimitiveEditTool {
         domainObject instanceof MeasurePointDomainObject ||
         domainObject instanceof MeasureBoxDomainObject ||
         domainObject instanceof MeasureLineDomainObject ||
-        domainObject instanceof MeasureCylinderDomainObject
+        domainObject instanceof MeasureCylinderDomainObject ||
+        domainObject instanceof MeasureRadiusDomainObject
       ) {
         boundingBox.makeEmpty();
         domainObject.expandBoundingBox(boundingBox);
@@ -69,6 +91,13 @@ export class MeasurementTool extends PrimitiveEditTool {
   }
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    if (this.primitiveType === PrimitiveType.Radius) {
+      const circleMarker = getCircleMarker(this.rootDomainObject);
+      if (circleMarker !== undefined && circleMarker.isVisible()) {
+        circleMarker.onWheel(delta);
+        return;
+      }
+    }
     const intersection = await this.getIntersection(event);
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (!(domainObject instanceof MeasurePointDomainObject)) {
@@ -86,6 +115,12 @@ export class MeasurementTool extends PrimitiveEditTool {
     domainObject.notify(Changes.geometry);
   }
 
+  public override clearDragging(): void {
+    const circleMarker = getCircleMarker(this.rootDomainObject);
+    circleMarker?.setVisibleInteractive(false);
+    super.clearDragging();
+  }
+
   // ==================================================
   // OVERRIDES of BaseEditTool
   // ==================================================
@@ -95,7 +130,8 @@ export class MeasurementTool extends PrimitiveEditTool {
       domainObject instanceof MeasurePointDomainObject ||
       domainObject instanceof MeasureBoxDomainObject ||
       domainObject instanceof MeasureLineDomainObject ||
-      domainObject instanceof MeasureCylinderDomainObject
+      domainObject instanceof MeasureCylinderDomainObject ||
+      domainObject instanceof MeasureRadiusDomainObject
     );
   }
 
@@ -103,7 +139,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   // OVERRIDES of PrimitiveEditTool
   // ==================================================
 
-  protected override getOrCreateParent(): DomainObject {
+  public override getOrCreateParent(): DomainObject {
     const parent = this.rootDomainObject.getDescendantByType(MeasurementFolder);
     if (parent !== undefined) {
       return parent;

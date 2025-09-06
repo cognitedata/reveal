@@ -50,6 +50,8 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
         return { key: 'CYLINDER' };
       case PrimitiveType.HorizontalCircle:
         return { key: 'CIRCLE' };
+      case PrimitiveType.Radius:
+        return { untranslated: 'Radius measurements' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -78,7 +80,8 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const hasRadius = Cylinder.isValidSize(cylinder.radius);
     const hasHeight =
       Cylinder.isValidSize(cylinder.height) &&
-      this.primitiveType !== PrimitiveType.HorizontalCircle;
+      this.primitiveType !== PrimitiveType.HorizontalCircle &&
+      this.primitiveType !== PrimitiveType.Radius;
 
     if (hasRadius) {
       add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
@@ -175,6 +178,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 }
 
 const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.Radius,
   PrimitiveType.Cylinder,
   PrimitiveType.HorizontalCircle,
   PrimitiveType.HorizontalCylinder,
