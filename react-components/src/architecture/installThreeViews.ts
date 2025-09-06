@@ -22,6 +22,8 @@ import { PointCloudThreeView } from './concrete/reveal/pointCloud/PointCloudThre
 import { PointsOfInterestDomainObject, PointsOfInterestView } from './concrete/pointsOfInterest';
 import { TerrainDomainObject } from './concrete/terrain/TerrainDomainObject';
 import { TerrainThreeView } from './concrete/terrain/TerrainThreeView';
+import { CircleMarkerDomainObject } from './concrete/circleMarker/CircleMarkerDomainObject';
+import { CircleMarkerView } from './concrete/circleMarker/CircleMarkerView';
 
 export function installThreeViews(): void {
   installThreeView(AnnotationsDomainObject, AnnotationsView);
@@ -36,4 +38,5 @@ export function installThreeViews(): void {
   installThreeView(PointCloudDomainObject, PointCloudThreeView);
   installThreeView(PointsOfInterestDomainObject, PointsOfInterestView);
   installThreeView(TerrainDomainObject, TerrainThreeView);
+  installThreeView(CircleMarkerDomainObject, CircleMarkerView);
 }
