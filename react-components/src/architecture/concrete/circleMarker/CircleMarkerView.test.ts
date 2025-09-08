@@ -55,7 +55,7 @@ describe(CircleMarkerView.name, () => {
   });
 });
 
-function getSprite(view: CircleMarkerView) {
+function getSprite(view: CircleMarkerView): Sprite {
   const sprite = view.object.children[0];
   if (sprite instanceof Sprite) {
     return sprite;
