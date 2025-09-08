@@ -4,6 +4,7 @@
 import { Cognite3DViewer, CogniteModel } from '../../packages/api';
 import { VisualTestFixture } from './VisualTestFixture';
 import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
+import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
 import * as THREE from 'three';
@@ -25,10 +26,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   }
 
   public async run(): Promise<void> {
-    let totalItemsRequested = 0;
-    let totalItemsLoaded = 0;
-    const loadingCompleteResolve: ((value: void | PromiseLike<void>) => void) | null = null;
-
+    const modelLoadedPromise = new DeferredPromise<void>();
     this._viewer = await createCognite3DViewer(modelLoadingCallback, this._renderer);
 
     this.setupDom(this._viewer);
@@ -38,36 +36,23 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
 
     this._viewer.fitCameraToModel(models[0]);
 
-    // Wait for all models to complete loading
-    await this.waitForAllModelsToLoad(models);
+    await this.modelLoaded(models[0], modelLoadedPromise);
 
     await this.setup({ viewer: this._viewer, models });
 
     function modelLoadingCallback(itemsLoaded: number, itemsRequested: number, _: number) {
-      totalItemsLoaded = itemsLoaded;
-      totalItemsRequested = itemsRequested;
-
-      if (itemsRequested > 0 && itemsLoaded === itemsRequested && loadingCompleteResolve) {
-        loadingCompleteResolve();
+      if (itemsRequested > 0 && itemsLoaded === itemsRequested) {
+        modelLoadedPromise.resolve();
       }
     }
   }
-  private async waitForAllModelsToLoad(models: CogniteModel[]): Promise<void> {
-    // For point cloud models, the loading callback doesn't work correctly, so use timeout
-    const hasPointCloudModel = models.some(model => model instanceof CognitePointCloudModel);
-    if (hasPointCloudModel) {
+  private modelLoaded(model: CogniteModel, modelLoadedPromise: DeferredPromise<void>): Promise<void> {
+    // Model loading callback does not work as expected for Point clouds
+    if (model instanceof CognitePointCloudModel) {
       return new Promise<void>(resolve => setTimeout(resolve, 5000));
     }
 
-    // For multiple CAD models, we need to wait longer to ensure both models fully load
-    // The global loading callback resolves too early when the first model finishes
-    if (models.length > 1) {
-      // Wait longer for multiple models to allow both to finish loading
-      return new Promise<void>(resolve => setTimeout(resolve, 3000));
-    }
-
-    // For single CAD model, use the original approach
-    return new Promise<void>(resolve => setTimeout(resolve, 1000));
+    return modelLoadedPromise;
   }
 
   private setupDom(viewer: Cognite3DViewer) {
