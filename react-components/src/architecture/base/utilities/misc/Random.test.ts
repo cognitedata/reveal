@@ -87,7 +87,7 @@ describe(Random.name, () => {
     const unique = new Set<Vector3>();
     const range = new Range1(10, 100);
     for (let i = 0; i < 10; i++) {
-      const value = random.getPoint(range.min, range.min);
+      const value = random.getPoint(range.min, range.max);
       expect(range.isInside(value.x)).toBe(true);
       expect(range.isInside(value.y)).toBe(true);
       expect(range.isInside(value.z)).toBe(true);
