@@ -6,8 +6,11 @@ import { TerrainDomainObject } from './TerrainDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { type IconName } from '../../base/utilities/types';
+import { Random } from '../../base/utilities/misc/Random';
 
 export class UpdateTerrainCommand extends RenderTargetCommand {
+  private readonly _random = new Random(42);
+
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -39,7 +42,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
       return false;
     }
     const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
-    terrainDomainObject.grid = createFractalRegularGrid2(range);
+    terrainDomainObject.grid = createFractalRegularGrid2(range, this._random);
     terrainDomainObject.notify(Changes.geometry);
     return true;
   }

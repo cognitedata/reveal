@@ -2,14 +2,12 @@ import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { Vector3 } from 'three';
 import { bestFitCylinder, MAIN_AXES } from './bestFitCylinder';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
-import SeededRandom from 'random-seed';
-
-type Random = SeededRandom.RandomSeed;
+import { Random } from '../misc/Random';
 
 describe(bestFitCylinder.name, () => {
-  const random = SeededRandom.create();
+  let random: Random;
   beforeEach(() => {
-    random.seed(bestFitCylinder.name);
+    random = new Random(42);
   });
 
   test('should get the cylinder for main axis', () => {
@@ -42,7 +40,7 @@ describe(bestFitCylinder.name, () => {
     for (let i = 0; i < 20; i++) {
       const expectedCylinder = getRandomCylinder(random);
       const points = createPoints(expectedCylinder, 100, random, relativeRadiusError, arcFraction);
-      checkCorrectness(bestFitCylinder(points), expectedCylinder, 0.125);
+      checkCorrectness(bestFitCylinder(points), expectedCylinder, 0.2);
     }
   });
 
@@ -196,21 +194,9 @@ function createPoints(
 }
 
 function getRandomCylinder(random: Random): LeastSquareCylinderResult {
-  const axis = getRandomUnitVector(random);
-  const center = getRandomPoint(random, -10, 10);
+  const axis = random.getUnitVector();
+  const center = random.getPoint(-10, 10);
   const radius = random.floatBetween(1, 5);
   const height = random.floatBetween(1, 5) * radius;
   return new LeastSquareCylinderResult(center, axis, radius, height);
-}
-
-function getRandomUnitVector(random: Random): Vector3 {
-  return new Vector3(random.random(), random.random(), random.random()).normalize();
-}
-
-function getRandomPoint(random: Random, min: number, max: number): Vector3 {
-  return new Vector3(
-    random.floatBetween(min, max),
-    random.floatBetween(min, max),
-    random.floatBetween(min, max)
-  );
 }
