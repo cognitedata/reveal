@@ -29,8 +29,5 @@ export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
     const transform = model.getModelTransformation();
     transform.multiply(translation);
     model.setModelTransformation(transform);
-
-    // Small delay to ensure model setup completes properly
-    await new Promise(resolve => setTimeout(resolve, 100));
   }
 }
