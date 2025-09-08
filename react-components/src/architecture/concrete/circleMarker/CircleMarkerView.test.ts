@@ -33,20 +33,23 @@ describe(CircleMarkerView.name, () => {
   test('should change position when move', () => {
     const sprite = view.object.children[0] as Sprite;
     const oldPosition = sprite.position.clone();
-
     domainObject.position.set(1, 2, 3);
     domainObject.notify(Changes.geometry);
+    expect(oldPosition).not.toBe(sprite.position);
+  });
 
+  test('should change position when not move', () => {
+    const sprite = view.object.children[0] as Sprite;
+    const oldPosition = sprite.position.clone();
+    domainObject.notify(Changes.geometry);
     expect(oldPosition).not.toBe(sprite.position);
   });
 
   test('should change scale when radius change', () => {
     const sprite = view.object.children[0] as Sprite;
     const oldScale = sprite.scale.clone();
-
     domainObject.radius = 2;
     domainObject.notify(Changes.geometry);
-
     expect(oldScale).not.toBe(sprite.position);
   });
 
