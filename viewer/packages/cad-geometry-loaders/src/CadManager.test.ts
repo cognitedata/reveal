@@ -47,7 +47,7 @@ describe(CadManager.name, () => {
       .setup(p => p.updateCamera(It.IsAny(), It.IsAny()))
       .returns()
       .setup(p => (p.clippingPlanes = It.IsAny()))
-      .callback(() => { });
+      .callback(() => {});
 
     cadManager = new CadManager(materialManagerMock.object(), cadModelFactoryMock.object(), updateHandlerMock.object());
   });
