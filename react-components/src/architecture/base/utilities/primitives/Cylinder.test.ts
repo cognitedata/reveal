@@ -73,9 +73,9 @@ describe(Cylinder.name, () => {
     expect(primitive.isPointInside(point, new Matrix4())).toBe(false);
   });
 
-  test('should filter out points inside cylinder', () => {
+  test('should only return points inside cylinder', () => {
     const points = [];
-    const random = new Random();
+    const random = new Random(42);
 
     const cylinder = new Cylinder();
     cylinder.radius = 2;

@@ -4,8 +4,5 @@ import { type AnyIntersection, type PointCloudIntersection } from '@cognite/reve
 export function isPointCloudIntersection(
   intersection: AnyIntersection | undefined
 ): intersection is PointCloudIntersection {
-  if (intersection?.type !== 'pointcloud') {
-    return false;
-  }
-  return true;
+  return intersection?.type === 'pointcloud';
 }

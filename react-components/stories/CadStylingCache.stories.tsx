@@ -84,7 +84,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
         const newTreeIndices = getRandomSubset(treeIndices, treeIndices.length * 0.4);
         const indexSet = new IndexSet(newTreeIndices);
-        const random = new Random();
+        const random = new Random(Date.now());
 
         return {
           groups: [
