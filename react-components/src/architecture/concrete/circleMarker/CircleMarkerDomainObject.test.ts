@@ -1,10 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
-import {
-  CircleMarkerDomainObject,
-  getCircleMarker,
-  getOrCreateCircleMarker
-} from './CircleMarkerDomainObject';
+import { CircleMarkerDomainObject, getOrCreateCircleMarker } from './CircleMarkerDomainObject';
 import { EventChangeTester } from '../../../../tests/tests-utilities/architecture/EventChangeTester';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Range1 } from '../../base/utilities/geometry/Range1';
