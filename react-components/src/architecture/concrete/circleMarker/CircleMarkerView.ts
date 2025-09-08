@@ -1,7 +1,7 @@
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { colorToHex } from '../../base/utilities/colors/colorToHex';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
-import { Sprite, type PerspectiveCamera, CanvasTexture, SpriteMaterial } from 'three';
+import { Sprite, CanvasTexture, SpriteMaterial } from 'three';
 import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
@@ -12,6 +12,7 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
   public override update(change: DomainObjectChange): void {
     super.update(change);
     if (change.isChanged(Changes.geometry)) {
+      this.updateGeometry();
       this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.renderStyle, Changes.color)) {
@@ -24,8 +25,19 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     return super.style as CircleMarkerRenderStyle;
   }
 
-  public override beforeRender(camera: PerspectiveCamera): void {
-    super.beforeRender(camera);
+  protected override addChildren(): void {
+    const { domainObject, style } = this;
+    const solidColor = colorToHex(domainObject.color, style.solidOpacity);
+    const lineColor = colorToHex(style.lineColor);
+
+    const texture = createTexture(TEXTURE_SIZE, solidColor, lineColor, style.lineWidth);
+    const material = new SpriteMaterial({ map: texture, depthTest: style.depthTest });
+    const sprite = new Sprite(material);
+    sprite.updateMatrixWorld();
+    this.addChild(sprite);
+  }
+
+  private updateGeometry(): void {
     const { domainObject, object } = this;
     if (object === undefined || this.isEmpty) {
       return;
@@ -37,18 +49,6 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     object.position.copy(domainObject.position);
     object.scale.setScalar(scale);
     object.updateMatrixWorld();
-  }
-
-  protected override addChildren(): void {
-    const { domainObject, style } = this;
-    const solidColor = colorToHex(domainObject.color, style.solidOpacity);
-    const lineColor = colorToHex(style.lineColor);
-
-    const texture = createTexture(TEXTURE_SIZE, solidColor, lineColor, style.lineWidth);
-    const material = new SpriteMaterial({ map: texture, depthTest: style.depthTest });
-    const sprite = new Sprite(material);
-    sprite.updateMatrixWorld();
-    this.addChild(sprite);
   }
 }
 

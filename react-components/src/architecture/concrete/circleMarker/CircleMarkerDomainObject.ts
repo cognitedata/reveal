@@ -55,8 +55,11 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
   public onWheel(wheelDelta: number): boolean {
     const factor = 1 - Math.sign(wheelDelta) * 0.05;
     const newRadius = this.radius * factor;
+    if (newRadius === this.radius) {
+      return false; // No change
+    }
     if (!this.legalRadiusRange.isInside(newRadius)) {
-      return false; // Too small or tool large
+      return false; // Too small or large
     }
     this.radius = newRadius;
     this.notify(Changes.geometry);
