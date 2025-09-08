@@ -21,6 +21,10 @@ export class AutoDisposeGroup extends THREE.Group {
     this._textures.push(texture);
   }
 
+  public get textures(): THREE.Texture[] {
+    return this._textures;
+  }
+
   isDisposed(): boolean {
     return this._isDisposed;
   }

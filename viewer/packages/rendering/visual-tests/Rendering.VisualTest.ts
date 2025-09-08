@@ -13,8 +13,8 @@ import {
   StreamingTestFixtureComponents
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { CadMaterialManager } from '../src/CadMaterialManager';
-import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 import { CadNode } from '@reveal/cad-model';
+import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 
 export default class RenderingVisualTestFixture extends StreamingVisualTestFixture {
   private readonly guiData = {

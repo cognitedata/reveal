@@ -30,7 +30,7 @@ describe('ModelStateHandler', () => {
   test('hasStateChanged for added model, updates sectors', () => {
     const modelStateHandler = new ModelStateHandler();
     modelStateHandler.addModel(simple.modelIdentifier.revealInternalId);
-    const consumedSimple: ConsumedSector = { ...simple, group: undefined, instancedMeshes: undefined };
+    const consumedSimple: ConsumedSector = { ...simple, instancedMeshes: undefined };
 
     modelStateHandler.updateState(
       consumedSimple.modelIdentifier.revealInternalId,
@@ -62,7 +62,7 @@ describe('ModelStateHandler', () => {
     modelStateHandler.addModel(simple.modelIdentifier.revealInternalId);
     const sectors = [simple, detailed, discarded];
     sectors.forEach(wantedSector => {
-      const consumedSector: ConsumedSector = { ...wantedSector, group: undefined, instancedMeshes: undefined };
+      const consumedSector: ConsumedSector = { ...wantedSector, instancedMeshes: undefined };
       modelStateHandler.updateState(
         consumedSector.modelIdentifier.revealInternalId,
         consumedSector.metadata.id,
