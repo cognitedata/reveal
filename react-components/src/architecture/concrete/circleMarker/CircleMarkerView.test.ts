@@ -13,7 +13,7 @@ describe(CircleMarkerView.name, () => {
   beforeEach(() => {
     const renderTarget = createFullRenderTargetMock();
 
-    // Create axis and add it to the scene
+    // Create the marker and add it to the scene
     domainObject = new CircleMarkerDomainObject();
     renderTarget.rootDomainObject.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, renderTarget);
@@ -31,22 +31,15 @@ describe(CircleMarkerView.name, () => {
   });
 
   test('should change position when move', () => {
-    const sprite = view.object.children[0] as Sprite;
+    const sprite = getSprite(view);
     const oldPosition = sprite.position.clone();
     domainObject.position.set(1, 2, 3);
     domainObject.notify(Changes.geometry);
     expect(oldPosition).not.toBe(sprite.position);
   });
 
-  test('should change position when not move', () => {
-    const sprite = view.object.children[0] as Sprite;
-    const oldPosition = sprite.position.clone();
-    domainObject.notify(Changes.geometry);
-    expect(oldPosition).not.toBe(sprite.position);
-  });
-
   test('should change scale when radius change', () => {
-    const sprite = view.object.children[0] as Sprite;
+    const sprite = getSprite(view);
     const oldScale = sprite.scale.clone();
     domainObject.radius = 2;
     domainObject.notify(Changes.geometry);
@@ -54,10 +47,18 @@ describe(CircleMarkerView.name, () => {
   });
 
   test('should change position when move', () => {
-    const oldSprite = view.object.children[0] as Sprite;
+    const oldSprite = getSprite(view);
     domainObject.notify(Changes.color);
     // Simply Create if the sprite har been regenerated
-    const newSprite = view.object.children[0] as Sprite;
+    const newSprite = getSprite(view);
     expect(oldSprite).not.toBe(newSprite);
   });
 });
+
+function getSprite(view: CircleMarkerView) {
+  const sprite = view.object.children[0];
+  if (sprite instanceof Sprite) {
+    return sprite;
+  }
+  throw new Error('Child is not a sprite');
+}

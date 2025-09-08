@@ -42,12 +42,8 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     if (object === undefined || this.isEmpty) {
       return;
     }
-    const scale = domainObject.radius * 2;
-    if (object.position.equals(domainObject.position) && object.scale.x === scale) {
-      return; // No change
-    }
     object.position.copy(domainObject.position);
-    object.scale.setScalar(scale);
+    object.scale.setScalar(domainObject.radius * 2);
     object.updateMatrixWorld();
   }
 }
