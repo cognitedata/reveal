@@ -1,9 +1,15 @@
 import { describe, expect, test } from 'vitest';
 import { CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
-import { CircleMarkerDomainObject } from './CircleMarkerDomainObject';
+import {
+  CircleMarkerDomainObject,
+  getCircleMarker,
+  getOrCreateCircleMarker
+} from './CircleMarkerDomainObject';
 import { EventChangeTester } from '../../../../tests/tests-utilities/architecture/EventChangeTester';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Range1 } from '../../base/utilities/geometry/Range1';
+import { DomainObject } from '../../base/domainObjects/DomainObject';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 
 describe(CircleMarkerDomainObject.name, () => {
   test('should have initial state', () => {
@@ -20,6 +26,12 @@ describe(CircleMarkerDomainObject.name, () => {
 
     domainObject.setWarningColor();
     tester.toHaveBeenCalledTimes(1);
+
+    domainObject.setWarningColor();
+    tester.toHaveBeenCalledTimes(1);
+
+    domainObject.setDefaultColor();
+    tester.toHaveBeenCalledTimes(2);
 
     domainObject.setDefaultColor();
     tester.toHaveBeenCalledTimes(2);
@@ -50,4 +62,22 @@ describe(CircleMarkerDomainObject.name, () => {
     domainObject.onWheel(1);
     tester.toHaveBeenCalledTimes(0);
   });
+
+  test('should get the circle marker from root and create it if not present', () => {
+    const root = new RootDomainObject();
+    const domainObject = getOrCreateCircleMarker(root);
+
+    expect(domainObject).toBeDefined();
+    expect(getOrCreateCircleMarker(root)).toBe(domainObject);
+  });
 });
+
+class RootDomainObject extends DomainObject {
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Root' };
+  }
+
+  public override get isRoot(): boolean {
+    return true;
+  }
+}
