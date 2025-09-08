@@ -4,7 +4,6 @@
 import { Cognite3DViewer, CogniteModel } from '../../packages/api';
 import { VisualTestFixture } from './VisualTestFixture';
 import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
-import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
 import * as THREE from 'three';
@@ -28,7 +27,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   public async run(): Promise<void> {
     let totalItemsRequested = 0;
     let totalItemsLoaded = 0;
-    let loadingCompleteResolve: ((value: void | PromiseLike<void>) => void) | null = null;
+    const loadingCompleteResolve: ((value: void | PromiseLike<void>) => void) | null = null;
 
     this._viewer = await createCognite3DViewer(modelLoadingCallback, this._renderer);
 
@@ -67,7 +66,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
       return new Promise<void>(resolve => setTimeout(resolve, 3000));
     }
 
-    // For single CAD model, use the original approach  
+    // For single CAD model, use the original approach
     return new Promise<void>(resolve => setTimeout(resolve, 1000));
   }
 
