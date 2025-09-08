@@ -8,7 +8,8 @@ export class LeastSquareCylinderResult {
   public readonly center: Vector3 = new Vector3();
   private readonly _axis: Vector3 = new Vector3(); // Will be normalized with Z >= 0
 
-  public rms = 0; // Root mean square of the fit, 0 is perfect fit
+  public rms = Number.NaN; // Root mean square of the fit, 0 is perfect fit
+  public angularCoverage = Number.NaN; // Fraction of angles covered by points, 0 to 1, should be close to 1 if equal distributes points
 
   get axis(): Vector3 {
     return this._axis;
