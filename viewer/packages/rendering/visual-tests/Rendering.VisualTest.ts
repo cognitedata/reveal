@@ -158,7 +158,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
       return Promise.resolve();
     }
 
-    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('local: primitives');
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 10)),
       DefaultNodeAppearance.Ghosted

@@ -83,7 +83,7 @@ export class SectorLoader {
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
 
     const changedSectors = prioritizedResult.wantedSectors.filter(sector =>
-      hasSectorChanged(sector.modelIdentifier, sector.metadata.id, sector.levelOfDetail)
+      hasSectorChanged(sector.modelIdentifier.revealInternalId, sector.metadata.id, sector.levelOfDetail)
     );
 
     this._progressHelper.reset(changedSectors.length);
@@ -103,7 +103,7 @@ export class SectorLoader {
         const resolvedSector = consumed.result;
         if (currentBatchId === this._batchId && resolvedSector !== undefined) {
           this._modelStateHandler.updateState(
-            resolvedSector.modelIdentifier,
+            resolvedSector.modelIdentifier.revealInternalId,
             resolvedSector.metadata.id,
             resolvedSector.levelOfDetail
           );
@@ -147,7 +147,10 @@ export class SectorLoader {
 
   private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(wantedSector => {
-      const model = models.filter(model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier)[0];
+      const model = models.filter(
+        model =>
+          model.cadModelMetadata.modelIdentifier.revealInternalId === wantedSector.modelIdentifier.revealInternalId
+      )[0];
       return { sector: wantedSector, downloadSector: model.loadSector.bind(model) };
     });
 

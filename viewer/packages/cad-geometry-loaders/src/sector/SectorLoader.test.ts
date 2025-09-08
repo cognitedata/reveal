@@ -73,7 +73,7 @@ describe('SectorLoader', () => {
       prioritizedAreas: [],
       loadingHints: {}
     };
-    stateHandler.addModel(model.modelIdentifier);
+    stateHandler.addModel(model.modelIdentifier.revealInternalId);
     loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);
   });
 
@@ -113,7 +113,7 @@ describe('SectorLoader', () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
     stateHandler.updateState(
-      alreadyLoadedSector.modelIdentifier,
+      alreadyLoadedSector.modelIdentifier.revealInternalId,
       alreadyLoadedSector.metadata.id,
       alreadyLoadedSector.levelOfDetail
     );
