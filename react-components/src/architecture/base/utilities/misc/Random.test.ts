@@ -5,20 +5,20 @@ import { Box3, type Color, Vector3 } from 'three';
 import { Range1 } from '../geometry/Range1';
 
 describe(Random.name, () => {
-  const random = new Random();
+  let random: Random;
   beforeEach(() => {
-    random.seed = 42;
+    random = new Random(42);
   });
 
   test('should get a random integer numbers', () => {
-    expect(isInteger(random.getRandomInt())).toBe(true);
-    expect(isInteger(random.getRandomInt())).toBe(true);
+    expect(isInteger(random.getInteger())).toBe(true);
+    expect(isInteger(random.getInteger())).toBe(true);
   });
 
   test('should get a random integer numbers less than max', () => {
     const exclusiveMax = 10;
     for (let i = 0; i < 10; i++) {
-      const value = random.getRandomIntByMax(exclusiveMax);
+      const value = random.getIntegerByMax(exclusiveMax);
       expect(isInteger(value)).toBe(true);
       expect(value).toBeGreaterThanOrEqual(0);
       expect(value).toBeLessThan(exclusiveMax);

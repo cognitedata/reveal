@@ -5,9 +5,9 @@ import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 import { Random } from '../misc/Random';
 
 describe(bestFitCylinder.name, () => {
-  const random = new Random();
+  let random: Random;
   beforeEach(() => {
-    random.seed = 42;
+    random = new Random(42);
   });
 
   test('should get the cylinder for main axis', () => {

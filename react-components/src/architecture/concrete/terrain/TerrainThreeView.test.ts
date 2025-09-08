@@ -72,7 +72,7 @@ describe(TerrainThreeView.name, () => {
 });
 
 export function createTerrainDomainObject(): TerrainDomainObject {
-  const random = new Random();
+  const random = new Random(42);
   const domainObject = new TerrainDomainObject();
   const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
   domainObject.grid = createFractalRegularGrid2(range, random, 4, 0.3);
