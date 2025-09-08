@@ -1,7 +1,7 @@
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { colorToHex } from '../../base/utilities/colors/colorToHex';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
-import { Sprite, type PerspectiveCamera, CanvasTexture, SpriteMaterial } from 'three';
+import { Sprite, CanvasTexture, SpriteMaterial } from 'three';
 import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
@@ -12,6 +12,7 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
   public override update(change: DomainObjectChange): void {
     super.update(change);
     if (change.isChanged(Changes.geometry)) {
+      this.updateGeometry();
       this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.renderStyle, Changes.color)) {
@@ -24,21 +25,6 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     return super.style as CircleMarkerRenderStyle;
   }
 
-  public override beforeRender(camera: PerspectiveCamera): void {
-    super.beforeRender(camera);
-    const { domainObject, object } = this;
-    if (object === undefined || this.isEmpty) {
-      return;
-    }
-    const scale = domainObject.radius * 2;
-    if (object.position.equals(domainObject.position) && object.scale.x === scale) {
-      return; // No change
-    }
-    object.position.copy(domainObject.position);
-    object.scale.setScalar(scale);
-    object.updateMatrixWorld();
-  }
-
   protected override addChildren(): void {
     const { domainObject, style } = this;
     const solidColor = colorToHex(domainObject.color, style.solidOpacity);
@@ -49,6 +35,16 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     const sprite = new Sprite(material);
     sprite.updateMatrixWorld();
     this.addChild(sprite);
+  }
+
+  private updateGeometry(): void {
+    const { domainObject, object } = this;
+    if (object === undefined || this.isEmpty) {
+      return;
+    }
+    object.position.copy(domainObject.position);
+    object.scale.setScalar(domainObject.radius * 2);
+    object.updateMatrixWorld();
   }
 }
 

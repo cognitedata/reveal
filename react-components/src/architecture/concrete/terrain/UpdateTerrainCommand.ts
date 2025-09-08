@@ -9,7 +9,7 @@ import { type IconName } from '../../base/utilities/types';
 import { Random } from '../../base/utilities/misc/Random';
 
 export class UpdateTerrainCommand extends RenderTargetCommand {
-  private readonly _random = new Random();
+  private readonly _random = new Random(42);
 
   // ==================================================
   // OVERRIDES

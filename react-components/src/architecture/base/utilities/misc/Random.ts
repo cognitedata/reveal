@@ -17,7 +17,7 @@ import SeededRandom from 'random-seed';
 export class Random {
   private readonly _random = SeededRandom.create();
 
-  constructor(seed = 42) {
+  constructor(seed: number) {
     this.seed = seed;
   }
 
@@ -31,11 +31,11 @@ export class Random {
     return this._random.random();
   }
 
-  public getRandomInt(): number {
-    return this.getRandomIntByMax(Number.MAX_SAFE_INTEGER);
+  public getInteger(): number {
+    return this.getIntegerByMax(Number.MAX_SAFE_INTEGER);
   }
 
-  public getRandomIntByMax(exclusiveMax: number): number {
+  public getIntegerByMax(exclusiveMax: number): number {
     return Math.floor(this.random() * exclusiveMax);
   }
 
@@ -56,7 +56,7 @@ export class Random {
    * @returns A random number sampled from the specified normal distribution.
    */
   public getGaussian(mean = 0, stdDev = 1): number {
-    for (;;) {
+    for (let i = 0; i < 10000; i++) {
       const a = this.random();
       if (a <= Number.EPSILON) {
         continue;
@@ -68,6 +68,7 @@ export class Random {
       const gaussian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
       return gaussian * stdDev + mean;
     }
+    return mean; // fallback to mean if we fail to get a good random number
   }
 
   public getColor(): Color {

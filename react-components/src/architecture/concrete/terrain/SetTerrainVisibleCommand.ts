@@ -23,7 +23,7 @@ export class SetTerrainVisibleCommand extends RenderTargetCommand {
   protected override invokeCore(): boolean {
     const { renderTarget, rootDomainObject } = this;
     let terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
-    const random = new Random(234);
+    const random = new Random(42);
     if (terrainDomainObject === undefined) {
       terrainDomainObject = new TerrainDomainObject();
       const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));

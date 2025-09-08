@@ -9,9 +9,9 @@ import { expectEqualRange1, expectEqualRange2 } from '#test-utils/primitives/pri
 import { Random } from '../../../base/utilities/misc/Random';
 
 describe(RegularGrid2.name, () => {
-  const random = new Random(234);
+  let random: Random;
   beforeEach(() => {
-    random.seed = 231;
+    random = new Random(231);
   });
 
   test('Should create a flat terrain with and without rotation', () => {
