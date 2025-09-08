@@ -83,6 +83,8 @@ export class CadManager {
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
+        // Also clean up any mesh groups created from parsed geometries
+        cadModel.removeSectorMeshGroup(sector.metadata.id);
       }
 
       // Create meshes from parsedMeshGeometries data

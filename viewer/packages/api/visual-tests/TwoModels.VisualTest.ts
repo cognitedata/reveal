@@ -14,7 +14,7 @@ export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
   constructor() {
     super('primitives', 'primitives');
   }
-  public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
+  public async setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { models } = testFixtureComponents;
 
     const model = models[1];
@@ -30,6 +30,7 @@ export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
     transform.multiply(translation);
     model.setModelTransformation(transform);
 
-    return Promise.resolve();
+    // Small delay to ensure model setup completes properly
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
 }
