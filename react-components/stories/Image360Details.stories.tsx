@@ -20,9 +20,12 @@ export const Main: Story = {
       <RevealStoryContext color={new Color(0x4a4a4a)}>
         <RevealCanvas>
           <Image360CollectionContainer
-            addImage360CollectionOptions={{ source: 'dm', externalId: 'site-7406531069573539-6246920459517222', space: 'threed_data' }}
+            addImage360CollectionOptions={{
+              source: 'dm',
+              externalId: 'site-7406531069573539-6246920459517222',
+              space: 'threed_data'
+            }}
             onLoad={() => {
-              console.log('Image360 collection loaded');
               setLoading(false);
             }}
           />

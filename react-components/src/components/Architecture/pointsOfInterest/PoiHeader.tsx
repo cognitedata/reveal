@@ -66,9 +66,7 @@ export const CreatePoiOwnerField = ({
 }): ReactNode => {
   const { createdTime, ownerId } = selectedPoi.properties;
   const createTime =
-    createdTime !== undefined
-      ? formatDateTime({ date: createdTime })
-      : 'Date not available';
+    createdTime !== undefined ? formatDateTime({ date: createdTime }) : 'Date not available';
 
   return (
     <Flex direction="row" alignItems="center" gap={8}>
