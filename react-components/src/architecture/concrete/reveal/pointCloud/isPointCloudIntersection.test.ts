@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { isPointCloudIntersection } from './isPointCloudIntersection';
 import { type AnyIntersection, type PointCloudIntersection } from '@cognite/reveal';
 import { Vector3 } from 'three';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
-import { createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 
 describe(isPointCloudIntersection.name, () => {
   test('should return true for valid PointCloudIntersection', () => {

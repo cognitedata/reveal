@@ -31,25 +31,25 @@ describe(CircleMarkerView.name, () => {
   });
 
   test('should change position when move', () => {
-    const sprite = getSprite(view);
-    const oldPosition = sprite.position.clone();
+    const oldPosition = view.object.position.clone();
     domainObject.position.set(1, 2, 3);
     domainObject.notify(Changes.geometry);
-    expect(oldPosition).not.toBe(sprite.position);
+    const newPosition = view.object.position.clone();
+    expect(oldPosition).not.toEqual(newPosition);
   });
 
   test('should change scale when radius change', () => {
-    const sprite = getSprite(view);
-    const oldScale = sprite.scale.clone();
+    const oldScale = view.object.scale.clone();
     domainObject.radius = 2;
     domainObject.notify(Changes.geometry);
-    expect(oldScale).not.toBe(sprite.position);
+    const newScale = view.object.scale.clone();
+    expect(oldScale).not.toEqual(newScale);
   });
 
-  test('should change position when move', () => {
+  test('should regenerate sprite on color change', () => {
     const oldSprite = getSprite(view);
     domainObject.notify(Changes.color);
-    // Simply Create if the sprite har been regenerated
+    // Simply check if the sprite has been regenerated
     const newSprite = getSprite(view);
     expect(oldSprite).not.toBe(newSprite);
   });

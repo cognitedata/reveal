@@ -6,5 +6,6 @@ describe(ExampleRenderStyle.name, () => {
     const style = new ExampleRenderStyle();
     const clone = style.clone();
     expect(clone).toStrictEqual(style);
+    expect(clone).not.toBe(style);
   });
 });
