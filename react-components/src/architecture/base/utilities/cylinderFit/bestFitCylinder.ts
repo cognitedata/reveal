@@ -37,7 +37,7 @@ export function bestFitCylinder(
     return undefined;
   }
   let bestCylinder: LeastSquareCylinderResult | undefined;
-  const angularHistogram = new Array<number>(points.length / 2); // Just to avoid to many allocation
+  const angularHistogram = new Array<number>(Math.ceil(points.length / 2)); // Just to avoid to many allocation
 
   // Try with all available axis as a starting point, and keep the best one
   for (const axis of MAIN_AXES) {
@@ -288,8 +288,6 @@ function addToAngularHistogram(point: Vector3, histogram: number[]): void {
   // Fold into range 0..length-1
   if (index < 0) {
     index += histogram.length;
-  } else if (index >= histogram.length) {
-    index -= histogram.length;
   }
   histogram[index]++;
 }
