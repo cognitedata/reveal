@@ -6,6 +6,7 @@ import { Vector3 } from 'three';
 
 const MIN_POINTS_FOR_FIT = 10;
 const MAX_RMS = 0.05;
+const MIN_ANGULAR_COVERAGE = 0.2;
 const MAX_RELATIVE_RADIUS = 2;
 const MAX_DISTANCE_BEHIND = 1;
 const MAX_DISTANCE_FRONT = -0.5;
@@ -38,7 +39,11 @@ export function getBestFitCylinder(
     return undefined;
   }
   const acceptCylinder = (cylinder: LeastSquareCylinderResult): boolean => {
-    return cylinder.rms < MAX_RMS && cylinder.radius < MAX_RELATIVE_RADIUS * markerRadius;
+    return (
+      cylinder.rms < MAX_RMS &&
+      cylinder.radius < MAX_RELATIVE_RADIUS * markerRadius &&
+      cylinder.angularCoverage > MIN_ANGULAR_COVERAGE
+    );
   };
   return bestFitCylinder(filteredPoints, acceptCylinder);
 }

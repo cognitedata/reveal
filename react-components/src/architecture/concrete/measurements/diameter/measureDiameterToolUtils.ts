@@ -41,9 +41,6 @@ export async function updateMeasureDiameter(
     return false;
   }
   const root = tool.rootDomainObject;
-  if (root === undefined) {
-    return false;
-  }
   const circleMarker = getOrCreateCircleMarker(root);
   const bestFitCylinder = getBestFitCylinder(cameraPosition, circleMarker.radius, intersection);
   if (bestFitCylinder === undefined) {

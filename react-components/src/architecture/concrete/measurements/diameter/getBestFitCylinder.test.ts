@@ -11,18 +11,19 @@ import {
 import { Random } from '../../../base/utilities/misc/Random';
 
 describe(getBestFitCylinder.name, () => {
-  test('Should have XXX', () => {
-    testCylinder(3, true);
-    testCylinder(1, true);
-    testCylinder(0.5, false);
-    testCylinder(0.1, false);
-    testCylinder(0.01, false);
+  test('Should get cylinder only if many points and marker radius is large', () => {
+    for (const pointCount of [5, 100]) {
+      for (const markerFraction of [3, 1, 0.5, 0.1, 0.01]) {
+        const expectCylinder = markerFraction >= 1 && pointCount >= 10;
+        testCylinder(markerFraction, pointCount, expectCylinder);
+      }
+    }
   });
 });
 
-function testCylinder(markerFraction: number, expectCylinder: boolean): void {
+function testCylinder(markerFraction: number, pointCount: number, expectCylinder: boolean): void {
   const { intersection, expectedCylinder, cameraPosition } =
-    createPointCloudIntersectionWithCylinder(100);
+    createPointCloudIntersectionWithCylinder(pointCount);
 
   const actualCylinder = getBestFitCylinder(
     cameraPosition,
