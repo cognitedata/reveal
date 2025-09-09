@@ -22,6 +22,8 @@ import { MeasureDiameterDomainObject } from './diameter/MeasureDiameterDomainObj
 import { updateMarker, updateMeasureDiameter } from './diameter/measureDiameterToolUtils';
 import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 
+const POINT_SIZE_CHANGE_FACTOR = 0.1;
+
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
   // OVERRIDES of BaseCommand
@@ -102,7 +104,7 @@ export class MeasurementTool extends PrimitiveEditTool {
     }
     // Change size
     this.addTransaction(domainObject.createTransaction(Changes.geometry));
-    const factor = 1 - Math.sign(delta) * 0.1;
+    const factor = 1 - Math.sign(delta) * POINT_SIZE_CHANGE_FACTOR;
     domainObject.size *= factor;
     domainObject.notify(Changes.geometry);
   }
