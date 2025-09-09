@@ -36,7 +36,10 @@ export type RuleBasedOutputsSelectorDependencies = {
     ReturnType<typeof useGetDMConnectionWithNodeFromHybridMappingsQuery>,
     'data' | 'isLoading'
   >;
-  useFetchAllClassicAssets: () => Pick<ReturnType<typeof useFetchAllClassicAssets>, 'data' | 'isLoading' | 'isFetched'>;
+  useFetchAllClassicAssets: () => Pick<
+    ReturnType<typeof useFetchAllClassicAssets>,
+    'data' | 'isLoading' | 'isFetched'
+  >;
   generateRuleBasedOutputs: typeof generateRuleBasedOutputs;
 };
 

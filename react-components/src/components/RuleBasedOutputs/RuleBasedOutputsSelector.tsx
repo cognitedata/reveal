@@ -72,15 +72,13 @@ export function RuleBasedOutputsSelector({
   const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
   const allClassicAssetConnections = useMemo(
-    () =>
-      allClassicAsset?.filter((asset) => assetIdsFromMapped.find((id) => id.id === asset.id)),
+    () => allClassicAsset?.filter((asset) => assetIdsFromMapped.find((id) => id.id === asset.id)),
     [allClassicAsset, assetIdsFromMapped]
   );
 
   const nodeWithDmIdsFromHybridMappings = useMemo(() => {
     return assetMappings?.flatMap((item) => item.assetMappings.filter(isDmCadAssetMapping));
   }, [assetMappings]);
-
 
   const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
     useMappedEdgesForRevisions(cadModels, true);

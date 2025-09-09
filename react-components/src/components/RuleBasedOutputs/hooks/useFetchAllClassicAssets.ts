@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../../RevealCanvas/SDKProvider';
-import { Asset } from '@cognite/sdk';
+import { type Asset } from '@cognite/sdk';
 import { queryKeys } from '../../../utilities/queryKeys';
 import { createContext, useContext } from 'react';
 
@@ -22,7 +22,7 @@ export function useFetchAllClassicAssets() {
   return useQuery({
     queryKey: queryKeys.allClassicAssets(),
     queryFn: async () => {
-      let cursor: string | undefined = undefined;
+      let cursor: string | undefined;
       let assets: Asset[] = [];
       do {
         const { items, nextCursor } = await sdk.assets.list({
