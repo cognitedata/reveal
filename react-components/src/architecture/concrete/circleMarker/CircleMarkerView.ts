@@ -7,6 +7,7 @@ import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
 const TEXTURE_SIZE = 200;
+const CANVAS_PADDING = 1; // To avoid artifacts on the edge when drawing
 
 export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
   public override update(change: DomainObjectChange): void {
@@ -59,7 +60,7 @@ function createTexture(
   canvas.height = textureSize;
 
   const center = textureSize / 2;
-  const radius = textureSize / 2 - lineWidth - 1;
+  const radius = textureSize / 2 - lineWidth - CANVAS_PADDING;
   const context = canvas.getContext('2d');
 
   if (context !== null) {

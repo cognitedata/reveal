@@ -1,9 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { CircleMarkerDomainObject, getOrCreateCircleMarker } from './CircleMarkerDomainObject';
-import { EventChangeTester } from '../../../../tests/tests-utilities/architecture/EventChangeTester';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { Range1 } from '../../base/utilities/geometry/Range1';
 import { DomainObject } from '../../base/domainObjects/DomainObject';
 import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 
@@ -48,12 +47,9 @@ describe(CircleMarkerDomainObject.name, () => {
     const domainObject = new CircleMarkerDomainObject();
     const tester = new EventChangeTester(domainObject, Changes.geometry);
 
-    const newLegalRadiusRange = new Range1(domainObject.radius);
-    newLegalRadiusRange.expandByFraction(0.01);
-
-    domainObject.legalRadiusRange.set(newLegalRadiusRange.min, newLegalRadiusRange.min);
-
-    expect(domainObject.legalRadiusRange).toStrictEqual(newLegalRadiusRange);
+    // With an initial radius of 0.3, onWheel(1) will produce a new radius of 0.285.
+    // Set the legal range to not include this value to test the boundary condition.
+    domainObject.legalRadiusRange.set(0.29, 5.0);
 
     domainObject.onWheel(1);
     tester.toHaveBeenCalledTimes(0);

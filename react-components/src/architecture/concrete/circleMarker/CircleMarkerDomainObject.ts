@@ -10,10 +10,14 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 const WARNING_COLOR = Color.NAMES.red;
 const DEFAULT_COLOR = Color.NAMES.yellow;
 
+const RADIUS_MIN = 0.05;
+const RADIUS_MAX = 5.0;
+const RADIUS_CHANGE_FACTOR = 0.05;
+
 export class CircleMarkerDomainObject extends VisualDomainObject {
   public readonly position: Vector3 = new Vector3();
   public radius = 0.3;
-  public legalRadiusRange = new Range1(0.05, 5.0);
+  public legalRadiusRange = new Range1(RADIUS_MIN, RADIUS_MAX);
 
   public override get typeName(): TranslationInput {
     return { untranslated: 'Circle marker' };
@@ -53,7 +57,7 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
   }
 
   public onWheel(wheelDelta: number): boolean {
-    const factor = 1 - Math.sign(wheelDelta) * 0.05;
+    const factor = 1 - Math.sign(wheelDelta) * RADIUS_CHANGE_FACTOR;
     const newRadius = this.radius * factor;
     if (newRadius === this.radius) {
       return false; // No change
