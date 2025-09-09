@@ -2,7 +2,6 @@
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
 import { type LeastSquareCylinderResult } from '../../../base/utilities/cylinderFit/LeastSquareCylinderResult';
@@ -15,6 +14,7 @@ import { isPointCloudIntersection } from '../../reveal/pointCloud/isPointCloudIn
 import { getBestFitCylinder } from './getBestFitCylinder';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { type MeasurementTool } from '../MeasurementTool';
+import { type Vector3 } from 'three';
 
 export async function updateMarker(tool: MeasurementTool, event: PointerEvent): Promise<boolean> {
   const intersection = await tool.getIntersection(event, intersectionPredicate);
@@ -33,6 +33,7 @@ export async function updateMarker(tool: MeasurementTool, event: PointerEvent): 
 
 export async function updateMeasureDiameter(
   tool: MeasurementTool,
+  cameraPosition: Vector3,
   event: PointerEvent
 ): Promise<boolean> {
   const intersection = await tool.getIntersection(event, intersectionPredicate);
@@ -44,11 +45,7 @@ export async function updateMeasureDiameter(
     return false;
   }
   const circleMarker = getOrCreateCircleMarker(root);
-  const bestFitCylinder = getBestFitCylinder(
-    tool.renderTarget.camera.position,
-    circleMarker.radius,
-    intersection
-  );
+  const bestFitCylinder = getBestFitCylinder(cameraPosition, circleMarker.radius, intersection);
   if (bestFitCylinder === undefined) {
     circleMarker.position.copy(intersection.point);
     circleMarker.setWarningColor();
@@ -60,7 +57,7 @@ export async function updateMeasureDiameter(
 
   circleMarker.setVisibleInteractive(false);
   measureDiameter.notify(Changes.geometry);
-  measureDiameter.setFocusInteractive(FocusType.Body);
+  // measureDiameter.setFocusInteractive(FocusType.Body);
   measureDiameter.setSelectedInteractive(true);
   measureDiameter.setVisibleInteractive(true);
   return true;
@@ -68,19 +65,20 @@ export async function updateMeasureDiameter(
 
 function copyBestFitCylinder(
   domainObject: MeasureDiameterDomainObject,
-  result: LeastSquareCylinderResult
+  sourceCylinder: LeastSquareCylinderResult
 ): void {
-  result.height = Cylinder.MinSize; // Use a small height since we only care about radius
-  const centerA = result.centerA;
-  const centerB = result.centerB;
+  sourceCylinder.height = Cylinder.MinSize; // Use a small height since we only care about radius
+  const centerA = sourceCylinder.centerA;
+  const centerB = sourceCylinder.centerB;
 
   const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
   centerA.applyMatrix4(fromViewerMatrix);
   centerB.applyMatrix4(fromViewerMatrix);
 
-  domainObject.cylinder.radius = result.radius;
-  domainObject.cylinder.centerA.copy(centerA);
-  domainObject.cylinder.centerB.copy(centerB);
+  const destinationCylinder = domainObject.cylinder;
+  destinationCylinder.radius = sourceCylinder.radius;
+  destinationCylinder.centerA.copy(centerA);
+  destinationCylinder.centerB.copy(centerB);
 }
 
 function intersectionPredicate(domainObject: DomainObject): boolean {

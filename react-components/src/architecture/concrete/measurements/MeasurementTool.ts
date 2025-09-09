@@ -50,7 +50,7 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this.primitiveType === PrimitiveType.Diameter) {
-      if (await updateMeasureDiameter(this, event)) {
+      if (await updateMeasureDiameter(this, this.renderTarget.camera.position, event)) {
         return;
       }
     }

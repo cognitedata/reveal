@@ -11,7 +11,7 @@ import {
 import { Random } from '../../../base/utilities/misc/Random';
 
 describe(getBestFitCylinder.name, () => {
-  test('Should have typename', () => {
+  test('Should have XXX', () => {
     testCylinder(3, true);
     testCylinder(1, true);
     testCylinder(0.5, false);
@@ -21,34 +21,9 @@ describe(getBestFitCylinder.name, () => {
 });
 
 function testCylinder(markerFraction: number, expectCylinder: boolean): void {
-  const expectedCylinder = new LeastSquareCylinderResult(
-    new Vector3(0, 0, 0),
-    new Vector3(0, 0, 1),
-    1,
-    2
-  );
-  const random = new Random(42);
-  const points = createPoints(expectedCylinder, 100, random, 0, 1);
-  const pointCloud = createPointCloudMock();
-  pointCloud.getPointsByBoundingBox = () => points;
+  const { intersection, expectedCylinder, cameraPosition } =
+    createPointCloudIntersectionWithCylinder(100);
 
-  const point = new Vector3(1, 1, 0);
-  point.normalize().multiplyScalar(expectedCylinder.radius).add(expectedCylinder.center);
-  const cameraPosition = new Vector3(1, 1, 0);
-
-  cameraPosition
-    .normalize()
-    .multiplyScalar(expectedCylinder.radius * 10)
-    .add(expectedCylinder.center);
-
-  const intersection: PointCloudIntersection = {
-    type: 'pointcloud',
-    point,
-    pointIndex: 0,
-    distanceToCamera: point.distanceTo(cameraPosition),
-    model: pointCloud,
-    annotationId: 0
-  };
   const actualCylinder = getBestFitCylinder(
     cameraPosition,
     expectedCylinder.radius * markerFraction,
@@ -62,4 +37,46 @@ function testCylinder(markerFraction: number, expectCylinder: boolean): void {
   } else {
     expect(actualCylinder).toBeUndefined();
   }
+}
+
+export function createPointCloudIntersectionWithCylinder(pointCount: number): {
+  intersection: PointCloudIntersection;
+  expectedCylinder: LeastSquareCylinderResult;
+  cameraPosition: Vector3;
+} {
+  // Create the cylinder
+  const expectedCylinder = new LeastSquareCylinderResult(
+    new Vector3(0, 0, 0),
+    new Vector3(0, 0, 1),
+    1,
+    2
+  );
+  // Create the intersection point on the cylinder surface
+  const intersectionPosition = new Vector3(1, 1, 0)
+    .normalize()
+    .multiplyScalar(expectedCylinder.radius)
+    .add(expectedCylinder.center);
+
+  // Create the camera position some distance to the intersection point
+  const cameraPosition = new Vector3(1, 1, 0)
+    .normalize()
+    .multiplyScalar(expectedCylinder.radius * 10)
+    .add(expectedCylinder.center);
+
+  // Create the point cloud
+  const random = new Random(42);
+  const points = createPoints(expectedCylinder, pointCount, random, 0, 1);
+  const pointCloud = createPointCloudMock();
+  pointCloud.getPointsByBoundingBox = () => points;
+
+  // Create the intersection object
+  const intersection: PointCloudIntersection = {
+    type: 'pointcloud',
+    point: intersectionPosition,
+    pointIndex: 0,
+    distanceToCamera: intersectionPosition.distanceTo(cameraPosition),
+    model: pointCloud,
+    annotationId: 0
+  };
+  return { intersection, expectedCylinder, cameraPosition };
 }
