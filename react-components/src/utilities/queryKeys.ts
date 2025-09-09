@@ -8,6 +8,7 @@ export const queryKeys = {
   all3DResources: () => [...queryKeys.all, 'all-3d-resources'] as const,
   // ASSETS
   assetsById: (ids: IdEither[]) => [...assets, ids] as const,
+  allClassicAssets: () => [...assets, 'all-classic-assets'] as const,
   // DM nodes
   dmNodesById: (ids: DmsUniqueIdentifier[]) => [...dm, ids] as const,
   // Points of interest
