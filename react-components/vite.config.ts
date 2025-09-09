@@ -16,6 +16,15 @@ export default defineConfig(({ command }) => {
       }),
       yalcPush()
     ],
+    resolve: {
+      alias: {
+        // Fix dayjs plugin imports for @cognite/cdf-utilities
+        'dayjs/plugin/isToday': 'dayjs/plugin/isToday.js',
+        'dayjs/plugin/isTomorrow': 'dayjs/plugin/isTomorrow.js',
+        'dayjs/plugin/isYesterday': 'dayjs/plugin/isYesterday.js',
+        'dayjs/plugin/relativeTime': 'dayjs/plugin/relativeTime.js'
+      }
+    },
     build: {
       lib: {
         // Could also be a dictionary or array of multiple entry points
@@ -53,7 +62,9 @@ export default defineConfig(({ command }) => {
             '@cognite/cogs-core',
             '@mui',
             '@cognite/cogs-utils',
-            'lodash'
+            'lodash',
+            '@cognite/cdf-utilities',
+            'dayjs'
           ]
         }
       }
