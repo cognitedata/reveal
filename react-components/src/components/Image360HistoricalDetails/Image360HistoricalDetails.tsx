@@ -5,10 +5,11 @@ import {
   Image360HistoricalSummary,
   type Image360RevisionDetails
 } from './Toolbar/Image360HistoricalSummary';
-import { formatDate } from './utils/FormatDate';
 import styled from 'styled-components';
 import { uniqueId } from 'lodash';
 import { getStationIdentifier } from './utils/getStationIdentifier';
+
+import { formatDateTime } from '@cognite/cdf-utilities';
 
 export type Image360HistoricalDetailsProps = {
   viewer: Cognite3DViewer<DataSourceType>;
@@ -42,7 +43,7 @@ export const Image360HistoricalDetails = ({
 
         const collection = revisionDates.map((date, index) => {
           return {
-            date: formatDate(date),
+            date: date !== undefined ? formatDateTime({ date: date }) : 'Date not available',
             imageUrl: imageDatas[index],
             index,
             image360Entity
