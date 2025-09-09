@@ -37,7 +37,7 @@ export function bestFitCylinder(
     return undefined;
   }
   let bestCylinder: LeastSquareCylinderResult | undefined;
-  const angleHistogram = new Array<number>(points.length / 2);
+  const angularHistogram = new Array<number>(points.length / 2); // Just to avoid to many allocation
 
   // Try with all available axis as a starting point, and keep the best one
   for (const axis of MAIN_AXES) {
@@ -46,7 +46,7 @@ export function bestFitCylinder(
       continue;
     }
     // Calculate the Root mean square error
-    calculateFitness(cylinder, points, angleHistogram);
+    calculateFitness(cylinder, points, angularHistogram);
     if (accept !== undefined && !accept(cylinder)) {
       continue;
     }
@@ -55,9 +55,6 @@ export function bestFitCylinder(
     }
     bestCylinder = cylinder;
   }
-  console.log(
-    `Best cylinder RMS: ${bestCylinder?.rms}, angle coverage: ${bestCylinder?.angularCoverage}`
-  );
   return bestCylinder;
 }
 
@@ -260,24 +257,32 @@ function computeGaussNewton(points: Vector3[], cylinder: LeastSquareCylinderResu
 function calculateFitness(
   cylinder: LeastSquareCylinderResult,
   points: Vector3[],
-  angleHistogram: number[]
+  angularHistogram: number[]
 ): void {
   const matrix = cylinder.getTranslationRotationMatrix();
   let sumError = 0;
-  angleHistogram.fill(0);
+  angularHistogram.fill(0);
+  const useHistogram = angularHistogram.length > 1;
+
   for (const point of getTransformedPoints(points, matrix)) {
     // Find relative radius error
     const radius = horizontalLength(point);
     const error = cylinder.radius > EPSILON ? 1 - radius / cylinder.radius : radius;
-    addToAngleHistogram(point, angleHistogram);
+    if (useHistogram) {
+      addToAngularHistogram(point, angularHistogram);
+    }
     sumError += error * error;
   }
-  const nonZeroCount = count(angleHistogram, (value: number) => value > 0);
   cylinder.rms = Math.sqrt(sumError / points.length);
-  cylinder.angularCoverage = nonZeroCount / angleHistogram.length;
+  if (!useHistogram) {
+    cylinder.angularCoverage = 1;
+  } else {
+    const nonZeroCount = count(angularHistogram, (value: number) => value > 0);
+    cylinder.angularCoverage = nonZeroCount / angularHistogram.length;
+  }
 }
 
-function addToAngleHistogram(point: Vector3, histogram: number[]): void {
+function addToAngularHistogram(point: Vector3, histogram: number[]): void {
   const angle = Math.atan2(point.y, point.x);
   let index = Math.floor((histogram.length * angle) / (2 * Math.PI));
   // Fold into range 0..length-1
