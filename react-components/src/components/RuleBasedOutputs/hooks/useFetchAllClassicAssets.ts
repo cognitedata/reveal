@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '../../RevealCanvas/SDKProvider';
 import { type Asset } from '@cognite/sdk';
 import { queryKeys } from '../../../utilities/queryKeys';
@@ -37,4 +37,4 @@ export const useFetchAllClassicAssets = (): UseQueryResult<Asset[], undefined> =
     },
     staleTime: Infinity
   });
-}
+};
