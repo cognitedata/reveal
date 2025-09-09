@@ -6,7 +6,7 @@ import { getOrCreateCircleMarker } from '../../circleMarker/CircleMarkerDomainOb
 import { MOUSE, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type PointCloudIntersection } from '@cognite/reveal';
 import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
-import { createPointCloudIntersectionWithCylinder } from './getBestFitCylinder.test';
+import { createPointCloudIntersectionWithCylinder } from './getBestFitCylinderByIntersection.test';
 import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
 
 describe(updateMarker.name, () => {

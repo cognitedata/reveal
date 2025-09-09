@@ -11,7 +11,7 @@ import {
   getOrCreateCircleMarker
 } from '../../circleMarker/CircleMarkerDomainObject';
 import { isPointCloudIntersection } from '../../reveal/pointCloud/isPointCloudIntersection';
-import { getBestFitCylinder } from './getBestFitCylinder';
+import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { type MeasurementTool } from '../MeasurementTool';
 import { type Vector3 } from 'three';
@@ -42,7 +42,11 @@ export async function updateMeasureDiameter(
   }
   const root = tool.rootDomainObject;
   const circleMarker = getOrCreateCircleMarker(root);
-  const bestFitCylinder = getBestFitCylinder(cameraPosition, circleMarker.radius, intersection);
+  const bestFitCylinder = getBestFitCylinderByIntersection(
+    intersection,
+    cameraPosition,
+    circleMarker.radius
+  );
   if (bestFitCylinder === undefined) {
     circleMarker.position.copy(intersection.point);
     circleMarker.setWarningColor();

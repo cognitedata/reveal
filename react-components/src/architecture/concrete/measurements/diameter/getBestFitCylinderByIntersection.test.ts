@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { getBestFitCylinder } from './getBestFitCylinder';
+import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
 import { Vector3 } from 'three';
 import { type PointCloudIntersection } from '@cognite/reveal';
 import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
@@ -10,7 +10,7 @@ import {
 } from '../../../base/utilities/cylinderFit/bestFitCylinder.test';
 import { Random } from '../../../base/utilities/misc/Random';
 
-describe(getBestFitCylinder.name, () => {
+describe(getBestFitCylinderByIntersection.name, () => {
   test('Should get cylinder only if many points and marker radius is large', () => {
     for (const pointCount of [5, 100]) {
       for (const markerFraction of [3, 1, 0.5, 0.1, 0.01]) {
@@ -25,10 +25,10 @@ function testCylinder(markerFraction: number, pointCount: number, expectCylinder
   const { intersection, expectedCylinder, cameraPosition } =
     createPointCloudIntersectionWithCylinder(pointCount);
 
-  const actualCylinder = getBestFitCylinder(
+  const actualCylinder = getBestFitCylinderByIntersection(
+    intersection,
     cameraPosition,
-    expectedCylinder.radius * markerFraction,
-    intersection
+    expectedCylinder.radius * markerFraction
   );
   if (actualCylinder !== undefined) {
     actualCylinder.height = expectedCylinder.height; // Ignore the height

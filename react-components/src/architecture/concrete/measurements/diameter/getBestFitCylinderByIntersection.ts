@@ -8,13 +8,13 @@ const MIN_POINTS_FOR_FIT = 10;
 const MAX_RMS = 0.05;
 const MIN_ANGULAR_COVERAGE = 0.2;
 const MAX_RELATIVE_RADIUS = 2;
-const MAX_DISTANCE_BEHIND = 1;
+const MAX_DISTANCE_BEHIND = 1.5;
 const MAX_DISTANCE_FRONT = -0.5;
 
-export function getBestFitCylinder(
+export function getBestFitCylinderByIntersection(
+  intersection: PointCloudIntersection,
   cameraPosition: Vector3,
-  markerRadius: number,
-  intersection: PointCloudIntersection
+  markerRadius: number
 ): LeastSquareCylinderResult | undefined {
   const pointCloud = intersection.model;
   const minPoint = intersection.point.clone();
