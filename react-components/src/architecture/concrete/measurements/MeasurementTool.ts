@@ -67,19 +67,11 @@ export class MeasurementTool extends PrimitiveEditTool {
     const sceneBoundingBox = this.renderTarget.clippedVisualSceneBoundingBox;
     const boundingBox = new Box3();
     for (const domainObject of this.getSelectable()) {
-      if (
-        domainObject instanceof MeasurePointDomainObject ||
-        domainObject instanceof MeasureBoxDomainObject ||
-        domainObject instanceof MeasureLineDomainObject ||
-        domainObject instanceof MeasureCylinderDomainObject ||
-        domainObject instanceof MeasureDiameterDomainObject
-      ) {
-        boundingBox.makeEmpty();
-        domainObject.expandBoundingBox(boundingBox);
-        boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-        if (!sceneBoundingBox.intersectsBox(boundingBox)) {
-          continue;
-        }
+      boundingBox.makeEmpty();
+      domainObject.expandBoundingBox(boundingBox);
+      boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      if (!sceneBoundingBox.intersectsBox(boundingBox)) {
+        continue;
       }
       domainObject.setVisibleInteractive(true, this.renderTarget);
     }
