@@ -24,8 +24,7 @@ export async function updateMarker(tool: MeasurementTool, event: PointerEvent): 
     return false;
   }
   const circleMarker = getOrCreateCircleMarker(tool.rootDomainObject);
-  const point = intersection.point;
-  circleMarker.position.copy(point);
+  circleMarker.position.copy(intersection.point);
   circleMarker.notify(Changes.geometry);
   circleMarker.setDefaultColor();
   circleMarker.setVisibleInteractive(true);
@@ -51,6 +50,7 @@ export async function updateMeasureDiameter(
     intersection
   );
   if (bestFitCylinder === undefined) {
+    circleMarker.position.copy(intersection.point);
     circleMarker.setWarningColor();
     circleMarker.setVisibleInteractive(true);
     return true;

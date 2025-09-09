@@ -18,6 +18,7 @@ import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
+import { MeasureDiameterDomainObject } from '../../measurements/diameter/MeasureDiameterDomainObject';
 
 describe(CylinderView.name, () => {
   let domainObject: CylinderDomainObject;
@@ -119,8 +120,33 @@ describe(CylinderView.name, () => {
   });
 });
 
+describe(CylinderView.name + ' with MeasureDiameterDomainObject', () => {
+  let domainObject: CylinderDomainObject;
+  let view: CylinderView;
+
+  beforeEach(() => {
+    domainObject = createDiameterDomainObject();
+    view = new CylinderView();
+    addView(domainObject, view);
+    updateView(view);
+  });
+
+  test('should have initial state', () => {
+    updateAndCheckVisibleChildren(view, 1, 1, 1);
+  });
+});
+
 function createCylinderDomainObject(): CylinderDomainObject {
   const domainObject = new MeasureCylinderDomainObject(PrimitiveType.HorizontalCylinder);
+  // Horizontal cylinder with center at (0,0)
+  domainObject.cylinder.radius = 2;
+  domainObject.cylinder.centerA.set(1, 0, 0);
+  domainObject.cylinder.centerB.set(-1, 0, 0);
+  return domainObject;
+}
+
+function createDiameterDomainObject(): CylinderDomainObject {
+  const domainObject = new MeasureDiameterDomainObject();
   // Horizontal cylinder with center at (0,0)
   domainObject.cylinder.radius = 2;
   domainObject.cylinder.centerA.set(1, 0, 0);

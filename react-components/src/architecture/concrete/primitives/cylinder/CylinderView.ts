@@ -51,6 +51,7 @@ const CIRCULAR_SEGMENTS = 32;
 const HEIGHT_LABEL = 'HeightLabel';
 const RADIUS_LABEL_A = 'RadiusLabelA';
 const RADIUS_LABEL_B = 'RadiusLabelB';
+const DIAMETER_LABEL = 'DiameterLabel';
 
 const RENDER_ORDER = 100;
 const LABEL_RENDER_ORDER = 101;
@@ -337,6 +338,9 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCylinder) {
       this.addChild(this.createHeightLabel(HEIGHT_LABEL));
     }
+    if (type === PrimitiveType.Diameter) {
+      this.addChild(this.createDiameterLabel(DIAMETER_LABEL));
+    }
   }
 
   private createRadiusLabel(name: string): Sprite | undefined {
@@ -345,6 +349,15 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return undefined; // Not show when about 0
     }
     const labelHeight = this.getRadiusLabelHeight();
+    return this.createLabel(name, value, labelHeight);
+  }
+
+  private createDiameterLabel(name: string): Sprite | undefined {
+    const value = this.domainObject.cylinder.diameter;
+    if (!Cylinder.isValidSize(value * 0.99)) {
+      return undefined; // Not show when about 0
+    }
+    const labelHeight = this.getDiameterLabelHeight();
     return this.createLabel(name, value, labelHeight);
   }
 
@@ -367,6 +380,11 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     return 2 * style.relativeTextSize * domainObject.cylinder.height;
   }
 
+  private getDiameterLabelHeight(): number {
+    const { style, domainObject } = this;
+    return style.relativeTextSize * domainObject.cylinder.diameter;
+  }
+
   private createLabel(name: string, value: number, labelHeight: number): Sprite {
     const text = this.getUnitSystem().toStringWithUnit(value, Quantity.Length);
     const sprite = createSprite(text, this.style, labelHeight);
@@ -378,7 +396,11 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   private updateLabels(camera: PerspectiveCamera): void {
     const radiusLabelA = this._group.getObjectByName(RADIUS_LABEL_A);
     const radiusLabelB = this._group.getObjectByName(RADIUS_LABEL_B);
-    const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
+    let heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
+    if (heightLabel === undefined) {
+      heightLabel = this._group.getObjectByName(DIAMETER_LABEL);
+    }
+
     if (radiusLabelA === undefined && radiusLabelB === undefined && heightLabel === undefined) {
       return;
     }
