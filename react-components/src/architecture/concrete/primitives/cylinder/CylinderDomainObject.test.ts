@@ -14,7 +14,8 @@ describe(CylinderDomainObject, () => {
       PrimitiveType.Cylinder,
       PrimitiveType.HorizontalCylinder,
       PrimitiveType.VerticalCylinder,
-      PrimitiveType.HorizontalCircle
+      PrimitiveType.HorizontalCircle,
+      PrimitiveType.Diameter
     ]) {
       const domainObject = createCylinderDomainObject(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
