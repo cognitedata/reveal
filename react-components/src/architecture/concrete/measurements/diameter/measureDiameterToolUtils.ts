@@ -4,7 +4,7 @@ import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { MeasureRadiusDomainObject } from '../MeasureRadiusDomainObject';
+import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
 import { type LeastSquareCylinderResult } from '../../../base/utilities/cylinderFit/LeastSquareCylinderResult';
 import {
   CircleMarkerDomainObject,
@@ -32,7 +32,7 @@ export async function updateMarker(tool: MeasurementTool, event: PointerEvent): 
   return true;
 }
 
-export async function updateMeasureRadius(
+export async function updateMeasureDiameter(
   tool: MeasurementTool,
   event: PointerEvent
 ): Promise<boolean> {
@@ -55,19 +55,19 @@ export async function updateMeasureRadius(
     circleMarker.setVisibleInteractive(true);
     return true;
   }
-  const measureRadius = getOrCreateMeasureRadius(tool);
-  copyBestFitCylinder(measureRadius, bestFitCylinder);
+  const measureDiameter = getOrCreateMeasureDiameter(tool);
+  copyBestFitCylinder(measureDiameter, bestFitCylinder);
 
   circleMarker.setVisibleInteractive(false);
-  measureRadius.notify(Changes.geometry);
-  measureRadius.setFocusInteractive(FocusType.Body);
-  measureRadius.setSelectedInteractive(true);
-  measureRadius.setVisibleInteractive(true);
+  measureDiameter.notify(Changes.geometry);
+  measureDiameter.setFocusInteractive(FocusType.Body);
+  measureDiameter.setSelectedInteractive(true);
+  measureDiameter.setVisibleInteractive(true);
   return true;
 }
 
 function copyBestFitCylinder(
-  domainObject: MeasureRadiusDomainObject,
+  domainObject: MeasureDiameterDomainObject,
   result: LeastSquareCylinderResult
 ): void {
   result.height = Cylinder.MinSize; // Use a small height since we only care about radius
@@ -90,15 +90,15 @@ function intersectionPredicate(domainObject: DomainObject): boolean {
   );
 }
 
-function getMeasureRadius(root: DomainObject): MeasureRadiusDomainObject | undefined {
-  return root.getDescendantByType(MeasureRadiusDomainObject);
+function getMeasureDiameter(root: DomainObject): MeasureDiameterDomainObject | undefined {
+  return root.getDescendantByType(MeasureDiameterDomainObject);
 }
 
-function getOrCreateMeasureRadius(tool: MeasurementTool): MeasureRadiusDomainObject {
-  let domainObject = getMeasureRadius(tool.rootDomainObject);
+function getOrCreateMeasureDiameter(tool: MeasurementTool): MeasureDiameterDomainObject {
+  let domainObject = getMeasureDiameter(tool.rootDomainObject);
   if (domainObject === undefined) {
     const parent = tool.getOrCreateParent();
-    domainObject = new MeasureRadiusDomainObject();
+    domainObject = new MeasureDiameterDomainObject();
     parent.addChildInteractive(domainObject);
   }
   return domainObject;

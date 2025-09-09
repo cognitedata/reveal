@@ -11,7 +11,7 @@ export enum PrimitiveType {
   HorizontalCircle,
   HorizontalCylinder,
   VerticalCylinder,
-  Radius,
+  Diameter,
   PlaneX,
   PlaneY,
   PlaneZ,

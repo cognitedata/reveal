@@ -20,7 +20,7 @@ export const MEASURE_PRIMITIVE_TYPES = [
   PrimitiveType.HorizontalCircle,
   PrimitiveType.VerticalCylinder,
   PrimitiveType.HorizontalCylinder,
-  PrimitiveType.Radius
+  PrimitiveType.Diameter
 ];
 
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
@@ -121,8 +121,8 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInp
       return { key: 'MEASUREMENTS_ADD_CYLINDER_VERTICAL' };
     case PrimitiveType.HorizontalCylinder:
       return { key: 'MEASUREMENTS_ADD_CYLINDER_HORIZONTAL' };
-    case PrimitiveType.Radius:
-      return { untranslated: 'Measure pipe radius' };
+    case PrimitiveType.Diameter:
+      return { key: 'MEASUREMENTS_ADD_DIAMETER' };
     default:
       throw new Error('Unknown PrimitiveType');
   }
