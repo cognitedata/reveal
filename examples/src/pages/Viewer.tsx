@@ -158,7 +158,7 @@ export function Viewer() {
         pixelRadius: 40,
         strokePx: 10,
         sizeMode: 'world',
-        visibleOnlyIn360: false,
+        visibleOnlyIn360: true,
         fadeAfterMs: 800,
         fadeDurationMs: 250
       });
