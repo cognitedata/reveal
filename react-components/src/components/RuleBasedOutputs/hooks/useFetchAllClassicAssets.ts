@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '../../RevealCanvas/SDKProvider';
 import { type Asset } from '@cognite/sdk';
 import { queryKeys } from '../../../utilities/queryKeys';
@@ -16,7 +16,7 @@ export const UseFetchAllClassicAssetsContext = createContext<UseFetchAllClassicA
   defaultUseFetchAllClassicAssetsDependencies
 );
 
-export function useFetchAllClassicAssets() {
+export const useFetchAllClassicAssets = (): UseQueryResult<Asset[], undefined> => {
   const { useSDK } = useContext(UseFetchAllClassicAssetsContext);
   const sdk = useSDK();
   return useQuery({
