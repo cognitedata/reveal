@@ -13,7 +13,6 @@ import { type MeasurementTool } from '../MeasurementTool';
 import { type Vector3 } from 'three';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 
 export async function updateMarker(tool: MeasurementTool, event: PointerEvent): Promise<boolean> {
@@ -55,7 +54,7 @@ export async function updateMeasureDiameter(
     circleMarker.setVisibleInteractive(true);
     return true;
   }
-  bestFitCylinder.height = Cylinder.MinSize;
+  bestFitCylinder.height = bestFitCylinder.radius / 2; // Just to make it visible, the height is not important for diameter measurement
   const measureDiameter = tool.getOrCreateMeasureDiameter();
   const { cylinder } = measureDiameter;
   bestFitCylinder.copyTo(cylinder);
