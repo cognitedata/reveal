@@ -2,7 +2,6 @@
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
 import {
   CircleMarkerDomainObject,
   getCircleMarker,
@@ -12,9 +11,11 @@ import { isPointCloudIntersection } from '../../reveal/pointCloud/isPointCloudIn
 import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
 import { type MeasurementTool } from '../MeasurementTool';
 import { type Vector3 } from 'three';
+import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 export async function updateMarker(tool: MeasurementTool, event: PointerEvent): Promise<boolean> {
-  const intersection = await tool.getIntersection(event, intersectionPredicate);
+  const intersection = await tool.getIntersection(event, shouldIntersect);
   if (!isPointCloudIntersection(intersection)) {
     const circleMarker = getCircleMarker(tool.rootDomainObject);
     circleMarker?.setVisibleInteractive(false);
@@ -33,7 +34,7 @@ export async function updateMeasureDiameter(
   cameraPosition: Vector3,
   event: PointerEvent
 ): Promise<boolean> {
-  const intersection = await tool.getIntersection(event, intersectionPredicate);
+  const intersection = await tool.getIntersection(event, shouldIntersect);
   if (!isPointCloudIntersection(intersection)) {
     return false;
   }
@@ -63,9 +64,16 @@ export async function updateMeasureDiameter(
   return true;
 }
 
-function intersectionPredicate(domainObject: DomainObject): boolean {
-  return !(
-    domainObject instanceof MeasureDiameterDomainObject ||
-    domainObject instanceof CircleMarkerDomainObject
-  );
+function shouldIntersect(domainObject: DomainObject): boolean {
+  if (
+    domainObject instanceof MeasureCylinderDomainObject &&
+    domainObject.primitiveType === PrimitiveType.Diameter
+  ) {
+    return false;
+  }
+
+  if (domainObject instanceof CircleMarkerDomainObject) {
+    return false;
+  }
+  return true;
 }

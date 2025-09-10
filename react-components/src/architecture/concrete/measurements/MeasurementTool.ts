@@ -12,13 +12,12 @@ import { type IconName } from '../../base/utilities/types';
 import { Box3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
-import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
+import { getMeasureDiameter, MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
 import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { MeasureDiameterDomainObject } from './diameter/MeasureDiameterDomainObject';
 import { updateMarker, updateMeasureDiameter } from './diameter/measureDiameterToolUtils';
 import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 
@@ -124,8 +123,7 @@ export class MeasurementTool extends PrimitiveEditTool {
       domainObject instanceof MeasurePointDomainObject ||
       domainObject instanceof MeasureBoxDomainObject ||
       domainObject instanceof MeasureLineDomainObject ||
-      domainObject instanceof MeasureCylinderDomainObject ||
-      domainObject instanceof MeasureDiameterDomainObject
+      domainObject instanceof MeasureCylinderDomainObject
     );
   }
 
@@ -173,13 +171,14 @@ export class MeasurementTool extends PrimitiveEditTool {
   // INSTANCE METHODS
   // ==================================================
 
-  public getOrCreateMeasureDiameter(): MeasureDiameterDomainObject {
-    let domainObject = this.rootDomainObject.getDescendantByType(MeasureDiameterDomainObject);
-    if (domainObject === undefined) {
-      const parent = this.getOrCreateParent();
-      domainObject = new MeasureDiameterDomainObject();
-      parent.addChildInteractive(domainObject);
+  public getOrCreateMeasureDiameter(): MeasureCylinderDomainObject {
+    const existing = getMeasureDiameter(this.rootDomainObject);
+    if (existing !== undefined) {
+      return existing;
     }
+    const parent = this.getOrCreateParent();
+    const domainObject = new MeasureCylinderDomainObject(PrimitiveType.Diameter);
+    parent.addChildInteractive(domainObject);
     return domainObject;
   }
 }

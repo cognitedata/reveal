@@ -5,9 +5,9 @@ import { getOrCreateCircleMarker } from '../../circleMarker/CircleMarkerDomainOb
 import { MOUSE, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type PointCloudIntersection } from '@cognite/reveal';
 import { createPointCloudIntersectionWithCylinder } from './getBestFitCylinderByIntersection.test';
-import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { getMeasureDiameter } from '../MeasureCylinderDomainObject';
 
 describe(updateMarker.name, () => {
   test('Should hide the marker when nothing is intersected', async () => {
@@ -80,7 +80,7 @@ describe(updateMeasureDiameter.name, () => {
 
     expect(circleMarker.isVisible()).toBe(true);
 
-    const measureDiameter = root.getDescendantByType(MeasureDiameterDomainObject);
+    const measureDiameter = getMeasureDiameter(root);
     expect(measureDiameter).toBeUndefined();
   });
 
@@ -103,7 +103,7 @@ describe(updateMeasureDiameter.name, () => {
 
     expect(circleMarker.isVisible()).toBe(false);
 
-    const measureDiameter = root.getDescendantByType(MeasureDiameterDomainObject);
+    const measureDiameter = getMeasureDiameter(root);
     expect(measureDiameter).toBeDefined();
     assert(measureDiameter !== undefined);
     expect(measureDiameter.isVisible()).toBe(true);
