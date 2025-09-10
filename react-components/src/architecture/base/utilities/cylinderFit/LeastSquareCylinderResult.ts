@@ -44,11 +44,9 @@ export class LeastSquareCylinderResult {
   }
 
   public copyTo(cylinder: Cylinder): void {
-    const centerA = this.centerA;
-    const centerB = this.centerB;
     cylinder.radius = this.radius;
-    cylinder.centerA.copy(centerA);
-    cylinder.centerB.copy(centerB);
+    cylinder.centerA.copy(this.centerA);
+    cylinder.centerB.copy(this.centerB);
   }
 }
 
