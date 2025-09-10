@@ -11,7 +11,6 @@ import { type CadModelOptions } from '../Reveal3DResources';
 import { type IdEither } from '@cognite/sdk';
 import { type DmCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
 import { type FdmConnectionWithNode } from '../CacheProvider/types';
-import { useFetchAllClassicAssets } from './hooks/useFetchAllClassicAssets';
 
 export type RuleBasedOutputsSelectorDependencies = {
   use3dModels: typeof use3dModels;
@@ -35,10 +34,6 @@ export type RuleBasedOutputsSelectorDependencies = {
     ReturnType<typeof useGetDMConnectionWithNodeFromHybridMappingsQuery>,
     'data' | 'isLoading'
   >;
-  useFetchAllClassicAssets: () => Pick<
-    ReturnType<typeof useFetchAllClassicAssets>,
-    'data' | 'isLoading' | 'isFetched'
-  >;
   generateRuleBasedOutputs: typeof generateRuleBasedOutputs;
 };
 
@@ -49,7 +44,6 @@ export const defaultRuleBasedOutputsSelectorDependencies: RuleBasedOutputsSelect
   useMappedEdgesForRevisions,
   useAll3dDirectConnectionsWithProperties,
   useGetDMConnectionWithNodeFromHybridMappingsQuery,
-  useFetchAllClassicAssets,
   generateRuleBasedOutputs
 };
 
