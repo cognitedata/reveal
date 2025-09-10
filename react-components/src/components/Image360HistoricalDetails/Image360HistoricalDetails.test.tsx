@@ -67,7 +67,6 @@ describe(Image360HistoricalDetails.name, () => {
   });
 
   test('expands to show historical summary when panel is clicked', async () => {
-    const user = userEvent.setup();
     const testRevisions = [
       createMockImage360Revision({
         date: new Date('2024-01-15T10:30:00Z'),
@@ -87,14 +86,13 @@ describe(Image360HistoricalDetails.name, () => {
     expect(container.firstChild).toBeTruthy();
 
     // Click to expand
-    await user.click(expandButton);
+    await userEvent.click(expandButton);
 
     // Should call onExpand with true
     expect(mockOnExpand).toHaveBeenCalledWith(true);
   });
 
   test('handles missing onExpand callback gracefully', async () => {
-    const user = userEvent.setup();
     const testRevisions = [
       createMockImage360Revision({
         date: new Date('2024-01-15T10:30:00Z'),
@@ -116,7 +114,7 @@ describe(Image360HistoricalDetails.name, () => {
 
     // Should not throw when onExpand is not provided
     expect(async () => {
-      await user.click(expandButton);
+      await userEvent.click(expandButton);
     }).not.toThrow();
   });
 
