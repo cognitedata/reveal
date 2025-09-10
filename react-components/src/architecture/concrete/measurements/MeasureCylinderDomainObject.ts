@@ -28,6 +28,14 @@ export class MeasureCylinderDomainObject extends CylinderDomainObject {
   }
 }
 
+/**
+ * Searches the descendants of the given root domain object for a `MeasureCylinderDomainObject`
+ * whose `primitiveType` is `PrimitiveType.Diameter`. The reason for making this function is that we only have one
+ * MeasureCylinderDomainObject with PrimitiveType.Diameter in the model at any time.
+ *
+ * @param root - The root `DomainObject` to search from.
+ * @returns The first matching `MeasureCylinderDomainObject` with a diameter primitive type, or `undefined` if none is found.
+ */
 export function getMeasureDiameter(root: DomainObject): MeasureCylinderDomainObject | undefined {
   for (const descendant of root.getDescendantsByType(MeasureCylinderDomainObject)) {
     if (descendant.primitiveType === PrimitiveType.Diameter) {
