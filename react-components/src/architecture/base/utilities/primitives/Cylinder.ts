@@ -1,6 +1,6 @@
 import { type Box3, Line3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { Range3 } from '../geometry/Range3';
-import { square } from '../extensions/mathUtils';
+import { isEqual, square } from '../extensions/mathUtils';
 import { Primitive } from './Primitive';
 import { PrimitiveType } from './PrimitiveType';
 
@@ -216,6 +216,19 @@ export class Cylinder extends Primitive {
     this.radius = cylinder.radius;
     this.centerA.copy(cylinder.centerA);
     this.centerB.copy(cylinder.centerB);
+    return this;
+  }
+
+  public applyMatrix4(matrix: Matrix4): this {
+    const scale = new Vector3().setFromMatrixScale(matrix);
+    if (!isEqual(scale.x, scale.y) || !isEqual(scale.x, scale.z)) {
+      console.warn(
+        'Cylinder.applyMatrix4: The matrix has non-uniform scale, result may be incorrect.'
+      );
+    }
+    this.centerA.applyMatrix4(matrix);
+    this.centerB.applyMatrix4(matrix);
+    this.radius *= scale.x;
     return this;
   }
 
