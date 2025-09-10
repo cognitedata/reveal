@@ -1,5 +1,5 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
-import { Cylinder } from '../primitives/Cylinder';
+import { type Cylinder } from '../primitives/Cylinder';
 
 export const UP_VECTOR = new Vector3(0, 0, 1);
 
