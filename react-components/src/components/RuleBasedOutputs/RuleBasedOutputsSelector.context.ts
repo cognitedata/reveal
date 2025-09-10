@@ -8,7 +8,7 @@ import { useAll3dDirectConnectionsWithProperties } from '../../query';
 import { useGetDMConnectionWithNodeFromHybridMappingsQuery } from './hooks/useGetDMConnectionWithNodeFromHybridMappingsQuery';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
 import { type CadModelOptions } from '../Reveal3DResources';
-import { type InternalId, type IdEither } from '@cognite/sdk';
+import { type InternalId } from '@cognite/sdk';
 import { type DmCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
 import { type FdmConnectionWithNode } from '../CacheProvider/types';
 import { useFetchClassicAssets } from './hooks/useFetchClassicAssets';
