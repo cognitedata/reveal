@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
-import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
+import {
+  expectEqualBidirectionalVector3,
+  expectEqualVector3
+} from '#test-utils/primitives/primitiveTestUtil';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 import { Cylinder } from '../primitives/Cylinder';
 
@@ -70,6 +73,6 @@ describe(LeastSquareCylinderResult.name, () => {
     expectEqualVector3(actualCylinder.center, expectedCylinder.center);
     expectEqualVector3(actualCylinder.centerA, expectedCylinder.centerA);
     expectEqualVector3(actualCylinder.centerB, expectedCylinder.centerB);
-    expectEqualVector3(actualCylinder.axis, expectedCylinder.axis);
+    expectEqualBidirectionalVector3(actualCylinder.axis, expectedCylinder.axis);
   });
 });

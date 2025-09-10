@@ -31,16 +31,16 @@ export function getBestFitCylinderByIntersection(
   markerRadius: number
 ): LeastSquareCylinderResult | undefined {
   const pointCloud = intersection.model;
-  const minPoint = intersection.point.clone();
-  const maxPoint = intersection.point.clone();
+  const centerA = intersection.point.clone();
+  const centerB = intersection.point.clone();
   const direction = new Vector3().subVectors(intersection.point, cameraPosition).normalize();
 
-  minPoint.addScaledVector(direction, MAX_DISTANCE_BEHIND * markerRadius); // Behind the point
-  maxPoint.addScaledVector(direction, MAX_DISTANCE_FRONT * markerRadius); // In front of the point
+  centerA.addScaledVector(direction, MAX_DISTANCE_BEHIND * markerRadius); // Behind the point
+  centerB.addScaledVector(direction, MAX_DISTANCE_FRONT * markerRadius); // In front of the point
 
   const boundingCylinder = new Cylinder();
-  boundingCylinder.centerA.copy(minPoint);
-  boundingCylinder.centerB.copy(maxPoint);
+  boundingCylinder.centerA.copy(centerA);
+  boundingCylinder.centerB.copy(centerB);
   boundingCylinder.radius = markerRadius;
 
   const box = boundingCylinder.getBoundingBox();
