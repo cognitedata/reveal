@@ -46,7 +46,7 @@ export function RuleBasedOutputsSelector({
     useMappedEdgesForRevisions,
     useAll3dDirectConnectionsWithProperties,
     useGetDMConnectionWithNodeFromHybridMappingsQuery,
-    useFetchClassicAssets,
+    useFetchClassicAssetsByIds,
     generateRuleBasedOutputs
   } = useContext(RuleBasedOutputsSelectorContext);
 
@@ -69,7 +69,7 @@ export function RuleBasedOutputsSelector({
     data: allClassicAsset,
     isLoading: isAllClassicAssetConnectionsLoading,
     isFetched: isAllClassicAssetConnectionsFetched
-  } = useFetchClassicAssets(assetIdsFromMapped);
+  } = useFetchClassicAssetsByIds(assetIdsFromMapped);
 
   const allClassicAssetConnections = useMemo(
     () => allClassicAsset?.filter((asset) => assetIdsFromMapped.find((id) => id.id === asset.id)),

@@ -1,12 +1,12 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useSDK } from '../../RevealCanvas/SDKProvider';
 import { type InternalId, type Asset } from '@cognite/sdk';
-import { queryKeys } from '../../../utilities/queryKeys';
 import { createContext, useContext } from 'react';
-import { type AllAssetFilterProps } from '../../../query/network/common/filters';
 import { chunk } from 'lodash';
-import { executeParallel } from '../../../utilities/executeParallel';
-import { MAX_PARALLEL_QUERIES } from '../../../data-providers/utils/getDMSModelRevisionRefs';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import { AllAssetFilterProps } from '../query/network/common/filters';
+import { executeParallel } from '../utilities/executeParallel';
+import { queryKeys } from '../utilities/queryKeys';
+import { MAX_PARALLEL_QUERIES } from '../data-providers/utils/getDMSModelRevisionRefs';
 
 export type UseFetchAllClassicAssetsDependencies = {
   useSDK: typeof useSDK;
@@ -22,8 +22,9 @@ export const UseFetchAllClassicAssetsContext = createContext<UseFetchAllClassicA
 
 const MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS = 100;
 
-export const useFetchClassicAssets = (
-  assetIdsToFilter: InternalId[]
+export const useFetchClassicAssetsByIds = (
+  assetIdsToFilter: InternalId[],
+  filter? : AllAssetFilterProps
 ): UseQueryResult<Asset[], undefined> => {
   const { useSDK } = useContext(UseFetchAllClassicAssetsContext);
   const sdk = useSDK();
@@ -33,19 +34,7 @@ export const useFetchClassicAssets = (
       const assetIdsChunk = chunk(assetIdsToFilter, MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS);
       const assets = await executeParallel(
         assetIdsChunk.map((chunkIds) => async () => {
-          const filters: AllAssetFilterProps = {
-            advancedFilter: {
-              or: [
-                {
-                  in: {
-                    property: 'id',
-                    values: chunkIds.map((id) => id.id)
-                  }
-                }
-              ]
-            },
-            filter: {}
-          };
+          const filters: AllAssetFilterProps = filter ?? defaultFilter(chunkIds);
           const { items } = await sdk.assets.list({
             limit: MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS,
             ...filters
@@ -59,3 +48,19 @@ export const useFetchClassicAssets = (
     staleTime: Infinity
   });
 };
+
+function defaultFilter(ids: InternalId[]): AllAssetFilterProps {
+  return {
+    advancedFilter: {
+      or: [
+        {
+          in: {
+            property: 'id',
+            values: ids.map((id) => id.id)
+          }
+        }
+      ]
+    },
+    filter: {}
+  };
+}

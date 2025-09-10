@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
-  useFetchClassicAssets,
+  useFetchClassicAssetsByIds,
   UseFetchAllClassicAssetsContext,
   defaultUseFetchAllClassicAssetsDependencies
-} from './useFetchClassicAssets';
+} from './useFetchClassicAssetsByIds';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type PropsWithChildren, type ReactElement } from 'react';
@@ -18,7 +18,7 @@ import {
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createAssetMock } from '#test-utils/fixtures/assets';
 
-describe(useFetchClassicAssets.name, () => {
+describe(useFetchClassicAssetsByIds.name, () => {
   const queryClient = new QueryClient();
 
   const dependencies = getMocksByDefaultDependencies(defaultUseFetchAllClassicAssetsDependencies);
@@ -72,7 +72,7 @@ describe(useFetchClassicAssets.name, () => {
         })
     );
 
-    const { result } = renderHook(() => useFetchClassicAssets(mockAssetIds), { wrapper });
+    const { result } = renderHook(() => useFetchClassicAssetsByIds(mockAssetIds), { wrapper });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -82,7 +82,7 @@ describe(useFetchClassicAssets.name, () => {
   });
 
   test('returns empty array if no assets', async () => {
-    const { result } = renderHook(() => useFetchClassicAssets(mockAssetIds), { wrapper });
+    const { result } = renderHook(() => useFetchClassicAssetsByIds(mockAssetIds), { wrapper });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);

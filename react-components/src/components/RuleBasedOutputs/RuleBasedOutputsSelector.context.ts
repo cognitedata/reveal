@@ -11,7 +11,7 @@ import { type CadModelOptions } from '../Reveal3DResources';
 import { type InternalId } from '@cognite/sdk';
 import { type DmCadAssetMapping } from '../CacheProvider/cad/assetMappingTypes';
 import { type FdmConnectionWithNode } from '../CacheProvider/types';
-import { useFetchClassicAssets } from './hooks/useFetchClassicAssets';
+import { useFetchClassicAssetsByIds } from '../../query/useFetchClassicAssetsByIds';
 
 export type RuleBasedOutputsSelectorDependencies = {
   use3dModels: typeof use3dModels;
@@ -32,9 +32,9 @@ export type RuleBasedOutputsSelectorDependencies = {
     ReturnType<typeof useGetDMConnectionWithNodeFromHybridMappingsQuery>,
     'data' | 'isLoading'
   >;
-  useFetchClassicAssets: (
+  useFetchClassicAssetsByIds: (
     assetIdsToFilter: InternalId[]
-  ) => Pick<ReturnType<typeof useFetchClassicAssets>, 'data' | 'isLoading' | 'isFetched'>;
+  ) => Pick<ReturnType<typeof useFetchClassicAssetsByIds>, 'data' | 'isLoading' | 'isFetched'>;
   generateRuleBasedOutputs: typeof generateRuleBasedOutputs;
 };
 
@@ -44,7 +44,7 @@ export const defaultRuleBasedOutputsSelectorDependencies: RuleBasedOutputsSelect
   useMappedEdgesForRevisions,
   useAll3dDirectConnectionsWithProperties,
   useGetDMConnectionWithNodeFromHybridMappingsQuery,
-  useFetchClassicAssets,
+  useFetchClassicAssetsByIds,
   generateRuleBasedOutputs
 };
 
