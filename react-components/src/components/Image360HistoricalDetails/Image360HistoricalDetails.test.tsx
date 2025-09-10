@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Image360HistoricalDetails } from './Image360HistoricalDetails';
@@ -141,5 +141,80 @@ describe(Image360HistoricalDetails.name, () => {
 
     expect(container.firstChild).toBeTruthy();
     expect(mockEntity.getRevisions()).toEqual(testRevisions);
+  });
+
+  test('processes revision collection data correctly', async () => {
+    const testRevisions = [
+      createMockImage360Revision({
+        date: new Date('2024-01-15T10:30:00Z'),
+        thumbnailUrl: 'https://example.com/thumb1.jpg'
+      }),
+      createMockImage360Revision({
+        date: new Date('2024-02-20T14:45:00Z'),
+        thumbnailUrl: 'https://example.com/thumb2.jpg'
+      })
+    ];
+
+    const mockEntity = createMockImage360Entity(testRevisions);
+
+    // First render without entity
+    const { rerender } = render(
+      <Image360HistoricalDetails {...defaultProps} image360Entity={undefined} />,
+      { wrapper }
+    );
+
+    // Then render with entity to trigger the fetch
+    rerender(<Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />);
+
+    // Wait for async operations to complete
+    await waitFor(() => {
+      expect(mockContextValue.formatDateTime).toHaveBeenCalledWith({
+        date: new Date('2024-01-15T10:30:00Z')
+      });
+    });
+
+    expect(mockContextValue.formatDateTime).toHaveBeenCalledWith({
+      date: new Date('2024-02-20T14:45:00Z')
+    });
+  });
+
+  test('handles entity change and triggers data fetch', async () => {
+    const initialRevisions = [
+      createMockImage360Revision({
+        date: new Date('2024-01-15T10:30:00Z'),
+        thumbnailUrl: 'https://example.com/thumb1.jpg'
+      })
+    ];
+
+    const newRevisions = [
+      createMockImage360Revision({
+        date: new Date('2024-02-20T14:45:00Z'),
+        thumbnailUrl: 'https://example.com/thumb2.jpg'
+      })
+    ];
+
+    const initialEntity = createMockImage360Entity(initialRevisions);
+    const newEntity = createMockImage360Entity(newRevisions);
+
+    const { rerender } = render(
+      <Image360HistoricalDetails {...defaultProps} image360Entity={undefined} />,
+      { wrapper }
+    );
+
+    rerender(<Image360HistoricalDetails {...defaultProps} image360Entity={initialEntity} />);
+
+    await waitFor(() => {
+      expect(mockContextValue.formatDateTime).toHaveBeenCalled();
+    });
+    vi.clearAllMocks();
+
+    // Change entity to trigger new fetch
+    rerender(<Image360HistoricalDetails {...defaultProps} image360Entity={newEntity} />);
+
+    await waitFor(() => {
+      expect(mockContextValue.formatDateTime).toHaveBeenCalledWith({
+        date: new Date('2024-02-20T14:45:00Z')
+      });
+    });
   });
 });
