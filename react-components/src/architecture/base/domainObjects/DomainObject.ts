@@ -1,4 +1,4 @@
-import { Box3, type Color } from 'three';
+import { type Color } from 'three';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
