@@ -10,7 +10,14 @@ export class MeasureCylinderDomainObject extends CylinderDomainObject {
 
   public constructor(primitiveType: PrimitiveType) {
     super(primitiveType);
-    this.color = new Color(Color.NAMES.magenta);
+    if (primitiveType === PrimitiveType.Diameter) {
+      this.color = new Color(Color.NAMES.yellow);
+      this.renderStyle.showLabel = true;
+      this.renderStyle.depthTest = false;
+      this.renderStyle.relativeTextSize = 0.5;
+    } else {
+      this.color = new Color(Color.NAMES.magenta);
+    }
   }
 
   // ==================================================
