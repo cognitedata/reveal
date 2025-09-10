@@ -33,7 +33,6 @@ describe(Image360HistoricalDetails.name, () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     // Mock URL methods to avoid errors in test environment
     globalThis.URL.revokeObjectURL = vi.fn();
   });
@@ -46,15 +45,18 @@ describe(Image360HistoricalDetails.name, () => {
 
   test('renders with image360 entity and displays historical panel', () => {
     const testRevisions = [
-      createMockImage360Revision(
-        new Date('2024-01-15T10:30:00Z'),
-        'https://example.com/thumb1.jpg'
-      ),
-      createMockImage360Revision(
-        new Date('2024-02-20T14:45:00Z'),
-        'https://example.com/thumb2.jpg'
-      ),
-      createMockImage360Revision(new Date('2024-03-10T08:15:00Z'), 'https://example.com/thumb3.jpg')
+      createMockImage360Revision({
+        date: new Date('2024-01-15T10:30:00Z'),
+        thumbnailUrl: 'https://example.com/thumb1.jpg'
+      }),
+      createMockImage360Revision({
+        date: new Date('2024-02-20T14:45:00Z'),
+        thumbnailUrl: 'https://example.com/thumb2.jpg'
+      }),
+      createMockImage360Revision({
+        date: new Date('2024-03-10T08:15:00Z'),
+        thumbnailUrl: 'https://example.com/thumb3.jpg'
+      })
     ];
 
     const mockEntity = createMockImage360Entity(testRevisions);
@@ -67,7 +69,10 @@ describe(Image360HistoricalDetails.name, () => {
   test('expands to show historical summary when panel is clicked', async () => {
     const user = userEvent.setup();
     const testRevisions = [
-      createMockImage360Revision(new Date('2024-01-15T10:30:00Z'), 'https://example.com/thumb1.jpg')
+      createMockImage360Revision({
+        date: new Date('2024-01-15T10:30:00Z'),
+        thumbnailUrl: 'https://example.com/thumb1.jpg'
+      })
     ];
 
     const mockEntity = createMockImage360Entity(testRevisions);
@@ -91,7 +96,10 @@ describe(Image360HistoricalDetails.name, () => {
   test('handles missing onExpand callback gracefully', async () => {
     const user = userEvent.setup();
     const testRevisions = [
-      createMockImage360Revision(new Date('2024-01-15T10:30:00Z'), 'https://example.com/thumb1.jpg')
+      createMockImage360Revision({
+        date: new Date('2024-01-15T10:30:00Z'),
+        thumbnailUrl: 'https://example.com/thumb1.jpg'
+      })
     ];
 
     const mockEntity = createMockImage360Entity(testRevisions);
@@ -114,7 +122,10 @@ describe(Image360HistoricalDetails.name, () => {
 
   test('displays correct station information', () => {
     const testRevisions = [
-      createMockImage360Revision(new Date('2024-01-15T10:30:00Z'), 'https://example.com/thumb1.jpg')
+      createMockImage360Revision({
+        date: new Date('2024-01-15T10:30:00Z'),
+        thumbnailUrl: 'https://example.com/thumb1.jpg'
+      })
     ];
 
     const mockEntity = createMockImage360Entity(testRevisions);
