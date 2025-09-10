@@ -245,7 +245,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return Math.abs(Vector3ArrayUtils.getSignedHorizontalArea(transformedPoints));
   }
 
-  public override expandBoundingBox(boundingBox: Box3): void {
+  public expandBoundingBox(boundingBox: Box3): void {
     for (const point of this.points) {
       const transformedPoint = this.getTransformedPoint(point);
       boundingBox.expandByPoint(transformedPoint);

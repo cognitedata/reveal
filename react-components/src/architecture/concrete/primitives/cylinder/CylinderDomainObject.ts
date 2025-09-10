@@ -172,7 +172,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     );
   }
 
-  public override expandBoundingBox(boundingBox: Box3): void {
+  public expandBoundingBox(boundingBox: Box3): void {
     this.cylinder.expandBoundingBox(boundingBox);
   }
 }

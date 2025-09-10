@@ -482,14 +482,6 @@ export abstract class DomainObject implements TreeNodeType {
     return undefined;
   }
 
-  public getBoundingBox(): Box3 {
-    const boundingBox = new Box3().makeEmpty();
-    this.expandBoundingBox(boundingBox);
-    return boundingBox;
-  }
-
-  public expandBoundingBox(_boundingBox: Box3): void {}
-
   /**
    * Removes the core functionality of the domain object.
    * This will automatically be called when the domain object is removed from its parent, by the function DomainObject.remove()
