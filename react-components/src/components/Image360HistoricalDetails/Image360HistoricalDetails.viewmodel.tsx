@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { formatDateTime } from '@cognite/cdf-utilities';
+import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import {
   type Image360HistoricalDetailsProps,
   type UseImage360HistoricalDetailsViewModelResult
 } from './types';
 import { type Image360RevisionDetails } from './Toolbar/Image360HistoricalSummary';
 import { getStationIdentifier } from './utils/getStationIdentifier';
+import { Image360HistoricalDetailsViewModelContext } from './Image360HistoricalDetails.viewmodel.context';
 
 export function useImage360HistoricalDetailsViewModel({
   image360Entity,
@@ -18,6 +18,7 @@ export function useImage360HistoricalDetailsViewModel({
   const previousImageUrls = useRef<Array<string | undefined>>([]);
   const newScrollPosition = useRef(0);
   const previousImage360Entity = useRef(image360Entity);
+  const { formatDateTime } = useContext(Image360HistoricalDetailsViewModelContext);
 
   const stationId = image360Entity !== undefined ? getStationIdentifier(image360Entity) : undefined;
   const stationName = image360Entity?.label;

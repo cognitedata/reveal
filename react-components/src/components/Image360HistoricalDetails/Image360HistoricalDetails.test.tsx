@@ -8,22 +8,18 @@ import {
   createMockImage360Entity,
   createMockImage360Revision
 } from '#test-utils/fixtures/image360Station';
-
-// Mock external dependencies that cause module resolution issues
-vi.mock('@cognite/cdf-utilities', () => ({
-  formatDateTime: vi.fn(({ date }) => date.toISOString().split('T')[0])
-}));
-
-vi.mock('./utils/getStationIdentifier', () => ({
-  getStationIdentifier: vi.fn(() => 'station-123')
-}));
-
-vi.mock('lodash', () => ({
-  uniqueId: vi.fn(() => 'test-id')
-}));
+import {
+  Image360HistoricalDetailsViewModelContext,
+  type Image360HistoricalDetailsViewModelDependencies
+} from './Image360HistoricalDetails.viewmodel.context';
+import { type ReactElement, type ReactNode } from 'react';
 
 describe(Image360HistoricalDetails.name, () => {
   const mockOnExpand = vi.fn();
+
+  const mockContextValue: Image360HistoricalDetailsViewModelDependencies = {
+    formatDateTime: vi.fn(({ date }) => date.toISOString().split('T')[0])
+  };
 
   const defaultProps: Image360HistoricalDetailsProps = {
     viewer: viewerMock,
@@ -32,13 +28,19 @@ describe(Image360HistoricalDetails.name, () => {
     fallbackLanguage: 'en'
   };
 
+  const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
+    <Image360HistoricalDetailsViewModelContext.Provider value={mockContextValue}>
+      {children}
+    </Image360HistoricalDetailsViewModelContext.Provider>
+  );
+
   beforeEach(() => {
     // Mock URL methods to avoid errors in test environment
     globalThis.URL.revokeObjectURL = vi.fn();
   });
 
   test('renders without crashing when no entity is provided', () => {
-    const { container } = render(<Image360HistoricalDetails {...defaultProps} />);
+    const { container } = render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
 
     expect(container.firstChild).toBeTruthy();
   });
@@ -61,7 +63,9 @@ describe(Image360HistoricalDetails.name, () => {
 
     const mockEntity = createMockImage360Entity(testRevisions);
 
-    render(<Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />);
+    render(<Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />, {
+      wrapper
+    });
 
     expect(screen.getByRole('button')).toBeTruthy();
   });
@@ -77,7 +81,8 @@ describe(Image360HistoricalDetails.name, () => {
     const mockEntity = createMockImage360Entity(testRevisions);
 
     const { container } = render(
-      <Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />
+      <Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />,
+      { wrapper }
     );
 
     const expandButton = screen.getByRole('button');
@@ -107,7 +112,8 @@ describe(Image360HistoricalDetails.name, () => {
         viewer={viewerMock}
         image360Entity={mockEntity}
         fallbackLanguage="en"
-      />
+      />,
+      { wrapper }
     );
 
     const expandButton = screen.getByRole('button');
@@ -129,7 +135,8 @@ describe(Image360HistoricalDetails.name, () => {
     const mockEntity = createMockImage360Entity(testRevisions);
 
     const { container } = render(
-      <Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />
+      <Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />,
+      { wrapper }
     );
 
     expect(container.firstChild).toBeTruthy();
