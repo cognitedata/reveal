@@ -50,7 +50,7 @@ export async function updateMeasureDiameter(
     circleMarker.setVisibleInteractive(true);
     return true;
   }
-  const measureDiameter = getOrCreateMeasureDiameter(tool);
+  const measureDiameter = tool.getOrCreateMeasureDiameter();
   const { cylinder } = measureDiameter;
   bestFitCylinder.copyTo(cylinder);
   cylinder.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
@@ -68,18 +68,4 @@ function intersectionPredicate(domainObject: DomainObject): boolean {
     domainObject instanceof MeasureDiameterDomainObject ||
     domainObject instanceof CircleMarkerDomainObject
   );
-}
-
-function getMeasureDiameter(root: DomainObject): MeasureDiameterDomainObject | undefined {
-  return root.getDescendantByType(MeasureDiameterDomainObject);
-}
-
-function getOrCreateMeasureDiameter(tool: MeasurementTool): MeasureDiameterDomainObject {
-  let domainObject = getMeasureDiameter(tool.rootDomainObject);
-  if (domainObject === undefined) {
-    const parent = tool.getOrCreateParent();
-    domainObject = new MeasureDiameterDomainObject();
-    parent.addChildInteractive(domainObject);
-  }
-  return domainObject;
 }

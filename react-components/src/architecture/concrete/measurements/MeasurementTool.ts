@@ -168,4 +168,18 @@ export class MeasurementTool extends PrimitiveEditTool {
         return undefined;
     }
   }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public getOrCreateMeasureDiameter(): MeasureDiameterDomainObject {
+    let domainObject = this.rootDomainObject.getDescendantByType(MeasureDiameterDomainObject);
+    if (domainObject === undefined) {
+      const parent = this.getOrCreateParent();
+      domainObject = new MeasureDiameterDomainObject();
+      parent.addChildInteractive(domainObject);
+    }
+    return domainObject;
+  }
 }

@@ -396,10 +396,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   private updateLabels(camera: PerspectiveCamera): void {
     const radiusLabelA = this._group.getObjectByName(RADIUS_LABEL_A);
     const radiusLabelB = this._group.getObjectByName(RADIUS_LABEL_B);
-    let heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
-    if (heightLabel === undefined) {
-      heightLabel = this._group.getObjectByName(DIAMETER_LABEL);
-    }
+    const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
+    const diameterLabel = this._group.getObjectByName(DIAMETER_LABEL);
 
     if (radiusLabelA === undefined && radiusLabelB === undefined && heightLabel === undefined) {
       return;
@@ -422,8 +420,12 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       updateRadiusLabel(centerB, radiusLabelB, 1, this.getRadiusLabelHeight());
     }
     if (heightLabel !== undefined) {
-      const center = newVector3().addVectors(centerB, centerA).multiplyScalar(0.5);
+      const center = centerA.add(centerB).multiplyScalar(0.5);
       updateHeightLabel(center, heightLabel);
+    }
+    if (diameterLabel !== undefined) {
+      const center = centerA.add(centerB).multiplyScalar(0.5);
+      updateHeightLabel(center, diameterLabel);
     }
 
     function updateRadiusLabel(
