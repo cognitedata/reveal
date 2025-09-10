@@ -133,7 +133,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   // OVERRIDES of PrimitiveEditTool
   // ==================================================
 
-  public override getOrCreateParent(): DomainObject {
+  protected override getOrCreateParent(): DomainObject {
     const parent = this.rootDomainObject.getDescendantByType(MeasurementFolder);
     if (parent !== undefined) {
       return parent;
