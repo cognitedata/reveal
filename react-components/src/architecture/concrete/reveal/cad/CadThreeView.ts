@@ -1,5 +1,5 @@
 import { type CadDomainObject } from './CadDomainObject';
-import { Box3 } from 'three';
+import { type Box3 } from 'three';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { ThreeView } from '../../../base/views/ThreeView';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -43,8 +43,6 @@ export class CadThreeView extends ThreeView<CadDomainObject> {
   // ==================================================
 
   protected override calculateBoundingBox(): Box3 {
-    const model = this.model;
-    const boundingBox = new Box3();
-    return model.getModelBoundingBox(boundingBox, true);
+    return this.domainObject.getBoundingBox();
   }
 }

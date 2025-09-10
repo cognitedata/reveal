@@ -1,5 +1,5 @@
 import { type PointCloudDomainObject } from './PointCloudDomainObject';
-import { Box3 } from 'three';
+import { type Box3 } from 'three';
 import { ThreeView } from '../../../base/views/ThreeView';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -43,8 +43,6 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   // ==================================================
 
   protected override calculateBoundingBox(): Box3 {
-    const pointCloud = this.model;
-    const boundingBox = new Box3();
-    return pointCloud.getModelBoundingBox(boundingBox);
+    return this.domainObject.getBoundingBox();
   }
 }

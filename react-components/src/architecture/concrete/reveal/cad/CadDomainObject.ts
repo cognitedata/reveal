@@ -3,6 +3,7 @@ import { type TranslationInput } from '../../../base/utilities/translation/Trans
 import { type IconName } from '../../../base/utilities/types';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { RevealDomainObject } from '../RevealDomainObject';
+import { type Box3 } from 'three';
 
 export class CadDomainObject extends RevealDomainObject {
   // ==================================================
@@ -42,6 +43,11 @@ export class CadDomainObject extends RevealDomainObject {
 
   public override get hasIconColor(): boolean {
     return false;
+  }
+
+  public override expandBoundingBox(boundingBox: Box3): void {
+    const model = this.model;
+    boundingBox.union(model.getModelBoundingBox(undefined, true));
   }
 
   public override dispose(): void {
