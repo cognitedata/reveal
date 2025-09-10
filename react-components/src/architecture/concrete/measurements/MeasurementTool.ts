@@ -24,6 +24,8 @@ import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 
 const POINT_SIZE_CHANGE_FACTOR = 0.1;
 
+const POINT_SIZE_CHANGE_FACTOR = 0.1;
+
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
   // OVERRIDES of BaseCommand
