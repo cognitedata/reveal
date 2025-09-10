@@ -219,6 +219,12 @@ export class Cylinder extends Primitive {
     return this;
   }
 
+  public applyMatrix4(matrix: Matrix4): this {
+    this.centerA.applyMatrix4(matrix);
+    this.centerB.applyMatrix4(matrix);
+    return this;
+  }
+
   public clear(): void {
     this.radius = Cylinder.MinSize;
     this.centerA.set(0, 0, -Cylinder.HalfMinSize);

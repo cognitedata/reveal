@@ -1,4 +1,5 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
+import { Cylinder } from '../primitives/Cylinder';
 
 export const UP_VECTOR = new Vector3(0, 0, 1);
 
@@ -40,6 +41,15 @@ export class LeastSquareCylinderResult {
 
   public getTranslationRotationMatrix(): Matrix4 {
     return getTranslationRotationMatrix(this.axis, this.center);
+  }
+
+  public copyTo(cylinder: Cylinder): void {
+    this.height = Cylinder.MinSize; // Use a small height since we only care about radius
+    const centerA = this.centerA;
+    const centerB = this.centerB;
+    cylinder.radius = this.radius;
+    cylinder.centerA.copy(centerA);
+    cylinder.centerB.copy(centerB);
   }
 }
 

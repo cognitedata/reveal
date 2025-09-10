@@ -1,13 +1,13 @@
 import { assert, describe, expect, test } from 'vitest';
 import { MeasurementTool } from '../MeasurementTool';
 import { updateMarker, updateMeasureDiameter } from './measureDiameterToolUtils';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { getOrCreateCircleMarker } from '../../circleMarker/CircleMarkerDomainObject';
 import { MOUSE, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type PointCloudIntersection } from '@cognite/reveal';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
 import { createPointCloudIntersectionWithCylinder } from './getBestFitCylinderByIntersection.test';
 import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(updateMarker.name, () => {
   test('Should hide the marker when nothing is intersected', async () => {
@@ -21,7 +21,7 @@ describe(updateMarker.name, () => {
 
     tool.getIntersection = async () => undefined;
 
-    const result = await updateMarker(tool, new PointerEvent('pointermove'));
+    const result = await updateMarker(tool, createMoveEvent());
     expect(result).toBe(false);
     expect(circleMarker.isVisible()).toBe(false);
   });
@@ -44,11 +44,13 @@ describe(updateMarker.name, () => {
     const circleMarker = getOrCreateCircleMarker(renderTarget.rootDomainObject);
     expect(circleMarker.isVisible()).toBe(false);
 
-    const result = await updateMarker(tool, new PointerEvent('pointermove'));
+    const result = await updateMarker(tool, createMoveEvent());
     expect(result).toBe(true);
     expect(circleMarker.isVisible()).toBe(true);
   });
+});
 
+describe(updateMeasureDiameter.name, () => {
   test('Should not create a cylinder when no intersection ', async () => {
     const renderTarget = createFullRenderTargetMock();
     const tool = new MeasurementTool();
@@ -118,4 +120,8 @@ describe(updateMarker.name, () => {
 
 function createClickEvent(): PointerEvent {
   return new PointerEvent('click', { button: MOUSE.LEFT });
+}
+
+function createMoveEvent(): PointerEvent {
+  return new PointerEvent('pointermove');
 }

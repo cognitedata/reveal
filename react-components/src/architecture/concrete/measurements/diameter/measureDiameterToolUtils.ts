@@ -4,7 +4,6 @@ import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
-import { type LeastSquareCylinderResult } from '../../../base/utilities/cylinderFit/LeastSquareCylinderResult';
 import {
   CircleMarkerDomainObject,
   getCircleMarker,
@@ -12,7 +11,6 @@ import {
 } from '../../circleMarker/CircleMarkerDomainObject';
 import { isPointCloudIntersection } from '../../reveal/pointCloud/isPointCloudIntersection';
 import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
-import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { type MeasurementTool } from '../MeasurementTool';
 import { type Vector3 } from 'three';
 
@@ -54,7 +52,9 @@ export async function updateMeasureDiameter(
     return true;
   }
   const measureDiameter = getOrCreateMeasureDiameter(tool);
-  copyBestFitCylinder(measureDiameter, bestFitCylinder);
+  const { cylinder } = measureDiameter;
+  bestFitCylinder.copyTo(cylinder);
+  cylinder.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
 
   circleMarker.setVisibleInteractive(false);
   measureDiameter.notify(Changes.geometry);
@@ -62,24 +62,6 @@ export async function updateMeasureDiameter(
   measureDiameter.setSelectedInteractive(true);
   measureDiameter.setVisibleInteractive(true);
   return true;
-}
-
-function copyBestFitCylinder(
-  domainObject: MeasureDiameterDomainObject,
-  sourceCylinder: LeastSquareCylinderResult
-): void {
-  sourceCylinder.height = Cylinder.MinSize; // Use a small height since we only care about radius
-  const centerA = sourceCylinder.centerA;
-  const centerB = sourceCylinder.centerB;
-
-  const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
-  centerA.applyMatrix4(fromViewerMatrix);
-  centerB.applyMatrix4(fromViewerMatrix);
-
-  const destinationCylinder = domainObject.cylinder;
-  destinationCylinder.radius = sourceCylinder.radius;
-  destinationCylinder.centerA.copy(centerA);
-  destinationCylinder.centerB.copy(centerB);
 }
 
 function intersectionPredicate(domainObject: DomainObject): boolean {

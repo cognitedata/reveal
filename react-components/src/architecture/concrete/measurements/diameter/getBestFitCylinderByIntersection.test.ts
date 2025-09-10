@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
 import { Vector3 } from 'three';
 import { type PointCloudIntersection } from '@cognite/reveal';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
 import { LeastSquareCylinderResult } from '../../../base/utilities/cylinderFit/LeastSquareCylinderResult';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import {
   checkCorrectness,
   createPoints
@@ -12,7 +12,9 @@ import { Random } from '../../../base/utilities/misc/Random';
 
 describe(getBestFitCylinderByIntersection.name, () => {
   test('Should get cylinder only if many points and marker radius is large', () => {
+    // Number ogf points are the points in the point cloud that can be used for the fit
     for (const pointCount of [5, 100]) {
+      // Marker fraction is the fraction of the actual radius of the expected cylinder
       for (const markerFraction of [3, 1, 0.5, 0.1, 0.01]) {
         const expectCylinder = markerFraction >= 1 && pointCount >= 10;
         testCylinder(markerFraction, pointCount, expectCylinder);
