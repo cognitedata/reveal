@@ -24,6 +24,7 @@ describe(CylinderDomainObject, () => {
       expect(isEmpty(domainObject.typeName)).toBe(false);
       expect(domainObject.renderStyle).toBeInstanceOf(SolidPrimitiveRenderStyle);
       expect(domainObject.createTransaction(Changes.geometry)).toBeDefined();
+      expect(domainObject.hasIndexOnLabel).toBe(primitiveType !== PrimitiveType.Diameter);
     }
   });
 
