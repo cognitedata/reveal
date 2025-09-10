@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { formatDateTime } from '@cognite/cdf-utilities';
 import {
   type Image360HistoricalDetailsProps,
@@ -15,56 +15,63 @@ export function useImage360HistoricalDetailsViewModel({
   const [activeRevision, setActiveRevision] = useState<number>(0);
   const [revisionCollection, setRevisionCollection] = useState<Image360RevisionDetails[]>([]);
   const [imageUrls, setImageUrls] = useState<Array<string | undefined>>([]);
-  const [minWidth, setMinWidth] = useState('100px');
+  const previousImageUrls = useRef<Array<string | undefined>>([]);
   const newScrollPosition = useRef(0);
+  const previousImage360Entity = useRef(image360Entity);
 
   const stationId = image360Entity !== undefined ? getStationIdentifier(image360Entity) : undefined;
   const stationName = image360Entity?.label;
 
-  useEffect(() => {
-    const fetchRevisionCollection = async (): Promise<void> => {
-      if (image360Entity !== undefined) {
-        const revisions = image360Entity.getRevisions();
-        const revisionDates = revisions.map((revision) => revision.date);
-        const imageDatas = await Promise.all(
-          revisions.map(async (revision) => await revision.getPreviewThumbnailUrl())
-        );
-        setImageUrls(imageDatas);
-
-        const collection = revisionDates.map((date, index) => {
-          return {
-            date: date !== undefined ? formatDateTime({ date }) : 'Date not available',
-            imageUrl: imageDatas[index],
-            index,
-            image360Entity
-          };
-        });
-
-        newScrollPosition.current = 0;
-        setRevisionCollection(collection);
-        setActiveRevision(0);
-      }
-    };
-
-    void fetchRevisionCollection();
-
-    return () => {
-      // Remove image URLs
-      imageUrls.forEach((url) => {
+  const fetchRevisionCollection = useCallback(async (): Promise<void> => {
+    if (image360Entity !== undefined) {
+      // Clean up previous URLs
+      previousImageUrls.current.forEach((url) => {
         if (url !== undefined) {
           URL.revokeObjectURL(url);
         }
       });
-      setImageUrls([]);
-    };
-  }, [image360Entity]);
 
-  useEffect(() => {
-    const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
-    setMinWidth(newMinWidth);
-    if (onExpand !== undefined) {
-      onExpand(revisionDetailsExpanded);
+      const revisions = image360Entity.getRevisions();
+      const revisionDates = revisions.map((revision) => revision.date);
+      const imageDatas = await Promise.all(
+        revisions.map(async (revision) => await revision.getPreviewThumbnailUrl())
+      );
+
+      previousImageUrls.current = imageUrls;
+      setImageUrls(imageDatas);
+
+      const collection = revisionDates.map((date, index) => {
+        return {
+          date: date !== undefined ? formatDateTime({ date }) : 'Date not available',
+          imageUrl: imageDatas[index],
+          index,
+          image360Entity
+        };
+      });
+
+      newScrollPosition.current = 0;
+      setRevisionCollection(collection);
+      setActiveRevision(0);
     }
+  }, [image360Entity, imageUrls]);
+
+  useMemo(() => {
+    if (previousImage360Entity.current !== image360Entity) {
+      previousImage360Entity.current = image360Entity;
+      void fetchRevisionCollection();
+    }
+  }, [image360Entity, fetchRevisionCollection]);
+
+  const minWidth = useMemo(() => {
+    const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
+
+    if (onExpand !== undefined) {
+      setTimeout(() => {
+        onExpand(revisionDetailsExpanded);
+      }, 0);
+    }
+
+    return newMinWidth;
   }, [revisionDetailsExpanded, onExpand]);
 
   return {
