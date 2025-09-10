@@ -195,7 +195,7 @@ describe(RuleBasedOutputsSelector.name, () => {
       isLoading: false,
       isFetched: true
     };
-    defaultDependencies.useAssetsByIdsQuery.mockReturnValue(mockAllClassicAssetsReturn);
+    defaultDependencies.useFetchClassicAssets.mockReturnValue(mockAllClassicAssetsReturn);
 
     const mockUseMappedEdgesForRevisionsResult = {
       data: mockFdmMappedEquipmentEdges,

@@ -46,7 +46,7 @@ export function RuleBasedOutputsSelector({
     useMappedEdgesForRevisions,
     useAll3dDirectConnectionsWithProperties,
     useGetDMConnectionWithNodeFromHybridMappingsQuery,
-    useAssetsByIdsQuery,
+    useFetchClassicAssets,
     generateRuleBasedOutputs
   } = useContext(RuleBasedOutputsSelectorContext);
 
@@ -65,11 +65,16 @@ export function RuleBasedOutputsSelector({
 
   const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
-    const {
-    data: allClassicAssetConnections,
+  const {
+    data: allClassicAsset,
     isLoading: isAllClassicAssetConnectionsLoading,
     isFetched: isAllClassicAssetConnectionsFetched
-  } = useAssetsByIdsQuery(assetIdsFromMapped);
+  } = useFetchClassicAssets(assetIdsFromMapped);
+
+  const allClassicAssetConnections = useMemo(
+    () => allClassicAsset?.filter((asset) => assetIdsFromMapped.find((id) => id.id === asset.id)),
+    [allClassicAsset, assetIdsFromMapped]
+  );
 
   const nodeWithDmIdsFromHybridMappings = useMemo(() => {
     return assetMappings?.flatMap((item) => item.assetMappings.filter(isDmCadAssetMapping));
