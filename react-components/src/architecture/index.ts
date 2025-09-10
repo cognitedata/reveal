@@ -43,6 +43,7 @@ export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
 export { CommandsController } from './base/renderTarget/CommandsController';
 export { type ContextMenuData } from './base/renderTarget/ContextMenuController';
+export { RevealSettingsController } from './concrete/reveal/RevealSettingsController';
 export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
