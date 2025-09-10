@@ -20,11 +20,11 @@ describe(AxisThreeView.name, () => {
     setLargeVisualSceneBoundingBox(renderTarget);
 
     // Create axis and add it to the scene
-    const axisDomainObject = new AxisDomainObject();
-    renderTarget.rootDomainObject.addChildInteractive(axisDomainObject);
-    axisDomainObject.setVisibleInteractive(true, renderTarget);
+    const domainObject = new AxisDomainObject();
+    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    domainObject.setVisibleInteractive(true, renderTarget);
 
-    view = axisDomainObject.getViewByTarget(renderTarget) as AxisThreeView;
+    view = domainObject.getViewByTarget(renderTarget) as AxisThreeView;
 
     // Force update view since nothing is visible in this mock code
     // this is not needed in the real code
