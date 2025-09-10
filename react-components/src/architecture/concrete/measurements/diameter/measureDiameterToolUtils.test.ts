@@ -84,7 +84,7 @@ describe(updateMeasureDiameter.name, () => {
     expect(measureDiameter).toBeUndefined();
   });
 
-  test('Should not create a cylinder', async () => {
+  test('Should create a cylinder', async () => {
     const renderTarget = createFullRenderTargetMock();
     const tool = new MeasurementTool();
     tool.attach(renderTarget);
