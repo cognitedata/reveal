@@ -1,6 +1,5 @@
 // eslint-disable-next-line prettier/prettier
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { MeasureDiameterDomainObject } from './MeasureDiameterDomainObject';
@@ -66,7 +65,7 @@ export async function updateMeasureDiameter(
 
 function intersectionPredicate(domainObject: DomainObject): boolean {
   return !(
-    domainObject instanceof MeasureCylinderDomainObject ||
+    domainObject instanceof MeasureDiameterDomainObject ||
     domainObject instanceof CircleMarkerDomainObject
   );
 }
