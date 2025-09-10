@@ -1,5 +1,5 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type Box3, type Vector3 } from 'three';
+import { Box3, type Vector3 } from 'three';
 import {
   PrimitiveType,
   verifyPrimitiveType
@@ -243,6 +243,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
     const transformedPoints = this.points.map((point) => this.getTransformedPoint(point));
     return Math.abs(Vector3ArrayUtils.getSignedHorizontalArea(transformedPoints));
+  }
+
+  public getBoundingBox(): Box3 {
+    const boundingBox = new Box3().makeEmpty();
+    this.expandBoundingBox(boundingBox);
+    return boundingBox;
   }
 
   public expandBoundingBox(boundingBox: Box3): void {
