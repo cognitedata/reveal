@@ -106,7 +106,7 @@
     "three": "0.176.0",
     "ts-loader": "^9.5.1",
     "typescript": "5.9.2",
-    "vite": "^6.3.6",
+    "vite": "^7.0.7",
     "vite-plugin-dts": "^4.0.0",
     "vite-plugin-externalize-deps": "^0.9.0",
     "vitest": "^3.0.6"
