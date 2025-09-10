@@ -1,7 +1,7 @@
 import { assert, describe, expect, test } from 'vitest';
 import { Matrix4, Vector3 } from 'three';
 import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { getTranslationRotationMatrix, UP_VECTOR } from './LeastSquareCylinderResult';
 
 describe(bestFitVerticalCylinder.name, () => {
@@ -84,7 +84,7 @@ describe(bestFitVerticalCylinder.name, () => {
  * @returns An array of `Vector3` points positioned on the surface of the cylinder.
  */
 function createPoints(radius: number, height: number, count: number): Vector3[] {
-  const points: Vector3[] = new Array<Vector3>(count);
+  const points = new Array<Vector3>(count);
   const scaling = new Vector3(radius, radius, height / 2);
   for (let i = 0; i < points.length; i++) {
     const angle = (i / points.length) * Math.PI * 2;

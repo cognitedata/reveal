@@ -2,14 +2,12 @@ import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { Vector3 } from 'three';
 import { bestFitCylinder, MAIN_AXES } from './bestFitCylinder';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
-import SeededRandom from 'random-seed';
-
-type Random = SeededRandom.RandomSeed;
+import { Random } from '../misc/Random';
 
 describe(bestFitCylinder.name, () => {
-  const random = SeededRandom.create();
+  let random: Random;
   beforeEach(() => {
-    random.seed(bestFitCylinder.name);
+    random = new Random(42);
   });
 
   test('should get the cylinder for main axis', () => {
@@ -32,17 +30,34 @@ describe(bestFitCylinder.name, () => {
     for (let i = 0; i < 20; i++) {
       const expectedCylinder = getRandomCylinder(random);
       const points = createPoints(expectedCylinder, 100, random);
-      checkCorrectness(bestFitCylinder(points), expectedCylinder);
+      const actualCylinder = bestFitCylinder(points);
+      checkCorrectness(actualCylinder, expectedCylinder);
+
+      // Check angular Coverage
+      assert(actualCylinder !== undefined);
+      expect(actualCylinder.angularCoverage).toBeGreaterThan(0.75);
     }
   });
 
   test('should get the cylinder for arbitrarily axis, center, radius and height with some errors', () => {
     const relativeRadiusError = 0.2;
-    const arcFraction = 0.5;
+    const angularCoverage = 0.5;
     for (let i = 0; i < 20; i++) {
       const expectedCylinder = getRandomCylinder(random);
-      const points = createPoints(expectedCylinder, 100, random, relativeRadiusError, arcFraction);
-      checkCorrectness(bestFitCylinder(points), expectedCylinder, 0.125);
+      const points = createPoints(
+        expectedCylinder,
+        100,
+        random,
+        relativeRadiusError,
+        angularCoverage
+      );
+      const actualCylinder = bestFitCylinder(points);
+      checkCorrectness(actualCylinder, expectedCylinder, 0.2);
+
+      // Check angular Coverage
+      assert(actualCylinder !== undefined);
+      expect(actualCylinder.angularCoverage).toBeGreaterThan(angularCoverage - 0.1);
+      expect(actualCylinder.angularCoverage).toBeLessThan(angularCoverage + 0.1);
     }
   });
 
@@ -67,6 +82,15 @@ describe(bestFitCylinder.name, () => {
     const expectedCylinder = getRandomCylinder(random);
     const points = createPoints(expectedCylinder, 10, random, 0.5, 1);
     const accept = (cylinder: LeastSquareCylinderResult): boolean => cylinder.rms < 0.1;
+    const cylinder = bestFitCylinder(points, accept);
+    expect(cylinder).toBeUndefined();
+  });
+
+  test('should not get a cylinder if the angularCoverage is too small', () => {
+    const expectedCylinder = getRandomCylinder(random);
+    const points = createPoints(expectedCylinder, 100, random, 0, 0.4);
+    const accept = (cylinder: LeastSquareCylinderResult): boolean =>
+      cylinder.rms < 0.05 && cylinder.angularCoverage > 0.5;
     const cylinder = bestFitCylinder(points, accept);
     expect(cylinder).toBeUndefined();
   });
@@ -154,7 +178,7 @@ function getAxisError(
  * @param count - The number of points to generate.
  * @param random - An instance of `SeededRandom` for generating random numbers.|
  * @param relativeRadiusError - Optional relative error to apply to the radius of each point.
- * @param arcFraction - Optional fraction of the cylinder's circumference to cover (0 to 1).
+ * @param angularCoverage - Optional fraction of the cylinder's circumference to cover (0 to 1).
  * @returns An array of `Vector3` points positioned on the surface of the cylinder.
  */
 function createPoints(
@@ -162,13 +186,13 @@ function createPoints(
   count: number,
   random: Random,
   relativeRadiusError = 0,
-  arcFraction = 1
+  angularCoverage = 1
 ): Vector3[] {
   const { height } = cylinder;
   const matrix = cylinder.getTranslationRotationMatrix();
   const points = new Array<Vector3>(count);
 
-  const maxAngle = arcFraction * 2 * Math.PI;
+  const maxAngle = angularCoverage * 2 * Math.PI;
   for (let i = 0; i < points.length; i++) {
     const angle = random.floatBetween(0, maxAngle);
 
@@ -196,21 +220,9 @@ function createPoints(
 }
 
 function getRandomCylinder(random: Random): LeastSquareCylinderResult {
-  const axis = getRandomUnitVector(random);
-  const center = getRandomPoint(random, -10, 10);
+  const axis = random.getUnitVector();
+  const center = random.getPoint(-10, 10);
   const radius = random.floatBetween(1, 5);
   const height = random.floatBetween(1, 5) * radius;
   return new LeastSquareCylinderResult(center, axis, radius, height);
-}
-
-function getRandomUnitVector(random: Random): Vector3 {
-  return new Vector3(random.random(), random.random(), random.random()).normalize();
-}
-
-function getRandomPoint(random: Random, min: number, max: number): Vector3 {
-  return new Vector3(
-    random.floatBetween(min, max),
-    random.floatBetween(min, max),
-    random.floatBetween(min, max)
-  );
 }

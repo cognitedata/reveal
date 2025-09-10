@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 
 describe(LeastSquareCylinderResult.name, () => {

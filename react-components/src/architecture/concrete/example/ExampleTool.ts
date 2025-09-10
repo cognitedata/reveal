@@ -8,6 +8,8 @@ import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObject
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type IconName } from '../../base/utilities/types';
 
+const RADIUS_CHANGE_FACTOR = 0.1;
+
 export class ExampleTool extends BaseEditTool {
   // ==================================================
   // OVERRIDES of BaseCommand
@@ -62,7 +64,7 @@ export class ExampleTool extends BaseEditTool {
       // Change radius
       this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
 
-      const factor = 1 - Math.sign(delta) * 0.1;
+      const factor = 1 - Math.sign(delta) * RADIUS_CHANGE_FACTOR;
       domainObject.renderStyle.radius *= factor;
       domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
     }
