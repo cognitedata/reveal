@@ -40,10 +40,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
 
   public override onActivate(): void {
     super.onActivate();
-    let domainObject = this.getPointsOfInterestDomainObject();
-    if (domainObject === undefined) {
-      domainObject = this.initializePointsOfInterestDomainObject();
-    }
+    const domainObject = this.getOrCreatePointsOfInterestDomainObject();
     domainObject.setVisibleInteractive(true, this.renderTarget);
     this.setIsCreating(true);
     this.setCursor('copy');
@@ -52,7 +49,9 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   public override onDeactivate(): void {
     super.onDeactivate();
     const domainObject = this.getPointsOfInterestDomainObject();
-    domainObject.setSelectedPointOfInterest(undefined);
+    if (domainObject !== undefined) {
+      domainObject.setSelectedPointOfInterest(undefined);
+    }
     this.setIsCreating(false);
     this.setCursor('default');
     this.setAssignedInstance(undefined);
@@ -69,26 +68,21 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    this.initializePointsOfInterestDomainObject();
   }
 
   public override getAnchoredDialogContent(): Signal<AnchoredDialogContent | undefined> {
     return this._anchoredDialogContent;
   }
 
-  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
-    return this.initializePointsOfInterestDomainObject();
+  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> | undefined {
+    return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 
-  public initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
-    const oldPoiDomainObject = this.rootDomainObject.getDescendantByType(
-      PointsOfInterestDomainObject
-    );
-
+  private getOrCreatePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
+    const oldPoiDomainObject = this.getPointsOfInterestDomainObject();
     if (oldPoiDomainObject !== undefined) {
       return oldPoiDomainObject;
     }
-
     const domainObject = new PointsOfInterestDomainObject(
       new PointsOfInterestAdsProvider(
         this.rootDomainObject.sdk
@@ -133,13 +127,11 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   }
 
   public openCreateCommandDialog(position: Vector3, clickEvent: PointerEvent): void {
-    const poiObject = this.getPointsOfInterestDomainObject();
-
-    const scene = poiObject?.getScene();
+    const domainObject = this.getOrCreatePointsOfInterestDomainObject();
+    const scene = domainObject?.getScene();
     if (scene === undefined) {
       return;
     }
-
     const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position, scene);
     createPointCommand.attach(this.renderTarget);
 
