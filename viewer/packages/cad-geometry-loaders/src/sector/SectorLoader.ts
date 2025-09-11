@@ -147,10 +147,17 @@ export class SectorLoader {
 
   private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(wantedSector => {
-      const model = models.filter(
+      const model = models.find(
         model =>
           model.cadModelMetadata.modelIdentifier.revealInternalId === wantedSector.modelIdentifier.revealInternalId
-      )[0];
+      );
+
+      if (!model) {
+        throw new Error(
+          `Model not found for sector with identifier: ${wantedSector.modelIdentifier.revealInternalId.toString()}`
+        );
+      }
+
       return { sector: wantedSector, downloadSector: model.loadSector.bind(model) };
     });
 

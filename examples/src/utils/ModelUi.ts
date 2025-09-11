@@ -81,8 +81,6 @@ export class ModelUi {
         );
       },
       fitToModel: () => {
-        // const model = this._cadModels[0] || this._pointCloudModels[0];
-        // viewer.fitCameraToModel(model);
         viewer.fitCameraToModels(viewer.models);
       },
       saveModelStateToUrl: () => {
@@ -159,6 +157,28 @@ export class ModelUi {
     this._viewer.setViewState(state);
   }
 
+  private parseTransformFromUrl(urlParams: URLSearchParams): Matrix4 | undefined {
+    const transformStr = urlParams.get('transform');
+    if (!transformStr) {
+      return undefined;
+    }
+
+    try {
+      const transformData = JSON.parse(transformStr);
+      if (transformData.position && transformData.rotation && transformData.scale) {
+        // Update the GUI state with URL transform data
+        this._guiState.transform.position.copy(transformData.position);
+        this._guiState.transform.rotation.copy(transformData.rotation);
+        this._guiState.transform.scale.copy(transformData.scale);
+        return this.createTransformMatrix(this._guiState.transform);
+      }
+    } catch (error) {
+      console.warn('Failed to parse transform from URL:', error);
+    }
+
+    return undefined;
+  }
+
   private async restoreModelsFromIds(urlParams: URLSearchParams) {
     const modelIdStr = urlParams.get('modelId');
     const revisionIdStr = urlParams.get('revisionId');
@@ -167,22 +187,7 @@ export class ModelUi {
     const modelUrl = urlParams.get('modelUrl');
 
     // Get transform from URL if provided
-    const transformStr = urlParams.get('transform');
-    let transformMatrix: Matrix4 | undefined;
-    if (transformStr) {
-      try {
-        const transformData = JSON.parse(transformStr);
-        if (transformData.position && transformData.rotation && transformData.scale) {
-          // Update the GUI state with URL transform data
-          this._guiState.transform.position.copy(transformData.position);
-          this._guiState.transform.rotation.copy(transformData.rotation);
-          this._guiState.transform.scale.copy(transformData.scale);
-          transformMatrix = this.createTransformMatrix(this._guiState.transform);
-        }
-      } catch (error) {
-        console.warn('Failed to parse transform from URL:', error);
-      }
-    }
+    const transformMatrix = this.parseTransformFromUrl(urlParams);
 
     if ((modelIdStr && revisionIdStr) || (revisionSpace && revisionExternalIdStr)) {
       const modelId = modelIdStr !== null ? Number.parseInt(modelIdStr, 10) : undefined;
@@ -265,8 +270,6 @@ export class ModelUi {
     this._pointCloudModels.forEach(model => {
       model.setModelTransformation(transformMatrix);
     });
-
-    console.log('Transform applied to', this._cadModels.length + this._pointCloudModels.length, 'models');
   }
 
   private initializeTransformGui(
