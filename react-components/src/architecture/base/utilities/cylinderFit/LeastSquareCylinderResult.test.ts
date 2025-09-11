@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
-import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
+import {
+  expectEqualBidirectionalVector3,
+  expectEqualVector3
+} from '#test-utils/primitives/primitiveTestUtil';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
+import { Cylinder } from '../primitives/Cylinder';
 
 describe(LeastSquareCylinderResult.name, () => {
   test('should construct a cylinder', () => {
@@ -52,5 +56,23 @@ describe(LeastSquareCylinderResult.name, () => {
     expectEqualVector3(center, new Vector3(0, 0, 0));
     expectEqualVector3(centerA, new Vector3(0, 0, +expectedHeight / 2));
     expectEqualVector3(centerB, new Vector3(0, 0, -expectedHeight / 2));
+  });
+
+  test('should copy to Cylinder', () => {
+    const expectedCylinder = new LeastSquareCylinderResult(
+      new Vector3(1, 2, 3),
+      new Vector3(4, 5, -6).normalize(),
+      5,
+      7
+    );
+    const actualCylinder = new Cylinder();
+    expectedCylinder.copyTo(actualCylinder);
+
+    expect(actualCylinder.radius).toBe(expectedCylinder.radius);
+    expect(actualCylinder.height).toBeCloseTo(expectedCylinder.height);
+    expectEqualVector3(actualCylinder.center, expectedCylinder.center);
+    expectEqualVector3(actualCylinder.centerA, expectedCylinder.centerA);
+    expectEqualVector3(actualCylinder.centerB, expectedCylinder.centerB);
+    expectEqualBidirectionalVector3(actualCylinder.axis, expectedCylinder.axis);
   });
 });
