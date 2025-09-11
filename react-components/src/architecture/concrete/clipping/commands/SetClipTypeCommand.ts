@@ -60,7 +60,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     }
     // Allow maximum 2 slices of each type
     let count = 0;
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(SliceDomainObject)) {
+    for (const domainObject of this.root.getDescendantsByType(SliceDomainObject)) {
       if (domainObject.primitiveType !== this.primitiveType) {
         continue;
       }

@@ -23,7 +23,7 @@ describe(PlaneView.name, () => {
 
   beforeEach(() => {
     const renderTarget = createFullRenderTargetMock();
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
 
     renderTarget.viewer.getSceneBoundingBox = () => {
       return new Box3(new Vector3(), new Vector3()).expandByScalar(100);

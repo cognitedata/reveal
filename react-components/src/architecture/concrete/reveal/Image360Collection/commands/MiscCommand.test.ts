@@ -20,7 +20,7 @@ describe('Misc 360 images commands', () => {
     }
 
     const domainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
-    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     for (const command of commands) {
       expect(command.isVisible).toBe(true);
     }

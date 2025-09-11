@@ -25,7 +25,7 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.rootDomainObject.getDescendantByType(PointCloudDomainObject) !== undefined;
+    return this.root.getDescendantByType(PointCloudDomainObject) !== undefined;
   }
 
   public override get value(): number {
