@@ -270,7 +270,6 @@ export class ModelUi {
     this._pointCloudModels.forEach(model => {
       model.setModelTransformation(transformMatrix);
     });
-
   }
 
   private initializeTransformGui(
