@@ -1,16 +1,17 @@
 import { formatDateTime } from '@cognite/cdf-utilities';
 import { createContext } from 'react';
-import { revokeObjectUrl } from './utils/revokeObjectUrl';
 
 export type Image360HistoricalDetailsViewModelDependencies = {
   formatDateTime: typeof formatDateTime;
-  revokeObjectUrl: typeof revokeObjectUrl;
+  revokeObjectUrl: typeof globalThis.URL.revokeObjectURL;
 };
 
 export const defaultImage360HistoricalDetailsViewModelDependencies: Image360HistoricalDetailsViewModelDependencies =
   {
     formatDateTime,
-    revokeObjectUrl
+    revokeObjectUrl: (url: string) => {
+      globalThis.URL.revokeObjectURL(url);
+    }
   };
 
 export const Image360HistoricalDetailsViewModelContext =

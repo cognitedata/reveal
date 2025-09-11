@@ -1,10 +1,8 @@
-import { type ReactElement } from 'react';
-import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
-import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
+import { useContext, type ReactElement } from 'react';
 import styled from 'styled-components';
 import { uniqueId } from 'lodash';
-import { useImage360HistoricalDetailsViewModel } from './Image360HistoricalDetails.viewmodel';
 import { type Image360HistoricalDetailsProps } from './types';
+import { Image360HistoricalDetailsContext } from './Image360HistoricalDetails.context';
 
 export const Image360HistoricalDetails = ({
   viewer,
@@ -12,6 +10,12 @@ export const Image360HistoricalDetails = ({
   onExpand,
   fallbackLanguage
 }: Image360HistoricalDetailsProps): ReactElement => {
+  const {
+    Image360HistoricalPanel,
+    Image360HistoricalSummary,
+    useImage360HistoricalDetailsViewModel
+  } = useContext(Image360HistoricalDetailsContext);
+
   const {
     revisionDetailsExpanded,
     setRevisionDetailsExpanded,

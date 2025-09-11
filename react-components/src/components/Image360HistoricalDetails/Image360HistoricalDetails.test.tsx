@@ -1,213 +1,168 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
-import userEvent from '@testing-library/user-event';
+import { render } from '@testing-library/react';
+import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { Image360HistoricalDetails } from './Image360HistoricalDetails';
 import { type Image360HistoricalDetailsProps } from './types';
 import { viewerMock } from '#test-utils/fixtures/viewer';
+import { createMockImage360Entity } from '#test-utils/fixtures/image360Station';
 import {
-  createMockImage360Entity,
-  createMockImage360Revision
-} from '#test-utils/fixtures/image360Station';
-import {
-  Image360HistoricalDetailsViewModelContext,
-  type Image360HistoricalDetailsViewModelDependencies
-} from './Image360HistoricalDetails.viewmodel.context';
-import { type ReactElement, type ReactNode } from 'react';
+  type Image360HistoricalDetailsDependencies,
+  Image360HistoricalDetailsContext
+} from './Image360HistoricalDetails.context';
+import { type ReactElement, type ReactNode, forwardRef } from 'react';
 
 describe(Image360HistoricalDetails.name, () => {
   const mockOnExpand = vi.fn();
 
-  const mockContextValue: Image360HistoricalDetailsViewModelDependencies = {
-    formatDateTime: vi.fn(({ date }) => date.toISOString().split('T')[0]),
-    revokeObjectUrl: vi.fn()
+  const mockEntity = createMockImage360Entity([]);
+
+  // Create a proper mutable ref object for React
+  const mockRef = { current: 100 };
+  Object.defineProperty(mockRef, 'current', {
+    writable: true,
+    enumerable: true,
+    configurable: true,
+    value: 100
+  });
+
+  const mockViewModelResult: ReturnType<
+    Image360HistoricalDetailsDependencies['useImage360HistoricalDetailsViewModel']
+  > = {
+    revisionDetailsExpanded: false,
+    setRevisionDetailsExpanded: vi.fn(),
+    activeRevision: 2,
+    setActiveRevision: vi.fn(),
+    revisionCollection: [
+      { date: '2024-01-15', imageUrl: 'thumb1.jpg', index: 0, image360Entity: mockEntity },
+      { date: '2024-02-20', imageUrl: 'thumb2.jpg', index: 1, image360Entity: mockEntity },
+      { date: '2024-03-10', imageUrl: 'thumb3.jpg', index: 2, image360Entity: mockEntity }
+    ],
+    imageUrls: ['thumb1.jpg', 'thumb2.jpg', 'thumb3.jpg'],
+    minWidth: '250px',
+    newScrollPosition: mockRef,
+    stationId: 'station-123',
+    stationName: 'Main Station'
   };
+
+  const mockUseImage360HistoricalDetailsViewModel = vi.fn(() => mockViewModelResult);
+
+  const mockImage360HistoricalPanel = vi.fn((_props) => (
+    <div data-testid="historical-panel">Panel</div>
+  ));
+
+  const mockImage360HistoricalSummaryFn = vi.fn((_props, ref) => (
+    <div data-testid="historical-summary" ref={ref}>
+      Summary
+    </div>
+  ));
+
+  const mockImage360HistoricalSummary = forwardRef<number, any>(mockImage360HistoricalSummaryFn);
+
+  const mockDependencies: Image360HistoricalDetailsDependencies = {
+    Image360HistoricalPanel: mockImage360HistoricalPanel,
+    Image360HistoricalSummary: mockImage360HistoricalSummary,
+    useImage360HistoricalDetailsViewModel: mockUseImage360HistoricalDetailsViewModel
+  };
+
+  beforeEach(() => {
+    mockUseImage360HistoricalDetailsViewModel.mockReturnValue(mockViewModelResult);
+  });
 
   const defaultProps: Image360HistoricalDetailsProps = {
     viewer: viewerMock,
-    image360Entity: undefined,
+    image360Entity: mockEntity,
     onExpand: mockOnExpand,
     fallbackLanguage: 'en'
   };
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <Image360HistoricalDetailsViewModelContext.Provider value={mockContextValue}>
+    <Image360HistoricalDetailsContext.Provider value={mockDependencies}>
       {children}
-    </Image360HistoricalDetailsViewModelContext.Provider>
+    </Image360HistoricalDetailsContext.Provider>
   );
 
-  test('renders without crashing when no entity is provided', () => {
+  test('renders DetailsContainer with correct minWidth style', () => {
     const { container } = render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
 
-    expect(container.firstChild).toBeTruthy();
+    assert(container.firstChild !== null);
+
+    const detailsContainer = container.firstChild as HTMLElement;
+    expect(detailsContainer.style.minWidth).toBe('250px');
   });
 
-  test('renders with image360 entity and displays historical panel', () => {
-    const testRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-01-15T10:30:00Z'),
-        thumbnailUrl: 'https://example.com/thumb1.jpg'
+  test('renders Image360HistoricalPanel with correct props', () => {
+    render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
+
+    expect(mockImage360HistoricalPanel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        revisionCount: 3,
+        revisionDetailsExpanded: false,
+        setRevisionDetailsExpanded: expect.any(Function),
+        fallbackLanguage: 'en'
       }),
-      createMockImage360Revision({
-        date: new Date('2024-02-20T14:45:00Z'),
-        thumbnailUrl: 'https://example.com/thumb2.jpg'
+      expect.anything()
+    );
+  });
+
+  test('renders Image360HistoricalSummary when expanded with correct props', () => {
+    mockUseImage360HistoricalDetailsViewModel.mockReturnValue({
+      ...mockViewModelResult,
+      revisionDetailsExpanded: true
+    });
+
+    render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
+
+    expect(mockImage360HistoricalSummaryFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        viewer: viewerMock,
+        stationId: 'station-123',
+        stationName: 'Main Station',
+        activeRevision: 2,
+        setActiveRevision: expect.any(Function),
+        revisionCollection: expect.arrayContaining([
+          expect.objectContaining({
+            date: '2024-01-15',
+            imageUrl: 'thumb1.jpg',
+            index: 0,
+            image360Entity: mockEntity
+          }),
+          expect.objectContaining({
+            date: '2024-02-20',
+            imageUrl: 'thumb2.jpg',
+            index: 1,
+            image360Entity: mockEntity
+          }),
+          expect.objectContaining({
+            date: '2024-03-10',
+            imageUrl: 'thumb3.jpg',
+            index: 2,
+            image360Entity: mockEntity
+          })
+        ]),
+        fallbackLanguage: 'en'
       }),
-      createMockImage360Revision({
-        date: new Date('2024-03-10T08:15:00Z'),
-        thumbnailUrl: 'https://example.com/thumb3.jpg'
-      })
-    ];
+      expect.anything()
+    );
+  });
 
-    const mockEntity = createMockImage360Entity(testRevisions);
-
-    render(<Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />, {
-      wrapper
+  test('does not render Image360HistoricalSummary when not expanded', () => {
+    mockUseImage360HistoricalDetailsViewModel.mockReturnValue({
+      ...mockViewModelResult,
+      revisionDetailsExpanded: false
     });
 
-    expect(screen.getByRole('button')).toBeTruthy();
+    render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
+
+    expect(mockImage360HistoricalSummaryFn).not.toHaveBeenCalled();
   });
 
-  test('expands to show historical summary when panel is clicked', async () => {
-    const testRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-01-15T10:30:00Z'),
-        thumbnailUrl: 'https://example.com/thumb1.jpg'
-      })
-    ];
+  test('passes all props correctly to useImage360HistoricalDetailsViewModel', () => {
+    render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
 
-    const mockEntity = createMockImage360Entity(testRevisions);
-
-    const { container } = render(
-      <Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />,
-      { wrapper }
-    );
-
-    const expandButton = screen.getByRole('button');
-
-    // Initially collapsed - check that container exists
-    expect(container.firstChild).toBeTruthy();
-
-    // Click to expand
-    await userEvent.click(expandButton);
-
-    expect(mockOnExpand).toHaveBeenCalledTimes(1);
-  });
-
-  test('handles missing onExpand callback gracefully', async () => {
-    const testRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-01-15T10:30:00Z'),
-        thumbnailUrl: 'https://example.com/thumb1.jpg'
-      })
-    ];
-
-    const mockEntity = createMockImage360Entity(testRevisions);
-
-    render(
-      <Image360HistoricalDetails
-        viewer={viewerMock}
-        image360Entity={mockEntity}
-        fallbackLanguage="en"
-      />,
-      { wrapper }
-    );
-
-    const expandButton = screen.getByRole('button');
-
-    // Should not throw when onExpand is not provided
-    await expect(userEvent.click(expandButton)).resolves.not.toThrow();
-  });
-
-  test('displays correct station information', () => {
-    const testRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-01-15T10:30:00Z'),
-        thumbnailUrl: 'https://example.com/thumb1.jpg'
-      })
-    ];
-
-    const mockEntity = createMockImage360Entity(testRevisions);
-
-    const { container } = render(
-      <Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />,
-      { wrapper }
-    );
-
-    expect(container.firstChild).toBeTruthy();
-    expect(mockEntity.getRevisions()).toEqual(testRevisions);
-  });
-
-  test('processes revision collection data correctly', async () => {
-    const testRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-01-15T10:30:00Z'),
-        thumbnailUrl: 'https://example.com/thumb1.jpg'
-      }),
-      createMockImage360Revision({
-        date: new Date('2024-02-20T14:45:00Z'),
-        thumbnailUrl: 'https://example.com/thumb2.jpg'
-      })
-    ];
-
-    const mockEntity = createMockImage360Entity(testRevisions);
-
-    // First render without entity
-    const { rerender } = render(
-      <Image360HistoricalDetails {...defaultProps} image360Entity={undefined} />,
-      { wrapper }
-    );
-
-    // Then render with entity to trigger the fetch
-    rerender(<Image360HistoricalDetails {...defaultProps} image360Entity={mockEntity} />);
-
-    // Wait for async operations to complete
-    await waitFor(() => {
-      expect(mockContextValue.formatDateTime).toHaveBeenCalledWith({
-        date: new Date('2024-01-15T10:30:00Z')
-      });
-    });
-
-    expect(mockContextValue.formatDateTime).toHaveBeenCalledWith({
-      date: new Date('2024-02-20T14:45:00Z')
-    });
-  });
-
-  test('handles entity change and triggers data fetch', async () => {
-    const initialRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-01-15T10:30:00Z'),
-        thumbnailUrl: 'https://example.com/thumb1.jpg'
-      })
-    ];
-
-    const newRevisions = [
-      createMockImage360Revision({
-        date: new Date('2024-02-20T14:45:00Z'),
-        thumbnailUrl: 'https://example.com/thumb2.jpg'
-      })
-    ];
-
-    const initialEntity = createMockImage360Entity(initialRevisions);
-    const newEntity = createMockImage360Entity(newRevisions);
-
-    const { rerender } = render(
-      <Image360HistoricalDetails {...defaultProps} image360Entity={undefined} />,
-      { wrapper }
-    );
-
-    rerender(<Image360HistoricalDetails {...defaultProps} image360Entity={initialEntity} />);
-
-    await waitFor(() => {
-      expect(mockContextValue.formatDateTime).toHaveBeenCalled();
-    });
-    vi.clearAllMocks();
-
-    // Change entity to trigger new fetch
-    rerender(<Image360HistoricalDetails {...defaultProps} image360Entity={newEntity} />);
-
-    await waitFor(() => {
-      expect(mockContextValue.formatDateTime).toHaveBeenCalledWith({
-        date: new Date('2024-02-20T14:45:00Z')
-      });
+    expect(mockUseImage360HistoricalDetailsViewModel).toHaveBeenCalledWith({
+      viewer: viewerMock,
+      image360Entity: mockEntity,
+      onExpand: mockOnExpand,
+      fallbackLanguage: 'en'
     });
   });
 });
