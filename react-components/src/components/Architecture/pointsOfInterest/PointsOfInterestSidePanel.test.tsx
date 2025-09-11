@@ -17,10 +17,6 @@ import { createPointOfInterestMock } from '#test-utils/fixtures/pointsOfInterest
 describe(PointsOfInterestSidePanel.name, () => {
   const dependencies = getMocksByDefaultDependencies(defaultPointsOfInterestSidePanelDependencies);
 
-  const mockGetPointsOfInterestTool = vi.fn<() => PointsOfInterestTool<unknown> | undefined>(
-    () => undefined
-  );
-
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <PointsOfInteresSidePanelContext.Provider value={dependencies}>
       {children}
@@ -38,7 +34,7 @@ describe(PointsOfInterestSidePanel.name, () => {
 
     expect(MockChildComponent).toHaveBeenCalledTimes(1);
 
-    mockGetPointsOfInterestTool.mockReturnValue(
+    dependencies.usePointsOfInterestTool.mockReturnValue(
       createMockPointsOfInterestTool({ enabled: false, checked: false })
     );
 
@@ -46,7 +42,7 @@ describe(PointsOfInterestSidePanel.name, () => {
 
     expect(MockChildComponent).toHaveBeenCalledTimes(2);
 
-    mockGetPointsOfInterestTool.mockReturnValue(
+    dependencies.usePointsOfInterestTool.mockReturnValue(
       createMockPointsOfInterestTool({ enabled: true, checked: true })
     );
 
