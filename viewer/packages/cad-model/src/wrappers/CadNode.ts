@@ -344,7 +344,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
     this.materialManager.off('materialsChanged', this._setModelRenderLayers);
-    this._sectorRepository.clearCache();
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
 
     // Dispose all tracked mesh groups and their resources
