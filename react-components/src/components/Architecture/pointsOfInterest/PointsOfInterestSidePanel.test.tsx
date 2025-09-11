@@ -51,27 +51,21 @@ describe(PointsOfInterestSidePanel.name, () => {
     expect(MockChildComponent).toHaveBeenCalledTimes(3);
   });
 
-  test('panel is only open if tool is enabled and checked', () => {
-    const combinations = [
-      [false, false],
-      [true, false],
-      [false, true],
-      [true, true]
-    ];
+  test.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true]
+  ])('panel is only open if tool is enabled and checked, testing %s, %s', (enabled, checked) => {
+    dependencies.usePointsOfInterestTool.mockReturnValue(
+      createMockPointsOfInterestTool({ enabled, checked })
+    );
 
-    for (const [enabled, checked] of combinations) {
-      dependencies.PoiList.mockClear();
+    render(<PointsOfInterestSidePanel />, {
+      wrapper
+    });
 
-      dependencies.usePointsOfInterestTool.mockReturnValue(
-        createMockPointsOfInterestTool({ enabled, checked })
-      );
-
-      render(<PointsOfInterestSidePanel />, {
-        wrapper
-      });
-
-      expect(dependencies.PoiList).toHaveBeenCalledTimes(enabled && checked ? 1 : 0);
-    }
+    expect(dependencies.PoiList).toHaveBeenCalledTimes(enabled && checked ? 1 : 0);
   });
 
   test('if a POI is not selected, the PoiList component should be displayed', () => {
