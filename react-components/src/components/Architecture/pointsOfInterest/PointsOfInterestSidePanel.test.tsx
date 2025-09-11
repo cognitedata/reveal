@@ -6,7 +6,7 @@ import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInt
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
   defaultPointsOfInterestSidePanelDependencies,
-  PointsOfInteresSidePanelContext
+  PointsOfInterestSidePanelContext
 } from './PointsOfInterestSidePanel.context';
 
 import { render } from '@testing-library/react';
@@ -18,9 +18,9 @@ describe(PointsOfInterestSidePanel.name, () => {
   const dependencies = getMocksByDefaultDependencies(defaultPointsOfInterestSidePanelDependencies);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <PointsOfInteresSidePanelContext.Provider value={dependencies}>
+    <PointsOfInterestSidePanelContext.Provider value={dependencies}>
       {children}
-    </PointsOfInteresSidePanelContext.Provider>
+    </PointsOfInterestSidePanelContext.Provider>
   );
 
   test('child component is rendered even if poi tool is not enabled', () => {

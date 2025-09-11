@@ -1,12 +1,12 @@
 import { CollapsablePanel } from '@cognite/cogs.js';
 import { type PropsWithChildren, type ReactNode, useContext } from 'react';
 import styled from 'styled-components';
-import { PointsOfInteresSidePanelContext } from './PointsOfInterestSidePanel.context';
+import { PointsOfInterestSidePanelContext } from './PointsOfInterestSidePanel.context';
 import { useNullableCommandProperty } from '../hooks/useCommandProperty';
 
 export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): ReactNode => {
   const { useSelectedPoi, usePointsOfInterestTool, PoiList, PoiInfoPanelContent } = useContext(
-    PointsOfInteresSidePanelContext
+    PointsOfInterestSidePanelContext
   );
 
   const tool = usePointsOfInterestTool();

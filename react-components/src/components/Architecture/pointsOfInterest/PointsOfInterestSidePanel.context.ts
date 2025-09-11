@@ -18,6 +18,7 @@ export const defaultPointsOfInterestSidePanelDependencies = {
   PoiInfoPanelContent
 };
 
-export const PointsOfInteresSidePanelContext = createContext<PointsOfInterestSidePanelDependencies>(
-  defaultPointsOfInterestSidePanelDependencies
-);
+export const PointsOfInterestSidePanelContext =
+  createContext<PointsOfInterestSidePanelDependencies>(
+    defaultPointsOfInterestSidePanelDependencies
+  );
