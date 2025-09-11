@@ -96,7 +96,7 @@ describe(bestFitCylinder.name, () => {
   });
 });
 
-function checkCorrectness(
+export function checkCorrectness(
   actualCylinder: LeastSquareCylinderResult | undefined,
   expectedCylinder: LeastSquareCylinderResult,
   tolerance = 0.05
@@ -181,7 +181,7 @@ function getAxisError(
  * @param angularCoverage - Optional fraction of the cylinder's circumference to cover (0 to 1).
  * @returns An array of `Vector3` points positioned on the surface of the cylinder.
  */
-function createPoints(
+export function createPoints(
   cylinder: LeastSquareCylinderResult,
   count: number,
   random: Random,
