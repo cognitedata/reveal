@@ -3,7 +3,7 @@ import { type InternalId, type Asset } from '@cognite/sdk';
 import { createContext, useContext } from 'react';
 import { chunk } from 'lodash';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { AllAssetFilterProps } from '../query/network/common/filters';
+import { type AllAssetFilterProps } from '../query/network/common/filters';
 import { executeParallel } from '../utilities/executeParallel';
 import { queryKeys } from '../utilities/queryKeys';
 import { MAX_PARALLEL_QUERIES } from '../data-providers/utils/getDMSModelRevisionRefs';
@@ -24,7 +24,7 @@ const MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS = 100;
 
 export const useFetchClassicAssetsByIds = (
   assetIdsToFilter: InternalId[],
-  filter? : AllAssetFilterProps
+  filter?: AllAssetFilterProps
 ): UseQueryResult<Asset[], undefined> => {
   const { useSDK } = useContext(UseFetchAllClassicAssetsContext);
   const sdk = useSDK();
