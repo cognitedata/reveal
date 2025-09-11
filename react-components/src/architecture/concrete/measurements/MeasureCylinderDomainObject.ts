@@ -12,9 +12,9 @@ export class MeasureCylinderDomainObject extends CylinderDomainObject {
     super(primitiveType);
     if (primitiveType === PrimitiveType.Diameter) {
       this.color = new Color(Color.NAMES.yellow);
+      this.renderStyle.depthTest = false; // Should be visible through other geometry
       this.renderStyle.showLabel = true;
-      this.renderStyle.depthTest = false;
-      this.renderStyle.relativeTextSize = 0.5;
+      this.renderStyle.relativeTextSize = 1; // Should use large labels
     } else {
       this.color = new Color(Color.NAMES.magenta);
     }

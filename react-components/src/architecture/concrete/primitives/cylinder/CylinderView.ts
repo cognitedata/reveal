@@ -48,6 +48,7 @@ const RELATIVE_MAX_RADIUS = 0.9;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
 const LABEL_PADDING_FACTOR = 1.1;
+const SMALL_SIZE_TOLERANCE_FACTOR = 0.99;
 
 const HEIGHT_LABEL = 'HeightLabel';
 const RADIUS_LABEL_A = 'RadiusLabelA';
@@ -346,7 +347,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
   private createRadiusLabel(name: string): Sprite | undefined {
     const value = this.domainObject.cylinder.radius;
-    if (!Cylinder.isValidSize(value)) {
+    if (value < Cylinder.MinSize * SMALL_SIZE_TOLERANCE_FACTOR) {
       return undefined; // Not show when about 0
     }
     const labelHeight = this.getRadiusLabelHeight();
@@ -354,17 +355,13 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   private createDiameterLabel(name: string): Sprite | undefined {
-    const value = this.domainObject.cylinder.diameter;
-    if (!Cylinder.isValidSize(value * 0.99)) {
-      return undefined; // Not show when about 0
-    }
     const labelHeight = this.getDiameterLabelHeight();
-    return this.createLabel(name, value, labelHeight);
+    return this.createLabel(name, this.domainObject.cylinder.diameter, labelHeight);
   }
 
   private createHeightLabel(name: string): Sprite | undefined {
     const value = this.domainObject.cylinder.height;
-    if (!Cylinder.isValidSize(value * 0.99)) {
+    if (value < Cylinder.MinSize * SMALL_SIZE_TOLERANCE_FACTOR) {
       return undefined; // Not show when about 0
     }
     const labelHeight = this.getHeightLabelHeight();
@@ -378,7 +375,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
   private getHeightLabelHeight(): number {
     const { style, domainObject } = this;
-    return 2 * style.relativeTextSize * domainObject.cylinder.height;
+    return style.relativeTextSize * domainObject.cylinder.height;
   }
 
   private getDiameterLabelHeight(): number {
@@ -459,17 +456,19 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       label.position.copy(center);
       label.visible = true;
     }
+
     function updateDiameterLabel(center: Vector3, label: Object3D, labelHeight: number): void {
       const cameraDirection = newVector3().subVectors(center, cameraPosition).normalize();
       const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
 
       // Here the label will be placed one top of the cylinder.
+      const padding = LABEL_PADDING_FACTOR * labelHeight;
       if (Math.abs(axis.y) > 0.5) {
         // Mostly vertical cylinder
-        center.addScaledVector(axis, -height - LABEL_PADDING_FACTOR * labelHeight);
+        center.addScaledVector(axis, -height - padding);
       } else {
         // Mostly horizontal cylinder
-        center.addScaledVector(radialDirection, -radius - LABEL_PADDING_FACTOR * labelHeight);
+        center.addScaledVector(radialDirection, -radius - padding);
       }
       label.position.copy(center);
       label.visible = true;
