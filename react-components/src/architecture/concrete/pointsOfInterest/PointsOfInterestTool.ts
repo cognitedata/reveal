@@ -40,6 +40,9 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
 
   public override onActivate(): void {
     super.onActivate();
+
+    // TODO: This should be getPointsOfInterestDomainObject
+    // is should be created when the user do something to create the first point
     const domainObject = this.getOrCreatePointsOfInterestDomainObject();
     domainObject.setVisibleInteractive(true, this.renderTarget);
     this.setIsCreating(true);
@@ -49,9 +52,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   public override onDeactivate(): void {
     super.onDeactivate();
     const domainObject = this.getPointsOfInterestDomainObject();
-    if (domainObject !== undefined) {
-      domainObject.setSelectedPointOfInterest(undefined);
-    }
+    domainObject?.setSelectedPointOfInterest(undefined);
     this.setIsCreating(false);
     this.setCursor('default');
     this.setAssignedInstance(undefined);
@@ -74,14 +75,14 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     return this._anchoredDialogContent;
   }
 
-  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> | undefined {
+  private getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> | undefined {
     return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 
   private getOrCreatePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
-    const oldPoiDomainObject = this.getPointsOfInterestDomainObject();
-    if (oldPoiDomainObject !== undefined) {
-      return oldPoiDomainObject;
+    const oldDomainObject = this.getPointsOfInterestDomainObject();
+    if (oldDomainObject !== undefined) {
+      return oldDomainObject;
     }
     const domainObject = new PointsOfInterestDomainObject(
       new PointsOfInterestAdsProvider(
