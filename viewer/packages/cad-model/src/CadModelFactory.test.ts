@@ -12,7 +12,7 @@ import { It, Mock } from 'moq.ts';
 import { GeometryFilter } from './types';
 
 import { jest } from '@jest/globals';
-import { createMockModelIdentifier } from '../../../test-utilities';
+import { createMockLocalModelIdentifier } from '../../../test-utilities';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;
@@ -22,7 +22,7 @@ describe('CadModelFactory', () => {
   beforeEach(() => {
     materialManager = new CadMaterialManager();
 
-    const mockIdentifier = createMockModelIdentifier();
+    const mockIdentifier = createMockLocalModelIdentifier();
     mockIdentifierObject = mockIdentifier.object();
 
     const testOutput: BlobOutputMetadata = { blobId: 1, format: 'gltf-directory', version: 9 };
