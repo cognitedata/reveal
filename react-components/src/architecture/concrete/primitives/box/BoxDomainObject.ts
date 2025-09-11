@@ -193,7 +193,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     }
   }
 
-  public expandBoundingBox(boundingBox: Box3): void {
+  public override expandBoundingBox(boundingBox: Box3): void {
     this.box.expandBoundingBox(boundingBox);
   }
 }

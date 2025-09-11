@@ -488,6 +488,12 @@ export abstract class DomainObject implements TreeNodeType {
     return boundingBox;
   }
 
+  /**
+   * Expands the provided bounding box to include the bounds of this domain object.
+   * Override this to provide the actual implementation for specific domain object types.
+   *
+   * @param _boundingBox - The bounding box to be expanded. This parameter is typically modified in-place.
+   */
   public expandBoundingBox(_boundingBox: Box3): void {}
 
   /**
