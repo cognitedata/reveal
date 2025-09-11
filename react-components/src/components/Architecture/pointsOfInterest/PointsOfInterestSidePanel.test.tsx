@@ -12,7 +12,7 @@ import {
 import { render } from '@testing-library/react';
 import { type PropsWithChildren, type ReactElement, type FC } from 'react';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { createPointOfInterestMock } from '#test-utils/fixtures/pointsOfInterest';
+import { createPointOfInterestMock } from '#test-utils/fixtures/pointsOfInterest/pointOfInterest';
 
 describe(PointsOfInterestSidePanel.name, () => {
   const dependencies = getMocksByDefaultDependencies(defaultPointsOfInterestSidePanelDependencies);

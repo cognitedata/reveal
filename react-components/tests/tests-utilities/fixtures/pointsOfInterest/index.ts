@@ -1,1 +1,0 @@
-export { createPointOfInterestMock } from './pointOfInterest';
