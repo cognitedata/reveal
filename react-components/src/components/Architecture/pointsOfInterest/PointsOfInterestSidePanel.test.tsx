@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { PointsOfInterestSidePanel } from './PointsOfInterestSidePanel';
 import { Mock } from 'moq.ts';
-import { PointsOfInterestDomainObject, type RevealRenderTarget } from '../../../architecture';
+import { Changes, type CommandUpdateDelegate } from '../../../architecture';
 import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
@@ -11,9 +11,7 @@ import {
 
 import { render } from '@testing-library/react';
 import { type PropsWithChildren, type ReactElement, type FC } from 'react';
-import { PointsOfInterestProvider } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestProvider';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { PointsOfInterestStatus } from '../../../architecture/concrete/pointsOfInterest/types';
 import { createPointOfInterestMock } from '#test-utils/fixtures/pointsOfInterest/pointOfInterest';
 
 describe(PointsOfInterestSidePanel.name, () => {
@@ -115,16 +113,22 @@ function createMockPointsOfInterestTool({
   const tool = new PointsOfInterestTool<unknown>();
   tool.attach(createRenderTargetMock());
 
+  const mockActivateEventListener = vi.fn<(listener: CommandUpdateDelegate) => void>();
+
   const poiToolMock = new Mock<PointsOfInterestTool<unknown>>()
     .setup((p) => p.isEnabled)
     .returns(enabled)
     .setup((p) => p.isChecked)
     .returns(checked)
     .setup((p) => p.addEventListener)
-    .returns((f) => f())
+    .returns(mockActivateEventListener)
     .setup((p) => p.removeEventListener)
     .returns(() => {})
     .object();
+
+  mockActivateEventListener.mockImplementation((listener) => {
+    listener(poiToolMock, Changes.changedPart);
+  });
 
   return poiToolMock;
 }

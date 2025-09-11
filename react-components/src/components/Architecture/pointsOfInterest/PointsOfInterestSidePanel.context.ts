@@ -1,6 +1,4 @@
 import { createContext } from 'react';
-import { useRenderTarget } from '../../RevealCanvas';
-import { usePoiDomainObject } from './usePoiDomainObject';
 import { useSelectedPoi } from './useSelectedPoi';
 import { PoiList } from './PoiList';
 import { PoiInfoPanelContent } from './PoiInfoPanelContent';
