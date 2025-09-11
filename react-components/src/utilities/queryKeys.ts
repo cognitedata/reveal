@@ -2,12 +2,14 @@ import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers';
 import { type InstanceReference } from './instanceIds';
 import { type CadModelOptions } from '../components';
+import { AllAssetFilterProps } from '../query/network/common/filters';
 
 export const queryKeys = {
   all: ['cdf'] as const,
   all3DResources: () => [...queryKeys.all, 'all-3d-resources'] as const,
   // ASSETS
   assetsById: (ids: IdEither[]) => [...assets, ids] as const,
+  assetsByIdsWithFilter: (ids: IdEither[], filter: AllAssetFilterProps) => [...queryKeys.assetsById(ids), filter] as const,
   // DM nodes
   dmNodesById: (ids: DmsUniqueIdentifier[]) => [...dm, ids] as const,
   // Points of interest

@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type InternalId, type Asset } from '@cognite/sdk';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { chunk } from 'lodash';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type AllAssetFilterProps } from '../query/network/common/filters';
@@ -28,10 +28,13 @@ export const useFetchClassicAssetsByIds = (
 ): UseQueryResult<Asset[], undefined> => {
   const { useSDK } = useContext(UseFetchAllClassicAssetsContext);
   const sdk = useSDK();
+
+  const sortedIds = useMemo(() => assetIdsToFilter.sort((a, b) => a.id - b.id), [assetIdsToFilter]);
+
   return useQuery({
-    queryKey: queryKeys.assetsById(assetIdsToFilter),
+    queryKey: queryKeys.assetsByIdsWithFilter(sortedIds, filter ?? {}),
     queryFn: async () => {
-      const assetIdsChunk = chunk(assetIdsToFilter, MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS);
+      const assetIdsChunk = chunk(sortedIds, MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS);
       const assets = await executeParallel(
         assetIdsChunk.map((chunkIds) => async () => {
           const filters: AllAssetFilterProps = filter ?? defaultFilter(chunkIds);

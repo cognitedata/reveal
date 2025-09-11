@@ -71,10 +71,13 @@ export function RuleBasedOutputsSelector({
     isFetched: isAllClassicAssetConnectionsFetched
   } = useFetchClassicAssetsByIds(assetIdsFromMapped);
 
-  const allClassicAssetConnections = useMemo(
-    () => allClassicAsset?.filter((asset) => assetIdsFromMapped.find((id) => id.id === asset.id)),
-    [allClassicAsset, assetIdsFromMapped]
-  );
+  const allClassicAssetConnections = useMemo(() => {
+    if (allClassicAsset === undefined || assetIdsFromMapped.length === 0) {
+      return undefined;
+    }
+    const mappedIds = new Set(assetIdsFromMapped.map((id) => id.id));
+    return allClassicAsset.filter((asset) => mappedIds.has(asset.id));
+  }, [allClassicAsset, assetIdsFromMapped]);
 
   const nodeWithDmIdsFromHybridMappings = useMemo(() => {
     return assetMappings?.flatMap((item) => item.assetMappings.filter(isDmCadAssetMapping));
