@@ -28,8 +28,12 @@ export default class BlendingTestFixture extends StreamingVisualTestFixture {
 
     this.render();
 
-    const cadNode = model.geometryNode as CadNode;
-    const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider(cadNode.cadModelIdentifier);
+    if (!(model.geometryNode instanceof CadNode)) {
+      return Promise.resolve();
+    }
+    const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider(
+      model.geometryNode.cadModelIdentifier
+    );
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 100)),
       DefaultNodeAppearance.Ghosted

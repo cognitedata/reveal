@@ -158,12 +158,13 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     materialManager: CadMaterialManager,
     model: StreamingTestFixtureComponents['model']
   ): Promise<void> {
-    if (model.geometryNode.type !== 'CadNode') {
+    if (!(model.geometryNode instanceof CadNode)) {
       return Promise.resolve();
     }
 
-    const cadNode = model.geometryNode as CadNode;
-    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider(cadNode.cadModelIdentifier);
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider(
+      model.geometryNode.cadModelIdentifier
+    );
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 10)),
       DefaultNodeAppearance.Ghosted

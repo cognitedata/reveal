@@ -10,18 +10,15 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { createBinaryFileProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
 describe(GltfSectorLoader.name, () => {
-  let modelIdentifier: symbol;
-
   let loader: GltfSectorLoader;
   let wantedSectorMock: IMock<WantedSector>;
 
   beforeEach(() => {
     const binMock = createBinaryFileProviderMock();
     wantedSectorMock = createWantedSectorMock();
-    modelIdentifier = wantedSectorMock.object().modelIdentifier.revealInternalId;
 
     const materialManager = new CadMaterialManager();
-    materialManager.addModelMaterials(modelIdentifier, 1);
+    materialManager.addModelMaterials(wantedSectorMock.object().modelIdentifier.revealInternalId, 1);
 
     loader = new GltfSectorLoader(binMock.object(), materialManager);
   });
@@ -29,7 +26,9 @@ describe(GltfSectorLoader.name, () => {
   test('loadSector returns consumed sector with right id and modelIdentifier', async () => {
     const consumedSector = await loader.loadSector(wantedSectorMock.object());
 
-    expect(consumedSector.modelIdentifier.revealInternalId).toBe(modelIdentifier);
+    expect(consumedSector.modelIdentifier.revealInternalId).toBe(
+      wantedSectorMock.object().modelIdentifier.revealInternalId
+    );
     expect(consumedSector.metadata.id).toBe(wantedSectorMock.object().metadata.id);
   });
 
