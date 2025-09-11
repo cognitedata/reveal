@@ -6,6 +6,7 @@ import {
 import { type Image360RevisionDetails } from './Toolbar/Image360HistoricalSummary';
 import { getStationIdentifier } from './utils/getStationIdentifier';
 import { Image360HistoricalDetailsViewModelContext } from './Image360HistoricalDetails.viewmodel.context';
+import { type DataSourceType, type Image360 } from '@cognite/reveal';
 
 export function useImage360HistoricalDetailsViewModel({
   image360Entity,
@@ -17,8 +18,8 @@ export function useImage360HistoricalDetailsViewModel({
   const [imageUrls, setImageUrls] = useState<Array<string | undefined>>([]);
   const previousImageUrls = useRef<Array<string | undefined>>([]);
   const newScrollPosition = useRef(0);
-  const previousImage360Entity = useRef(image360Entity);
-  const { formatDateTime } = useContext(Image360HistoricalDetailsViewModelContext);
+  const previousImage360Entity = useRef<Image360<DataSourceType> | undefined>(undefined);
+  const { formatDateTime, revokeObjectUrl } = useContext(Image360HistoricalDetailsViewModelContext);
 
   const stationId = image360Entity !== undefined ? getStationIdentifier(image360Entity) : undefined;
   const stationName = image360Entity?.label;
@@ -28,7 +29,7 @@ export function useImage360HistoricalDetailsViewModel({
       // Clean up previous URLs
       previousImageUrls.current.forEach((url) => {
         if (url !== undefined) {
-          URL.revokeObjectURL(url);
+          revokeObjectUrl(url);
         }
       });
 
@@ -67,9 +68,7 @@ export function useImage360HistoricalDetailsViewModel({
     const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
 
     if (onExpand !== undefined) {
-      setTimeout(() => {
-        onExpand(revisionDetailsExpanded);
-      }, 0);
+      onExpand(revisionDetailsExpanded);
     }
 
     return newMinWidth;

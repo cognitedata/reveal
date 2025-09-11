@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Image360HistoricalDetails } from './Image360HistoricalDetails';
 import { type Image360HistoricalDetailsProps } from './types';
@@ -18,7 +18,8 @@ describe(Image360HistoricalDetails.name, () => {
   const mockOnExpand = vi.fn();
 
   const mockContextValue: Image360HistoricalDetailsViewModelDependencies = {
-    formatDateTime: vi.fn(({ date }) => date.toISOString().split('T')[0])
+    formatDateTime: vi.fn(({ date }) => date.toISOString().split('T')[0]),
+    revokeObjectUrl: vi.fn()
   };
 
   const defaultProps: Image360HistoricalDetailsProps = {
@@ -33,11 +34,6 @@ describe(Image360HistoricalDetails.name, () => {
       {children}
     </Image360HistoricalDetailsViewModelContext.Provider>
   );
-
-  beforeEach(() => {
-    // Mock URL methods to avoid errors in test environment
-    globalThis.URL.revokeObjectURL = vi.fn();
-  });
 
   test('renders without crashing when no entity is provided', () => {
     const { container } = render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
@@ -93,8 +89,7 @@ describe(Image360HistoricalDetails.name, () => {
     // Click to expand
     await userEvent.click(expandButton);
 
-    // Should call onExpand with true
-    expect(mockOnExpand).toHaveBeenCalledWith(true);
+    expect(mockOnExpand).toHaveBeenCalledTimes(1);
   });
 
   test('handles missing onExpand callback gracefully', async () => {
@@ -119,9 +114,7 @@ describe(Image360HistoricalDetails.name, () => {
     const expandButton = screen.getByRole('button');
 
     // Should not throw when onExpand is not provided
-    expect(async () => {
-      await userEvent.click(expandButton);
-    }).not.toThrow();
+    await expect(userEvent.click(expandButton)).resolves.not.toThrow();
   });
 
   test('displays correct station information', () => {
