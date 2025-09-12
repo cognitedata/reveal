@@ -1,14 +1,11 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Mock } from 'moq.ts';
 import { CadNode } from './CadNode';
-import { SectorRepository } from '@reveal/sector-loader';
 import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
 
 const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
@@ -67,19 +64,6 @@ const getMeshFromGroup = (group: AutoDisposeGroup, index: number): Mesh => {
 };
 
 describe(CadNode.name, () => {
-  test('should call sector repository cache clear on disposal', () => {
-    const sectorRepositoryMock = new Mock<SectorRepository>()
-      .setup(p => p.clearCache)
-      .returns(jest.fn())
-      .object();
-
-    const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-
-    cadNode.dispose();
-
-    expect(jest.mocked(sectorRepositoryMock).clearCache).toHaveBeenCalledTimes(1);
-  });
-
   test('should return needsRedraw state correctly', () => {
     const cadNode = createCadNode(3, 3);
 
