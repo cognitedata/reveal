@@ -204,7 +204,7 @@ describe(useImage360HistoricalDetailsViewModel.name, () => {
     });
 
     expect(result.current.revisionCollection[0].date).toBe('Date not available');
-    expect(defaultDependencies.formatDateTime).not.toHaveBeenCalledWith({ date: undefined });
+    expect(defaultDependencies.formatDateTime).not.toHaveBeenCalled();
   });
 
   test('should handle image 360 entity change from undefined to defined', async () => {
