@@ -63,8 +63,7 @@ export class CadModelFactory {
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
     if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
-      this._gltfSectorRepository =
-        this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider, this._materialManager);
+      this._gltfSectorRepository = this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider);
 
       return this._gltfSectorRepository;
     } else {

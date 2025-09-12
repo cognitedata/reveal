@@ -15,6 +15,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { AutoDisposeGroup } from '@reveal/utilities';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -82,6 +83,14 @@ export class CadManager {
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
+        // Also clean up any mesh groups created from parsed geometries
+        cadModel.removeSectorMeshGroup(sector.metadata.id);
+      }
+
+      // Create meshes from parsedMeshGeometries data
+      let meshGroup: AutoDisposeGroup | undefined = undefined;
+      if (sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0) {
+        meshGroup = cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
@@ -89,13 +98,15 @@ export class CadManager {
       if (!sectorNode) {
         throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
       }
-      if (sector.group) {
-        sectorNode.add(sector.group);
-      }
-      sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
 
-      if (sector.group) {
-        cadModel.setModelRenderLayers(sectorNode.group);
+      // Use meshGroup from parsed geometries, or fallback to sector.group for backward compatibility
+      if (meshGroup) {
+        sectorNode.add(meshGroup);
+      }
+      sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
+
+      if (meshGroup) {
+        cadModel.setModelRenderLayers(meshGroup);
       }
 
       this.markNeedsRedraw();
@@ -251,18 +262,8 @@ export class CadManager {
       return;
     }
 
-    if (sector.group?.children.length !== 1) {
+    if (sector.parsedMeshGeometries?.length !== 1) {
       return;
     }
-
-    const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
-    if (!treeIndices) {
-      return;
-    }
-
-    for (const treeIndex of treeIndices.keys()) {
-      cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
-    }
-    cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }
