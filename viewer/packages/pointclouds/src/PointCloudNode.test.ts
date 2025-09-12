@@ -12,6 +12,7 @@ import { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPoi
 import jest from 'jest-mock';
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
+import { Cylinder } from '@reveal/utilities';
 
 describe(PointCloudNode.name, () => {
   test('getModelTransformation returns transformation set by setModelTransformation', () => {
@@ -24,6 +25,43 @@ describe(PointCloudNode.name, () => {
     const receivedTransform = node.getModelTransformation();
 
     expect(receivedTransform).toEqual(transform);
+  });
+
+  describe('stylableVolumeMetadata', () => {
+    test('returns empty volume list when no annotation is provided', () => {
+      const node = createPointCloudNode({ annotations: [] });
+      expect(node.stylableVolumeMetadata).toEqual([]);
+    });
+
+    test('returns volume objects from annotation list', () => {
+      const shape = new Cylinder(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1), 1);
+      const boundingBox = shape.createBoundingBox();
+      const annotations = [
+        {
+          annotationId: 123,
+          assetRef: { id: 345 },
+          boundingBox,
+          stylableObject: {
+            shape,
+            objectId: 1
+          }
+        },
+        {
+          annotationId: 124,
+          instanceRef: { externalId: 'some-external-id', space: 'some-space' },
+          boundingBox,
+          stylableObject: {
+            shape,
+            objectId: 2
+          }
+        }
+      ];
+
+      const node = createPointCloudNode({ annotations });
+      const result = [...node.stylableVolumeMetadata];
+
+      expect([...result]).toEqual(annotations);
+    });
   });
 
   describe('getSubtreePointsByBox', () => {

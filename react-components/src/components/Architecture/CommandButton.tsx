@@ -10,6 +10,13 @@ import { TOOLTIP_DELAY } from './constants';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
 
+export function createButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+}
+
 export const CommandButton = ({
   inputCommand,
   placement

@@ -15,12 +15,22 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
+import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { type FlexDirection, type PlacementType } from './types';
 import { type ReactNode, useState, type ReactElement } from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
+
+export function createSettingsButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseSettingsCommand) {
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+  return undefined;
+}
 
 export const SettingsButton = ({
   inputCommand,

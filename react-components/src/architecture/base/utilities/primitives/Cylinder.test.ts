@@ -7,6 +7,8 @@ import {
   expectEqualVector3
 } from '#test-utils/primitives/primitiveTestUtil';
 import { Cylinder } from './Cylinder';
+import { count } from '../extensions/arrayUtils';
+import { Random } from '../misc/Random';
 
 describe(Cylinder.name, () => {
   test('Should test all properties on regular primitive', () => {
@@ -69,6 +71,33 @@ describe(Cylinder.name, () => {
     point.x -= 0.1 * primitive.diameter;
     point.z += 0.1 * primitive.height;
     expect(primitive.isPointInside(point, new Matrix4())).toBe(false);
+  });
+
+  test('should only return points inside cylinder', () => {
+    const points = [];
+    const random = new Random(42);
+
+    const cylinder = new Cylinder();
+    cylinder.radius = 2;
+    cylinder.centerA.set(3, 7, -4);
+    cylinder.centerB.set(1, 2, +2);
+
+    const boundingBox = cylinder.getBoundingBox();
+    for (let i = 0; i < 100; i++) {
+      points.push(random.getPointInsideBox(boundingBox));
+    }
+    const matrix = new Matrix4();
+    const insideCount = count(points, (point) => cylinder.isPointInside(point, matrix));
+
+    // Check that some points are inside and some are outside
+    expect(insideCount).greaterThan(5);
+    expect(insideCount).lessThan(points.length - 5);
+
+    const insidePoint = cylinder.getPointsInside(points);
+    expect(insidePoint).toHaveLength(insideCount);
+    for (const point of insidePoint) {
+      expect(cylinder.isPointInside(point, matrix)).toBe(true);
+    }
   });
 
   test('should intersect vertical primitive and some horizontal line', () => {
@@ -175,6 +204,20 @@ describe(Cylinder.name, () => {
     primitive.radius = 0;
     primitive.forceMinSize();
     expect(primitive.radius).toBe(Cylinder.MinSize);
+  });
+
+  test('should test apply matrix', () => {
+    const primitive = new Cylinder();
+    primitive.radius = 1;
+    primitive.centerA.set(0, 0, 1);
+    primitive.centerB.set(0, 0, -1);
+    const matrix = new Matrix4().makeRotationX(Math.PI / 2).setPosition(1, 2, 3);
+    primitive.applyMatrix4(matrix);
+
+    expect(primitive.radius).toBeCloseTo(1);
+    expect(primitive.height).toBeCloseTo(2);
+    expectEqualVector3(primitive.centerA, new Vector3(1, 1, 3));
+    expectEqualVector3(primitive.centerB, new Vector3(1, 3, 3));
   });
 });
 

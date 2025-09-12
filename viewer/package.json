@@ -85,7 +85,6 @@
     "@microsoft/api-extractor": "^7.43.1",
     "@types/dat.gui": "^0.7.13",
     "@types/gl": "^6.0.5",
-    "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.12",
     "@types/jest-environment-puppeteer": "^5.0.6",
     "@types/jest-image-snapshot": "^6.4.0",
@@ -156,7 +155,7 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.9.4",
   "resolutions": {
     "binary-install/axios": "^0.30.0"
   }

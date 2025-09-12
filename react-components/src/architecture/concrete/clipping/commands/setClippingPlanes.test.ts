@@ -8,7 +8,7 @@ import { setClippingPlanes } from './setClippingPlanes';
 describe(setClippingPlanes.name, () => {
   test('Should set global clipping planes', () => {
     const renderTarget = createFullRenderTargetMock();
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
 
     // Add some planes to the root
     const folder = new ClipFolder();
@@ -23,7 +23,7 @@ describe(setClippingPlanes.name, () => {
 
   test('Should set global clipping planes to none planes', () => {
     const renderTarget = createFullRenderTargetMock();
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     setClippingPlanes(root);
     expect(renderTarget.getGlobalClippingPlanes().length).toBe(0);
   });
