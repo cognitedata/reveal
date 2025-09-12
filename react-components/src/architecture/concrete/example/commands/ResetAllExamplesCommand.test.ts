@@ -13,7 +13,7 @@ describe(ResetAllExamplesCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    root = renderTarget.rootDomainObject;
+    root = renderTarget.root;
   });
 
   test('Should have initial state', () => {

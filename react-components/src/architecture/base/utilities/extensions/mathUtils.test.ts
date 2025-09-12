@@ -6,9 +6,7 @@ import {
   forceAngleAround0,
   forceBetween0AndPi,
   forceBetween0AndTwoPi,
-  getRandomGaussian,
   getRandomInt,
-  getRandomIntByMax,
   isAbsEqual,
   isBetween,
   isEqual,
@@ -200,36 +198,5 @@ describe('mathUtils', () => {
   test('should get a random integer numbers', () => {
     expect(isInteger(getRandomInt())).toBe(true);
     expect(isInteger(getRandomInt())).toBe(true);
-  });
-
-  test('should get a random integer numbers less than max', () => {
-    const exclusiveMax = 10;
-    for (let i = 0; i < 10; i++) {
-      const value = getRandomIntByMax(exclusiveMax);
-      expect(isInteger(value)).toBe(true);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(exclusiveMax);
-    }
-  });
-
-  test('should get random numbers from gaussian distribution', () => {
-    const expectedMean = -23;
-    const expectedStdDev = 2;
-    const n = 100;
-    let sum = 0;
-    let sumSquared = 0;
-    for (let i = 0; i < n; i++) {
-      const value = getRandomGaussian(expectedMean, expectedStdDev);
-      sum += value;
-      sumSquared += value * value;
-    }
-    const actualMean = sum / n;
-    const actualStdDev = Math.sqrt((sumSquared - sum * actualMean) / n);
-
-    // give a quite a bit of wiggle room so it never fails
-    expect(actualMean).toBeGreaterThan(expectedMean - expectedStdDev);
-    expect(actualMean).toBeLessThan(expectedMean + expectedStdDev);
-    expect(actualStdDev).toBeGreaterThan(expectedStdDev - 0.5);
-    expect(actualStdDev).toBeLessThan(expectedStdDev + 0.5);
   });
 });

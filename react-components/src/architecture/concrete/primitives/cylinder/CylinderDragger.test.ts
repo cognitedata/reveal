@@ -1,7 +1,7 @@
 import { assert, describe, expect, test } from 'vitest';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { CylinderDragger } from './CylinderDragger';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Matrix4, Ray, Vector3 } from 'three';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';

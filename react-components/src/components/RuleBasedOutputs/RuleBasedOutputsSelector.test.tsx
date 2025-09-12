@@ -190,12 +190,12 @@ describe(RuleBasedOutputsSelector.name, () => {
       mockuseAssetMappedNodesForRevisionsResult
     );
 
-    const mockUseAssetsByIdsQueryResult = {
+    const mockAllClassicAssetsReturn = {
       data: mockClassicAssetConnections,
       isLoading: false,
       isFetched: true
     };
-    defaultDependencies.useAssetsByIdsQuery.mockReturnValue(mockUseAssetsByIdsQueryResult);
+    defaultDependencies.useFetchClassicAssetsByIds.mockReturnValue(mockAllClassicAssetsReturn);
 
     const mockUseMappedEdgesForRevisionsResult = {
       data: mockFdmMappedEquipmentEdges,
