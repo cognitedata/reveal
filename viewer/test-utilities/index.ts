@@ -22,3 +22,4 @@ export { createRandomBox } from './src/createBoxes';
 export { Mutable } from './src/reflection';
 export { mockViewer, mockViewerComponents, fakeGetBoundingClientRect } from './src/viewerMock';
 export { autoMockWebGLRenderer } from './src/autoMockWebGLRenderer';
+export { createMockModelIdentifier } from './src/modelIdentifier';

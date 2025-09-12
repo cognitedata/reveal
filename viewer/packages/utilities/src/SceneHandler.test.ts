@@ -21,7 +21,7 @@ describe(SceneHandler.name, () => {
     const cadNodeMock = cadModel.cadNode;
 
     const sceneHandler = new SceneHandler();
-    sceneHandler.addCadModel(cadNodeMock, '0');
+    sceneHandler.addCadModel(cadNodeMock, Symbol('0'));
     sceneHandler.addObject3D(customObjectMesh);
 
     expect(sceneHandler.scene.children.length).toBe(2);
