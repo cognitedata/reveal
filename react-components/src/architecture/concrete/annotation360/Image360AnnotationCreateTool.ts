@@ -148,7 +148,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   }
 
   protected override getOrCreateParent(): DomainObject {
-    const root = this.rootDomainObject;
+    const root = this.root;
     const folder = root.getDescendantByType(Image360AnnotationFolder);
     if (folder !== undefined) {
       return folder;

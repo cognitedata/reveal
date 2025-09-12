@@ -102,7 +102,7 @@ export class ExampleTool extends BaseEditTool {
     domainObject.center.copy(center);
 
     this.deselectAll();
-    this.rootDomainObject.addChildInteractive(domainObject);
+    this.root.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, this.renderTarget);
     domainObject.setSelectedInteractive(true);
 

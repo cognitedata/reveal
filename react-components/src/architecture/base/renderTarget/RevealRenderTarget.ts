@@ -118,7 +118,7 @@ export class RevealRenderTarget {
     return this._config;
   }
 
-  public get rootDomainObject(): RootDomainObject {
+  public get root(): RootDomainObject {
     return this._rootDomainObject;
   }
 
@@ -365,14 +365,14 @@ export class RevealRenderTarget {
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
     this._clippedBoundingBox = clippedBoundingBox;
     this._cropBoxUniqueId = domainObject?.uniqueId;
-    this.rootDomainObject.notifyDescendants(Changes.clipping);
+    this.root.notifyDescendants(Changes.clipping);
   }
 
   public clearGlobalClipping(): void {
     this.viewer.setGlobalClippingPlanes([]);
     this._clippedBoundingBox = undefined;
     this._cropBoxUniqueId = undefined;
-    this.rootDomainObject.notifyDescendants(Changes.clipping);
+    this.root.notifyDescendants(Changes.clipping);
   }
 
   // ==================================================
