@@ -24,7 +24,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
   private readonly _cadGeometryRenderPasses: CadGeometryRenderPasses;
   private readonly _cadModels: {
     cadNode: THREE.Object3D;
-    modelIdentifier: string;
+    modelIdentifier: symbol;
   }[];
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;

@@ -9,6 +9,7 @@ import { AutoDisposeGroup } from '@reveal/utilities';
 import { SectorMetadata } from '../metadata/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { ParsedGeometry } from '@reveal/sector-parser';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 export type TriangleMesh = {
   readonly fileId: number;
@@ -35,7 +36,7 @@ export type InstancedMesh = {
 };
 
 export interface ConsumedSector {
-  modelIdentifier: string;
+  modelIdentifier: ModelIdentifier;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: AutoDisposeGroup | undefined;
@@ -44,7 +45,7 @@ export interface ConsumedSector {
 }
 
 export interface WantedSector {
-  modelIdentifier: string;
+  modelIdentifier: ModelIdentifier;
   modelBaseUrl: string;
   geometryClipBox: THREE.Box3 | null;
   levelOfDetail: LevelOfDetail;

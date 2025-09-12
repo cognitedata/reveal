@@ -14,6 +14,7 @@ import {
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { CadMaterialManager } from '../src/CadMaterialManager';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
+import { CadNode } from '@reveal/cad-model';
 
 export default class RenderingVisualTestFixture extends StreamingVisualTestFixture {
   private readonly guiData = {
@@ -36,7 +37,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     const transformControls = this.attachTransformControlsTo(customBox, camera, renderer.domElement);
     sceneHandler.addObject3D(transformControls.getHelper());
 
-    await this.setupMockCadStyling(cadMaterialManager, model.geometryNode.type);
+    await this.setupMockCadStyling(cadMaterialManager, model);
 
     this.setupGui(stepPipelineExecutor, renderer, cadMaterialManager, pcMaterialManager, sceneHandler);
   }
@@ -153,12 +154,17 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     });
   }
 
-  private setupMockCadStyling(materialManager: CadMaterialManager, modelType: string): Promise<void> {
-    if (modelType !== 'CadNode') {
+  private setupMockCadStyling(
+    materialManager: CadMaterialManager,
+    model: StreamingTestFixtureComponents['model']
+  ): Promise<void> {
+    if (!(model.geometryNode instanceof CadNode)) {
       return Promise.resolve();
     }
 
-    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider(
+      model.geometryNode.cadModelIdentifier
+    );
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 10)),
       DefaultNodeAppearance.Ghosted
