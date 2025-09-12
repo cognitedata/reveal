@@ -41,7 +41,7 @@ export abstract class Transaction {
   // =================================================
 
   public undo(renderTarget: RevealRenderTarget): boolean {
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     const uniqueId = this.changed === Changes.deleted ? this._parentUniqueId : this.uniqueId;
     if (uniqueId === undefined) {
       return false;

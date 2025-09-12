@@ -15,7 +15,7 @@ describe(CircleMarkerView.name, () => {
 
     // Create the marker and add it to the scene
     domainObject = new CircleMarkerDomainObject();
-    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, renderTarget);
 
     view = domainObject.getViewByTarget(renderTarget) as CircleMarkerView;

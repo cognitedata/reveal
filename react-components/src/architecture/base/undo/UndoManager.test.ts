@@ -16,7 +16,7 @@ describe(UndoManager.name, () => {
   let manager: UndoManager;
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    root = renderTarget.rootDomainObject;
+    root = renderTarget.root;
     manager = new UndoManager();
   });
 

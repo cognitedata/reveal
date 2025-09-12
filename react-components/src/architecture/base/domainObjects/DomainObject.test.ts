@@ -275,7 +275,7 @@ describe(DomainObject.name, () => {
   test('should test notify on CommandsUpdater', () => {
     const domainObject = new ChildDomainObject();
     const renderTarget = createFullRenderTargetMock();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
 
     const updateMock = vi.fn();
     renderTarget.updateAllCommands = updateMock;
