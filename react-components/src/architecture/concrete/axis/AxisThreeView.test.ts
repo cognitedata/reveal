@@ -21,7 +21,7 @@ describe(AxisThreeView.name, () => {
 
     // Create axis and add it to the scene
     const domainObject = new AxisDomainObject();
-    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, renderTarget);
 
     view = domainObject.getViewByTarget(renderTarget) as AxisThreeView;

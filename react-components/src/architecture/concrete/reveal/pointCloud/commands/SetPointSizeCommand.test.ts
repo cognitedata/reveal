@@ -9,7 +9,7 @@ describe(SetPointSizeCommand.name, () => {
   let command: SetPointSizeCommand;
   const renderTarget = createFullRenderTargetMock();
   const domainObject = new PointCloudDomainObject(createPointCloudMock());
-  renderTarget.rootDomainObject.addChildInteractive(domainObject);
+  renderTarget.root.addChildInteractive(domainObject);
 
   beforeEach(() => {
     command = new SetPointSizeCommand();

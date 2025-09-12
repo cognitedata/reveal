@@ -16,14 +16,12 @@ export function getRevealDomainUpdateSignal(
     getRevealDomainObjects(renderTarget, predicate)
   );
 
-  renderTarget.rootDomainObject.views.addEventListener(updateDomainObjectListOnRelevantEvent);
+  renderTarget.root.views.addEventListener(updateDomainObjectListOnRelevantEvent);
 
   return {
     signal: objectsSignal,
     dispose: () => {
-      renderTarget.rootDomainObject.views.removeEventListener(
-        updateDomainObjectListOnRelevantEvent
-      );
+      renderTarget.root.views.removeEventListener(updateDomainObjectListOnRelevantEvent);
     }
   };
 
@@ -53,7 +51,5 @@ function getRevealDomainObjects(
   renderTarget: RevealRenderTarget,
   predicate: (domainObject: RevealDomainObject) => boolean
 ): RevealDomainObject[] {
-  return [
-    ...filter(renderTarget.rootDomainObject.getDescendantsByType(RevealDomainObject), predicate)
-  ];
+  return [...filter(renderTarget.root.getDescendantsByType(RevealDomainObject), predicate)];
 }

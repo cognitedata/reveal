@@ -9,7 +9,7 @@ describe(SetPointShapeCommand.name, () => {
   let command: SetPointShapeCommand;
   const renderTarget = createFullRenderTargetMock();
   const domainObject = new PointCloudDomainObject(createPointCloudMock());
-  renderTarget.rootDomainObject.addChildInteractive(domainObject);
+  renderTarget.root.addChildInteractive(domainObject);
 
   beforeEach(() => {
     command = new SetPointShapeCommand();
