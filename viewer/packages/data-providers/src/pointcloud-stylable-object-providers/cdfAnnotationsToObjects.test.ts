@@ -3,8 +3,9 @@
  */
 import { CompositeShape, Cylinder } from '@reveal/utilities';
 import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
-import { CdfPointCloudObjectAnnotation, VolumeAnnotation } from './types';
+import { CdfPointCloudObjectAnnotation, isVolumeAnnotation } from './types';
 import { Vector3 } from 'three';
+import assert from 'assert';
 
 describe(cdfAnnotationsToObjects.name, () => {
   const ARBITRARY_ANNOTATION_ID = 123;
@@ -29,12 +30,14 @@ describe(cdfAnnotationsToObjects.name, () => {
       region: [ARBITRARY_VOLUME]
     };
 
+    assert(isVolumeAnnotation(input.volumeMetadata));
+
     expect(cdfAnnotationsToObjects([input])).toEqual([
       {
         boundingBox: ARBITRARY_VOLUME.createBoundingBox(),
         stylableObject: { shape: new CompositeShape([ARBITRARY_VOLUME]), objectId: 1 },
         annotationId: ARBITRARY_ANNOTATION_ID,
-        instanceRef: (input.volumeMetadata as VolumeAnnotation).assetInstanceRef,
+        instanceRef: input.volumeMetadata.assetInstanceRef,
         assetRef: input.volumeMetadata.asset
       }
     ]);
