@@ -123,7 +123,7 @@ export abstract class BaseEditTool extends NavigationTool {
    * @param except - The visual domain object to exclude from deselection.
    */
   protected deselectAll(except?: VisualDomainObject | undefined): void {
-    for (const domainObject of this.getSelectable()) {
+    for (const domainObject of this.root.getDescendants()) {
       if (except !== undefined && domainObject === except) {
         continue;
       }
