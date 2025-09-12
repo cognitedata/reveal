@@ -80,9 +80,9 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   }
 
   public getOrCreatePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
-    const oldPoiDomainObject = this.root.getDescendantByType(PointsOfInterestDomainObject);
-    if (oldPoiDomainObject !== undefined) {
-      return oldPoiDomainObject;
+    const oldDomainObject = this.root.getDescendantByType(PointsOfInterestDomainObject);
+    if (oldDomainObject !== undefined) {
+      return oldDomainObject;
     }
     const domainObject = new PointsOfInterestDomainObject(
       new PointsOfInterestAdsProvider(
