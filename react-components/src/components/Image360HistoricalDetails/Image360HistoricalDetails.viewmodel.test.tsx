@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { useImage360HistoricalDetailsViewModel } from './Image360HistoricalDetails.viewmodel';
 import { type Image360HistoricalDetailsProps } from './types';
@@ -14,6 +14,7 @@ import {
 } from './Image360HistoricalDetails.viewmodel.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import { type ClassicDataSourceType, type Image360Revision } from '@cognite/reveal';
+import { Mock } from 'moq.ts';
 
 describe(useImage360HistoricalDetailsViewModel.name, () => {
   const mockDefaultDateTime = '2024-01-15T10:30:00Z';
@@ -32,10 +33,6 @@ describe(useImage360HistoricalDetailsViewModel.name, () => {
   ];
 
   const mockEntity = createMockImage360Entity(mockRevisions);
-
-  beforeEach(() => {
-    defaultDependencies.revokeObjectUrl.mockReturnValue(undefined);
-  });
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <Image360HistoricalDetailsViewModelContext.Provider value={defaultDependencies}>
@@ -181,22 +178,33 @@ describe(useImage360HistoricalDetailsViewModel.name, () => {
     expect(result.current.newScrollPosition.current).toBe(0);
   });
 
-  test('should handle image 360 revision date not available', () => {
-    defaultDependencies.formatDateTime.mockReturnValue('Date not available');
+  test('should handle image 360 revision date not available', async () => {
+    const revisionWithUndefinedDate = new Mock<Image360Revision>()
+      .setup((p) => p.date)
+      .returns(undefined)
+      .setup((p) => p.getPreviewThumbnailUrl)
+      .returns(async () => 'mock-thumbnail-url')
+      .object();
 
-    renderHook(
+    const entityWithUndefinedDate = createMockImage360Entity([revisionWithUndefinedDate]);
+
+    const { result } = renderHook(
       () =>
         useImage360HistoricalDetailsViewModel({
           viewer: viewerMock,
-          image360Entity: mockEntity,
+          image360Entity: entityWithUndefinedDate,
           onExpand: mockOnExpand,
           fallbackLanguage: 'en'
         }),
       { wrapper }
     );
 
-    expect(defaultDependencies.formatDateTime({ date: undefined })).toBe('Date not available');
-    expect(defaultDependencies.formatDateTime).toHaveBeenCalledWith({ date: undefined });
+    await waitFor(() => {
+      expect(result.current.revisionCollection.length).toBeGreaterThan(0);
+    });
+
+    expect(result.current.revisionCollection[0].date).toBe('Date not available');
+    expect(defaultDependencies.formatDateTime).not.toHaveBeenCalledWith({ date: undefined });
   });
 
   test('should handle image 360 entity change from undefined to defined', async () => {

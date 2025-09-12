@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
+import { describe, expect, test, vi, assert } from 'vitest';
 import { Image360HistoricalDetails } from './Image360HistoricalDetails';
 import { type Image360HistoricalDetailsProps } from './types';
 import { viewerMock } from '#test-utils/fixtures/viewer';
@@ -15,14 +15,7 @@ describe(Image360HistoricalDetails.name, () => {
 
   const mockEntity = createMockImage360Entity([]);
 
-  // Create a proper mutable ref object for React
   const mockRef = { current: 100 };
-  Object.defineProperty(mockRef, 'current', {
-    writable: true,
-    enumerable: true,
-    configurable: true,
-    value: 100
-  });
 
   const mockViewModelResult: ReturnType<
     Image360HistoricalDetailsDependencies['useImage360HistoricalDetailsViewModel']
@@ -62,10 +55,6 @@ describe(Image360HistoricalDetails.name, () => {
     Image360HistoricalSummary: mockImage360HistoricalSummary,
     useImage360HistoricalDetailsViewModel: mockUseImage360HistoricalDetailsViewModel
   };
-
-  beforeEach(() => {
-    mockUseImage360HistoricalDetailsViewModel.mockReturnValue(mockViewModelResult);
-  });
 
   const defaultProps: Image360HistoricalDetailsProps = {
     viewer: viewerMock,
@@ -119,24 +108,9 @@ describe(Image360HistoricalDetails.name, () => {
         activeRevision: 2,
         setActiveRevision: expect.any(Function),
         revisionCollection: expect.arrayContaining([
-          expect.objectContaining({
-            date: '2024-01-15',
-            imageUrl: 'thumb1.jpg',
-            index: 0,
-            image360Entity: mockEntity
-          }),
-          expect.objectContaining({
-            date: '2024-02-20',
-            imageUrl: 'thumb2.jpg',
-            index: 1,
-            image360Entity: mockEntity
-          }),
-          expect.objectContaining({
-            date: '2024-03-10',
-            imageUrl: 'thumb3.jpg',
-            index: 2,
-            image360Entity: mockEntity
-          })
+          expect.objectContaining(mockViewModelResult.revisionCollection[0]),
+          expect.objectContaining(mockViewModelResult.revisionCollection[1]),
+          expect.objectContaining(mockViewModelResult.revisionCollection[2])
         ]),
         fallbackLanguage: 'en'
       }),
