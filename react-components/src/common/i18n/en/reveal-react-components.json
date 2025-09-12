@@ -82,6 +82,7 @@
   "MEASUREMENTS_ADD_CYLINDER": "Measure vertical cylinder. Select first at the center, second to define the radius, and third for the height.",
   "MEASUREMENTS_ADD_CYLINDER_HORIZONTAL": "Measure horizontal cylinder. Select first at one side, second to define the diameter, and third for the height.",
   "MEASUREMENTS_ADD_CYLINDER_VERTICAL": "Measure vertical cylinder. Select first at one side, second to define the diameter, and third for the height.",
+  "MEASUREMENTS_ADD_DIAMETER": "Measure diameter of a pipe by one click on a point in the point cloud. Use mouse wheel to change the search size.",
   "MEASUREMENTS_ADD_HORIZONTAL_AREA": "Measure rectangular horizontal Area. Click at three points in a horizontal plan.",
   "MEASUREMENTS_ADD_LINE": "Measure distance between two points. Click at the start point and the end point.",
   "MEASUREMENTS_ADD_POINT": "Measure the coordinate of a single point. Click at any point. Use the wheel to resize it",

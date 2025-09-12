@@ -29,7 +29,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
     return this._renderTarget;
   }
 
-  protected get root(): RootDomainObject {
+  public get root(): RootDomainObject {
     return this.renderTarget.root;
   }
 

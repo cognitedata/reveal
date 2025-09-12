@@ -14,7 +14,8 @@ describe(CylinderDomainObject, () => {
       PrimitiveType.Cylinder,
       PrimitiveType.HorizontalCylinder,
       PrimitiveType.VerticalCylinder,
-      PrimitiveType.HorizontalCircle
+      PrimitiveType.HorizontalCircle,
+      PrimitiveType.Diameter
     ]) {
       const domainObject = createCylinderDomainObject(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
@@ -23,6 +24,7 @@ describe(CylinderDomainObject, () => {
       expect(isEmpty(domainObject.typeName)).toBe(false);
       expect(domainObject.renderStyle).toBeInstanceOf(SolidPrimitiveRenderStyle);
       expect(domainObject.createTransaction(Changes.geometry)).toBeDefined();
+      expect(domainObject.hasIndexOnLabel).toBe(primitiveType !== PrimitiveType.Diameter);
     }
   });
 
