@@ -16,7 +16,7 @@ describe(CadDomainObject.name, () => {
     model = createCadMock({ visible: false });
     domainObject = new CadDomainObject(model);
     renderTarget = createFullRenderTargetMock();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
   });
 
   test('has expected default values', () => {

@@ -9,7 +9,7 @@ describe(SetPointColorTypeCommand.name, () => {
   let command: SetPointColorTypeCommand;
   const renderTarget = createFullRenderTargetMock();
   const domainObject = new PointCloudDomainObject(createPointCloudMock());
-  renderTarget.rootDomainObject.addChildInteractive(domainObject);
+  renderTarget.root.addChildInteractive(domainObject);
 
   beforeEach(() => {
     command = new SetPointColorTypeCommand();

@@ -43,6 +43,6 @@ export function createRenderTargetMock(): RevealRenderTarget {
     .returns(new RevealSettingsController(viewerMock));
 
   const root = new RootDomainObject(mock.object(), sdkMock);
-  mock.setup((p) => p.rootDomainObject).returns(root);
+  mock.setup((p) => p.root).returns(root);
   return mock.object();
 }

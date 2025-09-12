@@ -32,7 +32,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   }
 
   public override initializeChildrenIfNeeded(): void {
-    const domainObject = getFirstPointCloudWithClasses(this.rootDomainObject);
+    const domainObject = getFirstPointCloudWithClasses(this.root);
     if (domainObject === undefined) {
       this._children = undefined;
       this._currentUniqueId = undefined;
@@ -99,7 +99,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     if (this._currentUniqueId === undefined) {
       return undefined;
     }
-    return getCurrentDomainObject(this.rootDomainObject, this._currentUniqueId);
+    return getCurrentDomainObject(this.root, this._currentUniqueId);
   }
 }
 
@@ -128,7 +128,7 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   public override get isChecked(): boolean {
-    const domainObject = getCurrentDomainObject(this.rootDomainObject, this._currentUniqueId);
+    const domainObject = getCurrentDomainObject(this.root, this._currentUniqueId);
     if (domainObject === undefined) {
       return false;
     }
@@ -140,7 +140,7 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   protected override setCheckedCore(value: boolean): boolean {
-    const domainObject = getCurrentDomainObject(this.rootDomainObject, this._currentUniqueId);
+    const domainObject = getCurrentDomainObject(this.root, this._currentUniqueId);
     if (domainObject === undefined) {
       return false;
     }

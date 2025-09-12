@@ -51,9 +51,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(
-      AnnotationsDomainObject
-    )) {
+    for (const domainObject of this.root.getDescendantsByType(AnnotationsDomainObject)) {
       domainObject.removeGizmoInteractive();
     }
   }
@@ -154,7 +152,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
   // ==================================================
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
+    return this.root.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 
   private defocusAll(except?: DomainObject | undefined): void {
