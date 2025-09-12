@@ -541,7 +541,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public getVisibleState(renderTarget?: RevealRenderTarget): VisibleState {
-    // If renderTarget is not provided, use the renderTarget of the rootDomainObject
+    // If renderTarget is not provided, use the renderTarget of the root
     if (renderTarget === undefined) {
       renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
@@ -589,7 +589,7 @@ export abstract class DomainObject implements TreeNodeType {
     renderTarget: RevealRenderTarget | undefined = undefined,
     topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
-    // If renderTarget is not provided, use the renderTarget of the rootDomainObject
+    // If renderTarget is not provided, use the renderTarget of the root
     if (renderTarget === undefined) {
       renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {

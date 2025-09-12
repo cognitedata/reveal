@@ -13,7 +13,7 @@ describe(PointCloudFilterCommand.name, () => {
   beforeEach(() => {
     const renderTarget = createFullRenderTargetMock();
     domainObject = new PointCloudDomainObject(createPointCloudMock());
-    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
 
     command = new PointCloudFilterCommand();
     command.attach(renderTarget);

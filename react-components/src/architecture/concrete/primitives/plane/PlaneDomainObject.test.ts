@@ -76,7 +76,7 @@ describe(PlaneDomainObject.name, () => {
   });
 
   test('should be make flipping consistent', () => {
-    const root = createFullRenderTargetMock().rootDomainObject;
+    const root = createFullRenderTargetMock().root;
     // Add some not related planes
     root.addChild(createPlaneDomainObjectMock(PrimitiveType.PlaneX));
     root.addChild(createPlaneDomainObjectMock(PrimitiveType.PlaneY));
@@ -112,7 +112,7 @@ describe(PlaneDomainObject.name, () => {
   });
 
   test('should be make flipping consistent when added new planes', () => {
-    const root = createFullRenderTargetMock().rootDomainObject;
+    const root = createFullRenderTargetMock().root;
     const domainObject1 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
     const domainObject2 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
 

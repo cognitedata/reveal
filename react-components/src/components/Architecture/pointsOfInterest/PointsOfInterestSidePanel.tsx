@@ -1,57 +1,34 @@
 import { CollapsablePanel } from '@cognite/cogs.js';
-import { type PropsWithChildren, type ReactNode, useState } from 'react';
-import { useRenderTarget } from '../../RevealCanvas';
-import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
+import { type PropsWithChildren, type ReactNode, useContext } from 'react';
 import styled from 'styled-components';
-import { useOnUpdate } from '../hooks/useOnUpdate';
-import { PoiInfoPanelContent } from './PoiInfoPanelContent';
-import { PoiList } from './PoiList';
-import { useSelectedPoi } from './useSelectedPoi';
+import { PointsOfInterestSidePanelContext } from './PointsOfInterestSidePanel.context';
+import { useNullableCommandProperty } from '../hooks/useCommandProperty';
 
 export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): ReactNode => {
-  const renderTarget = useRenderTarget();
+  const { useSelectedPoi, usePointsOfInterestTool, PoiList, PoiInfoPanelContent } = useContext(
+    PointsOfInterestSidePanelContext
+  );
 
-  const tool = renderTarget.commandsController.getToolByType(PointsOfInterestTool);
+  const tool = usePointsOfInterestTool();
 
-  const [enabled, setEnabled] = useState<boolean>(tool?.isEnabled ?? false);
+  const selectedPoi = useSelectedPoi();
 
-  useOnUpdate(tool, () => {
-    if (tool === undefined) {
-      return;
-    }
-
-    setEnabled(tool.isChecked && tool.isEnabled);
-  });
+  const isOpen = useNullableCommandProperty(tool, () =>
+    tool !== undefined ? tool.isChecked && tool.isEnabled : false
+  );
 
   return (
     <CollapsablePanel
-      sidePanelRightVisible={enabled}
+      sidePanelRightVisible={isOpen ?? false}
       sidePanelRightWidth={500}
-      sidePanelRight={<PanelContainer />}>
+      sidePanelRight={
+        <PanelContentContainer>
+          {selectedPoi !== undefined ? <PoiInfoPanelContent /> : <PoiList />}
+        </PanelContentContainer>
+      }>
       {children}
     </CollapsablePanel>
   );
-};
-
-const PanelContainer = (): ReactNode => {
-  return (
-    <PanelContentContainer>
-      <PanelContent />
-    </PanelContentContainer>
-  );
-};
-
-const PanelContent = (): ReactNode => {
-  const selectedPoi = useSelectedPoi();
-  if (selectedPoi !== undefined) {
-    return <PoiInfoPanelContent />;
-  } else {
-    return <AllPoiInfoPanel />;
-  }
-};
-
-const AllPoiInfoPanel = (): ReactNode => {
-  return <PoiList />;
 };
 
 const PanelContentContainer = styled.div`

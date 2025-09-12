@@ -13,7 +13,7 @@ export class Set360IconsVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) !== undefined;
+    return this.root.getDescendantByType(Image360CollectionDomainObject) !== undefined;
   }
 
   public override get isToggle(): boolean {

@@ -13,7 +13,7 @@ describe(DeleteSelectedImage360AnnotationCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    root = renderTarget.rootDomainObject;
+    root = renderTarget.root;
   });
 
   test('Should have initial state witch icon, tooltip etc', () => {

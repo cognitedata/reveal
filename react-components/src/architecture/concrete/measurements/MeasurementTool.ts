@@ -139,13 +139,13 @@ export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
 
   protected override getOrCreateParent(): DomainObject {
-    const parent = this.rootDomainObject.getDescendantByType(MeasurementFolder);
+    const parent = this.root.getDescendantByType(MeasurementFolder);
     if (parent !== undefined) {
       return parent;
     }
     const newParent = new MeasurementFolder();
     newParent.isExpanded = true;
-    this.renderTarget.rootDomainObject.addChildInteractive(newParent);
+    this.renderTarget.root.addChildInteractive(newParent);
     return newParent;
   }
 

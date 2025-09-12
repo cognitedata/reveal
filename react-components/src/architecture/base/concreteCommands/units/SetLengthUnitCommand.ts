@@ -26,7 +26,7 @@ export class SetLengthUnitCommand extends BaseOptionCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    this.listenTo(this.rootDomainObject.unitSystem.lengthUnit);
+    this.listenTo(this.root.unitSystem.lengthUnit);
   }
 }
 
@@ -43,11 +43,11 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.rootDomainObject.unitSystem.lengthUnit() === this._value;
+    return this.root.unitSystem.lengthUnit() === this._value;
   }
 
   public override invokeCore(): boolean {
-    this.rootDomainObject.unitSystem.lengthUnit(this._value);
+    this.root.unitSystem.lengthUnit(this._value);
     return true;
   }
 }

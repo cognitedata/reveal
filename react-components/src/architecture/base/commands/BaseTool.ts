@@ -175,7 +175,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     domainObjectPredicate?: (domainObject: DomainObject) => boolean
   ): DomainObjectIntersection | undefined {
     // This function is similar to getIntersection, but it only considers a specific DomainObject
-    const { renderTarget, rootDomainObject } = this;
+    const { renderTarget, root } = this;
     const { viewer } = renderTarget;
 
     const point = viewer.getPixelCoordinatesFromEvent(event);
@@ -183,7 +183,7 @@ export abstract class BaseTool extends RenderTargetCommand {
 
     let closestIntersection: CustomObjectIntersection | undefined;
     let closestDistanceToCamera: number | undefined;
-    for (const domainObject of rootDomainObject.getDescendants()) {
+    for (const domainObject of root.getDescendants()) {
       if (domainObjectPredicate !== undefined && !domainObjectPredicate(domainObject)) {
         continue;
       }
