@@ -36,7 +36,7 @@ export class AnnotationsCreateMockCommand extends InstanceCommand {
 
   protected override invokeCore(): boolean {
     const isMultiple = true;
-    const { renderTarget, rootDomainObject } = this;
+    const { renderTarget, root } = this;
     let annotationDomainObject = this.getFirstInstance() as AnnotationsDomainObject;
     if (annotationDomainObject !== undefined) {
       return false;
@@ -47,7 +47,7 @@ export class AnnotationsCreateMockCommand extends InstanceCommand {
       ? createMultiAnnotations()
       : createSingleAnnotations();
     annotationDomainObject.setSelectedInteractive(true);
-    rootDomainObject.addChildInteractive(annotationDomainObject);
+    root.addChildInteractive(annotationDomainObject);
     annotationDomainObject.setVisibleInteractive(true, renderTarget);
     annotationDomainObject.views.addEventListener(onAnnotationChanged);
     return true;

@@ -10,13 +10,11 @@ export function usePoiDomainObject(): PointsOfInterestDomainObject<unknown> | un
     PointsOfInterestDomainObject<unknown> | undefined
   >(undefined);
 
-  useOnUpdateDomainObject(renderTarget.rootDomainObject, () => {
+  useOnUpdateDomainObject(renderTarget.root, () => {
     if (poiDomainObject !== undefined) {
       return;
     }
-    setPoiDomainObject(
-      renderTarget.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject)
-    );
+    setPoiDomainObject(renderTarget.root.getDescendantByType(PointsOfInterestDomainObject));
   });
 
   return poiDomainObject;

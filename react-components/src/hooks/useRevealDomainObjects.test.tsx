@@ -45,10 +45,10 @@ describe(useRevealDomainObjects.name, () => {
     const pointCloudDomainObject = new PointCloudDomainObject(createPointCloudMock());
     const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
-    revealRenderTarget.rootDomainObject.addChild(dummyDomainObject);
+    revealRenderTarget.root.addChild(dummyDomainObject);
     dummyDomainObject.addChild(cadDomainObject);
-    revealRenderTarget.rootDomainObject.addChild(pointCloudDomainObject);
-    revealRenderTarget.rootDomainObject.addChild(image360DomainObject);
+    revealRenderTarget.root.addChild(pointCloudDomainObject);
+    revealRenderTarget.root.addChild(image360DomainObject);
 
     const { result } = renderHook(() => useRevealDomainObjects(), { wrapper });
 
@@ -60,7 +60,7 @@ describe(useRevealDomainObjects.name, () => {
 
   test('holds stable reference over rerenders', () => {
     const pointCloudDomainObject = new PointCloudDomainObject(createPointCloudMock());
-    revealRenderTarget.rootDomainObject.addChild(pointCloudDomainObject);
+    revealRenderTarget.root.addChild(pointCloudDomainObject);
     const { result, rerender } = renderHook(() => useRevealDomainObjects(), { wrapper });
 
     const initialResult = result.current;
@@ -76,14 +76,14 @@ describe(useRevealDomainObjects.name, () => {
     const cadDomainObject = new CadDomainObject(createCadMock());
     const pointCloudDomainObject = new PointCloudDomainObject(createPointCloudMock());
 
-    revealRenderTarget.rootDomainObject.addChild(cadDomainObject);
+    revealRenderTarget.root.addChild(cadDomainObject);
 
     const { result } = renderHook(() => useRevealDomainObjects(), { wrapper });
 
     const initialResult = result.current;
 
     act(() => {
-      revealRenderTarget.rootDomainObject.addChildInteractive(pointCloudDomainObject);
+      revealRenderTarget.root.addChildInteractive(pointCloudDomainObject);
     });
 
     const secondResult = result.current;
@@ -101,8 +101,8 @@ describe(useRevealDomainObjects.name, () => {
     const cadDomainObject = new CadDomainObject(createCadMock());
     const pointCloudDomainObject = new PointCloudDomainObject(createPointCloudMock());
 
-    revealRenderTarget.rootDomainObject.addChild(cadDomainObject);
-    revealRenderTarget.rootDomainObject.addChild(pointCloudDomainObject);
+    revealRenderTarget.root.addChild(cadDomainObject);
+    revealRenderTarget.root.addChild(pointCloudDomainObject);
 
     const { result } = renderHook(() => useRevealDomainObjects(), { wrapper });
 
@@ -125,8 +125,8 @@ describe(useRevealDomainObjects.name, () => {
   test('updates returned objects filtered by predicate when a user-specified change happens', () => {
     const cadDomainObject = new CadDomainObject(createCadMock());
     const dummyDomainObject = new DummyDomainObject();
-    revealRenderTarget.rootDomainObject.addChild(cadDomainObject);
-    revealRenderTarget.rootDomainObject.addChild(dummyDomainObject);
+    revealRenderTarget.root.addChild(cadDomainObject);
+    revealRenderTarget.root.addChild(dummyDomainObject);
 
     cadDomainObject.setVisibleInteractive(true, revealRenderTarget);
 

@@ -40,7 +40,7 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
   }
 
   public override invokeCore(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+    const domainObject = this.root.getDescendantByType(PointsOfInterestDomainObject);
     void domainObject?.postCommentForPoi(this._poi, this.content).then(() => {
       this._onFinish?.();
       domainObject?.notify(Changes.addedPart);
