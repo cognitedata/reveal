@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi, assert } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { Image360HistoricalDetails } from './Image360HistoricalDetails';
 import { type Image360HistoricalDetailsProps } from './types';
 import { viewerMock } from '#test-utils/fixtures/viewer';
@@ -30,7 +30,6 @@ describe(Image360HistoricalDetails.name, () => {
       { date: '2024-03-10', imageUrl: 'thumb3.jpg', index: 2, image360Entity: mockEntity }
     ],
     imageUrls: ['thumb1.jpg', 'thumb2.jpg', 'thumb3.jpg'],
-    minWidth: '250px',
     newScrollPosition: mockRef,
     stationId: 'station-123',
     stationName: 'Main Station'
@@ -68,15 +67,6 @@ describe(Image360HistoricalDetails.name, () => {
       {children}
     </Image360HistoricalDetailsContext.Provider>
   );
-
-  test('renders DetailsContainer with correct minWidth style', () => {
-    const { container } = render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });
-
-    assert(container.firstChild !== null);
-
-    const detailsContainer = container.firstChild as HTMLElement;
-    expect(detailsContainer.style.minWidth).toBe('250px');
-  });
 
   test('renders Image360HistoricalPanel with correct props', () => {
     render(<Image360HistoricalDetails {...defaultProps} />, { wrapper });

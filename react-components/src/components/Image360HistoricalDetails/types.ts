@@ -16,7 +16,6 @@ export type UseImage360HistoricalDetailsViewModelResult = {
   setActiveRevision: (revision: number) => void;
   revisionCollection: Image360RevisionDetails[];
   imageUrls: Array<string | undefined>;
-  minWidth: string;
   newScrollPosition: MutableRefObject<number>;
   stationId: string | undefined;
   stationName: string | undefined;

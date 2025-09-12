@@ -56,7 +56,6 @@ describe(useImage360HistoricalDetailsViewModel.name, () => {
     expect(result.current.activeRevision).toBe(0);
     expect(result.current.revisionCollection).toEqual([]);
     expect(result.current.imageUrls).toEqual([]);
-    expect(result.current.minWidth).toBe('100px');
     expect(result.current.stationId).toBeUndefined();
     expect(result.current.stationName).toBeUndefined();
     expect(result.current.newScrollPosition.current).toBe(0);
@@ -79,7 +78,6 @@ describe(useImage360HistoricalDetailsViewModel.name, () => {
     });
 
     expect(result.current.revisionDetailsExpanded).toBe(true);
-    expect(result.current.minWidth).toBe('100%');
     expect(mockOnExpand).toHaveBeenCalledWith(true);
   });
 
@@ -298,7 +296,6 @@ describe(useImage360HistoricalDetailsViewModel.name, () => {
     }).not.toThrow();
 
     expect(result.current.revisionDetailsExpanded).toBe(true);
-    expect(result.current.minWidth).toBe('100%');
   });
 
   test('should reset active image 360 revision and scroll position when new image 360 entity is provided', async () => {

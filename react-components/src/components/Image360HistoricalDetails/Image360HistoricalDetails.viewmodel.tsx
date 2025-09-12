@@ -15,7 +15,6 @@ export function useImage360HistoricalDetailsViewModel({
   const [activeRevision, setActiveRevision] = useState<number>(0);
   const [revisionCollection, setRevisionCollection] = useState<Image360RevisionDetails[]>([]);
   const [imageUrls, setImageUrls] = useState<Array<string | undefined>>([]);
-  const [minWidth, setMinWidth] = useState('100px');
   const newScrollPosition = useRef(0);
 
   const { formatDateTime, revokeObjectUrl } = useContext(Image360HistoricalDetailsViewModelContext);
@@ -62,8 +61,6 @@ export function useImage360HistoricalDetailsViewModel({
   }, [image360Entity, revokeObjectUrl, formatDateTime]);
 
   useEffect(() => {
-    const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
-    setMinWidth(newMinWidth);
     if (onExpand !== undefined) {
       onExpand(revisionDetailsExpanded);
     }
@@ -76,7 +73,6 @@ export function useImage360HistoricalDetailsViewModel({
     setActiveRevision,
     revisionCollection,
     imageUrls,
-    minWidth,
     newScrollPosition,
     stationId,
     stationName

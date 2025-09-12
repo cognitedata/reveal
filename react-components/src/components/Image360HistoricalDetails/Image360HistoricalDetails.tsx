@@ -22,7 +22,6 @@ export const Image360HistoricalDetails = ({
     activeRevision,
     setActiveRevision,
     revisionCollection,
-    minWidth,
     newScrollPosition,
     stationId,
     stationName
@@ -34,7 +33,7 @@ export const Image360HistoricalDetails = ({
   });
 
   return (
-    <DetailsContainer style={{ minWidth }}>
+    <DetailsContainer $revisionDetailsExpanded={revisionDetailsExpanded}>
       {
         <>
           <Image360HistoricalPanel
@@ -63,10 +62,11 @@ export const Image360HistoricalDetails = ({
   );
 };
 
-const DetailsContainer = styled.div`
+const DetailsContainer = styled.div<{ $revisionDetailsExpanded: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
   height: fit-content;
   width: 100%;
+  min-width: ${({ $revisionDetailsExpanded }) => ($revisionDetailsExpanded ? '100%' : '100px')};
 `;
