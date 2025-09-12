@@ -18,11 +18,11 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 export async function updateMarker(tool: MeasurementTool, event: PointerEvent): Promise<boolean> {
   const intersection = await tool.getIntersection(event, shouldIntersect);
   if (!isPointCloudIntersection(intersection)) {
-    const circleMarker = getCircleMarker(tool.rootDomainObject);
+    const circleMarker = getCircleMarker(tool.root);
     circleMarker?.setVisibleInteractive(false);
     return false;
   }
-  const circleMarker = getOrCreateCircleMarker(tool.rootDomainObject);
+  const circleMarker = getOrCreateCircleMarker(tool.root);
   circleMarker.position.copy(intersection.point);
   circleMarker.notify(Changes.geometry);
   circleMarker.setDefaultColor();
@@ -39,8 +39,7 @@ export async function updateMeasureDiameter(
   if (!isPointCloudIntersection(intersection)) {
     return false;
   }
-  const root = tool.rootDomainObject;
-  const circleMarker = getOrCreateCircleMarker(root);
+  const circleMarker = getOrCreateCircleMarker(tool.root);
   circleMarker.position.copy(intersection.point);
   circleMarker.notify(Changes.geometry);
 

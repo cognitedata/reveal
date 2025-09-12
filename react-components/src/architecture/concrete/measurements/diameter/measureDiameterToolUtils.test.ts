@@ -19,7 +19,7 @@ describe(updateMarker.name, () => {
     const tool = new MeasurementTool();
     tool.attach(renderTarget);
 
-    const circleMarker = getOrCreateCircleMarker(renderTarget.rootDomainObject);
+    const circleMarker = getOrCreateCircleMarker(renderTarget.root);
     circleMarker.setVisibleInteractive(true);
     expect(circleMarker.isVisible()).toBe(true);
 
@@ -45,7 +45,7 @@ describe(updateMarker.name, () => {
     };
     tool.getIntersection = async () => intersection;
 
-    const circleMarker = getOrCreateCircleMarker(renderTarget.rootDomainObject);
+    const circleMarker = getOrCreateCircleMarker(renderTarget.root);
     expect(circleMarker.isVisible()).toBe(false);
 
     const result = await updateMarker(tool, createMoveEvent());
@@ -71,7 +71,7 @@ describe(updateMeasureDiameter.name, () => {
     const tool = new MeasurementTool();
     tool.attach(renderTarget);
 
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
 
     const circleMarker = getOrCreateCircleMarker(root);
     circleMarker.radius = 0.1; // Small radius to avoid cylinder creation
@@ -93,7 +93,7 @@ describe(updateMeasureDiameter.name, () => {
     const tool = new MeasurementTool();
     tool.attach(renderTarget);
 
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
 
     const circleMarker = getOrCreateCircleMarker(root);
     circleMarker.radius = 1;

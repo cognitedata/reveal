@@ -92,7 +92,7 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
     if (this.primitiveType === PrimitiveType.Diameter) {
-      const circleMarker = getCircleMarker(this.rootDomainObject);
+      const circleMarker = getCircleMarker(this.root);
       if (circleMarker !== undefined && circleMarker.isVisible()) {
         circleMarker.onWheel(delta);
         return;
@@ -116,7 +116,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   }
 
   public override clearDragging(): void {
-    const circleMarker = getCircleMarker(this.rootDomainObject);
+    const circleMarker = getCircleMarker(this.root);
     circleMarker?.setVisibleInteractive(false);
     super.clearDragging();
   }
@@ -179,7 +179,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
 
   public getOrCreateMeasureDiameter(): MeasureCylinderDomainObject {
-    const existing = getMeasureDiameter(this.rootDomainObject);
+    const existing = getMeasureDiameter(this.root);
     if (existing !== undefined) {
       return existing;
     }
