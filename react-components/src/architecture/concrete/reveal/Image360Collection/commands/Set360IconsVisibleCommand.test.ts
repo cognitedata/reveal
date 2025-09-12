@@ -9,7 +9,7 @@ describe(Set360IconsVisibleCommand.name, () => {
   let command: Set360IconsVisibleCommand;
   const renderTarget = createFullRenderTargetMock();
   const domainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
-  renderTarget.rootDomainObject.addChildInteractive(domainObject);
+  renderTarget.root.addChildInteractive(domainObject);
 
   beforeEach(() => {
     command = new Set360IconsVisibleCommand();

@@ -13,7 +13,7 @@ describe(CadDividerCommand.name, () => {
     expect(command.isVisible).toBe(false);
 
     const domainObject = new CadDomainObject(createCadMock());
-    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     expect(command.isVisible).toBe(true);
   });
 });

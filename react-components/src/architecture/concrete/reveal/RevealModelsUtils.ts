@@ -64,7 +64,7 @@ export class RevealModelsUtils {
     renderTarget: RevealRenderTarget,
     options: AddModelOptions
   ): Promise<CogniteCadModel> {
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
@@ -76,7 +76,7 @@ export class RevealModelsUtils {
     }
 
     try {
-      domainObject.name = await RevealModelsUtils.getName(renderTarget.rootDomainObject.sdk, model);
+      domainObject.name = await RevealModelsUtils.getName(renderTarget.root.sdk, model);
     } catch (error) {
       console.error('Can not get name of Cad model', error);
     }
@@ -87,7 +87,7 @@ export class RevealModelsUtils {
     renderTarget: RevealRenderTarget,
     options: AddModelOptions<DataSourceType>
   ): Promise<PointCloud> {
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
@@ -99,7 +99,7 @@ export class RevealModelsUtils {
     }
 
     try {
-      domainObject.name = await RevealModelsUtils.getName(renderTarget.rootDomainObject.sdk, model);
+      domainObject.name = await RevealModelsUtils.getName(renderTarget.root.sdk, model);
     } catch (error) {
       console.error('Can not get name of point cloud', error);
     }
@@ -110,7 +110,7 @@ export class RevealModelsUtils {
     renderTarget: RevealRenderTarget,
     options: AddImage360CollectionOptions
   ): Promise<Image360Collection<DataSourceType>> {
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
@@ -145,7 +145,7 @@ export class RevealModelsUtils {
   }
 
   public static remove(renderTarget: RevealRenderTarget, model: RevealModel): void {
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }

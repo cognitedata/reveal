@@ -73,9 +73,9 @@ function populateRenderTargetAndGetModels(renderTarget: RevealRenderTarget): Rev
   const pointCloudDomainObject = new PointCloudDomainObject(createPointCloudDMMock());
   const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
-  renderTarget.rootDomainObject.addChildInteractive(cadDomainObject);
-  renderTarget.rootDomainObject.addChildInteractive(pointCloudDomainObject);
-  renderTarget.rootDomainObject.addChildInteractive(image360DomainObject);
+  renderTarget.root.addChildInteractive(cadDomainObject);
+  renderTarget.root.addChildInteractive(pointCloudDomainObject);
+  renderTarget.root.addChildInteractive(image360DomainObject);
 
   return [cadDomainObject, pointCloudDomainObject, image360DomainObject];
 }

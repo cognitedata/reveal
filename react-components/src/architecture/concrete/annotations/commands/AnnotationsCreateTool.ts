@@ -199,7 +199,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
+    return this.root.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 
   private getSelectedAnnotationsDomainObjectByForce(): AnnotationsDomainObject {
@@ -209,7 +209,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     }
     const newDomainObject = new AnnotationsDomainObject();
     newDomainObject.applyPendingWhenCreated = true;
-    this.rootDomainObject.addChildInteractive(newDomainObject);
+    this.root.addChildInteractive(newDomainObject);
     newDomainObject.setSelectedInteractive(true);
     newDomainObject.setVisibleInteractive(true);
     return newDomainObject;

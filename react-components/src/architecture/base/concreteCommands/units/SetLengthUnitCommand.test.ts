@@ -43,7 +43,7 @@ describe(SetLengthUnitCommand.name, () => {
       if (option.isChecked) {
         continue; // Already check
       }
-      const unitSystem = renderTarget.rootDomainObject.unitSystem;
+      const unitSystem = renderTarget.root.unitSystem;
       const oldValue = unitSystem.lengthUnit();
       expect(option.invoke()).toBe(true);
       const newValue = unitSystem.lengthUnit();
@@ -60,7 +60,7 @@ describe(SetLengthUnitCommand.name, () => {
       if (option.isChecked) {
         continue; // Already check
       }
-      const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+      const tester = new EventChangeTester(renderTarget.root, Changes.unit);
       expect(option.invoke()).toBe(true);
       tester.toHaveBeenCalledOnce();
     }

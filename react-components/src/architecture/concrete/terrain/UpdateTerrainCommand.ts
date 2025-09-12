@@ -24,8 +24,8 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const { renderTarget, rootDomainObject } = this;
-    const terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
+    const { renderTarget, root } = this;
+    const terrainDomainObject = root.getDescendantByType(TerrainDomainObject);
     if (terrainDomainObject === undefined) {
       return false;
     }
@@ -33,8 +33,8 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget, rootDomainObject } = this;
-    const terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
+    const { renderTarget, root } = this;
+    const terrainDomainObject = root.getDescendantByType(TerrainDomainObject);
     if (terrainDomainObject === undefined) {
       return false;
     }
