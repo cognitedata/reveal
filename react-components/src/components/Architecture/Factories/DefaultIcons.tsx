@@ -29,6 +29,7 @@ import {
   FlipVerticalIcon,
   FolderIcon,
   GrabIcon,
+  HelpIcon,
   LeafIcon,
   InfoIcon,
   LocationIcon,
@@ -93,7 +94,12 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Folder', FolderIcon],
   ['FolderFilled', FolderFilledIcon],
   ['Grab', GrabIcon],
+<<<<<<< Updated upstream
   ['GraphTree', GraphTreeIcon],
+=======
+  ['Help', HelpIcon],
+  ['TreeIcon', TreeIcon],
+>>>>>>> Stashed changes
   ['Info', InfoIcon],
   ['Leaf', LeafIcon],
   ['Location', LocationIcon],
