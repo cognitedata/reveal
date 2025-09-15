@@ -9,17 +9,10 @@ import { KeyboardNavigation } from './Help/KeyboardNavigation';
 import { useTranslation } from '../i18n/I18n';
 import { type PlacementType } from '../Architecture';
 
-/**
- * @deprecated
- */
 export type HelpButtonProps = {
   fallbackLanguage?: string;
   placement?: PlacementType;
 };
-
-/**
- * @deprecated
- */
 
 export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): ReactElement => {
   const { t } = useTranslation(fallbackLanguage);
