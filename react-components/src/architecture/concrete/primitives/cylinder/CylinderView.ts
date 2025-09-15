@@ -149,10 +149,12 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     }
 
     const { cylinder } = domainObject;
-    const centerA = cylinder.centerA.clone();
-    const centerB = cylinder.centerB.clone();
+
+    const centerA = newVector3(cylinder.centerA);
+    const centerB = newVector3(cylinder.centerB);
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
     const ray = intersectInput.raycaster.ray;
     const point = cylinder.intersectRay(ray, CDF_TO_VIEWER_TRANSFORMATION);
     if (point === undefined) {
@@ -408,8 +410,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const { domainObject } = this;
     const { radius, height } = domainObject.cylinder;
 
-    const centerA = domainObject.cylinder.centerA.clone();
-    const centerB = domainObject.cylinder.centerB.clone();
+    const centerA = newVector3(domainObject.cylinder.centerA);
+    const centerB = newVector3(domainObject.cylinder.centerB);
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
