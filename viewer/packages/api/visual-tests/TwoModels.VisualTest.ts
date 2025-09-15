@@ -1,69 +1,24 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { CogniteCadModel, Cognite3DViewer, CogniteModel } from '..';
 import * as THREE from 'three';
 
-import { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
+import {
+  ViewerTestFixtureComponents,
+  ViewerVisualTestFixture
+} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
-import { createCognite3DViewer } from '../../../visual-tests/test-fixtures/utilities/cognite3DViewerHelpers';
-import { AxisViewTool } from '../../../packages/tools';
+import { CogniteCadModel } from '@reveal/cad-model';
 
-export default class TwoModelsVisualTest implements VisualTestFixture {
-  private _viewer!: Cognite3DViewer;
-  private readonly _renderer: THREE.WebGLRenderer;
-
+export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
   constructor() {
-    this._renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
-    this._renderer.setPixelRatio(window.devicePixelRatio);
+    super('primitives', 'primitives', 'primitives');
   }
 
-  public async run(): Promise<void> {
-    let totalItemsLoaded = 0;
-    let totalItemsRequested = 0;
+  // Use standard base class loading since caching issue is fixed
 
-    this._viewer = await createCognite3DViewer(modelLoadingCallback, this._renderer);
-
-    this.setupDom(this._viewer);
-
-    // Load models SEQUENTIALLY to avoid resource conflicts
-    const firstModel = await this._viewer.addCadModel({
-      modelId: -1,
-      revisionId: -1,
-      localPath: `${window.location.origin}/primitives`
-    });
-
-    // Wait for first model to fully load before starting second
-    await this.waitForModelToLoad();
-
-    const secondModel = await this._viewer.addCadModel({
-      modelId: -2, // Different modelId to ensure uniqueness
-      revisionId: -2,
-      localPath: `${window.location.origin}/primitives`
-    });
-
-    // Wait for second model to fully load
-    await this.waitForModelToLoad();
-
-    const models = [firstModel, secondModel];
-
-    new AxisViewTool(this._viewer);
-    this._viewer.fitCameraToModel(models[0]);
-
-    await this.setup({ viewer: this._viewer, models });
-
-    function modelLoadingCallback(itemsLoaded: number, itemsRequested: number, _: number) {
-      totalItemsLoaded = itemsLoaded;
-      totalItemsRequested = itemsRequested;
-    }
-  }
-
-  private async waitForModelToLoad(): Promise<void> {
-    // Wait for model to stabilize
-    return new Promise(resolve => setTimeout(resolve, 2000));
-  }
-
-  public async setup({ models }: { viewer: Cognite3DViewer; models: CogniteModel[] }): Promise<void> {
+  public async setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
+    const { models } = testFixtureComponents;
     const model = models[1];
 
     if (!(model instanceof CogniteCadModel)) {
@@ -76,16 +31,22 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
     const transform = model.getModelTransformation();
     transform.multiply(translation);
     model.setModelTransformation(transform);
-  }
+  //   const model2 = models[2];
 
-  private setupDom(viewer: Cognite3DViewer) {
-    document.body.append(viewer.domElement);
-    viewer.domElement.style.height = '100vh';
-    document.body.style.margin = '0px 0px 0px 0px';
+  //   if (!(model2 instanceof CogniteCadModel)) {
+  //     return Promise.resolve();
+  //   }
+
+  //   model2.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+
+  //   const translation2 = new THREE.Matrix4().makeTranslation(0, 10, 0);
+  //   const transform2 = model2.getModelTransformation();
+  //   transform2.multiply(translation2);
+  //   model2.setModelTransformation(transform2);
   }
 
   public dispose(): void {
-    this._renderer.forceContextLoss();
-    this._viewer.dispose();
+    // Keep base disposal
+    super.dispose();
   }
 }

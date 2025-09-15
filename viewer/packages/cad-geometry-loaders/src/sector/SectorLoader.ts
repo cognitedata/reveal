@@ -176,7 +176,7 @@ class ProgressReportHelper {
   }
 
   reset(sectorsScheduledChange: number) {
-    this._sectorsScheduled += sectorsScheduledChange - this._sectorsLoaded;
+    this._sectorsScheduled = sectorsScheduledChange;
     this._sectorsLoaded = 0;
     this._sectorsCulled = 0;
     this.triggerCallback();
