@@ -9,15 +9,11 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { DropdownButton } from './DropdownButton';
 import { FilterButton } from './FilterButton';
-import {
-  getFlexDirection,
-  getTooltipPlacement,
-  getDropdownPlacement,
-  DROP_DOWN_OFFSET
-} from './utilities';
+import { getFlexDirection, getTooltipPlacement } from './utilities';
 import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { type FlexDirection, type PlacementType } from './types';
@@ -54,6 +50,14 @@ export const SettingsButton = ({
   const flexDirection = getFlexDirection(placement);
   const isTooltipDisabled = isOpen || label === undefined;
 
+  // This ensures the rule for where the dropdown panel should open:
+  // Horizontal toolbar at top:    Below the button
+  // Horizontal toolbar at bottom: Above the button
+  // Vertical toolbar at left:     Right of the button
+  // Vertical toolbar at right:    Left of the button
+  const dropdownPlacement =
+    placement === 'top' || placement === 'bottom' ? 'bottom-end' : 'right-start';
+
   return (
     <Dropdown
       disabled={!isEnabled}
@@ -69,8 +73,8 @@ export const SettingsButton = ({
       onHide={(open) => {
         setOpen(open);
       }}
-      placement={getDropdownPlacement(placement)}
-      offset={DROP_DOWN_OFFSET}>
+      placement={dropdownPlacement}
+      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 0 }}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
         disabled={isTooltipDisabled}

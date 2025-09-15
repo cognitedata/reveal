@@ -3,7 +3,6 @@ import { createCustomInputField } from '../CustomInputField';
 import { createDivider } from '../DividerCreator';
 import { createDropdownButton } from '../DropdownButton';
 import { createFilterButton } from '../FilterButton';
-import { createHelpButton } from '../HelpButton';
 import { createInputField } from '../InputField';
 import { createSegmentedButtons } from '../SegmentedButtons';
 import { createSettingsButton } from '../SettingsButton';
@@ -20,7 +19,6 @@ function installReactElements(factory: ComponentFactory): void {
   factory.installElement(createDivider);
   factory.installElement(createDropdownButton);
   factory.installElement(createFilterButton);
-  factory.installElement(createHelpButton);
   factory.installElement(createInputField);
   factory.installElement(createSegmentedButtons);
   factory.installElement(createSettingsButton);
