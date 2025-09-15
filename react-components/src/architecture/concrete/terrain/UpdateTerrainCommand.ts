@@ -4,10 +4,13 @@ import { Range3 } from '../../base/utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type IconName } from '../../base/utilities/IconName';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
+import { type IconName } from '../../base/utilities/types';
+import { Random } from '../../base/utilities/misc/Random';
 
 export class UpdateTerrainCommand extends RenderTargetCommand {
+  private readonly _random = new Random(42);
+
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -21,8 +24,8 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const { renderTarget, rootDomainObject } = this;
-    const terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
+    const { renderTarget, root } = this;
+    const terrainDomainObject = root.getDescendantByType(TerrainDomainObject);
     if (terrainDomainObject === undefined) {
       return false;
     }
@@ -30,8 +33,8 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget, rootDomainObject } = this;
-    const terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
+    const { renderTarget, root } = this;
+    const terrainDomainObject = root.getDescendantByType(TerrainDomainObject);
     if (terrainDomainObject === undefined) {
       return false;
     }
@@ -39,7 +42,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
       return false;
     }
     const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
-    terrainDomainObject.grid = createFractalRegularGrid2(range);
+    terrainDomainObject.grid = createFractalRegularGrid2(range, this._random);
     terrainDomainObject.notify(Changes.geometry);
     return true;
   }

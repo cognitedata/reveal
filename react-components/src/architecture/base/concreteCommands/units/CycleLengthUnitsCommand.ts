@@ -1,7 +1,7 @@
-import { type IconName } from '../../utilities/IconName';
+import { type IconName } from '../../utilities/types';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { LengthUnit } from '../../renderTarget/UnitSystem';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class CycleLengthUnitsCommand extends RenderTargetCommand {
@@ -15,12 +15,12 @@ export class CycleLengthUnitsCommand extends RenderTargetCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    this.listenTo(this.rootDomainObject.unitSystem.lengthUnit);
+    this.listenTo(this.root.unitSystem.lengthUnit);
   }
 
   protected override invokeCore(): boolean {
     // This command cycles through the length units: Meter -> Feet -> Inch -> Meter
-    const unitSystem = this.rootDomainObject.unitSystem;
+    const unitSystem = this.root.unitSystem;
     switch (unitSystem.lengthUnit()) {
       case LengthUnit.Meter:
         unitSystem.lengthUnit(LengthUnit.Feet);

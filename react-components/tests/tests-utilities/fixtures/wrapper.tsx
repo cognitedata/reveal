@@ -10,7 +10,7 @@ const renderTargetMock = createRenderTargetMock();
 export const wrapper = ({ children }: { children: any }): any => (
   <SDKProvider sdk={sdkMock}>
     <QueryClientProvider client={queryClient}>
-      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
     </QueryClientProvider>
   </SDKProvider>
 );

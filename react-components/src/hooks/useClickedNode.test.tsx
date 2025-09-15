@@ -83,7 +83,7 @@ describe(useClickedNodeData.name, () => {
   const mockUseRenderTarget = vi.fn<UseClickedNodeDataDependencies['useRenderTarget']>();
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider value={renderTarget}>
+    <ViewerContextProvider renderTarget={renderTarget}>
       <UseClickedNodeDataContext.Provider value={mockDependencies}>
         {children}
       </UseClickedNodeDataContext.Provider>

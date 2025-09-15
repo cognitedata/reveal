@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { CycleLengthUnitsCommand } from './CycleLengthUnitsCommand';
-import { isEmpty } from '../../utilities/TranslateInput';
+import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 import { Changes } from '../../domainObjectsHelpers/Changes';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
@@ -24,7 +24,7 @@ describe(CycleLengthUnitsCommand.name, () => {
   });
 
   test('should switch from metric unit and imperial', async () => {
-    const unitSystem = renderTarget.rootDomainObject.unitSystem;
+    const unitSystem = renderTarget.root.unitSystem;
 
     // Check initial state
     expect(unitSystem.lengthUnit()).toBe(LengthUnit.Meter);
@@ -43,7 +43,7 @@ describe(CycleLengthUnitsCommand.name, () => {
   });
 
   test('should toggle between metric and imperial units and notify domain objects twice', async () => {
-    const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+    const tester = new EventChangeTester(renderTarget.root, Changes.unit);
 
     expect(command.invoke()).toBe(true);
 

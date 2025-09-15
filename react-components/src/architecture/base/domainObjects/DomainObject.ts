@@ -12,13 +12,12 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
-import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
-import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
+import { isTranslatedString, type TranslationInput } from '../utilities/translation/TranslateInput';
+import { DeleteDomainObjectCommand } from '../concreteCommands/general/DeleteDomainObjectCommand';
+import { CopyToClipboardCommand } from '../concreteCommands/general/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { CycleLengthUnitsCommand } from '../concreteCommands/units/CycleLengthUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import {
@@ -29,7 +28,7 @@ import {
   type TreeNodeType
 } from '../../../advanced-tree-view';
 import { getRenderTarget } from './getRoot';
-import { translate } from '../utilities/translateUtils';
+import { translate } from '../utilities/translation/translateUtils';
 import { effect } from '@cognite/signals';
 import { generateUniqueId, type UniqueId } from '../utilities/types';
 
@@ -79,7 +78,7 @@ export abstract class DomainObject implements TreeNodeType {
     return this._uniqueId;
   }
 
-  protected set uniqueId(value: UniqueId) {
+  public set uniqueId(value: UniqueId) {
     this._uniqueId = value;
   }
 
@@ -397,12 +396,10 @@ export abstract class DomainObject implements TreeNodeType {
         Changes.childDeleted
       )
     ) {
+      // Update all the command buttons (in the toolbars).
+      // This goes fast and will not slow the system down.
       const renderTarget = getRenderTarget(this);
-      if (renderTarget !== undefined) {
-        // Update all the command buttons (in the toolbars).
-        // This goes fast and will not slow the system down.
-        CommandsUpdater.update(renderTarget);
-      }
+      renderTarget?.updateAllCommands();
     }
     if (this.hasPanelInfo) {
       const renderTarget = getRenderTarget(this);
@@ -544,7 +541,7 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
 
   public getVisibleState(renderTarget?: RevealRenderTarget): VisibleState {
-    // If renderTarget is not provided, use the renderTarget of the rootDomainObject
+    // If renderTarget is not provided, use the renderTarget of the root
     if (renderTarget === undefined) {
       renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
@@ -592,7 +589,7 @@ export abstract class DomainObject implements TreeNodeType {
     renderTarget: RevealRenderTarget | undefined = undefined,
     topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
-    // If renderTarget is not provided, use the renderTarget of the rootDomainObject
+    // If renderTarget is not provided, use the renderTarget of the root
     if (renderTarget === undefined) {
       renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {

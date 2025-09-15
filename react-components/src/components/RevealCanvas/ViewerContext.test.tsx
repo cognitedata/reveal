@@ -14,12 +14,13 @@ describe(ViewerContextProvider.name, () => {
   });
 
   test('renders children', async () => {
+    const renderTarget = createRenderTargetMock();
     const TestComponent = (): ReactElement => {
       return <h1>Child component</h1>;
     };
 
     const result = render(
-      <ViewerContextProvider value={null}>
+      <ViewerContextProvider renderTarget={renderTarget}>
         <TestComponent />
       </ViewerContextProvider>
     );
@@ -40,7 +41,7 @@ describe(ViewerContextProvider.name, () => {
     };
 
     render(
-      <ViewerContextProvider value={renderTargetMock}>
+      <ViewerContextProvider renderTarget={renderTargetMock}>
         <TestComponent />
       </ViewerContextProvider>
     );
@@ -64,7 +65,7 @@ describe(ViewerContextProvider.name, () => {
     expect(window.renderTarget).toBe(undefined);
 
     render(
-      <ViewerContextProvider value={renderTargetMock}>
+      <ViewerContextProvider renderTarget={renderTargetMock}>
         <></>
       </ViewerContextProvider>
     );
@@ -82,12 +83,12 @@ describe(ViewerContextProvider.name, () => {
     const renderTargetMock0 = createRenderTargetMock();
     const renderTargetMock1 = createRenderTargetMock();
     render(
-      <ViewerContextProvider value={renderTargetMock0}>
+      <ViewerContextProvider renderTarget={renderTargetMock0}>
         <></>
       </ViewerContextProvider>
     );
     render(
-      <ViewerContextProvider value={renderTargetMock1}>
+      <ViewerContextProvider renderTarget={renderTargetMock1}>
         <></>
       </ViewerContextProvider>
     );
@@ -98,14 +99,7 @@ describe(ViewerContextProvider.name, () => {
   test('mounting `null` renderTarget does not occupy viewer slot on window', () => {
     const renderTargetMock = createRenderTargetMock();
     render(
-      <ViewerContextProvider value={null}>
-        <></>
-      </ViewerContextProvider>
-    );
-    expect(window.renderTarget).toBe(undefined);
-
-    render(
-      <ViewerContextProvider value={renderTargetMock}>
+      <ViewerContextProvider renderTarget={renderTargetMock}>
         <></>
       </ViewerContextProvider>
     );
@@ -117,25 +111,15 @@ describe(ViewerContextProvider.name, () => {
     const renderTargetMock1 = createRenderTargetMock();
 
     const { rerender } = render(
-      <ViewerContextProvider value={null}>
+      <ViewerContextProvider renderTarget={renderTargetMock0}>
         <></>
       </ViewerContextProvider>
     );
-
-    expect(window.renderTarget).toBe(undefined);
-    expect(window.viewer).toBe(undefined);
-
-    rerender(
-      <ViewerContextProvider value={renderTargetMock0}>
-        <></>
-      </ViewerContextProvider>
-    );
-
     expect(window.renderTarget).toBe(renderTargetMock0);
     expect(window.viewer).toBe(renderTargetMock0.viewer);
 
     rerender(
-      <ViewerContextProvider value={renderTargetMock1}>
+      <ViewerContextProvider renderTarget={renderTargetMock1}>
         <></>
       </ViewerContextProvider>
     );
@@ -151,7 +135,7 @@ describe(ViewerContextProvider.name, () => {
     expect(window.renderTargets).toBeUndefined();
 
     const { unmount: unmount0 } = render(
-      <ViewerContextProvider value={renderTargetMock0}>
+      <ViewerContextProvider renderTarget={renderTargetMock0}>
         <></>
       </ViewerContextProvider>
     );
@@ -160,7 +144,7 @@ describe(ViewerContextProvider.name, () => {
     expect(window.renderTargets).toContain(renderTargetMock0);
 
     const { unmount: unmount1 } = render(
-      <ViewerContextProvider value={renderTargetMock1}>
+      <ViewerContextProvider renderTarget={renderTargetMock1}>
         <></>
       </ViewerContextProvider>
     );

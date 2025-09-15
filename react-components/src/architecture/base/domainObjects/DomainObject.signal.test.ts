@@ -1,10 +1,10 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 import { describe, test, expect, vi } from 'vitest';
 import { DomainObject } from './DomainObject';
 import { signal } from '@cognite/signals';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { EventChangeTester } from '../../../../tests/tests-utilities/architecture/EventChangeTester';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 
 describe(DomainObject.name, () => {
   test('should call event listeners when signal change', async () => {

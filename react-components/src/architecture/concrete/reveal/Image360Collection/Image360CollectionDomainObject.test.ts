@@ -23,7 +23,7 @@ describe(Image360CollectionDomainObject.name, () => {
     const image360Collection = createImage360ClassicMock();
 
     const domainObject = new Image360CollectionDomainObject(image360Collection);
-    renderTargetMock.rootDomainObject.addChild(domainObject);
+    renderTargetMock.root.addChild(domainObject);
 
     expect(image360Collection.on).toHaveBeenCalledTimes(2);
 
@@ -33,18 +33,18 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(onEventType0).toBe('image360Entered');
     expect(onEventType1).toBe('image360Exited');
 
-    expect(renderTargetMock.commandsController.update).not.toHaveBeenCalled();
+    expect(renderTargetMock.updateAllCommands).not.toHaveBeenCalled();
 
     registeredCallback0();
 
     await waitFor(async () => {
-      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(1);
+      expect(renderTargetMock.updateAllCommands).toHaveBeenCalledTimes(1);
     });
 
     registeredCallback1();
 
     await waitFor(async () => {
-      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(2);
+      expect(renderTargetMock.updateAllCommands).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -54,7 +54,7 @@ describe(Image360CollectionDomainObject.name, () => {
     const image360Collection = createImage360ClassicMock();
 
     const domainObject = new Image360CollectionDomainObject(image360Collection);
-    renderTargetMock.rootDomainObject.addChild(domainObject);
+    renderTargetMock.root.addChild(domainObject);
 
     const eventAndListener0 = vi.mocked(image360Collection.on).mock.calls[0];
     const eventAndListener1 = vi.mocked(image360Collection.on).mock.calls[1];
@@ -72,7 +72,7 @@ describe(Image360CollectionDomainObject.name, () => {
     const image360Collection = createImage360ClassicMock();
 
     const domainObject = new Image360CollectionDomainObject(image360Collection);
-    renderTargetMock.rootDomainObject.addChild(domainObject);
+    renderTargetMock.root.addChild(domainObject);
 
     domainObject.removeInteractive();
     expect(() => domainObject.removeInteractive()).toThrowError();

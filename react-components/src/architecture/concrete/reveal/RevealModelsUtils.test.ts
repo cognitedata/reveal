@@ -22,7 +22,7 @@ describe(RevealModelsUtils.name, () => {
 
   beforeEach(() => {
     renderTargetMock = createRenderTargetMock();
-    root = renderTargetMock.rootDomainObject;
+    root = renderTargetMock.root;
   });
 
   test('should get CadDomainObject', () => {

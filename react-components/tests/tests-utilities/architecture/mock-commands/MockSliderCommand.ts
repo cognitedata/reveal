@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 import { FractionSliderCommand } from '../../../../src/architecture/base/commands/FractionSliderCommand';
 
 export class MockSliderCommand extends FractionSliderCommand {

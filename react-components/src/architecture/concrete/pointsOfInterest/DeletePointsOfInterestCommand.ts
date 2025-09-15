@@ -1,7 +1,6 @@
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
-import { type IconName } from '../../base/utilities/IconName';
-import { type ButtonType } from '../../base/utilities/types';
+import { type IconName, type ButtonType } from '../../base/utilities/types';
 
 export class DeleteSelectedPointsOfInterestCommand<
   PoiIdType

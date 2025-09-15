@@ -5,7 +5,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
 

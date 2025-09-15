@@ -1,7 +1,7 @@
+import { signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
-import { type IconName } from '../../../base/utilities/IconName';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type IconName } from '../../../base/utilities/types';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type Image360Model } from '../RevealTypes';
 
@@ -11,6 +11,10 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
 
   private readonly _model: Image360Model;
+  public readonly isIconsVisible = signal(false);
+  public readonly isOccludedIconsVisible = signal(false);
+  public readonly iconsOpacity = signal(0);
+  public readonly imagesOpacity = signal(0);
   private readonly _updateCallback: () => void;
 
   // ==================================================
@@ -30,8 +34,21 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
     this._model = model;
     this.name = model.label;
 
+    this.isIconsVisible(model.getIconsVisibility());
+    this.isOccludedIconsVisible(model.isOccludedIconsVisible());
+    this.iconsOpacity(model.getIconsOpacity());
+    this.imagesOpacity(model.getImagesOpacity());
+
+    // This updated the point cloud on reveal side when the signals change.
+    this.addEffect(() => {
+      this._model.setIconsVisibility(this.isIconsVisible());
+      this._model.setOccludedIconsVisible(this.isOccludedIconsVisible());
+      this._model.setIconsOpacity(this.iconsOpacity());
+      this._model.setImagesOpacity(this.imagesOpacity());
+    });
+
     this._updateCallback = () => {
-      CommandsUpdater.update(getRenderTarget(this));
+      getRenderTarget(this)?.updateAllCommands();
     };
 
     this._model.on('image360Entered', this._updateCallback);

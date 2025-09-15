@@ -1,4 +1,4 @@
-import { NavigationTool } from '../concreteCommands/NavigationTool';
+import { NavigationTool } from '../concreteCommands/navigation/NavigationTool';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
@@ -136,8 +136,8 @@ export abstract class BaseEditTool extends NavigationTool {
   // ==================================================
 
   protected *getSelectable(): Generator<VisualDomainObject> {
-    const { rootDomainObject } = this;
-    for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
+    const { root } = this;
+    for (const domainObject of root.getDescendantsByType(VisualDomainObject)) {
       if (this.canBeSelected(domainObject)) {
         yield domainObject;
       }

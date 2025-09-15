@@ -388,6 +388,7 @@ export type ClassicDataSourceType = {
     pointCloudVolumeMetadata: {
         annotationId: number;
         assetRef?: AnnotationsAssetRef;
+        instanceRef?: DMInstanceRef;
     };
     pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
     image360Identifier: {
@@ -650,6 +651,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     getModelBoundingBox(outBoundingBox?: THREE.Box3): THREE.Box3;
     getModelClippingPlanes(): THREE.Plane[];
     getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+    getPointsByBoundingBox(box: THREE.Box3): THREE.Vector3[];
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;

@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 import { describe, test, expect, beforeEach } from 'vitest';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
@@ -16,7 +16,7 @@ describe(DomainObjectPanelUpdater.name, () => {
   beforeEach(() => {
     domainObject = new MockDomainObject();
     renderTarget = createFullRenderTargetMock();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
     panelUpdater = renderTarget.panelUpdater;
   });
 

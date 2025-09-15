@@ -25,10 +25,10 @@ describe(getRevealDomainUpdateSignal.name, () => {
     const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
     const dummyDomainObject = new DummyDomainOject();
 
-    revealRenderTarget.rootDomainObject.addChild(cadDomainObject);
-    revealRenderTarget.rootDomainObject.addChild(pointCloudDomainObject);
-    revealRenderTarget.rootDomainObject.addChild(image360DomainObject);
-    revealRenderTarget.rootDomainObject.addChild(dummyDomainObject);
+    revealRenderTarget.root.addChild(cadDomainObject);
+    revealRenderTarget.root.addChild(pointCloudDomainObject);
+    revealRenderTarget.root.addChild(image360DomainObject);
+    revealRenderTarget.root.addChild(dummyDomainObject);
 
     const signalResult = getRevealDomainUpdateSignal(revealRenderTarget);
 
@@ -40,11 +40,8 @@ describe(getRevealDomainUpdateSignal.name, () => {
   });
 
   test('adds event listener, and calling dispose removes event listener', () => {
-    const addEventMock = vi.spyOn(revealRenderTarget.rootDomainObject.views, 'addEventListener');
-    const removeEventMock = vi.spyOn(
-      revealRenderTarget.rootDomainObject.views,
-      'removeEventListener'
-    );
+    const addEventMock = vi.spyOn(revealRenderTarget.root.views, 'addEventListener');
+    const removeEventMock = vi.spyOn(revealRenderTarget.root.views, 'removeEventListener');
 
     const result = getRevealDomainUpdateSignal(revealRenderTarget);
 
@@ -65,7 +62,7 @@ describe(getRevealDomainUpdateSignal.name, () => {
 
     let signalUpdates = 0;
 
-    revealRenderTarget.rootDomainObject.addChild(cadDomainObject);
+    revealRenderTarget.root.addChild(cadDomainObject);
 
     const signalResult = getRevealDomainUpdateSignal(revealRenderTarget);
 
@@ -80,7 +77,7 @@ describe(getRevealDomainUpdateSignal.name, () => {
     expect(initialDomainObjects).toHaveLength(1);
     expect(initialDomainObjects[0]).toBe(cadDomainObject);
 
-    revealRenderTarget.rootDomainObject.addChildInteractive(pointCloudDomainObject);
+    revealRenderTarget.root.addChildInteractive(pointCloudDomainObject);
 
     const domainObjectsAfterAdd = signalResult.signal()();
 
@@ -105,8 +102,8 @@ describe(getRevealDomainUpdateSignal.name, () => {
     cadDomainObject.setVisibleInteractive(true, revealRenderTarget);
     pointCloudDomainObject.setVisibleInteractive(true, revealRenderTarget);
 
-    revealRenderTarget.rootDomainObject.addChildInteractive(cadDomainObject);
-    revealRenderTarget.rootDomainObject.addChildInteractive(pointCloudDomainObject);
+    revealRenderTarget.root.addChildInteractive(cadDomainObject);
+    revealRenderTarget.root.addChildInteractive(pointCloudDomainObject);
 
     const signalResult = getRevealDomainUpdateSignal(
       revealRenderTarget,

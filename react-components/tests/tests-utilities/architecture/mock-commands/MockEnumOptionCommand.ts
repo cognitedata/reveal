@@ -1,6 +1,9 @@
-import { BaseOptionCommand } from '../../../../src/architecture/base/commands/BaseOptionCommand';
+import {
+  BaseOptionCommand,
+  OptionType
+} from '../../../../src/architecture/base/commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 
 enum MockEnum {
   Red = 'Red',
@@ -15,8 +18,8 @@ export class MockEnumOptionCommand extends BaseOptionCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor() {
-    super();
+  constructor(optionType = OptionType.Dropdown) {
+    super(optionType);
     for (const value of [MockEnum.Red, MockEnum.Green, MockEnum.Blue]) {
       this.add(new OptionItemCommand(this, value));
     }

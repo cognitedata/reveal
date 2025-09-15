@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 import { ShowExamplesOnTopCommand } from './ShowExamplesOnTopCommand';
@@ -13,7 +13,7 @@ describe(ShowExamplesOnTopCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    root = renderTarget.rootDomainObject;
+    root = renderTarget.root;
   });
 
   test('Should have initial state', () => {
