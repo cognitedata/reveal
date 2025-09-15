@@ -407,11 +407,11 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     ) {
       return;
     }
-    const { domainObject } = this;
-    const { radius, height } = domainObject.cylinder;
+    const { cylinder } = this.domainObject;
+    const { radius, height } = cylinder;
 
-    const centerA = newVector3(domainObject.cylinder.centerA);
-    const centerB = newVector3(domainObject.cylinder.centerB);
+    const centerA = newVector3(cylinder.centerA);
+    const centerB = newVector3(cylinder.centerB);
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
