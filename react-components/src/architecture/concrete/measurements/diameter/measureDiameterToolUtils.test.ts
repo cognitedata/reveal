@@ -13,6 +13,8 @@ import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRende
 import { getMeasureDiameter, MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
+const POINT_COUNT = 100;
+
 describe(updateMarker.name, () => {
   test('Should hide the marker when nothing is intersected', async () => {
     const renderTarget = createFullRenderTargetMock();
@@ -76,7 +78,7 @@ describe(updateMeasureDiameter.name, () => {
     const circleMarker = getOrCreateCircleMarker(root);
     circleMarker.radius = 0.1; // Small radius to avoid cylinder creation
 
-    const { intersection, cameraPosition } = createPointCloudIntersectionWithCylinder(100);
+    const { intersection, cameraPosition } = createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
 
     const result = await updateMeasureDiameter(tool, cameraPosition, createClickEvent());
@@ -99,7 +101,7 @@ describe(updateMeasureDiameter.name, () => {
     circleMarker.radius = 1;
 
     const { intersection, expectedCylinder, cameraPosition } =
-      createPointCloudIntersectionWithCylinder(100);
+      createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
 
     const result = await updateMeasureDiameter(tool, cameraPosition, createClickEvent());

@@ -422,13 +422,14 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     if (radiusLabelB !== undefined) {
       updateRadiusLabel(centerB, radiusLabelB, 1, this.getRadiusLabelHeight());
     }
-    if (heightLabel !== undefined) {
-      const center = centerA.clone().add(centerB).multiplyScalar(0.5);
-      updateHeightLabel(center, heightLabel);
-    }
-    if (diameterLabel !== undefined) {
-      const center = centerA.clone().add(centerB).multiplyScalar(0.5);
-      updateDiameterLabel(center, diameterLabel, this.getDiameterLabelHeight());
+    if (heightLabel !== undefined || diameterLabel !== undefined) {
+      const center = newVector3().addVectors(centerA, centerB).multiplyScalar(0.5);
+      if (heightLabel !== undefined) {
+        updateHeightLabel(center, heightLabel);
+      }
+      if (diameterLabel !== undefined) {
+        updateDiameterLabel(center, diameterLabel, this.getDiameterLabelHeight());
+      }
     }
 
     function updateRadiusLabel(
@@ -443,8 +444,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
         return;
       }
       const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
-      const position = newVector3(center).addScaledVector(radialDirection, radius / 2);
-      position.addScaledVector(axis, (sign * LABEL_PADDING_FACTOR * labelHeight) / 2);
+      const position = newVector3(center).addScaledVector(radialDirection, 0.5 * radius);
+      position.addScaledVector(axis, 0.5 * sign * LABEL_PADDING_FACTOR * labelHeight);
       label.position.copy(position);
     }
 
