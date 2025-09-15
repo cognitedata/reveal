@@ -408,7 +408,6 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return;
     }
     const { cylinder } = this.domainObject;
-    const { radius, height } = cylinder;
 
     const centerA = newVector3(cylinder.centerA);
     const centerB = newVector3(cylinder.centerB);
@@ -417,7 +416,6 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
     const axis = newVector3().subVectors(centerB, centerA).normalize();
     const cameraPosition = camera.getWorldPosition(newVector3());
-
     if (radiusLabelA !== undefined) {
       updateRadiusLabel(centerA, radiusLabelA, -1, this.getRadiusLabelHeight());
     }
@@ -446,7 +444,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
         return;
       }
       const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
-      const position = newVector3(center).addScaledVector(radialDirection, 0.5 * radius);
+      const position = newVector3(center).addScaledVector(radialDirection, 0.5 * cylinder.radius);
       position.addScaledVector(axis, 0.5 * sign * LABEL_PADDING_FACTOR * labelHeight);
       label.position.copy(position);
     }
@@ -455,25 +453,19 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       const cameraDirection = newVector3().subVectors(center, cameraPosition).normalize();
       const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
       const forwardDirection = newVector3().crossVectors(radialDirection, axis).normalize();
-      center.addScaledVector(forwardDirection, radius);
+
       label.position.copy(center);
+      label.position.addScaledVector(forwardDirection, cylinder.radius);
       label.visible = true;
     }
 
     function updateDiameterLabel(center: Vector3, label: Object3D, labelHeight: number): void {
-      const cameraDirection = newVector3().subVectors(center, cameraPosition).normalize();
-      const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
+      // Place it above the cylinder towards the "up" direction of the camera
+      const up = camera.up.clone().transformDirection(camera.matrixWorld).normalize();
+      const padding = LABEL_PADDING_FACTOR * labelHeight * 0.5;
 
-      // Here the label will be placed one top of the cylinder.
-      const padding = LABEL_PADDING_FACTOR * labelHeight;
-      if (Math.abs(axis.y) > 0.5) {
-        // Mostly vertical cylinder
-        center.addScaledVector(axis, -height - padding);
-      } else {
-        // Mostly horizontal cylinder
-        center.addScaledVector(radialDirection, -radius - padding);
-      }
       label.position.copy(center);
+      label.position.addScaledVector(up, cylinder.radius + padding);
       label.visible = true;
     }
   }
