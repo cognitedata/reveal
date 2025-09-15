@@ -1,6 +1,6 @@
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type PointOfInterest } from './types';
 
@@ -40,7 +40,7 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
   }
 
   public override invokeCore(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+    const domainObject = this.root.getDescendantByType(PointsOfInterestDomainObject);
     void domainObject?.postCommentForPoi(this._poi, this.content).then(() => {
       this._onFinish?.();
       domainObject?.notify(Changes.addedPart);

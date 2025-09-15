@@ -1,11 +1,10 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName, type ButtonType } from '../../../base/utilities/types';
 import { setClippingPlanes } from './setClippingPlanes';
-import { type ButtonType } from '../../../base/utilities/types';
 
 export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================
@@ -31,7 +30,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
     if (cropBox !== undefined) {
       return cropBox.focusType !== FocusType.Pending;
     }
-    if (this.rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
+    if (this.root.getDescendantByType(SliceDomainObject) !== undefined) {
       return true;
     }
     return false;
@@ -58,7 +57,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
         renderTarget.fitView();
       }
     } else {
-      setClippingPlanes(this.rootDomainObject);
+      setClippingPlanes(this.root);
     }
     return true;
   }
@@ -68,6 +67,6 @@ export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================
 
   private getSelectedCropBoxDomainObject(): CropBoxDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(CropBoxDomainObject);
+    return this.root.getSelectedDescendantByType(CropBoxDomainObject);
   }
 }

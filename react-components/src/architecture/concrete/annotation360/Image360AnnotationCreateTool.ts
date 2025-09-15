@@ -1,15 +1,14 @@
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { Image360AnnotationCreator } from './Image360AnnotationCreator';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { Image360AnnotationSelectTool } from './Image360AnnotationSelectTool';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
@@ -149,7 +148,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   }
 
   protected override getOrCreateParent(): DomainObject {
-    const root = this.rootDomainObject;
+    const root = this.root;
     const folder = root.getDescendantByType(Image360AnnotationFolder);
     if (folder !== undefined) {
       return folder;
@@ -166,7 +165,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
 
   private setSelectTool(): void {
     if (this.renderTarget.commandsController.setActiveToolByType(Image360AnnotationSelectTool)) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 }

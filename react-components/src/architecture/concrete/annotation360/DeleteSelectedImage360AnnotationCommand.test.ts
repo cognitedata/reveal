@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { addImage360Annotations, getNumberOfImage360Annotations } from './testUtilities';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 
@@ -13,7 +13,7 @@ describe(DeleteSelectedImage360AnnotationCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    root = renderTarget.rootDomainObject;
+    root = renderTarget.root;
   });
 
   test('Should have initial state witch icon, tooltip etc', () => {

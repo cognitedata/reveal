@@ -3,9 +3,10 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type IconName } from '../utilities/IconName';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { type IconName } from '../utilities/types';
 import { AxisDomainObject } from '../../concrete/axis/AxisDomainObject';
+import { Changes } from '../domainObjectsHelpers/Changes';
 
 export class RootDomainObject extends DomainObject {
   // ==================================================
@@ -43,6 +44,14 @@ export class RootDomainObject extends DomainObject {
     this._sdk = sdk;
     this._fdmSdk = new FdmSDK(sdk);
     this.addChild(new AxisDomainObject());
+
+    this.addEffect(() => {
+      this.unitSystem.lengthUnit();
+
+      // Make sure all views are notified when unit change
+      this.notify(Changes.unit);
+      this.notifyDescendants(Changes.unit);
+    });
   }
 
   // ==================================================

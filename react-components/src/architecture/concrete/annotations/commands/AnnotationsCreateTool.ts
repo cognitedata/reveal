@@ -1,17 +1,16 @@
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
-import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
+import { NavigationTool } from '../../../base/concreteCommands/navigation/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
 import { type Annotation } from '../helpers/Annotation';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -200,7 +199,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
+    return this.root.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 
   private getSelectedAnnotationsDomainObjectByForce(): AnnotationsDomainObject {
@@ -210,7 +209,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     }
     const newDomainObject = new AnnotationsDomainObject();
     newDomainObject.applyPendingWhenCreated = true;
-    this.rootDomainObject.addChildInteractive(newDomainObject);
+    this.root.addChildInteractive(newDomainObject);
     newDomainObject.setSelectedInteractive(true);
     newDomainObject.setVisibleInteractive(true);
     return newDomainObject;
@@ -218,7 +217,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   private setSelectTool(): void {
     if (this.renderTarget.commandsController.setActiveToolByType(AnnotationsSelectTool)) {
-      CommandsUpdater.update(this.renderTarget);
+      this._renderTarget?.updateAllCommands();
     }
   }
 

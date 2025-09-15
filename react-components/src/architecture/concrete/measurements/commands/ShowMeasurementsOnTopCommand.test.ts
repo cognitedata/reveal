@@ -1,5 +1,5 @@
 import { assert, beforeEach, describe, expect, test } from 'vitest';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
@@ -18,7 +18,7 @@ describe(ShowMeasurementsOnTopCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    root = renderTarget.rootDomainObject;
+    root = renderTarget.root;
   });
 
   test('Should have initial state', () => {

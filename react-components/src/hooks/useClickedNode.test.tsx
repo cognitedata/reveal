@@ -6,7 +6,7 @@ import { Vector3, MOUSE, Vector2 } from 'three';
 import { useClickedNodeData } from './useClickedNode';
 
 import { ViewerContextProvider } from '../components/RevealCanvas/ViewerContext';
-import { createFullRenderTargetMock } from '../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { type DataSourceType, type Cognite3DViewer, type CadIntersection } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
 import { cadMock } from '#test-utils/fixtures/cadModel';
@@ -83,7 +83,7 @@ describe(useClickedNodeData.name, () => {
   const mockUseRenderTarget = vi.fn<UseClickedNodeDataDependencies['useRenderTarget']>();
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider value={renderTarget}>
+    <ViewerContextProvider renderTarget={renderTarget}>
       <UseClickedNodeDataContext.Provider value={mockDependencies}>
         {children}
       </UseClickedNodeDataContext.Provider>

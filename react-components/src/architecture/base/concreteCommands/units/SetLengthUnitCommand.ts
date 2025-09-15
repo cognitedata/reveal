@@ -1,8 +1,8 @@
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/translation/TranslateInput';
 import { LengthUnit, UnitSystem } from '../../renderTarget/UnitSystem';
-import { Changes } from '../../domainObjectsHelpers/Changes';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class SetLengthUnitCommand extends BaseOptionCommand {
   // ==================================================
@@ -23,6 +23,11 @@ export class SetLengthUnitCommand extends BaseOptionCommand {
   public override get tooltip(): TranslationInput {
     return { key: 'UNITS' };
   }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.listenTo(this.root.unitSystem.lengthUnit);
+  }
 }
 
 class OptionItemCommand extends RenderTargetCommand {
@@ -38,15 +43,11 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const unitSystem = this.rootDomainObject.unitSystem;
-    return unitSystem.lengthUnit === this._value;
+    return this.root.unitSystem.lengthUnit() === this._value;
   }
 
   public override invokeCore(): boolean {
-    const unitSystem = this.rootDomainObject.unitSystem;
-    unitSystem.lengthUnit = this._value;
-    this.rootDomainObject.notify(Changes.unit);
-    this.rootDomainObject.notifyDescendants(Changes.unit);
+    this.root.unitSystem.lengthUnit(this._value);
     return true;
   }
 }

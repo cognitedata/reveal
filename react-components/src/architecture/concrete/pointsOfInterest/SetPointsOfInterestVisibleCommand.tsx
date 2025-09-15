@@ -1,5 +1,5 @@
 import { VisibleState } from '../../base/domainObjectsHelpers/VisibleState';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 
@@ -27,6 +27,6 @@ export class SetPointsOfInterestVisibleCommand<
   }
 
   private get poiDomainObject(): PointsOfInterestDomainObject<PoiIdType> | undefined {
-    return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+    return this.root.getDescendantByType(PointsOfInterestDomainObject);
   }
 }

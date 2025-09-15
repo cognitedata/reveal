@@ -36,7 +36,7 @@ describe(BoxDragger.name, () => {
     // Point toward the center of the box from top.
     const startRay = new Ray(new Vector3(0, 0, 2), new Vector3(0, 0, -1));
 
-    // Move the box the the XY plane
+    // Move the box the XY plane
     const delta = new Vector3(1, 2, 0);
 
     const expectedBox = clone(domainObject.box);
@@ -61,7 +61,7 @@ describe(BoxDragger.name, () => {
 
       const expectedBox = clone(domainObject.box);
       if (testCase.expectedChange) {
-        // Move the box the the XY plane
+        // Move the box the XY plane
         delta.set(testCase.shiftKey ? 0 : 1, 2, 0); // Shift only translate in dominate direction
         expectedBox.center.add(delta);
       }

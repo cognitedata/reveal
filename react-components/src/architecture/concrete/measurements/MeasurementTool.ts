@@ -1,5 +1,5 @@
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
@@ -8,7 +8,7 @@ import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { Box3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
@@ -18,6 +18,8 @@ import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+
+const POINT_SIZE_CHANGE_FACTOR = 0.1;
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -81,7 +83,7 @@ export class MeasurementTool extends PrimitiveEditTool {
     }
     // Change size
     this.addTransaction(domainObject.createTransaction(Changes.geometry));
-    const factor = 1 - Math.sign(delta) * 0.1;
+    const factor = 1 - Math.sign(delta) * POINT_SIZE_CHANGE_FACTOR;
     domainObject.size *= factor;
     domainObject.notify(Changes.geometry);
   }
@@ -104,13 +106,13 @@ export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
 
   protected override getOrCreateParent(): DomainObject {
-    const parent = this.rootDomainObject.getDescendantByType(MeasurementFolder);
+    const parent = this.root.getDescendantByType(MeasurementFolder);
     if (parent !== undefined) {
       return parent;
     }
     const newParent = new MeasurementFolder();
     newParent.isExpanded = true;
-    this.renderTarget.rootDomainObject.addChildInteractive(newParent);
+    this.renderTarget.root.addChildInteractive(newParent);
     return newParent;
   }
 

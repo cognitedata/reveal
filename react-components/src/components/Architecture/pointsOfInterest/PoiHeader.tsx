@@ -18,6 +18,7 @@ import { PoiSharePanel } from './PoiSharePanel';
 import { usePoiDomainObject } from './usePoiDomainObject';
 import { useSelectedPoi } from './useSelectedPoi';
 import { type PointOfInterest } from '../../../architecture';
+import { formatDateTime } from '@cognite/cdf-utilities';
 
 export const PoiHeader = (): ReactNode => {
   const { t } = useTranslation();
@@ -65,13 +66,7 @@ export const CreatePoiOwnerField = ({
 }): ReactNode => {
   const { createdTime, ownerId } = selectedPoi.properties;
   const createTime =
-    createdTime !== undefined
-      ? new Date(createdTime).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: '2-digit'
-        })
-      : 'Date not available';
+    createdTime !== undefined ? formatDateTime({ date: createdTime }) : 'Date not available';
 
   return (
     <Flex direction="row" alignItems="center" gap={8}>

@@ -1,9 +1,14 @@
-import { type IconName } from '../utilities/IconName';
-import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
+import { effect, type Signal } from '@cognite/signals';
+import { isTranslatedString, type TranslationInput } from '../utilities/translation/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { isMacOs } from '../utilities/extensions/isMacOs';
-import { translate } from '../utilities/translateUtils';
-import { generateUniqueId, type ButtonType, type UniqueId } from '../utilities/types';
+import { translate } from '../utilities/translation/translateUtils';
+import {
+  generateUniqueId,
+  type IconName,
+  type ButtonType,
+  type UniqueId
+} from '../utilities/types';
 
 /**
  * Represents a delegate function for updating a command.
@@ -27,6 +32,10 @@ export abstract class BaseCommand {
 
   private readonly _listeners: CommandUpdateDelegate[] = [];
   private readonly _disposables: Array<() => void> = [];
+
+  public get disposableCount(): number {
+    return this._disposables.length;
+  }
 
   // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
@@ -141,6 +150,12 @@ export abstract class BaseCommand {
     return this.invokeCore();
   }
 
+  /**
+   * Removes the core functionality of the command
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @remarks
+   * Always call `super.dispose()` in the overrides.
+   */
   public dispose(): void {
     for (const child of this.getChildren()) {
       child.dispose();
@@ -148,6 +163,7 @@ export abstract class BaseCommand {
     for (const disposable of this._disposables) {
       disposable();
     }
+    clear(this._disposables);
     this.removeEventListeners();
   }
 
@@ -186,6 +202,21 @@ export abstract class BaseCommand {
 
   protected addDisposable(disposable: () => void): void {
     this._disposables.push(disposable);
+  }
+
+  protected addEffect(effectFunction: () => void): void {
+    this.addDisposable(
+      effect(() => {
+        effectFunction();
+      })
+    );
+  }
+
+  protected listenTo<T>(signal: Signal<T>): void {
+    this.addEffect(() => {
+      signal();
+      this.update();
+    });
   }
 
   public getShortCutKeys(): string[] | undefined {

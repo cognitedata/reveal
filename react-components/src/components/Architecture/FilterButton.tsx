@@ -18,7 +18,7 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
 import { DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
-import { type IconName } from '../../architecture/base/utilities/IconName';
+import { type IconName } from '../../architecture/base/utilities/types';
 import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
@@ -28,6 +28,17 @@ import { type PlacementType } from './types';
 import { useCommandProperty } from './hooks/useCommandProperty';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
+import { type BaseCommand } from '../../architecture';
+
+export function createFilterButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseFilterCommand) {
+    return <FilterButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+  return undefined;
+}
 
 export const FilterButton = ({
   inputCommand,

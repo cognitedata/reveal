@@ -16,6 +16,19 @@ export function expectEqualVector3(
   }
 }
 
+export function expectEqualBidirectionalVector3(
+  actual: Vector3 | undefined,
+  expected: Vector3 | undefined
+): void {
+  const equals =
+    equalsVector3(actual, expected) || equalsVector3(actual?.clone().negate(), expected); // Just to see the difference
+  if (!equals) {
+    expect(actual).toStrictEqual(expected);
+  } else {
+    expect(equals).toBe(true);
+  }
+}
+
 export function expectEqualColor(actual: Color | undefined, expected: Color | undefined): void {
   const equals = equalsColor(actual, expected);
   if (!equals) {

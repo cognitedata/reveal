@@ -14,7 +14,7 @@ export function filterPrimitivesOutsideClipBox(
     attributeFloatValues: Float32Array,
     outBox: THREE.Box3
   ) => void
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const elementCount = attributesByteValues.length / elementSize;
   const attributeFloatValues = new Float32Array(
     attributesByteValues.buffer,

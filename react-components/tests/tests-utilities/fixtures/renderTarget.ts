@@ -17,7 +17,7 @@ const cdfCachesMock = new Mock<CdfCaches>()
   .object();
 
 const commandsControllerMock = new Mock<CommandsController>()
-  .setup((p) => p.update)
+  .setup((p) => p.deferredUpdate)
   .returns(vi.fn())
   .setup((p) => p.addEventListeners)
   .returns(vi.fn())
@@ -37,10 +37,12 @@ export function createRenderTargetMock(): RevealRenderTarget {
     .returns(commandsControllerMock)
     .setup((p) => p.invalidate.bind(p))
     .returns(vi.fn())
+    .setup((p) => p.updateAllCommands)
+    .returns(vi.fn())
     .setup((p) => p.revealSettingsController)
     .returns(new RevealSettingsController(viewerMock));
 
   const root = new RootDomainObject(mock.object(), sdkMock);
-  mock.setup((p) => p.rootDomainObject).returns(root);
+  mock.setup((p) => p.root).returns(root);
   return mock.object();
 }

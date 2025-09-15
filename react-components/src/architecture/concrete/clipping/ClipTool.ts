@@ -1,5 +1,5 @@
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
@@ -7,7 +7,7 @@ import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { ClipFolder } from './ClipFolder';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
@@ -59,13 +59,13 @@ export class ClipTool extends PrimitiveEditTool {
   // ==================================================
 
   protected override getOrCreateParent(): DomainObject {
-    const parent = this.rootDomainObject.getDescendantByType(ClipFolder);
+    const parent = this.root.getDescendantByType(ClipFolder);
     if (parent !== undefined) {
       return parent;
     }
     const newParent = new ClipFolder();
     newParent.isExpanded = true;
-    this.renderTarget.rootDomainObject.addChildInteractive(newParent);
+    this.renderTarget.root.addChildInteractive(newParent);
     return newParent;
   }
 

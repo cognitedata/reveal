@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { ClipTool } from '../ClipTool';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { getDefaultCommand } from '../../../../components/Architecture/utilities';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { lastElement } from '../../../base/utilities/extensions/arrayUtils';
 import { CLIP_PRIMITIVE_TYPES, SetClipTypeCommand } from './SetClipTypeCommand';
 import { SliceDomainObject } from '../SliceDomainObject';
@@ -19,7 +19,7 @@ describe(SetClipTypeCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
 
     // Add some planes and set the last one selected
     for (const domainObject of getPlanesOfAllType()) {
@@ -62,7 +62,7 @@ describe(SetClipTypeCommand.name, () => {
   test('Should be not be enable when active tool is ClipTool and more than 1 planes along the axis', () => {
     createActiveClipTool(renderTarget);
     // Add extra set of planes so it is 2 of each type
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     for (const domainObject of getPlanesOfAllType()) {
       root.addChild(domainObject);
     }
@@ -75,7 +75,7 @@ describe(SetClipTypeCommand.name, () => {
   test('Should set primitiveType on active tool', () => {
     const tool = createActiveClipTool(renderTarget);
     // Add extra set of planes
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     for (const domainObject of getPlanesOfAllType()) {
       root.addChild(domainObject);
     }

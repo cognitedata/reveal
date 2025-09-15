@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { lastElement } from '../../../base/utilities/extensions/arrayUtils';
 import { PlanePrimitiveTypes } from '../../../base/utilities/primitives/PrimitiveType';
 import { ShowAllClippingCommand } from './ShowAllClippingCommand';
@@ -19,7 +19,7 @@ describe(ShowAllClippingCommand.name, () => {
     command.attach(renderTarget);
 
     // Add some planes and set the last one selected
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     for (const domainObject of createClippingDomainObjects()) {
       root.addChild(domainObject);
     }
@@ -59,7 +59,7 @@ function isAllVisible(isVisible: boolean, renderTarget: RevealRenderTarget): boo
   return true;
 
   function* getClippingDomainObjects(renderTarget: RevealRenderTarget): Generator<DomainObject> {
-    const root = renderTarget.rootDomainObject;
+    const root = renderTarget.root;
     for (const domainObject of root.getDescendantsByType(CropBoxDomainObject)) {
       yield domainObject;
     }

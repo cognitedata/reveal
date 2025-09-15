@@ -1,5 +1,5 @@
 import { type JSX } from 'react';
-import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { type IconName } from '../../../architecture/base/utilities/types';
 import { type IconProps } from '@cognite/cogs.js';
 import { DefaultIcons } from './DefaultIcons';
 import { type IconType } from './IconType';

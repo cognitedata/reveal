@@ -15,13 +15,13 @@ import {
 import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DomainObjectPanel } from './DomainObjectPanel';
-import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
-import { type IconName } from '../../architecture/base/utilities/IconName';
-import { createFullRenderTargetMock } from '../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { type IconName } from '../../architecture/base/utilities/types';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { ComponentFactoryContextProvider } from '../RevealCanvas/ComponentFactoryContext';
 
 describe(DomainObjectPanel.name, () => {
   test('should not be visible for no domain object', async () => {
-    render(<DomainObjectPanel />, {});
+    renderDomainObjectPanel(undefined);
     const buttons = screen.queryAllByRole('button');
     expect(buttons.length).toBe(0);
   });
@@ -98,14 +98,16 @@ describe(DomainObjectPanel.name, () => {
 function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
   const renderTarget = createFullRenderTargetMock();
   if (domainObject !== undefined) {
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
   }
   if (domainObject !== undefined) {
     domainObject.isSelected = true; // Select the domain object to show the panel
-    DomainObjectPanelUpdater.show(domainObject);
+    renderTarget.panelUpdater.show(domainObject);
   }
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-    <ViewerContextProvider value={renderTarget}>{children}</ViewerContextProvider>
+    <ComponentFactoryContextProvider>
+      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
+    </ComponentFactoryContextProvider>
   );
   render(<DomainObjectPanel />, {
     wrapper
