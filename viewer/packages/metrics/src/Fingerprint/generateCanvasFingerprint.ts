@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 export function generateCanvasFingerprint(): string {
   const canvas = document.createElement('canvas');
   const canvasContext = canvas.getContext('2d');

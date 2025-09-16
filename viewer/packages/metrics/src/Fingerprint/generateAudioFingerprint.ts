@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 export async function generateAudioFingerprint(): Promise<string> {
   return new Promise((resolve, reject) => {
     try {

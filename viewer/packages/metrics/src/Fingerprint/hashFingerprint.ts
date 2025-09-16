@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 export function hashFingerprint(str: string, seed = 0): number {
   let firstPointer = 0xdeadbeef ^ seed,
     secondPointer = 0x41c6ce57 ^ seed;
