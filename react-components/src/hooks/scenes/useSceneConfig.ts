@@ -40,7 +40,16 @@ const DefaultScene: Scene = {
     cameraTranslationZ: 0,
     cameraEulerRotationX: 0,
     cameraEulerRotationY: 0,
-    cameraEulerRotationZ: 0
+    cameraEulerRotationZ: 0,
+    qualitySettings: {
+      cadBudget: 0,
+      pointCloudBudget: 0,
+      maxRenderResolution: 0,
+      movingCameraResolutionFactor: 0,
+      pointSize: 0,
+      pointShape: 0,
+      pointColor: 0
+    }
   },
   skybox: undefined,
   groundPlanes: [],
