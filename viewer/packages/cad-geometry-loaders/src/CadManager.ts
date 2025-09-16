@@ -68,7 +68,9 @@ export class CadManager {
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
-      const cadModel = this._cadModelMap.get(sector.modelIdentifier.revealInternalId);
+      const modelSymbol = sector.modelIdentifier.revealInternalId;
+      const cadModel = this._cadModelMap.get(modelSymbol);
+
       if (!cadModel) {
         // Model has been removed - results can come in for a period just after removal
         return;
@@ -199,6 +201,7 @@ export class CadManager {
 
     const model = await this._cadModelFactory.createModel(modelMetadata, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
+
     this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
     this.setCacheSizeForModel(model, this.budget);
