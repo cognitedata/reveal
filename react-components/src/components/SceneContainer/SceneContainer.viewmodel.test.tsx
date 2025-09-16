@@ -8,7 +8,7 @@ import {
   SceneContainerViewModelContext
 } from './SceneContainer.viewmodel.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
-import { type AddResourceOptions } from '../..';
+import { type AddResourceOptions } from '../Reveal3DResources';
 
 describe(useSceneContainerViewModel.name, () => {
   const mockProps: UseSceneContainerViewModelProps = {
