@@ -1,6 +1,6 @@
-import { generateCanvasFingerprint } from "./generateCanvasFingerprint";
-import { generateAudioFingerprint } from "./generateAudioFingerprint";
-import { hashFingerprint } from "./hashFingerprint";
+import { generateCanvasFingerprint } from './generateCanvasFingerprint';
+import { generateAudioFingerprint } from './generateAudioFingerprint';
+import { hashFingerprint } from './hashFingerprint';
 
 export async function getUserFingerprint(): Promise<string> {
   try {
