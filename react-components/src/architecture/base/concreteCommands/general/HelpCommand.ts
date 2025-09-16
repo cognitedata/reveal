@@ -1,8 +1,8 @@
-import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type IconName } from '../../utilities/types';
 import { type TranslationInput } from '../../utilities/translation/TranslateInput';
+import { BaseCommand } from '../../commands/BaseCommand';
 
-export class HelpCommand extends RenderTargetCommand {
+export class HelpCommand extends BaseCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -15,10 +15,6 @@ export class HelpCommand extends RenderTargetCommand {
 
   public override get icon(): IconName {
     return 'Help';
-  }
-
-  public override get isToggle(): boolean {
-    return true;
   }
 
   public override get isChecked(): boolean {

@@ -30,10 +30,14 @@ import { Image360AnnotationSelectTool } from '../../architecture/concrete/annota
 import { PointCloudFilterCommand } from '../../architecture/concrete/reveal/pointCloud/commands/PointCloudFilterCommand';
 import { UndoCommand } from '../../architecture/base/concreteCommands/general/UndoCommand';
 import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
+import { ShareCommand } from '../../architecture/base/concreteCommands/general/ShareCommand';
 
 export class RevealButtons {
   static Help = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new HelpCommand(), prop);
+
+  static Share = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new ShareCommand(), prop);
 
   static Settings = (props: SettingsProp): ReactElement =>
     createButtonFromCommandConstructor(
