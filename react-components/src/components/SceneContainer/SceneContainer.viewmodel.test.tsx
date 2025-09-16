@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { useSceneContainerViewModel } from './SceneContainer.viewmodel';
 import { type UseSceneContainerViewModelProps } from './types';
@@ -24,10 +24,6 @@ describe(useSceneContainerViewModel.name, () => {
       {children}
     </SceneContainerViewModelContext.Provider>
   );
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   test('should return correct viewmodel result when resources are available', () => {
     const mockResourceOptions = [

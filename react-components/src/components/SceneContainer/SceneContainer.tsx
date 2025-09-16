@@ -13,7 +13,7 @@ export function SceneContainer({
     sceneSpaceId
   });
 
-  if(!hasResources) {
+  if (!hasResources) {
     return null;
   }
 

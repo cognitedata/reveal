@@ -3,12 +3,9 @@ import { describe, expect, test, vi } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { SceneContainer } from './SceneContainer';
 import { type SceneContainerProps } from './types';
-import {
-  SceneContainerContext,
-  defaultSceneContainerDependencies
-} from './SceneContainer.context';
+import { SceneContainerContext, defaultSceneContainerDependencies } from './SceneContainer.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
-import { AddResourceOptions } from '../Reveal3DResources';
+import { type AddResourceOptions } from '../Reveal3DResources';
 
 describe(SceneContainer.name, () => {
   const mockProps: SceneContainerProps = {
@@ -21,16 +18,12 @@ describe(SceneContainer.name, () => {
   );
 
   const mockReveal3DResources = vi.fn(({ resources }) => (
-    <div data-testid="reveal-3d-resources">
-      Resources count: {resources?.length || 0}
-    </div>
+    <div data-testid="reveal-3d-resources">Resources count: {resources?.length ?? 0}</div>
   ));
   defaultViewModelDependencies.Reveal3DResources = mockReveal3DResources;
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <SceneContainerContext.Provider
-      value={defaultViewModelDependencies}
-    >
+    <SceneContainerContext.Provider value={defaultViewModelDependencies}>
       {children}
     </SceneContainerContext.Provider>
   );
@@ -43,7 +36,7 @@ describe(SceneContainer.name, () => {
 
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
-      hasResources: true,
+      hasResources: true
     });
 
     const { getByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
@@ -60,7 +53,7 @@ describe(SceneContainer.name, () => {
   test('should not render Reveal3DResources when no resources are available', () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false,
+      hasResources: false
     });
 
     const { queryByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
@@ -77,7 +70,7 @@ describe(SceneContainer.name, () => {
 
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
-      hasResources: true,
+      hasResources: true
     });
 
     render(<SceneContainer {...mockProps} {...additionalProps} />, { wrapper });
@@ -94,7 +87,7 @@ describe(SceneContainer.name, () => {
   test('should call useSceneContainerViewModel with correct parameters', () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false,
+      hasResources: false
     });
 
     render(<SceneContainer {...mockProps} />, { wrapper });
@@ -108,7 +101,7 @@ describe(SceneContainer.name, () => {
   test('should render null when hasResources is false', () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false,
+      hasResources: false
     });
 
     const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
