@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 import { GltfSectorLoader } from '../src/GltfSectorLoader';
-import { CadMaterialManager } from '@reveal/rendering';
 
 import { IMock } from 'moq.ts';
 import { WantedSector } from '@reveal/cad-parsers';
@@ -17,10 +16,7 @@ describe(GltfSectorLoader.name, () => {
     const binMock = createBinaryFileProviderMock();
     wantedSectorMock = createWantedSectorMock();
 
-    const materialManager = new CadMaterialManager();
-    materialManager.addModelMaterials(wantedSectorMock.object().modelIdentifier.revealInternalId, 1);
-
-    loader = new GltfSectorLoader(binMock.object(), materialManager);
+    loader = new GltfSectorLoader(binMock.object());
   });
 
   test('loadSector returns consumed sector with right id and modelIdentifier', async () => {
