@@ -85,7 +85,6 @@ describe(MeasurementTool.name, () => {
     tool.attach(renderTarget);
 
     const marker = getOrCreateCircleMarker(renderTarget.root);
-    marker.setVisibleInteractive(false);
     marker.onWheel = vi.fn();
 
     await tool.onWheel(createShiftWheelEvent(), 1);
