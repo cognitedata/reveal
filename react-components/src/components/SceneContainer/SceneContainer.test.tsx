@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { SceneContainer } from './SceneContainer';
 import { type SceneContainerProps } from './types';
@@ -8,6 +8,7 @@ import {
   defaultSceneContainerDependencies
 } from './SceneContainer.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import { AddResourceOptions } from '../Reveal3DResources';
 
 describe(SceneContainer.name, () => {
   const mockProps: SceneContainerProps = {
@@ -35,7 +36,7 @@ describe(SceneContainer.name, () => {
   );
 
   test('should render Reveal3DResources when resources are available', () => {
-    const mockResourceOptions = [
+    const mockResourceOptions: AddResourceOptions[] = [
       { modelId: 1, revisionId: 1 },
       { modelId: 2, revisionId: 2 }
     ];
@@ -43,7 +44,6 @@ describe(SceneContainer.name, () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
       hasResources: true,
-      isLoading: false
     });
 
     const { getByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
@@ -61,7 +61,6 @@ describe(SceneContainer.name, () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
       hasResources: false,
-      isLoading: true
     });
 
     const { queryByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
@@ -70,7 +69,7 @@ describe(SceneContainer.name, () => {
   });
 
   test('should pass through additional props to Reveal3DResources', () => {
-    const mockResourceOptions = [{ modelId: 1, revisionId: 1 }];
+    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 1, revisionId: 1 }];
     const additionalProps = {
       onModelLoadingChanged: vi.fn(),
       styling: { default: { color: 'red' } }
@@ -79,7 +78,6 @@ describe(SceneContainer.name, () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
       hasResources: true,
-      isLoading: false
     });
 
     render(<SceneContainer {...mockProps} {...additionalProps} />, { wrapper });
@@ -97,7 +95,6 @@ describe(SceneContainer.name, () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
       hasResources: false,
-      isLoading: true
     });
 
     render(<SceneContainer {...mockProps} />, { wrapper });
@@ -112,28 +109,10 @@ describe(SceneContainer.name, () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
       hasResources: false,
-      isLoading: true
     });
 
     const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
 
     expect(container.firstChild).toBeNull();
-  });
-
-  test('should handle loading state correctly', () => {
-    defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
-      resourceOptions: [],
-      hasResources: false,
-      isLoading: true
-    });
-
-    const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
-
-    // Should render nothing while loading with no resources
-    expect(container.firstChild).toBeNull();
-    expect(defaultViewModelDependencies.useSceneContainerViewModel).toHaveBeenCalledWith({
-      sceneExternalId: mockProps.sceneExternalId,
-      sceneSpaceId: mockProps.sceneSpaceId
-    });
   });
 });

@@ -41,7 +41,6 @@ describe(useSceneContainerViewModel.name, () => {
 
     expect(result.current.resourceOptions).toEqual(mockResourceOptions);
     expect(result.current.hasResources).toBe(true);
-    expect(result.current.isLoading).toBe(false);
   });
 
   test('should return correct viewmodel result when no resources are available', () => {
@@ -53,7 +52,6 @@ describe(useSceneContainerViewModel.name, () => {
 
     expect(result.current.resourceOptions).toEqual(mockResourceOptions);
     expect(result.current.hasResources).toBe(false);
-    expect(result.current.isLoading).toBe(true);
   });
 
   test('should call all required hooks with correct parameters', () => {

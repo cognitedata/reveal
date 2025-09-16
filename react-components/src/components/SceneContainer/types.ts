@@ -15,6 +15,5 @@ export type UseSceneContainerViewModelProps = {
 
 export type UseSceneContainerViewModelResult = {
   resourceOptions: AddResourceOptions[];
-  isLoading: boolean;
   hasResources: boolean;
 };

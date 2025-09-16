@@ -23,11 +23,9 @@ export function useSceneContainerViewModel({
   useLoadPoisForScene(sceneExternalId, sceneSpaceId);
 
   const hasResources = useMemo(() => resourceOptions.length > 0, [resourceOptions]);
-  const isLoading = useMemo(() => resourceOptions.length === 0, [resourceOptions]);
 
   return {
     resourceOptions,
-    isLoading,
     hasResources
   };
 }
