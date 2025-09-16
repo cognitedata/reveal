@@ -1,0 +1,20 @@
+import {
+  type CommonResourceContainerProps,
+  type AddResourceOptions
+} from '../Reveal3DResources/types';
+
+export type SceneContainerProps = {
+  sceneExternalId: string;
+  sceneSpaceId: string;
+} & CommonResourceContainerProps;
+
+export type UseSceneContainerViewModelProps = {
+  sceneExternalId: string;
+  sceneSpaceId: string;
+};
+
+export type UseSceneContainerViewModelResult = {
+  resourceOptions: AddResourceOptions[];
+  isLoading: boolean;
+  hasResources: boolean;
+};
