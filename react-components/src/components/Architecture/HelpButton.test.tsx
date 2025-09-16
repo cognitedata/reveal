@@ -9,7 +9,7 @@ import { viewerMock } from '#test-utils/fixtures/viewer';
 import { RevealRenderTarget } from '../../architecture';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
-import { HelpButton } from './HelpButton';
+import { createHelpButton } from './HelpButton';
 
 let wrapper: (props: PropsWithChildren) => ReactElement;
 
@@ -26,17 +26,13 @@ describe(SettingsButton.name, () => {
   });
 
   test('should have icon', async () => {
-    const { container } = render(<HelpButton inputCommand={command} placement="right" />, {
-      wrapper
-    });
+    const { container } = render(createHelpButton(command, PLACEMENT), { wrapper });
     const icon = findIconByNameInContainer(command.icon, container);
     expect(icon).toBeDefined();
   });
 
   test('should be closed when no click', async () => {
-    const { container } = render(<HelpButton inputCommand={command} placement="right" />, {
-      wrapper
-    });
+    const { container } = render(createHelpButton(command, PLACEMENT), { wrapper });
     const icon = findIconByNameInContainer(command.icon, container);
     assert(icon !== null);
 
@@ -45,9 +41,7 @@ describe(SettingsButton.name, () => {
   });
 
   test('should open on click', async () => {
-    const { container } = render(<HelpButton inputCommand={command} placement="right" />, {
-      wrapper
-    });
+    const { container } = render(createHelpButton(command, PLACEMENT), { wrapper });
     const icon = findIconByNameInContainer(command.icon, container);
     assert(icon !== null);
 
@@ -57,10 +51,8 @@ describe(SettingsButton.name, () => {
     expect(screen.queryByRole('dialog')).toBeDefined();
   });
 
-  test('should close on when open', async () => {
-    const { container } = render(<HelpButton inputCommand={command} placement="right" />, {
-      wrapper
-    });
+  test('should close on click on when open', async () => {
+    const { container } = render(createHelpButton(command, PLACEMENT), { wrapper });
     const icon = findIconByNameInContainer(command.icon, container);
     assert(icon !== null);
 
@@ -73,3 +65,5 @@ describe(SettingsButton.name, () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
+
+const PLACEMENT = 'right';

@@ -21,7 +21,7 @@ export function createHelpButton(
   return undefined;
 }
 
-export const HelpButton = ({
+const HelpButton = ({
   inputCommand,
   placement
 }: {
