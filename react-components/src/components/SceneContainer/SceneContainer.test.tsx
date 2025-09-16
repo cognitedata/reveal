@@ -17,7 +17,9 @@ describe(SceneContainer.name, () => {
     defaultSceneContainerDependencies
   );
 
-  const mockReveal3DResources = vi.fn(({ resources }) => (
+  const mockReveal3DResources = vi.fn<
+    ({ resources }: { resources: AddResourceOptions[] }) => ReactElement
+  >(({ resources }) => (
     <div data-testid="reveal-3d-resources">Resources count: {resources?.length ?? 0}</div>
   ));
   defaultViewModelDependencies.Reveal3DResources = mockReveal3DResources;
