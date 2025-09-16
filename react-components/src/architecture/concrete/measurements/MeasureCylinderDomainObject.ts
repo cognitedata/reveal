@@ -14,7 +14,7 @@ export class MeasureCylinderDomainObject extends CylinderDomainObject {
       this.color = new Color(Color.NAMES.yellow);
       this.renderStyle.depthTest = false; // Should be visible through other geometry
       this.renderStyle.showLabel = true;
-      this.renderStyle.relativeTextSize = 1; // Should use large labels
+      this.renderStyle.relativeTextSize = 0.5; // Should use large labels
     } else {
       this.color = new Color(Color.NAMES.magenta);
     }

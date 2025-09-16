@@ -91,7 +91,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   }
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
-    if (this.primitiveType === PrimitiveType.Diameter) {
+    if (this.primitiveType === PrimitiveType.Diameter && event.shiftKey) {
       const circleMarker = getCircleMarker(this.root);
       if (circleMarker !== undefined && circleMarker.isVisible()) {
         circleMarker.onWheel(delta);
