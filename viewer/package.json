@@ -63,7 +63,6 @@
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
-    "@rajesh896/broprint.js": "^2.1.1",
     "@tweenjs/tween.js": "^25.0.0",
     "assert": "^2.1.0",
     "async-mutex": "^0.5.0",
