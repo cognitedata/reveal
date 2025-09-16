@@ -176,8 +176,12 @@ class ProgressReportHelper {
   }
 
   reset(sectorsScheduledChange: number) {
-    this._sectorsScheduled = sectorsScheduledChange;
-    this._sectorsLoaded = 0;
+    if (sectorsScheduledChange === 0) {
+      return;
+    }
+    // Handle overlapping cycles - don't overwrite, accumulate
+    this._sectorsScheduled = Math.max(this._sectorsScheduled, sectorsScheduledChange);
+    // Keep _sectorsLoaded as is - it accumulates naturally
     this._sectorsCulled = 0;
     this.triggerCallback();
   }
