@@ -151,7 +151,16 @@ function createMapOfScenes(
           modelOptions: [],
           image360CollectionOptions: [],
           groundPlanes: [],
-          skybox: skyboxObject
+          skybox: skyboxObject,
+          qualitySettings: {
+            cadBudget: properties.cadBudget,
+            pointCloudBudget: properties.pointCloudBudget,
+            maxRenderResolution: properties.maxRenderResolution,
+            movingCameraResolutionFactor: properties.movingCameraResolutionFactor,
+            pointSize: properties.pointSize,
+            pointShape: properties.pointShape,
+            pointColor: properties.pointColor
+          }
         };
       }
 

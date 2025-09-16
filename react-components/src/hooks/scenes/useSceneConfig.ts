@@ -103,7 +103,16 @@ export const useSceneConfig = (
           cameraTargetX: sceneConfigurationProperties.cameraTargetX,
           cameraTargetY: sceneConfigurationProperties.cameraTargetY,
           cameraTargetZ: sceneConfigurationProperties.cameraTargetZ,
-          updatedAt: sceneConfigurationProperties.updatedAt
+          updatedAt: sceneConfigurationProperties.updatedAt,
+          qualitySettings: {
+            cadBudget: sceneConfigurationProperties.cadBudget,
+            pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
+            maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
+            movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
+            pointSize: sceneConfigurationProperties.pointSize,
+            pointShape: sceneConfigurationProperties.pointShape,
+            pointColor: sceneConfigurationProperties.pointColor
+          }
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),

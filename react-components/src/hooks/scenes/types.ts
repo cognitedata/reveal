@@ -5,7 +5,11 @@ import {
   type AddImage360CollectionDatamodelsOptions,
   type AddPointCloudResourceOptions
 } from '../../components';
-import { type GroundPlane, type Skybox } from '../../components/SceneContainer/sceneTypes';
+import {
+  type SceneQualitySettings,
+  type GroundPlane,
+  type Skybox
+} from '../../components/SceneContainer/sceneTypes';
 
 export type Transformation3d = {
   translationX: number;
@@ -31,6 +35,7 @@ export type SceneData = {
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;
+  qualitySettings?: SceneQualitySettings;
 };
 
 export type SceneModelsProperties = Transformation3d & {
@@ -50,6 +55,13 @@ export type SceneConfigurationProperties = {
   cameraTargetY?: number;
   cameraTargetZ?: number;
   updatedAt?: string;
+  cadBudget?: number;
+  pointCloudBudget?: number;
+  maxRenderResolution?: number;
+  movingCameraResolutionFactor?: number;
+  pointSize?: number;
+  pointShape?: number;
+  pointColor?: number;
 };
 
 export type SkyboxProperties = {
@@ -156,7 +168,14 @@ export const sceneSourceWithProperties = [
       'cameraTargetX',
       'cameraTargetY',
       'cameraTargetZ',
-      'updatedAt'
+      'updatedAt',
+      'cadBudget',
+      'pointCloudBudget',
+      'maxRenderResolution',
+      'movingCameraResolutionFactor',
+      'pointSize',
+      'pointShape',
+      'pointColor'
     ]
   }
 ] as const satisfies SourceSelectorV3;
