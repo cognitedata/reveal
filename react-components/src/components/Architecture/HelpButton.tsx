@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { MouseNavigation } from '../RevealToolbar/Help/MouseNavigation';
 import { TouchNavigation } from '../RevealToolbar/Help/TouchNavigation';
 import { KeyboardNavigation } from '../RevealToolbar/Help/KeyboardNavigation';
-import { type PlacementType } from '.';
 import { CommandButton } from './CommandButton';
 import { type BaseCommand } from '../../architecture';
 import { useCommand } from './hooks/useCommand';
 import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
 import { getDropdownPlacement, DROP_DOWN_OFFSET } from './utilities';
+import { type PlacementType } from './types';
 
 export function createHelpButton(
   command: BaseCommand,
