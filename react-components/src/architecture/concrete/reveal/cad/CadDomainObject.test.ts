@@ -5,6 +5,7 @@ import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { CadDomainObject } from './CadDomainObject';
 import type { RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { viewerModelsMock } from '#test-utils/fixtures/viewer';
+import { Box3, Vector3 } from 'three';
 
 describe(CadDomainObject.name, () => {
   let model: CogniteCadModel;
@@ -41,5 +42,12 @@ describe(CadDomainObject.name, () => {
     expect(domainObject.isVisible()).toBe(true);
     expect(model.visible).toBe(true);
     expect(renderTarget.viewer.requestRedraw).toHaveBeenCalled();
+  });
+
+  test('should have bounding box', () => {
+    const expectedBoundingBox = new Box3(new Vector3(1, 2, 3), new Vector3(4, 5, 6));
+    domainObject.model.getModelBoundingBox = () => expectedBoundingBox;
+    const actualBoundingBox = domainObject.getBoundingBox();
+    expect(actualBoundingBox).toStrictEqual(actualBoundingBox);
   });
 });

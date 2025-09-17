@@ -7,7 +7,7 @@ import {
   MeshPhongMaterial,
   type Color,
   type Object3D,
-  Box3
+  type Box3
 } from 'three';
 import { ContouringService } from './geometry/ContouringService';
 import { type TerrainDomainObject } from './TerrainDomainObject';
@@ -89,16 +89,8 @@ export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
   // ==================================================
 
   protected override calculateBoundingBox(): Box3 {
-    const { grid } = this.domainObject;
-    if (grid === undefined) {
-      return new Box3().makeEmpty();
-    }
-    const range = grid.boundingBox;
-    if (range.isEmpty) {
-      return new Box3().makeEmpty();
-    }
-    const boundingBox = range.getBox();
-    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION); // Convert to viewer space
+    const boundingBox = this.domainObject.getBoundingBox();
+    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     return boundingBox;
   }
 
