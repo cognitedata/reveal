@@ -13,19 +13,12 @@ describe(SceneContainer.name, () => {
     sceneSpaceId: 'test-space-id'
   };
 
-  const defaultViewModelDependencies = getMocksByDefaultDependencies(
+  const sceneContainerDependencies = getMocksByDefaultDependencies(
     defaultSceneContainerDependencies
   );
 
-  const mockReveal3DResources = vi.fn<
-    ({ resources }: { resources: AddResourceOptions[] }) => ReactElement
-  >(({ resources }) => (
-    <div data-testid="reveal-3d-resources">Resources count: {resources?.length ?? 0}</div>
-  ));
-  defaultViewModelDependencies.Reveal3DResources = mockReveal3DResources;
-
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <SceneContainerContext.Provider value={defaultViewModelDependencies}>
+    <SceneContainerContext.Provider value={sceneContainerDependencies}>
       {children}
     </SceneContainerContext.Provider>
   );
@@ -36,16 +29,15 @@ describe(SceneContainer.name, () => {
       { modelId: 789, revisionId: 987 }
     ];
 
-    defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
       hasResources: true,
       onPointCloudSettingsCallback: vi.fn()
     });
 
-    const { getByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
+    render(<SceneContainer {...mockProps} />, { wrapper });
 
-    expect(getByTestId('reveal-3d-resources')).toBeDefined();
-    expect(mockReveal3DResources).toHaveBeenCalledWith(
+    expect(sceneContainerDependencies.Reveal3DResources).toHaveBeenCalledWith(
       expect.objectContaining({
         resources: mockResourceOptions
       }),
@@ -54,15 +46,15 @@ describe(SceneContainer.name, () => {
   });
 
   test('should not render Reveal3DResources when no resources are available', () => {
-    defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
       hasResources: false,
       onPointCloudSettingsCallback: vi.fn()
     });
 
-    const { queryByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
+    render(<SceneContainer {...mockProps} />, { wrapper });
 
-    expect(queryByTestId('reveal-3d-resources')).toBeNull();
+    expect(sceneContainerDependencies.Reveal3DResources).not.toHaveBeenCalled();
   });
 
   test('should pass through additional props to Reveal3DResources', () => {
@@ -72,7 +64,7 @@ describe(SceneContainer.name, () => {
       styling: { default: { color: 'red' } }
     };
 
-    defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
       hasResources: true,
       onPointCloudSettingsCallback: vi.fn()
@@ -80,7 +72,7 @@ describe(SceneContainer.name, () => {
 
     render(<SceneContainer {...mockProps} {...additionalProps} />, { wrapper });
 
-    expect(mockReveal3DResources).toHaveBeenCalledWith(
+    expect(sceneContainerDependencies.Reveal3DResources).toHaveBeenCalledWith(
       expect.objectContaining({
         resources: mockResourceOptions,
         ...additionalProps
@@ -90,7 +82,7 @@ describe(SceneContainer.name, () => {
   });
 
   test('should call useSceneContainerViewModel with correct parameters', () => {
-    defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
       hasResources: false,
       onPointCloudSettingsCallback: vi.fn()
@@ -98,9 +90,20 @@ describe(SceneContainer.name, () => {
 
     render(<SceneContainer {...mockProps} />, { wrapper });
 
-    expect(defaultViewModelDependencies.useSceneContainerViewModel).toHaveBeenCalledWith({
+    expect(sceneContainerDependencies.useSceneContainerViewModel).toHaveBeenCalledWith({
       sceneExternalId: mockProps.sceneExternalId,
       sceneSpaceId: mockProps.sceneSpaceId
     });
+  });
+
+  test('should render null when hasResources is false', () => {
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
+      resourceOptions: [],
+      hasResources: false
+    });
+
+    const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
+
+    expect(container.firstChild).toBeNull();
   });
 });
