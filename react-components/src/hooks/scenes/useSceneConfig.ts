@@ -46,9 +46,9 @@ const DefaultScene: Scene = {
       pointCloudBudget: 0,
       maxRenderResolution: 0,
       movingCameraResolutionFactor: 0,
-      pointSize: 0,
-      pointShape: 0,
-      pointColor: 0
+      pointCloudPointSize: 0,
+      pointCloudPointShape: '',
+      pointCloudColor: ''
     }
   },
   skybox: undefined,
@@ -118,9 +118,9 @@ export const useSceneConfig = (
             pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
             maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
             movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
-            pointSize: sceneConfigurationProperties.pointSize,
-            pointShape: sceneConfigurationProperties.pointShape,
-            pointColor: sceneConfigurationProperties.pointColor
+            pointCloudPointSize: sceneConfigurationProperties.pointCloudPointSize,
+            pointCloudPointShape: sceneConfigurationProperties.pointCloudPointShape,
+            pointCloudColor: sceneConfigurationProperties.pointCloudColor
           }
         },
         skybox: getSkybox(sceneResponse),

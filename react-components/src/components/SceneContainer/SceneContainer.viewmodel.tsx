@@ -22,12 +22,17 @@ export function useSceneContainerViewModel({
   useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
   useSkyboxFromScene(sceneExternalId, sceneSpaceId);
   useLoadPoisForScene(sceneExternalId, sceneSpaceId);
-  useQualitySettingsFromScene(sceneExternalId, sceneSpaceId);
+
+  const { onPointCloudSettingsCallback } = useQualitySettingsFromScene(
+    sceneExternalId,
+    sceneSpaceId
+  );
 
   const hasResources = useMemo(() => resourceOptions.length > 0, [resourceOptions]);
 
   return {
     resourceOptions,
-    hasResources
+    hasResources,
+    onPointCloudSettingsCallback
   };
 }

@@ -38,7 +38,8 @@ describe(SceneContainer.name, () => {
 
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
-      hasResources: true
+      hasResources: true,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     const { getByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
@@ -55,7 +56,8 @@ describe(SceneContainer.name, () => {
   test('should not render Reveal3DResources when no resources are available', () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false
+      hasResources: false,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     const { queryByTestId } = render(<SceneContainer {...mockProps} />, { wrapper });
@@ -72,7 +74,8 @@ describe(SceneContainer.name, () => {
 
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
-      hasResources: true
+      hasResources: true,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     render(<SceneContainer {...mockProps} {...additionalProps} />, { wrapper });
@@ -89,7 +92,8 @@ describe(SceneContainer.name, () => {
   test('should call useSceneContainerViewModel with correct parameters', () => {
     defaultViewModelDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false
+      hasResources: false,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     render(<SceneContainer {...mockProps} />, { wrapper });

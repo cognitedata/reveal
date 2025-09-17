@@ -1,4 +1,3 @@
-import { type PointColorType, type PointShape } from '@cognite/reveal';
 import { type Transformation3d } from './SceneFdmTypes';
 
 export type Scene = {
@@ -29,9 +28,9 @@ export type SceneQualitySettings = {
   pointCloudBudget?: number;
   maxRenderResolution?: number;
   movingCameraResolutionFactor?: number;
-  pointSize?: number;
-  pointShape?: PointShape;
-  pointColor?: PointColorType;
+  pointCloudPointSize?: number;
+  pointCloudPointShape?: string;
+  pointCloudColor?: string;
 };
 
 export type ClassicModelIdentifier = {

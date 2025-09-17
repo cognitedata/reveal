@@ -157,9 +157,9 @@ function createMapOfScenes(
             pointCloudBudget: properties.pointCloudBudget,
             maxRenderResolution: properties.maxRenderResolution,
             movingCameraResolutionFactor: properties.movingCameraResolutionFactor,
-            pointSize: properties.pointSize,
-            pointShape: properties.pointShape,
-            pointColor: properties.pointColor
+            pointCloudPointSize: properties.pointCloudPointSize,
+            pointCloudPointShape: properties.pointCloudPointShape,
+            pointCloudColor: properties.pointCloudColor
           }
         };
       }

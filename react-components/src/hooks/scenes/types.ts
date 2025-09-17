@@ -59,9 +59,9 @@ export type SceneConfigurationProperties = {
   pointCloudBudget?: number;
   maxRenderResolution?: number;
   movingCameraResolutionFactor?: number;
-  pointSize?: number;
-  pointShape?: number;
-  pointColor?: number;
+  pointCloudPointSize?: number;
+  pointCloudPointShape?: string;
+  pointCloudColor?: string;
 };
 
 export type SkyboxProperties = {
@@ -173,9 +173,9 @@ export const sceneSourceWithProperties = [
       'pointCloudBudget',
       'maxRenderResolution',
       'movingCameraResolutionFactor',
-      'pointSize',
-      'pointShape',
-      'pointColor'
+      'pointCloudPointSize',
+      'pointCloudPointShape',
+      'pointCloudColor'
     ]
   }
 ] as const satisfies SourceSelectorV3;

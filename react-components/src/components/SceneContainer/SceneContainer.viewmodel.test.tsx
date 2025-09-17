@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { useSceneContainerViewModel } from './SceneContainer.viewmodel';
 import { type UseSceneContainerViewModelProps } from './types';
@@ -20,11 +20,20 @@ describe(useSceneContainerViewModel.name, () => {
     defaultSceneContainerViewModelDependencies
   );
 
+  const mockOnPointCloudSettingsCallback = vi.fn();
+
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <SceneContainerViewModelContext.Provider value={defaultDependencies}>
       {children}
     </SceneContainerViewModelContext.Provider>
   );
+
+  beforeEach(() => {
+    // Mock the new return type for useQualitySettingsFromScene
+    defaultDependencies.useQualitySettingsFromScene.mockReturnValue({
+      onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
+    });
+  });
 
   test('should return correct viewmodel result when resources are available', () => {
     const mockResourceOptions: AddResourceOptions[] = [
@@ -38,6 +47,7 @@ describe(useSceneContainerViewModel.name, () => {
 
     expect(result.current.resourceOptions).toEqual(mockResourceOptions);
     expect(result.current.hasResources).toBe(true);
+    expect(result.current.onPointCloudSettingsCallback).toBe(mockOnPointCloudSettingsCallback);
   });
 
   test('should return correct viewmodel result when no resources are available', () => {
@@ -49,6 +59,7 @@ describe(useSceneContainerViewModel.name, () => {
 
     expect(result.current.resourceOptions).toEqual(mockResourceOptions);
     expect(result.current.hasResources).toBe(false);
+    expect(result.current.onPointCloudSettingsCallback).toBe(mockOnPointCloudSettingsCallback);
   });
 
   test('should call all required hooks with correct parameters', () => {
