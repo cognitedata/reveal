@@ -76,7 +76,7 @@ describe(updateMeasureDiameter.name, () => {
     const root = renderTarget.root;
 
     const circleMarker = getOrCreateCircleMarker(root);
-    circleMarker.radius = 0.1; // Small radius to avoid cylinder creation
+    circleMarker.radius = circleMarker.legalRadiusRange.min; // Small radius to avoid cylinder creation
 
     const { intersection, cameraPosition } = createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
