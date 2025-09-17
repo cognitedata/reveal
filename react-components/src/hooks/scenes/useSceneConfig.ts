@@ -40,7 +40,16 @@ const DefaultScene: Scene = {
     cameraTranslationZ: 0,
     cameraEulerRotationX: 0,
     cameraEulerRotationY: 0,
-    cameraEulerRotationZ: 0
+    cameraEulerRotationZ: 0,
+    qualitySettings: {
+      cadBudget: 0,
+      pointCloudBudget: 0,
+      maxRenderResolution: 0,
+      movingCameraResolutionFactor: 0,
+      pointCloudPointSize: 0,
+      pointCloudPointShape: '',
+      pointCloudColor: ''
+    }
   },
   skybox: undefined,
   groundPlanes: [],
@@ -103,7 +112,16 @@ export const useSceneConfig = (
           cameraTargetX: sceneConfigurationProperties.cameraTargetX,
           cameraTargetY: sceneConfigurationProperties.cameraTargetY,
           cameraTargetZ: sceneConfigurationProperties.cameraTargetZ,
-          updatedAt: sceneConfigurationProperties.updatedAt
+          updatedAt: sceneConfigurationProperties.updatedAt,
+          qualitySettings: {
+            cadBudget: sceneConfigurationProperties.cadBudget,
+            pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
+            maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
+            movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
+            pointCloudPointSize: sceneConfigurationProperties.pointCloudPointSize,
+            pointCloudPointShape: sceneConfigurationProperties.pointCloudPointShape,
+            pointCloudColor: sceneConfigurationProperties.pointCloudColor
+          }
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
