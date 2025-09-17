@@ -20,7 +20,7 @@ export class ShowTreeViewCommand extends RenderTargetCommand {
   }
 
   public override get icon(): IconName {
-    return 'GraphTree';
+    return 'TreeIcon';
   }
 
   public override get isEnabled(): boolean {
@@ -41,7 +41,13 @@ export class ShowTreeViewCommand extends RenderTargetCommand {
   }
 
   public getPanelInfoStyle(): PopupStyle {
-    // Default lower left corner
-    return new PopupStyle({ top: 5, right: 5 });
+    if (this.position === undefined) {
+      return new PopupStyle({ top: 5, right: 5 });
+    }
+    return new PopupStyle({
+      top: this.position?.y,
+      left: this.position?.x,
+      margin: 0
+    });
   }
 }
