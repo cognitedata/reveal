@@ -1,6 +1,5 @@
 import {
   type IFlexibleCameraManager,
-  type CameraManager,
   type CameraManagerEventType,
   type CameraState,
   FlexibleControlsType,
