@@ -11,9 +11,14 @@ describe(ShareCommand.name, () => {
   });
 
   test('should copy the URL to clipboard', async () => {
+    vi.spyOn(window, 'location', 'get').mockReturnValue({
+      ...window.location,
+      href: 'http://cognite.test'
+    });
+
     const command = new ShareCommand();
     expect(command.invoke()).toBe(true);
     const text = await navigator.clipboard.readText();
-    expect(text).toBe('http://localhost:3000/');
+    expect(text).toBe('http://cognite.test');
   });
 });
