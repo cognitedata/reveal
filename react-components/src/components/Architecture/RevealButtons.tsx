@@ -142,6 +142,6 @@ type SettingsProp = ButtonProp & {
   includePois?: boolean;
 };
 
-export type Image360Prop = ButtonProp & {
+type Image360Prop = ButtonProp & {
   action: Image360Action;
 };
