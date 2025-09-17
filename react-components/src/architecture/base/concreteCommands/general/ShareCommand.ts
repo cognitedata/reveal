@@ -17,14 +17,9 @@ export class ShareCommand extends BaseCommand {
 
   protected override invokeCore(): boolean {
     const url = window.location.href;
-    navigator.clipboard
-      .writeText(url)
-      .then((_result) => {
-        return true;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    void navigator.clipboard.writeText(url).catch((error) => {
+      console.error(error);
+    });
     return true;
   }
 }

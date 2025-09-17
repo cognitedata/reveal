@@ -51,7 +51,7 @@ describe(SettingsButton.name, () => {
     expect(screen.queryByRole('dialog')).toBeDefined();
   });
 
-  test('should close on click on when open', async () => {
+  test('should close on click when open', async () => {
     const { container } = render(createHelpButton(command, PLACEMENT), { wrapper });
     const icon = findIconByNameInContainer(command.icon, container);
     assert(icon !== null);
