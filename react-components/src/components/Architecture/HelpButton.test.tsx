@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { SettingsButton } from './SettingsButton';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
 import assert from 'assert';
+import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
 import { type PropsWithChildren, type ReactElement } from 'react';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { viewerMock } from '#test-utils/fixtures/viewer';
@@ -13,7 +12,7 @@ import { createHelpButton } from './HelpButton';
 
 let wrapper: (props: PropsWithChildren) => ReactElement;
 
-describe(SettingsButton.name, () => {
+describe(createHelpButton.name, () => {
   let renderTargetMock: RevealRenderTarget;
   let command: HelpCommand;
   beforeEach(() => {
