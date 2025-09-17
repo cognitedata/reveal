@@ -99,7 +99,8 @@ describe(SceneContainer.name, () => {
   test('should render null when hasResources is false', () => {
     sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false
+      hasResources: false,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
