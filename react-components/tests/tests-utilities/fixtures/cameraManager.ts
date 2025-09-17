@@ -67,5 +67,5 @@ export function createFlexibleCameraManager(): IFlexibleCameraManager {
   );
   result.removeControlsTypeChangeListener = vi.fn();
 
-  return result as IFlexibleCameraManager & CameraManager;
+  return result;
 }
