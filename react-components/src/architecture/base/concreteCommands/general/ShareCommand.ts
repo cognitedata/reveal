@@ -3,10 +3,6 @@ import { type TranslationInput } from '../../utilities/translation/TranslateInpu
 import { BaseCommand } from '../../commands/BaseCommand';
 
 export class ShareCommand extends BaseCommand {
-  // ==================================================
-  // OVERRIDES
-  // ==================================================
-
   public override get tooltip(): TranslationInput {
     return { key: 'COPY_URL_TO_SHARE' };
   }

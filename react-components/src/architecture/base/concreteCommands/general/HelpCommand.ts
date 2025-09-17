@@ -3,10 +3,6 @@ import { type TranslationInput } from '../../utilities/translation/TranslateInpu
 import { BaseCommand } from '../../commands/BaseCommand';
 
 export class HelpCommand extends BaseCommand {
-  // ==================================================
-  // OVERRIDES
-  // ==================================================
-
   private _isChecked = false;
 
   public override get tooltip(): TranslationInput {
