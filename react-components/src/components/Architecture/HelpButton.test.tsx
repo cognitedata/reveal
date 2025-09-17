@@ -10,15 +10,15 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
 import { createHelpButton } from './HelpButton';
 
-let wrapper: (props: PropsWithChildren) => ReactElement;
-
 describe(createHelpButton.name, () => {
-  let renderTargetMock: RevealRenderTarget;
+  let renderTarget: RevealRenderTarget;
   let command: HelpCommand;
+  let wrapper: (props: PropsWithChildren) => ReactElement;
+
   beforeEach(() => {
-    renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
+    renderTarget = new RevealRenderTarget(viewerMock, sdkMock);
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider renderTarget={renderTarget}>{children}</ViewerContextProvider>
     );
 
     command = new HelpCommand();
