@@ -1,12 +1,11 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { jest } from '@jest/globals';
 
-import {
-  getUserFingerprint,
-} from '../src/Fingerprint/getUserFingerprint';
+import { getUserFingerprint } from '../src/Fingerprint/getUserFingerprint';
 import { setupCanvasMock } from './mocks/setupCanvasMock';
 import { setupAudioMock } from './mocks/setupAudioMock';
-
-
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -28,7 +27,7 @@ describe('Browser Fingerprint', () => {
 
   it('returns "unknown" if the Error has occured', async () => {
     setupCanvasMock();
-    setupAudioMock(false); 
+    setupAudioMock(false);
 
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
@@ -38,5 +37,4 @@ describe('Browser Fingerprint', () => {
 
     warnSpy.mockRestore();
   });
-
 });
