@@ -6,12 +6,8 @@ import {
 } from '../../../src/components/SceneContainer/sceneTypes';
 
 export function createSceneMockWithQualitySettings(
-  qualitySettings?: Partial<SceneQualitySettings> | null
-): Scene | null {
-  if (qualitySettings === null) {
-    return null;
-  }
-
+  qualitySettings: Partial<SceneQualitySettings>
+): Scene {
   return new Mock<Scene>()
     .setup((s) => s.sceneConfiguration)
     .returns(
