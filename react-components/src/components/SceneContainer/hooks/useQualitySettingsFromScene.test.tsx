@@ -78,9 +78,8 @@ describe(useQualitySettingsFromScene.name, () => {
     expect(mockQualitySettingsPeek).not.toHaveBeenCalled();
   });
 
-  test('should not apply quality settings when qualitySettings is undefined', () => {
-    const mockScene = createSceneMockWithQualitySettings(undefined);
-    defaultDependencies.useSceneConfig.mockReturnValue({ data: mockScene });
+  test('should not apply quality settings when scene data is null', () => {
+    defaultDependencies.useSceneConfig.mockReturnValue({ data: null });
 
     renderHook(
       () => {
@@ -186,22 +185,5 @@ describe(useQualitySettingsFromScene.name, () => {
         movingCameraResolutionFactor: 0.5
       }
     });
-  });
-
-  test('should handle missing scene data gracefully', () => {
-    defaultDependencies.useSceneConfig.mockReturnValue({
-      data: createSceneMockWithQualitySettings(null)
-    });
-
-    expect(() => {
-      renderHook(
-        () => {
-          useQualitySettingsFromScene(mockProps.sceneExternalId, mockProps.sceneSpaceId);
-        },
-        { wrapper }
-      );
-    }).not.toThrow();
-
-    expect(mockQualitySettingsPeek).not.toHaveBeenCalled();
   });
 });

@@ -29,7 +29,6 @@ describe(useSceneContainerViewModel.name, () => {
   );
 
   beforeEach(() => {
-    // Mock the new return type for useQualitySettingsFromScene
     defaultDependencies.useQualitySettingsFromScene.mockReturnValue({
       onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
     });
