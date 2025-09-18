@@ -16,7 +16,7 @@ describe(CopyToClipboardCommand.name, () => {
     const getString = (): string => TEST_STRING;
     const command = new CopyToClipboardCommand(getString);
     expect(command.isEnabled).toBe(true);
-    expect(command.invoke()).toBe(true);
+    command.invoke();
 
     await waitFor(() => {
       expect(command.isDone).toBe(true);

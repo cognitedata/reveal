@@ -51,6 +51,6 @@ export class CopyToClipboardCommand extends BaseCommand {
       .catch((error) => {
         console.error(error);
       });
-    return true; // Return true regardless, for checking, use is isDone
+    return false; // Do not need another update
   }
 }
