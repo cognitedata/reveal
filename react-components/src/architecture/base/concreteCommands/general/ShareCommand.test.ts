@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { waitFor } from '@testing-library/react';
 import { ShareCommand } from './ShareCommand';
 import { isEmpty } from '../../utilities/translation/TranslateInput';
 
@@ -16,7 +17,12 @@ describe(ShareCommand.name, () => {
       href: TEST_URL
     });
     const command = new ShareCommand();
-    expect(command.invoke()).toBe(true);
+    command.invoke();
+
+    await waitFor(() => {
+      expect(command.isDone).toBe(true);
+    });
+
     const text = await navigator.clipboard.readText();
     expect(text).toBe(TEST_URL);
   });

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { waitFor } from '@testing-library/react';
 import { CopyToClipboardCommand } from './CopyToClipboardCommand';
 import { isEmpty } from '../../utilities/translation/TranslateInput';
 
@@ -12,12 +13,18 @@ describe(CopyToClipboardCommand.name, () => {
   });
 
   test('should copy to clipboard', async () => {
-    const getString = (): string => 'test string';
+    const getString = (): string => TEST_STRING;
     const command = new CopyToClipboardCommand(getString);
     expect(command.isEnabled).toBe(true);
     expect(command.invoke()).toBe(true);
 
+    await waitFor(() => {
+      expect(command.isDone).toBe(true);
+    });
+
     const text = await navigator.clipboard.readText();
-    expect(text).toBe('test string');
+    expect(text).toBe(TEST_STRING);
   });
 });
+
+const TEST_STRING = 'test string';
