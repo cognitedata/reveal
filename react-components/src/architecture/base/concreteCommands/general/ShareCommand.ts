@@ -25,6 +25,6 @@ export class ShareCommand extends BaseCommand {
       .catch((error) => {
         console.error(error);
       });
-    return true; // Return true regardless, use is isDone
+    return false; // Do not need another update
   }
 }
