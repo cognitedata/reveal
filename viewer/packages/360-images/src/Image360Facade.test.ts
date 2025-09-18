@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { Mock, It } from 'moq.ts';
 import { Image360Facade } from './Image360Facade';
 
@@ -109,33 +106,28 @@ function createFacadeWithCollection(params?: {
   entityPosition?: Vector3;
   collectionTransformation?: Matrix4;
 }): Image360Facade<DataSourceType> {
-  const entityPosition = params?.entityPosition ?? new Vector3(0, 0, 0);
-  const collectionTransformation = params?.collectionTransformation ?? new Matrix4();
-
-  const mockEntity = new Mock<Image360Entity<DataSourceType>>()
-    .setup(p => p.icon)
-    .returns(
-      new Overlay3DIcon(
-        {
-          position: entityPosition,
-          minPixelSize: 10,
-          maxPixelSize: 80,
-          iconRadius: 0.1
-        },
-        {}
-      )
-    )
-    .setup(p => p.image360Visualization.visible)
-    .returns(false)
-    .setup(p => p.transform)
-    .returns(new Matrix4().makeTranslation(entityPosition).multiply(collectionTransformation))
-    .object();
-
   const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>()
     .setup(p => p.getModelTransformation(It.IsAny()))
-    .callback(({ args }) => args[0].copy(collectionTransformation))
+    .callback(({ args }) => args[0].copy(params?.collectionTransformation ?? new Matrix4()))
     .setup(p => p.image360Entities)
-    .returns([mockEntity])
+    .returns([
+      new Mock<Image360Entity<DataSourceType>>()
+        .setup(p => p.icon)
+        .returns(
+          new Overlay3DIcon(
+            {
+              position: params?.entityPosition ?? new Vector3(0, 0, 0),
+              minPixelSize: 10,
+              maxPixelSize: 80,
+              iconRadius: 0.1
+            },
+            {}
+          )
+        )
+        .setup(p => p.image360Visualization.visible)
+        .returns(false)
+        .object()
+    ])
     .object();
 
   const facade = new Image360Facade(
