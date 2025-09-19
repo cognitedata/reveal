@@ -5,6 +5,7 @@ import { type TranslationInput } from '../../utilities/translation/TranslateInpu
 type GetStringDelegate = () => string;
 
 export class CopyToClipboardCommand extends BaseCommand {
+  public isDone = false; // True when the string has been copied to clipboard (because of the async clipboard API)
   public getString?: GetStringDelegate;
 
   // ==================================================
@@ -37,17 +38,19 @@ export class CopyToClipboardCommand extends BaseCommand {
   }
 
   protected override invokeCore(): boolean {
+    this.isDone = false;
     if (this.getString === undefined) {
       return false;
     }
-    navigator.clipboard
+    void navigator.clipboard
       .writeText(this.getString())
       .then((_result) => {
-        return true;
+        this.isDone = true;
+        this.update();
       })
       .catch((error) => {
         console.error(error);
       });
-    return true;
+    return false; // Do not need another update
   }
 }
