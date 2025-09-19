@@ -1,6 +1,6 @@
 import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
-import { type QueryRequest, type CogniteClient } from '@cognite/sdk';
+import { type QueryRequest, type CogniteClient, type NodeDefinition } from '@cognite/sdk';
 import { useMemo } from 'react';
 import { type EdgeItem, FdmSDK, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
@@ -29,15 +29,24 @@ import {
   transformationSourceWithProperties
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-import { isSceneConfigurationProperties } from './sceneResponseTypeGuard';
 
 export type Space = string;
 export type ExternalId = string;
 
 const SCENE_QUERY_LIMIT = 100;
 
+type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
+
+type SceneNode = Omit<NodeDefinition, 'properties'> & {
+  properties: {
+    scene: {
+      'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
+    };
+  };
+};
+
 type Use3dScenesQueryResult = {
-  scenes: Array<NodeItem<SceneConfigurationProperties>>;
+  scenes: SceneNode[];
   sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
   scene360Collections: Array<
     EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
@@ -83,16 +92,7 @@ export const use3dScenes = (
         ]
       >(scenesQuery);
 
-      const allScenesProperties = response.items.scenes.map((scene) => {
-        const sceneProperties = scene.properties.scene['SceneConfiguration/v1'];
-        if (!isSceneConfigurationProperties(sceneProperties)) {
-          throw new Error('Scene configuration properties are missing or invalid');
-        }
-        console.log('scene', scene);
-        return scene as unknown as NodeItem<SceneConfigurationProperties>;
-      });
-
-      allScenes.scenes.push(...allScenesProperties);
+      allScenes.scenes.push(...response.items.scenes);
       allScenes.sceneModels.push(...response.items.sceneModels);
       allScenes.scene360Collections.push(...response.items.scene360Collections);
       allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
@@ -122,62 +122,56 @@ export const use3dScenes = (
 };
 
 function createMapOfScenes(
-  scenes: Array<NodeItem<SceneConfigurationProperties>>,
+  scenes: SceneNode[],
   skyboxes: Array<NodeItem<SkyboxProperties>>
 ): Record<Space, Record<ExternalId, SceneData>> {
-  return scenes.reduce(
-    (
-      acc: Record<Space, Record<ExternalId, SceneData>>,
-      scene: NodeItem<SceneConfigurationProperties>
-    ) => {
-      const { space, externalId } = scene;
-      const properties = Object.values(Object.values(scene.properties)[0])[0];
-      if (acc[space] === undefined) {
-        acc[space] = {};
-      }
-      if (acc[space][externalId] === undefined) {
-        let skyboxObject: SkyboxProperties | undefined;
-        const skyboxIdentifier = properties.skybox;
-        if (skyboxIdentifier !== undefined) {
-          const connectedSkybox = skyboxes.find(
-            (skybox) =>
-              skybox.externalId === skyboxIdentifier.externalId &&
-              skybox.space === skyboxIdentifier.space
-          );
-          if (connectedSkybox !== undefined) {
-            const skyboxProperties = Object.values(Object.values(connectedSkybox.properties)[0])[0];
-            skyboxObject = skyboxProperties;
-          }
+  return scenes.reduce((acc: Record<Space, Record<ExternalId, SceneData>>, scene: SceneNode) => {
+    const { space, externalId } = scene;
+    const properties = scene.properties.scene['SceneConfiguration/v1'];
+    if (acc[space] === undefined) {
+      acc[space] = {};
+    }
+    if (acc[space][externalId] === undefined) {
+      let skyboxObject: SkyboxProperties | undefined;
+      const skyboxIdentifier = properties.skybox;
+      if (skyboxIdentifier !== undefined) {
+        const connectedSkybox = skyboxes.find(
+          (skybox) =>
+            skybox.externalId === skyboxIdentifier.externalId &&
+            skybox.space === skyboxIdentifier.space
+        );
+        if (connectedSkybox !== undefined) {
+          const skyboxProperties = Object.values(Object.values(connectedSkybox.properties)[0])[0];
+          skyboxObject = skyboxProperties;
         }
-
-        acc[space][externalId] = {
-          name: properties.name,
-          cameraTranslationX: properties.cameraTranslationX,
-          cameraTranslationY: properties.cameraTranslationY,
-          cameraTranslationZ: properties.cameraTranslationZ,
-          cameraEulerRotationX: properties.cameraEulerRotationX,
-          cameraEulerRotationY: properties.cameraEulerRotationY,
-          cameraEulerRotationZ: properties.cameraEulerRotationZ,
-          modelOptions: [],
-          image360CollectionOptions: [],
-          groundPlanes: [],
-          skybox: skyboxObject,
-          qualitySettings: {
-            cadBudget: properties.cadBudget,
-            pointCloudBudget: properties.pointCloudBudget,
-            maxRenderResolution: properties.maxRenderResolution,
-            movingCameraResolutionFactor: properties.movingCameraResolutionFactor,
-            pointCloudPointSize: properties.pointCloudPointSize,
-            pointCloudPointShape: properties.pointCloudPointShape,
-            pointCloudColor: properties.pointCloudColor
-          }
-        };
       }
 
-      return acc;
-    },
-    {}
-  );
+      acc[space][externalId] = {
+        name: properties.name ?? '',
+        cameraTranslationX: properties.cameraTranslationX ?? 0,
+        cameraTranslationY: properties.cameraTranslationY ?? 0,
+        cameraTranslationZ: properties.cameraTranslationZ ?? 0,
+        cameraEulerRotationX: properties.cameraEulerRotationX ?? 0,
+        cameraEulerRotationY: properties.cameraEulerRotationY ?? 0,
+        cameraEulerRotationZ: properties.cameraEulerRotationZ ?? 0,
+        modelOptions: [],
+        image360CollectionOptions: [],
+        groundPlanes: [],
+        skybox: skyboxObject,
+        qualitySettings: {
+          cadBudget: properties.cadBudget,
+          pointCloudBudget: properties.pointCloudBudget,
+          maxRenderResolution: properties.maxRenderResolution,
+          movingCameraResolutionFactor: properties.movingCameraResolutionFactor,
+          pointCloudPointSize: properties.pointCloudPointSize,
+          pointCloudPointShape: properties.pointCloudPointShape,
+          pointCloudColor: properties.pointCloudColor
+        }
+      };
+    }
+
+    return acc;
+  }, {});
 }
 
 function populateSceneMapWithModels(

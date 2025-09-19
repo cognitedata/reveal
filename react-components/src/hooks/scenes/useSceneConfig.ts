@@ -100,29 +100,31 @@ export const useSceneConfig = (
       >(query);
 
       const sceneResponse = queryResult;
-      const sceneProperties = extractSceneProperties(sceneResponse.items.myScene[0]?.properties);
+      const sceneConfigurationProperties = extractSceneProperties(
+        sceneResponse.items.myScene[0]?.properties
+      );
 
       const scene: Scene = {
         sceneConfiguration: {
-          name: sceneProperties.name,
-          cameraTranslationX: sceneProperties.cameraTranslationX,
-          cameraTranslationY: sceneProperties.cameraTranslationY,
-          cameraTranslationZ: sceneProperties.cameraTranslationZ,
-          cameraEulerRotationX: sceneProperties.cameraEulerRotationX,
-          cameraEulerRotationY: sceneProperties.cameraEulerRotationY,
-          cameraEulerRotationZ: sceneProperties.cameraEulerRotationZ,
-          cameraTargetX: sceneProperties.cameraTargetX,
-          cameraTargetY: sceneProperties.cameraTargetY,
-          cameraTargetZ: sceneProperties.cameraTargetZ,
-          updatedAt: sceneProperties.updatedAt,
+          name: sceneConfigurationProperties.name,
+          cameraTranslationX: sceneConfigurationProperties.cameraTranslationX,
+          cameraTranslationY: sceneConfigurationProperties.cameraTranslationY,
+          cameraTranslationZ: sceneConfigurationProperties.cameraTranslationZ,
+          cameraEulerRotationX: sceneConfigurationProperties.cameraEulerRotationX,
+          cameraEulerRotationY: sceneConfigurationProperties.cameraEulerRotationY,
+          cameraEulerRotationZ: sceneConfigurationProperties.cameraEulerRotationZ,
+          cameraTargetX: sceneConfigurationProperties.cameraTargetX,
+          cameraTargetY: sceneConfigurationProperties.cameraTargetY,
+          cameraTargetZ: sceneConfigurationProperties.cameraTargetZ,
+          updatedAt: sceneConfigurationProperties.updatedAt,
           qualitySettings: {
-            cadBudget: sceneProperties.cadBudget,
-            pointCloudBudget: sceneProperties.pointCloudBudget,
-            maxRenderResolution: sceneProperties.maxRenderResolution,
-            movingCameraResolutionFactor: sceneProperties.movingCameraResolutionFactor,
-            pointCloudPointSize: sceneProperties.pointCloudPointSize,
-            pointCloudPointShape: sceneProperties.pointCloudPointShape,
-            pointCloudColor: sceneProperties.pointCloudColor
+            cadBudget: sceneConfigurationProperties.cadBudget,
+            pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
+            maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
+            movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
+            pointCloudPointSize: sceneConfigurationProperties.pointCloudPointSize,
+            pointCloudPointShape: sceneConfigurationProperties.pointCloudPointShape,
+            pointCloudColor: sceneConfigurationProperties.pointCloudColor
           }
         },
         skybox: getSkybox(sceneResponse.items.skybox[0]?.properties),
