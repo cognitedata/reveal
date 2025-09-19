@@ -13,7 +13,8 @@ export function useSceneContainerViewModel({
     useReveal3dResourcesFromScene,
     useGroundPlaneFromScene,
     useSkyboxFromScene,
-    useLoadPoisForScene
+    useLoadPoisForScene,
+    useQualitySettingsFromScene
   } = useContext(SceneContainerViewModelContext);
 
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
@@ -22,10 +23,16 @@ export function useSceneContainerViewModel({
   useSkyboxFromScene(sceneExternalId, sceneSpaceId);
   useLoadPoisForScene(sceneExternalId, sceneSpaceId);
 
+  const { onPointCloudSettingsCallback } = useQualitySettingsFromScene(
+    sceneExternalId,
+    sceneSpaceId
+  );
+
   const hasResources = useMemo(() => resourceOptions.length > 0, [resourceOptions]);
 
   return {
     resourceOptions,
-    hasResources
+    hasResources,
+    onPointCloudSettingsCallback
   };
 }

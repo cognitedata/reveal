@@ -16,4 +16,5 @@ export type UseSceneContainerViewModelProps = {
 export type UseSceneContainerViewModelResult = {
   resourceOptions: AddResourceOptions[];
   hasResources: boolean;
+  onPointCloudSettingsCallback: () => void;
 };
