@@ -1,16 +1,15 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-export async function generateAudioFingerprint(): Promise<string> {
+
+import { RequiredDynamicsCompressorNode, RequiredOfflineAudioContext } from '../types';
+
+export async function generateAudioFingerprint(
+  OfflineAudioContextCtor: typeof window.OfflineAudioContext
+): Promise<string> {
   try {
-    // OfflineAudioContext renders audio in memory
-    const OfflineAudioContext = window.OfflineAudioContext;
+    const context = new OfflineAudioContextCtor(1, 44100, 44100);
 
-    if (!OfflineAudioContext) {
-      throw new Error('Offline Audio Context is not supported.');
-    }
-
-    const context = new OfflineAudioContext(1, 44100, 44100);
     const currentTime = context.currentTime;
 
     const oscillator = context.createOscillator();
@@ -19,6 +18,7 @@ export async function generateAudioFingerprint(): Promise<string> {
 
     // Each call contributes to uniqunes of fingerprint
     const compressor = context.createDynamicsCompressor();
+
     setCompressorValueIfDefined(compressor, context, 'threshold', -50);
     setCompressorValueIfDefined(compressor, context, 'knee', 40);
     setCompressorValueIfDefined(compressor, context, 'ratio', 12);
@@ -43,18 +43,20 @@ export async function generateAudioFingerprint(): Promise<string> {
     const fingerprint = output.toString();
 
     return fingerprint;
-
   } catch (error) {
-    throw error;
+    if (error) {
+      throw error;
+    }
+    throw new Error('Unknown error during audio fingerprinting.');
   }
 }
 
 function setCompressorValueIfDefined(
-  compressor: DynamicsCompressorNode,
-  context: OfflineAudioContext,
-  item: keyof DynamicsCompressorNode,
+  compressor: RequiredDynamicsCompressorNode,
+  context: RequiredOfflineAudioContext,
+  item: keyof RequiredDynamicsCompressorNode,
   value: number
-) {
+): void {
   const param = compressor[item] as AudioParam | undefined;
   if (param?.setValueAtTime) {
     param.setValueAtTime(value, context.currentTime);

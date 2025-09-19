@@ -1,8 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-export function generateCanvasFingerprint(): string {
-  const canvas = document.createElement('canvas');
+export function generateCanvasFingerprint(doc: Document): string {
+  const canvas = doc.createElement('canvas');
   const canvasContext = canvas.getContext('2d');
 
   if (!canvasContext) {
@@ -11,7 +11,7 @@ export function generateCanvasFingerprint(): string {
 
   const placeholder = 'Fingerprint placeholder';
 
-  // Contributes to uniqunes of fingerprint
+  // Contributes to uniqueness of fingerprint
   canvasContext.textBaseline = 'top';
   canvasContext.font = "14px 'Arial'";
   canvasContext.textBaseline = 'alphabetic';
