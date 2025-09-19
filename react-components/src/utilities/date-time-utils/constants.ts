@@ -1,4 +1,4 @@
-import relativeTime from 'dayjs/plugin/relativeTime';
+import type relativeTime from 'dayjs/plugin/relativeTime';
 
 type RelativeTimeOption = Parameters<typeof relativeTime>[0];
 // Relative time content guidelines: https://zeroheight.com/37d494d9d/p/287f64-date-and-time/b/70f8ef/t/page-287f64-75881737-70f8ef-16
@@ -14,8 +14,8 @@ export const RELATIVE_TIME_CONFIG: RelativeTimeOption = {
     { l: 'M', r: 1 },
     { l: 'MM', r: 11, d: 'month' },
     { l: 'y', r: 1 },
-    { l: 'yy', d: 'year' },
-  ],
+    { l: 'yy', d: 'year' }
+  ]
 };
 
 export const DEFAULT_DATE_TIME_FORMAT = 'll LT';

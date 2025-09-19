@@ -19,7 +19,7 @@ import 'dayjs/locale/zh';
 import 'dayjs/locale/ja';
 
 import { DEFAULT_DATE_TIME_FORMAT, RELATIVE_TIME_CONFIG } from './constants';
-import { DateTimeFormatArguments, DateTimeFormatOptions } from './types';
+import { type DateTimeFormatArguments, type DateTimeFormatOptions } from './types';
 
 dayjs.extend(relativeTime, RELATIVE_TIME_CONFIG);
 dayjs.extend(dayjsIsToday);
@@ -39,21 +39,21 @@ dayjs.extend(localizedFormat);
  *
  * @returns The formatted date and time as a string.
  */
-export const formatDateTime = (options: DateTimeFormatArguments) => {
+export const formatDateTime = (options: DateTimeFormatArguments): string => {
   const { date, language, showAbsolute, format } = options;
 
   let dateInput = dayjs(date);
 
-  if (language) {
+  if (language !== undefined) {
     dateInput = dateInput.locale(language);
   }
 
-  if (showAbsolute) {
+  if (showAbsolute !== undefined) {
     return getAbsoluteDateTime({ date: dateInput, format });
   }
 
   const isWithinThreshold =
-    options.thresholdInHours && Number.isInteger(options.thresholdInHours)
+    options.thresholdInHours !== undefined && Number.isInteger(options.thresholdInHours)
       ? dateInput.isAfter(dayjs().subtract(options.thresholdInHours, 'hour')) &&
         dateInput.isBefore(dayjs().add(options.thresholdInHours, 'hour'))
       : dateInput.isAfter(dayjs().subtract(24, 'hour')) &&
@@ -75,10 +75,10 @@ export const formatDateTime = (options: DateTimeFormatArguments) => {
  *
  * @returns A string representing the relative time from the current date.
  */
-export const getRelativeDateTime = (options: DateTimeFormatOptions) => {
+export const getRelativeDateTime = (options: DateTimeFormatOptions): string => {
   let dateInput = dayjs(options.date);
 
-  if (options.language) {
+  if (options.language !== undefined) {
     dateInput = dateInput.locale(options.language);
   }
 
@@ -95,10 +95,10 @@ export const getRelativeDateTime = (options: DateTimeFormatOptions) => {
  *
  * @returns A string representing the formatted date-time.
  */
-export const getAbsoluteDateTime = (options: DateTimeFormatOptions) => {
+export const getAbsoluteDateTime = (options: DateTimeFormatOptions): string => {
   let dateInput = dayjs(options.date);
 
-  if (options.language) {
+  if (options.language !== undefined) {
     dateInput = dateInput.locale(options.language);
   }
 
@@ -108,14 +108,14 @@ export const getAbsoluteDateTime = (options: DateTimeFormatOptions) => {
   return dateInput.format(format);
 };
 
-export const isToday = (date: dayjs.ConfigType) => {
+export const isToday = (date: dayjs.ConfigType): boolean => {
   return dayjs(date).isToday();
 };
 
-export const isTomorrow = (date: dayjs.ConfigType) => {
+export const isTomorrow = (date: dayjs.ConfigType): boolean => {
   return dayjs(date).isTomorrow();
 };
 
-export const isYesterday = (date: dayjs.ConfigType) => {
+export const isYesterday = (date: dayjs.ConfigType): boolean => {
   return dayjs(date).isYesterday();
 };

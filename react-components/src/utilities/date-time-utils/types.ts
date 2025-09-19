@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import type dayjs from 'dayjs';
 
 export type DateTimeFormatOptions = {
   date?: dayjs.ConfigType; // string | number | Date | Dayjs | null | undefined
@@ -6,7 +6,7 @@ export type DateTimeFormatOptions = {
   format?: string; // Check out dayjs format options https://day.js.org/docs/en/display/format
 };
 
-export interface DateTimeFormatArguments extends DateTimeFormatOptions {
+export type DateTimeFormatArguments = {
   thresholdInHours?: number; // hours
   showAbsolute?: boolean;
-}
+} & DateTimeFormatOptions;
