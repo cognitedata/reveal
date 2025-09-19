@@ -54,7 +54,6 @@ export default defineConfig(({ command }) => {
             '@mui',
             '@cognite/cogs-utils',
             'lodash',
-            '@cognite/cdf-utilities',
             'dayjs'
           ]
         }

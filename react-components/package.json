@@ -45,13 +45,13 @@
     "styled-components": "^6.1.12"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^5.0.0",
     "@cognite/cogs-lab": "9.0.0-alpha.160",
     "@cognite/cogs.js": "^10.36.0",
     "@cognite/signals": "^0.0.4",
     "@floating-ui/dom": "^1.0.0",
     "@tanstack/react-query": "^5.84.1",
     "assert": "^2.1.0",
+    "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "ml-matrix": "^6.12.1"
   },
