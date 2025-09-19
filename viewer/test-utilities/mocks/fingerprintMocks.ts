@@ -3,7 +3,7 @@
  */
 import { jest } from '@jest/globals';
 
-import { MockedDocument } from '@reveal/metrics/src/types';
+import { MockedDocument } from '../../packages/metrics/src/types';
 import { Mock, UnknownFunction } from 'jest-mock';
 
 export function createMockOfflineAudioContext(shouldSucceed: boolean): Mock<UnknownFunction> {
