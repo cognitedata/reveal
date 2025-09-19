@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { SceneContainer } from './SceneContainer';
 import { type SceneContainerProps } from './types';
@@ -106,5 +106,51 @@ describe(SceneContainer.name, () => {
     const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
 
     expect(container.firstChild).toBeNull();
+  });
+
+  test('should call both onPointCloudSettingsCallback and onResourcesAdded when combinedOnResourcesAdded is triggered', () => {
+    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 123, revisionId: 456 }];
+    const mockOnPointCloudSettingsCallback = vi.fn();
+    const mockOnResourcesAdded = vi.fn();
+
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
+      resourceOptions: mockResourceOptions,
+      hasResources: true,
+      onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
+    });
+
+    render(<SceneContainer {...mockProps} onResourcesAdded={mockOnResourcesAdded} />, { wrapper });
+
+    const reveal3DResourcesCall = sceneContainerDependencies.Reveal3DResources.mock.calls[0];
+    const passedProps = reveal3DResourcesCall[0];
+    const combinedCallback = passedProps.onResourcesAdded;
+
+    assert(combinedCallback !== undefined, 'onResourcesAdded should be defined');
+    combinedCallback();
+
+    expect(mockOnPointCloudSettingsCallback).toHaveBeenCalled();
+    expect(mockOnResourcesAdded).toHaveBeenCalled();
+  });
+
+  test('should call onPointCloudSettingsCallback even when onResourcesAdded is not provided', () => {
+    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 123, revisionId: 456 }];
+    const mockOnPointCloudSettingsCallback = vi.fn();
+
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
+      resourceOptions: mockResourceOptions,
+      hasResources: true,
+      onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
+    });
+
+    render(<SceneContainer {...mockProps} />, { wrapper });
+
+    const reveal3DResourcesCall = sceneContainerDependencies.Reveal3DResources.mock.calls[0];
+    const passedProps = reveal3DResourcesCall[0];
+    const combinedCallback = passedProps.onResourcesAdded;
+
+    assert(combinedCallback !== undefined, 'onResourcesAdded should be defined');
+    combinedCallback();
+
+    expect(mockOnPointCloudSettingsCallback).toHaveBeenCalled();
   });
 });
