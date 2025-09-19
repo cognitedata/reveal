@@ -1,31 +1,26 @@
 import { useContext, useMemo } from 'react';
 import { type QueryFunction } from '@tanstack/react-query';
-import { type NodeDefinition, type QueryRequest } from '@cognite/sdk';
+import { type NodeDefinition } from '@cognite/sdk';
 import { FdmSDK, type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
 import {
+  SCENE_QUERY_LIMIT,
   type Cdf3dImage360CollectionProperties,
   type Cdf3dRevisionProperties,
   type ENVIRONMENT_MAP_SOURCE,
-  environmentMapSourceWithProperties,
   type GROUND_PLANE_SOURCE,
   type GroundPlaneProperties,
-  groundPlaneSourceWithProperties,
-  image360CollectionSourceWithProperties,
   type IMAGE_360_COLLECTION_SOURCE,
   type REVISION_SOURCE,
-  revisionSourceWithProperties,
   type SCENE_SOURCE,
   type SceneConfigurationProperties,
   type SceneData,
-  sceneSourceWithProperties,
   type SkyboxProperties,
   type Transformation3d,
-  type TRANSFORMATION_SOURCE,
-  transformationSourceWithProperties
+  type TRANSFORMATION_SOURCE
 } from './types';
 import {
   type Use3dScenesViewModelProps,
@@ -36,8 +31,7 @@ import {
 } from './use3dScenes.types';
 import { Use3dScenesViewModelContext } from './use3dScenes.viewmodel.context';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-
-const SCENE_QUERY_LIMIT = 100;
+import { createGetScenesQuery } from './allScenesQuery';
 
 type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
 
@@ -315,122 +309,4 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
   }
 
   return modelProps;
-}
-
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-function createGetScenesQuery(limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) {
-  return {
-    with: {
-      scenes: {
-        nodes: {
-          filter: {
-            hasData: [
-              {
-                type: 'view',
-                space: 'scene',
-                externalId: 'SceneConfiguration',
-                version: 'v1'
-              }
-            ]
-          }
-        },
-        limit
-      },
-      sceneModels: {
-        edges: {
-          from: 'scenes',
-          maxDistance: 1,
-          direction: 'outwards',
-          filter: {
-            equals: {
-              property: ['edge', 'type'],
-              value: {
-                space: 'scene',
-                externalId: 'SceneConfiguration.model3ds'
-              }
-            }
-          }
-        },
-        limit: 10000
-      },
-      scene360Collections: {
-        edges: {
-          from: 'scenes',
-          maxDistance: 1,
-          direction: 'outwards',
-          filter: {
-            equals: {
-              property: ['edge', 'type'],
-              value: {
-                space: 'scene',
-                externalId: 'SceneConfiguration.images360Collections'
-              }
-            }
-          }
-        },
-        limit: 10000
-      },
-      sceneSkybox: {
-        nodes: {
-          from: 'scenes',
-          through: {
-            view: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'SceneConfiguration',
-              version: 'v1'
-            },
-            identifier: 'skybox'
-          },
-          direction: 'outwards'
-        },
-        limit: 10000
-      },
-      sceneGroundPlaneEdges: {
-        edges: {
-          from: 'scenes',
-          maxDistance: 1,
-          direction: 'outwards',
-          filter: {
-            equals: {
-              property: ['edge', 'type'],
-              value: {
-                space: 'scene',
-                externalId: 'SceneConfiguration.texturedGroundPlanes'
-              }
-            }
-          }
-        },
-        limit: 10000
-      },
-      sceneGroundPlanes: {
-        nodes: {
-          from: 'sceneGroundPlaneEdges',
-          chainTo: 'destination'
-        },
-        limit: 10000
-      }
-    },
-    select: {
-      scenes: {
-        sources: sceneSourceWithProperties
-      },
-      sceneModels: {
-        sources: revisionSourceWithProperties
-      },
-      scene360Collections: {
-        sources: image360CollectionSourceWithProperties
-      },
-      sceneSkybox: {
-        sources: environmentMapSourceWithProperties
-      },
-      sceneGroundPlaneEdges: {
-        sources: transformationSourceWithProperties
-      },
-      sceneGroundPlanes: {
-        sources: groundPlaneSourceWithProperties
-      }
-    },
-    cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
-  } as const satisfies Omit<QueryRequest, 'parameters'>;
 }
