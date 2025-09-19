@@ -29,6 +29,7 @@ import {
   transformationSourceWithProperties
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
+import { isSceneConfigurationProperties } from './sceneResponseTypeGuard';
 
 export type Space = string;
 export type ExternalId = string;
@@ -82,7 +83,16 @@ export const use3dScenes = (
         ]
       >(scenesQuery);
 
-      allScenes.scenes.push(...response.items.scenes);
+      const allScenesProperties = response.items.scenes.map((scene) => {
+        const sceneProperties = scene.properties.scene['SceneConfiguration/v1'];
+        if (!isSceneConfigurationProperties(sceneProperties)) {
+          throw new Error('Scene configuration properties are missing or invalid');
+        }
+        console.log('scene', scene);
+        return scene as unknown as NodeItem<SceneConfigurationProperties>;
+      });
+
+      allScenes.scenes.push(...allScenesProperties);
       allScenes.sceneModels.push(...response.items.sceneModels);
       allScenes.scene360Collections.push(...response.items.scene360Collections);
       allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
