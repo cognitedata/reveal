@@ -1,7 +1,6 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { CogniteCadModel } from '..';
 import * as THREE from 'three';
 
 import {
@@ -9,14 +8,15 @@ import {
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
+import { CogniteCadModel } from '@reveal/cad-model';
 
 export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
   constructor() {
     super('primitives', 'primitives');
   }
-  public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
-    const { models } = testFixtureComponents;
 
+  public async setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
+    const { models } = testFixtureComponents;
     const model = models[1];
 
     if (!(model instanceof CogniteCadModel)) {
@@ -29,7 +29,10 @@ export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
     const transform = model.getModelTransformation();
     transform.multiply(translation);
     model.setModelTransformation(transform);
+  }
 
-    return Promise.resolve();
+  public dispose(): void {
+    // Keep base disposal
+    super.dispose();
   }
 }

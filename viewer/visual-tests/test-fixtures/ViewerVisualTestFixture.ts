@@ -36,7 +36,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
 
     this._viewer.fitCameraToModel(models[0]);
 
-    await this.modelLoaded(models[0], modelLoadedPromise);
+    await Promise.all(models.map(model => this.modelLoaded(model, modelLoadedPromise)));
 
     await this.setup({ viewer: this._viewer, models });
 
