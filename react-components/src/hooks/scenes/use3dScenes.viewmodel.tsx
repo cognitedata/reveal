@@ -34,7 +34,7 @@ import {
   type Space,
   type ExternalId
 } from './use3dScenes.types';
-import { Use3dScenesViewModelContext } from './use3dScenes.context';
+import { Use3dScenesViewModelContext } from './use3dScenes.viewmodel.context';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 
 const SCENE_QUERY_LIMIT = 100;
@@ -60,7 +60,7 @@ type Use3dScenesQueryResult = {
   sceneSkybox: Array<NodeItem<SkyboxProperties>>;
 };
 
-export function use3dScenesViewModel({
+export function Use3dScenesViewModel({
   userSdk
 }: Use3dScenesViewModelProps): Use3dScenesViewModelResult {
   const { useSDK, useQuery } = useContext(Use3dScenesViewModelContext);

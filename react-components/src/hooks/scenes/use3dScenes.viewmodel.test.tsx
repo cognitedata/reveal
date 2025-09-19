@@ -1,17 +1,17 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { use3dScenesViewModel } from './use3dScenes.viewmodel';
+import { Use3dScenesViewModel } from './use3dScenes.viewmodel';
 import {
   type Use3dScenesViewModelDependencies,
   Use3dScenesViewModelContext
-} from './use3dScenes.context';
+} from './use3dScenes.viewmodel.context';
 import { type Use3dScenesViewModelProps, type ScenesMap } from './use3dScenes.types';
 import { type SceneData } from './types';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createMockQueryResult } from '#test-utils/fixtures/queryResult';
 
-describe(use3dScenesViewModel.name, () => {
+describe(Use3dScenesViewModel.name, () => {
   const mockProps: Use3dScenesViewModelProps = {
     userSdk: undefined
   };
@@ -67,13 +67,13 @@ describe(use3dScenesViewModel.name, () => {
   });
 
   test('should call useSDK with correct parameters', () => {
-    renderHook(() => use3dScenesViewModel(mockProps), { wrapper });
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
 
     expect(mockUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
   });
 
   test('should pass correct query parameters to useQuery', () => {
-    renderHook(() => use3dScenesViewModel(mockProps), { wrapper });
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
 
     expect(mockUseQuery).toHaveBeenCalledWith({
       queryKey: ['reveal-react-components', 'cdf', '3d', 'scenes'],
@@ -82,7 +82,7 @@ describe(use3dScenesViewModel.name, () => {
   });
 
   test('should return successful query result', () => {
-    const { result } = renderHook(() => use3dScenesViewModel(mockProps), { wrapper });
+    const { result } = renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
 
     expect(result.current.data).toEqual(mockScenesMap);
     expect(result.current.isLoading).toBe(false);
@@ -97,7 +97,7 @@ describe(use3dScenesViewModel.name, () => {
 
     mockUseSDK.mockReturnValue(customSdk);
 
-    renderHook(() => use3dScenesViewModel(customProps), { wrapper });
+    renderHook(() => Use3dScenesViewModel(customProps), { wrapper });
 
     expect(mockUseSDK).toHaveBeenCalledWith(customSdk);
   });
