@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { type QueryFunction } from '@tanstack/react-query';
 import { sceneQuery } from './sceneQuery';
 import {
   type GroundPlaneProperties,
@@ -7,7 +9,6 @@ import {
   type SceneModelsProperties,
   type Scene360ImageCollectionsProperties
 } from '../../components/SceneContainer/SceneFdmTypes';
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
   type CadOrPointCloudModel,
   type GroundPlane,
@@ -15,7 +16,6 @@ import {
   type Scene,
   type Skybox
 } from '../../components/SceneContainer/sceneTypes';
-import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 import { type Source, type FdmSDK } from '../../data-providers/FdmSDK';
 import { fdmViewsExist } from '../../utilities/fdmViewsExist';
 import {
@@ -31,6 +31,11 @@ import {
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { UseSceneConfigViewModelContext } from './useSceneConfig.viewmodel.context';
+import {
+  type UseSceneConfigViewModelProps,
+  type UseSceneConfigViewModelResult
+} from './useSceneConfig.types';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -57,83 +62,88 @@ const DefaultScene: Scene = {
   image360Collections: []
 };
 
-export const useSceneConfig = (
-  sceneExternalId: string | undefined,
-  sceneSpace: string | undefined
-): UseQueryResult<Scene | null> => {
+export function UseSceneConfigViewModel({
+  sceneExternalId,
+  sceneSpace
+}: UseSceneConfigViewModelProps): UseSceneConfigViewModelResult {
+  const { useFdmSdk, useQuery } = useContext(UseSceneConfigViewModelContext);
+
   const fdmSdk = useFdmSdk();
-  return useQuery({
+
+  const queryFunction: QueryFunction<Scene | null> = async () => {
+    if (sceneExternalId === undefined || sceneSpace === undefined) {
+      return null;
+    }
+
+    const isSceneEnabledInProject = await sceneViewsExist(fdmSdk);
+
+    if (!isSceneEnabledInProject) {
+      return DefaultScene;
+    }
+
+    const query = {
+      ...sceneQuery,
+      parameters: { sceneExternalId, sceneSpace }
+    };
+
+    const queryResult = await fdmSdk.queryNodesAndEdges<
+      typeof query,
+      [
+        { source: typeof SCENE_SOURCE; properties: SceneConfigurationProperties },
+        { source: typeof ENVIRONMENT_MAP_SOURCE; properties: SkyboxProperties },
+        { source: typeof GROUND_PLANE_SOURCE; properties: GroundPlaneProperties },
+        { source: typeof TRANSFORMATION_SOURCE; properties: Transformation3d },
+        { source: typeof REVISION_SOURCE; properties: SceneModelsProperties },
+        {
+          source: typeof IMAGE_360_COLLECTION_SOURCE;
+          properties: Scene360ImageCollectionsProperties;
+        }
+      ]
+    >(query);
+
+    const sceneResponse = queryResult;
+    const sceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
+      sceneResponse.items.myScene[0]?.properties
+    );
+
+    const scene: Scene = {
+      sceneConfiguration: {
+        name: sceneConfigurationProperties.name,
+        cameraTranslationX: sceneConfigurationProperties.cameraTranslationX,
+        cameraTranslationY: sceneConfigurationProperties.cameraTranslationY,
+        cameraTranslationZ: sceneConfigurationProperties.cameraTranslationZ,
+        cameraEulerRotationX: sceneConfigurationProperties.cameraEulerRotationX,
+        cameraEulerRotationY: sceneConfigurationProperties.cameraEulerRotationY,
+        cameraEulerRotationZ: sceneConfigurationProperties.cameraEulerRotationZ,
+        cameraTargetX: sceneConfigurationProperties.cameraTargetX,
+        cameraTargetY: sceneConfigurationProperties.cameraTargetY,
+        cameraTargetZ: sceneConfigurationProperties.cameraTargetZ,
+        updatedAt: sceneConfigurationProperties.updatedAt,
+        qualitySettings: {
+          cadBudget: sceneConfigurationProperties.cadBudget,
+          pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
+          maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
+          movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
+          pointCloudPointSize: sceneConfigurationProperties.pointCloudPointSize,
+          pointCloudPointShape: sceneConfigurationProperties.pointCloudPointShape,
+          pointCloudColor: sceneConfigurationProperties.pointCloudColor
+        }
+      },
+      skybox: getSkybox(sceneResponse),
+      groundPlanes: getGroundPlanes(sceneResponse),
+      sceneModels: await getSceneModels(sceneResponse, fdmSdk),
+      image360Collections: getImageCollections(sceneResponse)
+    };
+    return scene;
+  };
+
+  return useQuery<Scene | null>({
     queryKey: ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpace],
-    queryFn: async () => {
-      if (sceneExternalId === undefined || sceneSpace === undefined) {
-        return null;
-      }
-
-      const isSceneEnabledInProject = await sceneViewsExist(fdmSdk);
-
-      if (!isSceneEnabledInProject) {
-        return DefaultScene;
-      }
-
-      const query = {
-        ...sceneQuery,
-        parameters: { sceneExternalId, sceneSpace }
-      };
-
-      const queryResult = await fdmSdk.queryNodesAndEdges<
-        typeof query,
-        [
-          { source: typeof SCENE_SOURCE; properties: SceneConfigurationProperties },
-          { source: typeof ENVIRONMENT_MAP_SOURCE; properties: SkyboxProperties },
-          { source: typeof GROUND_PLANE_SOURCE; properties: GroundPlaneProperties },
-          { source: typeof TRANSFORMATION_SOURCE; properties: Transformation3d },
-          { source: typeof REVISION_SOURCE; properties: SceneModelsProperties },
-          {
-            source: typeof IMAGE_360_COLLECTION_SOURCE;
-            properties: Scene360ImageCollectionsProperties;
-          }
-        ]
-      >(query);
-
-      const sceneResponse = queryResult;
-      const sceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
-        sceneResponse.items.myScene[0]?.properties
-      );
-
-      const scene: Scene = {
-        sceneConfiguration: {
-          name: sceneConfigurationProperties.name,
-          cameraTranslationX: sceneConfigurationProperties.cameraTranslationX,
-          cameraTranslationY: sceneConfigurationProperties.cameraTranslationY,
-          cameraTranslationZ: sceneConfigurationProperties.cameraTranslationZ,
-          cameraEulerRotationX: sceneConfigurationProperties.cameraEulerRotationX,
-          cameraEulerRotationY: sceneConfigurationProperties.cameraEulerRotationY,
-          cameraEulerRotationZ: sceneConfigurationProperties.cameraEulerRotationZ,
-          cameraTargetX: sceneConfigurationProperties.cameraTargetX,
-          cameraTargetY: sceneConfigurationProperties.cameraTargetY,
-          cameraTargetZ: sceneConfigurationProperties.cameraTargetZ,
-          updatedAt: sceneConfigurationProperties.updatedAt,
-          qualitySettings: {
-            cadBudget: sceneConfigurationProperties.cadBudget,
-            pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
-            maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
-            movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
-            pointCloudPointSize: sceneConfigurationProperties.pointCloudPointSize,
-            pointCloudPointShape: sceneConfigurationProperties.pointCloudPointShape,
-            pointCloudColor: sceneConfigurationProperties.pointCloudColor
-          }
-        },
-        skybox: getSkybox(sceneResponse),
-        groundPlanes: getGroundPlanes(sceneResponse),
-        sceneModels: await getSceneModels(sceneResponse, fdmSdk),
-        image360Collections: getImageCollections(sceneResponse)
-      };
-      return scene;
-    },
+    queryFn: queryFunction,
     enabled: sceneExternalId !== undefined && sceneSpace !== undefined,
     staleTime: Infinity
   });
-};
+}
 
 async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
   const neededViews: Source[] = [
