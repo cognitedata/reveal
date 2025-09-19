@@ -14,5 +14,5 @@ export interface ModelState {
   [id: number]: LevelOfDetail;
 }
 export interface SceneModelState {
-  [modelIdentifier: string]: ModelState;
+  [modelIdentifier: symbol]: ModelState;
 }
