@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { type CogniteClient } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { use3dScenes, Use3dScenesProvider } from './use3dScenes';
 import { use3dScenesViewModel } from './use3dScenes.viewmodel';
@@ -60,10 +59,6 @@ describe('use3dScenes MVVM', () => {
       }
     };
 
-    const mockFdmSdk = {
-      queryNodesAndEdges: vi.fn()
-    };
-
     const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
       <Use3dScenesViewModelContext.Provider value={defaultDependencies}>
         {children}
@@ -71,67 +66,8 @@ describe('use3dScenes MVVM', () => {
     );
 
     beforeEach(() => {
-      vi.clearAllMocks();
       defaultDependencies.useSDK.mockReturnValue(sdkMock);
-      defaultDependencies.FdmSDK.mockImplementation(() => mockFdmSdk);
-      defaultDependencies.tryGetModelIdFromExternalId.mockImplementation((externalId) => {
-        // Mock implementation for converting externalId to modelId
-        const match = externalId.match(/(\d+)/);
-        return match !== null ? parseInt(match[1], 10) : undefined;
-      });
 
-      // Mock FDM SDK response structure
-      const mockResponse = {
-        items: {
-          scenes: [
-            {
-              space: 'test-space',
-              externalId: 'test-scene-1',
-              properties: {
-                scene: {
-                  'SceneConfiguration/v1': {
-                    name: 'Test Scene 1',
-                    cameraTranslationX: 0,
-                    cameraTranslationY: 0,
-                    cameraTranslationZ: 10
-                  }
-                }
-              }
-            }
-          ],
-          sceneModels: [
-            {
-              startNode: { space: 'test-space', externalId: 'test-scene-1' },
-              endNode: { externalId: 'model-123456' },
-              properties: {
-                'transformation-source': {
-                  'Transformation3d/v1': {
-                    revisionId: '1',
-                    translationX: 0,
-                    translationY: 0,
-                    translationZ: 0,
-                    eulerRotationX: 0,
-                    eulerRotationY: 0,
-                    eulerRotationZ: 0,
-                    scaleX: 1,
-                    scaleY: 1,
-                    scaleZ: 1
-                  }
-                }
-              }
-            }
-          ],
-          scene360Collections: [],
-          sceneGroundPlanes: [],
-          sceneGroundPlaneEdges: [],
-          sceneSkybox: []
-        },
-        nextCursor: undefined
-      };
-
-      mockFdmSdk.queryNodesAndEdges.mockResolvedValue(mockResponse);
-
-      // Mock successful query result
       defaultDependencies.useQuery.mockReturnValue({
         data: mockScenesMap,
         isLoading: false,
@@ -245,7 +181,6 @@ describe('use3dScenes MVVM', () => {
       renderHook(() => use3dScenesViewModel(mockProps), { wrapper });
 
       expect(defaultDependencies.useSDK).toHaveBeenCalledWith(mockProps.userSdk);
-      expect(defaultDependencies.FdmSDK).toHaveBeenCalledWith(sdkMock);
       expect(defaultDependencies.useQuery).toHaveBeenCalledWith({
         queryKey: ['reveal-react-components', 'cdf', '3d', 'scenes'],
         queryFn: expect.any(Function)
@@ -253,7 +188,11 @@ describe('use3dScenes MVVM', () => {
     });
 
     test('should pass custom SDK to dependencies', () => {
-      const customSdk = { ...sdkMock, project: 'custom-project' } satisfies CogniteClient;
+      const customSdk = {
+        ...sdkMock,
+        project: 'custom-project',
+        getBaseUrl: vi.fn().mockReturnValue('https://custom-api.cognitedata.com')
+      };
       const propsWithCustomSdk: Use3dScenesViewModelProps = {
         userSdk: customSdk
       };
@@ -315,7 +254,6 @@ describe('use3dScenes MVVM', () => {
       );
 
       mockDependencies.useSDK.mockReturnValue(sdkMock);
-      mockDependencies.FdmSDK.mockImplementation(() => ({ queryNodesAndEdges: vi.fn() }));
       mockDependencies.useQuery.mockReturnValue(mockResult);
 
       const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
@@ -329,13 +267,16 @@ describe('use3dScenes MVVM', () => {
     });
 
     test('should accept userSdk parameter', () => {
-      const customSdk = { ...sdkMock, project: 'custom-project' } satisfies CogniteClient;
+      const customSdk = {
+        ...sdkMock,
+        project: 'custom-project',
+        getBaseUrl: vi.fn().mockReturnValue('https://custom-api.cognitedata.com')
+      };
       const mockDependencies = getMocksByDefaultDependencies(
         defaultUse3dScenesViewModelDependencies
       );
 
       mockDependencies.useSDK.mockReturnValue(customSdk);
-      mockDependencies.FdmSDK.mockImplementation(() => ({ queryNodesAndEdges: vi.fn() }));
       mockDependencies.useQuery.mockReturnValue({
         data: {},
         isLoading: false,
@@ -398,7 +339,6 @@ describe('use3dScenes MVVM', () => {
         defaultUse3dScenesViewModelDependencies
       );
       customDependencies.useSDK.mockReturnValue(sdkMock);
-      customDependencies.FdmSDK.mockImplementation(() => ({ queryNodesAndEdges: vi.fn() }));
       customDependencies.useQuery.mockReturnValue({
         data: { 'custom-space': { 'custom-scene': {} } },
         isLoading: false,

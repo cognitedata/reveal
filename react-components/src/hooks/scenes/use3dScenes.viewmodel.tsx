@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { type QueryFunction } from '@tanstack/react-query';
 import { type NodeDefinition, type QueryRequest } from '@cognite/sdk';
-import { type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
+import { FdmSDK, type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
@@ -35,6 +35,7 @@ import {
   type ExternalId
 } from './use3dScenes.types';
 import { Use3dScenesViewModelContext } from './use3dScenes.context';
+import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 
 const SCENE_QUERY_LIMIT = 100;
 
@@ -62,9 +63,7 @@ type Use3dScenesQueryResult = {
 export function use3dScenesViewModel({
   userSdk
 }: Use3dScenesViewModelProps): Use3dScenesViewModelResult {
-  const { useSDK, FdmSDK, useQuery, tryGetModelIdFromExternalId } = useContext(
-    Use3dScenesViewModelContext
-  );
+  const { useSDK, useQuery } = useContext(Use3dScenesViewModelContext);
 
   const sdk = useSDK(userSdk);
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [FdmSDK, sdk]);
@@ -265,7 +264,7 @@ function populateSceneMapWithGroundplanes(
       wrapping: groundPlaneProperties.wrapping,
       repeatU: groundPlaneProperties.repeatU ?? 1,
       repeatV: groundPlaneProperties.repeatV ?? 1,
-      ...groundPlaneEdgeProperties // Transformation3d
+      ...groundPlaneEdgeProperties
     };
 
     scenesMap[space]?.[externalId].groundPlanes.push(groundPlane);

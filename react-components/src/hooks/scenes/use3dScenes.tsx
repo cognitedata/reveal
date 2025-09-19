@@ -5,16 +5,12 @@ import {
   defaultUse3dScenesViewModelDependencies
 } from './use3dScenes.context';
 import { use3dScenesViewModel } from './use3dScenes.viewmodel';
-import { type Use3dScenesViewModelResult, type Space, type ExternalId } from './use3dScenes.types';
+import { type Use3dScenesViewModelResult } from './use3dScenes.types';
 
-export type { Space, ExternalId };
-
-// Main hook that provides context and uses viewmodel
 export const use3dScenes = (userSdk?: CogniteClient): Use3dScenesViewModelResult => {
   return use3dScenesViewModel({ userSdk });
 };
 
-// Provider component for testing and dependency injection
 export const Use3dScenesProvider = ({
   children,
   dependencies = defaultUse3dScenesViewModelDependencies

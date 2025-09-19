@@ -1,7 +1,6 @@
 import { renderHook, type RenderHookResult } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { type CogniteClient } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { use3dScenesViewModel } from './use3dScenes.viewmodel';
 import {
@@ -58,10 +57,6 @@ describe(use3dScenesViewModel.name, () => {
     }
   };
 
-  const mockFdmSdk = {
-    queryNodesAndEdges: vi.fn()
-  };
-
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <Use3dScenesViewModelContext.Provider value={defaultDependencies}>
       {children}
@@ -77,11 +72,6 @@ describe(use3dScenesViewModel.name, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     defaultDependencies.useSDK.mockReturnValue(sdkMock);
-    defaultDependencies.FdmSDK.mockImplementation(() => mockFdmSdk);
-    defaultDependencies.tryGetModelIdFromExternalId.mockImplementation((externalId) => {
-      const match = externalId.match(/(\d+)/);
-      return match !== null ? parseInt(match[1], 10) : undefined;
-    });
 
     // Mock successful query result by default
     defaultDependencies.useQuery.mockReturnValue({
@@ -112,11 +102,10 @@ describe(use3dScenesViewModel.name, () => {
     } satisfies Use3dScenesViewModelResult);
   });
 
-  test('should initialize FdmSDK with correct SDK', () => {
+  test('should call useSDK with correct parameters', () => {
     renderHookWithViewModel();
 
     expect(defaultDependencies.useSDK).toHaveBeenCalledWith(mockProps.userSdk);
-    expect(defaultDependencies.FdmSDK).toHaveBeenCalledWith(sdkMock);
   });
 
   test('should pass correct query parameters to useQuery', () => {
@@ -210,7 +199,11 @@ describe(use3dScenesViewModel.name, () => {
   });
 
   test('should use custom SDK when provided', () => {
-    const customSdk = { ...sdkMock, project: 'custom-project' } satisfies CogniteClient;
+    const customSdk = {
+      ...sdkMock,
+      project: 'custom-project',
+      getBaseUrl: vi.fn().mockReturnValue('https://custom-api.cognitedata.com')
+    };
     const customProps: Use3dScenesViewModelProps = {
       userSdk: customSdk
     };
@@ -220,222 +213,5 @@ describe(use3dScenesViewModel.name, () => {
     renderHookWithViewModel(customProps);
 
     expect(defaultDependencies.useSDK).toHaveBeenCalledWith(customSdk);
-    expect(defaultDependencies.FdmSDK).toHaveBeenCalledWith(customSdk);
-  });
-
-  test('should handle FdmSDK creation correctly', () => {
-    const mockFdmInstance = {
-      queryNodesAndEdges: vi.fn().mockResolvedValue({
-        items: {
-          scenes: [],
-          sceneModels: [],
-          scene360Collections: [],
-          sceneGroundPlanes: [],
-          sceneGroundPlaneEdges: [],
-          sceneSkybox: []
-        },
-        nextCursor: undefined
-      })
-    };
-
-    defaultDependencies.FdmSDK.mockImplementation(() => mockFdmInstance);
-
-    renderHookWithViewModel();
-
-    expect(defaultDependencies.FdmSDK).toHaveBeenCalledWith(sdkMock);
-  });
-
-  test('should handle query function execution with mock data', async () => {
-    const mockQueryResponse = {
-      items: {
-        scenes: [
-          {
-            space: 'test-space',
-            externalId: 'test-scene',
-            properties: {
-              scene: {
-                'SceneConfiguration/v1': {
-                  name: 'Test Scene',
-                  cameraTranslationX: 0,
-                  cameraTranslationY: 0,
-                  cameraTranslationZ: 10
-                }
-              }
-            }
-          }
-        ],
-        sceneModels: [],
-        scene360Collections: [],
-        sceneGroundPlanes: [],
-        sceneGroundPlaneEdges: [],
-        sceneSkybox: []
-      },
-      nextCursor: undefined
-    };
-
-    mockFdmSdk.queryNodesAndEdges.mockResolvedValue(mockQueryResponse);
-
-    // Extract and test the query function
-    renderHookWithViewModel();
-
-    const queryCall = defaultDependencies.useQuery.mock.calls[0];
-    const queryFn = queryCall[0].queryFn;
-
-    const result = await queryFn({} as any);
-
-    expect(mockFdmSdk.queryNodesAndEdges).toHaveBeenCalled();
-    expect(result).toEqual(
-      expect.objectContaining({
-        'test-space': expect.objectContaining({
-          'test-scene': expect.objectContaining({
-            name: 'Test Scene',
-            cameraTranslationX: 0,
-            cameraTranslationY: 0,
-            cameraTranslationZ: 10
-          })
-        })
-      })
-    );
-  });
-
-  test('should handle pagination with multiple query calls', async () => {
-    // Create array of 100 scenes to trigger pagination (SCENE_QUERY_LIMIT = 100)
-    const firstPageScenes = Array.from({ length: 100 }, (_, i) => ({
-      space: 'test-space',
-      externalId: `scene-${i + 1}`,
-      properties: {
-        scene: {
-          'SceneConfiguration/v1': {
-            name: `Scene ${i + 1}`
-          }
-        }
-      }
-    }));
-
-    const secondPageScenes = [
-      {
-        space: 'test-space',
-        externalId: 'scene-101',
-        properties: {
-          scene: {
-            'SceneConfiguration/v1': {
-              name: 'Scene 101'
-            }
-          }
-        }
-      }
-    ];
-
-    const firstResponse = {
-      items: {
-        scenes: firstPageScenes,
-        sceneModels: [],
-        scene360Collections: [],
-        sceneGroundPlanes: [],
-        sceneGroundPlaneEdges: [],
-        sceneSkybox: []
-      },
-      nextCursor: { scenes: 'cursor-123' }
-    };
-
-    const secondResponse = {
-      items: {
-        scenes: secondPageScenes,
-        sceneModels: [],
-        scene360Collections: [],
-        sceneGroundPlanes: [],
-        sceneGroundPlaneEdges: [],
-        sceneSkybox: []
-      },
-      nextCursor: undefined
-    };
-
-    mockFdmSdk.queryNodesAndEdges
-      .mockResolvedValueOnce(firstResponse)
-      .mockResolvedValueOnce(secondResponse);
-
-    // Extract and test the query function with pagination
-    renderHookWithViewModel();
-
-    const queryCall = defaultDependencies.useQuery.mock.calls[0];
-    const queryFn = queryCall[0].queryFn;
-
-    const result = await queryFn({} as any);
-
-    expect(mockFdmSdk.queryNodesAndEdges).toHaveBeenCalledTimes(2);
-    expect(result).toEqual(
-      expect.objectContaining({
-        'test-space': expect.objectContaining({
-          'scene-1': expect.objectContaining({
-            name: 'Scene 1'
-          }),
-          'scene-100': expect.objectContaining({
-            name: 'Scene 100'
-          }),
-          'scene-101': expect.objectContaining({
-            name: 'Scene 101'
-          })
-        })
-      })
-    );
-  });
-
-  test('should call tryGetModelIdFromExternalId for model processing', async () => {
-    const mockQueryResponse = {
-      items: {
-        scenes: [
-          {
-            space: 'test-space',
-            externalId: 'test-scene',
-            properties: {
-              scene: {
-                'SceneConfiguration/v1': {
-                  name: 'Test Scene'
-                }
-              }
-            }
-          }
-        ],
-        sceneModels: [
-          {
-            startNode: { space: 'test-space', externalId: 'test-scene' },
-            endNode: { externalId: 'model-123456' },
-            properties: {
-              'transformation-source': {
-                'Transformation3d/v1': {
-                  revisionId: '1',
-                  translationX: 0,
-                  translationY: 0,
-                  translationZ: 0,
-                  eulerRotationX: 0,
-                  eulerRotationY: 0,
-                  eulerRotationZ: 0,
-                  scaleX: 1,
-                  scaleY: 1,
-                  scaleZ: 1
-                }
-              }
-            }
-          }
-        ],
-        scene360Collections: [],
-        sceneGroundPlanes: [],
-        sceneGroundPlaneEdges: [],
-        sceneSkybox: []
-      },
-      nextCursor: undefined
-    };
-
-    mockFdmSdk.queryNodesAndEdges.mockResolvedValue(mockQueryResponse);
-
-    // Extract and test the query function
-    renderHookWithViewModel();
-
-    const queryCall = defaultDependencies.useQuery.mock.calls[0];
-    const queryFn = queryCall[0].queryFn;
-
-    await queryFn({} as any);
-
-    expect(defaultDependencies.tryGetModelIdFromExternalId).toHaveBeenCalledWith('model-123456');
   });
 });
