@@ -37,7 +37,7 @@ describe(UseSceneConfigViewModel.name, () => {
           version: 1,
           instanceType: 'node',
           properties: {
-            'SceneConfiguration/v1': {
+            scene: {
               'SceneConfiguration/v1': {
                 name: 'Test Scene',
                 cameraTranslationX: 0,
@@ -424,8 +424,8 @@ describe(UseSceneConfigViewModel.name, () => {
       sceneModels: [
         {
           modelIdentifier: {
-            modelId: 111111,
-            revisionId: 1
+            modelId: 123,
+            revisionId: 456
           },
           translationX: 0,
           translationY: 0,
@@ -503,7 +503,7 @@ describe(UseSceneConfigViewModel.name, () => {
     expect(result.current.data.groundPlanes[0].label).toBe('Main Ground');
     expect(result.current.data.groundPlanes[1].label).toBe('Secondary Ground');
 
-    expect(result.current.data.sceneModels[0].modelIdentifier).toHaveProperty('modelId', 111111);
+    expect(result.current.data.sceneModels[0].modelIdentifier).toHaveProperty('modelId', 123);
     expect(result.current.data.sceneModels[1].modelIdentifier).toHaveProperty(
       'revisionExternalId',
       'dm-model-1'
@@ -630,7 +630,14 @@ describe(UseSceneConfigViewModel.name, () => {
 
       renderHook(() => UseSceneConfigViewModel(mockProps), { wrapper });
 
-      const result = await capturedQueryFunction();
+      // Mock context for QueryFunction
+      const mockContext = {
+        queryKey: ['scenes', mockProps.sceneExternalId, mockProps.sceneSpace],
+        signal: new AbortController().signal,
+        meta: undefined
+      };
+
+      const result = await capturedQueryFunction(mockContext);
       expect(result).toBeDefined();
       expect(result?.sceneConfiguration.name).toBe('Test Scene');
       expect(result?.skybox).toBeUndefined();
