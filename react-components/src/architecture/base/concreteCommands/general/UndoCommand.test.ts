@@ -30,7 +30,7 @@ describe(DeleteDomainObjectCommand.name, () => {
 
   test('should remove domain object', async () => {
     const folder = new FolderDomainObject();
-    renderTarget.rootDomainObject.addChild(folder);
+    renderTarget.root.addChild(folder);
     expect(undoCommand.isEnabled).toBe(false);
 
     // Add two domain objects to the folder

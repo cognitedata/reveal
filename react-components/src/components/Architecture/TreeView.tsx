@@ -11,7 +11,7 @@ export const TreeView = (): ReactElement => {
   const renderTarget = useRenderTarget();
   return (
     <AdvancedTreeView
-      root={renderTarget.rootDomainObject}
+      root={renderTarget.root}
       onSelectNode={onSelectDomainObject}
       onToggleNode={onToggleDomainObject}
       getIconFromIconName={getIconFromIconName}

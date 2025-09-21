@@ -21,15 +21,15 @@ export class SetTerrainVisibleCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget, rootDomainObject } = this;
-    let terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
+    const { renderTarget, root } = this;
+    let terrainDomainObject = root.getDescendantByType(TerrainDomainObject);
     const random = new Random(42);
     if (terrainDomainObject === undefined) {
       terrainDomainObject = new TerrainDomainObject();
       const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
       terrainDomainObject.grid = createFractalRegularGrid2(range, random);
 
-      rootDomainObject.addChildInteractive(terrainDomainObject);
+      root.addChildInteractive(terrainDomainObject);
       terrainDomainObject.setVisibleInteractive(true, renderTarget);
     } else {
       terrainDomainObject.toggleVisibleInteractive(renderTarget);

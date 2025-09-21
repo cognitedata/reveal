@@ -24,7 +24,7 @@ describe(CycleLengthUnitsCommand.name, () => {
   });
 
   test('should switch from metric unit and imperial', async () => {
-    const unitSystem = renderTarget.rootDomainObject.unitSystem;
+    const unitSystem = renderTarget.root.unitSystem;
 
     // Check initial state
     expect(unitSystem.lengthUnit()).toBe(LengthUnit.Meter);
@@ -43,7 +43,7 @@ describe(CycleLengthUnitsCommand.name, () => {
   });
 
   test('should toggle between metric and imperial units and notify domain objects twice', async () => {
-    const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+    const tester = new EventChangeTester(renderTarget.root, Changes.unit);
 
     expect(command.invoke()).toBe(true);
 
