@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { type QueryFunction } from '@tanstack/react-query';
 import { type NodeDefinition } from '@cognite/sdk';
-import { FdmSDK, type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
+import { type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
@@ -35,7 +35,7 @@ import { createGetScenesQuery } from './allScenesQuery';
 
 type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
 
-type SceneNode = Omit<NodeDefinition, 'properties'> & {
+export type SceneNode = Omit<NodeDefinition, 'properties'> & {
   properties: {
     scene: {
       'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
@@ -57,10 +57,10 @@ type Use3dScenesQueryResult = {
 export function Use3dScenesViewModel({
   userSdk
 }: Use3dScenesViewModelProps): Use3dScenesViewModelResult {
-  const { useSDK, useQuery } = useContext(Use3dScenesViewModelContext);
+  const { useSDK, useQuery, createFdmSdk } = useContext(Use3dScenesViewModelContext);
 
   const sdk = useSDK(userSdk);
-  const fdmSdk = useMemo(() => new FdmSDK(sdk), [FdmSDK, sdk]);
+  const fdmSdk = useMemo(() => createFdmSdk(sdk), [createFdmSdk, sdk]);
 
   const queryFunction: QueryFunction<ScenesMap> = async () => {
     const allScenes: Use3dScenesQueryResult = {

@@ -1,12 +1,16 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { Use3dScenesViewModel } from './use3dScenes.viewmodel';
+import { Mock } from 'moq.ts';
+import { type CogniteClient } from '@cognite/sdk';
+import { type QueryFunction, QueryClient } from '@tanstack/react-query';
+import { type SceneNode, Use3dScenesViewModel } from './use3dScenes.viewmodel';
 import {
   type Use3dScenesViewModelDependencies,
   Use3dScenesViewModelContext
 } from './use3dScenes.viewmodel.context';
 import { type Use3dScenesViewModelProps, type ScenesMap } from './use3dScenes.types';
+import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createMockQueryResult } from '#test-utils/fixtures/queryResult';
 
@@ -17,10 +21,18 @@ describe(Use3dScenesViewModel.name, () => {
 
   const mockUseSDK = vi.fn();
   const mockUseQuery = vi.fn();
+  const mockCreateFdmSdk = vi.fn();
+  const mockQueryNodesAndEdges = vi.fn();
+
+  const mockFdmSdkInstance = new Mock<FdmSDK>()
+    .setup((instance) => instance.queryNodesAndEdges)
+    .returns(mockQueryNodesAndEdges)
+    .object();
 
   const mockDependencies: Use3dScenesViewModelDependencies = {
     useSDK: mockUseSDK,
-    useQuery: mockUseQuery
+    useQuery: mockUseQuery,
+    createFdmSdk: mockCreateFdmSdk
   };
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
@@ -32,13 +44,37 @@ describe(Use3dScenesViewModel.name, () => {
   beforeEach(() => {
     mockUseSDK.mockReturnValue(sdkMock);
     mockUseQuery.mockReturnValue(createMockQueryResult({}));
-    sdkMock.getBaseUrl = vi.fn().mockReturnValue('https://test.cognitedata.com');
+    mockCreateFdmSdk.mockReturnValue(mockFdmSdkInstance);
   });
 
   test('should call useSDK with correct parameters', () => {
     renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
 
     expect(mockUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
+  });
+
+  test('should create FdmSDK with SDK from useSDK', () => {
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    expect(mockCreateFdmSdk).toHaveBeenCalledWith(sdkMock);
+  });
+
+  test('should create FdmSDK with custom SDK when provided', () => {
+    const customSdkMock = new Mock<CogniteClient>()
+      .setup((sdk) => sdk.getBaseUrl)
+      .returns(vi.fn().mockReturnValue('https://custom.cognitedata.com'))
+      .object();
+
+    mockUseSDK.mockReturnValueOnce(customSdkMock);
+
+    const customProps: Use3dScenesViewModelProps = {
+      userSdk: customSdkMock
+    };
+
+    renderHook(() => Use3dScenesViewModel(customProps), { wrapper });
+
+    expect(mockUseSDK).toHaveBeenCalledWith(customProps.userSdk);
+    expect(mockCreateFdmSdk).toHaveBeenCalledWith(customSdkMock);
   });
 
   test('should pass correct query parameters to useQuery', () => {
@@ -121,12 +157,6 @@ describe(Use3dScenesViewModel.name, () => {
     renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
 
     expect(mockUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
-  });
-
-  test('should call useSDK before creating FdmSDK', () => {
-    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
-
-    expect(mockUseSDK).toHaveBeenCalledBefore(mockUseQuery);
   });
 
   test('should pass queryFunction to useQuery', () => {
@@ -278,14 +308,17 @@ describe(Use3dScenesViewModel.name, () => {
   test('should handle context changes', () => {
     const customUseSDK = vi.fn();
     const customUseQuery = vi.fn();
+    const customCreateFdmSdk = vi.fn();
 
     const customDependencies: Use3dScenesViewModelDependencies = {
       useSDK: customUseSDK,
-      useQuery: customUseQuery
+      useQuery: customUseQuery,
+      createFdmSdk: customCreateFdmSdk
     };
 
     customUseSDK.mockReturnValue(sdkMock);
     customUseQuery.mockReturnValue(createMockQueryResult({}));
+    customCreateFdmSdk.mockReturnValue(mockFdmSdkInstance);
 
     const customWrapper = ({ children }: { children: ReactNode }): ReactElement => (
       <Use3dScenesViewModelContext.Provider value={customDependencies}>
@@ -297,6 +330,7 @@ describe(Use3dScenesViewModel.name, () => {
 
     expect(customUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
     expect(customUseQuery).toHaveBeenCalled();
+    expect(customCreateFdmSdk).toHaveBeenCalled();
   });
 
   test('should handle refetch functionality', () => {
@@ -309,5 +343,621 @@ describe(Use3dScenesViewModel.name, () => {
     const { result } = renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
 
     expect(result.current.refetch).toBe(mockRefetch);
+  });
+
+  test('should execute complete scene processing with minimal data', async () => {
+    mockQueryNodesAndEdges.mockResolvedValue({
+      items: {
+        scenes: [
+          {
+            externalId: 'test-scene-1',
+            space: 'test-space',
+            properties: {
+              scene: {
+                'SceneConfiguration/v1': {
+                  name: 'Test Scene 1'
+                }
+              }
+            }
+          }
+        ],
+        sceneModels: [],
+        scene360Collections: [],
+        sceneGroundPlanes: [],
+        sceneGroundPlaneEdges: [],
+        sceneSkybox: []
+      },
+      nextCursor: undefined
+    });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+
+    // Verify the result structure (covers createMapOfScenes execution)
+    expect(result).toBeDefined();
+    expect(typeof result).toBe('object');
+    expect(result['test-space']).toBeDefined();
+    expect(result['test-space']['test-scene-1']).toBeDefined();
+    expect(result['test-space']['test-scene-1'].name).toBe('Test Scene 1');
+  });
+
+  test('should handle pagination', async () => {
+    // Create 100+ scenes to trigger pagination
+    const createMockScenes = (count: number, startIndex: number = 0): SceneNode[] =>
+      Array.from({ length: count }, (_, i) => ({
+        externalId: `scene-${startIndex + i}`,
+        space: 'test-space',
+        createdTime: Date.now(),
+        lastUpdatedTime: Date.now(),
+        version: 1,
+        instanceType: 'node',
+        properties: {
+          scene: {
+            'SceneConfiguration/v1': {
+              name: `Scene ${startIndex + i}`
+            }
+          }
+        }
+      }));
+
+    // Mock first call returns 100 scenes with cursor
+    // Mock second call returns remaining scenes without cursor
+    mockQueryNodesAndEdges
+      .mockResolvedValueOnce({
+        items: {
+          scenes: createMockScenes(100, 0),
+          sceneModels: [],
+          scene360Collections: [],
+          sceneGroundPlanes: [],
+          sceneGroundPlaneEdges: [],
+          sceneSkybox: []
+        },
+        nextCursor: { scenes: 'cursor-token' }
+      })
+      .mockResolvedValueOnce({
+        items: {
+          scenes: createMockScenes(50, 100),
+          sceneModels: [],
+          scene360Collections: [],
+          sceneGroundPlanes: [],
+          sceneGroundPlaneEdges: [],
+          sceneSkybox: []
+        },
+        nextCursor: undefined
+      });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    // Mock context for QueryFunction
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+
+    // Verify pagination worked - should have 150 scenes total
+    const allScenes = Object.values(result).flatMap((spaceScenes) => Object.values(spaceScenes));
+    expect(allScenes).toHaveLength(150);
+    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
+  });
+
+  test('should populate scene map with models', async () => {
+    mockQueryNodesAndEdges.mockResolvedValue({
+      items: {
+        scenes: [
+          {
+            externalId: 'scene-with-model',
+            space: 'test-space',
+            properties: {
+              scene: {
+                'SceneConfiguration/v1': {
+                  name: 'Scene with Model'
+                }
+              }
+            }
+          }
+        ],
+        sceneModels: [
+          {
+            startNode: {
+              externalId: 'scene-with-model',
+              space: 'test-space'
+            },
+            endNode: {
+              externalId: 'cog_3d_model_123'
+            },
+            properties: {
+              'SceneModels/v1': {
+                'SceneModels/v1': {
+                  revisionId: 1,
+                  translationX: 10,
+                  translationY: 20,
+                  translationZ: 30
+                }
+              }
+            }
+          }
+        ],
+        scene360Collections: [],
+        sceneGroundPlanes: [],
+        sceneGroundPlaneEdges: [],
+        sceneSkybox: []
+      }
+    });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    // Mock context for QueryFunction
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+
+    // Verify model was added to scene
+    expect(result['test-space']['scene-with-model'].modelOptions).toBeDefined();
+    expect(result['test-space']['scene-with-model'].modelOptions).toHaveLength(1);
+    expect(result['test-space']['scene-with-model'].modelOptions[0]).toEqual({
+      modelId: 123,
+      revisionId: 1,
+      transformation: expect.any(Object)
+    });
+  });
+
+  test('should populate scene map with 360 images', async () => {
+    mockQueryNodesAndEdges.mockResolvedValue({
+      items: {
+        scenes: [
+          {
+            externalId: 'scene-with-360',
+            space: 'test-space',
+            properties: {
+              scene: {
+                'SceneConfiguration/v1': {
+                  name: 'Scene with 360 Images'
+                }
+              }
+            }
+          }
+        ],
+        sceneModels: [],
+        scene360Collections: [
+          {
+            startNode: {
+              externalId: 'scene-with-360',
+              space: 'test-space'
+            },
+            properties: {
+              'Scene360ImageCollection/v1': {
+                'Scene360ImageCollection/v1': {
+                  image360CollectionExternalId: 'image-collection-1',
+                  image360CollectionSpace: 'image-space',
+                  translationX: 0,
+                  translationY: 0,
+                  translationZ: 0,
+                  eulerRotationX: 0,
+                  eulerRotationY: 0,
+                  eulerRotationZ: 0,
+                  scaleX: 1,
+                  scaleY: 1,
+                  scaleZ: 1
+                }
+              }
+            }
+          }
+        ],
+        sceneGroundPlanes: [],
+        sceneGroundPlaneEdges: [],
+        sceneSkybox: []
+      }
+    });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    // Mock context for QueryFunction
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+
+    // Verify 360 image collection was added to scene
+    expect(result['test-space']['scene-with-360'].image360CollectionOptions).toBeDefined();
+    expect(result['test-space']['scene-with-360'].image360CollectionOptions).toHaveLength(1);
+    expect(result['test-space']['scene-with-360'].image360CollectionOptions[0]).toEqual({
+      source: 'dm',
+      externalId: 'image-collection-1',
+      space: 'image-space',
+      transform: expect.any(Object)
+    });
+  });
+
+  test('should populate scene map with ground planes', async () => {
+    mockQueryNodesAndEdges.mockResolvedValue({
+      items: {
+        scenes: [
+          {
+            externalId: 'scene-with-groundplane',
+            space: 'test-space',
+            properties: {
+              scene: {
+                'SceneConfiguration/v1': {
+                  name: 'Scene with Ground Plane'
+                }
+              }
+            }
+          }
+        ],
+        sceneModels: [],
+        scene360Collections: [],
+        sceneGroundPlanes: [
+          {
+            externalId: 'ground-plane-1',
+            space: 'test-space',
+            properties: {
+              'GroundPlane/v1': {
+                'GroundPlane/v1': {
+                  label: 'Ground Plane 1',
+                  file: 'ground.jpg'
+                }
+              }
+            }
+          }
+        ],
+        sceneGroundPlaneEdges: [
+          {
+            startNode: {
+              externalId: 'scene-with-groundplane',
+              space: 'test-space'
+            },
+            endNode: {
+              externalId: 'ground-plane-1',
+              space: 'test-space'
+            },
+            properties: {
+              'Transformation3d/v1': {
+                'Transformation3d/v1': {
+                  translationX: 5,
+                  translationY: 0,
+                  translationZ: 5,
+                  eulerRotationX: 0,
+                  eulerRotationY: 0,
+                  eulerRotationZ: 0,
+                  scaleX: 1,
+                  scaleY: 1,
+                  scaleZ: 1
+                }
+              }
+            }
+          }
+        ],
+        sceneSkybox: []
+      }
+    });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    // Mock context for QueryFunction
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+
+    // Verify ground plane was added to scene
+    expect(result['test-space']['scene-with-groundplane'].groundPlanes).toBeDefined();
+    expect(result['test-space']['scene-with-groundplane'].groundPlanes).toHaveLength(1);
+    expect(result['test-space']['scene-with-groundplane'].groundPlanes[0]).toEqual({
+      label: 'Ground Plane 1',
+      file: 'ground.jpg',
+      translationX: 5,
+      translationY: 0,
+      translationZ: 5,
+      eulerRotationX: 0,
+      eulerRotationY: 0,
+      eulerRotationZ: 0,
+      scaleX: 1,
+      scaleY: 1,
+      scaleZ: 1,
+      repeatU: 1,
+      repeatV: 1,
+      wrapping: undefined
+    });
+  });
+
+  test('should handle skybox in scenes', async () => {
+    mockQueryNodesAndEdges.mockResolvedValue({
+      items: {
+        scenes: [
+          {
+            externalId: 'scene-with-skybox',
+            space: 'test-space',
+            properties: {
+              scene: {
+                'SceneConfiguration/v1': {
+                  name: 'Scene with Skybox',
+                  skybox: {
+                    externalId: 'skybox-hdr',
+                    space: 'test-space'
+                  }
+                }
+              }
+            }
+          }
+        ],
+        sceneModels: [],
+        scene360Collections: [],
+        sceneGroundPlanes: [],
+        sceneGroundPlaneEdges: [],
+        sceneSkybox: [
+          {
+            externalId: 'skybox-hdr',
+            space: 'test-space',
+            properties: {
+              'EnvironmentMap/v1': {
+                'EnvironmentMap/v1': {
+                  label: 'HDR Skybox',
+                  isSpherical: true,
+                  file: 'skybox.hdr'
+                }
+              }
+            }
+          }
+        ]
+      }
+    });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    // Mock context for QueryFunction
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+
+    // Verify skybox was added to scene
+    expect(result['test-space']['scene-with-skybox'].skybox).toBeDefined();
+    expect(result['test-space']['scene-with-skybox'].skybox).toEqual({
+      label: 'HDR Skybox',
+      isSpherical: true,
+      file: 'skybox.hdr'
+    });
+  });
+
+  test('should handle complex scene with all components', async () => {
+    mockQueryNodesAndEdges.mockResolvedValue({
+      items: {
+        scenes: [
+          {
+            externalId: 'complex-scene',
+            space: 'test-space',
+            properties: {
+              scene: {
+                'SceneConfiguration/v1': {
+                  name: 'Complex Scene',
+                  cameraTranslationX: 100,
+                  cameraTranslationY: 200,
+                  cameraTranslationZ: 300,
+                  skybox: {
+                    externalId: 'complex-skybox-hdr',
+                    space: 'test-space'
+                  }
+                }
+              }
+            }
+          }
+        ],
+        sceneModels: [
+          {
+            startNode: {
+              externalId: 'complex-scene',
+              space: 'test-space'
+            },
+            endNode: {
+              externalId: 'cog_3d_model_456'
+            },
+            properties: {
+              'SceneModels/v1': {
+                'SceneModels/v1': {
+                  revisionId: 2,
+                  translationX: 50,
+                  translationY: 100,
+                  translationZ: 150
+                }
+              }
+            }
+          }
+        ],
+        scene360Collections: [
+          {
+            startNode: {
+              externalId: 'complex-scene',
+              space: 'test-space'
+            },
+            properties: {
+              'Scene360ImageCollection/v1': {
+                'Scene360ImageCollection/v1': {
+                  image360CollectionExternalId: 'complex-images',
+                  image360CollectionSpace: 'image-space',
+                  translationX: 0,
+                  translationY: 0,
+                  translationZ: 0,
+                  eulerRotationX: 0,
+                  eulerRotationY: 0,
+                  eulerRotationZ: 0,
+                  scaleX: 1,
+                  scaleY: 1,
+                  scaleZ: 1
+                }
+              }
+            }
+          }
+        ],
+        sceneGroundPlanes: [
+          {
+            externalId: 'complex-ground',
+            space: 'test-space',
+            properties: {
+              'GroundPlane/v1': {
+                'GroundPlane/v1': {
+                  label: 'Complex Ground',
+                  file: 'complex_ground.jpg'
+                }
+              }
+            }
+          }
+        ],
+        sceneGroundPlaneEdges: [
+          {
+            startNode: {
+              externalId: 'complex-scene',
+              space: 'test-space'
+            },
+            endNode: {
+              externalId: 'complex-ground',
+              space: 'test-space'
+            },
+            properties: {
+              'Transformation3d/v1': {
+                'Transformation3d/v1': {
+                  translationX: 25,
+                  translationY: 0,
+                  translationZ: 25,
+                  eulerRotationX: 0,
+                  eulerRotationY: 45,
+                  eulerRotationZ: 0,
+                  scaleX: 2,
+                  scaleY: 1,
+                  scaleZ: 2
+                }
+              }
+            }
+          }
+        ],
+        sceneSkybox: [
+          {
+            externalId: 'complex-skybox-hdr',
+            space: 'test-space',
+            properties: {
+              'EnvironmentMap/v1': {
+                'EnvironmentMap/v1': {
+                  label: 'Complex Skybox',
+                  isSpherical: false,
+                  file: 'complex_skybox.hdr'
+                }
+              }
+            }
+          }
+        ]
+      }
+    });
+
+    let capturedQueryFunction: QueryFunction<ScenesMap> | undefined;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult({});
+    });
+
+    renderHook(() => Use3dScenesViewModel(mockProps), { wrapper });
+
+    // Mock context for QueryFunction
+    const mockContext = {
+      client: new QueryClient(),
+      queryKey: ['scenes', undefined],
+      signal: new AbortController().signal,
+      meta: undefined
+    };
+
+    assert(capturedQueryFunction !== undefined);
+    const result = await capturedQueryFunction(mockContext);
+    const complexScene = result['test-space']['complex-scene'];
+
+    // Verify all components were processed
+    expect(complexScene).toBeDefined();
+    expect(complexScene.name).toBe('Complex Scene');
+    expect(complexScene.modelOptions).toHaveLength(1);
+    expect(complexScene.image360CollectionOptions).toHaveLength(1);
+    expect(complexScene.groundPlanes).toHaveLength(1);
+    expect(complexScene.skybox).toBeDefined();
+
+    // Verify model processing
+    const firstModel = complexScene.modelOptions[0];
+    expect('modelId' in firstModel && firstModel.modelId).toBe(456);
+    expect('revisionId' in firstModel && firstModel.revisionId).toBe(2);
+
+    // Verify ground plane processing
+    expect(complexScene.groundPlanes[0].label).toBe('Complex Ground');
+    expect(complexScene.groundPlanes[0].translationX).toBe(25);
+
+    // Verify skybox processing
+    assert(complexScene.skybox !== undefined);
+    expect(complexScene.skybox.label).toBe('Complex Skybox');
+    expect(complexScene.skybox.isSpherical).toBe(false);
   });
 });
