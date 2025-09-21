@@ -158,27 +158,7 @@ export const transformationSourceWithProperties = [
 export const sceneSourceWithProperties = [
   {
     source: SCENE_SOURCE,
-    properties: [
-      'name',
-      'skybox',
-      'cameraTranslationX',
-      'cameraTranslationY',
-      'cameraTranslationZ',
-      'cameraEulerRotationX',
-      'cameraEulerRotationY',
-      'cameraEulerRotationZ',
-      'cameraTargetX',
-      'cameraTargetY',
-      'cameraTargetZ',
-      'updatedAt',
-      'cadBudget',
-      'pointCloudBudget',
-      'maxRenderResolution',
-      'movingCameraResolutionFactor',
-      'pointCloudPointSize',
-      'pointCloudPointShape',
-      'pointCloudColor'
-    ]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
