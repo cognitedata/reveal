@@ -209,7 +209,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   protected getOrCreateParent(): DomainObject {
-    return this.rootDomainObject;
+    return this.root;
   }
 
   // ==================================================

@@ -9,7 +9,7 @@ describe(Set360ImagesOpacityCommand.name, () => {
   let command: Set360ImagesOpacityCommand;
   const renderTarget = createFullRenderTargetMock();
   const domainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
-  renderTarget.rootDomainObject.addChildInteractive(domainObject);
+  renderTarget.root.addChildInteractive(domainObject);
 
   beforeEach(() => {
     command = new Set360ImagesOpacityCommand();

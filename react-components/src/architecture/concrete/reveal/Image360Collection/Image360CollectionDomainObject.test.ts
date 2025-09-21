@@ -23,7 +23,7 @@ describe(Image360CollectionDomainObject.name, () => {
     const image360Collection = createImage360ClassicMock();
 
     const domainObject = new Image360CollectionDomainObject(image360Collection);
-    renderTargetMock.rootDomainObject.addChild(domainObject);
+    renderTargetMock.root.addChild(domainObject);
 
     expect(image360Collection.on).toHaveBeenCalledTimes(2);
 
@@ -54,7 +54,7 @@ describe(Image360CollectionDomainObject.name, () => {
     const image360Collection = createImage360ClassicMock();
 
     const domainObject = new Image360CollectionDomainObject(image360Collection);
-    renderTargetMock.rootDomainObject.addChild(domainObject);
+    renderTargetMock.root.addChild(domainObject);
 
     const eventAndListener0 = vi.mocked(image360Collection.on).mock.calls[0];
     const eventAndListener1 = vi.mocked(image360Collection.on).mock.calls[1];
@@ -72,7 +72,7 @@ describe(Image360CollectionDomainObject.name, () => {
     const image360Collection = createImage360ClassicMock();
 
     const domainObject = new Image360CollectionDomainObject(image360Collection);
-    renderTargetMock.rootDomainObject.addChild(domainObject);
+    renderTargetMock.root.addChild(domainObject);
 
     domainObject.removeInteractive();
     expect(() => domainObject.removeInteractive()).toThrowError();

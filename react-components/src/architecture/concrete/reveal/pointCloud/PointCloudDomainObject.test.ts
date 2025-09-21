@@ -15,7 +15,7 @@ describe(PointCloudDomainObject.name, () => {
     model = createPointCloudMock({ visible: false });
     domainObject = new PointCloudDomainObject(model);
     renderTarget = createFullRenderTargetMock();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
   });
 
   test('has expected default values', () => {
