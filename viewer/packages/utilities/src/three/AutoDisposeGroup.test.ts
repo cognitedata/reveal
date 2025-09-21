@@ -58,4 +58,49 @@ describe('AutoDisposeGroup', () => {
 
     expect(disposeSpy).not.toBeCalled();
   });
+
+  test('addTexture adds texture and disposes it when group is disposed', () => {
+    // Arrange
+    const texture = new THREE.Texture();
+    const disposeSpy = jest.spyOn(texture, 'dispose');
+
+    // Act
+    group.addTexture(texture);
+    group.reference();
+    group.dereference();
+
+    // Assert
+    expect(disposeSpy).toBeCalledTimes(1);
+  });
+
+  test('isDisposed returns correct disposal state', () => {
+    // Initially not disposed
+    expect(group.isDisposed()).toBe(false);
+
+    // After referencing, still not disposed
+    group.reference();
+    expect(group.isDisposed()).toBe(false);
+
+    // After dereferencing, should be disposed
+    group.dereference();
+    expect(group.isDisposed()).toBe(true);
+  });
+
+  test('dispose handles mixed child types safely', () => {
+    // This test verifies that the dispose method handles the case where
+    // BufferGeometry instances might exist as children (defensive programming)
+    const bufferGeometry = new THREE.BufferGeometry();
+    const disposeSpy = jest.spyOn(bufferGeometry, 'dispose');
+
+    // Manually add BufferGeometry to children array to test the defensive code
+    // Note: This is not normal usage, but tests the defensive instanceof check
+    (group.children as any).push(bufferGeometry);
+
+    // Act
+    group.reference();
+    group.dereference();
+
+    // Assert
+    expect(disposeSpy).toBeCalledTimes(1);
+  });
 });
