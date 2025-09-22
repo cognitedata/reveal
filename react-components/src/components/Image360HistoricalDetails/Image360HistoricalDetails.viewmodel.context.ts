@@ -1,5 +1,5 @@
-import { formatDateTime } from '@cognite/cdf-utilities';
 import { createContext } from 'react';
+import { formatDateTime } from '../../utilities/date-time-utils';
 
 export type Image360HistoricalDetailsViewModelDependencies = {
   formatDateTime: typeof formatDateTime;

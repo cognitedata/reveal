@@ -36,6 +36,7 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     const sprite = new Sprite(material);
     sprite.updateMatrixWorld();
     this.addChild(sprite);
+    this.updateGeometry();
   }
 
   private updateGeometry(): void {

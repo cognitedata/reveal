@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.87.0",
+  "version": "0.88.2",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -51,12 +51,12 @@
     "@floating-ui/dom": "^1.0.0",
     "@tanstack/react-query": "^5.84.1",
     "assert": "^2.1.0",
+    "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "ml-matrix": "^6.12.1"
   },
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
-    "@cognite/cdf-utilities": "^5.0.0",
     "@cognite/reveal": "4.26.0",
     "@cognite/sdk": "^10.0.0",
     "@playwright/test": "1.55.0",
