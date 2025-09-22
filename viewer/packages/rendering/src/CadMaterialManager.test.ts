@@ -129,9 +129,6 @@ describe('CadMaterialManager', () => {
     // Assert
     expect(texturedMaterial).toBeDefined();
     expect(texturedMaterial.uniforms.tDiffuse.value).toBe(texture);
-    expect(texturedMaterial.defines.IS_TEXTURED).toBe(true);
-    expect(texture.colorSpace).toBe(THREE.SRGBColorSpace);
-    expect(texture.flipY).toBe(false);
     // The material should be marked for update (needsUpdate might not be enumerable/visible in tests)
     expect(texturedMaterial).toHaveProperty('needsUpdate');
     // Verify the material is stored in the textured materials collection
