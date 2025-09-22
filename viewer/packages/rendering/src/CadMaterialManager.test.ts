@@ -118,6 +118,77 @@ describe('CadMaterialManager', () => {
       expect(material.clippingPlanes?.length).toBe(3);
     }
   });
+
+  test('addTexturedMeshMaterial creates textured material successfully', () => {
+    // Arrange
+    manager.addModelMaterials(modelIdentifier1, 16);
+    const texture = new THREE.Texture();
+    const sectorId = 123;
+    // Act
+    const texturedMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture);
+    // Assert
+    expect(texturedMaterial).toBeDefined();
+    expect(texturedMaterial.uniforms.tDiffuse.value).toBe(texture);
+    expect(texturedMaterial.defines.IS_TEXTURED).toBe(true);
+    expect(texture.colorSpace).toBe(THREE.SRGBColorSpace);
+    expect(texture.flipY).toBe(false);
+    // The material should be marked for update (needsUpdate might not be enumerable/visible in tests)
+    expect(texturedMaterial).toHaveProperty('needsUpdate');
+    // Verify the material is stored in the textured materials collection
+    const materials = manager.getModelMaterials(modelIdentifier1);
+    expect(materials.texturedMaterials[`texturedMaterial_${sectorId}`]).toBe(texturedMaterial);
+  });
+
+  test('addTexturedMeshMaterial throws error when model identifier not found', () => {
+    // Arrange
+    const nonExistentModelId = Symbol('nonExistent');
+    const texture = new THREE.Texture();
+    const sectorId = 123;
+    // Act & Assert
+    expect(() => {
+      manager.addTexturedMeshMaterial(nonExistentModelId, sectorId, texture);
+    }).toThrow('Model identifier: Symbol(nonExistent) not found');
+  });
+
+  test('addTexturedMeshMaterial disposes existing textured material when replacing', () => {
+    // Arrange
+    manager.addModelMaterials(modelIdentifier1, 16);
+    const texture1 = new THREE.Texture();
+    const texture2 = new THREE.Texture();
+    const sectorId = 123;
+    // Create first textured material
+    const firstMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture1);
+    const disposeSpy = jest.spyOn(firstMaterial, 'dispose');
+    // Act - create second textured material with same sectorId
+    const secondMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture2);
+    // Assert
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+    expect(secondMaterial.uniforms.tDiffuse.value).toBe(texture2);
+    // Verify the new material replaced the old one
+    const materials = manager.getModelMaterials(modelIdentifier1);
+    expect(materials.texturedMaterials[`texturedMaterial_${sectorId}`]).toBe(secondMaterial);
+  });
+
+  test('addTexturedMeshMaterial clones original triangle mesh material properties', () => {
+    // Arrange
+    manager.addModelMaterials(modelIdentifier1, 16);
+    const texture = new THREE.Texture();
+    const sectorId = 123;
+
+    const originalMaterial = manager.getModelMaterials(modelIdentifier1).triangleMesh;
+    const originalUniforms = { ...originalMaterial.uniforms };
+    // Act
+    const texturedMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture);
+    // Assert
+    // Verify it's a clone, not the same instance
+    expect(texturedMaterial).not.toBe(originalMaterial);
+    // Verify certain uniforms are preserved from original (excluding the tDiffuse we set)
+    Object.keys(originalUniforms).forEach(key => {
+      if (key !== 'tDiffuse') {
+        expect(texturedMaterial.uniforms[key]).toEqual(originalUniforms[key]);
+      }
+    });
+  });
 });
 
 function* iterateMaterials(materials: Materials): Generator<THREE.RawShaderMaterial> {

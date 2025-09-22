@@ -59,8 +59,7 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
   }
 
   private async waitForModelToLoad(): Promise<void> {
-    // Wait for model to stabilize
-    return new Promise(resolve => setTimeout(resolve, 2000));
+    return new Promise(resolve => setTimeout(resolve, 250));
   }
 
   public async setup({ models }: { viewer: Cognite3DViewer; models: CogniteModel[] }): Promise<void> {
