@@ -1,14 +1,24 @@
 import { createContext } from 'react';
-import { Use3dScenesViewModel } from './use3dScenes.viewmodel';
+import { type CogniteClient } from '@cognite/sdk';
+import { type QueryFunction, type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { useSDK } from '../../components/RevealCanvas/SDKProvider';
+import { FdmSDK, type FdmSDK as FdmSDKType } from '../../data-providers/FdmSDK';
 
-export type Use3dScenesViewDependencies = {
-  Use3dScenesViewModel: typeof Use3dScenesViewModel;
+export type Use3dScenesDependencies = {
+  useSDK: (userSdk?: CogniteClient) => CogniteClient;
+  useQuery: <T>(options: {
+    queryKey: readonly unknown[];
+    queryFn: QueryFunction<T>;
+  }) => UseQueryResult<T>;
+  createFdmSdk: (sdk: CogniteClient) => FdmSDKType;
 };
 
-export const defaultUse3dScenesViewDependencies: Use3dScenesViewDependencies = {
-  Use3dScenesViewModel
+export const defaultUse3dScenesDependencies: Use3dScenesDependencies = {
+  useSDK,
+  useQuery,
+  createFdmSdk: (sdk: CogniteClient) => new FdmSDK(sdk)
 };
 
-export const Use3dScenesViewContext = createContext<Use3dScenesViewDependencies>(
-  defaultUse3dScenesViewDependencies
+export const Use3dScenesContext = createContext<Use3dScenesDependencies>(
+  defaultUse3dScenesDependencies
 );
