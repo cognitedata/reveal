@@ -4,7 +4,7 @@ import { type TranslationInput } from '../../../../base/utilities/translation/Tr
 
 export class Set360IconsSectionCommand extends SectionCommand {
   public override get isVisible(): boolean {
-    return this.rootDomainObject.getDescendantByType(Image360CollectionDomainObject) !== undefined;
+    return this.root.getDescendantByType(Image360CollectionDomainObject) !== undefined;
   }
 
   public override get tooltip(): TranslationInput {

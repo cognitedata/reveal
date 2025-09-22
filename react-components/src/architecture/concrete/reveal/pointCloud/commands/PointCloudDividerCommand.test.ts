@@ -13,7 +13,7 @@ describe(PointCloudDividerCommand.name, () => {
     expect(command.isVisible).toBe(false);
 
     const domainObject = new PointCloudDomainObject(createPointCloudMock());
-    renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     expect(command.isVisible).toBe(true);
   });
 });

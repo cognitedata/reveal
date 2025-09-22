@@ -33,7 +33,7 @@ describe('AxisViewTool', () => {
     canvasContainer = document.createElement('div');
     canvasContainer.style.width = `${domSize.width}px`;
     canvasContainer.style.height = `${domSize.height}px`;
-    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
+    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer, logMetrics: false });
   });
 
   test('Creation of tool', () => {

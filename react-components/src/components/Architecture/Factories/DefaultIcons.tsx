@@ -29,6 +29,7 @@ import {
   FlipVerticalIcon,
   FolderIcon,
   GrabIcon,
+  HelpIcon,
   LeafIcon,
   InfoIcon,
   LocationIcon,
@@ -54,7 +55,8 @@ import {
   WaypointIcon,
   GraphTreeIcon,
   FolderFilledIcon,
-  CubesIcon
+  CubesIcon,
+  ShareIcon
 } from '@cognite/cogs.js';
 
 import { type IconName } from '../../../architecture/base/utilities/types';
@@ -94,6 +96,7 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['FolderFilled', FolderFilledIcon],
   ['Grab', GrabIcon],
   ['GraphTree', GraphTreeIcon],
+  ['Help', HelpIcon],
   ['Info', InfoIcon],
   ['Leaf', LeafIcon],
   ['Location', LocationIcon],
@@ -108,8 +111,9 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Ruler', RulerIcon],
   ['RulerAlternative', RulerAlternativeIcon],
   ['Save', SaveIcon],
-  ['Shapes', ShapesIcon],
   ['Settings', SettingsIcon],
+  ['Shapes', ShapesIcon],
+  ['Share', ShareIcon],
   ['Snow', SnowIcon],
   ['Sun', SunIcon],
   ['Sync', SyncIcon],

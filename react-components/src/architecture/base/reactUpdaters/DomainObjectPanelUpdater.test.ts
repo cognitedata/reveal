@@ -16,7 +16,7 @@ describe(DomainObjectPanelUpdater.name, () => {
   beforeEach(() => {
     domainObject = new MockDomainObject();
     renderTarget = createFullRenderTargetMock();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
     panelUpdater = renderTarget.panelUpdater;
   });
 

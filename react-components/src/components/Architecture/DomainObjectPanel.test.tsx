@@ -98,7 +98,7 @@ describe(DomainObjectPanel.name, () => {
 function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
   const renderTarget = createFullRenderTargetMock();
   if (domainObject !== undefined) {
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
   }
   if (domainObject !== undefined) {
     domainObject.isSelected = true; // Select the domain object to show the panel

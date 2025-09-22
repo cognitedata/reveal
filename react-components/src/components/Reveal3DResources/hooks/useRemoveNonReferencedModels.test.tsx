@@ -42,7 +42,7 @@ describe(useRemoveNonReferencedModels.name, () => {
 
   test('removes models when empty ', () => {
     const renderTarget = createRenderTargetMock();
-    renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
+    renderTarget.root.addChildInteractive(new CadDomainObject(cadMock));
 
     viewerModelsMock.mockReturnValue([cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([]);
@@ -62,11 +62,9 @@ describe(useRemoveNonReferencedModels.name, () => {
     const cadMock = createCadMock();
     const image360Mock = createImage360ClassicMock();
 
-    renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
-    renderTarget.rootDomainObject.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
-    renderTarget.rootDomainObject.addChildInteractive(
-      new Image360CollectionDomainObject(image360Mock)
-    );
+    renderTarget.root.addChildInteractive(new CadDomainObject(cadMock));
+    renderTarget.root.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
+    renderTarget.root.addChildInteractive(new Image360CollectionDomainObject(image360Mock));
 
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);
@@ -88,11 +86,9 @@ describe(useRemoveNonReferencedModels.name, () => {
     const cadMock = createCadMock();
     const image360Mock = createImage360ClassicMock();
 
-    renderTarget.rootDomainObject.addChildInteractive(new CadDomainObject(cadMock));
-    renderTarget.rootDomainObject.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
-    renderTarget.rootDomainObject.addChildInteractive(
-      new Image360CollectionDomainObject(image360Mock)
-    );
+    renderTarget.root.addChildInteractive(new CadDomainObject(cadMock));
+    renderTarget.root.addChildInteractive(new PointCloudDomainObject(pointCloudMock));
+    renderTarget.root.addChildInteractive(new Image360CollectionDomainObject(image360Mock));
 
     viewerModelsMock.mockReturnValue([pointCloudMock, cadMock]);
     viewerImage360CollectionsMock.mockReturnValue([image360Mock]);

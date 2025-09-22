@@ -205,6 +205,20 @@ describe(Cylinder.name, () => {
     primitive.forceMinSize();
     expect(primitive.radius).toBe(Cylinder.MinSize);
   });
+
+  test('should test apply matrix', () => {
+    const primitive = new Cylinder();
+    primitive.radius = 1;
+    primitive.centerA.set(0, 0, 1);
+    primitive.centerB.set(0, 0, -1);
+    const matrix = new Matrix4().makeRotationX(Math.PI / 2).setPosition(1, 2, 3);
+    primitive.applyMatrix4(matrix);
+
+    expect(primitive.radius).toBeCloseTo(1);
+    expect(primitive.height).toBeCloseTo(2);
+    expectEqualVector3(primitive.centerA, new Vector3(1, 1, 3));
+    expectEqualVector3(primitive.centerB, new Vector3(1, 3, 3));
+  });
 });
 
 function createVerticalCylinder(): Cylinder {
