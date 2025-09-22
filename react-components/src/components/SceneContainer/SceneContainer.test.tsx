@@ -132,7 +132,7 @@ describe(SceneContainer.name, () => {
     expect(mockOnResourcesAdded).toHaveBeenCalled();
   });
 
-  test('should call onPointCloudSettingsCallback even when onResourcesAdded is not provided', () => {
+  test('should call onPointCloudSettingsCallback when onResourcesAdded is triggered and no user callback is provided', () => {
     const mockResourceOptions: AddResourceOptions[] = [{ modelId: 123, revisionId: 456 }];
     const mockOnPointCloudSettingsCallback = vi.fn();
 

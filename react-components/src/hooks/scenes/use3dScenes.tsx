@@ -127,11 +127,11 @@ function createMapOfScenes(
 ): Record<Space, Record<ExternalId, SceneData>> {
   return scenes.reduce((acc: Record<Space, Record<ExternalId, SceneData>>, scene: SceneNode) => {
     const { space, externalId } = scene;
-    const properties = scene.properties.scene['SceneConfiguration/v1'];
     if (acc[space] === undefined) {
       acc[space] = {};
     }
     if (acc[space][externalId] === undefined) {
+      const properties = scene.properties.scene['SceneConfiguration/v1'];
       let skyboxObject: SkyboxProperties | undefined;
       const skyboxIdentifier = properties.skybox;
       if (skyboxIdentifier !== undefined) {
