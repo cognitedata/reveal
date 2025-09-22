@@ -2,13 +2,15 @@
  * Copyright 2025 Cognite AS
  */
 import { CadNode } from './CadNode';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import { ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
 
 import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
+import { SectorRepository } from '@reveal/sector-loader';
+import { Mock } from 'moq.ts';
 
 const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
   const geometry = new BufferGeometry();
