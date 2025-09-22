@@ -4,7 +4,7 @@ import { type ReactElement, type ReactNode } from 'react';
 import { Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { type QueryFunction, QueryClient } from '@tanstack/react-query';
-import { type Use3dScenesProps, type ScenesMap } from './use3dScenes.types';
+import { type ScenesMap } from './use3dScenes.types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createMockQueryResult } from '#test-utils/fixtures/queryResult';
@@ -12,10 +12,6 @@ import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.
 import { type SceneNode, use3dScenes } from './use3dScenes';
 
 describe(use3dScenes.name, () => {
-  const mockProps: Use3dScenesProps = {
-    userSdk: undefined
-  };
-
   const mockUseSDK = vi.fn();
   const mockUseQuery = vi.fn();
   const mockCreateFdmSdk = vi.fn();
@@ -43,13 +39,13 @@ describe(use3dScenes.name, () => {
   });
 
   test('should call useSDK with correct parameters', () => {
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
-    expect(mockUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
+    expect(mockUseSDK).toHaveBeenCalledWith(undefined);
   });
 
   test('should create FdmSDK with SDK from useSDK', () => {
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     expect(mockCreateFdmSdk).toHaveBeenCalledWith(sdkMock);
   });
@@ -62,18 +58,14 @@ describe(use3dScenes.name, () => {
 
     mockUseSDK.mockReturnValueOnce(customSdkMock);
 
-    const customProps: Use3dScenesProps = {
-      userSdk: customSdkMock
-    };
+    renderHook(() => use3dScenes(customSdkMock), { wrapper });
 
-    renderHook(() => use3dScenes(customProps), { wrapper });
-
-    expect(mockUseSDK).toHaveBeenCalledWith(customProps.userSdk);
+    expect(mockUseSDK).toHaveBeenCalledWith(customSdkMock);
     expect(mockCreateFdmSdk).toHaveBeenCalledWith(customSdkMock);
   });
 
   test('should pass correct query parameters to useQuery', () => {
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     expect(mockUseQuery).toHaveBeenCalledWith({
       queryKey: ['reveal-react-components', 'cdf', '3d', 'scenes'],
@@ -107,7 +99,7 @@ describe(use3dScenes.name, () => {
 
     mockUseQuery.mockReturnValue(createMockQueryResult(mockScenesMap));
 
-    const { result } = renderHook(() => use3dScenes(mockProps), { wrapper });
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.data).toEqual(mockScenesMap);
     expect(result.current.isLoading).toBe(false);
@@ -115,23 +107,18 @@ describe(use3dScenes.name, () => {
   });
 
   test('should use custom SDK when provided', () => {
-    const customSdk = sdkMock;
-    const customProps: Use3dScenesProps = {
-      userSdk: customSdk
-    };
+    mockUseSDK.mockReturnValue(sdkMock);
 
-    mockUseSDK.mockReturnValue(customSdk);
+    renderHook(() => use3dScenes(sdkMock), { wrapper });
 
-    renderHook(() => use3dScenes(customProps), { wrapper });
-
-    expect(mockUseSDK).toHaveBeenCalledWith(customSdk);
+    expect(mockUseSDK).toHaveBeenCalledWith(sdkMock);
   });
 
   test('should handle loading state', () => {
     const loadingResult = createMockQueryResult(undefined, false, true);
     mockUseQuery.mockReturnValue(loadingResult);
 
-    const { result } = renderHook(() => use3dScenes(mockProps), { wrapper });
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
@@ -142,20 +129,20 @@ describe(use3dScenes.name, () => {
     const errorResult = createMockQueryResult(undefined, false, false, true, testError);
     mockUseQuery.mockReturnValue(errorResult);
 
-    const { result } = renderHook(() => use3dScenes(mockProps), { wrapper });
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.isError).toBe(true);
     expect(result.current.error).toEqual(testError);
   });
 
   test('should create FdmSDK instance with correct SDK', () => {
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(sdkMock), { wrapper });
 
-    expect(mockUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
+    expect(mockUseSDK).toHaveBeenCalledWith(sdkMock);
   });
 
   test('should pass queryFunction to useQuery', () => {
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     const callArgs = mockUseQuery.mock.calls[0][0];
     expect(callArgs).toHaveProperty('queryKey');
@@ -164,7 +151,7 @@ describe(use3dScenes.name, () => {
   });
 
   test('should have correct query key structure', () => {
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     const queryKey = mockUseQuery.mock.calls[0][0].queryKey;
     expect(queryKey).toEqual(['reveal-react-components', 'cdf', '3d', 'scenes']);
@@ -176,11 +163,7 @@ describe(use3dScenes.name, () => {
 
     mockUseSDK.mockReturnValue(customSdkMock);
 
-    const propsWithCustomSdk: Use3dScenesProps = {
-      userSdk: customSdkMock
-    };
-
-    renderHook(() => use3dScenes(propsWithCustomSdk), { wrapper });
+    renderHook(() => use3dScenes(customSdkMock), { wrapper });
 
     expect(mockUseSDK).toHaveBeenCalledWith(customSdkMock);
   });
@@ -189,7 +172,7 @@ describe(use3dScenes.name, () => {
     const emptyResult = createMockQueryResult({});
     mockUseQuery.mockReturnValue(emptyResult);
 
-    const { result } = renderHook(() => use3dScenes(mockProps), { wrapper });
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.data).toEqual({});
   });
@@ -290,7 +273,7 @@ describe(use3dScenes.name, () => {
 
     mockUseQuery.mockReturnValue(createMockQueryResult(complexScenesMap));
 
-    const { result } = renderHook(() => use3dScenes(mockProps), { wrapper });
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.data).toEqual(complexScenesMap);
     expect(result.current.data).toBeDefined();
@@ -321,9 +304,9 @@ describe(use3dScenes.name, () => {
       </Use3dScenesContext.Provider>
     );
 
-    renderHook(() => use3dScenes(mockProps), { wrapper: customWrapper });
+    renderHook(() => use3dScenes(sdkMock), { wrapper: customWrapper });
 
-    expect(customUseSDK).toHaveBeenCalledWith(mockProps.userSdk);
+    expect(customUseSDK).toHaveBeenCalledWith(sdkMock);
     expect(customUseQuery).toHaveBeenCalled();
     expect(customCreateFdmSdk).toHaveBeenCalled();
   });
@@ -335,7 +318,7 @@ describe(use3dScenes.name, () => {
 
     mockUseQuery.mockReturnValue(resultWithRefetch);
 
-    const { result } = renderHook(() => use3dScenes(mockProps), { wrapper });
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.refetch).toBe(mockRefetch);
   });
@@ -371,7 +354,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     const mockContext = {
       client: new QueryClient(),
@@ -442,7 +425,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     // Mock context for QueryFunction
     const mockContext = {
@@ -511,7 +494,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     // Mock context for QueryFunction
     const mockContext = {
@@ -588,7 +571,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     // Mock context for QueryFunction
     const mockContext = {
@@ -681,7 +664,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     // Mock context for QueryFunction
     const mockContext = {
@@ -763,7 +746,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     // Mock context for QueryFunction
     const mockContext = {
@@ -919,7 +902,7 @@ describe(use3dScenes.name, () => {
       return createMockQueryResult({});
     });
 
-    renderHook(() => use3dScenes(mockProps), { wrapper });
+    renderHook(() => use3dScenes(), { wrapper });
 
     // Mock context for QueryFunction
     const mockContext = {

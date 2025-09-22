@@ -53,7 +53,7 @@ type Use3dScenesQueryResult = {
   sceneSkybox: Array<NodeItem<SkyboxProperties>>;
 };
 
-export function use3dScenes({ userSdk }: { userSdk?: CogniteClient } = {}): Use3dScenesResult {
+export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
   const { useSDK, useQuery, createFdmSdk } = useContext(Use3dScenesContext);
 
   const sdk = useSDK(userSdk);
