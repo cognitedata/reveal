@@ -158,7 +158,7 @@ function extractSceneProperties(
   scenesProperties: Record<string, Record<string, unknown>>
 ): SceneConfigurationProperties {
   const currentSceneProperties = scenesProperties.scene['SceneConfiguration/v1'];
-  if (isSceneConfigurationProperties(currentSceneProperties) === false) {
+  if (!isSceneConfigurationProperties(currentSceneProperties)) {
     throw new Error('Scene configuration properties are missing or invalid');
   }
   return currentSceneProperties;
