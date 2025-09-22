@@ -1,13 +1,15 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteCadModel, Cognite3DViewer, CogniteModel } from '..';
 import * as THREE from 'three';
 
 import { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
 import { createCognite3DViewer } from '../../../visual-tests/test-fixtures/utilities/cognite3DViewerHelpers';
 import { AxisViewTool } from '../../../packages/tools';
+import { CogniteCadModel } from '@reveal/cad-model';
+import { Cognite3DViewer } from '../src/public/migration/Cognite3DViewer';
+import { CogniteModel } from '../src/public/types';
 
 export default class TwoModelsVisualTest implements VisualTestFixture {
   private _viewer!: Cognite3DViewer;

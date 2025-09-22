@@ -38,8 +38,6 @@ export function createMockedConsumedSector(): IMock<ConsumedSector> {
     .returns(modelIdentifier)
     .setup(x => x.levelOfDetail)
     .returns(LevelOfDetail.Detailed)
-    .setup(x => x.group)
-    .returns(undefined)
     .setup(x => x.instancedMeshes)
     .returns(undefined);
 }
