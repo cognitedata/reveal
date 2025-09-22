@@ -5,37 +5,11 @@ import { Mock } from 'moq.ts';
 import { CadNode } from './CadNode';
 import { SectorRepository } from '@reveal/sector-loader';
 import { Plane, Matrix4, Vector3 } from 'three';
-import { WantedSector, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
-import { LocalModelIdentifier } from '@reveal/data-providers';
+import { WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 
 import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
-
-function createMockedWantedSector(): WantedSector {
-  return new Mock<WantedSector>()
-    .setup(x => x.modelIdentifier)
-    .returns(new LocalModelIdentifier('test-model'))
-    .setup(x => x.modelBaseUrl)
-    .returns('https://test.example.com')
-    .setup(x => x.geometryClipBox)
-    .returns(null)
-    .setup(x => x.levelOfDetail)
-    .returns(LevelOfDetail.Detailed)
-    .object();
-}
-
-function createMockedConsumedSector(): ConsumedSector {
-  return new Mock<ConsumedSector>()
-    .setup(x => x.modelIdentifier)
-    .returns(new LocalModelIdentifier('test-model'))
-    .setup(x => x.levelOfDetail)
-    .returns(LevelOfDetail.Detailed)
-    .setup(x => x.group)
-    .returns(undefined)
-    .setup(x => x.instancedMeshes)
-    .returns(undefined)
-    .object();
-}
+import { createMockedConsumedSector, createWantedSectorMock } from '@reveal/sector-loader/tests/mockSectorUtils';
 
 describe(CadNode.name, () => {
   test('should not call sector repository cache clear on removal', () => {
@@ -131,7 +105,7 @@ describe(CadNode.name, () => {
   test('loadSector method delegates to sector repository', async () => {
     const mockedConsumedSector = createMockedConsumedSector();
     const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
-    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector);
+    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
 
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.loadSector)
@@ -139,18 +113,18 @@ describe(CadNode.name, () => {
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-    const wantedSector = createMockedWantedSector();
+    const wantedSector = createWantedSectorMock();
     const abortSignal = new AbortController().signal;
 
-    await cadNode.loadSector(wantedSector, abortSignal);
+    await cadNode.loadSector(wantedSector.object(), abortSignal);
 
-    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector, abortSignal);
+    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), abortSignal);
   });
 
   test('loadSector method works without abort signal', async () => {
     const mockedConsumedSector = createMockedConsumedSector();
     const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
-    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector);
+    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
 
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.loadSector)
@@ -158,10 +132,10 @@ describe(CadNode.name, () => {
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-    const wantedSector = createMockedWantedSector();
+    const wantedSector = createWantedSectorMock();
 
-    await cadNode.loadSector(wantedSector);
+    await cadNode.loadSector(wantedSector.object());
 
-    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector, undefined);
+    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), undefined);
   });
 });
