@@ -4,24 +4,52 @@
 import { Mock } from 'moq.ts';
 import { CadNode } from './CadNode';
 import { SectorRepository } from '@reveal/sector-loader';
-import { Plane, Matrix4 } from 'three';
-import { WantedSector } from '@reveal/cad-parsers';
+import { Plane, Matrix4, Vector3 } from 'three';
+import { WantedSector, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { LocalModelIdentifier } from '@reveal/data-providers';
 
 import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
 
+function createMockedWantedSector(): WantedSector {
+  return new Mock<WantedSector>()
+    .setup(x => x.modelIdentifier)
+    .returns(new LocalModelIdentifier('test-model'))
+    .setup(x => x.modelBaseUrl)
+    .returns('https://test.example.com')
+    .setup(x => x.geometryClipBox)
+    .returns(null)
+    .setup(x => x.levelOfDetail)
+    .returns(LevelOfDetail.Detailed)
+    .object();
+}
+
+function createMockedConsumedSector(): ConsumedSector {
+  return new Mock<ConsumedSector>()
+    .setup(x => x.modelIdentifier)
+    .returns(new LocalModelIdentifier('test-model'))
+    .setup(x => x.levelOfDetail)
+    .returns(LevelOfDetail.Detailed)
+    .setup(x => x.group)
+    .returns(undefined)
+    .setup(x => x.instancedMeshes)
+    .returns(undefined)
+    .object();
+}
+
 describe(CadNode.name, () => {
   test('should not call sector repository cache clear on removal', () => {
+    const clearCacheMock = jest.fn();
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.clearCache)
-      .returns(jest.fn())
+      .returns(clearCacheMock)
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
 
     cadNode.dispose();
 
-    expect(jest.mocked(sectorRepositoryMock).clearCache).not.toHaveBeenCalled();
+    expect(clearCacheMock).not.toHaveBeenCalled();
   });
 
   test('needsRedraw getter returns correct redraw state', () => {
@@ -73,7 +101,7 @@ describe(CadNode.name, () => {
 
   test('clippingPlanes setter updates clipping planes', () => {
     const cadNode = createCadNode();
-    const testPlanes = [new Plane(), new Plane()];
+    const testPlanes = [new Plane(new Vector3(1, 0, 0), 5), new Plane(new Vector3(0, 1, 0), -3)];
 
     cadNode.clippingPlanes = testPlanes;
 
@@ -101,37 +129,39 @@ describe(CadNode.name, () => {
   });
 
   test('loadSector method delegates to sector repository', async () => {
-    const mockLoadSector = jest.fn();
+    const mockedConsumedSector = createMockedConsumedSector();
+    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector);
+
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.loadSector)
-      .returns(mockLoadSector as any)
-      .setup(p => p.clearCache)
-      .returns(jest.fn())
+      .returns(mockLoadSectorFn)
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-    const wantedSector = {} as WantedSector;
+    const wantedSector = createMockedWantedSector();
     const abortSignal = new AbortController().signal;
 
-    cadNode.loadSector(wantedSector, abortSignal);
+    await cadNode.loadSector(wantedSector, abortSignal);
 
-    expect(mockLoadSector).toHaveBeenCalledWith(wantedSector, abortSignal);
+    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector, abortSignal);
   });
 
   test('loadSector method works without abort signal', async () => {
-    const mockLoadSector = jest.fn();
+    const mockedConsumedSector = createMockedConsumedSector();
+    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector);
+
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.loadSector)
-      .returns(mockLoadSector as any)
-      .setup(p => p.clearCache)
-      .returns(jest.fn())
+      .returns(mockLoadSectorFn)
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-    const wantedSector = {} as WantedSector;
+    const wantedSector = createMockedWantedSector();
 
-    cadNode.loadSector(wantedSector);
+    await cadNode.loadSector(wantedSector);
 
-    expect(mockLoadSector).toHaveBeenCalledWith(wantedSector, undefined);
+    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector, undefined);
   });
 });

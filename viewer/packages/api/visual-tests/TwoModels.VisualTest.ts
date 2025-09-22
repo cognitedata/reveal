@@ -19,10 +19,7 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
   }
 
   public async run(): Promise<void> {
-    let totalItemsLoaded = 0;
-    let totalItemsRequested = 0;
-
-    this._viewer = await createCognite3DViewer(modelLoadingCallback, this._renderer);
+    this._viewer = await createCognite3DViewer(() => {}, this._renderer);
 
     this.setupDom(this._viewer);
 
@@ -51,11 +48,6 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
     this._viewer.fitCameraToModel(models[0]);
 
     await this.setup({ viewer: this._viewer, models });
-
-    function modelLoadingCallback(itemsLoaded: number, itemsRequested: number, _: number) {
-      totalItemsLoaded = itemsLoaded;
-      totalItemsRequested = itemsRequested;
-    }
   }
 
   private async waitForModelToLoad(): Promise<void> {
