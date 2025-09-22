@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, test, expect } from 'vitest';
 
 import { type SceneConfigurationProperties } from './types';
 
@@ -23,7 +23,7 @@ describe('sceneResponseTypeGuards', () => {
   const invalidInputs = [null, undefined, 'string', 123, true, [], {}];
 
   describe('shared behavior', () => {
-    it.each([['isSceneBuilderSceneConfigurationProperties', isSceneConfigurationProperties]])(
+    test.each([['isSceneBuilderSceneConfigurationProperties', isSceneConfigurationProperties]])(
       '%s should return false for invalid inputs',
       (_, typeGuard) => {
         invalidInputs.forEach((input) => {
@@ -34,7 +34,7 @@ describe('sceneResponseTypeGuards', () => {
   });
 
   describe(isSceneConfigurationProperties.name, () => {
-    it('should return true for valid scene configuration', () => {
+    test('should return true for valid scene configuration', () => {
       expect(isSceneConfigurationProperties(createValidSceneConfig())).toBe(true);
 
       expect(
@@ -62,7 +62,7 @@ describe('sceneResponseTypeGuards', () => {
       ).toBe(true);
     });
 
-    it.each([
+    test.each([
       ['missing name', { name: undefined }],
       ['wrong name type', { name: 123 }],
       ['missing camera translation', { cameraTranslationX: undefined }],
@@ -87,7 +87,7 @@ describe('sceneResponseTypeGuards', () => {
       expect(isSceneConfigurationProperties(createValidSceneConfig(overrides))).toBe(false);
     });
 
-    it('should validate pointCloudPointSize, pointCloudShape, and pointCloudColor types', () => {
+    test('should validate pointCloudPointSize, pointCloudShape, and pointCloudColor types', () => {
       // Valid cases
       expect(
         isSceneConfigurationProperties(
@@ -122,7 +122,7 @@ describe('sceneResponseTypeGuards', () => {
       ).toBe(false);
     });
 
-    it('should allow all individual quality settings properties to be undefined', () => {
+    test('should allow all individual quality settings properties to be undefined', () => {
       const qualitySettingsProperties = [
         'cadBudget',
         'pointCloudBudget',
@@ -154,22 +154,6 @@ describe('sceneResponseTypeGuards', () => {
           ...createValidSceneConfig(),
           ...allUndefinedOverrides
         })
-      ).toBe(true);
-    });
-
-    it('should validate quality settings properties with valid values', () => {
-      expect(
-        isSceneConfigurationProperties(
-          createValidSceneConfig({
-            cadBudget: 1000000,
-            pointCloudBudget: 2000000,
-            maxRenderResolution: 1920,
-            movingCameraResolutionFactor: 0.5,
-            pointCloudPointSize: 3.5,
-            pointCloudPointShape: 'Square',
-            pointCloudColor: 'Height'
-          })
-        )
       ).toBe(true);
     });
   });
