@@ -1,14 +1,23 @@
 import { createContext } from 'react';
-import { UseSceneConfigViewModel } from './useSceneConfig.viewmodel';
+import { type QueryFunction, type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
+import { type FdmSDK } from '../../data-providers/FdmSDK';
 
-export type UseSceneConfigViewDependencies = {
-  UseSceneConfigViewModel: typeof UseSceneConfigViewModel;
+export type UseSceneConfigDependencies = {
+  useFdmSdk: () => FdmSDK;
+  useQuery: <T>(options: {
+    queryKey: readonly unknown[];
+    queryFn: QueryFunction<T>;
+    enabled?: boolean;
+    staleTime?: number;
+  }) => UseQueryResult<T>;
 };
 
-export const defaultUseSceneConfigViewDependencies: UseSceneConfigViewDependencies = {
-  UseSceneConfigViewModel
+export const defaultUseSceneConfigDependencies: UseSceneConfigDependencies = {
+  useFdmSdk,
+  useQuery
 };
 
-export const UseSceneConfigViewContext = createContext<UseSceneConfigViewDependencies>(
-  defaultUseSceneConfigViewDependencies
+export const UseSceneConfigContext = createContext<UseSceneConfigDependencies>(
+  defaultUseSceneConfigDependencies
 );
