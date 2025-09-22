@@ -15,7 +15,7 @@ export default class BlendingTestFixture extends StreamingVisualTestFixture {
     const { cadMaterialManager, pcMaterialManager, sceneHandler, model } = testFixtureComponents;
 
     if (model.geometryNode.type !== 'CadNode') {
-      return Promise.resolve();
+      return;
     }
 
     const renderOptions = { ...defaultRenderOptions, multiSampleCountHint: 4 } as RenderOptions;
@@ -29,7 +29,7 @@ export default class BlendingTestFixture extends StreamingVisualTestFixture {
     this.render();
 
     if (!(model.geometryNode instanceof CadNode)) {
-      return Promise.resolve();
+      return;
     }
     const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider(
       model.geometryNode.cadModelIdentifier

@@ -3,10 +3,16 @@
  */
 
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
-import { BlobOutputMetadata, File3dFormat, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import {
+  BlobOutputMetadata,
+  File3dFormat,
+  LocalModelIdentifier,
+  ModelDataProvider,
+  ModelMetadataProvider
+} from '@reveal/data-providers';
 
 import * as THREE from 'three';
-import { createV9SceneSectorMetadata, createMockLocalModelIdentifier } from '../../../../test-utilities';
+import { createV9SceneSectorMetadata } from '../../../../test-utilities';
 import { CadSceneRootMetadata } from './parsers/types';
 
 export interface ModelId {
@@ -22,8 +28,8 @@ describe(CadModelMetadataRepository.name, () => {
 
     const cadModelMetadataRepository = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
 
-    const mockIdentifier = createMockLocalModelIdentifier();
-    const cadModelMetadata = await cadModelMetadataRepository.loadData(mockIdentifier.object());
+    const mockIdentifier = new LocalModelIdentifier('test-model');
+    const cadModelMetadata = await cadModelMetadataRepository.loadData(mockIdentifier);
 
     expect(cadModelMetadata.formatVersion).toBe(9);
   });

@@ -4,13 +4,14 @@
 import { CadNode } from './CadNode';
 import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
 
 import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
 import { SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
+import { createMockedConsumedSector, createWantedSectorMock } from '@reveal/sector-loader/tests/mockSectorUtils';
 
 const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
   const geometry = new BufferGeometry();
@@ -298,7 +299,7 @@ describe(CadNode.name, () => {
 
   test('clippingPlanes setter updates clipping planes', () => {
     const cadNode = createCadNode();
-    const testPlanes = [new Plane(), new Plane()];
+    const testPlanes = [new Plane(new Vector3(1, 0, 0), 5), new Plane(new Vector3(0, 1, 0), -3)];
 
     cadNode.clippingPlanes = testPlanes;
 
@@ -326,37 +327,39 @@ describe(CadNode.name, () => {
   });
 
   test('loadSector method delegates to sector repository', async () => {
-    const mockLoadSector = jest.fn();
+    const mockedConsumedSector = createMockedConsumedSector();
+    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
+
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.loadSector)
-      .returns(mockLoadSector as any)
-      .setup(p => p.clearCache)
-      .returns(jest.fn())
+      .returns(mockLoadSectorFn)
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-    const wantedSector = {} as WantedSector;
+    const wantedSector = createWantedSectorMock();
     const abortSignal = new AbortController().signal;
 
-    cadNode.loadSector(wantedSector, abortSignal);
+    await cadNode.loadSector(wantedSector.object(), abortSignal);
 
-    expect(mockLoadSector).toHaveBeenCalledWith(wantedSector, abortSignal);
+    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), abortSignal);
   });
 
   test('loadSector method works without abort signal', async () => {
-    const mockLoadSector = jest.fn();
+    const mockedConsumedSector = createMockedConsumedSector();
+    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
+
     const sectorRepositoryMock = new Mock<SectorRepository>()
       .setup(p => p.loadSector)
-      .returns(mockLoadSector as any)
-      .setup(p => p.clearCache)
-      .returns(jest.fn())
+      .returns(mockLoadSectorFn)
       .object();
 
     const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
-    const wantedSector = {} as WantedSector;
+    const wantedSector = createWantedSectorMock();
 
-    cadNode.loadSector(wantedSector);
+    await cadNode.loadSector(wantedSector.object());
 
-    expect(mockLoadSector).toHaveBeenCalledWith(wantedSector, undefined);
+    expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), undefined);
   });
 });
