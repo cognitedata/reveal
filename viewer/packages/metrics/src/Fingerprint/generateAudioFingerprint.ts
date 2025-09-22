@@ -20,7 +20,6 @@ export async function generateAudioFingerprint(OfflineAudioContextCtor: PartialO
     setCompressorValueIfDefined(compressor, context, 'threshold', -50);
     setCompressorValueIfDefined(compressor, context, 'knee', 40);
     setCompressorValueIfDefined(compressor, context, 'ratio', 12);
-    setCompressorValueIfDefined(compressor, context, 'reduction', -20);
     setCompressorValueIfDefined(compressor, context, 'attack', 0);
     setCompressorValueIfDefined(compressor, context, 'release', 0.25);
 
@@ -52,11 +51,9 @@ export async function generateAudioFingerprint(OfflineAudioContextCtor: PartialO
 function setCompressorValueIfDefined(
   compressor: RequiredDynamicsCompressorNode,
   context: RequiredOfflineAudioContext,
-  item: keyof RequiredDynamicsCompressorNode,
+  item: keyof Omit<RequiredDynamicsCompressorNode, 'connect'>,
   value: number
 ): void {
-  const param = compressor[item] as AudioParam;
-  if (param?.setValueAtTime) {
-    param.setValueAtTime(value, context.currentTime);
-  }
+  const param = compressor[item];
+  param.setValueAtTime(value, context.currentTime);
 }

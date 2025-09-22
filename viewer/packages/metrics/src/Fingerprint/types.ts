@@ -10,7 +10,7 @@ export type OfflineAudioContextCompressorInstance = ReturnType<RequiredOfflineAu
 
 export type RequiredDynamicsCompressorNode = Pick<
   DynamicsCompressorNode,
-  'threshold' | 'knee' | 'ratio' | 'reduction' | 'attack' | 'release' | 'connect'
+  'threshold' | 'knee' | 'ratio' | 'attack' | 'release' | 'connect'
 >;
 
 export type GetContextReturnType = Pick<
