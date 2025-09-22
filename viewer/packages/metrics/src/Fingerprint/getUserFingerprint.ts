@@ -4,7 +4,7 @@
 import { generateCanvasFingerprint } from './generateCanvasFingerprint';
 import { generateAudioFingerprint } from './generateAudioFingerprint';
 import { hashFingerprint } from './hashFingerprint';
-import { GlobalDependencies } from '../types';
+import { GlobalDependencies } from './types';
 
 export async function getUserFingerprint(dependencies: Partial<GlobalDependencies> = {}): Promise<string> {
   const { document = window.document, OfflineAudioContext = window.OfflineAudioContext } = dependencies;
@@ -14,8 +14,8 @@ export async function getUserFingerprint(dependencies: Partial<GlobalDependencie
       throw new Error('OfflineAudioContext is not supported.');
     }
 
-    const canvasFingerprint = generateCanvasFingerprint(document as Document);
-    const audioFingerprint = await generateAudioFingerprint(OfflineAudioContext as typeof window.OfflineAudioContext);
+    const canvasFingerprint = generateCanvasFingerprint(document);
+    const audioFingerprint = await generateAudioFingerprint(OfflineAudioContext);
 
     const combinedFP = `${canvasFingerprint}-${audioFingerprint}`;
 

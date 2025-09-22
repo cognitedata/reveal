@@ -2,11 +2,9 @@
  * Copyright 2025 Cognite AS
  */
 
-import { RequiredDynamicsCompressorNode, RequiredOfflineAudioContext } from '../types';
+import { PartialOfflineAudioContext, RequiredDynamicsCompressorNode, RequiredOfflineAudioContext } from './types';
 
-export async function generateAudioFingerprint(
-  OfflineAudioContextCtor: typeof window.OfflineAudioContext
-): Promise<string> {
+export async function generateAudioFingerprint(OfflineAudioContextCtor: PartialOfflineAudioContext): Promise<string> {
   try {
     const context = new OfflineAudioContextCtor(1, 44100, 44100);
 
@@ -57,7 +55,7 @@ function setCompressorValueIfDefined(
   item: keyof RequiredDynamicsCompressorNode,
   value: number
 ): void {
-  const param = compressor[item] as AudioParam | undefined;
+  const param = compressor[item] as AudioParam;
   if (param?.setValueAtTime) {
     param.setValueAtTime(value, context.currentTime);
   }

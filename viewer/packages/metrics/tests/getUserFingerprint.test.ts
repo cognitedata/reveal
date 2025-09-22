@@ -5,7 +5,6 @@ import { jest } from '@jest/globals';
 
 import { getUserFingerprint } from '../src/Fingerprint/getUserFingerprint';
 import { createMockDocument, createMockOfflineAudioContext } from '../../../test-utilities/mocks/fingerprintMocks';
-import { MockedDocument } from '../src/types';
 
 describe('Browser Fingerprint', () => {
   it('returns string with up to 20 digits in it (FingerprintID)', async () => {
@@ -13,7 +12,7 @@ describe('Browser Fingerprint', () => {
     const MockOfflineAudioContext = createMockOfflineAudioContext(true);
 
     const result = await getUserFingerprint({
-      document: mockDocument as MockedDocument,
+      document: mockDocument,
       OfflineAudioContext: MockOfflineAudioContext
     });
 
@@ -29,7 +28,7 @@ describe('Browser Fingerprint', () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     const result = await getUserFingerprint({
-      document: mockDocument as MockedDocument,
+      document: mockDocument,
       OfflineAudioContext: MockOfflineAudioContext
     });
 
