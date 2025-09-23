@@ -11,6 +11,7 @@ import { type SceneQualitySettings } from '../components/SceneContainer/sceneTyp
 import { type RevealSettingsController } from '../architecture/concrete/reveal/RevealSettingsController';
 import { type QualitySettings } from '../architecture/base/utilities/quality/QualitySettings';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { DEFAULT_REVEAL_QUALITY_SETTINGS } from '../architecture/concrete/reveal/constants';
 import { Mock } from 'moq.ts';
 
 describe('pointCloudSettings utilities', () => {
@@ -57,7 +58,7 @@ describe('pointCloudSettings utilities', () => {
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
       expect(mockPointShape).toHaveBeenCalledWith(PointShape.Square);
-      expect(mockPointSize).not.toHaveBeenCalled();
+      expect(mockPointSize).toHaveBeenCalledWith(2);
       expect(mockPointColorType).not.toHaveBeenCalled();
     });
 
@@ -69,7 +70,7 @@ describe('pointCloudSettings utilities', () => {
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
       expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Height);
-      expect(mockPointSize).not.toHaveBeenCalled();
+      expect(mockPointSize).toHaveBeenCalledWith(2);
       expect(mockPointShape).not.toHaveBeenCalled();
     });
 
@@ -87,12 +88,12 @@ describe('pointCloudSettings utilities', () => {
       expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Intensity);
     });
 
-    test('should not apply any settings when none are provided', () => {
+    test('should apply default point size when no settings are provided', () => {
       const qualitySettings: SceneQualitySettings = {};
 
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
-      expect(mockPointSize).not.toHaveBeenCalled();
+      expect(mockPointSize).toHaveBeenCalledWith(2);
       expect(mockPointShape).not.toHaveBeenCalled();
       expect(mockPointColorType).not.toHaveBeenCalled();
     });
@@ -229,14 +230,13 @@ describe('pointCloudSettings utilities', () => {
 
       applyQualitySettingsToRenderTarget(mockRenderTarget, qualitySettings);
 
-      expect(mockQualitySettingsPeek).toHaveBeenCalled();
       expect(mockQualitySettingsCall).toHaveBeenCalledWith({
         cadBudget: {
           maximumRenderCost: 2000000,
-          highDetailProximityThreshold: 100
+          highDetailProximityThreshold: 0
         },
         pointCloudBudget: {
-          numberOfPoints: 500000
+          numberOfPoints: 3_000_000
         },
         resolutionOptions: {
           maxRenderResolution: 2560,
@@ -266,7 +266,7 @@ describe('pointCloudSettings utilities', () => {
 
       applyQualitySettingsToRenderTarget(mockRenderTarget, qualitySettings);
 
-      expect(mockQualitySettingsCall).toHaveBeenCalledWith(currentSettings);
+      expect(mockQualitySettingsCall).toHaveBeenCalledWith(DEFAULT_REVEAL_QUALITY_SETTINGS);
     });
   });
 });

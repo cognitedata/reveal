@@ -12,6 +12,7 @@ import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/get
 import { createSceneMockWithQualitySettings } from '#test-utils/fixtures/sceneData';
 import { PointColorType, PointShape } from '@cognite/reveal';
 import { type QualitySettings } from '../../../architecture/base/utilities/quality/QualitySettings';
+import { DEFAULT_REVEAL_QUALITY_SETTINGS } from '../../../architecture/concrete/reveal/constants';
 
 describe(useQualitySettingsFromScene.name, () => {
   const mockQualitySettingsPeek = vi.fn();
@@ -40,11 +41,7 @@ describe(useQualitySettingsFromScene.name, () => {
     </UseQualitySettingsFromSceneContext.Provider>
   );
 
-  const defaultCurrentSettings: QualitySettings = {
-    cadBudget: { maximumRenderCost: 1000000, highDetailProximityThreshold: 100 },
-    pointCloudBudget: { numberOfPoints: 500000 },
-    resolutionOptions: { maxRenderResolution: 1920, movingCameraResolutionFactor: 0.5 }
-  };
+  const defaultCurrentSettings: QualitySettings = DEFAULT_REVEAL_QUALITY_SETTINGS;
 
   const renderHookWithScene = (
     sceneData: Scene | null | undefined
@@ -74,10 +71,9 @@ describe(useQualitySettingsFromScene.name, () => {
 
     renderHookWithScene(createSceneMockWithQualitySettings(qualitySettings));
 
-    expect(mockQualitySettingsPeek).toHaveBeenCalled();
     expect(mockQualitySettingsCall).toHaveBeenCalledWith({
-      cadBudget: { maximumRenderCost: 2000000, highDetailProximityThreshold: 100 },
-      pointCloudBudget: { numberOfPoints: 500000 },
+      cadBudget: { maximumRenderCost: 2000000, highDetailProximityThreshold: 0 },
+      pointCloudBudget: { numberOfPoints: 3_000_000 },
       resolutionOptions: { maxRenderResolution: 2560, movingCameraResolutionFactor: 0.5 }
     });
   });
@@ -111,7 +107,8 @@ describe(useQualitySettingsFromScene.name, () => {
     // Create second scene with different quality settings
     const updatedQualitySettings: SceneQualitySettings = {
       cadBudget: 3000000,
-      maxRenderResolution: 4096
+      maxRenderResolution: 4096,
+      pointCloudBudget: 1_500_000
     };
     const updatedScene = createSceneMockWithQualitySettings(updatedQualitySettings);
 
@@ -143,8 +140,8 @@ describe(useQualitySettingsFromScene.name, () => {
 
     // Verify initial quality settings were applied
     expect(mockQualitySettingsCall).toHaveBeenCalledWith({
-      cadBudget: { maximumRenderCost: 1500000, highDetailProximityThreshold: 100 },
-      pointCloudBudget: { numberOfPoints: 500000 },
+      cadBudget: { maximumRenderCost: 1500000, highDetailProximityThreshold: 0 },
+      pointCloudBudget: { numberOfPoints: 3_000_000 },
       resolutionOptions: { maxRenderResolution: 1920, movingCameraResolutionFactor: 0.5 }
     });
 
@@ -162,8 +159,8 @@ describe(useQualitySettingsFromScene.name, () => {
 
     // Verify updated quality settings were applied
     expect(mockQualitySettingsCall).toHaveBeenCalledWith({
-      cadBudget: { maximumRenderCost: 3000000, highDetailProximityThreshold: 100 },
-      pointCloudBudget: { numberOfPoints: 500000 },
+      cadBudget: { maximumRenderCost: 3000000, highDetailProximityThreshold: 0 },
+      pointCloudBudget: { numberOfPoints: 1_500_000 },
       resolutionOptions: { maxRenderResolution: 4096, movingCameraResolutionFactor: 0.5 }
     });
 
