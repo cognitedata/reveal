@@ -92,3 +92,11 @@ export function mergeQualitySettings(
     }
   };
 }
+
+export function resetRevealQualitySettings(renderTarget: RevealRenderTarget): void {
+  const settingsController = renderTarget.revealSettingsController;
+  settingsController.qualitySettings(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  settingsController.pointSize(2);
+  settingsController.pointShape(PointShape.Circle);
+  settingsController.pointColorType(PointColorType.Rgb);
+}

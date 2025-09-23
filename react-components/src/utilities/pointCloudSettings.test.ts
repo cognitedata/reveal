@@ -5,7 +5,8 @@ import {
   mapPointShape,
   mapPointColorType,
   applyQualitySettingsToRenderTarget,
-  mergeQualitySettings
+  mergeQualitySettings,
+  resetRevealQualitySettings
 } from './pointCloudSettings';
 import { type SceneQualitySettings } from '../components/SceneContainer/sceneTypes';
 import { type RevealSettingsController } from '../architecture/concrete/reveal/RevealSettingsController';
@@ -267,6 +268,46 @@ describe('pointCloudSettings utilities', () => {
       applyQualitySettingsToRenderTarget(mockRenderTarget, qualitySettings);
 
       expect(mockQualitySettingsCall).toHaveBeenCalledWith(DEFAULT_REVEAL_QUALITY_SETTINGS);
+    });
+  });
+
+  describe('resetRevealQualitySettings', () => {
+    test('should reset all settings to default values', () => {
+      const mockQualitySettings = vi.fn();
+      const mockPointSize = vi.fn();
+      const mockPointShape = vi.fn();
+      const mockPointColorType = vi.fn();
+
+      const mockRenderTarget = createRenderTargetMock();
+
+      // Mock the settings controller methods
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'qualitySettings', {
+        value: mockQualitySettings,
+        writable: true,
+        configurable: true
+      });
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'pointSize', {
+        value: mockPointSize,
+        writable: true,
+        configurable: true
+      });
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'pointShape', {
+        value: mockPointShape,
+        writable: true,
+        configurable: true
+      });
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'pointColorType', {
+        value: mockPointColorType,
+        writable: true,
+        configurable: true
+      });
+
+      resetRevealQualitySettings(mockRenderTarget);
+
+      expect(mockQualitySettings).toHaveBeenCalledWith(DEFAULT_REVEAL_QUALITY_SETTINGS);
+      expect(mockPointSize).toHaveBeenCalledWith(2);
+      expect(mockPointShape).toHaveBeenCalledWith(PointShape.Circle);
+      expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Rgb);
     });
   });
 });
