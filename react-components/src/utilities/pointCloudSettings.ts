@@ -16,7 +16,7 @@ export function mergePointCloudSettings(
   if (qualitySettings.pointCloudPointSize !== undefined) {
     settingsController.pointSize(qualitySettings.pointCloudPointSize);
   } else {
-    settingsController.pointSize(2);
+    settingsController.pointSize(DEFAULT_POINT_SIZE);
   }
 
   if (qualitySettings.pointCloudPointShape !== undefined) {

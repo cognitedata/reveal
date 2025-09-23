@@ -62,7 +62,7 @@ describe('pointCloudSettings utilities', () => {
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
       expect(mockPointShape).toHaveBeenCalledWith(PointShape.Square);
-      expect(mockPointSize).toHaveBeenCalledWith(2);
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
       expect(mockPointColorType).not.toHaveBeenCalled();
     });
 
@@ -74,7 +74,7 @@ describe('pointCloudSettings utilities', () => {
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
       expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Height);
-      expect(mockPointSize).toHaveBeenCalledWith(2);
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
       expect(mockPointShape).not.toHaveBeenCalled();
     });
 
@@ -97,7 +97,7 @@ describe('pointCloudSettings utilities', () => {
 
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
-      expect(mockPointSize).toHaveBeenCalledWith(2);
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
       expect(mockPointShape).not.toHaveBeenCalled();
       expect(mockPointColorType).not.toHaveBeenCalled();
     });
