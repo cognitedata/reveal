@@ -99,4 +99,75 @@ describe(useQualitySettingsFromScene.name, () => {
     );
     expect(mockRenderTarget.revealSettingsController.pointShape.peek()).toBe(PointShape.Square);
   });
+
+  test('should update quality settings when sceneExternalId and sceneSpace change', () => {
+    // Create initial scene with first set of quality settings
+    const initialQualitySettings: SceneQualitySettings = {
+      cadBudget: 1500000,
+      maxRenderResolution: 1920
+    };
+    const initialScene = createSceneMockWithQualitySettings(initialQualitySettings);
+
+    // Create second scene with different quality settings
+    const updatedQualitySettings: SceneQualitySettings = {
+      cadBudget: 3000000,
+      maxRenderResolution: 4096
+    };
+    const updatedScene = createSceneMockWithQualitySettings(updatedQualitySettings);
+
+    // Mock useSceneConfig to return different scenes based on scene ID and space
+    defaultDependencies.useSceneConfig.mockImplementation(
+      (sceneExternalId: string, sceneSpaceId: string) => {
+        if (sceneExternalId === 'initial-scene' && sceneSpaceId === 'initial-space') {
+          return { data: initialScene };
+        }
+        if (sceneExternalId === 'updated-scene' && sceneSpaceId === 'updated-space') {
+          return { data: updatedScene };
+        }
+        return { data: null };
+      }
+    );
+
+    // Initial render with first scene
+    const { rerender } = renderHook(
+      ({ sceneExternalId, sceneSpaceId }: { sceneExternalId: string; sceneSpaceId: string }) =>
+        useQualitySettingsFromScene(sceneExternalId, sceneSpaceId),
+      {
+        wrapper,
+        initialProps: {
+          sceneExternalId: 'initial-scene',
+          sceneSpaceId: 'initial-space'
+        }
+      }
+    );
+
+    // Verify initial quality settings were applied
+    expect(mockQualitySettingsCall).toHaveBeenCalledWith({
+      cadBudget: { maximumRenderCost: 1500000, highDetailProximityThreshold: 100 },
+      pointCloudBudget: { numberOfPoints: 500000 },
+      resolutionOptions: { maxRenderResolution: 1920, movingCameraResolutionFactor: 0.5 }
+    });
+
+    // Verify that the initial quality settings were updated in renderTarget.revealSettingsController
+    expect(mockRenderTarget.revealSettingsController.qualitySettings).toBe(mockQualitySettings);
+
+    // Clear previous calls
+    mockQualitySettingsCall.mockClear();
+
+    // Re-render with different scene ID and space
+    rerender({
+      sceneExternalId: 'updated-scene',
+      sceneSpaceId: 'updated-space'
+    });
+
+    // Verify updated quality settings were applied
+    expect(mockQualitySettingsCall).toHaveBeenCalledWith({
+      cadBudget: { maximumRenderCost: 3000000, highDetailProximityThreshold: 100 },
+      pointCloudBudget: { numberOfPoints: 500000 },
+      resolutionOptions: { maxRenderResolution: 4096, movingCameraResolutionFactor: 0.5 }
+    });
+
+    // Verify that the quality settings were updated in renderTarget.revealSettingsController
+    expect(mockRenderTarget.revealSettingsController.qualitySettings).toBe(mockQualitySettings);
+  });
 });
