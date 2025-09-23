@@ -6,7 +6,10 @@ import {
   mapPointColorType,
   applyQualitySettingsToRenderTarget,
   mergeQualitySettings,
-  resetRevealQualitySettings
+  resetRevealQualitySettings,
+  DEFAULT_POINT_COLOR_TYPE,
+  DEFAULT_POINT_SHAPE,
+  DEFAULT_POINT_SIZE
 } from './pointCloudSettings';
 import { type SceneQualitySettings } from '../components/SceneContainer/sceneTypes';
 import { type RevealSettingsController } from '../architecture/concrete/reveal/RevealSettingsController';
@@ -305,9 +308,9 @@ describe('pointCloudSettings utilities', () => {
       resetRevealQualitySettings(mockRenderTarget);
 
       expect(mockQualitySettings).toHaveBeenCalledWith(DEFAULT_REVEAL_QUALITY_SETTINGS);
-      expect(mockPointSize).toHaveBeenCalledWith(2);
-      expect(mockPointShape).toHaveBeenCalledWith(PointShape.Circle);
-      expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Rgb);
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
+      expect(mockPointShape).toHaveBeenCalledWith(DEFAULT_POINT_SHAPE);
+      expect(mockPointColorType).toHaveBeenCalledWith(DEFAULT_POINT_COLOR_TYPE);
     });
   });
 });

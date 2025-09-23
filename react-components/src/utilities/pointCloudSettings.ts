@@ -5,6 +5,10 @@ import { type QualitySettings } from '../architecture/base/utilities/quality/Qua
 import { type SceneQualitySettings } from '../components/SceneContainer/sceneTypes';
 import { DEFAULT_REVEAL_QUALITY_SETTINGS } from '../architecture/concrete/reveal/constants';
 
+export const DEFAULT_POINT_SIZE = 2;
+export const DEFAULT_POINT_SHAPE = PointShape.Circle;
+export const DEFAULT_POINT_COLOR_TYPE = PointColorType.Rgb;
+
 export function mergePointCloudSettings(
   settingsController: RevealSettingsController,
   qualitySettings: SceneQualitySettings
@@ -96,7 +100,7 @@ export function mergeQualitySettings(
 export function resetRevealQualitySettings(renderTarget: RevealRenderTarget): void {
   const settingsController = renderTarget.revealSettingsController;
   settingsController.qualitySettings(DEFAULT_REVEAL_QUALITY_SETTINGS);
-  settingsController.pointSize(2);
-  settingsController.pointShape(PointShape.Circle);
-  settingsController.pointColorType(PointColorType.Rgb);
+  settingsController.pointSize(DEFAULT_POINT_SIZE);
+  settingsController.pointShape(DEFAULT_POINT_SHAPE);
+  settingsController.pointColorType(DEFAULT_POINT_COLOR_TYPE);
 }
