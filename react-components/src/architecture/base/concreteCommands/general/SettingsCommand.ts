@@ -22,14 +22,23 @@ import { SetQualitySliderCommand } from '../quality/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from '../quality/QualityWarningBannerCommand';
 import { DividerCommand } from '../../commands/DividerCommand';
 import { SetLengthUnitCommand } from '../units/SetLengthUnitCommand';
+import { CustomBannerCommand, type CustomBannerContent } from '../../commands/CustomBannerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(include360Images: boolean = true, includePois: boolean = false) {
+  public constructor(
+    include360Images: boolean = true,
+    includePois: boolean = false,
+    topBannerContent?: CustomBannerContent
+  ) {
     super();
+
+    if (topBannerContent !== undefined) {
+      this.add(new CustomBannerCommand(topBannerContent));
+    }
 
     this.add(new SetQualitySliderCommand());
     this.add(new QualityWarningBannerCommand());
