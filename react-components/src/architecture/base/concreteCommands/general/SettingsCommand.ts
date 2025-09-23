@@ -22,7 +22,7 @@ import { SetQualitySliderCommand } from '../quality/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from '../quality/QualityWarningBannerCommand';
 import { DividerCommand } from '../../commands/DividerCommand';
 import { SetLengthUnitCommand } from '../units/SetLengthUnitCommand';
-import { CustomBannerCommand, type CustomBannerContent } from '../../commands/CustomBannerCommand';
+import { GeneralBannerCommand, type GeneralBannerContent } from '../../commands/GeneralBannerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -32,12 +32,12 @@ export class SettingsCommand extends BaseSettingsCommand {
   public constructor(
     include360Images: boolean = true,
     includePois: boolean = false,
-    topBannerContent?: CustomBannerContent
+    topBannerContent?: GeneralBannerContent
   ) {
     super();
 
     if (topBannerContent !== undefined) {
-      this.add(new CustomBannerCommand(topBannerContent));
+      this.add(new GeneralBannerCommand(topBannerContent));
     }
 
     this.add(new SetQualitySliderCommand());

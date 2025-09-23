@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { SettingsCommand } from './SettingsCommand';
-import { type CustomBannerContent } from '../../commands/CustomBannerCommand';
+import { type GeneralBannerContent } from '../../commands/GeneralBannerCommand';
 
 describe(SettingsCommand.name, () => {
-  const bannerContent: CustomBannerContent = { text: 'Test banner message' };
+  const bannerContent: GeneralBannerContent = { text: 'Test banner message' };
   test('should have following default behavior', () => {
     const command = new SettingsCommand();
     expect(isEmpty(command.tooltip)).toBe(false);

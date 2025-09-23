@@ -1,12 +1,12 @@
 import { BannerStatus, BaseBannerCommand } from './BaseBannerCommand';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
-export type CustomBannerContent = {
+export type GeneralBannerContent = {
   text: string;
   status?: 'critical' | 'success' | 'warning' | 'neutral';
 };
 
-export class CustomBannerCommand extends BaseBannerCommand {
+export class GeneralBannerCommand extends BaseBannerCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -16,7 +16,7 @@ export class CustomBannerCommand extends BaseBannerCommand {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
-  public constructor(bannerContent: CustomBannerContent) {
+  public constructor(bannerContent: GeneralBannerContent) {
     super();
     this._bannerStatus = this.mapStringToBannerStatus(bannerContent.status);
     this._bannerText = bannerContent.text;
