@@ -11,6 +11,8 @@ import {
   type Skybox
 } from '../../components/SceneContainer/sceneTypes';
 
+export const SCENE_QUERY_LIMIT = 100;
+
 export type Transformation3d = {
   translationX: number;
   translationY: number;

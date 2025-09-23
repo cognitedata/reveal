@@ -1,43 +1,40 @@
-import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useSDK } from '../../components/RevealCanvas/SDKProvider';
-import { type QueryRequest, type CogniteClient, type NodeDefinition } from '@cognite/sdk';
-import { useMemo } from 'react';
-import { type EdgeItem, FdmSDK, type NodeItem } from '../../data-providers/FdmSDK';
+import { useContext, useMemo } from 'react';
+import { type QueryFunction } from '@tanstack/react-query';
+import { type CogniteClient, type NodeDefinition } from '@cognite/sdk';
+import { type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
 import {
+  SCENE_QUERY_LIMIT,
   type Cdf3dImage360CollectionProperties,
   type Cdf3dRevisionProperties,
   type ENVIRONMENT_MAP_SOURCE,
-  environmentMapSourceWithProperties,
   type GROUND_PLANE_SOURCE,
   type GroundPlaneProperties,
-  groundPlaneSourceWithProperties,
-  image360CollectionSourceWithProperties,
   type IMAGE_360_COLLECTION_SOURCE,
   type REVISION_SOURCE,
-  revisionSourceWithProperties,
   type SCENE_SOURCE,
   type SceneConfigurationProperties,
   type SceneData,
-  sceneSourceWithProperties,
   type SkyboxProperties,
   type Transformation3d,
-  type TRANSFORMATION_SOURCE,
-  transformationSourceWithProperties
+  type TRANSFORMATION_SOURCE
 } from './types';
+import {
+  type Use3dScenesResult,
+  type ScenesMap,
+  type Space,
+  type ExternalId
+} from './use3dScenes.types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-
-export type Space = string;
-export type ExternalId = string;
-
-const SCENE_QUERY_LIMIT = 100;
+import { createGetScenesQuery } from './allScenesQuery';
+import { Use3dScenesContext } from './use3dScenes.context';
 
 type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
 
-type SceneNode = Omit<NodeDefinition, 'properties'> & {
+export type SceneNode = Omit<NodeDefinition, 'properties'> & {
   properties: {
     scene: {
       'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
@@ -56,14 +53,13 @@ type Use3dScenesQueryResult = {
   sceneSkybox: Array<NodeItem<SkyboxProperties>>;
 };
 
-export const use3dScenes = (
-  userSdk?: CogniteClient
-): UseQueryResult<Record<Space, Record<ExternalId, SceneData>>> => {
+export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
+  const { useSDK, useQuery, createFdmSdk } = useContext(Use3dScenesContext);
+
   const sdk = useSDK(userSdk);
+  const fdmSdk = useMemo(() => createFdmSdk(sdk), [createFdmSdk, sdk]);
 
-  const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
-
-  const queryFunction: QueryFunction<Record<Space, Record<ExternalId, SceneData>>> = async () => {
+  const queryFunction: QueryFunction<ScenesMap> = async () => {
     const allScenes: Use3dScenesQueryResult = {
       scenes: [],
       sceneModels: [],
@@ -104,7 +100,7 @@ export const use3dScenes = (
     }
 
     const scenesMap = createMapOfScenes(allScenes.scenes, allScenes.sceneSkybox);
-    populateSceneMapWithModels(allScenes.sceneModels, scenesMap);
+    populateSceneMapWithModels(allScenes.sceneModels, scenesMap, tryGetModelIdFromExternalId);
     populateSceneMapWith360Images(allScenes.scene360Collections, scenesMap);
     populateSceneMapWithGroundplanes(
       allScenes.sceneGroundPlanes,
@@ -115,11 +111,11 @@ export const use3dScenes = (
     return scenesMap;
   };
 
-  return useQuery<Record<Space, Record<ExternalId, SceneData>>>({
+  return useQuery<ScenesMap>({
     queryKey: ['reveal-react-components', 'cdf', '3d', 'scenes'],
     queryFn: queryFunction
   });
-};
+}
 
 function createMapOfScenes(
   scenes: SceneNode[],
@@ -176,7 +172,8 @@ function createMapOfScenes(
 
 function populateSceneMapWithModels(
   sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>,
-  scenesMap: Record<Space, Record<ExternalId, SceneData>>
+  scenesMap: Record<Space, Record<ExternalId, SceneData>>,
+  tryGetModelIdFromExternalId: (externalId: string) => number | undefined
 ): void {
   sceneModels.forEach((edge) => {
     const { space, externalId } = edge.startNode;
@@ -258,7 +255,7 @@ function populateSceneMapWithGroundplanes(
       wrapping: groundPlaneProperties.wrapping,
       repeatU: groundPlaneProperties.repeatU ?? 1,
       repeatV: groundPlaneProperties.repeatV ?? 1,
-      ...groundPlaneEdgeProperties // Transformation3d
+      ...groundPlaneEdgeProperties
     };
 
     scenesMap[space]?.[externalId].groundPlanes.push(groundPlane);
@@ -309,122 +306,4 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
   }
 
   return modelProps;
-}
-
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-function createGetScenesQuery(limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) {
-  return {
-    with: {
-      scenes: {
-        nodes: {
-          filter: {
-            hasData: [
-              {
-                type: 'view',
-                space: 'scene',
-                externalId: 'SceneConfiguration',
-                version: 'v1'
-              }
-            ]
-          }
-        },
-        limit
-      },
-      sceneModels: {
-        edges: {
-          from: 'scenes',
-          maxDistance: 1,
-          direction: 'outwards',
-          filter: {
-            equals: {
-              property: ['edge', 'type'],
-              value: {
-                space: 'scene',
-                externalId: 'SceneConfiguration.model3ds'
-              }
-            }
-          }
-        },
-        limit: 10000
-      },
-      scene360Collections: {
-        edges: {
-          from: 'scenes',
-          maxDistance: 1,
-          direction: 'outwards',
-          filter: {
-            equals: {
-              property: ['edge', 'type'],
-              value: {
-                space: 'scene',
-                externalId: 'SceneConfiguration.images360Collections'
-              }
-            }
-          }
-        },
-        limit: 10000
-      },
-      sceneSkybox: {
-        nodes: {
-          from: 'scenes',
-          through: {
-            view: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'SceneConfiguration',
-              version: 'v1'
-            },
-            identifier: 'skybox'
-          },
-          direction: 'outwards'
-        },
-        limit: 10000
-      },
-      sceneGroundPlaneEdges: {
-        edges: {
-          from: 'scenes',
-          maxDistance: 1,
-          direction: 'outwards',
-          filter: {
-            equals: {
-              property: ['edge', 'type'],
-              value: {
-                space: 'scene',
-                externalId: 'SceneConfiguration.texturedGroundPlanes'
-              }
-            }
-          }
-        },
-        limit: 10000
-      },
-      sceneGroundPlanes: {
-        nodes: {
-          from: 'sceneGroundPlaneEdges',
-          chainTo: 'destination'
-        },
-        limit: 10000
-      }
-    },
-    select: {
-      scenes: {
-        sources: sceneSourceWithProperties
-      },
-      sceneModels: {
-        sources: revisionSourceWithProperties
-      },
-      scene360Collections: {
-        sources: image360CollectionSourceWithProperties
-      },
-      sceneSkybox: {
-        sources: environmentMapSourceWithProperties
-      },
-      sceneGroundPlaneEdges: {
-        sources: transformationSourceWithProperties
-      },
-      sceneGroundPlanes: {
-        sources: groundPlaneSourceWithProperties
-      }
-    },
-    cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
-  } as const satisfies Omit<QueryRequest, 'parameters'>;
 }
