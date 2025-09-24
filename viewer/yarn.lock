@@ -453,7 +453,6 @@ __metadata:
     "@azure/msal-browser": "npm:^3.13.0"
     "@cognite/sdk": "npm:^10.0.0"
     "@microsoft/api-extractor": "npm:^7.43.1"
-    "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:^25.0.0"
     "@types/dat.gui": "npm:^0.7.13"
     "@types/gl": "npm:^6.0.5"
@@ -1329,15 +1328,6 @@ __metadata:
   bin:
     browsers: lib/cjs/main-cli.js
   checksum: 10/0a7c791fc05800305e9d52329eb02381b989fe68bfaa55ba901f090490f3fc7ee6df46df34c4f43d8cd1fe7a727bad02a218d2c9daa251a8db01f06f3347ba02
-  languageName: node
-  linkType: hard
-
-"@rajesh896/broprint.js@npm:^2.1.1":
-  version: 2.2.0
-  resolution: "@rajesh896/broprint.js@npm:2.2.0"
-  bin:
-    getDeviceId(): lib/index.js
-  checksum: 10/aa5717b64df082d637be7f7fe48e1f41ea8801ed17d49577ea7781769efc91d1854a05c8c9290f8c6f57f794131c6065ca9dacdc32b9d1d2595e1fcfa0cf7acc
   languageName: node
   linkType: hard
 
@@ -3023,18 +3013,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.30.0":
-  version: 0.30.0
-  resolution: "axios@npm:0.30.0"
-  dependencies:
-    follow-redirects: "npm:^1.15.4"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10/55f4fc3b009d335e25c68b8a26efe2cd6a7f33e632894e304804f6d31863661b9667c92a4ad3489f57358cfa1e5fefaa2e10bb4089f2fa600b0b3e2cfa8f0954
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.12.1":
+"axios@npm:^1.0.0, axios@npm:^1.12.1":
   version: 1.12.2
   resolution: "axios@npm:1.12.2"
   dependencies:
@@ -5211,7 +5190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.4, follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.6":
   version: 1.15.9
   resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
