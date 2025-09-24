@@ -83,13 +83,13 @@ export type SceneConfigurationProperties = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
-  cadBudget: number;
-  pointCloudBudget: number;
-  maxRenderResolution: number;
-  movingCameraResolutionFactor: number;
-  pointCloudPointSize: number;
-  pointCloudPointShape: string;
-  pointCloudColor: string;
+  cadBudget?: number;
+  pointCloudBudget?: number;
+  maxRenderResolution?: number;
+  movingCameraResolutionFactor?: number;
+  pointCloudPointSize?: number;
+  pointCloudPointShape?: string;
+  pointCloudColor?: string;
 };
 
 export type SkyboxProperties = {
