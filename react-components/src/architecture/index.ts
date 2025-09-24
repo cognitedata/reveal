@@ -33,7 +33,10 @@ export { CycleLengthUnitsCommand } from './base/concreteCommands/units/CycleLeng
 export { UndoCommand } from './base/concreteCommands/general/UndoCommand';
 export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
 export { SetQualitySliderCommand } from './base/concreteCommands/quality/SetQualitySliderCommand';
-export { GeneralBannerCommand as CustomBannerCommand, type GeneralBannerContent as CustomBannerContent } from './base/commands/GeneralBannerCommand';
+export {
+  GeneralBannerCommand as CustomBannerCommand,
+  type GeneralBannerContent as CustomBannerContent
+} from './base/commands/GeneralBannerCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './base/domainObjects/DomainObject';

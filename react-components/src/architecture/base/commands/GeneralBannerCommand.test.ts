@@ -29,7 +29,7 @@ describe(GeneralBannerCommand.name, () => {
       { string: 'critical', enum: BannerStatus.Critical } as const,
       { string: 'success', enum: BannerStatus.Success } as const,
       { string: 'warning', enum: BannerStatus.Warning } as const,
-      { string: 'neutral', enum: BannerStatus.Neutral } as const,
+      { string: 'neutral', enum: BannerStatus.Neutral } as const
     ];
 
     statusMappings.forEach(({ string, enum: expectedEnum }) => {

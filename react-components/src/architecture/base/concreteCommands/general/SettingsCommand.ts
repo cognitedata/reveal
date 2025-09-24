@@ -22,7 +22,10 @@ import { SetQualitySliderCommand } from '../quality/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from '../quality/QualityWarningBannerCommand';
 import { DividerCommand } from '../../commands/DividerCommand';
 import { SetLengthUnitCommand } from '../units/SetLengthUnitCommand';
-import { GeneralBannerCommand, type GeneralBannerContent } from '../../commands/GeneralBannerCommand';
+import {
+  GeneralBannerCommand,
+  type GeneralBannerContent
+} from '../../commands/GeneralBannerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
