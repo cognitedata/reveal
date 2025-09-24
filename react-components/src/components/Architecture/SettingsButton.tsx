@@ -250,8 +250,9 @@ const StyledToggleContainer = styled(Flex).attrs({
 `;
 
 const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
-  max-height: 600px;
+  max-height: 700px;
   min-width: 340px;
+  max-width: 400px;
   overflow-x: hidden;
   overflow-y: auto;
   flexdirection: ${({ $flexDirection }) => $flexDirection};
