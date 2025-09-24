@@ -34,8 +34,8 @@ export { UndoCommand } from './base/concreteCommands/general/UndoCommand';
 export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
 export { SetQualitySliderCommand } from './base/concreteCommands/quality/SetQualitySliderCommand';
 export {
-  GeneralBannerCommand as CustomBannerCommand,
-  type GeneralBannerContent as CustomBannerContent
+  GeneralBannerCommand,
+  type GeneralBannerContent
 } from './base/commands/GeneralBannerCommand';
 
 // New architecture: domainObjects

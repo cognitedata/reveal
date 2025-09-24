@@ -31,7 +31,7 @@ import { PointCloudFilterCommand } from '../../architecture/concrete/reveal/poin
 import { UndoCommand } from '../../architecture/base/concreteCommands/general/UndoCommand';
 import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
 import { ShareCommand } from '../../architecture/base/concreteCommands/general/ShareCommand';
-import { type CustomBannerContent } from '../../architecture';
+import { type GeneralBannerContent } from '../../architecture';
 
 export class RevealButtons {
   static Help = (prop: ButtonProp): ReactElement =>
@@ -141,7 +141,7 @@ export type ButtonProp = {
 type SettingsProp = ButtonProp & {
   include360Images?: boolean;
   includePois?: boolean;
-  topBanner?: CustomBannerContent;
+  topBanner?: GeneralBannerContent;
 };
 
 type Image360Prop = ButtonProp & {
