@@ -14,7 +14,20 @@ import {
   StyledTreeIndexSets
 } from '@reveal/rendering';
 
-import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+import {
+  Group,
+  Object3D,
+  Plane,
+  Matrix4,
+  Object3DEventMap,
+  BufferGeometry,
+  Mesh,
+  RawShaderMaterial,
+  Sphere,
+  BufferAttribute,
+  Box3
+} from 'three';
+import * as THREE from 'three';
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
