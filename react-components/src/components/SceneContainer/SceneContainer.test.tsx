@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { SceneContainer } from './SceneContainer';
 import { type SceneContainerProps } from './types';
@@ -25,13 +25,14 @@ describe(SceneContainer.name, () => {
 
   test('should render Reveal3DResources when resources are available', () => {
     const mockResourceOptions: AddResourceOptions[] = [
-      { modelId: 1, revisionId: 1 },
-      { modelId: 2, revisionId: 2 }
+      { modelId: 123, revisionId: 456 },
+      { modelId: 789, revisionId: 987 }
     ];
 
     sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
-      hasResources: true
+      hasResources: true,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     render(<SceneContainer {...mockProps} />, { wrapper });
@@ -47,7 +48,8 @@ describe(SceneContainer.name, () => {
   test('should not render Reveal3DResources when no resources are available', () => {
     sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false
+      hasResources: false,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     render(<SceneContainer {...mockProps} />, { wrapper });
@@ -56,7 +58,7 @@ describe(SceneContainer.name, () => {
   });
 
   test('should pass through additional props to Reveal3DResources', () => {
-    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 1, revisionId: 1 }];
+    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 123, revisionId: 456 }];
     const additionalProps = {
       onModelLoadingChanged: vi.fn(),
       styling: { default: { color: 'red' } }
@@ -64,7 +66,8 @@ describe(SceneContainer.name, () => {
 
     sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: mockResourceOptions,
-      hasResources: true
+      hasResources: true,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     render(<SceneContainer {...mockProps} {...additionalProps} />, { wrapper });
@@ -81,7 +84,8 @@ describe(SceneContainer.name, () => {
   test('should call useSceneContainerViewModel with correct parameters', () => {
     sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false
+      hasResources: false,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     render(<SceneContainer {...mockProps} />, { wrapper });
@@ -95,11 +99,58 @@ describe(SceneContainer.name, () => {
   test('should render null when hasResources is false', () => {
     sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
       resourceOptions: [],
-      hasResources: false
+      hasResources: false,
+      onPointCloudSettingsCallback: vi.fn()
     });
 
     const { container } = render(<SceneContainer {...mockProps} />, { wrapper });
 
     expect(container.firstChild).toBeNull();
+  });
+
+  test('should call both onPointCloudSettingsCallback and onResourcesAdded when combinedOnResourcesAdded is triggered', () => {
+    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 123, revisionId: 456 }];
+    const mockOnPointCloudSettingsCallback = vi.fn();
+    const mockOnResourcesAdded = vi.fn();
+
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
+      resourceOptions: mockResourceOptions,
+      hasResources: true,
+      onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
+    });
+
+    render(<SceneContainer {...mockProps} onResourcesAdded={mockOnResourcesAdded} />, { wrapper });
+
+    const reveal3DResourcesCall = sceneContainerDependencies.Reveal3DResources.mock.calls[0];
+    const passedProps = reveal3DResourcesCall[0];
+    const combinedCallback = passedProps.onResourcesAdded;
+
+    assert(combinedCallback !== undefined, 'onResourcesAdded should be defined');
+    combinedCallback();
+
+    expect(mockOnPointCloudSettingsCallback).toHaveBeenCalled();
+    expect(mockOnResourcesAdded).toHaveBeenCalled();
+  });
+
+  test('should call onPointCloudSettingsCallback when onResourcesAdded is triggered and no user callback is provided', () => {
+    const mockResourceOptions: AddResourceOptions[] = [{ modelId: 123, revisionId: 456 }];
+    const mockOnPointCloudSettingsCallback = vi.fn();
+
+    sceneContainerDependencies.useSceneContainerViewModel.mockReturnValue({
+      resourceOptions: mockResourceOptions,
+      hasResources: true,
+      onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
+    });
+
+    render(<SceneContainer {...mockProps} />, { wrapper });
+
+    const reveal3DResourcesCall = sceneContainerDependencies.Reveal3DResources.mock.calls[0];
+    const passedProps = reveal3DResourcesCall[0];
+    const combinedCallback = passedProps.onResourcesAdded;
+
+    assert(combinedCallback !== undefined, 'onResourcesAdded should be defined');
+    combinedCallback();
+
+    expect(mockOnPointCloudSettingsCallback).toHaveBeenCalled();
   });
 });
