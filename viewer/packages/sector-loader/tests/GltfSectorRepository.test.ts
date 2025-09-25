@@ -50,93 +50,211 @@ describe(GltfSectorRepository.name, () => {
 
     const sectorRepository = new GltfSectorRepository(binaryFileProvider.object());
 
-    //Sector loader will throw since there is no valid materials for given object
     await expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();
 
     Log.setLevel(currentLogLevel);
   });
 
-  describe('Empty sector handling', () => {
-    test.each([
-      ['sectorFileName is undefined', { id: 1, sectorFileName: undefined, downloadSize: 100 }, LevelOfDetail.Detailed],
-      ['downloadSize is 0', { id: 2, sectorFileName: 'test.glb', downloadSize: 0 }, LevelOfDetail.Detailed],
-      ['levelOfDetail is Discarded', { id: 3, sectorFileName: 'test.glb', downloadSize: 100 }, LevelOfDetail.Discarded]
-    ])('should return empty sector when %s', async (_, metadata, expectedLod) => {
-      const wantedSector = createWantedSectorWithMetadata(metadata, expectedLod);
-      const result = await sectorRepository.loadSector(wantedSector.object());
-      expectEmptySector(result, expectedLod, wantedSector.object().modelIdentifier);
-    });
+  test.each([
+    ['sectorFileName is undefined', { id: 1, sectorFileName: undefined, downloadSize: 100 }, LevelOfDetail.Detailed],
+    ['downloadSize is 0', { id: 2, sectorFileName: 'test.glb', downloadSize: 0 }, LevelOfDetail.Detailed],
+    ['levelOfDetail is Discarded', { id: 3, sectorFileName: 'test.glb', downloadSize: 100 }, LevelOfDetail.Discarded]
+  ])('should return empty sector when %s', async (_, metadata, expectedLod) => {
+    const wantedSector = createWantedSectorWithMetadata(metadata, expectedLod);
+    const result = await sectorRepository.loadSector(wantedSector.object());
+    expectEmptySector(result, expectedLod, wantedSector.object().modelIdentifier);
   });
 
-  describe('Cache management', () => {
-    test('setCacheSize should update cache size', () => {
-      expect(() => sectorRepository.setCacheSize(500)).not.toThrow();
-    });
-
-    test('clearCache should clear the cache', async () => {
-      const loaderSpy = jest.spyOn(binaryFileProvider.object(), 'getBinaryFile');
-
-      await sectorRepository.loadSector(wantedSectorMock.object());
-      sectorRepository.clearCache();
-      await sectorRepository.loadSector(wantedSectorMock.object());
-
-      expect(loaderSpy).toHaveBeenCalledTimes(2);
-    });
-
-    test('cache should work with different model identifiers', async () => {
-      const [modelId1, modelId2] = ['model1', 'model2'].map(id => new LocalModelIdentifier(id));
-      const testMetadata = { id: 1, sectorFileName: 'test.glb', downloadSize: 100 };
-
-      const [sector1, sector2] = [modelId1, modelId2].map(modelId =>
-        createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
-      );
-
-      const loaderSpy = jest.spyOn(binaryFileProvider.object(), 'getBinaryFile');
-
-      await Promise.all([sector1, sector2].map(sector => sectorRepository.loadSector(sector.object())));
-
-      expect(loaderSpy).toHaveBeenCalledTimes(2);
-    });
+  test('setCacheSize should update cache size', () => {
+    expect(() => sectorRepository.setCacheSize(500)).not.toThrow();
   });
 
-  describe('AbortSignal and error handling', () => {
-    test('should pass abort signal to sector loader', async () => {
-      const abortController = new AbortController();
-      const mockProvider = new Mock<BinaryFileProvider>()
-        .setup(p => p.getBinaryFile(It.IsAny(), It.IsAny(), abortController.signal))
-        .returnsAsync(new ArrayBuffer(0));
+  test('clearCache should clear the cache', async () => {
+    const loaderSpy = jest.spyOn(binaryFileProvider.object(), 'getBinaryFile');
 
-      const testRepository = new GltfSectorRepository(mockProvider.object());
-      const wantedSector = createWantedSectorWithMetadata({ id: 1, sectorFileName: 'test.glb', downloadSize: 100 });
+    await sectorRepository.loadSector(wantedSectorMock.object());
+    sectorRepository.clearCache();
+    await sectorRepository.loadSector(wantedSectorMock.object());
 
-      await expect(testRepository.loadSector(wantedSector.object(), abortController.signal)).resolves.toBeDefined();
-    });
+    expect(loaderSpy).toHaveBeenCalledTimes(2);
+  });
 
-    test('should return empty discarded sector when loader fails', async () => {
-      const failingProvider = new Mock<BinaryFileProvider>()
-        .setup(p => p.getBinaryFile(It.IsAny(), It.IsAny(), It.IsAny()))
-        .throws(new Error('Network error'));
+  test('cache should work with different model identifiers', async () => {
+    const [modelId1, modelId2] = ['model1', 'model2'].map(id => new LocalModelIdentifier(id));
+    const testMetadata = { id: 1, sectorFileName: 'test.glb', downloadSize: 100 };
 
-      const testRepository = new GltfSectorRepository(failingProvider.object());
-      const wantedSector = createWantedSectorWithMetadata({ id: 1, sectorFileName: 'test.glb', downloadSize: 100 });
-      const result = await testRepository.loadSector(wantedSector.object());
+    const [sector1, sector2] = [modelId1, modelId2].map(modelId =>
+      createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
+    );
 
-      expectEmptySector(result, LevelOfDetail.Discarded);
-    });
+    const loaderSpy = jest.spyOn(binaryFileProvider.object(), 'getBinaryFile');
 
-    test('should handle cached sector with different model identifier correctly', async () => {
-      const [originalId, newId] = ['original', 'new'].map(id => new LocalModelIdentifier(id));
-      const testMetadata = { id: 1, sectorFileName: 'test.glb', downloadSize: 100 };
+    await Promise.all([sector1, sector2].map(sector => sectorRepository.loadSector(sector.object())));
 
-      const [originalSector, newSector] = [originalId, newId].map(modelId =>
-        createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
-      );
+    expect(loaderSpy).toHaveBeenCalledTimes(2);
+  });
 
-      await sectorRepository.loadSector(originalSector.object());
-      const result = await sectorRepository.loadSector(newSector.object());
+  test('should pass abort signal to sector loader', async () => {
+    const abortController = new AbortController();
+    const mockProvider = new Mock<BinaryFileProvider>()
+      .setup(p => p.getBinaryFile(It.IsAny(), It.IsAny(), abortController.signal))
+      .returnsAsync(new ArrayBuffer(0));
 
-      expect(result.modelIdentifier).toBe(newId);
-    });
+    const testRepository = new GltfSectorRepository(mockProvider.object());
+    const wantedSector = createWantedSectorWithMetadata({ id: 1, sectorFileName: 'test.glb', downloadSize: 100 });
+
+    await expect(testRepository.loadSector(wantedSector.object(), abortController.signal)).resolves.toBeDefined();
+  });
+
+  test('should return empty discarded sector when loader fails', async () => {
+    const failingProvider = new Mock<BinaryFileProvider>()
+      .setup(p => p.getBinaryFile(It.IsAny(), It.IsAny(), It.IsAny()))
+      .throws(new Error('Network error'));
+
+    const testRepository = new GltfSectorRepository(failingProvider.object());
+    const wantedSector = createWantedSectorWithMetadata({ id: 1, sectorFileName: 'test.glb', downloadSize: 100 });
+    const result = await testRepository.loadSector(wantedSector.object());
+
+    expectEmptySector(result, LevelOfDetail.Discarded);
+  });
+
+  test('should handle cached sector with different model identifier correctly', async () => {
+    const [originalId, newId] = ['original', 'new'].map(id => new LocalModelIdentifier(id));
+    const testMetadata = { id: 1, sectorFileName: 'test.glb', downloadSize: 100 };
+
+    const [originalSector, newSector] = [originalId, newId].map(modelId =>
+      createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
+    );
+
+    await sectorRepository.loadSector(originalSector.object());
+    const result = await sectorRepository.loadSector(newSector.object());
+
+    expect(result.modelIdentifier).toBe(newId);
+  });
+
+  test('dereferenceSector should handle non-existent sector gracefully', () => {
+    const modelId = new LocalModelIdentifier('test_model');
+
+    // Should not throw when dereferencing non-existent sector
+    expect(() => sectorRepository.dereferenceSector(modelId, 999)).not.toThrow();
+  });
+
+  test('dereferenceSector should handle zero reference count gracefully', async () => {
+    const modelId = new LocalModelIdentifier('test_model');
+    const wantedSector = createWantedSectorWithMetadata(
+      {
+        id: 1,
+        sectorFileName: 'test.glb',
+        downloadSize: 100
+      },
+      LevelOfDetail.Detailed,
+      modelId
+    );
+
+    await sectorRepository.loadSector(wantedSector.object());
+
+    // Dereference once (should make count 0)
+    sectorRepository.dereferenceSector(modelId, 1);
+
+    // Dereference again (should handle gracefully)
+    expect(() => sectorRepository.dereferenceSector(modelId, 1)).not.toThrow();
+  });
+
+  test('should handle multiple references to same sector correctly', async () => {
+    const modelId1 = new LocalModelIdentifier('model1');
+    const modelId2 = new LocalModelIdentifier('model2');
+
+    const wantedSector1 = createWantedSectorWithMetadata(
+      {
+        id: 1,
+        sectorFileName: 'test.glb',
+        downloadSize: 100
+      },
+      LevelOfDetail.Detailed,
+      modelId1
+    );
+
+    const wantedSector2 = createWantedSectorWithMetadata(
+      {
+        id: 1,
+        sectorFileName: 'test.glb',
+        downloadSize: 100
+      },
+      LevelOfDetail.Detailed,
+      modelId2
+    );
+
+    // Load the same sector for two different models
+    const sector1 = await sectorRepository.loadSector(wantedSector1.object());
+    const sector2 = await sectorRepository.loadSector(wantedSector2.object());
+
+    // Both sectors should be successfully loaded
+    expect(sector1).toBeDefined();
+    expect(sector2).toBeDefined();
+    expect(sector1.metadata.id).toBe(1);
+    expect(sector2.metadata.id).toBe(1);
+
+    // Different model identifiers should be preserved
+    expect(sector1.modelIdentifier).toBe(modelId1);
+    expect(sector2.modelIdentifier).toBe(modelId2);
+
+    // Test that dereferencing works without crashing
+    expect(() => sectorRepository.dereferenceSector(modelId1, 1)).not.toThrow();
+    expect(() => sectorRepository.dereferenceSector(modelId2, 1)).not.toThrow();
+
+    // System should still work after all dereferences
+    const testLoad = await sectorRepository.loadSector(wantedSector1.object());
+    expect(testLoad).toBeDefined();
+  });
+
+  test('should handle cache clearing after sector dereferencing', async () => {
+    const modelId = new LocalModelIdentifier('test_model');
+    const wantedSector = createWantedSectorWithMetadata(
+      {
+        id: 1,
+        sectorFileName: 'test.glb',
+        downloadSize: 100
+      },
+      LevelOfDetail.Detailed,
+      modelId
+    );
+
+    await sectorRepository.loadSector(wantedSector.object());
+
+    // Dereference it (simulating model removal)
+    sectorRepository.dereferenceSector(modelId, 1);
+
+    // Clear cache should not crash
+    expect(() => sectorRepository.clearCache()).not.toThrow();
+
+    // Should be able to load sectors after cache clear
+    const reloadedSector = await sectorRepository.loadSector(wantedSector.object());
+    expect(reloadedSector).toBeDefined();
+  });
+
+  test('should handle cache clearing while sectors are still referenced', async () => {
+    const modelId = new LocalModelIdentifier('test_model');
+    const wantedSector = createWantedSectorWithMetadata(
+      {
+        id: 1,
+        sectorFileName: 'test.glb',
+        downloadSize: 100
+      },
+      LevelOfDetail.Detailed,
+      modelId
+    );
+
+    await sectorRepository.loadSector(wantedSector.object());
+
+    // Clear cache while sector is still referenced - should not crash
+    expect(() => sectorRepository.clearCache()).not.toThrow();
+
+    // Should still work after cache clear
+    const reloadedSector = await sectorRepository.loadSector(wantedSector.object());
+    expect(reloadedSector).toBeDefined();
+
+    // Now clean up properly
+    sectorRepository.dereferenceSector(modelId, 1);
   });
 
   // Helper functions
