@@ -136,4 +136,5 @@ export class GltfSectorRepository implements SectorRepository {
 
   private getCacheKeyForSector(sector: ConsumedSector): string {
     return sector.modelIdentifier.sourceModelIdentifier() + '.' + sector.metadata.id;
+  }
 }

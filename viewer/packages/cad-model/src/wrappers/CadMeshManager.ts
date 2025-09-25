@@ -18,14 +18,18 @@ import { BufferGeometry, Mesh, RawShaderMaterial, Sphere, BufferAttribute, Box3,
  */
 export class CadMeshManager {
   private readonly _materialManager: CadMaterialManager;
-  private readonly _modelId: symbol;
+  private readonly _modelIdentifier: symbol;
   private readonly _treeIndexToSectorsMap: TreeIndexToSectorsMap;
 
   private readonly _sectorMeshGroups: Map<number, AutoDisposeGroup> = new Map();
 
-  constructor(materialManager: CadMaterialManager, modelId: symbol, treeIndexToSectorsMap: TreeIndexToSectorsMap) {
+  constructor(
+    materialManager: CadMaterialManager,
+    modelIdentifier: symbol,
+    treeIndexToSectorsMap: TreeIndexToSectorsMap
+  ) {
     this._materialManager = materialManager;
-    this._modelId = modelId;
+    this._modelIdentifier = modelIdentifier;
     this._treeIndexToSectorsMap = treeIndexToSectorsMap;
   }
 
@@ -40,7 +44,7 @@ export class CadMeshManager {
     sectorId: number
   ): AutoDisposeGroup {
     const group = new AutoDisposeGroup();
-    const materials = this._materialManager.getModelMaterials(this._modelId);
+    const materials = this._materialManager.getModelMaterials(this._modelIdentifier);
 
     parsedMeshGeometries.forEach(geometryData => {
       if (geometryData.type === RevealGeometryCollectionType.TriangleMesh) {
@@ -53,7 +57,7 @@ export class CadMeshManager {
       } else if (geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh) {
         if (geometryData.texture) {
           const texturedMaterial = this._materialManager.addTexturedMeshMaterial(
-            this._modelId,
+            this._modelIdentifier,
             sectorId,
             geometryData.texture
           );
