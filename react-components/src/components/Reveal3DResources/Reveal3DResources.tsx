@@ -61,10 +61,6 @@ export const Reveal3DResources = ({
   const instanceStylingWithAssetMappings =
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
-  useEffect(() => {
-    console.log('Cad model options: ', cadModelOptions);
-  }, [cadModelOptions]);
-
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } =
     hooks.useCalculateCadStyling(
       cadModelOptions,
@@ -85,18 +81,6 @@ export const Reveal3DResources = ({
   );
 
   const image360StyledGroup = hooks.useCalculateImage360Styling(instanceStyling);
-  useEffect(() => {
-    console.log(
-      'Styled cad model options: ',
-      styledCadModelOptions,
-      'styled point cloud model',
-      styledPointCloudModelOptions,
-      'image 360 styled group: ',
-      image360CollectionAddOptions,
-      'while resources was',
-      resources
-    );
-  }, [styledCadModelOptions, styledPointCloudModelOptions, image360StyledGroup]);
 
   return (
     <>

@@ -71,7 +71,6 @@ export class RevealModelsUtils {
     }
     const model = await renderTarget.viewer.addCadModel(options);
 
-    console.log('Cad had default visible', defaultVisible);
     model.visible = defaultVisible ?? true;
 
     const domainObject = new CadDomainObject(model);
@@ -97,7 +96,6 @@ export class RevealModelsUtils {
       throw new Error('Root domain object is not set');
     }
     const model = await renderTarget.viewer.addPointCloudModel(options);
-    console.log('Point cloud had default visible', defaultVisible);
     model.visible = defaultVisible ?? true;
     const domainObject = new PointCloudDomainObject(model);
     root.addChildInteractive(domainObject);
@@ -137,14 +135,10 @@ export class RevealModelsUtils {
       }
     })();
 
-    console.log('360 image collection had default visible', defaultVisible);
-
     model.setIconsVisibility(defaultVisible ?? true);
     const domainObject = new Image360CollectionDomainObject(model);
     root.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(model.getIconsVisibility());
-
-    console.log('360 domain object visibility: ', domainObject.isVisible(renderTarget));
 
     return model;
   }

@@ -29,13 +29,7 @@ import {
   transformationSourceWithProperties
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-import assert from 'assert';
-import {
-  isScene360CollectionEdge,
-  isScene360CollectionProperties,
-  isScene3dModelEdge,
-  isSceneModelProperties
-} from './sceneResponseTypeGuard';
+import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export type Space = string;
 export type ExternalId = string;

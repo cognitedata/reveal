@@ -1,8 +1,4 @@
-import {
-  type ClassicDataSourceType,
-  type AddModelOptions,
-  type DataSourceType
-} from '@cognite/reveal';
+import { type ClassicDataSourceType, type AddModelOptions } from '@cognite/reveal';
 
 import { useContext, useMemo } from 'react';
 import { type FdmSDK } from '../data-providers/FdmSDK';
@@ -14,7 +10,7 @@ import {
   isDM3DModelIdentifier
 } from '../components/Reveal3DResources/typeGuards';
 import { ModelIdRevisionIdFromModelOptionsContext } from './useModelIdRevisionIdFromModelOptions.context';
-import { AddCadResourceOptions, AddPointCloudResourceOptions } from '..';
+import { type AddCadResourceOptions, type AddPointCloudResourceOptions } from '..';
 
 export const useModelIdRevisionIdFromModelOptions = (
   addModelOptionsArray: Array<AddCadResourceOptions | AddPointCloudResourceOptions> | undefined

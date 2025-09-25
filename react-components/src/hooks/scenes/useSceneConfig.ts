@@ -38,7 +38,7 @@ import {
   isScene360CollectionEdge,
   isScene3dModelEdge,
   isSceneConfigurationProperties
-} from './sceneResponseTypeGuard';
+} from './sceneResponseTypeGuards';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
