@@ -335,7 +335,6 @@ function createDiscardedConsumedSectorMock(sector: WantedSector): ConsumedSector
     modelIdentifier: sector.modelIdentifier,
     metadata: sector.metadata,
     levelOfDetail: LevelOfDetail.Discarded,
-    group: undefined,
     instancedMeshes: undefined
   };
 }
