@@ -154,7 +154,7 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.10.2",
   "resolutions": {
     "binary-install/axios": "^1.0.0"
   }

@@ -531,25 +531,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@cognite/sdk-core@npm:5.0.0"
+"@cognite/sdk-core@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@cognite/sdk-core@npm:5.0.1"
   dependencies:
     cross-fetch: "npm:^3.1.8"
     lodash: "npm:^4.17.21"
-  checksum: 10/37986c5840eedfe0637dacf432c8c5b6cfdfa7b744544e7552eab6b1ef283f762774449bcffd2b2592f448901601da9f6793399fc5ec726f96fa1867210d658e
+  checksum: 10/3033e283d853072c3082c37617e16514f7e1cef8933f76e653230d894384da835f2a78a5da5370a7dba1074ccc987c53ced2a39a0e3c038f0a121b43fd29639b
   languageName: node
   linkType: hard
 
 "@cognite/sdk@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@cognite/sdk@npm:10.0.0"
+  version: 10.1.3
+  resolution: "@cognite/sdk@npm:10.1.3"
   dependencies:
-    "@cognite/sdk-core": "npm:^5.0.0"
+    "@cognite/sdk-core": "npm:^5.0.1"
     "@types/geojson": "npm:^7946.0.14"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.21"
-  checksum: 10/17ef6fd9f39bf19cbfc545140f8a003a400b621f54d2a800b255f7b6f54935b63c23e647c826990e9b4d78a9a56c18c0ae1ecec3155594d0f4c2624df038c4bc
+  checksum: 10/2ed7172aaa027698249fcd5248be7df9e3faa0f35b76292eb18f2573cf293cab5492d7d61bdc6fdfa5dec1dfbdee80dc0292d708a70ad198fde6296d24e7d46d
   languageName: node
   linkType: hard
 
@@ -1161,16 +1161,16 @@ __metadata:
   linkType: hard
 
 "@microsoft/api-extractor@npm:^7.43.1":
-  version: 7.52.11
-  resolution: "@microsoft/api-extractor@npm:7.52.11"
+  version: 7.52.13
+  resolution: "@microsoft/api-extractor@npm:7.52.13"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.30.7"
     "@microsoft/tsdoc": "npm:~0.15.1"
     "@microsoft/tsdoc-config": "npm:~0.17.1"
     "@rushstack/node-core-library": "npm:5.14.0"
     "@rushstack/rig-package": "npm:0.5.3"
-    "@rushstack/terminal": "npm:0.15.4"
-    "@rushstack/ts-command-line": "npm:5.0.2"
+    "@rushstack/terminal": "npm:0.16.0"
+    "@rushstack/ts-command-line": "npm:5.0.3"
     lodash: "npm:~4.17.15"
     minimatch: "npm:10.0.3"
     resolve: "npm:~1.22.1"
@@ -1179,7 +1179,7 @@ __metadata:
     typescript: "npm:5.8.2"
   bin:
     api-extractor: bin/api-extractor
-  checksum: 10/963382a222ca9329a1e1c3a969c2c7c7801ac7d4f9f890de80d29a9084208faefb48848d388f480b73f8b38f801eac785dd3d7b629adf7a584e243d72762b94d
+  checksum: 10/ed158b89741019b240f3662ab7a8947dec60bb5b4ea4ef3f46b7249bcac0e5884249944040815ab220a2b4ad0771c5c42a1d9681474b65da1c15921a21a71a1e
   languageName: node
   linkType: hard
 
@@ -1603,9 +1603,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/terminal@npm:0.15.4":
-  version: 0.15.4
-  resolution: "@rushstack/terminal@npm:0.15.4"
+"@rushstack/terminal@npm:0.16.0":
+  version: 0.16.0
+  resolution: "@rushstack/terminal@npm:0.16.0"
   dependencies:
     "@rushstack/node-core-library": "npm:5.14.0"
     supports-color: "npm:~8.1.1"
@@ -1614,19 +1614,19 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/451e6e56e2fd3df19e24d88b2be42a6f3194133a6d3a6535ce2aa1597445bbd9933a1ca8a3ed4c27a3dad062049dd0121c5768498356da1145b27b7bba444551
+  checksum: 10/24819859450c3e60293e95d291930057a24e1b457ef9eee56c42bfc2c1d194b121157355ff0ef2c91627e1eac8a65d666d1d3eb0d0bdbee5ff95fc889f42b467
   languageName: node
   linkType: hard
 
-"@rushstack/ts-command-line@npm:5.0.2":
-  version: 5.0.2
-  resolution: "@rushstack/ts-command-line@npm:5.0.2"
+"@rushstack/ts-command-line@npm:5.0.3":
+  version: 5.0.3
+  resolution: "@rushstack/ts-command-line@npm:5.0.3"
   dependencies:
-    "@rushstack/terminal": "npm:0.15.4"
+    "@rushstack/terminal": "npm:0.16.0"
     "@types/argparse": "npm:1.0.38"
     argparse: "npm:~1.0.9"
     string-argv: "npm:~0.3.1"
-  checksum: 10/dbd9b184fce0212bf768678a1ec447d84ef633f00947159f765ccafad26bff2fb0af6030ec3dd51f62c1f28a8b2d052d9516d52cd582152d0f1bb48921f3edd8
+  checksum: 10/f7797d7fa2834c4f483c115f1466f2cccd0d015698ab63d433f07b383da2e5e81450227ca0a32913ae0fb6a20f8be4a2e5d41a554ea44afc4ba8dbe68b5faf88
   languageName: node
   linkType: hard
 
@@ -2069,20 +2069,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 24.3.1
-  resolution: "@types/node@npm:24.3.1"
+  version: 24.5.2
+  resolution: "@types/node@npm:24.5.2"
   dependencies:
-    undici-types: "npm:~7.10.0"
-  checksum: 10/b9a52ed8f2fb1fa764ce988828b8d579761f944f1bb0492adbdeaa676a161086bad1a807b590799681ad93b3d272468b5c5ddccf5678735d487d1b65e481bc07
+    undici-types: "npm:~7.12.0"
+  checksum: 10/a497aea88a12131b03382d933690b71c131ee890232596b8d5b73f0a20c90874001800b2bfc267bd37df8285bef911729b4773426be7d2dc13ef4c760904e47d
   languageName: node
   linkType: hard
 
 "@types/node@npm:^22.0.0":
-  version: 22.18.1
-  resolution: "@types/node@npm:22.18.1"
+  version: 22.18.6
+  resolution: "@types/node@npm:22.18.6"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10/da67f3c3fa4107fbca704e7a71fee36c27f3b6f44af1c466cd5c71eab76a9ffcd6a16f3b97d1e757b9763f1fa1085eebb60cb648c272e36794aca7305b2a15d9
+  checksum: 10/d816882476fa4f2d2db238139e9d65299414ac54bf81aa85dae850589b480cfe0c1722dc845295d446e2babd6ddfe64b79a8c56d771bf5345ddb1c48950f029e
   languageName: node
   linkType: hard
 
@@ -10462,10 +10462,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~7.10.0":
-  version: 7.10.0
-  resolution: "undici-types@npm:7.10.0"
-  checksum: 10/1f3fe777937690ab8a7a7bccabc8fdf4b3171f4899b5a384fb5f3d6b56c4b5fec2a51fbf345c9dd002ff6716fd440a37fa8fdb0e13af8eca8889f25445875ba3
+"undici-types@npm:~7.12.0":
+  version: 7.12.0
+  resolution: "undici-types@npm:7.12.0"
+  checksum: 10/4a0f927c98828f76fb0d64f356e36e5ac6e074ae4c7bec08d6de8bc36b7cf08ae27a3518fa8eb703f51c1a675241e2d07359bbce63f5575299148a270cea7e43
   languageName: node
   linkType: hard
 
