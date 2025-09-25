@@ -44,18 +44,18 @@ export class CadModelFactory {
       {
         type: modelType
       },
-      modelIdentifier,
+      modelIdentifier.sourceModelIdentifier(),
       formatVersion
     );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
-    this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);
+    this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, scene.maxTreeIndex);
     const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
 
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
       const clippingPlanes = new BoundingBoxClipper(clipBox).clippingPlanes;
-      this._materialManager.setModelClippingPlanes(modelMetadata.modelIdentifier, clippingPlanes);
+      this._materialManager.setModelClippingPlanes(modelMetadata.modelIdentifier.revealInternalId, clippingPlanes);
     }
 
     return cadModel;
@@ -63,8 +63,7 @@ export class CadModelFactory {
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
     if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
-      this._gltfSectorRepository =
-        this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider, this._materialManager);
+      this._gltfSectorRepository = this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider);
 
       return this._gltfSectorRepository;
     } else {

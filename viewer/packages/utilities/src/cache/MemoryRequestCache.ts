@@ -35,19 +35,15 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
   private _defaultCleanupCount: number;
-  private readonly _removeCallback: ((value: Data) => void) | undefined;
+  private readonly _disposeCallback?: (data: Data) => void;
 
   private static readonly CLEANUP_COUNT_TO_CAPACITY_RATIO = 1.0 / 5.0;
 
-  constructor(
-    maxElementsInCache: number = 50,
-    removeCallback?: (value: Data) => void,
-    defaultCleanupCount: number = 10
-  ) {
+  constructor(maxElementsInCache: number, defaultCleanupCount: number, disposeCallback?: (data: Data) => void) {
     this._data = new Map();
     this._maxElementsInCache = maxElementsInCache;
     this._defaultCleanupCount = Math.max(defaultCleanupCount, 1);
-    this._removeCallback = removeCallback;
+    this._disposeCallback = disposeCallback;
   }
 
   has(id: Key): boolean {
@@ -70,10 +66,10 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   remove(id: Key): void {
-    if (this._removeCallback !== undefined) {
-      const value = this._data.get(id);
-      if (value !== undefined) {
-        this._removeCallback(value.value);
+    const value = this._data.get(id);
+    if (value !== undefined) {
+      if (this._disposeCallback) {
+        this._disposeCallback(value.value);
       }
     }
     this._data.delete(id);
@@ -118,9 +114,9 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   clear(): void {
-    if (this._removeCallback !== undefined) {
-      for (const value of this._data.values()) {
-        this._removeCallback(value.value);
+    if (this._disposeCallback) {
+      for (const container of this._data.values()) {
+        this._disposeCallback(container.value);
       }
     }
     this._data.clear();

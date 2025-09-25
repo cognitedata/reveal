@@ -22,7 +22,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     const group = this.initializeGroup(scene);
 
     const cadMaterialManager = new CadMaterialManager();
-    const sectorRepository = new GltfSectorRepository(modelDataProvider, cadMaterialManager);
+    const sectorRepository = new GltfSectorRepository(modelDataProvider);
 
     const gltfOutput = (await modelMetadataProvider.getModelOutputs(modelIdentifier)).find(
       output => output.format === 'gltf-directory'
@@ -58,7 +58,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     cadMaterialManager: CadMaterialManager,
     modelUri: string
   ): Promise<THREE.Group> {
-    const internalId = modelIdentifier.revealInternalId.toString();
+    const internalId = modelIdentifier.revealInternalId;
 
     cadMaterialManager.addModelMaterials(internalId, sceneJson.maxTreeIndex);
     for (const material of Object.values(
@@ -86,7 +86,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
         const threeBoundingBox = toThreeBox(sector.boundingBox);
         const consumedSector = await sectorRepository.loadSector({
           modelBaseUrl: modelUri,
-          modelIdentifier: internalId,
+          modelIdentifier: modelIdentifier,
           metadata: {
             ...sector,
             subtreeBoundingBox: threeBoundingBox,
@@ -97,10 +97,6 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
           levelOfDetail: 2,
           geometryClipBox: null
         });
-
-        if (consumedSector.group) {
-          model.add(consumedSector.group);
-        }
 
         const group = this.createGltfSectorGroup(consumedSector, cadMaterialManager.getModelMaterials(internalId));
         model.add(group);
