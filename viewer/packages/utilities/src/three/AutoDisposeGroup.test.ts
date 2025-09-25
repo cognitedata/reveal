@@ -58,4 +58,48 @@ describe('AutoDisposeGroup', () => {
 
     expect(disposeSpy).not.toBeCalled();
   });
+
+  test('addTexture adds texture and disposes it when group is disposed', () => {
+    // Arrange
+    const texture = new THREE.Texture();
+    const disposeSpy = jest.spyOn(texture, 'dispose');
+
+    // Act
+    group.addTexture(texture);
+    group.reference();
+    group.dereference();
+
+    // Assert
+    expect(disposeSpy).toBeCalledTimes(1);
+  });
+
+  test('isDisposed returns correct disposal state', () => {
+    // Initially not disposed
+    expect(group.isDisposed()).toBe(false);
+
+    // After referencing, still not disposed
+    group.reference();
+    expect(group.isDisposed()).toBe(false);
+
+    // After dereferencing, should be disposed
+    group.dereference();
+    expect(group.isDisposed()).toBe(true);
+  });
+
+  test('dispose clears all children from group', () => {
+    // Arrange
+    const mesh1 = new THREE.Mesh(new THREE.BufferGeometry());
+    const mesh2 = new THREE.Mesh(new THREE.BufferGeometry());
+    group.add(mesh1);
+    group.add(mesh2);
+
+    expect(group.children.length).toBe(3);
+
+    // Act
+    group.reference();
+    group.dereference();
+
+    // Assert
+    expect(group.children.length).toBe(0);
+  });
 });
