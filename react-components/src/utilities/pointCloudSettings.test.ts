@@ -5,12 +5,17 @@ import {
   mapPointShape,
   mapPointColorType,
   applyQualitySettingsToRenderTarget,
-  mergeQualitySettings
+  mergeQualitySettings,
+  resetRevealQualitySettings,
+  DEFAULT_POINT_COLOR_TYPE,
+  DEFAULT_POINT_SHAPE,
+  DEFAULT_POINT_SIZE
 } from './pointCloudSettings';
 import { type SceneQualitySettings } from '../components/SceneContainer/sceneTypes';
 import { type RevealSettingsController } from '../architecture/concrete/reveal/RevealSettingsController';
 import { type QualitySettings } from '../architecture/base/utilities/quality/QualitySettings';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { DEFAULT_REVEAL_QUALITY_SETTINGS } from '../architecture/concrete/reveal/constants';
 import { Mock } from 'moq.ts';
 
 describe('pointCloudSettings utilities', () => {
@@ -57,7 +62,7 @@ describe('pointCloudSettings utilities', () => {
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
       expect(mockPointShape).toHaveBeenCalledWith(PointShape.Square);
-      expect(mockPointSize).not.toHaveBeenCalled();
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
       expect(mockPointColorType).not.toHaveBeenCalled();
     });
 
@@ -69,7 +74,7 @@ describe('pointCloudSettings utilities', () => {
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
       expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Height);
-      expect(mockPointSize).not.toHaveBeenCalled();
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
       expect(mockPointShape).not.toHaveBeenCalled();
     });
 
@@ -87,12 +92,12 @@ describe('pointCloudSettings utilities', () => {
       expect(mockPointColorType).toHaveBeenCalledWith(PointColorType.Intensity);
     });
 
-    test('should not apply any settings when none are provided', () => {
+    test('should apply default point size when no settings are provided', () => {
       const qualitySettings: SceneQualitySettings = {};
 
       mergePointCloudSettings(mockSettingsController, qualitySettings);
 
-      expect(mockPointSize).not.toHaveBeenCalled();
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
       expect(mockPointShape).not.toHaveBeenCalled();
       expect(mockPointColorType).not.toHaveBeenCalled();
     });
@@ -229,14 +234,13 @@ describe('pointCloudSettings utilities', () => {
 
       applyQualitySettingsToRenderTarget(mockRenderTarget, qualitySettings);
 
-      expect(mockQualitySettingsPeek).toHaveBeenCalled();
       expect(mockQualitySettingsCall).toHaveBeenCalledWith({
         cadBudget: {
           maximumRenderCost: 2000000,
-          highDetailProximityThreshold: 100
+          highDetailProximityThreshold: 0
         },
         pointCloudBudget: {
-          numberOfPoints: 500000
+          numberOfPoints: 3_000_000
         },
         resolutionOptions: {
           maxRenderResolution: 2560,
@@ -266,7 +270,47 @@ describe('pointCloudSettings utilities', () => {
 
       applyQualitySettingsToRenderTarget(mockRenderTarget, qualitySettings);
 
-      expect(mockQualitySettingsCall).toHaveBeenCalledWith(currentSettings);
+      expect(mockQualitySettingsCall).toHaveBeenCalledWith(DEFAULT_REVEAL_QUALITY_SETTINGS);
+    });
+  });
+
+  describe('resetRevealQualitySettings', () => {
+    test('should reset all settings to default values', () => {
+      const mockQualitySettings = vi.fn();
+      const mockPointSize = vi.fn();
+      const mockPointShape = vi.fn();
+      const mockPointColorType = vi.fn();
+
+      const mockRenderTarget = createRenderTargetMock();
+
+      // Mock the settings controller methods
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'qualitySettings', {
+        value: mockQualitySettings,
+        writable: true,
+        configurable: true
+      });
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'pointSize', {
+        value: mockPointSize,
+        writable: true,
+        configurable: true
+      });
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'pointShape', {
+        value: mockPointShape,
+        writable: true,
+        configurable: true
+      });
+      Object.defineProperty(mockRenderTarget.revealSettingsController, 'pointColorType', {
+        value: mockPointColorType,
+        writable: true,
+        configurable: true
+      });
+
+      resetRevealQualitySettings(mockRenderTarget);
+
+      expect(mockQualitySettings).toHaveBeenCalledWith(DEFAULT_REVEAL_QUALITY_SETTINGS);
+      expect(mockPointSize).toHaveBeenCalledWith(DEFAULT_POINT_SIZE);
+      expect(mockPointShape).toHaveBeenCalledWith(DEFAULT_POINT_SHAPE);
+      expect(mockPointColorType).toHaveBeenCalledWith(DEFAULT_POINT_COLOR_TYPE);
     });
   });
 });

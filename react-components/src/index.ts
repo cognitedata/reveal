@@ -8,6 +8,8 @@ export * from './data-providers';
 
 export * from './utilities/externalIndex';
 
+export { resetRevealQualitySettings } from './utilities/pointCloudSettings';
+
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
 
