@@ -49,7 +49,10 @@ export class SectorDownloadScheduler {
   public queueSectorBatchForDownload(downloadData: SectorDownloadData[]): Promise<ConsumedSector>[] {
     return downloadData.map(sectorDownloadData => {
       const { sector, downloadSector } = sectorDownloadData;
-      const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
+      const sectorIdentifier = this.getSectorIdentifier(
+        sector.modelIdentifier.sourceModelIdentifier(),
+        sector.metadata.id
+      );
 
       if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         const abortedSector = this.abortPendingDownload(sectorIdentifier);
@@ -80,7 +83,6 @@ export class SectorDownloadScheduler {
       modelIdentifier: sector.modelIdentifier,
       metadata: sector.metadata,
       levelOfDetail: LevelOfDetail.Discarded,
-      group: undefined,
       instancedMeshes: undefined
     };
   }
@@ -174,8 +176,8 @@ export class SectorDownloadScheduler {
     });
   }
 
-  private getSectorIdentifier(modelIdentifer: string, sectorId: number): string {
-    return `${sectorId}-${modelIdentifer}`;
+  private getSectorIdentifier(modelSourceIdentifer: string, sectorId: number): string {
+    return `${sectorId}-${modelSourceIdentifer}`;
   }
 
   private createAbortSignal() {
