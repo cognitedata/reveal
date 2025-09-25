@@ -63,6 +63,7 @@ const getTypedModels = async (
   const successfullyLoadedResources = resourceLoadResults.filter(
     (p): p is TypedReveal3DModel => p.type === 'cad' || p.type === 'pointcloud'
   );
+  console.log('Returning typed models: ', successfullyLoadedResources);
 
   return successfullyLoadedResources;
 };

@@ -62,18 +62,22 @@ export class RevealModelsUtils {
 
   public static async addCadModel(
     renderTarget: RevealRenderTarget,
-    options: AddModelOptions
+    options: AddModelOptions,
+    defaultVisible?: boolean
   ): Promise<CogniteCadModel> {
     const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
     const model = await renderTarget.viewer.addCadModel(options);
+
+    console.log('Cad had default visible', defaultVisible);
+    model.visible = defaultVisible ?? true;
+
     const domainObject = new CadDomainObject(model);
     root.addChildInteractive(domainObject);
-    if (model.visible) {
-      domainObject.setVisibleInteractive(true);
-    }
+
+    domainObject.setVisibleInteractive(model.visible);
 
     try {
       domainObject.name = await RevealModelsUtils.getName(renderTarget.root.sdk, model);
@@ -85,18 +89,19 @@ export class RevealModelsUtils {
 
   public static async addPointCloud(
     renderTarget: RevealRenderTarget,
-    options: AddModelOptions<DataSourceType>
+    options: AddModelOptions<DataSourceType>,
+    defaultVisible?: boolean
   ): Promise<PointCloud> {
     const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
     const model = await renderTarget.viewer.addPointCloudModel(options);
+    console.log('Point cloud had default visible', defaultVisible);
+    model.visible = defaultVisible ?? true;
     const domainObject = new PointCloudDomainObject(model);
     root.addChildInteractive(domainObject);
-    if (model.visible) {
-      domainObject.setVisibleInteractive(true);
-    }
+    domainObject.setVisibleInteractive(model.visible);
 
     try {
       domainObject.name = await RevealModelsUtils.getName(renderTarget.root.sdk, model);
@@ -108,40 +113,40 @@ export class RevealModelsUtils {
 
   public static async addImage360Collection(
     renderTarget: RevealRenderTarget,
-    options: AddImage360CollectionOptions
+    options: AddImage360CollectionOptions,
+    defaultVisible?: boolean
   ): Promise<Image360Collection<DataSourceType>> {
     const root = renderTarget.root;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
 
-    if (options.source === 'events') {
-      return await renderTarget.viewer
-        .add360ImageSet('events', { site_id: options.siteId }, { preMultipliedRotation: false })
-        .then((model) => {
-          const domainObject = new Image360CollectionDomainObject(model);
-          root.addChildInteractive(domainObject);
-          if (model.getIconsVisibility()) {
-            domainObject.setVisibleInteractive(true);
-          }
-          return model;
-        });
-    } else {
-      return await renderTarget.viewer
-        .add360ImageSet('datamodels', {
+    const model = await (async () => {
+      if (options.source === 'events') {
+        return await renderTarget.viewer.add360ImageSet(
+          'events',
+          { site_id: options.siteId },
+          { preMultipliedRotation: false }
+        );
+      } else {
+        return await renderTarget.viewer.add360ImageSet('datamodels', {
           source: options.source,
           image360CollectionExternalId: options.externalId,
           space: options.space
-        })
-        .then((model) => {
-          const domainObject = new Image360CollectionDomainObject(model);
-          root.addChildInteractive(domainObject);
-          if (model.getIconsVisibility()) {
-            domainObject.setVisibleInteractive(true);
-          }
-          return model;
         });
-    }
+      }
+    })();
+
+    console.log('360 image collection had default visible', defaultVisible);
+
+    model.setIconsVisibility(defaultVisible ?? true);
+    const domainObject = new Image360CollectionDomainObject(model);
+    root.addChildInteractive(domainObject);
+    domainObject.setVisibleInteractive(model.getIconsVisibility());
+
+    console.log('360 domain object visibility: ', domainObject.isVisible(renderTarget));
+
+    return model;
   }
 
   public static remove(renderTarget: RevealRenderTarget, model: RevealModel): void {
