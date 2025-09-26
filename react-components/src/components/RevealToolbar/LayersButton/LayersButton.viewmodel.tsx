@@ -24,7 +24,6 @@ type UseLayersButtonViewModelResult = {
 
 export function useLayersButtonViewModel(
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
   externalLayersState: LayersUrlStateParam | undefined
 ): UseLayersButtonViewModelResult {
   const {
@@ -40,7 +39,6 @@ export function useLayersButtonViewModel(
 
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
-    defaultLayerConfiguration,
     viewer,
     models,
     use3DModelName

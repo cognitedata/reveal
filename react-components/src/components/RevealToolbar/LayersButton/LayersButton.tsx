@@ -15,14 +15,12 @@ export type LayersButtonProps = {
 
 export const LayersButton = ({
   layersState: externalLayersState,
-  setLayersState: setExternalLayersState,
-  defaultLayerConfiguration
+  setLayersState: setExternalLayersState
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
 
   const { modelLayerHandlers, updateCallback, ModelLayerSelection } = useLayersButtonViewModel(
     setExternalLayersState,
-    defaultLayerConfiguration,
     externalLayersState
   );
 
