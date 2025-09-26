@@ -11,12 +11,17 @@ import { GltfSectorLoader } from './GltfSectorLoader';
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorLoader: GltfSectorLoader;
   private readonly _gltfCache: MemoryRequestCache<string, ConsumedSector>;
-  private readonly _sectorReferenceCounts: Map<string, number> = new Map();
 
   constructor(sectorFileProvider: BinaryFileProvider) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider);
 
-    this._gltfCache = new MemoryRequestCache(200, 50);
+    // Create cache with disposal callback that properly disposes GPU resources
+    this._gltfCache = new MemoryRequestCache(200, 50, (sector: ConsumedSector) => {
+      sector.parsedMeshGeometries?.forEach(mesh => {
+        mesh.geometryBuffer.dispose();
+        mesh.texture?.dispose();
+      });
+    });
   }
 
   private async getEmptySectorWithLod(
@@ -57,9 +62,8 @@ export class GltfSectorRepository implements SectorRepository {
     if (this._gltfCache.has(cacheKey)) {
       const cachedSector = this._gltfCache.get(cacheKey);
 
-      // Increment reference count for this model
-      const currentCount = this._sectorReferenceCounts.get(cacheKey) || 0;
-      this._sectorReferenceCounts.set(cacheKey, currentCount + 1);
+      // Add reference to prevent disposal while this model uses it
+      this._gltfCache.addReference(cacheKey);
 
       // Note: BufferGeometry is intentionally shared between models for memory efficiency
       return { ...cachedSector, modelIdentifier: sector.modelIdentifier };
@@ -75,8 +79,8 @@ export class GltfSectorRepository implements SectorRepository {
 
     this._gltfCache.forceInsert(cacheKey, consumedSector);
 
-    // Initialize reference count for this new sector
-    this._sectorReferenceCounts.set(cacheKey, 1);
+    // Add initial reference for this model
+    this._gltfCache.addReference(cacheKey);
 
     return consumedSector;
   }
@@ -87,34 +91,19 @@ export class GltfSectorRepository implements SectorRepository {
 
   clearCache(): void {
     this._gltfCache.clear();
-    this._sectorReferenceCounts.clear();
   }
 
   /**
    * Dereferences a sector when a model stops using it.
-   * Decrements reference count and disposes GPU resources when no models are using the sector.
+   * The cache handles reference counting and automatic disposal when count reaches zero.
    * @param modelIdentifier The model identifier that was using the sector
    * @param sectorId The sector ID to dereference
    */
   dereferenceSector(modelIdentifier: ModelIdentifier, sectorId: number): void {
     const cacheKey = modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
 
-    const currentCount = this._sectorReferenceCounts.get(cacheKey);
-    if (currentCount === undefined || currentCount <= 0) {
-      return; // Sector not referenced or already at zero
-    }
-
-    const newCount = currentCount - 1;
-    this._sectorReferenceCounts.set(cacheKey, newCount);
-
-    // If no more references and sector is still in cache, dispose GPU resources
-    if (newCount === 0 && this._gltfCache.has(cacheKey)) {
-      const cachedSector = this._gltfCache.get(cacheKey);
-      cachedSector.parsedMeshGeometries?.forEach(mesh => {
-        mesh.geometryBuffer.dispose();
-        mesh.texture?.dispose();
-      });
-    }
+    // Let the cache handle reference counting and disposal
+    this._gltfCache.removeReference(cacheKey);
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
