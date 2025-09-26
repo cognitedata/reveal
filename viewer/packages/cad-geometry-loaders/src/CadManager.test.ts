@@ -5,9 +5,9 @@ import { CadManager } from './CadManager';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelFactory } from '@reveal/cad-model';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import * as THREE from 'three';
 import { EMPTY } from 'rxjs';
 import { It, Mock, IMock } from 'moq.ts';
+import { PerspectiveCamera } from 'three';
 
 describe(CadManager.name, () => {
   let cadManager: CadManager;
@@ -55,6 +55,9 @@ describe(CadManager.name, () => {
   test('should initialize CadManager with proper dependencies', () => {
     expect(cadManager).toBeDefined();
     expect(cadManager).toBeInstanceOf(CadManager);
+    expect(cadManager.dispose).toBeDefined();
+    expect(cadManager.updateCamera).toBeDefined();
+    expect(cadManager.getLoadingStateObserver).toBeDefined();
   });
 
   test('should register materials changed listener on initialization', () => {
@@ -77,7 +80,7 @@ describe(CadManager.name, () => {
 
   test('should handle camera update correctly', () => {
     // Create a proper PerspectiveCamera instance instead of a mock
-    const camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
+    const camera = new PerspectiveCamera(75, 1.0, 0.1, 1000);
     camera.position.set(0, 0, 5);
     camera.updateMatrixWorld();
 
@@ -92,19 +95,5 @@ describe(CadManager.name, () => {
 
   test('should access material manager correctly', () => {
     expect(cadManager.materialManager).toBe(materialManagerMock.object());
-  });
-
-  test('should create CadManager with all required components', () => {
-    // Test that CadManager can be created with valid components
-    const validCadManager = new CadManager(
-      materialManagerMock.object(),
-      cadModelFactoryMock.object(),
-      updateHandlerMock.object()
-    );
-
-    expect(validCadManager).toBeDefined();
-    expect(validCadManager.dispose).toBeDefined();
-    expect(validCadManager.updateCamera).toBeDefined();
-    expect(validCadManager.getLoadingStateObserver).toBeDefined();
   });
 });

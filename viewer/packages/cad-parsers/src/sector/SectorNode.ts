@@ -3,9 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { AutoDisposeGroup } from '@reveal/utilities';
 import { LevelOfDetail } from '../cad/LevelOfDetail';
-import { Log } from '@reveal/logger';
 
 export class SectorNode extends THREE.Group {
   public readonly sectorPath: string;
@@ -13,7 +11,7 @@ export class SectorNode extends THREE.Group {
   public readonly bounds: THREE.Box3;
   public readonly depth: number;
 
-  private _group?: AutoDisposeGroup;
+  private _group?: THREE.Group;
   private _lod = LevelOfDetail.Discarded;
   private _updatedTimestamp: number = Date.now();
 
@@ -38,16 +36,8 @@ export class SectorNode extends THREE.Group {
     return this._updatedTimestamp;
   }
 
-  updateGeometry(geometryGroup: AutoDisposeGroup | undefined, levelOfDetail: LevelOfDetail): void {
+  updateGeometry(geometryGroup: THREE.Group | undefined, levelOfDetail: LevelOfDetail): void {
     this.resetGeometry();
-
-    if (geometryGroup) {
-      if (geometryGroup.isDisposed()) {
-        Log.warn('Tried to add an already disposed geometry group to sector:', this.sectorId);
-      } else {
-        geometryGroup.reference();
-      }
-    }
 
     this._group = geometryGroup;
     this._lod = levelOfDetail;
@@ -56,23 +46,11 @@ export class SectorNode extends THREE.Group {
     this.updateMatrixWorld(true);
   }
 
-  dereference(): void {
-    if (this._group !== undefined && !this._group.isDisposed()) {
-      this._group.dereference();
-    }
-  }
-
   resetGeometry(): void {
     if (this._group !== undefined) {
-      if (!this._group.isDisposed()) {
-        this._group.dereference();
-      } else {
-        Log.warn('Tried to dereference an already disposed geometryGroup in sector:', this.sectorId);
-      }
       this.remove(this._group);
+      this._group = undefined;
     }
-
-    this._group = undefined;
     this._lod = LevelOfDetail.Discarded;
     this._updatedTimestamp = Date.now();
   }

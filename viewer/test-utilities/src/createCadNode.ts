@@ -23,6 +23,8 @@ export function createCadNode(
     new Mock<SectorRepository>()
       .setup(p => p.clearCache)
       .returns(() => {})
+      .setup(p => p.dereferenceSector)
+      .returns(() => {})
       .object();
 
   return new CadNode(cadMetadata, materialManager, mockSectorRepository);

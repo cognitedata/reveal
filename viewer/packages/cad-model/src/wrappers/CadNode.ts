@@ -14,31 +14,20 @@ import {
   StyledTreeIndexSets
 } from '@reveal/rendering';
 
-import {
-  Group,
-  Object3D,
-  Plane,
-  Matrix4,
-  Object3DEventMap,
-  BufferGeometry,
-  Mesh,
-  RawShaderMaterial,
-  Sphere,
-  BufferAttribute,
-  Box3
-} from 'three';
-import * as THREE from 'three';
+import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { AutoDisposeGroup, incrementOrInsertIndex } from '@reveal/utilities';
-import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import { CadMeshManager } from './CadMeshManager';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorRepository: SectorRepository;
+  private readonly _modelIdentifier: ModelIdentifier;
 
   // savokr 01-04-22: These are made non-readonly because they need to be manually deleted when model is removed.
   // Can be made back to readonly if all references of the CadNode are removed from memory when model is removed
@@ -57,8 +46,8 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   private _needsRedraw: boolean = false;
 
-  // Track mesh groups by sector ID for proper cleanup when sectors are unloaded
-  private readonly _sectorMeshGroups: Map<number, AutoDisposeGroup> = new Map();
+  // Manages mesh for sectors
+  private readonly _meshManager: CadMeshManager;
 
   public readonly treeIndexToSectorsMap;
 
@@ -69,6 +58,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this.name = 'Sector model';
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
+    this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
     const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier.revealInternalId);
     const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier.revealInternalId);
@@ -100,6 +90,13 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     const { scene } = model;
 
     this._sectorScene = scene;
+
+    // Initialize mesh manager
+    this._meshManager = new CadMeshManager(
+      materialManager,
+      model.modelIdentifier.revealInternalId,
+      this.treeIndexToSectorsMap
+    );
 
     // Prepare renderables
     this.add(this._rootSector);
@@ -229,112 +226,27 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   public removeSectorMeshGroup(sectorId: number): void {
-    const meshGroup = this._sectorMeshGroups.get(sectorId);
-    if (meshGroup) {
-      // Remove from parent if it's still attached
-      if (meshGroup.parent) {
-        meshGroup.parent.remove(meshGroup);
-      }
-
-      // Manually dispose all resources in the group (geometries, materials, textures)
-      for (const child of meshGroup.children) {
-        if (child instanceof THREE.Mesh && child.geometry !== undefined) {
-          child.geometry.dispose();
-        }
-      }
-
-      // Dispose textures
-      meshGroup.textures.forEach(texture => texture.dispose());
-
-      // Clear the group
-      meshGroup.clear();
-
-      // Remove from our tracking map
-      this._sectorMeshGroups.delete(sectorId);
-    }
+    this._meshManager.removeSectorMeshGroup(sectorId);
   }
 
-  public createMeshesFromParsedGeometries(
-    parsedMeshGeometries: ParsedMeshGeometry[],
-    sectorId: number
-  ): AutoDisposeGroup {
-    // Remove any existing mesh group for this sector first
-    this.removeSectorMeshGroup(sectorId);
-
-    const group = new AutoDisposeGroup();
-    const materials = this._materialManager.getModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
-
-    parsedMeshGeometries.forEach(geometryData => {
-      if (geometryData.type === RevealGeometryCollectionType.TriangleMesh) {
-        // Create basic triangle mesh
-        this.createMeshFromGeometry(
-          group,
-          geometryData.geometryBuffer,
-          materials.triangleMesh,
-          geometryData.wholeSectorBoundingBox
-        );
-      } else if (geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh && geometryData.texture) {
-        // Create textured triangle mesh with model-specific material
-        const texturedMaterial = this._materialManager.addTexturedMeshMaterial(
-          this._cadModelMetadata.modelIdentifier.revealInternalId,
-          sectorId,
-          geometryData.texture
-        );
-
-        this.createMeshFromGeometry(
-          group,
-          geometryData.geometryBuffer,
-          texturedMaterial,
-          geometryData.wholeSectorBoundingBox
-        );
-
-        // Add texture to group for proper disposal
-        group.addTexture(geometryData.texture);
-      }
-    });
-
-    // Track this mesh group by sector ID for cleanup when sector is unloaded
-    this._sectorMeshGroups.set(sectorId, group);
-
-    return group;
+  /**
+   * Removes sector mesh group and properly dereferences it in the sector repository.
+   * This ensures proper reference counting for shared geometry between duplicate models.
+   * @param sectorId The sector ID to remove and dereference
+   */
+  public removeSectorMeshGroupWithDereferencing(sectorId: number): void {
+    this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
   }
 
-  private createMeshFromGeometry(
-    group: AutoDisposeGroup,
-    geometry: BufferGeometry,
-    material: RawShaderMaterial,
-    geometryBoundingBox: Box3
-  ): void {
-    // Assigns an approximate bounding-sphere to the geometry to avoid recalculating this on first render
-    geometry.boundingSphere = geometryBoundingBox.getBoundingSphere(new Sphere());
+  public createMeshesFromParsedGeometries(parsedMeshGeometries: ParsedMeshGeometry[], sectorId: number): Group {
+    const managedSectorIds = this._meshManager.getManagedSectorIds();
 
-    const mesh = new Mesh(geometry, material);
-    group.add(mesh);
-    mesh.frustumCulled = false; // Note: Frustum culling does not play well with node-transforms
-
-    mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
-
-    if (material.uniforms.inverseModelMatrix === undefined) return;
-
-    mesh.onBeforeRender = () => {
-      const inverseModelMatrix: Matrix4 = material.uniforms.inverseModelMatrix.value;
-      inverseModelMatrix.copy(mesh.matrixWorld).invert();
-    };
-  }
-
-  private createTreeIndexSet(geometry: BufferGeometry): Map<number, number> {
-    const treeIndexAttribute = geometry.attributes['treeIndex'];
-    if (!treeIndexAttribute) {
-      return new Map();
+    // Check if we already have meshes for this sector - if so, we need to dereference the old sector first
+    if (managedSectorIds.includes(sectorId)) {
+      // This is a sector update/replacement - dereference the old one first
+      this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
     }
-
-    const treeIndexSet = new Map<number, number>();
-
-    for (let i = 0; i < treeIndexAttribute.count; i++) {
-      incrementOrInsertIndex(treeIndexSet, (treeIndexAttribute as BufferAttribute).getX(i));
-    }
-
-    return treeIndexSet;
+    return this._meshManager.createMeshesFromParsedGeometries(parsedMeshGeometries, sectorId);
   }
 
   public setCacheSize(sectorCount: number): void {
@@ -346,29 +258,16 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this.materialManager.off('materialsChanged', this._setModelRenderLayers);
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
 
-    // Dispose all tracked mesh groups and their resources
-    this._sectorMeshGroups.forEach(meshGroup => {
-      if (meshGroup.parent) {
-        meshGroup.parent.remove(meshGroup);
-      }
-
-      // Manually dispose all resources
-      for (const child of meshGroup.children) {
-        if (child instanceof THREE.Mesh && child.geometry !== undefined) {
-          child.geometry.dispose();
-        }
-      }
-
-      // Dispose textures
-      meshGroup.textures.forEach(texture => texture.dispose());
-
-      // Clear the group
-      meshGroup.clear();
-    });
-    this._sectorMeshGroups.clear();
-
     this._geometryBatchingManager?.dispose();
-    this._rootSector?.dereferenceAllNodes();
+
+    // Remove all mesh groups from the scene and dereference sectors in cache
+    // but don't dispose shared geometries
+    const managedSectorIds = this._meshManager.getManagedSectorIds();
+    for (const sectorId of managedSectorIds) {
+      this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
+    }
+
+    // Clear the scene hierarchy (dereferencing is already handled above)
     this._rootSector?.clear();
     this.clear();
     this._isDisposed = true;

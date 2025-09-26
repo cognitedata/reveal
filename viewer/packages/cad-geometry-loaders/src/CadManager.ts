@@ -15,7 +15,6 @@ import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { AutoDisposeGroup } from '@reveal/utilities';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -86,13 +85,8 @@ export class CadManager {
       } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
         // Also clean up any mesh groups created from parsed geometries
-        cadModel.removeSectorMeshGroup(sector.metadata.id);
-      }
-
-      // Create meshes from parsedMeshGeometries data
-      let meshGroup: AutoDisposeGroup | undefined = undefined;
-      if (sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0) {
-        meshGroup = cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id);
+        cadModel.removeSectorMeshGroupWithDereferencing(sector.metadata.id);
+        return;
       }
 
       const sectorNodeParent = cadModel.rootSector;
@@ -101,14 +95,21 @@ export class CadManager {
         throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
       }
 
-      // Use meshGroup from parsed geometries, or fallback to sector.group for backward compatibility
+      // Create meshes from parsedMeshGeometries data
+      const meshGroup =
+        sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0
+          ? cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id)
+          : undefined;
+
+      // Update the sector node with the mesh group
       if (meshGroup) {
         sectorNode.add(meshGroup);
       }
       sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
 
+      // Apply render layers to the sector node
       if (meshGroup) {
-        cadModel.setModelRenderLayers(meshGroup);
+        cadModel.setModelRenderLayers(sectorNode);
       }
 
       this.markNeedsRedraw();

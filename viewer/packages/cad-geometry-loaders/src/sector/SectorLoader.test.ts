@@ -6,6 +6,7 @@ import * as THREE from 'three';
 
 import { asyncIteratorToArray, createCadModelMetadata, generateV9SectorTree } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 import { SectorCuller } from './culling/SectorCuller';
 import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
@@ -168,6 +169,7 @@ class StubRepository implements SectorRepository {
   }
   clearCache(): void {}
   setCacheSize(_sectorCount: number): void {}
+  dereferenceSector(_modelIdentifier: ModelIdentifier, _sectorId: number): void {}
 }
 
 class StubSectorCuller implements SectorCuller {

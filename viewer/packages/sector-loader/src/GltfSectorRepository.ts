@@ -14,7 +14,14 @@ export class GltfSectorRepository implements SectorRepository {
 
   constructor(sectorFileProvider: BinaryFileProvider) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider);
-    this._gltfCache = new MemoryRequestCache(200, () => {}, 50);
+
+    // Create cache with disposal callback that properly disposes GPU resources
+    this._gltfCache = new MemoryRequestCache(200, 50, (sector: ConsumedSector) => {
+      sector.parsedMeshGeometries?.forEach(mesh => {
+        mesh.geometryBuffer.dispose();
+        mesh.texture?.dispose();
+      });
+    });
   }
 
   private async getEmptySectorWithLod(
@@ -51,9 +58,14 @@ export class GltfSectorRepository implements SectorRepository {
     }
 
     const cacheKey = this.wantedSectorCacheKey(sector);
+
     if (this._gltfCache.has(cacheKey)) {
       const cachedSector = this._gltfCache.get(cacheKey);
 
+      // Add reference to prevent disposal while this model uses it
+      this._gltfCache.addReference(cacheKey);
+
+      // Note: BufferGeometry is intentionally shared between models for memory efficiency
       return { ...cachedSector, modelIdentifier: sector.modelIdentifier };
     }
 
@@ -67,6 +79,9 @@ export class GltfSectorRepository implements SectorRepository {
 
     this._gltfCache.forceInsert(cacheKey, consumedSector);
 
+    // Add initial reference for this model
+    this._gltfCache.addReference(cacheKey);
+
     return consumedSector;
   }
 
@@ -76,6 +91,19 @@ export class GltfSectorRepository implements SectorRepository {
 
   clearCache(): void {
     this._gltfCache.clear();
+  }
+
+  /**
+   * Dereferences a sector when a model stops using it.
+   * The cache handles reference counting and automatic disposal when count reaches zero.
+   * @param modelIdentifier The model identifier that was using the sector
+   * @param sectorId The sector ID to dereference
+   */
+  dereferenceSector(modelIdentifier: ModelIdentifier, sectorId: number): void {
+    const cacheKey = modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
+
+    // Let the cache handle reference counting and disposal
+    this._gltfCache.removeReference(cacheKey);
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {

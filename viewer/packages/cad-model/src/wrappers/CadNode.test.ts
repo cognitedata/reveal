@@ -2,71 +2,15 @@
  * Copyright 2025 Cognite AS
  */
 import { CadNode } from './CadNode';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane, Group } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
-import { AutoDisposeGroup } from '@reveal/utilities';
 
 import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
 import { SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
 import { createMockedConsumedSector, createWantedSectorMock } from '@reveal/sector-loader/tests/mockSectorUtils';
-
-const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
-  const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
-  if (treeIndices) {
-    geometry.setAttribute('treeIndex', new BufferAttribute(new Float32Array(treeIndices), 1));
-  }
-  return geometry;
-};
-
-const createParsedGeometry = (
-  type: RevealGeometryCollectionType,
-  geometry: BufferGeometry,
-  texture?: CanvasTexture
-): ParsedMeshGeometry => ({
-  type,
-  geometryBuffer: geometry,
-  wholeSectorBoundingBox: new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1)),
-  ...(texture && { texture })
-});
-
-const createTexture = (size: number = 64) => {
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  return new CanvasTexture(canvas);
-};
-
-const expectMeshGroup = (result: AutoDisposeGroup, expectedChildCount: number) => {
-  expect(result).toBeDefined();
-  expect(result.children.length).toBe(expectedChildCount);
-  if (expectedChildCount > 0) {
-    result.children.forEach(child => {
-      expect(child.type).toBe('Mesh');
-    });
-  }
-};
-
-const createTestMeshGroup = (cadNode: CadNode, sectorId: number, vertices?: number[]) => {
-  const geometry = createBasicGeometry(vertices);
-  const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
-  return cadNode.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
-};
-
-const isMesh = (object: unknown): object is Mesh => {
-  return object instanceof Mesh;
-};
-
-const getMeshFromGroup = (group: AutoDisposeGroup, index: number): Mesh => {
-  const child = group.children[index];
-  if (isMesh(child)) {
-    return child;
-  }
-  throw new Error(`Expected Mesh at index ${index}, got ${child?.type || 'undefined'}`);
-};
 
 describe(CadNode.name, () => {
   test('should return needsRedraw state correctly', () => {
@@ -200,7 +144,7 @@ describe(CadNode.name, () => {
     expectMeshGroup(meshGroup, 1);
 
     cadNode.removeSectorMeshGroup(sectorId);
-    expect(meshGroup.children.length).toBe(0); // AutoDisposeGroup clears children on dispose
+    expect(meshGroup.children.length).toBe(0);
   });
 
   test('should handle multiple sector mesh groups independently', () => {
@@ -363,3 +307,54 @@ describe(CadNode.name, () => {
     expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), undefined);
   });
 });
+
+const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
+  if (treeIndices) {
+    geometry.setAttribute('treeIndex', new BufferAttribute(new Float32Array(treeIndices), 1));
+  }
+  return geometry;
+};
+
+const createParsedGeometry = (
+  type: RevealGeometryCollectionType,
+  geometry: BufferGeometry,
+  texture?: CanvasTexture
+): ParsedMeshGeometry => ({
+  type,
+  geometryBuffer: geometry,
+  wholeSectorBoundingBox: new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1)),
+  ...(texture && { texture })
+});
+
+const createTexture = (size: number = 64) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  return new CanvasTexture(canvas);
+};
+
+const expectMeshGroup = (result: Group, expectedChildCount: number) => {
+  expect(result).toBeDefined();
+  expect(result.children.length).toBe(expectedChildCount);
+  if (expectedChildCount > 0) {
+    result.children.forEach(child => {
+      expect(child.type).toBe('Mesh');
+    });
+  }
+};
+
+const createTestMeshGroup = (cadNode: CadNode, sectorId: number, vertices?: number[]) => {
+  const geometry = createBasicGeometry(vertices);
+  const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
+  return cadNode.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
+};
+
+const getMeshFromGroup = (group: Group, index: number): Mesh => {
+  const child = group.children[index];
+  if (child instanceof Mesh) {
+    return child;
+  }
+  throw new Error(`Expected Mesh at index ${index}, got ${child?.type || 'undefined'}`);
+};
