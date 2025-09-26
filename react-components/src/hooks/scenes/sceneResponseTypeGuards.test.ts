@@ -3,7 +3,6 @@ import { describe, it, expect } from 'vitest';
 import {
   type Transformation3d,
   type Cdf3dImage360CollectionProperties,
-  type Cdf3dRevisionProperties,
   type SceneConfigurationProperties
 } from './types';
 
