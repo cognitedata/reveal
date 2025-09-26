@@ -5,7 +5,7 @@ import { useTranslation } from '../../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
 import { useLayersButtonViewModel } from './LayersButton.viewmodel';
-import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './types';
+import { type LayersUrlStateParam } from './types';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
