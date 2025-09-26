@@ -28,6 +28,7 @@ export type AddImage360CollectionOptions =
 export type CommonImage360CollectionAddOptions = {
   transform?: Matrix4;
   iconCullingOptions?: { radius?: number; iconCountLimit?: number };
+  defaultVisible?: boolean;
 };
 
 export type AddImage360CollectionEventsOptions = {
@@ -76,6 +77,7 @@ export type AddPointCloudResourceOptions<T extends DataSourceType = DataSourceTy
   AddModelOptions<T> & {
     transform?: Matrix4;
     styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+    defaultVisible?: boolean;
   };
 
 export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
@@ -85,6 +87,7 @@ export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
     mapped?: NodeAppearance;
     nodeGroups?: TreeIndexStylingGroup[];
   };
+  defaultVisible?: boolean;
 };
 
 export type ClassicAdd3DModelOptions =

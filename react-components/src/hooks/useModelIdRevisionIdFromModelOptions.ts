@@ -1,8 +1,4 @@
-import {
-  type ClassicDataSourceType,
-  type AddModelOptions,
-  type DataSourceType
-} from '@cognite/reveal';
+import { type ClassicDataSourceType, type AddModelOptions } from '@cognite/reveal';
 
 import { useContext, useMemo } from 'react';
 import { type FdmSDK } from '../data-providers/FdmSDK';
@@ -14,9 +10,10 @@ import {
   isDM3DModelIdentifier
 } from '../components/Reveal3DResources/typeGuards';
 import { ModelIdRevisionIdFromModelOptionsContext } from './useModelIdRevisionIdFromModelOptions.context';
+import { type AddCadResourceOptions, type AddPointCloudResourceOptions } from '..';
 
 export const useModelIdRevisionIdFromModelOptions = (
-  addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
+  addModelOptionsArray: Array<AddCadResourceOptions | AddPointCloudResourceOptions> | undefined
 ): Array<AddModelOptions<ClassicDataSourceType>> => {
   const { getModelIdAndRevisionIdFromExternalId, useFdmSdk } = useContext(
     ModelIdRevisionIdFromModelOptionsContext
@@ -49,7 +46,7 @@ export const useModelIdRevisionIdFromModelOptions = (
 };
 
 async function fetchClassicModelOption(
-  addModelOptions: AddModelOptions<DataSourceType>,
+  addModelOptions: AddCadResourceOptions | AddPointCloudResourceOptions,
   fdmSdk: FdmSDK,
   getModelIdAndRevisionIdFromExternalId: (
     revisionExternalId: string,

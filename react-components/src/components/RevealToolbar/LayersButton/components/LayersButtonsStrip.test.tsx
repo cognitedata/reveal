@@ -26,8 +26,7 @@ describe(LayersButtonStrip.name, () => {
       pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
       image360Layers: [{ siteId: 'site-id', applied: true }]
     },
-    setLayersState: vi.fn(),
-    defaultLayerConfiguration: undefined
+    setLayersState: vi.fn()
   } as const satisfies LayersButtonProps;
 
   const defaultDependencies = getMocksByDefaultDependencies(defaultLayersButtonDependencies);

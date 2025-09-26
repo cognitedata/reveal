@@ -80,11 +80,13 @@ export type GroundPlaneProperties = {
 
 export type Cdf3dRevisionProperties = Transformation3d & {
   revisionId: number;
+  defaultVisible?: boolean;
 };
 
 export type Cdf3dImage360CollectionProperties = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
+  defaultVisible?: boolean;
 };
 
 export const SCENE_SOURCE = {
@@ -163,18 +165,14 @@ export const sceneSourceWithProperties = [
 export const revisionSourceWithProperties = [
   {
     source: REVISION_SOURCE,
-    properties: ['revisionId', ...transformationSourceWithProperties[0].properties]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
 export const image360CollectionSourceWithProperties = [
   {
     source: IMAGE_360_COLLECTION_SOURCE,
-    properties: [
-      'image360CollectionExternalId',
-      'image360CollectionSpace',
-      ...transformationSourceWithProperties[0].properties
-    ]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 

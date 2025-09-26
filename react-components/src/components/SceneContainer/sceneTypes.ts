@@ -47,11 +47,13 @@ export type ModelIdentifier = ClassicModelIdentifier | DMModelIdenfitier;
 
 export type CadOrPointCloudModel = Transformation3d & {
   modelIdentifier: ModelIdentifier;
+  defaultVisible?: boolean;
 };
 
 export type Image360Collection = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
+  defaultVisible?: boolean;
 };
 
 export type Skybox = {

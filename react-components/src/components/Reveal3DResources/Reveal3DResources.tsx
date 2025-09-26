@@ -96,6 +96,7 @@ export const Reveal3DResources = ({
             addModelOptions={model}
             styling={cadStyling}
             transform={model.transform}
+            defaultVisible={model.defaultVisible}
             onLoad={onResourceIsLoaded}
             onLoadError={onResourceLoadError}
           />
@@ -118,6 +119,7 @@ export const Reveal3DResources = ({
             key={key}
             addModelOptions={model}
             styling={pcStyling}
+            defaultVisible={model.defaultVisible}
             transform={model.transform}
             onLoad={onResourceIsLoaded}
             onLoadError={onResourceLoadError}
@@ -142,6 +144,7 @@ export const Reveal3DResources = ({
               key={key}
               addImage360CollectionOptions={addModelOption}
               styling={image360Styling}
+              defaultVisible={addModelOption.defaultVisible}
               onLoad={onResourceIsLoaded}
               onLoadError={onResourceLoadError}
             />

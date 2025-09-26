@@ -1,10 +1,6 @@
 import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
-import {
-  type ModelLayerHandlers,
-  type DefaultLayersConfiguration,
-  type LayersUrlStateParam
-} from './types';
+import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
 import { type ModelHandler } from './ModelHandler';
 import { use3DModelName } from '../../../query';
 
@@ -24,7 +20,6 @@ type UseLayersButtonViewModelResult = {
 
 export function useLayersButtonViewModel(
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
   externalLayersState: LayersUrlStateParam | undefined
 ): UseLayersButtonViewModelResult {
   const {
@@ -40,7 +35,6 @@ export function useLayersButtonViewModel(
 
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
-    defaultLayerConfiguration,
     viewer,
     models,
     use3DModelName

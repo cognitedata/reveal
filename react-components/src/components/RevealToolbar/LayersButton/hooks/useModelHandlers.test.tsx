@@ -30,7 +30,7 @@ describe(useModelHandlers.name, () => {
     viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
 
     const { result } = renderHook(
-      () => useModelHandlers(undefined, undefined, viewerMock, mockModels, use3DModelNameMock),
+      () => useModelHandlers(undefined, viewerMock, mockModels, use3DModelNameMock),
       { wrapper }
     );
 
@@ -69,8 +69,7 @@ describe(useModelHandlers.name, () => {
     const setExternalState = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
 
     const { result } = renderHook(
-      () =>
-        useModelHandlers(setExternalState, undefined, viewerMock, mockModels, use3DModelNameMock),
+      () => useModelHandlers(setExternalState, viewerMock, mockModels, use3DModelNameMock),
       { wrapper }
     );
 

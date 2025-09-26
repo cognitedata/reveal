@@ -19,11 +19,7 @@ import {
   Image360CollectionHandler,
   PointCloudModelHandler
 } from '../ModelHandler';
-import {
-  type DefaultLayersConfiguration,
-  type LayersUrlStateParam,
-  type ModelLayerHandlers
-} from '../types';
+import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 import { type UseQueryResult } from '@tanstack/react-query';
 
 export type UpdateModelHandlersCallback = (
@@ -33,7 +29,6 @@ export type UpdateModelHandlersCallback = (
 
 export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  defaultLayersConfig: DefaultLayersConfiguration | undefined,
   viewer: Cognite3DViewer<DataSourceType>,
   models: Array<CogniteModel<DataSourceType>>,
   use3DModelName: (modelIds: number[]) => UseQueryResult<Array<string | undefined>, unknown>
@@ -50,7 +45,6 @@ export const useModelHandlers = (
   );
   useEffect(() => {
     const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
-    setDefaultConfigOnNewHandlers(newHandlers, modelHandlers, defaultLayersConfig);
     setModelHandlers(newHandlers);
   }, [models, modelNames.data, image360Collections, viewer]);
 
@@ -136,34 +130,4 @@ function createExternalStateFromLayers(modelHandlers: ModelLayerHandlers): Layer
       index: handlerIndex
     }))
   };
-}
-
-function setDefaultConfigOnNewHandlers(
-  newHandlers: ModelLayerHandlers,
-  modelHandlers: ModelLayerHandlers,
-  defaultLayersConfig: DefaultLayersConfiguration | undefined
-): void {
-  const containsCadModel = newHandlers.cadHandlers.length > 0;
-  const containsPointCloudModel = newHandlers.pointCloudHandlers.length > 0;
-  newHandlers.cadHandlers.forEach((newHandler) => {
-    if (!modelHandlers.cadHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
-      newHandler.setVisibility(defaultLayersConfig?.cad ?? true);
-    }
-  });
-
-  newHandlers.pointCloudHandlers.forEach((newHandler) => {
-    if (!modelHandlers.pointCloudHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
-      newHandler.setVisibility(containsCadModel ? (defaultLayersConfig?.pointcloud ?? true) : true);
-    }
-  });
-
-  newHandlers.image360Handlers.forEach((newHandler) => {
-    if (!modelHandlers.image360Handlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
-      if (!containsCadModel && !containsPointCloudModel) {
-        newHandler.setVisibility(true);
-      } else {
-        newHandler.setVisibility(defaultLayersConfig?.image360 ?? true);
-      }
-    }
-  });
 }

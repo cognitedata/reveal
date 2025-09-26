@@ -16,12 +16,6 @@ export type LayersUrlStateParam = {
   pointCloudLayers?: PointCloudLayersUrlStateParam[];
 };
 
-export type DefaultLayersConfiguration = {
-  cad: boolean;
-  pointcloud: boolean;
-  image360: boolean;
-};
-
 export type ModelLayerHandlers = {
   cadHandlers: CadModelHandler[];
   pointCloudHandlers: PointCloudModelHandler[];

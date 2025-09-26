@@ -9,8 +9,7 @@ import { use3DModelName } from '../../../../query/use3DModelName';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
-  setLayersState: setExternalLayersState,
-  defaultLayerConfiguration
+  setLayersState: setExternalLayersState
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
 
@@ -22,7 +21,6 @@ export const LayersButtonStrip = ({
 
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
-    defaultLayerConfiguration,
     viewer,
     models,
     use3DModelName
