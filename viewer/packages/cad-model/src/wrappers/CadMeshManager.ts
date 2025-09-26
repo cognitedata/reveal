@@ -5,23 +5,23 @@
 import { CadMaterialManager } from '@reveal/rendering';
 import { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { AutoDisposeGroup, incrementOrInsertIndex } from '@reveal/utilities';
+import { incrementOrInsertIndex } from '@reveal/utilities';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import { SectorRepository } from '@reveal/sector-loader';
 import { ModelIdentifier } from '@reveal/data-providers';
 
-import { BufferGeometry, Mesh, RawShaderMaterial, Sphere, BufferAttribute, Box3, Matrix4 } from 'three';
+import { BufferGeometry, RawShaderMaterial, Sphere, BufferAttribute, Box3, Matrix4, Mesh, Group } from 'three';
 
 /**
- * Manages mesh groups for CAD sectors, including creation and disposal.
- * This class handles mesh creation from parsed geometries and proper cleanup of resources.
+ * Manages mesh data for CAD sectors.
+ * This class prepares mesh data for  object creation.
  */
 export class CadMeshManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _modelIdentifier: symbol;
   private readonly _treeIndexToSectorsMap: TreeIndexToSectorsMap;
 
-  private readonly _sectorMeshGroups: Map<number, AutoDisposeGroup> = new Map();
+  private readonly _sectorMeshGroups: Map<number, Group> = new Map();
 
   constructor(
     materialManager: CadMaterialManager,
@@ -37,14 +37,12 @@ export class CadMeshManager {
    * Creates meshes from parsed geometries for a given sector.
    * @param parsedMeshGeometries Array of parsed mesh geometries to create meshes from
    * @param sectorId The sector ID these meshes belong to
-   * @returns AutoDisposeGroup containing the created meshes
+   * @returns Group containing the created meshes
    */
-  public createMeshesFromParsedGeometries(
-    parsedMeshGeometries: ParsedMeshGeometry[],
-    sectorId: number
-  ): AutoDisposeGroup {
-    const group = new AutoDisposeGroup();
+  public createMeshesFromParsedGeometries(parsedMeshGeometries: ParsedMeshGeometry[], sectorId: number): Group {
     const materials = this._materialManager.getModelMaterials(this._modelIdentifier);
+    const group = new Group();
+    const allTreeIndices = new Set<number>();
 
     parsedMeshGeometries.forEach(geometryData => {
       if (geometryData.type === RevealGeometryCollectionType.TriangleMesh) {
@@ -54,6 +52,12 @@ export class CadMeshManager {
           materials.triangleMesh,
           geometryData.wholeSectorBoundingBox
         );
+
+        // Collect tree indices for mapping
+        const treeIndices = this.createTreeIndexSet(geometryData.geometryBuffer);
+        for (const treeIndex of treeIndices.keys()) {
+          allTreeIndices.add(treeIndex);
+        }
       } else if (geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh) {
         if (geometryData.texture) {
           const texturedMaterial = this._materialManager.addTexturedMeshMaterial(
@@ -69,8 +73,11 @@ export class CadMeshManager {
             geometryData.wholeSectorBoundingBox
           );
 
-          // Add texture to group for proper disposal
-          group.addTexture(geometryData.texture);
+          // Collect tree indices for mapping
+          const treeIndices = this.createTreeIndexSet(geometryData.geometryBuffer);
+          for (const treeIndex of treeIndices.keys()) {
+            allTreeIndices.add(treeIndex);
+          }
         } else {
           console.warn(
             `Missing texture for textured triangle mesh in sector ${sectorId} - mesh will be skipped. ` +
@@ -80,20 +87,20 @@ export class CadMeshManager {
       }
     });
 
-    // Reference the group since we're now tracking it
-    group.reference();
-
     // Track this mesh group by sector ID for cleanup when sector is unloaded
     this._sectorMeshGroups.set(sectorId, group);
 
-    // Update tree index to sector mapping for triangle mesh geometry
-    this.updateTreeIndexToSectorsMap(group, sectorId);
+    // Update tree index to sector mapping only if there's exactly one parsed geometry
+    // (matching original behavior from CadManager)
+    if (parsedMeshGeometries.length === 1) {
+      this.updateTreeIndexToSectorsMap(allTreeIndices, sectorId);
+    }
 
     return group;
   }
 
   /**
-   * Removes a mesh group for the given sector ID from the scene.
+   * Removes mesh group for the given sector ID.
    * Note: This does not dispose the underlying geometries as they may be shared with other models.
    * @param sectorId The sector ID whose mesh group should be removed
    */
@@ -115,7 +122,7 @@ export class CadMeshManager {
   }
 
   /**
-   * Removes a mesh group and dereferences the sector in the repository.
+   * Removes mesh group and dereferences the sector in the repository.
    * This should be called when a model stops using a sector to properly manage reference counting.
    * @param sectorId The sector ID whose mesh group should be removed
    * @param sectorRepository The sector repository to dereference from
@@ -140,8 +147,11 @@ export class CadMeshManager {
     return Array.from(this._sectorMeshGroups.keys());
   }
 
+  /**
+   * Creates a mesh from geometry, material, and bounding box.
+   */
   private createMeshFromGeometry(
-    group: AutoDisposeGroup,
+    group: Group,
     geometry: BufferGeometry,
     material: RawShaderMaterial,
     geometryBoundingBox: Box3
@@ -163,6 +173,26 @@ export class CadMeshManager {
     };
   }
 
+  /**
+   * Updates tree index to sectors mapping from a set of tree indices.
+   */
+  private updateTreeIndexToSectorsMap(allTreeIndices: Set<number>, sectorId: number): void {
+    // Skip if sector is already completed (matching original CadManager behavior)
+    if (this._treeIndexToSectorsMap.isCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh)) {
+      return;
+    }
+
+    // Update tree index mapping if we have indices
+    if (allTreeIndices.size > 0) {
+      for (const treeIndex of allTreeIndices) {
+        this._treeIndexToSectorsMap.set(treeIndex, sectorId);
+      }
+
+      // Mark the sector as completed for triangle mesh geometry
+      this._treeIndexToSectorsMap.markCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh);
+    }
+  }
+
   private createTreeIndexSet(geometry: BufferGeometry): Map<number, number> {
     const treeIndexAttribute = geometry.attributes['treeIndex'];
     if (!treeIndexAttribute) {
@@ -176,27 +206,5 @@ export class CadMeshManager {
     }
 
     return treeIndexSet;
-  }
-
-  private updateTreeIndexToSectorsMap(group: AutoDisposeGroup, sectorId: number): void {
-    if (group.children.length !== 1) {
-      return;
-    }
-
-    const treeIndices = group.children[0].userData?.treeIndices as Map<number, number> | undefined;
-    if (!treeIndices || treeIndices.size === 0) {
-      return;
-    }
-
-    // Skip if this sector is already completed for triangle mesh geometry
-    if (this._treeIndexToSectorsMap.isCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh)) {
-      return;
-    }
-
-    // Update mapping from tree indices to sector ids
-    for (const treeIndex of treeIndices.keys()) {
-      this._treeIndexToSectorsMap.set(treeIndex, sectorId);
-    }
-    this._treeIndexToSectorsMap.markCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh);
   }
 }

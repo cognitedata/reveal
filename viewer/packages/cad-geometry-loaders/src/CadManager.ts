@@ -15,7 +15,6 @@ import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { AutoDisposeGroup } from '@reveal/utilities';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -97,18 +96,20 @@ export class CadManager {
       }
 
       // Create meshes from parsedMeshGeometries data
-      const meshGroup: AutoDisposeGroup | undefined =
+      const meshGroup =
         sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0
           ? cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id)
           : undefined;
 
+      // Update the sector node with the mesh group
       if (meshGroup) {
         sectorNode.add(meshGroup);
       }
       sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
 
+      // Apply render layers to the sector node
       if (meshGroup) {
-        cadModel.setModelRenderLayers(meshGroup);
+        cadModel.setModelRenderLayers(sectorNode);
       }
 
       this.markNeedsRedraw();

@@ -2,10 +2,9 @@
  * Copyright 2025 Cognite AS
  */
 import { CadNode } from './CadNode';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane, Group } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
-import { AutoDisposeGroup } from '@reveal/utilities';
 
 import { jest } from '@jest/globals';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
@@ -336,7 +335,7 @@ const createTexture = (size: number = 64) => {
   return new CanvasTexture(canvas);
 };
 
-const expectMeshGroup = (result: AutoDisposeGroup, expectedChildCount: number) => {
+const expectMeshGroup = (result: Group, expectedChildCount: number) => {
   expect(result).toBeDefined();
   expect(result.children.length).toBe(expectedChildCount);
   if (expectedChildCount > 0) {
@@ -352,7 +351,7 @@ const createTestMeshGroup = (cadNode: CadNode, sectorId: number, vertices?: numb
   return cadNode.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
 };
 
-const getMeshFromGroup = (group: AutoDisposeGroup, index: number): Mesh => {
+const getMeshFromGroup = (group: Group, index: number): Mesh => {
   const child = group.children[index];
   if (child instanceof Mesh) {
     return child;

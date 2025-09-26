@@ -19,7 +19,6 @@ import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { AutoDisposeGroup } from '@reveal/utilities';
 import { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { CadMeshManager } from './CadMeshManager';
 import { ModelIdentifier } from '@reveal/data-providers';
@@ -231,7 +230,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   /**
-   * Removes a sector mesh group and properly dereferences it in the sector repository.
+   * Removes sector mesh group and properly dereferences it in the sector repository.
    * This ensures proper reference counting for shared geometry between duplicate models.
    * @param sectorId The sector ID to remove and dereference
    */
@@ -239,10 +238,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
   }
 
-  public createMeshesFromParsedGeometries(
-    parsedMeshGeometries: ParsedMeshGeometry[],
-    sectorId: number
-  ): AutoDisposeGroup {
+  public createMeshesFromParsedGeometries(parsedMeshGeometries: ParsedMeshGeometry[], sectorId: number): Group {
     const managedSectorIds = this._meshManager.getManagedSectorIds();
 
     // Check if we already have meshes for this sector - if so, we need to dereference the old sector first
@@ -271,7 +267,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
       this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
     }
 
-    this._rootSector?.dereferenceAllNodes();
+    // Clear the scene hierarchy (dereferencing is already handled above)
     this._rootSector?.clear();
     this.clear();
     this._isDisposed = true;

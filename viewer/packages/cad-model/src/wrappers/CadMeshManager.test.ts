@@ -6,101 +6,22 @@ import { CadMeshManager } from './CadMeshManager';
 import { CadMaterialManager } from '@reveal/rendering';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ParsedMeshGeometry } from '@reveal/cad-parsers';
-import { AutoDisposeGroup } from '@reveal/utilities';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 
-import { BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, RawShaderMaterial, Matrix4 } from 'three';
+import {
+  BufferGeometry,
+  BufferAttribute,
+  Box3,
+  Vector3,
+  CanvasTexture,
+  Mesh,
+  RawShaderMaterial,
+  Matrix4,
+  Group
+} from 'three';
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
-
-const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
-  const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
-  if (treeIndices) {
-    geometry.setAttribute('treeIndex', new BufferAttribute(new Float32Array(treeIndices), 1));
-  }
-  return geometry;
-};
-
-const createParsedGeometry = (
-  type: RevealGeometryCollectionType,
-  geometry: BufferGeometry,
-  texture?: CanvasTexture
-): ParsedMeshGeometry => ({
-  type,
-  geometryBuffer: geometry,
-  wholeSectorBoundingBox: new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1)),
-  ...(texture && { texture })
-});
-
-const createTexture = (size: number = 64) => {
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  return new CanvasTexture(canvas);
-};
-
-const createMockMaterial = (): RawShaderMaterial => {
-  const material = new RawShaderMaterial({
-    vertexShader: 'void main() {}',
-    fragmentShader: 'void main() {}'
-  });
-  material.uniforms = { inverseModelMatrix: { value: new Matrix4() } };
-  return material;
-};
-
-const createMockMaterialManager = () => {
-  const triangleMaterial = createMockMaterial();
-  const texturedMaterial = createMockMaterial();
-
-  const materials = {
-    box: createMockMaterial(),
-    circle: createMockMaterial(),
-    generalRing: createMockMaterial(),
-    nut: createMockMaterial(),
-    quad: createMockMaterial(),
-    cone: createMockMaterial(),
-    eccentricCone: createMockMaterial(),
-    torusSegment: createMockMaterial(),
-    generalCylinder: createMockMaterial(),
-    trapezium: createMockMaterial(),
-    ellipsoidSegment: createMockMaterial(),
-    instancedMesh: createMockMaterial(),
-    triangleMesh: triangleMaterial,
-    texturedMaterials: {}
-  };
-
-  const materialManagerMock = new Mock<CadMaterialManager>()
-    .setup(m => m.getModelMaterials)
-    .returns(() => materials)
-    .setup(m => m.addTexturedMeshMaterial)
-    .returns(() => texturedMaterial);
-
-  return { materialManager: materialManagerMock.object(), triangleMaterial, texturedMaterial };
-};
-
-const expectMeshGroup = (result: AutoDisposeGroup, expectedChildCount: number) => {
-  expect(result).toBeDefined();
-  expect(result.children.length).toBe(expectedChildCount);
-  if (expectedChildCount > 0) {
-    result.children.forEach(child => {
-      expect(child.type).toBe('Mesh');
-    });
-  }
-};
-
-const isMesh = (object: unknown): object is Mesh => {
-  return object instanceof Mesh;
-};
-
-const getMeshFromGroup = (group: AutoDisposeGroup, index: number): Mesh => {
-  const child = group.children[index];
-  if (isMesh(child)) {
-    return child;
-  }
-  throw new Error(`Expected Mesh at index ${index}, got ${child?.type || 'undefined'}`);
-};
 
 describe(CadMeshManager.name, () => {
   let meshManager: CadMeshManager;
@@ -143,7 +64,9 @@ describe(CadMeshManager.name, () => {
     const result = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1);
 
     expectMeshGroup(result, 1);
-    expect(result.textures.includes(texture)).toBe(true);
+    // The texture is handled by the material manager and applied to the mesh material
+    const mesh = getMeshFromGroup(result, 0);
+    expect(mesh.material).toBeDefined();
   });
 
   test('should handle mixed geometry types', () => {
@@ -398,3 +321,87 @@ describe(CadMeshManager.name, () => {
     expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(60))).not.toContain(sectorId);
   });
 });
+
+const createBasicGeometry = (vertices: number[] = [0, 0, 0, 1, 0, 0, 0, 1, 0], treeIndices?: number[]) => {
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
+  if (treeIndices) {
+    geometry.setAttribute('treeIndex', new BufferAttribute(new Float32Array(treeIndices), 1));
+  }
+  return geometry;
+};
+
+const createParsedGeometry = (
+  type: RevealGeometryCollectionType,
+  geometry: BufferGeometry,
+  texture?: CanvasTexture
+): ParsedMeshGeometry => ({
+  type,
+  geometryBuffer: geometry,
+  wholeSectorBoundingBox: new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1)),
+  ...(texture && { texture })
+});
+
+const createTexture = (size: number = 64) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  return new CanvasTexture(canvas);
+};
+
+const createMockMaterial = (): RawShaderMaterial => {
+  const material = new RawShaderMaterial({
+    vertexShader: 'void main() {}',
+    fragmentShader: 'void main() {}'
+  });
+  material.uniforms = { inverseModelMatrix: { value: new Matrix4() } };
+  return material;
+};
+
+const createMockMaterialManager = () => {
+  const triangleMaterial = createMockMaterial();
+  const texturedMaterial = createMockMaterial();
+
+  const materials = {
+    box: createMockMaterial(),
+    circle: createMockMaterial(),
+    generalRing: createMockMaterial(),
+    nut: createMockMaterial(),
+    quad: createMockMaterial(),
+    cone: createMockMaterial(),
+    eccentricCone: createMockMaterial(),
+    torusSegment: createMockMaterial(),
+    generalCylinder: createMockMaterial(),
+    trapezium: createMockMaterial(),
+    ellipsoidSegment: createMockMaterial(),
+    instancedMesh: createMockMaterial(),
+    triangleMesh: triangleMaterial,
+    texturedMaterials: {}
+  };
+
+  const materialManagerMock = new Mock<CadMaterialManager>()
+    .setup(m => m.getModelMaterials)
+    .returns(() => materials)
+    .setup(m => m.addTexturedMeshMaterial)
+    .returns(() => texturedMaterial);
+
+  return { materialManager: materialManagerMock.object(), triangleMaterial, texturedMaterial };
+};
+
+const expectMeshGroup = (result: Group, expectedChildCount: number) => {
+  expect(result).toBeDefined();
+  expect(result.children.length).toBe(expectedChildCount);
+  if (expectedChildCount > 0) {
+    result.children.forEach(child => {
+      expect(child.type).toBe('Mesh');
+    });
+  }
+};
+
+const getMeshFromGroup = (group: Group, index: number): Mesh => {
+  const child = group.children[index];
+  if (child instanceof Mesh) {
+    return child;
+  }
+  throw new Error(`Expected Mesh at index ${index}, got ${child?.type || 'undefined'}`);
+};

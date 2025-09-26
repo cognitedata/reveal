@@ -15,21 +15,8 @@ export class GltfSectorRepository implements SectorRepository {
 
   constructor(sectorFileProvider: BinaryFileProvider) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider);
-    // Create disposal callback for GPU resources
-    const disposeConsumedSector = (sector: ConsumedSector) => {
-      // Only dispose GPU resources if no models are using this sector
-      const cacheKey = this.getCacheKeyForSector(sector);
-      const refCount = this._sectorReferenceCounts.get(cacheKey) || 0;
-      if (refCount === 0) {
-        sector.parsedMeshGeometries?.forEach(mesh => {
-          mesh.geometryBuffer.dispose();
-          mesh.texture?.dispose();
-        });
-      }
-      // Clean up reference count entry
-      this._sectorReferenceCounts.delete(cacheKey);
-    };
-    this._gltfCache = new MemoryRequestCache(200, 50, disposeConsumedSector);
+
+    this._gltfCache = new MemoryRequestCache(200, 50);
   }
 
   private async getEmptySectorWithLod(
@@ -132,9 +119,5 @@ export class GltfSectorRepository implements SectorRepository {
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
     return wantedSector.modelIdentifier.sourceModelIdentifier() + '.' + wantedSector.metadata.id;
-  }
-
-  private getCacheKeyForSector(sector: ConsumedSector): string {
-    return sector.modelIdentifier.sourceModelIdentifier() + '.' + sector.metadata.id;
   }
 }
