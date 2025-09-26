@@ -1,10 +1,6 @@
 import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
-import {
-  type ModelLayerHandlers,
-  type DefaultLayersConfiguration,
-  type LayersUrlStateParam
-} from './types';
+import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
 import { type ModelHandler } from './ModelHandler';
 import { use3DModelName } from '../../../query';
 

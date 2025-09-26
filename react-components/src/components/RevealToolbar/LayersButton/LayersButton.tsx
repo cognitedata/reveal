@@ -10,7 +10,6 @@ import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './typ
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
   setLayersState?: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined;
-  defaultLayerConfiguration?: DefaultLayersConfiguration | undefined;
 };
 
 export const LayersButton = ({

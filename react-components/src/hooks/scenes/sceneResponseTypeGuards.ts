@@ -167,19 +167,35 @@ function hasValidDefaultVisibleProperty(props: Record<string, unknown>): boolean
 }
 
 export function isScene3dModelEdge(
-  model: EdgeItem<{
-    scene: { ['RevisionProperties/v1']: Record<string, unknown> };
-  }>
+  model: unknown
 ): model is EdgeItem<{ scene: { ['RevisionProperties/v1']: Cdf3dRevisionProperties } }> {
+  if (typeof model !== 'object' || model === undefined) {
+    return false;
+  }
+
+  const modelRecord = model as Record<string, any>;
+
+  if (modelRecord?.properties?.scene?.['RevisionProperties/v1'] === undefined) {
+    return false;
+  }
+
   return isSceneModelProperties(model.properties.scene['RevisionProperties/v1']);
 }
 
-export function isScene360CollectionEdge(
-  model: EdgeItem<{
-    scene: { ['Image360CollectionProperties/v1']: Record<string, unknown> };
-  }>
-): model is EdgeItem<{
+export function isScene360CollectionEdge(model: unknown): model is EdgeItem<{
   scene: { ['Image360CollectionProperties/v1']: Cdf3dImage360CollectionProperties };
 }> {
-  return isScene360CollectionProperties(model.properties.scene['Image360CollectionProperties/v1']);
+  if (typeof model !== 'object' || model === undefined) {
+    return false;
+  }
+
+  const modelRecord = model as Record<string, any>;
+
+  if (modelRecord?.properties?.scene?.['Image360CollectionProperties/v1'] === undefined) {
+    return false;
+  }
+
+  return isScene360CollectionProperties(
+    modelRecord.properties.scene['Image360CollectionProperties/v1']
+  );
 }

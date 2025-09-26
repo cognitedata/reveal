@@ -19,11 +19,7 @@ import {
   Image360CollectionHandler,
   PointCloudModelHandler
 } from '../ModelHandler';
-import {
-  type DefaultLayersConfiguration,
-  type LayersUrlStateParam,
-  type ModelLayerHandlers
-} from '../types';
+import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 import { type UseQueryResult } from '@tanstack/react-query';
 
 export type UpdateModelHandlersCallback = (

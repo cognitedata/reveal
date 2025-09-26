@@ -15,97 +15,15 @@ import {
 import { type EdgeItem } from '../../data-providers/FdmSDK';
 
 describe('sceneResponseTypeGuards', () => {
-  // Data factory functions for test data generation
-  const createValidSceneConfig = (
-    overrides: Partial<SceneConfigurationProperties> = {}
-  ): SceneConfigurationProperties => ({
-    name: 'Test Scene',
-    cameraTranslationX: 1.0,
-    cameraTranslationY: 2.0,
-    cameraTranslationZ: 3.0,
-    cameraEulerRotationX: 0.1,
-    cameraEulerRotationY: 0.2,
-    cameraEulerRotationZ: 0.3,
-    ...overrides
-  });
-
-  const createValidTransformation = (
-    overrides: Partial<Transformation3d> = {}
-  ): Transformation3d => ({
-    translationX: 0.0,
-    translationY: 0.0,
-    translationZ: 0.0,
-    eulerRotationX: 0.0,
-    eulerRotationY: 0.0,
-    eulerRotationZ: 0.0,
-    scaleX: 1.0,
-    scaleY: 1.0,
-    scaleZ: 1.0,
-    ...overrides
-  });
-
-  const createValidSceneModel = (
-    overrides: Partial<Cdf3dRevisionProperties> = {}
-  ): Cdf3dRevisionProperties => ({
-    ...createValidTransformation(),
-    revisionId: 123,
-    ...overrides
-  });
-
-  const createValid360Collection = (
-    overrides: Partial<Cdf3dImage360CollectionProperties> = {}
-  ): Cdf3dImage360CollectionProperties => ({
-    ...createValidTransformation(),
-    image360CollectionExternalId: 'collection-123',
-    image360CollectionSpace: 'space-123',
-    ...overrides
-  });
-
-  const createValid3dRevisionEdgeItem = (
-    overrides: Partial<Cdf3dRevisionProperties> = {}
-  ): EdgeItem<{ scene: { ['RevisionProperties/v1']: Cdf3dRevisionProperties } }> => {
-    return createValidEdgeItem({
-      scene: { 'RevisionProperties/v1': createValidSceneModel(overrides) }
-    });
-  };
-
-  const createValid360CollectionEdgeItem = (
-    overrides: Partial<Cdf3dImage360CollectionProperties> = {}
-  ): EdgeItem<{
-    scene: { ['Image360CollectionProperties/v1']: Cdf3dImage360CollectionProperties };
-  }> => {
-    return createValidEdgeItem({
-      scene: { 'Image360CollectionProperties/v1': createValid360Collection(overrides) }
-    });
-  };
-
-  const createValidEdgeItem = <T>(properties: T): EdgeItem<T> => {
-    return {
-      instanceType: 'edge',
-      externalId: 'external-id',
-      space: 'space',
-      version: 1,
-      type: { externalId: 'type-external-id', space: 'type-space' },
-      createdTime: 0,
-      lastUpdatedTime: 0,
-      startNode: { externalId: 'start-external-id', space: 'start-space' },
-      endNode: { externalId: 'end-external-id', space: 'end-space' },
-      properties
-    };
-  };
-
-  // Common test cases
-  const invalidInputs = [null, undefined, 'string', 123, true, [], {}];
-
-  describe('shared behavior', () => {
+  describe(isSceneConfigurationProperties.name, () => {
     it('isSceneConfigurationProperties should return false for invalid inputs', () => {
+      // Common test cases
+      const invalidInputs = [null, undefined, 'string', 123, true, [], {}];
       invalidInputs.forEach((input) => {
         expect(isSceneConfigurationProperties(input)).toBe(false);
       });
     });
-  });
 
-  describe(isSceneConfigurationProperties.name, () => {
     it('should return true for valid scene configuration', () => {
       expect(isSceneConfigurationProperties(createValidSceneConfig())).toBe(true);
 
@@ -322,7 +240,7 @@ describe('sceneResponseTypeGuards', () => {
         isSceneConfigurationProperties({
           ...createValidSceneConfig(),
           extra: 'ignored'
-        } as any)
+        })
       ).toBe(true);
 
       expect(
@@ -381,3 +299,82 @@ describe('sceneResponseTypeGuards', () => {
     });
   });
 });
+
+// Data factory functions for test data generation
+const createValidSceneConfig = (
+  overrides: Partial<SceneConfigurationProperties> = {}
+): SceneConfigurationProperties => ({
+  name: 'Test Scene',
+  cameraTranslationX: 1.0,
+  cameraTranslationY: 2.0,
+  cameraTranslationZ: 3.0,
+  cameraEulerRotationX: 0.1,
+  cameraEulerRotationY: 0.2,
+  cameraEulerRotationZ: 0.3,
+  ...overrides
+});
+
+const createValidTransformation = (
+  overrides: Partial<Transformation3d> = {}
+): Transformation3d => ({
+  translationX: 0.0,
+  translationY: 0.0,
+  translationZ: 0.0,
+  eulerRotationX: 0.0,
+  eulerRotationY: 0.0,
+  eulerRotationZ: 0.0,
+  scaleX: 1.0,
+  scaleY: 1.0,
+  scaleZ: 1.0,
+  ...overrides
+});
+
+const createValidSceneModel = (
+  overrides: Partial<Cdf3dRevisionProperties> = {}
+): Cdf3dRevisionProperties => ({
+  ...createValidTransformation(),
+  revisionId: 123,
+  ...overrides
+});
+
+const createValid360Collection = (
+  overrides: Partial<Cdf3dImage360CollectionProperties> = {}
+): Cdf3dImage360CollectionProperties => ({
+  ...createValidTransformation(),
+  image360CollectionExternalId: 'collection-123',
+  image360CollectionSpace: 'space-123',
+  ...overrides
+});
+
+const createValid3dRevisionEdgeItem = (
+  overrides: Partial<Cdf3dRevisionProperties> = {}
+): EdgeItem<{ scene: { ['RevisionProperties/v1']: Cdf3dRevisionProperties } }> => {
+  return createValidEdgeItem({
+    scene: { 'RevisionProperties/v1': createValidSceneModel(overrides) }
+  });
+};
+
+const createValid360CollectionEdgeItem = (
+  overrides: Partial<Cdf3dImage360CollectionProperties> = {}
+): EdgeItem<{
+  scene: { ['Image360CollectionProperties/v1']: Cdf3dImage360CollectionProperties };
+}> => {
+  return createValidEdgeItem({
+    scene: { 'Image360CollectionProperties/v1': createValid360Collection(overrides) }
+  });
+};
+
+const createValidEdgeItem = <T>(properties: T): EdgeItem<T> => {
+  return {
+    instanceType: 'edge',
+    externalId: 'external-id',
+    space: 'space',
+    version: 1,
+    type: { externalId: 'type-external-id', space: 'type-space' },
+    createdTime: 0,
+    lastUpdatedTime: 0,
+    startNode: { externalId: 'start-external-id', space: 'start-space' },
+    endNode: { externalId: 'end-external-id', space: 'end-space' },
+    properties
+  };
+};
