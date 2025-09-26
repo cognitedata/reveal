@@ -249,7 +249,7 @@ describe('sceneResponseTypeGuards', () => {
             ...createValidSceneModel(),
             extra: 'ignored',
             another: 42
-          } as any)
+          })
         )
       ).toBe(true);
 
@@ -259,7 +259,7 @@ describe('sceneResponseTypeGuards', () => {
             ...createValid360Collection(),
             extra: 'ignored',
             another: 42
-          } as any)
+          })
         )
       ).toBe(true);
     });
@@ -329,9 +329,7 @@ const createValidTransformation = (
   ...overrides
 });
 
-const createValidSceneModel = (
-  overrides: Partial<Cdf3dRevisionProperties> = {}
-): Cdf3dRevisionProperties => ({
+const createValidSceneModel = (overrides: object = {}): object => ({
   ...createValidTransformation(),
   revisionId: 123,
   ...overrides
@@ -347,17 +345,17 @@ const createValid360Collection = (
 });
 
 const createValid3dRevisionEdgeItem = (
-  overrides: Partial<Cdf3dRevisionProperties> = {}
-): EdgeItem<{ scene: { ['RevisionProperties/v1']: Cdf3dRevisionProperties } }> => {
+  overrides: object = {}
+): EdgeItem<{ scene: { ['RevisionProperties/v1']: object } }> => {
   return createValidEdgeItem({
     scene: { 'RevisionProperties/v1': createValidSceneModel(overrides) }
   });
 };
 
 const createValid360CollectionEdgeItem = (
-  overrides: Partial<Cdf3dImage360CollectionProperties> = {}
+  overrides: object = {}
 ): EdgeItem<{
-  scene: { ['Image360CollectionProperties/v1']: Cdf3dImage360CollectionProperties };
+  scene: { ['Image360CollectionProperties/v1']: object };
 }> => {
   return createValidEdgeItem({
     scene: { 'Image360CollectionProperties/v1': createValid360Collection(overrides) }

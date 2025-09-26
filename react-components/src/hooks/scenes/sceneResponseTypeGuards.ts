@@ -169,7 +169,7 @@ function hasValidDefaultVisibleProperty(props: Record<string, unknown>): boolean
 export function isScene3dModelEdge(
   model: unknown
 ): model is EdgeItem<{ scene: { ['RevisionProperties/v1']: Cdf3dRevisionProperties } }> {
-  if (typeof model !== 'object' || model === undefined) {
+  if (typeof model !== 'object' || model === null) {
     return false;
   }
 
@@ -179,13 +179,13 @@ export function isScene3dModelEdge(
     return false;
   }
 
-  return isSceneModelProperties(model.properties.scene['RevisionProperties/v1']);
+  return isSceneModelProperties(modelRecord.properties.scene['RevisionProperties/v1']);
 }
 
 export function isScene360CollectionEdge(model: unknown): model is EdgeItem<{
   scene: { ['Image360CollectionProperties/v1']: Cdf3dImage360CollectionProperties };
 }> {
-  if (typeof model !== 'object' || model === undefined) {
+  if (typeof model !== 'object' || model === null) {
     return false;
   }
 
