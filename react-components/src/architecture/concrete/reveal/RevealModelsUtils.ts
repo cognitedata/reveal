@@ -65,16 +65,12 @@ export class RevealModelsUtils {
     options: AddModelOptions,
     defaultVisible?: boolean
   ): Promise<CogniteCadModel> {
-    const root = renderTarget.root;
-    if (root === undefined) {
-      throw new Error('Root domain object is not set');
-    }
     const model = await renderTarget.viewer.addCadModel(options);
 
     model.visible = defaultVisible ?? true;
 
     const domainObject = new CadDomainObject(model);
-    root.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
 
     domainObject.setVisibleInteractive(model.visible);
 
@@ -91,14 +87,10 @@ export class RevealModelsUtils {
     options: AddModelOptions<DataSourceType>,
     defaultVisible?: boolean
   ): Promise<PointCloud> {
-    const root = renderTarget.root;
-    if (root === undefined) {
-      throw new Error('Root domain object is not set');
-    }
     const model = await renderTarget.viewer.addPointCloudModel(options);
     model.visible = defaultVisible ?? true;
     const domainObject = new PointCloudDomainObject(model);
-    root.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(model.visible);
 
     try {
@@ -114,11 +106,6 @@ export class RevealModelsUtils {
     options: AddImage360CollectionOptions,
     defaultVisible?: boolean
   ): Promise<Image360Collection<DataSourceType>> {
-    const root = renderTarget.root;
-    if (root === undefined) {
-      throw new Error('Root domain object is not set');
-    }
-
     const model = await (async () => {
       if (options.source === 'events') {
         return await renderTarget.viewer.add360ImageSet(
@@ -137,7 +124,7 @@ export class RevealModelsUtils {
 
     model.setIconsVisibility(defaultVisible ?? true);
     const domainObject = new Image360CollectionDomainObject(model);
-    root.addChildInteractive(domainObject);
+    renderTarget.root.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(model.getIconsVisibility());
 
     return model;

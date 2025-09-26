@@ -14,15 +14,22 @@ import {
 import { type EdgeItem } from '../../data-providers/FdmSDK';
 
 describe('sceneResponseTypeGuards', () => {
-  describe(isSceneConfigurationProperties.name, () => {
-    it('isSceneConfigurationProperties should return false for invalid inputs', () => {
-      // Common test cases
-      const invalidInputs = [null, undefined, 'string', 123, true, [], {}];
+  // Common test cases
+  const invalidInputs = [null, undefined, 'string', 123, true, [], {}];
+
+  describe('common', () => {
+    it.each([
+      ['isSceneConfigurationProperties', isSceneConfigurationProperties],
+      ['isScene3dModelEdge', isScene3dModelEdge],
+      ['isScene360CollectionEdge', isScene360CollectionEdge]
+    ])('%s correctly returns false on invalid input', (_, validator) => {
       invalidInputs.forEach((input) => {
-        expect(isSceneConfigurationProperties(input)).toBe(false);
+        expect(validator(input)).toBe(false);
       });
     });
+  });
 
+  describe(isSceneConfigurationProperties.name, () => {
     it('should return true for valid scene configuration', () => {
       expect(isSceneConfigurationProperties(createValidSceneConfig())).toBe(true);
 
@@ -168,6 +175,15 @@ describe('sceneResponseTypeGuards', () => {
       expect(isScene3dModelEdge(createValid3dRevisionEdgeItem())).toBe(true);
     });
 
+    it('should return false for invalid properties', () => {
+      invalidInputs.forEach((input) => {
+        const revisionEdgeItem = createValid3dRevisionEdgeItem();
+        (revisionEdgeItem.properties.scene as Record<string, unknown>)['RevisionProperties/v1'] =
+          input;
+        expect(isScene3dModelEdge(revisionEdgeItem)).toBe(false);
+      });
+    });
+
     it('should return true for valid scene model properties with defaultVisible', () => {
       expect(isScene3dModelEdge(createValid3dRevisionEdgeItem({ defaultVisible: true }))).toBe(
         true
@@ -203,6 +219,16 @@ describe('sceneResponseTypeGuards', () => {
       expect(
         isScene360CollectionEdge(createValid360CollectionEdgeItem(createValid360Collection()))
       ).toBe(true);
+    });
+
+    it('should return false for invalid properties', () => {
+      invalidInputs.forEach((input) => {
+        const collectionEdgeItem = createValid360CollectionEdgeItem();
+        (collectionEdgeItem.properties.scene as Record<string, unknown>)[
+          'Image360CollectionProperties/v1'
+        ] = input;
+        expect(isScene360CollectionEdge(collectionEdgeItem)).toBe(false);
+      });
     });
 
     it('should return true for valid 360 collection properties with defaultVisible', () => {
