@@ -78,10 +78,12 @@ describe(SectorNode.name, () => {
 
     // Force a small delay to ensure timestamp difference
     const now = Date.now();
-    jest.spyOn(Date, 'now').mockReturnValue(now + 100);
+    const mockDateNow = jest.fn<() => number>().mockReturnValue(now + 100);
+    (Date.now as jest.MockedFunction<() => number>) = mockDateNow;
 
     sectorNode.updateGeometry(testGroup, LevelOfDetail.Detailed);
     expect(sectorNode.updatedTimestamp).toBeGreaterThan(initialTimestamp);
+    expect(jest.mocked(Date.now)).toHaveBeenCalled();
 
     jest.restoreAllMocks();
   });
