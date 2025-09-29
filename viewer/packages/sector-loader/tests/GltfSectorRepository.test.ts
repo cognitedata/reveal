@@ -257,6 +257,71 @@ describe(GltfSectorRepository.name, () => {
     sectorRepository.dereferenceSector(modelId, 1);
   });
 
+  test('cache disposal callback should dispose resources from both parsedMeshGeometries and geometryBatchingQueue', async () => {
+    // Create mock geometry buffers and textures with dispose methods
+    const mockMeshGeometryBuffer = { dispose: jest.fn() };
+    const mockMeshTexture = { dispose: jest.fn() };
+    const mockBatchGeometryBuffer = { dispose: jest.fn() };
+    const mockBatchTexture = { dispose: jest.fn() };
+
+    // Use helper function to create proper sector metadata
+    const wantedSector = createWantedSectorWithMetadata({
+      id: 1,
+      sectorFileName: 'test-disposal.glb',
+      downloadSize: 100
+    });
+
+    // Create a mock sector with both parsedMeshGeometries and geometryBatchingQueue
+    const mockSector = {
+      metadata: wantedSector.object().metadata,
+      modelIdentifier: wantedSector.object().modelIdentifier,
+      instancedMeshes: [],
+      levelOfDetail: wantedSector.object().levelOfDetail,
+      parsedMeshGeometries: [
+        {
+          geometryBuffer: mockMeshGeometryBuffer,
+          texture: mockMeshTexture
+        }
+      ],
+      geometryBatchingQueue: [
+        {
+          geometryBuffer: mockBatchGeometryBuffer,
+          texture: mockBatchTexture
+        }
+      ]
+    };
+
+    // Access private cache to directly test disposal callback
+    const cache = (sectorRepository as any)._gltfCache;
+
+    // Insert mock sector into cache and ensure its reference count is 0 (eligible for disposal)
+    const cacheKey = 'test_key';
+    cache.forceInsert(cacheKey, mockSector);
+    // Ensure reference count is 0 so it can be cleaned up
+    cache._referenceCounts.set(cacheKey, 0);
+
+    // Add a small delay to ensure different timestamps for proper sorting
+    await new Promise(resolve => setTimeout(resolve, 1));
+
+    // Force cache eviction by adding more entries than cache capacity
+    const cacheSize = cache._maxElementsInCache;
+    for (let i = 0; i < cacheSize + 10; i++) {
+      cache.forceInsert(`overflow_${i}`, {
+        metadata: { id: i + 100 },
+        instancedMeshes: [],
+        levelOfDetail: LevelOfDetail.Detailed
+      });
+      // Set reference count to 0 for these items too so they can also be cleaned
+      cache._referenceCounts.set(`overflow_${i}`, 0);
+    }
+
+    // Verify that all dispose methods were called
+    expect(mockMeshGeometryBuffer.dispose).toHaveBeenCalledTimes(1);
+    expect(mockMeshTexture.dispose).toHaveBeenCalledTimes(1);
+    expect(mockBatchGeometryBuffer.dispose).toHaveBeenCalledTimes(1);
+    expect(mockBatchTexture.dispose).toHaveBeenCalledTimes(1);
+  });
+
   // Helper functions
   const createWantedSectorWithMetadata = (
     metadata: Partial<SectorMetadata>,

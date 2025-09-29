@@ -21,6 +21,10 @@ export class GltfSectorRepository implements SectorRepository {
         mesh.geometryBuffer.dispose();
         mesh.texture?.dispose();
       });
+      sector.geometryBatchingQueue?.forEach(batch => {
+        batch.geometryBuffer.dispose();
+        batch.texture?.dispose();
+      });
     });
   }
 
