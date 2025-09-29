@@ -4,12 +4,12 @@ import { type ReactElement, type ReactNode } from 'react';
 import { Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { type QueryFunction, QueryClient } from '@tanstack/react-query';
-import { type ScenesMap } from './use3dScenes.types';
+import { type SceneNode, type ScenesMap } from './use3dScenes.types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createMockQueryResult } from '#test-utils/fixtures/queryResult';
 import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
-import { type SceneNode, use3dScenes } from './use3dScenes';
+import { use3dScenes } from './use3dScenes';
 
 describe(use3dScenes.name, () => {
   const mockUseSDK = vi.fn();
@@ -470,12 +470,18 @@ describe(use3dScenes.name, () => {
               externalId: 'cog_3d_model_123'
             },
             properties: {
-              'SceneModels/v1': {
-                'SceneModels/v1': {
+              scene: {
+                'RevisionProperties/v1': {
                   revisionId: 1,
                   translationX: 10,
                   translationY: 20,
-                  translationZ: 30
+                  translationZ: 30,
+                  eulerRotationX: 0,
+                  eulerRotationY: 0,
+                  eulerRotationZ: 0,
+                  scaleX: 1,
+                  scaleY: 1,
+                  scaleZ: 1
                 }
               }
             }
@@ -541,8 +547,8 @@ describe(use3dScenes.name, () => {
               space: 'test-space'
             },
             properties: {
-              'Scene360ImageCollection/v1': {
-                'Scene360ImageCollection/v1': {
+              scene: {
+                'Image360CollectionProperties/v1': {
                   image360CollectionExternalId: 'image-collection-1',
                   image360CollectionSpace: 'image-space',
                   translationX: 0,
@@ -801,12 +807,18 @@ describe(use3dScenes.name, () => {
               externalId: 'cog_3d_model_456'
             },
             properties: {
-              'SceneModels/v1': {
-                'SceneModels/v1': {
+              scene: {
+                'RevisionProperties/v1': {
                   revisionId: 2,
                   translationX: 50,
                   translationY: 100,
-                  translationZ: 150
+                  translationZ: 150,
+                  eulerRotationX: 0,
+                  eulerRotationY: 0,
+                  eulerRotationZ: 0,
+                  scaleX: 1,
+                  scaleY: 1,
+                  scaleZ: 1
                 }
               }
             }
@@ -819,8 +831,8 @@ describe(use3dScenes.name, () => {
               space: 'test-space'
             },
             properties: {
-              'Scene360ImageCollection/v1': {
-                'Scene360ImageCollection/v1': {
+              scene: {
+                'Image360CollectionProperties/v1': {
                   image360CollectionExternalId: 'complex-images',
                   image360CollectionSpace: 'image-space',
                   translationX: 0,

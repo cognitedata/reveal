@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { type QueryFunction } from '@tanstack/react-query';
-import { type CogniteClient, type NodeDefinition } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -26,33 +26,14 @@ import {
   type Use3dScenesResult,
   type ScenesMap,
   type Space,
-  type ExternalId
+  type ExternalId,
+  type Use3dScenesQueryResult,
+  type SceneNode
 } from './use3dScenes.types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { createGetScenesQuery } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
-
-type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
-
-type SceneNode = Omit<NodeDefinition, 'properties'> & {
-  properties: {
-    scene: {
-      'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
-    };
-  };
-};
-
-type Use3dScenesQueryResult = {
-  scenes: SceneNode[];
-  sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
-  scene360Collections: Array<
-    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
-  >;
-  sceneGroundPlanes: Array<NodeItem<GroundPlaneProperties>>;
-  sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>;
-  sceneSkybox: Array<NodeItem<SkyboxProperties>>;
-};
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
   const { useSDK, useQuery, createFdmSdk } = useContext(Use3dScenesContext);
