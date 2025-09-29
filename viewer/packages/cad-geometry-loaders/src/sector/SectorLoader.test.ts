@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 
-import { AutoDisposeGroup } from '@reveal/utilities';
 import { asyncIteratorToArray, createCadModelMetadata, generateV9SectorTree } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 
@@ -73,7 +72,7 @@ describe('SectorLoader', () => {
       prioritizedAreas: [],
       loadingHints: {}
     };
-    stateHandler.addModel(model.modelIdentifier);
+    stateHandler.addModel(model.modelIdentifier.revealInternalId);
     loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);
   });
 
@@ -113,7 +112,7 @@ describe('SectorLoader', () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
     stateHandler.updateState(
-      alreadyLoadedSector.modelIdentifier,
+      alreadyLoadedSector.modelIdentifier.revealInternalId,
       alreadyLoadedSector.metadata.id,
       alreadyLoadedSector.levelOfDetail
     );
@@ -201,7 +200,6 @@ function createWantedSector(model: CadModelMetadata, sector: SectorMetadata): Wa
 
 function createConsumedSector(sector: WantedSector): ConsumedSector {
   const consumed: ConsumedSector = {
-    group: new AutoDisposeGroup(),
     instancedMeshes: [],
     levelOfDetail: sector.levelOfDetail,
     metadata: sector.metadata,

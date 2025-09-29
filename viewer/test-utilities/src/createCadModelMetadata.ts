@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { File3dFormat } from '../../packages/data-providers';
+import { File3dFormat, LocalModelIdentifier } from '../../packages/data-providers';
 import { SectorMetadata, CadModelMetadata, SectorSceneFactory } from '../../packages/cad-parsers';
 
 let modelIdRunningNumber = 0;
@@ -14,7 +14,7 @@ export function createCadModelMetadata(sceneVersion: number, root: SectorMetadat
   const scene = factory.createSectorScene(sceneVersion, 1, 'Meters', root);
   const modelId = `testModel_${modelIdRunningNumber++}`;
   const model: CadModelMetadata = {
-    modelIdentifier: modelId,
+    modelIdentifier: new LocalModelIdentifier(modelId),
     format: File3dFormat.GltfCadModel,
     formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,

@@ -5,14 +5,13 @@
 import * as THREE from 'three';
 import { SectorScene } from '../utilities/types';
 import { CameraConfiguration } from '@reveal/utilities';
-import { File3dFormat } from '@reveal/data-providers';
+import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 
 export interface CadModelMetadata {
   /**
    * A unique identifier of the model.
    */
-  // TODO 2021-10-03 larsmoa: Change into a ModelIdentifier
-  readonly modelIdentifier: string;
+  readonly modelIdentifier: ModelIdentifier;
 
   /**
    * File format of the 3D model (i3d/f3d, gltf, etc.)
