@@ -29,6 +29,8 @@ import { type ExternalId } from '../../src/data-providers/FdmSDK';
 import { Image360AnnotationSelectTool } from '../../src/architecture/concrete/annotation360/Image360AnnotationSelectTool';
 import { Image360AnnotationCreateTool } from '../../src/architecture/concrete/annotation360/Image360AnnotationCreateTool';
 import { ShowTreeViewCommand } from '../../src/architecture/base/concreteCommands/general/ShowTreeViewCommand';
+import { HelpCommand } from '../../src/architecture/base/concreteCommands/general/HelpCommand';
+import { ShareCommand } from '../../src/architecture/base/concreteCommands/general/ShareCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -55,6 +57,8 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     return [
+      new HelpCommand(),
+      new ShareCommand(),
       new ShowTreeViewCommand(),
       new ToggleAllModelsVisibleCommand(),
       new SettingsCommand(),
