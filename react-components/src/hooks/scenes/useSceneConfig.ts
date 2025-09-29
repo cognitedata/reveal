@@ -34,7 +34,11 @@ import {
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { isSceneConfigurationProperties } from './sceneResponseTypeGuard';
+import {
+  isScene360CollectionEdge,
+  isScene3dModelEdge,
+  isSceneConfigurationProperties
+} from './sceneResponseTypeGuards';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -132,8 +136,13 @@ export const useSceneConfig = (
           sceneResponse.items.groundPlanes,
           sceneResponse.items.groundPlaneEdges
         ),
-        sceneModels: await getSceneModels(sceneResponse.items.sceneModels, fdmSdk),
-        image360Collections: getImageCollections(sceneResponse.items.image360CollectionsEdges)
+        sceneModels: await getSceneModels(
+          sceneResponse.items.sceneModels.filter(isScene3dModelEdge),
+          fdmSdk
+        ),
+        image360Collections: getImageCollections(
+          sceneResponse.items.image360CollectionsEdges.filter(isScene360CollectionEdge)
+        )
       };
       return scene;
     },
