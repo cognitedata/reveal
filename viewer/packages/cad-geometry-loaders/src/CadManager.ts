@@ -94,21 +94,18 @@ export class CadManager {
         throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
       }
 
-      // Create meshes from parsedMeshGeometries data
       const meshGroup =
         sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0
           ? cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id)
           : undefined;
 
-      // Update the sector node with the mesh group
       if (meshGroup) {
         sectorNode.add(meshGroup);
       }
       sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
 
-      // Apply render layers to the sector node
       if (meshGroup) {
-        cadModel.setModelRenderLayers(sectorNode);
+        cadModel.setModelRenderLayers(meshGroup);
       }
 
       this.markNeedsRedraw();

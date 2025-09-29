@@ -14,7 +14,7 @@ import { BufferGeometry, RawShaderMaterial, Sphere, BufferAttribute, Box3, Matri
 
 /**
  * Manages mesh data for CAD sectors.
- * This class prepares mesh data for  object creation.
+ * This class prepares mesh data for object creation.
  */
 export class CadMeshManager {
   private readonly _materialManager: CadMaterialManager;
@@ -62,7 +62,7 @@ export class CadMeshManager {
             `Missing texture for textured triangle mesh in sector ${sectorId} - mesh will be skipped. ` +
               'This will result in missing geometry in the 3D scene.'
           );
-          return; // Skip this geometry
+          return;
         } else {
           material = materials.triangleMesh;
         }
@@ -80,11 +80,7 @@ export class CadMeshManager {
     // Track this mesh group by sector ID for cleanup when sector is unloaded
     this._sectorMeshGroups.set(sectorId, group);
 
-    // Update tree index to sector mapping only if there's exactly one parsed geometry
-    // (matching original behavior from CadManager)
-    if (parsedMeshGeometries.length === 1) {
-      this.updateTreeIndexToSectorsMap(allTreeIndices, sectorId);
-    }
+    this.updateTreeIndexToSectorsMap(allTreeIndices, sectorId);
 
     return group;
   }
@@ -97,16 +93,11 @@ export class CadMeshManager {
   private removeSectorMeshGroup(sectorId: number): void {
     const meshGroup = this._sectorMeshGroups.get(sectorId);
     if (meshGroup) {
-      // Remove from parent if it's still attached
       if (meshGroup.parent) {
         meshGroup.parent.remove(meshGroup);
       }
 
-      // Clear the mesh group's children to remove references, but don't dispose geometries
-      // as they are managed by the cache and may be shared between models
       meshGroup.clear();
-
-      // Remove from our tracking map
       this._sectorMeshGroups.delete(sectorId);
     }
   }
@@ -123,10 +114,7 @@ export class CadMeshManager {
     sectorRepository: SectorRepository,
     modelIdentifier: ModelIdentifier
   ): void {
-    // Remove the mesh group
     this.removeSectorMeshGroup(sectorId);
-
-    // Dereference the sector in the repository
     sectorRepository.dereferenceSector(modelIdentifier, sectorId);
   }
 
@@ -155,7 +143,6 @@ export class CadMeshManager {
     material: RawShaderMaterial,
     geometryBoundingBox: Box3
   ): void {
-    // Assigns an approximate bounding-sphere to the geometry to avoid recalculating this on first render
     geometry.boundingSphere = geometryBoundingBox.getBoundingSphere(new Sphere());
 
     const mesh = new Mesh(geometry, material);
@@ -176,18 +163,15 @@ export class CadMeshManager {
    * Updates tree index to sectors mapping from a set of tree indices.
    */
   private updateTreeIndexToSectorsMap(allTreeIndices: Set<number>, sectorId: number): void {
-    // Skip if sector is already completed (matching original CadManager behavior)
     if (this._treeIndexToSectorsMap.isCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh)) {
       return;
     }
 
-    // Update tree index mapping if we have indices
     if (allTreeIndices.size > 0) {
       for (const treeIndex of allTreeIndices) {
         this._treeIndexToSectorsMap.set(treeIndex, sectorId);
       }
 
-      // Mark the sector as completed for triangle mesh geometry
       this._treeIndexToSectorsMap.markCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh);
     }
   }

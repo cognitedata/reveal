@@ -61,7 +61,7 @@ export class GltfSectorRepository implements SectorRepository {
       return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);
     }
 
-    const cacheKey = this.wantedSectorCacheKey(sector);
+    const cacheKey = this.wantedSectorCacheKey(sector.modelIdentifier, sector.metadata.id);
 
     if (this._gltfCache.has(cacheKey)) {
       const cachedSector = this._gltfCache.get(cacheKey);
@@ -104,17 +104,13 @@ export class GltfSectorRepository implements SectorRepository {
    * @param sectorId The sector ID to dereference
    */
   dereferenceSector(modelIdentifier: ModelIdentifier, sectorId: number): void {
-    const cacheKey = this.createSectorCacheKey(modelIdentifier, sectorId);
+    const cacheKey = this.wantedSectorCacheKey(modelIdentifier, sectorId);
 
     // Let the cache handle reference counting and disposal
     this._gltfCache.removeReference(cacheKey);
   }
 
-  private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return this.createSectorCacheKey(wantedSector.modelIdentifier, wantedSector.metadata.id);
-  }
-
-  private createSectorCacheKey(modelIdentifier: ModelIdentifier, sectorId: number): string {
+  private wantedSectorCacheKey(modelIdentifier: ModelIdentifier, sectorId: number) {
     return modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
   }
 }

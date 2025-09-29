@@ -127,7 +127,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
    * @param id The cache key to remove a reference from
    */
   removeReference(id: Key): void {
-    const currentCount = this._referenceCounts.get(id) || 0;
+    const currentCount = this._referenceCounts.get(id) ?? 0;
     if (currentCount <= 1) {
       // Set count to 0 but keep item in cache for potential reuse
       this._referenceCounts.set(id, 0);
@@ -143,7 +143,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
    * @returns The number of active references, or 0 if not found
    */
   getReferenceCount(id: Key): number {
-    return this._referenceCounts.get(id) || 0;
+    return this._referenceCounts.get(id) ?? 0;
   }
 
   resize(cacheSize: number): void {

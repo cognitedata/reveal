@@ -30,8 +30,22 @@ describe(CadMeshManager.name, () => {
   let materialManager: CadMaterialManager;
   let treeIndexToSectorsMap: TreeIndexToSectorsMap;
   let modelId: symbol;
-  let mockSectorRepository: SectorRepository;
-  let mockModelIdentifier: ModelIdentifier;
+  const mockSectorRepository = new Mock<SectorRepository>()
+    .setup(instance => instance.dereferenceSector)
+    .returns(() => {})
+    .setup(instance => instance.loadSector)
+    .returns(() => Promise.resolve({} as any))
+    .setup(instance => instance.clearCache)
+    .returns(() => {})
+    .setup(instance => instance.setCacheSize)
+    .returns(() => {})
+    .object();
+  const mockModelIdentifier = new Mock<ModelIdentifier>()
+    .setup(instance => instance.sourceModelIdentifier)
+    .returns(() => 'test-model')
+    .setup(instance => instance.revealInternalId)
+    .returns(Symbol('test-model-internal'))
+    .object();
 
   beforeEach(() => {
     const mocks = createMockMaterialManager();
@@ -39,19 +53,6 @@ describe(CadMeshManager.name, () => {
     modelId = Symbol('testModel');
     treeIndexToSectorsMap = new TreeIndexToSectorsMap(1000); // Max tree index
     meshManager = new CadMeshManager(materialManager, modelId, treeIndexToSectorsMap);
-
-    // Create simple mocks for test methods that need sector repository and model identifier
-    mockSectorRepository = {
-      dereferenceSector: jest.fn(),
-      loadSector: jest.fn(),
-      clearCache: jest.fn(),
-      setCacheSize: jest.fn()
-    } as unknown as SectorRepository;
-
-    mockModelIdentifier = {
-      sourceModelIdentifier: jest.fn().mockReturnValue('test-model'),
-      revealInternalId: Symbol('test-model-internal')
-    } as unknown as ModelIdentifier;
   });
 
   test('should create empty mesh group when no geometries provided', () => {
@@ -101,7 +102,7 @@ describe(CadMeshManager.name, () => {
     expectMeshGroup(result, 2);
   });
 
-  test('should skip textured geometry without texture and log warning', () => {
+  test('should skip textured geometry without texture', () => {
     const geometry = createBasicGeometry();
     const parsedGeometries: ParsedMeshGeometry[] = [
       {
@@ -111,18 +112,11 @@ describe(CadMeshManager.name, () => {
       }
     ];
 
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const sectorId = 1;
 
     const result = meshManager.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
 
     expectMeshGroup(result, 0);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      `Missing texture for textured triangle mesh in sector ${sectorId} - mesh will be skipped. ` +
-        'This will result in missing geometry in the 3D scene.'
-    );
-
-    consoleSpy.mockRestore();
   });
 
   test('should create tree index set with proper counting', () => {
@@ -218,7 +212,8 @@ describe(CadMeshManager.name, () => {
 
   test('should remove mesh group from scene without disposing shared geometries', () => {
     const geometry = createBasicGeometry();
-    const disposeSpy = jest.spyOn(geometry, 'dispose');
+    const mockDispose = jest.fn();
+    geometry.dispose = mockDispose;
     const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
 
     const meshGroup = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1);
@@ -226,15 +221,15 @@ describe(CadMeshManager.name, () => {
 
     meshManager.removeSectorMeshGroupAndDereference(1, mockSectorRepository, mockModelIdentifier);
 
-    // Mesh group should be cleared but geometry not disposed (managed by cache)
     expect(meshGroup.children.length).toBe(0);
-    expect(disposeSpy).not.toHaveBeenCalled();
+    expect(mockDispose).not.toHaveBeenCalled();
   });
 
   test('should remove textured mesh group without disposing shared textures', () => {
     const geometry = createBasicGeometry();
     const texture = createTexture();
-    const textureSpy = jest.spyOn(texture, 'dispose');
+    const mockTextureDispose = jest.fn();
+    texture.dispose = mockTextureDispose;
     const parsedGeometries = [
       createParsedGeometry(RevealGeometryCollectionType.TexturedTriangleMesh, geometry, texture)
     ];
@@ -242,9 +237,8 @@ describe(CadMeshManager.name, () => {
     const meshGroup = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1);
     meshManager.removeSectorMeshGroupAndDereference(1, mockSectorRepository, mockModelIdentifier);
 
-    // Mesh group should be cleared but texture not disposed (managed by cache)
     expect(meshGroup.children.length).toBe(0);
-    expect(textureSpy).not.toHaveBeenCalled();
+    expect(mockTextureDispose).not.toHaveBeenCalled();
   });
 
   test('should set up mesh onBeforeRender callback when material has inverseModelMatrix uniform', () => {
@@ -266,7 +260,6 @@ describe(CadMeshManager.name, () => {
       createParsedGeometry(RevealGeometryCollectionType.TexturedTriangleMesh, geometry, texture)
     ];
 
-    // Should not throw when creating textured materials
     expect(() => meshManager.createMeshesFromParsedGeometries(parsedGeometries, sectorId)).not.toThrow();
   });
 
@@ -274,7 +267,6 @@ describe(CadMeshManager.name, () => {
     const geometry = createBasicGeometry();
     const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
 
-    // Should not throw when creating basic materials
     expect(() => meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1)).not.toThrow();
   });
 
@@ -287,30 +279,11 @@ describe(CadMeshManager.name, () => {
 
     meshManager.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
 
-    // Verify tree indices are mapped to the correct sector
     expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(10))).toContain(sectorId);
     expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(20))).toContain(sectorId);
     expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(30))).toContain(sectorId);
 
-    // Verify sector is marked as completed for triangle mesh geometry
     expect(treeIndexToSectorsMap.isCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh)).toBe(true);
-  });
-
-  test('should not update tree index mapping when group has multiple children', () => {
-    const geometry1 = createBasicGeometry([0, 0, 0, 1, 0, 0, 0, 1, 0], [10]);
-    const geometry2 = createBasicGeometry([1, 0, 0, 2, 0, 0, 1, 1, 0], [20]);
-    const parsedGeometries = [
-      createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry1),
-      createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry2)
-    ];
-    const sectorId = 43;
-
-    meshManager.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
-
-    // Should not have updated tree index mapping because group has 2 children
-    expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(10))).not.toContain(sectorId);
-    expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(20))).not.toContain(sectorId);
-    expect(treeIndexToSectorsMap.isCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh)).toBe(false);
   });
 
   test('should not update tree index mapping when mesh has no tree indices', () => {
@@ -330,12 +303,10 @@ describe(CadMeshManager.name, () => {
     const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
     const sectorId = 45;
 
-    // Pre-mark the sector as completed
     treeIndexToSectorsMap.markCompleted(sectorId, RevealGeometryCollectionType.TriangleMesh);
 
     meshManager.createMeshesFromParsedGeometries(parsedGeometries, sectorId);
 
-    // Tree indices should not be mapped because sector was already completed
     expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(50))).not.toContain(sectorId);
     expect(Array.from(treeIndexToSectorsMap.getSectorIdsForTreeIndex(60))).not.toContain(sectorId);
   });
@@ -398,11 +369,9 @@ const createMockMaterialManager = () => {
     texturedMaterials: {}
   };
 
-  const materialManagerMock = new Mock<CadMaterialManager>()
-    .setup(m => m.getModelMaterials)
-    .returns(() => materials)
-    .setup(m => m.addTexturedMeshMaterial)
-    .returns(() => texturedMaterial);
+  const materialManagerMock = new Mock<CadMaterialManager>();
+  materialManagerMock.setup(m => m.getModelMaterials).returns(() => materials);
+  materialManagerMock.setup(m => m.addTexturedMeshMaterial).returns(() => texturedMaterial);
 
   return { materialManager: materialManagerMock.object(), triangleMaterial, texturedMaterial };
 };

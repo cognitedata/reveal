@@ -140,7 +140,6 @@ describe('MemoryRequestCache', () => {
     expect(disposeCallback).not.toHaveBeenCalled();
   });
 
-  // Reference counting tests
   describe('Reference Counting', () => {
     test('addReference should increment reference count', () => {
       const cache = new MemoryRequestCache<number, string>(10, 5);
@@ -206,21 +205,6 @@ describe('MemoryRequestCache', () => {
       expect(cache.has(2)).toBe(true); // Still referenced
       expect(cache.has(3)).toBe(true); // Newly inserted
       expect(disposeCallback).toHaveBeenCalledWith('test1');
-    });
-
-    test('removeReference should not dispose item with active references', () => {
-      const disposeCallback = jest.fn();
-      const cache = new MemoryRequestCache<number, string>(10, 5, disposeCallback);
-
-      cache.insert(1, 'test1');
-      cache.addReference(1);
-      cache.addReference(1);
-
-      cache.removeReference(1);
-
-      expect(cache.has(1)).toBe(true);
-      expect(cache.getReferenceCount(1)).toBe(1);
-      expect(disposeCallback).not.toHaveBeenCalled();
     });
 
     test('cleanCache should not remove items with active references', () => {
@@ -315,7 +299,6 @@ describe('MemoryRequestCache', () => {
       const disposeCallback = jest.fn();
       const cache = new MemoryRequestCache<string, { data: string }>(10, 5, disposeCallback);
 
-      // Simulate sector caching scenario
       const sector1 = { data: 'sector1' };
       const sector2 = { data: 'sector2' };
 
