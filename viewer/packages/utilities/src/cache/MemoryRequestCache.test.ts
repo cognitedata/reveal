@@ -120,13 +120,13 @@ describe('MemoryRequestCache', () => {
   test('dispose callback is not called when not provided', () => {
     const cache = new MemoryRequestCache<number, string>(10, 5);
 
-    cache.insert(1, 'test1');
-    cache.remove(1);
-    cache.insert(2, 'test2');
-    cache.clear();
-
-    // Should not throw or cause any issues
-    expect(true).toBe(true);
+    // Should not throw or cause any issues when no dispose callback is provided
+    expect(() => {
+      cache.insert(1, 'test1');
+      cache.remove(1);
+      cache.insert(2, 'test2');
+      cache.clear();
+    }).not.toThrow();
   });
 
   test('dispose callback is not called on successful get', () => {
