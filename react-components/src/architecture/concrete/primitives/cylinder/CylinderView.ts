@@ -332,6 +332,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   private addLabels(): void {
     const type = this.domainObject.primitiveType;
     if (
+      type === PrimitiveType.Diameter ||
       type === PrimitiveType.VerticalCylinder ||
       type === PrimitiveType.HorizontalCircle ||
       type === PrimitiveType.HorizontalCylinder
@@ -339,11 +340,12 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       this.addChild(this.createRadiusLabel(RADIUS_LABEL_B));
       this.addChild(this.createRadiusLabel(RADIUS_LABEL_A));
     }
-    if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCylinder) {
+    if (
+      // type === PrimitiveType.Diameter ||
+      type === PrimitiveType.VerticalCylinder ||
+      type === PrimitiveType.HorizontalCylinder
+    ) {
       this.addChild(this.createHeightLabel(HEIGHT_LABEL));
-    }
-    if (type === PrimitiveType.Diameter) {
-      this.addChild(this.createDiameterLabel(DIAMETER_LABEL));
     }
   }
 
