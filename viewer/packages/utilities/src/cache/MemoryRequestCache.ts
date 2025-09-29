@@ -116,7 +116,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
    * @param id The cache key to add a reference to
    */
   addReference(id: Key): void {
-    const currentCount = this._referenceCounts.get(id) || 0;
+    const currentCount = this._referenceCounts.get(id) ?? 0;
     this._referenceCounts.set(id, currentCount + 1);
   }
 
