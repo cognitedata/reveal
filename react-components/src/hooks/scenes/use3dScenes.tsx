@@ -31,10 +31,11 @@ import {
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { createGetScenesQuery } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
+import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
 
-export type SceneNode = Omit<NodeDefinition, 'properties'> & {
+type SceneNode = Omit<NodeDefinition, 'properties'> & {
   properties: {
     scene: {
       'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
@@ -88,9 +89,13 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
         ]
       >(scenesQuery);
 
+      const scene3dModels = response.items.sceneModels.filter(isScene3dModelEdge);
+      const scene360Collections =
+        response.items.scene360Collections.filter(isScene360CollectionEdge);
+
       allScenes.scenes.push(...response.items.scenes);
-      allScenes.sceneModels.push(...response.items.sceneModels);
-      allScenes.scene360Collections.push(...response.items.scene360Collections);
+      allScenes.sceneModels.push(...scene3dModels);
+      allScenes.scene360Collections.push(...scene360Collections);
       allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
       allScenes.sceneGroundPlaneEdges.push(...response.items.sceneGroundPlaneEdges);
       allScenes.sceneSkybox.push(...response.items.sceneSkybox);

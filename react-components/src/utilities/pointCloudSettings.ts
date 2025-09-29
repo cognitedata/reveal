@@ -3,6 +3,11 @@ import { type RevealSettingsController } from '../architecture/concrete/reveal/R
 import { type RevealRenderTarget } from '../architecture/base/renderTarget/RevealRenderTarget';
 import { type QualitySettings } from '../architecture/base/utilities/quality/QualitySettings';
 import { type SceneQualitySettings } from '../components/SceneContainer/sceneTypes';
+import { DEFAULT_REVEAL_QUALITY_SETTINGS } from '../architecture/concrete/reveal/constants';
+
+export const DEFAULT_POINT_SIZE = 2;
+export const DEFAULT_POINT_SHAPE = PointShape.Circle;
+export const DEFAULT_POINT_COLOR_TYPE = PointColorType.Rgb;
 
 export function mergePointCloudSettings(
   settingsController: RevealSettingsController,
@@ -10,6 +15,8 @@ export function mergePointCloudSettings(
 ): void {
   if (qualitySettings.pointCloudPointSize !== undefined) {
     settingsController.pointSize(qualitySettings.pointCloudPointSize);
+  } else {
+    settingsController.pointSize(DEFAULT_POINT_SIZE);
   }
 
   if (qualitySettings.pointCloudPointShape !== undefined) {
@@ -62,30 +69,38 @@ export function applyQualitySettingsToRenderTarget(
   qualitySettings: SceneQualitySettings
 ): void {
   const settingsController = renderTarget.revealSettingsController;
-  const currentSettings = settingsController.qualitySettings.peek();
+  const defaultSettings: QualitySettings = DEFAULT_REVEAL_QUALITY_SETTINGS;
 
-  const newSettings = mergeQualitySettings(currentSettings, qualitySettings);
+  const newSettings = mergeQualitySettings(defaultSettings, qualitySettings);
   settingsController.qualitySettings(newSettings);
 }
 
 export function mergeQualitySettings(
-  current: QualitySettings,
+  defaultSettings: QualitySettings,
   incoming: SceneQualitySettings
 ): QualitySettings {
   return {
     cadBudget: {
-      maximumRenderCost: incoming.cadBudget ?? current.cadBudget.maximumRenderCost,
-      highDetailProximityThreshold: current.cadBudget.highDetailProximityThreshold
+      maximumRenderCost: incoming.cadBudget ?? defaultSettings.cadBudget.maximumRenderCost,
+      highDetailProximityThreshold: defaultSettings.cadBudget.highDetailProximityThreshold
     },
     pointCloudBudget: {
-      numberOfPoints: incoming.pointCloudBudget ?? current.pointCloudBudget.numberOfPoints
+      numberOfPoints: incoming.pointCloudBudget ?? defaultSettings.pointCloudBudget.numberOfPoints
     },
     resolutionOptions: {
       maxRenderResolution:
-        incoming.maxRenderResolution ?? current.resolutionOptions.maxRenderResolution,
+        incoming.maxRenderResolution ?? defaultSettings.resolutionOptions.maxRenderResolution,
       movingCameraResolutionFactor:
         incoming.movingCameraResolutionFactor ??
-        current.resolutionOptions.movingCameraResolutionFactor
+        defaultSettings.resolutionOptions.movingCameraResolutionFactor
     }
   };
+}
+
+export function resetRevealQualitySettings(renderTarget: RevealRenderTarget): void {
+  const settingsController = renderTarget.revealSettingsController;
+  settingsController.qualitySettings(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  settingsController.pointSize(DEFAULT_POINT_SIZE);
+  settingsController.pointShape(DEFAULT_POINT_SHAPE);
+  settingsController.pointColorType(DEFAULT_POINT_COLOR_TYPE);
 }

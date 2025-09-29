@@ -12,6 +12,7 @@ import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/get
 import { createSceneMockWithQualitySettings } from '#test-utils/fixtures/sceneData';
 import { PointColorType, PointShape } from '@cognite/reveal';
 import { type QualitySettings } from '../../../architecture/base/utilities/quality/QualitySettings';
+import { DEFAULT_REVEAL_QUALITY_SETTINGS } from '../../../architecture/concrete/reveal/constants';
 
 describe(useQualitySettingsFromScene.name, () => {
   const mockQualitySettingsPeek = vi.fn();
@@ -40,11 +41,7 @@ describe(useQualitySettingsFromScene.name, () => {
     </UseQualitySettingsFromSceneContext.Provider>
   );
 
-  const defaultCurrentSettings: QualitySettings = {
-    cadBudget: { maximumRenderCost: 1000000, highDetailProximityThreshold: 100 },
-    pointCloudBudget: { numberOfPoints: 500000 },
-    resolutionOptions: { maxRenderResolution: 1920, movingCameraResolutionFactor: 0.5 }
-  };
+  const defaultCurrentSettings: QualitySettings = DEFAULT_REVEAL_QUALITY_SETTINGS;
 
   const renderHookWithScene = (
     sceneData: Scene | null | undefined
@@ -74,10 +71,9 @@ describe(useQualitySettingsFromScene.name, () => {
 
     renderHookWithScene(createSceneMockWithQualitySettings(qualitySettings));
 
-    expect(mockQualitySettingsPeek).toHaveBeenCalled();
     expect(mockQualitySettingsCall).toHaveBeenCalledWith({
-      cadBudget: { maximumRenderCost: 2000000, highDetailProximityThreshold: 100 },
-      pointCloudBudget: { numberOfPoints: 500000 },
+      cadBudget: { maximumRenderCost: 2000000, highDetailProximityThreshold: 0 },
+      pointCloudBudget: { numberOfPoints: 3_000_000 },
       resolutionOptions: { maxRenderResolution: 2560, movingCameraResolutionFactor: 0.5 }
     });
   });
@@ -98,5 +94,77 @@ describe(useQualitySettingsFromScene.name, () => {
       PointColorType.Intensity
     );
     expect(mockRenderTarget.revealSettingsController.pointShape.peek()).toBe(PointShape.Square);
+  });
+
+  test('should update quality settings when sceneExternalId and sceneSpace change', () => {
+    // Create initial scene with first set of quality settings
+    const initialQualitySettings: SceneQualitySettings = {
+      cadBudget: 1500000,
+      maxRenderResolution: 1920
+    };
+    const initialScene = createSceneMockWithQualitySettings(initialQualitySettings);
+
+    // Create second scene with different quality settings
+    const updatedQualitySettings: SceneQualitySettings = {
+      cadBudget: 3000000,
+      maxRenderResolution: 4096,
+      pointCloudBudget: 1_500_000
+    };
+    const updatedScene = createSceneMockWithQualitySettings(updatedQualitySettings);
+
+    // Mock useSceneConfig to return different scenes based on scene ID and space
+    defaultDependencies.useSceneConfig.mockImplementation(
+      (sceneExternalId: string, sceneSpaceId: string) => {
+        if (sceneExternalId === 'initial-scene' && sceneSpaceId === 'initial-space') {
+          return { data: initialScene };
+        }
+        if (sceneExternalId === 'updated-scene' && sceneSpaceId === 'updated-space') {
+          return { data: updatedScene };
+        }
+        return { data: null };
+      }
+    );
+
+    // Initial render with first scene
+    const { rerender } = renderHook(
+      ({ sceneExternalId, sceneSpaceId }: { sceneExternalId: string; sceneSpaceId: string }) =>
+        useQualitySettingsFromScene(sceneExternalId, sceneSpaceId),
+      {
+        wrapper,
+        initialProps: {
+          sceneExternalId: 'initial-scene',
+          sceneSpaceId: 'initial-space'
+        }
+      }
+    );
+
+    // Verify initial quality settings were applied
+    expect(mockQualitySettingsCall).toHaveBeenCalledWith({
+      cadBudget: { maximumRenderCost: 1500000, highDetailProximityThreshold: 0 },
+      pointCloudBudget: { numberOfPoints: 3_000_000 },
+      resolutionOptions: { maxRenderResolution: 1920, movingCameraResolutionFactor: 0.5 }
+    });
+
+    // Verify that the initial quality settings were updated in renderTarget.revealSettingsController
+    expect(mockRenderTarget.revealSettingsController.qualitySettings).toBe(mockQualitySettings);
+
+    // Clear previous calls
+    mockQualitySettingsCall.mockClear();
+
+    // Re-render with different scene ID and space
+    rerender({
+      sceneExternalId: 'updated-scene',
+      sceneSpaceId: 'updated-space'
+    });
+
+    // Verify updated quality settings were applied
+    expect(mockQualitySettingsCall).toHaveBeenCalledWith({
+      cadBudget: { maximumRenderCost: 3000000, highDetailProximityThreshold: 0 },
+      pointCloudBudget: { numberOfPoints: 1_500_000 },
+      resolutionOptions: { maxRenderResolution: 4096, movingCameraResolutionFactor: 0.5 }
+    });
+
+    // Verify that the quality settings were updated in renderTarget.revealSettingsController
+    expect(mockRenderTarget.revealSettingsController.qualitySettings).toBe(mockQualitySettings);
   });
 });
