@@ -26,7 +26,7 @@ export async function updateMarker(tool: MeasurementTool, event: PointerEvent): 
   return true;
 }
 
-export async function updateMeasureDiameter(
+export async function tryCreateMeasureDiameter(
   tool: MeasurementTool,
   cameraPosition: Vector3,
   event: PointerEvent

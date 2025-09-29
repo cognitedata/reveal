@@ -1,6 +1,6 @@
 import { assert, describe, expect, test } from 'vitest';
 import { MeasurementTool } from '../MeasurementTool';
-import { updateMarker, updateMeasureDiameter } from './measureDiameterToolUtils';
+import { updateMarker, tryCreateMeasureDiameter } from './measureDiameterToolUtils';
 import { getOrCreateCircleMarker } from '../../circleMarker/CircleMarkerDomainObject';
 import { MOUSE, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type PointCloudIntersection } from '@cognite/reveal';
@@ -54,7 +54,7 @@ describe(updateMarker.name, () => {
   });
 });
 
-describe(updateMeasureDiameter.name, () => {
+describe(tryCreateMeasureDiameter.name, () => {
   test('Should not create a cylinder when no intersection ', async () => {
     const renderTarget = createFullRenderTargetMock();
     const tool = new MeasurementTool();
@@ -62,7 +62,7 @@ describe(updateMeasureDiameter.name, () => {
 
     tool.getIntersection = async () => undefined;
 
-    const result = await updateMeasureDiameter(tool, new Vector3(), createClickEvent());
+    const result = await tryCreateMeasureDiameter(tool, new Vector3(), createClickEvent());
     expect(result).toBe(false);
   });
 
@@ -79,7 +79,7 @@ describe(updateMeasureDiameter.name, () => {
     const { intersection, cameraPosition } = createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
 
-    const result = await updateMeasureDiameter(tool, cameraPosition, createClickEvent());
+    const result = await tryCreateMeasureDiameter(tool, cameraPosition, createClickEvent());
     expect(result).toBe(true);
 
     expect(circleMarker.isVisible()).toBe(true);
@@ -102,7 +102,7 @@ describe(updateMeasureDiameter.name, () => {
       createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
 
-    const result = await updateMeasureDiameter(tool, cameraPosition, createClickEvent());
+    const result = await tryCreateMeasureDiameter(tool, cameraPosition, createClickEvent());
     expect(result).toBe(true);
 
     expect(circleMarker.isVisible()).toBe(false);

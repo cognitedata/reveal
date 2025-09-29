@@ -18,7 +18,7 @@ import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { updateMarker, updateMeasureDiameter } from './diameter/measureDiameterToolUtils';
+import { updateMarker, tryCreateMeasureDiameter } from './diameter/measureDiameterToolUtils';
 import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 
 const POINT_SIZE_CHANGE_FACTOR = 0.1;
@@ -51,7 +51,7 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this.primitiveType === PrimitiveType.Diameter) {
-      if (await updateMeasureDiameter(this, this.renderTarget.camera.position, event)) {
+      if (await tryCreateMeasureDiameter(this, this.renderTarget.camera.position, event)) {
         return;
       }
     }
