@@ -225,10 +225,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._geometryBatchingManager?.removeSectorBatches(sectorId);
   }
 
-  public removeSectorMeshGroup(sectorId: number): void {
-    this._meshManager.removeSectorMeshGroup(sectorId);
-  }
-
   /**
    * Removes sector mesh group and properly dereferences it in the sector repository.
    * This ensures proper reference counting for shared geometry between duplicate models.
@@ -239,11 +235,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   public createMeshesFromParsedGeometries(parsedMeshGeometries: ParsedMeshGeometry[], sectorId: number): Group {
-    const managedSectorIds = this._meshManager.getManagedSectorIds();
-
-    // Check if we already have meshes for this sector - if so, we need to dereference the old sector first
-    if (managedSectorIds.includes(sectorId)) {
-      // This is a sector update/replacement - dereference the old one first
+    if (this._meshManager.hasManagedSector(sectorId)) {
       this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
     }
     return this._meshManager.createMeshesFromParsedGeometries(parsedMeshGeometries, sectorId);

@@ -104,13 +104,17 @@ export class GltfSectorRepository implements SectorRepository {
    * @param sectorId The sector ID to dereference
    */
   dereferenceSector(modelIdentifier: ModelIdentifier, sectorId: number): void {
-    const cacheKey = modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
+    const cacheKey = this.createSectorCacheKey(modelIdentifier, sectorId);
 
     // Let the cache handle reference counting and disposal
     this._gltfCache.removeReference(cacheKey);
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return wantedSector.modelIdentifier.sourceModelIdentifier() + '.' + wantedSector.metadata.id;
+    return this.createSectorCacheKey(wantedSector.modelIdentifier, wantedSector.metadata.id);
+  }
+
+  private createSectorCacheKey(modelIdentifier: ModelIdentifier, sectorId: number): string {
+    return modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
   }
 }

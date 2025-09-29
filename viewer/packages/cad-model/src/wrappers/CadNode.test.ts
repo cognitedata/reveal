@@ -143,7 +143,7 @@ describe(CadNode.name, () => {
 
     expectMeshGroup(meshGroup, 1);
 
-    cadNode.removeSectorMeshGroup(sectorId);
+    cadNode.removeSectorMeshGroupWithDereferencing(sectorId);
     expect(meshGroup.children.length).toBe(0);
   });
 
@@ -155,11 +155,11 @@ describe(CadNode.name, () => {
     expect(meshGroup1.children.length).toBe(1);
     expect(meshGroup2.children.length).toBe(1);
 
-    cadNode.removeSectorMeshGroup(100);
+    cadNode.removeSectorMeshGroupWithDereferencing(100);
     expect(meshGroup1.children.length).toBe(0);
     expect(meshGroup2.children.length).toBe(1);
 
-    cadNode.removeSectorMeshGroup(200);
+    cadNode.removeSectorMeshGroupWithDereferencing(200);
     expect(meshGroup2.children.length).toBe(0);
   });
 

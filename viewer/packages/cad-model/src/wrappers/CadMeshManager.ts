@@ -45,44 +45,34 @@ export class CadMeshManager {
     const allTreeIndices = new Set<number>();
 
     parsedMeshGeometries.forEach(geometryData => {
-      if (geometryData.type === RevealGeometryCollectionType.TriangleMesh) {
-        this.createMeshFromGeometry(
-          group,
-          geometryData.geometryBuffer,
-          materials.triangleMesh,
-          geometryData.wholeSectorBoundingBox
-        );
+      const isTriangleMesh = geometryData.type === RevealGeometryCollectionType.TriangleMesh;
+      const isTexturedTriangleMesh = geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh;
+
+      if (isTriangleMesh || isTexturedTriangleMesh) {
+        let material: RawShaderMaterial;
+
+        if (isTexturedTriangleMesh && geometryData.texture) {
+          material = this._materialManager.addTexturedMeshMaterial(
+            this._modelIdentifier,
+            sectorId,
+            geometryData.texture
+          );
+        } else if (isTexturedTriangleMesh && !geometryData.texture) {
+          console.warn(
+            `Missing texture for textured triangle mesh in sector ${sectorId} - mesh will be skipped. ` +
+              'This will result in missing geometry in the 3D scene.'
+          );
+          return; // Skip this geometry
+        } else {
+          material = materials.triangleMesh;
+        }
+
+        this.createMeshFromGeometry(group, geometryData.geometryBuffer, material, geometryData.wholeSectorBoundingBox);
 
         // Collect tree indices for mapping
         const treeIndices = this.createTreeIndexSet(geometryData.geometryBuffer);
         for (const treeIndex of treeIndices.keys()) {
           allTreeIndices.add(treeIndex);
-        }
-      } else if (geometryData.type === RevealGeometryCollectionType.TexturedTriangleMesh) {
-        if (geometryData.texture) {
-          const texturedMaterial = this._materialManager.addTexturedMeshMaterial(
-            this._modelIdentifier,
-            sectorId,
-            geometryData.texture
-          );
-
-          this.createMeshFromGeometry(
-            group,
-            geometryData.geometryBuffer,
-            texturedMaterial,
-            geometryData.wholeSectorBoundingBox
-          );
-
-          // Collect tree indices for mapping
-          const treeIndices = this.createTreeIndexSet(geometryData.geometryBuffer);
-          for (const treeIndex of treeIndices.keys()) {
-            allTreeIndices.add(treeIndex);
-          }
-        } else {
-          console.warn(
-            `Missing texture for textured triangle mesh in sector ${sectorId} - mesh will be skipped. ` +
-              'This will result in missing geometry in the 3D scene.'
-          );
         }
       }
     });
@@ -104,7 +94,7 @@ export class CadMeshManager {
    * Note: This does not dispose the underlying geometries as they may be shared with other models.
    * @param sectorId The sector ID whose mesh group should be removed
    */
-  public removeSectorMeshGroup(sectorId: number): void {
+  private removeSectorMeshGroup(sectorId: number): void {
     const meshGroup = this._sectorMeshGroups.get(sectorId);
     if (meshGroup) {
       // Remove from parent if it's still attached
@@ -145,6 +135,15 @@ export class CadMeshManager {
    */
   public getManagedSectorIds(): number[] {
     return Array.from(this._sectorMeshGroups.keys());
+  }
+
+  /**
+   * Checks if a sector is currently managed by this mesh manager.
+   * @param sectorId The sector ID to check
+   * @returns True if the sector is managed, false otherwise
+   */
+  public hasManagedSector(sectorId: number): boolean {
+    return this._sectorMeshGroups.has(sectorId);
   }
 
   /**

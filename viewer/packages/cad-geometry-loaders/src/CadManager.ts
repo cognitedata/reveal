@@ -86,7 +86,6 @@ export class CadManager {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
         // Also clean up any mesh groups created from parsed geometries
         cadModel.removeSectorMeshGroupWithDereferencing(sector.metadata.id);
-        return;
       }
 
       const sectorNodeParent = cadModel.rootSector;

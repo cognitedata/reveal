@@ -7,6 +7,8 @@ import { CadMaterialManager } from '@reveal/rendering';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import { SectorRepository } from '@reveal/sector-loader';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 import {
   BufferGeometry,
@@ -28,6 +30,8 @@ describe(CadMeshManager.name, () => {
   let materialManager: CadMaterialManager;
   let treeIndexToSectorsMap: TreeIndexToSectorsMap;
   let modelId: symbol;
+  let mockSectorRepository: SectorRepository;
+  let mockModelIdentifier: ModelIdentifier;
 
   beforeEach(() => {
     const mocks = createMockMaterialManager();
@@ -35,6 +39,19 @@ describe(CadMeshManager.name, () => {
     modelId = Symbol('testModel');
     treeIndexToSectorsMap = new TreeIndexToSectorsMap(1000); // Max tree index
     meshManager = new CadMeshManager(materialManager, modelId, treeIndexToSectorsMap);
+
+    // Create simple mocks for test methods that need sector repository and model identifier
+    mockSectorRepository = {
+      dereferenceSector: jest.fn(),
+      loadSector: jest.fn(),
+      clearCache: jest.fn(),
+      setCacheSize: jest.fn()
+    } as unknown as SectorRepository;
+
+    mockModelIdentifier = {
+      sourceModelIdentifier: jest.fn().mockReturnValue('test-model'),
+      revealInternalId: Symbol('test-model-internal')
+    } as unknown as ModelIdentifier;
   });
 
   test('should create empty mesh group when no geometries provided', () => {
@@ -154,13 +171,15 @@ describe(CadMeshManager.name, () => {
     const meshGroup = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1);
     expect(meshGroup.children.length).toBe(1);
 
-    meshManager.removeSectorMeshGroup(1);
+    meshManager.removeSectorMeshGroupAndDereference(1, mockSectorRepository, mockModelIdentifier);
     expect(meshGroup.children.length).toBe(0);
   });
 
   test('should handle removing non-existent sector', () => {
     // Should not throw when removing a sector that doesn't exist
-    expect(() => meshManager.removeSectorMeshGroup(999)).not.toThrow();
+    expect(() =>
+      meshManager.removeSectorMeshGroupAndDereference(999, mockSectorRepository, mockModelIdentifier)
+    ).not.toThrow();
   });
 
   test('should handle multiple sector mesh groups independently', () => {
@@ -173,11 +192,11 @@ describe(CadMeshManager.name, () => {
     expect(meshGroup1.children.length).toBe(1);
     expect(meshGroup2.children.length).toBe(1);
 
-    meshManager.removeSectorMeshGroup(100);
+    meshManager.removeSectorMeshGroupAndDereference(100, mockSectorRepository, mockModelIdentifier);
     expect(meshGroup1.children.length).toBe(0);
     expect(meshGroup2.children.length).toBe(1);
 
-    meshManager.removeSectorMeshGroup(200);
+    meshManager.removeSectorMeshGroupAndDereference(200, mockSectorRepository, mockModelIdentifier);
     expect(meshGroup2.children.length).toBe(0);
   });
 
@@ -189,7 +208,7 @@ describe(CadMeshManager.name, () => {
     expect(firstGroup.children.length).toBe(1);
 
     // Caller should explicitly remove existing mesh group before creating new one
-    meshManager.removeSectorMeshGroup(150);
+    meshManager.removeSectorMeshGroupAndDereference(150, mockSectorRepository, mockModelIdentifier);
     expect(firstGroup.children.length).toBe(0); // First group should be disposed
 
     const secondGroup = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 150);
@@ -205,7 +224,7 @@ describe(CadMeshManager.name, () => {
     const meshGroup = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1);
     expect(meshGroup.children.length).toBe(1);
 
-    meshManager.removeSectorMeshGroup(1);
+    meshManager.removeSectorMeshGroupAndDereference(1, mockSectorRepository, mockModelIdentifier);
 
     // Mesh group should be cleared but geometry not disposed (managed by cache)
     expect(meshGroup.children.length).toBe(0);
@@ -221,7 +240,7 @@ describe(CadMeshManager.name, () => {
     ];
 
     const meshGroup = meshManager.createMeshesFromParsedGeometries(parsedGeometries, 1);
-    meshManager.removeSectorMeshGroup(1);
+    meshManager.removeSectorMeshGroupAndDereference(1, mockSectorRepository, mockModelIdentifier);
 
     // Mesh group should be cleared but texture not disposed (managed by cache)
     expect(meshGroup.children.length).toBe(0);
