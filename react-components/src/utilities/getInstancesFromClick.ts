@@ -98,12 +98,16 @@ async function getPointCloudAnnotationMappingsFromIntersection(
     caches.pointCloudAnnotationCache
   );
 
-  return annotations?.map((annotation) => {
-    if ('id' in annotation.asset) {
-      return { id: annotation.asset.id };
-    }
-    return undefined;
-  }).filter((ref) => ref !== undefined) ?? EMPTY_ARRAY;
+  return (
+    annotations
+      ?.map((annotation) => {
+        if ('id' in annotation.asset) {
+          return { id: annotation.asset.id };
+        }
+        return undefined;
+      })
+      .filter((ref) => ref !== undefined) ?? EMPTY_ARRAY
+  );
 }
 
 function getPointCloudFdmInstancesFromIntersection(
