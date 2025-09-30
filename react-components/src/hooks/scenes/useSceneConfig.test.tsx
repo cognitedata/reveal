@@ -42,15 +42,13 @@ describe(useSceneConfig.name, () => {
                 cameraEulerRotationX: 0,
                 cameraEulerRotationY: 0,
                 cameraEulerRotationZ: 0,
-                qualitySettings: {
-                  cadBudget: 1000000,
-                  pointCloudBudget: 500000,
-                  maxRenderResolution: 1920,
-                  movingCameraResolutionFactor: 0.5,
-                  pointCloudPointSize: 2,
-                  pointCloudPointShape: 'circle',
-                  pointCloudColor: 'rgb'
-                }
+                cadBudget: 1000000,
+                pointCloudBudget: 500000,
+                maxRenderResolution: 1920,
+                movingCameraResolutionFactor: 0.5,
+                pointCloudPointSize: 2,
+                pointCloudPointShape: 'Circle',
+                pointCloudColor: 'Rgb'
               }
             }
           }
@@ -125,8 +123,8 @@ describe(useSceneConfig.name, () => {
           maxRenderResolution: 1920,
           movingCameraResolutionFactor: 0.5,
           pointCloudPointSize: 2,
-          pointCloudPointShape: 'circle',
-          pointCloudColor: 'rgb'
+          pointCloudPointShape: 'Circle',
+          pointCloudColor: 'Rgb'
         }
       },
       skybox: undefined,
@@ -242,8 +240,8 @@ describe(useSceneConfig.name, () => {
           maxRenderResolution: 4096,
           movingCameraResolutionFactor: 0.8,
           pointCloudPointSize: 4,
-          pointCloudPointShape: 'square',
-          pointCloudColor: 'height'
+          pointCloudPointShape: 'Square',
+          pointCloudColor: 'Height'
         }
       },
       skybox: {
@@ -398,8 +396,8 @@ describe(useSceneConfig.name, () => {
           maxRenderResolution: 8192,
           movingCameraResolutionFactor: 0.9,
           pointCloudPointSize: 8,
-          pointCloudPointShape: 'circle',
-          pointCloudColor: 'rgb'
+          pointCloudPointShape: 'Circle',
+          pointCloudColor: 'Rgb'
         }
       },
       skybox: {
