@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { Sprite } from 'three';
+import { PerspectiveCamera, Raycaster, Sprite, Vector2, Vector3 } from 'three';
 import { expectChildrenOfTypeAndCount } from '#test-utils/architecture/viewUtil';
 import { CircleMarkerView } from './CircleMarkerView';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type CustomObjectIntersectInput } from '@cognite/reveal';
 
 describe(CircleMarkerView.name, () => {
   let view: CircleMarkerView;
@@ -52,6 +53,20 @@ describe(CircleMarkerView.name, () => {
     // Simply check if the sprite has been regenerated
     const newSprite = getSprite(view);
     expect(oldSprite).not.toBe(newSprite);
+  });
+
+  test('should not intersect', () => {
+    const customObjectIntersectInputMock: CustomObjectIntersectInput = {
+      raycaster: new Raycaster(new Vector3(0, 0, 0), new Vector3(0, 1, 0)),
+      isVisible: (_point: Vector3) => true,
+      clippingPlanes: undefined,
+
+      // This is not used in this test
+      normalizedCoords: new Vector2(),
+      camera: new PerspectiveCamera()
+    };
+
+    expect(view.intersectIfCloser(customObjectIntersectInputMock, undefined)).toBeUndefined();
   });
 });
 
