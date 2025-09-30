@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
+import { type QueryFunction } from '@tanstack/react-query';
 import { Mock, type IMock } from 'moq.ts';
 import { type Scene } from '../../components/SceneContainer/sceneTypes';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
@@ -576,7 +577,7 @@ describe(useSceneConfig.name, () => {
   // Tests for actual query function execution to cover missing lines
   describe('QueryFunction execution coverage', () => {
     test('should return null when sceneExternalId is undefined', async () => {
-      let capturedQueryFunction: any;
+      let capturedQueryFunction: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -589,7 +590,7 @@ describe(useSceneConfig.name, () => {
     });
 
     test('should return null when sceneSpace is undefined', async () => {
-      let capturedQueryFunction: any;
+      let capturedQueryFunction: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -604,7 +605,7 @@ describe(useSceneConfig.name, () => {
     test('should return DefaultScene when scene views do not exist', async () => {
       fdmSdkMock = createViewsNotExistFdmSdkMock();
 
-      let capturedQueryFunction: any;
+      let capturedQueryFunction: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -642,7 +643,7 @@ describe(useSceneConfig.name, () => {
     });
 
     test('should execute complete scene processing with minimal data', async () => {
-      let capturedQueryFunction: any;
+      let capturedQueryFunction: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
