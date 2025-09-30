@@ -5,6 +5,7 @@ import { type TranslationInput } from '../../../base/utilities/translation/Trans
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type PointCloud } from '../RevealTypes';
 import { type PointColorType, type PointShape } from '@cognite/reveal';
+import { Matrix4 } from 'three';
 
 export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
@@ -30,6 +31,7 @@ export class PointCloudDomainObject extends RevealDomainObject {
   public constructor(model: PointCloud) {
     super();
     this._model = model;
+    model.setModelTransformation(new Matrix4().setPosition(10, 20, 30));
     this.pointSize(model.pointSize);
     this.pointShape(model.pointShape);
     this.pointColorType(model.pointColorType);

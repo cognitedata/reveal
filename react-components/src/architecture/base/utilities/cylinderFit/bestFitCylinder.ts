@@ -16,6 +16,7 @@ export const MAIN_AXES = createMainAxes();
 export type AcceptCylinder = (cylinder: LeastSquareCylinderResult) => boolean;
 
 const EPSILON = 1e-9;
+const MEASUREMENT_ERROR = 0.005;
 
 /**
  * Computes the best-fit cylinder for a given set of 3D points.
@@ -266,7 +267,17 @@ function calculateFitness(
 
   for (const point of getTransformedPoints(points, matrix)) {
     // Find relative radius error
-    const radius = horizontalLength(point);
+    let radius = horizontalLength(point);
+
+    // Assume a small measurement error, so remove the error from the radius
+    // This will improve the detection of small cylinders, with radius less that about 10 * MEASUREMENT_ERROR. where
+    // the measurement error is a significant part of the radius
+    // This gave better results when testing with real data
+    if (radius > cylinder.radius) {
+      radius = Math.max(cylinder.radius, radius - MEASUREMENT_ERROR);
+    } else if (radius < cylinder.radius) {
+      radius = Math.min(cylinder.radius, radius + MEASUREMENT_ERROR);
+    }
     const error = cylinder.radius > EPSILON ? 1 - radius / cylinder.radius : radius;
     if (useHistogram) {
       addToAngularHistogram(point, angularHistogram);
