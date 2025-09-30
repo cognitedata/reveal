@@ -66,9 +66,8 @@ export function createPointCloudIntersectionWithCylinder(pointCount: number): {
     .multiplyScalar(expectedCylinder.radius * 10)
     .add(expectedCylinder.center);
 
-  // Create the point cloud
+  // Create the point cloud with a model transformation and some points
   const pointCloud = createPointCloudMock();
-
   const modelTransformation = new Matrix4().setPosition(10, 20, 30);
   const inverseModelTransformation = modelTransformation.clone().invert();
 

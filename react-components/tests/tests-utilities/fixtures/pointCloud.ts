@@ -46,12 +46,6 @@ export function createPointCloudMock(parameters?: {
     .returns(revisionId)
     .setup((p) => p.modelIdentifier)
     .returns({ modelId, revisionId })
-    .setup((p) => p.getModelTransformation())
-    .returns(modelTransformation)
-    .setup((p) => p.setModelTransformation)
-    .returns((matrix: Matrix4) => {
-      modelTransformation.copy(matrix);
-    })
     .setup((p) => p.type)
     .returns('pointcloud')
 
@@ -80,6 +74,10 @@ export function createPointCloudMock(parameters?: {
   pointCloud.pointShape = PointShape.Circle;
   pointCloud.pointSize = 1;
   pointCloud.pointColorType = PointColorType.Rgb;
+  pointCloud.getModelTransformation = () => modelTransformation;
+  pointCloud.setModelTransformation = (matrix: Matrix4) => {
+    modelTransformation.copy(matrix);
+  };
 
   return pointCloud;
 }
