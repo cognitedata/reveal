@@ -5,13 +5,13 @@ import {
   type PointCloudAnnotationModel,
   type AnnotationId
 } from './types';
-import { type CogniteClient, type Asset, type AnnotationFilterProps, IdEither } from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps, type IdEither } from '@cognite/sdk';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
 import { createModelRevisionKey } from './idAndKeyTranslation';
-import { AssetInstance, isClassicAsset } from '../../utilities/instances';
-import { DmsUniqueIdentifier } from '../../data-providers';
+import { type AssetInstance, isClassicAsset } from '../../utilities/instances';
+import { type DmsUniqueIdentifier } from '../../data-providers';
 import { isDmsInstance, isExternalId, isIdEither, isInternalId } from '../../utilities/instanceIds';
 
 export class PointCloudAnnotationCache {
@@ -115,7 +115,9 @@ export class PointCloudAnnotationCache {
     const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(
       ([, asset]) => {
         if (isClassicAsset(asset)) {
-          return internalClassicId ? asset.id === internalClassicId : asset.externalId === externalClassicId;
+          return internalClassicId !== undefined
+            ? asset.id === internalClassicId
+            : asset.externalId === externalClassicId;
         } else {
           return asset.externalId === dmsId?.externalId && asset.space === dmsId?.space;
         }
