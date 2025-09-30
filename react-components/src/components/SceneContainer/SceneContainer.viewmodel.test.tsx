@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { useSceneContainerViewModel } from './SceneContainer.viewmodel';
 import { type UseSceneContainerViewModelProps } from './types';
@@ -8,6 +8,7 @@ import {
   SceneContainerViewModelContext
 } from './SceneContainer.viewmodel.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import { type AddResourceOptions } from '../Reveal3DResources';
 
 describe(useSceneContainerViewModel.name, () => {
   const mockProps: UseSceneContainerViewModelProps = {
@@ -19,16 +20,24 @@ describe(useSceneContainerViewModel.name, () => {
     defaultSceneContainerViewModelDependencies
   );
 
+  const mockOnPointCloudSettingsCallback = vi.fn();
+
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <SceneContainerViewModelContext.Provider value={defaultDependencies}>
       {children}
     </SceneContainerViewModelContext.Provider>
   );
 
+  beforeEach(() => {
+    defaultDependencies.useQualitySettingsFromScene.mockReturnValue({
+      onPointCloudSettingsCallback: mockOnPointCloudSettingsCallback
+    });
+  });
+
   test('should return correct viewmodel result when resources are available', () => {
-    const mockResourceOptions = [
-      { modelId: 1, revisionId: 1 },
-      { modelId: 2, revisionId: 2 }
+    const mockResourceOptions: AddResourceOptions[] = [
+      { modelId: 123, revisionId: 456 },
+      { modelId: 789, revisionId: 987 }
     ];
 
     defaultDependencies.useReveal3dResourcesFromScene.mockReturnValue(mockResourceOptions);
@@ -37,10 +46,11 @@ describe(useSceneContainerViewModel.name, () => {
 
     expect(result.current.resourceOptions).toEqual(mockResourceOptions);
     expect(result.current.hasResources).toBe(true);
+    expect(result.current.onPointCloudSettingsCallback).toBe(mockOnPointCloudSettingsCallback);
   });
 
   test('should return correct viewmodel result when no resources are available', () => {
-    const mockResourceOptions: never[] = [];
+    const mockResourceOptions: AddResourceOptions[] = [];
 
     defaultDependencies.useReveal3dResourcesFromScene.mockReturnValue(mockResourceOptions);
 
@@ -48,6 +58,7 @@ describe(useSceneContainerViewModel.name, () => {
 
     expect(result.current.resourceOptions).toEqual(mockResourceOptions);
     expect(result.current.hasResources).toBe(false);
+    expect(result.current.onPointCloudSettingsCallback).toBe(mockOnPointCloudSettingsCallback);
   });
 
   test('should call all required hooks with correct parameters', () => {
@@ -68,6 +79,10 @@ describe(useSceneContainerViewModel.name, () => {
       mockProps.sceneSpaceId
     );
     expect(defaultDependencies.useLoadPoisForScene).toHaveBeenCalledWith(
+      mockProps.sceneExternalId,
+      mockProps.sceneSpaceId
+    );
+    expect(defaultDependencies.useQualitySettingsFromScene).toHaveBeenCalledWith(
       mockProps.sceneExternalId,
       mockProps.sceneSpaceId
     );

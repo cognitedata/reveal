@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { type QueryFunction } from '@tanstack/react-query';
-import { type CogniteClient, type NodeDefinition } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -26,32 +26,14 @@ import {
   type Use3dScenesResult,
   type ScenesMap,
   type Space,
-  type ExternalId
+  type ExternalId,
+  type Use3dScenesQueryResult,
+  type SceneNode
 } from './use3dScenes.types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { createGetScenesQuery } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
-
-type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
-
-export type SceneNode = Omit<NodeDefinition, 'properties'> & {
-  properties: {
-    scene: {
-      'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
-    };
-  };
-};
-
-type Use3dScenesQueryResult = {
-  scenes: SceneNode[];
-  sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
-  scene360Collections: Array<
-    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
-  >;
-  sceneGroundPlanes: Array<NodeItem<GroundPlaneProperties>>;
-  sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>;
-  sceneSkybox: Array<NodeItem<SkyboxProperties>>;
-};
+import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
   const { useSDK, useQuery, createFdmSdk } = useContext(Use3dScenesContext);
@@ -88,9 +70,13 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
         ]
       >(scenesQuery);
 
+      const scene3dModels = response.items.sceneModels.filter(isScene3dModelEdge);
+      const scene360Collections =
+        response.items.scene360Collections.filter(isScene360CollectionEdge);
+
       allScenes.scenes.push(...response.items.scenes);
-      allScenes.sceneModels.push(...response.items.sceneModels);
-      allScenes.scene360Collections.push(...response.items.scene360Collections);
+      allScenes.sceneModels.push(...scene3dModels);
+      allScenes.scene360Collections.push(...scene360Collections);
       allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
       allScenes.sceneGroundPlaneEdges.push(...response.items.sceneGroundPlaneEdges);
       allScenes.sceneSkybox.push(...response.items.sceneSkybox);
@@ -123,11 +109,11 @@ function createMapOfScenes(
 ): Record<Space, Record<ExternalId, SceneData>> {
   return scenes.reduce((acc: Record<Space, Record<ExternalId, SceneData>>, scene: SceneNode) => {
     const { space, externalId } = scene;
-    const properties = scene.properties.scene['SceneConfiguration/v1'];
     if (acc[space] === undefined) {
       acc[space] = {};
     }
     if (acc[space][externalId] === undefined) {
+      const properties = scene.properties.scene['SceneConfiguration/v1'];
       let skyboxObject: SkyboxProperties | undefined;
       const skyboxIdentifier = properties.skybox;
       if (skyboxIdentifier !== undefined) {

@@ -9,8 +9,8 @@ import {
   type Scene360ImageCollectionsProperties,
   type GroundPlaneResponse,
   type GroundPlaneEdgeResponse,
-  type Image360CollectionsResponse,
-  type SceneModelsResponse
+  type SceneModelsResponse,
+  type Image360CollectionsResponse
 } from '../../components/SceneContainer/SceneFdmTypes';
 import {
   type CadOrPointCloudModel,
@@ -34,8 +34,12 @@ import {
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { isSceneConfigurationProperties } from './sceneResponseTypeGuard';
 import { UseSceneConfigContext } from './useSceneConfig.context';
+import {
+  isScene360CollectionEdge,
+  isScene3dModelEdge,
+  isSceneConfigurationProperties
+} from './sceneResponseTypeGuards';
 
 export type UseSceneConfigResult = UseQueryResult<Scene | null>;
 
@@ -136,8 +140,13 @@ export function useSceneConfig(
         sceneResponse.items.groundPlanes,
         sceneResponse.items.groundPlaneEdges
       ),
-      sceneModels: await getSceneModels(sceneResponse.items.sceneModels, fdmSdk),
-      image360Collections: getImageCollections(sceneResponse.items.image360CollectionsEdges)
+      sceneModels: await getSceneModels(
+        sceneResponse.items.sceneModels.filter(isScene3dModelEdge),
+        fdmSdk
+      ),
+      image360Collections: getImageCollections(
+        sceneResponse.items.image360CollectionsEdges.filter(isScene360CollectionEdge)
+      )
     };
     return scene;
   };
@@ -166,8 +175,7 @@ function extractSceneProperties(
   scenesProperties: Record<string, Record<string, unknown>>
 ): SceneConfigurationProperties {
   const currentSceneProperties = scenesProperties.scene['SceneConfiguration/v1'];
-  const sceneConfigurationProperties = isSceneConfigurationProperties(currentSceneProperties);
-  if (!sceneConfigurationProperties) {
+  if (!isSceneConfigurationProperties(currentSceneProperties)) {
     throw new Error('Scene configuration properties are missing or invalid');
   }
   return currentSceneProperties;

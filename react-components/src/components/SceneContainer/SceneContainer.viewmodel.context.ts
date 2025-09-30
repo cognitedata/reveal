@@ -3,19 +3,22 @@ import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesF
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
 import { useLoadPoisForScene } from '../Architecture/pointsOfInterest/useLoadPoisForScene';
+import { useQualitySettingsFromScene } from './hooks/useQualitySettingsFromScene';
 
 export type SceneContainerViewModelDependencies = {
   useReveal3dResourcesFromScene: typeof useReveal3dResourcesFromScene;
   useGroundPlaneFromScene: typeof useGroundPlaneFromScene;
   useSkyboxFromScene: typeof useSkyboxFromScene;
   useLoadPoisForScene: typeof useLoadPoisForScene;
+  useQualitySettingsFromScene: typeof useQualitySettingsFromScene;
 };
 
 export const defaultSceneContainerViewModelDependencies: SceneContainerViewModelDependencies = {
   useReveal3dResourcesFromScene,
   useGroundPlaneFromScene,
   useSkyboxFromScene,
-  useLoadPoisForScene
+  useLoadPoisForScene,
+  useQualitySettingsFromScene
 };
 
 export const SceneContainerViewModelContext = createContext<SceneContainerViewModelDependencies>(
