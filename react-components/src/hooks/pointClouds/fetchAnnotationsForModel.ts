@@ -18,7 +18,9 @@ export const fetchAnnotationsForModel = async (
         await pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(
           modelId,
           revisionId,
-          assetId
+          typeof assetId === 'number'
+            ? { id: assetId }
+            : { externalId: assetId }
         )
     )
   );
