@@ -1,6 +1,6 @@
 import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { Vector3 } from 'three';
-import { bestFitCylinder, MAIN_AXES } from './bestFitCylinder';
+import { bestFitCylinder, MAIN_AXES, MEASUREMENT_ERROR } from './bestFitCylinder';
 import { LeastSquareCylinderResult } from './LeastSquareCylinderResult';
 import { Random } from '../misc/Random';
 
@@ -14,7 +14,12 @@ describe(bestFitCylinder.name, () => {
     for (const axis of MAIN_AXES) {
       const expectedCylinder = new LeastSquareCylinderResult(new Vector3(1, 2, 3), axis, 3, 6);
       const points = createPoints(expectedCylinder, 100, random);
-      checkCorrectness(bestFitCylinder(points), expectedCylinder);
+      const actualCylinder = bestFitCylinder(points);
+
+      checkCorrectness(actualCylinder, expectedCylinder);
+      assert(actualCylinder !== undefined);
+      expect(actualCylinder.angularCoverage).toBeGreaterThan(0.75);
+      expect(actualCylinder.rms).toBeLessThan(0.005);
     }
   });
 
@@ -22,7 +27,11 @@ describe(bestFitCylinder.name, () => {
     for (let i = 0; i < 20; i++) {
       const expectedCylinder = getRandomCylinder(random);
       const points = createPoints(expectedCylinder, 10, random);
-      checkCorrectness(bestFitCylinder(points), expectedCylinder);
+      const actualCylinder = bestFitCylinder(points);
+
+      checkCorrectness(actualCylinder, expectedCylinder);
+      assert(actualCylinder !== undefined);
+      expect(actualCylinder.rms).toBeLessThan(0.005);
     }
   });
 
@@ -31,12 +40,29 @@ describe(bestFitCylinder.name, () => {
       const expectedCylinder = getRandomCylinder(random);
       const points = createPoints(expectedCylinder, 100, random);
       const actualCylinder = bestFitCylinder(points);
-      checkCorrectness(actualCylinder, expectedCylinder);
 
-      // Check angular Coverage
+      checkCorrectness(actualCylinder, expectedCylinder);
       assert(actualCylinder !== undefined);
       expect(actualCylinder.angularCoverage).toBeGreaterThan(0.75);
+      expect(actualCylinder.rms).toBeLessThan(0.005);
     }
+  });
+
+  test('should get the cylinder with tiny RMS for small cylinder with points containing measurement errors', () => {
+    // Small radius to make sure that we can handle small cylinders
+    const expectedCylinder = new LeastSquareCylinderResult(
+      new Vector3(),
+      new Vector3(0, 0, 1),
+      0.03,
+      0.06
+    );
+    const relativeRadiusError = MEASUREMENT_ERROR / expectedCylinder.radius;
+    const points = createPoints(expectedCylinder, 100, random, relativeRadiusError);
+    const actualCylinder = bestFitCylinder(points);
+
+    checkCorrectness(actualCylinder, expectedCylinder);
+    assert(actualCylinder !== undefined);
+    expect(actualCylinder.rms).toBeLessThan(0.005);
   });
 
   test('should get the cylinder for arbitrarily axis, center, radius and height with some errors', () => {

@@ -15,8 +15,9 @@ export const MAIN_AXES = createMainAxes();
 
 export type AcceptCylinder = (cylinder: LeastSquareCylinderResult) => boolean;
 
+export const MEASUREMENT_ERROR = 0.005;
+
 const EPSILON = 1e-9;
-const MEASUREMENT_ERROR = 0.005;
 
 /**
  * Computes the best-fit cylinder for a given set of 3D points.
