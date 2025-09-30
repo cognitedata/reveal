@@ -267,18 +267,19 @@ function calculateFitness(
 
   for (const point of getTransformedPoints(points, matrix)) {
     // Find relative radius error
-    let radius = horizontalLength(point);
+    let actualRadius = horizontalLength(point);
 
-    // Assume a small measurement error, so remove the error from the radius
+    // Assume a small measurement error on the points, let say 5 mm.
+    // So remove this error from the actualRadius, by adjusting it towards the radius found in the cylinder detection.
     // This will improve the detection of small cylinders, with radius less that about 10 * MEASUREMENT_ERROR. where
     // the measurement error is a significant part of the radius
-    // This gave better results when testing with real data
-    if (radius > cylinder.radius) {
-      radius = Math.max(cylinder.radius, radius - MEASUREMENT_ERROR);
-    } else if (radius < cylinder.radius) {
-      radius = Math.min(cylinder.radius, radius + MEASUREMENT_ERROR);
+    // This gave better detection on small cylinders when testing with real data
+    if (actualRadius > cylinder.radius) {
+      actualRadius = Math.max(cylinder.radius, actualRadius - MEASUREMENT_ERROR);
+    } else if (actualRadius < cylinder.radius) {
+      actualRadius = Math.min(cylinder.radius, actualRadius + MEASUREMENT_ERROR);
     }
-    const error = cylinder.radius > EPSILON ? 1 - radius / cylinder.radius : radius;
+    const error = cylinder.radius > EPSILON ? 1 - actualRadius / cylinder.radius : actualRadius;
     if (useHistogram) {
       addToAngularHistogram(point, angularHistogram);
     }
