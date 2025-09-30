@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { type QueryFunction } from '@tanstack/react-query';
+import { type QueryFunction, type QueryFunctionContext, QueryClient } from '@tanstack/react-query';
 import { Mock, type IMock } from 'moq.ts';
 import { type Scene } from '../../components/SceneContainer/sceneTypes';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
@@ -574,10 +574,20 @@ describe(useSceneConfig.name, () => {
     expect(result.current.data.image360Collections).toHaveLength(0);
   });
 
+  // Helper to create mock query context
+  const createMockQueryContext = (
+    queryKey: readonly unknown[]
+  ): QueryFunctionContext<readonly unknown[]> => ({
+    queryKey,
+    signal: new AbortController().signal,
+    meta: undefined,
+    client: new QueryClient()
+  });
+
   // Tests for actual query function execution to cover missing lines
   describe('QueryFunction execution coverage', () => {
     test('should return null when sceneExternalId is undefined', async () => {
-      let capturedQueryFunction: QueryFunction<Scene | null>;
+      let capturedQueryFunction!: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -585,12 +595,19 @@ describe(useSceneConfig.name, () => {
 
       renderHook(() => useSceneConfig(undefined, 'test-space'), { wrapper });
 
-      const result = await capturedQueryFunction();
+      const mockContext = createMockQueryContext([
+        'reveal',
+        'react-components',
+        'sync-scene-config',
+        undefined,
+        'test-space'
+      ]);
+      const result = await capturedQueryFunction(mockContext);
       expect(result).toBeNull();
     });
 
     test('should return null when sceneSpace is undefined', async () => {
-      let capturedQueryFunction: QueryFunction<Scene | null>;
+      let capturedQueryFunction!: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -598,14 +615,21 @@ describe(useSceneConfig.name, () => {
 
       renderHook(() => useSceneConfig('test-scene', undefined), { wrapper });
 
-      const result = await capturedQueryFunction();
+      const mockContext = createMockQueryContext([
+        'reveal',
+        'react-components',
+        'sync-scene-config',
+        'test-scene',
+        undefined
+      ]);
+      const result = await capturedQueryFunction(mockContext);
       expect(result).toBeNull();
     });
 
     test('should return DefaultScene when scene views do not exist', async () => {
       fdmSdkMock = createViewsNotExistFdmSdkMock();
 
-      let capturedQueryFunction: QueryFunction<Scene | null>;
+      let capturedQueryFunction!: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -615,7 +639,14 @@ describe(useSceneConfig.name, () => {
         wrapper
       });
 
-      const result = await capturedQueryFunction();
+      const mockContext = createMockQueryContext([
+        'reveal',
+        'react-components',
+        'sync-scene-config',
+        mockProps.sceneExternalId,
+        mockProps.sceneSpace
+      ]);
+      const result = await capturedQueryFunction(mockContext);
       expect(result).toEqual({
         sceneConfiguration: {
           name: '',
@@ -643,7 +674,7 @@ describe(useSceneConfig.name, () => {
     });
 
     test('should execute complete scene processing with minimal data', async () => {
-      let capturedQueryFunction: QueryFunction<Scene | null>;
+      let capturedQueryFunction!: QueryFunction<Scene | null>;
       mockUseQuery.mockImplementation((options) => {
         capturedQueryFunction = options.queryFn;
         return createMockQueryResult(null);
@@ -653,13 +684,13 @@ describe(useSceneConfig.name, () => {
         wrapper
       });
 
-      // Mock context for QueryFunction
-      const mockContext = {
-        queryKey: ['scenes', mockProps.sceneExternalId, mockProps.sceneSpace],
-        signal: new AbortController().signal,
-        meta: undefined
-      };
-
+      const mockContext = createMockQueryContext([
+        'reveal',
+        'react-components',
+        'sync-scene-config',
+        mockProps.sceneExternalId,
+        mockProps.sceneSpace
+      ]);
       const result = await capturedQueryFunction(mockContext);
       expect(result).toBeDefined();
       expect(result?.sceneConfiguration.name).toBe('Test Scene');
