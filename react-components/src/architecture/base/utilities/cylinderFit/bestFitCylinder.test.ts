@@ -56,6 +56,7 @@ describe(bestFitCylinder.name, () => {
       0.03,
       0.06
     );
+    // This relative error is according to the predefined MEASUREMENT_ERROR.
     const relativeRadiusError = MEASUREMENT_ERROR / expectedCylinder.radius;
     const points = createPoints(expectedCylinder, 100, random, relativeRadiusError);
     const actualCylinder = bestFitCylinder(points);
