@@ -46,7 +46,9 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override set value(index: number) {
-    this.pointSize = POINT_SIZES[index];
+    if (index >= 0 && index < POINT_SIZES.length) {
+      this.pointSize = POINT_SIZES[index];
+    }
   }
 
   public get pointSize(): number {
