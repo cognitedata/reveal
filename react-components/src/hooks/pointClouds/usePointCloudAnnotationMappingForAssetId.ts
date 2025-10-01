@@ -5,6 +5,7 @@ import { type AnyIntersection } from '@cognite/reveal';
 import { queryKeys } from '../../utilities/queryKeys';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
+import { getInstanceDataFromIntersection } from './getInstanceDataFromIntersection';
 
 export const usePointCloudAnnotationMappingForAssetId = (
   intersection: AnyIntersection | undefined
@@ -12,34 +13,32 @@ export const usePointCloudAnnotationMappingForAssetId = (
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
-  const [modelId, revisionId, assetId] = isPointCloudIntersection
-    ? [
-        intersection.model.modelId,
-        intersection.model.revisionId,
-        intersection.assetRef?.externalId ?? intersection.assetRef?.id
-      ]
-    : [undefined, undefined, undefined];
+  const instanceData = getInstanceDataFromIntersection(intersection);
+  const classicModelIdentifier = instanceData?.classicModelIdentifier;
+  const dmsModelUniqueIdentifier = instanceData?.dmsModelUniqueIdentifier;
+  const reference = instanceData?.reference;
+
+  const queryKeyString = classicModelIdentifier
+    ? `${classicModelIdentifier.modelId}/${classicModelIdentifier.revisionId}`
+    : `${dmsModelUniqueIdentifier?.revisionExternalId}/${dmsModelUniqueIdentifier?.revisionSpace}`;
 
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudAnnotationForAssetId(
-        `${modelId}/${revisionId}`,
-        assetId?.toString() ?? ''
-      )
+      queryKeys.pointCloudAnnotationForAssetId(queryKeyString, reference?.toString() ?? '')
     ],
     queryFn: async () => {
-      if (modelId === undefined || revisionId === undefined || assetId === undefined) {
+      if (classicModelIdentifier === undefined || reference === undefined) {
         return EMPTY_ARRAY;
       }
       const result = await fetchAnnotationsForModel(
-        modelId,
-        revisionId,
-        [assetId],
+        classicModelIdentifier.modelId,
+        classicModelIdentifier.revisionId,
+        [reference],
         pointCloudAnnotationCache
       );
       return result ?? EMPTY_ARRAY;
     },
     staleTime: Infinity,
-    enabled: isPointCloudIntersection && assetId !== undefined
+    enabled: isPointCloudIntersection && reference !== undefined
   });
 };

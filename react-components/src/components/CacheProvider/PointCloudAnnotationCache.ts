@@ -5,17 +5,25 @@ import {
   type PointCloudAnnotationModel,
   type AnnotationId
 } from './types';
-import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
+import {
+  type CogniteClient,
+  type Asset,
+  type AnnotationFilterProps,
+  type IdEither
+} from '@cognite/sdk';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
 import { createModelRevisionKey } from './idAndKeyTranslation';
+import { type AssetInstance, isClassicAsset } from '../../utilities/instances';
+import { type DmsUniqueIdentifier } from '../../data-providers';
+import { isDmsInstance, isExternalId, isIdEither, isInternalId } from '../../utilities/instanceIds';
 
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
   private readonly _modelToAnnotationAssetMappings = new Map<
     ModelRevisionKey,
-    Promise<Map<AnnotationId, Asset>>
+    Promise<Map<AnnotationId, AssetInstance>>
   >();
 
   private readonly _modelToAnnotationMappings = new Map<
@@ -30,7 +38,7 @@ export class PointCloudAnnotationCache {
   public async getPointCloudAnnotationAssetsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<Map<AnnotationId, Asset>> {
+  ): Promise<Map<AnnotationId, AssetInstance>> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = this._modelToAnnotationAssetMappings.get(key);
 
@@ -64,7 +72,7 @@ export class PointCloudAnnotationCache {
 
   private async fetchAndCacheAssetMappingsForModel(
     modelId: ModelId
-  ): Promise<Map<AnnotationId, Asset>> {
+  ): Promise<Map<AnnotationId, AssetInstance>> {
     const annotationModels = await this.fetchAnnotationForModel(modelId);
     const annotationAssets = fetchPointCloudAnnotationAssets(annotationModels, this._sdk);
 
@@ -97,16 +105,28 @@ export class PointCloudAnnotationCache {
   public async matchPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetId: string | number
-  ): Promise<Map<AnnotationId, Asset> | undefined> {
+    assetId: IdEither | DmsUniqueIdentifier
+  ): Promise<Map<AnnotationId, AssetInstance> | undefined> {
     const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
       modelId,
       revisionId
     );
 
-    const assetIdNumber = typeof assetId === 'number' ? assetId : undefined;
+    const classicAssetId = isIdEither(assetId) ? assetId : undefined;
+    const internalClassicId = isInternalId(classicAssetId) ? classicAssetId.id : undefined;
+    const externalClassicId = isExternalId(classicAssetId) ? classicAssetId.externalId : undefined;
+    const dmsId = isDmsInstance(assetId) ? assetId : undefined;
+
     const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(
-      ([, asset]) => asset.id === assetIdNumber
+      ([, asset]) => {
+        if (isClassicAsset(asset)) {
+          return internalClassicId
+            ? asset.id === internalClassicId
+            : asset.externalId === externalClassicId;
+        } else {
+          return asset.externalId === dmsId?.externalId && asset.space === dmsId?.space;
+        }
+      }
     );
     return matchedAnnotations.length > 0 ? new Map(matchedAnnotations) : undefined;
   }

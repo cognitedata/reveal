@@ -11,18 +11,24 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
-import { type InstanceReference, isIdEither } from '../../utilities/instanceIds';
-import { isSameIdEither } from '../../utilities/instanceIds/equality';
+import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
+import { isSameDmsId, isSameIdEither } from '../../utilities/instanceIds/equality';
 import { type AssetInstance } from '../../utilities/instances';
 
 export async function fetchPointCloudAnnotationAssets(
   annotations: PointCloudAnnotationModel[],
   sdk: CogniteClient
-): Promise<Map<AnnotationId, Asset>> {
+): Promise<Map<AnnotationId, AssetInstance>> {
   const annotationMapping = annotations.map((annotation) => {
     const assetId = getInstanceReferenceFromPointCloudAnnotation(annotation);
     if (assetId === undefined) {
       return undefined;
+    }
+    if (isDmsInstance(assetId)) {
+      return {
+        annotationId: annotation.id,
+        assetId: { externalId: assetId.externalId, space: assetId.space }
+      };
     }
     return {
       annotationId: annotation.id,
@@ -36,13 +42,19 @@ export async function fetchPointCloudAnnotationAssets(
     (annotationMapping) => annotationMapping.assetId
   );
   const assetIds = uniqueAnnotationMapping.map((mapping) => mapping.assetId);
-  const assets = await fetchAssetsForAssetIds(assetIds, sdk);
+  const assets = await fetchAssetsForAssetReferences(assetIds, sdk);
 
-  const annotationIdToAssetMap = new Map<number, Asset>();
+  const annotationIdToAssetMap = new Map<number, AssetInstance>();
   assets.forEach((asset) => {
     filteredAnnotationMapping.forEach((mapping) => {
-      if (isSameIdEither(mapping.assetId, asset)) {
-        annotationIdToAssetMap.set(mapping.annotationId, asset);
+      if (isDmsInstance(mapping.assetId) && isDmsInstance(asset)) {
+        if (isSameDmsId(mapping.assetId, asset)) {
+          annotationIdToAssetMap.set(mapping.annotationId, asset);
+        }
+      } else if (isIdEither(mapping.assetId) && isIdEither(asset)) {
+        if (isSameIdEither(mapping.assetId, asset)) {
+          annotationIdToAssetMap.set(mapping.annotationId, asset);
+        }
       }
     });
   });
