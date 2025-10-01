@@ -15,6 +15,7 @@ import {
 import { CadMaterialManager } from '../src/CadMaterialManager';
 import { CadNode } from '@reveal/cad-model';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
+import { CadNode } from '@reveal/cad-model';
 
 export default class RenderingVisualTestFixture extends StreamingVisualTestFixture {
   private readonly guiData = {

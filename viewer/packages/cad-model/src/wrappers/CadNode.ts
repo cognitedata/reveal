@@ -249,7 +249,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this.nodeAppearanceProvider.dispose();
     this.materialManager.off('materialsChanged', this._setModelRenderLayers);
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
-
     this._geometryBatchingManager?.dispose();
 
     // Remove all mesh groups from the scene and dereference sectors in cache
