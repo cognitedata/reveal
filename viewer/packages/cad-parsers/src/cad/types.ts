@@ -4,8 +4,6 @@
 
 import * as THREE from 'three';
 
-import { AutoDisposeGroup } from '@reveal/utilities';
-
 import { SectorMetadata } from '../metadata/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { ParsedGeometry } from '@reveal/sector-parser';
@@ -39,9 +37,9 @@ export interface ConsumedSector {
   modelIdentifier: ModelIdentifier;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
-  group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
   geometryBatchingQueue?: ParsedGeometry[];
+  parsedMeshGeometries?: ParsedMeshGeometry[];
 }
 
 export interface WantedSector {
@@ -51,3 +49,7 @@ export interface WantedSector {
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }
+
+export type ParsedMeshGeometry = ParsedGeometry & {
+  wholeSectorBoundingBox: THREE.Box3;
+};

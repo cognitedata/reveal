@@ -84,6 +84,8 @@ export class CadManager {
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
+        // Also clean up any mesh groups created from parsed geometries
+        cadModel.removeSectorMeshGroupWithDereferencing(sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
@@ -91,13 +93,19 @@ export class CadManager {
       if (!sectorNode) {
         throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
       }
-      if (sector.group) {
-        sectorNode.add(sector.group);
-      }
-      sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
 
-      if (sector.group) {
-        cadModel.setModelRenderLayers(sectorNode.group);
+      const meshGroup =
+        sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0
+          ? cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id)
+          : undefined;
+
+      if (meshGroup) {
+        sectorNode.add(meshGroup);
+      }
+      sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
+
+      if (meshGroup) {
+        cadModel.setModelRenderLayers(meshGroup);
       }
 
       this.markNeedsRedraw();
@@ -254,18 +262,8 @@ export class CadManager {
       return;
     }
 
-    if (sector.group?.children.length !== 1) {
+    if (sector.parsedMeshGeometries?.length !== 1) {
       return;
     }
-
-    const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
-    if (!treeIndices) {
-      return;
-    }
-
-    for (const treeIndex of treeIndices.keys()) {
-      cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
-    }
-    cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }

@@ -83,7 +83,6 @@ export class SectorDownloadScheduler {
       modelIdentifier: sector.modelIdentifier,
       metadata: sector.metadata,
       levelOfDetail: LevelOfDetail.Discarded,
-      group: undefined,
       instancedMeshes: undefined
     };
   }

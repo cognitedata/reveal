@@ -5,7 +5,6 @@
 import { MemoryRequestCache } from '@reveal/utilities';
 import { ConsumedSector, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider, ModelIdentifier } from '@reveal/data-providers';
-import { CadMaterialManager } from '@reveal/rendering';
 import { SectorRepository } from './SectorRepository';
 import { GltfSectorLoader } from './GltfSectorLoader';
 
@@ -13,9 +12,20 @@ export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorLoader: GltfSectorLoader;
   private readonly _gltfCache: MemoryRequestCache<string, ConsumedSector>;
 
-  constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
-    this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider, materialManager);
-    this._gltfCache = new MemoryRequestCache(200, consumedSector => consumedSector.group?.dereference(), 50);
+  constructor(sectorFileProvider: BinaryFileProvider) {
+    this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider);
+
+    // Create cache with disposal callback that properly disposes GPU resources
+    this._gltfCache = new MemoryRequestCache(200, 50, (sector: ConsumedSector) => {
+      sector.parsedMeshGeometries?.forEach(mesh => {
+        mesh.geometryBuffer.dispose();
+        mesh.texture?.dispose();
+      });
+      sector.geometryBatchingQueue?.forEach(batch => {
+        batch.geometryBuffer.dispose();
+        batch.texture?.dispose();
+      });
+    });
   }
 
   private async getEmptySectorWithLod(
@@ -51,9 +61,15 @@ export class GltfSectorRepository implements SectorRepository {
       return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);
     }
 
-    const cacheKey = this.wantedSectorCacheKey(sector);
+    const cacheKey = this.wantedSectorCacheKey(sector.modelIdentifier, sector.metadata.id);
+
     if (this._gltfCache.has(cacheKey)) {
       const cachedSector = this._gltfCache.get(cacheKey);
+
+      // Add reference to prevent disposal while this model uses it
+      this._gltfCache.addReference(cacheKey);
+
+      // Note: BufferGeometry is intentionally shared between models for memory efficiency
       return { ...cachedSector, modelIdentifier: sector.modelIdentifier };
     }
 
@@ -65,8 +81,10 @@ export class GltfSectorRepository implements SectorRepository {
       return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);
     }
 
-    consumedSector.group?.reference();
     this._gltfCache.forceInsert(cacheKey, consumedSector);
+
+    // Add initial reference for this model
+    this._gltfCache.addReference(cacheKey);
 
     return consumedSector;
   }
@@ -79,7 +97,20 @@ export class GltfSectorRepository implements SectorRepository {
     this._gltfCache.clear();
   }
 
-  private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return wantedSector.modelIdentifier.sourceModelIdentifier() + '.' + wantedSector.metadata.id;
+  /**
+   * Dereferences a sector when a model stops using it.
+   * The cache handles reference counting and automatic disposal when count reaches zero.
+   * @param modelIdentifier The model identifier that was using the sector
+   * @param sectorId The sector ID to dereference
+   */
+  dereferenceSector(modelIdentifier: ModelIdentifier, sectorId: number): void {
+    const cacheKey = this.wantedSectorCacheKey(modelIdentifier, sectorId);
+
+    // Let the cache handle reference counting and disposal
+    this._gltfCache.removeReference(cacheKey);
+  }
+
+  private wantedSectorCacheKey(modelIdentifier: ModelIdentifier, sectorId: number) {
+    return modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
   }
 }
