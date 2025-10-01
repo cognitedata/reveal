@@ -1,4 +1,4 @@
-import { SetPointSizeCommand } from './SetPointSizeCommand';
+import { POINT_SIZES, SetPointSizeCommand } from './SetPointSizeCommand';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../../../base/utilities/translation/TranslateInput';
@@ -22,13 +22,25 @@ describe(SetPointSizeCommand.name, () => {
   });
 
   test('Should have the same value as the point cloud', () => {
-    expect(command.value).toBe(domainObject.pointSize());
+    expect(command.pointSize).toBe(domainObject.pointSize());
   });
 
   test('Should change pointSize at the point cloud', () => {
     const expectedValue = 3;
     expect(domainObject.pointSize()).not.toBe(expectedValue);
-    command.value = expectedValue;
+    command.pointSize = expectedValue;
     expect(domainObject.pointSize()).toBe(expectedValue);
+  });
+
+  test('Should get and set index value', () => {
+    command.value = 2;
+    expect(command.value).toBe(2);
+  });
+
+  test('Should set point size index outside the legal values', () => {
+    command.pointSize = POINT_SIZES[5] + 0.0001;
+    expect(command.value).toBe(5);
+    command.pointSize = POINT_SIZES[5] - 0.0001;
+    expect(command.value).toBe(5);
   });
 });

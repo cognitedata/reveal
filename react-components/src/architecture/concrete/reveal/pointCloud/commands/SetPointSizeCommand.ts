@@ -3,9 +3,9 @@ import { BaseSliderCommand } from '../../../../base/commands/BaseSliderCommand';
 import { PointCloudDomainObject } from '../PointCloudDomainObject';
 import { type RevealRenderTarget } from '../../../../base/renderTarget/RevealRenderTarget';
 
-const MIN_POINT_SIZE = 0.0;
-const MAX_POINT_SIZE = 4;
-const STEP_POINT_SIZE = 0.1;
+export const POINT_SIZES = [
+  0, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1, 1.5, 2, 2.5, 3, 4
+];
 
 export class SetPointSizeCommand extends BaseSliderCommand {
   // ==================================================
@@ -13,9 +13,16 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   // ==================================================
 
   public constructor() {
-    super(MIN_POINT_SIZE, MAX_POINT_SIZE, STEP_POINT_SIZE);
+    super(0, POINT_SIZES.length - 1, 1);
   }
 
+  public override getValueLabel(): string {
+    const value = this.settingsController.pointSize();
+    if (value === 0) {
+      return 'Minimum';
+    }
+    return value.toString();
+  }
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -29,10 +36,23 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override get value(): number {
+    const value = this.pointSize;
+    const index = POINT_SIZES.findIndex((size) => size === value);
+    if (index >= 0) {
+      return index;
+    }
+    return getClosestIndex(POINT_SIZES, value);
+  }
+
+  public override set value(index: number) {
+    this.pointSize = POINT_SIZES[index];
+  }
+
+  public get pointSize(): number {
     return this.settingsController.pointSize();
   }
 
-  public override set value(value: number) {
+  public set pointSize(value: number) {
     this.settingsController.pointSize(value);
   }
 
@@ -40,4 +60,12 @@ export class SetPointSizeCommand extends BaseSliderCommand {
     super.attach(renderTarget);
     this.listenTo(this.settingsController.pointSize);
   }
+}
+
+function getClosestIndex(array: number[], value: number): number {
+  return array.reduce(
+    (bestIndex, size, index, array) =>
+      Math.abs(size - value) < Math.abs(array[bestIndex] - value) ? index : bestIndex,
+    0
+  );
 }
