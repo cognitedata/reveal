@@ -1,9 +1,12 @@
 import { POINT_SIZES, SetPointSizeCommand } from './SetPointSizeCommand';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { isEmpty } from '../../../../base/utilities/translation/TranslateInput';
 import { PointCloudDomainObject } from '../PointCloudDomainObject';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { translate } from '../../../../base/utilities/translation/translateUtils';
+
+vi.mock('../../../../base/utilities/translation/translateUtils');
 
 describe(SetPointSizeCommand.name, () => {
   let command: SetPointSizeCommand;
@@ -52,7 +55,8 @@ describe(SetPointSizeCommand.name, () => {
 
   test('Should get correct value label at minimum point size', () => {
     command.value = 0;
-    expect(command.getValueLabel()).toBe('Minimum');
+    command.getValueLabel();
+    expect(vi.mocked(translate)).toHaveBeenCalledWith({ key: 'MINIMUM' });
   });
 
   test('Should get correct value label at other point size then minimum', () => {
