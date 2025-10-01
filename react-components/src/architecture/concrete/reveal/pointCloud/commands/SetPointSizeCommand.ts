@@ -2,6 +2,7 @@ import { type TranslationInput } from '../../../../base/utilities/translation/Tr
 import { BaseSliderCommand } from '../../../../base/commands/BaseSliderCommand';
 import { PointCloudDomainObject } from '../PointCloudDomainObject';
 import { type RevealRenderTarget } from '../../../../base/renderTarget/RevealRenderTarget';
+import { translate } from '../../../../base/utilities/translation/translateUtils';
 
 export const POINT_SIZES = [
   0, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1, 1.5, 2, 2.5, 3, 4
@@ -19,7 +20,7 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   public override getValueLabel(): string {
     const value = this.settingsController.pointSize();
     if (value === 0) {
-      return 'Minimum';
+      return translate({ key: 'MINIMUM' });
     }
     return value.toString();
   }

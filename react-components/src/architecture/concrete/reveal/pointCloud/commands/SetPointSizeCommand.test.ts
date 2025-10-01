@@ -43,4 +43,14 @@ describe(SetPointSizeCommand.name, () => {
     command.pointSize = POINT_SIZES[5] - 0.0001;
     expect(command.value).toBe(5);
   });
+
+  test('Should get correct value label at minimum point size', () => {
+    command.value = 0;
+    expect(command.getValueLabel()).toBe('Minimum');
+  });
+
+  test('Should get correct value label at other point size then minimum', () => {
+    command.value = 5;
+    expect(command.getValueLabel()).toBe(POINT_SIZES[5].toString());
+  });
 });
