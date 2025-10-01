@@ -15,14 +15,19 @@ import {
 } from '@reveal/rendering';
 
 import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import { CadMeshManager } from './CadMeshManager';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorRepository: SectorRepository;
+  private readonly _modelIdentifier: ModelIdentifier;
 
   // savokr 01-04-22: These are made non-readonly because they need to be manually deleted when model is removed.
   // Can be made back to readonly if all references of the CadNode are removed from memory when model is removed
@@ -41,6 +46,9 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   private _needsRedraw: boolean = false;
 
+  // Manages mesh for sectors
+  private readonly _meshManager: CadMeshManager;
+
   public readonly treeIndexToSectorsMap;
 
   public readonly type = 'CadNode';
@@ -50,11 +58,12 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this.name = 'Sector model';
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
+    this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
-    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier);
-    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier);
-    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier);
-    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier);
+    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier.revealInternalId);
+    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier.revealInternalId);
+    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier.revealInternalId);
+    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier.revealInternalId);
 
     this._styledTreeIndexSets = {
       back,
@@ -66,7 +75,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._batchedGeometryMeshGroup = new Group();
     this._batchedGeometryMeshGroup.name = 'Batched Geometry';
 
-    const materials = materialManager.getModelMaterials(model.modelIdentifier);
+    const materials = materialManager.getModelMaterials(model.modelIdentifier.revealInternalId);
     this._geometryBatchingManager = new MultiBufferBatchingManager(
       this._batchedGeometryMeshGroup,
       materials,
@@ -81,6 +90,13 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     const { scene } = model;
 
     this._sectorScene = scene;
+
+    // Initialize mesh manager
+    this._meshManager = new CadMeshManager(
+      materialManager,
+      model.modelIdentifier.revealInternalId,
+      this.treeIndexToSectorsMap
+    );
 
     // Prepare renderables
     this.add(this._rootSector);
@@ -103,36 +119,41 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
-    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {
-    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelNodeAppearanceProvider(
+      this._cadModelMetadata.modelIdentifier.revealInternalId
+    );
   }
 
   get defaultNodeAppearance(): NodeAppearance {
-    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
-    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
+    this._materialManager.setModelDefaultNodeAppearance(
+      this._cadModelMetadata.modelIdentifier.revealInternalId,
+      appearance
+    );
     this.setModelRenderLayers();
   }
 
   get clippingPlanes(): Plane[] {
-    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier, planes);
+    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId, planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
     return this._cadModelMetadata;
   }
 
-  get cadModelIdentifier(): string {
-    return this._cadModelMetadata.modelIdentifier;
+  get cadModelIdentifier(): symbol {
+    return this._cadModelMetadata.modelIdentifier.revealInternalId;
   }
 
   get sectorScene(): SectorScene {
@@ -204,6 +225,22 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._geometryBatchingManager?.removeSectorBatches(sectorId);
   }
 
+  /**
+   * Removes sector mesh group and properly dereferences it in the sector repository.
+   * This ensures proper reference counting for shared geometry between duplicate models.
+   * @param sectorId The sector ID to remove and dereference
+   */
+  public removeSectorMeshGroupWithDereferencing(sectorId: number): void {
+    this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
+  }
+
+  public createMeshesFromParsedGeometries(parsedMeshGeometries: ParsedMeshGeometry[], sectorId: number): Group {
+    if (this._meshManager.hasManagedSector(sectorId)) {
+      this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
+    }
+    return this._meshManager.createMeshesFromParsedGeometries(parsedMeshGeometries, sectorId);
+  }
+
   public setCacheSize(sectorCount: number): void {
     this._sectorRepository.setCacheSize(sectorCount);
   }
@@ -211,10 +248,17 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
     this.materialManager.off('materialsChanged', this._setModelRenderLayers);
-    this._sectorRepository.clearCache();
-    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
+    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
     this._geometryBatchingManager?.dispose();
-    this._rootSector?.dereferenceAllNodes();
+
+    // Remove all mesh groups from the scene and dereference sectors in cache
+    // but don't dispose shared geometries
+    const managedSectorIds = this._meshManager.getManagedSectorIds();
+    for (const sectorId of managedSectorIds) {
+      this._meshManager.removeSectorMeshGroupAndDereference(sectorId, this._sectorRepository, this._modelIdentifier);
+    }
+
+    // Clear the scene hierarchy (dereferencing is already handled above)
     this._rootSector?.clear();
     this.clear();
     this._isDisposed = true;

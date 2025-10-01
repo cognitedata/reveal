@@ -8,6 +8,7 @@ import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
+import { LocalModelIdentifier } from '@reveal/data-providers';
 
 describe(SectorDownloadScheduler.name, () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
@@ -306,7 +307,7 @@ function createMockWantedSectors(
           .object()
       )
       .setup(p => p.modelIdentifier)
-      .returns(modelIdentifier)
+      .returns(new LocalModelIdentifier(modelIdentifier))
       .setup(p => p.levelOfDetail)
       .returns(levelOfDetail)
       .object();
@@ -334,7 +335,6 @@ function createDiscardedConsumedSectorMock(sector: WantedSector): ConsumedSector
     modelIdentifier: sector.modelIdentifier,
     metadata: sector.metadata,
     levelOfDetail: LevelOfDetail.Discarded,
-    group: undefined,
     instancedMeshes: undefined
   };
 }
