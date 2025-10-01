@@ -22,6 +22,7 @@ import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealMode
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
   styling?: ImageCollectionModelStyling;
+  defaultVisible?: boolean;
   onLoad?: (image360: Image360Collection<DataSourceType>) => void;
   onLoadError?: (addOptions: AddImage360CollectionOptions, error: any) => void;
 };
@@ -29,6 +30,7 @@ type Image360CollectionContainerProps = {
 export function Image360CollectionContainer({
   addImage360CollectionOptions,
   styling,
+  defaultVisible,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
@@ -116,7 +118,8 @@ export function Image360CollectionContainer({
       }
       return await RevealModelsUtils.addImage360Collection(
         renderTarget,
-        addImage360CollectionOptions
+        addImage360CollectionOptions,
+        defaultVisible
       );
     }
   }

@@ -1,6 +1,6 @@
 import {
-  type CommonResourceContainerProps,
-  type AddResourceOptions
+  type AddResourceOptions,
+  type CommonResourceContainerProps
 } from '../Reveal3DResources/types';
 
 export type SceneContainerProps = {

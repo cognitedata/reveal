@@ -29,6 +29,7 @@ import {
   transformationSourceWithProperties
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
+import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export type Space = string;
 export type ExternalId = string;
@@ -92,9 +93,13 @@ export const use3dScenes = (
         ]
       >(scenesQuery);
 
+      const scene3dModels = response.items.sceneModels.filter(isScene3dModelEdge);
+      const scene360Collections =
+        response.items.scene360Collections.filter(isScene360CollectionEdge);
+
       allScenes.scenes.push(...response.items.scenes);
-      allScenes.sceneModels.push(...response.items.sceneModels);
-      allScenes.scene360Collections.push(...response.items.scene360Collections);
+      allScenes.sceneModels.push(...scene3dModels);
+      allScenes.scene360Collections.push(...scene360Collections);
       allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
       allScenes.sceneGroundPlaneEdges.push(...response.items.sceneGroundPlaneEdges);
       allScenes.sceneSkybox.push(...response.items.sceneSkybox);
