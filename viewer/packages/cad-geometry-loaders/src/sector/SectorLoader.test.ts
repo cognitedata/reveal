@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 
-import { AutoDisposeGroup } from '@reveal/utilities';
 import { asyncIteratorToArray, createCadModelMetadata, generateV9SectorTree } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 import { SectorCuller } from './culling/SectorCuller';
 import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
@@ -73,7 +73,7 @@ describe('SectorLoader', () => {
       prioritizedAreas: [],
       loadingHints: {}
     };
-    stateHandler.addModel(model.modelIdentifier);
+    stateHandler.addModel(model.modelIdentifier.revealInternalId);
     loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);
   });
 
@@ -113,7 +113,7 @@ describe('SectorLoader', () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
     stateHandler.updateState(
-      alreadyLoadedSector.modelIdentifier,
+      alreadyLoadedSector.modelIdentifier.revealInternalId,
       alreadyLoadedSector.metadata.id,
       alreadyLoadedSector.levelOfDetail
     );
@@ -169,6 +169,7 @@ class StubRepository implements SectorRepository {
   }
   clearCache(): void {}
   setCacheSize(_sectorCount: number): void {}
+  dereferenceSector(_modelIdentifier: ModelIdentifier, _sectorId: number): void {}
 }
 
 class StubSectorCuller implements SectorCuller {
@@ -201,7 +202,6 @@ function createWantedSector(model: CadModelMetadata, sector: SectorMetadata): Wa
 
 function createConsumedSector(sector: WantedSector): ConsumedSector {
   const consumed: ConsumedSector = {
-    group: new AutoDisposeGroup(),
     instancedMeshes: [],
     levelOfDetail: sector.levelOfDetail,
     metadata: sector.metadata,
