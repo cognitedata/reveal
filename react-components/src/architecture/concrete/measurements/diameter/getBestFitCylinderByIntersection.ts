@@ -58,9 +58,8 @@ export function getBestFitCylinderByIntersection(
   if (filteredPoints.length < MIN_POINTS_FOR_FIT) {
     return undefined;
   }
-  for (const point of filteredPoints) {
-    point.applyMatrix4(modelMatrix);
-  }
+  const worldSpacePoints = filteredPoints.map((p) => p.clone().applyMatrix4(modelMatrix));
+
   const acceptCylinder = (cylinder: LeastSquareCylinderResult): boolean => {
     const accepted =
       cylinder.rms < MAX_RMS &&
@@ -68,5 +67,5 @@ export function getBestFitCylinderByIntersection(
       cylinder.angularCoverage > MIN_ANGULAR_COVERAGE;
     return accepted; // Want to have it like this because it is easier to debug
   };
-  return bestFitCylinder(filteredPoints, acceptCylinder);
+  return bestFitCylinder(worldSpacePoints, acceptCylinder);
 }
