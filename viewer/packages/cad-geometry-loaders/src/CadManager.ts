@@ -21,7 +21,7 @@ export class CadManager {
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
-  private readonly _cadModelMap: Map<string, CadNode> = new Map();
+  private readonly _cadModelMap: Map<symbol, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
   private _compatibleFileFormat:
     | {
@@ -68,7 +68,9 @@ export class CadManager {
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
-      const cadModel = this._cadModelMap.get(sector.modelIdentifier);
+      const modelSymbol = sector.modelIdentifier.revealInternalId;
+      const cadModel = this._cadModelMap.get(modelSymbol);
+
       if (!cadModel) {
         // Model has been removed - results can come in for a period just after removal
         return;
@@ -199,6 +201,7 @@ export class CadManager {
 
     const model = await this._cadModelFactory.createModel(modelMetadata, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
+
     this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
     this.setCacheSizeForModel(model, this.budget);
@@ -207,7 +210,7 @@ export class CadManager {
 
   removeModel(model: CadNode): void {
     if (!this._cadModelMap.delete(model.cadModelIdentifier)) {
-      throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
+      throw new Error(`Could not remove model ${String(model.cadModelIdentifier)} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
@@ -233,8 +236,8 @@ export class CadManager {
    * @param budget The budget to calculate cache size by
    */
   private setCacheSizeForModel(model: CadNode, budget: CadModelBudget) {
-    // This gives cache size of 200 on desktop on default budget
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
+    // This gives cache size of 300 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 300 / defaultDesktopCadModelBudget.maximumRenderCost;
     model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
   }
 

@@ -1,14 +1,14 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { WantedSector, SectorMetadata } from '@reveal/cad-parsers';
-import { BinaryFileProvider } from '@reveal/data-providers';
+import { WantedSector, SectorMetadata, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { BinaryFileProvider, LocalModelIdentifier } from '@reveal/data-providers';
 import { IMock, Mock, It } from 'moq.ts';
 
 import * as fs from 'fs';
 
 export const defaultBaseUrl = 'https://some_baseurl.com';
-const modelIdentifier = 'some_model_identifier';
+const modelIdentifier = new LocalModelIdentifier('some_model_identifier');
 
 // https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
 import url from 'url';
@@ -30,6 +30,18 @@ export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
     .returns(modelIdentifier)
     .setup(p => p.metadata)
     .returns(mockedSectorMetadata.object());
+}
+
+export function createMockedConsumedSector(): IMock<ConsumedSector> {
+  return new Mock<ConsumedSector>()
+    .setup(x => x.modelIdentifier)
+    .returns(modelIdentifier)
+    .setup(x => x.levelOfDetail)
+    .returns(LevelOfDetail.Detailed)
+    .setup(x => x.group)
+    .returns(undefined)
+    .setup(x => x.instancedMeshes)
+    .returns(undefined);
 }
 
 export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
