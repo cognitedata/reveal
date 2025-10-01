@@ -37,6 +37,12 @@ describe(SetPointSizeCommand.name, () => {
     expect(command.value).toBe(2);
   });
 
+  test('Should set incorrect value and not change anything', () => {
+    const expectedValue = command.value;
+    command.value = 1000000;
+    expect(command.value).toBe(expectedValue);
+  });
+
   test('Should set point size index outside the legal values', () => {
     command.pointSize = POINT_SIZES[5] + 0.0001;
     expect(command.value).toBe(5);
