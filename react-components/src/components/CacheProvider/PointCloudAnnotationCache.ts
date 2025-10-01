@@ -5,12 +5,7 @@ import {
   type PointCloudAnnotationModel,
   type AnnotationId
 } from './types';
-import {
-  type CogniteClient,
-  type Asset,
-  type AnnotationFilterProps,
-  type IdEither
-} from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps, type IdEither } from '@cognite/sdk';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
@@ -120,7 +115,7 @@ export class PointCloudAnnotationCache {
     const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(
       ([, asset]) => {
         if (isClassicAsset(asset)) {
-          return internalClassicId
+          return internalClassicId !== undefined
             ? asset.id === internalClassicId
             : asset.externalId === externalClassicId;
         } else {
