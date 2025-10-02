@@ -70,15 +70,8 @@ export type ModelInstanceIdKey = ModelAssetIdKey | ModelFdmIdKey;
 
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
-export type AnnotationBoundingVolumeWithInstanceRef = AnnotationsBoundingVolume & {
-  instanceRef?: DmsUniqueIdentifier & {
-    instanceType: 'node';
-    sources: Source[];
-  };
-};
-
 export type PointCloudAnnotationModel = AnnotationModel & {
-  data: AnnotationBoundingVolumeWithInstanceRef;
+  data: AnnotationsBoundingVolume;
 };
 
 export type Image360AnnotationModel = AnnotationModel & {
