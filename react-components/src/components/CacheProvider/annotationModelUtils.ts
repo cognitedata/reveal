@@ -2,7 +2,7 @@ import { type CogniteClient, type Asset, type IdEither } from '@cognite/sdk';
 import { uniqBy, chunk, partition, uniqWith } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';
-import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
+import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { type FdmNode, FdmSDK } from '../../data-providers/FdmSDK';
@@ -11,54 +11,52 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
-import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
-import { isSameDmsId, isSameIdEither } from '../../utilities/instanceIds/equality';
+import {
+  createInstanceReferenceKey,
+  InstanceReference,
+  InstanceReferenceKey,
+  isIdEither
+} from '../../utilities/instanceIds';
+import { isSameIdEither } from '../../utilities/instanceIds/equality';
 import { type AssetInstance } from '../../utilities/instances';
+import { concatenateMapValues } from '../../utilities/map/concatenateMapValues';
 
 export async function fetchPointCloudAnnotationAssets(
   annotations: PointCloudAnnotationModel[],
   sdk: CogniteClient
-): Promise<Map<AnnotationId, AssetInstance>> {
-  const annotationMapping = annotations.map((annotation) => {
-    const assetId = getInstanceReferenceFromPointCloudAnnotation(annotation);
-    if (assetId === undefined) {
-      return undefined;
-    }
-    if (isDmsInstance(assetId)) {
-      return {
+): Promise<Map<AnnotationId, AssetInstance[]>> {
+  const annotationMappings = annotations
+    .flatMap((annotation) =>
+      getInstanceReferencesFromPointCloudAnnotation(annotation).map((assetId) => ({
         annotationId: annotation.id,
-        assetId: { externalId: assetId.externalId, space: assetId.space }
-      };
-    }
-    return {
-      annotationId: annotation.id,
-      assetId
-    };
-  });
-  const filteredAnnotationMapping = annotationMapping.filter(isDefined);
+        assetId
+      }))
+    )
+    .filter(isDefined);
 
-  const uniqueAnnotationMapping = uniqBy(
-    filteredAnnotationMapping,
-    (annotationMapping) => annotationMapping.assetId
+  const uniqueAssetIds = uniqBy(
+    annotationMappings.map((mapping) => mapping.assetId),
+    createInstanceReferenceKey
   );
-  const assetIds = uniqueAnnotationMapping.map((mapping) => mapping.assetId);
-  const assets = await fetchAssetsForAssetReferences(assetIds, sdk);
 
-  const annotationIdToAssetMap = new Map<number, AssetInstance>();
-  assets.forEach((asset) => {
-    filteredAnnotationMapping.forEach((mapping) => {
-      if (isDmsInstance(mapping.assetId) && isDmsInstance(asset)) {
-        if (isSameDmsId(mapping.assetId, asset)) {
-          annotationIdToAssetMap.set(mapping.annotationId, asset);
+  const assets = await fetchAssetsForAssetReferences(uniqueAssetIds, sdk);
+
+  const instanceKeyToInstanceMap = new Map<InstanceReferenceKey, AssetInstance>(
+    assets.map((asset) => [createInstanceReferenceKey(asset), asset])
+  );
+
+  return concatenateMapValues(
+    annotationMappings
+      .map((mapping) => {
+        const instanceKey = createInstanceReferenceKey(mapping.assetId);
+        const correspondingAsset = instanceKeyToInstanceMap.get(instanceKey);
+        if (correspondingAsset === undefined) {
+          return undefined;
         }
-      } else if (isIdEither(mapping.assetId) && isIdEither(asset)) {
-        if (isSameIdEither(mapping.assetId, asset)) {
-          annotationIdToAssetMap.set(mapping.annotationId, asset);
-        }
-      }
-    });
-  });
-  return annotationIdToAssetMap;
+        return [mapping.annotationId, correspondingAsset] as const;
+      })
+      .filter(isDefined)
+  );
 }
 
 export async function fetchAssetsForAssetReferences(
