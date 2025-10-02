@@ -2,6 +2,7 @@ import { type ExternalId, type IdEither, type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { type InstanceId } from './types';
 import { type AssetId } from '../../components/CacheProvider/types';
+import { ClassicModelIdentifierType, DMModelIdentifierType } from '@cognite/reveal';
 
 export type AnnotationAssetRef = { id?: number; externalId?: string };
 
@@ -34,3 +35,18 @@ export function isDmsInstance(instance: unknown): instance is DmsUniqueIdentifie
 export function isClassicInstanceId(instanceId: InstanceId): instanceId is AssetId {
   return typeof instanceId === 'number';
 }
+
+export function isDMModelIdentifier(
+  modelIdentifier: DMModelIdentifierType | ClassicModelIdentifierType
+): modelIdentifier is DMModelIdentifierType {
+  return (
+    (modelIdentifier as DMModelIdentifierType).revisionExternalId !== undefined &&
+    (modelIdentifier as DMModelIdentifierType).revisionSpace !== undefined
+  );
+}
+
+export function isClassicModelIdentifier(
+  modelIdentifier: DMModelIdentifierType | ClassicModelIdentifierType
+): modelIdentifier is ClassicModelIdentifierType {
+  return (modelIdentifier as ClassicModelIdentifierType).modelId !== undefined;
+};

@@ -1,14 +1,17 @@
-import { type AnnotationsAssetRef, type IdEither } from '@cognite/sdk';
+import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import {
   type AnyIntersection,
   type ClassicDataSourceType,
-  type DMInstanceRef,
   type DMModelIdentifierType,
   type PointCloudIntersection
 } from '@cognite/reveal';
-import { isDmsInstance } from '../../utilities/instanceIds';
-import { toIdEither } from '../../utilities/instanceIds/toIdEither';
+import {
+  isClassicModelIdentifier,
+  isDMModelIdentifier,
+  isDmsInstance,
+  isIdEither
+} from '../../utilities/instanceIds';
 
 type InstanceData = {
   classicModelIdentifier: { modelId: number; revisionId: number } | undefined;
@@ -26,42 +29,32 @@ export function getInstanceDataFromIntersection(
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
   if (!isPointCloudIntersection) return emptyResult;
 
-  const classicIdEither = extractClassicIdEitherFromAssetRef(intersection.volumeMetadata?.assetRef);
-
-  if (classicIdEither && 'modelId' in intersection.model.modelIdentifier) {
+  if (isIdEither(intersection.volumeMetadata?.assetRef) && isClassicModelIdentifier(intersection.model.modelIdentifier)) {
     return {
       classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
-      reference: classicIdEither
+      reference: intersection.volumeMetadata?.assetRef
     };
-  } else if (isDmsInstance(intersection.volumeMetadata?.assetRef) && 'revisionExternalId' in intersection.model.modelIdentifier) {
+  } else if (
+    isDmsInstance(intersection.volumeMetadata?.assetRef) &&
+    isDMModelIdentifier(intersection.model.modelIdentifier)
+  ) {
     return {
       classicModelIdentifier: undefined,
       dmsModelUniqueIdentifier: intersection.model.modelIdentifier,
       reference: intersection.volumeMetadata?.assetRef
     };
-  } else if (!classicIdEither && 'modelId' in intersection.model.modelIdentifier) {
-    const instanceRef = isInstanceRefUnderVolumeMetadata(intersection)
-      ? intersection.volumeMetadata?.instanceRef
-      : undefined;
+  } else if (
+    isClassicModelIdentifier(intersection.model.modelIdentifier) &&
+    isInstanceRefUnderVolumeMetadata(intersection)
+  ) {
     return {
       classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
-      reference: instanceRef
+      reference: intersection.volumeMetadata?.instanceRef
     };
   }
   return emptyResult;
-}
-
-function extractClassicIdEitherFromAssetRef(
-  assetRef: AnnotationsAssetRef | DMInstanceRef | undefined
-): IdEither | undefined {
-  const classicReference = !isDmsInstance(assetRef)
-    ? (assetRef?.externalId ?? assetRef?.id)
-    : undefined;
-
-  const classicIdEither = classicReference ? toIdEither(classicReference) : undefined;
-  return classicIdEither;
 }
 
 function isInstanceRefUnderVolumeMetadata(
