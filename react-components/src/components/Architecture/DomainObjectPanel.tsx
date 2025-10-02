@@ -58,8 +58,8 @@ export const DomainObjectPanel = (): ReactElement => {
         margin: style.marginPx,
         padding: style.paddingPx
       }}>
-      <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <Flex gap={8}>
+      <Flex gap={4} justifyContent={'space-between'} alignItems={'center'}>
+        <Flex gap={4}>
           {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
           {label !== undefined && (
             <Body strong size={HEADER_SIZE}>
@@ -67,11 +67,11 @@ export const DomainObjectPanel = (): ReactElement => {
             </Body>
           )}
         </Flex>
-        <Flex>
+        <Flex gap={0}>
           <CommandButtons commands={commands} placement={'bottom'} />
         </Flex>
       </Flex>
-      <table>
+      <table style={{ gap: 8 }}>
         <tbody>{info.items.map((item, _i) => addTextWithNumber(item, unitSystem))}</tbody>
       </table>
     </Container>
@@ -161,6 +161,7 @@ export function NumberInput({ item, unitSystem }: NumberInputProps): ReactElemen
 
   return (
     <Input
+      style={{ marginTop: 2, marginBottom: 2 }}
       onChange={(e) => {
         onChange(e.target.value);
       }}

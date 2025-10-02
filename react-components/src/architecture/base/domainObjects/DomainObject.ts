@@ -462,7 +462,7 @@ export abstract class DomainObject implements TreeNodeType {
 
   public getPanelInfoStyle(): PopupStyle {
     // Default lower left corner
-    return new PopupStyle({ bottom: 50, left: 0 });
+    return new PopupStyle({ bottom: 50, left: 0, padding: 8 });
   }
 
   public getPanelToolbar(): BaseCommand[] {
