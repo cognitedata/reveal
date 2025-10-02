@@ -32,6 +32,8 @@ export const SlicerButton = (): ReactElement => {
     bottomRatio: initialBottomRatio
   });
 
+  const [slicerActive, setSlicerActive] = useState<boolean>(false);
+
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
 
   useEffect(() => {
@@ -93,9 +95,21 @@ export const SlicerButton = (): ReactElement => {
     <StyledMenu
       placement="right-start"
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      onOpenChange={(open: boolean) => {
+        setSlicerActive(open);
+      }}
       renderTrigger={(props: any) => (
-        <CogsTooltip content={t({ key: 'SLICE_TOOLTIP' })} placement="right">
-          <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
+        <CogsTooltip
+        content={t({ key: 'SLICE_TOOLTIP' })}
+        placement="right"
+        >
+          <Button
+            {...props}
+            type="ghost"
+            icon={<SliceIcon />}
+            toggled={slicerActive}
+            aria-label="Slice models"
+          />
         </CogsTooltip>
       )}>
       <StyledRangeSlider

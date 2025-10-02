@@ -27,6 +27,9 @@ export const SettingsButton = ({
     <StyledMenu
       placement="right"
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      onOpenChange={(open: boolean) => {
+        setSettingsActive(open);
+      }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
@@ -38,9 +41,6 @@ export const SettingsButton = ({
             type="ghost"
             aria-label="Show settings"
             toggled={settingsActive}
-            onClick={() => {
-              setSettingsActive((prevState) => !prevState);
-            }}
             {...props}
           />
         </CogsTooltip>

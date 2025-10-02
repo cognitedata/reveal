@@ -43,6 +43,8 @@ export const RuleBasedOutputsButton = ({
 
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
   const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
     useAssetMappedNodesForRevisions(cadModels);
 
@@ -133,6 +135,9 @@ export const RuleBasedOutputsButton = ({
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
+      onOpenChange={(open: boolean) => {
+        setIsExpanded(open);
+      }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'RULESET_SELECT_HEADER' })} placement="right">
           <Button
@@ -140,6 +145,7 @@ export const RuleBasedOutputsButton = ({
             disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"
+            toggled={isExpanded || !!currentRuleSetEnabled}
             {...props}
           />
         </CogsTooltip>
