@@ -78,9 +78,9 @@ describe(CylinderDomainObject, () => {
       assert(item.setValue !== undefined);
       assert(item.verifyValue !== undefined);
 
-      expect(item.verifyValue(expectedValue)).toBe(true);
-      expect(item.verifyValue(0)).toBe(false);
-      expect(item.verifyValue(-expectedValue)).toBe(false);
+      for (const value of [-expectedValue, 0, expectedValue]) {
+        expect(item.verifyValue(value)).toBe(value > 0);
+      }
 
       item.setValue(expectedValue);
       if (key === 'DIAMETER') {
