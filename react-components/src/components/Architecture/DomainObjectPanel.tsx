@@ -1,6 +1,6 @@
-import { Body, Flex, Input } from '@cognite/cogs.js';
+import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useMemo, useState, type ReactElement, useEffect } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import {
   type PanelInfo,
   type NumberPanelItem
@@ -9,7 +9,6 @@ import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import {
-  type LengthUnit,
   UNDEFINED_UNIT_SYSTEM,
   type UnitSystem
 } from '../../architecture/base/renderTarget/UnitSystem';
@@ -18,9 +17,7 @@ import { type DomainObject } from '../../architecture';
 import { useSignalValue } from '@cognite/signals/react';
 import { useRenderTarget } from '../RevealCanvas';
 import { getRoot } from '../../architecture/base/domainObjects/getRoot';
-
-const INPUT_SIZE = 'small';
-const HEADER_SIZE = 'medium';
+import { DomainObjectPanelInput } from './DomainObjectPanelInput';
 
 export const DomainObjectPanel = (): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -62,7 +59,7 @@ export const DomainObjectPanel = (): ReactElement => {
         <Flex gap={4}>
           {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
           {label !== undefined && (
-            <Body strong size={HEADER_SIZE}>
+            <Body strong size="medium">
               {label}
             </Body>
           )}
@@ -80,7 +77,7 @@ export const DomainObjectPanel = (): ReactElement => {
   function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
     return (
       <tr key={JSON.stringify(item)}>
-        <NumberInput item={item} unitSystem={unitSystem} />
+        <DomainObjectPanelInput item={item} unitSystem={unitSystem} />
       </tr>
     );
   }
@@ -118,68 +115,3 @@ const Container = withSuppressRevealEvents(styled.div`
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
 `);
-
-type NumberInputProps = {
-  item: NumberPanelItem;
-  unitSystem: UnitSystem;
-};
-
-export function NumberInput({ item, unitSystem }: NumberInputProps): ReactElement {
-  function getOriginalValue(): string {
-    return unitSystem.toString(item.value, item.quantity, false);
-  }
-  const [value, setValue] = useState(getOriginalValue());
-  const lengthUnit = useSignalValue<LengthUnit>(unitSystem.lengthUnit);
-  useEffect(() => {
-    setValue(getOriginalValue());
-  }, [lengthUnit]);
-
-  function onChange(newStringValue: string): void {
-    if (item.setValue === undefined) {
-      return;
-    }
-    const newValue = parseFloat(newStringValue);
-    if (Number.isNaN(newValue)) {
-      setValue('');
-      return;
-    }
-    setValue(newStringValue);
-  }
-
-  function onApply(): void {
-    if (item.setValue === undefined) {
-      return;
-    }
-    const newValue = parseFloat(value);
-    const newMetricValue = unitSystem.convertFromUnit(newValue, item.quantity);
-    if (item.verifyValue !== undefined && !item.verifyValue(newMetricValue)) {
-      setValue(getOriginalValue());
-      return;
-    }
-    item.setValue(newMetricValue);
-  }
-
-  return (
-    <Input
-      style={{ marginTop: 2, marginBottom: 2 }}
-      onChange={(e) => {
-        onChange(e.target.value);
-      }}
-      onBlur={() => {
-        onApply();
-      }}
-      onKeyDownCapture={(event) => {
-        if (event.key === 'Enter') onApply();
-      }}
-      hideSpinButtons
-      type="number"
-      size={INPUT_SIZE}
-      value={value}
-      fullWidth={true}
-      prefix={item.getText()}
-      textAlign="right"
-      disabled={item.setValue === undefined}
-      suffix={unitSystem.getUnit(item.quantity)}
-    />
-  );
-}

@@ -30,14 +30,10 @@ export class PanelInfo {
 
   public getItemTranslationKey(key: TranslationKey): NumberPanelItem | undefined {
     for (const item of this.items) {
-      if (!isTranslatedString(item.translationInput)) {
-        continue;
-      }
-      if (item.translationInput.key === key) {
+      if (isTranslatedString(item.translationInput) && item.translationInput.key === key) {
         return item;
       }
     }
-    return undefined;
   }
 }
 
@@ -65,10 +61,5 @@ export class NumberPanelItem extends PanelItem {
     this.quantity = props.quantity ?? Quantity.Unitless;
     this.setValue = props.setValue;
     this.verifyValue = props.verifyValue;
-
-    // Set default verify function if setValue is defined and verifyValue is undefined
-    if (this.setValue !== undefined && this.verifyValue === undefined) {
-      this.verifyValue = (value: number) => !Number.isNaN(value);
-    }
   }
 }
