@@ -1,9 +1,6 @@
-name: Publish Package to NPM
+name: Publish Viewer Package to NPM
 on:
   workflow_dispatch:
-  release:
-    types:
-      - published
 
 jobs:
   deploy-to-npm:
