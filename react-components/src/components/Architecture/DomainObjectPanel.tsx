@@ -1,6 +1,6 @@
-import { Body, Flex } from '@cognite/cogs.js';
+import { Body, Flex, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useMemo, type ReactElement } from 'react';
+import { useMemo, useState, type ReactElement, useEffect } from 'react';
 import {
   type PanelInfo,
   type NumberPanelItem
@@ -19,7 +19,7 @@ import { useSignalValue } from '@cognite/signals/react';
 import { useRenderTarget } from '../RevealCanvas';
 import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 
-const TEXT_SIZE = 'x-small';
+const INPUT_SIZE = 'small';
 const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
@@ -30,8 +30,6 @@ export const DomainObjectPanel = (): ReactElement => {
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
   const root = domainObject === undefined ? undefined : getRoot(domainObject);
   const unitSystem = root === undefined ? UNDEFINED_UNIT_SYSTEM : root.unitSystem;
-
-  useSignalValue<LengthUnit>(unitSystem.lengthUnit);
 
   if (domainObject === undefined || commands === undefined || root === undefined) {
     return <></>;
@@ -63,7 +61,11 @@ export const DomainObjectPanel = (): ReactElement => {
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={8}>
           {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
-          {label !== undefined && <Body size={HEADER_SIZE}>{label}</Body>}
+          {label !== undefined && (
+            <Body strong size={HEADER_SIZE}>
+              {label}
+            </Body>
+          )}
         </Flex>
         <Flex>
           <CommandButtons commands={commands} placement={'bottom'} />
@@ -76,22 +78,9 @@ export const DomainObjectPanel = (): ReactElement => {
   );
 
   function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
-    const icon = item.icon;
-    const { quantity, value } = item;
-    const text = item?.getText();
     return (
       <tr key={JSON.stringify(item)}>
-        <PaddedTh>
-          {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
-          {icon !== undefined && <IconComponent type={icon} iconName={icon} />}
-        </PaddedTh>
-        <></>
-        <NumberTh>
-          <Body size={TEXT_SIZE}>{unitSystem.toString(value, quantity)}</Body>
-        </NumberTh>
-        <PaddedTh>
-          <Body size={TEXT_SIZE}>{unitSystem.getUnit(quantity)}</Body>
-        </PaddedTh>
+        <NumberInput item={item} unitSystem={unitSystem} />
       </tr>
     );
   }
@@ -119,18 +108,6 @@ function toString(
   return result;
 }
 
-const NumberTh = styled.th`
-  text-align: right;
-  padding-right: 8px;
-  min-width: 60px;
-  size: small;
-`;
-
-const PaddedTh = styled.th`
-  padding-right: 10px;
-  size: small;
-`;
-
 const Container = withSuppressRevealEvents(styled.div`
   z-index: 1000;
   position: absolute;
@@ -141,3 +118,67 @@ const Container = withSuppressRevealEvents(styled.div`
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
 `);
+
+type NumberInputProps = {
+  item: NumberPanelItem;
+  unitSystem: UnitSystem;
+};
+
+export function NumberInput({ item, unitSystem }: NumberInputProps): ReactElement {
+  function getOriginalValue(): string {
+    return unitSystem.toString(item.value, item.quantity, false);
+  }
+  const [value, setValue] = useState(getOriginalValue());
+  const lengthUnit = useSignalValue<LengthUnit>(unitSystem.lengthUnit);
+  useEffect(() => {
+    setValue(getOriginalValue());
+  }, [lengthUnit]);
+
+  function onChange(newStringValue: string): void {
+    if (item.setValue === undefined) {
+      return;
+    }
+    const newValue = parseFloat(newStringValue);
+    if (Number.isNaN(newValue)) {
+      setValue('');
+      return;
+    }
+    setValue(newStringValue);
+  }
+
+  function onApply(): void {
+    if (item.setValue === undefined) {
+      return;
+    }
+    const newValue = parseFloat(value);
+    const newMetricValue = unitSystem.convertFromUnit(newValue, item.quantity);
+    if (item.verifyValue !== undefined && !item.verifyValue(newMetricValue)) {
+      setValue(getOriginalValue());
+      return;
+    }
+    item.setValue(newMetricValue);
+  }
+
+  return (
+    <Input
+      onChange={(e) => {
+        onChange(e.target.value);
+      }}
+      onBlur={() => {
+        onApply();
+      }}
+      onKeyDownCapture={(event) => {
+        if (event.key === 'Enter') onApply();
+      }}
+      hideSpinButtons
+      type="number"
+      size={INPUT_SIZE}
+      value={value}
+      fullWidth={true}
+      prefix={item.getText()}
+      textAlign="right"
+      disabled={item.setValue === undefined}
+      suffix={unitSystem.getUnit(item.quantity)}
+    />
+  );
+}

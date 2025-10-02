@@ -1,13 +1,16 @@
-import { type IconName } from '../utilities/types';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { translate } from '../utilities/translation/translateUtils';
 import { Quantity } from './Quantity';
 
+export type SetValue = (value: number) => void;
+export type VerifyValue = (value: number) => boolean;
+
 type PanelItemProps = {
   translationInput: TranslationInput;
-  icon?: IconName;
   value?: number;
   quantity?: Quantity;
+  setValue?: SetValue;
+  verifyValue?: VerifyValue;
 };
 
 export class PanelInfo {
@@ -35,14 +38,21 @@ export class PanelItem {
 }
 
 export class NumberPanelItem extends PanelItem {
-  public icon: string | undefined = undefined;
   public value: number;
   public quantity: Quantity;
+  setValue?: SetValue;
+  verifyValue?: VerifyValue;
 
   constructor(props: PanelItemProps) {
     super(props.translationInput);
-    this.icon = props.icon;
     this.value = props.value ?? 0;
     this.quantity = props.quantity ?? Quantity.Unitless;
+    this.setValue = props.setValue;
+    this.verifyValue = props.verifyValue;
+
+    // Set default verify function if setValue is defined and verifyValue is undefined
+    if (this.setValue !== undefined && this.verifyValue === undefined) {
+      this.verifyValue = (value: number) => !Number.isNaN(value);
+    }
   }
 }

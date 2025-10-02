@@ -11,7 +11,11 @@ import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import {
+  PanelInfo,
+  type SetValue,
+  type VerifyValue
+} from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
@@ -83,13 +87,26 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
       this.primitiveType !== PrimitiveType.HorizontalCircle;
 
     if (hasRadius) {
-      add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
-      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length);
+      const setValue = (value: number): void => {
+        const radius = value / 2;
+        if (radius !== cylinder.radius) {
+          cylinder.radius = radius;
+          this.notify(Changes.geometry);
+        }
+      };
+      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length, setValue, verifyDiameter);
     }
     if (hasHeight) {
-      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length);
+      const setValue = (height: number): void => {
+        if (height !== cylinder.height) {
+          cylinder.height = height;
+          this.notify(Changes.geometry);
+        }
+      };
+      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length, setValue, verifyHeight);
     }
     if (hasRadius) {
+      add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
       if (this.primitiveType === PrimitiveType.HorizontalCircle) {
         add({ key: 'AREA' }, cylinder.endCapArea, Quantity.Area);
       } else {
@@ -101,8 +118,14 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     }
     return info;
 
-    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
-      info.add({ translationInput, value, quantity });
+    function add(
+      translationInput: TranslationInput,
+      value: number,
+      quantity: Quantity,
+      setValue?: SetValue,
+      verifyValue?: VerifyValue
+    ): void {
+      info.add({ translationInput, value, quantity, setValue, verifyValue });
     }
   }
 
@@ -184,3 +207,11 @@ const LEGAL_PRIMITIVE_TYPES = [
   PrimitiveType.HorizontalCylinder,
   PrimitiveType.VerticalCylinder
 ];
+
+function verifyDiameter(diameter: number): boolean {
+  return !Number.isNaN(diameter) && Cylinder.isValidSize(diameter / 2); // Give the radius for verification
+}
+
+function verifyHeight(height: number): boolean {
+  return !Number.isNaN(height) && Cylinder.isValidSize(height);
+}

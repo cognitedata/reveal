@@ -2,11 +2,17 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { Color, type Vector3 } from 'three';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BoxDomainObject } from '../../primitives/box/BoxDomainObject';
-import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import {
+  PanelInfo,
+  type SetValue,
+  type VerifyValue
+} from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../../primitives/common/SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { Box } from '../../../base/utilities/primitives/Box';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 
 const DEFAULT_POINT_SIZE = 0.05;
 export class MeasurePointDomainObject extends BoxDomainObject {
@@ -42,14 +48,33 @@ export class MeasurePointDomainObject extends BoxDomainObject {
     const info = new PanelInfo();
     const { point, size } = this;
 
-    add({ key: 'X:COORDINATE' }, point.x, Quantity.Length);
-    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length);
-    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length);
-    add({ key: 'POINT_SIZE' }, size, Quantity.Length);
+    const setXCoord = (value: number): void => {
+      this.setCoord(0, value);
+    };
+    const setYCoord = (value: number): void => {
+      this.setCoord(1, value);
+    };
+    const setZCoord = (value: number): void => {
+      this.setCoord(2, value);
+    };
+    const setSize = (value: number): void => {
+      this.setSize(value);
+    };
+
+    add({ key: 'X:COORDINATE' }, point.x, Quantity.Length, setXCoord, verifyCoord);
+    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length, setYCoord, verifyCoord);
+    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length, setZCoord, verifyCoord);
+    add({ key: 'POINT_SIZE' }, size, Quantity.Length, setSize, verifySize);
     return info;
 
-    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
-      info.add({ translationInput, value, quantity });
+    function add(
+      translationInput: TranslationInput,
+      value: number,
+      quantity: Quantity,
+      setValue?: SetValue,
+      verifyValue?: VerifyValue
+    ): void {
+      info.add({ translationInput, value, quantity, setValue, verifyValue });
     }
   }
 
@@ -82,4 +107,26 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   public set point(value: Vector3) {
     this.box.center.copy(value);
   }
+
+  private setCoord(component: number, value: number): void {
+    if (value > 0 && value !== this.box.center.getComponent(component)) {
+      this.box.center.setComponent(component, value);
+      this.notify(Changes.geometry);
+    }
+  }
+
+  private setSize(value: number): void {
+    if (value !== this.box.size.x) {
+      this.box.size.set(value, value, value);
+      this.notify(Changes.geometry);
+    }
+  }
+}
+
+function verifySize(value: number): boolean {
+  return !Number.isNaN(value) && Box.isValidSize(value);
+}
+
+function verifyCoord(value: number): boolean {
+  return !Number.isNaN(value);
 }

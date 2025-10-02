@@ -46,7 +46,7 @@ export class UnitSystem {
   // INSTANCE METHODS: Convert number to string
   // ==================================================
 
-  public toString(value: number, quantity: Quantity): string {
+  public toString(value: number, quantity: Quantity, useGrouping = true): string {
     const fractionDigits = this.getFractionDigits(quantity);
     let convertedValue = this.convertToUnit(value, quantity);
 
@@ -54,8 +54,9 @@ export class UnitSystem {
     if (this.lengthUnit() === LengthUnit.Inch) {
       convertedValue = round(convertedValue, 0.25);
     }
-    // This ensures the number with commas as thousands separators
+    // This ensures the number with commas as thousands separators if isGrouping == true
     return convertedValue.toLocaleString(this._language, {
+      useGrouping,
       maximumFractionDigits: fractionDigits,
       minimumFractionDigits: fractionDigits
     });
