@@ -1,7 +1,7 @@
 import { assert, describe, expect, test } from 'vitest';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
+import { isEmpty, type TranslationKey } from '../../../base/utilities/translation/TranslateInput';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -74,6 +74,55 @@ describe(BoxDomainObject.name, () => {
       assert(info !== undefined);
       expect(info.getItemsByQuantity(quantity)).toHaveLength(expectedItems);
     }
+  });
+
+  test('Should set value by panel-info.item for length, depth and height', () => {
+    const domainObject = createBoxDomainObject(PrimitiveType.Box);
+    const info = domainObject.getPanelInfo();
+
+    const keys: TranslationKey[] = ['LENGTH', 'DEPTH', 'HEIGHT'];
+    let component = 0;
+    let expectedValue = 10;
+
+    for (const key of keys) {
+      const item = info?.getItemTranslationKey(key);
+      expect(item).toBeDefined();
+      assert(item !== undefined);
+
+      expect(item.setValue).toBeDefined();
+      expect(item.verifyValue).toBeDefined();
+      assert(item.setValue !== undefined);
+      assert(item.verifyValue !== undefined);
+
+      expect(item.verifyValue(expectedValue)).toBe(true);
+      expect(item.verifyValue(0)).toBe(false);
+      expect(item.verifyValue(-expectedValue)).toBe(false);
+      item.setValue(expectedValue);
+      expect(domainObject.box.size.getComponent(component)).toBeCloseTo(expectedValue);
+      component++;
+      expectedValue *= 2;
+    }
+  });
+
+  test('Should set value by panel-info.item for horizontal angle', () => {
+    const domainObject = createBoxDomainObject(PrimitiveType.Box);
+    const info = domainObject.getPanelInfo();
+
+    const item = info?.getItemTranslationKey('HORIZONTAL_ANGLE');
+    expect(item).toBeDefined();
+    assert(item !== undefined);
+
+    expect(item.setValue).toBeDefined();
+    expect(item.verifyValue).toBeDefined();
+    assert(item.setValue !== undefined);
+    assert(item.verifyValue !== undefined);
+
+    const expectedValue = 10;
+    for (const value of [-expectedValue, 0, expectedValue]) {
+      expect(item.verifyValue(value)).toBe(true);
+    }
+    item.setValue(expectedValue);
+    expect(domainObject.box.zRotationInDegrees).toBeCloseTo(expectedValue);
   });
 });
 

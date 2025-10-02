@@ -110,14 +110,14 @@ export class MeasurePointDomainObject extends BoxDomainObject {
 
   private setCoord(component: number, value: number): void {
     if (value > 0 && value !== this.box.center.getComponent(component)) {
-      this.box.center.setComponent(component, value);
+      this.point.setComponent(component, value);
       this.notify(Changes.geometry);
     }
   }
 
   private setSize(value: number): void {
-    if (value !== this.box.size.x) {
-      this.box.size.set(value, value, value);
+    if (value !== this.size) {
+      this.size = value;
       this.notify(Changes.geometry);
     }
   }

@@ -3,7 +3,7 @@ import { MeasurePointDomainObject } from './MeasurePointDomainObject';
 import { Vector3 } from 'three';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { SolidPrimitiveRenderStyle } from '../../primitives/common/SolidPrimitiveRenderStyle';
-import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
+import { isEmpty, type TranslationKey } from '../../../base/utilities/translation/TranslateInput';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 describe(MeasurePointDomainObject.name, () => {
@@ -65,6 +65,56 @@ describe(MeasurePointDomainObject.name, () => {
     expect(info.getItemsByQuantity(Quantity.Area)).toHaveLength(0);
     expect(info.getItemsByQuantity(Quantity.Volume)).toHaveLength(0);
     expect(info.getItemsByQuantity(Quantity.Angle)).toHaveLength(0);
+  });
+
+  test('Should set value by panel-info.item for center', () => {
+    const domainObject = createMeasurePointDomainObject();
+    const info = domainObject.getPanelInfo();
+
+    const keys: TranslationKey[] = ['X:COORDINATE', 'Y_COORDINATE', 'Z_COORDINATE'];
+    let component = 0;
+
+    let expectedValue = 10;
+    for (const key of keys) {
+      const item = info?.getItemTranslationKey(key);
+      expect(item).toBeDefined();
+      assert(item !== undefined);
+
+      expect(item.setValue).toBeDefined();
+      expect(item.verifyValue).toBeDefined();
+      assert(item.setValue !== undefined);
+      assert(item.verifyValue !== undefined);
+
+      for (const value of [-expectedValue, 0, expectedValue]) {
+        expect(item.verifyValue(value)).toBe(true);
+      }
+      item.setValue(expectedValue);
+      expect(domainObject.box.center.getComponent(component)).toBeCloseTo(expectedValue);
+      component++;
+      expectedValue *= 2;
+    }
+  });
+
+  test('Should set value by panel-info.item for point size', () => {
+    const domainObject = createMeasurePointDomainObject();
+    const info = domainObject.getPanelInfo();
+
+    const item = info?.getItemTranslationKey('POINT_SIZE');
+    expect(item).toBeDefined();
+    assert(item !== undefined);
+
+    expect(item.setValue).toBeDefined();
+    expect(item.verifyValue).toBeDefined();
+    assert(item.setValue !== undefined);
+    assert(item.verifyValue !== undefined);
+
+    const expectedValue = 10;
+    expect(item.verifyValue(expectedValue)).toBe(true);
+    expect(item.verifyValue(0)).toBe(false);
+    expect(item.verifyValue(-expectedValue)).toBe(false);
+
+    item.setValue(expectedValue);
+    expect(domainObject.size).toBeCloseTo(expectedValue);
   });
 });
 

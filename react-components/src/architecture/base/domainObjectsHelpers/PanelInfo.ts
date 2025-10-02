@@ -1,4 +1,8 @@
-import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import {
+  isTranslatedString,
+  type TranslationKey,
+  type TranslationInput
+} from '../utilities/translation/TranslateInput';
 import { translate } from '../utilities/translation/translateUtils';
 import { Quantity } from './Quantity';
 
@@ -22,6 +26,18 @@ export class PanelInfo {
 
   public getItemsByQuantity(quantity: Quantity): NumberPanelItem[] {
     return this.items.filter((a) => a.quantity === quantity);
+  }
+
+  public getItemTranslationKey(key: TranslationKey): NumberPanelItem | undefined {
+    for (const item of this.items) {
+      if (!isTranslatedString(item.translationInput)) {
+        continue;
+      }
+      if (item.translationInput.key === key) {
+        return item;
+      }
+    }
+    return undefined;
   }
 }
 
