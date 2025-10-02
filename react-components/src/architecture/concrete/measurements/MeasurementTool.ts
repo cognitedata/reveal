@@ -12,13 +12,13 @@ import { type IconName } from '../../base/utilities/types';
 import { Box3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
-import { getMeasureDiameter, MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
+import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
 import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
 import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { updateMarker, updateMeasureDiameter } from './diameter/measureDiameterToolUtils';
+import { updateMarker, tryCreateMeasureDiameter } from './diameter/measureDiameterToolUtils';
 import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 
 const POINT_SIZE_CHANGE_FACTOR = 0.1;
@@ -51,7 +51,7 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this.primitiveType === PrimitiveType.Diameter) {
-      if (await updateMeasureDiameter(this, this.renderTarget.camera.position, event)) {
+      if (await tryCreateMeasureDiameter(this, this.renderTarget.camera.position, event)) {
         return;
       }
     }
@@ -178,11 +178,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   // INSTANCE METHODS
   // ==================================================
 
-  public getOrCreateMeasureDiameter(): MeasureCylinderDomainObject {
-    const existing = getMeasureDiameter(this.root);
-    if (existing !== undefined) {
-      return existing;
-    }
+  public createMeasureDiameter(): MeasureCylinderDomainObject {
     const parent = this.getOrCreateParent();
     const domainObject = new MeasureCylinderDomainObject(PrimitiveType.Diameter);
     parent.addChildInteractive(domainObject);
