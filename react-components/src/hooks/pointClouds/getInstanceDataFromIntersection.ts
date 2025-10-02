@@ -30,44 +30,24 @@ export function getInstanceDataFromIntersection(
 
   if (classicIdEither && 'modelId' in intersection.model.modelIdentifier) {
     return {
-      classicModelIdentifier: {
-        modelId: intersection.model.modelIdentifier.modelId,
-        revisionId: intersection.model.modelIdentifier.revisionId
-      },
+      classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
       reference: classicIdEither
     };
-  } else if (!classicIdEither && 'revisionExternalId' in intersection.model.modelIdentifier) {
-    const instanceRef = isInstanceRefUnderVolumeMetadata(intersection)
-      ? intersection.volumeMetadata?.instanceRef
-      : undefined;
-    const dmReference: DmsUniqueIdentifier | undefined = instanceRef
-      ? { externalId: instanceRef.externalId, space: instanceRef.space }
-      : undefined;
-
+  } else if (isDmsInstance(intersection.volumeMetadata?.assetRef) && 'revisionExternalId' in intersection.model.modelIdentifier) {
     return {
       classicModelIdentifier: undefined,
-      dmsModelUniqueIdentifier: {
-        revisionExternalId: intersection.model.modelIdentifier.revisionExternalId,
-        revisionSpace: intersection.model.modelIdentifier.revisionSpace
-      },
-      reference: dmReference
+      dmsModelUniqueIdentifier: intersection.model.modelIdentifier,
+      reference: intersection.volumeMetadata?.assetRef
     };
-  } else if (!classicIdEither && 'modelId' in intersection.model.modelIdentifier && intersection.model.modelIdentifier.modelId !== undefined) {
+  } else if (!classicIdEither && 'modelId' in intersection.model.modelIdentifier) {
     const instanceRef = isInstanceRefUnderVolumeMetadata(intersection)
       ? intersection.volumeMetadata?.instanceRef
       : undefined;
-    const dmReference: DmsUniqueIdentifier | undefined = instanceRef
-      ? { externalId: instanceRef.externalId, space: instanceRef.space }
-      : undefined;
-
     return {
-      classicModelIdentifier: {
-        modelId: intersection.model.modelIdentifier.modelId,
-        revisionId: intersection.model.modelIdentifier.revisionId
-      },
+      classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
-      reference: dmReference
+      reference: instanceRef
     };
   }
   return emptyResult;
