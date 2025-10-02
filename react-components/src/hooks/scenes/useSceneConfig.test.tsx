@@ -1,14 +1,13 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { type QueryFunction, type QueryFunctionContext, QueryClient } from '@tanstack/react-query';
-import { Mock, type IMock } from 'moq.ts';
+import { type QueryFunction } from '@tanstack/react-query';
 import { type Scene } from '../../components/SceneContainer/sceneTypes';
-import { type FdmSDK } from '../../data-providers/FdmSDK';
-import { type SceneResponse } from '../../components/SceneContainer/SceneFdmTypes';
-import { createMockQueryResult } from '#test-utils/fixtures/queryResult';
+import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
 import { useSceneConfig } from './useSceneConfig';
 import { type UseSceneConfigDependencies, UseSceneConfigContext } from './useSceneConfig.context';
+import { type ScenesMap } from './use3dScenes.types';
+import { type SceneData } from './types';
 
 describe(useSceneConfig.name, () => {
   const mockProps = {
@@ -16,74 +15,40 @@ describe(useSceneConfig.name, () => {
     sceneSpace: 'test-space'
   };
 
-  let fdmSdkMock: IMock<FdmSDK>;
+  const mockDefaultScene: Scene = {
+    sceneConfiguration: {
+      name: 'Test Scene',
+      cameraTranslationX: 0,
+      cameraTranslationY: 0,
+      cameraTranslationZ: 0,
+      cameraEulerRotationX: 0,
+      cameraEulerRotationY: 0,
+      cameraEulerRotationZ: 0,
+      cameraTargetX: 0,
+      cameraTargetY: 0,
+      cameraTargetZ: 0,
+      qualitySettings: {
+        cadBudget: 0,
+        pointCloudBudget: 0,
+        maxRenderResolution: 0,
+        movingCameraResolutionFactor: 0,
+        pointCloudPointSize: 0,
+        pointCloudPointShape: '',
+        pointCloudColor: ''
+      }
+    },
+    skybox: undefined,
+    groundPlanes: [],
+    sceneModels: [],
+    image360Collections: []
+  };
+
   const mockUseQuery = vi.fn();
+  const mockUse3dScenes = vi.fn<UseSceneConfigDependencies['use3dScenes']>();
 
   const mockDependencies: UseSceneConfigDependencies = {
-    useFdmSdk: () => fdmSdkMock.object(),
+    use3dScenes: mockUse3dScenes,
     useQuery: mockUseQuery
-  };
-
-  // Default scene response
-  const createDefaultSceneResponse = (): SceneResponse => ({
-    items: {
-      myScene: [
-        {
-          externalId: 'test-scene',
-          space: 'test-space',
-          version: 1,
-          instanceType: 'node',
-          properties: {
-            scene: {
-              'SceneConfiguration/v1': {
-                name: 'Test Scene',
-                cameraTranslationX: 0,
-                cameraTranslationY: 0,
-                cameraTranslationZ: 10,
-                cameraEulerRotationX: 0,
-                cameraEulerRotationY: 0,
-                cameraEulerRotationZ: 0,
-                cadBudget: 1000000,
-                pointCloudBudget: 500000,
-                maxRenderResolution: 1920,
-                movingCameraResolutionFactor: 0.5,
-                pointCloudPointSize: 2,
-                pointCloudPointShape: 'Circle',
-                pointCloudColor: 'Rgb'
-              }
-            }
-          }
-        }
-      ],
-      skybox: [],
-      groundPlanes: [],
-      groundPlaneEdges: [],
-      sceneModels: [],
-      image360CollectionsEdges: []
-    }
-  });
-
-  // Mock functions for FdmSDK methods
-  const mockGetViewsByIds = vi.fn();
-  const mockQueryNodesAndEdges = vi.fn();
-
-  const createDefaultFdmSdkMock = (): IMock<FdmSDK> => {
-    // Setup mocks to return 5 views (views exist)
-    mockGetViewsByIds.mockResolvedValue({ items: new Array(5) });
-    mockQueryNodesAndEdges.mockResolvedValue(createDefaultSceneResponse());
-
-    return new Mock<FdmSDK>()
-      .setup((sdk) => sdk.getViewsByIds)
-      .returns(mockGetViewsByIds)
-      .setup((sdk) => sdk.queryNodesAndEdges)
-      .returns(mockQueryNodesAndEdges);
-  };
-
-  const createViewsNotExistFdmSdkMock = (): IMock<FdmSDK> => {
-    // Setup mocks to return empty array (views don't exist)
-    mockGetViewsByIds.mockResolvedValue({ items: [] });
-
-    return new Mock<FdmSDK>().setup((sdk) => sdk.getViewsByIds).returns(mockGetViewsByIds);
   };
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
@@ -92,9 +57,35 @@ describe(useSceneConfig.name, () => {
     </UseSceneConfigContext.Provider>
   );
 
+  const mockScenesMap: ScenesMap = {
+    'test-space': {
+      'test-scene': {
+        name: 'Test Scene',
+        cameraTranslationX: 0,
+        cameraTranslationY: 0,
+        cameraTranslationZ: 0,
+        cameraEulerRotationX: 0,
+        cameraEulerRotationY: 0,
+        cameraEulerRotationZ: 0,
+        cameraTargetX: 0,
+        cameraTargetY: 0,
+        cameraTargetZ: 0,
+        modelOptions: [],
+        image360CollectionOptions: [],
+        groundPlanes: [],
+        skybox: undefined,
+        qualitySettings: {
+          cadBudget: 1000000,
+          pointCloudBudget: 500000,
+          maxRenderResolution: 1920
+        }
+      }
+    }
+  };
+
   beforeEach(() => {
-    fdmSdkMock = createDefaultFdmSdkMock();
     mockUseQuery.mockReturnValue(createMockQueryResult(null));
+    mockUse3dScenes.mockReturnValue(createMockQueryResult(mockScenesMap));
   });
 
   test('should pass correct query parameters to useQuery', () => {
@@ -109,39 +100,14 @@ describe(useSceneConfig.name, () => {
   });
 
   test('should return successful query result', () => {
-    const mockScene: Scene = {
-      sceneConfiguration: {
-        name: 'Test Scene',
-        cameraTranslationX: 0,
-        cameraTranslationY: 0,
-        cameraTranslationZ: 10,
-        cameraEulerRotationX: 0,
-        cameraEulerRotationY: 0,
-        cameraEulerRotationZ: 0,
-        qualitySettings: {
-          cadBudget: 1000000,
-          pointCloudBudget: 500000,
-          maxRenderResolution: 1920,
-          movingCameraResolutionFactor: 0.5,
-          pointCloudPointSize: 2,
-          pointCloudPointShape: 'Circle',
-          pointCloudColor: 'Rgb'
-        }
-      },
-      skybox: undefined,
-      groundPlanes: [],
-      sceneModels: [],
-      image360Collections: []
-    };
-
-    mockUseQuery.mockReturnValue(createMockQueryResult(mockScene));
+    mockUseQuery.mockReturnValue(createMockQueryResult(mockDefaultScene));
 
     const { result } = renderHook(
       () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
       { wrapper }
     );
 
-    expect(result.current.data).toEqual(mockScene);
+    expect(result.current.data).toEqual(mockDefaultScene);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isError).toBe(false);
   });
@@ -193,11 +159,11 @@ describe(useSceneConfig.name, () => {
     expect(result.current.error).toEqual(testError);
   });
 
-  test('should initialize FdmSDK before calling useQuery', () => {
+  test('should call use3dScenes and useQuery', () => {
     renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), { wrapper });
 
+    expect(mockUse3dScenes).toHaveBeenCalled();
     expect(mockUseQuery).toHaveBeenCalled();
-    expect(fdmSdkMock.object()).toBeDefined();
   });
 
   test('should pass queryFunction to useQuery', () => {
@@ -222,7 +188,7 @@ describe(useSceneConfig.name, () => {
     ]);
   });
 
-  test('should handle different scene configurations', () => {
+  test('should handle filled scene configurations', () => {
     const customScene: Scene = {
       sceneConfiguration: {
         name: 'Custom Scene',
@@ -274,30 +240,14 @@ describe(useSceneConfig.name, () => {
             modelId: 123,
             revisionId: 456
           },
-          translationX: 0,
-          translationY: 0,
-          translationZ: 0,
-          eulerRotationX: 0,
-          eulerRotationY: 0,
-          eulerRotationZ: 0,
-          scaleX: 1,
-          scaleY: 1,
-          scaleZ: 1
+          defaultVisible: true
         }
       ],
       image360Collections: [
         {
           image360CollectionExternalId: 'image-collection-1',
           image360CollectionSpace: 'image-space',
-          translationX: 0,
-          translationY: 0,
-          translationZ: 0,
-          eulerRotationX: 0,
-          eulerRotationY: 0,
-          eulerRotationZ: 0,
-          scaleX: 1,
-          scaleY: 1,
-          scaleZ: 1
+          defaultVisible: true
         }
       ]
     };
@@ -331,11 +281,13 @@ describe(useSceneConfig.name, () => {
   });
 
   test('should handle context changes', () => {
-    const customFdmSdkMock = createDefaultFdmSdkMock();
     const customUseQuery = vi.fn();
+    const customUse3dScenes = vi.fn<UseSceneConfigDependencies['use3dScenes']>();
+    const emptyScenes: ScenesMap = {};
+    customUse3dScenes.mockReturnValue(createMockQueryResult(emptyScenes));
 
     const customDependencies: UseSceneConfigDependencies = {
-      useFdmSdk: () => customFdmSdkMock.object(),
+      use3dScenes: customUse3dScenes,
       useQuery: customUseQuery
     };
 
@@ -351,7 +303,6 @@ describe(useSceneConfig.name, () => {
       wrapper: customWrapper
     });
 
-    expect(customFdmSdkMock.object()).toBeDefined();
     expect(customUseQuery).toHaveBeenCalled();
   });
 
@@ -446,58 +397,26 @@ describe(useSceneConfig.name, () => {
             modelId: 123,
             revisionId: 456
           },
-          translationX: 0,
-          translationY: 0,
-          translationZ: 0,
-          eulerRotationX: 0,
-          eulerRotationY: 0,
-          eulerRotationZ: 0,
-          scaleX: 1,
-          scaleY: 1,
-          scaleZ: 1
+          defaultVisible: true
         },
         {
           modelIdentifier: {
             revisionExternalId: 'dm-model-1',
             revisionSpace: 'dm-space'
           },
-          translationX: 10,
-          translationY: 20,
-          translationZ: 30,
-          eulerRotationX: 0,
-          eulerRotationY: 45,
-          eulerRotationZ: 0,
-          scaleX: 2,
-          scaleY: 1,
-          scaleZ: 2
+          defaultVisible: true
         }
       ],
       image360Collections: [
         {
           image360CollectionExternalId: 'panorama-collection-1',
           image360CollectionSpace: 'panorama-space',
-          translationX: 0,
-          translationY: 0,
-          translationZ: 0,
-          eulerRotationX: 0,
-          eulerRotationY: 0,
-          eulerRotationZ: 0,
-          scaleX: 1,
-          scaleY: 1,
-          scaleZ: 1
+          defaultVisible: true
         },
         {
           image360CollectionExternalId: 'panorama-collection-2',
           image360CollectionSpace: 'panorama-space',
-          translationX: 5,
-          translationY: 0,
-          translationZ: 5,
-          eulerRotationX: 0,
-          eulerRotationY: 90,
-          eulerRotationZ: 0,
-          scaleX: 1,
-          scaleY: 1,
-          scaleZ: 1
+          defaultVisible: true
         }
       ]
     };
@@ -532,172 +451,130 @@ describe(useSceneConfig.name, () => {
     );
   });
 
-  test('should handle scene with minimal configuration', () => {
-    const minimalScene: Scene = {
-      sceneConfiguration: {
-        name: 'Minimal Scene',
-        cameraTranslationX: 0,
-        cameraTranslationY: 0,
-        cameraTranslationZ: 0,
-        cameraEulerRotationX: 0,
-        cameraEulerRotationY: 0,
-        cameraEulerRotationZ: 0,
-        qualitySettings: {
-          cadBudget: 0,
-          pointCloudBudget: 0,
-          maxRenderResolution: 0,
-          movingCameraResolutionFactor: 0,
-          pointCloudPointSize: 0,
-          pointCloudPointShape: '',
-          pointCloudColor: ''
-        }
-      },
-      skybox: undefined,
+  test('should return null when sceneExternalId is undefined', async () => {
+    let capturedQueryFunction!: QueryFunction<Scene | null>;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult(null);
+    });
+
+    renderHook(() => useSceneConfig(undefined, 'test-space'), { wrapper });
+
+    const mockContext = createMockQueryContext([
+      'reveal',
+      'react-components',
+      'sync-scene-config',
+      undefined,
+      'test-space'
+    ]);
+    const result = await capturedQueryFunction(mockContext);
+    expect(result).toBeNull();
+  });
+
+  test('should return null when sceneSpace is undefined', async () => {
+    let capturedQueryFunction!: QueryFunction<Scene | null>;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult(null);
+    });
+
+    renderHook(() => useSceneConfig('test-scene', undefined), { wrapper });
+
+    const mockContext = createMockQueryContext([
+      'reveal',
+      'react-components',
+      'sync-scene-config',
+      'test-scene',
+      undefined
+    ]);
+    const result = await capturedQueryFunction(mockContext);
+    expect(result).toBeNull();
+  });
+
+  test('should return null when scene data does not exist in use3dScenes', async () => {
+    // Set up use3dScenes to return empty data (no scene found)
+    const emptyScenesMap: ScenesMap = {};
+    mockUse3dScenes.mockReturnValue(createMockQueryResult(emptyScenesMap));
+
+    let capturedQueryFunction!: QueryFunction<Scene | null>;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult(null);
+    });
+
+    renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), {
+      wrapper
+    });
+
+    const mockContext = createMockQueryContext([
+      'reveal',
+      'react-components',
+      'sync-scene-config',
+      mockProps.sceneExternalId,
+      mockProps.sceneSpace
+    ]);
+    const result = await capturedQueryFunction(mockContext);
+    expect(result).toBeNull();
+  });
+
+  test('should execute complete scene processing with minimal data', async () => {
+    const mockSceneData: SceneData = {
+      name: 'Test Scene',
+      cameraTranslationX: 0,
+      cameraTranslationY: 0,
+      cameraTranslationZ: 10,
+      cameraEulerRotationX: 0,
+      cameraEulerRotationY: 0,
+      cameraEulerRotationZ: 0,
+      cameraTargetX: 0,
+      cameraTargetY: 0,
+      cameraTargetZ: 0,
+      modelOptions: [],
+      image360CollectionOptions: [],
       groundPlanes: [],
-      sceneModels: [],
-      image360Collections: []
+      skybox: undefined,
+      qualitySettings: {
+        cadBudget: 1000000,
+        pointCloudBudget: 500000,
+        maxRenderResolution: 1920,
+        movingCameraResolutionFactor: 0.5,
+        pointCloudPointSize: 2,
+        pointCloudPointShape: 'Circle',
+        pointCloudColor: 'Rgb'
+      }
     };
 
-    mockUseQuery.mockReturnValue(createMockQueryResult(minimalScene));
+    const mockScenesMapWithData: ScenesMap = {
+      [mockProps.sceneSpace]: {
+        [mockProps.sceneExternalId]: mockSceneData
+      }
+    };
 
-    const { result } = renderHook(
-      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
-      { wrapper }
-    );
+    mockUse3dScenes.mockReturnValue(createMockQueryResult(mockScenesMapWithData));
 
-    expect(result.current.data).toEqual(minimalScene);
-    assert(result.current.data !== null && result.current.data !== undefined);
-    expect(result.current.data.sceneConfiguration.name).toBe('Minimal Scene');
-    expect(result.current.data.skybox).toBeUndefined();
-    expect(result.current.data.groundPlanes).toHaveLength(0);
-    expect(result.current.data.sceneModels).toHaveLength(0);
-    expect(result.current.data.image360Collections).toHaveLength(0);
-  });
-
-  // Helper to create mock query context
-  const createMockQueryContext = (
-    queryKey: readonly unknown[]
-  ): QueryFunctionContext<readonly unknown[]> => ({
-    queryKey,
-    signal: new AbortController().signal,
-    meta: undefined,
-    client: new QueryClient()
-  });
-
-  // Tests for actual query function execution to cover missing lines
-  describe('QueryFunction execution coverage', () => {
-    test('should return null when sceneExternalId is undefined', async () => {
-      let capturedQueryFunction!: QueryFunction<Scene | null>;
-      mockUseQuery.mockImplementation((options) => {
-        capturedQueryFunction = options.queryFn;
-        return createMockQueryResult(null);
-      });
-
-      renderHook(() => useSceneConfig(undefined, 'test-space'), { wrapper });
-
-      const mockContext = createMockQueryContext([
-        'reveal',
-        'react-components',
-        'sync-scene-config',
-        undefined,
-        'test-space'
-      ]);
-      const result = await capturedQueryFunction(mockContext);
-      expect(result).toBeNull();
+    let capturedQueryFunction!: QueryFunction<Scene | null>;
+    mockUseQuery.mockImplementation((options) => {
+      capturedQueryFunction = options.queryFn;
+      return createMockQueryResult(null);
     });
 
-    test('should return null when sceneSpace is undefined', async () => {
-      let capturedQueryFunction!: QueryFunction<Scene | null>;
-      mockUseQuery.mockImplementation((options) => {
-        capturedQueryFunction = options.queryFn;
-        return createMockQueryResult(null);
-      });
-
-      renderHook(() => useSceneConfig('test-scene', undefined), { wrapper });
-
-      const mockContext = createMockQueryContext([
-        'reveal',
-        'react-components',
-        'sync-scene-config',
-        'test-scene',
-        undefined
-      ]);
-      const result = await capturedQueryFunction(mockContext);
-      expect(result).toBeNull();
+    renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), {
+      wrapper
     });
 
-    test('should return DefaultScene when scene views do not exist', async () => {
-      fdmSdkMock = createViewsNotExistFdmSdkMock();
-
-      let capturedQueryFunction!: QueryFunction<Scene | null>;
-      mockUseQuery.mockImplementation((options) => {
-        capturedQueryFunction = options.queryFn;
-        return createMockQueryResult(null);
-      });
-
-      renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), {
-        wrapper
-      });
-
-      const mockContext = createMockQueryContext([
-        'reveal',
-        'react-components',
-        'sync-scene-config',
-        mockProps.sceneExternalId,
-        mockProps.sceneSpace
-      ]);
-      const result = await capturedQueryFunction(mockContext);
-      expect(result).toEqual({
-        sceneConfiguration: {
-          name: '',
-          cameraTranslationX: 0,
-          cameraTranslationY: 0,
-          cameraTranslationZ: 0,
-          cameraEulerRotationX: 0,
-          cameraEulerRotationY: 0,
-          cameraEulerRotationZ: 0,
-          qualitySettings: {
-            cadBudget: 0,
-            pointCloudBudget: 0,
-            maxRenderResolution: 0,
-            movingCameraResolutionFactor: 0,
-            pointCloudPointSize: 0,
-            pointCloudPointShape: '',
-            pointCloudColor: ''
-          }
-        },
-        skybox: undefined,
-        groundPlanes: [],
-        sceneModels: [],
-        image360Collections: []
-      });
-    });
-
-    test('should execute complete scene processing with minimal data', async () => {
-      let capturedQueryFunction!: QueryFunction<Scene | null>;
-      mockUseQuery.mockImplementation((options) => {
-        capturedQueryFunction = options.queryFn;
-        return createMockQueryResult(null);
-      });
-
-      renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), {
-        wrapper
-      });
-
-      const mockContext = createMockQueryContext([
-        'reveal',
-        'react-components',
-        'sync-scene-config',
-        mockProps.sceneExternalId,
-        mockProps.sceneSpace
-      ]);
-      const result = await capturedQueryFunction(mockContext);
-      expect(result).toBeDefined();
-      expect(result?.sceneConfiguration.name).toBe('Test Scene');
-      expect(result?.skybox).toBeUndefined();
-      expect(result?.groundPlanes).toHaveLength(0);
-      expect(result?.sceneModels).toHaveLength(0);
-      expect(result?.image360Collections).toHaveLength(0);
-    });
+    const mockContext = createMockQueryContext([
+      'reveal',
+      'react-components',
+      'sync-scene-config',
+      mockProps.sceneExternalId,
+      mockProps.sceneSpace
+    ]);
+    const result = await capturedQueryFunction(mockContext);
+    expect(result).toBeDefined();
+    expect(result?.sceneConfiguration.name).toBe('Test Scene');
+    expect(result?.skybox).toBeUndefined();
+    expect(result?.groundPlanes).toHaveLength(0);
+    expect(result?.sceneModels).toHaveLength(0);
+    expect(result?.image360Collections).toHaveLength(0);
   });
 });

@@ -1,21 +1,20 @@
 import { createContext } from 'react';
 import { type QueryFunction, type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
-import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { use3dScenes } from './use3dScenes';
 
 export type UseSceneConfigDependencies = {
-  useFdmSdk: () => FdmSDK;
   useQuery: <T>(options: {
     queryKey: readonly unknown[];
     queryFn: QueryFunction<T>;
     enabled?: boolean;
     staleTime?: number;
   }) => UseQueryResult<T>;
+  use3dScenes: typeof use3dScenes;
 };
 
 export const defaultUseSceneConfigDependencies: UseSceneConfigDependencies = {
-  useFdmSdk,
-  useQuery
+  useQuery,
+  use3dScenes
 };
 
 export const UseSceneConfigContext = createContext<UseSceneConfigDependencies>(

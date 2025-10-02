@@ -136,6 +136,9 @@ function createMapOfScenes(
         cameraEulerRotationX: properties.cameraEulerRotationX ?? 0,
         cameraEulerRotationY: properties.cameraEulerRotationY ?? 0,
         cameraEulerRotationZ: properties.cameraEulerRotationZ ?? 0,
+        cameraTargetX: properties.cameraTargetX ?? 0,
+        cameraTargetY: properties.cameraTargetY ?? 0,
+        cameraTargetZ: properties.cameraTargetZ ?? 0,
         modelOptions: [],
         image360CollectionOptions: [],
         groundPlanes: [],
@@ -181,7 +184,7 @@ function populateSceneMapWithModels(
     const newModel = {
       modelId: newModelId,
       revisionId: newModelRevisionId,
-      transformation: transform
+      transform
     };
 
     scenesMap[space]?.[externalId].modelOptions.push(newModel);
