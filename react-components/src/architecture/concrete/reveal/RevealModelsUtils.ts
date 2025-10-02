@@ -16,6 +16,9 @@ import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTar
 import { type AddImage360CollectionOptions } from '../../..';
 import { type RevealDomainObject } from './RevealDomainObject';
 import { type CogniteClient } from '@cognite/sdk';
+import { PointCloudFolder } from './pointCloud/PointCloudFolder';
+import { CadFolder } from './cad/CadFolder';
+import { Image360CollectionFolder } from './Image360Collection/Image360CollectionFolder';
 
 export class RevealModelsUtils {
   public static getByRevealModel(
@@ -65,13 +68,17 @@ export class RevealModelsUtils {
     options: AddModelOptions,
     defaultVisible?: boolean
   ): Promise<CogniteCadModel> {
+    let folder = renderTarget.root.getDescendantByType(CadFolder);
+    if (folder === undefined) {
+      folder = new CadFolder();
+      renderTarget.root.addChildInteractive(folder);
+    }
+
     const model = await renderTarget.viewer.addCadModel(options);
-
     model.visible = defaultVisible ?? true;
-
     const domainObject = new CadDomainObject(model);
-    renderTarget.root.addChildInteractive(domainObject);
 
+    folder.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(model.visible);
 
     try {
@@ -87,10 +94,16 @@ export class RevealModelsUtils {
     options: AddModelOptions<DataSourceType>,
     defaultVisible?: boolean
   ): Promise<PointCloud> {
+    let folder = renderTarget.root.getDescendantByType(PointCloudFolder);
+    if (folder === undefined) {
+      folder = new PointCloudFolder();
+      renderTarget.root.addChildInteractive(folder);
+    }
     const model = await renderTarget.viewer.addPointCloudModel(options);
     model.visible = defaultVisible ?? true;
     const domainObject = new PointCloudDomainObject(model);
-    renderTarget.root.addChildInteractive(domainObject);
+
+    folder.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(model.visible);
 
     try {
@@ -122,9 +135,14 @@ export class RevealModelsUtils {
       }
     })();
 
+    let folder = renderTarget.root.getDescendantByType(Image360CollectionFolder);
+    if (folder === undefined) {
+      folder = new Image360CollectionFolder();
+      renderTarget.root.addChildInteractive(folder);
+    }
     model.setIconsVisibility(defaultVisible ?? true);
     const domainObject = new Image360CollectionDomainObject(model);
-    renderTarget.root.addChildInteractive(domainObject);
+    folder.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(model.getIconsVisibility());
 
     return model;
