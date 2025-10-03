@@ -4,12 +4,12 @@ import { type ReactElement, type ReactNode } from 'react';
 import { Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { type QueryFunction } from '@tanstack/react-query';
-import { type SceneNode, type ScenesMap } from './use3dScenes.types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
 import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
 import { use3dScenes } from './use3dScenes';
+import { SceneNode, ScenesMap } from './types';
 
 describe(use3dScenes.name, () => {
   const mockUseSDK = vi.fn();
@@ -483,7 +483,7 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
     assert(capturedQueryFunction !== undefined);
-    return await capturedQueryFunction(mockContext);
+    return capturedQueryFunction(mockContext);
   };
 
   const setupMockResponse = (responseData: any): void => {

@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { type QueryFunction } from '@tanstack/react-query';
 import { type CogniteClient } from '@cognite/sdk';
-import { type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
+import { type Space, type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
@@ -20,16 +20,14 @@ import {
   type SceneData,
   type SkyboxProperties,
   type Transformation3d,
-  type TRANSFORMATION_SOURCE
-} from './types';
-import {
+  type TRANSFORMATION_SOURCE,
   type Use3dScenesResult,
   type ScenesMap,
-  type Space,
-  type ExternalId,
   type Use3dScenesQueryResult,
-  type SceneNode
-} from './use3dScenes.types';
+  type SceneNode,
+  type ExternalId
+} from './types';
+
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { createGetScenesQuery } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
