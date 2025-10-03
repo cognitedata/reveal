@@ -37,6 +37,7 @@ export function createPointCloudMock(parameters?: {
 }): CognitePointCloudModel {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
+  const modelTransformation = new Matrix4().identity();
 
   const pointCloud = new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
     .setup((p) => p.modelId)
@@ -45,8 +46,6 @@ export function createPointCloudMock(parameters?: {
     .returns(revisionId)
     .setup((p) => p.modelIdentifier)
     .returns({ modelId, revisionId })
-    .setup((p) => p.getModelTransformation())
-    .returns(new Matrix4())
     .setup((p) => p.type)
     .returns('pointcloud')
 
@@ -75,6 +74,10 @@ export function createPointCloudMock(parameters?: {
   pointCloud.pointShape = PointShape.Circle;
   pointCloud.pointSize = 1;
   pointCloud.pointColorType = PointColorType.Rgb;
+  pointCloud.getModelTransformation = () => modelTransformation;
+  pointCloud.setModelTransformation = (matrix: Matrix4) => {
+    modelTransformation.copy(matrix);
+  };
 
   return pointCloud;
 }

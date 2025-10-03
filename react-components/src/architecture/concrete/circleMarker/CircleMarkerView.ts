@@ -5,6 +5,7 @@ import { Sprite, CanvasTexture, SpriteMaterial } from 'three';
 import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { type CustomObjectIntersectInput, type CustomObjectIntersection } from '@cognite/reveal';
 
 const TEXTURE_SIZE = 200;
 const CANVAS_PADDING = 1; // To avoid artifacts on the edge when drawing
@@ -37,6 +38,13 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     sprite.updateMatrixWorld();
     this.addChild(sprite);
     this.updateGeometry();
+  }
+
+  public override intersectIfCloser(
+    _intersectInput: CustomObjectIntersectInput,
+    _closestDistance: number | undefined
+  ): undefined | CustomObjectIntersection {
+    return undefined; // CircleMarker is not pick-able
   }
 
   private updateGeometry(): void {

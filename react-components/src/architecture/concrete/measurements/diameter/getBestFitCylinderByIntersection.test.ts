@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
-import { Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { type PointCloudIntersection } from '@cognite/reveal';
 import { LeastSquareCylinderResult } from '../../../base/utilities/cylinderFit/LeastSquareCylinderResult';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
@@ -66,10 +66,17 @@ export function createPointCloudIntersectionWithCylinder(pointCount: number): {
     .multiplyScalar(expectedCylinder.radius * 10)
     .add(expectedCylinder.center);
 
-  // Create the point cloud
+  // Create the point cloud with a model transformation and some points
+  const pointCloud = createPointCloudMock();
+  const modelTransformation = new Matrix4().setPosition(10, 20, 30);
+  const inverseModelTransformation = modelTransformation.clone().invert();
+
   const random = new Random(42);
   const points = createPoints(expectedCylinder, pointCount, random, 0, 1);
-  const pointCloud = createPointCloudMock();
+  for (const point of points) {
+    point.applyMatrix4(inverseModelTransformation);
+  }
+  pointCloud.setModelTransformation(modelTransformation);
   pointCloud.getPointsByBoundingBox = () => points;
 
   // Create the intersection object
