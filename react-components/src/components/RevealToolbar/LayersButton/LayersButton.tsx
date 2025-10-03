@@ -19,7 +19,6 @@ export const LayersButton = ({
   const { t } = useTranslation();
 
   const [layersActive, setLayersActive] = useState<boolean>(false);
-  const [isTriggerHovered, setIsTriggerHovered] = useState<boolean>(false);
 
   const { modelLayerHandlers, updateCallback, ModelLayerSelection } = useLayersButtonViewModel(
     setExternalLayersState,
@@ -32,8 +31,11 @@ export const LayersButton = ({
         placement="right"
         hideOnOutsideClick
         offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}
-        onClickOutside={() => {
-          if (isTriggerHovered) return;
+        visible={layersActive}
+        onShow={() => {
+          setLayersActive(true);
+        }}
+        onHide={() => {
           setLayersActive(false);
         }}>
         <SelectPanel.Trigger>
@@ -44,15 +46,6 @@ export const LayersButton = ({
               icon={<LayersIcon />}
               type="ghost"
               toggled={layersActive}
-              onPointerOver={() => {
-                setIsTriggerHovered(true);
-              }}
-              onPointerOut={() => {
-                setIsTriggerHovered(false);
-              }}
-              onClick={() => {
-                setLayersActive((prevState) => !prevState);
-              }}
               aria-label={t({ key: 'LAYERS_FILTER_TOOLTIP' })}
             />
           </Tooltip>
