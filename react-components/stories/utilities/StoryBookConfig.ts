@@ -15,7 +15,6 @@ import { KeyboardSpeedCommand } from '../../src/architecture/base/concreteComman
 import { SettingsCommand } from '../../src/architecture/base/concreteCommands/general/SettingsCommand';
 import { MockSettingsCommand } from '#test-utils/architecture/mock-commands/MockSettingsCommand';
 import { MockFilterCommand } from '#test-utils/architecture/mock-commands/MockFilterCommand';
-import { ToggleAllModelsVisibleCommand } from '../../src/architecture/base/concreteCommands/general/ToggleAllModelsVisibleCommand';
 import { SetOrbitOrFirstPersonModeCommand } from '../../src/architecture/base/concreteCommands/navigation/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsCreateTool } from '../../src/architecture/concrete/annotations/commands/AnnotationsCreateTool';
@@ -60,7 +59,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new HelpCommand(),
       new ShareCommand(),
       new ShowTreeViewCommand(),
-      new ToggleAllModelsVisibleCommand(),
       new SettingsCommand(),
       undefined,
       new Image360AnnotationSelectTool(false),

@@ -1,17 +1,15 @@
 import { assert, describe, expect, test } from 'vitest';
 import { MeasurementTool } from '../MeasurementTool';
-import { shouldIntersect, updateMarker, updateMeasureDiameter } from './measureDiameterToolUtils';
-import {
-  CircleMarkerDomainObject,
-  getOrCreateCircleMarker
-} from '../../circleMarker/CircleMarkerDomainObject';
+import { updateMarker, tryCreateMeasureDiameter } from './measureDiameterToolUtils';
+import { getOrCreateCircleMarker } from '../../circleMarker/CircleMarkerDomainObject';
 import { MOUSE, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type PointCloudIntersection } from '@cognite/reveal';
 import { createPointCloudIntersectionWithCylinder } from './getBestFitCylinderByIntersection.test';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { getMeasureDiameter, MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
+import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 
 const POINT_COUNT = 100;
 
@@ -56,7 +54,7 @@ describe(updateMarker.name, () => {
   });
 });
 
-describe(updateMeasureDiameter.name, () => {
+describe(tryCreateMeasureDiameter.name, () => {
   test('Should not create a cylinder when no intersection ', async () => {
     const renderTarget = createFullRenderTargetMock();
     const tool = new MeasurementTool();
@@ -64,7 +62,7 @@ describe(updateMeasureDiameter.name, () => {
 
     tool.getIntersection = async () => undefined;
 
-    const result = await updateMeasureDiameter(tool, new Vector3(), createClickEvent());
+    const result = await tryCreateMeasureDiameter(tool, new Vector3(), createClickEvent());
     expect(result).toBe(false);
   });
 
@@ -81,7 +79,7 @@ describe(updateMeasureDiameter.name, () => {
     const { intersection, cameraPosition } = createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
 
-    const result = await updateMeasureDiameter(tool, cameraPosition, createClickEvent());
+    const result = await tryCreateMeasureDiameter(tool, cameraPosition, createClickEvent());
     expect(result).toBe(true);
 
     expect(circleMarker.isVisible()).toBe(true);
@@ -104,7 +102,7 @@ describe(updateMeasureDiameter.name, () => {
       createPointCloudIntersectionWithCylinder(POINT_COUNT);
     tool.getIntersection = async () => intersection;
 
-    const result = await updateMeasureDiameter(tool, cameraPosition, createClickEvent());
+    const result = await tryCreateMeasureDiameter(tool, cameraPosition, createClickEvent());
     expect(result).toBe(true);
 
     expect(circleMarker.isVisible()).toBe(false);
@@ -124,27 +122,19 @@ describe(updateMeasureDiameter.name, () => {
   });
 });
 
-describe(shouldIntersect.name, () => {
-  test('Should intersect', () => {
-    const domainObject = new MeasureCylinderDomainObject(PrimitiveType.Cylinder);
-    expect(shouldIntersect(domainObject)).toBe(true);
-  });
-
-  test('Should not intersect when the diameter measurement given', async () => {
-    const domainObject = new MeasureCylinderDomainObject(PrimitiveType.Diameter);
-    expect(shouldIntersect(domainObject)).toBe(false);
-  });
-
-  test('Should not intersect when the circle marker is given', async () => {
-    const domainObject = new CircleMarkerDomainObject();
-    expect(shouldIntersect(domainObject)).toBe(false);
-  });
-});
-
 function createClickEvent(): PointerEvent {
   return new PointerEvent('click', { button: MOUSE.LEFT });
 }
 
 function createMoveEvent(): PointerEvent {
   return new PointerEvent('pointermove');
+}
+
+function getMeasureDiameter(root: RootDomainObject): MeasureCylinderDomainObject | undefined {
+  for (const descendant of root.getDescendantsByType(MeasureCylinderDomainObject)) {
+    if (descendant.primitiveType === PrimitiveType.Diameter) {
+      return descendant;
+    }
+  }
+  return undefined;
 }
