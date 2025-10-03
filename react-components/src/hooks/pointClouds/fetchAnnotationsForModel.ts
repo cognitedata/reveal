@@ -27,10 +27,12 @@ export const fetchAnnotationsForModel = async (
 
   const filteredAnnotationMappings = annotationMappings.filter(isDefined);
   const transformedAnnotationMappings = filteredAnnotationMappings.flatMap((annotationMapping) =>
-    Array.from(annotationMapping.entries()).map(([annotationId, asset]) => ({
-      annotationId,
-      asset
-    }))
+    Array.from(annotationMapping.entries()).flatMap(([annotationId, assets]) =>
+      assets.map((asset) => ({
+        annotationId,
+        asset
+      }))
+    )
   );
 
   return transformedAnnotationMappings;

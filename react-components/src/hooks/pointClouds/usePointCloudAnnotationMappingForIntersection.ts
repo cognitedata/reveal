@@ -6,7 +6,6 @@ import { queryKeys } from '../../utilities/queryKeys';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 import { getInstanceDataFromIntersection } from './getInstanceDataFromIntersection';
-import { isIdEither } from '../../utilities/instanceIds';
 
 export const usePointCloudAnnotationMappingForIntersection = (
   intersection: AnyIntersection | undefined

@@ -3,7 +3,6 @@ import {
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type IdEither,
-  type AnnotationsInstanceRef
 } from '@cognite/sdk';
 import { type CoreDmImage360Annotation, type DataSourceType } from '@cognite/reveal';
 import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
@@ -13,14 +12,25 @@ import {
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
 
-export function getInstanceReferenceFromPointCloudAnnotation(
+export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel
-): IdEither | AnnotationsInstanceRef | undefined {
+): InstanceReference[] {
   const annotationData = annotation.data as AnnotationsBoundingVolume;
-  const assetRef = annotationData.assetRef ?? annotationData.instanceRef;
-  return assetRef !== undefined && (isIdEither(assetRef) || isDmsInstance(assetRef))
-    ? assetRef
-    : undefined;
+
+  const instances: InstanceReference[] = [];
+
+  if (annotationData.assetRef !== undefined && isIdEither(annotationData.assetRef)) {
+    instances.push(annotationData.assetRef);
+  }
+  if (annotationData.instanceRef !== undefined && isDmsInstance(annotationData.instanceRef)) {
+    const dmsUniqueIdentifierFromInstanceRef: InstanceReference = {
+      space: annotationData.instanceRef.space,
+      externalId: annotationData.instanceRef.externalId
+    };
+    instances.push(dmsUniqueIdentifierFromInstanceRef);
+  }
+
+  return instances;
 }
 
 export function getInstanceReferenceFromImage360Annotation(

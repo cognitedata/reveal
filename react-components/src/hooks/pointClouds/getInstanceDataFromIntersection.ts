@@ -48,10 +48,14 @@ export function getInstanceDataFromIntersection(
     isClassicModelIdentifier(intersection.model.modelIdentifier) &&
     isInstanceRefUnderVolumeMetadata(intersection)
   ) {
+    const referenceData = intersection.volumeMetadata?.instanceRef;
+    const reference = isDmsInstance(referenceData)
+      ? { space: referenceData.space, externalId: referenceData.externalId }
+      : undefined;
     return {
       classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
-      reference: intersection.volumeMetadata?.instanceRef
+      reference: reference
     };
   }
   return emptyResult;
