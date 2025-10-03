@@ -1,8 +1,8 @@
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
-import { SlicerButton } from './SlicerButton';
-import { SettingsButton } from './SettingsButton';
+import { SlicerButton } from './SlicerButton/SlicerButton';
+import { SettingsButton } from './SettingsButton/SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { HelpButton } from './HelpButton';
 import { ShareButton } from './ShareButton';

@@ -39,7 +39,7 @@ describe(HelpButton.name, () => {
     expect(button.className.includes('cogs-button')).toBe(true);
   });
 
-  test('toggles HelpButton on click and shows toggled class', async () => {
+  test('toggles HelpButton on click and shows toggled class, toggles off on second click', async () => {
     render(<HelpButton {...defaultProps} />);
 
     const button = screen.getByRole('button', { name: 'help-button' });
@@ -48,5 +48,8 @@ describe(HelpButton.name, () => {
 
     await userEvent.click(button);
     expect(button).toHaveClass('cogs-button--toggled');
+
+    await userEvent.click(button);
+    expect(button).not.toHaveClass('cogs-button--toggled');
   });
 });

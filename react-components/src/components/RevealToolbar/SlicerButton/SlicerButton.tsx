@@ -1,16 +1,14 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useContext } from 'react';
 
 import { Box3, Plane, Vector3 } from 'three';
 
-import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Button, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
-import { useTranslation } from '../i18n/I18n';
-import { use3dModels } from '../../hooks/use3dModels';
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { offset } from '@floating-ui/dom';
+import { SlicerButtonContext } from './SlicerButton.context';
 
 type SliceState = {
   minHeight: number;
@@ -20,6 +18,7 @@ type SliceState = {
 };
 
 export const SlicerButton = (): ReactElement => {
+  const { useReveal, useTranslation, use3dModels } = useContext(SlicerButtonContext);
   const viewer = useReveal();
   const { t } = useTranslation();
   const models = use3dModels();

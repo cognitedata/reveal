@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { SettingsButton } from './SettingsButton';
-import { SettingsButtonContext, defaultSettingsButtonDependencies } from './SettingsButton';
+import { SettingsButtonContext, defaultSettingsButtonDependencies } from './SettingsButton.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(SettingsButton.name, () => {
@@ -14,7 +14,9 @@ describe(SettingsButton.name, () => {
     highQualitySettings: {}
   };
 
-  const settingsButtonDependencies = getMocksByDefaultDependencies(defaultSettingsButtonDependencies);
+  const settingsButtonDependencies = getMocksByDefaultDependencies(
+    defaultSettingsButtonDependencies
+  );
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <SettingsButtonContext.Provider value={settingsButtonDependencies}>
@@ -24,12 +26,15 @@ describe(SettingsButton.name, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Setup default mock implementations
     settingsButtonDependencies.useTranslation.mockReturnValue({
-      t: ({ key }: { key: string }) => key
-    });
-    
+      t: (translationInput: any) =>
+        typeof translationInput === 'object' ? translationInput.key : translationInput,
+      currentLanguage: 'en',
+      fallbackLanguage: 'en'
+    } as any);
+
     settingsButtonDependencies.HighFidelityContainer.mockReturnValue(
       <div>High Fidelity Container</div>
     );

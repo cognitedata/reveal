@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { SlicerButton } from './SlicerButton';
-import { SlicerButtonContext, defaultSlicerButtonDependencies } from './SlicerButton';
+import { SlicerButtonContext, defaultSlicerButtonDependencies } from './SlicerButton.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(SlicerButton.name, () => {
@@ -18,17 +18,23 @@ describe(SlicerButton.name, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Setup default mock implementations
-    slicerButtonDependencies.useReveal.mockReturnValue({
-      setGlobalClippingPlanes: vi.fn()
-    });
-    
+    slicerButtonDependencies.useReveal.mockImplementation(
+      () =>
+        ({
+          setGlobalClippingPlanes: vi.fn()
+        }) as any
+    );
+
     slicerButtonDependencies.use3dModels.mockReturnValue([]);
-    
+
     slicerButtonDependencies.useTranslation.mockReturnValue({
-      t: ({ key }: { key: string }) => key
-    });
+      t: (translationInput: any) =>
+        typeof translationInput === 'object' ? translationInput.key : translationInput,
+      currentLanguage: 'en',
+      fallbackLanguage: 'en'
+    } as any);
   });
 
   test('renders without crashing', () => {

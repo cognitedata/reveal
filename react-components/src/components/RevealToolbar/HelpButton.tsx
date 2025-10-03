@@ -27,9 +27,6 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
 
   return (
     <Dropdown
-      onClickOutside={() => {
-        setHelpActive(false);
-      }}
       onHide={() => {
         setHelpActive(false);
       }}
