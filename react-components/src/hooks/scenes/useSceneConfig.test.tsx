@@ -6,8 +6,7 @@ import { type Scene } from '../../components/SceneContainer/sceneTypes';
 import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
 import { useSceneConfig } from './useSceneConfig';
 import { type UseSceneConfigDependencies, UseSceneConfigContext } from './useSceneConfig.context';
-import { type ScenesMap } from './use3dScenes.types';
-import { type SceneData } from './types';
+import { type ScenesMap, type SceneData } from './types';
 
 describe(useSceneConfig.name, () => {
   const mockProps = {
