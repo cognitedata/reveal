@@ -7,7 +7,7 @@ describe(FolderDomainObject.name, () => {
     expect(domainObject.label).toBe('Folder');
     expect(domainObject.hasIconColor).toBe(false);
     expect(domainObject.hasIndexOnLabel).toBe(false);
-    expect(domainObject.icon).toBe('Folder');
+    expect(domainObject.icon).toBe('FolderFilled');
   });
 
   test('should clone', () => {
