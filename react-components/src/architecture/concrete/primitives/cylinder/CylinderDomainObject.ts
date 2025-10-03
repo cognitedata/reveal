@@ -209,9 +209,9 @@ const LEGAL_PRIMITIVE_TYPES = [
 ];
 
 function verifyDiameter(diameter: number): boolean {
-  return !Number.isNaN(diameter) && Cylinder.isValidSize(diameter / 2); // Give the radius for verification
+  return Cylinder.isValidSize(diameter / 2); // Give the radius for verification
 }
 
 function verifyHeight(height: number): boolean {
-  return !Number.isNaN(height) && Cylinder.isValidSize(height);
+  return Cylinder.isValidSize(height);
 }

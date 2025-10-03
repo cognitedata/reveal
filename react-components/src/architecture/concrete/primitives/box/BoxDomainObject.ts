@@ -108,13 +108,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
       const setValue = (value: number): void => {
         this.setZRotationInDegrees(value);
       };
-      add(
-        { key: 'HORIZONTAL_ANGLE' },
-        box.zRotationInDegrees,
-        Quantity.Angle,
-        setValue,
-        verifyAngle
-      );
+      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle, setValue);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
       add({ key: 'AREA' }, this.area, Quantity.Area);
@@ -247,9 +241,5 @@ const LEGAL_PRIMITIVE_TYPES = [
 ];
 
 function verifySize(value: number): boolean {
-  return !Number.isNaN(value) && Box.isValidSize(value);
-}
-
-function verifyAngle(value: number): boolean {
-  return !Number.isNaN(value);
+  return Box.isValidSize(value);
 }

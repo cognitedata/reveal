@@ -61,9 +61,9 @@ export class MeasurePointDomainObject extends BoxDomainObject {
       this.setSize(value);
     };
 
-    add({ key: 'X:COORDINATE' }, point.x, Quantity.Length, setXCoord, verifyCoord);
-    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length, setYCoord, verifyCoord);
-    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length, setZCoord, verifyCoord);
+    add({ key: 'X:COORDINATE' }, point.x, Quantity.Length, setXCoord);
+    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length, setYCoord);
+    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length, setZCoord);
     add({ key: 'POINT_SIZE' }, size, Quantity.Length, setSize, verifySize);
     return info;
 
@@ -124,9 +124,5 @@ export class MeasurePointDomainObject extends BoxDomainObject {
 }
 
 function verifySize(value: number): boolean {
-  return !Number.isNaN(value) && Box.isValidSize(value);
-}
-
-function verifyCoord(value: number): boolean {
-  return !Number.isNaN(value);
+  return Box.isValidSize(value);
 }
