@@ -35,21 +35,23 @@ export const LayersButton = ({
         onClickOutside={() => {
           if (isTriggerHovered) return;
           setLayersActive(false);
-        }}
-      >
+        }}>
         <SelectPanel.Trigger>
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
-            placement="right"
-          >
+            placement="right">
             <Button
               icon={<LayersIcon />}
               type="ghost"
               toggled={layersActive}
-              onPointerOver={() => setIsTriggerHovered(true)}
-              onPointerOut={() => setIsTriggerHovered(false)}
+              onPointerOver={() => {
+                setIsTriggerHovered(true);
+              }}
+              onPointerOut={() => {
+                setIsTriggerHovered(false);
+              }}
               onClick={() => {
-                setLayersActive(prevState => !prevState);
+                setLayersActive((prevState) => !prevState);
               }}
               aria-label={t({ key: 'LAYERS_FILTER_TOOLTIP' })}
             />

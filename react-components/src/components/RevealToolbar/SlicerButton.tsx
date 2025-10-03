@@ -99,10 +99,7 @@ export const SlicerButton = (): ReactElement => {
         setSlicerActive(open);
       }}
       renderTrigger={(props: any) => (
-        <CogsTooltip
-        content={t({ key: 'SLICE_TOOLTIP' })}
-        placement="right"
-        >
+        <CogsTooltip content={t({ key: 'SLICE_TOOLTIP' })} placement="right">
           <Button
             {...props}
             type="ghost"

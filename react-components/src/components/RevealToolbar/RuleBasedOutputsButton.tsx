@@ -56,6 +56,8 @@ export const RuleBasedOutputsButton = ({
   const { data: ruleInstancesResult } = useFetchRuleInstances();
 
   const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
+  const noRuleSetSelected =
+    currentRuleSetEnabled === undefined || Boolean(emptyRuleSelected?.isEnabled);
 
   useEffect(() => {
     setRuleInstances(ruleInstancesResult);
@@ -145,7 +147,7 @@ export const RuleBasedOutputsButton = ({
             disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"
-            toggled={isExpanded || !!currentRuleSetEnabled}
+            toggled={isExpanded || !noRuleSetSelected}
             {...props}
           />
         </CogsTooltip>
@@ -155,7 +157,7 @@ export const RuleBasedOutputsButton = ({
         key="no-rule-selected"
         id="no-rule-selected"
         label={t({ key: 'RULESET_NO_SELECTION' })}
-        checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
+        checked={noRuleSetSelected}
         onChange={onChange}
         isLoading={isRuleLoading}
         isEmptyRuleItem={true}
