@@ -3,11 +3,11 @@ import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
-import { type QueryFunction, QueryClient } from '@tanstack/react-query';
+import { type QueryFunction } from '@tanstack/react-query';
 import { type SceneNode, type ScenesMap } from './use3dScenes.types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
-import { createMockQueryResult } from '#test-utils/fixtures/queryResult';
+import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
 import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
 import { use3dScenes } from './use3dScenes';
 
@@ -27,6 +27,8 @@ describe(use3dScenes.name, () => {
     useQuery: mockUseQuery,
     createFdmSdk: mockCreateFdmSdk
   };
+
+  const mockContext = createMockQueryContext(['scenes', undefined]);
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <Use3dScenesContext.Provider value={mockDependencies}>{children}</Use3dScenesContext.Provider>
@@ -356,17 +358,9 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
 
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
-
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
 
-    // Verify the result structure (covers createMapOfScenes execution)
     expect(result).toBeDefined();
     expect(typeof result).toBe('object');
     expect(result['test-space']).toBeDefined();
@@ -426,14 +420,6 @@ describe(use3dScenes.name, () => {
     });
 
     renderHook(() => use3dScenes(), { wrapper });
-
-    // Mock context for QueryFunction
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
 
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
@@ -502,24 +488,15 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
 
-    // Mock context for QueryFunction
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
-
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
 
-    // Verify model was added to scene
     expect(result['test-space']['scene-with-model'].modelOptions).toBeDefined();
     expect(result['test-space']['scene-with-model'].modelOptions).toHaveLength(1);
     expect(result['test-space']['scene-with-model'].modelOptions[0]).toEqual({
       modelId: 123,
       revisionId: 1,
-      transformation: expect.any(Object)
+      transform: expect.any(Object)
     });
   });
 
@@ -579,18 +556,9 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
 
-    // Mock context for QueryFunction
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
-
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
 
-    // Verify 360 image collection was added to scene
     expect(result['test-space']['scene-with-360'].image360CollectionOptions).toBeDefined();
     expect(result['test-space']['scene-with-360'].image360CollectionOptions).toHaveLength(1);
     expect(result['test-space']['scene-with-360'].image360CollectionOptions[0]).toEqual({
@@ -672,18 +640,9 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
 
-    // Mock context for QueryFunction
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
-
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
 
-    // Verify ground plane was added to scene
     expect(result['test-space']['scene-with-groundplane'].groundPlanes).toBeDefined();
     expect(result['test-space']['scene-with-groundplane'].groundPlanes).toHaveLength(1);
     expect(result['test-space']['scene-with-groundplane'].groundPlanes[0]).toEqual({
@@ -754,18 +713,9 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
 
-    // Mock context for QueryFunction
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
-
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
 
-    // Verify skybox was added to scene
     expect(result['test-space']['scene-with-skybox'].skybox).toBeDefined();
     expect(result['test-space']['scene-with-skybox'].skybox).toEqual({
       label: 'HDR Skybox',
@@ -916,19 +866,10 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
 
-    // Mock context for QueryFunction
-    const mockContext = {
-      client: new QueryClient(),
-      queryKey: ['scenes', undefined],
-      signal: new AbortController().signal,
-      meta: undefined
-    };
-
     assert(capturedQueryFunction !== undefined);
     const result = await capturedQueryFunction(mockContext);
     const complexScene = result['test-space']['complex-scene'];
 
-    // Verify all components were processed
     expect(complexScene).toBeDefined();
     expect(complexScene.name).toBe('Complex Scene');
     expect(complexScene.modelOptions).toHaveLength(1);
@@ -936,16 +877,13 @@ describe(use3dScenes.name, () => {
     expect(complexScene.groundPlanes).toHaveLength(1);
     expect(complexScene.skybox).toBeDefined();
 
-    // Verify model processing
     const firstModel = complexScene.modelOptions[0];
     expect('modelId' in firstModel && firstModel.modelId).toBe(456);
     expect('revisionId' in firstModel && firstModel.revisionId).toBe(2);
 
-    // Verify ground plane processing
     expect(complexScene.groundPlanes[0].label).toBe('Complex Ground');
     expect(complexScene.groundPlanes[0].translationX).toBe(25);
 
-    // Verify skybox processing
     assert(complexScene.skybox !== undefined);
     expect(complexScene.skybox.label).toBe('Complex Skybox');
     expect(complexScene.skybox.isSpherical).toBe(false);

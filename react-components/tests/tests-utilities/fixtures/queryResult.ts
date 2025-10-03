@@ -1,4 +1,4 @@
-import { type UseQueryResult } from '@tanstack/react-query';
+import { QueryClient, type QueryFunctionContext, type UseQueryResult } from '@tanstack/react-query';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
@@ -22,6 +22,8 @@ export function createMockQueryResult<T>(
     .returns(error)
     .setup((instance) => instance.refetch)
     .returns(vi.fn())
+    .setup((instance) => instance.isLoadingError)
+    .returns(false)
     .object();
 }
 
@@ -41,3 +43,13 @@ export function createMockQueryResultNoData<T>(): UseQueryResult<T> {
     .returns(vi.fn())
     .object();
 }
+
+// Helper to create mock query context
+export const createMockQueryContext = (
+  queryKey: readonly unknown[]
+): QueryFunctionContext<readonly unknown[]> => ({
+  queryKey,
+  signal: new AbortController().signal,
+  meta: undefined,
+  client: new QueryClient()
+});
