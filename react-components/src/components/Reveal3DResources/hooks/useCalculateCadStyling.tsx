@@ -1,9 +1,4 @@
-import {
-  type ClassicAssetStylingGroup,
-  type CadModelOptions,
-  type DefaultResourceStyling,
-  type FdmInstanceStylingGroup
-} from '../types';
+import { type CadModelOptions, type DefaultResourceStyling, InstanceStylingGroup } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
@@ -22,10 +17,14 @@ import { useQuery } from '@tanstack/react-query';
 import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
 import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
-import { getInstanceKeysFromStylingGroup } from '../utils';
+import {
+  getInstanceIdsFromReferences,
+  getInstanceKeysFromStylingGroup,
+  getInstanceReferencesFromStylingGroup
+} from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
-import { type InstanceKey } from '../../../utilities/instanceIds';
+import { InstanceReferenceKey, type InstanceKey } from '../../../utilities/instanceIds';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -62,7 +61,7 @@ export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylin
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>,
+  instanceGroups: Array<InstanceStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -147,14 +146,16 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmInstanceStylingGroup | ClassicAssetStylingGroup>
+  instanceGroups: Array<InstanceStylingGroup>
 ): ModelStyleGroupWithMappingsFetched {
-  const dmIdsForInstanceGroups = instanceGroups
+  /* const dmIdsForInstanceGroups = instanceGroups
     .filter(isFdmAssetStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds);
   const assetIdsFromInstanceGroups = instanceGroups
     .filter(isClassicAssetMappingStylingGroup)
-    .flatMap((instanceGroup) => instanceGroup.assetIds);
+    .flatMap((instanceGroup) => instanceGroup.assetIds); */
+
+  const instanceReferences = instanceGroups.flatMap(getInstanceReferencesFromStylingGroup);
 
   const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
 
@@ -169,13 +170,14 @@ function useCalculateInstanceStyling(
       'reveal',
       'react-components',
       'cad-asset-mappings',
-      dmIdsForInstanceGroups,
-      assetIdsFromInstanceGroups,
+      // dmIdsForInstanceGroups,
+      // assetIdsFromInstanceGroups,
+      instanceReferences,
       models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async () => {
       const mappings = await cadCache.getMappingsForModelsAndInstances(
-        [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
+        getInstanceIdsFromReferences(instanceReferences),
         models
       );
 
@@ -258,8 +260,8 @@ function getMappedStyleGroupFromInstanceToNodeMap(
 }
 
 function createStyleGroupsFromMappings(
-  stylingGroups: Array<ClassicAssetStylingGroup | FdmInstanceStylingGroup>,
-  mappings?: Map<InstanceKey, Node3D[]>
+  stylingGroups: Array<InstanceStylingGroup>,
+  mappings?: Map<InstanceReferenceKey, Node3D[]>
 ): TreeIndexStylingGroup[] {
   if (mappings === undefined || mappings.size === 0) {
     return [];

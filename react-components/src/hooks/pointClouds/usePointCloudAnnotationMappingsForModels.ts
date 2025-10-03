@@ -22,13 +22,13 @@ export const usePointCloudAnnotationMappingsForModels = (
     queryFn: async () => {
       return await Promise.all(
         classicAddModelOptions.map(async (model) => {
-          const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
+          const annotations = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
             model.modelId,
             model.revisionId
           );
           return {
             model: { ...model, type: 'pointcloud' as const },
-            annotationModel
+            annotations
           };
         })
       );

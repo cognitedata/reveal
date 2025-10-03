@@ -109,3 +109,5 @@ export type PointCloudVolumeWithAsset = PointCloudVolume & {
     description: string;
   };
 };
+
+export type PointCloudVolumeId = AnnotationId | DmsUniqueIdentifier;

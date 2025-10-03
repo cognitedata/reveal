@@ -12,9 +12,11 @@ import {
 } from '@cognite/reveal';
 import { fetchAssetsForAssetReferences } from './annotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
-import { assetInstanceToKey } from '../../utilities/assetInstanceToKey';
 import { isInternalId, type InstanceReference } from '../../utilities/instanceIds';
-import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
+import {
+  createInstanceReferenceKey,
+  InstanceReferenceKey
+} from '../../utilities/instanceIds/toKey';
 import { chunk, uniqBy } from 'lodash';
 import { type AssetInstance } from '../../utilities/instances';
 
@@ -106,7 +108,9 @@ export class Image360AnnotationCache {
     const uniqueAssetIds = uniqBy(assetIds, createInstanceReferenceKey);
 
     const assetsArray = await fetchAssetsForAssetReferences(uniqueAssetIds, this._sdk);
-    const assets = new Map(assetsArray.map((asset) => [assetInstanceToKey(asset), asset]));
+    const assets = new Map(
+      assetsArray.map((asset) => [createInstanceReferenceKey(asset), asset] as const)
+    );
 
     const assetsWithAnnotations = this.getAssetWithAnnotationsMapped(
       image360AnnotationAssets,
@@ -118,7 +122,7 @@ export class Image360AnnotationCache {
 
   private getAssetWithAnnotationsMapped(
     image360AnnotationAssets: Array<Image360AnnotationAssetQueryResult<DataSourceType>>,
-    assets: Map<string, AssetInstance>
+    assets: Map<InstanceReferenceKey, AssetInstance>
   ): Image360AnnotationAssetInfo[] {
     const image360AnnotationAssetInfo = image360AnnotationAssets
       .filter((image360AnnotationAsset) => {
@@ -137,7 +141,7 @@ export class Image360AnnotationCache {
 
 function createAnnotationInfoWithAsset(
   image360AnnotationAsset: Image360AnnotationAssetQueryResult<DataSourceType>,
-  assets: Map<string, AssetInstance>
+  assets: Map<InstanceReferenceKey, AssetInstance>
 ): Image360AnnotationAssetInfo | undefined {
   const idRef = getAssetIdKeyForImage360Annotation(image360AnnotationAsset.annotation.annotation);
   if (idRef === undefined) {

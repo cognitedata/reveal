@@ -4,19 +4,25 @@ import {
   type AnnotationsBoundingVolume,
   type IdEither
 } from '@cognite/sdk';
-import { type CoreDmImage360Annotation, type DataSourceType } from '@cognite/reveal';
+import {
+  isClassicPointCloudVolume,
+  isDMPointCloudVolume,
+  PointCloudObjectMetadata,
+  type CoreDmImage360Annotation,
+  type DataSourceType
+} from '@cognite/reveal';
 import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
 import {
   createInstanceReferenceKey,
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
-import { type AnnotationBoundingVolumeWithInstanceRef } from './types';
+import { PointCloudVolumeId } from './types';
 
 export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel
 ): InstanceReference[] {
-  const annotationData = annotation.data as AnnotationBoundingVolumeWithInstanceRef;
+  const annotationData = annotation.data as AnnotationsBoundingVolume;
 
   const instances: InstanceReference[] = [];
 
@@ -28,6 +34,37 @@ export function getInstanceReferencesFromPointCloudAnnotation(
   }
 
   return instances;
+}
+
+export function getInstanceReferencesFromPointCloudVolume(
+  volume: PointCloudObjectMetadata<DataSourceType>
+): InstanceReference[] {
+  const instances: InstanceReference[] = [];
+
+  if (isClassicPointCloudVolume(volume)) {
+    if (isIdEither(volume.assetRef)) {
+      instances.push(volume.assetRef);
+    }
+
+    if (isDmsInstance(volume.instanceRef)) {
+      instances.push(volume.instanceRef);
+    }
+  }
+  if (isDMPointCloudVolume(volume) && volume.assetRef !== undefined) {
+    instances.push(volume.assetRef);
+  }
+
+  return instances;
+}
+
+export function getVolumeAnnotationId(
+  volume: PointCloudObjectMetadata<DataSourceType>
+): PointCloudVolumeId {
+  if (isClassicPointCloudVolume(volume)) {
+    return volume.annotationId;
+  } else {
+    return volume.volumeInstanceRef;
+  }
 }
 
 export function getInstanceReferenceFromImage360Annotation(
