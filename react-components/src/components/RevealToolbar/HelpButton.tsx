@@ -27,7 +27,7 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
 
   return (
     <Dropdown
-      onClickOutside={() => {
+      onHide={() => {
         setHelpActive(false);
       }}
       placement={placement ?? 'right'}
@@ -45,7 +45,9 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
           aria-label="help-button"
           toggled={helpActive}
           onClick={() => {
-            setHelpActive((prevState) => !prevState);
+            if (!helpActive) {
+              setHelpActive(true);
+            }
           }}
         />
       </CogsTooltip>

@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
+import { type Dispatch, type SetStateAction, type ReactElement, useState } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, LayersIcon, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
@@ -18,6 +18,8 @@ export const LayersButton = ({
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
 
+  const [layersActive, setLayersActive] = useState<boolean>(false);
+
   const { modelLayerHandlers, updateCallback, ModelLayerSelection } = useLayersButtonViewModel(
     setExternalLayersState,
     externalLayersState
@@ -25,7 +27,17 @@ export const LayersButton = ({
 
   return (
     <>
-      <SelectPanel placement="right" hideOnOutsideClick offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
+      <SelectPanel
+        placement="right"
+        hideOnOutsideClick
+        offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}
+        visible={layersActive}
+        onShow={() => {
+          setLayersActive(true);
+        }}
+        onHide={() => {
+          setLayersActive(false);
+        }}>
         <SelectPanel.Trigger>
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
@@ -33,6 +45,7 @@ export const LayersButton = ({
             <Button
               icon={<LayersIcon />}
               type="ghost"
+              toggled={layersActive}
               aria-label={t({ key: 'LAYERS_FILTER_TOOLTIP' })}
             />
           </Tooltip>

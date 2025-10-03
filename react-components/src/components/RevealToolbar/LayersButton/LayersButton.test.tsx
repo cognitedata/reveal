@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
@@ -57,6 +58,20 @@ describe(LayersButton.name, () => {
     expect(
       getByRole('button', { name: 'Filter 3D resource layers' }).className.includes('cogs-button')
     ).toBe(true);
+  });
+
+  test('toggles LayersButton on click and off on second click', async () => {
+    render(<LayersButton {...defaultProps} />, { wrapper });
+
+    const button = screen.getByRole('button', { name: 'Filter 3D resource layers' });
+
+    expect(button).not.toHaveClass('cogs-button--toggled');
+
+    await userEvent.click(button);
+    expect(button).toHaveClass('cogs-button--toggled');
+
+    await userEvent.click(button);
+    expect(button).not.toHaveClass('cogs-button--toggled');
   });
 
   test('Layers drop down should mount under the same parent as button', async () => {
