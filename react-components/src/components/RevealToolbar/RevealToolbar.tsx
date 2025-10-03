@@ -10,7 +10,7 @@ import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from '../../architecture/base/utilities/quality/QualitySettings';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
-import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
+import { RuleBasedOutputsButton } from './RuleBasedOutputsButton/RuleBasedOutputsButton';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
 import { LayersButton } from './LayersButton/LayersButton';
 

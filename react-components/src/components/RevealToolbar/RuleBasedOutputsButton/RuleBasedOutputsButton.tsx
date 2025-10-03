@@ -1,26 +1,20 @@
-import { useState, type ReactElement, useEffect, useCallback } from 'react';
+import { useState, type ReactElement, useEffect, useCallback, useContext } from 'react';
 
 import { Button, Tooltip as CogsTooltip, ColorPaletteIcon } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 
-import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
   type EmptyRuleForSelection,
   type RuleAndEnabled,
   type AllMappingStylingGroupAndStyleIndex,
   type AllRuleBasedStylingGroups
-} from '../RuleBasedOutputs/types';
-import { useTranslation } from '../i18n/I18n';
-import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
-import { use3dModels } from '../../hooks/use3dModels';
-import { type CadModelOptions } from '../Reveal3DResources/types';
-import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
-import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+} from '../../RuleBasedOutputs/types';
+import { type CadModelOptions } from '../../Reveal3DResources/types';
 import { offset } from '@floating-ui/dom';
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
-import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
-import { generateEmptyRuleForSelection } from '../RuleBasedOutputs/core/generateEmptyRuleForSelection';
-import { getRuleBasedById } from '../RuleBasedOutputs/core/getRuleBasedById';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
+import { generateEmptyRuleForSelection } from '../../RuleBasedOutputs/core/generateEmptyRuleForSelection';
+import { getRuleBasedById } from '../../RuleBasedOutputs/core/getRuleBasedById';
+import { RuleBasedOutputsButtonContext } from './RuleBasedOutputsButton.context';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
@@ -30,6 +24,16 @@ export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
   onRuleSetSelectedChanged
 }: RuleBasedOutputsButtonProps): ReactElement => {
+  const {
+    useTranslation,
+    use3dModels,
+    useAssetMappedNodesForRevisions,
+    useReveal3DResourcesStylingLoading,
+    useFetchRuleInstances,
+    RuleBasedOutputsSelector,
+    RuleBasedSelectionItem
+  } = useContext(RuleBasedOutputsButtonContext);
+
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
