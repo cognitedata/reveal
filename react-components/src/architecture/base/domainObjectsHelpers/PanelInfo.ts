@@ -1,3 +1,4 @@
+import { type UnitSystem } from '../renderTarget/UnitSystem';
 import {
   isTranslatedString,
   type TranslationKey,
@@ -38,7 +39,7 @@ export class PanelInfo {
 }
 
 export class PanelItem {
-  translationInput: TranslationInput;
+  public readonly translationInput: TranslationInput;
 
   constructor(props: TranslationInput) {
     this.translationInput = props;
@@ -50,10 +51,10 @@ export class PanelItem {
 }
 
 export class NumberPanelItem extends PanelItem {
-  public value: number;
-  public quantity: Quantity;
-  setValue?: SetValue;
-  verifyValue?: VerifyValue;
+  public readonly value: number;
+  public readonly quantity: Quantity;
+  public readonly setValue?: SetValue;
+  public readonly verifyValue?: VerifyValue;
 
   constructor(props: PanelItemProps) {
     super(props.translationInput);
@@ -61,5 +62,20 @@ export class NumberPanelItem extends PanelItem {
     this.quantity = props.quantity ?? Quantity.Unitless;
     this.setValue = props.setValue;
     this.verifyValue = props.verifyValue;
+  }
+
+  public trySetValue(value: number, unitSystem: UnitSystem): boolean {
+    if (this.setValue === undefined) {
+      return false;
+    }
+    if (Number.isNaN(value)) {
+      return false;
+    }
+    const metricValue = unitSystem.convertFromUnit(value, this.quantity);
+    if (this.verifyValue !== undefined && !this.verifyValue(metricValue)) {
+      return false;
+    }
+    this.setValue(metricValue);
+    return true;
   }
 }

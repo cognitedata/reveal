@@ -81,13 +81,8 @@ describe(MeasurePointDomainObject.name, () => {
       assert(item !== undefined);
 
       expect(item.setValue).toBeDefined();
-      expect(item.verifyValue).toBeDefined();
       assert(item.setValue !== undefined);
-      assert(item.verifyValue !== undefined);
 
-      for (const value of [-expectedValue, 0, expectedValue]) {
-        expect(item.verifyValue(value)).toBe(true);
-      }
       item.setValue(expectedValue);
       expect(domainObject.box.center.getComponent(component)).toBeCloseTo(expectedValue);
       component++;

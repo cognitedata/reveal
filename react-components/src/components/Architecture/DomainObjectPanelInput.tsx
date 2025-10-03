@@ -35,17 +35,9 @@ export function DomainObjectPanelInput({ item, unitSystem }: NumberInputProps): 
     if (item.setValue === undefined) {
       return;
     }
-    const newValue = parseFloat(value);
-    if (Number.isNaN(newValue)) {
+    if (!item.trySetValue(parseFloat(value), unitSystem)) {
       setValue(getOriginalValue());
-      return;
     }
-    const newMetricValue = unitSystem.convertFromUnit(newValue, item.quantity);
-    if (item.verifyValue !== undefined && !item.verifyValue(newMetricValue)) {
-      setValue(getOriginalValue());
-      return;
-    }
-    item.setValue(newMetricValue);
   }
 
   return (

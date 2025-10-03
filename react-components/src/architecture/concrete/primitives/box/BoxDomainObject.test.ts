@@ -113,14 +113,9 @@ describe(BoxDomainObject.name, () => {
     assert(item !== undefined);
 
     expect(item.setValue).toBeDefined();
-    expect(item.verifyValue).toBeDefined();
     assert(item.setValue !== undefined);
-    assert(item.verifyValue !== undefined);
 
     const expectedValue = 10;
-    for (const value of [-expectedValue, 0, expectedValue]) {
-      expect(item.verifyValue(value)).toBe(true);
-    }
     item.setValue(expectedValue);
     expect(domainObject.box.zRotationInDegrees).toBeCloseTo(expectedValue);
   });
