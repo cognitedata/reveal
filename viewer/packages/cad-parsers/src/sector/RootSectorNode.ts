@@ -29,7 +29,9 @@ export class RootSectorNode extends SectorNode {
 
   dereferenceAllNodes(): void {
     for (const [_, node] of this.sectorNodeMap) {
-      node.dereference();
+      // Clear rendered meshes from each sector node
+      // Note: Shared geometry/material dereferencing is handled by CadNode.dispose()
+      node.resetGeometry();
     }
   }
 

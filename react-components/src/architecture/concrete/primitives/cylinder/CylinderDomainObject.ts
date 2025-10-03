@@ -80,8 +80,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const hasRadius = Cylinder.isValidSize(cylinder.radius);
     const hasHeight =
       Cylinder.isValidSize(cylinder.height) &&
-      this.primitiveType !== PrimitiveType.HorizontalCircle &&
-      this.primitiveType !== PrimitiveType.Diameter;
+      this.primitiveType !== PrimitiveType.HorizontalCircle;
 
     if (hasRadius) {
       add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
@@ -166,6 +165,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public get canMoveCaps(): boolean {
     return (
       this.primitiveType === PrimitiveType.Cylinder ||
+      this.primitiveType === PrimitiveType.Diameter ||
       // Horizontal cylinder can move the caps only in the horizontal plane
       // This constrain are implemented in the dragger
       this.primitiveType === PrimitiveType.HorizontalCylinder
