@@ -9,7 +9,7 @@ import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
 import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
 import { use3dScenes } from './use3dScenes';
-import { SceneNode, ScenesMap } from './types';
+import { type SceneNode, type ScenesMap } from './types';
 
 describe(use3dScenes.name, () => {
   const mockUseSDK = vi.fn();
@@ -483,7 +483,7 @@ describe(use3dScenes.name, () => {
 
     renderHook(() => use3dScenes(), { wrapper });
     assert(capturedQueryFunction !== undefined);
-    return capturedQueryFunction(mockContext);
+    return await capturedQueryFunction(mockContext);
   };
 
   const setupMockResponse = (responseData: any): void => {
