@@ -36,7 +36,6 @@ export const DomainObjectPanel = (): ReactElement => {
   if (style === undefined || info === undefined) {
     return <></>;
   }
-
   // Force the getString to be updated
   for (const command of commands) {
     if (command instanceof CopyToClipboardCommand)

@@ -4,12 +4,12 @@ import { type UnitSystem, type LengthUnit } from '../../architecture/base/render
 import { useSignalValue } from '@cognite/signals/react';
 import { type NumberPanelItem } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
 
-type NumberInputProps = {
+type Props = {
   item: NumberPanelItem;
   unitSystem: UnitSystem;
 };
 
-export function DomainObjectPanelInput({ item, unitSystem }: NumberInputProps): ReactElement {
+export function DomainObjectPanelInput({ item, unitSystem }: Props): ReactElement {
   function getOriginalValue(): string {
     return unitSystem.toString(item.value, item.quantity, false);
   }
