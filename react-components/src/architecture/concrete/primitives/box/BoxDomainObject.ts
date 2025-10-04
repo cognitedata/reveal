@@ -128,7 +128,13 @@ export abstract class BoxDomainObject extends SolidDomainObject {
       setValue?: SetValue,
       verifyValue?: VerifyValue
     ): void {
-      info.add({ translationInput, value, quantity, setValue, verifyValue });
+      info.add({
+        translationInput,
+        value,
+        quantity,
+        setValue: isFinished ? setValue : undefined,
+        verifyValue: isFinished ? verifyValue : undefined
+      });
     }
   }
 

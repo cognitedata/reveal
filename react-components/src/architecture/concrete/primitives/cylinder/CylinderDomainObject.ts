@@ -80,6 +80,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     const { cylinder } = this;
+    const isFinished = this.focusType !== FocusType.Pending;
 
     const hasRadius = Cylinder.isValidSize(cylinder.radius);
     const hasHeight =
@@ -125,7 +126,13 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
       setValue?: SetValue,
       verifyValue?: VerifyValue
     ): void {
-      info.add({ translationInput, value, quantity, setValue, verifyValue });
+      info.add({
+        translationInput,
+        value,
+        quantity,
+        setValue: isFinished ? setValue : undefined,
+        verifyValue: isFinished ? verifyValue : undefined
+      });
     }
   }
 
