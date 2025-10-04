@@ -165,6 +165,14 @@ export class Cylinder extends Primitive {
     return this.centerA.distanceTo(this.centerB);
   }
 
+  public set height(value: number) {
+    const center = this.center;
+    const halfHeight = value * 0.5;
+    const axis = this.axis;
+    this.centerA.copy(center).addScaledVector(axis, -halfHeight);
+    this.centerB.copy(center).addScaledVector(axis, +halfHeight);
+  }
+
   public get center(): Vector3 {
     return this._center.addVectors(this.centerB, this.centerA).divideScalar(2);
   }
