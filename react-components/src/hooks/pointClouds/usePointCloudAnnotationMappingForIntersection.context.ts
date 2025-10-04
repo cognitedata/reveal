@@ -3,20 +3,20 @@ import { getInstanceDataFromIntersection } from './getInstanceDataFromIntersecti
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 
-export type UsePointCloudAnnotationMappingForAssetIdDependencies = {
+export type UsePointCloudAnnotationMappingForIntersectionDependencies = {
   getInstanceDataFromIntersection: typeof getInstanceDataFromIntersection;
   usePointCloudAnnotationCache: typeof usePointCloudAnnotationCache;
   fetchAnnotationsForModel: typeof fetchAnnotationsForModel;
 };
 
-export const defaultUsePointCloudAnnotationMappingForAssetIdDependencies: UsePointCloudAnnotationMappingForAssetIdDependencies =
+export const defaultUsePointCloudAnnotationMappingForIntersectionDependencies: UsePointCloudAnnotationMappingForIntersectionDependencies =
   {
     getInstanceDataFromIntersection,
     usePointCloudAnnotationCache,
     fetchAnnotationsForModel,
   };
 
-export const UsePointCloudAnnotationMappingForAssetIdContext =
-  createContext<UsePointCloudAnnotationMappingForAssetIdDependencies>(
-    defaultUsePointCloudAnnotationMappingForAssetIdDependencies
+export const UsePointCloudAnnotationMappingForIntersectionContext =
+  createContext<UsePointCloudAnnotationMappingForIntersectionDependencies>(
+    defaultUsePointCloudAnnotationMappingForIntersectionDependencies
   );

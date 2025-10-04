@@ -1,6 +1,5 @@
 import { describe, expect, beforeEach, test } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { usePointCloudAnnotationMappingForAssetId } from './usePointCloudAnnotationMappingForAssetId';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactElement, type ReactNode } from 'react';
 import { type IdEither } from '@cognite/sdk';
@@ -20,10 +19,8 @@ import { cadMock } from '#test-utils/fixtures/cadModel';
 import { type PointCloudAnnotationMappedAssetData } from '../types';
 import { createAssetMock, createFdmNodeItem } from '#test-utils/fixtures/assets';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
-import {
-  defaultUsePointCloudAnnotationMappingForAssetIdDependencies,
-  UsePointCloudAnnotationMappingForAssetIdContext
-} from './usePointCloudAnnotationMappingForAssetId.context';
+import { defaultUsePointCloudAnnotationMappingForIntersectionDependencies, UsePointCloudAnnotationMappingForIntersectionContext } from './usePointCloudAnnotationMappingForIntersection.context';
+import { usePointCloudAnnotationMappingForIntersection } from './usePointCloudAnnotationMappingForIntersection';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,18 +31,18 @@ const queryClient = new QueryClient({
 });
 
 const dependencies = getMocksByDefaultDependencies(
-  defaultUsePointCloudAnnotationMappingForAssetIdDependencies
+  defaultUsePointCloudAnnotationMappingForIntersectionDependencies
 );
 
 const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
   <QueryClientProvider client={queryClient}>
-    <UsePointCloudAnnotationMappingForAssetIdContext.Provider value={dependencies}>
+    <UsePointCloudAnnotationMappingForIntersectionContext.Provider value={dependencies}>
       {children}
-    </UsePointCloudAnnotationMappingForAssetIdContext.Provider>
+    </UsePointCloudAnnotationMappingForIntersectionContext.Provider>
   </QueryClientProvider>
 );
 
-describe(usePointCloudAnnotationMappingForAssetId.name, () => {
+describe(usePointCloudAnnotationMappingForIntersection.name, () => {
   const mockClassicIdEither: IdEither = { id: 123 };
   const classicAssetInstance = createAssetMock(123);
   const classicAssetInstance2 = createAssetMock(456);
@@ -100,7 +97,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
   });
 
   test('returns undefined when intersection is undefined', async () => {
-    const { result } = renderHook(() => usePointCloudAnnotationMappingForAssetId(undefined), {
+    const { result } = renderHook(() => usePointCloudAnnotationMappingForIntersection(undefined), {
       wrapper
     });
 
@@ -117,7 +114,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
       distanceToCamera: 0
     };
 
-    const { result } = renderHook(() => usePointCloudAnnotationMappingForAssetId(cadIntersection), {
+    const { result } = renderHook(() => usePointCloudAnnotationMappingForIntersection(cadIntersection), {
       wrapper
     });
 
@@ -129,7 +126,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
     dependencies.fetchAnnotationsForModel.mockReturnValue(mockFetchAnnotationsForModelReturn);
 
     const { result } = renderHook(
-      () => usePointCloudAnnotationMappingForAssetId(mockClassicIntersection),
+      () => usePointCloudAnnotationMappingForIntersection(mockClassicIntersection),
       { wrapper }
     );
 
@@ -151,7 +148,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
 
 
     const { result } = renderHook(
-      () => usePointCloudAnnotationMappingForAssetId(mockHybridIntersection),
+      () => usePointCloudAnnotationMappingForIntersection(mockHybridIntersection),
       { wrapper }
     );
 
@@ -169,7 +166,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
       distanceToCamera: 0
     };
 
-    const { result } = renderHook(() => usePointCloudAnnotationMappingForAssetId(cadIntersection), {
+    const { result } = renderHook(() => usePointCloudAnnotationMappingForIntersection(cadIntersection), {
       wrapper
     });
 
@@ -197,7 +194,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
     });
 
     const { result } = renderHook(
-      () => usePointCloudAnnotationMappingForAssetId(intersectionNoRef),
+      () => usePointCloudAnnotationMappingForIntersection(intersectionNoRef),
       { wrapper }
     );
 
@@ -219,7 +216,7 @@ describe(usePointCloudAnnotationMappingForAssetId.name, () => {
     dependencies.fetchAnnotationsForModel.mockResolvedValue(mockAnnotationMap);
 
     const { result } = renderHook(
-      () => usePointCloudAnnotationMappingForAssetId(mockClassicIntersection),
+      () => usePointCloudAnnotationMappingForIntersection(mockClassicIntersection),
       { wrapper }
     );
 
