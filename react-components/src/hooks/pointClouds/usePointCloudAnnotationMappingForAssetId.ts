@@ -3,13 +3,18 @@ import { type PointCloudAnnotationMappedAssetData } from '../types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type AnyIntersection } from '@cognite/reveal';
 import { queryKeys } from '../../utilities/queryKeys';
-import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
-import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
-import { getInstanceDataFromIntersection } from './getInstanceDataFromIntersection';
+import { useContext } from 'react';
+import { UsePointCloudAnnotationMappingForAssetIdContext } from './usePointCloudAnnotationMappingForAssetId.context';
 
 export const usePointCloudAnnotationMappingForAssetId = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
+  const {
+    usePointCloudAnnotationCache,
+    fetchAnnotationsForModel,
+    getInstanceDataFromIntersection
+  } = useContext(UsePointCloudAnnotationMappingForAssetIdContext);
+
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
