@@ -96,9 +96,9 @@ function toString(
     }
   }
   for (const item of info.items) {
-    const text = item?.getText();
-    if (text !== undefined) {
-      result += `${text}: `;
+    const label = item.label;
+    if (label !== undefined) {
+      result += `${label}: `;
     }
     result += `${unitSystem.toStringWithUnit(item.value, item.quantity)}\n`;
   }

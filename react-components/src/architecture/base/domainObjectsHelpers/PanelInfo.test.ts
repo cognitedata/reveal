@@ -19,7 +19,7 @@ describe(NumberPanelItem.name, () => {
       quantity: Quantity.Length,
       translationInput: { key: 'RADIUS' }
     });
-    expect(item.getText()).toBe('Radius');
+    expect(item.label).toBe('Radius');
   });
 
   test('should set value', () => {

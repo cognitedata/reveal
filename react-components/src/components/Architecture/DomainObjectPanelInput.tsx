@@ -51,7 +51,7 @@ export function DomainObjectPanelInput({ item, unitSystem }: NumberInputProps): 
       size="small"
       value={value}
       fullWidth={true}
-      prefix={item.getText()}
+      prefix={item.label}
       textAlign="right"
       disabled={item.setValue === undefined}
       suffix={unitSystem.getUnit(item.quantity)}

@@ -45,7 +45,7 @@ export class PanelItem {
     this.translationInput = props;
   }
 
-  public getText(): string | undefined {
+  public get label(): string | undefined {
     return translate(this.translationInput);
   }
 }
