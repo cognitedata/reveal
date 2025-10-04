@@ -13,6 +13,7 @@ import {
 } from '../components/Reveal3DResources/typeGuards';
 import { FilterOnClassicAssetsInSceneContext } from './FilterOnClassicAssetsInScene.context';
 import { isDefined } from '../utilities/isDefined';
+import { isClassicAsset } from '../utilities/instances';
 
 export type FilterOnClassicAssetsInScene = (assets: Asset[]) => Asset[];
 
@@ -84,6 +85,10 @@ export const useFilterOnClassicAssetsInScene = (
       return undefined;
     }
 
+    const filteredClassicPointCloudAssets = allPointCloudAssets?.filter((asset) =>
+      isClassicAsset(asset)
+    );
+
     const flattenedCadAssetMappings =
       pagedCadAssetMappings?.pages
         .flat()
@@ -94,7 +99,7 @@ export const useFilterOnClassicAssetsInScene = (
     const allAssetsArray = [
       ...flattenedCadAssetMappings,
       ...all360ImageAssets,
-      ...(allPointCloudAssets ?? [])
+      ...(filteredClassicPointCloudAssets ?? [])
     ];
 
     const assetMap = new Map<number, Asset>();

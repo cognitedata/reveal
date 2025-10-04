@@ -13,9 +13,11 @@ import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsF
 import { isDM3DModelIdentifier } from '../components/Reveal3DResources/typeGuards';
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
-import { type InstanceReference, isIdEither } from './instanceIds';
+import { type InstanceReference, isDmsInstance, isIdEither } from './instanceIds';
 import { getMappingInstanceId } from '../components/CacheProvider/cad/assetMappingTypes';
 import { instanceIdToInstanceReference } from '../components/CacheProvider/idAndKeyTranslation';
+import { toIdEither } from './instanceIds/toIdEither';
+import { isClassicAsset } from './instances';
 
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,
@@ -85,20 +87,58 @@ async function getPointCloudAnnotationMappingsFromIntersection(
   ) {
     return [intersection.volumeMetadata.assetRef];
   }
-  const assetExternalId = intersection.volumeMetadata?.assetRef?.externalId;
 
+  if (
+    intersection.volumeMetadata?.instanceRef !== undefined &&
+    isDmsInstance(intersection.volumeMetadata.instanceRef)
+  ) {
+    return [intersection.volumeMetadata.instanceRef];
+  }
+
+  const assetExternalId = intersection.volumeMetadata?.assetRef?.externalId;
+  if (assetExternalId === undefined) {
+    return [];
+  }
+  return await getClassicAnnotationsFromClassicExternalId(
+    assetExternalId,
+    intersection.model.modelIdentifier.modelId,
+    intersection.model.modelIdentifier.revisionId,
+    caches
+  );
+}
+
+async function getClassicAnnotationsFromClassicExternalId(
+  assetExternalId: string,
+  modelId: number,
+  revisionId: number,
+  caches: CdfCaches
+): Promise<InstanceReference[]> {
   if (assetExternalId === undefined) {
     return [];
   }
 
+  const classicIdEither = toIdEither(assetExternalId);
+
   const annotations = await fetchAnnotationsForModel(
-    intersection.model.modelIdentifier.modelId,
-    intersection.model.modelIdentifier.revisionId,
-    [assetExternalId],
+    modelId,
+    revisionId,
+    [classicIdEither],
     caches.pointCloudAnnotationCache
   );
 
-  return annotations?.map((annotation) => ({ id: annotation.asset.id })) ?? EMPTY_ARRAY;
+  return (
+    annotations
+      ?.filter((annotation) => {
+        return isClassicAsset(annotation.asset);
+      })
+      .map((annotation) => {
+        if (isClassicAsset(annotation.asset)) {
+          return { id: annotation.asset.id };
+        }
+        return undefined;
+      })
+      .filter((annotation) => annotation !== undefined) ?? EMPTY_ARRAY
+  );
 }
 
 function getPointCloudFdmInstancesFromIntersection(

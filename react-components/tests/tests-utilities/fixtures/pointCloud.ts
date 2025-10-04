@@ -4,11 +4,15 @@ import {
   type ClassicDataSourceType,
   type DMDataSourceType,
   PointShape,
-  PointColorType
+  PointColorType,
+  PointCloudIntersection,
+  DMInstanceRef,
+  DataSourceType
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
-import { Color, Matrix4 } from 'three';
+import { Color, Matrix4, Vector3 } from 'three';
 import { type TaggedAddPointCloudResourceOptions } from '../../../src/components/Reveal3DResources/types';
+import { AnnotationsAssetRef } from '@cognite/sdk';
 
 export const pointCloudModelOptions: AddModelOptions<ClassicDataSourceType> = {
   modelId: 321,
@@ -95,4 +99,26 @@ export function createPointCloudDMMock(parameters?: {
     .setup((p) => p.type)
     .returns('pointcloud')
     .object();
+}
+
+export function createPointCloudIntersectionMock(parameters: {
+  model: CognitePointCloudModel<ClassicDataSourceType | DMDataSourceType>;
+  assetRef: AnnotationsAssetRef | DMInstanceRef | undefined;
+  instanceRef: DMInstanceRef | undefined;
+  annotationId?: number;
+}): PointCloudIntersection<ClassicDataSourceType | DMDataSourceType> {
+
+  return {
+    type: 'pointcloud',
+    model: parameters.model,
+    volumeMetadata: {
+      assetRef: parameters?.assetRef ?? { id: 123 },
+      instanceRef: parameters?.instanceRef,
+      annotationId: parameters?.annotationId ?? 1
+    },
+    point: new Vector3(1, 2, 3),
+    pointIndex: 0,
+    distanceToCamera: 0,
+    annotationId: parameters?.annotationId ?? 1,
+  };
 }

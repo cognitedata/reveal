@@ -5,7 +5,9 @@ import {
   isInternalId,
   isDmsInstance,
   type AnnotationAssetRef,
-  isClassicInstanceId
+  isClassicInstanceId,
+  isDMModelIdentifier,
+  isClassicModelIdentifier
 } from '../../../src/utilities/instanceIds/typeGuards';
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers';
@@ -106,6 +108,35 @@ describe('typeGuards', () => {
       const assetId = 123 as InstanceId;
       assert(isClassicInstanceId(assetId));
       expectTypeOf<AssetId>(assetId);
+    });
+  });
+
+  describe(isDMModelIdentifier.name, () => {
+    it('should return true for a DM model identifier', () => {
+      const dmModelIdentifier = {
+        revisionExternalId: 'rev-ext-id',
+        revisionSpace: 'rev-space'
+      };
+      expect(isDMModelIdentifier(dmModelIdentifier)).toBe(true);
+    });
+
+    it('should return false for a classic model identifier', () => {
+      const classicModelIdentifier = { modelId: 123, revisionId: 456 };
+      expect(isDMModelIdentifier(classicModelIdentifier)).toBe(false);
+    });
+  });
+  describe(isClassicModelIdentifier.name, () => {
+    it('should return true for a classic model identifier', () => {
+      const classicModelIdentifier = { modelId: 123, revisionId: 456 };
+      expect(isClassicModelIdentifier(classicModelIdentifier)).toBe(true);
+    });
+
+    it('should return false for a DM model identifier', () => {
+      const dmModelIdentifier = {
+        revisionExternalId: 'rev-ext-id',
+        revisionSpace: 'rev-space'
+      };
+      expect(isClassicModelIdentifier(dmModelIdentifier)).toBe(false);
     });
   });
 });
