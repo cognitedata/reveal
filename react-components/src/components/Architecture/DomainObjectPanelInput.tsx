@@ -20,9 +20,6 @@ export function DomainObjectPanelInput({ item, unitSystem }: NumberInputProps): 
   }, [lengthUnit]);
 
   function onChange(newStringValue: string): void {
-    if (item.setValue === undefined) {
-      return;
-    }
     const newValue = parseFloat(newStringValue);
     if (Number.isNaN(newValue)) {
       setValue('');
@@ -32,9 +29,6 @@ export function DomainObjectPanelInput({ item, unitSystem }: NumberInputProps): 
   }
 
   function onApply(): void {
-    if (item.setValue === undefined) {
-      return;
-    }
     if (!item.trySetValue(parseFloat(value), unitSystem)) {
       setValue(getOriginalValue());
     }

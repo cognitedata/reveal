@@ -4,6 +4,15 @@ import { Quantity } from './Quantity';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 
 describe(NumberPanelItem.name, () => {
+  const unitSystem = new UnitSystem();
+  let originalValue = 0;
+  function setValueMock(value: number): void {
+    originalValue = value;
+  }
+  function verifyValueMock(value: number): boolean {
+    return value >= 10;
+  }
+
   test('should translate the text', () => {
     const item = new NumberPanelItem({
       value: 0,
@@ -14,21 +23,13 @@ describe(NumberPanelItem.name, () => {
   });
 
   test('should set value', () => {
-    let originalValue = 10;
-    function setValue(value: number): void {
-      originalValue = value;
-    }
-    function verifyValue(value: number): boolean {
-      return value >= 10;
-    }
     const item = new NumberPanelItem({
-      value: originalValue,
+      value: 0,
       quantity: Quantity.Length,
       translationInput: { key: 'RADIUS' },
-      setValue,
-      verifyValue
+      setValue: setValueMock,
+      verifyValue: verifyValueMock
     });
-    const unitSystem = new UnitSystem();
     expect(item.trySetValue(42, unitSystem)).toBe(true);
     expect(item.trySetValue(9, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
@@ -37,17 +38,12 @@ describe(NumberPanelItem.name, () => {
   });
 
   test('should set value without verifyValue', () => {
-    let originalValue = 10;
-    function setValue(value: number): void {
-      originalValue = value;
-    }
     const item = new NumberPanelItem({
-      value: originalValue,
+      value: 0,
       quantity: Quantity.Length,
       translationInput: { key: 'RADIUS' },
-      setValue
+      setValue: setValueMock
     });
-    const unitSystem = new UnitSystem();
     expect(item.trySetValue(42, unitSystem)).toBe(true);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
     expect(originalValue).toBe(42); // Still 42, not changed by the NaN
@@ -59,8 +55,6 @@ describe(NumberPanelItem.name, () => {
       quantity: Quantity.Length,
       translationInput: { key: 'RADIUS' }
     });
-    const unitSystem = new UnitSystem();
-
     // Always fails when setValue is missing
     expect(item.trySetValue(42, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
