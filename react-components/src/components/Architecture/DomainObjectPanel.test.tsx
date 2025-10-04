@@ -41,12 +41,13 @@ describe(DomainObjectPanel.name, () => {
     expect(buttons.length).toBe(expectedButtonsLength);
   });
 
-  test('should render with correct info text', async () => {
+  test('should render with correct labels, units and numbers', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
-    // for (const subString of EXPECTED_SUB_STRINGS) {
-    // TODO: expect(screen.getByText(subString)).toBeDefined();
-    // }
+    for (const subString of EXPECTED_SUB_STRINGS) {
+      const element = screen.queryByText(subString);
+      expect(element).toBeDefined();
+    }
   });
 
   test('should copy info text to clipboard when clicking at the copy button', async () => {

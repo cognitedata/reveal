@@ -4,17 +4,16 @@ import { Quantity } from './Quantity';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 
 describe(NumberPanelItem.name, () => {
-  test('should translate the test', () => {
+  test('should translate the text', () => {
     const item = new NumberPanelItem({
       value: 0,
       quantity: Quantity.Length,
       translationInput: { key: 'RADIUS' }
     });
-
     expect(item.getText()).toBe('Radius');
   });
 
-  test('should set value at NumberPanelItem', () => {
+  test('should set value', () => {
     let originalValue = 10;
     function setValue(value: number): void {
       originalValue = value;
@@ -30,14 +29,14 @@ describe(NumberPanelItem.name, () => {
       verifyValue
     });
     const unitSystem = new UnitSystem();
-    expect(item.trySetValue(11, unitSystem)).toBe(true);
+    expect(item.trySetValue(42, unitSystem)).toBe(true);
     expect(item.trySetValue(9, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
 
-    expect(originalValue).toBe(11); // Still 11, not changed by the 9 and NaN
+    expect(originalValue).toBe(42); // Still 42, not changed by the 9 and NaN
   });
 
-  test('should set value at NumberPanelItem without verifyValue', () => {
+  test('should set value without verifyValue', () => {
     let originalValue = 10;
     function setValue(value: number): void {
       originalValue = value;
@@ -49,12 +48,12 @@ describe(NumberPanelItem.name, () => {
       setValue
     });
     const unitSystem = new UnitSystem();
-    expect(item.trySetValue(9, unitSystem)).toBe(true);
+    expect(item.trySetValue(42, unitSystem)).toBe(true);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
-    expect(originalValue).toBe(9); // Still 9, not changed by the NaN
+    expect(originalValue).toBe(42); // Still 42, not changed by the NaN
   });
 
-  test('should not set value at NumberPanelItem without setValue and verifyValue', () => {
+  test('should not set value without setValue and verifyValue', () => {
     const item = new NumberPanelItem({
       value: 0,
       quantity: Quantity.Length,
@@ -62,8 +61,8 @@ describe(NumberPanelItem.name, () => {
     });
     const unitSystem = new UnitSystem();
 
-    // Always fails
-    expect(item.trySetValue(9, unitSystem)).toBe(false);
+    // Always fails when setValue is missing
+    expect(item.trySetValue(42, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
   });
 });
