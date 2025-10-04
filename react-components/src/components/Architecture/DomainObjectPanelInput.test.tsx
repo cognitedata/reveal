@@ -39,18 +39,32 @@ describe(DomainObjectPanelInput.name, () => {
       await userEvent.click(input);
       await userEvent.clear(input);
       expect(input).toHaveValue(null);
-      await userEvent.type(input, '1');
-      expect(input).toHaveValue(1);
-      await userEvent.type(input, '2');
-      expect(input).toHaveValue(12);
+      await userEvent.type(input, '4');
+      expect(input).toHaveValue(4);
+      await userEvent.type(input, '3');
+      expect(input).toHaveValue(43);
       if (time === 1) {
         await userEvent.keyboard('[Enter]'); // Enter key press
       } else {
         await userEvent.tab(); // Simulates pressing the Tab key, causing a blur
       }
       expect(item.setValue).toBeCalledTimes(time);
-      expect(item.setValue).toHaveBeenCalledWith(12);
+      expect(item.setValue).toHaveBeenCalledWith(43);
     }
+  });
+
+  test('Should try to set illegal value', async () => {
+    const unitSystem = new UnitSystem();
+    const item = createItem(false);
+    renderInput(unitSystem, item);
+
+    const input = screen.getByRole('spinbutton');
+    await userEvent.click(input);
+    await userEvent.clear(input);
+    await userEvent.type(input, '41'); // 41 is illegal, must be >= 42
+    await userEvent.tab(); // Simulates pressing the Tab key, causing a blur
+    expect(input).toHaveValue(42); // Resets to original value
+    expect(item.setValue).toBeCalledTimes(0); // Should not be called!
   });
 });
 
@@ -58,6 +72,7 @@ function createItem(readonly: boolean): NumberPanelItem {
   return new NumberPanelItem({
     value: 42,
     setValue: readonly ? undefined : vi.fn(),
+    verifyValue: readonly ? undefined : (v: number) => v >= 42,
     quantity: Quantity.Length,
     translationInput: { key: 'RADIUS' }
   });
