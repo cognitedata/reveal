@@ -2,7 +2,7 @@ import { type ExternalId, type IdEither, type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { type InstanceId } from './types';
 import { type AssetId } from '../../components/CacheProvider/types';
-import { ClassicModelIdentifierType, DMModelIdentifierType } from '@cognite/reveal';
+import { type ClassicModelIdentifierType, type DMModelIdentifierType } from '@cognite/reveal';
 
 export type AnnotationAssetRef = { id?: number; externalId?: string };
 
@@ -49,4 +49,4 @@ export function isClassicModelIdentifier(
   modelIdentifier: DMModelIdentifierType | ClassicModelIdentifierType
 ): modelIdentifier is ClassicModelIdentifierType {
   return (modelIdentifier as ClassicModelIdentifierType).modelId !== undefined;
-};
+}

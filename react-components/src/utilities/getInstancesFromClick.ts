@@ -80,7 +80,8 @@ async function getPointCloudAnnotationMappingsFromIntersection(
 
   if (
     intersection.volumeMetadata?.assetRef !== undefined &&
-    (isIdEither(intersection.volumeMetadata.assetRef) || isDmsInstance(intersection.volumeMetadata.assetRef))
+    (isIdEither(intersection.volumeMetadata.assetRef) ||
+      isDmsInstance(intersection.volumeMetadata.assetRef))
   ) {
     return [intersection.volumeMetadata.assetRef];
   }

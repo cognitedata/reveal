@@ -29,7 +29,10 @@ export function getInstanceDataFromIntersection(
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
   if (!isPointCloudIntersection) return emptyResult;
 
-  if (isIdEither(intersection.volumeMetadata?.assetRef) && isClassicModelIdentifier(intersection.model.modelIdentifier)) {
+  if (
+    isIdEither(intersection.volumeMetadata?.assetRef) &&
+    isClassicModelIdentifier(intersection.model.modelIdentifier)
+  ) {
     return {
       classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
@@ -55,7 +58,7 @@ export function getInstanceDataFromIntersection(
     return {
       classicModelIdentifier: intersection.model.modelIdentifier,
       dmsModelUniqueIdentifier: undefined,
-      reference: reference
+      reference
     };
   }
   return emptyResult;

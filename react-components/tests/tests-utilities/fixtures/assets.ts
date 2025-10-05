@@ -1,6 +1,10 @@
 import { type Asset } from '@cognite/sdk';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
-import { FdmNode, type ExternalIdsResultList, type NodeItem } from '../../../src/data-providers/FdmSDK';
+import {
+  type FdmNode,
+  type ExternalIdsResultList,
+  type NodeItem
+} from '../../../src/data-providers/FdmSDK';
 
 const fixedDate = new Date('2025-01-01T00:00:00.000Z');
 
@@ -49,9 +53,10 @@ export function createDMAssetMock(externalId: string): ExternalIdsResultList<Ass
   };
 }
 
-export function createFdmNodeItem(
-  id: { externalId: string; space: string },
-): FdmNode<AssetProperties> {
+export function createFdmNodeItem(id: {
+  externalId: string;
+  space: string;
+}): FdmNode<AssetProperties> {
   return {
     instanceType: 'node',
     version: 0,

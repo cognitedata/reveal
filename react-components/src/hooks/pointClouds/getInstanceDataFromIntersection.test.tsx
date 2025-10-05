@@ -5,7 +5,7 @@ import {
   type ClassicDataSourceType,
   type DMInstanceRef,
   type PointCloudIntersection,
-  DMDataSourceType
+  type DMDataSourceType
 } from '@cognite/reveal';
 import { Vector3 } from 'three';
 import { getInstanceDataFromIntersection } from './getInstanceDataFromIntersection';
@@ -24,14 +24,14 @@ describe(getInstanceDataFromIntersection.name, () => {
   const mockDmsIdentifier2: DMInstanceRef = { externalId: 'ext-id-2', space: 'space-2' };
 
   const pointCloudModelMock = createPointCloudMock({
-        modelId: 456,
-        revisionId: 789
-    });
+    modelId: 456,
+    revisionId: 789
+  });
 
-    const pointCloudDMMock = createPointCloudDMMock({
-        revisionExternalId: 'revision-ext-id',
-        revisionSpace: 'test-space'
-    });
+  const pointCloudDMMock = createPointCloudDMMock({
+    revisionExternalId: 'revision-ext-id',
+    revisionSpace: 'test-space'
+  });
 
   // Create test data that the real type guards will recognize
   const classicIntersection: PointCloudIntersection<ClassicDataSourceType> = {
@@ -113,7 +113,7 @@ describe(getInstanceDataFromIntersection.name, () => {
     });
 
     test('should return classic model data with DMS reference for hybrid intersection (instanceRef)', () => {
-     const result = getInstanceDataFromIntersection(hybridIntersection);
+      const result = getInstanceDataFromIntersection(hybridIntersection);
 
       expect(result).toEqual({
         classicModelIdentifier: hybridIntersection.model.modelIdentifier,
@@ -154,6 +154,5 @@ describe(getInstanceDataFromIntersection.name, () => {
 
       expect(result).toEqual(emptyResult);
     });
-
   });
 });
