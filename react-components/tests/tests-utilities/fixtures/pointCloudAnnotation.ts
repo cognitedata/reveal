@@ -12,7 +12,7 @@ export function createPointCloudAnnotationMock(params?: {
     annotationType: 'threed.BoundingVolume',
     data: {
       assetRef: { id: params?.assetId ?? 0 },
-      instanceRef: params?.dmIdentifier
+      instanceRef: params?.dmIdentifier !== undefined
         ? {
             ...params.dmIdentifier,
             instanceType: 'node',
