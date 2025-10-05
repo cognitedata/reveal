@@ -1,9 +1,9 @@
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import {
   PlanePrimitiveTypes,
   PrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
+import { isEmpty, type TranslationKey } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PlaneDomainObject } from './PlaneDomainObject';
@@ -184,6 +184,32 @@ describe(PlaneDomainObject.name, () => {
 
     expect(domainObject1.plane).toStrictEqual(expectedPlane1);
     expect(domainObject2.plane).toStrictEqual(expectedPlane2);
+  });
+
+  test('Should set value by panel-info.item for radius and height', () => {
+    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
+    const info = domainObject.getPanelInfo();
+
+    const keys: TranslationKey[] = ['DISTANCE_TO_ORIGIN', 'HORIZONTAL_ANGLE'];
+    let expectedValue = 10;
+
+    for (const key of keys) {
+      const item = info?.getItemTranslationKey(key);
+      expect(item).toBeDefined();
+      assert(item !== undefined);
+
+      expect(item.setValue).toBeDefined();
+      expect(item.verifyValue).toBeUndefined();
+      assert(item.setValue !== undefined);
+
+      item.setValue(expectedValue);
+      if (key === 'DISTANCE_TO_ORIGIN') {
+        expect(domainObject.coordinate).toBeCloseTo(expectedValue);
+      } else {
+        expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedValue);
+      }
+      expectedValue *= 2;
+    }
   });
 });
 
