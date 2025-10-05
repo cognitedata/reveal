@@ -82,31 +82,31 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const { cylinder } = this;
     const isFinished = this.focusType !== FocusType.Pending;
 
-    const hasRadius = Cylinder.isValidSize(cylinder.radius);
+    const hasRadiusAndDiameter = Cylinder.isValidSize(cylinder.radius);
     const hasHeight =
       Cylinder.isValidSize(cylinder.height) &&
       this.primitiveType !== PrimitiveType.HorizontalCircle;
 
-    if (hasRadius) {
-      const setValue = (value: number): void => {
+    if (hasRadiusAndDiameter) {
+      const setDiameter = (value: number): void => {
         const radius = value / 2;
         if (radius !== cylinder.radius) {
           cylinder.radius = radius;
           this.notify(Changes.geometry);
         }
       };
-      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length, setValue, verifyDiameter);
+      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length, setDiameter, verifyDiameter);
     }
     if (hasHeight) {
-      const setValue = (height: number): void => {
+      const setHeight = (height: number): void => {
         if (height !== cylinder.height) {
           cylinder.height = height;
           this.notify(Changes.geometry);
         }
       };
-      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length, setValue, verifyHeight);
+      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length, setHeight, verifyHeight);
     }
-    if (hasRadius) {
+    if (hasRadiusAndDiameter) {
       add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
       if (this.primitiveType === PrimitiveType.HorizontalCircle) {
         add({ key: 'AREA' }, cylinder.endCapArea, Quantity.Area);
@@ -114,7 +114,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
         add({ key: 'AREA' }, cylinder.area, Quantity.Area);
       }
     }
-    if (hasRadius && hasHeight) {
+    if (hasRadiusAndDiameter && hasHeight) {
       add({ key: 'VOLUME' }, cylinder.volume, Quantity.Volume);
     }
     return info;

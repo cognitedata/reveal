@@ -87,28 +87,28 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     const hasZ = Box.isValidSize(size.z);
 
     if (isFinished || hasX) {
-      const setValue = (value: number): void => {
+      const setSizeX = (value: number): void => {
         this.setSizeComponent(0, value);
       };
-      add({ key: 'LENGTH' }, size.x, Quantity.Length, setValue, verifySize);
+      add({ key: 'LENGTH' }, size.x, Quantity.Length, setSizeX, verifySize);
     }
     if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
-      const setValue = (value: number): void => {
+      const setSizeY = (value: number): void => {
         this.setSizeComponent(1, value);
       };
-      add({ key: 'DEPTH' }, size.y, Quantity.Length, setValue, verifySize);
+      add({ key: 'DEPTH' }, size.y, Quantity.Length, setSizeY, verifySize);
     }
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
-      const setValue = (value: number): void => {
+      const setSizeZ = (value: number): void => {
         this.setSizeComponent(2, value);
       };
-      add({ key: 'HEIGHT' }, size.z, Quantity.Length, setValue, verifySize);
+      add({ key: 'HEIGHT' }, size.z, Quantity.Length, setSizeZ, verifySize);
     }
     if (this.canRotateComponent(2) && isFinished) {
-      const setValue = (value: number): void => {
+      const setZRotation = (value: number): void => {
         this.setZRotationInDegrees(value);
       };
-      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle, setValue);
+      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle, setZRotation);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
       add({ key: 'AREA' }, this.area, Quantity.Area);
