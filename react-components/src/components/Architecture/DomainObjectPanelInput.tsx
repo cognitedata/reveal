@@ -17,7 +17,7 @@ export function DomainObjectPanelInput({ item, unitSystem }: Props): ReactElemen
   const lengthUnit = useSignalValue<LengthUnit>(unitSystem.lengthUnit);
   useEffect(() => {
     setValue(getOriginalValue());
-  }, [lengthUnit]);
+  }, [lengthUnit, item.value]);
 
   function onChange(newStringValue: string): void {
     if (newStringValue === '-') {
