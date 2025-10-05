@@ -68,29 +68,7 @@ describe(PlaneDomainObject.name, () => {
     }
   });
 
-  test('should set and get angle in degrees', () => {
-    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
-    for (let expectedAngle = 0; expectedAngle < 360; expectedAngle += 30) {
-      // Also Check that the coordinate should not change when setting angle
-      const coordinate = domainObject.coordinate;
-      domainObject.horizontalAngleInDegrees = expectedAngle;
-
-      expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedAngle);
-      expect(domainObject.coordinate).toBeCloseTo(coordinate);
-    }
-  });
-
-  test('should set and get coordinate', () => {
-    for (const primitiveType of PlanePrimitiveTypes) {
-      const domainObject = createPlaneDomainObjectMock(primitiveType);
-      for (const expectedCoordinate of [-10, 0, 10]) {
-        domainObject.coordinate = expectedCoordinate;
-        expect(domainObject.coordinate).toBeCloseTo(expectedCoordinate);
-      }
-    }
-  });
-
-  test('should be cloned', () => {
+  test('Should create info', () => {
     testMe(PrimitiveType.PlaneX, Quantity.Length, 1);
     testMe(PrimitiveType.PlaneY, Quantity.Length, 1);
     testMe(PrimitiveType.PlaneZ, Quantity.Length, 1);
@@ -118,6 +96,16 @@ describe(PlaneDomainObject.name, () => {
 
       expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedAngle);
       expect(domainObject.coordinate).toBeCloseTo(coordinate);
+    }
+  });
+
+  test('should set and get coordinate', () => {
+    for (const primitiveType of PlanePrimitiveTypes) {
+      const domainObject = createPlaneDomainObjectMock(primitiveType);
+      for (const expectedCoordinate of [-10, 0, 10]) {
+        domainObject.coordinate = expectedCoordinate;
+        expect(domainObject.coordinate).toBeCloseTo(expectedCoordinate);
+      }
     }
   });
 
