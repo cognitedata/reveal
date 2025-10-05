@@ -20,6 +20,10 @@ export function DomainObjectPanelInput({ item, unitSystem }: Props): ReactElemen
   }, [lengthUnit, item.value]);
 
   function onChange(newStringValue: string): void {
+    if (newStringValue === '-') {
+      setValue(newStringValue);
+      return;
+    }
     const newValue = parseFloat(newStringValue);
     if (Number.isNaN(newValue)) {
       setValue('');
