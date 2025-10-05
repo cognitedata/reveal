@@ -245,9 +245,11 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   }
 
   public set horizontalAngleInDegrees(value: number) {
-    const radians = degToRad(value) - Math.PI;
-    const normal = new Vector3(Math.cos(radians), Math.sin(radians), 0);
-    rotateHorizontal(normal, Math.PI / 2);
+    const planeAngleRad = degToRad(value);
+    // The plane's normal is perpendicular to the plane's direction vector.
+    // If the plane has an angle of `planeAngleRad`, its normal will have an angle of `planeAngleRad - 90 degrees`.
+    const normalAngleRad = planeAngleRad - Math.PI / 2;
+    const normal = new Vector3(Math.cos(normalAngleRad), Math.sin(normalAngleRad), 0);
     this.plane.normal.copy(normal);
   }
 
