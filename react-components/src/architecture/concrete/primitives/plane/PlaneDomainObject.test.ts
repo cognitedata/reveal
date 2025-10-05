@@ -68,59 +68,6 @@ describe(PlaneDomainObject.name, () => {
     }
   });
 
-  test('should set and get angle in degrees', () => {
-    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
-    for (let expectedAngle = 0; expectedAngle < 360; expectedAngle += 30) {
-      // Also Check that the coordinate should not change when setting angle
-      const coordinate = domainObject.coordinate;
-      domainObject.horizontalAngleInDegrees = expectedAngle;
-
-      expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedAngle);
-      expect(domainObject.coordinate).toBeCloseTo(coordinate);
-    }
-  });
-
-  test('should set and get coordinate', () => {
-    for (const primitiveType of PlanePrimitiveTypes) {
-      const domainObject = createPlaneDomainObjectMock(primitiveType);
-      for (const expectedCoordinate of [-10, 0, 10]) {
-        domainObject.coordinate = expectedCoordinate;
-        expect(domainObject.coordinate).toBeCloseTo(expectedCoordinate);
-      }
-    }
-  });
-
-  test('should be cloned', () => {
-    testMe(PrimitiveType.PlaneX, Quantity.Length, 1);
-    testMe(PrimitiveType.PlaneY, Quantity.Length, 1);
-    testMe(PrimitiveType.PlaneZ, Quantity.Length, 1);
-    testMe(PrimitiveType.PlaneXY, Quantity.Length, 1);
-    testMe(PrimitiveType.PlaneXY, Quantity.Angle, 1);
-
-    function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
-      const domainObject = createPlaneDomainObjectMock(primitiveType);
-      expect(domainObject.hasPanelInfo).toBe(true);
-      const info = domainObject.getPanelInfo();
-      expect(info).toBeDefined();
-      if (info === undefined) {
-        return;
-      }
-      expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
-    }
-  });
-
-  test('should set and get angle in degrees', () => {
-    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
-    for (let expectedAngle = 0; expectedAngle < 360; expectedAngle += 30) {
-      // Also Check that the coordinate should not change when setting angle
-      const coordinate = domainObject.coordinate;
-      domainObject.horizontalAngleInDegrees = expectedAngle;
-
-      expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedAngle);
-      expect(domainObject.coordinate).toBeCloseTo(coordinate);
-    }
-  });
-
   test('should be flip', () => {
     const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
     const expectedPlane = domainObject.plane.clone().negate();

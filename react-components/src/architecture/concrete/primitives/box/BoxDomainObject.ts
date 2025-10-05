@@ -11,11 +11,7 @@ import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import {
-  PanelInfo,
-  type SetValue,
-  type VerifyValue
-} from '../../../base/domainObjectsHelpers/PanelInfo';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Box } from '../../../base/utilities/primitives/Box';
@@ -87,28 +83,13 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     const hasZ = Box.isValidSize(size.z);
 
     if (isFinished || hasX) {
-      const setValue = (value: number): void => {
-        this.setSizeComponent(0, value);
-      };
-      add({ key: 'LENGTH' }, size.x, Quantity.Length, setValue, verifySize);
+      add({ key: 'LENGTH' }, size.x, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
-      const setValue = (value: number): void => {
-        this.setSizeComponent(1, value);
-      };
-      add({ key: 'DEPTH' }, size.y, Quantity.Length, setValue, verifySize);
+      add({ key: 'DEPTH' }, size.y, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
-      const setValue = (value: number): void => {
-        this.setSizeComponent(2, value);
-      };
-      add({ key: 'HEIGHT' }, size.z, Quantity.Length, setValue, verifySize);
-    }
-    if (this.canRotateComponent(2) && isFinished) {
-      const setValue = (value: number): void => {
-        this.setZRotationInDegrees(value);
-      };
-      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle, setValue);
+      add({ key: 'HEIGHT' }, size.z, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
       add({ key: 'AREA' }, this.area, Quantity.Area);
@@ -119,22 +100,14 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasVolume)) {
       add({ key: 'VOLUME' }, box.volume, Quantity.Volume);
     }
+    // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
+    if (box.rotation.z !== 0 && isFinished) {
+      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle);
+    }
     return info;
 
-    function add(
-      translationInput: TranslationInput,
-      value: number,
-      quantity: Quantity,
-      setValue?: SetValue,
-      verifyValue?: VerifyValue
-    ): void {
-      info.add({
-        translationInput,
-        value,
-        quantity,
-        setValue: isFinished ? setValue : undefined,
-        verifyValue: isFinished ? verifyValue : undefined
-      });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 
@@ -201,7 +174,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS / PROPERTIES:
+  // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
   public get area(): number {
@@ -223,20 +196,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public expandBoundingBox(boundingBox: Box3): void {
     this.box.expandBoundingBox(boundingBox);
   }
-
-  private setSizeComponent(component: number, value: number): void {
-    if (value > 0 && value !== this.box.size.getComponent(component)) {
-      this.box.size.setComponent(component, value);
-      this.notify(Changes.geometry);
-    }
-  }
-
-  private setZRotationInDegrees(value: number): void {
-    if (value !== this.box.zRotationInDegrees) {
-      this.box.zRotationInDegrees = value;
-      this.notify(Changes.geometry);
-    }
-  }
 }
 
 const LEGAL_PRIMITIVE_TYPES = [
@@ -245,7 +204,3 @@ const LEGAL_PRIMITIVE_TYPES = [
   PrimitiveType.HorizontalArea,
   PrimitiveType.Box
 ];
-
-function verifySize(value: number): boolean {
-  return Box.isValidSize(value);
-}

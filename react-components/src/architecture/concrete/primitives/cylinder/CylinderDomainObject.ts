@@ -11,11 +11,7 @@ import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import {
-  PanelInfo,
-  type SetValue,
-  type VerifyValue
-} from '../../../base/domainObjectsHelpers/PanelInfo';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
@@ -80,7 +76,6 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     const { cylinder } = this;
-    const isFinished = this.focusType !== FocusType.Pending;
 
     const hasRadius = Cylinder.isValidSize(cylinder.radius);
     const hasHeight =
@@ -88,26 +83,13 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
       this.primitiveType !== PrimitiveType.HorizontalCircle;
 
     if (hasRadius) {
-      const setValue = (value: number): void => {
-        const radius = value / 2;
-        if (radius !== cylinder.radius) {
-          cylinder.radius = radius;
-          this.notify(Changes.geometry);
-        }
-      };
-      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length, setValue, verifyDiameter);
+      add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
+      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length);
     }
     if (hasHeight) {
-      const setValue = (height: number): void => {
-        if (height !== cylinder.height) {
-          cylinder.height = height;
-          this.notify(Changes.geometry);
-        }
-      };
-      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length, setValue, verifyHeight);
+      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length);
     }
     if (hasRadius) {
-      add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
       if (this.primitiveType === PrimitiveType.HorizontalCircle) {
         add({ key: 'AREA' }, cylinder.endCapArea, Quantity.Area);
       } else {
@@ -119,20 +101,8 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     }
     return info;
 
-    function add(
-      translationInput: TranslationInput,
-      value: number,
-      quantity: Quantity,
-      setValue?: SetValue,
-      verifyValue?: VerifyValue
-    ): void {
-      info.add({
-        translationInput,
-        value,
-        quantity,
-        setValue: isFinished ? setValue : undefined,
-        verifyValue: isFinished ? verifyValue : undefined
-      });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 
@@ -214,11 +184,3 @@ const LEGAL_PRIMITIVE_TYPES = [
   PrimitiveType.HorizontalCylinder,
   PrimitiveType.VerticalCylinder
 ];
-
-function verifyDiameter(diameter: number): boolean {
-  return Cylinder.isValidSize(diameter / 2); // Give the radius for verification
-}
-
-function verifyHeight(height: number): boolean {
-  return Cylinder.isValidSize(height);
-}
