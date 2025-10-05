@@ -48,22 +48,22 @@ export class MeasurePointDomainObject extends BoxDomainObject {
     const info = new PanelInfo();
     const { point, size } = this;
 
-    const setXCoord = (value: number): void => {
-      this.setCoord(0, value);
+    const setPointX = (value: number): void => {
+      this.setPointComponent(0, value);
     };
-    const setYCoord = (value: number): void => {
-      this.setCoord(1, value);
+    const setPointY = (value: number): void => {
+      this.setPointComponent(1, value);
     };
-    const setZCoord = (value: number): void => {
-      this.setCoord(2, value);
+    const setPointZ = (value: number): void => {
+      this.setPointComponent(2, value);
     };
     const setSize = (value: number): void => {
       this.setSize(value);
     };
 
-    add({ key: 'X:COORDINATE' }, point.x, Quantity.Length, setXCoord);
-    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length, setYCoord);
-    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length, setZCoord);
+    add({ key: 'X_COORDINATE' }, point.x, Quantity.Length, setPointX);
+    add({ key: 'Y_COORDINATE' }, point.y, Quantity.Length, setPointY);
+    add({ key: 'Z_COORDINATE' }, point.z, Quantity.Length, setPointZ);
     add({ key: 'POINT_SIZE' }, size, Quantity.Length, setSize, verifySize);
     return info;
 
@@ -108,8 +108,8 @@ export class MeasurePointDomainObject extends BoxDomainObject {
     this.box.center.copy(value);
   }
 
-  private setCoord(component: number, value: number): void {
-    if (value !== this.box.center.getComponent(component)) {
+  private setPointComponent(component: number, value: number): void {
+    if (value !== this.point.getComponent(component)) {
       this.point.setComponent(component, value);
       this.notify(Changes.geometry);
     }
