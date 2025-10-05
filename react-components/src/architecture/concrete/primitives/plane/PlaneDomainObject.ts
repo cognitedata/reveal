@@ -120,7 +120,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     };
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        add({ key: 'X:COORDINATE' }, this.coordinate, Quantity.Length, setCoordinate);
+        add({ key: 'X_COORDINATE' }, this.coordinate, Quantity.Length, setCoordinate);
         break;
       case PrimitiveType.PlaneY:
         add({ key: 'Y_COORDINATE' }, this.coordinate, Quantity.Length, setCoordinate);

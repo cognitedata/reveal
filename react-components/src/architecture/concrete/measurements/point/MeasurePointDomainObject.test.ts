@@ -71,7 +71,7 @@ describe(MeasurePointDomainObject.name, () => {
     const domainObject = createMeasurePointDomainObject();
     const info = domainObject.getPanelInfo();
 
-    const keys: TranslationKey[] = ['X:COORDINATE', 'Y_COORDINATE', 'Z_COORDINATE'];
+    const keys: TranslationKey[] = ['X_COORDINATE', 'Y_COORDINATE', 'Z_COORDINATE'];
     let component = 0;
 
     let expectedValue = 10;

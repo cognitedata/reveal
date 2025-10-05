@@ -165,7 +165,7 @@
   "WIDGET_WINDOW_CLOSE": "Chiudi",
   "WIDGET_WINDOW_EXPAND": "Espandi",
   "WIDGET_WINDOW_MINIMIZE": "Riduci a icona",
-  "X:COORDINATE": "Coordinata X",
+  "X_COORDINATE": "Coordinata X",
   "X_RAY": "Raggi X",
   "Y_COORDINATE": "Coordinata Y",
   "Z_COORDINATE": "Coordinata Z"
