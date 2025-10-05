@@ -109,7 +109,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
   }
 
   private setCoord(component: number, value: number): void {
-    if (value > 0 && value !== this.box.center.getComponent(component)) {
+    if (value !== this.box.center.getComponent(component)) {
       this.point.setComponent(component, value);
       this.notify(Changes.geometry);
     }
