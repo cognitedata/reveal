@@ -35,13 +35,13 @@ export async function getInstancesFromClick(
   );
 
   const image360Annotation = image360AnnotationIntersection?.annotation.annotation;
-  const annotationAsset =
+  const annotation360sAsset =
     image360Annotation !== undefined
       ? getInstanceReferenceFromImage360Annotation(image360Annotation)
       : undefined;
 
-  if (!coreDmOnly && annotationAsset !== undefined) {
-    return [annotationAsset];
+  if (!coreDmOnly && annotation360sAsset !== undefined) {
+    return [annotation360sAsset];
   }
 
   if (intersection === undefined) {
@@ -57,7 +57,7 @@ export async function getInstancesFromClick(
   return undefined;
 }
 
-async function getInstancesFromPointCloudIntersection(
+export async function getInstancesFromPointCloudIntersection(
   intersection: PointCloudIntersection<DataSourceType>,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
@@ -149,7 +149,7 @@ function getPointCloudFdmInstancesFromIntersection(
     : [intersection.volumeMetadata.assetRef];
 }
 
-async function getInstancesFromCadIntersection(
+export async function getInstancesFromCadIntersection(
   intersection: CadIntersection,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
