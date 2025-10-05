@@ -34,7 +34,7 @@ describe(NumberPanelItem.name, () => {
     expect(item.trySetValue(9, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
 
-    expect(originalValue).toBe(42); // Still 42, not changed by the 9 and NaN
+    expect(originalValue).toBe(42); // Still 42, not changed by the 9(outside range) and NaN
   });
 
   test('should set value without verifyValue', () => {
