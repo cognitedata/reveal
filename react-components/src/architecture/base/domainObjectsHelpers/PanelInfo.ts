@@ -64,18 +64,18 @@ export class NumberPanelItem extends PanelItem {
     this.verifyValue = props.verifyValue;
   }
 
-  public trySetValue(value: number, unitSystem: UnitSystem): boolean {
+  public trySetValue(valueInCurrentUnit: number, unitSystem: UnitSystem): boolean {
     if (this.setValue === undefined) {
       return false;
     }
-    if (Number.isNaN(value)) {
+    if (Number.isNaN(valueInCurrentUnit)) {
       return false;
     }
-    const metricValue = unitSystem.convertFromUnit(value, this.quantity);
-    if (this.verifyValue !== undefined && !this.verifyValue(metricValue)) {
+    const valueInMetricUnit = unitSystem.convertFromUnit(valueInCurrentUnit, this.quantity);
+    if (this.verifyValue !== undefined && !this.verifyValue(valueInMetricUnit)) {
       return false;
     }
-    this.setValue(metricValue);
+    this.setValue(valueInMetricUnit);
     return true;
   }
 }
