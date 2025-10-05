@@ -52,6 +52,23 @@ describe(DomainObjectPanelInput.name, () => {
     }
   });
 
+  test('Should give a minus sign and blur (corner case)', async () => {
+    const item = createItem(false);
+    renderInput(unitSystem, item);
+
+    const inputElement = screen.getByRole('spinbutton');
+    await userEvent.click(inputElement);
+    await userEvent.clear(inputElement);
+    expect(inputElement).toHaveValue(null);
+    await userEvent.type(inputElement, '-');
+    await userEvent.type(inputElement, '2');
+    expect(inputElement).toHaveValue(-2);
+
+    await userEvent.tab(); // Simulates pressing the Tab key, causing a blur
+    expect(inputElement).toHaveValue(EXPECTED_VALUE); // Resets to original value
+    expect(item.setValue).toBeCalledTimes(0); // Should not be called, because -2 is illegal
+  });
+
   test('Should try to set illegal value', async () => {
     const item = createItem(false);
     renderInput(unitSystem, item);
@@ -61,16 +78,18 @@ describe(DomainObjectPanelInput.name, () => {
     await userEvent.clear(inputElement);
     await userEvent.type(inputElement, '41'); // 41 is illegal, must be >= 42
     await userEvent.tab(); // Simulates pressing the Tab key, causing a blur
-    expect(inputElement).toHaveValue(42); // Resets to original value
-    expect(item.setValue).toBeCalledTimes(0); // Should not be called!
+    expect(inputElement).toHaveValue(EXPECTED_VALUE); // Resets to original value
+    expect(item.setValue).toBeCalledTimes(0); // Should not be called, , because 41 is illegal
   });
 });
 
+const EXPECTED_VALUE = 42;
+
 function createItem(readonly: boolean): NumberPanelItem {
   return new NumberPanelItem({
-    value: 42,
+    value: EXPECTED_VALUE,
     setValue: readonly ? undefined : vi.fn(),
-    verifyValue: readonly ? undefined : (v: number) => v >= 42,
+    verifyValue: readonly ? undefined : (v: number) => v >= EXPECTED_VALUE,
     quantity: Quantity.Length,
     translationInput: { key: 'RADIUS' }
   });
