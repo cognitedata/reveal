@@ -176,7 +176,7 @@ describe(PlaneDomainObject.name, () => {
 
   test('Should set value by panel-info.item for coordinate', () => {
     const keys: TranslationKey[] = [
-      'X:COORDINATE',
+      'X_COORDINATE',
       'Y_COORDINATE',
       'Z_COORDINATE',
       'DISTANCE_TO_ORIGIN'
