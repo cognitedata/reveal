@@ -12,7 +12,7 @@ import { EMPTY_ARRAY } from './constants';
 import { isDM3DModelIdentifier } from '../components/Reveal3DResources/typeGuards';
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
-import { type InstanceReference, isDmsInstance, isIdEither, isInternalId } from './instanceIds';
+import { type InstanceReference, isDmsInstance, isIdEither } from './instanceIds';
 import { getMappingInstanceId } from '../components/CacheProvider/cad/assetMappingTypes';
 import { instanceIdToInstanceReference } from '../components/CacheProvider/idAndKeyTranslation';
 
