@@ -61,7 +61,7 @@ describe(CylinderDomainObject, () => {
     }
   });
 
-  test('Should set value by panel-info.item for radius', () => {
+  test('Should set value by panel-info.item for radius and height', () => {
     const domainObject = createCylinderDomainObject(PrimitiveType.Cylinder);
     const info = domainObject.getPanelInfo();
 
