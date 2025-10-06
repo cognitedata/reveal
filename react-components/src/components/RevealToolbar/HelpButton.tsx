@@ -45,9 +45,7 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
           aria-label="help-button"
           toggled={helpActive}
           onClick={() => {
-            if (!helpActive) {
-              setHelpActive(true);
-            }
+            setHelpActive(true);
           }}
         />
       </CogsTooltip>
