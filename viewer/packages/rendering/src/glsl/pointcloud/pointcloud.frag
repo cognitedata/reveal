@@ -10,6 +10,7 @@ uniform float spacing;
 uniform float pcIndex;
 uniform float screenWidth;
 uniform float screenHeight;
+uniform float ambientBoost;
 
 out vec4 outputColor;
 
@@ -40,6 +41,14 @@ float specularStrength = 1.0;
 void main() {
 
 	vec3 color = vColor;
+	
+	// Apply ambient brightness boost for better visibility
+	// IMPORTANT: Skip in picking mode where colors represent point indices
+	#if !defined(color_type_point_index)
+		color = color + vec3(ambientBoost);
+		color = clamp(color, vec3(0.0), vec3(1.0));
+	#endif
+	
 	float depth = gl_FragCoord.z;
 
 	#if defined(circle_point_shape) || defined(paraboloid_point_shape) || defined (weighted_splats)

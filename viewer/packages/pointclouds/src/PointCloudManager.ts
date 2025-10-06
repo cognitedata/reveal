@@ -57,7 +57,7 @@ export class PointCloudManager {
     scene.add(this.createDrawResetTrigger());
 
     combineLatest([this._cameraSubject, this.loadedModelsObservable(), this._budgetSubject])
-      .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
+      .pipe(throttleTime(50, asyncScheduler, { leading: true, trailing: true }))
       .subscribe(([cam, _models, _budget]: [THREE.PerspectiveCamera, ModelIdentifier[], number]) => {
         this.updatePointClouds(cam);
       });

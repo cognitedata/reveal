@@ -56,6 +56,11 @@ export interface IPointCloudMaterialUniforms {
   objectIdLUT: IUniform<Texture>;
   octreeSize: IUniform<number>;
   pcIndex: IUniform<number>;
+  rgbBrightness: IUniform<number>;
+  rgbContrast: IUniform<number>;
+  rgbGamma: IUniform<number>;
+  rgbExposure: IUniform<number>;
+  ambientBoost: IUniform<number>;
   screenHeight: IUniform<number>;
   screenWidth: IUniform<number>;
   size: IUniform<number>;
@@ -127,6 +132,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
     objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
     pcIndex: makeUniform('f', 0),
+    rgbBrightness: makeUniform('f', 0.1),
+    rgbContrast: makeUniform('f', 0.25),
+    rgbGamma: makeUniform('f', 1.15),
+    rgbExposure: makeUniform('f', 0.9),
+    ambientBoost: makeUniform('f', 0.05),
     screenHeight: makeUniform('f', 1.0),
     screenWidth: makeUniform('f', 1.0),
     size: makeUniform('f', 1),
@@ -146,6 +156,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
   @uniform('maxSize') accessor maxSize!: number;
   @uniform('minSize') accessor minSize!: number;
   @uniform('octreeSize') accessor octreeSize!: number;
+  @uniform('rgbBrightness') accessor rgbBrightness!: number;
+  @uniform('rgbContrast') accessor rgbContrast!: number;
+  @uniform('rgbGamma') accessor rgbGamma!: number;
+  @uniform('rgbExposure') accessor rgbExposure!: number;
+  @uniform('ambientBoost') accessor ambientBoost!: number;
   @uniform('screenHeight') accessor screenHeight!: number;
   @uniform('screenWidth') accessor screenWidth!: number;
   @uniform('size') accessor size!: number;

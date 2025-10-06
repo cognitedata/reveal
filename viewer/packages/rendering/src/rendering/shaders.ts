@@ -52,6 +52,9 @@ import pointCloudVert from '../glsl/pointcloud/pointcloud.vert';
 import ssaoFrag from '../glsl/post-processing/pure-depth-ssao.frag';
 import ssaoVert from '../glsl/post-processing/passthrough.vert';
 
+import taaFrag from '../glsl/post-processing/taa.frag';
+import taaVert from '../glsl/post-processing/taa.vert';
+
 import blitFrag from '../glsl/post-processing/blit.frag';
 import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
@@ -140,6 +143,14 @@ export const pointCloudShaders = {
 export const ssaoShaders = {
   fragment: glsl(ssaoFrag),
   vertex: glsl(ssaoVert)
+};
+
+/**
+ * Temporal anti-aliasing shader
+ */
+export const taaShaders = {
+  fragment: glsl(taaFrag),
+  vertex: glsl(taaVert)
 };
 
 export const blitShaders = {

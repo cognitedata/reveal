@@ -40,6 +40,7 @@ uniform float intensityBrightness;
 uniform float rgbGamma;
 uniform float rgbContrast;
 uniform float rgbBrightness;
+uniform float rgbExposure;
 
 uniform sampler2D visibleNodes;
 uniform sampler2D gradient;
@@ -158,7 +159,10 @@ float getLOD() {
 }
 
 float getPointSizeAttenuation() {
-	return 0.5 * pow(2.0, getLOD());
+	float lod = getLOD();
+	// Clamp LOD to prevent extreme size variations (especially on low-LOD coarse nodes)
+	lod = clamp(lod, 2.0, 10.0);
+	return 0.5 * pow(2.0, lod);
 }
 
 #endif
@@ -169,7 +173,32 @@ float getContrastFactor(float contrast) {
 }
 
 vec3 getRGB() {
-        return color;
+	vec3 rgb = color;
+	
+	// In picking mode, colors represent point indices and must not be modified
+	#if defined(color_type_point_index)
+		return rgb;
+	#endif
+	
+	// Gamma correction
+	rgb = pow(rgb, vec3(rgbGamma));
+	
+	// Brightness
+	rgb = rgb + rgbBrightness;
+	
+	// Contrast
+	rgb = (rgb - 0.5) * getContrastFactor(rgbContrast) + 0.5;
+	
+	// HDR control
+	rgb = rgb * rgbExposure;
+	
+	// This compresses HDR values into displayable range without harsh clipping
+	rgb = (rgb * (2.51 * rgb + 0.03)) / (rgb * (2.43 * rgb + 0.59) + 0.14);
+	
+	// Clamp to valid display range
+	rgb = clamp(rgb, vec3(0.0), vec3(1.0));
+	
+	return rgb;
 }
 
 float getIntensity() {
@@ -247,6 +276,21 @@ void main() {
 
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
+
+	// Distance-based size limiting to prevent oversized close points from low-LOD nodes
+	#if defined(adaptive_point_size)
+		// ONLY reduce point size when VERY close to camera for low-LOD nodes
+		// This prevents giant "blocky" points when detailed nodes not yet loaded
+		float distanceToCamera = length(mvPosition.xyz);
+		float lod = getLOD();
+		
+		if (distanceToCamera < 10.0 && lod < 4.0) {
+			// Reduce oversized points when very close to low-LOD geometry
+			float closeScale = smoothstep(1.0, 10.0, distanceToCamera);
+			closeScale = 0.15 + closeScale * 0.85;  // Scale 15%-100% (was 25%)
+			pointSize = pointSize * closeScale;
+		}
+	#endif
 
 	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;

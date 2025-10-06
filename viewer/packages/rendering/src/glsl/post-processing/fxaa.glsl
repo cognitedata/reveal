@@ -6,13 +6,13 @@
  */
  
 #ifndef FXAA_REDUCE_MIN
-    #define FXAA_REDUCE_MIN   (1.0/ 128.0)
+    #define FXAA_REDUCE_MIN   (1.0/ 256.0)  // Increased from 128 for more smoothing
 #endif
 #ifndef FXAA_REDUCE_MUL
-    #define FXAA_REDUCE_MUL   (1.0 / 8.0)
+    #define FXAA_REDUCE_MUL   (1.0 / 6.0)   // Reduced from 8 for better quality
 #endif
 #ifndef FXAA_SPAN_MAX
-    #define FXAA_SPAN_MAX     8.0
+    #define FXAA_SPAN_MAX     12.0          // Increased from 8 for wider smoothing
 #endif
 
 vec4 fxaa(sampler2D tex) {
