@@ -3,6 +3,8 @@ import { NumberPanelItem } from './PanelInfo';
 import { Quantity } from './Quantity';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 
+const EXPECTED_VALUE = 42;
+
 describe(NumberPanelItem.name, () => {
   const unitSystem = new UnitSystem();
   let originalValue = 0;
@@ -30,11 +32,11 @@ describe(NumberPanelItem.name, () => {
       setValue: setValueMock,
       verifyValue: verifyValueMock
     });
-    expect(item.trySetValue(42, unitSystem)).toBe(true);
+    expect(item.trySetValue(EXPECTED_VALUE, unitSystem)).toBe(true);
     expect(item.trySetValue(9, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
 
-    expect(originalValue).toBe(42); // Still 42, not changed by the 9(outside range) and NaN
+    expect(originalValue).toBe(EXPECTED_VALUE); // Still EXPECTED_VALUE, not changed by the 9(outside range) and NaN
   });
 
   test('should set value without verifyValue', () => {
@@ -44,9 +46,9 @@ describe(NumberPanelItem.name, () => {
       translationInput: { key: 'RADIUS' },
       setValue: setValueMock
     });
-    expect(item.trySetValue(42, unitSystem)).toBe(true);
+    expect(item.trySetValue(EXPECTED_VALUE, unitSystem)).toBe(true);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
-    expect(originalValue).toBe(42); // Still 42, not changed by the NaN
+    expect(originalValue).toBe(EXPECTED_VALUE); // Still EXPECTED_VALUE, not changed by the NaN
   });
 
   test('should not set value without setValue and verifyValue', () => {
@@ -56,7 +58,7 @@ describe(NumberPanelItem.name, () => {
       translationInput: { key: 'RADIUS' }
     });
     // Always fails when setValue is missing
-    expect(item.trySetValue(42, unitSystem)).toBe(false);
+    expect(item.trySetValue(EXPECTED_VALUE, unitSystem)).toBe(false);
     expect(item.trySetValue(Number.NaN, unitSystem)).toBe(false);
   });
 });
