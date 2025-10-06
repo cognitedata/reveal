@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { SettingsButton } from './SettingsButton';
 import { SettingsButtonContext, defaultSettingsButtonDependencies } from './SettingsButton.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import { type I18nContent } from '../../i18n/types';
 
 describe(SettingsButton.name, () => {
   const defaultProps = {
@@ -14,30 +15,24 @@ describe(SettingsButton.name, () => {
     highQualitySettings: {}
   };
 
-  const settingsButtonDependencies = getMocksByDefaultDependencies(
-    defaultSettingsButtonDependencies
-  );
+  const deps = getMocksByDefaultDependencies(defaultSettingsButtonDependencies);
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <SettingsButtonContext.Provider value={settingsButtonDependencies}>
-      {children}
-    </SettingsButtonContext.Provider>
+    <SettingsButtonContext.Provider value={deps}>{children}</SettingsButtonContext.Provider>
   );
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup default mock implementations
-    settingsButtonDependencies.useTranslation.mockReturnValue({
-      t: (translationInput: any) =>
-        typeof translationInput === 'object' ? translationInput.key : translationInput,
-      currentLanguage: 'en',
-      fallbackLanguage: 'en'
-    } as any);
+    const mockTranslation: I18nContent = {
+      t: (translationInput) =>
+        typeof translationInput === 'object' ? String(translationInput) : translationInput,
+      currentLanguage: 'en'
+    };
 
-    settingsButtonDependencies.HighFidelityContainer.mockReturnValue(
-      <div>High Fidelity Container</div>
-    );
+    deps.useTranslation.mockReturnValue(mockTranslation);
+
+    deps.HighFidelityContainer.mockReturnValue(<div>High Fidelity Container</div>);
   });
 
   test('renders without crashing', () => {

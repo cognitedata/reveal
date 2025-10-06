@@ -6,35 +6,50 @@ import userEvent from '@testing-library/user-event';
 import { SlicerButton } from './SlicerButton';
 import { SlicerButtonContext, defaultSlicerButtonDependencies } from './SlicerButton.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import { Mock } from 'moq.ts';
+import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
+import { type I18nContent } from '../../i18n/types';
 
 describe(SlicerButton.name, () => {
-  const slicerButtonDependencies = getMocksByDefaultDependencies(defaultSlicerButtonDependencies);
+  const deps = getMocksByDefaultDependencies(defaultSlicerButtonDependencies);
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <SlicerButtonContext.Provider value={slicerButtonDependencies}>
-      {children}
-    </SlicerButtonContext.Provider>
+    <SlicerButtonContext.Provider value={deps}>{children}</SlicerButtonContext.Provider>
   );
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup default mock implementations
-    slicerButtonDependencies.useReveal.mockImplementation(
-      () =>
-        ({
-          setGlobalClippingPlanes: vi.fn()
-        }) as any
-    );
+    const mockViewer = new Mock<Cognite3DViewer<DataSourceType>>()
+      .setup((viewer) => viewer.setGlobalClippingPlanes)
+      .returns(vi.fn())
+      .setup((viewer) => viewer.canvas)
+      .returns(document.createElement('canvas'))
+      .setup((viewer) => viewer.domElement)
+      .returns(document.createElement('div'))
+      .setup((viewer) => viewer.models)
+      .returns([])
+      .setup((viewer) => viewer.dispose)
+      .returns(vi.fn())
+      .setup((viewer) => viewer.fitCameraToModel)
+      .returns(vi.fn())
+      .setup((viewer) => viewer.addModel)
+      .returns(vi.fn())
+      .setup((viewer) => viewer.removeModel)
+      .returns(vi.fn())
+      .object();
 
-    slicerButtonDependencies.use3dModels.mockReturnValue([]);
+    deps.useReveal.mockReturnValue(mockViewer);
 
-    slicerButtonDependencies.useTranslation.mockReturnValue({
-      t: (translationInput: any) =>
-        typeof translationInput === 'object' ? translationInput.key : translationInput,
-      currentLanguage: 'en',
-      fallbackLanguage: 'en'
-    } as any);
+    deps.use3dModels.mockReturnValue([]);
+
+    const mockTranslation: I18nContent = {
+      t: (translationInput) =>
+        typeof translationInput === 'object' ? String(translationInput) : translationInput,
+      currentLanguage: 'en'
+    };
+
+    deps.useTranslation.mockReturnValue(mockTranslation);
   });
 
   test('renders without crashing', () => {
