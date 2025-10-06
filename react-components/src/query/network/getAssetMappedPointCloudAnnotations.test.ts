@@ -6,13 +6,13 @@ import { type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
 import { createAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
 import { createPointCloudAnnotationMock } from '../../../tests/tests-utilities/fixtures/pointCloudAnnotation';
-import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { ExternalIdsResultList, type FdmSDK } from '../../data-providers/FdmSDK';
 import { createCursorAndAsyncIteratorMock } from '../../../tests/tests-utilities/fixtures/cursorAndIterator';
 
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { annotationsListMock } from '#test-utils/fixtures/sdk';
+import { AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 
-// Mock the dependencies
 vi.mock(import('./common/getAssetsForIds'), () => ({
   getAssetsForIds: vi.fn<typeof getAssetsForIds>()
 }));
@@ -73,7 +73,6 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
 
     const annotationRetrieveMock = new Mock<CogniteClient['annotations']>()
       .setup((p) => p.list)
@@ -90,7 +89,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     mockFdmSdk = new Mock<FdmSDK>()
       .setup((p) => p.getByExternalIds)
-      .returns(vi.fn())
+      .returns(vi.fn<() => Promise<ExternalIdsResultList<any>>>())
       .object();
 
     mockGetAssetsForIds.mockResolvedValue(mockAssets);
