@@ -1,13 +1,12 @@
 import { describe, expect, beforeEach, test, vi } from 'vitest';
 import { type RevealRenderTarget } from '../architecture';
-import { type InstanceReference } from './instanceIds';
 import {
   type CadIntersection,
   type PointCloudIntersection,
   type AnyIntersection,
-  Image360AnnotationIntersection,
-  DataSourceType,
-  Image360Annotation
+  type Image360AnnotationIntersection,
+  type DataSourceType,
+  type Image360Annotation
 } from '@cognite/reveal';
 import { Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
@@ -18,14 +17,14 @@ import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { getInstancesFromClick } from './getInstancesFromClick';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
-import { DmsUniqueIdentifier } from '../data-providers';
-import { IdEither } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../data-providers';
+import { type IdEither } from '@cognite/sdk';
 import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
-import { HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { createAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
 import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
-import { PointCloudAnnotationMappedAssetData } from '../hooks';
+import { type PointCloudAnnotationMappedAssetData } from '../hooks';
 import { createAssetMock } from '#test-utils/fixtures/assets';
 
 vi.mock(import('../components/CacheProvider/requests'), () => ({
@@ -42,8 +41,10 @@ vi.mock(import('../components/CacheProvider/utils'), () => ({
 }));
 
 describe(getInstancesFromClick.name, () => {
-  let mockRenderTarget: RevealRenderTarget;
-  let mockEvent: PointerEvent;
+  const mockEvent = {
+    offsetX: 100,
+    offsetY: 200
+  } as const as PointerEvent;
 
   const classicIdEither: IdEither = { id: 123 };
   const dmInstanceRef: DmsUniqueIdentifier = {
@@ -64,7 +65,7 @@ describe(getInstancesFromClick.name, () => {
 
   const mockFetchAnnotationsForModelReturn: PointCloudAnnotationMappedAssetData[] = [
     { annotationId: 1, asset: classicAssetInstance },
-    { annotationId: 2, asset: classicAssetInstance2 },
+    { annotationId: 2, asset: classicAssetInstance2 }
   ];
 
   const mockCadIntersection: CadIntersection = {
@@ -118,7 +119,7 @@ describe(getInstancesFromClick.name, () => {
         creatingUser: 'test-user',
         data: {}
       }
-    } as Image360Annotation<DataSourceType>,
+    } as const as Image360Annotation<DataSourceType>,
     type: 'image360Annotation',
     direction: new Vector3()
   };
@@ -141,7 +142,7 @@ describe(getInstancesFromClick.name, () => {
     .fn<typeof viewerMock.getPixelCoordinatesFromEvent>()
     .mockReturnValue(new Vector2(100, 200));
 
-  mockRenderTarget = new Mock<RevealRenderTarget>()
+  const mockRenderTarget = new Mock<RevealRenderTarget>()
     .setup((p) => p.viewer)
     .returns(viewerMock)
     .setup((p) => p.cdfCaches)
@@ -149,13 +150,6 @@ describe(getInstancesFromClick.name, () => {
     .object();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
-    mockEvent = {
-      offsetX: 100,
-      offsetY: 200
-    } as PointerEvent;
-
     vi.mocked(viewerMock.get360AnnotationIntersectionFromPixel).mockResolvedValue(
       mockImage360Intersection
     );
@@ -216,7 +210,7 @@ describe(getInstancesFromClick.name, () => {
       type: 'unknown' as any,
       point: new Vector3(1, 2, 3),
       distanceToCamera: 10
-    } as AnyIntersection;
+    } as const as AnyIntersection;
 
     vi.mocked(viewerMock.getAnyIntersectionFromPixel).mockResolvedValue(unknownIntersection);
 
