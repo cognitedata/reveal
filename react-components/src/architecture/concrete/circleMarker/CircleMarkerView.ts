@@ -1,14 +1,15 @@
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { colorToHex } from '../../base/utilities/colors/colorToHex';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
-import { Sprite, CanvasTexture, SpriteMaterial } from 'three';
-import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
+import { Sprite, CanvasTexture, SpriteMaterial, type PerspectiveCamera } from 'three';
+import { CircleMarkerType, type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type CustomObjectIntersectInput, type CustomObjectIntersection } from '@cognite/reveal';
 
 const TEXTURE_SIZE = 200;
 const CANVAS_PADDING = 1; // To avoid artifacts on the edge when drawing
+const MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER = 7;
 
 export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
   public override update(change: DomainObjectChange): void {
@@ -21,6 +22,29 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
       this.clearMemory();
       this.invalidateRenderTarget();
     }
+  }
+
+  public override beforeRender(camera: PerspectiveCamera): void {
+    super.beforeRender(camera);
+
+    const { domainObject, object } = this;
+    if (domainObject.type !== CircleMarkerType.FocusPointMarker) {
+      return;
+    }
+    if (object === undefined) {
+      return;
+    }
+    // Mimic the behavior of the point size close to camera.
+    // This will make the point size smaller
+    let radius = domainObject.radius;
+    const distanceToCamera = camera.position.distanceTo(domainObject.position);
+    if (distanceToCamera < MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER) {
+      const fraction = distanceToCamera / MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER;
+      radius *= fraction;
+    }
+    object.position.copy(domainObject.position);
+    object.scale.setScalar(radius * 2);
+    object.updateMatrixWorld();
   }
 
   protected override get style(): CircleMarkerRenderStyle {
