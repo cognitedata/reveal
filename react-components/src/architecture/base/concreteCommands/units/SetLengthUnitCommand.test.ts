@@ -2,8 +2,8 @@ import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/translation/TranslateInput';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { SetLengthUnitCommand } from './SetLengthUnitCommand';
-import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';
 import { Changes } from '../../domainObjectsHelpers/Changes';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 
 describe(SetLengthUnitCommand.name, () => {
   const renderTarget = createFullRenderTargetMock();
@@ -43,7 +43,7 @@ describe(SetLengthUnitCommand.name, () => {
       if (option.isChecked) {
         continue; // Already check
       }
-      const unitSystem = renderTarget.rootDomainObject.unitSystem;
+      const unitSystem = renderTarget.root.unitSystem;
       const oldValue = unitSystem.lengthUnit();
       expect(option.invoke()).toBe(true);
       const newValue = unitSystem.lengthUnit();
@@ -60,7 +60,7 @@ describe(SetLengthUnitCommand.name, () => {
       if (option.isChecked) {
         continue; // Already check
       }
-      const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+      const tester = new EventChangeTester(renderTarget.root, Changes.unit);
       expect(option.invoke()).toBe(true);
       tester.toHaveBeenCalledOnce();
     }

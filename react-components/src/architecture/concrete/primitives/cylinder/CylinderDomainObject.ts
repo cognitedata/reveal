@@ -50,6 +50,8 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
         return { key: 'CYLINDER' };
       case PrimitiveType.HorizontalCircle:
         return { key: 'CIRCLE' };
+      case PrimitiveType.Diameter:
+        return { key: 'DIAMETER' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -163,6 +165,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public get canMoveCaps(): boolean {
     return (
       this.primitiveType === PrimitiveType.Cylinder ||
+      this.primitiveType === PrimitiveType.Diameter ||
       // Horizontal cylinder can move the caps only in the horizontal plane
       // This constrain are implemented in the dragger
       this.primitiveType === PrimitiveType.HorizontalCylinder
@@ -175,6 +178,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 }
 
 const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.Diameter,
   PrimitiveType.Cylinder,
   PrimitiveType.HorizontalCircle,
   PrimitiveType.HorizontalCylinder,

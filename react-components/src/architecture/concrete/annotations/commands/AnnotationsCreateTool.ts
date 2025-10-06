@@ -7,7 +7,7 @@ import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
-import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
+import { NavigationTool } from '../../../base/concreteCommands/navigation/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
 import { type Annotation } from '../helpers/Annotation';
 import { type IconName } from '../../../base/utilities/types';
@@ -199,7 +199,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
+    return this.root.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 
   private getSelectedAnnotationsDomainObjectByForce(): AnnotationsDomainObject {
@@ -209,7 +209,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     }
     const newDomainObject = new AnnotationsDomainObject();
     newDomainObject.applyPendingWhenCreated = true;
-    this.rootDomainObject.addChildInteractive(newDomainObject);
+    this.root.addChildInteractive(newDomainObject);
     newDomainObject.setSelectedInteractive(true);
     newDomainObject.setVisibleInteractive(true);
     return newDomainObject;

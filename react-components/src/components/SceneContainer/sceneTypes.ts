@@ -20,6 +20,17 @@ export type SceneConfiguration = {
   cameraTargetY?: number;
   cameraTargetZ?: number;
   updatedAt?: string;
+  qualitySettings?: SceneQualitySettings;
+};
+
+export type SceneQualitySettings = {
+  cadBudget?: number;
+  pointCloudBudget?: number;
+  maxRenderResolution?: number;
+  movingCameraResolutionFactor?: number;
+  pointCloudPointSize?: number;
+  pointCloudPointShape?: string;
+  pointCloudColor?: string;
 };
 
 export type ClassicModelIdentifier = {
@@ -36,11 +47,13 @@ export type ModelIdentifier = ClassicModelIdentifier | DMModelIdenfitier;
 
 export type CadOrPointCloudModel = Transformation3d & {
   modelIdentifier: ModelIdentifier;
+  defaultVisible?: boolean;
 };
 
 export type Image360Collection = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
+  defaultVisible?: boolean;
 };
 
 export type Skybox = {

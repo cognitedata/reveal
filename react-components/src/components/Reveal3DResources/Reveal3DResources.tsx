@@ -23,18 +23,28 @@ export const Reveal3DResources = ({
   const renderTarget = hooks.useRenderTarget();
   const viewer = hooks.useReveal();
 
-  hooks.useRemoveNonReferencedModels(resources, renderTarget);
-
   const { data: reveal3DModels } = hooks.useTypedModels(viewer, resources, onResourceLoadError);
+
+  const { image360CollectionAddOptions, image360CollectionOptionsWithSettings } = useMemo(() => {
+    const image360CollectionAddOptions = resources.filter(is360ImageAddOptions);
+    const image360CollectionOptionsWithSettings = image360CollectionAddOptions.map((options) => ({
+      ...image360Settings,
+      ...options
+    }));
+    return {
+      image360CollectionAddOptions,
+      image360CollectionOptionsWithSettings
+    };
+  }, [resources, image360Settings]);
+
+  hooks.useRemoveNonReferencedModels(
+    reveal3DModels ?? EMPTY_ARRAY,
+    image360CollectionAddOptions,
+    renderTarget
+  );
 
   hooks.useSetExpectedLoadCount(resources);
   hooks.useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
-
-  const image360CollectionAddOptions = useMemo(() => {
-    return resources
-      .filter(is360ImageAddOptions)
-      .map((options) => ({ ...image360Settings, ...options }));
-  }, [resources, image360Settings]);
 
   const cadModelOptions = useMemo(() => {
     if (reveal3DModels === undefined) {
@@ -86,6 +96,7 @@ export const Reveal3DResources = ({
             addModelOptions={model}
             styling={cadStyling}
             transform={model.transform}
+            defaultVisible={model.defaultVisible}
             onLoad={onResourceIsLoaded}
             onLoadError={onResourceLoadError}
           />
@@ -108,13 +119,14 @@ export const Reveal3DResources = ({
             key={key}
             addModelOptions={model}
             styling={pcStyling}
+            defaultVisible={model.defaultVisible}
             transform={model.transform}
             onLoad={onResourceIsLoaded}
             onLoadError={onResourceLoadError}
           />
         );
       })}
-      {image360CollectionAddOptions.map((addModelOption) => {
+      {image360CollectionOptionsWithSettings.map((addModelOption) => {
         const image360Styling: ImageCollectionModelStyling = {
           defaultStyle: defaultResourceStyling?.image360?.default,
           groups: image360StyledGroup
@@ -132,6 +144,7 @@ export const Reveal3DResources = ({
               key={key}
               addImage360CollectionOptions={addModelOption}
               styling={image360Styling}
+              defaultVisible={addModelOption.defaultVisible}
               onLoad={onResourceIsLoaded}
               onLoadError={onResourceLoadError}
             />

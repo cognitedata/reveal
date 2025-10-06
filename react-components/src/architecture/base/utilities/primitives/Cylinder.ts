@@ -1,6 +1,6 @@
-import { type Box3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
+import { type Box3, Line3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { Range3 } from '../geometry/Range3';
-import { square } from '../extensions/mathUtils';
+import { isEqual, square } from '../extensions/mathUtils';
 import { Primitive } from './Primitive';
 import { PrimitiveType } from './PrimitiveType';
 
@@ -54,8 +54,7 @@ export class Cylinder extends Primitive {
   public override setMatrix(matrix: Matrix4): void {
     const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
     const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
-    const scale = new Vector3();
-    matrix.decompose(new Vector3(), new Quaternion(), scale);
+    const scale = new Vector3().setFromMatrixScale(matrix);
 
     this.centerA.copy(centerA);
     this.centerB.copy(centerB);
@@ -90,6 +89,25 @@ export class Cylinder extends Primitive {
       return false;
     }
     return true;
+  }
+
+  public getPointsInside(points: Vector3[]): Vector3[] {
+    // It could reused Cylinder.isPointInside, but this is a lot faster for many points
+    // as it avoids a extra memory allocations
+    const centerLine = new Line3(this.centerA, this.centerB);
+    const target = new Vector3();
+    return points.filter((point) => {
+      const t = centerLine.closestPointToPointParameter(point, false);
+      if (t < 0 || t > 1) {
+        return false; // Not on line
+      }
+      const closestPoint = centerLine.at(t, target);
+      const distanceToAxis = closestPoint.distanceTo(point);
+      if (distanceToAxis > this.radius) {
+        return false; // Outside radius
+      }
+      return true;
+    });
   }
 
   public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined {
@@ -197,6 +215,19 @@ export class Cylinder extends Primitive {
     this.radius = cylinder.radius;
     this.centerA.copy(cylinder.centerA);
     this.centerB.copy(cylinder.centerB);
+    return this;
+  }
+
+  public applyMatrix4(matrix: Matrix4): this {
+    const scale = new Vector3().setFromMatrixScale(matrix);
+    if (!isEqual(scale.x, scale.y) || !isEqual(scale.x, scale.z)) {
+      console.warn(
+        'Cylinder.applyMatrix4: The matrix has non-uniform scale, result may be incorrect.'
+      );
+    }
+    this.centerA.applyMatrix4(matrix);
+    this.centerB.applyMatrix4(matrix);
+    this.radius *= scale.x;
     return this;
   }
 

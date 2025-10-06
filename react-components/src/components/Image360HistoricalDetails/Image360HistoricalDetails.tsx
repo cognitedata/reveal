@@ -1,21 +1,8 @@
-import { type DataSourceType, type Cognite3DViewer, type Image360 } from '@cognite/reveal';
-import { type ReactElement, useEffect, useRef, useState } from 'react';
-import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
-import {
-  Image360HistoricalSummary,
-  type Image360RevisionDetails
-} from './Toolbar/Image360HistoricalSummary';
-import { formatDate } from './utils/FormatDate';
+import { useContext, type ReactElement } from 'react';
 import styled from 'styled-components';
 import { uniqueId } from 'lodash';
-import { getStationIdentifier } from './utils/getStationIdentifier';
-
-export type Image360HistoricalDetailsProps = {
-  viewer: Cognite3DViewer<DataSourceType>;
-  image360Entity?: Image360<DataSourceType>;
-  onExpand?: (isExpanded: boolean) => void;
-  fallbackLanguage?: string;
-};
+import { type Image360HistoricalDetailsProps } from './types';
+import { Image360HistoricalDetailsContext } from './Image360HistoricalDetails.context';
 
 export const Image360HistoricalDetails = ({
   viewer,
@@ -23,61 +10,30 @@ export const Image360HistoricalDetails = ({
   onExpand,
   fallbackLanguage
 }: Image360HistoricalDetailsProps): ReactElement => {
-  const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
-  const [activeRevision, setActiveRevision] = useState<number>(0);
-  const [revisionCollection, setRevisionCollection] = useState<Image360RevisionDetails[]>([]);
-  const [imageUrls, setImageUrls] = useState<Array<string | undefined>>([]);
-  const [minWidth, setMinWidth] = useState('100px');
-  const newScrollPosition = useRef(0);
+  const {
+    Image360HistoricalPanel,
+    Image360HistoricalSummary,
+    useImage360HistoricalDetailsViewModel
+  } = useContext(Image360HistoricalDetailsContext);
 
-  useEffect(() => {
-    const fetchRevisionCollection = async (): Promise<void> => {
-      if (image360Entity !== undefined) {
-        const revisions = image360Entity.getRevisions();
-        const revisionDates = revisions.map((revision) => revision.date);
-        const imageDatas = await Promise.all(
-          revisions.map(async (revision) => await revision.getPreviewThumbnailUrl())
-        );
-        setImageUrls(imageDatas);
-
-        const collection = revisionDates.map((date, index) => {
-          return {
-            date: formatDate(date),
-            imageUrl: imageDatas[index],
-            index,
-            image360Entity
-          };
-        });
-
-        newScrollPosition.current = 0;
-        setRevisionCollection(collection);
-        setActiveRevision(0);
-      }
-    };
-
-    void fetchRevisionCollection();
-
-    return () => {
-      // Remove image URLs
-      imageUrls.forEach((url) => {
-        if (url !== undefined) {
-          URL.revokeObjectURL(url);
-        }
-      });
-      setImageUrls([]);
-    };
-  }, [image360Entity, imageUrls]);
-
-  useEffect(() => {
-    const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
-    setMinWidth(newMinWidth);
-    if (onExpand !== undefined) {
-      onExpand(revisionDetailsExpanded);
-    }
-  }, [revisionDetailsExpanded, onExpand]);
+  const {
+    revisionDetailsExpanded,
+    setRevisionDetailsExpanded,
+    activeRevision,
+    setActiveRevision,
+    revisionCollection,
+    newScrollPosition,
+    stationId,
+    stationName
+  } = useImage360HistoricalDetailsViewModel({
+    viewer,
+    image360Entity,
+    onExpand,
+    fallbackLanguage
+  });
 
   return (
-    <DetailsContainer style={{ minWidth }}>
+    <DetailsContainer $revisionDetailsExpanded={revisionDetailsExpanded}>
       {
         <>
           <Image360HistoricalPanel
@@ -92,10 +48,8 @@ export const Image360HistoricalDetails = ({
               ref={newScrollPosition}
               key={uniqueId()}
               viewer={viewer}
-              stationId={
-                image360Entity !== undefined ? getStationIdentifier(image360Entity) : undefined
-              }
-              stationName={image360Entity?.label}
+              stationId={stationId}
+              stationName={stationName}
               activeRevision={activeRevision}
               setActiveRevision={setActiveRevision}
               revisionCollection={revisionCollection}
@@ -108,10 +62,11 @@ export const Image360HistoricalDetails = ({
   );
 };
 
-const DetailsContainer = styled.div`
+const DetailsContainer = styled.div<{ $revisionDetailsExpanded: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
   height: fit-content;
   width: 100%;
+  min-width: ${({ $revisionDetailsExpanded }) => ($revisionDetailsExpanded ? '100%' : '100px')};
 `;

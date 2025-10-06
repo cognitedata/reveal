@@ -7,16 +7,18 @@ import { ExampleTool } from './concrete/example/ExampleTool';
 import { MeasurementTool } from './concrete/measurements/MeasurementTool';
 import { installToolbars } from './installToolbars';
 import { type BaseTool } from './base/commands/BaseTool';
-import { NavigationTool } from './base/concreteCommands/NavigationTool';
+import { NavigationTool } from './base/concreteCommands/navigation/NavigationTool';
 
 describe(installToolbars.name, () => {
   test('Should have toolbars with correct number of commands for the following tools', () => {
     installToolbars();
+
+    // The number here are the number of commands in the toolbar for each tool
     expect(getCommandsInToolbarCount(new AnnotationsCreateTool())).toBe(5);
     expect(getCommandsInToolbarCount(new AnnotationsSelectTool())).toBe(6);
     expect(getCommandsInToolbarCount(new ClipTool())).toBe(11);
     expect(getCommandsInToolbarCount(new ExampleTool())).toBe(5);
-    expect(getCommandsInToolbarCount(new MeasurementTool())).toBe(12);
+    expect(getCommandsInToolbarCount(new MeasurementTool())).toBe(13);
   });
 
   test('Should not install toolbar for navigation ', () => {

@@ -30,7 +30,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
     if (cropBox !== undefined) {
       return cropBox.focusType !== FocusType.Pending;
     }
-    if (this.rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
+    if (this.root.getDescendantByType(SliceDomainObject) !== undefined) {
       return true;
     }
     return false;
@@ -57,7 +57,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
         renderTarget.fitView();
       }
     } else {
-      setClippingPlanes(this.rootDomainObject);
+      setClippingPlanes(this.root);
     }
     return true;
   }
@@ -67,6 +67,6 @@ export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================
 
   private getSelectedCropBoxDomainObject(): CropBoxDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(CropBoxDomainObject);
+    return this.root.getSelectedDescendantByType(CropBoxDomainObject);
   }
 }

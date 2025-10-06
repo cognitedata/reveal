@@ -5,7 +5,11 @@ import {
   type AddImage360CollectionDatamodelsOptions,
   type AddPointCloudResourceOptions
 } from '../../components';
-import { type GroundPlane, type Skybox } from '../../components/SceneContainer/sceneTypes';
+import {
+  type SceneQualitySettings,
+  type GroundPlane,
+  type Skybox
+} from '../../components/SceneContainer/sceneTypes';
 
 export type Transformation3d = {
   translationX: number;
@@ -31,6 +35,7 @@ export type SceneData = {
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;
+  qualitySettings?: SceneQualitySettings;
 };
 
 export type SceneModelsProperties = Transformation3d & {
@@ -50,6 +55,13 @@ export type SceneConfigurationProperties = {
   cameraTargetY?: number;
   cameraTargetZ?: number;
   updatedAt?: string;
+  cadBudget?: number;
+  pointCloudBudget?: number;
+  maxRenderResolution?: number;
+  movingCameraResolutionFactor?: number;
+  pointCloudPointSize?: number;
+  pointCloudPointShape?: string;
+  pointCloudColor?: string;
 };
 
 export type SkyboxProperties = {
@@ -68,11 +80,13 @@ export type GroundPlaneProperties = {
 
 export type Cdf3dRevisionProperties = Transformation3d & {
   revisionId: number;
+  defaultVisible?: boolean;
 };
 
 export type Cdf3dImage360CollectionProperties = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
+  defaultVisible?: boolean;
 };
 
 export const SCENE_SOURCE = {
@@ -144,38 +158,21 @@ export const transformationSourceWithProperties = [
 export const sceneSourceWithProperties = [
   {
     source: SCENE_SOURCE,
-    properties: [
-      'name',
-      'skybox',
-      'cameraTranslationX',
-      'cameraTranslationY',
-      'cameraTranslationZ',
-      'cameraEulerRotationX',
-      'cameraEulerRotationY',
-      'cameraEulerRotationZ',
-      'cameraTargetX',
-      'cameraTargetY',
-      'cameraTargetZ',
-      'updatedAt'
-    ]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
 export const revisionSourceWithProperties = [
   {
     source: REVISION_SOURCE,
-    properties: ['revisionId', ...transformationSourceWithProperties[0].properties]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
 export const image360CollectionSourceWithProperties = [
   {
     source: IMAGE_360_COLLECTION_SOURCE,
-    properties: [
-      'image360CollectionExternalId',
-      'image360CollectionSpace',
-      ...transformationSourceWithProperties[0].properties
-    ]
+    properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 

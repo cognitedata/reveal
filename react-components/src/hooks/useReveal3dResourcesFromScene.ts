@@ -47,7 +47,11 @@ export const useReveal3dResourcesFromScene = (
 
         const transform = createResourceTransformation(model);
 
-        addResourceOptions.push({ ...addModelOptions, transform });
+        addResourceOptions.push({
+          ...addModelOptions,
+          transform,
+          defaultVisible: model.defaultVisible
+        });
       } else if (isDM3DModelIdentifier(model.modelIdentifier)) {
         const addModelOptions: AddModelOptions<DMDataSourceType> = {
           revisionExternalId: model.modelIdentifier.revisionExternalId,
@@ -56,7 +60,11 @@ export const useReveal3dResourcesFromScene = (
 
         const transform = createResourceTransformation(model);
 
-        addResourceOptions.push({ ...addModelOptions, transform });
+        addResourceOptions.push({
+          ...addModelOptions,
+          transform,
+          defaultVisible: model.defaultVisible
+        });
       }
     });
 
@@ -68,7 +76,11 @@ export const useReveal3dResourcesFromScene = (
         space: collection.image360CollectionSpace
       };
 
-      addResourceOptions.push({ ...addModelOptions, transform });
+      addResourceOptions.push({
+        ...addModelOptions,
+        transform,
+        defaultVisible: collection.defaultVisible
+      });
     });
     setResourceOptions(addResourceOptions);
   }, [scene.data, isCoreDm]);

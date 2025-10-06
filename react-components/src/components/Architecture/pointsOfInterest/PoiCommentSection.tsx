@@ -4,11 +4,11 @@ import { type PointOfInterest } from '../../../architecture';
 import { CreatePoiCommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoiCommentCommand';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { useTranslation } from '../../i18n/I18n';
-import { createButton } from '../CommandButtons';
 import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { useSelectedPoi } from './useSelectedPoi';
 import styled from 'styled-components';
 import { TextWithClickableLink } from '../../../utilities/TextWithClickableLink';
+import { useComponentFactory } from '../../RevealCanvas/ComponentFactoryContext';
 
 export const PoiCommentSection = (): ReactNode => {
   const { t } = useTranslation();
@@ -55,8 +55,10 @@ export const CreateCommentField = ({
       refetchComments();
     };
     return command;
-  }, [poi, refetchComments]);
-  return createButton(command, 'right');
+  }, [poi]);
+
+  const factory = useComponentFactory();
+  return factory.createElement(command, 'right');
 };
 
 const StyledCreateCommentField = styled(CreateCommentField)`

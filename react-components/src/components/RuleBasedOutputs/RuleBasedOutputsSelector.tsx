@@ -42,9 +42,9 @@ export function RuleBasedOutputsSelector({
     use3dModels,
     useAssetMappedNodesForRevisions,
     useMappedEdgesForRevisions,
-    useAssetsByIdsQuery,
     useAll3dDirectConnectionsWithProperties,
     useGetDMConnectionWithNodeFromHybridMappingsQuery,
+    useFetchClassicAssetsByIds,
     generateRuleBasedOutputs
   } = useContext(RuleBasedOutputsSelectorContext);
 
@@ -63,15 +63,23 @@ export function RuleBasedOutputsSelector({
 
   const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
+  const {
+    data: allClassicAsset,
+    isLoading: isAllClassicAssetConnectionsLoading,
+    isFetched: isAllClassicAssetConnectionsFetched
+  } = useFetchClassicAssetsByIds(assetIdsFromMapped);
+
+  const allClassicAssetConnections = useMemo(() => {
+    if (allClassicAsset === undefined || assetIdsFromMapped.length === 0) {
+      return undefined;
+    }
+    const mappedIds = new Set(assetIdsFromMapped.map((id) => id.id));
+    return allClassicAsset.filter((asset) => mappedIds.has(asset.id));
+  }, [allClassicAsset, assetIdsFromMapped]);
+
   const nodeWithDmIdsFromHybridMappings = useMemo(() => {
     return assetMappings?.flatMap((item) => item.assetMappings.filter(isDmCadAssetMapping));
   }, [assetMappings]);
-
-  const {
-    data: allClassicAssetConnections,
-    isLoading: isAllClassicAssetConnectionsLoading,
-    isFetched: isAllClassicAssetConnectionsFetched
-  } = useAssetsByIdsQuery(assetIdsFromMapped);
 
   const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
     useMappedEdgesForRevisions(cadModels, true);

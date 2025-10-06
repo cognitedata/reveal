@@ -5,35 +5,44 @@ import { type Vector3 } from 'three';
 
 import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
 
-import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
-import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
-import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
+import { NavigationTool } from '../../architecture/base/concreteCommands/navigation/NavigationTool';
+import { FitViewCommand } from '../../architecture/base/concreteCommands/navigation/FitViewCommand';
+import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/navigation/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
-import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
+import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/navigation/KeyboardSpeedCommand';
 import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { CreateButtonFromCommandConstructor } from './CommandButtons';
-import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
-import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
+import { SettingsCommand } from '../../architecture/base/concreteCommands/general/SettingsCommand';
+import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/navigation/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
-import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
+import { Image360ActionCommand } from '../../architecture/concrete/reveal/Image360Collection/commands/Image360ActionCommand';
 import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
 import { DeleteSelectedPointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/DeletePointsOfInterestCommand';
 
 import { Image360AnnotationCreateTool } from '../../architecture/concrete/annotation360/Image360AnnotationCreateTool';
 import { Image360AnnotationSelectTool } from '../../architecture/concrete/annotation360/Image360AnnotationSelectTool';
-import { PointCloudFilterCommand } from '../../architecture/base/concreteCommands/pointCloud/PointCloudFilterCommand';
-import { UndoCommand } from '../../architecture/base/concreteCommands/UndoCommand';
+import { PointCloudFilterCommand } from '../../architecture/concrete/reveal/pointCloud/commands/PointCloudFilterCommand';
+import { UndoCommand } from '../../architecture/base/concreteCommands/general/UndoCommand';
+import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
+import { ShareCommand } from '../../architecture/base/concreteCommands/general/ShareCommand';
+import { type GeneralBannerContent } from '../../architecture';
 
 export class RevealButtons {
+  static Help = (prop: ButtonProp): ReactElement =>
+    CreateButtonFromCommandConstructor(() => new HelpCommand(), prop);
+
+  static Share = (prop: ButtonProp): ReactElement =>
+    CreateButtonFromCommandConstructor(() => new ShareCommand(), prop);
+
   static Settings = (props: SettingsProp): ReactElement =>
     CreateButtonFromCommandConstructor(
-      () => new SettingsCommand(props.include360Images, props.includePois),
+      () => new SettingsCommand(props.include360Images, props.includePois, props.topBanner),
       props
     );
 
@@ -132,6 +141,7 @@ export type ButtonProp = {
 type SettingsProp = ButtonProp & {
   include360Images?: boolean;
   includePois?: boolean;
+  topBanner?: GeneralBannerContent;
 };
 
 type Image360Prop = ButtonProp & {

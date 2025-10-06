@@ -351,6 +351,7 @@ export class CdfModelIdentifier implements ModelIdentifier {
     readonly revealInternalId: symbol;
     // (undocumented)
     readonly revisionId: number;
+    sourceModelIdentifier(): string;
     // (undocumented)
     toString(): string;
 }
@@ -388,6 +389,7 @@ export type ClassicDataSourceType = {
     pointCloudVolumeMetadata: {
         annotationId: number;
         assetRef?: AnnotationsAssetRef;
+        instanceRef?: DMInstanceRef;
     };
     pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
     image360Identifier: {
@@ -1578,6 +1580,7 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
 // @public
 export interface ModelIdentifier {
     readonly revealInternalId: symbol;
+    sourceModelIdentifier(): string;
 }
 
 // @public

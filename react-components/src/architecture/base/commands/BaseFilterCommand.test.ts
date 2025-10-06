@@ -1,8 +1,8 @@
 import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { BaseFilterCommand } from './BaseFilterCommand';
-import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { isOdd } from '../utilities/extensions/mathUtils';
+import { MockFilterCommand } from '#test-utils/architecture/mock-commands/MockFilterCommand';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 
 describe(BaseFilterCommand.name, () => {
   let command: MockFilterCommand;

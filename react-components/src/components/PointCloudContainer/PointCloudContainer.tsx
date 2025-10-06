@@ -26,6 +26,7 @@ export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions<DataSourceType>;
   styling?: PointCloudModelStyling;
   transform?: Matrix4;
+  defaultVisible?: boolean;
   onLoad?: (model: CognitePointCloudModel<DataSourceType>) => void;
   onLoadError?: (options: AddModelOptions<DataSourceType>, error: any) => void;
 };
@@ -34,6 +35,7 @@ export function PointCloudContainer({
   addModelOptions,
   styling,
   transform,
+  defaultVisible,
   onLoad,
   onLoadError
 }: CognitePointCloudModelProps): ReactElement {
@@ -129,7 +131,7 @@ export function PointCloudContainer({
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
       }
-      return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions);
+      return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions, defaultVisible);
     }
   }
 

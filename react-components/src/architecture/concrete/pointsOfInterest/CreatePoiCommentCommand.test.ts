@@ -45,7 +45,7 @@ describe(CreatePoiCommentCommand.name, () => {
     const mockPointOfInterestProvider = createPointsOfInterestProviderMock();
 
     const domainObject = new PointsOfInterestDomainObject(mockPointOfInterestProvider);
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
 
     const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
     command.attach(renderTarget);

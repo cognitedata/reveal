@@ -42,6 +42,6 @@ export class AnnotationsDeleteCommand extends RenderTargetCommand {
   // ==================================================
 
   private getAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
+    return this.root.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 }

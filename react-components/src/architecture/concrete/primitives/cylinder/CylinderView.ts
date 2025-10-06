@@ -47,10 +47,12 @@ const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_MAX_RADIUS = 0.9;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
+const LABEL_PADDING_FACTOR = 1.1;
+const SMALL_SIZE_TOLERANCE_FACTOR = 0.99;
 
 const HEIGHT_LABEL = 'HeightLabel';
-const RADIUS_LABEL_A = 'RadiusLabelA';
-const RADIUS_LABEL_B = 'RadiusLabelB';
+const DIAMETER_LABEL_A = 'DiameterLabelA';
+const DIAMETER_LABEL_B = 'DiameterLabelB';
 
 const RENDER_ORDER = 100;
 const LABEL_RENDER_ORDER = 101;
@@ -146,10 +148,12 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     }
 
     const { cylinder } = domainObject;
-    const centerA = cylinder.centerA.clone();
-    const centerB = cylinder.centerB.clone();
+
+    const centerA = newVector3(cylinder.centerA);
+    const centerB = newVector3(cylinder.centerB);
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
     const ray = intersectInput.raycaster.ray;
     const point = cylinder.intersectRay(ray, CDF_TO_VIEWER_TRANSFORMATION);
     if (point === undefined) {
@@ -327,39 +331,40 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   private addLabels(): void {
     const type = this.domainObject.primitiveType;
     if (
+      type === PrimitiveType.Diameter ||
       type === PrimitiveType.VerticalCylinder ||
       type === PrimitiveType.HorizontalCircle ||
       type === PrimitiveType.HorizontalCylinder
     ) {
-      this.addChild(this.createRadiusLabel(RADIUS_LABEL_B));
-      this.addChild(this.createRadiusLabel(RADIUS_LABEL_A));
+      this.addChild(this.createDiameterLabel(DIAMETER_LABEL_B));
+      this.addChild(this.createDiameterLabel(DIAMETER_LABEL_A));
     }
     if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCylinder) {
       this.addChild(this.createHeightLabel(HEIGHT_LABEL));
     }
   }
 
-  private createRadiusLabel(name: string): Sprite | undefined {
-    const value = this.domainObject.cylinder.radius;
-    if (!Cylinder.isValidSize(value)) {
+  private createDiameterLabel(name: string): Sprite | undefined {
+    const { cylinder } = this.domainObject;
+    if (cylinder.radius < Cylinder.MinSize * SMALL_SIZE_TOLERANCE_FACTOR) {
       return undefined; // Not show when about 0
     }
-    const labelHeight = this.getRadiusLabelHeight();
-    return this.createLabel(name, value, labelHeight);
+    const labelHeight = this.getDiameterLabelHeight();
+    return this.createLabel(name, cylinder.diameter, labelHeight);
   }
 
   private createHeightLabel(name: string): Sprite | undefined {
     const value = this.domainObject.cylinder.height;
-    if (!Cylinder.isValidSize(value * 0.99)) {
+    if (value < Cylinder.MinSize * SMALL_SIZE_TOLERANCE_FACTOR) {
       return undefined; // Not show when about 0
     }
     const labelHeight = this.getHeightLabelHeight();
     return this.createLabel(name, value, labelHeight);
   }
 
-  private getRadiusLabelHeight(): number {
+  private getDiameterLabelHeight(): number {
     const { style, domainObject } = this;
-    return 4 * style.relativeTextSize * domainObject.cylinder.radius;
+    return 2 * style.relativeTextSize * domainObject.cylinder.diameter;
   }
 
   private getHeightLabelHeight(): number {
@@ -376,35 +381,36 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   private updateLabels(camera: PerspectiveCamera): void {
-    const radiusLabelA = this._group.getObjectByName(RADIUS_LABEL_A);
-    const radiusLabelB = this._group.getObjectByName(RADIUS_LABEL_B);
+    const diameterLabelA = this._group.getObjectByName(DIAMETER_LABEL_A);
+    const diameterLabelB = this._group.getObjectByName(DIAMETER_LABEL_B);
     const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
-    if (radiusLabelA === undefined && radiusLabelB === undefined && heightLabel === undefined) {
+
+    if (diameterLabelA === undefined && diameterLabelB === undefined && heightLabel === undefined) {
       return;
     }
-    const { domainObject } = this;
-    const radius = domainObject.cylinder.radius;
+    const { cylinder } = this.domainObject;
 
-    const centerA = domainObject.cylinder.centerA.clone();
-    const centerB = domainObject.cylinder.centerB.clone();
+    const centerA = newVector3(cylinder.centerA);
+    const centerB = newVector3(cylinder.centerB);
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
     const axis = newVector3().subVectors(centerB, centerA).normalize();
     const cameraPosition = camera.getWorldPosition(newVector3());
-
-    if (radiusLabelA !== undefined) {
-      updateRadiusLabel(centerA, radiusLabelA, -1, this.getRadiusLabelHeight());
+    if (diameterLabelA !== undefined) {
+      updateDiameterLabel(centerA, diameterLabelA, -1, this.getDiameterLabelHeight());
     }
-    if (radiusLabelB !== undefined) {
-      updateRadiusLabel(centerB, radiusLabelB, 1, this.getRadiusLabelHeight());
+    if (diameterLabelB !== undefined) {
+      updateDiameterLabel(centerB, diameterLabelB, 1, this.getDiameterLabelHeight());
     }
     if (heightLabel !== undefined) {
-      const center = newVector3().addVectors(centerB, centerA).multiplyScalar(0.5);
-      updateHeightLabel(center, heightLabel);
+      const center = newVector3().addVectors(centerA, centerB).multiplyScalar(0.5);
+      if (heightLabel !== undefined) {
+        updateHeightLabel(center, heightLabel);
+      }
     }
 
-    function updateRadiusLabel(
+    function updateDiameterLabel(
       center: Vector3,
       label: Object3D,
       sign: number,
@@ -416,8 +422,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
         return;
       }
       const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
-      const position = newVector3(center).addScaledVector(radialDirection, radius / 2);
-      position.addScaledVector(axis, (sign * 1.1 * labelHeight) / 2);
+      const position = newVector3(center).addScaledVector(radialDirection, 0.5 * cylinder.radius);
+      position.addScaledVector(axis, 0.5 * sign * LABEL_PADDING_FACTOR * labelHeight);
       label.position.copy(position);
     }
 
@@ -425,8 +431,9 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       const cameraDirection = newVector3().subVectors(center, cameraPosition).normalize();
       const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
       const forwardDirection = newVector3().crossVectors(radialDirection, axis).normalize();
-      center.addScaledVector(forwardDirection, radius);
+
       label.position.copy(center);
+      label.position.addScaledVector(forwardDirection, cylinder.radius);
       label.visible = true;
     }
   }

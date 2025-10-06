@@ -8,6 +8,7 @@ import { type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
+import { ComponentFactoryContextProvider } from '../RevealCanvas/ComponentFactoryContext';
 
 describe(BannerComponent.name, () => {
   let renderTargetMock: RevealRenderTarget;
@@ -17,7 +18,9 @@ describe(BannerComponent.name, () => {
     renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+      <ComponentFactoryContextProvider>
+        <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
+      </ComponentFactoryContextProvider>
     );
   });
 

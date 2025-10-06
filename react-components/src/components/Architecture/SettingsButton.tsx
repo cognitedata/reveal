@@ -9,18 +9,32 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { DropdownButton } from './DropdownButton';
 import { FilterButton } from './FilterButton';
-import { getFlexDirection, getTooltipPlacement } from './utilities';
+import {
+  getFlexDirection,
+  getTooltipPlacement,
+  getDropdownPlacement,
+  DROP_DOWN_OFFSET
+} from './utilities';
 import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
+import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { type FlexDirection, type PlacementType } from './types';
 import { type ReactNode, useState, type ReactElement } from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
+
+export function createSettingsButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseSettingsCommand) {
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+  return undefined;
+}
 
 export const SettingsButton = ({
   inputCommand,
@@ -40,14 +54,6 @@ export const SettingsButton = ({
   const flexDirection = getFlexDirection(placement);
   const isTooltipDisabled = isOpen || label === undefined;
 
-  // This ensures the rule for where the dropdown panel should open:
-  // Horizontal toolbar at top:    Below the button
-  // Horizontal toolbar at bottom: Above the button
-  // Vertical toolbar at left:     Right of the button
-  // Vertical toolbar at right:    Left of the button
-  const dropdownPlacement =
-    placement === 'top' || placement === 'bottom' ? 'bottom-end' : 'right-start';
-
   return (
     <Dropdown
       disabled={!isEnabled}
@@ -63,8 +69,8 @@ export const SettingsButton = ({
       onHide={(open) => {
         setOpen(open);
       }}
-      placement={dropdownPlacement}
-      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 0 }}>
+      placement={getDropdownPlacement(placement)}
+      offset={DROP_DOWN_OFFSET}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
         disabled={isTooltipDisabled}
@@ -244,8 +250,9 @@ const StyledToggleContainer = styled(Flex).attrs({
 `;
 
 const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
-  max-height: 600px;
+  max-height: 700px;
   min-width: 340px;
+  max-width: 400px;
   overflow-x: hidden;
   overflow-y: auto;
   flexdirection: ${({ $flexDirection }) => $flexDirection};

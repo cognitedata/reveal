@@ -21,6 +21,7 @@ import {
   useCameraStateControl,
   type CameraStateParameters
 } from '../RevealCanvas/hooks/useCameraStateControl';
+import { ComponentFactoryContextProvider } from '../RevealCanvas/ComponentFactoryContext';
 
 export type RevealContextProps = {
   color?: Color;
@@ -58,23 +59,27 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
     });
   }, []);
 
-  if (renderTarget === null) return <></>;
+  if (renderTarget === null) {
+    return <></>;
+  }
 
   return (
     <SDKProvider sdk={props.sdk}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
-            <ViewerContextProvider value={renderTarget}>
-              <ViewerControls
-                cameraState={props.cameraState}
-                setCameraState={props.setCameraState}
-              />
+            <ComponentFactoryContextProvider>
+              <ViewerContextProvider renderTarget={renderTarget}>
+                <ViewerControls
+                  cameraState={props.cameraState}
+                  setCameraState={props.setCameraState}
+                />
 
-              <Reveal3DResourcesInfoContextProvider>
-                {props.children}
-              </Reveal3DResourcesInfoContextProvider>
-            </ViewerContextProvider>
+                <Reveal3DResourcesInfoContextProvider>
+                  {props.children}
+                </Reveal3DResourcesInfoContextProvider>
+              </ViewerContextProvider>
+            </ComponentFactoryContextProvider>
           </LoadedSceneProvider>
         </I18nContextProvider>
       </QueryClientProvider>
