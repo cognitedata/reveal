@@ -11,6 +11,7 @@ import { type AssetProperties } from '../data-providers/core-dm-provider/utils/f
 import { type FdmKey } from '../components/CacheProvider/types';
 import { type MOUSE, type Vector2 } from 'three';
 import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { AssetInstance } from '../utilities/instances';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;
@@ -47,7 +48,7 @@ export type Reveal360AnnotationAssetData = {
 
 export type PointCloudAnnotationMappedAssetData = {
   annotationId: number;
-  asset: Asset;
+  asset: AssetInstance;
 };
 
 export type Image360AnnotationMappedAssetData =
