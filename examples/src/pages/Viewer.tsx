@@ -40,6 +40,8 @@ import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
+import { Water } from './Waves';
+import { GerstnerWave } from './GerstnerWave';
 
 (window as any).reveal = reveal;
 
@@ -427,6 +429,9 @@ export function Viewer() {
 
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
+
+      const waterAgain = new GerstnerWave((dir: THREE.Vector3) => viewer._sunDirection.copy(dir));
+      viewer.addObject3D(waterAgain);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

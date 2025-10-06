@@ -260,6 +260,8 @@ export function createMaterials(
   };
 }
 
+export const SUN_DIRECTION = new THREE.Vector3(2, 2, 0).normalize();
+
 export function initializeDefinesAndUniforms(
   material: THREE.RawShaderMaterial,
   overrideColorPerTreeIndex: THREE.DataTexture,
@@ -303,6 +305,9 @@ export function initializeDefinesAndUniforms(
       },
       matCapTexture: {
         value: matCapTexture
+      },
+      sunDirection: {
+        value: new THREE.Vector3()
       }
     }
   });

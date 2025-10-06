@@ -67,6 +67,10 @@ export class SceneHandler {
     this._scene.add(customObject.object);
   }
 
+  public hasCustomObjects(): boolean {
+    return this._customObjects.length > 0;
+  }
+
   public removeObject3D(object: THREE.Object3D): void {
     const customObject = this._customObjects.find(customObject => customObject.object === object);
     if (customObject) {

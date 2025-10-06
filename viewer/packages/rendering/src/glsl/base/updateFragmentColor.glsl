@@ -6,6 +6,8 @@
 
 #include <packing>
 
+uniform vec3 sunDirection;
+
 out vec4 outputColor;
 
 vec3 packNormalToRgb( const in vec3 normal ) {
@@ -29,7 +31,10 @@ void updateFragmentColor(
         vec2 cap = normal.xy * 0.5 + 0.5;
         vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
 
-        outputColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
+	vec3 specularReflectionDir = reflect(- sunDirection, normal);
+	float specStrength = pow(max(0.0,dot(specularReflectionDir, vec3(0.0, 0.0, 1.0))), 5.0);
+
+        outputColor = vec4(albedo.rgb * mc.rgb * 1.7 + specStrength * vec3(1.0), color.a);
     } else if (renderMode == RenderTypeGhost) {
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         float s = 0.4 + 0.6 * amplitude;

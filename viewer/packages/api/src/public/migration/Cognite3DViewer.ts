@@ -102,6 +102,7 @@ import { getModelAndRevisionId } from '../../utilities/utils';
 import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 import { Image360Action } from '@reveal/360-images/src/Image360Action';
+import { SUN_DIRECTION } from '@reveal/rendering/src/rendering/materials';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -175,6 +176,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   private readonly _boundAnimate = this.animate.bind(this);
 
+  // Direction to the sun from e.g. origin
+  public _sunDirection: THREE.Vector3 = SUN_DIRECTION.clone();
   private readonly _events = {
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
@@ -1820,6 +1823,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     const camera = this.cameraManager.getCamera();
     TWEEN.update(time);
     this.recalculateBoundingBox();
+    camera.updateMatrix();
+    camera.updateMatrixWorld(true);
+    camera.updateWorldMatrix(true, false);
+    this.revealManager.materialManager.updateSunDirection(this._sunDirection, camera.matrixWorldInverse);
 
     const innerCameraManager = this._activeCameraManager.innerCameraManager;
     if (innerCameraManager instanceof FlexibleCameraManager) {
@@ -1831,7 +1838,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
 
     const needsRedraw =
-      (this.revealManager.needsRedraw || this._clippingNeedsUpdate || image360NeedsRedraw) && !this._forceStopRendering;
+      (this.revealManager.needsRedraw ||
+        this._clippingNeedsUpdate ||
+        image360NeedsRedraw ||
+        this._sceneHandler.hasCustomObjects()) &&
+      !this._forceStopRendering;
 
     this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
 

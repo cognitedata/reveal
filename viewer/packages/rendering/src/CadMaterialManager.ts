@@ -7,7 +7,13 @@ import * as THREE from 'three';
 import { NodeAppearanceTextureBuilder } from './rendering/NodeAppearanceTextureBuilder';
 import { NodeTransformTextureBuilder } from './transform/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './transform/NodeTransformProvider';
-import { createMaterials, Materials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
+import {
+  createMaterials,
+  Materials,
+  initializeDefinesAndUniforms,
+  forEachMaterial,
+  SUN_DIRECTION
+} from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
@@ -249,6 +255,15 @@ export class CadMaterialManager {
 
   getRenderMode(): RenderMode {
     return this._renderMode;
+  }
+
+  public updateSunDirection(sunDirection: THREE.Vector3, cameraWorldInverse: THREE.Matrix4): void {
+    const relativeSunDirection = sunDirection
+      .clone()
+      .applyMatrix4(new THREE.Matrix4().extractRotation(cameraWorldInverse))
+      .normalize();
+
+    this.applyToAllMaterials(material => (material.uniforms['sunDirection'].value = relativeSunDirection));
   }
 
   dispose(): void {
