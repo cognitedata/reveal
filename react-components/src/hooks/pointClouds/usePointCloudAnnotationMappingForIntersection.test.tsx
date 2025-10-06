@@ -119,7 +119,7 @@ describe(usePointCloudAnnotationMappingForIntersection.name, () => {
   });
 
   test('returns annotation mappings for classic intersection with assetRef', async () => {
-    dependencies.fetchAnnotationsForModel.mockReturnValue(mockFetchAnnotationsForModelReturn);
+    dependencies.fetchAnnotationsForModel.mockResolvedValue(mockFetchAnnotationsForModelReturn);
 
     const { result } = renderHook(
       () => usePointCloudAnnotationMappingForIntersection(mockClassicIntersection),
