@@ -8,7 +8,8 @@ import {
   type Nodes3DAPI,
   type Revisions3DAPI,
   type CursorAndAsyncIterator,
-  type AssetMapping3D
+  type AssetMapping3D,
+  type AnnotationModel
 } from '@cognite/sdk';
 import { vi } from 'vitest';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
@@ -41,6 +42,10 @@ export const assetMappings3DFilterMock = vi.fn<AssetMappings3DAPI['filter']>(
 
 export const nodes3dRetrieveMock = vi.fn<Nodes3DAPI['retrieve']>(
   async () => await Promise.resolve([])
+);
+
+export const annotationsListMock = vi.fn<CogniteClient['annotations']['list']>(
+  (): CursorAndAsyncIterator<AnnotationModel> => createCursorAndAsyncIteratorMock({ items: [] })
 );
 
 export const postMock = vi.fn<

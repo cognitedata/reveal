@@ -1,12 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { Mock } from 'moq.ts';
-import {
-  type AnnotationModel,
-  type CogniteClient,
-  type AnnotationFilterProps,
-  type CursorAndAsyncIterator
-} from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
 import { type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
 import { createAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
@@ -15,6 +10,7 @@ import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { createCursorAndAsyncIteratorMock } from '../../../tests/tests-utilities/fixtures/cursorAndIterator';
 
 import { getAssetsForIds } from './common/getAssetsForIds';
+import { annotationsListMock } from '#test-utils/fixtures/sdk';
 
 // Mock the dependencies
 vi.mock(import('./common/getAssetsForIds'), () => ({
@@ -32,10 +28,6 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
   const mockModelId3 = 456;
   const mockRevisionId1 = 456;
   const mockRevisionId2 = 101;
-
-  const annotationsMock = vi.fn<CogniteClient['annotations']['list']>(
-    (): CursorAndAsyncIterator<AnnotationModel> => createCursorAndAsyncIteratorMock({ items: [] })
-  );
 
   const mockModels = [
     { modelId: mockModelId1, revisionId: mockRevisionId1 },
@@ -85,7 +77,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     const annotationRetrieveMock = new Mock<CogniteClient['annotations']>()
       .setup((p) => p.list)
-      .returns(annotationsMock)
+      .returns(annotationsListMock)
       .object();
     mockSdk = new Mock<CogniteClient>()
       .setup((p) => p.getBaseUrl())
@@ -126,7 +118,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
       const mixedAnnotations = [annotationWithAssetRef, annotationWithDmsRef];
 
-      annotationsMock.mockReturnValue(
+      annotationsListMock.mockReturnValue(
         createCursorAndAsyncIteratorMock({ items: mixedAnnotations })
       );
 
