@@ -45,6 +45,7 @@ describe(getInstancesFromClick.name, () => {
     offsetX: 100,
     offsetY: 200
   } as const as PointerEvent;
+
   const classicIdEither: IdEither = { id: 123 };
   const dmInstanceRef: DmsUniqueIdentifier = {
     externalId: 'test-external-id',
@@ -149,8 +150,6 @@ describe(getInstancesFromClick.name, () => {
     .object();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     vi.mocked(viewerMock.get360AnnotationIntersectionFromPixel).mockResolvedValue(
       mockImage360Intersection
     );
