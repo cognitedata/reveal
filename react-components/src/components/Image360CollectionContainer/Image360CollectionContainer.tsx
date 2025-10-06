@@ -29,7 +29,6 @@ export function Image360CollectionContainer({
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
-
   const {
     useRenderTarget,
     useRevealKeepAlive,

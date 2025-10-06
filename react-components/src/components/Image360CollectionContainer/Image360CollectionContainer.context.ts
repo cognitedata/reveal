@@ -17,15 +17,17 @@ export type Image360CollectionContainerContextDependencies = {
   removeImage360CollectionDomainObject: typeof RevealModelsUtils.remove;
 };
 
-export const defaultImage360CollectionContainerContextDependencies: Image360CollectionContainerContextDependencies = {
-  useRenderTarget,
-  useRevealKeepAlive,
-  useReveal3DResourcesCount,
-  useReveal3DResourceLoadFailCount,
-  createImage360CollectionDomainObject: RevealModelsUtils.addImage360Collection.bind(this),
-  removeImage360CollectionDomainObject: RevealModelsUtils.remove.bind(this)
-};
+export const defaultImage360CollectionContainerContextDependencies: Image360CollectionContainerContextDependencies =
+  {
+    useRenderTarget,
+    useRevealKeepAlive,
+    useReveal3DResourcesCount,
+    useReveal3DResourceLoadFailCount,
+    createImage360CollectionDomainObject: RevealModelsUtils.addImage360Collection.bind(this),
+    removeImage360CollectionDomainObject: RevealModelsUtils.remove.bind(this)
+  };
 
-export const Image360CollectionContainerContext = createContext<Image360CollectionContainerContextDependencies>(
-  defaultImage360CollectionContainerContextDependencies
-);
+export const Image360CollectionContainerContext =
+  createContext<Image360CollectionContainerContextDependencies>(
+    defaultImage360CollectionContainerContextDependencies
+  );

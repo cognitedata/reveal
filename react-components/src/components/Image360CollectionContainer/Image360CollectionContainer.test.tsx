@@ -26,7 +26,7 @@ describe(Image360CollectionContainer.name, () => {
     </Image360CollectionContainerContext.Provider>
   );
 
-  const collectionsGetter = vi.fn<() => Image360Collection<ClassicDataSourceType>[]>();
+  const collectionsGetter = vi.fn<() => Array<Image360Collection<ClassicDataSourceType>>>();
   const image360Collection = new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((x) => x.id)
     .returns('test-site-id')
@@ -69,9 +69,10 @@ describe(Image360CollectionContainer.name, () => {
     deps.createImage360CollectionDomainObject.mockResolvedValue(image360Collection);
     collectionsGetter.mockReturnValue([]);
 
-    vi.spyOn(useApply360AnnotationStylingModule, 'useApply360AnnotationStyling').mockImplementation(() => {});
+    vi.spyOn(useApply360AnnotationStylingModule, 'useApply360AnnotationStyling').mockImplementation(
+      () => {}
+    );
   });
-
 
   it('should properly add and remove Image360 Collection when mounting and unmounting Image360CollectionContainer', async () => {
     const addImage360CollectionOptions: AddImage360CollectionOptions = {
@@ -99,7 +100,6 @@ describe(Image360CollectionContainer.name, () => {
       expect(deps.removeImage360CollectionDomainObject).toHaveBeenCalled();
     });
   });
-
 
   it.each([undefined, false, true])(
     'should propagate defaultVisible flag %s to `createImage360CollectionDomainObject`',
