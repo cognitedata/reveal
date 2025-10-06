@@ -3,45 +3,48 @@ import { type PointCloudAnnotationMappedAssetData } from '../types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type AnyIntersection } from '@cognite/reveal';
 import { queryKeys } from '../../utilities/queryKeys';
-import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
-import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
-import { toIdEither } from '../../utilities/instanceIds/toIdEither';
+import { useContext } from 'react';
+import { UsePointCloudAnnotationMappingForIntersectionContext } from './usePointCloudAnnotationMappingForIntersection.context';
 
 export const usePointCloudAnnotationMappingForIntersection = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
+  const {
+    usePointCloudAnnotationCache,
+    fetchAnnotationsForModel,
+    getInstanceDataFromIntersection
+  } = useContext(UsePointCloudAnnotationMappingForIntersectionContext);
+
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
-  const [modelId, revisionId, assetId] = isPointCloudIntersection
-    ? [
-        intersection.model.modelId,
-        intersection.model.revisionId,
-        intersection.assetRef?.externalId ?? intersection.assetRef?.id
-      ]
-    : [undefined, undefined, undefined];
+  const instanceData = getInstanceDataFromIntersection(intersection);
+  const classicModelIdentifier = instanceData?.classicModelIdentifier;
+  const dmsModelUniqueIdentifier = instanceData?.dmsModelUniqueIdentifier;
+  const reference = instanceData?.reference;
+
+  const queryKeyString =
+    classicModelIdentifier !== undefined
+      ? `${classicModelIdentifier.modelId}/${classicModelIdentifier.revisionId}`
+      : `${dmsModelUniqueIdentifier?.revisionExternalId}/${dmsModelUniqueIdentifier?.revisionSpace}`;
 
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudAnnotationForAssetId(
-        `${modelId}/${revisionId}`,
-        assetId?.toString() ?? ''
-      )
+      queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(reference) ?? '')
     ],
     queryFn: async () => {
-      if (modelId === undefined || revisionId === undefined || assetId === undefined) {
+      if (classicModelIdentifier === undefined || reference === undefined) {
         return EMPTY_ARRAY;
       }
-      const idEither = toIdEither(assetId);
       const result = await fetchAnnotationsForModel(
-        modelId,
-        revisionId,
-        [idEither],
+        classicModelIdentifier.modelId,
+        classicModelIdentifier.revisionId,
+        [reference],
         pointCloudAnnotationCache
       );
       return result ?? EMPTY_ARRAY;
     },
     staleTime: Infinity,
-    enabled: isPointCloudIntersection && assetId !== undefined
+    enabled: isPointCloudIntersection && reference !== undefined
   });
 };
