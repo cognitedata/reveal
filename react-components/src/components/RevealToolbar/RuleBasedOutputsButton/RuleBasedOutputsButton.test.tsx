@@ -10,10 +10,13 @@ import {
 } from './RuleBasedOutputsButton.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import { type I18nContent } from '../../i18n/types';
-import { type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/modelWithAssetMappings';
+import { createAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
 import { type UseQueryResult } from '@tanstack/react-query';
-import { type RuleAndEnabled } from '../../RuleBasedOutputs/types';
+import { type RuleAndEnabled, type RuleOutputSet } from '../../RuleBasedOutputs/types';
+import { Mock } from 'moq.ts';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
+import { type FdmNode } from '../../../data-providers/FdmSDK';
 
 describe(RuleBasedOutputsButton.name, () => {
   const defaultProps = {
@@ -21,33 +24,9 @@ describe(RuleBasedOutputsButton.name, () => {
     onRuleSetSelectedChanged: vi.fn()
   };
 
-  const ruleBasedOutputsButtonDependencies = getMocksByDefaultDependencies(
-    defaultRuleBasedOutputsButtonDependencies
-  );
-
-  const mockRuleInstances: RuleAndEnabled[] = [
-    {
-      rule: {
-        properties: {
-          id: 'rule1',
-          name: 'Test Rule 1'
-        }
-      },
-      isEnabled: false
-    },
-    {
-      rule: {
-        properties: {
-          id: 'rule2',
-          name: 'Test Rule 2'
-        }
-      },
-      isEnabled: false
-    }
-  ] as RuleAndEnabled[];
-
+  const deps = getMocksByDefaultDependencies(defaultRuleBasedOutputsButtonDependencies);
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <RuleBasedOutputsButtonContext.Provider value={ruleBasedOutputsButtonDependencies}>
+    <RuleBasedOutputsButtonContext.Provider value={deps}>
       {children}
     </RuleBasedOutputsButtonContext.Provider>
   );
@@ -55,48 +34,74 @@ describe(RuleBasedOutputsButton.name, () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup default mock implementations
     const mockTranslation: I18nContent = {
       t: (translationInput) =>
         typeof translationInput === 'object' ? String(translationInput) : translationInput,
       currentLanguage: 'en'
     };
-    ruleBasedOutputsButtonDependencies.useTranslation.mockReturnValue(mockTranslation);
 
-    const mockModelData = {
-      type: 'cad' as const,
-      modelId: 123,
-      revisionId: 456
-    };
-    const mockModels: Array<CogniteModel<DataSourceType>> = [
-      mockModelData as CogniteModel<DataSourceType>
+    deps.useTranslation.mockReturnValue(mockTranslation);
+
+    const mockCadModel = createCadMock({ modelId: 123, revisionId: 456 });
+    deps.use3dModels.mockReturnValue([mockCadModel]);
+
+    const mockAssetMappingsResult = new Mock<UseQueryResult<ModelWithAssetMappings[]>>()
+      .setup((x) => x.isLoading)
+      .returns(false)
+      .setup((x) => x.isFetched)
+      .returns(true)
+      .setup((x) => x.data)
+      .returns([
+        {
+          model: { modelId: 123, revisionId: 456, type: 'cad' },
+          assetMappings: [createAssetMappingMock()]
+        }
+      ])
+      .object();
+
+    deps.useAssetMappedNodesForRevisions.mockReturnValue(mockAssetMappingsResult);
+
+    deps.useReveal3DResourcesStylingLoading.mockReturnValue(false);
+
+    const mockRuleInstances: RuleAndEnabled[] = [
+      {
+        rule: {
+          properties: {
+            id: 'rule1',
+            name: 'Test Rule 1',
+            rulesWithOutputs: [],
+            createdAt: 1111,
+            createdBy: 'Test User'
+          },
+          instanceType: 'node',
+          version: 1,
+          space: 'test-space',
+          externalId: 'rule1',
+          createdTime: 1111,
+          lastUpdatedTime: 1111
+        } satisfies FdmNode<RuleOutputSet>,
+        isEnabled: false
+      }
     ];
-    ruleBasedOutputsButtonDependencies.use3dModels.mockReturnValue(mockModels);
 
-    const mockAssetMappingsData = {
-      isLoading: false,
-      isFetched: true
-    };
-    const mockAssetMappings: UseQueryResult<ModelWithAssetMappings[]> =
-      mockAssetMappingsData as UseQueryResult<ModelWithAssetMappings[]>;
-    ruleBasedOutputsButtonDependencies.useAssetMappedNodesForRevisions.mockReturnValue(
-      mockAssetMappings
-    );
+    const mockRuleInstancesResult = new Mock<UseQueryResult<RuleAndEnabled[], undefined>>()
+      .setup((x) => x.data)
+      .returns(mockRuleInstances)
+      .setup((x) => x.isLoading)
+      .returns(false)
+      .setup((x) => x.isFetched)
+      .returns(true)
+      .setup((x) => x.error)
+      .returns(undefined)
+      .object();
 
-    ruleBasedOutputsButtonDependencies.useReveal3DResourcesStylingLoading.mockReturnValue(false);
+    deps.useFetchRuleInstances.mockReturnValue(mockRuleInstancesResult);
 
-    const mockRuleData = {
-      data: mockRuleInstances
-    };
-    const mockRuleQueryResult: UseQueryResult<RuleAndEnabled[], undefined> =
-      mockRuleData as UseQueryResult<RuleAndEnabled[], undefined>;
-    ruleBasedOutputsButtonDependencies.useFetchRuleInstances.mockReturnValue(mockRuleQueryResult);
-
-    ruleBasedOutputsButtonDependencies.RuleBasedOutputsSelector.mockReturnValue(
+    deps.RuleBasedOutputsSelector.mockReturnValue(
       <div data-testid="rule-based-outputs-selector">Selector</div>
     );
 
-    ruleBasedOutputsButtonDependencies.RuleBasedSelectionItem.mockImplementation(
+    deps.RuleBasedSelectionItem.mockImplementation(
       ({ label, checked, onChange, id, isEmptyRuleItem }) => (
         <div data-testid={`rule-item-${id}`}>
           <input
