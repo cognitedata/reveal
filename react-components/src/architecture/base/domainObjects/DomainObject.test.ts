@@ -79,7 +79,7 @@ describe(DomainObject.name, () => {
     const domainObject = new ChildDomainObject();
     const color = new Color(1, 0, 1);
     domainObject.setColor(color);
-    expect(domainObject.color).equals(color);
+    expect(domainObject.color).toStrictEqual(color);
   });
 
   test('should select', () => {
