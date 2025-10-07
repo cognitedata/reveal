@@ -18,6 +18,21 @@ export enum CircleMarkerType {
   FocusPointMarker
 }
 
+/**
+ * Represents a visual domain object for a circle marker in the architecture.
+ *
+ * This class encapsulates the properties and behaviors of a circle marker,
+ * including its position, radius, type, color, and rendering style.
+ * It provides methods for handling color changes, wheel interactions for resizing,
+ * and overrides for visibility and labeling in the object tree.
+ *
+ * There are tow types of circle markers:
+ * - MouseCircleMarker: A circle marker that follows the mouse cursor.
+ * - FocusPointMarker: A circle marker that indicates a focus point in the 3D space.
+ *
+ * The application developer is responsible to set the position, size and visibility of the circle marker,
+ * typically done in the tools
+ */
 export class CircleMarkerDomainObject extends VisualDomainObject {
   public readonly position: Vector3 = new Vector3();
   public radius = 0.3;
