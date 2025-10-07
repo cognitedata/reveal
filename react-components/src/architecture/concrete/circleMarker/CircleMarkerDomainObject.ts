@@ -14,7 +14,7 @@ const RADIUS_MAX = 5.0;
 const RADIUS_CHANGE_FACTOR = 0.05;
 
 export enum CircleMarkerType {
-  CircleMarker,
+  MouseCircleMarker,
   FocusPointMarker
 }
 
@@ -24,7 +24,7 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
   public legalRadiusRange = new Range1(RADIUS_MIN, RADIUS_MAX);
   public readonly type: CircleMarkerType;
 
-  constructor(type: CircleMarkerType = CircleMarkerType.CircleMarker) {
+  constructor(type: CircleMarkerType = CircleMarkerType.MouseCircleMarker) {
     super();
     this.type = type;
     this.color.setHex(getDefaultColor(type));
@@ -38,7 +38,7 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
     if (this.type === CircleMarkerType.FocusPointMarker) {
       return { untranslated: 'Focus point marker' };
     }
-    return { untranslated: 'Circle marker' };
+    return { untranslated: 'Mouse circle marker' };
   }
 
   public override get isVisibleInTree(): boolean {
@@ -97,7 +97,7 @@ function getDefaultColor(type: CircleMarkerType): number {
 
 export function getCircleMarker(root: DomainObject): CircleMarkerDomainObject | undefined {
   for (const descendant of root.getDescendantsByType(CircleMarkerDomainObject)) {
-    if (descendant.type === CircleMarkerType.CircleMarker) {
+    if (descendant.type === CircleMarkerType.MouseCircleMarker) {
       return descendant;
     }
   }
@@ -107,7 +107,7 @@ export function getCircleMarker(root: DomainObject): CircleMarkerDomainObject | 
 export function getOrCreateCircleMarker(root: DomainObject): CircleMarkerDomainObject {
   let domainObject = getCircleMarker(root);
   if (domainObject === undefined) {
-    domainObject = new CircleMarkerDomainObject(CircleMarkerType.CircleMarker);
+    domainObject = new CircleMarkerDomainObject(CircleMarkerType.MouseCircleMarker);
     root.addChildInteractive(domainObject);
   }
   return domainObject;
