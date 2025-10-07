@@ -35,6 +35,9 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
   }
 
   public override get typeName(): TranslationInput {
+    if (this.type === CircleMarkerType.FocusPointMarker) {
+      return { untranslated: 'Focus point marker' };
+    }
     return { untranslated: 'Circle marker' };
   }
 
@@ -50,7 +53,6 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
     const style = new CircleMarkerRenderStyle();
     if (this.type === CircleMarkerType.FocusPointMarker) {
       style.solidOpacity = 1;
-      //style.lineWidth = 1;
     }
     return style;
   }
@@ -84,6 +86,13 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
     this.notify(Changes.geometry);
     return true;
   }
+}
+
+function getDefaultColor(type: CircleMarkerType): number {
+  if (type === CircleMarkerType.FocusPointMarker) {
+    return 0xf2ff19; // Yellow-green
+  }
+  return Color.NAMES.yellow;
 }
 
 export function getCircleMarker(root: DomainObject): CircleMarkerDomainObject | undefined {
@@ -120,11 +129,4 @@ export function getOrCreateFocusPointMarker(root: DomainObject): CircleMarkerDom
     root.addChildInteractive(domainObject);
   }
   return domainObject;
-}
-
-function getDefaultColor(type: CircleMarkerType): number {
-  if (type === CircleMarkerType.FocusPointMarker) {
-    return 0xf2ff19; // Yellow-green
-  }
-  return Color.NAMES.yellow;
 }

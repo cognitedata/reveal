@@ -34,8 +34,8 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     if (object === undefined) {
       return;
     }
-    // Mimic the behavior of the point size close to camera.
-    // This will make the point size smaller
+    // This will make the point size smaller when it is close to the camera.
+    // (Mimic the behavior of the point size close to camera done by point clouds on Reveal)
     let radius = domainObject.radius;
     const distanceToCamera = camera.position.distanceTo(domainObject.position);
     if (distanceToCamera < MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER) {

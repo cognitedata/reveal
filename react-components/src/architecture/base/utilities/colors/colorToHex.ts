@@ -2,10 +2,11 @@ import { clamp } from 'lodash';
 import { type Color } from 'three';
 
 export function colorToHex(color: Color, opacity: number = 1): string {
+  const result = '#' + color.getHexString().toUpperCase();
   if (opacity >= 1) {
-    return '#' + color.getHexString().toUpperCase();
+    return result;
   }
-  return '#' + color.getHexString().toUpperCase() + opacityFractionToHex(opacity);
+  return result + opacityFractionToHex(opacity);
 }
 
 function opacityFractionToHex(opacity: number): string {
