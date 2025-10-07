@@ -3,33 +3,13 @@ import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import {
   getCircleMarker,
-  getFocusPointMarker,
-  getOrCreateCircleMarker,
-  getOrCreateFocusPointMarker
+  getOrCreateCircleMarker
 } from '../../circleMarker/CircleMarkerDomainObject';
 import { isPointCloudIntersection } from '../../reveal/pointCloud/isPointCloudIntersection';
 import { getBestFitCylinderByIntersection } from './getBestFitCylinderByIntersection';
 import { type MeasurementTool } from '../MeasurementTool';
 import { type Vector3 } from 'three';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-
-export async function updateFocusPointMarker(
-  tool: MeasurementTool,
-  event: PointerEvent
-): Promise<boolean> {
-  const intersection = await tool.getIntersection(event);
-  if (!isPointCloudIntersection(intersection)) {
-    const selectedPoint = getFocusPointMarker(tool.root);
-    selectedPoint?.setVisibleInteractive(false);
-    return false;
-  }
-  const marker = getOrCreateFocusPointMarker(tool.root);
-  marker.radius = intersection.model.pointSize / 8;
-  marker.position.copy(intersection.point);
-  marker.notify(Changes.geometry);
-  marker.setVisibleInteractive(true);
-  return true;
-}
 
 export async function updateMarker(tool: MeasurementTool, event: PointerEvent): Promise<boolean> {
   const intersection = await tool.getIntersection(event);

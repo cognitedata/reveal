@@ -18,12 +18,9 @@ import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import {
-  updateMarker,
-  tryCreateMeasureDiameter,
-  updateFocusPointMarker
-} from './diameter/measureDiameterToolUtils';
+import { updateMarker, tryCreateMeasureDiameter } from './diameter/measureDiameterToolUtils';
 import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
+import { updateFocusPointMarker } from './updateFocusPointMarker';
 
 const POINT_SIZE_CHANGE_FACTOR = 0.1;
 
