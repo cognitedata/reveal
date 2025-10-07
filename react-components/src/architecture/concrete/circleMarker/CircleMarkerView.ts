@@ -29,7 +29,7 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     const { domainObject, object, style } = this;
 
     let size = 2 * domainObject.radius;
-    if (style.maxDistanceForSizeAdjustments !== undefined) {
+    if (style.maxDistanceForSizeAdjustments !== undefined && style.maxDistanceForSizeAdjustments > 0) {
       // This will make the size smaller when it is close to the camera,
       // in order to not blow up the size when it come very close to the camera
       const distanceToCamera = camera.position.distanceTo(domainObject.position);
