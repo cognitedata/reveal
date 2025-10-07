@@ -18,7 +18,7 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
-import { AssetMappedPointCloudAnnotationsDependencies } from './common/types';
+import { type AssetMappedPointCloudAnnotationsDependencies } from './common/types';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
@@ -30,7 +30,12 @@ export async function getAssetsMappedPointCloudAnnotations(
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  const classicAssets = await getPointCloudAnnotationAssets(pointCloudAnnotations, filters, sdk, dependencies);
+  const classicAssets = await getPointCloudAnnotationAssets(
+    pointCloudAnnotations,
+    filters,
+    sdk,
+    dependencies
+  );
   const dmsInstances =
     fdmSdk !== undefined
       ? await getPointCloudAnnotationDmInstances(pointCloudAnnotations, fdmSdk)

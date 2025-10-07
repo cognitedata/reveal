@@ -1,4 +1,4 @@
-import { getAssetsForIds } from './getAssetsForIds';
+import { type getAssetsForIds } from './getAssetsForIds';
 
 export type AssetAdvancedFilterAnd = {
   and: AssetAdvancedFilterProps[];

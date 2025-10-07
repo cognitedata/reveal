@@ -4,8 +4,8 @@ import { It, Mock } from 'moq.ts';
 import {
   type CogniteClient,
   type AnnotationFilterProps,
-  CursorAndAsyncIterator,
-  AnnotationModel
+  type CursorAndAsyncIterator,
+  type AnnotationModel
 } from '@cognite/sdk';
 import { type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
@@ -14,7 +14,7 @@ import { createPointCloudAnnotationMock } from '../../../tests/tests-utilities/f
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { createCursorAndAsyncIteratorMock } from '../../../tests/tests-utilities/fixtures/cursorAndIterator';
 
-import { getAssetsForIds } from './common/getAssetsForIds';
+import { type getAssetsForIds } from './common/getAssetsForIds';
 
 describe(getAssetsMappedPointCloudAnnotations.name, () => {
   let mockSdk: CogniteClient;
@@ -97,7 +97,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       .object();
 
     mockGetAssetsForIds
-      .setup((p) => p(It.IsAny(), It.IsAny(), It.IsAny()))
+      .setup(async (p) => await p(It.IsAny(), It.IsAny(), It.IsAny()))
       .returns(Promise.resolve(mockAssets));
   });
 
@@ -168,7 +168,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     test('handles empty models array', async () => {
       mockGetAssetsForIds
-        .setup((p) => p(It.IsAny(), It.IsAny(), It.IsAny()))
+        .setup(async (p) => await p(It.IsAny(), It.IsAny(), It.IsAny()))
         .returns(Promise.resolve([]));
 
       const result = await getAssetsMappedPointCloudAnnotations([], undefined, mockSdk, undefined, {
@@ -246,7 +246,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       vi.mocked(mockFdmSdk.getByExternalIds).mockResolvedValue(mockDmsResult);
 
       mockGetAssetsForIds
-        .setup((p) => p(It.IsAny(), It.IsAny(), It.IsAny()))
+        .setup(async (p) => await p(It.IsAny(), It.IsAny(), It.IsAny()))
         .returns(Promise.resolve([]));
 
       const result = await getAssetsMappedPointCloudAnnotations(
@@ -297,7 +297,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     test('propagates errors from assets API', async () => {
       mockGetAssetsForIds
-        .setup((p) => p(It.IsAny(), It.IsAny(), It.IsAny()))
+        .setup(async (p) => await p(It.IsAny(), It.IsAny(), It.IsAny()))
         .returns(Promise.reject(new Error('Assets API error')));
 
       await expect(
