@@ -96,30 +96,8 @@ describe(use3dScenes.name, () => {
   test('should handle pagination', async () => {
     const createScenes = (count: number, start: number = 0): SceneNode[] =>
       Array.from({ length: count }, (_, i) => createSceneNode(`scene-${start + i}`, 'test-space'));
-
-    mockQueryNodesAndEdges
-      .mockResolvedValueOnce({
-        items: {
-          scenes: createScenes(100, 0),
-          sceneModels: [],
-          scene360Collections: [],
-          sceneGroundPlanes: [],
-          sceneGroundPlaneEdges: [],
-          sceneSkybox: []
-        },
-        nextCursor: { scenes: 'cursor-token' }
-      })
-      .mockResolvedValueOnce({
-        items: {
-          scenes: createScenes(50, 100),
-          sceneModels: [],
-          scene360Collections: [],
-          sceneGroundPlanes: [],
-          sceneGroundPlaneEdges: [],
-          sceneSkybox: []
-        },
-        nextCursor: undefined
-      });
+    setupMockResponse({ scenes: createScenes(100, 0) }, 'cursor-token');
+    setupMockResponse({ scenes: createScenes(50, 100) }, undefined);
 
     const { result } = renderHook(() => use3dScenes(), { wrapper });
 
@@ -475,8 +453,8 @@ describe(use3dScenes.name, () => {
     }
   });
 
-  const setupMockResponse = (responseData: MockResponseData): void => {
-    mockQueryNodesAndEdges.mockResolvedValue({
+  const setupMockResponse = (responseData: MockResponseData, nextCursor?: string): void => {
+    mockQueryNodesAndEdges.mockResolvedValueOnce({
       items: {
         scenes: [],
         sceneModels: [],
@@ -486,7 +464,7 @@ describe(use3dScenes.name, () => {
         sceneSkybox: [],
         ...responseData
       },
-      nextCursor: undefined
+      nextCursor: nextCursor !== undefined ? { scenes: nextCursor } : undefined
     });
   };
 
