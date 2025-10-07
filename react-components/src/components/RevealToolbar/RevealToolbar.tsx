@@ -4,7 +4,7 @@ import { FitModelsButton } from './FitModelsButton';
 import { SlicerButton } from './SlicerButton/SlicerButton';
 import { SettingsButton } from './SettingsButton/SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { HelpButton } from './HelpButton';
+import { HelpButton } from './HelpButton/HelpButton';
 import { ShareButton } from './ShareButton';
 import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from '../../architecture/base/utilities/quality/QualitySettings';

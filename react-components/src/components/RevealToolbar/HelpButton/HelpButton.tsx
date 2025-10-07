@@ -1,13 +1,10 @@
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, useContext } from 'react';
 
 import { Button, Tooltip as CogsTooltip, HelpIcon } from '@cognite/cogs.js';
 import { Dropdown } from '@cognite/cogs-lab';
 import styled from 'styled-components';
-import { MouseNavigation } from './Help/MouseNavigation';
-import { TouchNavigation } from './Help/TouchNavigation';
-import { KeyboardNavigation } from './Help/KeyboardNavigation';
-import { useTranslation } from '../i18n/I18n';
-import { type PlacementType } from '../Architecture';
+import { type PlacementType } from '../../Architecture';
+import { HelpButtonContext } from './HelpButton.context';
 
 /**
  * @deprecated
@@ -22,6 +19,9 @@ export type HelpButtonProps = {
  */
 
 export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): ReactElement => {
+  const { useTranslation, MouseNavigation, TouchNavigation, KeyboardNavigation } =
+    useContext(HelpButtonContext);
+
   const { t } = useTranslation(fallbackLanguage);
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
