@@ -1,5 +1,9 @@
-import { type SourceSelectorV3 } from '@cognite/sdk';
-import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import { type NodeDefinition, type SourceSelectorV3 } from '@cognite/sdk';
+import {
+  type EdgeItem,
+  type NodeItem,
+  type DmsUniqueIdentifier
+} from '../../data-providers/FdmSDK';
 import {
   type AddCadResourceOptions,
   type AddImage360CollectionDatamodelsOptions,
@@ -10,6 +14,10 @@ import {
   type GroundPlane,
   type Skybox
 } from '../../components/SceneContainer/sceneTypes';
+import { type UseQueryResult } from '@tanstack/react-query';
+
+export const SCENE_QUERY_LIMIT = 100;
+export const SCENE_RELATED_DATA_LIMIT = 10000;
 
 export type Transformation3d = {
   translationX: number;
@@ -31,6 +39,9 @@ export type SceneData = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
+  cameraTargetX?: number;
+  cameraTargetY?: number;
+  cameraTargetZ?: number;
   modelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
@@ -182,3 +193,31 @@ export const environmentMapSourceWithProperties = [
     properties: ['label', 'file', 'isSpherical']
   }
 ] as const satisfies SourceSelectorV3;
+
+export type Space = string;
+export type ExternalId = string;
+
+export type Use3dScenesResult = UseQueryResult<Record<Space, Record<ExternalId, SceneData>>>;
+
+export type ScenesMap = Record<Space, Record<ExternalId, SceneData>>;
+
+type SceneConfigurationPropertiesOptional = Partial<SceneConfigurationProperties>;
+
+export type SceneNode = Omit<NodeDefinition, 'properties'> & {
+  properties: {
+    scene: {
+      'SceneConfiguration/v1': SceneConfigurationPropertiesOptional;
+    };
+  };
+};
+
+export type Use3dScenesQueryResult = {
+  scenes: SceneNode[];
+  sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
+  scene360Collections: Array<
+    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
+  >;
+  sceneGroundPlanes: Array<NodeItem<GroundPlaneProperties>>;
+  sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>;
+  sceneSkybox: Array<NodeItem<SkyboxProperties>>;
+};
