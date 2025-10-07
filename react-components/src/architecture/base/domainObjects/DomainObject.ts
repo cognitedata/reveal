@@ -254,7 +254,7 @@ export abstract class DomainObject implements TreeNodeType {
     if (this._color === undefined) {
       this._color = new Color(color);
     } else {
-      this.setColor(color);
+      this._color.set(color);
     }
   }
 
