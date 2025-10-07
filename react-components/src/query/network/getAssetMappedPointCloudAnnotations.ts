@@ -1,13 +1,14 @@
 import { type ClassicDataSourceType } from '@cognite/reveal';
 import {
+  type AnnotationsView,
   type AnnotationFilterProps,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Asset,
   type CogniteClient
 } from '@cognite/sdk';
-import { chunk, uniq } from 'lodash';
-import { type AddPointCloudResourceOptions } from '../../components';
+import { chunk, uniq, uniqBy } from 'lodash';
+import { createFdmKey, type AddPointCloudResourceOptions } from '../../components';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 import { type AllAssetFilterProps } from './common/filters';
@@ -19,6 +20,8 @@ import {
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
 import { type AssetMappedPointCloudAnnotationsDependencies } from './common/types';
+import { type PointCloudAnnotationModel } from '../../components/CacheProvider/types';
+import { isPointCloudAnnotationModel } from '../../components/CacheProvider/typeGuards';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
@@ -30,7 +33,7 @@ export async function getAssetsMappedPointCloudAnnotations(
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  const classicAssets = await getPointCloudAnnotationAssets(
+  const classicAssets = await getPointCloudAnnotationClassicInstances(
     pointCloudAnnotations,
     filters,
     sdk,
@@ -47,7 +50,7 @@ export async function getAssetsMappedPointCloudAnnotations(
 async function getPointCloudAnnotations(
   modelIdList: number[],
   sdk: CogniteClient
-): Promise<AnnotationModel[]> {
+): Promise<PointCloudAnnotationModel[]> {
   const annotationArray = await Promise.all(
     chunk(modelIdList, 1000).map(async (modelIdList) => {
       const filter: AnnotationFilterProps = {
@@ -65,11 +68,11 @@ async function getPointCloudAnnotations(
     })
   );
 
-  return annotationArray.flatMap((annotations) => annotations);
+  return annotationArray.flatMap((annotations) => annotations.filter(isPointCloudAnnotationModel));
 }
 
-async function getPointCloudAnnotationAssets(
-  pointCloudAnnotations: AnnotationModel[],
+async function getPointCloudAnnotationClassicInstances(
+  pointCloudAnnotations: PointCloudAnnotationModel[],
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
   dependencies: Partial<AssetMappedPointCloudAnnotationsDependencies>
@@ -78,11 +81,7 @@ async function getPointCloudAnnotationAssets(
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
 
   const annotationMappingClassic = pointCloudAnnotations
-    .map(
-      (annotation) =>
-        (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
-        (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
-    )
+    .map((annotation) => annotation.data.assetRef?.id ?? annotation.data.assetRef?.externalId)
     .filter((annotation): annotation is string | number => annotation !== undefined);
 
   const uniqueMappingClassicAssetId = uniq(annotationMappingClassic);
@@ -99,40 +98,26 @@ async function getPointCloudAnnotationDmInstances(
     .map((annotation) => (annotation.data as AnnotationsBoundingVolume).instanceRef)
     .filter((instanceRef) => instanceRef !== undefined);
 
-  const uniqueMappingDmsInstances = uniq(annotationMappingDms);
+  const uniqueMappingDmsInstances = uniqBy(annotationMappingDms, createFdmKey);
 
-  const referencesWithSources = uniqueMappingDmsInstances.map((mapping) => {
-    const reference = {
-      instanceType: mapping.instanceType,
-      externalId: mapping.externalId,
-      space: mapping.space
-    };
+  const source: AnnotationsView = {
+    externalId: COGNITE_ASSET_VIEW_VERSION_KEY,
+    space: CORE_DM_SPACE,
+    version: 'v1',
+    type: 'view'
+  };
 
-    const sources = mapping.sources;
-    return { reference, sources };
-  });
-
-  const uniqueSources = uniq(uniqueMappingDmsInstances.flatMap((mapping) => mapping.sources));
-
-  const allResultLists = await Promise.all(
-    uniqueSources.map(async (source) => {
-      return await fdmSdk.getByExternalIds<AssetProperties>(
-        referencesWithSources
-          .map((ref) => {
-            if (ref.sources.includes(source)) {
-              return ref.reference;
-            }
-            return undefined;
-          })
-          .filter((ref) => ref !== undefined),
-        [source]
-      );
-    })
+  const allResultLists = await fdmSdk.getByExternalIds<AssetProperties>(
+    uniqueMappingDmsInstances
+      .map((ref) => {
+        if (ref.sources.includes(source)) return ref;
+        return undefined;
+      })
+      .filter((ref) => ref !== undefined),
+    [source]
   );
-  return allResultLists.flatMap((resultList) =>
-    resultList.items.map((item) => ({
-      ...item,
-      properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
-    }))
-  );
+  return allResultLists.items.map((item) => ({
+    ...item,
+    properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
+  }));
 }
