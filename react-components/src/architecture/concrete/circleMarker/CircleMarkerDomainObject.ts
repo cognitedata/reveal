@@ -68,6 +68,7 @@ export class CircleMarkerDomainObject extends VisualDomainObject {
     const style = new CircleMarkerRenderStyle();
     if (this.type === CircleMarkerType.FocusPointMarker) {
       style.solidOpacity = 1;
+      style.maxDistanceForSizeAdjustments = 7; // Mimics the behavior of the point size close to camera done by point clouds on Reveal
     }
     return style;
   }

@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { PerspectiveCamera, Raycaster, Sprite, Vector2, Vector3 } from 'three';
-import { expectChildrenOfTypeAndCount } from '#test-utils/architecture/viewUtil';
+import { addView, expectChildrenOfTypeAndCount } from '#test-utils/architecture/viewUtil';
 import { CircleMarkerView } from './CircleMarkerView';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type CustomObjectIntersectInput } from '@cognite/reveal';
+import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe(CircleMarkerView.name, () => {
   let view: CircleMarkerView;
@@ -14,17 +15,11 @@ describe(CircleMarkerView.name, () => {
   beforeEach(() => {
     const renderTarget = createFullRenderTargetMock();
 
-    // Create the marker and add it to the scene
     domainObject = new CircleMarkerDomainObject();
     renderTarget.root.addChildInteractive(domainObject);
-    domainObject.setVisibleInteractive(true, renderTarget);
 
-    view = domainObject.getViewByTarget(renderTarget) as CircleMarkerView;
-
-    // Force update view since nothing is visible in this mock code
-    // this is not needed in the real code
-    // but needed in the mock code since nothing is rendered in Reveal
-    const _ = view.object;
+    view = new CircleMarkerView();
+    addView(domainObject, view);
   });
 
   test('should have initial state', () => {
@@ -67,6 +62,32 @@ describe(CircleMarkerView.name, () => {
     };
 
     expect(view.intersectIfCloser(customObjectIntersectInputMock, undefined)).toBeUndefined();
+  });
+
+  test('should adjust the point size for when camera near', () => {
+    domainObject.position.set(0, 0, 0);
+    domainObject.radius = 2;
+    domainObject.notify(Changes.geometry);
+    const camera = new PerspectiveCamera();
+    camera.position.set(0, 20, 0); // Look down from 20 units away
+    camera.lookAt(0, 0, 0);
+
+    const expectedScale = new Vector3().setScalar(2 * domainObject.radius);
+
+    // No adjustments expected when camera is far away
+    domainObject.style.maxDistanceForSizeAdjustments = 10;
+    view.beforeRender(camera);
+    expectEqualVector3(view.object.scale, expectedScale);
+
+    // Adjustment expected when camera is close
+    camera.position.set(0, 1, 0); // Look down, but closer, 1 unit away, 10% of maxDistanceForSizeAdjustments
+    view.beforeRender(camera);
+    expectEqualVector3(view.object.scale, expectedScale.clone().multiplyScalar(0.1));
+
+    // Set back to default behavior, no adjustments expected
+    domainObject.style.maxDistanceForSizeAdjustments = undefined;
+    view.beforeRender(camera);
+    expectEqualVector3(view.object.scale, expectedScale);
   });
 });
 

@@ -2,14 +2,13 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { colorToHex } from '../../base/utilities/colors/colorToHex';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { Sprite, CanvasTexture, SpriteMaterial, type PerspectiveCamera } from 'three';
-import { CircleMarkerType, type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
+import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type CustomObjectIntersectInput, type CustomObjectIntersection } from '@cognite/reveal';
 
 const TEXTURE_SIZE = 200;
 const CANVAS_PADDING = 1; // To avoid artifacts on the edge when drawing
-const MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER = 7;
 
 export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
   public override update(change: DomainObjectChange): void {
@@ -27,24 +26,22 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
   public override beforeRender(camera: PerspectiveCamera): void {
     super.beforeRender(camera);
 
-    const { domainObject, object } = this;
-    if (domainObject.type !== CircleMarkerType.FocusPointMarker) {
-      return;
+    const { domainObject, object, style } = this;
+
+    let size = 2 * domainObject.radius;
+    if (style.maxDistanceForSizeAdjustments !== undefined) {
+      // This will make the size smaller when it is close to the camera,
+      // in order to not blow up the size when it come very close to the camera
+      const distanceToCamera = camera.position.distanceTo(domainObject.position);
+      if (distanceToCamera < style.maxDistanceForSizeAdjustments) {
+        const fraction = distanceToCamera / style.maxDistanceForSizeAdjustments;
+        size *= fraction;
+      }
     }
-    if (object === undefined) {
-      return;
+    if (object.scale.x !== size) {
+      object.scale.setScalar(size);
+      object.updateMatrixWorld();
     }
-    // This will make the point size smaller when it is close to the camera.
-    // (Mimic the behavior of the point size close to camera done by point clouds on Reveal)
-    let radius = domainObject.radius;
-    const distanceToCamera = camera.position.distanceTo(domainObject.position);
-    if (distanceToCamera < MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER) {
-      const fraction = distanceToCamera / MAX_DISTANCE_FOR_POINT_SIZE_TO_BE_LARGER;
-      radius *= fraction;
-    }
-    object.position.copy(domainObject.position);
-    object.scale.setScalar(radius * 2);
-    object.updateMatrixWorld();
   }
 
   protected override get style(): CircleMarkerRenderStyle {
