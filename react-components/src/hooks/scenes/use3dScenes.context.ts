@@ -1,21 +1,15 @@
 import { createContext } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
-import { type QueryFunction, type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
-import { FdmSDK, type FdmSDK as FdmSDKType } from '../../data-providers/FdmSDK';
+import { FdmSDK } from '../../data-providers/FdmSDK';
 
 export type Use3dScenesDependencies = {
   useSDK: (userSdk?: CogniteClient) => CogniteClient;
-  useQuery: <T>(options: {
-    queryKey: readonly unknown[];
-    queryFn: QueryFunction<T>;
-  }) => UseQueryResult<T>;
-  createFdmSdk: (sdk: CogniteClient) => FdmSDKType;
+  createFdmSdk: (sdk: CogniteClient) => FdmSDK;
 };
 
 export const defaultUse3dScenesDependencies: Use3dScenesDependencies = {
   useSDK,
-  useQuery,
   createFdmSdk: (sdk: CogniteClient) => new FdmSDK(sdk)
 };
 
