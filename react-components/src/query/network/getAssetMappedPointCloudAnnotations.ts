@@ -18,17 +18,19 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
+import { AssetMappedPointCloudAnnotationsDependencies } from './common/types';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
-  fdmSdk?: FdmSDK
+  fdmSdk?: FdmSDK,
+  dependencies: Partial<AssetMappedPointCloudAnnotationsDependencies> = {}
 ): Promise<AssetInstance[]> {
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  const classicAssets = await getPointCloudAnnotationAssets(pointCloudAnnotations, filters, sdk);
+  const classicAssets = await getPointCloudAnnotationAssets(pointCloudAnnotations, filters, sdk, dependencies);
   const dmsInstances =
     fdmSdk !== undefined
       ? await getPointCloudAnnotationDmInstances(pointCloudAnnotations, fdmSdk)
@@ -64,8 +66,10 @@ async function getPointCloudAnnotations(
 async function getPointCloudAnnotationAssets(
   pointCloudAnnotations: AnnotationModel[],
   filters: AllAssetFilterProps | undefined,
-  sdk: CogniteClient
+  sdk: CogniteClient,
+  dependencies: Partial<AssetMappedPointCloudAnnotationsDependencies>
 ): Promise<Asset[]> {
+  const { getAssetsByIds = getAssetsForIds } = dependencies;
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
 
   const annotationMappingClassic = pointCloudAnnotations
@@ -79,7 +83,7 @@ async function getPointCloudAnnotationAssets(
   const uniqueMappingClassicAssetId = uniq(annotationMappingClassic);
 
   const assetRefs = uniqueMappingClassicAssetId.map(toIdEither);
-  return await getAssetsForIds(assetRefs, filters, sdk);
+  return await getAssetsByIds(assetRefs, filters, sdk);
 }
 
 async function getPointCloudAnnotationDmInstances(

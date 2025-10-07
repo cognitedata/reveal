@@ -1,3 +1,5 @@
+import { getAssetsForIds } from './getAssetsForIds';
+
 export type AssetAdvancedFilterAnd = {
   and: AssetAdvancedFilterProps[];
 };
@@ -16,3 +18,7 @@ export type AssetAdvancedFilterProps =
   | AssetAdvancedFilterAnd
   | AssetAdvancedFilterOr
   | AssetAdvancedFilterLeaf;
+
+export type AssetMappedPointCloudAnnotationsDependencies = {
+  getAssetsByIds: typeof getAssetsForIds;
+};
