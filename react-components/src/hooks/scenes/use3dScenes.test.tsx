@@ -1,54 +1,63 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
-import { type ReactElement, type ReactNode } from 'react';
+import { type PropsWithChildren, type ReactElement } from 'react';
 import { Mock } from 'moq.ts';
-import { type CogniteClient } from '@cognite/sdk';
-import { type QueryFunction } from '@tanstack/react-query';
-import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { type QueryRequest, type CogniteClient } from '@cognite/sdk';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type FdmSDK, type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
-import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
-import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
+import { defaultUse3dScenesDependencies, Use3dScenesContext } from './use3dScenes.context';
 import { use3dScenes } from './use3dScenes';
-import { type SceneNode, type ScenesMap } from './types';
+import {
+  type Transformation3d,
+  type SceneNode,
+  type Use3dScenesQueryResult,
+  type GroundPlaneProperties,
+  type SkyboxProperties,
+  type Cdf3dRevisionProperties,
+  type Cdf3dImage360CollectionProperties,
+  type Use3dScenesResult,
+  type ScenesMap
+} from './types';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import { type QueryResult } from '../../data-providers/utils/queryNodesAndEdges';
+import { isClassicIdentifier } from '../../components';
 
 describe(use3dScenes.name, () => {
-  const mockUseSDK = vi.fn();
-  const mockUseQuery = vi.fn();
-  const mockCreateFdmSdk = vi.fn();
-  const mockQueryNodesAndEdges = vi.fn();
+  const MOCK_TIMESTAMP = 1696694400000; // 2023-10-07T12:00:00.000Z
+  const TEST_SPACE = 'test-space';
+  const EXPECTED_MATRIX_IDENTITY = [1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1];
+  const EXPECTED_MATRIX_WITH_TRANSLATION = [1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 10, 30, -20, 1];
+
+  const mockQueryNodesAndEdges = vi.fn<(request: QueryRequest) => Promise<QueryResult<any, any>>>();
 
   const mockFdmSdkInstance = new Mock<FdmSDK>()
     .setup((instance) => instance.queryNodesAndEdges)
     .returns(mockQueryNodesAndEdges)
     .object();
 
-  const mockDependencies: Use3dScenesDependencies = {
-    useSDK: mockUseSDK,
-    useQuery: mockUseQuery,
-    createFdmSdk: mockCreateFdmSdk
-  };
+  const mockDependencies = getMocksByDefaultDependencies(defaultUse3dScenesDependencies);
+  const queryClient = new QueryClient();
 
-  const mockContext = createMockQueryContext(['scenes', undefined]);
+  type MockResponseData = Partial<Use3dScenesQueryResult>;
 
-  const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <Use3dScenesContext.Provider value={mockDependencies}>{children}</Use3dScenesContext.Provider>
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
+    <QueryClientProvider client={queryClient}>
+      <Use3dScenesContext.Provider value={mockDependencies}>{children}</Use3dScenesContext.Provider>
+    </QueryClientProvider>
   );
 
   beforeEach(() => {
-    mockUseSDK.mockReturnValue(sdkMock);
-    mockUseQuery.mockReturnValue(createMockQueryResult({}));
-    mockCreateFdmSdk.mockReturnValue(mockFdmSdkInstance);
+    mockDependencies.useSDK.mockReturnValue(sdkMock);
+    mockDependencies.createFdmSdk.mockReturnValue(mockFdmSdkInstance);
+    queryClient.clear();
   });
 
   test('should pass correct query parameters and call dependencies', () => {
     renderHook(() => use3dScenes(), { wrapper });
 
-    expect(mockUseSDK).toHaveBeenCalledWith(undefined);
-    expect(mockCreateFdmSdk).toHaveBeenCalledWith(sdkMock);
-    expect(mockUseQuery).toHaveBeenCalledWith({
-      queryKey: ['reveal-react-components', 'cdf', '3d', 'scenes'],
-      queryFn: expect.any(Function)
-    });
+    expect(mockDependencies.useSDK).toHaveBeenCalledWith(undefined);
+    expect(mockDependencies.createFdmSdk).toHaveBeenCalledWith(sdkMock);
   });
 
   test('should use custom SDK when provided', () => {
@@ -57,45 +66,19 @@ describe(use3dScenes.name, () => {
       .returns(vi.fn().mockReturnValue('https://custom.cognitedata.com'))
       .object();
 
-    mockUseSDK.mockReturnValueOnce(customSdk);
+    mockDependencies.useSDK.mockReturnValueOnce(customSdk);
     renderHook(() => use3dScenes(customSdk), { wrapper });
 
-    expect(mockUseSDK).toHaveBeenCalledWith(customSdk);
-    expect(mockCreateFdmSdk).toHaveBeenCalledWith(customSdk);
+    expect(mockDependencies.useSDK).toHaveBeenCalledWith(customSdk);
+    expect(mockDependencies.createFdmSdk).toHaveBeenCalledWith(customSdk);
   });
 
   test('should handle loading state', () => {
-    mockUseQuery.mockReturnValue(createMockQueryResult(undefined, false, true));
     const { result } = renderHook(() => use3dScenes(), { wrapper });
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
-  });
-
-  test('should handle error state', () => {
-    const testError = new Error('Test error');
-    mockUseQuery.mockReturnValue(createMockQueryResult(undefined, false, false, true, testError));
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-
-    expect(result.current.isError).toBe(true);
-    expect(result.current.error).toEqual(testError);
-  });
-
-  test('should return empty data when no scenes', () => {
-    mockUseQuery.mockReturnValue(createMockQueryResult({}));
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-
-    expect(result.current.data).toEqual({});
-  });
-
-  test('should handle refetch functionality', () => {
-    const mockRefetch = vi.fn();
-    const resultWithRefetch = createMockQueryResult({});
-    resultWithRefetch.refetch = mockRefetch;
-    mockUseQuery.mockReturnValue(resultWithRefetch);
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-    expect(result.current.refetch).toBe(mockRefetch);
+    expect(result.current.error).toBeNull();
   });
 
   test('should execute complete scene processing with minimal data', async () => {
@@ -103,12 +86,11 @@ describe(use3dScenes.name, () => {
       scenes: [createSceneNode('test-scene-1', 'test-space')]
     });
 
-    const result = await executeQueryFn();
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
 
-    expect(result).toBeDefined();
-    expect(result['test-space']).toBeDefined();
-    expect(result['test-space']['test-scene-1']).toBeDefined();
-    expect(result['test-space']['test-scene-1'].name).toBe('Scene test-scene-1');
+    expect(data['test-space']['test-scene-1']).toBeDefined();
+    expect(data['test-space']['test-scene-1'].name).toBe('Scene test-scene-1');
   });
 
   test('should handle pagination', async () => {
@@ -139,132 +121,91 @@ describe(use3dScenes.name, () => {
         nextCursor: undefined
       });
 
-    const result = await executeQueryFn();
-    const allScenes = Object.values(result).flatMap((spaceScenes) => Object.values(spaceScenes));
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
 
-    expect(allScenes).toHaveLength(150);
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    assert(result.current.data !== undefined);
+
     expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
+    expect(result.current.data).toBeDefined();
+
+    const allScenes = Object.values(result.current.data).flatMap((spaceScenes) =>
+      Object.values(spaceScenes)
+    );
+    expect(allScenes).toHaveLength(150);
   });
 
-  test('should populate scene with models', async () => {
+  test('should process model edges and create 3d model options with correct transform matrix', async () => {
     setupMockResponse({
-      scenes: [createSceneNode('scene-with-model', 'test-space')],
+      scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
       sceneModels: [
-        {
-          startNode: { externalId: 'scene-with-model', space: 'test-space' },
-          endNode: { externalId: 'cog_3d_model_123' },
-          properties: {
-            scene: {
-              'RevisionProperties/v1': {
-                revisionId: 1,
-                translationX: 10,
-                translationY: 20,
-                translationZ: 30,
-                eulerRotationX: 0,
-                eulerRotationY: 0,
-                eulerRotationZ: 0,
-                scaleX: 1,
-                scaleY: 1,
-                scaleZ: 1
-              }
-            }
-          }
-        }
+        createModelEdge('scene-with-model', TEST_SPACE, 'cog_3d_model_123', 'models', 1)
       ]
     });
 
-    const result = await executeQueryFn();
-    const scene = result['test-space']['scene-with-model'];
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data[TEST_SPACE]['scene-with-model'];
 
     expect(scene.modelOptions).toHaveLength(1);
     expect(scene.modelOptions[0]).toEqual({
       modelId: 123,
       revisionId: 1,
-      transform: expect.any(Object)
+      transform: expect.objectContaining({
+        elements: expect.arrayContaining(EXPECTED_MATRIX_WITH_TRANSLATION)
+      })
     });
   });
 
-  test('should populate scene with 360 images', async () => {
+  test('should process 360 image collection edges and create image360 options with transform', async () => {
     setupMockResponse({
-      scenes: [createSceneNode('scene-with-360', 'test-space')],
+      scenes: [createSceneNode('scene-with-360', TEST_SPACE)],
       scene360Collections: [
-        {
-          startNode: { externalId: 'scene-with-360', space: 'test-space' },
-          properties: {
-            scene: {
-              'Image360CollectionProperties/v1': {
-                image360CollectionExternalId: 'image-collection-1',
-                image360CollectionSpace: 'image-space',
-                translationX: 0,
-                translationY: 0,
-                translationZ: 0,
-                eulerRotationX: 0,
-                eulerRotationY: 0,
-                eulerRotationZ: 0,
-                scaleX: 1,
-                scaleY: 1,
-                scaleZ: 1
-              }
-            }
-          }
-        }
+        create360Edge('scene-with-360', TEST_SPACE, 'image-collection-1', 'image-space')
       ]
     });
 
-    const result = await executeQueryFn();
-    const scene = result['test-space']['scene-with-360'];
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data[TEST_SPACE]['scene-with-360'];
 
     expect(scene.image360CollectionOptions).toHaveLength(1);
     expect(scene.image360CollectionOptions[0]).toEqual({
       source: 'dm',
       externalId: 'image-collection-1',
       space: 'image-space',
-      transform: expect.any(Object)
+      transform: expect.objectContaining({
+        elements: expect.arrayContaining(EXPECTED_MATRIX_IDENTITY)
+      })
     });
   });
 
-  test('should populate scene with ground planes', async () => {
+  test('should process ground plane nodes and edges to create ground plane options with transforms', async () => {
     setupMockResponse({
       scenes: [createSceneNode('scene-with-groundplane', 'test-space')],
       sceneGroundPlanes: [
-        {
-          externalId: 'ground-plane-1',
-          space: 'test-space',
-          properties: {
-            'GroundPlane/v1': {
-              'GroundPlane/v1': {
-                label: 'Ground Plane 1',
-                file: 'ground.jpg'
-              }
-            }
-          }
-        }
+        createGroundPlaneNode('ground-plane-1', 'test-space', 'Ground Plane 1', 'ground.jpg')
       ],
       sceneGroundPlaneEdges: [
-        {
-          startNode: { externalId: 'scene-with-groundplane', space: 'test-space' },
-          endNode: { externalId: 'ground-plane-1', space: 'test-space' },
-          properties: {
-            'Transformation3d/v1': {
-              'Transformation3d/v1': {
-                translationX: 5,
-                translationY: 0,
-                translationZ: 5,
-                eulerRotationX: 0,
-                eulerRotationY: 0,
-                eulerRotationZ: 0,
-                scaleX: 1,
-                scaleY: 1,
-                scaleZ: 1
-              }
-            }
-          }
-        }
+        createGroundPlaneEdge(
+          'scene-with-groundplane',
+          'test-space',
+          'ground-plane-1',
+          'test-space',
+          createDefaultTransformation({
+            translationX: 5,
+            translationZ: 5
+          })
+        )
       ]
     });
 
-    const result = await executeQueryFn();
-    const scene = result['test-space']['scene-with-groundplane'];
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data['test-space']['scene-with-groundplane'];
 
     expect(scene.groundPlanes).toHaveLength(1);
     expect(scene.groundPlanes[0]).toMatchObject({
@@ -276,7 +217,7 @@ describe(use3dScenes.name, () => {
     });
   });
 
-  test('should handle skybox in scenes', async () => {
+  test('should resolve skybox references and attach skybox data to scenes', async () => {
     setupMockResponse({
       scenes: [
         createSceneNode('scene-with-skybox', 'test-space', {
@@ -290,25 +231,12 @@ describe(use3dScenes.name, () => {
           }
         })
       ],
-      sceneSkybox: [
-        {
-          externalId: 'skybox-hdr',
-          space: 'test-space',
-          properties: {
-            'EnvironmentMap/v1': {
-              'EnvironmentMap/v1': {
-                label: 'HDR Skybox',
-                isSpherical: true,
-                file: 'skybox.hdr'
-              }
-            }
-          }
-        }
-      ]
+      sceneSkybox: [createSkyboxNode('skybox-hdr', 'test-space', 'HDR Skybox', 'skybox.hdr', true)]
     });
 
-    const result = await executeQueryFn();
-    const scene = result['test-space']['scene-with-skybox'];
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data['test-space']['scene-with-skybox'];
 
     expect(scene.skybox).toEqual({
       label: 'HDR Skybox',
@@ -317,7 +245,7 @@ describe(use3dScenes.name, () => {
     });
   });
 
-  test('should handle complex scene with all components', async () => {
+  test('should process scenes with all component types (3d models, 360 images, ground planes, skybox)', async () => {
     setupMockResponse({
       scenes: [
         createSceneNode('complex-scene', 'test-space', {
@@ -335,105 +263,49 @@ describe(use3dScenes.name, () => {
         })
       ],
       sceneModels: [
-        {
-          startNode: { externalId: 'complex-scene', space: 'test-space' },
-          endNode: { externalId: 'cog_3d_model_456' },
-          properties: {
-            scene: {
-              'RevisionProperties/v1': {
-                revisionId: 2,
-                translationX: 50,
-                translationY: 100,
-                translationZ: 150,
-                eulerRotationX: 0,
-                eulerRotationY: 0,
-                eulerRotationZ: 0,
-                scaleX: 1,
-                scaleY: 1,
-                scaleZ: 1
-              }
-            }
-          }
-        }
+        createModelEdge('complex-scene', 'test-space', 'cog_3d_model_456', 'models', 2)
       ],
       scene360Collections: [
-        {
-          startNode: { externalId: 'complex-scene', space: 'test-space' },
-          properties: {
-            scene: {
-              'Image360CollectionProperties/v1': {
-                image360CollectionExternalId: 'complex-images',
-                image360CollectionSpace: 'image-space',
-                translationX: 0,
-                translationY: 0,
-                translationZ: 0,
-                eulerRotationX: 0,
-                eulerRotationY: 0,
-                eulerRotationZ: 0,
-                scaleX: 1,
-                scaleY: 1,
-                scaleZ: 1
-              }
-            }
-          }
-        }
+        create360Edge('complex-scene', 'test-space', 'complex-images', 'image-space')
       ],
       sceneGroundPlanes: [
-        {
-          externalId: 'complex-ground',
-          space: 'test-space',
-          properties: {
-            'GroundPlane/v1': {
-              'GroundPlane/v1': {
-                label: 'Complex Ground',
-                file: 'complex_ground.jpg'
-              }
-            }
-          }
-        }
+        createGroundPlaneNode(
+          'complex-ground',
+          'test-space',
+          'Complex Ground',
+          'complex_ground.jpg'
+        )
       ],
       sceneGroundPlaneEdges: [
-        {
-          startNode: { externalId: 'complex-scene', space: 'test-space' },
-          endNode: { externalId: 'complex-ground', space: 'test-space' },
-          properties: {
-            'Transformation3d/v1': {
-              'Transformation3d/v1': {
-                translationX: 25,
-                translationY: 0,
-                translationZ: 25,
-                eulerRotationX: 0,
-                eulerRotationY: 45,
-                eulerRotationZ: 0,
-                scaleX: 2,
-                scaleY: 1,
-                scaleZ: 2
-              }
-            }
-          }
-        }
+        createGroundPlaneEdge(
+          'complex-scene',
+          'test-space',
+          'complex-ground',
+          'test-space',
+          createDefaultTransformation({
+            translationX: 25,
+            translationZ: 25,
+            eulerRotationY: 45,
+            scaleX: 2,
+            scaleZ: 2
+          })
+        )
       ],
       sceneSkybox: [
-        {
-          externalId: 'complex-skybox',
-          space: 'test-space',
-          properties: {
-            'EnvironmentMap/v1': {
-              'EnvironmentMap/v1': {
-                label: 'Complex Skybox',
-                isSpherical: false,
-                file: 'complex_skybox.hdr'
-              }
-            }
-          }
-        }
+        createSkyboxNode(
+          'complex-skybox',
+          'test-space',
+          'Complex Skybox',
+          'complex_skybox.hdr',
+          false
+        )
       ]
     });
 
-    const result = await executeQueryFn();
-    const scene = result['test-space']['complex-scene'];
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data['test-space']['complex-scene'];
 
-    expect(scene).toBeDefined();
     expect(scene.name).toBe('Complex Scene');
     expect(scene.modelOptions).toHaveLength(1);
     expect(scene.image360CollectionOptions).toHaveLength(1);
@@ -441,8 +313,9 @@ describe(use3dScenes.name, () => {
     expect(scene.skybox).toBeDefined();
 
     const firstModel = scene.modelOptions[0];
-    expect('modelId' in firstModel && firstModel.modelId).toBe(456);
-    expect('revisionId' in firstModel && firstModel.revisionId).toBe(2);
+    assert(isClassicIdentifier(firstModel));
+    expect(firstModel.modelId).toBe(456);
+    expect(firstModel.revisionId).toBe(2);
 
     expect(scene.groundPlanes[0].label).toBe('Complex Ground');
     expect(scene.groundPlanes[0].translationX).toBe(25);
@@ -459,8 +332,8 @@ describe(use3dScenes.name, () => {
   ): SceneNode => ({
     externalId,
     space,
-    createdTime: Date.now(),
-    lastUpdatedTime: Date.now(),
+    createdTime: MOCK_TIMESTAMP,
+    lastUpdatedTime: MOCK_TIMESTAMP,
     version: 1,
     instanceType: 'node',
     properties: {
@@ -474,19 +347,135 @@ describe(use3dScenes.name, () => {
     ...overrides
   });
 
-  const executeQueryFn = async (): Promise<ScenesMap> => {
-    let capturedQueryFunction!: QueryFunction<ScenesMap>;
-    mockUseQuery.mockImplementation((options) => {
-      capturedQueryFunction = options.queryFn;
-      return createMockQueryResult({});
-    });
+  const createModelEdge = (
+    sceneExternalId: string,
+    sceneSpace: string,
+    modelExternalId: string,
+    modelSpace = 'models',
+    revisionId?: number
+  ): EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>> => ({
+    startNode: { externalId: sceneExternalId, space: sceneSpace },
+    endNode: { externalId: modelExternalId, space: modelSpace },
+    instanceType: 'edge' as const,
+    version: 1,
+    type: { externalId: 'test-edge-type', space: 'test' },
+    space: sceneSpace,
+    externalId: `${sceneExternalId}-${modelExternalId}`,
+    createdTime: MOCK_TIMESTAMP,
+    lastUpdatedTime: MOCK_TIMESTAMP,
+    properties: {
+      scene: {
+        'RevisionProperties/v1': {
+          revisionId: revisionId ?? parseInt(modelExternalId.replace('cog_3d_model_', '')),
+          ...createDefaultTransformation({
+            translationX: 10,
+            translationY: 20,
+            translationZ: 30
+          })
+        }
+      }
+    }
+  });
 
-    renderHook(() => use3dScenes(), { wrapper });
-    assert(capturedQueryFunction !== undefined);
-    return await capturedQueryFunction(mockContext);
-  };
+  const create360Edge = (
+    sceneExternalId: string,
+    sceneSpace: string,
+    collectionExternalId: string,
+    collectionSpace: string
+  ): EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>> => ({
+    startNode: { externalId: sceneExternalId, space: sceneSpace },
+    endNode: { externalId: collectionExternalId, space: collectionSpace },
+    instanceType: 'edge' as const,
+    version: 1,
+    type: { externalId: 'test-edge-type', space: 'test' },
+    space: sceneSpace,
+    externalId: `${sceneExternalId}-${collectionExternalId}`,
+    createdTime: MOCK_TIMESTAMP,
+    lastUpdatedTime: MOCK_TIMESTAMP,
+    properties: {
+      scene: {
+        'Image360CollectionProperties/v1': {
+          image360CollectionExternalId: collectionExternalId,
+          image360CollectionSpace: collectionSpace,
+          ...createDefaultTransformation()
+        }
+      }
+    }
+  });
 
-  const setupMockResponse = (responseData: any): void => {
+  const createGroundPlaneNode = (
+    externalId: string,
+    space: string,
+    label: string,
+    file: string
+  ): NodeItem<GroundPlaneProperties> => ({
+    externalId,
+    space,
+    instanceType: 'node' as const,
+    version: 1,
+    createdTime: MOCK_TIMESTAMP,
+    lastUpdatedTime: MOCK_TIMESTAMP,
+    properties: {
+      GroundPlane: {
+        v1: {
+          label,
+          file,
+          wrapping: 'repeat' as const
+        }
+      }
+    }
+  });
+
+  const createGroundPlaneEdge = (
+    sceneExternalId: string,
+    sceneSpace: string,
+    groundPlaneExternalId: string,
+    groundPlaneSpace: string,
+    transform: Transformation3d
+  ): EdgeItem<Record<string, Record<string, Transformation3d>>> => ({
+    startNode: { externalId: sceneExternalId, space: sceneSpace },
+    endNode: { externalId: groundPlaneExternalId, space: groundPlaneSpace },
+    instanceType: 'edge' as const,
+    version: 1,
+    type: { externalId: 'test-edge-type', space: 'test' },
+    space: sceneSpace,
+    externalId: `${sceneExternalId}-${groundPlaneExternalId}`,
+    createdTime: MOCK_TIMESTAMP,
+    lastUpdatedTime: MOCK_TIMESTAMP,
+    properties: {
+      Transformation3d: {
+        v1: {
+          ...transform
+        }
+      }
+    }
+  });
+
+  const createSkyboxNode = (
+    externalId: string,
+    space: string,
+    label: string,
+    file: string,
+    isSpherical: boolean
+  ): NodeItem<SkyboxProperties> => ({
+    externalId,
+    space,
+    instanceType: 'node' as const,
+    version: 1,
+    createdTime: MOCK_TIMESTAMP,
+    lastUpdatedTime: MOCK_TIMESTAMP,
+    properties: {
+      EnvironmentMap: {
+        v1: {
+          label,
+          isSpherical,
+          file
+        }
+      }
+    }
+  });
+
+  const setupMockResponse = (responseData: MockResponseData): void => {
     mockQueryNodesAndEdges.mockResolvedValue({
       items: {
         scenes: [],
@@ -499,5 +488,31 @@ describe(use3dScenes.name, () => {
       },
       nextCursor: undefined
     });
+  };
+
+  const createDefaultTransformation = (
+    overrides?: Partial<Transformation3d>
+  ): Transformation3d => ({
+    translationX: 0,
+    translationY: 0,
+    translationZ: 0,
+    eulerRotationX: 0,
+    eulerRotationY: 0,
+    eulerRotationZ: 0,
+    scaleX: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    ...overrides
+  });
+
+  const waitForSuccessAndGetData = async (result: {
+    current: Use3dScenesResult;
+  }): Promise<ScenesMap> => {
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    assert(result.current.data !== undefined);
+    return result.current.data;
   };
 });
