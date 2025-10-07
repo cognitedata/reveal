@@ -1,26 +1,20 @@
-import { useState, type ReactElement, useEffect, useCallback } from 'react';
+import { useState, type ReactElement, useEffect, useCallback, useContext } from 'react';
 
 import { Button, Tooltip as CogsTooltip, ColorPaletteIcon } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 
-import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
   type EmptyRuleForSelection,
   type RuleAndEnabled,
   type AllMappingStylingGroupAndStyleIndex,
   type AllRuleBasedStylingGroups
-} from '../RuleBasedOutputs/types';
-import { useTranslation } from '../i18n/I18n';
-import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
-import { use3dModels } from '../../hooks/use3dModels';
-import { type CadModelOptions } from '../Reveal3DResources/types';
-import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
-import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+} from '../../RuleBasedOutputs/types';
+import { type CadModelOptions } from '../../Reveal3DResources/types';
 import { offset } from '@floating-ui/dom';
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
-import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
-import { generateEmptyRuleForSelection } from '../RuleBasedOutputs/core/generateEmptyRuleForSelection';
-import { getRuleBasedById } from '../RuleBasedOutputs/core/getRuleBasedById';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
+import { generateEmptyRuleForSelection } from '../../RuleBasedOutputs/core/generateEmptyRuleForSelection';
+import { getRuleBasedById } from '../../RuleBasedOutputs/core/getRuleBasedById';
+import { RuleBasedOutputsButtonContext } from './RuleBasedOutputsButton.context';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
@@ -30,6 +24,16 @@ export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
   onRuleSetSelectedChanged
 }: RuleBasedOutputsButtonProps): ReactElement => {
+  const {
+    useTranslation,
+    use3dModels,
+    useAssetMappedNodesForRevisions,
+    useReveal3DResourcesStylingLoading,
+    useFetchRuleInstances,
+    RuleBasedOutputsSelector,
+    RuleBasedSelectionItem
+  } = useContext(RuleBasedOutputsButtonContext);
+
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
@@ -43,6 +47,8 @@ export const RuleBasedOutputsButton = ({
 
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
   const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
     useAssetMappedNodesForRevisions(cadModels);
 
@@ -54,6 +60,8 @@ export const RuleBasedOutputsButton = ({
   const { data: ruleInstancesResult } = useFetchRuleInstances();
 
   const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
+  const noRuleSetSelected =
+    currentRuleSetEnabled === undefined || Boolean(emptyRuleSelected?.isEnabled);
 
   useEffect(() => {
     setRuleInstances(ruleInstancesResult);
@@ -133,6 +141,9 @@ export const RuleBasedOutputsButton = ({
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
+      onOpenChange={(open: boolean) => {
+        setIsExpanded(open);
+      }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'RULESET_SELECT_HEADER' })} placement="right">
           <Button
@@ -140,6 +151,7 @@ export const RuleBasedOutputsButton = ({
             disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"
+            toggled={isExpanded || !noRuleSetSelected}
             {...props}
           />
         </CogsTooltip>
@@ -149,7 +161,7 @@ export const RuleBasedOutputsButton = ({
         key="no-rule-selected"
         id="no-rule-selected"
         label={t({ key: 'RULESET_NO_SELECTION' })}
-        checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
+        checked={noRuleSetSelected}
         onChange={onChange}
         isLoading={isRuleLoading}
         isEmptyRuleItem={true}
