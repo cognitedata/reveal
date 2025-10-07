@@ -1,7 +1,14 @@
 import { useContext, useMemo } from 'react';
-import { type QueryFunction } from '@tanstack/react-query';
+import { useQuery, type QueryFunction } from '@tanstack/react-query';
 import { type CogniteClient } from '@cognite/sdk';
-import { type Space, type EdgeItem, type NodeItem, type FdmSDK as FdmSDKType, DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import {
+  type Space,
+  type EdgeItem,
+  type NodeItem,
+  type ExternalId,
+  DmsUniqueIdentifier,
+  FdmSDK
+} from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
@@ -26,7 +33,6 @@ import {
   type ScenesMap,
   type Use3dScenesQueryResult,
   type SceneNode,
-  type ExternalId
 } from './types';
 
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
@@ -39,7 +45,7 @@ import { Use3dScenesContext } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
-  const { useSDK, useQuery, createFdmSdk } = useContext(Use3dScenesContext);
+  const { useSDK, createFdmSdk } = useContext(Use3dScenesContext);
 
   const sdk = useSDK(userSdk);
   const fdmSdk = useMemo(() => createFdmSdk(sdk), [createFdmSdk, sdk]);
@@ -322,7 +328,7 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
 }
 
 async function fetchSceneModelsWithPagination(
-  fdmSdk: FdmSDKType,
+  fdmSdk: FdmSDK,
   sceneIds: DmsUniqueIdentifier[],
   allScenes: Use3dScenesQueryResult
 ): Promise<void> {
@@ -345,7 +351,7 @@ async function fetchSceneModelsWithPagination(
 }
 
 async function fetchScene360CollectionsWithPagination(
-  fdmSdk: FdmSDKType,
+  fdmSdk: FdmSDK,
   sceneIds: DmsUniqueIdentifier[],
   allScenes: Use3dScenesQueryResult
 ): Promise<void> {

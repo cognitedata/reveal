@@ -2,7 +2,9 @@ import { type NodeDefinition, type SourceSelectorV3 } from '@cognite/sdk';
 import {
   type EdgeItem,
   type NodeItem,
-  type DmsUniqueIdentifier
+  type DmsUniqueIdentifier,
+  type Space,
+  type ExternalId
 } from '../../data-providers/FdmSDK';
 import {
   type AddCadResourceOptions,
@@ -193,9 +195,6 @@ export const environmentMapSourceWithProperties = [
     properties: ['label', 'file', 'isSpherical']
   }
 ] as const satisfies SourceSelectorV3;
-
-export type Space = string;
-export type ExternalId = string;
 
 export type Use3dScenesResult = UseQueryResult<Record<Space, Record<ExternalId, SceneData>>>;
 

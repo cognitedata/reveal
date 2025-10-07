@@ -10,8 +10,10 @@ import {
   transformationSourceWithProperties
 } from './types';
 
+export type ScenesQuery = ReturnType<typeof getAllScenesQuery>;
+
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-export function createGetScenesQuery(limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) {
+const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) => {
   return {
     with: {
       scenes: {
@@ -126,6 +128,13 @@ export function createGetScenesQuery(limit: number = SCENE_QUERY_LIMIT, sceneCur
     },
     cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
   } as const satisfies Omit<QueryRequest, 'parameters'>;
+};
+
+export function createGetScenesQuery(
+  limit: number = SCENE_QUERY_LIMIT,
+  sceneCursor?: string
+): ScenesQuery {
+  return getAllScenesQuery(limit, sceneCursor);
 }
 
 export function createGetSceneModelsQuery(
