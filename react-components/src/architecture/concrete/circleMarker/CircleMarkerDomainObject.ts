@@ -26,7 +26,7 @@ export enum CircleMarkerType {
  * It provides methods for handling color changes, wheel interactions for resizing,
  * and overrides for visibility and labeling in the object tree.
  *
- * There are tow types of circle markers:
+ * There are two types of circle markers:
  * - MouseCircleMarker: A circle marker that follows the mouse cursor.
  * - FocusPointMarker: A circle marker that indicates a focus point in the 3D space.
  *
