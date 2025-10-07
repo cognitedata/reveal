@@ -19,9 +19,12 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
-import { type AssetMappedPointCloudAnnotationsDependencies } from './common/types';
 import { type PointCloudAnnotationModel } from '../../components/CacheProvider/types';
 import { isPointCloudAnnotationModel } from '../../components/CacheProvider/typeGuards';
+
+type AssetMappedPointCloudAnnotationsDependencies = {
+  getAssetsByIds: typeof getAssetsForIds;
+};
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
