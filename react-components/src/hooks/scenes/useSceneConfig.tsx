@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { type UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type SceneData } from './types';
 import {
   type CadOrPointCloudModel,
@@ -20,7 +20,7 @@ export function useSceneConfig(
   sceneExternalId?: string,
   sceneSpace?: string
 ): UseSceneConfigResult {
-  const { use3dScenes, useQuery } = useContext(UseSceneConfigContext);
+  const { use3dScenes } = useContext(UseSceneConfigContext);
   const allScenes = use3dScenes();
 
   return useQuery({

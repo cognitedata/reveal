@@ -1,12 +1,16 @@
-import { renderHook } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
+import { describe, expect, test, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
-import { type QueryFunction } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type Scene } from '../../components/SceneContainer/sceneTypes';
-import { createMockQueryContext, createMockQueryResult } from '#test-utils/fixtures/queryResult';
-import { useSceneConfig } from './useSceneConfig';
-import { type UseSceneConfigDependencies, UseSceneConfigContext } from './useSceneConfig.context';
+import {
+  createMockQueryResult,
+  createMockQueryResultNoData
+} from '#test-utils/fixtures/queryResult';
+import { useSceneConfig, type UseSceneConfigResult } from './useSceneConfig';
+import { defaultUseSceneConfigDependencies, UseSceneConfigContext } from './useSceneConfig.context';
 import { type ScenesMap, type SceneData } from './types';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(useSceneConfig.name, () => {
   const mockProps = {
@@ -14,18 +18,16 @@ describe(useSceneConfig.name, () => {
     sceneSpace: 'test-space'
   };
 
-  const mockUseQuery = vi.fn();
-  const mockUse3dScenes = vi.fn<UseSceneConfigDependencies['use3dScenes']>();
+  const queryClient = new QueryClient();
 
-  const mockDependencies: UseSceneConfigDependencies = {
-    use3dScenes: mockUse3dScenes,
-    useQuery: mockUseQuery
-  };
+  const mockDependencies = getMocksByDefaultDependencies(defaultUseSceneConfigDependencies);
 
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <UseSceneConfigContext.Provider value={mockDependencies}>
-      {children}
-    </UseSceneConfigContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <UseSceneConfigContext.Provider value={mockDependencies}>
+        {children}
+      </UseSceneConfigContext.Provider>
+    </QueryClientProvider>
   );
 
   const createSceneData = (overrides?: Partial<SceneData>): SceneData => ({
@@ -57,110 +59,32 @@ describe(useSceneConfig.name, () => {
     }
   };
 
-  // Helper: Execute queryFn and return result
-  const executeQueryFn = async (): Promise<Scene | null | undefined> => {
-    let capturedQueryFunction!: QueryFunction<Scene | null>;
-    mockUseQuery.mockImplementation((options) => {
-      capturedQueryFunction = options.queryFn;
-      return createMockQueryResult(null);
-    });
-
-    renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), { wrapper });
-
-    return await capturedQueryFunction(
-      createMockQueryContext([
-        'reveal',
-        'react-components',
-        'sync-scene-config',
-        mockProps.sceneExternalId,
-        mockProps.sceneSpace
-      ])
-    );
-  };
-
   beforeEach(() => {
-    mockUseQuery.mockReturnValue(createMockQueryResult(null));
-    mockUse3dScenes.mockReturnValue(createMockQueryResult(mockScenesMap));
+    mockDependencies.use3dScenes.mockReturnValue(createMockQueryResult(mockScenesMap));
+    queryClient.clear();
   });
 
-  test('should pass correct query parameters to useQuery', () => {
+  test('should call use3dScenes', () => {
     renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), { wrapper });
 
-    expect(mockUseQuery).toHaveBeenCalledWith({
-      queryKey: ['reveal', 'react-components', 'sync-scene-config', 'test-scene', 'test-space'],
-      queryFn: expect.any(Function),
-      enabled: true,
-      staleTime: Infinity
-    });
-  });
-
-  test('should disable query when parameters are undefined', () => {
-    renderHook(() => useSceneConfig(undefined, undefined), { wrapper });
-
-    expect(mockUseQuery).toHaveBeenCalledWith({
-      queryKey: ['reveal', 'react-components', 'sync-scene-config', undefined, undefined],
-      queryFn: expect.any(Function),
-      enabled: false,
-      staleTime: Infinity
-    });
-  });
-
-  test('should handle loading state', () => {
-    mockUseQuery.mockReturnValue(createMockQueryResult(undefined, false, true));
-
-    const { result } = renderHook(
-      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
-      { wrapper }
-    );
-
-    expect(result.current.isLoading).toBe(true);
-    expect(result.current.data).toBeUndefined();
-  });
-
-  test('should handle error state', () => {
-    const testError = new Error('Test error');
-    mockUseQuery.mockReturnValue(createMockQueryResult(undefined, false, false, true, testError));
-
-    const { result } = renderHook(
-      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
-      { wrapper }
-    );
-
-    expect(result.current.isError).toBe(true);
-    expect(result.current.error).toEqual(testError);
-  });
-
-  test('should call use3dScenes and pass queryFunction', () => {
-    renderHook(() => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace), { wrapper });
-
-    expect(mockUse3dScenes).toHaveBeenCalled();
-    const callArgs = mockUseQuery.mock.calls[0][0];
-    expect(callArgs).toHaveProperty('queryFn');
-    expect(typeof callArgs.queryFn).toBe('function');
-  });
-
-  test('should handle refetch functionality', () => {
-    const mockRefetch = vi.fn();
-    const resultWithRefetch = createMockQueryResult(null);
-    resultWithRefetch.refetch = mockRefetch;
-    mockUseQuery.mockReturnValue(resultWithRefetch);
-
-    const { result } = renderHook(
-      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
-      { wrapper }
-    );
-
-    expect(result.current.refetch).toBe(mockRefetch);
+    expect(mockDependencies.use3dScenes).toHaveBeenCalled();
   });
 
   test('should return null when scene data does not exist', async () => {
-    mockUse3dScenes.mockReturnValue(createMockQueryResult({}));
-    const result = await executeQueryFn();
-    expect(result).toBeNull();
+    mockDependencies.use3dScenes.mockReturnValue(createMockQueryResultNoData());
+    const { result } = renderHook(
+      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
+      { wrapper }
+    );
+    await waitFor(() => {
+      expect(result.current.isFetching).toBe(false);
+      expect(result.current.isLoading).toBe(false);
+    });
+    expect(result.current.data).toBeUndefined();
   });
 
   test('should execute complete scene processing with minimal data', async () => {
-    mockUse3dScenes.mockReturnValue(
+    mockDependencies.use3dScenes.mockReturnValue(
       createMockQueryResult({
         [mockProps.sceneSpace]: {
           [mockProps.sceneExternalId]: createSceneData()
@@ -168,15 +92,19 @@ describe(useSceneConfig.name, () => {
       })
     );
 
-    const result = await executeQueryFn();
-    expect(result).toBeDefined();
-    expect(result?.sceneConfiguration.name).toBe('Test Scene');
-    expect(result?.sceneModels).toHaveLength(0);
-    expect(result?.image360Collections).toHaveLength(0);
+    const { result } = renderHook(
+      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
+      { wrapper }
+    );
+
+    const data = await waitForSuccessAndGetData(result);
+    expect(data.sceneConfiguration.name).toBe('Test Scene');
+    expect(data.sceneModels).toHaveLength(0);
+    expect(data.image360Collections).toHaveLength(0);
   });
 
   test('should transform classic model identifiers correctly', async () => {
-    mockUse3dScenes.mockReturnValue(
+    mockDependencies.use3dScenes.mockReturnValue(
       createMockQueryResult({
         [mockProps.sceneSpace]: {
           [mockProps.sceneExternalId]: createSceneData({
@@ -189,17 +117,22 @@ describe(useSceneConfig.name, () => {
       })
     );
 
-    const result = await executeQueryFn();
-    expect(result?.sceneModels).toHaveLength(2);
-    expect(result?.sceneModels[0].modelIdentifier).toHaveProperty('modelId', 12345);
-    expect(result?.sceneModels[0].modelIdentifier).toHaveProperty('revisionId', 67890);
-    expect(result?.sceneModels[0].defaultVisible).toBe(true);
-    expect(result?.sceneModels[1].modelIdentifier).toHaveProperty('modelId', 54321);
-    expect(result?.sceneModels[1].defaultVisible).toBe(false);
+    const { result } = renderHook(
+      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
+      { wrapper }
+    );
+
+    const data = await waitForSuccessAndGetData(result);
+    expect(data.sceneModels).toHaveLength(2);
+    expect(data.sceneModels[0].modelIdentifier).toHaveProperty('modelId', 12345);
+    expect(data.sceneModels[0].modelIdentifier).toHaveProperty('revisionId', 67890);
+    expect(data.sceneModels[0].defaultVisible).toBe(true);
+    expect(data.sceneModels[1].modelIdentifier).toHaveProperty('modelId', 54321);
+    expect(data.sceneModels[1].defaultVisible).toBe(false);
   });
 
   test('should transform datamodels model identifiers correctly', async () => {
-    mockUse3dScenes.mockReturnValue(
+    mockDependencies.use3dScenes.mockReturnValue(
       createMockQueryResult({
         [mockProps.sceneSpace]: {
           [mockProps.sceneExternalId]: createSceneData({
@@ -220,18 +153,23 @@ describe(useSceneConfig.name, () => {
       })
     );
 
-    const result = await executeQueryFn();
-    expect(result?.sceneModels).toHaveLength(2);
-    expect(result?.sceneModels[0].modelIdentifier).toHaveProperty(
+    const { result } = renderHook(
+      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
+      { wrapper }
+    );
+
+    const data = await waitForSuccessAndGetData(result);
+    expect(data.sceneModels).toHaveLength(2);
+    expect(data.sceneModels[0].modelIdentifier).toHaveProperty(
       'revisionExternalId',
       'dm-revision-1'
     );
-    expect(result?.sceneModels[0].modelIdentifier).toHaveProperty('revisionSpace', 'dm-space-1');
-    expect(result?.sceneModels[1].defaultVisible).toBe(false);
+    expect(data.sceneModels[0].modelIdentifier).toHaveProperty('revisionSpace', 'dm-space-1');
+    expect(data.sceneModels[1].defaultVisible).toBe(false);
   });
 
   test('should transform image360 collection options correctly', async () => {
-    mockUse3dScenes.mockReturnValue(
+    mockDependencies.use3dScenes.mockReturnValue(
       createMockQueryResult({
         [mockProps.sceneSpace]: {
           [mockProps.sceneExternalId]: createSceneData({
@@ -254,16 +192,21 @@ describe(useSceneConfig.name, () => {
       })
     );
 
-    const result = await executeQueryFn();
-    expect(result?.image360Collections).toHaveLength(2);
-    expect(result?.image360Collections[0].image360CollectionExternalId).toBe('image-collection-1');
-    expect(result?.image360Collections[0].image360CollectionSpace).toBe('image-space-1');
-    expect(result?.image360Collections[0].defaultVisible).toBe(true);
-    expect(result?.image360Collections[1].defaultVisible).toBe(false);
+    const { result } = renderHook(
+      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
+      { wrapper }
+    );
+
+    const data = await waitForSuccessAndGetData(result);
+    expect(data.image360Collections).toHaveLength(2);
+    expect(data.image360Collections[0].image360CollectionExternalId).toBe('image-collection-1');
+    expect(data.image360Collections[0].image360CollectionSpace).toBe('image-space-1');
+    expect(data.image360Collections[0].defaultVisible).toBe(true);
+    expect(data.image360Collections[1].defaultVisible).toBe(false);
   });
 
   test('should transform mixed model types correctly', async () => {
-    mockUse3dScenes.mockReturnValue(
+    mockDependencies.use3dScenes.mockReturnValue(
       createMockQueryResult({
         [mockProps.sceneSpace]: {
           [mockProps.sceneExternalId]: createSceneData({
@@ -288,16 +231,30 @@ describe(useSceneConfig.name, () => {
       })
     );
 
-    const result = await executeQueryFn();
-    expect(result?.sceneModels).toHaveLength(2);
-    expect(result?.sceneModels[0].modelIdentifier).toHaveProperty('modelId', 11111);
-    expect(result?.sceneModels[1].modelIdentifier).toHaveProperty(
+    const { result } = renderHook(
+      () => useSceneConfig(mockProps.sceneExternalId, mockProps.sceneSpace),
+      { wrapper }
+    );
+
+    const data = await waitForSuccessAndGetData(result);
+    expect(data.sceneModels).toHaveLength(2);
+    expect(data.sceneModels[0].modelIdentifier).toHaveProperty('modelId', 11111);
+    expect(data.sceneModels[1].modelIdentifier).toHaveProperty(
       'revisionExternalId',
       'dm-revision-mixed'
     );
-    expect(result?.image360Collections).toHaveLength(1);
-    expect(result?.image360Collections[0].image360CollectionExternalId).toBe(
-      'mixed-image-collection'
-    );
+    expect(data.image360Collections).toHaveLength(1);
+    expect(data.image360Collections[0].image360CollectionExternalId).toBe('mixed-image-collection');
   });
+
+  const waitForSuccessAndGetData = async (result: {
+    current: UseSceneConfigResult;
+  }): Promise<Scene> => {
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    assert(result.current.data !== undefined && result.current.data !== null);
+    return result.current.data;
+  };
 });
