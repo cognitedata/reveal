@@ -10,7 +10,7 @@ export class MeasureLineDomainObject extends LineDomainObject {
 
   public constructor(primitiveType: PrimitiveType) {
     super(primitiveType);
-    this.color = new Color(Color.NAMES.red);
+    this.color.set(Color.NAMES.red);
   }
 
   // ==================================================

@@ -250,10 +250,6 @@ export abstract class DomainObject implements TreeNodeType {
     return this._color;
   }
 
-  public set color(value: Color) {
-    this._color = value;
-  }
-
   // ==================================================
   // INSTANCE/VIRTUAL METHODS: Selected
   // ==================================================
@@ -437,7 +433,7 @@ export abstract class DomainObject implements TreeNodeType {
     }
     if (what === undefined || what === Changes.color) {
       if (this.canChangeColor) {
-        this.color = domainObject.color.clone();
+        this.color.set(domainObject.color);
       }
     }
     if (what === undefined || what === Changes.naming) {
