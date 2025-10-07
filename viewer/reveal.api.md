@@ -1865,6 +1865,7 @@ export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceT
     model: CognitePointCloudModel<T>;
     point: Vector3;
     pointIndex: number;
+    pointSize: number;
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
