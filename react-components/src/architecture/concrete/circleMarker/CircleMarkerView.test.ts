@@ -6,7 +6,7 @@ import { addView, expectChildrenOfTypeAndCount } from '#test-utils/architecture/
 import { CircleMarkerView } from './CircleMarkerView';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type CustomObjectIntersectInput } from '@cognite/reveal';
-import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
 describe(CircleMarkerView.name, () => {
   let view: CircleMarkerView;

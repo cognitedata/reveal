@@ -2,10 +2,10 @@ import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
 import { updateFocusPointMarker } from './updateFocusPointMarker';
 import { MeasurementTool } from './MeasurementTool';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { getOrCreateFocusPointMarker } from '../circleMarker/CircleMarkerDomainObject';
 import { type PointCloudIntersection } from '@cognite/reveal';
-import { createPointCloudMock } from '../../../../tests/tests-utilities/fixtures/pointCloud';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { createPointCloudMock } from '#test-utils//fixtures/pointCloud';
 
 describe(updateFocusPointMarker.name, () => {
   test('Should hide the marker when nothing is intersected', async () => {
