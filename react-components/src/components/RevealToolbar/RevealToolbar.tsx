@@ -1,16 +1,16 @@
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
-import { SlicerButton } from './SlicerButton';
-import { SettingsButton } from './SettingsButton';
+import { SlicerButton } from './SlicerButton/SlicerButton';
+import { SettingsButton } from './SettingsButton/SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { HelpButton } from './HelpButton';
+import { HelpButton } from './HelpButton/HelpButton';
 import { ShareButton } from './ShareButton';
 import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from '../../architecture/base/utilities/quality/QualitySettings';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
-import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
+import { RuleBasedOutputsButton } from './RuleBasedOutputsButton/RuleBasedOutputsButton';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
 import { LayersButton } from './LayersButton/LayersButton';
 
