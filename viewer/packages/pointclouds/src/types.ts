@@ -102,10 +102,6 @@ export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
   /**
    * Point cloud node defining what model the point is a part of.
    */
-  pointSize?: number;
-  /**
-   * Point cloud node defining what model the point is a part of.
-   */
   pointCloudNode: PointCloudNode<T>;
   /**
    * The geometry object that was intersected.

@@ -27,6 +27,10 @@ export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceT
    */
   pointIndex: number;
   /**
+   * The size of the point
+   */
+  pointSize: number;
+  /**
    * Distance from the camera to the intersection.
    */
   distanceToCamera: number;

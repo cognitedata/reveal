@@ -52,7 +52,6 @@ export class PointCloudPickingHandler {
         pickWindowSize: PointCloudPickingHandler.PickingWindowSize
       });
       if (intersection !== null) {
-        intersection.pointSize = node.pointSize;
         intersections.push(intersection);
       }
     });
@@ -73,8 +72,7 @@ export class PointCloudPickingHandler {
           point: x.position,
           pointIndex: x.pointIndex,
           pointCloudNode,
-          object: x.object,
-          pointSize: x.pointSize
+          object: x.object
         };
 
         if (pointCloudObject !== undefined) {

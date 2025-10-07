@@ -1889,6 +1889,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
               model,
               point: result.point,
               pointIndex: result.pointIndex,
+              pointSize: result.pointCloudNode.pointSize,
               distanceToCamera: result.distance,
               annotationId,
               assetRef: result.volumeMetadata?.assetRef,

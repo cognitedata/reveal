@@ -7,7 +7,6 @@ export interface PickPoint {
   position: Vector3;
   normal?: Vector3;
   pointCloud?: PointCloudOctree;
-  pointSize?: number;
   [property: string]: any;
 }
 
