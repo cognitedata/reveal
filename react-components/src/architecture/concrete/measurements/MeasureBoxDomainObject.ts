@@ -10,7 +10,7 @@ export class MeasureBoxDomainObject extends BoxDomainObject {
 
   public constructor(primitiveType: PrimitiveType) {
     super(primitiveType);
-    this.color.set(Color.NAMES.magenta);
+    this.setColor(Color.NAMES.magenta);
   }
 
   // ==================================================

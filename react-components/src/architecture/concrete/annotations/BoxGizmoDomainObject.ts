@@ -22,7 +22,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
 
   public constructor() {
     super();
-    this.color.set(Color.NAMES.white);
+    this.setColor(Color.NAMES.white);
   }
   // ==================================================
   // OVERRIDES of DomainObject

@@ -19,7 +19,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   public constructor() {
     super();
-    this.color.set(Color.NAMES.orange);
+    this.setColor(Color.NAMES.orange);
   }
 
   // ==================================================
