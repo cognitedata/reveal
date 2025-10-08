@@ -42,7 +42,7 @@ describe(use3dScenes.name, () => {
   // Add the custom property needed for pagination testing
   const mockDependenciesWithLowLimit = {
     ...mockDependencies,
-    relatedDataLimit: 3
+    sceneRelatedDataLimit: 3
   };
 
   const queryClient = new QueryClient();

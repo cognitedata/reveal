@@ -39,7 +39,7 @@ import { Use3dScenesContext } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
-  const { useSDK, createFdmSdk, relatedDataLimit } = useContext(Use3dScenesContext);
+  const { useSDK, createFdmSdk, sceneRelatedDataLimit } = useContext(Use3dScenesContext);
 
   const sdk = useSDK(userSdk);
   const fdmSdk = useMemo(() => createFdmSdk(sdk), [createFdmSdk, sdk]);
@@ -80,8 +80,8 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       const currentScenes = scenesResponse.items.scenes;
       allScenes.scenes.push(...currentScenes);
 
-      const needsModelsPagination = scene3dModels.length === relatedDataLimit;
-      const needs360Pagination = scene360Collections.length === relatedDataLimit;
+      const needsModelsPagination = scene3dModels.length === sceneRelatedDataLimit;
+      const needs360Pagination = scene360Collections.length === sceneRelatedDataLimit;
 
       allScenes.sceneModels.push(...scene3dModels);
       allScenes.scene360Collections.push(...scene360Collections);
