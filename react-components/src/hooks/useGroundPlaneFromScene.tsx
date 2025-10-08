@@ -16,7 +16,7 @@ import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { clear } from '../architecture/base/utilities/extensions/arrayUtils';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
-  const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
+  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const sdk = useSDK();
   const viewer = useReveal();
 
