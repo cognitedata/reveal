@@ -9,14 +9,12 @@ export type Image360DetailsContextDependencies = {
   Image360HistoricalDetails: typeof Image360HistoricalDetails;
 };
 
-export const defaultImage360DetailsContextDependencies: Image360DetailsContextDependencies =
-  {
-    useReveal,
-    useImage360Collections,
-    Image360HistoricalDetails
-  };
+export const defaultImage360DetailsContextDependencies: Image360DetailsContextDependencies = {
+  useReveal,
+  useImage360Collections,
+  Image360HistoricalDetails
+};
 
-export const Image360DetailsContext = 
-  createContext<Image360DetailsContextDependencies>(
-    defaultImage360DetailsContextDependencies
-  );
+export const Image360DetailsContext = createContext<Image360DetailsContextDependencies>(
+  defaultImage360DetailsContextDependencies
+);

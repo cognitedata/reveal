@@ -13,11 +13,8 @@ export function Image360Details({
   appLanguage,
   enableExitButton = true
 }: Image360DetailsProps): ReactElement {
-  const {
-    useReveal,
-    useImage360Collections,
-    Image360HistoricalDetails
-  } = useContext(Image360DetailsContext);
+  const { useReveal, useImage360Collections, Image360HistoricalDetails } =
+    useContext(Image360DetailsContext);
 
   const viewer = useReveal();
   const [enteredEntity, setEnteredEntity] = useState<Image360<DataSourceType> | undefined>();
