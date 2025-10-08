@@ -29,7 +29,7 @@ export abstract class InstanceCommand extends RenderTargetCommand {
   }
 
   protected *getInstances(): Generator<DomainObject> {
-    for (const domainObject of this.rootDomainObject.getDescendants()) {
+    for (const domainObject of this.root.getDescendants()) {
       if (this.isInstance(domainObject)) {
         yield domainObject;
       }

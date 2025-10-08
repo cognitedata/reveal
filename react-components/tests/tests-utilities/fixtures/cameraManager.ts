@@ -1,4 +1,11 @@
-import { type CameraManager, type CameraManagerEventType, type CameraState } from '@cognite/reveal';
+import {
+  type IFlexibleCameraManager,
+  type CameraManagerEventType,
+  type CameraState,
+  FlexibleControlsType,
+  FlexibleControlsOptions,
+  type FlexibleControlsTypeChangeDelegate
+} from '@cognite/reveal';
 import { remove } from 'lodash';
 import { Mock } from 'moq.ts';
 import { PerspectiveCamera } from 'three';
@@ -10,36 +17,54 @@ export const cameraManagerGlobalCameraEvents: Record<CameraManagerEventType, viM
   cameraStop: []
 };
 
-const cameraManagerGlobalCurrentCameraState: CameraState = {};
-export const fitCameraToBoundingBoxMock = vi.fn<CameraManager['fitCameraToBoundingBox']>();
+export function createFlexibleCameraManager(): IFlexibleCameraManager {
+  const options = new FlexibleControlsOptions();
+  const cameraState: CameraState = {};
 
-export const cameraManagerMock = new Mock<CameraManager>()
-  .setup((p) => p.on)
-  .returns((eventType, callback) =>
-    cameraManagerGlobalCameraEvents[eventType].push(vi.fn().mockImplementation(callback))
-  )
-  .setup((p) => p.off)
-  .returns((eventType, callback) =>
-    remove(
-      cameraManagerGlobalCameraEvents[eventType],
-      (element) => element.getMockImplementation() === callback
+  const result = new Mock<IFlexibleCameraManager>()
+    .setup((p) => p.on)
+    .returns((eventType, callback) =>
+      cameraManagerGlobalCameraEvents[eventType].push(vi.fn().mockImplementation(callback))
     )
-  )
-  .setup((p) => p.setCameraState)
-  .returns(({ position, target, rotation }) => {
-    cameraManagerGlobalCurrentCameraState.position = position;
-    cameraManagerGlobalCurrentCameraState.target = target;
-    cameraManagerGlobalCurrentCameraState.rotation = rotation;
-    setTimeout(() => {
-      cameraManagerGlobalCameraEvents.cameraStop.forEach((callback) => {
-        callback(position!, target!);
-      });
-    }, 50);
-  })
-  .setup((p) => p.getCameraState())
-  .returns(cameraManagerGlobalCurrentCameraState as Required<CameraState>)
-  .setup((p) => p.getCamera)
-  .returns(() => new PerspectiveCamera())
-  .setup((p) => p.fitCameraToBoundingBox)
-  .returns(fitCameraToBoundingBoxMock)
-  .object();
+    .setup((p) => p.off)
+    .returns((eventType, callback) =>
+      remove(
+        cameraManagerGlobalCameraEvents[eventType],
+        (element) => element.getMockImplementation() === callback
+      )
+    )
+    .setup((p) => p.setCameraState)
+    .returns(({ position, target, rotation }) => {
+      cameraState.position = position;
+      cameraState.target = target;
+      cameraState.rotation = rotation;
+      setTimeout(() => {
+        cameraManagerGlobalCameraEvents.cameraStop.forEach((callback) => {
+          callback(position!, target!);
+        });
+      }, 50);
+    })
+    .setup((p) => p.options)
+    .returns(options)
+    .object();
+
+  result.controlsType = FlexibleControlsType.Orbit;
+  result.fitCameraToBoundingBox = vi.fn();
+  result.onDoubleClick = vi.fn(async (_event: PointerEvent) => {});
+  result.onPointerDown = vi.fn(async (_event: PointerEvent, _leftButton: boolean) => {});
+  result.onPointerDrag = vi.fn(async (_event: PointerEvent, _leftButton: boolean) => {});
+  result.onPointerUp = vi.fn(async (_event: PointerEvent, _leftButton: boolean) => {});
+  result.onWheel = vi.fn(async (_event: WheelEvent, _delta: number) => {});
+  result.onKey = vi.fn((_event: KeyboardEvent, _down: boolean) => {});
+  result.onFocusChanged = vi.fn((_haveFocus: boolean) => {});
+
+  result.getCamera = () => new PerspectiveCamera();
+  result.getCameraState = () => cameraState as Required<CameraState>;
+
+  result.addControlsTypeChangeListener = vi.fn(
+    (_callback: FlexibleControlsTypeChangeDelegate) => {}
+  );
+  result.removeControlsTypeChangeListener = vi.fn();
+
+  return result;
+}

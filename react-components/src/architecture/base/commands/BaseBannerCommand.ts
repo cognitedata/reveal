@@ -1,4 +1,4 @@
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export enum BannerStatus {

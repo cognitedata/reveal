@@ -28,10 +28,11 @@ export type ClassicDataSourceType = {
    */
   modelIdentifier: ClassicModelIdentifierType;
   /**
-   * The classic point cloud volume metadata containing reference associated with the object which includes annotationId
-   * and asset reference if any.
+   * The classic point cloud volume metadata containing reference associated with the object
+   * which includes annotationId and asset reference, if any. The instanceRef field is
+   * similarily a reference to a contextualized DM instance, if any.
    */
-  pointCloudVolumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef };
+  pointCloudVolumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef; instanceRef?: DMInstanceRef };
 
   /**
    * Point cloud volume collection type

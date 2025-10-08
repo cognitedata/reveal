@@ -1,12 +1,15 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
@@ -29,6 +32,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 
   protected constructor(primitiveType: PrimitiveType = PrimitiveType.Cylinder) {
     super();
+    verifyPrimitiveType(LEGAL_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -39,11 +43,15 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalCylinder:
+        return { key: 'CYLINDER_HORIZONTAL' };
       case PrimitiveType.VerticalCylinder:
+        return { key: 'CYLINDER_VERTICAL' };
       case PrimitiveType.Cylinder:
         return { key: 'CYLINDER' };
       case PrimitiveType.HorizontalCircle:
         return { key: 'CIRCLE' };
+      case PrimitiveType.Diameter:
+        return { key: 'DIAMETER' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -155,10 +163,24 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
 
   public get canMoveCaps(): boolean {
-    return this.primitiveType === PrimitiveType.Cylinder;
+    return (
+      this.primitiveType === PrimitiveType.Cylinder ||
+      this.primitiveType === PrimitiveType.Diameter ||
+      // Horizontal cylinder can move the caps only in the horizontal plane
+      // This constrain are implemented in the dragger
+      this.primitiveType === PrimitiveType.HorizontalCylinder
+    );
   }
 
   public expandBoundingBox(boundingBox: Box3): void {
     this.cylinder.expandBoundingBox(boundingBox);
   }
 }
+
+const LEGAL_PRIMITIVE_TYPES = [
+  PrimitiveType.Diameter,
+  PrimitiveType.Cylinder,
+  PrimitiveType.HorizontalCircle,
+  PrimitiveType.HorizontalCylinder,
+  PrimitiveType.VerticalCylinder
+];

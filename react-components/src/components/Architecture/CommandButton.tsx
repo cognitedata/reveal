@@ -2,13 +2,20 @@ import { type ReactElement } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { getButtonType, getTooltipPlacement } from './utilities';
+import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './Factories/IconFactory';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
 import { useCommand } from './hooks/useCommand';
 import { useCommandProps } from './hooks/useCommandProps';
+
+export function createButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+}
 
 export const CommandButton = ({
   inputCommand,
@@ -33,7 +40,7 @@ export const CommandButton = ({
       enterDelay={TOOLTIP_DELAY}
       placement={getTooltipPlacement(placement)}>
       <Button
-        type={getButtonType(command)}
+        type={command.buttonType}
         icon={<IconComponent iconName={icon} />}
         key={uniqueId}
         disabled={!isEnabled}

@@ -82,7 +82,8 @@ export class PointCloudPickingHandler {
               pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
               volumeMetadata: {
                 annotationId: pointCloudObject.annotationId,
-                assetRef: pointCloudObject.assetRef
+                assetRef: pointCloudObject.assetRef,
+                instanceRef: pointCloudObject.instanceRef
               }
             };
 

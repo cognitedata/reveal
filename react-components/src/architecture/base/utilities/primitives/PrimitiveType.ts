@@ -1,5 +1,6 @@
 export enum PrimitiveType {
   None,
+  Point,
   Line,
   Polyline,
   Polygon,
@@ -10,6 +11,7 @@ export enum PrimitiveType {
   HorizontalCircle,
   HorizontalCylinder,
   VerticalCylinder,
+  Diameter,
   PlaneX,
   PlaneY,
   PlaneZ,
@@ -23,3 +25,12 @@ export const AlongAxisPlanePrimitiveTypes = [
 ];
 
 export const PlanePrimitiveTypes = [...AlongAxisPlanePrimitiveTypes, PrimitiveType.PlaneXY];
+
+export function verifyPrimitiveType(
+  legalTypes: PrimitiveType[],
+  primitiveType: PrimitiveType
+): void {
+  if (!legalTypes.includes(primitiveType)) {
+    throw new Error(`Invalid primitive type: ${primitiveType}`);
+  }
+}

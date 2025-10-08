@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { Color } from 'three';
-import { getMixedColor } from '../../base/utilities/colors/colorExtensions';
+import { getMixedColor } from '../../base/utilities/colors/colorUtils';
 
 const COLOR_WHITE = new Color().setScalar(1);
 const COLOR_DARK_GREY = new Color().setScalar(0.23);

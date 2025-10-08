@@ -1,6 +1,6 @@
 import { type Vector3 } from 'three';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { createPointsOfInterestPropertiesFromPointAndTitle } from './types';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 
@@ -84,9 +84,7 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
       return false;
     }
 
-    const domainObject = this.renderTarget.rootDomainObject.getDescendantByType(
-      PointsOfInterestDomainObject
-    );
+    const domainObject = this.renderTarget.root.getDescendantByType(PointsOfInterestDomainObject);
 
     if (domainObject === undefined) {
       return false;

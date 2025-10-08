@@ -1,12 +1,11 @@
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { isPointsOfInterestIntersection } from './types';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { PointsOfInterestAdsProvider } from './ads/PointsOfInterestAdsProvider';
 import { type Vector3 } from 'three';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
-import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
@@ -14,13 +13,14 @@ import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick'
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 import { type InstanceReference } from '../../../utilities/instanceIds';
+import { signal, type Signal } from '@cognite/signals';
 
 const ASSIGNED_INSTANCE_STYLING_SYMBOL = Symbol('poi3d-assigned-instance-styling');
 
 export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
 
-  private _anchoredDialogContent: AnchoredDialogContent | undefined;
+  private readonly _anchoredDialogContent = signal<AnchoredDialogContent | undefined>();
 
   public override get icon(): IconName {
     return 'Waypoint';
@@ -72,7 +72,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     this.initializePointsOfInterestDomainObject();
   }
 
-  public override getAnchoredDialogContent(): AnchoredDialogContent | undefined {
+  public override getAnchoredDialogContent(): Signal<AnchoredDialogContent | undefined> {
     return this._anchoredDialogContent;
   }
 
@@ -81,9 +81,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   }
 
   public initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
-    const oldPoiDomainObject = this.rootDomainObject.getDescendantByType(
-      PointsOfInterestDomainObject
-    );
+    const oldPoiDomainObject = this.root.getDescendantByType(PointsOfInterestDomainObject);
 
     if (oldPoiDomainObject !== undefined) {
       return oldPoiDomainObject;
@@ -91,10 +89,10 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
 
     const domainObject = new PointsOfInterestDomainObject(
       new PointsOfInterestAdsProvider(
-        this.rootDomainObject.sdk
+        this.root.sdk
       ) as unknown as PointsOfInterestProvider<PoiIdType>
     );
-    this.rootDomainObject.addChildInteractive(domainObject);
+    this.root.addChildInteractive(domainObject);
     return domainObject;
   }
 
@@ -129,8 +127,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   }
 
   private setAnchoredDialogContent(dialogContent: AnchoredDialogContent | undefined): void {
-    this._anchoredDialogContent = dialogContent;
-    AnchoredDialogUpdater.update();
+    this._anchoredDialogContent(dialogContent);
   }
 
   public openCreateCommandDialog(position: Vector3, clickEvent: PointerEvent): void {

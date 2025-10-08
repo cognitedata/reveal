@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { getColorMap } from './colorMaps';
 import { ColorMapType } from './ColorMapType';
 import assert from 'assert';
-import { getColorFromBytes } from './colorExtensions';
+import { getColorFromBytes } from './colorUtils';
 import { BYTE_PR_COLOR, ColorMap, TEXTURE_1D_WIDTH } from './ColorMap';
 import { Range1 } from '../geometry/Range1';
 

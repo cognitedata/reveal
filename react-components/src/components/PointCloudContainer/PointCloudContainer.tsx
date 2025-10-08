@@ -4,7 +4,7 @@ import {
   type DataSourceType
 } from '@cognite/reveal';
 
-import { useEffect, type ReactElement, useState, useRef } from 'react';
+import { useEffect, type ReactElement, useState, useRef, useCallback } from 'react';
 import { type Matrix4 } from 'three';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -26,6 +26,7 @@ export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions<DataSourceType>;
   styling?: PointCloudModelStyling;
   transform?: Matrix4;
+  defaultVisible?: boolean;
   onLoad?: (model: CognitePointCloudModel<DataSourceType>) => void;
   onLoadError?: (options: AddModelOptions<DataSourceType>, error: any) => void;
 };
@@ -34,6 +35,7 @@ export function PointCloudContainer({
   addModelOptions,
   styling,
   transform,
+  defaultVisible,
   onLoad,
   onLoadError
 }: CognitePointCloudModelProps): ReactElement {
@@ -45,14 +47,55 @@ export function PointCloudContainer({
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
 
-  const modelOptions = useModelIdRevisionIdFromModelOptions([addModelOptions]);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions([addModelOptions]);
 
-  // useModelIdRevisionIdFromModelOptions returns an empty array if the query is
-  // still loading, fetching, refetching, or errored.
-  const addModelOptionsResult = modelOptions[0]?.data;
+  const modelId = classicAddModelOptions[0]?.modelId;
+  const revisionId = classicAddModelOptions[0]?.revisionId;
 
-  const modelId = addModelOptionsResult?.modelId;
-  const revisionId = addModelOptionsResult?.revisionId;
+  const addModel = useCallback(
+    async (
+      addModelOptions: AddModelOptions<DataSourceType>,
+      transform?: Matrix4
+    ): Promise<CognitePointCloudModel<DataSourceType>> => {
+      const pointCloudModel = await getOrAddModel();
+
+      if (transform !== undefined) {
+        pointCloudModel.setModelTransformation(transform);
+      }
+
+      setModel(pointCloudModel);
+      return pointCloudModel;
+
+      async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
+        const viewerModel = viewer.models.find((pointCloudModel) => {
+          const pointCloudModelClone = {
+            ...pointCloudModel,
+            transform: pointCloudModel.getModelTransformation()
+          };
+          return isSameModel(pointCloudModelClone, addModelOptions);
+        });
+
+        if (viewerModel !== undefined) {
+          return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
+        }
+
+        return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions, defaultVisible);
+      }
+    },
+    [viewer, renderTarget, defaultVisible, setModel]
+  );
+
+  const removeModel = useCallback((): void => {
+    if (!modelExists(model, viewer)) return;
+
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) {
+      return;
+    }
+
+    RevealModelsUtils.remove(renderTarget, model);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
+    setModel(undefined);
+  }, [viewer, model, cachedViewerRef, renderTarget, setRevealResourcesCount, setModel]);
 
   useEffect(() => {
     if (
@@ -85,56 +128,29 @@ export function PointCloudContainer({
         callback();
       });
     };
-  }, [modelId, revisionId]);
+  }, [
+    modelId,
+    revisionId,
+    addModelOptions,
+    transform,
+    onLoad,
+    onLoadError,
+    viewer,
+    setRevealResourcesCount,
+    setReveal3DResourceLoadFailCount,
+    addModel,
+    removeModel
+  ]);
 
   useEffect(() => {
     if (!modelExists(model, viewer) || transform === undefined) return;
 
     model.setModelTransformation(transform);
-  }, [transform, model]);
+  }, [transform, model, viewer]);
 
   useApplyPointCloudStyling(model, styling);
 
   return <></>;
-
-  async function addModel(
-    addModelOptions: AddModelOptions<DataSourceType>,
-    transform?: Matrix4
-  ): Promise<CognitePointCloudModel<DataSourceType>> {
-    const pointCloudModel = await getOrAddModel();
-
-    if (transform !== undefined) {
-      pointCloudModel.setModelTransformation(transform);
-    }
-    setModel(pointCloudModel);
-    return pointCloudModel;
-
-    async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
-      const viewerModel = viewer.models.find((pointCloudModel) => {
-        const pointCloudModelClone = {
-          ...pointCloudModel,
-          transform: pointCloudModel.getModelTransformation()
-        };
-        return isSameModel(pointCloudModelClone, addModelOptions);
-      });
-
-      if (viewerModel !== undefined) {
-        return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
-      }
-      return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions);
-    }
-  }
-
-  function removeModel(): void {
-    if (!modelExists(model, viewer)) return;
-
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
-
-    RevealModelsUtils.remove(renderTarget, model);
-    setRevealResourcesCount(getViewerResourceCount(viewer));
-    setModel(undefined);
-  }
 }
 
 function defaultLoadErrorHandler(addOptions: AddModelOptions<DataSourceType>, error: any): void {

@@ -1,7 +1,7 @@
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 

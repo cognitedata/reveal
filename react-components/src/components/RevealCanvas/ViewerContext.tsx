@@ -3,20 +3,19 @@ import { createContext, type ReactElement, type ReactNode, useContext, useEffect
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { remove } from 'lodash';
 
-export const ViewerContext = createContext<RevealRenderTarget | null>(null);
+export const ViewerContext = createContext<RevealRenderTarget | undefined>(undefined);
 
 export type ViewerContextProviderProps = {
-  value: RevealRenderTarget | null;
+  renderTarget: RevealRenderTarget;
   children: ReactNode;
 };
 
 export const ViewerContextProvider = ({
-  value,
+  renderTarget: value,
   children
 }: ViewerContextProviderProps): ReactElement => {
   useExposeRenderTargetAndViewerSingletons(value ?? undefined);
   useAddRenderTargetToWindowList(value ?? undefined);
-
   return <ViewerContext.Provider value={value}>{children}</ViewerContext.Provider>;
 };
 
@@ -27,7 +26,7 @@ export const useReveal = (): Cognite3DViewer<DataSourceType> => {
 
 export const useRenderTarget = (): RevealRenderTarget => {
   const renderTarget = useContext(ViewerContext);
-  if (renderTarget === null) {
+  if (renderTarget === undefined) {
     throw new Error('useRenderTarget must be used within a ViewerProvider');
   }
   return renderTarget;

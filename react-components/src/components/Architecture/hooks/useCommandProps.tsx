@@ -1,11 +1,11 @@
 import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
 import { type BaseSliderCommand } from '../../../architecture';
-import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { type IconName, type UniqueId } from '../../../architecture/base/utilities/types';
 import { useCommandProperty } from './useCommandProperty';
 
 type CommonCommandProps = {
   icon: IconName;
-  uniqueId: number;
+  uniqueId: UniqueId;
   isVisible: boolean;
   isEnabled: boolean;
   isChecked: boolean;
@@ -25,7 +25,7 @@ export function useCommandIcon(command: BaseCommand): IconName {
   return useCommandProperty(command, () => command.icon);
 }
 
-export function useCommandUniqueId(command: BaseCommand): number {
+export function useCommandUniqueId(command: BaseCommand): UniqueId {
   return useCommandProperty(command, () => command.uniqueId);
 }
 

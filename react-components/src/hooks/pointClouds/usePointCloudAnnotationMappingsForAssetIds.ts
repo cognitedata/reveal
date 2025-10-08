@@ -1,7 +1,5 @@
-import { useMemo } from 'react';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { type TypedReveal3DModel } from '../../components/Reveal3DResources/types';
-import { isDefined } from '../../utilities/isDefined';
 import { type PointCloudAnnotationMappedAssetData } from '../types';
 import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
@@ -14,23 +12,18 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
   assetIds: Array<string | number> | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
-
-  const classicModelOptions = useMemo(
-    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetIds(
-        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+        classicAddModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
         assetIds?.map((assetId) => assetId.toString()).sort() ?? []
       )
     ],
     queryFn: async () => {
       const allAnnotationMappingsPromisesResult = await Promise.all(
-        classicModelOptions.map(async (model) => {
+        classicAddModelOptions.map(async (model) => {
           const result = await fetchAnnotationsForModel(
             model.modelId,
             model.revisionId,

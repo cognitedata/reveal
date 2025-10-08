@@ -7,7 +7,7 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
-import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
+import { cdfAnnotationsToObjects } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
 import {
   ClassicDataSourceType,
   ClassicModelIdentifierType,
@@ -40,7 +40,7 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider<Class
       }
     ];
 
-    return cdfAnnotationsToObjectInfo(cdfAnnotations);
+    return cdfAnnotationsToObjects(cdfAnnotations);
   }
 }
 
@@ -55,7 +55,7 @@ class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceT
       }
     ];
 
-    return cdfAnnotationsToObjectInfo(cdfAnnotations);
+    return cdfAnnotationsToObjects(cdfAnnotations);
   }
 }
 

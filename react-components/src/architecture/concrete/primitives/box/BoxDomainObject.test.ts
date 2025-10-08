@@ -1,7 +1,7 @@
 import { assert, describe, expect, test } from 'vitest';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -20,28 +20,29 @@ describe(BoxDomainObject.name, () => {
       expect(domainObject.color.getHex()).toBe(0xff00ff);
       expect(domainObject.box).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
+      expect(domainObject.label).toBeDefined();
       expect(isEmpty(domainObject.typeName)).toBe(false);
       expect(domainObject.renderStyle).toBeInstanceOf(SolidPrimitiveRenderStyle);
       expect(domainObject.createTransaction(Changes.geometry)).toBeDefined();
     }
   });
 
-  test('Should check canRotateComponent', () => {
+  test('Should check edit constrains', () => {
     const domainObject = createBoxDomainObject(PrimitiveType.Box);
     expect(domainObject.canRotateComponent(0)).toBe(false);
     expect(domainObject.canRotateComponent(1)).toBe(false);
     expect(domainObject.canRotateComponent(2)).toBe(true);
+    expect(domainObject.canMoveCorners()).toBe(true);
   });
 
-  test('Should be cloned', () => {
+  test('Should clone', () => {
     const domainObject = createBoxDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureBoxDomainObject);
     expect(clone).not.toBe(domainObject);
-    if (!(clone instanceof MeasureBoxDomainObject)) {
-      return;
-    }
+    assert(clone instanceof MeasureBoxDomainObject);
+
     expect(clone.box).toStrictEqual(domainObject.box);
     expect(clone.color).toStrictEqual(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
@@ -54,11 +55,15 @@ describe(BoxDomainObject.name, () => {
     testMe(PrimitiveType.Box, Quantity.Area, 1);
     testMe(PrimitiveType.Box, Quantity.Volume, 1);
     testMe(PrimitiveType.Box, Quantity.Angle, 1);
+
     testMe(PrimitiveType.HorizontalArea, Quantity.Length, 2);
     testMe(PrimitiveType.HorizontalArea, Quantity.Area, 1);
+    testMe(PrimitiveType.HorizontalArea, Quantity.Volume, 0);
     testMe(PrimitiveType.HorizontalArea, Quantity.Angle, 1);
+
     testMe(PrimitiveType.VerticalArea, Quantity.Length, 2);
     testMe(PrimitiveType.VerticalArea, Quantity.Area, 1);
+    testMe(PrimitiveType.VerticalArea, Quantity.Volume, 0);
     testMe(PrimitiveType.VerticalArea, Quantity.Angle, 1);
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {

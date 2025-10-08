@@ -1,8 +1,10 @@
-import { type IconName } from '../IconName';
+import { type IconName } from '../types';
 import { PrimitiveType } from './PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
   switch (primitiveType) {
+    case PrimitiveType.Point:
+      return 'Waypoint';
     case PrimitiveType.Line:
       return 'VectorLine';
     case PrimitiveType.Polyline:
@@ -25,6 +27,8 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
       return 'Cube';
     case PrimitiveType.HorizontalCircle:
       return 'Circle';
+    case PrimitiveType.Diameter:
+      return 'CylinderArbitrary';
     case PrimitiveType.Cylinder:
       return 'CylinderArbitrary';
     case PrimitiveType.VerticalCylinder:

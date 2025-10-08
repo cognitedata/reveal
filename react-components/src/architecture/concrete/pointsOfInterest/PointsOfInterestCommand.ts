@@ -8,6 +8,6 @@ export class PointsOfInterestCommand<PoiIdType> extends RenderTargetCommand {
   }
 
   protected getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> | undefined {
-    return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+    return this.root.getDescendantByType(PointsOfInterestDomainObject);
   }
 }

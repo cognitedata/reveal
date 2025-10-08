@@ -7,11 +7,12 @@ type RevealResources = typeof Reveal3DResources;
 export function with3dResourcesFitCameraOnLoad(Component: RevealResources): RevealResources {
   return function SuppressRevealEvents(props: Reveal3DResourcesProps): ReactElement {
     const cameraNavigation = useCameraNavigation();
+    const { onResourcesAdded: onResourcesAddedProp } = props;
 
     const onResourcesAdded = useCallback(() => {
       cameraNavigation.fitCameraToAllModels();
-      props.onResourcesAdded?.();
-    }, []);
+      onResourcesAddedProp?.();
+    }, [cameraNavigation, onResourcesAddedProp]);
 
     return <Component {...props} onResourcesAdded={onResourcesAdded} />;
   };

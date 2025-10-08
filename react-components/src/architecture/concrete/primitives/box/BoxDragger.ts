@@ -8,10 +8,10 @@ import {
   forceBetween0AndTwoPi,
   isAbsEqual,
   round
-} from '../../../base/utilities/extensions/mathExtensions';
-import { getAbsMaxComponent } from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/mathUtils';
+import { getAbsMaxComponent } from '../../../base/utilities/extensions/vectorUtils';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
 import { type BoxDomainObject } from './BoxDomainObject';
 import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {

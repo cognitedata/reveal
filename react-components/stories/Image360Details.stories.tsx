@@ -14,16 +14,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
-  render: () => <MainStoryComponent />
+  render: MainStoryComponent
 };
 
 function MainStoryComponent(): ReactElement {
   const [loading, setLoading] = useState(true);
+
   return (
     <RevealStoryContext color={new Color(0x4a4a4a)}>
       <RevealCanvas>
         <Image360CollectionContainer
-          addImage360CollectionOptions={{ source: 'events', siteId: 'c_RC_2' }}
+          addImage360CollectionOptions={{
+            source: 'dm',
+            externalId: 'site-7406531069573539-6246920459517222',
+            space: 'threed_data'
+          }}
           onLoad={() => {
             setLoading(false);
           }}

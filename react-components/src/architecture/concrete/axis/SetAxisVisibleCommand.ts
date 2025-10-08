@@ -1,6 +1,6 @@
-import { type IconName } from '../../base/utilities/IconName';
+import { type IconName } from '../../base/utilities/types';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { AxisDomainObject } from './AxisDomainObject';
 
 export class SetAxisVisibleCommand extends RenderTargetCommand {
@@ -25,9 +25,9 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const { renderTarget, rootDomainObject } = this;
+    const { renderTarget, root } = this;
 
-    const axis = rootDomainObject.getDescendantByType(AxisDomainObject);
+    const axis = root.getDescendantByType(AxisDomainObject);
     if (axis === undefined) {
       return false;
     }
@@ -35,12 +35,12 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget, rootDomainObject } = this;
+    const { renderTarget, root } = this;
 
-    let axis = rootDomainObject.getDescendantByType(AxisDomainObject);
+    let axis = root.getDescendantByType(AxisDomainObject);
     if (axis === undefined) {
       axis = new AxisDomainObject();
-      rootDomainObject.addChildInteractive(axis);
+      root.addChildInteractive(axis);
     }
     axis.toggleVisibleInteractive(renderTarget);
     return true;

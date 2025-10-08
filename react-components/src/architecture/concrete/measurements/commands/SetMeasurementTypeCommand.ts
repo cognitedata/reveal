@@ -1,20 +1,41 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import {
+  PrimitiveType,
+  verifyPrimitiveType
+} from '../../../base/utilities/primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { MeasurementTool } from '../MeasurementTool';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
+
+export const MEASURE_PRIMITIVE_TYPES = [
+  PrimitiveType.Point,
+  PrimitiveType.Line,
+  PrimitiveType.Polyline,
+  PrimitiveType.Polygon,
+  PrimitiveType.VerticalArea,
+  PrimitiveType.HorizontalArea,
+  PrimitiveType.Box,
+  PrimitiveType.HorizontalCircle,
+  PrimitiveType.VerticalCylinder,
+  PrimitiveType.HorizontalCylinder,
+  PrimitiveType.Diameter
+];
 
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
-  // ==================================================
+  public get primitiveType(): PrimitiveType {
+    return this._primitiveType;
+  }
+
   // CONSTRUCTOR
   // ==================================================
 
   public constructor(primitiveType: PrimitiveType) {
     super();
+    verifyPrimitiveType(MEASURE_PRIMITIVE_TYPES, primitiveType);
     this._primitiveType = primitiveType;
   }
 
@@ -23,11 +44,11 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): IconName {
-    return getIconByPrimitiveType(this._primitiveType);
+    return getIconByPrimitiveType(this.primitiveType);
   }
 
   public override get tooltip(): TranslationInput {
-    return getTooltipByPrimitiveType(this._primitiveType);
+    return getTooltipByPrimitiveType(this.primitiveType);
   }
 
   public override get isEnabled(): boolean {
@@ -39,7 +60,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    return tool.primitiveType === this._primitiveType;
+    return tool.primitiveType === this.primitiveType;
   }
 
   protected override invokeCore(): boolean {
@@ -47,12 +68,13 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
+    const isChecked = tool.primitiveType === this.primitiveType;
     tool.escape();
     tool.clearDragging();
-    if (tool.primitiveType === this._primitiveType) {
+    if (isChecked) {
       tool.primitiveType = PrimitiveType.None;
     } else {
-      tool.primitiveType = this._primitiveType;
+      tool.primitiveType = this.primitiveType;
     }
     return true;
   }
@@ -61,7 +83,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (!(other instanceof SetMeasurementTypeCommand)) {
       return false;
     }
-    return this._primitiveType === other._primitiveType;
+    return this.primitiveType === other.primitiveType;
   }
 
   // ==================================================
@@ -79,6 +101,8 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
+    case PrimitiveType.Point:
+      return { key: 'MEASUREMENTS_ADD_POINT' };
     case PrimitiveType.Line:
       return { key: 'MEASUREMENTS_ADD_LINE' };
     case PrimitiveType.Polyline:
@@ -94,7 +118,11 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInp
     case PrimitiveType.HorizontalCircle:
       return { key: 'MEASUREMENTS_ADD_CIRCLE' };
     case PrimitiveType.VerticalCylinder:
-      return { key: 'MEASUREMENTS_ADD_CYLINDER' };
+      return { key: 'MEASUREMENTS_ADD_CYLINDER_VERTICAL' };
+    case PrimitiveType.HorizontalCylinder:
+      return { key: 'MEASUREMENTS_ADD_CYLINDER_HORIZONTAL' };
+    case PrimitiveType.Diameter:
+      return { key: 'MEASUREMENTS_ADD_DIAMETER' };
     default:
       throw new Error('Unknown PrimitiveType');
   }

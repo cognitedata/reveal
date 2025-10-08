@@ -2,8 +2,8 @@ import { InstanceCommand } from '../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { type IconName } from '../../base/utilities/IconName';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type IconName, type ButtonType } from '../../base/utilities/types';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 
 export class DeleteSelectedImage360AnnotationCommand extends InstanceCommand {
@@ -15,7 +15,7 @@ export class DeleteSelectedImage360AnnotationCommand extends InstanceCommand {
     return 'Delete';
   }
 
-  public override get buttonType(): string {
+  public override get buttonType(): ButtonType {
     return 'ghost-destructive';
   }
 

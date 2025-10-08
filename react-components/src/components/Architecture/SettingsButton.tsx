@@ -9,18 +9,32 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { DropdownButton } from './DropdownButton';
 import { FilterButton } from './FilterButton';
-import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
+import {
+  getFlexDirection,
+  getTooltipPlacement,
+  getDropdownPlacement,
+  DROP_DOWN_OFFSET
+} from './utilities';
 import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
+import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { type FlexDirection, type PlacementType } from './types';
 import { type ReactNode, useState, type ReactElement } from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
+
+export function createSettingsButton(
+  command: BaseCommand,
+  placement: PlacementType
+): ReactElement | undefined {
+  if (command instanceof BaseSettingsCommand) {
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+  return undefined;
+}
 
 export const SettingsButton = ({
   inputCommand,
@@ -55,15 +69,15 @@ export const SettingsButton = ({
       onHide={(open) => {
         setOpen(open);
       }}
-      placement={placement ?? 'right-end'}
-      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET }}>
+      placement={getDropdownPlacement(placement)}
+      offset={DROP_DOWN_OFFSET}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
         disabled={isTooltipDisabled}
         enterDelay={TOOLTIP_DELAY}
         placement={getTooltipPlacement(placement)}>
         <Button
-          type={getButtonType(command)}
+          type={command.buttonType}
           icon={<IconComponent iconName={icon} />}
           disabled={!isEnabled}
           toggled={isOpen}
@@ -236,8 +250,9 @@ const StyledToggleContainer = styled(Flex).attrs({
 `;
 
 const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
-  max-height: 400px;
+  max-height: 700px;
   min-width: 340px;
+  max-width: 400px;
   overflow-x: hidden;
   overflow-y: auto;
   flexdirection: ${({ $flexDirection }) => $flexDirection};
@@ -246,7 +261,7 @@ const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
   padding: var(--Padding-Small-Small-8, 8px) var(--space-8, 8px);
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--Padding-Small-Small-8, 8px);
+  gap: var(--Padding-Small-Small-8, 0px);
 
   border-radius: var(--Radius-Large, 8px);
   background: #fff;

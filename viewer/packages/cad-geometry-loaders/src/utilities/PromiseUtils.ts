@@ -28,20 +28,20 @@ export class PromiseUtils {
   static async *raceUntilAllCompleted<T>(promises: Promise<T>[]): AsyncIterable<PromiseResult<T>> {
     // Inspired by https://stackoverflow.com/a/42898229
     const remaining = new Map(
-      promises.map(p => [
-        p,
+      promises.map((p, i) => [
+        i,
         p
           .then(res => {
-            return [p, { result: res }] as [Promise<T>, PromiseResult<T>];
+            return [i, { result: res }] as [number, PromiseResult<T>];
           })
           .catch(error => {
-            return [p, { error: error }] as [Promise<T>, PromiseResult<T>];
+            return [i, { error: error }] as [number, PromiseResult<T>];
           })
       ])
     );
     while (remaining.size > 0) {
-      const [promise, result] = await Promise.race(remaining.values());
-      remaining.delete(promise);
+      const [i, result] = await Promise.race(remaining.values());
+      remaining.delete(i);
       yield result;
     }
   }

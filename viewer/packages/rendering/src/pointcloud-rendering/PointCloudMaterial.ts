@@ -183,9 +183,6 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     this.classification = DEFAULT_CLASSIFICATION;
 
-    this.defaultAttributeValues.classification = [0, 0, 0];
-    this.defaultAttributeValues.indices = [0, 0, 0, 0];
-
     this.vertexColors = true;
 
     if (parameters.objectsMaps) {

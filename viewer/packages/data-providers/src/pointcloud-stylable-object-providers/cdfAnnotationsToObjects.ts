@@ -8,10 +8,10 @@ import { PointCloudObject, CdfPointCloudObjectAnnotation, isVolumeDMReference } 
 import { StylableObject } from './StylableObject';
 import { DataSourceType } from '../DataSourceType';
 
-function cdfAnnotationsToPointCloudObjects<T extends DataSourceType>(
+export function cdfAnnotationsToObjects<T extends DataSourceType>(
   cdfAnnotations: CdfPointCloudObjectAnnotation[]
 ): PointCloudObject<T>[] {
-  const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
+  return cdfAnnotations.map((cdfAnnotation, index) => {
     const shapes = cdfAnnotation.region;
 
     const compShape = new CompositeShape(shapes);
@@ -20,24 +20,18 @@ function cdfAnnotationsToPointCloudObjects<T extends DataSourceType>(
       objectId: index + 1
     };
 
-    const volumeMetadata = isVolumeDMReference(cdfAnnotation.volumeMetadata)
+    const volumeMetadata: T['pointCloudVolumeMetadata'] = isVolumeDMReference(cdfAnnotation.volumeMetadata)
       ? { volumeInstanceRef: cdfAnnotation.volumeMetadata.instanceRef, assetRef: cdfAnnotation.volumeMetadata.asset }
-      : { annotationId: cdfAnnotation.volumeMetadata.annotationId, assetRef: cdfAnnotation.volumeMetadata.asset };
+      : {
+          annotationId: cdfAnnotation.volumeMetadata.annotationId,
+          assetRef: cdfAnnotation.volumeMetadata.asset,
+          instanceRef: cdfAnnotation.volumeMetadata.assetInstanceRef
+        };
 
-    const pointCloudObject = {
+    return {
       boundingBox: stylableObject.shape.createBoundingBox(),
-      ...(volumeMetadata as T['pointCloudVolumeMetadata']),
-      stylableObject
+      stylableObject,
+      ...volumeMetadata
     };
-
-    return pointCloudObject;
   });
-
-  return resultAnnotations;
-}
-
-export function cdfAnnotationsToObjectInfo<T extends DataSourceType>(
-  annotations: CdfPointCloudObjectAnnotation[]
-): PointCloudObject<T>[] {
-  return cdfAnnotationsToPointCloudObjects(annotations);
 }

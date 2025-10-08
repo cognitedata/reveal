@@ -1,14 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, expectTypeOf } from 'vitest';
 import {
   isIdEither,
   isExternalId,
   isInternalId,
   isDmsInstance,
-  type AnnotationAssetRef
+  type AnnotationAssetRef,
+  isClassicInstanceId
 } from '../../../src/utilities/instanceIds/typeGuards';
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers';
-import { type InstanceReference } from '../../../src/utilities/instanceIds/types';
+import { type InstanceId, type InstanceReference } from '../../../src/utilities/instanceIds/types';
+import { type AssetId } from '../../components/CacheProvider/types';
+import assert from 'assert';
 
 describe('typeGuards', () => {
   describe(isIdEither.name, () => {
@@ -85,6 +88,24 @@ describe('typeGuards', () => {
     it('should return false for null or undefined', () => {
       expect(isDmsInstance(null)).toBe(false);
       expect(isDmsInstance(undefined)).toBe(false);
+    });
+  });
+
+  describe(isClassicInstanceId.name, () => {
+    it('should return true for a classic internal ID', () => {
+      const assetId = 123;
+      expect(isClassicInstanceId(assetId)).toBe(true);
+    });
+
+    it('should return false for a DM ID', () => {
+      const instance = { externalId: 'externalId', space: 'space' };
+      expect(isClassicInstanceId(instance)).toBeFalsy();
+    });
+
+    it('should assert ID to be of type AssetId', () => {
+      const assetId = 123 as InstanceId;
+      assert(isClassicInstanceId(assetId));
+      expectTypeOf<AssetId>(assetId);
     });
   });
 });

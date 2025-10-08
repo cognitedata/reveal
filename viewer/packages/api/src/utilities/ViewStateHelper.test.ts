@@ -22,7 +22,7 @@ describe(ViewStateHelper.name, () => {
     const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
     renderer.render = jest.fn();
 
-    viewer = new Cognite3DViewer({ sdk, renderer });
+    viewer = new Cognite3DViewer({ sdk, renderer, logMetrics: false });
   });
 
   test('setState() resets camera and clipping to initial state', () => {

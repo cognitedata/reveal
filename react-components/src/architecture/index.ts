@@ -18,20 +18,25 @@ export { ShowAllDomainObjectsCommand } from './base/commands/ShowAllDomainObject
 export { ShowDomainObjectsOnTopCommand } from './base/commands/ShowDomainObjectsOnTopCommand';
 
 // New architecture: concreteCommands
-export { CopyToClipboardCommand } from './base/concreteCommands/CopyToClipboardCommand';
-export { DeleteDomainObjectCommand } from './base/concreteCommands/DeleteDomainObjectCommand';
-export { FitViewCommand } from './base/concreteCommands/FitViewCommand';
-export { KeyboardSpeedCommand } from './base/concreteCommands/KeyboardSpeedCommand';
-export { NavigationTool } from './base/concreteCommands/NavigationTool';
-export { PointCloudFilterCommand } from './base/concreteCommands/pointCloud/PointCloudFilterCommand';
-export { SetPointColorTypeCommand } from './base/concreteCommands/pointCloud/SetPointColorTypeCommand';
-export { SetPointShapeCommand } from './base/concreteCommands/pointCloud/SetPointShapeCommand';
-export { SetPointSizeCommand } from './base/concreteCommands/pointCloud/SetPointSizeCommand';
-export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
-export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
-export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';
-export { UndoCommand } from './base/concreteCommands/UndoCommand';
+export { CopyToClipboardCommand } from './base/concreteCommands/general/CopyToClipboardCommand';
+export { DeleteDomainObjectCommand } from './base/concreteCommands/general/DeleteDomainObjectCommand';
+export { FitViewCommand } from './base/concreteCommands/navigation/FitViewCommand';
+export { KeyboardSpeedCommand } from './base/concreteCommands/navigation/KeyboardSpeedCommand';
+export { NavigationTool } from './base/concreteCommands/navigation/NavigationTool';
+export { PointCloudFilterCommand } from './concrete/reveal/pointCloud/commands/PointCloudFilterCommand';
+export { SetPointColorTypeCommand } from './concrete/reveal/pointCloud/commands/SetPointColorTypeCommand';
+export { SetPointShapeCommand } from './concrete/reveal/pointCloud/commands/SetPointShapeCommand';
+export { SetPointSizeCommand } from './concrete/reveal/pointCloud/commands/SetPointSizeCommand';
+export { SetQualityCommand } from './base/concreteCommands/quality/SetQualityCommand';
+export { SettingsCommand } from './base/concreteCommands/general/SettingsCommand';
+export { CycleLengthUnitsCommand } from './base/concreteCommands/units/CycleLengthUnitsCommand';
+export { UndoCommand } from './base/concreteCommands/general/UndoCommand';
 export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
+export { SetQualitySliderCommand } from './base/concreteCommands/quality/SetQualitySliderCommand';
+export {
+  GeneralBannerCommand,
+  type GeneralBannerContent
+} from './base/commands/GeneralBannerCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './base/domainObjects/DomainObject';
@@ -42,9 +47,16 @@ export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
 export { CommandsController } from './base/renderTarget/CommandsController';
 export { type ContextMenuData } from './base/renderTarget/ContextMenuController';
+export { RevealSettingsController } from './concrete/reveal/RevealSettingsController';
 export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
+
+// New architecture: Reveal domain objects
+export { RevealDomainObject } from './concrete/reveal/RevealDomainObject';
+export { CadDomainObject } from './concrete/reveal/cad/CadDomainObject';
+export { PointCloudDomainObject } from './concrete/reveal/pointCloud/PointCloudDomainObject';
+export { Image360CollectionDomainObject } from './concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 
 // New architecture: renderStyles
 export { RenderStyle } from './base/renderStyles/RenderStyle';
@@ -82,8 +94,8 @@ export { TrianglesBuffers } from './base/utilities/geometry/TrianglesBuffers';
 export { getNextColor } from './base/utilities/colors/getNextColor';
 export { getNextColorByIndex } from './base/utilities/colors/getNextColor';
 export { getResizeCursor } from './base/utilities/geometry/getResizeCursor';
-export type { TranslateDelegate } from './base/utilities/TranslateInput';
-export type { TranslationInput } from './base/utilities/TranslateInput';
+export type { TranslateDelegate } from './base/utilities/translation/TranslateInput';
+export type { TranslationInput } from './base/utilities/translation/TranslateInput';
 export type { QualitySettings } from './base/utilities/quality/QualitySettings';
 
 // New architecture: views

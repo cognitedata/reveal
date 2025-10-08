@@ -3,14 +3,14 @@ import {
   PlanePrimitiveTypes,
   PrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/TranslateInput';
+import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PlaneDomainObject } from './PlaneDomainObject';
 import { Vector3 } from 'three';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { isGreyScale } from '../../../base/utilities/colors/colorExtensions';
+import { isGreyScale } from '../../../base/utilities/colors/colorUtils';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(PlaneDomainObject.name, () => {
@@ -76,7 +76,7 @@ describe(PlaneDomainObject.name, () => {
   });
 
   test('should be make flipping consistent', () => {
-    const root = createFullRenderTargetMock().rootDomainObject;
+    const root = createFullRenderTargetMock().root;
     // Add some not related planes
     root.addChild(createPlaneDomainObjectMock(PrimitiveType.PlaneX));
     root.addChild(createPlaneDomainObjectMock(PrimitiveType.PlaneY));
@@ -112,7 +112,7 @@ describe(PlaneDomainObject.name, () => {
   });
 
   test('should be make flipping consistent when added new planes', () => {
-    const root = createFullRenderTargetMock().rootDomainObject;
+    const root = createFullRenderTargetMock().root;
     const domainObject1 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
     const domainObject2 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
 

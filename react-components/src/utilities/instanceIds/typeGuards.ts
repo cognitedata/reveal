@@ -1,5 +1,7 @@
 import { type ExternalId, type IdEither, type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
+import { type InstanceId } from './types';
+import { type AssetId } from '../../components/CacheProvider/types';
 
 export type AnnotationAssetRef = { id?: number; externalId?: string };
 
@@ -27,4 +29,8 @@ export function isDmsInstance(instance: unknown): instance is DmsUniqueIdentifie
     'externalId' in instance &&
     'space' in instance
   );
+}
+
+export function isClassicInstanceId(instanceId: InstanceId): instanceId is AssetId {
+  return typeof instanceId === 'number';
 }

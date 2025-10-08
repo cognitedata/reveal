@@ -66,20 +66,20 @@ describe('Cognite3DViewer', () => {
 
   test('dispose does not dispose of externally supplied renderer', () => {
     const disposeSpy = jest.spyOn(renderer, 'dispose');
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
     expect(disposeSpy).not.toBeCalled();
   });
 
   test('dispose disposes of sector culler', () => {
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
     expect(_sectorCuller.dispose).toBeCalledTimes(1);
   });
 
   test('dispose raises disposed-event', () => {
     const disposedListener: DisposedDelegate = jest.fn();
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('disposed', disposedListener);
 
     viewer.dispose();
@@ -108,7 +108,7 @@ describe('Cognite3DViewer', () => {
       .get(/.*\/scene.json/)
       .reply(200, sceneJson);
 
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
     const disposeSpy = jest.spyOn(model, 'dispose');
 
@@ -121,7 +121,7 @@ describe('Cognite3DViewer', () => {
   test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('cameraChange', onCameraChange);
 
     // Act
@@ -154,7 +154,7 @@ describe('Cognite3DViewer', () => {
       .reply(200, sceneJson);
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('cameraChange', onCameraChange);
 
     // Act
@@ -168,7 +168,7 @@ describe('Cognite3DViewer', () => {
 
   test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {
     // Arrange
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
     const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
     bSphere.radius *= 3;
@@ -185,7 +185,7 @@ describe('Cognite3DViewer', () => {
 
   test('fitCameraToBoundingBox with 1000 duration, moves camera over time', () => {
     // Arrange
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const cameraManager = viewer.cameraManager;
     cameraManager.setCameraState({ position: new THREE.Vector3(30, 10, 50), target: new THREE.Vector3() });
     const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
@@ -208,7 +208,7 @@ describe('Cognite3DViewer', () => {
   });
 
   test('viewer can add/remove Object3d on scene', () => {
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const obj = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
 
     expect(() => viewer.addObject3D(obj)).not.toThrowError();
@@ -216,7 +216,7 @@ describe('Cognite3DViewer', () => {
   });
 
   test('viewer can add/remove CustomObject on scene', () => {
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
 
     // Create 10 custom objects
     const customObjects: CustomObject[] = [];
@@ -241,7 +241,7 @@ describe('Cognite3DViewer', () => {
       return 1;
     });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const onBeforeRendered: BeforeSceneRenderedDelegate = jest.fn();
     const onRendered: SceneRenderedDelegate = jest.fn();
     if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
@@ -268,7 +268,7 @@ describe('Cognite3DViewer', () => {
 
   test('fitCameraToBoundingBox with zero duration updates camera immediatly', () => {
     // Arrange
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const box = new THREE.Box3(new THREE.Vector3(-1001, -1001, -1001), new THREE.Vector3(-1000, -1000, -1000));
     const { position: originalCameraPosition, target: originalCameraTarget } = viewer.cameraManager.getCameraState();
 
@@ -284,7 +284,7 @@ describe('Cognite3DViewer', () => {
   test('resolution options are persisted when set', () => {
     const resolutionOptions: ResolutionOptions = { movingCameraResolutionFactor: 0.35, maxRenderResolution: 4e6 };
 
-    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
 
     viewer.setResolutionOptions(resolutionOptions);
 

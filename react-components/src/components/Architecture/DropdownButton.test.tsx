@@ -6,7 +6,7 @@ import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DropdownButton } from './DropdownButton';
-import { MockEnumOptionCommand } from '../../../tests/tests-utilities/architecture/mock-commands/MockEnumOptionCommand';
+import { MockEnumOptionCommand } from '#test-utils/architecture/mock-commands/MockEnumOptionCommand';
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
@@ -18,7 +18,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
     renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+      <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
     );
     testCommand = new MockEnumOptionCommand();
     render(<DropdownButton inputCommand={testCommand} placement={'top'} usedInSettings={false} />, {
@@ -35,7 +35,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
     expect(testCommand.value).toBe(expectedValue);
     expect(button.textContent).toBe(expectedValue);
 
-    // Check that the the option menu is closed
+    // Check that the option menu is closed
 
     const menuItems = screen.queryAllByRole('menuitem'); // this doesn't crash when nothing found
     expect(menuItems).toHaveLength(0);

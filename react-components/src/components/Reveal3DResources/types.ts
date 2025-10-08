@@ -14,6 +14,7 @@ import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmS
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 import {
+  type AssetId,
   type PointCloudAnnotationModel,
   type PointCloudVolumeWithAsset
 } from '../CacheProvider/types';
@@ -27,6 +28,7 @@ export type AddImage360CollectionOptions =
 export type CommonImage360CollectionAddOptions = {
   transform?: Matrix4;
   iconCullingOptions?: { radius?: number; iconCountLimit?: number };
+  defaultVisible?: boolean;
 };
 
 export type AddImage360CollectionEventsOptions = {
@@ -75,6 +77,7 @@ export type AddPointCloudResourceOptions<T extends DataSourceType = DataSourceTy
   AddModelOptions<T> & {
     transform?: Matrix4;
     styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+    defaultVisible?: boolean;
   };
 
 export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
@@ -84,6 +87,7 @@ export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
     mapped?: NodeAppearance;
     nodeGroups?: TreeIndexStylingGroup[];
   };
+  defaultVisible?: boolean;
 };
 
 export type ClassicAdd3DModelOptions =
@@ -102,7 +106,7 @@ export type NodeDataResult = {
   cadNode: Node3D;
 };
 
-export type FdmAssetStylingGroup = {
+export type FdmInstanceStylingGroup = {
   fdmAssetExternalIds: DmsUniqueIdentifier[];
   style: {
     cad?: NodeAppearance;
@@ -110,8 +114,8 @@ export type FdmAssetStylingGroup = {
   };
 };
 
-export type AssetStylingGroup = {
-  assetIds: CogniteInternalId[];
+export type ClassicAssetStylingGroup = {
+  assetIds: AssetId[];
   style: {
     cad?: NodeAppearance;
     pointcloud?: NodeAppearance;
@@ -129,8 +133,8 @@ export type Image360DMAssetStylingGroup = {
 };
 
 export type InstanceStylingGroup =
-  | FdmAssetStylingGroup
-  | AssetStylingGroup
+  | FdmInstanceStylingGroup
+  | ClassicAssetStylingGroup
   | Image360AssetStylingGroup
   | Image360DMAssetStylingGroup;
 

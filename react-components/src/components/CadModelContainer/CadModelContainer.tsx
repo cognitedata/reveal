@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useState, useRef, useContext } from 'react';
+import { type ReactElement, useEffect, useState, useRef, useContext, useCallback } from 'react';
 import type {
   GeometryFilter,
   AddModelOptions,
@@ -17,6 +17,7 @@ export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
   styling?: CadModelStyling;
   transform?: Matrix4;
+  defaultVisible?: boolean;
   onLoad?: (model: CogniteCadModel) => void;
   onLoadError?: (options: AddModelOptions<ClassicDataSourceType>, error: any) => void;
 };
@@ -25,6 +26,7 @@ export function CadModelContainer({
   addModelOptions,
   transform,
   styling,
+  defaultVisible,
   onLoad,
   onLoadError
 }: CogniteCadModelProps): ReactElement {
@@ -49,6 +51,48 @@ export function CadModelContainer({
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
+
+  const addModel = useCallback(
+    async (addModelOptions: AddModelOptions, transform?: Matrix4): Promise<CogniteCadModel> => {
+      const cadModel = await getOrAddModel();
+
+      if (transform !== undefined) {
+        cadModel.setModelTransformation(transform);
+      }
+      setModel(cadModel);
+
+      return cadModel;
+
+      async function getOrAddModel(): Promise<CogniteCadModel> {
+        const viewerModel = viewer.models.find((model) => {
+          const cadModel = { ...model, transform: model.getModelTransformation() };
+          return (
+            isSameModel(cadModel, addModelOptions) &&
+            isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
+          );
+        });
+        if (viewerModel !== undefined) {
+          return viewerModel as CogniteCadModel;
+        }
+        initializingModelsGeometryFilter.current = geometryFilter;
+        return await createCadDomainObject(renderTarget, addModelOptions, defaultVisible);
+      }
+    },
+    [viewer, geometryFilter, renderTarget, createCadDomainObject, defaultVisible]
+  );
+
+  const removeModel = useCallback(
+    (model: CogniteCadModel): void => {
+      if (!modelExists(model, viewer)) return;
+
+      if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
+        return;
+
+      removeCadDomainObject(renderTarget, model);
+      setRevealResourcesCount(getViewerResourceCount(viewer));
+    },
+    [viewer, cachedViewerRef, removeCadDomainObject, renderTarget, setRevealResourcesCount]
+  );
 
   useEffect(() => {
     if (isEqual(initializingModel.current, addModelOptions) || addModelOptions === undefined) {
@@ -78,56 +122,30 @@ export function CadModelContainer({
         callback();
       });
     };
-  }, [modelId, revisionId, geometryFilter]);
+  }, [
+    modelId,
+    revisionId,
+    geometryFilter,
+    transform,
+    addModelOptions,
+    viewer,
+    onLoad,
+    onLoadError,
+    setRevealResourcesCount,
+    setReveal3DResourceLoadFailCount,
+    addModel,
+    removeModel
+  ]);
 
   useEffect(() => {
     if (!modelExists(model, viewer) || transform === undefined) return;
 
     model.setModelTransformation(transform);
-  }, [transform, model]);
+  }, [transform, model, viewer]);
 
   useApplyCadModelStyling(model, styling);
 
   return <></>;
-
-  async function addModel(
-    addModelOptions: AddModelOptions,
-    transform?: Matrix4
-  ): Promise<CogniteCadModel> {
-    const cadModel = await getOrAddModel();
-
-    if (transform !== undefined) {
-      cadModel.setModelTransformation(transform);
-    }
-    setModel(cadModel);
-
-    return cadModel;
-
-    async function getOrAddModel(): Promise<CogniteCadModel> {
-      const viewerModel = viewer.models.find((model) => {
-        const cadModel = { ...model, transform: model.getModelTransformation() };
-        return (
-          isSameModel(cadModel, addModelOptions) &&
-          isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
-        );
-      });
-      if (viewerModel !== undefined) {
-        return await Promise.resolve(viewerModel as CogniteCadModel);
-      }
-      initializingModelsGeometryFilter.current = geometryFilter;
-      return await createCadDomainObject(renderTarget, addModelOptions);
-    }
-  }
-
-  function removeModel(model: CogniteCadModel): void {
-    if (!modelExists(model, viewer)) return;
-
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
-
-    removeCadDomainObject(renderTarget, model);
-    setRevealResourcesCount(getViewerResourceCount(viewer));
-  }
 }
 
 function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {

@@ -1,5 +1,5 @@
 import { FolderDomainObject } from '../../base/domainObjects/FolderDomainObject';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 
 export class ClipFolder extends FolderDomainObject {
   public override get typeName(): TranslationInput {

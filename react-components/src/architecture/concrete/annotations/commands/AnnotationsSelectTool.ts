@@ -1,6 +1,6 @@
 import { CDF_TO_VIEWER_TRANSFORMATION, type AnyIntersection } from '@cognite/reveal';
 import { type VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { BaseEditTool } from '../../../base/commands/BaseEditTool';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
@@ -11,7 +11,7 @@ import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInf
 import { type AnnotationIntersectInfo } from '../helpers/getClosestAnnotation';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { isAnnotationsOrGizmo, isGizmo } from './isGizmo';
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -51,9 +51,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(
-      AnnotationsDomainObject
-    )) {
+    for (const domainObject of this.root.getDescendantsByType(AnnotationsDomainObject)) {
       domainObject.removeGizmoInteractive();
     }
   }
@@ -154,7 +152,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
   // ==================================================
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
+    return this.root.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 
   private defocusAll(except?: DomainObject | undefined): void {

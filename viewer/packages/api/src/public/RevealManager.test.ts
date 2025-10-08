@@ -80,7 +80,8 @@ describe('RevealManager', () => {
       new SceneHandler(),
       cameraManagerMock.object(),
       {
-        internal: { cad: { sectorCuller } }
+        internal: { cad: { sectorCuller } },
+        logMetrics: false
       }
     );
 

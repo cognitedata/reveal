@@ -8,7 +8,7 @@ import {
   RevealContext,
   type TreeIndexStylingGroup
 } from '../src';
-import { Color, Matrix4, Vector3 } from 'three';
+import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import {
   type AddModelOptions,
@@ -18,6 +18,7 @@ import {
 } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
 import { useMappedEdgesForRevisions } from '../src/hooks/cad';
+import { Random } from '../src/architecture/base/utilities/misc/Random';
 
 const meta = {
   title: 'Example/CadStylingCache',
@@ -71,7 +72,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
       data
         ?.get(`${modelId}/${revisionId}`)
         ?.map((edgeWithNode) => edgeWithNode.connection.treeIndex),
-    [data]
+    [data, modelId, revisionId]
   );
 
   useEffect(() => {
@@ -83,6 +84,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
         const newTreeIndices = getRandomSubset(treeIndices, treeIndices.length * 0.4);
         const indexSet = new IndexSet(newTreeIndices);
+        const random = new Random(Date.now());
 
         return {
           groups: [
@@ -90,9 +92,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
             {
               treeIndexSet: indexSet,
               style: {
-                color: new Color().setFromVector3(
-                  new Vector3(Math.random(), Math.random(), Math.random())
-                ),
+                color: random.getColor(),
                 prioritizedForLoadingHint: 5
               }
             }
@@ -106,7 +106,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
     return () => {
       viewer.off('click', callback);
     };
-  }, [viewer, platformStyling, setPlatformStyling]);
+  }, [viewer, platformStyling, treeIndices, setPlatformStyling]);
 
   useEffect(() => {
     if (treeIndices === undefined) return;
@@ -123,7 +123,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
       defaultStyle: DefaultNodeAppearance.Ghosted,
       groups: [stylingGroupRed]
     });
-  }, [viewer, data]);
+  }, [viewer, data, treeIndices]);
 
   const onModelLoaded = (model: CogniteCadModel): void => {
     viewer.fitCameraToModel(model);

@@ -1,5 +1,5 @@
 import { Box3, Vector3 } from 'three';
-import { getHorizontalCrossProduct } from '../extensions/vectorExtensions';
+import { getHorizontalCrossProduct } from '../extensions/vectorUtils';
 
 export class Vector3ArrayUtils {
   public static getSignedHorizontalArea(polygon: Vector3[]): number {
@@ -28,6 +28,17 @@ export class Vector3ArrayUtils {
       return undefined;
     }
     return boundingBox.getCenter(new Vector3());
+  }
+
+  public static getCenterOfMass(points: Vector3[]): Vector3 | undefined {
+    const result = new Vector3();
+    if (points.length === 0) {
+      return undefined;
+    }
+    for (const point of points) {
+      result.add(point);
+    }
+    return result.divideScalar(points.length);
   }
 
   public static getBoundingBox(points: Vector3[]): Box3 | undefined {

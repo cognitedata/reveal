@@ -453,7 +453,9 @@ export function Viewer() {
                 const { point, model } = intersection;
 
                 console.log(
-                  `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`,
+                  `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and volume metadata`,
+                  intersection.volumeMetadata,
+                  'at',
                   point
                 );
                 if (intersection.volumeMetadata !== undefined && 'annotationId' in intersection.volumeMetadata) {

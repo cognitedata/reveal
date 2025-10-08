@@ -1,56 +1,97 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { getCadModelsForAsset } from '../hooks/network/getCadModelsForAsset';
-import { getPointCloudModelsForAsset } from '../hooks/network/getPointCloudModelsForAsset';
-import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type InternalId, type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
-import { getImage360CollectionsForAsset } from '../hooks/network/getImage360CollectionsForAsset';
 import { uniqBy } from 'lodash';
 import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { type DmsUniqueIdentifier } from '../data-providers';
-import { getPointCloudModelsForAssetInstance } from '../hooks/network/getPointCloudModelsForAssetInstance';
 import { type FdmSDK } from '../data-providers/FdmSDK';
-import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type InstanceReference, isDmsInstance, isInternalId } from '../utilities/instanceIds';
+import { useContext } from 'react';
+import { UseModelsForInstanceQueryContext } from './useModelsForInstanceQuery.context';
+import { type ModelsForAssetParams } from '../hooks/network/types';
+import { queryKeys } from '../utilities/queryKeys';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
-): UseQueryResult<TaggedAddResourceOptions[]> => {
+): UseQueryResult<TaggedAddResourceOptions[] | null> => {
+  const {
+    useSDK,
+    useFdmSdk,
+    useFdm3dDataProvider,
+    useIsCoreDmOnly,
+    getPointCloudModelsForAssetInstance,
+    getCadModelsForHybridDmInstance,
+    getCadModelsForAsset,
+    getPointCloudModelsForAsset,
+    getImage360CollectionsForAsset
+  } = useContext(UseModelsForInstanceQueryContext);
+
   const cogniteClient = useSDK();
   const fdm3dDataProvider = useFdm3dDataProvider();
   const fdmSdk = useFdmSdk();
+  const isCoreDm = useIsCoreDmOnly();
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'models-for-instance', instance],
+    queryKey: queryKeys.modelsForAssetPerInstanceReference(instance),
     queryFn: async () => {
       if (instance === undefined) {
-        return undefined;
+        return null;
       }
 
       if (isInternalId(instance)) {
-        return await getModelsForAssetInstance(instance, cogniteClient);
+        return await getModelsForAssetInstance(
+          instance,
+          cogniteClient,
+          getCadModelsForAsset,
+          getPointCloudModelsForAsset,
+          getImage360CollectionsForAsset
+        );
       }
 
       if (isDmsInstance(instance)) {
-        return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
+        if (!isCoreDm) {
+          return await getCadModelsForHybridDmInstance(instance, cogniteClient);
+        }
+        if (fdm3dDataProvider === undefined) {
+          return [];
+        }
+        return await getModelsForDmsInstance(
+          instance,
+          fdmSdk,
+          fdm3dDataProvider,
+          getPointCloudModelsForAssetInstance
+        );
       }
 
       throw Error(
         `Can not fetch models for instance: ${JSON.stringify(instance)}. InternalId or DMS ID required`
       );
     },
-    enabled: instance !== undefined
+    enabled: instance !== undefined,
+    staleTime: Infinity
   });
 };
 
 async function getModelsForAssetInstance(
   instance: InternalId,
-  cogniteClient: CogniteClient
+  sdk: CogniteClient,
+  getCadModelsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>,
+  getPointCloudModelsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>,
+  getImage360CollectionsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>
 ): Promise<TaggedAddResourceOptions[]> {
-  const cadModelsPromise = getCadModelsForAsset(instance.id, cogniteClient);
-  const pointCloudModelsPromise = getPointCloudModelsForAsset(instance.id, cogniteClient);
-  const image360CollectionsPromise = getImage360CollectionsForAsset(instance.id, cogniteClient);
+  const cadModelsPromise = getCadModelsForAsset({ assetId: instance.id, sdk });
+  const pointCloudModelsPromise = getPointCloudModelsForAsset({ assetId: instance.id, sdk });
+  const image360CollectionsPromise = getImage360CollectionsForAsset({ assetId: instance.id, sdk });
 
   const results = (
     await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
@@ -62,7 +103,11 @@ async function getModelsForAssetInstance(
 async function getModelsForDmsInstance(
   instance: DmsUniqueIdentifier,
   fdmSdk: FdmSDK,
-  fdm3dDataProvider: Fdm3dDataProvider
+  fdm3dDataProvider: Fdm3dDataProvider,
+  getPointCloudModelsForAssetInstance: (
+    instance: DmsUniqueIdentifier,
+    sdk: FdmSDK
+  ) => Promise<TaggedAddResourceOptions[]>
 ): Promise<TaggedAddResourceOptions[]> {
   const cadModelsPromise = fdm3dDataProvider.getCadModelsForInstance(instance);
   const pointCloudModelsPromise = getPointCloudModelsForAssetInstance(instance, fdmSdk);

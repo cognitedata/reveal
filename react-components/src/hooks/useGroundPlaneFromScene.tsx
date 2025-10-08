@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION, CustomObject } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
-import { clear } from '../architecture/base/utilities/extensions/arrayExtensions';
+import { clear } from '../architecture/base/utilities/extensions/arrayUtils';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
@@ -129,7 +129,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       clear(groundMeshes);
     };
-  }, [groundPlaneTextures]);
+  }, [groundPlaneTextures, scene, viewer]);
 
   function groundPlaneUsesNewScaleFormat(lastUpdatedAt: string | undefined): boolean {
     if (lastUpdatedAt === undefined) {

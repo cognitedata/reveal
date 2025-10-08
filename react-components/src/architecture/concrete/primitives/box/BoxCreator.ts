@@ -2,11 +2,11 @@ import { Matrix4, Plane, type Ray, Vector3 } from 'three';
 import {
   horizontalAngle,
   verticalDistanceTo
-} from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/vectorUtils';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
-import { forceBetween0AndTwoPi } from '../../../base/utilities/extensions/mathExtensions';
+import { forceBetween0AndTwoPi } from '../../../base/utilities/extensions/mathUtils';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';

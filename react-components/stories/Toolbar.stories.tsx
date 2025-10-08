@@ -135,7 +135,7 @@ function FitToUrlCameraState(): ReactElement {
     const currentCameraState = getCameraState();
     if (currentCameraState === undefined) return;
     cameraNavigation.fitCameraToState(currentCameraState);
-  }, []);
+  }, [cameraNavigation, getCameraState]);
 
   return <></>;
 }

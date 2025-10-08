@@ -1,7 +1,7 @@
-import { type IconName } from '../../../base/utilities/IconName';
+import { type IconName } from '../../../base/utilities/types';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { setClippingPlanes } from './setClippingPlanes';
@@ -43,10 +43,10 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
       return false;
     }
     const minimumCount = this._next ? 2 : 3; // Don't need both buttons if it is less than 3
-    const { rootDomainObject } = this;
+    const { root } = this;
     // Require at least two crop boxes or one crop box and one slice
     let count = 0;
-    for (const domainObject of rootDomainObject.getDescendants()) {
+    for (const domainObject of root.getDescendants()) {
       if (domainObject instanceof CropBoxDomainObject) {
         count++;
         if (count >= minimumCount) {
@@ -54,7 +54,7 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
         }
       }
     }
-    if (rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
+    if (root.getDescendantByType(SliceDomainObject) !== undefined) {
       count++;
     }
     return count >= minimumCount;
@@ -87,7 +87,7 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
     if (nextCropBoxOrSlice instanceof CropBoxDomainObject) {
       nextCropBoxOrSlice.setThisAsGlobalCropBox();
     } else {
-      setClippingPlanes(this.rootDomainObject);
+      setClippingPlanes(this.root);
     }
     this.renderTarget.fitView();
     return true;
@@ -98,18 +98,18 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
   // ==================================================
 
   private createCropBoxesAndSliceArray(): Array<CropBoxDomainObject | SliceDomainObject> {
-    const { rootDomainObject } = this;
+    const { root } = this;
     // Build the array of crop boxes and at least one slice
     const array = new Array<CropBoxDomainObject | SliceDomainObject>();
-    for (const cropBox of rootDomainObject.getDescendantsByType(CropBoxDomainObject)) {
+    for (const cropBox of root.getDescendantsByType(CropBoxDomainObject)) {
       array.push(cropBox);
     }
     // Take the selected slice, otherwise take the first one
-    const selectedSlice = rootDomainObject.getSelectedDescendantByType(SliceDomainObject);
+    const selectedSlice = root.getSelectedDescendantByType(SliceDomainObject);
     if (selectedSlice !== undefined) {
       array.push(selectedSlice);
     } else {
-      const sliceDomainObject = rootDomainObject.getDescendantByType(SliceDomainObject);
+      const sliceDomainObject = root.getDescendantByType(SliceDomainObject);
       if (sliceDomainObject !== undefined) {
         array.push(sliceDomainObject);
       }
@@ -152,22 +152,22 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
   }
 
   private setAllSliceDomainObjectsVisible(visible: boolean): void {
-    const { rootDomainObject } = this;
-    for (const sliceDomainObject of rootDomainObject.getDescendantsByType(SliceDomainObject)) {
+    const { root } = this;
+    for (const sliceDomainObject of root.getDescendantsByType(SliceDomainObject)) {
       sliceDomainObject.setVisibleInteractive(visible, this.renderTarget);
     }
   }
 
   public getCropBoxesAndSliceCount(): number {
-    const { rootDomainObject } = this;
+    const { root } = this;
     // Require at least two crop boxes or one crop box and one slice
     let count = 0;
-    for (const domainObject of rootDomainObject.getDescendants()) {
+    for (const domainObject of root.getDescendants()) {
       if (domainObject instanceof CropBoxDomainObject) {
         count++;
       }
     }
-    if (rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
+    if (root.getDescendantByType(SliceDomainObject) !== undefined) {
       count++;
     }
     return count;

@@ -43,7 +43,7 @@ export async function assignPointsToObjectsWithWasm(
   objects: SerializableStylableObject[],
   pointOffset: Vector3,
   sectorBoundingBox: Box3
-): Promise<Uint16Array> {
+): Promise<Uint16Array<ArrayBuffer>> {
   const wasmShapes = objects.map(obj => createWasmSerializedObject(obj));
 
   try {

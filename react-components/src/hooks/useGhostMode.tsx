@@ -1,5 +1,5 @@
 import { useRenderTarget } from '../components/RevealCanvas';
-import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
+import { SetGhostModeCommand } from '../architecture/concrete/reveal/cad/commands/SetGhostModeCommand';
 import { useNullableCommandProperty } from '../components/Architecture/hooks/useCommandProperty';
 
 export const useGhostMode = (): boolean => {

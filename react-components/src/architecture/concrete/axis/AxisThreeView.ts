@@ -13,7 +13,7 @@ import {
 } from 'three';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { isIncrement } from '../../base/utilities/extensions/mathExtensions';
+import { isIncrement } from '../../base/utilities/extensions/mathUtils';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 import { type AxisRenderStyle } from './AxisRenderStyle';
 import {
@@ -25,7 +25,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Vector3Pool } from '@cognite/reveal';
 import { PrimitiveUtils } from '../../base/utilities/primitives/PrimitiveUtils';
-import { numberToString } from '../../base/utilities/extensions/stringExtensions';
+import { numberToString } from '../../base/utilities/extensions/stringUtils';
 
 const FACE_INDEX_NAME1 = 'faceIndex1';
 const FACE_INDEX_NAME2 = 'faceIndex2';
@@ -269,9 +269,6 @@ export class AxisThreeView extends GroupThreeView {
 
           const text = numberToString(dimension === 2 ? -tick : tick);
           const sprite = createSpriteWithText(text, tickFontSize, style.textColor);
-          if (sprite === undefined) {
-            continue;
-          }
           sprite.position.copy(end);
           this.addChild(sprite);
           this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
@@ -304,9 +301,6 @@ export class AxisThreeView extends GroupThreeView {
         labelFontSize,
         style.textColor
       );
-      if (sprite === undefined) {
-        return;
-      }
       moveSpriteByPositionAndDirection(sprite, position, tickDirection);
       this.addChild(sprite);
       this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);

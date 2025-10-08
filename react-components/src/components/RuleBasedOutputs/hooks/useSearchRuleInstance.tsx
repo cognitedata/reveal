@@ -36,7 +36,7 @@ export const useSearchRuleInstance = (): ((
 
       return result.instances;
     },
-    []
+    [fdmSdk]
   );
 
   return searchRuleById;

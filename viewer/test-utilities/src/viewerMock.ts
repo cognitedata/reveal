@@ -49,7 +49,7 @@ export function mockViewerComponents(): {
   camera.updateProjectionMatrix();
   camera.updateMatrix();
 
-  const viewer = new Cognite3DViewer<DataSourceType>({ domElement: canvasContainer, sdk, renderer });
+  const viewer = new Cognite3DViewer<DataSourceType>({ domElement: canvasContainer, sdk, renderer, logMetrics: false });
   jest.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
 
   renderer.setSize(128, 128);

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { describe, expect, test } from 'vitest';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
-import { isEmpty } from '../../base/utilities/TranslateInput';
+import { isEmpty } from '../../base/utilities/translation/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { Box3, Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';
@@ -40,7 +40,7 @@ describe(CropBoxDomainObject.name, () => {
   test('Should set and reset global clipping planes', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createSmallCropBox();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
 
     setLargeSceneBoundingBox(renderTarget);
 
@@ -52,7 +52,7 @@ describe(CropBoxDomainObject.name, () => {
     expect(renderTarget.getGlobalClippingPlanes().length).toBe(6);
 
     // Reset global clipping planes
-    setClippingPlanes(renderTarget.rootDomainObject);
+    setClippingPlanes(renderTarget.root);
     expect(renderTarget.isGlobalCropBox(domainObject)).toBe(false);
     expect(domainObject.hasBoldLabel).toBe(false);
     expect(renderTarget.getGlobalClippingPlanes().length).toBe(0);
@@ -61,7 +61,7 @@ describe(CropBoxDomainObject.name, () => {
   test('Should set and reset global clipping planes by selection', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createSmallCropBox();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
 
     setLargeSceneBoundingBox(renderTarget);
     renderTarget.viewer.setGlobalClippingPlanes([new Plane()]); // Must have at least one plane
@@ -79,7 +79,7 @@ describe(CropBoxDomainObject.name, () => {
   test('Should reset global clipping planes by remove', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createSmallCropBox();
-    renderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.root.addChild(domainObject);
 
     setLargeSceneBoundingBox(renderTarget);
 

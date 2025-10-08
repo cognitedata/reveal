@@ -6,23 +6,27 @@ import * as THREE from 'three';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/data-providers';
+import {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  BlobOutputMetadata,
+  LocalModelIdentifier
+} from '@reveal/data-providers';
 
 import { It, Mock } from 'moq.ts';
 import { GeometryFilter } from './types';
 
 import { jest } from '@jest/globals';
 
-describe('CadModelFactory', () => {
+describe(CadModelFactory.name, () => {
   let materialManager: CadMaterialManager;
   let factory: CadModelFactory;
-  let mockIdentifierObject: ModelIdentifier;
+  let mockIdentifier: ModelIdentifier;
 
   beforeEach(() => {
     materialManager = new CadMaterialManager();
-
-    const mockIdentifier = new Mock<ModelIdentifier>().setup(p => p.revealInternalId).returns(Symbol('test'));
-    mockIdentifierObject = mockIdentifier.object();
+    mockIdentifier = new LocalModelIdentifier('test-model');
 
     const testOutput: BlobOutputMetadata = { blobId: 1, format: 'gltf-directory', version: 9 };
     const testBaseUrl = 'https://test-base-url';
@@ -44,13 +48,13 @@ describe('CadModelFactory', () => {
     };
 
     const modelMetadataProviderMock = new Mock<ModelMetadataProvider>()
-      .setup(p => p.getModelOutputs(mockIdentifierObject))
+      .setup(p => p.getModelOutputs(mockIdentifier))
       .returns(Promise.resolve([testOutput]))
-      .setup(p => p.getModelUri(mockIdentifierObject, testOutput))
+      .setup(p => p.getModelUri(mockIdentifier, testOutput))
       .returns(Promise.resolve(testBaseUrl))
-      .setup(p => p.getModelMatrix(mockIdentifierObject, testOutput.format))
+      .setup(p => p.getModelMatrix(mockIdentifier, testOutput.format))
       .returns(Promise.resolve(new THREE.Matrix4()))
-      .setup(p => p.getModelCamera(mockIdentifierObject))
+      .setup(p => p.getModelCamera(mockIdentifier))
       .returns(Promise.resolve({ position: new THREE.Vector3(), target: new THREE.Vector3(0, 0, 1) }));
 
     const mock = new Mock<ModelDataProvider>()
@@ -62,7 +66,7 @@ describe('CadModelFactory', () => {
 
   test('createModel() initializes model materials', async () => {
     const addModelMaterialsSpy = jest.spyOn(materialManager, 'addModelMaterials');
-    const modelMetadata = await factory.loadModelMetadata(mockIdentifierObject);
+    const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
     const node = await factory.createModel(modelMetadata);
 
     expect(node).toBeTruthy();
@@ -77,10 +81,10 @@ describe('CadModelFactory', () => {
       isBoundingBoxInModelCoordinates: true
     };
 
-    const modelMetadata = await factory.loadModelMetadata(mockIdentifierObject);
+    const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
     await factory.createModel(modelMetadata, geometryFilter);
 
     expect(setModelClippingPlanesSpy).toBeCalledTimes(1);
-    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeString(), expect.toBeArrayOfSize(6));
+    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeSymbol(), expect.toBeArrayOfSize(6));
   });
 });

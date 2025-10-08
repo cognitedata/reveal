@@ -1,4 +1,4 @@
-import { clear } from '../utilities/extensions/arrayExtensions';
+import { clear } from '../utilities/extensions/arrayUtils';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
