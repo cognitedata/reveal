@@ -1,10 +1,8 @@
-import { useState, type ReactElement, useCallback, useEffect } from 'react';
+import { useState, type ReactElement, useCallback, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
 import { type DataSourceType, type Image360 } from '@cognite/reveal';
 import { Button, CloseLargeIcon } from '@cognite/cogs.js';
-import { useReveal } from '../RevealCanvas/ViewerContext';
-import { useImage360Collections } from '../../hooks/useImage360Collections';
+import { Image360DetailsContext } from './Image360Details.context';
 
 type Image360DetailsProps = {
   appLanguage?: string;
@@ -15,6 +13,12 @@ export function Image360Details({
   appLanguage,
   enableExitButton = true
 }: Image360DetailsProps): ReactElement {
+  const {
+    useReveal,
+    useImage360Collections,
+    Image360HistoricalDetails
+  } = useContext(Image360DetailsContext);
+
   const viewer = useReveal();
   const [enteredEntity, setEnteredEntity] = useState<Image360<DataSourceType> | undefined>();
   const [is360HistoricalPanelExpanded, setIs360HistoricalPanelExpanded] = useState<boolean>(false);
@@ -60,6 +64,7 @@ export function Image360Details({
           {enableExitButton && (
             <ExitButtonContainer>
               <StyledExitButton
+                data-testid="image-360-details-exit-button"
                 icon=<CloseLargeIcon />
                 type="tertiary"
                 onClick={exitImage360Image}
