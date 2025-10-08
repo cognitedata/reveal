@@ -1,5 +1,4 @@
 import { type ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
 import {
@@ -35,9 +34,7 @@ export function Image360CollectionContainer({
     useRenderTarget,
     useRevealKeepAlive,
     useReveal3DResourcesCount,
-    useReveal3DResourceLoadFailCount,
-    createImage360CollectionDomainObject,
-    removeImage360CollectionDomainObject
+    useReveal3DResourceLoadFailCount
   } = useContext(Image360CollectionContainerContext);
 
   const cachedViewerRef = useRevealKeepAlive();
