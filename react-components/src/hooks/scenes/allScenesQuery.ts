@@ -9,13 +9,15 @@ import {
   sceneSourceWithProperties,
   transformationSourceWithProperties
 } from './types';
-import { type DmsUniqueIdentifier } from '../../data-providers';
 
 export type ScenesQuery = ReturnType<typeof getAllScenesQuery>;
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) => {
-  return {
+const getAllScenesQuery = (
+  limit: number = SCENE_QUERY_LIMIT,
+  cursors?: { scenes?: string; sceneModels?: string; scene360Collections?: string }
+) => {
+  const query = {
     with: {
       scenes: {
         nodes: {
@@ -30,7 +32,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             ]
           }
         },
-        limit
+        ...(limit > 0 && { limit })
       },
       sceneModels: {
         edges: {
@@ -127,90 +129,27 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
         sources: groundPlaneSourceWithProperties
       }
     },
-    cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
+    ...(cursors !== undefined && { cursors })
   } as const satisfies Omit<QueryRequest, 'parameters'>;
+
+  return query;
 };
 
 export function createGetScenesQuery(
   limit: number = SCENE_QUERY_LIMIT,
-  sceneCursor?: string
+  sceneCursor?: string,
+  otherCursors?: { sceneModels?: string; scene360Collections?: string }
 ): ScenesQuery {
-  return getAllScenesQuery(limit, sceneCursor);
-}
+  const cursors = {
+    scenes: sceneCursor,
+    ...otherCursors
+  };
 
-export function createGetSceneModelsQuery(sceneIds: DmsUniqueIdentifier[], cursor?: string) {
-  return {
-    with: {
-      sceneModels: {
-        edges: {
-          filter: {
-            and: [
-              {
-                equals: {
-                  property: ['edge', 'type'],
-                  value: {
-                    space: 'scene',
-                    externalId: 'SceneConfiguration.model3ds'
-                  }
-                }
-              },
-              {
-                in: {
-                  property: ['edge', 'startNode'],
-                  values: sceneIds
-                }
-              }
-            ]
-          }
-        },
-        limit: SCENE_RELATED_DATA_LIMIT
-      }
-    },
-    select: {
-      sceneModels: {
-        sources: revisionSourceWithProperties
-      }
-    },
-    cursors: cursor !== undefined ? { sceneModels: cursor } : undefined
-  } as const satisfies Omit<QueryRequest, 'parameters'>;
-}
+  // Clean up undefined cursors so we don't send them in the request
+  if (cursors.scenes === undefined) delete cursors.scenes;
+  if (cursors.sceneModels === undefined) delete cursors.sceneModels;
+  if (cursors.scene360Collections === undefined) delete cursors.scene360Collections;
 
-export function createGetScene360CollectionsQuery(
-  sceneIds: DmsUniqueIdentifier[],
-  cursor?: string
-) {
-  return {
-    with: {
-      scene360Collections: {
-        edges: {
-          filter: {
-            and: [
-              {
-                equals: {
-                  property: ['edge', 'type'],
-                  value: {
-                    space: 'scene',
-                    externalId: 'SceneConfiguration.images360Collections'
-                  }
-                }
-              },
-              {
-                in: {
-                  property: ['edge', 'startNode'],
-                  values: sceneIds
-                }
-              }
-            ]
-          }
-        },
-        limit: SCENE_RELATED_DATA_LIMIT
-      }
-    },
-    select: {
-      scene360Collections: {
-        sources: image360CollectionSourceWithProperties
-      }
-    },
-    cursors: cursor !== undefined ? { scene360Collections: cursor } : undefined
-  } as const satisfies Omit<QueryRequest, 'parameters'>;
+  const finalCursors = Object.keys(cursors).length > 0 ? cursors : undefined;
+  return getAllScenesQuery(limit, finalCursors);
 }

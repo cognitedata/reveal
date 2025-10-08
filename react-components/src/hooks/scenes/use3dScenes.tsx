@@ -6,7 +6,6 @@ import {
   type EdgeItem,
   type NodeItem,
   type ExternalId,
-  type DmsUniqueIdentifier,
   type FdmSDK
 } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
@@ -15,7 +14,6 @@ import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
 import {
   SCENE_QUERY_LIMIT,
-  SCENE_RELATED_DATA_LIMIT,
   type Cdf3dImage360CollectionProperties,
   type Cdf3dRevisionProperties,
   type ENVIRONMENT_MAP_SOURCE,
@@ -36,16 +34,12 @@ import {
 } from './types';
 
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-import {
-  createGetScenesQuery,
-  createGetSceneModelsQuery,
-  createGetScene360CollectionsQuery
-} from './allScenesQuery';
+import { createGetScenesQuery } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
-  const { useSDK, createFdmSdk } = useContext(Use3dScenesContext);
+  const { useSDK, createFdmSdk, relatedDataLimit } = useContext(Use3dScenesContext);
 
   const sdk = useSDK(userSdk);
   const fdmSdk = useMemo(() => createFdmSdk(sdk), [createFdmSdk, sdk]);
@@ -86,30 +80,24 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       const currentScenes = scenesResponse.items.scenes;
       allScenes.scenes.push(...currentScenes);
 
-      // Extract scene IDs for potential paginated queries
-      const sceneIds: DmsUniqueIdentifier[] = currentScenes.map((scene) => ({
-        space: scene.space,
-        externalId: scene.externalId
-      }));
+      const needsModelsPagination = scene3dModels.length === relatedDataLimit;
+      const needs360Pagination = scene360Collections.length === relatedDataLimit;
 
-      // Check if any related data hit the limit and need pagination
-      const needsModelsPagination = scene3dModels.length === SCENE_RELATED_DATA_LIMIT;
-      const needs360Pagination = scene360Collections.length === SCENE_RELATED_DATA_LIMIT;
-
-      // Always add the data from the main query first
       allScenes.sceneModels.push(...scene3dModels);
       allScenes.scene360Collections.push(...scene360Collections);
       allScenes.sceneGroundPlanes.push(...scenesResponse.items.sceneGroundPlanes);
       allScenes.sceneGroundPlaneEdges.push(...scenesResponse.items.sceneGroundPlaneEdges);
       allScenes.sceneSkybox.push(...scenesResponse.items.sceneSkybox);
 
-      // If any related data hit limits, fetch additional data with pagination
-      if (needsModelsPagination) {
-        await fetchSceneModelsWithPagination(fdmSdk, sceneIds, allScenes);
-      }
-
-      if (needs360Pagination) {
-        await fetchScene360CollectionsWithPagination(fdmSdk, sceneIds, allScenes);
+      // If any related data needs pagination, handle it here
+      if (needsModelsPagination || needs360Pagination) {
+        const cursorsForRelatedData = {
+          sceneModels: needsModelsPagination ? scenesResponse.nextCursor?.sceneModels : undefined,
+          scene360Collections: needs360Pagination
+            ? scenesResponse.nextCursor?.scene360Collections
+            : undefined
+        };
+        await fetchRemainingRelatedData(fdmSdk, cursorsForRelatedData, allScenes);
       }
 
       sceneCursor = scenesResponse.nextCursor?.scenes;
@@ -328,58 +316,41 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
   return modelProps;
 }
 
-async function fetchSceneModelsWithPagination(
+async function fetchRemainingRelatedData(
   fdmSdk: FdmSDK,
-  sceneIds: DmsUniqueIdentifier[],
+  initialCursors: { sceneModels?: string; scene360Collections?: string },
   allScenes: Use3dScenesQueryResult
 ): Promise<void> {
-  let hasMoreModels = true;
-  let modelsCursor: string | undefined;
+  let currentCursors: { sceneModels?: string; scene360Collections?: string } = initialCursors;
 
-  while (hasMoreModels) {
-    const modelsQuery = createGetSceneModelsQuery(sceneIds, modelsCursor);
-    const modelsResponse = await fdmSdk.queryNodesAndEdges<
-      typeof modelsQuery,
-      [{ source: typeof REVISION_SOURCE; properties: Cdf3dRevisionProperties }]
-    >(modelsQuery);
+  // Loop as long as there is at least one cursor for any related data type
+  while (
+    currentCursors.sceneModels !== undefined ||
+    currentCursors.scene360Collections !== undefined
+  ) {
+    // Pass 0 for limit to indicate we are not fetching new scenes, only paginating related data.
+    const paginatedQuery = createGetScenesQuery(0, undefined, currentCursors);
 
-    const scene3dModels = modelsResponse.items.sceneModels.filter(isScene3dModelEdge);
-    allScenes.sceneModels.push(...scene3dModels);
-
-    modelsCursor = modelsResponse.nextCursor?.sceneModels;
-    hasMoreModels =
-      modelsResponse.items.sceneModels.length === SCENE_RELATED_DATA_LIMIT &&
-      modelsCursor !== undefined;
-  }
-}
-
-async function fetchScene360CollectionsWithPagination(
-  fdmSdk: FdmSDK,
-  sceneIds: DmsUniqueIdentifier[],
-  allScenes: Use3dScenesQueryResult
-): Promise<void> {
-  let hasMore360Collections = true;
-  let collections360Cursor: string | undefined;
-
-  while (hasMore360Collections) {
-    const collections360Query = createGetScene360CollectionsQuery(sceneIds, collections360Cursor);
-    const collections360Response = await fdmSdk.queryNodesAndEdges<
-      typeof collections360Query,
+    const response = await fdmSdk.queryNodesAndEdges<
+      typeof paginatedQuery,
       [
+        { source: typeof REVISION_SOURCE; properties: Cdf3dRevisionProperties },
         {
           source: typeof IMAGE_360_COLLECTION_SOURCE;
           properties: Cdf3dImage360CollectionProperties;
         }
       ]
-    >(collections360Query);
+    >(paginatedQuery);
 
-    const scene360Collections =
-      collections360Response.items.scene360Collections.filter(isScene360CollectionEdge);
-    allScenes.scene360Collections.push(...scene360Collections);
+    const newModels = response.items.sceneModels.filter(isScene3dModelEdge);
+    const new360Collections = response.items.scene360Collections.filter(isScene360CollectionEdge);
 
-    collections360Cursor = collections360Response.nextCursor?.scene360Collections;
-    hasMore360Collections =
-      collections360Response.items.scene360Collections.length === SCENE_RELATED_DATA_LIMIT &&
-      collections360Cursor !== undefined;
+    allScenes.sceneModels.push(...newModels);
+    allScenes.scene360Collections.push(...new360Collections);
+
+    currentCursors = {
+      sceneModels: response.nextCursor?.sceneModels,
+      scene360Collections: response.nextCursor?.scene360Collections
+    };
   }
 }

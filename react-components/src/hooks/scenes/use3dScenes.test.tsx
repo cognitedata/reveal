@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
 import { type PropsWithChildren, type ReactElement } from 'react';
 import { Mock } from 'moq.ts';
-import { type QueryRequest, type CogniteClient } from '@cognite/sdk';
+import { type CogniteClient, type QueryRequest } from '@cognite/sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type FdmSDK, type EdgeItem, type NodeItem } from '../../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
@@ -38,19 +38,28 @@ describe(use3dScenes.name, () => {
     .object();
 
   const mockDependencies = getMocksByDefaultDependencies(defaultUse3dScenesDependencies);
+
+  // Add the custom property needed for pagination testing
+  const mockDependenciesWithLowLimit = {
+    ...mockDependencies,
+    relatedDataLimit: 3
+  };
+
   const queryClient = new QueryClient();
 
   type MockResponseData = Partial<Use3dScenesQueryResult>;
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <QueryClientProvider client={queryClient}>
-      <Use3dScenesContext.Provider value={mockDependencies}>{children}</Use3dScenesContext.Provider>
+      <Use3dScenesContext.Provider value={mockDependenciesWithLowLimit}>
+        {children}
+      </Use3dScenesContext.Provider>
     </QueryClientProvider>
   );
 
   beforeEach(() => {
-    mockDependencies.useSDK.mockReturnValue(sdkMock);
-    mockDependencies.createFdmSdk.mockReturnValue(mockFdmSdkInstance);
+    mockDependenciesWithLowLimit.useSDK.mockReturnValue(sdkMock);
+    mockDependenciesWithLowLimit.createFdmSdk.mockReturnValue(mockFdmSdkInstance);
     mockQueryNodesAndEdges.mockClear();
     queryClient.clear();
   });
@@ -87,261 +96,169 @@ describe(use3dScenes.name, () => {
     setupMockResponse({
       scenes: [createSceneNode('test-scene-1', 'test-space')]
     });
-
     const { result } = renderHook(() => use3dScenes(), { wrapper });
     const data = await waitForSuccessAndGetData(result);
-
     expect(data['test-space']['test-scene-1']).toBeDefined();
     expect(data['test-space']['test-scene-1'].name).toBe('Scene test-scene-1');
   });
 
-  test('should handle pagination', async () => {
+  test('should handle scene pagination', async () => {
     const createScenes = (count: number, start: number = 0): SceneNode[] =>
       Array.from({ length: count }, (_, i) => createSceneNode(`scene-${start + i}`, 'test-space'));
-
     setupMockResponse([
       {
-        data: { scenes: createScenes(100, 0) },
+        data: { scenes: createScenes(SCENE_QUERY_LIMIT, 0) },
         nextCursor: { scenes: 'cursor-token' }
       },
       {
-        data: { scenes: createScenes(50, 100) },
+        data: { scenes: createScenes(50, SCENE_QUERY_LIMIT) },
         nextCursor: undefined
       }
     ]);
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    assert(result.current.data !== undefined);
-
-    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
-    expect(result.current.data).toBeDefined();
-
-    const allScenes = Object.values(result.current.data).flatMap((spaceScenes) =>
-      Object.values(spaceScenes)
-    );
-    expect(allScenes).toHaveLength(150);
-  });
-
-  test('should not trigger pagination when models count is below SCENE_RELATED_DATA_LIMIT', async () => {
-    // Create fewer models than the limit to ensure no pagination is triggered
-    const createModels = (
-      count: number,
-      start: number = 0
-    ): Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>> =>
-      Array.from({ length: count }, (_, i) =>
-        createModelEdge('test-scene', TEST_SPACE, `cog_3d_model_${start + i}`, 'models', 1)
-      );
-
-    setupMockResponse({
-      scenes: [createSceneNode('test-scene', TEST_SPACE)],
-      sceneModels: createModels(100) // Much less than SCENE_RELATED_DATA_LIMIT (10000)
-    });
-
     const { result } = renderHook(() => use3dScenes(), { wrapper });
     const data = await waitForSuccessAndGetData(result);
-
-    // Should only call the main query, no pagination
-    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(1);
-
-    const scene = data[TEST_SPACE]['test-scene'];
-    expect(scene.modelOptions).toHaveLength(100);
-  });
-
-  test('should handle 3d models pagination', async () => {
-    // Since directly testing the exact limit is complex due to performance constraints,
-    // test the pagination functionality by verifying that the logic can handle
-    // the pagination queries correctly when they are triggered
-    // This test verifies that the hook can properly handle model data
-    // The pagination functions are covered when the arrays reach SCENE_RELATED_DATA_LIMIT
-    // but testing with actual 10K items is not feasible
-
-    // First test the pagination query structure for models
-    const baseModels = [
-      createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_1', 'models', 1),
-      createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_2', 'models', 1)
-    ];
-
-    const paginatedModels = [
-      createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_paginated_1', 'models', 1),
-      createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_paginated_2', 'models', 1)
-    ];
-
-    setupMockResponse([
-      {
-        data: {
-          scenes: [createSceneNode('test-scene', TEST_SPACE)],
-          sceneModels: baseModels
-        },
-        nextCursor: undefined
-      },
-      {
-        data: {
-          sceneModels: paginatedModels
-        },
-        nextCursor: undefined
-      }
-    ]);
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    // Verify the hook completed successfully with the right data structure
-    expect(result.current.data).toBeDefined();
-    const scene = result.current.data![TEST_SPACE]['test-scene'];
-    expect(scene).toBeDefined();
-    expect(scene.modelOptions).toHaveLength(2);
-  });
-
-  test('should handle 360 collections pagination', async () => {
-    const base360Collections = [
-      create360Edge('test-scene', TEST_SPACE, 'image-collection-1', 'image-space'),
-      create360Edge('test-scene', TEST_SPACE, 'image-collection-2', 'image-space')
-    ];
-
-    const paginated360Collections = [
-      create360Edge('test-scene', TEST_SPACE, 'image-collection-paginated-1', 'image-space'),
-      create360Edge('test-scene', TEST_SPACE, 'image-collection-paginated-2', 'image-space')
-    ];
-
-    setupMockResponse([
-      {
-        data: {
-          scenes: [createSceneNode('test-scene', TEST_SPACE)],
-          scene360Collections: base360Collections
-        },
-        nextCursor: undefined
-      },
-      {
-        data: {
-          scene360Collections: paginated360Collections
-        },
-        nextCursor: undefined
-      }
-    ]);
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(result.current.data).toBeDefined();
-    const scene = result.current.data![TEST_SPACE]['test-scene'];
-    expect(scene).toBeDefined();
-    expect(scene.image360CollectionOptions).toHaveLength(2);
-  });
-
-  test('should handle multiple pagination calls', async () => {
-    // Test multiple sequential queries to verify the pagination query structure
-    const firstBatch = [createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_1', 'models', 1)];
-    const secondBatch = [createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_2', 'models', 1)];
-    const thirdBatch = [createModelEdge('test-scene', TEST_SPACE, 'cog_3d_model_3', 'models', 1)];
-
-    setupMockResponse([
-      {
-        data: {
-          scenes: [createSceneNode('test-scene', TEST_SPACE)],
-          sceneModels: firstBatch
-        },
-        nextCursor: undefined
-      },
-      {
-        data: {
-          sceneModels: secondBatch
-        },
-        nextCursor: undefined
-      },
-      {
-        data: {
-          sceneModels: thirdBatch
-        },
-        nextCursor: undefined
-      }
-    ]);
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(result.current.data).toBeDefined();
-    const scene = result.current.data![TEST_SPACE]['test-scene'];
-    expect(scene.modelOptions).toHaveLength(1); // Only counts the first batch since others aren't triggered
-  });
-
-  test('should handle complex multiple data types and scene pagination', async () => {
-    const createScenes = (count: number, start: number = 0): SceneNode[] =>
-      Array.from({ length: count }, (_, i) => createSceneNode(`scene-${start + i}`, 'test-space'));
-
-    const createModels = (
-      sceneId: string,
-      count: number,
-      start: number = 0
-    ): Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>> =>
-      Array.from({ length: count }, (_, i) =>
-        createModelEdge(sceneId, 'test-space', `cog_3d_model_${start + i}`, 'models', 1)
-      );
-
-    const create360Collections = (
-      sceneId: string,
-      count: number,
-      start: number = 0
-    ): Array<EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>> =>
-      Array.from({ length: count }, (_, i) =>
-        create360Edge(sceneId, 'test-space', `image-collection-${start + i}`, 'image-space')
-      ); // First batch: exactly SCENE_QUERY_LIMIT scenes to trigger pagination
-    setupMockResponse([
-      {
-        data: {
-          scenes: createScenes(SCENE_QUERY_LIMIT, 0), // Exactly SCENE_QUERY_LIMIT to trigger pagination
-          sceneModels: createModels('scene-0', 50, 0),
-          scene360Collections: create360Collections('scene-1', 25, 0)
-        },
-        nextCursor: { scenes: 'scene-cursor' }
-      },
-      // Second batch: remaining scenes
-      {
-        data: {
-          scenes: createScenes(30, SCENE_QUERY_LIMIT),
-          sceneModels: createModels(`scene-${SCENE_QUERY_LIMIT}`, 25, 0)
-        },
-        nextCursor: undefined
-      }
-    ]);
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-    const data = await waitForSuccessAndGetData(result);
-
     expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
-
     const allScenes = Object.values(data).flatMap((spaceScenes) => Object.values(spaceScenes));
-    expect(allScenes).toHaveLength(SCENE_QUERY_LIMIT + 30);
+    expect(allScenes).toHaveLength(SCENE_QUERY_LIMIT + 50);
+  });
 
-    // Check that scenes have their respective data
-    const sceneWithModels = data['test-space']['scene-0'];
-    expect(sceneWithModels.modelOptions).toHaveLength(50);
+  test('should trigger and handle 3d models pagination when limit is reached', async () => {
+    const sceneId = 'scene-with-paginated-models';
+    const firstBatchOfModels = [
+      createModelEdge(sceneId, TEST_SPACE, 'model-1', 'models', 1),
+      createModelEdge(sceneId, TEST_SPACE, 'model-2', 'models', 2),
+      createModelEdge(sceneId, TEST_SPACE, 'model-3', 'models', 3)
+    ]; // Length is 3, which equals the mocked limit
 
-    const sceneWith360 = data['test-space']['scene-1'];
-    expect(sceneWith360.image360CollectionOptions).toHaveLength(25);
+    const secondBatchOfModels = [createModelEdge(sceneId, TEST_SPACE, 'model-4', 'models', 4)]; // Last page
 
-    const scenePaginated = data['test-space'][`scene-${SCENE_QUERY_LIMIT}`];
-    expect(scenePaginated.modelOptions).toHaveLength(25);
+    setupMockResponse([
+      {
+        data: {
+          scenes: [createSceneNode(sceneId, TEST_SPACE)],
+          sceneModels: firstBatchOfModels
+        },
+        nextCursor: { sceneModels: 'model-cursor-1' } // Provide cursor to trigger pagination
+      },
+      {
+        data: {
+          sceneModels: secondBatchOfModels
+        },
+        nextCursor: undefined // No more cursors
+      }
+    ]);
+
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+
+    // Should be 2 calls: initial fetch, and one paginated fetch for models
+    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
+
+    const scene = data[TEST_SPACE][sceneId];
+    expect(scene.modelOptions).toHaveLength(4); // 3 from first call + 1 from second
+    const isClassic = scene.modelOptions.every(isClassicIdentifier);
+    assert(isClassic);
+    const classicModels = scene.modelOptions.filter(isClassicIdentifier);
+    expect(classicModels.map((m) => m.revisionId)).toEqual([1, 2, 3, 4]);
+  });
+
+  test('should trigger and handle 360 collections pagination when limit is reached', async () => {
+    const sceneId = 'scene-with-paginated-360s';
+    const firstBatch = [
+      create360Edge(sceneId, TEST_SPACE, 'collection-1', 'image-space'),
+      create360Edge(sceneId, TEST_SPACE, 'collection-2', 'image-space'),
+      create360Edge(sceneId, TEST_SPACE, 'collection-3', 'image-space')
+    ]; // Length is 3, equals the mocked limit
+
+    const secondBatch = [
+      create360Edge(sceneId, TEST_SPACE, 'collection-4', 'image-space'),
+      create360Edge(sceneId, TEST_SPACE, 'collection-5', 'image-space')
+    ];
+
+    setupMockResponse([
+      {
+        data: {
+          scenes: [createSceneNode(sceneId, TEST_SPACE)],
+          scene360Collections: firstBatch
+        },
+        nextCursor: { scene360Collections: '360-cursor-1' }
+      },
+      {
+        data: {
+          scene360Collections: secondBatch
+        },
+        nextCursor: undefined
+      }
+    ]);
+
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+
+    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
+
+    const scene = data[TEST_SPACE][sceneId];
+    expect(scene.image360CollectionOptions).toHaveLength(5);
+    expect(scene.image360CollectionOptions.map((c) => c.externalId)).toEqual([
+      'collection-1',
+      'collection-2',
+      'collection-3',
+      'collection-4',
+      'collection-5'
+    ]);
+  });
+
+  test('should handle pagination for both models and 360 collections simultaneously', async () => {
+    const sceneId = 'complex-pagination-scene';
+    const modelsPage1 = [
+      createModelEdge(sceneId, TEST_SPACE, 'model-1', 'models', 1),
+      createModelEdge(sceneId, TEST_SPACE, 'model-2', 'models', 2),
+      createModelEdge(sceneId, TEST_SPACE, 'model-3', 'models', 3)
+    ];
+    const collectionsPage1 = [
+      create360Edge(sceneId, TEST_SPACE, 'collection-1', 'image-space'),
+      create360Edge(sceneId, TEST_SPACE, 'collection-2', 'image-space'),
+      create360Edge(sceneId, TEST_SPACE, 'collection-3', 'image-space')
+    ];
+
+    const modelsPage2 = [createModelEdge(sceneId, TEST_SPACE, 'model-4', 'models', 4)];
+    const collectionsPage2 = [create360Edge(sceneId, TEST_SPACE, 'collection-4', 'image-space')];
+
+    setupMockResponse([
+      {
+        data: {
+          scenes: [createSceneNode(sceneId, TEST_SPACE)],
+          sceneModels: modelsPage1,
+          scene360Collections: collectionsPage1
+        },
+        nextCursor: {
+          sceneModels: 'model-cursor-1',
+          scene360Collections: '360-cursor-1'
+        }
+      },
+      {
+        data: {
+          sceneModels: modelsPage2,
+          scene360Collections: collectionsPage2
+        },
+        nextCursor: undefined
+      }
+    ]);
+
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+
+    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
+    const scene = data[TEST_SPACE][sceneId];
+
+    expect(scene.modelOptions).toHaveLength(4);
+    expect(scene.image360CollectionOptions).toHaveLength(4);
   });
 
   test('should process model edges and create 3d model options with correct transform matrix', async () => {
     setupMockResponse({
       scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
       sceneModels: [
-        createModelEdge('scene-with-model', TEST_SPACE, 'cog_3d_model_123', 'models', 1)
+        createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)
       ]
     });
 
@@ -444,86 +361,6 @@ describe(use3dScenes.name, () => {
     });
   });
 
-  test('should process scenes with all component types (3d models, 360 images, ground planes, skybox)', async () => {
-    setupMockResponse({
-      scenes: [
-        createSceneNode('complex-scene', 'test-space', {
-          properties: {
-            scene: {
-              'SceneConfiguration/v1': {
-                name: 'Complex Scene',
-                cameraTranslationX: 100,
-                cameraTranslationY: 200,
-                cameraTranslationZ: 300,
-                skybox: { externalId: 'complex-skybox', space: 'test-space' }
-              }
-            }
-          }
-        })
-      ],
-      sceneModels: [
-        createModelEdge('complex-scene', 'test-space', 'cog_3d_model_456', 'models', 2)
-      ],
-      scene360Collections: [
-        create360Edge('complex-scene', 'test-space', 'complex-images', 'image-space')
-      ],
-      sceneGroundPlanes: [
-        createGroundPlaneNode(
-          'complex-ground',
-          'test-space',
-          'Complex Ground',
-          'complex_ground.jpg'
-        )
-      ],
-      sceneGroundPlaneEdges: [
-        createGroundPlaneEdge(
-          'complex-scene',
-          'test-space',
-          'complex-ground',
-          'test-space',
-          createDefaultTransformation({
-            translationX: 25,
-            translationZ: 25,
-            eulerRotationY: 45,
-            scaleX: 2,
-            scaleZ: 2
-          })
-        )
-      ],
-      sceneSkybox: [
-        createSkyboxNode(
-          'complex-skybox',
-          'test-space',
-          'Complex Skybox',
-          'complex_skybox.hdr',
-          false
-        )
-      ]
-    });
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-    const data = await waitForSuccessAndGetData(result);
-    const scene = data['test-space']['complex-scene'];
-
-    expect(scene.name).toBe('Complex Scene');
-    expect(scene.modelOptions).toHaveLength(1);
-    expect(scene.image360CollectionOptions).toHaveLength(1);
-    expect(scene.groundPlanes).toHaveLength(1);
-    expect(scene.skybox).toBeDefined();
-
-    const firstModel = scene.modelOptions[0];
-    assert(isClassicIdentifier(firstModel));
-    expect(firstModel.modelId).toBe(456);
-    expect(firstModel.revisionId).toBe(2);
-
-    expect(scene.groundPlanes[0].label).toBe('Complex Ground');
-    expect(scene.groundPlanes[0].translationX).toBe(25);
-
-    assert(scene.skybox !== undefined);
-    expect(scene.skybox.label).toBe('Complex Skybox');
-    expect(scene.skybox.isSpherical).toBe(false);
-  });
-
   const createSceneNode = (
     externalId: string,
     space: string,
@@ -554,7 +391,7 @@ describe(use3dScenes.name, () => {
     revisionId?: number
   ): EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>> => ({
     startNode: { externalId: sceneExternalId, space: sceneSpace },
-    endNode: { externalId: modelExternalId, space: modelSpace },
+    endNode: { externalId: `cog_3d_${modelExternalId}`, space: modelSpace },
     instanceType: 'edge' as const,
     version: 1,
     type: { externalId: 'test-edge-type', space: 'test' },
@@ -565,7 +402,7 @@ describe(use3dScenes.name, () => {
     properties: {
       scene: {
         'RevisionProperties/v1': {
-          revisionId: revisionId ?? parseInt(modelExternalId.replace('cog_3d_model_', '')),
+          revisionId: revisionId ?? 1,
           ...createDefaultTransformation({
             translationX: 10,
             translationY: 20,
@@ -601,6 +438,70 @@ describe(use3dScenes.name, () => {
       }
     }
   });
+
+  const setupMockResponse = (
+    responseData: MockResponseData | Array<{ data: MockResponseData; nextCursor?: any }>
+  ): void => {
+    if (!Array.isArray(responseData)) {
+      mockQueryNodesAndEdges.mockResolvedValue({
+        items: {
+          scenes: [],
+          sceneModels: [],
+          scene360Collections: [],
+          sceneGroundPlanes: [],
+          sceneGroundPlaneEdges: [],
+          sceneSkybox: [],
+          ...responseData
+        },
+        nextCursor: undefined
+      });
+      return;
+    }
+
+    let mockChain = mockQueryNodesAndEdges;
+    responseData.forEach((response, index) => {
+      const isLast = index === responseData.length - 1;
+      const mockMethod = isLast ? 'mockResolvedValue' : 'mockResolvedValueOnce';
+
+      mockChain = mockChain[mockMethod]({
+        items: {
+          scenes: [],
+          sceneModels: [],
+          scene360Collections: [],
+          sceneGroundPlanes: [],
+          sceneGroundPlaneEdges: [],
+          sceneSkybox: [],
+          ...response.data
+        },
+        nextCursor: response.nextCursor
+      });
+    });
+  };
+
+  const createDefaultTransformation = (
+    overrides?: Partial<Transformation3d>
+  ): Transformation3d => ({
+    translationX: 0,
+    translationY: 0,
+    translationZ: 0,
+    eulerRotationX: 0,
+    eulerRotationY: 0,
+    eulerRotationZ: 0,
+    scaleX: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    ...overrides
+  });
+
+  const waitForSuccessAndGetData = async (result: {
+    current: Use3dScenesResult;
+  }): Promise<ScenesMap> => {
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    assert(result.current.data !== undefined);
+    return result.current.data;
+  };
 
   const createGroundPlaneNode = (
     externalId: string,
@@ -673,72 +574,4 @@ describe(use3dScenes.name, () => {
       }
     }
   });
-
-  const setupMockResponse = (
-    responseData: MockResponseData | Array<{ data: MockResponseData; nextCursor?: any }>
-  ): void => {
-    // Handle single response case
-    if (!Array.isArray(responseData)) {
-      mockQueryNodesAndEdges.mockResolvedValue({
-        items: {
-          scenes: [],
-          sceneModels: [],
-          scene360Collections: [],
-          sceneGroundPlanes: [],
-          sceneGroundPlaneEdges: [],
-          sceneSkybox: [],
-          ...responseData
-        },
-        nextCursor: undefined
-      });
-      return;
-    }
-
-    // Handle multiple responses (pagination) case
-    let mockChain = mockQueryNodesAndEdges;
-
-    responseData.forEach((response, index) => {
-      const isLast = index === responseData.length - 1;
-      const mockMethod = isLast ? 'mockResolvedValue' : 'mockResolvedValueOnce';
-
-      mockChain = mockChain[mockMethod]({
-        items: {
-          scenes: [],
-          sceneModels: [],
-          scene360Collections: [],
-          sceneGroundPlanes: [],
-          sceneGroundPlaneEdges: [],
-          sceneSkybox: [],
-          ...response.data
-        },
-        nextCursor: response.nextCursor
-      });
-    });
-  };
-
-  const createDefaultTransformation = (
-    overrides?: Partial<Transformation3d>
-  ): Transformation3d => ({
-    translationX: 0,
-    translationY: 0,
-    translationZ: 0,
-    eulerRotationX: 0,
-    eulerRotationY: 0,
-    eulerRotationZ: 0,
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    ...overrides
-  });
-
-  const waitForSuccessAndGetData = async (result: {
-    current: Use3dScenesResult;
-  }): Promise<ScenesMap> => {
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    assert(result.current.data !== undefined);
-    return result.current.data;
-  };
 });
