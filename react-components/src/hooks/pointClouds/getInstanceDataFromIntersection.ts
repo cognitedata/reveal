@@ -5,7 +5,7 @@ import {
   type AnyIntersection,
   type ClassicDataSourceType,
   type DMModelIdentifierType,
-  type PointCloudIntersection,
+  type PointCloudIntersection
 } from '@cognite/reveal';
 import {
   isClassicModelIdentifier,
