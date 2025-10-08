@@ -1,7 +1,8 @@
+import { type AnnotationModel } from '@cognite/sdk';
 import { type PointCloudAnnotationModel } from './types';
 
 export function isPointCloudAnnotationModel(
-  annotationModel: unknown
+  annotationModel: AnnotationModel
 ): annotationModel is PointCloudAnnotationModel {
   return (
     typeof annotationModel === 'object' &&
@@ -9,7 +10,6 @@ export function isPointCloudAnnotationModel(
     'data' in annotationModel &&
     annotationModel.data !== null &&
     typeof annotationModel.data === 'object' &&
-    'region' in annotationModel.data &&
-    ('assetRef' in annotationModel.data || 'instanceRef' in annotationModel.data)
+    'region' in annotationModel.data
   );
 }

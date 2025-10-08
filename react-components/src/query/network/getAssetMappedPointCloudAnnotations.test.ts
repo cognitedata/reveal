@@ -313,7 +313,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
       mockFdmSdk = new Mock<FdmSDK>()
         .setup((p) => p.getByExternalIds)
-        .returns(vi.fn(async () => await Promise.reject(new Error('FDM SDK error'))))
+        .returns(async () => await Promise.reject(new Error('FDM SDK error')))
         .object();
 
       await expect(

@@ -1,14 +1,6 @@
 import { type ClassicDataSourceType } from '@cognite/reveal';
-import {
-  type AnnotationsView,
-  type AnnotationFilterProps,
-  type AnnotationModel,
-  type AnnotationsBoundingVolume,
-  type Asset,
-  type CogniteClient
-} from '@cognite/sdk';
+import { type AnnotationFilterProps, type Asset, type CogniteClient } from '@cognite/sdk';
 import { chunk, uniq, uniqBy } from 'lodash';
-import { createFdmKey, type AddPointCloudResourceOptions } from '../../components';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 import { type AllAssetFilterProps } from './common/filters';
@@ -16,11 +8,14 @@ import { type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';
 import { type AssetInstance } from '../../utilities/instances';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import {
+  COGNITE_ASSET_SOURCE,
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
 import { type PointCloudAnnotationModel } from '../../components/CacheProvider/types';
 import { isPointCloudAnnotationModel } from '../../components/CacheProvider/typeGuards';
+import { type AddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 
 type AssetMappedPointCloudAnnotationsDependencies = {
   getAssetsByIds: typeof getAssetsForIds;
@@ -94,30 +89,28 @@ async function getPointCloudAnnotationClassicInstances(
 }
 
 async function getPointCloudAnnotationDmInstances(
-  pointCloudAnnotations: AnnotationModel[],
+  pointCloudAnnotations: PointCloudAnnotationModel[],
   fdmSdk: FdmSDK
 ): Promise<Array<FdmNode<AssetProperties>>> {
   const annotationMappingDms = pointCloudAnnotations
-    .map((annotation) => (annotation.data as AnnotationsBoundingVolume).instanceRef)
+    .map((annotation) => annotation.data.instanceRef)
     .filter((instanceRef) => instanceRef !== undefined);
 
   const uniqueMappingDmsInstances = uniqBy(annotationMappingDms, createFdmKey);
 
-  const source: AnnotationsView = {
-    externalId: COGNITE_ASSET_VIEW_VERSION_KEY,
-    space: CORE_DM_SPACE,
-    version: 'v1',
-    type: 'view'
-  };
-
   const allResultLists = await fdmSdk.getByExternalIds<AssetProperties>(
     uniqueMappingDmsInstances
-      .map((ref) => {
-        if (ref.sources.includes(source)) return ref;
-        return undefined;
-      })
+      .filter((instance) =>
+        instance.sources.some(
+          (instanceSource) =>
+            instanceSource.externalId === COGNITE_ASSET_SOURCE.externalId &&
+            instanceSource.space === COGNITE_ASSET_SOURCE.space &&
+            instanceSource.version === COGNITE_ASSET_SOURCE.version
+        )
+      )
+
       .filter((ref) => ref !== undefined),
-    [source]
+    [COGNITE_ASSET_SOURCE]
   );
   return allResultLists.items.map((item) => ({
     ...item,
