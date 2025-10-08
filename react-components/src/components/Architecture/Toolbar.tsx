@@ -11,32 +11,33 @@ import { useSignalValue } from '@cognite/signals/react';
 
 export const TopToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
-  if (renderTarget === undefined) {
-    return <></>;
-  }
   const config = renderTarget.config;
-  if (config === undefined) {
+  const commands = useMemo(() => {
+    if (config === undefined) {
+      return [];
+    }
+    return config.createTopToolbar();
+  }, [config]);
+
+  if (commands.length === 0 || config === undefined) {
     return <></>;
   }
-  const commands = useMemo(() => config.createTopToolbar(), [config]);
-  if (commands.length === 0) {
-    return <></>;
-  }
+
   const style = config.createTopToolbarStyle();
   return <ToolbarContent commands={commands} style={style} />;
 };
 
 export const MainToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
-  if (renderTarget === undefined) {
-    return <></>;
-  }
   const config = renderTarget.config;
-  if (config === undefined) {
-    return <></>;
-  }
-  const commands = useMemo(() => config.createMainToolbar(), [config]);
-  if (commands.length === 0) {
+  const commands = useMemo(() => {
+    if (config === undefined) {
+      return [];
+    }
+    return config.createMainToolbar();
+  }, [config]);
+
+  if (commands.length === 0 || config === undefined) {
     return <></>;
   }
   const style = config.createMainToolbarStyle();
@@ -45,9 +46,6 @@ export const MainToolbar = (): ReactElement => {
 
 export const ActiveToolToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
-  if (renderTarget === undefined) {
-    return <></>;
-  }
   const activeTool = useSignalValue(renderTarget.commandsController.activeToolSignal);
   if (activeTool === undefined) {
     return <></>;

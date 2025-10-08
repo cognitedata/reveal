@@ -84,7 +84,12 @@ function useRegisterFailedResources(
     return () => {
       setReveal3DResourceLoadFailCount((p) => p - numResourcesFailed);
     };
-  }, [typeResult.data, typeResult.isLoading, cadOrPointCloudResources]);
+  }, [
+    typeResult.data,
+    typeResult.isLoading,
+    cadOrPointCloudResources,
+    setReveal3DResourceLoadFailCount
+  ]);
 }
 
 const defaultLoadFailHandler = (resource: AddResourceOptions, error: any): void => {

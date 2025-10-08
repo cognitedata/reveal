@@ -1,17 +1,16 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { type TreeNodeType } from '../model/tree-node-type';
 
 export const useOnTreeNodeUpdate = (node: TreeNodeType | undefined, update: () => void): void => {
-  const memoizedUpdate = useCallback(update, [node]);
   useEffect(() => {
     if (node === undefined) {
       return;
     }
-    memoizedUpdate();
-    node.addTreeNodeListener?.(memoizedUpdate);
+    update();
+    node.addTreeNodeListener?.(update);
     return () => {
-      node.removeTreeNodeListener?.(memoizedUpdate);
+      node.removeTreeNodeListener?.(update);
     };
-  }, [node, memoizedUpdate]);
+  }, [node, update]);
 };

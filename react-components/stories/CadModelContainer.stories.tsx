@@ -34,36 +34,38 @@ export const Main: Story = {
     },
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },
-  render: ({
-    addModelOptions,
-    transform,
-    styling
-  }: {
-    addModelOptions: AddModelOptions;
-    transform?: Matrix4;
-    styling?: CadModelStyling;
-  }) => {
-    const [enabled, setEnabled] = useState<boolean>(true);
-    return (
-      <>
-        <button
-          onClick={() => {
-            setEnabled((prev) => !prev);
-          }}>
-          {enabled ? 'Disable Models' : 'Enable Models'}
-        </button>
-        <RevealStoryContainer color={new Color(0x4a4a4a)}>
-          <CadModelContainerStoryContent
-            addModelOptions={addModelOptions}
-            styling={styling}
-            transform={transform}
-            enabled={enabled}
-          />
-        </RevealStoryContainer>
-      </>
-    );
-  }
+  render: (props) => <MainStoryComponent {...props} />
 };
+
+function MainStoryComponent({
+  addModelOptions,
+  transform,
+  styling
+}: {
+  addModelOptions: AddModelOptions;
+  transform?: Matrix4;
+  styling?: CadModelStyling;
+}): ReactElement {
+  const [enabled, setEnabled] = useState<boolean>(true);
+  return (
+    <>
+      <button
+        onClick={() => {
+          setEnabled((prev) => !prev);
+        }}>
+        {enabled ? 'Disable Models' : 'Enable Models'}
+      </button>
+      <RevealStoryContainer color={new Color(0x4a4a4a)}>
+        <CadModelContainerStoryContent
+          addModelOptions={addModelOptions}
+          styling={styling}
+          transform={transform}
+          enabled={enabled}
+        />
+      </RevealStoryContainer>
+    </>
+  );
+}
 
 type CadModelContainerStoryContentProps = {
   addModelOptions: AddModelOptions;

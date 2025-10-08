@@ -46,7 +46,7 @@ export const useEditRuleInstance = (): ((
 
       return resultFromSavingRule;
     },
-    []
+    [fdmSdk]
   );
   return editCurrentRule;
 };

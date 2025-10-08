@@ -90,7 +90,7 @@ function useCalculateInstanceStyling(
         ...annotationMappingInstanceStyleGroups,
         ...dmInstanceStyleGroups
       ]),
-    [annotationMappingInstanceStyleGroups, dmInstanceStyleGroups]
+    [annotationMappingInstanceStyleGroups, dmInstanceStyleGroups, models]
   );
 
   return combinedMappedStyleGroups;
@@ -111,7 +111,7 @@ function useAnnotationMappingInstanceStyleGroups(
         annotationMapping
       );
     });
-  }, [annotationMappings, models, instanceGroups]);
+  }, [annotationMappings, instanceGroups]);
 }
 
 function calculateAnnotationMappingModelStyling(
@@ -142,7 +142,7 @@ function useVolumeMappingInstanceStyleGroups(
         dmVolumeMapping
       );
     });
-  }, [dmVolumeMappings, models, instanceGroups]);
+  }, [dmVolumeMappings, instanceGroups]);
 }
 
 function calculateVolumeMappingModelStyling(

@@ -72,7 +72,7 @@ export const Reveal3DResources = ({
 
   useEffect(() => {
     setModel3DStylingLoading(isModelMappingsLoading);
-  }, [isModelMappingsLoading]);
+  }, [isModelMappingsLoading, setModel3DStylingLoading]);
 
   const styledPointCloudModelOptions = hooks.useCalculatePointCloudStyling(
     reveal3DModels ?? EMPTY_ARRAY,

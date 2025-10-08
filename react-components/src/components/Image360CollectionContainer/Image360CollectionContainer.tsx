@@ -1,4 +1,5 @@
-import { type ReactElement, useContext, useEffect, useRef } from 'react';
+import { type ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
 import {
@@ -13,6 +14,7 @@ import {
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 import { Image360CollectionContainerContext } from './Image360CollectionContainer.context';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -49,6 +51,75 @@ export function Image360CollectionContainer({
     undefined
   );
 
+  const remove360Collection = useCallback((): void => {
+    if (modelRef.current === undefined) return;
+
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) {
+      return;
+    }
+
+    RevealModelsUtils.remove(renderTarget, modelRef.current);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
+    modelRef.current = undefined;
+  }, [cachedViewerRef, renderTarget, setRevealResourcesCount, viewer]);
+
+  const add360Collection = useCallback(
+    async (transform?: Matrix4): Promise<() => void> => {
+      return await getOrAdd360Collection()
+        .then((image360Collection) => {
+          if (transform !== undefined) {
+            image360Collection.setModelTransformation(transform);
+          }
+
+          setCollectionCullingOptions(
+            image360Collection,
+            addImage360CollectionOptions.iconCullingOptions
+          );
+
+          modelRef.current = image360Collection;
+          onLoad?.(image360Collection);
+          setRevealResourcesCount(getViewerResourceCount(viewer));
+          return remove360Collection;
+        })
+        .catch((error: any) => {
+          const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
+          errorReportFunction(addImage360CollectionOptions, error);
+          setReveal3DResourceLoadFailCount((p) => p + 1);
+          return () => {
+            setReveal3DResourceLoadFailCount((p) => p - 1);
+          };
+        });
+
+      async function getOrAdd360Collection(): Promise<Image360Collection<DataSourceType>> {
+        const collections = viewer.get360ImageCollections();
+        const siteId =
+          addImage360CollectionOptions.source === 'events'
+            ? addImage360CollectionOptions.siteId
+            : addImage360CollectionOptions.externalId;
+        const collection = collections.find((collection) => collection.id === siteId);
+        if (collection !== undefined) {
+          return collection;
+        }
+        return await RevealModelsUtils.addImage360Collection(
+          renderTarget,
+          addImage360CollectionOptions,
+          defaultVisible
+        );
+      }
+    },
+    [
+      viewer,
+      renderTarget,
+      defaultVisible,
+      addImage360CollectionOptions,
+      remove360Collection,
+      onLoad,
+      onLoadError,
+      setRevealResourcesCount,
+      setReveal3DResourceLoadFailCount
+    ]
+  );
+
   useEffect(() => {
     if (
       addImage360CollectionOptions.source === 'events' &&
@@ -65,7 +136,7 @@ export function Image360CollectionContainer({
         callback();
       });
     };
-  }, [addImage360CollectionOptions]);
+  }, [addImage360CollectionOptions, add360Collection]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
   useSetIconCulling(modelRef.current, addImage360CollectionOptions.iconCullingOptions);
@@ -83,61 +154,6 @@ export function Image360CollectionContainer({
   }, [modelRef, addImage360CollectionOptions.transform, viewer]);
 
   return <></>;
-
-  async function add360Collection(transform?: Matrix4): Promise<() => void> {
-    return await getOrAdd360Collection()
-      .then((image360Collection) => {
-        if (transform !== undefined) {
-          image360Collection.setModelTransformation(transform);
-        }
-
-        setCollectionCullingOptions(
-          image360Collection,
-          addImage360CollectionOptions.iconCullingOptions
-        );
-
-        modelRef.current = image360Collection;
-        onLoad?.(image360Collection);
-        setRevealResourcesCount(getViewerResourceCount(viewer));
-        return remove360Collection;
-      })
-      .catch((error: any) => {
-        const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(addImage360CollectionOptions, error);
-        setReveal3DResourceLoadFailCount((p) => p + 1);
-        return () => {
-          setReveal3DResourceLoadFailCount((p) => p - 1);
-        };
-      });
-
-    async function getOrAdd360Collection(): Promise<Image360Collection<DataSourceType>> {
-      const collections = viewer.get360ImageCollections();
-      const siteId =
-        addImage360CollectionOptions.source === 'events'
-          ? addImage360CollectionOptions.siteId
-          : addImage360CollectionOptions.externalId;
-      const collection = collections.find((collection) => collection.id === siteId);
-      if (collection !== undefined) {
-        return collection;
-      }
-      return await createImage360CollectionDomainObject(
-        renderTarget,
-        addImage360CollectionOptions,
-        defaultVisible
-      );
-    }
-  }
-
-  function remove360Collection(): void {
-    if (modelRef.current === undefined) return;
-
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
-
-    removeImage360CollectionDomainObject(renderTarget, modelRef.current);
-    setRevealResourcesCount(getViewerResourceCount(viewer));
-    modelRef.current = undefined;
-  }
 }
 
 const useSetIconCulling = (
@@ -149,7 +165,7 @@ const useSetIconCulling = (
 
   useEffect(() => {
     setCollectionCullingOptions(collection, cullingParameters);
-  }, [collection, radius, iconCountLimit]);
+  }, [collection, radius, iconCountLimit, cullingParameters]);
 };
 
 function setCollectionCullingOptions(

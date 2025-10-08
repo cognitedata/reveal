@@ -38,8 +38,6 @@ export function RuleBasedOutputsSelector({
   onRuleSetChanged,
   onAllMappingsFetched
 }: ColorOverlayProps): ReactElement | undefined {
-  if (ruleSet === undefined) return;
-
   const {
     use3dModels,
     useAssetMappedNodesForRevisions,
@@ -131,7 +129,7 @@ export function RuleBasedOutputsSelector({
 
   useEffect(() => {
     onAllMappingsFetched(allDataLoaded);
-  }, [allDataLoaded]);
+  }, [allDataLoaded, onAllMappingsFetched]);
 
   useEffect(() => {
     if (
@@ -149,6 +147,7 @@ export function RuleBasedOutputsSelector({
     )
       return;
 
+    if (ruleSet === undefined) return;
     const uniqueRuleSetKey = generateUniqueRuleSetKey(
       ruleSet,
       assetMappings,
@@ -205,7 +204,13 @@ export function RuleBasedOutputsSelector({
     allDataLoaded,
     allClassicAssetConnections,
     allFdmConnections,
-    models
+    models,
+    flatAssetsMappingsListPerModel,
+    generateRuleBasedOutputs,
+    isLoadingAssetIdsAndTimeseriesData,
+    onAllMappingsFetched,
+    onRuleSetChanged,
+    timeseriesExternalIds
   ]);
 
   return <></>;

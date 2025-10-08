@@ -5,31 +5,31 @@ import styled from 'styled-components';
 import { ShowTreeViewCommand } from '../../architecture/base/concreteCommands/general/ShowTreeViewCommand';
 import { useSignalValue } from '@cognite/signals/react';
 import { TreeView } from './TreeView';
+import { signal } from '@cognite/signals';
 
 export const TreeViewContainer = (): ReactElement => {
   const renderTarget = useRenderTarget();
   const showTreeViewCommand =
     renderTarget.commandsController.getCommandByTypeRecursive(ShowTreeViewCommand);
 
-  if (showTreeViewCommand === undefined) {
-    return <></>;
-  }
-  const showTree = useSignalValue(showTreeViewCommand.showTree);
+  const showTreeSignal = showTreeViewCommand?.showTree;
+  const showTree = useSignalValue(showTreeSignal ?? signal(false));
+
   if (!showTree) {
     return <></>;
   }
-  const style = showTreeViewCommand.getPanelInfoStyle();
+  const style = showTreeViewCommand?.getPanelInfoStyle();
 
   return (
     <Container
       style={{
         width: 300,
-        left: style.leftPx,
-        right: style.rightPx,
-        top: style.topPx,
-        bottom: style.bottomPx,
-        margin: style.marginPx,
-        padding: style.paddingPx
+        left: style?.leftPx,
+        right: style?.rightPx,
+        top: style?.topPx,
+        bottom: style?.bottomPx,
+        margin: style?.marginPx,
+        padding: style?.paddingPx
       }}>
       <TreeView />
     </Container>

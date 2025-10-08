@@ -26,5 +26,5 @@ export const useGenerateNode3DCache = (
         nodeIdsFromAssetMappings
       );
     });
-  }, [cadModelOptions, assetMappings]);
+  }, [cadModelOptions, assetMappings, assetMappingAndNode3DCache]);
 };

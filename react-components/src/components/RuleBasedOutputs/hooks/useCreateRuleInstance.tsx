@@ -46,7 +46,7 @@ export const useCreateRuleInstance = (): ((
 
       return resultFromSavingRule;
     },
-    []
+    [fdmSdk]
   );
   return createNewRule;
 };

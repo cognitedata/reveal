@@ -5,5 +5,8 @@ import { useRenderTarget } from '../../RevealCanvas/ViewerContext';
 
 export function useCommand<T extends BaseCommand>(inputCommand: T): T {
   const renderTarget = useRenderTarget();
-  return useMemo<T>(() => getDefaultCommand(inputCommand, renderTarget), [inputCommand]);
+  return useMemo<T>(
+    () => getDefaultCommand(inputCommand, renderTarget),
+    [inputCommand, renderTarget]
+  );
 }

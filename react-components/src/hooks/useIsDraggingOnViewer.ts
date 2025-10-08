@@ -5,22 +5,22 @@ export const useIsDraggingOnViewer = (): boolean => {
   const viewer = useReveal();
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
 
-  const onPointerDown = useCallback(() => {
-    setIsMouseDown(true);
-    window.addEventListener('pointerup', onPointerUp);
-  }, [setIsMouseDown]);
-
   const onPointerUp = useCallback(() => {
     setIsMouseDown(false);
     window.removeEventListener('pointerup', onPointerUp);
   }, [setIsMouseDown]);
+
+  const onPointerDown = useCallback(() => {
+    setIsMouseDown(true);
+    window.addEventListener('pointerup', onPointerUp);
+  }, [setIsMouseDown, onPointerUp]);
 
   useEffect(() => {
     viewer.domElement.addEventListener('pointerdown', onPointerDown);
     return () => {
       viewer.domElement.removeEventListener('pointerdown', onPointerDown);
     };
-  }, [onPointerDown]);
+  }, [onPointerDown, viewer.domElement]);
 
   return isMouseDown;
 };

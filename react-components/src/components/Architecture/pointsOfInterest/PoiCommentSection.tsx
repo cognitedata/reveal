@@ -55,7 +55,7 @@ export const CreateCommentField = ({
       refetchComments();
     };
     return command;
-  }, [poi]);
+  }, [poi, refetchComments]);
 
   const factory = useComponentFactory();
   return factory.createElement(command, 'right');

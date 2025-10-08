@@ -24,13 +24,13 @@ export const useApplyPointCloudStyling = (
     if (!modelExists(model, viewer) || styleGroups === undefined) return;
 
     applyStyling(model, styleGroups);
-  }, [styleGroups, model]);
+  }, [styleGroups, model, viewer]);
 
   useEffect(() => {
     if (!modelExists(model, viewer)) return;
 
     model.setDefaultPointCloudAppearance(defaultStyle);
-  }, [defaultStyle, model]);
+  }, [defaultStyle, model, viewer]);
 };
 
 function applyStyling(

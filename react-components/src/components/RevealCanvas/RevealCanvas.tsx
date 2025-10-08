@@ -11,7 +11,7 @@ export function RevealCanvas({ children }: { children?: ReactNode }): ReactEleme
     if (parentElement.current !== null) {
       parentElement.current.appendChild(viewer.domElement);
     }
-  }, [parentElement.current]);
+  }, [viewer.domElement]);
 
   useDisableBodyTextSelectionOnViewerDragging();
 
