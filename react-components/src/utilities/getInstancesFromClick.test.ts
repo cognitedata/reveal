@@ -155,13 +155,16 @@ describe(getInstancesFromClick.name, () => {
   });
 
   test('returns undefined for unknown intersection type', async () => {
-    const unknownIntersection = {
-      type: 'unknown' as any,
-      point: new Vector3(1, 2, 3),
-      distanceToCamera: 10
-    } as const as AnyIntersection;
+    const unknownIntersectionMock = new Mock<AnyIntersection>()
+      .setup((p) => p.type)
+      .returns('unknown' as any) // Force as any to simulate unknown type
+      .setup((p) => p.point)
+      .returns(new Vector3(1, 2, 3))
+      .setup((p) => p.distanceToCamera)
+      .returns(10)
+      .object();
 
-    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(unknownIntersection);
+    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(unknownIntersectionMock);
 
     const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
       fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
