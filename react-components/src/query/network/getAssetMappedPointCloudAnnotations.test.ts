@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { Mock } from 'moq.ts';
-import {
-  type CogniteClient,
-  type AnnotationFilterProps} from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
 import { type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
 import { createAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
