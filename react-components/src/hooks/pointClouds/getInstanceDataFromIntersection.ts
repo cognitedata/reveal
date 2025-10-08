@@ -1,6 +1,7 @@
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import {
+  type ClassicModelIdentifierType,
   type AnyIntersection,
   type ClassicDataSourceType,
   type DMModelIdentifierType,
@@ -14,7 +15,7 @@ import {
 } from '../../utilities/instanceIds';
 
 type InstanceData = {
-  classicModelIdentifier: { modelId: number; revisionId: number } | undefined;
+  classicModelIdentifier: ClassicModelIdentifierType | undefined;
   dmsModelUniqueIdentifier: DMModelIdentifierType | undefined;
   reference: IdEither | DmsUniqueIdentifier | undefined;
 };
@@ -38,7 +39,8 @@ export function getInstanceDataFromIntersection(
       dmsModelUniqueIdentifier: undefined,
       reference: intersection.volumeMetadata?.assetRef
     };
-  } else if (
+  }
+  if (
     isDmsInstance(intersection.volumeMetadata?.assetRef) &&
     isDMModelIdentifier(intersection.model.modelIdentifier)
   ) {
@@ -47,7 +49,8 @@ export function getInstanceDataFromIntersection(
       dmsModelUniqueIdentifier: intersection.model.modelIdentifier,
       reference: intersection.volumeMetadata?.assetRef
     };
-  } else if (
+  }
+  if (
     isClassicModelIdentifier(intersection.model.modelIdentifier) &&
     isInstanceRefUnderVolumeMetadata(intersection)
   ) {
