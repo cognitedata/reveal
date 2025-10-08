@@ -257,9 +257,7 @@ describe(use3dScenes.name, () => {
   test('should process model edges and create 3d model options with correct transform matrix', async () => {
     setupMockResponse({
       scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
-      sceneModels: [
-        createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)
-      ]
+      sceneModels: [createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)]
     });
 
     const { result } = renderHook(() => use3dScenes(), { wrapper });
