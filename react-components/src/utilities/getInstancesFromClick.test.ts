@@ -1,12 +1,9 @@
-import { describe, expect, beforeEach, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { type RevealRenderTarget } from '../architecture';
 import {
   type CadIntersection,
   type PointCloudIntersection,
-  type AnyIntersection,
-  type Image360AnnotationIntersection,
-  type DataSourceType,
-  type Image360Annotation
+  type AnyIntersection
 } from '@cognite/reveal';
 import { Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
@@ -16,40 +13,25 @@ import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { getInstancesFromClick } from './getInstancesFromClick';
-import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type DmsUniqueIdentifier } from '../data-providers';
 import { type IdEither } from '@cognite/sdk';
-import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
+import { type fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { createAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
-import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
-import { type PointCloudAnnotationMappedAssetData } from '../hooks';
-import { createAssetMock } from '#test-utils/fixtures/assets';
-
-vi.mock(import('../components/CacheProvider/requests'), () => ({
-  fetchAncestorNodesForTreeIndex: vi.fn<typeof fetchAncestorNodesForTreeIndex>()
-}));
-
-vi.mock(import('../hooks/pointClouds/fetchAnnotationsForModel'), () => ({
-  fetchAnnotationsForModel: vi.fn<typeof fetchAnnotationsForModel>()
-}));
-
-vi.mock(import('../components/CacheProvider/utils'), () => ({
-  getInstanceReferenceFromImage360Annotation:
-    vi.fn<typeof getInstanceReferenceFromImage360Annotation>()
-}));
 
 describe(getInstancesFromClick.name, () => {
-  const mockEvent = {
-    offsetX: 100,
-    offsetY: 200
-  } as const as PointerEvent;
+  const mockEvent = new Mock<PointerEvent>()
+    .setup((p) => p.offsetX)
+    .returns(100)
+    .setup((p) => p.offsetY)
+    .returns(200)
+    .object();
 
   const classicIdEither: IdEither = { id: 123 };
   const dmInstanceRef: DmsUniqueIdentifier = {
     externalId: 'test-external-id',
-    space: 'test-space'
+    space: 'asset-space'
   };
   const node3d = createCadNodeMock({
     id: 101,
@@ -60,13 +42,6 @@ describe(getInstancesFromClick.name, () => {
     node: node3d,
     mappings: [createAssetMappingMock({ assetId: classicIdEither.id })]
   };
-  const classicAssetInstance = createAssetMock(123);
-  const classicAssetInstance2 = createAssetMock(456);
-
-  const mockFetchAnnotationsForModelReturn: PointCloudAnnotationMappedAssetData[] = [
-    { annotationId: 1, asset: classicAssetInstance },
-    { annotationId: 2, asset: classicAssetInstance2 }
-  ];
 
   const mockCadIntersection: CadIntersection = {
     type: 'cad',
@@ -104,26 +79,6 @@ describe(getInstancesFromClick.name, () => {
     }
   };
 
-  const mockImage360Intersection: Image360AnnotationIntersection<DataSourceType> = {
-    annotation: {
-      annotation: {
-        id: 123,
-        createdTime: new Date(),
-        lastUpdatedTime: new Date(),
-        annotatedResourceId: 1,
-        annotationType: 'image360',
-        status: 'approved',
-        annotatedResourceType: 'threedmodel',
-        creatingApp: 'test-app',
-        creatingAppVersion: '1.0.0',
-        creatingUser: 'test-user',
-        data: {}
-      }
-    } as const as Image360Annotation<DataSourceType>,
-    type: 'image360Annotation',
-    direction: new Vector3()
-  };
-
   const mockClassicCadAssetMappingCache = new Mock<CdfCaches['classicCadAssetMappingCache']>()
     .setup((p) => p.getAssetMappingsForLowestAncestor)
     .returns(async () => hybridAssetMappings)
@@ -142,6 +97,11 @@ describe(getInstancesFromClick.name, () => {
     .fn<typeof viewerMock.getPixelCoordinatesFromEvent>()
     .mockReturnValue(new Vector2(100, 200));
 
+  const mockViewerGetAnyIntersectionFromPixel =
+    vi.fn<typeof viewerMock.getAnyIntersectionFromPixel>();
+
+  viewerMock.getAnyIntersectionFromPixel = mockViewerGetAnyIntersectionFromPixel;
+
   const mockRenderTarget = new Mock<RevealRenderTarget>()
     .setup((p) => p.viewer)
     .returns(viewerMock)
@@ -149,23 +109,14 @@ describe(getInstancesFromClick.name, () => {
     .returns(mockCaches)
     .object();
 
-  beforeEach(() => {
-    vi.mocked(viewerMock.get360AnnotationIntersectionFromPixel).mockResolvedValue(
-      mockImage360Intersection
-    );
-  });
+  const mockfetchAncestorNodesTreeIndex = vi.fn<typeof fetchAncestorNodesForTreeIndex>();
 
   test('returns undefined when no intersection is found', async () => {
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent);
+    const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
+      fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
+    });
 
     expect(result).toBeUndefined();
-  });
-
-  test('returns image360 annotation asset when found and coreDmOnly is false', async () => {
-    vi.mocked(getInstanceReferenceFromImage360Annotation).mockReturnValue(classicIdEither);
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent);
-
-    expect(result).toEqual([classicIdEither]);
   });
 
   test('does not return image360 annotation when coreDmOnly is true', async () => {
@@ -175,32 +126,30 @@ describe(getInstancesFromClick.name, () => {
   });
 
   test('calls getInstancesFromCadIntersection for CAD intersection', async () => {
-    vi.mocked(fetchAncestorNodesForTreeIndex).mockResolvedValue([node3d]);
-    vi.mocked(viewerMock.getAnyIntersectionFromPixel).mockResolvedValue(mockCadIntersection);
-
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent);
+    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(mockCadIntersection);
+    mockfetchAncestorNodesTreeIndex.mockResolvedValue([node3d]);
+    const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
+      fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
+    });
 
     expect(result).toEqual([classicIdEither]);
   });
 
-  test('calls getInstancesFromPointCloudIntersection for pointcloud intersection', async () => {
-    vi.mocked(fetchAnnotationsForModel).mockResolvedValue(mockFetchAnnotationsForModelReturn);
+  test('calls getInstancesFromPointCloudIntersection for pointcloud intersection and get both assetRef and instanceRef', async () => {
+    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(mockPointCloudIntersection);
+    const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
+      fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
+    });
 
-    vi.mocked(viewerMock.getAnyIntersectionFromPixel).mockResolvedValue(mockPointCloudIntersection);
-
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent);
-
-    expect(result).toEqual([classicIdEither]);
+    expect(result).toEqual([dmInstanceRef, classicIdEither]);
   });
 
   test('calls getInstancesFromPointCloudIntersection for pointcloud intersection for instanceRef', async () => {
-    vi.mocked(fetchAnnotationsForModel).mockResolvedValue(mockFetchAnnotationsForModelReturn);
+    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(mockPointCloudIntersectionInstanceRef);
 
-    vi.mocked(viewerMock.getAnyIntersectionFromPixel).mockResolvedValue(
-      mockPointCloudIntersectionInstanceRef
-    );
-
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent);
+    const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
+      fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
+    });
 
     expect(result).toEqual([dmInstanceRef]);
   });
@@ -212,9 +161,11 @@ describe(getInstancesFromClick.name, () => {
       distanceToCamera: 10
     } as const as AnyIntersection;
 
-    vi.mocked(viewerMock.getAnyIntersectionFromPixel).mockResolvedValue(unknownIntersection);
+    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(unknownIntersection);
 
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent);
+    const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
+      fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
+    });
 
     expect(result).toBeUndefined();
   });
