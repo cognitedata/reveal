@@ -13,12 +13,6 @@ import { cadMock } from '#test-utils/fixtures/cadModel';
 import { createPointCloudDMMock, createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
 describe(getInstanceDataFromIntersection.name, () => {
-  const emptyResult = {
-    classicModelIdentifier: undefined,
-    dmsModelUniqueIdentifier: undefined,
-    reference: undefined
-  };
-
   const mockClassicIdEither: IdEither = { id: 123 };
   const mockDmsIdentifier: DMInstanceRef = { externalId: 'ext-id', space: 'space' };
   const mockDmsIdentifier2: DMInstanceRef = { externalId: 'ext-id-2', space: 'space-2' };
@@ -73,9 +67,9 @@ describe(getInstanceDataFromIntersection.name, () => {
     annotationId: 3
   };
 
-  test('should return emptyResult when intersection is undefined', () => {
+  test('should return undefined when intersection is undefined', () => {
     const result = getInstanceDataFromIntersection(undefined);
-    expect(result).toEqual(emptyResult);
+    expect(result).toEqual(undefined);
   });
 
   test('should return emptyResult when intersection type is not pointcloud', () => {
@@ -88,7 +82,7 @@ describe(getInstanceDataFromIntersection.name, () => {
     };
 
     const result = getInstanceDataFromIntersection(nonPointCloudIntersection);
-    expect(result).toEqual(emptyResult);
+    expect(result).toEqual(undefined);
   });
 
   describe('pointcloud intersections', () => {
@@ -135,7 +129,7 @@ describe(getInstanceDataFromIntersection.name, () => {
 
       const result = getInstanceDataFromIntersection(intersectionNoVolume);
 
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual(undefined);
     });
     test('should return emptyResult when no conditions are met', () => {
       const mockInvalidIntersection: PointCloudIntersection<ClassicDataSourceType> = {
@@ -152,7 +146,7 @@ describe(getInstanceDataFromIntersection.name, () => {
 
       const result = getInstanceDataFromIntersection(mockInvalidIntersection);
 
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual(undefined);
     });
   });
 });

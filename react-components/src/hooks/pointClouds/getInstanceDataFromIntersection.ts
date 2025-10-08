@@ -5,7 +5,7 @@ import {
   type AnyIntersection,
   type ClassicDataSourceType,
   type DMModelIdentifierType,
-  type PointCloudIntersection
+  type PointCloudIntersection,
 } from '@cognite/reveal';
 import {
   isClassicModelIdentifier,
@@ -22,51 +22,34 @@ type InstanceData = {
 export function getInstanceDataFromIntersection(
   intersection: AnyIntersection | undefined
 ): InstanceData | undefined {
-  const emptyResult = {
-    classicModelIdentifier: undefined,
-    dmsModelUniqueIdentifier: undefined,
-    reference: undefined
-  };
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
-  if (!isPointCloudIntersection) return emptyResult;
+  if (!isPointCloudIntersection) return undefined;
+  const { model, volumeMetadata } = intersection;
+  const { modelIdentifier } = model;
 
-  if (
-    isIdEither(intersection.volumeMetadata?.assetRef) &&
-    isClassicModelIdentifier(intersection.model.modelIdentifier)
-  ) {
-    return {
-      classicModelIdentifier: intersection.model.modelIdentifier,
-      dmsModelUniqueIdentifier: undefined,
-      reference: intersection.volumeMetadata?.assetRef
-    };
+  if (isIdEither(volumeMetadata?.assetRef) && isClassicModelIdentifier(modelIdentifier)) {
+    return getInstanceData(modelIdentifier, undefined, volumeMetadata?.assetRef);
   }
-  if (
-    isDmsInstance(intersection.volumeMetadata?.assetRef) &&
-    isDMModelIdentifier(intersection.model.modelIdentifier)
-  ) {
-    return {
-      classicModelIdentifier: undefined,
-      dmsModelUniqueIdentifier: intersection.model.modelIdentifier,
-      reference: intersection.volumeMetadata?.assetRef
-    };
+  if (isDmsInstance(volumeMetadata?.assetRef) && isDMModelIdentifier(modelIdentifier)) {
+    return getInstanceData(undefined, modelIdentifier, volumeMetadata?.assetRef);
   }
-  if (
-    isClassicModelIdentifier(intersection.model.modelIdentifier) &&
-    isInstanceRefUnderVolumeMetadata(intersection)
-  ) {
-    const referenceData = intersection.volumeMetadata?.instanceRef;
-    const reference = isDmsInstance(referenceData)
-      ? { space: referenceData.space, externalId: referenceData.externalId }
-      : undefined;
-    return {
-      classicModelIdentifier: intersection.model.modelIdentifier,
-      dmsModelUniqueIdentifier: undefined,
-      reference
-    };
+  if (isClassicModelIdentifier(modelIdentifier) && isInstanceRefUnderVolumeMetadata(intersection)) {
+    return getInstanceData(modelIdentifier, undefined, intersection.volumeMetadata?.instanceRef);
   }
-  return emptyResult;
+  return undefined;
 }
 
+function getInstanceData(
+  classic: ClassicModelIdentifierType | undefined,
+  dms: DMModelIdentifierType | undefined,
+  reference: IdEither | DmsUniqueIdentifier | undefined
+): InstanceData {
+  return {
+    classicModelIdentifier: classic,
+    dmsModelUniqueIdentifier: dms,
+    reference
+  };
+}
 function isInstanceRefUnderVolumeMetadata(
   intersection: AnyIntersection | undefined
 ): intersection is PointCloudIntersection<ClassicDataSourceType> {
