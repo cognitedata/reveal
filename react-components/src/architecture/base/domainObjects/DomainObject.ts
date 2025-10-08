@@ -1,4 +1,4 @@
-import { type Color } from 'three';
+import { Box3, type Color } from 'three';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
@@ -481,6 +481,20 @@ export abstract class DomainObject implements TreeNodeType {
   public get icon(): IconName {
     return undefined;
   }
+
+  public getBoundingBox(): Box3 {
+    const boundingBox = new Box3().makeEmpty();
+    this.expandBoundingBox(boundingBox);
+    return boundingBox;
+  }
+
+  /**
+   * Expands the provided bounding box to include the bounds of this domain object.
+   * Override this to provide the actual implementation for specific domain object types.
+   *
+   * @param _boundingBox - The bounding box to be expanded. This parameter is typically modified in-place.
+   */
+  public expandBoundingBox(_boundingBox: Box3): void {}
 
   /**
    * Removes the core functionality of the domain object.

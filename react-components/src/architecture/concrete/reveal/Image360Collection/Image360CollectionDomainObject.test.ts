@@ -4,6 +4,7 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { waitFor } from '@testing-library/react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
+// import { Box3, Vector3 } from 'three';
 
 describe(Image360CollectionDomainObject.name, () => {
   test('has expected default values', () => {
@@ -76,5 +77,13 @@ describe(Image360CollectionDomainObject.name, () => {
 
     domainObject.removeInteractive();
     expect(() => domainObject.removeInteractive()).toThrowError();
+  });
+
+  test('should have bounding box', () => {
+    // const expectedBoundingBox = new Box3(new Vector3(1, 2, 3), new Vector3(4, 5, 6));
+    // const image360Collection = createImage360ClassicMock();
+    // const domainObject = new Image360CollectionDomainObject(image360Collection);
+    // const actualBoundingBox = domainObject.getBoundingBox();
+    // expect(actualBoundingBox).toStrictEqual(actualBoundingBox);
   });
 });

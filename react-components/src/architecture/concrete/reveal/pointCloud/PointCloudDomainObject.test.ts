@@ -5,6 +5,7 @@ import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRende
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { PointColorType, PointShape, type CognitePointCloudModel } from '@cognite/reveal';
 import { viewerModelsMock } from '#test-utils/fixtures/viewer';
+import { Box3, Vector3 } from 'three';
 
 describe(PointCloudDomainObject.name, () => {
   let model: CognitePointCloudModel;
@@ -62,5 +63,12 @@ describe(PointCloudDomainObject.name, () => {
     expect(model.pointColorType).not.toBe(expectedValue);
     domainObject.pointColorType(expectedValue);
     expect(model.pointColorType).toBe(expectedValue);
+  });
+
+  test('should have bounding box', () => {
+    const expectedBoundingBox = new Box3(new Vector3(1, 2, 3), new Vector3(4, 5, 6));
+    domainObject.model.getModelBoundingBox = () => expectedBoundingBox;
+    const actualBoundingBox = domainObject.getBoundingBox();
+    expect(actualBoundingBox).toStrictEqual(actualBoundingBox);
   });
 });

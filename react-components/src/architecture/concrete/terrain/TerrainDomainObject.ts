@@ -3,6 +3,7 @@ import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { type RegularGrid2 } from './geometry/RegularGrid2';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
+import { type Box3 } from 'three';
 
 export class TerrainDomainObject extends VisualDomainObject {
   // ==================================================
@@ -62,5 +63,17 @@ export class TerrainDomainObject extends VisualDomainObject {
     ) {
       style.increment = zRange.getBestIncrement(20);
     }
+  }
+
+  public override expandBoundingBox(boundingBox: Box3): void {
+    const { grid } = this;
+    if (grid === undefined) {
+      return;
+    }
+    const range = grid.boundingBox;
+    if (range.isEmpty) {
+      return;
+    }
+    boundingBox.union(range.getBox());
   }
 }

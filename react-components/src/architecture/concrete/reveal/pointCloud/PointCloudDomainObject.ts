@@ -5,6 +5,7 @@ import { type TranslationInput } from '../../../base/utilities/translation/Trans
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type PointCloud } from '../RevealTypes';
 import { type PointColorType, type PointShape } from '@cognite/reveal';
+import { type Box3 } from 'three';
 
 export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
@@ -56,6 +57,11 @@ export class PointCloudDomainObject extends RevealDomainObject {
 
   public override get hasIconColor(): boolean {
     return false;
+  }
+
+  public override expandBoundingBox(boundingBox: Box3): void {
+    const model = this.model;
+    boundingBox.union(model.getModelBoundingBox());
   }
 
   public override dispose(): void {
