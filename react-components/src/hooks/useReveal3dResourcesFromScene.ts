@@ -31,11 +31,11 @@ export const useReveal3dResourcesFromScene = (
   const isCoreDm = useIsCoreDmOnly();
 
   useEffect(() => {
-    if (scene.data === undefined || scene.data === null) {
+    if (scene === undefined) {
       return;
     }
     const addResourceOptions: AddResourceOptions[] = [];
-    scene.data.sceneModels.forEach((model) => {
+    scene.sceneModels.forEach((model) => {
       if (isClassicIdentifier(model.modelIdentifier)) {
         const addModelOptions: AddModelOptions<ClassicDataSourceType> = {
           modelId: model.modelIdentifier.modelId,
@@ -61,7 +61,7 @@ export const useReveal3dResourcesFromScene = (
       }
     });
 
-    scene.data.image360Collections.forEach((collection) => {
+    scene.image360Collections.forEach((collection) => {
       const addModelOptions: AddImage360CollectionDatamodelsOptions = {
         source: isCoreDm ? 'cdm' : 'dm',
         externalId: collection.image360CollectionExternalId,
@@ -75,7 +75,7 @@ export const useReveal3dResourcesFromScene = (
       });
     });
     setResourceOptions(addResourceOptions);
-  }, [scene.data]);
+  }, [scene]);
 
   return resourceOptions;
 };

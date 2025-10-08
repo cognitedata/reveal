@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useContext, useMemo } from 'react';
 import { type SceneData } from './types';
 import {
   type CadOrPointCloudModel,
@@ -14,38 +13,23 @@ import {
   isClassicIdentifier
 } from '../../components/Reveal3DResources';
 
-export type UseSceneConfigResult = UseQueryResult<Scene | undefined | null>;
-
-export function useSceneConfig(
-  sceneExternalId?: string,
-  sceneSpace?: string
-): UseSceneConfigResult {
+export function useSceneConfig(sceneExternalId?: string, sceneSpace?: string): Scene | undefined {
   const { use3dScenes } = useContext(UseSceneConfigContext);
   const allScenes = use3dScenes();
 
-  return useQuery({
-    queryKey: ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpace],
-    queryFn: async () => {
-      if (
-        sceneExternalId === undefined ||
-        sceneSpace === undefined ||
-        allScenes.data === undefined
-      ) {
-        return null;
-      }
+  return useMemo(() => {
+    if (sceneExternalId === undefined || sceneSpace === undefined || allScenes.data === undefined) {
+      return undefined;
+    }
 
-      const sceneData = allScenes.data[sceneSpace]?.[sceneExternalId];
-      return transformSceneDataToScene(sceneData);
-    },
-    enabled:
-      sceneExternalId !== undefined && sceneSpace !== undefined && allScenes.data !== undefined,
-    staleTime: Infinity
-  });
+    const sceneData = allScenes.data[sceneSpace]?.[sceneExternalId];
+    return transformSceneDataToScene(sceneData);
+  }, [sceneExternalId, sceneSpace, allScenes.data]);
 }
 
-function transformSceneDataToScene(sceneData: SceneData | undefined): Scene | null {
+function transformSceneDataToScene(sceneData: SceneData | undefined): Scene | undefined {
   if (sceneData === undefined) {
-    return null;
+    return undefined;
   }
 
   return {
