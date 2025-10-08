@@ -6,8 +6,8 @@ import {
   type EdgeItem,
   type NodeItem,
   type ExternalId,
-  DmsUniqueIdentifier,
-  FdmSDK
+  type DmsUniqueIdentifier,
+  type FdmSDK
 } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -32,13 +32,13 @@ import {
   type Use3dScenesResult,
   type ScenesMap,
   type Use3dScenesQueryResult,
-  type SceneNode,
+  type SceneNode
 } from './types';
 
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-import { 
-  createGetScenesQuery, 
-  createGetSceneModelsQuery, 
+import {
+  createGetScenesQuery,
+  createGetSceneModelsQuery,
   createGetScene360CollectionsQuery
 } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
@@ -80,15 +80,16 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       >(scenesQuery);
 
       const scene3dModels = scenesResponse.items.sceneModels.filter(isScene3dModelEdge);
-      const scene360Collections = scenesResponse.items.scene360Collections.filter(isScene360CollectionEdge);
+      const scene360Collections =
+        scenesResponse.items.scene360Collections.filter(isScene360CollectionEdge);
 
       const currentScenes = scenesResponse.items.scenes;
       allScenes.scenes.push(...currentScenes);
 
       // Extract scene IDs for potential paginated queries
-      const sceneIds: DmsUniqueIdentifier[] = currentScenes.map(scene => ({ 
-        space: scene.space, 
-        externalId: scene.externalId 
+      const sceneIds: DmsUniqueIdentifier[] = currentScenes.map((scene) => ({
+        space: scene.space,
+        externalId: scene.externalId
       }));
 
       // Check if any related data hit the limit and need pagination
@@ -346,7 +347,9 @@ async function fetchSceneModelsWithPagination(
     allScenes.sceneModels.push(...scene3dModels);
 
     modelsCursor = modelsResponse.nextCursor?.sceneModels;
-    hasMoreModels = modelsResponse.items.sceneModels.length === SCENE_RELATED_DATA_LIMIT && modelsCursor !== undefined;
+    hasMoreModels =
+      modelsResponse.items.sceneModels.length === SCENE_RELATED_DATA_LIMIT &&
+      modelsCursor !== undefined;
   }
 }
 
@@ -362,13 +365,21 @@ async function fetchScene360CollectionsWithPagination(
     const collections360Query = createGetScene360CollectionsQuery(sceneIds, collections360Cursor);
     const collections360Response = await fdmSdk.queryNodesAndEdges<
       typeof collections360Query,
-      [{ source: typeof IMAGE_360_COLLECTION_SOURCE; properties: Cdf3dImage360CollectionProperties }]
+      [
+        {
+          source: typeof IMAGE_360_COLLECTION_SOURCE;
+          properties: Cdf3dImage360CollectionProperties;
+        }
+      ]
     >(collections360Query);
 
-    const scene360Collections = collections360Response.items.scene360Collections.filter(isScene360CollectionEdge);
+    const scene360Collections =
+      collections360Response.items.scene360Collections.filter(isScene360CollectionEdge);
     allScenes.scene360Collections.push(...scene360Collections);
 
     collections360Cursor = collections360Response.nextCursor?.scene360Collections;
-    hasMore360Collections = collections360Response.items.scene360Collections.length === SCENE_RELATED_DATA_LIMIT && collections360Cursor !== undefined;
+    hasMore360Collections =
+      collections360Response.items.scene360Collections.length === SCENE_RELATED_DATA_LIMIT &&
+      collections360Cursor !== undefined;
   }
 }

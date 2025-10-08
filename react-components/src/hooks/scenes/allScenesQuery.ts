@@ -9,6 +9,7 @@ import {
   sceneSourceWithProperties,
   transformationSourceWithProperties
 } from './types';
+import { type DmsUniqueIdentifier } from '../../data-providers';
 
 export type ScenesQuery = ReturnType<typeof getAllScenesQuery>;
 
@@ -137,10 +138,7 @@ export function createGetScenesQuery(
   return getAllScenesQuery(limit, sceneCursor);
 }
 
-export function createGetSceneModelsQuery(
-  sceneIds: Array<{ space: string; externalId: string }>, 
-  cursor?: string
-) {
+export function createGetSceneModelsQuery(sceneIds: DmsUniqueIdentifier[], cursor?: string) {
   return {
     with: {
       sceneModels: {
@@ -178,7 +176,7 @@ export function createGetSceneModelsQuery(
 }
 
 export function createGetScene360CollectionsQuery(
-  sceneIds: Array<{ space: string; externalId: string }>, 
+  sceneIds: DmsUniqueIdentifier[],
   cursor?: string
 ) {
   return {
