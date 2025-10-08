@@ -9,7 +9,7 @@ export function CreateButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
   prop: ButtonProp
 ): ReactElement {
-  const command = useMemo(commandConstructor, []);
+  const command = useMemo(() => commandConstructor(), [commandConstructor]);
   const factory = useComponentFactory();
   return factory.createElement(command, prop.toolbarPlacement ?? 'left');
 }

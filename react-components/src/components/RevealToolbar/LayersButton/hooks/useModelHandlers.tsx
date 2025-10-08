@@ -33,10 +33,7 @@ export const useModelHandlers = (
   models: Array<CogniteModel<DataSourceType>>,
   use3DModelName: (modelIds: number[]) => UseQueryResult<Array<string | undefined>, unknown>
 ): [ModelLayerHandlers, () => void] => {
-  const image360Collections = useMemo(
-    () => viewer.get360ImageCollections(),
-    [viewer, viewer.get360ImageCollections().length]
-  );
+  const image360Collections = useMemo(() => viewer.get360ImageCollections(), [viewer]);
   const modelIds = useMemo(() => models.map((model) => model.modelId), [models]);
   const modelNames = use3DModelName(modelIds);
 
@@ -46,7 +43,7 @@ export const useModelHandlers = (
   useEffect(() => {
     const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
     setModelHandlers(newHandlers);
-  }, [models, modelNames.data, image360Collections, viewer, modelHandlers, defaultLayersConfig]);
+  }, [models, modelNames.data, image360Collections, viewer, modelHandlers]);
 
   const update = useCallback(
     (

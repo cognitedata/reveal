@@ -4,7 +4,7 @@ import {
   type DataSourceType
 } from '@cognite/reveal';
 
-import { useEffect, type ReactElement, useState, useRef } from 'react';
+import { useEffect, type ReactElement, useState, useRef, useCallback } from 'react';
 import { type Matrix4 } from 'three';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -51,6 +51,51 @@ export function PointCloudContainer({
 
   const modelId = classicAddModelOptions[0]?.modelId;
   const revisionId = classicAddModelOptions[0]?.revisionId;
+
+  const addModel = useCallback(
+    async (
+      addModelOptions: AddModelOptions<DataSourceType>,
+      transform?: Matrix4
+    ): Promise<CognitePointCloudModel<DataSourceType>> => {
+      const pointCloudModel = await getOrAddModel();
+
+      if (transform !== undefined) {
+        pointCloudModel.setModelTransformation(transform);
+      }
+
+      setModel(pointCloudModel);
+      return pointCloudModel;
+
+      async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
+        const viewerModel = viewer.models.find((pointCloudModel) => {
+          const pointCloudModelClone = {
+            ...pointCloudModel,
+            transform: pointCloudModel.getModelTransformation()
+          };
+          return isSameModel(pointCloudModelClone, addModelOptions);
+        });
+
+        if (viewerModel !== undefined) {
+          return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
+        }
+
+        return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions, defaultVisible);
+      }
+    },
+    [viewer, renderTarget, defaultVisible, setModel]
+  );
+
+  const removeModel = useCallback((): void => {
+    if (!modelExists(model, viewer)) return;
+
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) {
+      return;
+    }
+
+    RevealModelsUtils.remove(renderTarget, model);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
+    setModel(undefined);
+  }, [viewer, model, cachedViewerRef, renderTarget, setRevealResourcesCount, setModel]);
 
   useEffect(() => {
     if (
@@ -106,45 +151,6 @@ export function PointCloudContainer({
   useApplyPointCloudStyling(model, styling);
 
   return <></>;
-
-  async function addModel(
-    addModelOptions: AddModelOptions<DataSourceType>,
-    transform?: Matrix4
-  ): Promise<CognitePointCloudModel<DataSourceType>> {
-    const pointCloudModel = await getOrAddModel();
-
-    if (transform !== undefined) {
-      pointCloudModel.setModelTransformation(transform);
-    }
-    setModel(pointCloudModel);
-    return pointCloudModel;
-
-    async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
-      const viewerModel = viewer.models.find((pointCloudModel) => {
-        const pointCloudModelClone = {
-          ...pointCloudModel,
-          transform: pointCloudModel.getModelTransformation()
-        };
-        return isSameModel(pointCloudModelClone, addModelOptions);
-      });
-
-      if (viewerModel !== undefined) {
-        return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
-      }
-      return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions, defaultVisible);
-    }
-  }
-
-  function removeModel(): void {
-    if (!modelExists(model, viewer)) return;
-
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
-
-    RevealModelsUtils.remove(renderTarget, model);
-    setRevealResourcesCount(getViewerResourceCount(viewer));
-    setModel(undefined);
-  }
 }
 
 function defaultLoadErrorHandler(addOptions: AddModelOptions<DataSourceType>, error: any): void {
