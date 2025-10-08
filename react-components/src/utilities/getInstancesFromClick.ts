@@ -16,9 +16,14 @@ import { type InstanceReference, isDmsInstance, isIdEither } from './instanceIds
 import { getMappingInstanceId } from '../components/CacheProvider/cad/assetMappingTypes';
 import { instanceIdToInstanceReference } from '../components/CacheProvider/idAndKeyTranslation';
 
+type InstancesFromClickDependencies = {
+  fetchAncestorNodesTreeIndex: typeof fetchAncestorNodesForTreeIndex;
+};
+
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,
-  event: PointerEvent
+  event: PointerEvent,
+  dependencies: Partial<InstancesFromClickDependencies> = {}
 ): Promise<InstanceReference[] | undefined> {
   const viewer = renderTarget.viewer;
   const caches = renderTarget.cdfCaches;
@@ -46,7 +51,7 @@ export async function getInstancesFromClick(
   }
 
   if (intersection.type === 'cad') {
-    return await getInstancesFromCadIntersection(intersection, caches);
+    return await getInstancesFromCadIntersection(intersection, caches, dependencies);
   } else if (intersection.type === 'pointcloud') {
     return await getInstancesFromPointCloudIntersection(intersection, caches);
   }
@@ -78,21 +83,23 @@ async function getPointCloudAnnotationMappingsFromIntersection(
     return [];
   }
 
+  const instanceReferences: InstanceReference[] = [];
+  if (
+    intersection.volumeMetadata?.instanceRef !== undefined &&
+    isDmsInstance(intersection.volumeMetadata.instanceRef)
+  ) {
+    instanceReferences.push(intersection.volumeMetadata.instanceRef);
+  }
+
   if (
     intersection.volumeMetadata?.assetRef !== undefined &&
     (isIdEither(intersection.volumeMetadata.assetRef) ||
       isDmsInstance(intersection.volumeMetadata.assetRef))
   ) {
-    return [intersection.volumeMetadata.assetRef];
+    instanceReferences.push(intersection.volumeMetadata.assetRef);
   }
 
-  if (
-    intersection.volumeMetadata?.instanceRef !== undefined &&
-    isDmsInstance(intersection.volumeMetadata.instanceRef)
-  ) {
-    return [intersection.volumeMetadata.instanceRef];
-  }
-  return [];
+  return instanceReferences;
 }
 
 function getPointCloudFdmInstancesFromIntersection(
@@ -105,11 +112,12 @@ function getPointCloudFdmInstancesFromIntersection(
 
 export async function getInstancesFromCadIntersection(
   intersection: CadIntersection,
-  caches: CdfCaches
+  caches: CdfCaches,
+  dependencies: Partial<InstancesFromClickDependencies> = {}
 ): Promise<InstanceReference[]> {
   const fdmDataPromise = getCadFdmDataPromise(intersection, caches);
 
-  const assetMappingPromise = getAssetMappingPromise(intersection, caches);
+  const assetMappingPromise = getAssetMappingPromise(intersection, caches, dependencies);
 
   const [fdmData, assetMapping] = await Promise.all([fdmDataPromise, assetMappingPromise] as const);
   return [...fdmData, ...assetMapping];
@@ -134,13 +142,15 @@ async function getCadFdmDataPromise(
 
 async function getAssetMappingPromise(
   intersection: CadIntersection,
-  caches: CdfCaches
+  caches: CdfCaches,
+  dependencies: Partial<InstancesFromClickDependencies> = {}
 ): Promise<InstanceReference[]> {
   if (caches.coreDmOnly) {
     return [];
   }
 
-  const ancestors = await fetchAncestorNodesForTreeIndex(
+  const { fetchAncestorNodesTreeIndex = fetchAncestorNodesForTreeIndex } = dependencies;
+  const ancestors = await fetchAncestorNodesTreeIndex(
     intersection.model.modelId,
     intersection.model.revisionId,
     intersection.treeIndex,

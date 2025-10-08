@@ -105,6 +105,13 @@ export const assetMappingsMock = new Mock<AssetMappings3DAPI>()
   .returns(assetMappings3DFilterMock)
   .object();
 
+export const annotationsMock: CogniteClient['annotations'] = new Mock<
+  CogniteClient['annotations']
+>()
+  .setup((p) => p.list)
+  .returns(annotationsListMock)
+  .object();
+
 export const revisions3dMock = new Mock<Revisions3DAPI>()
   .setup((p) => p.retrieve3DNodes)
   .returns(nodes3dRetrieveMock)
@@ -121,6 +128,8 @@ export const sdkMock = new Mock<CogniteClient>()
   .returns(assetMappingsMock)
   .setup((p) => p.revisions3D)
   .returns(revisions3dMock)
+  .setup((p) => p.annotations)
+  .returns(annotationsMock)
   .setup((p) => p.post)
   .returns(postMock as <T>(path: string, options?: HttpRequestOptions) => Promise<HttpResponse<T>>)
   .setup((p) => p.models3D.retrieve)

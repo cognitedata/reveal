@@ -10,23 +10,15 @@ import {
 import { type PointCloudAnnotationModel } from './types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 
-import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
-import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
+import { type getInstanceReferencesFromPointCloudAnnotation } from './utils';
+import { type fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import { Mock } from 'moq.ts';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
+import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
 
-vi.mock(import('./annotationModelUtils'), () => ({
-  fetchPointCloudAnnotationAssets: vi.fn()
-}));
-
-vi.mock(import('./utils'), () => ({
-  getInstanceReferencesFromPointCloudAnnotation: vi.fn()
-}));
-
-const mockGetInstanceReferencesFromPointCloudAnnotation = vi.mocked(
-  getInstanceReferencesFromPointCloudAnnotation
-);
-const mockFetchPointCloudAnnotationAssets = vi.mocked(fetchPointCloudAnnotationAssets);
+const mockGetInstanceReferencesFromPointCloudAnnotation =
+  vi.fn<typeof getInstanceReferencesFromPointCloudAnnotation>();
+const mockFetchPointCloudAnnotationAssets = vi.fn<typeof fetchPointCloudAnnotationAssets>();
 
 const modelId = 123;
 const revisionId = 456;
@@ -40,9 +32,13 @@ const dmInstanceRef: AnnotationsInstanceRef = {
 };
 
 const mockAnnotations: PointCloudAnnotationModel[] = [
-  createPointCloudAnnotationMock({ id: annotationId, modelId, assetId: 1 }),
-  createPointCloudAnnotationMock({ id: annotationId + 1, modelId, assetId: 2 }),
-  createPointCloudAnnotationMock({ id: annotationId + 2, modelId, instanceId: dmInstanceRef })
+  createPointCloudAnnotationMock({ annotationId, modelId, assetId: 1 }),
+  createPointCloudAnnotationMock({ annotationId: annotationId + 1, modelId, assetId: 2 }),
+  createPointCloudAnnotationMock({
+    annotationId: annotationId + 2,
+    modelId,
+    dmIdentifier: dmInstanceRef
+  })
 ];
 
 const mockAssetInstances = [createAssetMock(1), createAssetMock(2)];
@@ -69,11 +65,14 @@ let cache: PointCloudAnnotationCache;
 
 describe(PointCloudAnnotationCache.name, () => {
   beforeEach(() => {
-    cache = new PointCloudAnnotationCache(sdkMock.object());
     sdkMock.setup((p) => p.annotations).returns(annotationsMock);
 
     mockGetInstanceReferencesFromPointCloudAnnotation.mockReturnValue([mockAssetInstances[0]]);
     mockFetchPointCloudAnnotationAssets.mockResolvedValue(mockAssetMappings);
+    cache = new PointCloudAnnotationCache(sdkMock.object(), {
+      fetchAnnotationAssets: mockFetchPointCloudAnnotationAssets,
+      getInstanceReferencesFromAnnotation: mockGetInstanceReferencesFromPointCloudAnnotation
+    });
   });
 
   describe('getPointCloudAnnotationsForModel', () => {
@@ -171,28 +170,3 @@ describe(PointCloudAnnotationCache.name, () => {
     });
   });
 });
-
-function createPointCloudAnnotationMock(params?: {
-  id?: number;
-  assetId?: number;
-  instanceId?: AnnotationsInstanceRef;
-  modelId?: number;
-}): PointCloudAnnotationModel {
-  return {
-    id: params?.id ?? 123,
-    annotatedResourceId: params?.modelId ?? 456,
-    annotatedResourceType: 'threedmodel',
-    annotationType: 'pointcloud.BoundingVolume',
-    data: {
-      assetRef: params?.assetId !== undefined ? { id: params?.assetId } : undefined,
-      instanceRef: params?.instanceId !== undefined ? params.instanceId : undefined,
-      region: []
-    },
-    createdTime: new Date(),
-    lastUpdatedTime: new Date(),
-    status: 'approved',
-    creatingApp: 'test-app',
-    creatingAppVersion: '1.0.0',
-    creatingUser: 'test-user'
-  };
-}

@@ -14,6 +14,10 @@ import { type AssetInstance } from '../../utilities/instances';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { isSameAssetReference } from '../../utilities/instanceIds';
 
+type PointCloudAnnotationCacheDependencies = Partial<{
+  fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
+  getInstanceReferencesFromAnnotation: typeof getInstanceReferencesFromPointCloudAnnotation;
+}>;
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
   private readonly _modelToAnnotationAssetMappings = new Map<
@@ -26,8 +30,18 @@ export class PointCloudAnnotationCache {
     PointCloudAnnotationModel[]
   >();
 
-  constructor(sdk: CogniteClient) {
+  private readonly fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
+  private readonly getInstanceReferencesFromAnnotation: typeof getInstanceReferencesFromPointCloudAnnotation;
+
+  constructor(sdk: CogniteClient, dependencies: PointCloudAnnotationCacheDependencies = {}) {
     this._sdk = sdk;
+
+    const {
+      fetchAnnotationAssets = fetchPointCloudAnnotationAssets,
+      getInstanceReferencesFromAnnotation = getInstanceReferencesFromPointCloudAnnotation
+    } = dependencies;
+    this.fetchAnnotationAssets = fetchAnnotationAssets;
+    this.getInstanceReferencesFromAnnotation = getInstanceReferencesFromAnnotation;
   }
 
   private async getPointCloudAnnotationAssetsForModel(
@@ -69,7 +83,7 @@ export class PointCloudAnnotationCache {
     modelId: ModelId
   ): Promise<Map<AnnotationId, AssetInstance[]>> {
     const annotationModels = await this.fetchAnnotationForModel(modelId);
-    const annotationAssets = fetchPointCloudAnnotationAssets(annotationModels, this._sdk);
+    const annotationAssets = this.fetchAnnotationAssets(annotationModels, this._sdk);
 
     return await annotationAssets;
   }
@@ -92,7 +106,7 @@ export class PointCloudAnnotationCache {
       )
     );
     const filteredAnnotationModelsByAsset = annotationModels.filter(
-      (annotation) => getInstanceReferencesFromPointCloudAnnotation(annotation).length !== 0
+      (annotation) => this.getInstanceReferencesFromAnnotation(annotation).length !== 0
     );
     return filteredAnnotationModelsByAsset as PointCloudAnnotationModel[];
   }
