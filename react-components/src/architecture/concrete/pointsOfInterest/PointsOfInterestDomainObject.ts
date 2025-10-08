@@ -57,6 +57,10 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     return false;
   }
 
+  public override get isVisibleInTree(): boolean {
+    return this._pointsOfInterest.length > 0;
+  }
+
   public addPendingPointsOfInterest(
     poiData: PointsOfInterestProperties
   ): PointOfInterest<PoiIdType> {

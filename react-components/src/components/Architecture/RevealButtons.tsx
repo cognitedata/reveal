@@ -32,8 +32,12 @@ import { UndoCommand } from '../../architecture/base/concreteCommands/general/Un
 import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
 import { ShareCommand } from '../../architecture/base/concreteCommands/general/ShareCommand';
 import { type GeneralBannerContent } from '../../architecture';
+import { ShowTreeViewCommand } from '../../architecture/base/concreteCommands/general/ShowTreeViewCommand';
 
 export class RevealButtons {
+  static ShowTreeView = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new ShowTreeViewCommand(), prop);
+
   static Help = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new HelpCommand(), prop);
 

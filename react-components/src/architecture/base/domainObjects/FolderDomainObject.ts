@@ -20,7 +20,7 @@ export class FolderDomainObject extends DomainObject {
   }
 
   public override get icon(): IconName {
-    return 'Folder';
+    return 'FolderFilled';
   }
 
   // ==================================================
