@@ -12,7 +12,7 @@ describe(NumberPanelItem.name, () => {
     originalValue = value;
   }
   function verifyValueMock(value: number): boolean {
-    return value >= 10;
+    return value >= 10; // Only allow values 10 or greater (10 is arbitrary chosen for testing)
   }
 
   test('should translate the text', () => {

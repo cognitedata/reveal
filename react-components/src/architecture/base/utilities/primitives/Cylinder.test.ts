@@ -223,8 +223,9 @@ describe(Cylinder.name, () => {
   test('Should set and get height', () => {
     const primitive = new Cylinder();
     primitive.radius = 2;
+    // Just make a arbitrary, none zero center A and B
     primitive.centerA.set(1, 2, 3);
-    primitive.centerB.set(4, 5, 7);
+    primitive.centerB.set(4, 6, 8);
 
     const expectedHeight = 10;
     primitive.height = expectedHeight;

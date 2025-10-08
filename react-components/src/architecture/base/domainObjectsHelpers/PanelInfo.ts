@@ -30,11 +30,9 @@ export class PanelInfo {
   }
 
   public getItemTranslationKey(key: TranslationKey): NumberPanelItem | undefined {
-    for (const item of this.items) {
-      if (isTranslatedString(item.translationInput) && item.translationInput.key === key) {
-        return item;
-      }
-    }
+    return this.items.find(
+      (item) => isTranslatedString(item.translationInput) && item.translationInput.key === key
+    );
   }
 }
 
