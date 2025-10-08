@@ -27,7 +27,11 @@ export function useSceneConfig(sceneExternalId?: string, sceneSpace?: string): S
   }, [sceneExternalId, sceneSpace, allScenes.data]);
 }
 
-function transformSceneDataToScene(sceneData: SceneData): Scene {
+function transformSceneDataToScene(sceneData: SceneData | undefined): Scene | undefined {
+  if (sceneData === undefined) {
+    return undefined;
+  }
+
   return {
     sceneConfiguration: {
       name: sceneData.name,
