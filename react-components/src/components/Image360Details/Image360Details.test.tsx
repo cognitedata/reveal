@@ -20,6 +20,7 @@ describe(Image360Details.name, () => {
     label: 'test-label',
     getRevisions: () => []
   } as unknown as Image360<ClassicDataSourceType>;
+  const mockExit360Image = vi.fn();
 
   const mockImage360HistoricalDetails = vi.fn((_props) => (
     <div data-testid="historical-details">Details</div>
@@ -33,9 +34,9 @@ describe(Image360Details.name, () => {
 
   beforeEach(() => {
     defaultDependencies.Image360HistoricalDetails = mockImage360HistoricalDetails;
-    defaultDependencies.useImage360Collections.mockReturnValue([mockImage360 as any]);
+    defaultDependencies.useImage360Collections.mockReturnValue([mockImage360]);
     defaultDependencies.useReveal.mockReturnValue({
-      exit360Image: vi.fn()
+      exit360Image: mockExit360Image
     } as any);
   });
 
@@ -96,11 +97,6 @@ describe(Image360Details.name, () => {
   });
 
   it('should show exit button by default and trigger exit360Image on click', async () => {
-    const mockExit360Image = vi.fn();
-    defaultDependencies.useReveal.mockReturnValue({
-      exit360Image: mockExit360Image
-    } as any);
-
     render(<Image360Details />, { wrapper });
 
     expect(mockImage360.on).toHaveBeenCalledTimes(2);
