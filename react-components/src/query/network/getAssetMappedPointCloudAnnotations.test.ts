@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { Mock } from 'moq.ts';
-import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
+import {
+  type CogniteClient,
+  type AnnotationFilterProps} from '@cognite/sdk';
 import { type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
 import { createAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
@@ -9,18 +11,14 @@ import { createPointCloudAnnotationMock } from '../../../tests/tests-utilities/f
 import { type ExternalIdsResultList, type FdmSDK } from '../../data-providers/FdmSDK';
 import { createCursorAndAsyncIteratorMock } from '../../../tests/tests-utilities/fixtures/cursorAndIterator';
 
-import { getAssetsForIds } from './common/getAssetsForIds';
+import { type getAssetsForIds } from './common/getAssetsForIds';
 import { annotationsListMock } from '#test-utils/fixtures/sdk';
-
-vi.mock(import('./common/getAssetsForIds'), () => ({
-  getAssetsForIds: vi.fn<typeof getAssetsForIds>()
-}));
-
-const mockGetAssetsForIds = vi.mocked(getAssetsForIds);
 
 describe(getAssetsMappedPointCloudAnnotations.name, () => {
   let mockSdk: CogniteClient;
   let mockFdmSdk: FdmSDK;
+
+  const mockGetAssetsForIds = vi.fn<typeof getAssetsForIds>();
 
   const mockModelId1 = 123;
   const mockModelId2 = 789;
@@ -95,7 +93,13 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
   describe('basic functionality', () => {
     test('returns assets from point cloud annotations without filters', async () => {
-      const result = await getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk);
+      const result = await getAssetsMappedPointCloudAnnotations(
+        mockModels,
+        undefined,
+        mockSdk,
+        undefined,
+        { getAssetsByIds: mockGetAssetsForIds }
+      );
 
       expect(result).toEqual(mockAssets);
     });
@@ -125,7 +129,8 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
         mockModels,
         undefined,
         mockSdk,
-        mockFdmSdk
+        mockFdmSdk,
+        { getAssetsByIds: mockGetAssetsForIds }
       );
 
       const expectedDmsInstanceResult = {
@@ -137,7 +142,15 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
     });
 
     test('returns only classic assets when FDM SDK not provided', async () => {
-      const result = await getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk);
+      const result = await getAssetsMappedPointCloudAnnotations(
+        mockModels,
+        undefined,
+        mockSdk,
+        undefined,
+        {
+          getAssetsByIds: mockGetAssetsForIds
+        }
+      );
 
       expect(result).toEqual(mockAssets);
       expect(result).toHaveLength(mockAssets.length);
@@ -146,7 +159,9 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
     test('handles empty models array', async () => {
       mockGetAssetsForIds.mockResolvedValue([]);
 
-      const result = await getAssetsMappedPointCloudAnnotations([], undefined, mockSdk);
+      const result = await getAssetsMappedPointCloudAnnotations([], undefined, mockSdk, undefined, {
+        getAssetsByIds: mockGetAssetsForIds
+      });
 
       expect(result).toEqual([]);
       expect(mockSdk.annotations.list).toHaveBeenCalledTimes(0);
@@ -174,7 +189,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       const largeModelList = Array.from({ length: 1500 }, (_, i) => ({
         modelId: i,
         revisionId: i + 1000
-      })) as Array<AddPointCloudResourceOptions<ClassicDataSourceType>>;
+      }));
 
       await getAssetsMappedPointCloudAnnotations(largeModelList, undefined, mockSdk);
 
@@ -198,7 +213,9 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       });
       vi.mocked(mockSdk.annotations.list).mockReturnValue(mockAnnotationsList);
 
-      await getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk);
+      await getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk, undefined, {
+        getAssetsByIds: mockGetAssetsForIds
+      });
     });
   });
 
@@ -222,7 +239,8 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
         mockModels,
         undefined,
         mockSdk,
-        mockFdmSdk
+        mockFdmSdk,
+        { getAssetsByIds: mockGetAssetsForIds }
       );
 
       expect(mockFdmSdk.getByExternalIds).toHaveBeenCalled();
@@ -242,7 +260,8 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
         mockModels,
         undefined,
         mockSdk,
-        mockFdmSdk
+        mockFdmSdk,
+        { getAssetsByIds: mockGetAssetsForIds }
       );
 
       expect(result).toEqual(mockAssets);
@@ -252,9 +271,9 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
   describe('error handling', () => {
     test('propagates errors from annotations API', async () => {
       const mockErrorIterator = createCursorAndAsyncIteratorMock({ items: [] });
-      mockErrorIterator.autoPagingToArray = vi
-        .fn()
-        .mockRejectedValue(new Error('Annotations API error'));
+      mockErrorIterator.autoPagingToArray = vi.fn(
+        async () => await Promise.reject(new Error('Annotations API error'))
+      );
       vi.mocked(mockSdk.annotations.list).mockReturnValue(mockErrorIterator);
 
       await expect(
@@ -266,7 +285,9 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       mockGetAssetsForIds.mockRejectedValue(new Error('Assets API error'));
 
       await expect(
-        getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk)
+        getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk, undefined, {
+          getAssetsByIds: mockGetAssetsForIds
+        })
       ).rejects.toThrow('Assets API error');
     });
 
@@ -276,15 +297,21 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
         dmIdentifier: { space: 'test-space', externalId: 'test-external-id' }
       });
 
-      const mockAnnotationsList = createCursorAndAsyncIteratorMock({
-        items: [annotationWithDmsRef]
-      });
-      vi.mocked(mockSdk.annotations.list).mockReturnValue(mockAnnotationsList);
+      annotationsListMock.mockReturnValue(
+        createCursorAndAsyncIteratorMock({
+          items: [annotationWithDmsRef]
+        })
+      );
 
-      vi.mocked(mockFdmSdk.getByExternalIds).mockRejectedValue(new Error('FDM SDK error'));
+      mockFdmSdk = new Mock<FdmSDK>()
+        .setup((p) => p.getByExternalIds)
+        .returns(async () => await Promise.reject(new Error('FDM SDK error')))
+        .object();
 
       await expect(
-        getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk, mockFdmSdk)
+        getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk, mockFdmSdk, {
+          getAssetsByIds: mockGetAssetsForIds
+        })
       ).rejects.toThrow('FDM SDK error');
     });
   });
