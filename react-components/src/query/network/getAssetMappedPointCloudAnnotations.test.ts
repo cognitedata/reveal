@@ -83,7 +83,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     mockFdmSdk = new Mock<FdmSDK>()
       .setup((p) => p.getByExternalIds)
-      .returns(vi.fn<() => Promise<ExternalIdsResultList<any>>>())
+      .returns(vi.fn<() => Promise<ExternalIdsResultList<unknown>>>())
       .object();
 
     mockGetAssetsForIds.mockResolvedValue(mockAssets);
