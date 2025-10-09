@@ -1,31 +1,46 @@
 import { useRef, useState } from 'react';
 
-export const useHoverHandlers = (isDisabled: boolean) => {
-    const closeTimeoutRef = useRef<number | null>(null);
-    const [isPanelOpen, setIsPanelOpen] = useState(false);
+export type UseHoverHandlersProps = { isDisabled: boolean };
+export type UseHoverHandlersReturnType = {
+  hoverHandlers: {
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+  };
+  isPanelOpen: boolean;
+  setPanelToClose: () => void;
+};
 
-    const setPanelToClose = () => setIsPanelOpen(false)
+export const useHoverHandlers = (
+  isDisabled: UseHoverHandlersProps['isDisabled']
+): UseHoverHandlersReturnType => {
+  const closeTimeoutRef = useRef<number | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-    const openPanel = () => {
-        if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
-        }
-        if (!isDisabled) {
-        setIsPanelOpen(true);
-        }
-    };
-    const closePanel = () => {
-        closeTimeoutRef.current = window.setTimeout(() => {
-            setPanelToClose();
-            closeTimeoutRef.current = null;
-        }, 100); 
-    };
+  const setPanelToClose = (): void => {
+    setIsPanelOpen(false);
+  };
 
-    const hoverHandlers = {
-        onMouseEnter: openPanel,
-        onMouseLeave: closePanel,
-    };
+  const openPanel = (): void => {
+    if (closeTimeoutRef.current !== null) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    if (!isDisabled) {
+      setIsPanelOpen(true);
+    }
+  };
 
-    return {hoverHandlers, isPanelOpen, setPanelToClose}
-}
+  const closePanel = (): void => {
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setPanelToClose();
+      closeTimeoutRef.current = null;
+    }, 100);
+  };
+
+  const hoverHandlers = {
+    onMouseEnter: openPanel,
+    onMouseLeave: closePanel
+  };
+
+  return { hoverHandlers, isPanelOpen, setPanelToClose };
+};

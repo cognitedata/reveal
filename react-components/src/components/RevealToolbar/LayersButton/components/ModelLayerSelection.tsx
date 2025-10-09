@@ -20,14 +20,19 @@ export const ModelLayerSelection = ({
   update
 }: ModelLayerSelectionProps): ReactElement => {
   const isDisabled = modelLayerHandlers.length === 0;
-  const {hoverHandlers, isPanelOpen, setPanelToClose} = useHoverHandlers(isDisabled)
+  const { hoverHandlers, isPanelOpen, setPanelToClose } = useHoverHandlers(isDisabled);
 
   const updateCallback = useCallback(() => {
     update();
   }, [update]);
 
   return (
-    <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={isDisabled} visible={isPanelOpen} onHide={setPanelToClose}>
+    <SelectPanel
+      placement="right"
+      hideOnOutsideClick={true}
+      openOnHover={isDisabled}
+      visible={isPanelOpen}
+      onHide={setPanelToClose}>
       <SelectPanel.Trigger>
         <div {...hoverHandlers}>
           <WholeLayerVisibilitySelectItem
