@@ -23,7 +23,8 @@ export const WholeLayerVisibilitySelectItem = ({
       label={label}
       checked={checked}
       disabled={disabled}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         modelLayerHandlers.forEach((handler) => {
           handler.setVisibility(!checked);
         });
