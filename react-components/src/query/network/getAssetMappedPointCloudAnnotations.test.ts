@@ -6,7 +6,7 @@ import { type ClassicModelIdentifierType, type ClassicDataSourceType } from '@co
 import { type AddPointCloudResourceOptions } from '../../components';
 import { createAssetMock, createFdmNodeItem } from '../../../tests/tests-utilities/fixtures/assets';
 import { createPointCloudAnnotationMock } from '../../../tests/tests-utilities/fixtures/pointCloudAnnotation';
-import { type ExternalIdsResultList, type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';
+import { type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';
 import { createCursorAndAsyncIteratorMock } from '../../../tests/tests-utilities/fixtures/cursorAndIterator';
 
 import { type getAssetsForIds } from './common/getAssetsForIds';
