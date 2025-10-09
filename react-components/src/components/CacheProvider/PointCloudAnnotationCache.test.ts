@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi, assert } from 'vitest';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { createAssetMock, createFdmNodeItem } from '#test-utils/fixtures/assets';
 import {
+  type AnnotationModel,
   type AnnotationsInstanceRef,
   type CogniteClient,
   type CursorAndAsyncIterator,
@@ -51,7 +52,7 @@ const dummyAnnotationsResponse = {
 const annotationsMock: CogniteClient['annotations'] = new Mock<CogniteClient['annotations']>()
   .setup((p) => p.list)
   .returns(
-    (): CursorAndAsyncIterator<any> =>
+    (): CursorAndAsyncIterator<PointCloudAnnotationModel> =>
       createCursorAndAsyncIteratorMock({
         items: dummyAnnotationsResponse.items
       })
@@ -85,7 +86,7 @@ describe(PointCloudAnnotationCache.name, () => {
       const annotationsMock: CogniteClient['annotations'] = new Mock<CogniteClient['annotations']>()
         .setup((p) => p.list)
         .returns(
-          (): CursorAndAsyncIterator<any> =>
+          (): CursorAndAsyncIterator<AnnotationModel> =>
             createCursorAndAsyncIteratorMock({
               items: [wrongTypeAnnotation]
             })
