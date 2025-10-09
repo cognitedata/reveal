@@ -122,16 +122,28 @@ export function RuleBasedOutputsSelector({
   const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
 
   useEffect(() => {
+    if (ruleSet === undefined) {
+      return;
+    }
+
     if (isAllClassicAssetConnectionsFetched) {
       setAllContextualizedAssets(allClassicAssetConnections);
     }
-  }, [allClassicAssetConnections, isAllClassicAssetConnectionsFetched]);
+  }, [ruleSet, allClassicAssetConnections, isAllClassicAssetConnectionsFetched]);
 
   useEffect(() => {
+    if (ruleSet === undefined) {
+      return;
+    }
+
     onAllMappingsFetched(allDataLoaded);
-  }, [allDataLoaded, onAllMappingsFetched]);
+  }, [ruleSet, allDataLoaded, onAllMappingsFetched]);
 
   useEffect(() => {
+    if (ruleSet === undefined) {
+      return;
+    }
+
     if (
       !isReadyToInitializeRules(
         ruleSet,

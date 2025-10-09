@@ -13,7 +13,6 @@ import {
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 import { Image360CollectionContainerContext } from './Image360CollectionContainer.context';
-import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -34,7 +33,9 @@ export function Image360CollectionContainer({
     useRenderTarget,
     useRevealKeepAlive,
     useReveal3DResourcesCount,
-    useReveal3DResourceLoadFailCount
+    useReveal3DResourceLoadFailCount,
+    createImage360CollectionDomainObject,
+    removeImage360CollectionDomainObject
   } = useContext(Image360CollectionContainerContext);
 
   const cachedViewerRef = useRevealKeepAlive();
@@ -51,14 +52,19 @@ export function Image360CollectionContainer({
   const remove360Collection = useCallback((): void => {
     if (modelRef.current === undefined) return;
 
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) {
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
-    }
 
-    RevealModelsUtils.remove(renderTarget, modelRef.current);
+    removeImage360CollectionDomainObject(renderTarget, modelRef.current);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     modelRef.current = undefined;
-  }, [cachedViewerRef, renderTarget, setRevealResourcesCount, viewer]);
+  }, [
+    viewer,
+    renderTarget,
+    cachedViewerRef,
+    setRevealResourcesCount,
+    removeImage360CollectionDomainObject
+  ]);
 
   const add360Collection = useCallback(
     async (transform?: Matrix4): Promise<() => void> => {
@@ -97,7 +103,7 @@ export function Image360CollectionContainer({
         if (collection !== undefined) {
           return collection;
         }
-        return await RevealModelsUtils.addImage360Collection(
+        return await createImage360CollectionDomainObject(
           renderTarget,
           addImage360CollectionOptions,
           defaultVisible
@@ -109,11 +115,12 @@ export function Image360CollectionContainer({
       renderTarget,
       defaultVisible,
       addImage360CollectionOptions,
-      remove360Collection,
       onLoad,
       onLoadError,
+      remove360Collection,
       setRevealResourcesCount,
-      setReveal3DResourceLoadFailCount
+      setReveal3DResourceLoadFailCount,
+      createImage360CollectionDomainObject
     ]
   );
 
