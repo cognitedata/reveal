@@ -99,17 +99,14 @@ async function getPointCloudAnnotationDmInstances(
   const uniqueMappingDmsInstances = uniqBy(annotationMappingDms, createFdmKey);
 
   const allResultLists = await fdmSdk.getByExternalIds<AssetProperties>(
-    uniqueMappingDmsInstances
-      .filter((instance) =>
-        instance.sources.some(
-          (instanceSource) =>
-            instanceSource.externalId === COGNITE_ASSET_SOURCE.externalId &&
-            instanceSource.space === COGNITE_ASSET_SOURCE.space &&
-            instanceSource.version === COGNITE_ASSET_SOURCE.version
-        )
+    uniqueMappingDmsInstances.filter((instance) =>
+      instance.sources.some(
+        (instanceSource) =>
+          instanceSource.externalId === COGNITE_ASSET_SOURCE.externalId &&
+          instanceSource.space === COGNITE_ASSET_SOURCE.space &&
+          instanceSource.version === COGNITE_ASSET_SOURCE.version
       )
-
-      .filter((ref) => ref !== undefined),
+    ),
     [COGNITE_ASSET_SOURCE]
   );
   return allResultLists.items.map((item) => ({

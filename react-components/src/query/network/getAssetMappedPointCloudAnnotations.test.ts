@@ -7,14 +7,15 @@ import {
   type CursorAndAsyncIterator,
   type AnnotationModel
 } from '@cognite/sdk';
-import { type ClassicDataSourceType } from '@cognite/reveal';
+import { type ClassicModelIdentifierType, type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
-import { createAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
+import { createAssetMock, createFdmNodeItem } from '../../../tests/tests-utilities/fixtures/assets';
 import { createPointCloudAnnotationMock } from '../../../tests/tests-utilities/fixtures/pointCloudAnnotation';
-import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';
 import { createCursorAndAsyncIteratorMock } from '../../../tests/tests-utilities/fixtures/cursorAndIterator';
 
 import { type getAssetsForIds } from './common/getAssetsForIds';
+import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 
 describe(getAssetsMappedPointCloudAnnotations.name, () => {
   let mockSdk: CogniteClient;
@@ -39,28 +40,18 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
   const mockAssets = [createAssetMock(1, 'Asset 1'), createAssetMock(2, 'Asset 2')];
 
-  const mockDmsInstances = [
-    {
-      instanceType: 'node' as const,
-      version: 1,
-      space: 'test-space',
-      externalId: 'test-external-id',
-      createdTime: 123456,
-      lastUpdatedTime: 987654,
-      properties: {
-        name: 'DMS Asset 1',
-        description: 'Test DMS asset'
-      }
-    }
-  ];
+  const mockDmsInstances = createFdmNodeItem({
+    externalId: 'test-external-id',
+    space: 'test-space'
+  });
 
   const mockDmsResult = {
     items: [
       {
-        ...mockDmsInstances[0],
+        ...mockDmsInstances,
         properties: {
           cdf_cdm: {
-            'CogniteAsset/v1': mockDmsInstances[0].properties
+            'CogniteAsset/v1': mockDmsInstances.properties
           }
         },
         sources: [
@@ -118,8 +109,8 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       const annotationWithDmsRef = createPointCloudAnnotationMock({
         modelId: mockModelId3,
         dmIdentifier: {
-          space: mockDmsInstances[0].space,
-          externalId: mockDmsInstances[0].externalId
+          space: mockDmsInstances.space,
+          externalId: mockDmsInstances.externalId
         }
       });
 
@@ -139,9 +130,9 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
         { getAssetsByIds: mockGetAssetsForIds }
       );
 
-      const expectedDmsInstanceResult = {
+      const expectedDmsInstanceResult: FdmNode<AssetProperties> = {
         ...mockDmsResult.items[0],
-        properties: mockDmsInstances[0].properties
+        properties: mockDmsInstances.properties
       };
 
       expect(result).toEqual([...mockAssets, expectedDmsInstanceResult]);
@@ -192,7 +183,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     test('handles large number of models by chunking requests', async () => {
       // Create more than 1000 models to test chunking
-      const largeModelList = Array.from({ length: 1500 }, (_, i) => ({
+      const largeModelList: ClassicModelIdentifierType[] = Array.from({ length: 1500 }, (_, i) => ({
         modelId: i,
         revisionId: i + 1000
       }));
@@ -251,9 +242,9 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
       expect(mockFdmSdk.getByExternalIds).toHaveBeenCalled();
 
-      const expectedDmsInstanceResult = {
+      const expectedDmsInstanceResult: FdmNode<AssetProperties> = {
         ...mockDmsResult.items[0],
-        properties: mockDmsInstances[0].properties
+        properties: mockDmsInstances.properties
       };
       expect(result).toEqual([expectedDmsInstanceResult]);
     });

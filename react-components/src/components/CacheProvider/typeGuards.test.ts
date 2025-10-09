@@ -6,11 +6,11 @@ describe(isPointCloudAnnotationModel.name, () => {
   const commonProperties = {
     id: 123,
     annotatedResourceId: 456,
-    annotatedResourceType: 'threedmodel' as AnnotationModel['annotatedResourceType'],
+    annotatedResourceType: 'threedmodel' as const,
     annotationType: 'pointcloud.BoundingVolume',
     createdTime: new Date(),
     lastUpdatedTime: new Date(),
-    status: 'approved' as AnnotationModel['status'],
+    status: 'approved' as const,
     creatingApp: 'test-app',
     creatingAppVersion: 'test-version',
     creatingUser: 'test-user'
@@ -48,38 +48,26 @@ describe(isPointCloudAnnotationModel.name, () => {
     ...commonProperties // data property is missing
   } as const as AnnotationModel;
 
-  test('returns true for annotation with minimal required properties', () => {
-    const result = isPointCloudAnnotationModel(minimalAnnotationWithEmptyRegion);
+  test('returns true for point cloud annotation with minimal required properties', () => {
+    expect(isPointCloudAnnotationModel(minimalAnnotationWithEmptyRegion)).toBe(true);
+  });
 
-    expect(result).toBe(true);
+  test('returns true for point cloud annotation with references', () => {
+    expect(isPointCloudAnnotationModel(annotationWithExtras)).toBe(true);
   });
 
   test('returns false for annotation without data property', () => {
-    const result = isPointCloudAnnotationModel(annotationWithoutData);
-
-    expect(result).toBe(false);
+    expect(isPointCloudAnnotationModel(annotationWithoutData)).toBe(false);
   });
 
   test('returns false for annotation with data missing region property', () => {
     const annotationWithoutRegion: AnnotationModel = {
       data: {
-        assetRef: { id: 789 } // region property is missing
+        assetRef: { id: 789 } // region property is missing, which indicates it's not a point cloud annotation
       } as const as AnnotationData,
       ...commonProperties
     };
 
-    const result = isPointCloudAnnotationModel(annotationWithoutRegion);
-
-    expect(result).toBe(false);
-  });
-
-  test('performs type narrowing correctly', () => {
-    if (isPointCloudAnnotationModel(annotationWithExtras)) {
-      // We can access data.region without type errors
-      expect(typeof annotationWithExtras.data).toBe('object');
-      expect(annotationWithExtras.data.region).toBeDefined();
-    } else {
-      expect.fail('Valid annotation should pass type guard'); // This should not happen for valid annotation
-    }
+    expect(isPointCloudAnnotationModel(annotationWithoutRegion)).toBe(false);
   });
 });
