@@ -153,5 +153,4 @@ describe(getInstancesFromClick.name, () => {
 
     expect(result).toEqual([dmInstanceRef]);
   });
-
 });

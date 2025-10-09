@@ -6,8 +6,8 @@ import {
   type DMInstanceRef,
   type PointCloudIntersection,
   type DMDataSourceType,
-  DataSourceType,
-  CognitePointCloudModel
+  type DataSourceType,
+  type CognitePointCloudModel
 } from '@cognite/reveal';
 import { Vector3 } from 'three';
 import { getPointCloudInstanceFromIntersection } from './getPointCloudInstanceFromIntersection';
