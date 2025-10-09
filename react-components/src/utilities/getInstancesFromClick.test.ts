@@ -1,9 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { type RevealRenderTarget } from '../architecture';
-import {
-  type CadIntersection,
-  type PointCloudIntersection,
-} from '@cognite/reveal';
+import { type CadIntersection, type PointCloudIntersection } from '@cognite/reveal';
 import { Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
 import { type CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
