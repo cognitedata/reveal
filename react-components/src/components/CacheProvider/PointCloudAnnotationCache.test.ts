@@ -51,7 +51,7 @@ const dummyAnnotationsResponse = {
 const annotationsMock: CogniteClient['annotations'] = new Mock<CogniteClient['annotations']>()
   .setup((p) => p.list)
   .returns(
-    (): CursorAndAsyncIterator<any> =>
+    (): CursorAndAsyncIterator<PointCloudAnnotationModel> =>
       createCursorAndAsyncIteratorMock({
         items: dummyAnnotationsResponse.items
       })
