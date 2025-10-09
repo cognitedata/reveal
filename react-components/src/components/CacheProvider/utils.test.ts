@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest';
-import { getInstanceDataFromIntersection } from '../../hooks/pointClouds/getInstanceDataFromIntersection';
 import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
 
