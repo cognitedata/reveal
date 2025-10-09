@@ -39,14 +39,11 @@ export function isClassicInstanceId(instanceId: InstanceId): instanceId is Asset
 export function isDMModelIdentifier(
   modelIdentifier: DMModelIdentifierType | ClassicModelIdentifierType
 ): modelIdentifier is DMModelIdentifierType {
-  return (
-    (modelIdentifier as DMModelIdentifierType).revisionExternalId !== undefined &&
-    (modelIdentifier as DMModelIdentifierType).revisionSpace !== undefined
-  );
+  return 'revisionExternalId' in modelIdentifier && 'revisionSpace' in modelIdentifier;
 }
 
 export function isClassicModelIdentifier(
   modelIdentifier: DMModelIdentifierType | ClassicModelIdentifierType
 ): modelIdentifier is ClassicModelIdentifierType {
-  return (modelIdentifier as ClassicModelIdentifierType).modelId !== undefined;
+  return 'modelId' in modelIdentifier;
 }

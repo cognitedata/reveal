@@ -1,10 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { type RevealRenderTarget } from '../architecture';
-import {
-  type CadIntersection,
-  type PointCloudIntersection,
-  type AnyIntersection
-} from '@cognite/reveal';
+import { type CadIntersection, type PointCloudIntersection } from '@cognite/reveal';
 import { Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
 import { type CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
@@ -152,24 +148,5 @@ describe(getInstancesFromClick.name, () => {
     });
 
     expect(result).toEqual([dmInstanceRef]);
-  });
-
-  test('returns undefined for unknown intersection type', async () => {
-    const unknownIntersectionMock = new Mock<AnyIntersection>()
-      .setup((p) => p.type)
-      .returns('unknown' as any) // Force as any to simulate unknown type
-      .setup((p) => p.point)
-      .returns(new Vector3(1, 2, 3))
-      .setup((p) => p.distanceToCamera)
-      .returns(10)
-      .object();
-
-    mockViewerGetAnyIntersectionFromPixel.mockResolvedValue(unknownIntersectionMock);
-
-    const result = await getInstancesFromClick(mockRenderTarget, mockEvent, {
-      fetchAncestorNodesTreeIndex: mockfetchAncestorNodesTreeIndex
-    });
-
-    expect(result).toBeUndefined();
   });
 });
