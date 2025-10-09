@@ -85,7 +85,7 @@ describe(PointCloudAnnotationCache.name, () => {
       const annotationsMock: CogniteClient['annotations'] = new Mock<CogniteClient['annotations']>()
         .setup((p) => p.list)
         .returns(
-          (): CursorAndAsyncIterator<any> =>
+          (): CursorAndAsyncIterator<AnnotationModel> =>
             createCursorAndAsyncIteratorMock({
               items: [wrongTypeAnnotation]
             })
