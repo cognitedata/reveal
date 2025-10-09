@@ -5,20 +5,16 @@ import {
   type ClassicDataSourceType,
   type DMInstanceRef,
   type PointCloudIntersection,
-  type DMDataSourceType
+  type DMDataSourceType,
+  type DataSourceType,
+  type CognitePointCloudModel
 } from '@cognite/reveal';
 import { Vector3 } from 'three';
-import { getInstanceDataFromIntersection } from './getInstanceDataFromIntersection';
+import { getPointCloudInstanceFromIntersection } from './getPointCloudInstanceFromIntersection';
 import { cadMock } from '#test-utils/fixtures/cadModel';
 import { createPointCloudDMMock, createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
-describe(getInstanceDataFromIntersection.name, () => {
-  const emptyResult = {
-    classicModelIdentifier: undefined,
-    dmsModelUniqueIdentifier: undefined,
-    reference: undefined
-  };
-
+describe(getPointCloudInstanceFromIntersection.name, () => {
   const mockClassicIdEither: IdEither = { id: 123 };
   const mockDmsIdentifier: DMInstanceRef = { externalId: 'ext-id', space: 'space' };
   const mockDmsIdentifier2: DMInstanceRef = { externalId: 'ext-id-2', space: 'space-2' };
@@ -33,49 +29,36 @@ describe(getInstanceDataFromIntersection.name, () => {
     revisionSpace: 'test-space'
   });
 
-  // Create test data that the real type guards will recognize
-  const classicIntersection: PointCloudIntersection<ClassicDataSourceType> = {
-    type: 'pointcloud',
-    model: pointCloudModelMock,
-    volumeMetadata: {
+  const classicIntersection = createIntersectionWithVolumeMetadataMock<ClassicDataSourceType>(
+    pointCloudModelMock,
+    1,
+    {
       assetRef: mockClassicIdEither,
       annotationId: 1
-    },
-    point: new Vector3(1, 2, 3),
-    pointIndex: 0,
-    distanceToCamera: 0,
-    annotationId: 1
-  };
+    }
+  );
 
-  const hybridIntersection: PointCloudIntersection<ClassicDataSourceType> = {
-    type: 'pointcloud',
-    model: pointCloudModelMock,
-    volumeMetadata: {
+  const hybridIntersection = createIntersectionWithVolumeMetadataMock<ClassicDataSourceType>(
+    pointCloudModelMock,
+    2,
+    {
       instanceRef: mockDmsIdentifier,
       annotationId: 2
-    },
-    point: new Vector3(1, 2, 3),
-    pointIndex: 0,
-    distanceToCamera: 0,
-    annotationId: 2
-  };
+    }
+  );
 
-  const dmsIntersection: PointCloudIntersection<DMDataSourceType> = {
-    type: 'pointcloud',
-    model: pointCloudDMMock,
-    volumeMetadata: {
+  const dmsIntersection = createIntersectionWithVolumeMetadataMock<DMDataSourceType>(
+    pointCloudDMMock,
+    3,
+    {
       assetRef: mockDmsIdentifier,
       volumeInstanceRef: mockDmsIdentifier2
-    },
-    point: new Vector3(1, 2, 3),
-    pointIndex: 0,
-    distanceToCamera: 0,
-    annotationId: 3
-  };
+    }
+  );
 
-  test('should return emptyResult when intersection is undefined', () => {
-    const result = getInstanceDataFromIntersection(undefined);
-    expect(result).toEqual(emptyResult);
+  test('should return undefined when intersection is undefined', () => {
+    const result = getPointCloudInstanceFromIntersection(undefined);
+    expect(result).toEqual(undefined);
   });
 
   test('should return emptyResult when intersection type is not pointcloud', () => {
@@ -87,13 +70,13 @@ describe(getInstanceDataFromIntersection.name, () => {
       distanceToCamera: 0
     };
 
-    const result = getInstanceDataFromIntersection(nonPointCloudIntersection);
-    expect(result).toEqual(emptyResult);
+    const result = getPointCloudInstanceFromIntersection(nonPointCloudIntersection);
+    expect(result).toEqual(undefined);
   });
 
   describe('pointcloud intersections', () => {
     test('should return classic model data when assetRef is IdEither and model is classic', () => {
-      const result = getInstanceDataFromIntersection(classicIntersection);
+      const result = getPointCloudInstanceFromIntersection(classicIntersection);
 
       expect(result).toEqual({
         classicModelIdentifier: classicIntersection.model.modelIdentifier,
@@ -103,7 +86,7 @@ describe(getInstanceDataFromIntersection.name, () => {
     });
 
     test('should return DMS model data when assetRef is DMS instance and model is DM', () => {
-      const result = getInstanceDataFromIntersection(dmsIntersection);
+      const result = getPointCloudInstanceFromIntersection(dmsIntersection);
 
       expect(result).toEqual({
         classicModelIdentifier: undefined,
@@ -113,7 +96,7 @@ describe(getInstanceDataFromIntersection.name, () => {
     });
 
     test('should return classic model data with DMS reference for hybrid intersection (instanceRef)', () => {
-      const result = getInstanceDataFromIntersection(hybridIntersection);
+      const result = getPointCloudInstanceFromIntersection(hybridIntersection);
 
       expect(result).toEqual({
         classicModelIdentifier: hybridIntersection.model.modelIdentifier,
@@ -133,9 +116,9 @@ describe(getInstanceDataFromIntersection.name, () => {
         annotationId: 1
       };
 
-      const result = getInstanceDataFromIntersection(intersectionNoVolume);
+      const result = getPointCloudInstanceFromIntersection(intersectionNoVolume);
 
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual(undefined);
     });
     test('should return emptyResult when no conditions are met', () => {
       const mockInvalidIntersection: PointCloudIntersection<ClassicDataSourceType> = {
@@ -150,9 +133,25 @@ describe(getInstanceDataFromIntersection.name, () => {
         annotationId: 1
       };
 
-      const result = getInstanceDataFromIntersection(mockInvalidIntersection);
+      const result = getPointCloudInstanceFromIntersection(mockInvalidIntersection);
 
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual(undefined);
     });
   });
 });
+
+function createIntersectionWithVolumeMetadataMock<T extends DataSourceType>(
+  model: CognitePointCloudModel<T>,
+  annotationId: number = 1,
+  pointCloudVolumeMetadata: T['pointCloudVolumeMetadata']
+): PointCloudIntersection<T> {
+  return {
+    type: 'pointcloud',
+    model,
+    point: new Vector3(1, 2, 3),
+    pointIndex: 0,
+    distanceToCamera: 0,
+    annotationId,
+    volumeMetadata: pointCloudVolumeMetadata
+  };
+}
