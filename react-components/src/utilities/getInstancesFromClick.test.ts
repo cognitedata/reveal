@@ -3,7 +3,6 @@ import { type RevealRenderTarget } from '../architecture';
 import {
   type CadIntersection,
   type PointCloudIntersection,
-  type AnyIntersection
 } from '@cognite/reveal';
 import { Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
