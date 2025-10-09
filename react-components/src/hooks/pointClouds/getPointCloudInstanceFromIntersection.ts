@@ -19,7 +19,7 @@ type InstanceData = {
   dmsModelUniqueIdentifier: DMModelIdentifierType | undefined;
   reference: IdEither | DmsUniqueIdentifier | undefined;
 };
-export function getInstanceDataFromIntersection(
+export function getPointCloudInstanceFromIntersection(
   intersection: AnyIntersection | undefined
 ): InstanceData | undefined {
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
