@@ -1,6 +1,5 @@
-import { useState, type ReactElement, useCallback, useEffect, useContext } from 'react';
+import { useState, type ReactElement, useCallback, useContext } from 'react';
 import styled from 'styled-components';
-import { type DataSourceType, type Image360 } from '@cognite/reveal';
 import { Button, CloseLargeIcon } from '@cognite/cogs.js';
 import { Image360DetailsContext } from './Image360Details.context';
 
@@ -13,38 +12,19 @@ export function Image360Details({
   appLanguage,
   enableExitButton = true
 }: Image360DetailsProps): ReactElement {
-  const { useReveal, useImage360Collections, Image360HistoricalDetails } =
+  const { useReveal, useImage360Entity, Image360HistoricalDetails } =
     useContext(Image360DetailsContext);
 
   const viewer = useReveal();
-  const [enteredEntity, setEnteredEntity] = useState<Image360<DataSourceType> | undefined>();
+  const enteredEntity = useImage360Entity(viewer);
   const [is360HistoricalPanelExpanded, setIs360HistoricalPanelExpanded] = useState<boolean>(false);
   const handleExpand = useCallback((isExpanded: boolean) => {
     setIs360HistoricalPanelExpanded(isExpanded);
   }, []);
 
-  const clearEnteredImage360 = useCallback((): void => {
-    setEnteredEntity(undefined);
-  }, [setEnteredEntity]);
-
   const exitImage360Image = useCallback((): void => {
     viewer.exit360Image();
   }, [viewer]);
-
-  const collections = useImage360Collections();
-
-  useEffect(() => {
-    collections.forEach((collection) => {
-      collection.on('image360Entered', setEnteredEntity);
-      collection.on('image360Exited', clearEnteredImage360);
-    });
-    return () => {
-      collections.forEach((collection) => {
-        collection.off('image360Entered', setEnteredEntity);
-        collection.off('image360Exited', clearEnteredImage360);
-      });
-    };
-  }, [viewer, collections, setEnteredEntity, clearEnteredImage360]);
 
   return (
     <>
@@ -61,7 +41,6 @@ export function Image360Details({
           {enableExitButton && (
             <ExitButtonContainer>
               <StyledExitButton
-                data-testid="image-360-details-exit-button"
                 icon=<CloseLargeIcon />
                 type="tertiary"
                 onClick={exitImage360Image}

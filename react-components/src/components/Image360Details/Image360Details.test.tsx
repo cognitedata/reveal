@@ -1,26 +1,21 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
-import { type ClassicDataSourceType, type Image360 } from '@cognite/reveal';
 import { Image360Details } from './Image360Details';
 import {
   defaultImage360DetailsContextDependencies,
   Image360DetailsContext
 } from './Image360Details.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
-import { createImage360DmMock } from '#test-utils/fixtures/image360';
+import { viewerExit360ImageMock, viewerMock } from '#test-utils/fixtures/viewer';
+import { createMockImage360Entity } from '#test-utils/fixtures/image360Station';
 
 describe(Image360Details.name, () => {
   const defaultDependencies = getMocksByDefaultDependencies(
     defaultImage360DetailsContextDependencies
   );
-  const mockImage360 = createImage360DmMock();
-  const entity = {
-    id: 'test-id',
-    label: 'test-label',
-    getRevisions: () => []
-  } as unknown as Image360<ClassicDataSourceType>;
-  const mockExit360Image = vi.fn();
+  const entity = createMockImage360Entity();
 
   const mockImage360HistoricalDetails = vi.fn((_props) => (
     <div data-testid="historical-details">Details</div>
@@ -34,13 +29,12 @@ describe(Image360Details.name, () => {
 
   beforeEach(() => {
     defaultDependencies.Image360HistoricalDetails = mockImage360HistoricalDetails;
-    defaultDependencies.useImage360Collections.mockReturnValue([mockImage360]);
-    defaultDependencies.useReveal.mockReturnValue({
-      exit360Image: mockExit360Image
-    } as any);
+    defaultDependencies.useImage360Entity.mockReturnValue(entity);
+    defaultDependencies.useReveal.mockReturnValue(viewerMock);
   });
 
   it('should render nothing with empty data', () => {
+    defaultDependencies.useImage360Entity.mockReturnValue(undefined);
     render(<Image360Details />, { wrapper });
 
     const details = screen.queryByTestId('historical-details');
@@ -50,89 +44,29 @@ describe(Image360Details.name, () => {
   it('should render Image360HistoricalDetails with enteredEntity', () => {
     render(<Image360Details />, { wrapper });
 
-    expect(mockImage360.on).toHaveBeenCalledTimes(2);
-
-    const [onEnteredEventType, enteredCallback] = vi.mocked(mockImage360.on).mock.calls[0] as [
-      string,
-      (entity: Image360<ClassicDataSourceType>) => void
-    ];
-    const [onExitedEventType] = vi.mocked(mockImage360.on).mock.calls[1];
-
-    expect(onEnteredEventType).toBe('image360Entered');
-    expect(onExitedEventType).toBe('image360Exited');
-
-    act(() => {
-      enteredCallback(entity);
-    });
-
     const element = screen.queryByTestId('historical-details');
+
     expect(element).toBeDefined();
     expect(mockImage360HistoricalDetails).toHaveBeenCalledTimes(1);
   });
 
-  it('should clear enteredEntity data on exit', () => {
-    render(<Image360Details />, { wrapper });
-
-    expect(mockImage360.on).toHaveBeenCalledTimes(2);
-
-    const [onEnteredEventType, enteredCallback] = vi.mocked(mockImage360.on).mock.calls[0] as [
-      string,
-      (entity: Image360<ClassicDataSourceType>) => void
-    ];
-    const [onExitedEventType, exitedCallback1] = vi.mocked(mockImage360.on).mock.calls[1];
-
-    expect(onEnteredEventType).toBe('image360Entered');
-    expect(onExitedEventType).toBe('image360Exited');
-
-    act(() => {
-      enteredCallback(entity);
-    });
-    expect(mockImage360HistoricalDetails).toHaveBeenCalledTimes(1);
-
-    act(() => {
-      exitedCallback1();
-    });
-    const element = screen.queryByTestId('historical-details');
-    expect(element).toBeNull();
-  });
-
   it('should show exit button by default and trigger exit360Image on click', async () => {
+    const user = userEvent.setup();
     render(<Image360Details />, { wrapper });
 
-    expect(mockImage360.on).toHaveBeenCalledTimes(2);
-
-    const enteredCallback = vi.mocked(mockImage360.on).mock.calls[0][1] as (
-      entity: Image360<ClassicDataSourceType>
-    ) => void;
-    act(() => {
-      enteredCallback(entity);
-    });
-
-    const exitButton = screen.getByTestId('image-360-details-exit-button');
+    const exitButton = screen.getByRole('button');
     expect(exitButton).toBeDefined();
 
-    act(() => {
-      exitButton.click();
-    });
-
+    await user.click(exitButton);
     await waitFor(() => {
-      expect(mockExit360Image).toHaveBeenCalledTimes(1);
+      expect(viewerExit360ImageMock).toHaveBeenCalledTimes(1);
     });
   });
 
   it('should not show exit button when enableExitButton is false', () => {
     render(<Image360Details enableExitButton={false} />, { wrapper });
 
-    expect(mockImage360.on).toHaveBeenCalledTimes(2);
-
-    const enteredCallback = vi.mocked(mockImage360.on).mock.calls[0][1] as (
-      entity: Image360<ClassicDataSourceType>
-    ) => void;
-    act(() => {
-      enteredCallback(entity);
-    });
-
-    const exitButton = screen.queryByTestId('image-360-details-exit-button');
+    const exitButton = screen.queryByRole('button');
     expect(exitButton).toBeNull();
   });
 });
