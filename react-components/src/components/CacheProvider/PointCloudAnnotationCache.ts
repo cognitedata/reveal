@@ -16,7 +16,6 @@ import { isSameAssetReference } from '../../utilities/instanceIds';
 
 type PointCloudAnnotationCacheDependencies = Partial<{
   fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
-  getInstanceReferencesFromAnnotation: typeof getInstanceReferencesFromPointCloudAnnotation;
 }>;
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -31,17 +30,12 @@ export class PointCloudAnnotationCache {
   >();
 
   private readonly fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
-  private readonly getInstanceReferencesFromAnnotation: typeof getInstanceReferencesFromPointCloudAnnotation;
 
   constructor(sdk: CogniteClient, dependencies: PointCloudAnnotationCacheDependencies = {}) {
     this._sdk = sdk;
 
-    const {
-      fetchAnnotationAssets = fetchPointCloudAnnotationAssets,
-      getInstanceReferencesFromAnnotation = getInstanceReferencesFromPointCloudAnnotation
-    } = dependencies;
+    const { fetchAnnotationAssets = fetchPointCloudAnnotationAssets } = dependencies;
     this.fetchAnnotationAssets = fetchAnnotationAssets;
-    this.getInstanceReferencesFromAnnotation = getInstanceReferencesFromAnnotation;
   }
 
   private async getPointCloudAnnotationAssetsForModel(
@@ -106,7 +100,7 @@ export class PointCloudAnnotationCache {
       )
     );
     const filteredAnnotationModelsByAsset = annotationModels.filter(
-      (annotation) => this.getInstanceReferencesFromAnnotation(annotation).length !== 0
+      (annotation) => getInstanceReferencesFromPointCloudAnnotation(annotation).length !== 0
     );
     return filteredAnnotationModelsByAsset as PointCloudAnnotationModel[];
   }

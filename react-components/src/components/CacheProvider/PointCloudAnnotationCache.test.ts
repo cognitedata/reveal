@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, assert } from 'vitest';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { createAssetMock, createFdmNodeItem } from '#test-utils/fixtures/assets';
 import {
@@ -10,14 +10,11 @@ import {
 import { type PointCloudAnnotationModel } from './types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 
-import { type getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { type fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import { Mock } from 'moq.ts';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
 
-const mockGetInstanceReferencesFromPointCloudAnnotation =
-  vi.fn<typeof getInstanceReferencesFromPointCloudAnnotation>();
 const mockFetchPointCloudAnnotationAssets = vi.fn<typeof fetchPointCloudAnnotationAssets>();
 
 const modelId = 123;
@@ -67,11 +64,9 @@ describe(PointCloudAnnotationCache.name, () => {
   beforeEach(() => {
     sdkMock.setup((p) => p.annotations).returns(annotationsMock);
 
-    mockGetInstanceReferencesFromPointCloudAnnotation.mockReturnValue([mockAssetInstances[0]]);
     mockFetchPointCloudAnnotationAssets.mockResolvedValue(mockAssetMappings);
     cache = new PointCloudAnnotationCache(sdkMock.object(), {
-      fetchAnnotationAssets: mockFetchPointCloudAnnotationAssets,
-      getInstanceReferencesFromAnnotation: mockGetInstanceReferencesFromPointCloudAnnotation
+      fetchAnnotationAssets: mockFetchPointCloudAnnotationAssets
     });
   });
 
@@ -113,10 +108,10 @@ describe(PointCloudAnnotationCache.name, () => {
         targetAssetId
       );
 
-      expect(result).toBeDefined();
-      expect(result!.size).toBe(1);
-      expect(result!.has(annotationId)).toBe(true);
-      expect(result!.get(annotationId)).toEqual([mockAssetInstances[0]]);
+      assert(result !== undefined);
+      expect(result.size).toBe(1);
+      expect(result.has(annotationId)).toBe(true);
+      expect(result.get(annotationId)).toEqual([mockAssetInstances[0]]);
     });
 
     it('returns matching annotations for DMS unique identifier', async () => {
@@ -125,10 +120,7 @@ describe(PointCloudAnnotationCache.name, () => {
         space: 'test-space'
       };
 
-      const dmsAssetInstance = createFdmNodeItem({
-        externalId: 'test-external-id',
-        space: 'test-space'
-      });
+      const dmsAssetInstance = createFdmNodeItem(dmsIdentifier);
 
       const dmsMappings = new Map([[annotationId, [dmsAssetInstance]]]);
 
@@ -140,10 +132,10 @@ describe(PointCloudAnnotationCache.name, () => {
         dmsIdentifier
       );
 
-      expect(result).toBeDefined();
-      expect(result?.get(annotationId)).toEqual([dmsAssetInstance]);
-      expect(result!.size).toBe(1);
-      expect(result!.has(annotationId)).toBe(true);
+      assert(result !== undefined);
+      expect(result.get(annotationId)).toEqual([dmsAssetInstance]);
+      expect(result.size).toBe(1);
+      expect(result.has(annotationId)).toBe(true);
     });
 
     it('returns undefined when no matching annotations found', async () => {
