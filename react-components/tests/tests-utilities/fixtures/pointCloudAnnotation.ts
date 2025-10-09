@@ -12,7 +12,7 @@ export function createPointCloudAnnotationMock(params?: {
     annotatedResourceType: 'threedmodel',
     annotationType: 'pointcloud.BoundingVolume',
     data: {
-      assetRef: { id: params?.assetId ?? 0 },
+      assetRef: params?.assetId !== undefined ? { id: params.assetId } : undefined,
       instanceRef:
         params?.dmIdentifier !== undefined
           ? {
