@@ -19,13 +19,12 @@ export const usePointCloudAnnotationMappingForIntersection = (
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
   const instanceData = getPointCloudInstanceFromIntersection(intersection);
   const classicModelIdentifier = instanceData?.classicModelIdentifier;
-  const dmsModelUniqueIdentifier = instanceData?.dmsModelUniqueIdentifier;
   const reference = instanceData?.reference;
 
   const queryKeyString =
     classicModelIdentifier !== undefined
       ? `${classicModelIdentifier.modelId}/${classicModelIdentifier.revisionId}`
-      : `${dmsModelUniqueIdentifier?.revisionExternalId}/${dmsModelUniqueIdentifier?.revisionSpace}`;
+      : '';
 
   return useQuery({
     queryKey: [queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(reference))],
