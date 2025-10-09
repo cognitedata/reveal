@@ -105,7 +105,7 @@ describe('annotationModelUtils', () => {
         ignoreUnknownIds: true
       });
       expect(result.size).toBe(1);
-      expect(result.get(1)).toEqual(assets[0]);
+      expect(result.get(1)).toEqual([assets[0]]);
     });
 
     test('should fetch asset for given point cloud annotations containing multiple annotation with same asset', async () => {
@@ -152,7 +152,7 @@ describe('annotationModelUtils', () => {
         ignoreUnknownIds: true
       });
       expect(result.size).toBe(2);
-      expect(result.get(1)).toEqual(assets[0]);
+      expect(result.get(1)).toEqual([assets[0]]);
     });
   });
 });

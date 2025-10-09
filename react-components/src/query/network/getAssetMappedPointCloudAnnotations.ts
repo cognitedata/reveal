@@ -11,16 +11,29 @@ import { type AddPointCloudResourceOptions } from '../../components';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 import { type AllAssetFilterProps } from './common/filters';
+import { type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';
+import { type AssetInstance } from '../../utilities/instances';
+import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
+import {
+  COGNITE_ASSET_VIEW_VERSION_KEY,
+  CORE_DM_SPACE
+} from '../../data-providers/core-dm-provider/dataModels';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
   filters: AllAssetFilterProps | undefined,
-  sdk: CogniteClient
-): Promise<Asset[]> {
+  sdk: CogniteClient,
+  fdmSdk?: FdmSDK
+): Promise<AssetInstance[]> {
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  return await getPointCloudAnnotationAssets(pointCloudAnnotations, filters, sdk);
+  const classicAssets = await getPointCloudAnnotationAssets(pointCloudAnnotations, filters, sdk);
+  const dmsInstances = fdmSdk
+    ? await getPointCloudAnnotationDmInstances(pointCloudAnnotations, fdmSdk)
+    : [];
+
+  return [...classicAssets, ...dmsInstances];
 }
 
 async function getPointCloudAnnotations(
@@ -53,7 +66,8 @@ async function getPointCloudAnnotationAssets(
   sdk: CogniteClient
 ): Promise<Asset[]> {
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
-  const annotationMapping = pointCloudAnnotations
+
+  const annotationMappingClassic = pointCloudAnnotations
     .map(
       (annotation) =>
         (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
@@ -61,8 +75,54 @@ async function getPointCloudAnnotationAssets(
     )
     .filter((annotation): annotation is string | number => annotation !== undefined);
 
-  const uniqueMappingAssetId = uniq(annotationMapping);
+  const uniqueMappingClassicAssetId = uniq(annotationMappingClassic);
 
-  const assetRefs = uniqueMappingAssetId.map(toIdEither);
+  const assetRefs = uniqueMappingClassicAssetId.map(toIdEither);
   return await getAssetsForIds(assetRefs, filters, sdk);
+}
+
+async function getPointCloudAnnotationDmInstances(
+  pointCloudAnnotations: AnnotationModel[],
+  fdmSdk: FdmSDK
+): Promise<Array<FdmNode<AssetProperties>>> {
+  const annotationMappingDms = pointCloudAnnotations
+    .map((annotation) => (annotation.data as AnnotationsBoundingVolume).instanceRef)
+    .filter((instanceRef) => instanceRef !== undefined);
+
+  const uniqueMappingDmsInstances = uniq(annotationMappingDms);
+
+  const referencesWithSources = uniqueMappingDmsInstances.map((mapping) => {
+    const reference = {
+      instanceType: mapping.instanceType,
+      externalId: mapping.externalId,
+      space: mapping.space
+    };
+
+    const sources = mapping.sources;
+    return { reference, sources };
+  });
+
+  const uniqueSources = uniq(uniqueMappingDmsInstances.flatMap((mapping) => mapping.sources));
+
+  const allResultLists = await Promise.all(
+    uniqueSources.map(async (source) => {
+      return await fdmSdk.getByExternalIds<AssetProperties>(
+        referencesWithSources
+          .map((ref) => {
+            if (ref.sources.includes(source)) {
+              return ref.reference;
+            }
+            return undefined;
+          })
+          .filter((ref) => ref !== undefined),
+        [source]
+      );
+    })
+  );
+  return allResultLists.flatMap((resultList) =>
+    resultList.items.map((item) => ({
+      ...item,
+      properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
+    }))
+  );
 }
