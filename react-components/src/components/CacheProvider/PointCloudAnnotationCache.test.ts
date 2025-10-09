@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi, assert } from 'vitest';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { createAssetMock, createFdmNodeItem } from '#test-utils/fixtures/assets';
 import {
+  type AnnotationModel,
   type AnnotationsInstanceRef,
   type CogniteClient,
   type CursorAndAsyncIterator,
