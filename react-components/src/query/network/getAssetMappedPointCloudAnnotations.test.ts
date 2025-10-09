@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
 import { type ClassicModelIdentifierType, type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
@@ -58,8 +58,6 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
     ]
   };
 
-  const mockGetByExternalIds = vi.fn<Promise<ExternalIdsResultList<AssetProperties>>>();
-
   beforeEach(async () => {
     const annotationRetrieveMock = new Mock<CogniteClient['annotations']>()
       .setup((p) => p.list)
@@ -75,8 +73,8 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       .object();
 
     mockFdmSdk = new Mock<FdmSDK>()
-      .setup((p) => p.getByExternalIds)
-      .returns(mockGetByExternalIds)
+      .setup(async (p) => await p.getByExternalIds<AssetProperties>(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(mockDmsResult))
       .object();
 
     mockGetAssetsForIds.mockResolvedValue(mockAssets);
@@ -113,8 +111,6 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       annotationsListMock.mockReturnValue(
         createCursorAndAsyncIteratorMock({ items: mixedAnnotations })
       );
-
-      mockGetByExternalIds.mockResolvedValue(mockDmsResult);
 
       const result = await getAssetsMappedPointCloudAnnotations(
         mockModels,
@@ -222,8 +218,6 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       });
       vi.mocked(mockSdk.annotations.list).mockReturnValue(mockAnnotationsList);
 
-      mockGetByExternalIds.mockResolvedValue(mockDmsResult);
-
       mockGetAssetsForIds.mockResolvedValue([]);
 
       const result = await getAssetsMappedPointCloudAnnotations(
@@ -234,8 +228,6 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
         { getAssetsByIds: mockGetAssetsForIds }
       );
 
-      expect(mockFdmSdk.getByExternalIds).toHaveBeenCalled();
-
       const expectedDmsInstanceResult: FdmNode<AssetProperties> = {
         ...mockDmsResult.items[0],
         properties: mockDmsInstances.properties
@@ -245,7 +237,11 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
     test('handles empty DMS instances gracefully', async () => {
       const mockDmsResult = { items: [] };
-      mockGetByExternalIds.mockResolvedValue(mockDmsResult);
+
+      mockFdmSdk = new Mock<FdmSDK>()
+        .setup(async (p) => await p.getByExternalIds<AssetProperties>(It.IsAny(), It.IsAny()))
+        .returns(Promise.resolve(mockDmsResult))
+        .object();
 
       const result = await getAssetsMappedPointCloudAnnotations(
         mockModels,
