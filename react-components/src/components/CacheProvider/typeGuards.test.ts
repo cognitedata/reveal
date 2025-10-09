@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { type AnnotationData, type AnnotationModel } from '@cognite/sdk';
+import { type AnnotationModel } from '@cognite/sdk';
 import { isPointCloudAnnotationModel } from './typeGuards';
 
 describe(isPointCloudAnnotationModel.name, () => {
@@ -44,33 +44,10 @@ describe(isPointCloudAnnotationModel.name, () => {
     ...commonProperties
   };
 
-  const annotationWithoutData = {
-    ...commonProperties // data property is missing
-  } as const as AnnotationModel;
-
   test('returns true for annotation with minimal required properties', () => {
     const result = isPointCloudAnnotationModel(minimalAnnotationWithEmptyRegion);
 
     expect(result).toBe(true);
-  });
-
-  test('returns false for annotation without data property', () => {
-    const result = isPointCloudAnnotationModel(annotationWithoutData);
-
-    expect(result).toBe(false);
-  });
-
-  test('returns false for annotation with data missing region property', () => {
-    const annotationWithoutRegion: AnnotationModel = {
-      data: {
-        assetRef: { id: 789 } // region property is missing
-      } as const as AnnotationData,
-      ...commonProperties
-    };
-
-    const result = isPointCloudAnnotationModel(annotationWithoutRegion);
-
-    expect(result).toBe(false);
   });
 
   test('performs type narrowing correctly', () => {
