@@ -81,11 +81,6 @@ describe(usePointCloudAnnotationMappingForIntersection.name, () => {
   ];
   beforeEach(() => {
     queryClient.clear();
-    dependencies.getInstanceDataFromIntersection.mockReturnValue({
-      classicModelIdentifier: { modelId: cadMock.modelId, revisionId: cadMock.revisionId },
-      dmsModelUniqueIdentifier: undefined,
-      reference: mockClassicIdEither
-    });
     dependencies.fetchAnnotationsForModel.mockResolvedValue(mockFetchAnnotationsForModelReturn);
   });
 
@@ -184,12 +179,6 @@ describe(usePointCloudAnnotationMappingForIntersection.name, () => {
       distanceToCamera: 0,
       annotationId: 1
     };
-
-    dependencies.getInstanceDataFromIntersection.mockReturnValue({
-      classicModelIdentifier: { modelId: cadMock.modelId, revisionId: cadMock.revisionId },
-      dmsModelUniqueIdentifier: undefined,
-      reference: undefined
-    });
 
     const { result } = renderHook(
       () => usePointCloudAnnotationMappingForIntersection(intersectionNoRef),

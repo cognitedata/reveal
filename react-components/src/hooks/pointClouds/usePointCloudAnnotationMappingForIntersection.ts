@@ -5,20 +5,19 @@ import { type AnyIntersection } from '@cognite/reveal';
 import { queryKeys } from '../../utilities/queryKeys';
 import { useContext } from 'react';
 import { UsePointCloudAnnotationMappingForIntersectionContext } from './usePointCloudAnnotationMappingForIntersection.context';
+import { getPointCloudInstanceFromIntersection } from './getPointCloudInstanceFromIntersection';
 
 export const usePointCloudAnnotationMappingForIntersection = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
-  const {
-    usePointCloudAnnotationCache,
-    fetchAnnotationsForModel,
-    getInstanceDataFromIntersection
-  } = useContext(UsePointCloudAnnotationMappingForIntersectionContext);
+  const { usePointCloudAnnotationCache, fetchAnnotationsForModel } = useContext(
+    UsePointCloudAnnotationMappingForIntersectionContext
+  );
 
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
-  const instanceData = getInstanceDataFromIntersection(intersection);
+  const instanceData = getPointCloudInstanceFromIntersection(intersection);
   const classicModelIdentifier = instanceData?.classicModelIdentifier;
   const dmsModelUniqueIdentifier = instanceData?.dmsModelUniqueIdentifier;
   const reference = instanceData?.reference;
@@ -29,9 +28,7 @@ export const usePointCloudAnnotationMappingForIntersection = (
       : `${dmsModelUniqueIdentifier?.revisionExternalId}/${dmsModelUniqueIdentifier?.revisionSpace}`;
 
   return useQuery({
-    queryKey: [
-      queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(reference) ?? '')
-    ],
+    queryKey: [queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(reference))],
     queryFn: async () => {
       if (classicModelIdentifier === undefined || reference === undefined) {
         return EMPTY_ARRAY;
