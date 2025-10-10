@@ -24,6 +24,7 @@ export const viewerSetCadModelBudgetMock = vi.fn<(budget: CadModelBudget) => voi
 export const viewerSetPointCloudModelBudgetMock = vi.fn<(budget: PointCloudBudget) => void>();
 export const viewerSetResolutionOptionsMock =
   vi.fn<(resolutionOptions: ResolutionOptions) => void>();
+export const viewerExit360ImageMock = vi.fn<Cognite3DViewer['exit360Image']>();
 
 // Fit camera
 export const fitCameraToBoundingBoxMock = vi.fn<Cognite3DViewer['fitCameraToBoundingBox']>();
@@ -80,6 +81,8 @@ export function createViewerMock(): ViewerMock {
       .returns(viewerAddPointCloudModelMock)
       .setup((p) => p.add360ImageSet)
       .returns(viewerAdd360ImageSetMock)
+      .setup((p) => p.exit360Image)
+      .returns(viewerExit360ImageMock)
       .setup((p) => p.cameraManager)
       .returns(manager)
 
