@@ -34,6 +34,7 @@ export const usePointCloudAnnotationMappingForIntersection = (
       if (classicModelIdentifier === undefined || instanceReference === undefined) {
         return EMPTY_ARRAY;
       }
+      const idEither = toIdEither(assetId);
       const result = await fetchAnnotationsForModel(
         classicModelIdentifier.modelId,
         classicModelIdentifier.revisionId,
