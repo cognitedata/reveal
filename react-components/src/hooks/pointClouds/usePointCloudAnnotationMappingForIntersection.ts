@@ -6,6 +6,12 @@ import { queryKeys } from '../../utilities/queryKeys';
 import { useContext } from 'react';
 import { UsePointCloudAnnotationMappingForIntersectionContext } from './usePointCloudAnnotationMappingForIntersection.context';
 import { getPointCloudInstanceFromIntersection } from './getPointCloudInstanceFromIntersection';
+import {
+  type InstanceReference,
+  isDmsInstance,
+  isExternalId,
+  isInternalId
+} from '../../utilities/instanceIds';
 
 export const usePointCloudAnnotationMappingForIntersection = (
   intersection: AnyIntersection | undefined
@@ -26,10 +32,9 @@ export const usePointCloudAnnotationMappingForIntersection = (
       ? `${classicModelIdentifier.modelId}/${classicModelIdentifier.revisionId}`
       : '';
 
+  const instanceQueryString = createInstanceQueryString(instanceReference);
   return useQuery({
-    queryKey: [
-      queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(instanceReference))
-    ],
+    queryKey: [queryKeys.pointCloudAnnotationForAssetId(queryKeyString, instanceQueryString)],
     queryFn: async () => {
       if (classicModelIdentifier === undefined || instanceReference === undefined) {
         return EMPTY_ARRAY;
@@ -46,3 +51,16 @@ export const usePointCloudAnnotationMappingForIntersection = (
     enabled: isPointCloudIntersection && instanceReference !== undefined
   });
 };
+
+function createInstanceQueryString(instanceReference: InstanceReference | undefined): string {
+  if (isInternalId(instanceReference)) {
+    return `${instanceReference.id}`;
+  }
+  if (isExternalId(instanceReference) && !isDmsInstance(instanceReference)) {
+    return `${instanceReference.externalId}`;
+  }
+  if (isDmsInstance(instanceReference)) {
+    return `${instanceReference.externalId}/${instanceReference.space}`;
+  }
+  return '';
+}
