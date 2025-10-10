@@ -19,7 +19,7 @@ export const usePointCloudAnnotationMappingForIntersection = (
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
   const instanceData = getPointCloudInstanceFromIntersection(intersection);
   const classicModelIdentifier = instanceData?.classicModelIdentifier;
-  const reference = instanceData?.reference;
+  const instanceReference = instanceData?.reference;
 
   const queryKeyString =
     classicModelIdentifier !== undefined
@@ -27,20 +27,22 @@ export const usePointCloudAnnotationMappingForIntersection = (
       : '';
 
   return useQuery({
-    queryKey: [queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(reference))],
+    queryKey: [
+      queryKeys.pointCloudAnnotationForAssetId(queryKeyString, JSON.stringify(instanceReference))
+    ],
     queryFn: async () => {
-      if (classicModelIdentifier === undefined || reference === undefined) {
+      if (classicModelIdentifier === undefined || instanceReference === undefined) {
         return EMPTY_ARRAY;
       }
       const result = await fetchAnnotationsForModel(
         classicModelIdentifier.modelId,
         classicModelIdentifier.revisionId,
-        [reference],
+        [instanceReference],
         pointCloudAnnotationCache
       );
       return result ?? EMPTY_ARRAY;
     },
     staleTime: Infinity,
-    enabled: isPointCloudIntersection && reference !== undefined
+    enabled: isPointCloudIntersection && instanceReference !== undefined
   });
 };

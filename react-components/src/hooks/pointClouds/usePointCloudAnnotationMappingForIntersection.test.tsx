@@ -24,27 +24,27 @@ import {
 } from './usePointCloudAnnotationMappingForIntersection.context';
 import { usePointCloudAnnotationMappingForIntersection } from './usePointCloudAnnotationMappingForIntersection';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false
-    }
-  }
-});
-
-const dependencies = getMocksByDefaultDependencies(
-  defaultUsePointCloudAnnotationMappingForIntersectionDependencies
-);
-
-const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-  <QueryClientProvider client={queryClient}>
-    <UsePointCloudAnnotationMappingForIntersectionContext.Provider value={dependencies}>
-      {children}
-    </UsePointCloudAnnotationMappingForIntersectionContext.Provider>
-  </QueryClientProvider>
-);
-
 describe(usePointCloudAnnotationMappingForIntersection.name, () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
+
+  const dependencies = getMocksByDefaultDependencies(
+    defaultUsePointCloudAnnotationMappingForIntersectionDependencies
+  );
+
+  const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
+    <QueryClientProvider client={queryClient}>
+      <UsePointCloudAnnotationMappingForIntersectionContext.Provider value={dependencies}>
+        {children}
+      </UsePointCloudAnnotationMappingForIntersectionContext.Provider>
+    </QueryClientProvider>
+  );
+
   const mockClassicIdEither: IdEither = { id: 123 };
   const classicAssetInstance = createAssetMock(123);
   const classicAssetInstance2 = createAssetMock(456);
@@ -121,7 +121,7 @@ describe(usePointCloudAnnotationMappingForIntersection.name, () => {
       { wrapper }
     );
 
-    const expectedResult: PointCloudAnnotationMappedAssetData[] | undefined = [
+    const expectedResult: PointCloudAnnotationMappedAssetData[] = [
       { annotationId: 1, asset: classicAssetInstance },
       { annotationId: 2, asset: classicAssetInstance2 }
     ];
