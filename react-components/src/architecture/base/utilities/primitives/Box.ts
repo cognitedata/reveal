@@ -1,5 +1,5 @@
 import { type Box3, Euler, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
-import { radToDeg } from 'three/src/math/MathUtils.js';
+import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 import {
   forceAngleAround0,
   forceBetween0AndPi,
@@ -109,6 +109,10 @@ export class Box extends Primitive {
       ? forceBetween0AndTwoPi(this.rotation.z)
       : forceBetween0AndPi(this.rotation.z);
     return radToDeg(zRotation);
+  }
+
+  public set zRotationInDegrees(value: number) {
+    this.rotation.z = degToRad(value);
   }
 
   // ==================================================

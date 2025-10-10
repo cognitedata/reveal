@@ -63,7 +63,7 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    add({ key: 'X:COORDINATE' }, this.center.x, Quantity.Length);
+    add({ key: 'X_COORDINATE' }, this.center.x, Quantity.Length);
     add({ key: 'Y_COORDINATE' }, this.center.y, Quantity.Length);
     add({ key: 'Z_COORDINATE' }, this.center.z, Quantity.Length);
     return info;

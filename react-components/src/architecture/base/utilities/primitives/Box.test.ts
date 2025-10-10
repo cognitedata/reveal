@@ -159,6 +159,13 @@ describe(Box.name, () => {
     expect(primitive.hasArea).toBe(false);
     expect(primitive.hasVolume).toBe(false);
   });
+
+  test('Should set and get zRotation in degrees', () => {
+    const primitive = createRegularBox();
+    const expectedZRotationInDegrees = 10;
+    primitive.zRotationInDegrees = expectedZRotationInDegrees;
+    expect(primitive.zRotationInDegrees).toBeCloseTo(expectedZRotationInDegrees);
+  });
 });
 
 function createRegularBox(): Box {

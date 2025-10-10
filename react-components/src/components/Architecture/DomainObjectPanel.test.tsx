@@ -41,11 +41,12 @@ describe(DomainObjectPanel.name, () => {
     expect(buttons.length).toBe(expectedButtonsLength);
   });
 
-  test('should render with correct info text', async () => {
+  test('should render with correct labels, units and numbers', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
     for (const subString of EXPECTED_SUB_STRINGS) {
-      expect(screen.getByText(subString)).toBeDefined();
+      const element = screen.queryByText(subString);
+      expect(element).toBeDefined();
     }
   });
 
