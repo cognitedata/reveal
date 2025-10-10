@@ -50,7 +50,7 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
     ]
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     const annotationRetrieveMock = new Mock<CogniteClient['annotations']>()
       .setup((p) => p.list)
       .returns(annotationsListMock)
