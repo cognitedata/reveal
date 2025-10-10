@@ -45,6 +45,7 @@ export const ModelLayerSelection = ({
               </IconWrapper>
             }
             disabled={isDisabled}
+            shouldPropagate={false}
           />
         </div>
       </SelectPanel.Trigger>
