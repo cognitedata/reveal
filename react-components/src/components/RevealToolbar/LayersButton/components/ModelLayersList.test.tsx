@@ -12,7 +12,7 @@ describe(ModelLayersList.name, () => {
         <SelectPanel.Body>
           <SelectPanel.Section>
             <ModelLayersList
-              modelLayerHandlers={[mockCadHandler]}
+              domainObjects={[mockCadHandler]}
               label="CAD Models"
               update={vi.fn()}
               disabled={false}

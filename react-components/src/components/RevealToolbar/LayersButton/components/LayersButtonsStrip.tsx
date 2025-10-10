@@ -6,6 +6,7 @@ import { useTranslation } from '../../../i18n/I18n';
 import { type LayersButtonProps } from '../LayersButton';
 import { LayersButtonContext } from '../LayersButton.context';
 import { use3DModelName } from '../../../../query/use3DModelName';
+import { useRenderTarget } from '../../../RevealCanvas';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
@@ -17,13 +18,15 @@ export const LayersButtonStrip = ({
     useContext(LayersButtonContext);
 
   const viewer = useReveal();
+  const renderTarget = useRenderTarget();
   const models = use3dModels();
 
-  const [modelLayerHandlers, update] = useModelHandlers(
+  const modelLayerHandlers = useModelHandlers(
     setExternalLayersState,
     viewer,
     models,
-    use3DModelName
+    use3DModelName,
+    renderTarget
   );
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
 
@@ -31,32 +34,36 @@ export const LayersButtonStrip = ({
     modelLayerHandlers,
     externalLayersState,
     setExternalLayersState,
-    update
+    renderTarget
+    // update
   );
 
-  const updateCallback = useCallback(() => {
+  /* const updateCallback = useCallback(() => {
     update();
-  }, [viewer, update]);
+  }, [viewer, update]); */
 
   return (
     <ButtonsContainer>
       <ModelLayersButton
         icon={'Cube'}
         label={t({ key: 'CAD_MODELS' })}
-        handlers={cadHandlers}
-        update={updateCallback}
+        domainObjects={cadHandlers}
+        renderTarget={renderTarget}
+        // update={updateCallback}
       />
       <ModelLayersButton
         icon={'PointCloud'}
         label={t({ key: 'POINT_CLOUDS' })}
-        handlers={pointCloudHandlers}
-        update={updateCallback}
+        domainObjects={pointCloudHandlers}
+        renderTarget={renderTarget}
+        // update={updateCallback}
       />
       <ModelLayersButton
         icon={'View360'}
         label={t({ key: 'IMAGES_360' })}
-        handlers={image360Handlers}
-        update={updateCallback}
+        domainObjects={image360Handlers}
+        renderTarget={renderTarget}
+        // update={updateCallback}
       />
     </ButtonsContainer>
   );

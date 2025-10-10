@@ -1,22 +1,30 @@
-import { type ReactElement, type ReactNode } from 'react';
+import { useEffect, useMemo, type ReactElement, type ReactNode } from 'react';
 import { type ModelHandler } from '../ModelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { CounterChip } from '@cognite/cogs.js';
+import { Changes, RevealDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { RenderTarget } from 'three';
+import { getRevealDomainUpdateSignal } from '../../../../architecture/concrete/reveal/signal/getRevealDomainObjectsSignal';
+import { useDisposableSignal } from '../../../../utilities/signal/useDisposableSignal';
 
 export const WholeLayerVisibilitySelectItem = ({
   label,
   trailingContent,
-  modelLayerHandlers,
-  update,
-  disabled
+  domainObjects,
+  // update,
+  disabled,
+  renderTarget
 }: {
   label?: string;
-  modelLayerHandlers: ModelHandler[];
-  update: () => void;
+  domainObjects: RevealDomainObject[];
+  // update: () => void;
   trailingContent?: ReactNode;
   disabled?: boolean;
+  renderTarget: RevealRenderTarget;
 }): ReactElement => {
-  const checked = modelLayerHandlers.some((handler) => handler.visible());
+  // const checked = domainObjects.some((handler) => handler.isVisible(renderTarget));
+
+  const checked = useSomeDomainObjectsVisible(domainObjects, renderTarget);
   return (
     <SelectPanel.Item
       variant="checkbox"
@@ -24,14 +32,14 @@ export const WholeLayerVisibilitySelectItem = ({
       checked={checked}
       disabled={disabled}
       onClick={() => {
-        modelLayerHandlers.forEach((handler) => {
-          handler.setVisibility(!checked);
+        domainObjects.forEach((handler) => {
+          handler.setVisibleInteractive(!checked, renderTarget);
         });
-        update();
+        // update();
       }}
       trailingContent={
         <>
-          <CounterChip counter={modelLayerHandlers.length} />
+          <CounterChip counter={domainObjects.length} />
           {trailingContent}
         </>
       }
@@ -39,3 +47,18 @@ export const WholeLayerVisibilitySelectItem = ({
     />
   );
 };
+
+function useSomeDomainObjectsVisible(
+  currentDomainObjects: RevealDomainObject[],
+  renderTarget: RevealRenderTarget
+): boolean {
+  const disposableSignal = useMemo(
+    () => getRevealDomainUpdateSignal(renderTarget, undefined, [Changes.visibleState]),
+    [renderTarget]
+  );
+
+  const allDomainObjects = useDisposableSignal(disposableSignal);
+  return useMemo(() => {
+    return currentDomainObjects.some((obj) => obj.isVisible(renderTarget));
+  }, [allDomainObjects]);
+}

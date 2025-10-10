@@ -6,6 +6,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
 import { useLayersButtonViewModel } from './LayersButton.viewmodel';
 import { type LayersUrlStateParam } from './types';
+import { useRenderTarget } from '../../RevealCanvas';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -19,11 +20,10 @@ export const LayersButton = ({
   const { t } = useTranslation();
 
   const [layersActive, setLayersActive] = useState<boolean>(false);
+  const renderTarget = useRenderTarget();
 
-  const { modelLayerHandlers, updateCallback, ModelLayerSelection } = useLayersButtonViewModel(
-    setExternalLayersState,
-    externalLayersState
-  );
+  const { modelLayerHandlers, /* updateCallback,  */ ModelLayerSelection } =
+    useLayersButtonViewModel(setExternalLayersState, externalLayersState);
 
   return (
     <>
@@ -54,18 +54,21 @@ export const LayersButton = ({
           <SelectPanel.Section>
             <ModelLayerSelection
               label={t({ key: 'CAD_MODELS' })}
-              modelLayerHandlers={modelLayerHandlers.cadHandlers}
-              update={updateCallback}
+              domainObjects={modelLayerHandlers.cadHandlers}
+              renderTarget={renderTarget}
+              // update={updateCallback}
             />
             <ModelLayerSelection
               label={t({ key: 'POINT_CLOUDS' })}
-              modelLayerHandlers={modelLayerHandlers.pointCloudHandlers}
-              update={updateCallback}
+              domainObjects={modelLayerHandlers.pointCloudHandlers}
+              renderTarget={renderTarget}
+              // update={updateCallback}
             />
             <ModelLayerSelection
               label={t({ key: 'IMAGES_360' })}
-              modelLayerHandlers={modelLayerHandlers.image360Handlers}
-              update={updateCallback}
+              domainObjects={modelLayerHandlers.image360Handlers}
+              renderTarget={renderTarget}
+              // update={updateCallback}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>
