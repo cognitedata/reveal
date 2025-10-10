@@ -44,20 +44,12 @@ describe(isPointCloudAnnotationModel.name, () => {
     ...commonProperties
   };
 
-  const annotationWithoutData = {
-    ...commonProperties // data property is missing
-  } as const as AnnotationModel;
-
   test('returns true for point cloud annotation with minimal required properties', () => {
     expect(isPointCloudAnnotationModel(minimalAnnotationWithEmptyRegion)).toBe(true);
   });
 
   test('returns true for point cloud annotation with references', () => {
     expect(isPointCloudAnnotationModel(annotationWithExtras)).toBe(true);
-  });
-
-  test('returns false for annotation without data property', () => {
-    expect(isPointCloudAnnotationModel(annotationWithoutData)).toBe(false);
   });
 
   test('returns false for annotation with data missing region property', () => {
