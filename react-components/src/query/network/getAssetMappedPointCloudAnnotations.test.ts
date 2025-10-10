@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { It, Mock } from 'moq.ts';
-import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps, type IdEither } from '@cognite/sdk';
 import { type ClassicModelIdentifierType, type ClassicDataSourceType } from '@cognite/reveal';
 import { type AddPointCloudResourceOptions } from '../../components';
 import { createAssetMock, createFdmNodeItem } from '../../../tests/tests-utilities/fixtures/assets';
@@ -179,10 +179,13 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
 
   describe('asset filtering', () => {
     test('filters out annotations without asset references', async () => {
+      const assetId: IdEither = {
+        id: 1
+      };
       const annotationsWithoutAssets = [
-        createPointCloudAnnotationMock({ assetId: 1, modelId: 123 }),
+        createPointCloudAnnotationMock({ assetId: assetId.id, modelId: 123 }),
         {
-          ...createPointCloudAnnotationMock({ modelId: 789 }),
+          ...createPointCloudAnnotationMock({ modelId: 789 }), // No assetRef or instanceRef
           data: { region: [] }
         }
       ];
@@ -195,6 +198,8 @@ describe(getAssetsMappedPointCloudAnnotations.name, () => {
       await getAssetsMappedPointCloudAnnotations(mockModels, undefined, mockSdk, undefined, {
         getAssetsByIds: mockGetAssetsForIds
       });
+
+      expect(mockGetAssetsForIds).toHaveBeenCalledWith([assetId], undefined, mockSdk);
     });
   });
 
