@@ -20,7 +20,7 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
           <SelectPanel.Section>
             <WholeLayerVisibilitySelectItem
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
+              domainObjects={[mockCadHandler]}
               update={updateMock}
             />
           </SelectPanel.Section>
@@ -40,7 +40,7 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
           <SelectPanel.Section>
             <WholeLayerVisibilitySelectItem
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
+              domainObjects={[mockCadHandler]}
               update={vi.fn()}
             />
           </SelectPanel.Section>
@@ -68,7 +68,7 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
           <SelectPanel.Section>
             <WholeLayerVisibilitySelectItem
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
+              domainObjects={[mockCadHandler]}
               update={vi.fn()}
               disabled={true}
             />

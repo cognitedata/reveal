@@ -21,6 +21,14 @@ import {
 } from '../ModelHandler';
 import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 import { type UseQueryResult } from '@tanstack/react-query';
+import {
+  CadDomainObject,
+  Image360CollectionDomainObject,
+  PointCloudDomainObject,
+  RevealDomainObject,
+  RevealRenderTarget
+} from '../../../../architecture';
+import { useRevealDomainObjects, useVisibleRevealDomainObjects } from '../../../../hooks';
 
 export type UpdateModelHandlersCallback = (
   models: Array<CogniteModel<DataSourceType>>,
@@ -31,30 +39,42 @@ export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
   viewer: Cognite3DViewer<DataSourceType>,
   models: Array<CogniteModel<DataSourceType>>,
-  use3DModelName: (modelIds: number[]) => UseQueryResult<Array<string | undefined>, unknown>
-): [ModelLayerHandlers, () => void] => {
-  const image360Collections = useMemo(
+  use3DModelName: (modelIds: number[]) => UseQueryResult<Array<string | undefined>, unknown>,
+  renderTarget: RevealRenderTarget
+): ModelLayerHandlers => {
+  /* const image360Collections = useMemo(
     () => viewer.get360ImageCollections(),
     [viewer, viewer.get360ImageCollections().length]
   );
   const modelIds = useMemo(() => models.map((model) => model.modelId), [models]);
-  const modelNames = use3DModelName(modelIds);
+  const modelNames = use3DModelName(modelIds); */
 
-  const [modelHandlers, setModelHandlers] = useState(
+  const domainObjects = useRevealDomainObjects();
+
+  /* const [modelHandlers, setModelHandlers] = useState(
     createHandlers(models, modelNames.data, image360Collections, viewer)
   );
   useEffect(() => {
     const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
     setModelHandlers(newHandlers);
-  }, [models, modelNames.data, image360Collections, viewer]);
+    }, [models, modelNames.data, image360Collections, viewer]); */
 
-  const update = useCallback(
+  // Plz don't commit
+  const domainObjectsByVisibility = useVisibleRevealDomainObjects();
+  useEffect(() => {
+    setExternalLayersState?.(
+      createExternalStateFromLayers(createModelLayersObject(domainObjects), renderTarget)
+    );
+    domainObjects.map((p) => p.isVisible(renderTarget));
+  }, [domainObjectsByVisibility]);
+
+  /* const update = useCallback(
     (
       models: Array<CogniteModel<DataSourceType>>,
       image360Collections: Array<Image360Collection<DataSourceType>>
     ) => {
       const newModelHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
-      setModelHandlers(newModelHandlers);
+      // setModelHandlers(newModelHandlers);
       const newExternalState = createExternalStateFromLayers(newModelHandlers);
 
       setExternalLayersState?.(newExternalState);
@@ -62,17 +82,27 @@ export const useModelHandlers = (
       viewer.requestRedraw();
     },
     [setExternalLayersState, models, modelNames.data, viewer]
-  );
+    ); */
 
-  return [
+  return createModelLayersObject(domainObjects);
+
+  /* return [
     modelHandlers,
     () => {
       update(models, viewer.get360ImageCollections());
     }
-  ];
+  ]; */
 };
 
-function createHandlers(
+function createModelLayersObject(domainObjects: RevealDomainObject[]): ModelLayerHandlers {
+  return {
+    cadHandlers: domainObjects.filter((obj) => obj instanceof CadDomainObject),
+    pointCloudHandlers: domainObjects.filter((obj) => obj instanceof PointCloudDomainObject),
+    image360Handlers: domainObjects.filter((obj) => obj instanceof Image360CollectionDomainObject)
+  };
+}
+
+/* function createHandlers(
   models: Array<CogniteModel<DataSourceType>>,
   modelNames: Array<string | undefined> | undefined,
   image360Collections: Array<Image360Collection<DataSourceType>>,
@@ -110,23 +140,26 @@ function createHandlers(
         new Image360CollectionHandler(collection, is360CollectionCurrentlyEntered, exit360Image)
     )
   };
-}
+} */
 
-function createExternalStateFromLayers(modelHandlers: ModelLayerHandlers): LayersUrlStateParam {
+function createExternalStateFromLayers(
+  modelHandlers: ModelLayerHandlers,
+  renderTarget: RevealRenderTarget
+): LayersUrlStateParam {
   return {
     cadLayers: modelHandlers.cadHandlers.map((cadHandler, handlerIndex) => ({
-      applied: cadHandler.visible(),
-      revisionId: cadHandler.getRevisionId(),
+      applied: cadHandler.isVisible(renderTarget),
+      revisionId: cadHandler.model.revisionId,
       index: handlerIndex
     })),
     pointCloudLayers: modelHandlers.pointCloudHandlers.map((pointCloudHandler, handlerIndex) => ({
-      applied: pointCloudHandler.visible(),
-      revisionId: pointCloudHandler.getRevisionId(),
+      applied: pointCloudHandler.isVisible(renderTarget),
+      revisionId: pointCloudHandler.model.revisionId,
       index: handlerIndex
     })),
     image360Layers: modelHandlers.image360Handlers.map((image360Handler, handlerIndex) => ({
-      applied: image360Handler.visible(),
-      siteId: image360Handler.getSiteId(),
+      applied: image360Handler.isVisible(renderTarget),
+      siteId: image360Handler.model.id,
       index: handlerIndex
     }))
   };

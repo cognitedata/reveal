@@ -4,12 +4,14 @@ import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 import { updateExternalStateFromLayerHandlers } from '../updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from '../updateViewerFromExternalState';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
+import { RevealRenderTarget } from '../../../../architecture';
 
 export const useSyncExternalLayersState = (
   modelLayerHandlers: ModelLayerHandlers,
   externalLayersState: LayersUrlStateParam | undefined,
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  update: UpdateModelHandlersCallback
+  renderTarget: RevealRenderTarget
+  // update: UpdateModelHandlersCallback
 ): void => {
   const lastExternalState = useRef(externalLayersState);
   const lastModelLayerHandlers = useRef(modelLayerHandlers);
@@ -17,7 +19,9 @@ export const useSyncExternalLayersState = (
   const viewer = useReveal();
 
   useEffect(() => {
-    if (areLayerStatesConsistent(modelLayerHandlers, externalLayersState)) {
+    if (areLayerStatesConsistent(modelLayerHandlers, externalLayersState, renderTarget)) {
+      lastExternalState.current = externalLayersState;
+      lastModelLayerHandlers.current = modelLayerHandlers;
       return;
     }
 
@@ -25,12 +29,22 @@ export const useSyncExternalLayersState = (
       lastModelLayerHandlers.current === modelLayerHandlers ||
       lastExternalState.current !== externalLayersState
     ) {
+      console.log(
+        'Updating local state from external state because',
+        lastModelLayerHandlers.current === modelLayerHandlers,
+        lastExternalState.current !== externalLayersState
+      );
       // Change happened in external state
-      updateViewerFromExternalState(externalLayersState, viewer);
-      update(viewer.models, viewer.get360ImageCollections());
+      updateViewerFromExternalState(externalLayersState, modelLayerHandlers, renderTarget);
+      // update(viewer.models, viewer.get360ImageCollections());
     } else {
       // Change happened in local state
-      updateExternalStateFromLayerHandlers(modelLayerHandlers, setExternalLayersState);
+      console.log('Updating external state from local state');
+      updateExternalStateFromLayerHandlers(
+        modelLayerHandlers,
+        setExternalLayersState,
+        renderTarget
+      );
     }
 
     lastExternalState.current = externalLayersState;
@@ -40,7 +54,8 @@ export const useSyncExternalLayersState = (
 
 function areLayerStatesConsistent(
   handlers: ModelLayerHandlers,
-  externalState: LayersUrlStateParam | undefined
+  externalState: LayersUrlStateParam | undefined,
+  renderTarget: RevealRenderTarget
 ): boolean {
   if (externalState === undefined) {
     return (
@@ -54,8 +69,8 @@ function areLayerStatesConsistent(
     externalState.cadLayers?.length === handlers.cadHandlers.length &&
     (externalState.cadLayers?.every(
       (layer, index) =>
-        handlers.cadHandlers[index].getRevisionId() === layer.revisionId &&
-        handlers.cadHandlers[index].visible() === layer.applied
+        handlers.cadHandlers[index].model.revisionId === layer.revisionId &&
+        handlers.cadHandlers[index].isVisible(renderTarget) === layer.applied
     ) ??
       false);
 
@@ -63,8 +78,8 @@ function areLayerStatesConsistent(
     externalState.pointCloudLayers?.length === handlers.pointCloudHandlers.length &&
     (externalState.pointCloudLayers?.every(
       (layer, index) =>
-        handlers.pointCloudHandlers[index].getRevisionId() === layer.revisionId &&
-        handlers.pointCloudHandlers[index].visible() === layer.applied
+        handlers.pointCloudHandlers[index].model.revisionId === layer.revisionId &&
+        handlers.pointCloudHandlers[index].isVisible(renderTarget) === layer.applied
     ) ??
       false);
 
@@ -72,8 +87,9 @@ function areLayerStatesConsistent(
     externalState.image360Layers?.length === handlers.image360Handlers.length &&
     (externalState.image360Layers?.every(
       (layer) =>
-        handlers.image360Handlers.find((image) => image.getSiteId() === layer.siteId)?.visible() ===
-        layer.applied
+        handlers.image360Handlers
+          .find((image) => image.model.id === layer.siteId)
+          ?.isVisible(renderTarget) === layer.applied
     ) ??
       false);
 

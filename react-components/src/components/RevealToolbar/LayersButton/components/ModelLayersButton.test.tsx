@@ -16,7 +16,7 @@ describe(ModelLayersButton.name, () => {
       <ModelLayersButton
         icon="CubeIcon"
         label="CAD Models"
-        handlers={[mockCadHandler]}
+        domainObjects={[mockCadHandler]}
         update={vi.fn()}
       />
     );
@@ -30,7 +30,7 @@ describe(ModelLayersButton.name, () => {
       <ModelLayersButton
         icon="CubeIcon"
         label="CAD Models"
-        handlers={[mockCadHandler]}
+        domainObjects={[mockCadHandler]}
         update={updateMock}
       />
     );

@@ -4,46 +4,51 @@ import { type ReactElement, useCallback } from 'react';
 import { type ModelHandler } from '../ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
+import { RevealDomainObject, RevealRenderTarget } from '../../../../architecture';
 
 type UpdateCallback = () => void;
 
 type ModelLayerSelectionProps = {
   label: string;
-  modelLayerHandlers: ModelHandler[];
-  update: UpdateCallback;
+  domainObjects: RevealDomainObject[];
+  // update: UpdateCallback;
+  renderTarget: RevealRenderTarget;
 };
 
 export const ModelLayerSelection = ({
   label,
-  modelLayerHandlers,
-  update
+  domainObjects,
+  // update,
+  renderTarget
 }: ModelLayerSelectionProps): ReactElement => {
-  const isDisabled = modelLayerHandlers.length === 0;
+  const isDisabled = domainObjects.length === 0;
 
-  const updateCallback = useCallback(() => {
+  /* const updateCallback = useCallback(() => {
     update();
-  }, [update]);
+  }, [update]); */
 
   return (
     <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={!isDisabled}>
       <SelectPanel.Trigger>
         <WholeLayerVisibilitySelectItem
           label={label}
-          modelLayerHandlers={modelLayerHandlers}
-          update={updateCallback}
+          domainObjects={domainObjects}
+          // update={updateCallback}
           trailingContent={
             <IconWrapper size={16}>
               <ChevronRightSmallIcon />
             </IconWrapper>
           }
+          renderTarget={renderTarget}
           disabled={isDisabled}
         />
       </SelectPanel.Trigger>
       <SelectPanel.Body>
         <ModelLayersList
-          modelLayerHandlers={modelLayerHandlers}
-          update={updateCallback}
+          domainObjects={domainObjects}
+          // update={updateCallback}
           disabled={isDisabled}
+          renderTarget={renderTarget}
         />
       </SelectPanel.Body>
     </SelectPanel>

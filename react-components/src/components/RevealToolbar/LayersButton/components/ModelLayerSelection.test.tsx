@@ -15,7 +15,7 @@ describe(ModelLayerSelection.name, () => {
           <SelectPanel.Section>
             <ModelLayerSelection
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
+              domainObjects={[mockCadHandler]}
               update={updateMock}
             />
           </SelectPanel.Section>
@@ -35,7 +35,7 @@ describe(ModelLayerSelection.name, () => {
           <SelectPanel.Section>
             <ModelLayerSelection
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
+              domainObjects={[mockCadHandler]}
               update={vi.fn()}
             />
           </SelectPanel.Section>
@@ -52,7 +52,7 @@ describe(ModelLayerSelection.name, () => {
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
-            <ModelLayerSelection label="CAD Models" modelLayerHandlers={[]} update={vi.fn()} />
+            <ModelLayerSelection label="CAD Models" domainObjects={[]} update={vi.fn()} />
           </SelectPanel.Section>
         </SelectPanel.Body>
       </SelectPanel>
