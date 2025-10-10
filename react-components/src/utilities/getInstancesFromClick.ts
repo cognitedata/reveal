@@ -23,7 +23,7 @@ type InstancesFromClickDependencies = {
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,
   event: PointerEvent,
-  dependencies: Partial<InstancesFromClickDependencies> = {}
+  dependencies?: InstancesFromClickDependencies
 ): Promise<InstanceReference[] | undefined> {
   const viewer = renderTarget.viewer;
   const caches = renderTarget.cdfCaches;
@@ -113,7 +113,7 @@ function getPointCloudFdmInstancesFromIntersection(
 export async function getInstancesFromCadIntersection(
   intersection: CadIntersection,
   caches: CdfCaches,
-  dependencies: Partial<InstancesFromClickDependencies> = {}
+  dependencies?: InstancesFromClickDependencies
 ): Promise<InstanceReference[]> {
   const fdmDataPromise = getCadFdmDataPromise(intersection, caches);
 
@@ -143,13 +143,15 @@ async function getCadFdmDataPromise(
 async function getAssetMappingPromise(
   intersection: CadIntersection,
   caches: CdfCaches,
-  dependencies: Partial<InstancesFromClickDependencies> = {}
+  dependencies?: InstancesFromClickDependencies
 ): Promise<InstanceReference[]> {
   if (caches.coreDmOnly) {
     return [];
   }
 
-  const { fetchAncestorNodesTreeIndex = fetchAncestorNodesForTreeIndex } = dependencies;
+  const { fetchAncestorNodesTreeIndex } = dependencies ?? {
+    fetchAncestorNodesTreeIndex: fetchAncestorNodesForTreeIndex
+  };
   const ancestors = await fetchAncestorNodesTreeIndex(
     intersection.model.modelId,
     intersection.model.revisionId,
