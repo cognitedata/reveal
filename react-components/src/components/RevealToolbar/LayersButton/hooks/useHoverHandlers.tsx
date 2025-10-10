@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 
 export type UseHoverHandlersProps = { isDisabled: boolean };
 export type UseHoverHandlersReturnType = {
@@ -16,31 +16,46 @@ export const useHoverHandlers = (
   const closeTimeoutRef = useRef<number | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  const setPanelToClose = (): void => {
-    setIsPanelOpen(false);
-  };
-
-  const openPanel = (): void => {
+  const removeTimeout = (): void => {
     if (closeTimeoutRef.current !== null) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
+  };
+
+  useEffect(() => {
+    return () => {
+      removeTimeout();
+    };
+  }, []);
+
+  const setPanelToClose = useCallback((): void => {
+    setIsPanelOpen(false);
+  }, []);
+
+  const openPanel = useCallback((): void => {
+    removeTimeout();
     if (!isDisabled) {
       setIsPanelOpen(true);
     }
-  };
+  }, [isDisabled]);
 
-  const closePanel = (): void => {
-    closeTimeoutRef.current = window.setTimeout(() => {
-      setPanelToClose();
-      closeTimeoutRef.current = null;
-    }, 100);
-  };
+  const closePanel = useCallback((): void => {
+    if (!isDisabled) {
+      closeTimeoutRef.current = window.setTimeout(() => {
+        setPanelToClose();
+        closeTimeoutRef.current = null;
+      }, 100);
+    }
+  }, [isDisabled, setPanelToClose]);
 
-  const hoverHandlers = {
-    onMouseEnter: openPanel,
-    onMouseLeave: closePanel
-  };
+  const hoverHandlers = useMemo(
+    () => ({
+      onMouseEnter: openPanel,
+      onMouseLeave: closePanel
+    }),
+    [openPanel, closePanel]
+  );
 
   return { hoverHandlers, isPanelOpen, setPanelToClose };
 };

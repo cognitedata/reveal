@@ -30,7 +30,7 @@ export const ModelLayerSelection = ({
     <SelectPanel
       placement="right"
       hideOnOutsideClick={true}
-      openOnHover={isDisabled}
+      openOnHover={false}
       visible={isPanelOpen}
       onHide={setPanelToClose}>
       <SelectPanel.Trigger>
