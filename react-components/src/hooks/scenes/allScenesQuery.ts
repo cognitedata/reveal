@@ -5,6 +5,7 @@ import {
   image360CollectionSourceWithProperties,
   revisionSourceWithProperties,
   SCENE_QUERY_LIMIT,
+  SCENE_RELATED_DATA_LIMIT,
   sceneSourceWithProperties,
   transformationSourceWithProperties
 } from './types';
@@ -12,8 +13,11 @@ import {
 export type ScenesQuery = ReturnType<typeof getAllScenesQuery>;
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) => {
-  return {
+const getAllScenesQuery = (
+  limit: number = SCENE_QUERY_LIMIT,
+  cursors?: { scenes?: string; sceneModels?: string; scene360Collections?: string }
+) => {
+  const query = {
     with: {
       scenes: {
         nodes: {
@@ -28,7 +32,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             ]
           }
         },
-        limit
+        ...(limit > 0 && { limit })
       },
       sceneModels: {
         edges: {
@@ -45,7 +49,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             }
           }
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       scene360Collections: {
         edges: {
@@ -62,7 +66,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             }
           }
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       sceneSkybox: {
         nodes: {
@@ -78,7 +82,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
           },
           direction: 'outwards'
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       sceneGroundPlaneEdges: {
         edges: {
@@ -95,14 +99,14 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             }
           }
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       sceneGroundPlanes: {
         nodes: {
           from: 'sceneGroundPlaneEdges',
           chainTo: 'destination'
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       }
     },
     select: {
@@ -125,13 +129,27 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
         sources: groundPlaneSourceWithProperties
       }
     },
-    cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
+    ...(cursors !== undefined && { cursors })
   } as const satisfies Omit<QueryRequest, 'parameters'>;
+
+  return query;
 };
 
 export function createGetScenesQuery(
   limit: number = SCENE_QUERY_LIMIT,
-  sceneCursor?: string
+  sceneCursor?: string,
+  otherCursors?: { sceneModels?: string; scene360Collections?: string }
 ): ScenesQuery {
-  return getAllScenesQuery(limit, sceneCursor);
+  const cursors = {
+    scenes: sceneCursor,
+    ...otherCursors
+  };
+
+  // Clean up undefined cursors so we don't send them in the request
+  if (cursors.scenes === undefined) delete cursors.scenes;
+  if (cursors.sceneModels === undefined) delete cursors.sceneModels;
+  if (cursors.scene360Collections === undefined) delete cursors.scene360Collections;
+
+  const finalCursors = Object.keys(cursors).length > 0 ? cursors : undefined;
+  return getAllScenesQuery(limit, finalCursors);
 }

@@ -19,6 +19,7 @@ import {
 import { type UseQueryResult } from '@tanstack/react-query';
 
 export const SCENE_QUERY_LIMIT = 100;
+export const SCENE_RELATED_DATA_LIMIT = 10000;
 
 export type Transformation3d = {
   translationX: number;
