@@ -16,38 +16,35 @@ export const useHoverHandlers = (
   const closeTimeoutRef = useRef<number | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  const removeTimeout = (): void => {
+  const removeTimeout = useCallback((): void => {
     if (closeTimeoutRef.current !== null) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-  };
+  }, []);
 
   useEffect(() => {
-    return () => {
-      removeTimeout();
-    };
-  }, []);
+    return removeTimeout;
+  }, [removeTimeout]);
 
   const setPanelToClose = useCallback((): void => {
+    removeTimeout();
     setIsPanelOpen(false);
-  }, []);
+  }, [removeTimeout]);
 
   const openPanel = useCallback((): void => {
     removeTimeout();
     if (!isDisabled) {
       setIsPanelOpen(true);
     }
-  }, [isDisabled]);
+  }, [isDisabled, removeTimeout]);
 
   const closePanel = useCallback((): void => {
+    removeTimeout();
     if (!isDisabled) {
-      closeTimeoutRef.current = window.setTimeout(() => {
-        setPanelToClose();
-        closeTimeoutRef.current = null;
-      }, 100);
+      closeTimeoutRef.current = window.setTimeout(setPanelToClose, 100);
     }
-  }, [isDisabled, setPanelToClose]);
+  }, [isDisabled, setPanelToClose, removeTimeout]);
 
   const hoverHandlers = useMemo(
     () => ({
