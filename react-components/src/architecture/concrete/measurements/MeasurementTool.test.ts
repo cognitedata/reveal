@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { MeasurementTool } from './MeasurementTool';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { getCircleMarker, getOrCreateCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { MOUSE } from 'three';

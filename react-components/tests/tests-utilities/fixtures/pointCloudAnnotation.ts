@@ -2,6 +2,7 @@ import { type AnnotationModel } from '@cognite/sdk';
 
 export function createPointCloudAnnotationMock(params?: {
   assetId?: number;
+  dmIdentifier?: { space: string; externalId: string };
   modelId?: number;
 }): AnnotationModel {
   return {
@@ -11,6 +12,21 @@ export function createPointCloudAnnotationMock(params?: {
     annotationType: 'threed.BoundingVolume',
     data: {
       assetRef: { id: params?.assetId ?? 0 },
+      instanceRef:
+        params?.dmIdentifier !== undefined
+          ? {
+              ...params.dmIdentifier,
+              instanceType: 'node',
+              sources: [
+                {
+                  externalId: 'source-external-id',
+                  space: 'source-space',
+                  type: 'view' as const,
+                  version: '1'
+                }
+              ]
+            }
+          : undefined,
       region: []
     },
     createdTime: new Date(),
