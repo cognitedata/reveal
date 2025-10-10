@@ -58,7 +58,7 @@ export function useImage360HistoricalDetailsViewModel({
       });
       setImageUrls([]);
     };
-  }, [image360Entity, revokeObjectUrl, formatDateTime]);
+  }, [image360Entity, imageUrls, revokeObjectUrl, formatDateTime]);
 
   useEffect(() => {
     if (onExpand !== undefined) {

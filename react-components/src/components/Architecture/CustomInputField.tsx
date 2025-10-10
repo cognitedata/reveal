@@ -41,7 +41,10 @@ export const CustomInputField = ({
 
   const renderTarget = useRenderTarget();
 
-  const command = useMemo(() => getDefaultCommand(inputCommand, renderTarget), [inputCommand]);
+  const command = useMemo(
+    () => getDefaultCommand(inputCommand, renderTarget),
+    [inputCommand, renderTarget]
+  );
   const [enabled, setEnabled] = useState<boolean>(command.isEnabled);
   const [postLabel, setPostLabel] = useState<string | undefined>(
     translateIfExists(command.getPostButtonLabel())

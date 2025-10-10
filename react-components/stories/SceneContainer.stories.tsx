@@ -48,40 +48,40 @@ export const Main: Story = {
       }
     }
   },
-  render: ({
-    sceneExternalId,
-    sceneSpaceId,
-    defaultResourceStyling
-  }: {
-    sceneExternalId: string;
-    sceneSpaceId: string;
-    defaultResourceStyling?: DefaultResourceStyling;
-  }) => {
-    const [selectedScene, setSelectedScene] = useState<DmsUniqueIdentifier | undefined>(undefined);
-    return (
-      <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk} useCoreDm>
-        <MyCustomToolbar>
-          <RevealToolbar.ResetCameraButton
-            sceneExternalId={selectedScene?.externalId}
-            sceneSpaceId={selectedScene?.space}
-          />
-          <RevealToolbar.SelectSceneButton
-            selectedScene={selectedScene}
-            setSelectedScene={setSelectedScene}
-          />
-          <RevealToolbar.FitModelsButton />
-        </MyCustomToolbar>
-        <SceneContainerStoryContent
-          sceneExternalId={
-            selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId
-          }
-          sceneSpaceId={selectedScene !== undefined ? selectedScene?.space : sceneSpaceId}
-          defaultResourceStyling={defaultResourceStyling}
-        />
-      </RevealStoryContainer>
-    );
-  }
+  render: (props) => <MainStoryComponent {...props} />
 };
+
+function MainStoryComponent({
+  sceneExternalId,
+  sceneSpaceId,
+  defaultResourceStyling
+}: {
+  sceneExternalId: string;
+  sceneSpaceId: string;
+  defaultResourceStyling?: DefaultResourceStyling;
+}): ReactElement {
+  const [selectedScene, setSelectedScene] = useState<DmsUniqueIdentifier | undefined>(undefined);
+  return (
+    <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk} useCoreDm>
+      <MyCustomToolbar>
+        <RevealToolbar.ResetCameraButton
+          sceneExternalId={selectedScene?.externalId}
+          sceneSpaceId={selectedScene?.space}
+        />
+        <RevealToolbar.SelectSceneButton
+          selectedScene={selectedScene}
+          setSelectedScene={setSelectedScene}
+        />
+        <RevealToolbar.FitModelsButton />
+      </MyCustomToolbar>
+      <SceneContainerStoryContent
+        sceneExternalId={selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId}
+        sceneSpaceId={selectedScene !== undefined ? selectedScene?.space : sceneSpaceId}
+        defaultResourceStyling={defaultResourceStyling}
+      />
+    </RevealStoryContainer>
+  );
+}
 
 type SceneContainerStoryContentProps = {
   sceneExternalId: string;

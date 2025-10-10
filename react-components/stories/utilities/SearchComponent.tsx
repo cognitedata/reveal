@@ -26,8 +26,8 @@ import { isClassicAsset } from '../../src/utilities/instances/typeGuards';
 
 type SearchComponentProps = {
   sdk: CogniteClient;
-  sceneExternalId?: string;
-  sceneSpaceId?: string;
+  sceneExternalId: string;
+  sceneSpaceId: string;
   resources?: AddResourceOptions[];
   viewsToSearch?: Source[] | SimpleSource[];
 };
@@ -50,10 +50,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   sdk,
   viewsToSearch
 }) => {
-  const fetchedResources =
-    sceneExternalId !== undefined && sceneSpaceId !== undefined
-      ? useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId)
-      : [];
+  const fetchedResources = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
   const resources = propResources ?? fetchedResources;
 
   const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
@@ -241,8 +238,10 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     searchData,
     allAssets,
     all360ImageAssetAnnotationMappings,
+    allPointCloudAssets,
     assetSearchData,
     assetAnnotationImage360SearchData,
+    pointCloudAssetSearchData,
     searchMethod
   ]);
 

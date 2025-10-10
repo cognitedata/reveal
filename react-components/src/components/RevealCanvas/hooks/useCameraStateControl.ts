@@ -33,7 +33,7 @@ const useSetInternalCameraStateOnExternalUpdate = (
     }
 
     reveal.cameraManager.setCameraState(externalCameraState);
-  }, [externalCameraState]);
+  }, [externalCameraState, lastSetExternalState, reveal.cameraManager]);
 };
 
 const useSetExternalCameraStateOnCameraMove = (
@@ -66,7 +66,7 @@ const useSetExternalCameraStateOnCameraMove = (
     return () => {
       reveal.cameraManager.off('cameraStop', updateStateOnCameraStop);
     };
-  }, [externalCameraState, setCameraState, lastSetExternalState]);
+  }, [externalCameraState, setCameraState, lastSetExternalState, reveal.cameraManager]);
 };
 
 function isCameraStatesEqual(

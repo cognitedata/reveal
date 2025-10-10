@@ -43,7 +43,7 @@ const exampleToolBarButtons: ToolBarButton[] = [
   }
 ];
 
-const exampleCustomSettingElements = (): ReactElement => {
+const ExampleCustomSettingElements = (): ReactElement => {
   const [originalCadColor, setOriginalCadColor] = useState(false);
 
   return (
@@ -95,7 +95,7 @@ export const Main: Story = {
       <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
-        customSettingsContent={exampleCustomSettingElements()}
+        customSettingsContent={ExampleCustomSettingElements()}
         lowFidelitySettings={exampleLowQualitySettings}
         highFidelitySettings={exampleHighQualitySettings}
       />
@@ -135,7 +135,7 @@ function FitToUrlCameraState(): ReactElement {
     const currentCameraState = getCameraState();
     if (currentCameraState === undefined) return;
     cameraNavigation.fitCameraToState(currentCameraState);
-  }, []);
+  }, [cameraNavigation, getCameraState]);
 
   return <></>;
 }

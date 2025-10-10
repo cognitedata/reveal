@@ -38,7 +38,7 @@ const useTranslationContent = (
     return () => {
       window.removeEventListener('languagechange', handleLanguageChange);
     };
-  }, []);
+  }, [currentLanguage, enabled]);
 
   useEffect(() => {
     if (!enabled) {
@@ -59,7 +59,7 @@ const useTranslationContent = (
     loadTranslations().catch(() => {
       console.warn('Translation not found. Default language: English is loaded');
     });
-  }, [currentLanguage]);
+  }, [currentLanguage, enabled]);
 
   const translate = (input: TranslationInput): string => {
     if (isTranslatedString(input)) {

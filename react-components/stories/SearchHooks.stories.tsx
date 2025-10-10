@@ -32,7 +32,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         />
         <RevealToolbar />
       </RevealCanvas>
-      <SearchComponent resources={resources} sdk={sdk} viewsToSearch={viewsToSearch} />
+      <SearchComponent
+        sceneExternalId="92748157-a77e-4163-baa0-64886edad458"
+        sceneSpaceId="test3d"
+        resources={resources}
+        sdk={sdk}
+        viewsToSearch={viewsToSearch}
+      />
     </>
   );
 };

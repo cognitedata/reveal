@@ -11,5 +11,5 @@ export function useSetExpectedLoadCount(resources: AddResourceOptions[]): void {
 
   useEffect(() => {
     setExpectedToLoadCount(resources.length);
-  }, [resources, setRevealResourcesCount]);
+  }, [resources, setRevealResourcesCount, setExpectedToLoadCount]);
 }

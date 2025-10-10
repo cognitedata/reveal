@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { type ReactElement, useRef } from 'react';
 
 import styled from 'styled-components';
 
@@ -52,55 +52,57 @@ const loader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const Main: Story = {
   name: 'main',
-  render: () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    return (
-      <div
-        style={{
-          gap: '8px',
-          padding: '8px'
-        }}>
-        <StyledButton
-          size="small"
-          onClick={() => {
-            scrollToFirst(containerRef?.current ?? undefined, loader.root);
-          }}>
-          Scroll to first
-        </StyledButton>
-        <StyledButton
-          size="small"
-          onClick={() => {
-            scrollToLast(containerRef?.current ?? undefined, loader.root);
-          }}>
-          Scroll to last
-        </StyledButton>
-        <StyledButton
-          size="small"
-          onClick={async () => {
-            const nodeId = sdk.getRandomNodeId();
-            await loader.forceNodeInTree(nodeId).then((selectedNode) => {
-              if (selectedNode === undefined) {
-                return;
-              }
-              onSingleSelectNode(selectedNode);
-              scrollToNode(containerRef?.current ?? undefined, selectedNode);
-            });
-          }}>
-          Test Random Insert
-        </StyledButton>
-        <Container ref={containerRef}>
-          <AdvancedTreeView
-            loader={loader}
-            onSelectNode={onSingleSelectNode}
-            onToggleNode={onRecursiveToggleNode}
-            hasCheckboxes
-            showRoot
-          />
-        </Container>
-      </div>
-    );
-  }
+  render: () => <MainStoryComponent />
 };
+
+function MainStoryComponent(): ReactElement {
+  const containerRef = useRef<HTMLDivElement>(null);
+  return (
+    <div
+      style={{
+        gap: '8px',
+        padding: '8px'
+      }}>
+      <StyledButton
+        size="small"
+        onClick={() => {
+          scrollToFirst(containerRef?.current ?? undefined, loader.root);
+        }}>
+        Scroll to first
+      </StyledButton>
+      <StyledButton
+        size="small"
+        onClick={() => {
+          scrollToLast(containerRef?.current ?? undefined, loader.root);
+        }}>
+        Scroll to last
+      </StyledButton>
+      <StyledButton
+        size="small"
+        onClick={async () => {
+          const nodeId = sdk.getRandomNodeId();
+          await loader.forceNodeInTree(nodeId).then((selectedNode) => {
+            if (selectedNode === undefined) {
+              return;
+            }
+            onSingleSelectNode(selectedNode);
+            scrollToNode(containerRef?.current ?? undefined, selectedNode);
+          });
+        }}>
+        Test Random Insert
+      </StyledButton>
+      <Container ref={containerRef}>
+        <AdvancedTreeView
+          loader={loader}
+          onSelectNode={onSingleSelectNode}
+          onToggleNode={onRecursiveToggleNode}
+          hasCheckboxes
+          showRoot
+        />
+      </Container>
+    </div>
+  );
+}
 
 const StyledButton = styled(Button)`
   margin: 8px;

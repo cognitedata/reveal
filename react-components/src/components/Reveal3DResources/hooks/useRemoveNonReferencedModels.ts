@@ -40,7 +40,12 @@ export function useRemoveNonReferencedModels(
       RevealModelsUtils.remove(renderTarget, model);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));
-  }, [reveal3DModelAddOptions, addImage360CollectionOptions]);
+  }, [
+    reveal3DModelAddOptions,
+    addImage360CollectionOptions,
+    renderTarget,
+    setRevealResourcesCount
+  ]);
 }
 
 function findNonReferencedModels(

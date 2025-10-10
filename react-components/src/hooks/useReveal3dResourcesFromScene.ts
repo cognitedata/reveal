@@ -83,7 +83,7 @@ export const useReveal3dResourcesFromScene = (
       });
     });
     setResourceOptions(addResourceOptions);
-  }, [scene.data]);
+  }, [scene.data, isCoreDm]);
 
   return resourceOptions;
 };
