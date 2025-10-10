@@ -5,6 +5,7 @@ import { type AnyIntersection } from '@cognite/reveal';
 import { queryKeys } from '../../utilities/queryKeys';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
+import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 
 export const usePointCloudAnnotationMappingForIntersection = (
   intersection: AnyIntersection | undefined
@@ -31,10 +32,11 @@ export const usePointCloudAnnotationMappingForIntersection = (
       if (modelId === undefined || revisionId === undefined || assetId === undefined) {
         return EMPTY_ARRAY;
       }
+      const idEither = toIdEither(assetId);
       const result = await fetchAnnotationsForModel(
         modelId,
         revisionId,
-        [assetId],
+        [idEither],
         pointCloudAnnotationCache
       );
       return result ?? EMPTY_ARRAY;

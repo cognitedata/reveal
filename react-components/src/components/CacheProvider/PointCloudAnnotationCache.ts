@@ -5,17 +5,22 @@ import {
   type PointCloudAnnotationModel,
   type AnnotationId
 } from './types';
-import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
-import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
+import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
+import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
 import { createModelRevisionKey } from './idAndKeyTranslation';
+import { type AssetInstance } from '../../utilities/instances';
+import { type InstanceReference, isSameAssetReference } from '../../utilities/instanceIds';
 
+type PointCloudAnnotationCacheDependencies = {
+  fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
+};
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
   private readonly _modelToAnnotationAssetMappings = new Map<
     ModelRevisionKey,
-    Promise<Map<AnnotationId, Asset>>
+    Promise<Map<AnnotationId, AssetInstance[]>>
   >();
 
   private readonly _modelToAnnotationMappings = new Map<
@@ -23,14 +28,21 @@ export class PointCloudAnnotationCache {
     PointCloudAnnotationModel[]
   >();
 
-  constructor(sdk: CogniteClient) {
+  private readonly fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
+
+  constructor(sdk: CogniteClient, dependencies?: PointCloudAnnotationCacheDependencies) {
     this._sdk = sdk;
+
+    const { fetchAnnotationAssets } = dependencies ?? {
+      fetchAnnotationAssets: fetchPointCloudAnnotationAssets
+    };
+    this.fetchAnnotationAssets = fetchAnnotationAssets;
   }
 
-  public async getPointCloudAnnotationAssetsForModel(
+  private async getPointCloudAnnotationAssetsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<Map<AnnotationId, Asset>> {
+  ): Promise<Map<AnnotationId, AssetInstance[]>> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = this._modelToAnnotationAssetMappings.get(key);
 
@@ -64,9 +76,9 @@ export class PointCloudAnnotationCache {
 
   private async fetchAndCacheAssetMappingsForModel(
     modelId: ModelId
-  ): Promise<Map<AnnotationId, Asset>> {
+  ): Promise<Map<AnnotationId, AssetInstance[]>> {
     const annotationModels = await this.fetchAnnotationForModel(modelId);
-    const annotationAssets = fetchPointCloudAnnotationAssets(annotationModels, this._sdk);
+    const annotationAssets = this.fetchAnnotationAssets(annotationModels, this._sdk);
 
     return await annotationAssets;
   }
@@ -88,25 +100,24 @@ export class PointCloudAnnotationCache {
         (annotationModel) => annotationModel.annotationType === 'pointcloud.BoundingVolume'
       )
     );
-    const filteredAnnotationModelsByAsset = annotationModels.filter((annotation) => {
-      return getInstanceReferenceFromPointCloudAnnotation(annotation) !== undefined;
-    });
+    const filteredAnnotationModelsByAsset = annotationModels.filter(
+      (annotation) => getInstanceReferencesFromPointCloudAnnotation(annotation).length !== 0
+    );
     return filteredAnnotationModelsByAsset as PointCloudAnnotationModel[];
   }
 
   public async matchPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetId: string | number
-  ): Promise<Map<AnnotationId, Asset> | undefined> {
+    assetId: InstanceReference
+  ): Promise<Map<AnnotationId, AssetInstance[]> | undefined> {
     const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
       modelId,
       revisionId
     );
 
-    const assetIdNumber = typeof assetId === 'number' ? assetId : undefined;
     const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(
-      ([, asset]) => asset.id === assetIdNumber
+      ([, assets]) => assets.some((asset) => isSameAssetReference(asset, assetId))
     );
     return matchedAnnotations.length > 0 ? new Map(matchedAnnotations) : undefined;
   }
