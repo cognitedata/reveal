@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 
 export type UseHoverHandlersProps = { isDisabled: boolean };
-
 export type UseHoverHandlersReturnType = {
   hoverHandlers: {
     onMouseEnter: () => void;
