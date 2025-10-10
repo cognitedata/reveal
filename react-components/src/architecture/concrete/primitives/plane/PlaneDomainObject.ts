@@ -14,11 +14,11 @@ import { PlaneDragger } from './PlaneDragger';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { getComplementary } from '../../../base/utilities/colors/colorUtils';
 import { horizontalAngle, rotateHorizontal } from '../../../base/utilities/extensions/vectorUtils';
-import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathUtils';
+import { forceBetween0AndTwoPi } from '../../../base/utilities/extensions/mathUtils';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
-import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { PanelInfo, type SetValue } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { radToDeg } from 'three/src/math/MathUtils.js';
+import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type IconName } from '../../../base/utilities/types';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
@@ -26,6 +26,7 @@ import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRender
 import { getRoot } from '../../../base/domainObjects/getRoot';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -109,25 +110,51 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
+    const isFinished = this.focusType !== FocusType.Pending;
+
+    const setCoordinate = (value: number): void => {
+      if (this.coordinate !== value) {
+        this.coordinate = value;
+        this.notify(Changes.geometry);
+      }
+    };
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        add({ key: 'X_COORDINATE' }, this.coordinate, Quantity.Length);
+        add({ key: 'X_COORDINATE' }, this.coordinate, Quantity.Length, setCoordinate);
         break;
       case PrimitiveType.PlaneY:
-        add({ key: 'Y_COORDINATE' }, this.coordinate, Quantity.Length);
+        add({ key: 'Y_COORDINATE' }, this.coordinate, Quantity.Length, setCoordinate);
         break;
       case PrimitiveType.PlaneZ:
-        add({ key: 'Z_COORDINATE' }, this.coordinate, Quantity.Length);
+        add({ key: 'Z_COORDINATE' }, this.coordinate, Quantity.Length, setCoordinate);
         break;
       case PrimitiveType.PlaneXY:
-        add({ key: 'DISTANCE_TO_ORIGIN' }, this.coordinate, Quantity.Length);
-        add({ key: 'HORIZONTAL_ANGLE' }, radToDeg(this.angle), Quantity.Angle);
+        {
+          const setAngle = (value: number): void => {
+            if (this.horizontalAngleInDegrees !== value) {
+              this.horizontalAngleInDegrees = value;
+              this.notify(Changes.geometry);
+            }
+          };
+          add({ key: 'DISTANCE_TO_ORIGIN' }, this.coordinate, Quantity.Length, setCoordinate);
+          add({ key: 'HORIZONTAL_ANGLE' }, this.horizontalAngleInDegrees, Quantity.Angle, setAngle);
+        }
         break;
     }
     return info;
 
-    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
-      info.add({ translationInput, value, quantity });
+    function add(
+      translationInput: TranslationInput,
+      value: number,
+      quantity: Quantity,
+      setValue?: SetValue
+    ): void {
+      info.add({
+        translationInput,
+        value,
+        quantity,
+        setValue: isFinished ? setValue : undefined
+      });
     }
   }
 
@@ -168,7 +195,13 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
-  private get coordinate(): number {
+  public get coordinate(): number {
+    if (this.primitiveType === PrimitiveType.PlaneXY) {
+      return this.plane.constant;
+    }
+    // For PlaneX, PlaneY, PlaneZ we return the coordinate of the point where the plane
+    // intersects the respective axis. This is a more natural way than returning the plane.constant
+    // since the constant is negated when we flip the plane.
     const pointOnPlane = this.plane.projectPoint(ORIGIN, new Vector3());
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
@@ -177,18 +210,47 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
         return pointOnPlane.y;
       case PrimitiveType.PlaneZ:
         return pointOnPlane.z;
-      case PrimitiveType.PlaneXY:
-        return pointOnPlane.distanceTo(ORIGIN);
       default:
         throw new Error('Unknown PrimitiveType');
     }
   }
 
-  public get angle(): number {
-    const vector = this.plane.normal.clone();
-    rotateHorizontal(vector, Math.PI / 2);
-    const angle = horizontalAngle(vector);
-    return forceBetween0AndPi(angle);
+  public set coordinate(value: number) {
+    if (this.primitiveType === PrimitiveType.PlaneXY) {
+      this.plane.constant = value;
+      return;
+    }
+    const pointOnPlane = new Vector3();
+    switch (this.primitiveType) {
+      case PrimitiveType.PlaneX:
+        pointOnPlane.setComponent(0, value);
+        break;
+      case PrimitiveType.PlaneY:
+        pointOnPlane.setComponent(1, value);
+        break;
+      case PrimitiveType.PlaneZ:
+        pointOnPlane.setComponent(2, value);
+        break;
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
+    this.plane.setFromNormalAndCoplanarPoint(this.plane.normal, pointOnPlane);
+  }
+
+  public get horizontalAngleInDegrees(): number {
+    const normal = this.plane.normal.clone();
+    rotateHorizontal(normal, Math.PI / 2);
+    const radians = horizontalAngle(normal);
+    return radToDeg(forceBetween0AndTwoPi(radians));
+  }
+
+  public set horizontalAngleInDegrees(value: number) {
+    const planeAngleRad = degToRad(value);
+    // The plane's normal is perpendicular to the plane's direction vector.
+    // If the plane has an angle of `planeAngleRad`, its normal will have an angle of `planeAngleRad - 90 degrees`.
+    const normalAngleRad = planeAngleRad - Math.PI / 2;
+    const normal = new Vector3(Math.cos(normalAngleRad), Math.sin(normalAngleRad), 0);
+    this.plane.normal.copy(normal);
   }
 
   // ==================================================
