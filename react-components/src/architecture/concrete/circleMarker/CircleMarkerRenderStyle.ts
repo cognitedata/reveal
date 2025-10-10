@@ -6,6 +6,7 @@ import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 export class CircleMarkerRenderStyle extends CommonRenderStyle {
   public solidOpacity = 0.25;
   public lineWidth = 2;
+  public maxDistanceForSizeAdjustments?: number; // undefined or greater than 0
   public readonly lineColor = BLACK_COLOR.clone();
 
   constructor() {
