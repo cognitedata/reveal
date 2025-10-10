@@ -5,28 +5,21 @@ import {
   type ClassicDataSourceType,
   type DMInstanceRef,
   type PointCloudIntersection,
-  type DMDataSourceType,
   type DataSourceType,
   type CognitePointCloudModel
 } from '@cognite/reveal';
 import { Vector3 } from 'three';
 import { getPointCloudInstanceFromIntersection } from './getPointCloudInstanceFromIntersection';
 import { cadMock } from '#test-utils/fixtures/cadModel';
-import { createPointCloudDMMock, createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
 describe(getPointCloudInstanceFromIntersection.name, () => {
   const mockClassicIdEither: IdEither = { id: 123 };
   const mockDmsIdentifier: DMInstanceRef = { externalId: 'ext-id', space: 'space' };
-  const mockDmsIdentifier2: DMInstanceRef = { externalId: 'ext-id-2', space: 'space-2' };
 
   const pointCloudModelMock = createPointCloudMock({
     modelId: 456,
     revisionId: 789
-  });
-
-  const pointCloudDMMock = createPointCloudDMMock({
-    revisionExternalId: 'revision-ext-id',
-    revisionSpace: 'test-space'
   });
 
   const classicIntersection = createIntersectionWithVolumeMetadataMock<ClassicDataSourceType>(
@@ -44,15 +37,6 @@ describe(getPointCloudInstanceFromIntersection.name, () => {
     {
       instanceRef: mockDmsIdentifier,
       annotationId: 2
-    }
-  );
-
-  const dmsIntersection = createIntersectionWithVolumeMetadataMock<DMDataSourceType>(
-    pointCloudDMMock,
-    3,
-    {
-      assetRef: mockDmsIdentifier,
-      volumeInstanceRef: mockDmsIdentifier2
     }
   );
 
@@ -81,17 +65,7 @@ describe(getPointCloudInstanceFromIntersection.name, () => {
       expect(result).toEqual({
         classicModelIdentifier: classicIntersection.model.modelIdentifier,
         dmsModelUniqueIdentifier: undefined,
-        reference: mockClassicIdEither
-      });
-    });
-
-    test('should return DMS model data when assetRef is DMS instance and model is DM', () => {
-      const result = getPointCloudInstanceFromIntersection(dmsIntersection);
-
-      expect(result).toEqual({
-        classicModelIdentifier: undefined,
-        dmsModelUniqueIdentifier: dmsIntersection.model.modelIdentifier,
-        reference: mockDmsIdentifier
+        instanceReference: mockClassicIdEither
       });
     });
 
@@ -101,7 +75,7 @@ describe(getPointCloudInstanceFromIntersection.name, () => {
       expect(result).toEqual({
         classicModelIdentifier: hybridIntersection.model.modelIdentifier,
         dmsModelUniqueIdentifier: undefined,
-        reference: mockDmsIdentifier
+        instanceReference: mockDmsIdentifier
       });
     });
 
