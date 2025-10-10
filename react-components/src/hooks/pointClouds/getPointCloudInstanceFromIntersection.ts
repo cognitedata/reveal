@@ -1,16 +1,19 @@
-import { type IdEither } from '@cognite/sdk';
-import { type DmsUniqueIdentifier } from '../../data-providers';
 import {
   type ClassicModelIdentifierType,
   type AnyIntersection,
   type ClassicDataSourceType,
   type PointCloudIntersection
 } from '@cognite/reveal';
-import { isClassicModelIdentifier, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
+import {
+  type InstanceReference,
+  isClassicModelIdentifier,
+  isDmsInstance,
+  isIdEither
+} from '../../utilities/instanceIds';
 
 type InstanceData = {
   classicModelIdentifier: ClassicModelIdentifierType;
-  reference: IdEither | DmsUniqueIdentifier | undefined;
+  instanceReference: InstanceReference | undefined;
 };
 export function getPointCloudInstanceFromIntersection(
   intersection: AnyIntersection | undefined
@@ -31,11 +34,11 @@ export function getPointCloudInstanceFromIntersection(
 
 function getInstanceData(
   classic: ClassicModelIdentifierType,
-  reference: IdEither | DmsUniqueIdentifier | undefined
+  instanceReference: InstanceReference | undefined
 ): InstanceData {
   return {
     classicModelIdentifier: classic,
-    reference
+    instanceReference
   };
 }
 function isInstanceRefUnderVolumeMetadata(

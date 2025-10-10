@@ -5,18 +5,17 @@ import {
   type PointCloudAnnotationModel,
   type AnnotationId
 } from './types';
-import { type CogniteClient, type AnnotationFilterProps, type IdEither } from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
 import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 import { type AssetInstance } from '../../utilities/instances';
-import { type DmsUniqueIdentifier } from '../../data-providers';
-import { isSameAssetReference } from '../../utilities/instanceIds';
+import { type InstanceReference, isSameAssetReference } from '../../utilities/instanceIds';
 
-type PointCloudAnnotationCacheDependencies = Partial<{
+type PointCloudAnnotationCacheDependencies = {
   fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
-}>;
+};
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
   private readonly _modelToAnnotationAssetMappings = new Map<
@@ -31,10 +30,12 @@ export class PointCloudAnnotationCache {
 
   private readonly fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
 
-  constructor(sdk: CogniteClient, dependencies: PointCloudAnnotationCacheDependencies = {}) {
+  constructor(sdk: CogniteClient, dependencies?: PointCloudAnnotationCacheDependencies) {
     this._sdk = sdk;
 
-    const { fetchAnnotationAssets = fetchPointCloudAnnotationAssets } = dependencies;
+    const { fetchAnnotationAssets } = dependencies ?? {
+      fetchAnnotationAssets: fetchPointCloudAnnotationAssets
+    };
     this.fetchAnnotationAssets = fetchAnnotationAssets;
   }
 
@@ -108,7 +109,7 @@ export class PointCloudAnnotationCache {
   public async matchPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetId: IdEither | DmsUniqueIdentifier
+    assetId: InstanceReference
   ): Promise<Map<AnnotationId, AssetInstance[]> | undefined> {
     const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
       modelId,

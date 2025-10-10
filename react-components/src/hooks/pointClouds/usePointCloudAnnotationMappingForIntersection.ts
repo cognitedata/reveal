@@ -19,7 +19,7 @@ export const usePointCloudAnnotationMappingForIntersection = (
   const isPointCloudIntersection = intersection?.type === 'pointcloud';
   const instanceData = getPointCloudInstanceFromIntersection(intersection);
   const classicModelIdentifier = instanceData?.classicModelIdentifier;
-  const instanceReference = instanceData?.reference;
+  const instanceReference = instanceData?.instanceReference;
 
   const queryKeyString =
     classicModelIdentifier !== undefined

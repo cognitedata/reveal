@@ -16,52 +16,52 @@ import { Mock } from 'moq.ts';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
 
-const mockFetchPointCloudAnnotationAssets = vi.fn<typeof fetchPointCloudAnnotationAssets>();
-
-const modelId = 123;
-const revisionId = 456;
-const annotationId = 789;
-
-const dmInstanceRef: AnnotationsInstanceRef = {
-  externalId: 'test-external-id',
-  space: 'test-space',
-  instanceType: 'node',
-  sources: []
-};
-
-const mockAnnotations: PointCloudAnnotationModel[] = [
-  createPointCloudAnnotationMock({ annotationId, modelId, assetId: 1 }),
-  createPointCloudAnnotationMock({ annotationId: annotationId + 1, modelId, assetId: 2 }),
-  createPointCloudAnnotationMock({
-    annotationId: annotationId + 2,
-    modelId,
-    dmIdentifier: dmInstanceRef
-  })
-];
-
-const mockAssetInstances = [createAssetMock(1), createAssetMock(2)];
-
-const mockAssetMappings = new Map([
-  [annotationId, [mockAssetInstances[0]]],
-  [annotationId + 1, [mockAssetInstances[1]]]
-]);
-const dummyAnnotationsResponse = {
-  items: mockAnnotations
-};
-
-const annotationsMock: CogniteClient['annotations'] = new Mock<CogniteClient['annotations']>()
-  .setup((p) => p.list)
-  .returns(
-    (): CursorAndAsyncIterator<PointCloudAnnotationModel> =>
-      createCursorAndAsyncIteratorMock({
-        items: dummyAnnotationsResponse.items
-      })
-  )
-  .object();
-const sdkMock = new Mock<CogniteClient>().setup((p) => p.annotations).returns(annotationsMock);
-let cache: PointCloudAnnotationCache;
-
 describe(PointCloudAnnotationCache.name, () => {
+  const mockFetchPointCloudAnnotationAssets = vi.fn<typeof fetchPointCloudAnnotationAssets>();
+
+  const modelId = 123;
+  const revisionId = 456;
+  const annotationId = 789;
+
+  const dmInstanceRef: AnnotationsInstanceRef = {
+    externalId: 'test-external-id',
+    space: 'test-space',
+    instanceType: 'node',
+    sources: []
+  };
+
+  const mockAnnotations: PointCloudAnnotationModel[] = [
+    createPointCloudAnnotationMock({ annotationId, modelId, assetId: 1 }),
+    createPointCloudAnnotationMock({ annotationId: annotationId + 1, modelId, assetId: 2 }),
+    createPointCloudAnnotationMock({
+      annotationId: annotationId + 2,
+      modelId,
+      dmIdentifier: dmInstanceRef
+    })
+  ];
+
+  const mockAssetInstances = [createAssetMock(1), createAssetMock(2)];
+
+  const mockAssetMappings = new Map([
+    [annotationId, [mockAssetInstances[0]]],
+    [annotationId + 1, [mockAssetInstances[1]]]
+  ]);
+  const dummyAnnotationsResponse = {
+    items: mockAnnotations
+  };
+
+  const annotationsMock: CogniteClient['annotations'] = new Mock<CogniteClient['annotations']>()
+    .setup((p) => p.list)
+    .returns(
+      (): CursorAndAsyncIterator<PointCloudAnnotationModel> =>
+        createCursorAndAsyncIteratorMock({
+          items: dummyAnnotationsResponse.items
+        })
+    )
+    .object();
+  const sdkMock = new Mock<CogniteClient>().setup((p) => p.annotations).returns(annotationsMock);
+  let cache: PointCloudAnnotationCache;
+
   beforeEach(() => {
     sdkMock.setup((p) => p.annotations).returns(annotationsMock);
 
@@ -79,7 +79,7 @@ describe(PointCloudAnnotationCache.name, () => {
     });
 
     it('throws assertion error if annotations have wrong type', async () => {
-      const wrongTypeAnnotation = {
+      const wrongTypeAnnotation: AnnotationModel = {
         ...createPointCloudAnnotationMock(),
         annotationType: 'wrong-type'
       };

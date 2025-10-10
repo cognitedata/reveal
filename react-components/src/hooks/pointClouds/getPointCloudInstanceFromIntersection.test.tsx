@@ -65,7 +65,7 @@ describe(getPointCloudInstanceFromIntersection.name, () => {
       expect(result).toEqual({
         classicModelIdentifier: classicIntersection.model.modelIdentifier,
         dmsModelUniqueIdentifier: undefined,
-        reference: mockClassicIdEither
+        instanceReference: mockClassicIdEither
       });
     });
 
@@ -75,7 +75,7 @@ describe(getPointCloudInstanceFromIntersection.name, () => {
       expect(result).toEqual({
         classicModelIdentifier: hybridIntersection.model.modelIdentifier,
         dmsModelUniqueIdentifier: undefined,
-        reference: mockDmsIdentifier
+        instanceReference: mockDmsIdentifier
       });
     });
 
