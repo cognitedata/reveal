@@ -22,7 +22,7 @@ export class MeasurePointDomainObject extends BoxDomainObject {
 
   public constructor() {
     super(PrimitiveType.Point);
-    this.color = new Color(Color.NAMES.deepskyblue);
+    this.setColor(Color.NAMES.deepskyblue);
     this.size = DEFAULT_POINT_SIZE;
   }
 
