@@ -1,6 +1,5 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 
-export type UseHoverHandlersProps = { isDisabled: boolean };
 export type UseHoverHandlersReturnType = {
   hoverHandlers: {
     onMouseEnter: () => void;
@@ -10,10 +9,9 @@ export type UseHoverHandlersReturnType = {
   setPanelToClose: () => void;
 };
 
-export const useHoverHandlers = (
-  isDisabled: UseHoverHandlersProps['isDisabled']
-): UseHoverHandlersReturnType => {
-  const closeTimeoutRef = useRef<number | null>(null);
+export const useHoverHandlers = (isDisabled: boolean): UseHoverHandlersReturnType => {
+  const closeTimeoutRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+  const isMountedRef = useRef(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const removeTimeout = useCallback((): void => {
@@ -24,12 +22,18 @@ export const useHoverHandlers = (
   }, []);
 
   useEffect(() => {
-    return removeTimeout;
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      removeTimeout();
+    };
   }, [removeTimeout]);
 
   const setPanelToClose = useCallback((): void => {
     removeTimeout();
-    setIsPanelOpen(false);
+    if (isMountedRef.current) {
+      setIsPanelOpen(false);
+    }
   }, [removeTimeout]);
 
   const openPanel = useCallback((): void => {
@@ -42,7 +46,7 @@ export const useHoverHandlers = (
   const closePanel = useCallback((): void => {
     removeTimeout();
     if (!isDisabled) {
-      closeTimeoutRef.current = window.setTimeout(setPanelToClose, 100);
+      closeTimeoutRef.current = setTimeout(setPanelToClose, 100);
     }
   }, [isDisabled, setPanelToClose, removeTimeout]);
 

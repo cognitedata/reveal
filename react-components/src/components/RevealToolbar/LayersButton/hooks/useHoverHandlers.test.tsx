@@ -1,22 +1,23 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { renderHook, act, type RenderHookResult } from '@testing-library/react';
-import {
-  useHoverHandlers,
-  type UseHoverHandlersReturnType,
-  type UseHoverHandlersProps
-} from './useHoverHandlers';
+import { useHoverHandlers, type UseHoverHandlersReturnType } from './useHoverHandlers';
 
-vi.useFakeTimers();
+type UseHoverHandlersProps = { isDisabled: boolean };
 
 describe(useHoverHandlers.name, () => {
   const renderUseHoverHandlers = (
-    isDisabled: UseHoverHandlersProps['isDisabled'] = false
+    isDisabled: boolean = false
   ): RenderHookResult<UseHoverHandlersReturnType, UseHoverHandlersProps> => {
     return renderHook(() => useHoverHandlers(isDisabled));
   };
 
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
   afterEach(() => {
     vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   test('should return initial state and handlers', () => {
