@@ -26,7 +26,7 @@ export async function getAssetsMappedPointCloudAnnotations(
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
   fdmSdk?: FdmSDK,
-  dependencies: Partial<AssetMappedPointCloudAnnotationsDependencies> = {}
+  dependencies?: AssetMappedPointCloudAnnotationsDependencies
 ): Promise<AssetInstance[]> {
   const modelIdList = models.map((model) => model.modelId);
 
@@ -73,9 +73,10 @@ async function getPointCloudAnnotationClassicInstances(
   pointCloudAnnotations: PointCloudAnnotationModel[],
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
-  dependencies: Partial<AssetMappedPointCloudAnnotationsDependencies>
+  dependencies?: AssetMappedPointCloudAnnotationsDependencies
 ): Promise<Asset[]> {
-  const { getAssetsByIds = getAssetsForIds } = dependencies;
+  const { getAssetsByIds } = dependencies ?? { getAssetsByIds: getAssetsForIds };
+
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
 
   const annotationMappingClassic = pointCloudAnnotations
