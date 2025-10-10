@@ -1,5 +1,3 @@
-import { type IdEither } from '@cognite/sdk';
-import { type DmsUniqueIdentifier } from '../../data-providers';
 import {
   type ClassicModelIdentifierType,
   type AnyIntersection,
@@ -8,6 +6,7 @@ import {
   type PointCloudIntersection
 } from '@cognite/reveal';
 import {
+  type InstanceReference,
   isClassicModelIdentifier,
   isDMModelIdentifier,
   isDmsInstance,
@@ -17,7 +16,7 @@ import {
 type InstanceData = {
   classicModelIdentifier: ClassicModelIdentifierType | undefined;
   dmsModelUniqueIdentifier: DMModelIdentifierType | undefined;
-  reference: IdEither | DmsUniqueIdentifier | undefined;
+  reference: InstanceReference | undefined;
 };
 export function getPointCloudInstanceFromIntersection(
   intersection: AnyIntersection | undefined
@@ -42,7 +41,7 @@ export function getPointCloudInstanceFromIntersection(
 function getInstanceData(
   classic: ClassicModelIdentifierType | undefined,
   dms: DMModelIdentifierType | undefined,
-  reference: IdEither | DmsUniqueIdentifier | undefined
+  reference: InstanceReference | undefined
 ): InstanceData {
   return {
     classicModelIdentifier: classic,
