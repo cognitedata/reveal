@@ -6,7 +6,7 @@ describe(colorToHex.name, () => {
   test('should convert solid yellow to hex', () => {
     const yellow = new Color(1, 1, 0);
     const hexCode = colorToHex(yellow);
-    expect(hexCode).toBe('#FFFF00FF');
+    expect(hexCode).toBe('#FFFF00');
   });
 
   test('should convert semi transparent yellow to hex', () => {
