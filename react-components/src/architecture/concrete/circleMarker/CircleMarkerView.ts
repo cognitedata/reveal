@@ -1,7 +1,7 @@
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { colorToHex } from '../../base/utilities/colors/colorToHex';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
-import { Sprite, CanvasTexture, SpriteMaterial } from 'three';
+import { Sprite, CanvasTexture, SpriteMaterial, type PerspectiveCamera } from 'three';
 import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
@@ -20,6 +20,28 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     if (change.isChanged(Changes.renderStyle, Changes.color)) {
       this.clearMemory();
       this.invalidateRenderTarget();
+    }
+  }
+
+  public override beforeRender(camera: PerspectiveCamera): void {
+    super.beforeRender(camera);
+
+    const { domainObject, object, style } = this;
+
+    let size = 2 * domainObject.radius;
+    const maxDistance = style.maxDistanceForSizeAdjustments;
+    if (maxDistance !== undefined && maxDistance > 0) {
+      // This will make the size smaller when it is close to the camera,
+      // in order to not blow up the size when it come very close to the camera
+      const distanceToCamera = camera.position.distanceTo(domainObject.position);
+      if (distanceToCamera < maxDistance) {
+        const fraction = distanceToCamera / maxDistance;
+        size *= fraction;
+      }
+    }
+    if (object.scale.x !== size) {
+      object.scale.setScalar(size);
+      object.updateMatrixWorld();
     }
   }
 
