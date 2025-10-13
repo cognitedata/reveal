@@ -1,7 +1,7 @@
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 
 import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { searchClassicImage360Assets } from './searchClassicImage360Assets';
 
 import { type CogniteClient } from '@cognite/sdk';

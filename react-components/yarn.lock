@@ -410,7 +410,7 @@ __metadata:
     "@tanstack/react-query-devtools": "npm:^5.32.0"
     "@testing-library/react": "npm:^16.0.0"
     "@tippyjs/react": "npm:4.2.6"
-    "@types/lodash": "npm:^4.17.0"
+    "@types/lodash-es": "npm:^4.17.0"
     "@types/node": "npm:^22.0.0"
     "@types/random-seed": "npm:^0.3.5"
     "@types/react": "npm:^18.3.1"
@@ -434,7 +434,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.34.1"
     happy-dom: "npm:^17.0.0"
     locize-cli: "npm:^8.0.1"
-    lodash: "npm:^4.17.21"
+    lodash-es: "npm:^4.17.21"
     madge: "npm:^8.0.0"
     ml-matrix: "npm:^6.12.1"
     moq.ts: "npm:10.0.8"
@@ -2856,7 +2856,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.0":
+"@types/lodash-es@npm:^4.17.0":
+  version: 4.17.12
+  resolution: "@types/lodash-es@npm:4.17.12"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10/56b9a433348b11c31051c6fa9028540a033a08fb80b400c589d740446c19444d73b217cf1471d4036448ef686a83e8cf2a35d1fadcb3f2105f26701f94aebb07
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
   version: 4.17.20
   resolution: "@types/lodash@npm:4.17.20"
   checksum: 10/8cd8ad3bd78d2e06a93ae8d6c9907981d5673655fec7cb274a4d9a59549aab5bb5b3017361280773b8990ddfccf363e14d1b37c97af8a9fe363de677f9a61524
@@ -7905,6 +7914,13 @@ __metadata:
   version: 2.4.6
   resolution: "locize@npm:2.4.6"
   checksum: 10/eb470a603fe9c66dd646efa2384bbc72afb88b74384a8ce405fe10a131dc04f60505287c4d85d9c15e5eb32c9ff456706b64b9388b36e3df5f9c92e7024f4998
+  languageName: node
+  linkType: hard
+
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 10/03f39878ea1e42b3199bd3f478150ab723f93cc8730ad86fec1f2804f4a07c6e30deaac73cad53a88e9c3db33348bb8ceeb274552390e7a75d7849021c02df43
   languageName: node
   linkType: hard
 

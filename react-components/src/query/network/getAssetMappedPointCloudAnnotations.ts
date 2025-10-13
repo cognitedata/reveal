@@ -1,6 +1,6 @@
 import { type ClassicDataSourceType } from '@cognite/reveal';
 import { type AnnotationFilterProps, type Asset, type CogniteClient } from '@cognite/sdk';
-import { chunk, uniq, uniqBy } from 'lodash';
+import { chunk, uniq, uniqBy } from 'lodash-es';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 import { type AllAssetFilterProps } from './common/filters';

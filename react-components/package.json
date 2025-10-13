@@ -52,7 +52,7 @@
     "@tanstack/react-query": "^5.84.1",
     "assert": "^2.1.0",
     "dayjs": "^1.11.13",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "ml-matrix": "^6.12.1"
   },
   "devDependencies": {
@@ -70,7 +70,7 @@
     "@tanstack/react-query-devtools": "^5.32.0",
     "@testing-library/react": "^16.0.0",
     "@tippyjs/react": "4.2.6",
-    "@types/lodash": "^4.17.0",
+    "@types/lodash-es": "^4.17.0",
     "@types/node": "^22.0.0",
     "@types/random-seed": "^0.3.5",
     "@types/react": "^18.3.1",
