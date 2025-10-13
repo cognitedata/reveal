@@ -36,6 +36,12 @@ export const useHoverHandlers = (isDisabled: boolean): UseHoverHandlersReturnTyp
     }
   }, [removeTimeout]);
 
+  useEffect(() => {
+    if (isDisabled) {
+      setPanelToClose();
+    }
+  }, [isDisabled, setPanelToClose]);
+
   const openPanel = useCallback((): void => {
     removeTimeout();
     if (!isDisabled) {
