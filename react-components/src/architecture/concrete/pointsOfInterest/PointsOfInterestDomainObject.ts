@@ -3,7 +3,7 @@ import { type TranslationInput } from '../../base/utilities/translation/Translat
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
-import { partition, remove } from 'lodash';
+import { partition, remove } from 'lodash-es';
 import {
   type CommentProperties,
   type PointsOfInterestProperties,

@@ -7,7 +7,7 @@ import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';

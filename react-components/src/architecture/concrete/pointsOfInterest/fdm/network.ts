@@ -1,4 +1,4 @@
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import {
   type CreateInstanceItem,
   type DmsUniqueIdentifier,
