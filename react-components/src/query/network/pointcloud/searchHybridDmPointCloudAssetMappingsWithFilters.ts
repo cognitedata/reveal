@@ -4,7 +4,6 @@ import { createFdmKey } from '../../../components/CacheProvider';
 import type { ModelRevisionId, FdmKey } from '../../../components/CacheProvider/types';
 import type { NodeItem } from '../../../data-providers';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
-import type { InstanceKey } from '../../../utilities/instanceIds';
 import { isDefined } from '../../../utilities/isDefined';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
 import { type PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
@@ -31,7 +30,7 @@ export async function searchHybridDmPointCloudAssetMappingsWithFilters(
     options.filter
   );
 
-  const instanceKeyToInstanceMap = new Map<InstanceKey, NodeItem>(
+  const instanceKeyToInstanceMap = new Map<string, NodeItem>(
     searchResult.instances.map(
       (instance) => [createFdmKey(instance), instance] as [FdmKey, NodeItem]
     )

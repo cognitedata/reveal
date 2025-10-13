@@ -9,6 +9,8 @@ import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider
 import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 import { searchHybridPointCloudDmAssetsForModels } from './pointcloud/searchHybridPointCloudDmAssetsForModels';
 import { type DMSView } from './types';
+import { uniqBy } from 'lodash-es';
+import { createFdmKey } from '../../components';
 
 export async function searchHybridDmAssetsForModels(
   resources: TaggedAddResourceOptions[],
@@ -44,5 +46,5 @@ export async function searchHybridDmAssetsForModels(
     sdk,
     classicCadCache
   );
-  return [...cadSearchedAssets, ...pointCloudSearchedAssets];
+  return uniqBy([...cadSearchedAssets, ...pointCloudSearchedAssets], createFdmKey);
 }
