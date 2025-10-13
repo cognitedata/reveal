@@ -5,7 +5,7 @@ import { type QualitySettings } from '../../../architecture/base/utilities/quali
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { SettingsButtonContext } from './SettingsButton.context';
 
-import { offset } from '@floating-ui/dom';
+import { offset } from '@floating-ui/react';
 import styled from 'styled-components';
 
 type CustomSettingsProps = {
