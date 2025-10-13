@@ -1,14 +1,6 @@
 import { useSceneConfig } from './scenes/useSceneConfig';
 import { type CogniteClient } from '@cognite/sdk';
-import {
-  type AddResourceOptions,
-  type AddImage360CollectionDatamodelsOptions
-} from '../components/Reveal3DResources/types';
-import {
-  type ClassicDataSourceType,
-  type DMDataSourceType,
-  type AddModelOptions
-} from '@cognite/reveal';
+import { type AddResourceOptions } from '../components/Reveal3DResources/types';
 import { useEffect, useState } from 'react';
 import {
   isClassicIdentifier,
@@ -37,24 +29,16 @@ export const useReveal3dResourcesFromScene = (
     const addResourceOptions: AddResourceOptions[] = [];
     scene.sceneModels.forEach((model) => {
       if (isClassicIdentifier(model.modelIdentifier)) {
-        const addModelOptions: AddModelOptions<ClassicDataSourceType> = {
-          modelId: model.modelIdentifier.modelId,
-          revisionId: model.modelIdentifier.revisionId
-        };
-
         addResourceOptions.push({
-          ...addModelOptions,
+          modelId: model.modelIdentifier.modelId,
+          revisionId: model.modelIdentifier.revisionId,
           transform: model.transform,
           defaultVisible: model.defaultVisible
         });
       } else if (isDM3DModelIdentifier(model.modelIdentifier)) {
-        const addModelOptions: AddModelOptions<DMDataSourceType> = {
-          revisionExternalId: model.modelIdentifier.revisionExternalId,
-          revisionSpace: model.modelIdentifier.revisionSpace
-        };
-
         addResourceOptions.push({
-          ...addModelOptions,
+          revisionExternalId: model.modelIdentifier.revisionExternalId,
+          revisionSpace: model.modelIdentifier.revisionSpace,
           transform: model.transform,
           defaultVisible: model.defaultVisible
         });
@@ -62,15 +46,11 @@ export const useReveal3dResourcesFromScene = (
     });
 
     scene.image360Collections.forEach((collection) => {
-      const addModelOptions: AddImage360CollectionDatamodelsOptions = {
+      addResourceOptions.push({
         source: isCoreDm ? 'cdm' : 'dm',
         externalId: collection.image360CollectionExternalId,
         space: collection.image360CollectionSpace,
-        transform: collection.transform
-      };
-
-      addResourceOptions.push({
-        ...addModelOptions,
+        transform: collection.transform,
         defaultVisible: collection.defaultVisible
       });
     });
