@@ -7,8 +7,7 @@ import type { LayersButtonProps } from './LayersButton';
 import { defaultLayersButtonDependencies, LayersButtonContext } from './LayersButton.context';
 import userEvent from '@testing-library/user-event';
 
-import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
-import { viewerMock } from '#test-utils/fixtures/viewer';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
@@ -45,8 +44,6 @@ describe(LayersButton.name, () => {
       pointCloudHandlers: [new PointCloudDomainObject(createPointCloudMock())],
       image360Handlers: [new Image360CollectionDomainObject(createImage360ClassicMock())]
     });
-    defaultDependencies.useReveal.mockReturnValue(viewerMock);
-    defaultDependencies.use3dModels.mockReturnValue([cadMock, cadMock]);
     defaultDependencies.ModelLayerSelection.mockImplementation(({ label }) => <div>{label}</div>);
   });
 

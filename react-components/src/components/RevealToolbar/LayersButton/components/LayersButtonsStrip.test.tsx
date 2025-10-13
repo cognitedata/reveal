@@ -2,11 +2,7 @@ import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { LayersButtonProps } from '../LayersButton';
 import { defaultLayersButtonDependencies, LayersButtonContext } from '../LayersButton.context';
-import {
-  viewerMock,
-  viewerImage360CollectionsMock,
-  viewerModelsMock
-} from '#test-utils/fixtures/viewer';
+import { viewerImage360CollectionsMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
 import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
@@ -60,8 +56,6 @@ describe(LayersButtonStrip.name, () => {
       pointCloudHandlers: [pointCloudObject],
       image360Handlers: [image360Object]
     });
-    defaultDependencies.useReveal.mockReturnValue(viewerMock);
-    defaultDependencies.use3dModels.mockReturnValue([cadMock, cadMock]);
     defaultDependencies.useRenderTarget.mockReturnValue(createRenderTargetMock());
   });
 

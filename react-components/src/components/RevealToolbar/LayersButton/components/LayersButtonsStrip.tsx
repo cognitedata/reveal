@@ -5,7 +5,6 @@ import { useContext, type ReactElement } from 'react';
 import { useTranslation } from '../../../i18n/I18n';
 import { type LayersButtonProps } from '../LayersButton';
 import { LayersButtonContext } from '../LayersButton.context';
-import { use3DModelName } from '../../../../query/use3DModelName';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
@@ -13,25 +12,12 @@ export const LayersButtonStrip = ({
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
 
-  const {
-    useModelsVisibilityState,
-    useSyncExternalLayersState,
-    use3dModels,
-    useReveal,
-    useRenderTarget
-  } = useContext(LayersButtonContext);
+  const { useModelsVisibilityState, useSyncExternalLayersState, useRenderTarget } =
+    useContext(LayersButtonContext);
 
-  const viewer = useReveal();
   const renderTarget = useRenderTarget();
-  const models = use3dModels();
 
-  const modelLayerHandlers = useModelsVisibilityState(
-    setExternalLayersState,
-    viewer,
-    models,
-    use3DModelName,
-    renderTarget
-  );
+  const modelLayerHandlers = useModelsVisibilityState(setExternalLayersState, renderTarget);
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
 
   useSyncExternalLayersState(
