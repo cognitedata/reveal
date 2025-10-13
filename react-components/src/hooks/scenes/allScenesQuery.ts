@@ -32,7 +32,7 @@ const getAllScenesQuery = (
             ]
           }
         },
-        ...(limit > 0 && { limit })
+        limit
       },
       sceneModels: {
         edges: {

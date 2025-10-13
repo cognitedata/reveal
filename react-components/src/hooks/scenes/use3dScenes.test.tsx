@@ -254,6 +254,44 @@ describe(use3dScenes.name, () => {
     expect(scene.image360CollectionOptions).toHaveLength(4);
   });
 
+  test('should pass previous scene cursor when paginating related data', async () => {
+    const sceneId = 'scene-external-id';
+    const modelsPage1 = [
+      createModelEdge(sceneId, TEST_SPACE, 'model-1', 'models', 1),
+      createModelEdge(sceneId, TEST_SPACE, 'model-2', 'models', 2),
+      createModelEdge(sceneId, TEST_SPACE, 'model-3', 'models', 3)
+    ];
+    const modelsPage2 = [createModelEdge(sceneId, TEST_SPACE, 'model-4', 'models', 4)];
+
+    setupMockResponse([
+      {
+        data: {
+          scenes: [createSceneNode(sceneId, TEST_SPACE)],
+          sceneModels: modelsPage1
+        },
+        nextCursor: {
+          sceneModels: 'model-cursor-1',
+          scenes: 'scene-cursor-1'
+        }
+      },
+      {
+        data: {
+          sceneModels: modelsPage2
+        },
+        nextCursor: undefined
+      }
+    ]);
+
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    await waitForSuccessAndGetData(result);
+
+    expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
+
+    const secondCall = mockQueryNodesAndEdges.mock.calls[1][0];
+    expect(secondCall.cursors?.scenes).toBe('scene-cursor-1');
+    expect(secondCall.cursors?.sceneModels).toBe('model-cursor-1');
+  });
+
   test('should process model edges and create 3d model options with correct transform matrix', async () => {
     setupMockResponse({
       scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
@@ -438,7 +476,9 @@ describe(use3dScenes.name, () => {
   });
 
   const setupMockResponse = (
-    responseData: MockResponseData | Array<{ data: MockResponseData; nextCursor?: any }>
+    responseData:
+      | MockResponseData
+      | Array<{ data: MockResponseData; nextCursor?: Record<string, string> }>
   ): void => {
     if (!Array.isArray(responseData)) {
       mockQueryNodesAndEdges.mockResolvedValue({

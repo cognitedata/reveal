@@ -91,11 +91,13 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
 
       // If any related data needs pagination, handle it here
       if (needsModelsPagination || needs360Pagination) {
+        // Need to use scene cursor from current response to paginate models and 360 collections from current scenes
         const cursorsForRelatedData = {
           sceneModels: needsModelsPagination ? scenesResponse.nextCursor?.sceneModels : undefined,
           scene360Collections: needs360Pagination
             ? scenesResponse.nextCursor?.scene360Collections
-            : undefined
+            : undefined,
+          scenes: scenesResponse.nextCursor?.scenes
         };
         await fetchRemainingRelatedData(fdmSdk, cursorsForRelatedData, allScenes);
       }
@@ -318,18 +320,22 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
 
 async function fetchRemainingRelatedData(
   fdmSdk: FdmSDK,
-  initialCursors: { sceneModels?: string; scene360Collections?: string },
+  initialCursors: { sceneModels?: string; scene360Collections?: string; scenes?: string },
   allScenes: Use3dScenesQueryResult
 ): Promise<void> {
-  let currentCursors: { sceneModels?: string; scene360Collections?: string } = initialCursors;
+  let currentCursors: { sceneModels?: string; scene360Collections?: string; scenes?: string } =
+    initialCursors;
 
   // Loop as long as there is at least one cursor for any related data type
   while (
     currentCursors.sceneModels !== undefined ||
     currentCursors.scene360Collections !== undefined
   ) {
-    // Pass 0 for limit to indicate we are not fetching new scenes, only paginating related data.
-    const paginatedQuery = createGetScenesQuery(0, undefined, currentCursors);
+    const paginatedQuery = createGetScenesQuery(
+      SCENE_QUERY_LIMIT,
+      currentCursors.scenes,
+      currentCursors
+    );
 
     const response = await fdmSdk.queryNodesAndEdges<
       typeof paginatedQuery,
