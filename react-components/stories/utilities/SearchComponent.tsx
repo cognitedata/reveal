@@ -79,7 +79,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const {
     data: assetSearchData,
     isFetching: isAssetSearchFetching,
-    hasNextPage: assetSearchHasNextPage,
+    hasNextPage: assetSearchHasNextPage = false,
     fetchNextPage: fetchAssetSearchNextPage
   } = useSearchMappedEquipmentAssetMappings(
     mainSearchQuery,
@@ -96,7 +96,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const {
     data: allAssets,
     isFetching,
-    hasNextPage,
+    hasNextPage = false,
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
 
@@ -170,7 +170,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping) => mapping.assets)
+          .map(({ pages }) => pages.flatMap((page) => page).flatMap((page) => page.assets))
           .flat() ?? [];
 
       const all360ImageAssets =
@@ -196,7 +196,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
       const transformedAssetsSearch = assetSearchData?.pages
         .flat()
-        .map((mapping) => mapping.assets)
+        .map(({ pages }) => pages.flatMap((page) => page).flatMap((page) => page.assets))
         .flat();
 
       const assetImage360SearchData =
