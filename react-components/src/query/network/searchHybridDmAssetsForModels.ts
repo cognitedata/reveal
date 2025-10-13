@@ -1,4 +1,4 @@
-import { type CogniteClient, type FilterDefinition, type ViewDefinition } from '@cognite/sdk';
+import { type CogniteClient, type FilterDefinition } from '@cognite/sdk';
 import { type NodeItem } from '../../data-providers';
 import {
   isClassicIdentifier,
@@ -8,15 +8,7 @@ import { searchHybridDmAssetsForCadModels } from './cad/searchHybridDmAssetsForC
 import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 import { searchHybridPointCloudDmAssetsForModels } from './pointcloud/searchHybridPointCloudDmAssetsForModels';
-
-export type SearchSort = {
-  property: string[];
-  direction: 'ascending' | 'descending';
-};
-
-export type DMSView = {
-  rawView: ViewDefinition;
-};
+import { type DMSView } from './types';
 
 export async function searchHybridDmAssetsForModels(
   resources: TaggedAddResourceOptions[],
