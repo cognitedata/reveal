@@ -50,7 +50,7 @@ export const useFilterOnClassicAssetsInScene = (
   const {
     data: pagedCadAssetMappings,
     isFetching: isFetchingCadAssetMappings,
-    hasNextPage: hasNextCadAssetMappings,
+    hasNextPage: hasNextCadAssetMappings = false,
     fetchNextPage: fetchNextCadAssetMappingsPage
   } = useAllMappedEquipmentAssetMappings(cadAndPointCloudresources, sdk);
 
