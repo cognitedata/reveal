@@ -3,7 +3,9 @@ import { type Asset, type CogniteClient, type ListResponse } from '@cognite/sdk'
 import {
   type UseInfiniteQueryResult,
   useInfiniteQuery,
-  type InfiniteData
+  type InfiniteData,
+  type QueryFunctionContext,
+  type QueryKey
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
@@ -110,11 +112,13 @@ export const useSearchMappedEquipmentAssetMappings = (
 
   return useInfiniteQuery({
     queryKey,
-    queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
+    queryFn: async (context: QueryFunctionContext<QueryKey, string>) => {
       if (query === '' || assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
       }
       const mappedSearchedAssetIds = new Set<number>();
+
+      const pageParam = context.pageParam;
 
       const { assets, nextCursor } = await fetchAssets(pageParam, [], mappedSearchedAssetIds);
 
@@ -123,7 +127,6 @@ export const useSearchMappedEquipmentAssetMappings = (
         nextCursor
       };
     },
-    initialPageParam: undefined,
     staleTime: Infinity,
     getNextPageParam: (_lastPage, allPages) => {
       const lastPageData = allPages[allPages.length - 1];
@@ -149,12 +152,18 @@ export const useAllMappedEquipmentAssetMappings = (
       limit,
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
-    queryFn: async ({ pageParam }) => {
-      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-        const nextCursors = pageParam as Array<{
+    queryFn: async (
+      context: QueryFunctionContext<
+        QueryKey,
+        Array<{
           cursor: string | 'start' | undefined;
           model: AddModelOptions;
-        }>;
+        }>
+      >
+    ) => {
+      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
+        const nextCursors =
+          context.pageParam ?? models.map((model) => ({ cursor: 'start', model }));
         const nextCursor = nextCursors.find(
           (nextCursor) =>
             nextCursor.model.modelId === model.modelId &&
@@ -183,7 +192,6 @@ export const useAllMappedEquipmentAssetMappings = (
 
       return modelsAssets;
     },
-    initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
     getNextPageParam
   });
@@ -203,12 +211,18 @@ export const useMappingsForAssetIds = (
       ...models.map((model) => [model.modelId, model.revisionId]),
       ...assetIds
     ],
-    queryFn: async ({ pageParam }) => {
-      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-        const nextCursors = pageParam as Array<{
+    queryFn: async (
+      context: QueryFunctionContext<
+        QueryKey,
+        Array<{
           cursor: string | 'start' | undefined;
           model: AddModelOptions;
-        }>;
+        }>
+      >
+    ) => {
+      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
+        const nextCursors =
+          context.pageParam ?? models.map((model) => ({ cursor: 'start', model }));
 
         const nextCursor = nextCursors.find(
           (nextCursor) =>
@@ -238,7 +252,6 @@ export const useMappingsForAssetIds = (
 
       return await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
     },
-    initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
     getNextPageParam
   });

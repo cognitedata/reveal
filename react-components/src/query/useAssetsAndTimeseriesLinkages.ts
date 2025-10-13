@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import {
   type IdEither,
@@ -95,6 +95,6 @@ export function useAssetsAndTimeseriesLinkages(
       return assetsAndTimeseriesAll;
     },
     enabled: timeseriesExternalIds.length > 0,
-    placeholderData: keepPreviousData
+    keepPreviousData: true
   });
 }

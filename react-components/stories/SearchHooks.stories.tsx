@@ -20,7 +20,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   return (
     <>
       <RevealCanvas>
-        <ReactQueryDevtools buttonPosition="bottom-right" />
+        <ReactQueryDevtools position="bottom-right" />
         <RevealResourcesFitCameraOnLoad
           resources={resources}
           defaultResourceStyling={{
