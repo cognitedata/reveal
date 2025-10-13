@@ -6,6 +6,8 @@ import {
 } from '../../components/Reveal3DResources';
 import { searchHybridDmAssetsForCadModels } from './cad/searchHybridDmAssetsForCadModels';
 import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
+import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
+import { searchHybridPointCloudDmAssetsForModels } from './pointcloud/searchHybridPointCloudDmAssetsForModels';
 
 export type SearchSort = {
   property: string[];
@@ -25,7 +27,8 @@ export async function searchHybridDmAssetsForModels(
     limit?: number;
   },
   sdk: CogniteClient,
-  classicCadCache: ClassicCadAssetMappingCache
+  classicCadCache: ClassicCadAssetMappingCache,
+  pointCloudAnnotationCache: PointCloudAnnotationCache
 ): Promise<NodeItem[]> {
   const rawView = view.rawView;
 
@@ -34,11 +37,20 @@ export async function searchHybridDmAssetsForModels(
     .map((resource) => resource.addOptions)
     .filter(isClassicIdentifier);
 
-  return await searchHybridDmAssetsForCadModels(
+  const pointCloudSearchedAssets = await searchHybridPointCloudDmAssetsForModels(
+    resources,
+    view,
+    options,
+    sdk,
+    pointCloudAnnotationCache
+  );
+
+  const cadSearchedAssets = await searchHybridDmAssetsForCadModels(
     cadResources,
     rawView,
     options,
     sdk,
     classicCadCache
   );
+  return [...cadSearchedAssets, ...pointCloudSearchedAssets];
 }
