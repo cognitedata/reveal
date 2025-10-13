@@ -9,7 +9,7 @@ import { SceneList, type SceneWithName } from './SceneList';
 import styled from 'styled-components';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
-import { offset } from '@floating-ui/dom';
+import { offset } from '@floating-ui/react';
 
 export type SelectSceneButtonProps = {
   selectedScene: DmsUniqueIdentifier | undefined;

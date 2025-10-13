@@ -48,7 +48,7 @@
     "@cognite/cogs-lab": "9.0.0-alpha.160",
     "@cognite/cogs.js": "^10.36.0",
     "@cognite/signals": "^0.0.4",
-    "@floating-ui/dom": "^1.0.0",
+    "@floating-ui/react": "^0.24.8",
     "@tanstack/react-query": "^5.84.1",
     "assert": "^2.1.0",
     "dayjs": "^1.11.13",
