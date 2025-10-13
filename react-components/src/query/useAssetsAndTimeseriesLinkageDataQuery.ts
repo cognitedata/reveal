@@ -23,7 +23,7 @@ import { getTimeseriesByIds } from '../hooks/network/getTimeseriesByIds';
 import { isDefined } from '../utilities/isDefined';
 import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
 import { getTimeseriesLatestDatapoints } from '../hooks/network/getTimeseriesLatestDatapoints';
-import { chunk, uniqBy } from 'lodash';
+import { chunk, uniqBy } from 'lodash-es';
 import { executeParallel } from '../utilities/executeParallel';
 
 const FETCH_RELATIONSHIP_CHUNK = 1000;

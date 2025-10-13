@@ -9,7 +9,7 @@ import {
   type ViewItem
 } from '../FdmSDK';
 import { type createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import {
   cadNodeInstanceFixture0,
   cadNodeInstanceFixture2,

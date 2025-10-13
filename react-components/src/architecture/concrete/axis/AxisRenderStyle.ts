@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { Color } from 'three';
 import { getMixedColor } from '../../base/utilities/colors/colorUtils';
