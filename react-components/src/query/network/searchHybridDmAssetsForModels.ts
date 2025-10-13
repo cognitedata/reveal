@@ -10,7 +10,7 @@ import { type PointCloudAnnotationCache } from '../../components/CacheProvider/P
 import { searchHybridPointCloudDmAssetsForModels } from './pointcloud/searchHybridPointCloudDmAssetsForModels';
 import { type DMSView } from './types';
 import { uniqBy } from 'lodash-es';
-import { createFdmKey } from '../../components';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 
 export async function searchHybridDmAssetsForModels(
   resources: TaggedAddResourceOptions[],

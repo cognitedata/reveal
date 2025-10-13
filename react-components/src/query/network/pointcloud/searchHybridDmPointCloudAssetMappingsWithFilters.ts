@@ -1,6 +1,6 @@
 import type { FilterDefinition, ViewDefinition, CogniteClient } from '@cognite/sdk';
 import { chunk } from 'lodash';
-import { createFdmKey } from '../../../components/CacheProvider';
+import { createFdmKey } from '../../../components/CacheProvider/idAndKeyTranslation';
 import type { ModelRevisionId, FdmKey } from '../../../components/CacheProvider/types';
 import type { NodeItem } from '../../../data-providers';
 import { FdmSDK } from '../../../data-providers/FdmSDK';

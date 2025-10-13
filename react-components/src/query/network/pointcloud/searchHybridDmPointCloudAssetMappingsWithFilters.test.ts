@@ -7,7 +7,7 @@ import { type DmsUniqueIdentifier, type NodeItem } from '../../../data-providers
 import { createDmsNodeItem } from '#test-utils/dms/createDmsNodeItem';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
 import { type PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
-import { createFdmKey } from '../../../components';
+import { createFdmKey } from '../../../components/CacheProvider/idAndKeyTranslation';
 import { isDmsInstance } from '../../../utilities/instanceIds';
 
 describe(searchHybridDmPointCloudAssetMappingsWithFilters.name, () => {

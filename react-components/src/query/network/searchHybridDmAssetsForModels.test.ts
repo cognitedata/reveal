@@ -17,7 +17,7 @@ import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createRawDmHybridAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
 import { isDmsInstance } from '../../utilities/instanceIds';
-import { createFdmKey } from '../../components';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
 import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 
