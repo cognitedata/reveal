@@ -33,6 +33,11 @@ export class PointCloudAnnotationCache {
     PointCloudAnnotationModel[]
   >();
 
+  private readonly _assetKeyToAnnotationIdsCache = new Map<
+    ModelRevisionKey,
+    Map<InstanceReferenceKey, Set<AnnotationId>>
+  >();
+
   private readonly fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
 
   constructor(sdk: CogniteClient, dependencies?: PointCloudAnnotationCacheDependencies) {
@@ -59,24 +64,6 @@ export class PointCloudAnnotationCache {
     this._modelToAnnotationAssetMappings.set(key, modelToAnnotationAssetMappings);
 
     return await modelToAnnotationAssetMappings;
-  }
-
-  public async getPointCloudAnnotationsForModel(
-    modelId: ModelId,
-    revisionId: RevisionId
-  ): Promise<PointCloudAnnotationModel[]> {
-    const key = createModelRevisionKey(modelId, revisionId);
-    const cachedResult = this._modelToAnnotationMappings.get(key);
-
-    if (cachedResult !== undefined) {
-      return cachedResult;
-    }
-
-    const annotationModels = await this.fetchAnnotationForModel(modelId);
-
-    this._modelToAnnotationMappings.set(key, annotationModels);
-
-    return annotationModels;
   }
 
   private async fetchAndCacheAssetMappingsForModel(
@@ -111,6 +98,69 @@ export class PointCloudAnnotationCache {
     return filteredAnnotationModelsByAsset as PointCloudAnnotationModel[];
   }
 
+  private async getOrBuildAssetKeyToAnnotationIdsCache(
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Promise<Map<InstanceReferenceKey, Set<AnnotationId>>> {
+    const modelRevisionKey = createModelRevisionKey(modelId, revisionId);
+    const cachedMap = this._assetKeyToAnnotationIdsCache.get(modelRevisionKey);
+
+    if (cachedMap !== undefined) {
+      return cachedMap;
+    }
+
+    const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
+      modelId,
+      revisionId
+    );
+
+    const assetKeyToAnnotationIds = new Map<InstanceReferenceKey, Set<AnnotationId>>();
+
+    for (const [annotationId, assets] of fetchedAnnotationAssetMappings.entries()) {
+      for (const asset of assets) {
+        const keys: InstanceReferenceKey[] = [];
+        if (isClassicAsset(asset)) {
+          keys.push(String(asset.id));
+          if (asset.externalId !== undefined) {
+            keys.push(asset.externalId);
+          }
+        } else {
+          keys.push(createFdmKey(asset));
+        }
+
+        for (const key of keys) {
+          let annotationIds = assetKeyToAnnotationIds.get(key);
+          if (annotationIds === undefined) {
+            annotationIds = new Set<AnnotationId>();
+            assetKeyToAnnotationIds.set(key, annotationIds);
+          }
+          annotationIds.add(annotationId);
+        }
+      }
+    }
+
+    this._assetKeyToAnnotationIdsCache.set(modelRevisionKey, assetKeyToAnnotationIds);
+    return assetKeyToAnnotationIds;
+  }
+
+  public async getPointCloudAnnotationsForModel(
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Promise<PointCloudAnnotationModel[]> {
+    const key = createModelRevisionKey(modelId, revisionId);
+    const cachedResult = this._modelToAnnotationMappings.get(key);
+
+    if (cachedResult !== undefined) {
+      return cachedResult;
+    }
+
+    const annotationModels = await this.fetchAnnotationForModel(modelId);
+
+    this._modelToAnnotationMappings.set(key, annotationModels);
+
+    return annotationModels;
+  }
+
   public async matchPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId,
@@ -132,34 +182,10 @@ export class PointCloudAnnotationCache {
     revisionId: RevisionId,
     instanceIds: InstanceReference[]
   ): Promise<Map<InstanceReferenceKey, AnnotationId[]>> {
-    const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
+    const assetKeyToAnnotationIds = await this.getOrBuildAssetKeyToAnnotationIdsCache(
       modelId,
       revisionId
     );
-
-    const assetKeyToAnnotationIds = new Map<InstanceReferenceKey, AnnotationId[]>();
-
-    for (const [annotationId, assets] of fetchedAnnotationAssetMappings.entries()) {
-      for (const asset of assets) {
-        const keys: InstanceReferenceKey[] = [];
-        if (isClassicAsset(asset)) {
-          keys.push(String(asset.id));
-          if (asset.externalId !== undefined) {
-            keys.push(asset.externalId);
-          }
-        } else {
-          keys.push(createFdmKey(asset));
-        }
-
-        for (const key of keys) {
-          const annotationIds = assetKeyToAnnotationIds.get(key) ?? [];
-          if (!annotationIds.includes(annotationId)) {
-            annotationIds.push(annotationId);
-          }
-          assetKeyToAnnotationIds.set(key, annotationIds);
-        }
-      }
-    }
 
     const result = new Map<InstanceReferenceKey, AnnotationId[]>();
     for (const instanceId of instanceIds) {
@@ -167,7 +193,7 @@ export class PointCloudAnnotationCache {
       const annotationIds = assetKeyToAnnotationIds.get(key);
 
       if (annotationIds !== undefined) {
-        result.set(key, annotationIds);
+        result.set(key, Array.from(annotationIds));
       }
     }
     return result;
