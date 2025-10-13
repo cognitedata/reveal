@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { ModelLayerSelection } from './ModelLayerSelection';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { CadDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 

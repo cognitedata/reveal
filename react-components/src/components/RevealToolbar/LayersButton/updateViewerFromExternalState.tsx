@@ -1,11 +1,5 @@
-import {
-  type DataSourceType,
-  type Cognite3DViewer,
-  type CogniteCadModel,
-  type CognitePointCloudModel
-} from '@cognite/reveal';
-import { ModelLayerHandlers, type LayersUrlStateParam } from './types';
-import { RevealRenderTarget } from '../../../architecture';
+import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
+import { type RevealRenderTarget } from '../../../architecture';
 
 export function updateViewerFromExternalState(
   layersState: LayersUrlStateParam | undefined,
@@ -15,12 +9,6 @@ export function updateViewerFromExternalState(
   if (layersState === undefined) {
     return;
   }
-
-  // const cadModels = viewer.models.filter((model): model is CogniteCadModel => model.type === 'cad');
-  /* const pointCloudModels = viewer.models.filter(
-    (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'
-  );
-  const image360Collections = viewer.get360ImageCollections(); */
 
   layersState.cadLayers?.forEach((layer) => {
     if (

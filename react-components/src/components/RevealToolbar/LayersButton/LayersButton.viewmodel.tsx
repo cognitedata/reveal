@@ -1,7 +1,7 @@
 import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
 import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
-import { RevealDomainObject, RevealRenderTarget } from '../../../architecture';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../architecture';
 
 type ModelLayerSelectionProps = {
   label: string;

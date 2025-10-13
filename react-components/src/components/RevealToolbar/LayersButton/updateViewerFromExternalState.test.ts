@@ -5,12 +5,12 @@ import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { ModelLayerHandlers } from './types';
+import { type ModelLayerHandlers } from './types';
 import {
   CadDomainObject,
   Image360CollectionDomainObject,
   PointCloudDomainObject,
-  RevealRenderTarget
+  type RevealRenderTarget
 } from '../../../architecture';
 
 describe(updateViewerFromExternalState.name, () => {
@@ -86,8 +86,8 @@ describe(updateViewerFromExternalState.name, () => {
 
     modelStates = { cadHandlers: [], pointCloudHandlers: [], image360Handlers: [] };
 
-    expect(() =>
-      updateViewerFromExternalState(layersState, modelStates, renderTargetMock)
-    ).not.toThrow();
+    expect(() => {
+      updateViewerFromExternalState(layersState, modelStates, renderTargetMock);
+    }).not.toThrow();
   });
 });

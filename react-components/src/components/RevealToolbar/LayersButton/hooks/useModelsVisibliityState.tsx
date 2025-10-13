@@ -4,8 +4,8 @@ import {
   CadDomainObject,
   Image360CollectionDomainObject,
   PointCloudDomainObject,
-  RevealDomainObject,
-  RevealRenderTarget
+  type RevealDomainObject,
+  type RevealRenderTarget
 } from '../../../../architecture';
 import { UseModelsVisibilityStateContext } from './useModelsVisibilityState.context';
 

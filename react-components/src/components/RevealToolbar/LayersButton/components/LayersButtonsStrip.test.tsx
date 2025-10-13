@@ -16,8 +16,7 @@ import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/get
 import {
   CadDomainObject,
   Image360CollectionDomainObject,
-  PointCloudDomainObject,
-  RevealRenderTarget
+  PointCloudDomainObject
 } from '../../../../architecture';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
@@ -47,10 +46,8 @@ describe(LayersButtonStrip.name, () => {
   let cadObject: CadDomainObject;
   let pointCloudObject: PointCloudDomainObject;
   let image360Object: Image360CollectionDomainObject;
-  let renderTarget: RevealRenderTarget;
 
   beforeEach(() => {
-    renderTarget = createRenderTargetMock();
     cadObject = new CadDomainObject(createCadMock({ revisionId: CAD_REVISION_ID }));
     pointCloudObject = new PointCloudDomainObject(
       createPointCloudMock({ revisionId: POINT_CLOUD_REVISION_ID })

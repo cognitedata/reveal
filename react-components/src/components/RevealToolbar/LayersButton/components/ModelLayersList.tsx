@@ -1,7 +1,7 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { useState, type ReactElement } from 'react';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
-import { RevealDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { useOnUpdateDomainObject } from '../../../Architecture/hooks/useOnUpdate';
 
 export const ModelLayersList = ({
@@ -32,7 +32,11 @@ export const ModelLayersList = ({
       )}
       <SelectPanel.Section>
         {domainObjects.map((domainObject) => (
-          <ModelVisibilityItem domainObject={domainObject} renderTarget={renderTarget} />
+          <ModelVisibilityItem
+            key={domainObject.uniqueId}
+            domainObject={domainObject}
+            renderTarget={renderTarget}
+          />
         ))}
       </SelectPanel.Section>
     </>

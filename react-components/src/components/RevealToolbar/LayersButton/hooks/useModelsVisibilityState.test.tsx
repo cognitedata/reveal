@@ -4,7 +4,12 @@ import { renderHook } from '@testing-library/react';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { type LayersUrlStateParam } from '../types';
-import { PropsWithChildren, type Dispatch, type SetStateAction } from 'react';
+import {
+  type PropsWithChildren,
+  type Dispatch,
+  type SetStateAction,
+  type ReactElement
+} from 'react';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { type use3DModelName } from '../../../../query';
 import { type UseQueryResult } from '@tanstack/react-query';
@@ -14,7 +19,7 @@ import {
   CadDomainObject,
   Image360CollectionDomainObject,
   PointCloudDomainObject,
-  RevealRenderTarget
+  type RevealRenderTarget
 } from '../../../../architecture';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
@@ -33,7 +38,7 @@ describe(useModelsVisibilityState.name, () => {
 
   const dependencies = getMocksByDefaultDependencies(defaultUseModelsVisibilityStateDependencies);
 
-  const wrapper = ({ children }: PropsWithChildren) => (
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <UseModelsVisibilityStateContext.Provider value={dependencies}>
       {children}
     </UseModelsVisibilityStateContext.Provider>

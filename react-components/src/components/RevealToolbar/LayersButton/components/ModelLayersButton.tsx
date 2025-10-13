@@ -4,7 +4,7 @@ import { type ReactElement } from 'react';
 import { IconComponent } from '../../../Architecture/Factories/IconFactory';
 import { type IconName } from '../../../../architecture/base/utilities/types';
 import { ModelLayersList } from './ModelLayersList';
-import { RevealDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 
 export const ModelLayersButton = ({
   icon,

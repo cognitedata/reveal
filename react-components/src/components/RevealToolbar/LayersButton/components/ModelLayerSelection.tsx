@@ -1,31 +1,22 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { IconWrapper, ChevronRightSmallIcon } from '@cognite/cogs.js';
-import { type ReactElement, useCallback } from 'react';
-import { type ModelHandler } from '../ModelHandler';
+import { type ReactElement } from 'react';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
-import { RevealDomainObject, RevealRenderTarget } from '../../../../architecture';
-
-type UpdateCallback = () => void;
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 
 type ModelLayerSelectionProps = {
   label: string;
   domainObjects: RevealDomainObject[];
-  // update: UpdateCallback;
   renderTarget: RevealRenderTarget;
 };
 
 export const ModelLayerSelection = ({
   label,
   domainObjects,
-  // update,
   renderTarget
 }: ModelLayerSelectionProps): ReactElement => {
   const isDisabled = domainObjects.length === 0;
-
-  /* const updateCallback = useCallback(() => {
-    update();
-  }, [update]); */
 
   return (
     <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={!isDisabled}>
@@ -33,7 +24,6 @@ export const ModelLayerSelection = ({
         <WholeLayerVisibilitySelectItem
           label={label}
           domainObjects={domainObjects}
-          // update={updateCallback}
           trailingContent={
             <IconWrapper size={16}>
               <ChevronRightSmallIcon />
@@ -46,7 +36,6 @@ export const ModelLayerSelection = ({
       <SelectPanel.Body>
         <ModelLayersList
           domainObjects={domainObjects}
-          // update={updateCallback}
           disabled={isDisabled}
           renderTarget={renderTarget}
         />

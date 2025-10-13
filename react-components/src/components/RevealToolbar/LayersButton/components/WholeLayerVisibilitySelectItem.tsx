@@ -1,9 +1,11 @@
-import { useEffect, useMemo, type ReactElement, type ReactNode } from 'react';
-import { type ModelHandler } from '../ModelHandler';
+import { useMemo, type ReactElement, type ReactNode } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { CounterChip } from '@cognite/cogs.js';
-import { Changes, RevealDomainObject, RevealRenderTarget } from '../../../../architecture';
-import { RenderTarget } from 'three';
+import {
+  Changes,
+  type RevealDomainObject,
+  type RevealRenderTarget
+} from '../../../../architecture';
 import { getRevealDomainUpdateSignal } from '../../../../architecture/concrete/reveal/signal/getRevealDomainObjectsSignal';
 import { useDisposableSignal } from '../../../../utilities/signal/useDisposableSignal';
 
@@ -11,19 +13,15 @@ export const WholeLayerVisibilitySelectItem = ({
   label,
   trailingContent,
   domainObjects,
-  // update,
   disabled,
   renderTarget
 }: {
   label?: string;
   domainObjects: RevealDomainObject[];
-  // update: () => void;
   trailingContent?: ReactNode;
   disabled?: boolean;
   renderTarget: RevealRenderTarget;
 }): ReactElement => {
-  // const checked = domainObjects.some((handler) => handler.isVisible(renderTarget));
-
   const checked = useSomeDomainObjectsVisible(domainObjects, renderTarget);
   return (
     <SelectPanel.Item
@@ -35,7 +33,6 @@ export const WholeLayerVisibilitySelectItem = ({
         domainObjects.forEach((handler) => {
           handler.setVisibleInteractive(!checked, renderTarget);
         });
-        // update();
       }}
       trailingContent={
         <>

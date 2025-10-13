@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, test, beforeEach } from 'vitest';
 import { ModelLayersButton } from './ModelLayersButton';
-import { CadDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 
@@ -28,7 +28,7 @@ describe(ModelLayersButton.name, () => {
 
   test('toggles visibility of model handlers when clicked', async () => {
     const cadObject = new CadDomainObject(createCadMock());
-    const { getAllByRole } = render(
+    render(
       <ModelLayersButton
         icon="CubeIcon"
         label="CAD Models"

@@ -1,6 +1,6 @@
 import { type Dispatch, type SetStateAction } from 'react';
 import { type LayersUrlStateParam, type ModelLayerHandlers } from './types';
-import { RevealRenderTarget } from '../../../architecture';
+import { type RevealRenderTarget } from '../../../architecture';
 
 export function updateExternalStateFromLayerHandlers(
   modelLayerHandlers: ModelLayerHandlers,

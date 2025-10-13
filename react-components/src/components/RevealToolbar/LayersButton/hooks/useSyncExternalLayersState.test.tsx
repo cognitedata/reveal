@@ -3,9 +3,9 @@ import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { renderHook } from '@testing-library/react';
 import { wrapper } from '#test-components/fixtures/wrapper';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { CadDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
-import { LayersUrlStateParam, ModelLayerHandlers } from '../types';
+import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 
 describe(useSyncExternalLayersState.name, () => {
   const CAD_REVISION_ID = 123;

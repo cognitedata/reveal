@@ -1,20 +1,13 @@
 import {
-  CadDomainObject,
-  Image360CollectionDomainObject,
-  PointCloudDomainObject,
-  RevealDomainObject
+  type CadDomainObject,
+  type Image360CollectionDomainObject,
+  type PointCloudDomainObject
 } from '../../../architecture';
 import {
   type CadLayersUrlStateParam,
   type Image360LayersUrlStateParam,
   type PointCloudLayersUrlStateParam
 } from '../../../hooks/types';
-
-import {
-  type CadModelHandler,
-  type Image360CollectionHandler,
-  type PointCloudModelHandler
-} from './ModelHandler';
 
 export type LayersUrlStateParam = {
   image360Layers?: Image360LayersUrlStateParam[];

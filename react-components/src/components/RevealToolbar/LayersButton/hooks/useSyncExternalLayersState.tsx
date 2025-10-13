@@ -2,7 +2,7 @@ import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 import { updateExternalStateFromLayerHandlers } from '../updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from '../updateViewerFromExternalState';
-import { RevealRenderTarget } from '../../../../architecture';
+import { type RevealRenderTarget } from '../../../../architecture';
 
 export const useSyncExternalLayersState = (
   modelLayerHandlers: ModelLayerHandlers,
