@@ -22,7 +22,7 @@ import { type IconName } from '../../architecture/base/utilities/types';
 import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
-import { offset } from '@floating-ui/dom';
+import { offset } from '@floating-ui/react';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useCommandProperty } from './hooks/useCommandProperty';

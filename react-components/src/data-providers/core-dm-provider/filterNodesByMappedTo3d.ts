@@ -15,7 +15,7 @@ import {
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
-import { chunk, concat, uniqBy } from 'lodash';
+import { chunk, concat, uniqBy } from 'lodash-es';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';

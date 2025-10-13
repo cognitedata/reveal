@@ -6,6 +6,7 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../../utilities/queryKeys';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 
 export const usePointCloudAnnotationMappingsForAssetIds = (
   models: TypedReveal3DModel[],
@@ -22,12 +23,13 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
       )
     ],
     queryFn: async () => {
+      const assetIdsAsIdEither = assetIds?.map(toIdEither);
       const allAnnotationMappingsPromisesResult = await Promise.all(
         classicAddModelOptions.map(async (model) => {
           const result = await fetchAnnotationsForModel(
             model.modelId,
             model.revisionId,
-            assetIds,
+            assetIdsAsIdEither,
             pointCloudAnnotationCache
           );
           return result ?? EMPTY_ARRAY;

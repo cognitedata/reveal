@@ -1,7 +1,7 @@
 import { type CogniteClient, type IdEither, type Datapoints } from '@cognite/sdk';
 import { executeParallel } from '../../utilities/executeParallel';
 import { isDefined } from '../../utilities/isDefined';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 
 const FETCH_CHUNK = 100;
 
