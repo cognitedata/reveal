@@ -476,7 +476,9 @@ describe(use3dScenes.name, () => {
   });
 
   const setupMockResponse = (
-    responseData: MockResponseData | Array<{ data: MockResponseData; nextCursor?: Record<string, string> }>
+    responseData:
+      | MockResponseData
+      | Array<{ data: MockResponseData; nextCursor?: Record<string, string> }>
   ): void => {
     if (!Array.isArray(responseData)) {
       mockQueryNodesAndEdges.mockResolvedValue({
