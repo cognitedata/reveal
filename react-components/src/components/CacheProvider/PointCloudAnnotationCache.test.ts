@@ -15,7 +15,7 @@ import { type fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import { Mock } from 'moq.ts';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
-import { type InstanceReference } from '../../utilities/instanceIds';
+import { createInstanceReferenceKey, type InstanceReference } from '../../utilities/instanceIds';
 
 describe(PointCloudAnnotationCache.name, () => {
   const mockFetchPointCloudAnnotationAssets = vi.fn<typeof fetchPointCloudAnnotationAssets>();
@@ -178,8 +178,8 @@ describe(PointCloudAnnotationCache.name, () => {
       );
 
       expect(result.size).toBe(2);
-      expect(result.get(classicIds[0])).toEqual([annotationId]);
-      expect(result.get(classicIds[1])).toEqual([annotationId + 1]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[0]))).toEqual([annotationId]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[1]))).toEqual([annotationId + 1]);
     });
 
     it('returns annotation IDs for external ID instance IDs', async () => {
@@ -206,8 +206,8 @@ describe(PointCloudAnnotationCache.name, () => {
       );
 
       expect(result.size).toBe(2);
-      expect(result.get(Number(classicExternalIds[0]))).toEqual([annotationId]);
-      expect(result.get(Number(classicExternalIds[1]))).toEqual([annotationId + 1]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[0]))).toEqual([annotationId]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[1]))).toEqual([annotationId + 1]);
     });
 
     it('returns annotation IDs for DMS instance IDs', async () => {
@@ -229,8 +229,7 @@ describe(PointCloudAnnotationCache.name, () => {
       );
 
       expect(result.size).toBe(1);
-      const instanceKey: `${string}/${string}` = `${dmsIdentifier.space}/${dmsIdentifier.externalId}`;
-      expect(result.get(instanceKey)).toEqual([annotationId]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[0]))).toEqual([annotationId]);
     });
 
     it('returns empty map when no matching annotations found', async () => {
@@ -273,8 +272,8 @@ describe(PointCloudAnnotationCache.name, () => {
       );
 
       expect(result.size).toBe(2);
-      expect(result.get(1)).toEqual([annotationId]);
-      expect(result.get('test-space/test-external-id-asset-1')).toEqual([annotationId + 1]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[0]))).toEqual([annotationId]);
+      expect(result.get(createInstanceReferenceKey(instanceIds[1]))).toEqual([annotationId + 1]);
     });
 
     it('caches asset mappings between calls', async () => {

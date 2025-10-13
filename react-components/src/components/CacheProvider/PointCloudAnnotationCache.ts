@@ -12,11 +12,9 @@ import assert from 'assert';
 import { createFdmKey, createModelRevisionKey } from './idAndKeyTranslation';
 import { isClassicAsset, type AssetInstance } from '../../utilities/instances';
 import {
-  type InstanceKey,
+  createInstanceReferenceKey,
   type InstanceReference,
-  isDmsInstance,
-  isExternalId,
-  isInternalId,
+  type InstanceReferenceKey,
   isSameAssetReference
 } from '../../utilities/instanceIds';
 
@@ -133,57 +131,45 @@ export class PointCloudAnnotationCache {
     modelId: ModelId,
     revisionId: RevisionId,
     instanceIds: InstanceReference[]
-  ): Promise<Map<InstanceKey, AnnotationId[]>> {
+  ): Promise<Map<InstanceReferenceKey, AnnotationId[]>> {
     const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
       modelId,
       revisionId
     );
 
-    const instanceIdToAnnotationIds = new Map<InstanceKey, AnnotationId[]>();
+    const assetKeyToAnnotationIds = new Map<InstanceReferenceKey, AnnotationId[]>();
 
+    for (const [annotationId, assets] of fetchedAnnotationAssetMappings.entries()) {
+      for (const asset of assets) {
+        const keys: InstanceReferenceKey[] = [];
+        if (isClassicAsset(asset)) {
+          keys.push(String(asset.id));
+          if (asset.externalId !== undefined) {
+            keys.push(asset.externalId);
+          }
+        } else {
+          keys.push(createFdmKey(asset));
+        }
+
+        for (const key of keys) {
+          const annotationIds = assetKeyToAnnotationIds.get(key) ?? [];
+          if (!annotationIds.includes(annotationId)) {
+            annotationIds.push(annotationId);
+          }
+          assetKeyToAnnotationIds.set(key, annotationIds);
+        }
+      }
+    }
+
+    const result = new Map<InstanceReferenceKey, AnnotationId[]>();
     for (const instanceId of instanceIds) {
-      const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(
-        ([, assets]) => assets.some((asset) => this.isAssetMatch(asset, instanceId))
-      );
+      const key = createInstanceReferenceKey(instanceId);
+      const annotationIds = assetKeyToAnnotationIds.get(key);
 
-      if (matchedAnnotations.length === 0) continue;
-
-      const fdmKey = this.createInstanceKey(instanceId);
-      if (fdmKey !== undefined) {
-        instanceIdToAnnotationIds.set(
-          fdmKey,
-          matchedAnnotations.map(([annotationId]) => annotationId)
-        );
+      if (annotationIds !== undefined) {
+        result.set(key, annotationIds);
       }
     }
-
-    return instanceIdToAnnotationIds;
-  }
-
-  private isAssetMatch(asset: AssetInstance, instanceId: InstanceReference): boolean {
-    if (isClassicAsset(asset)) {
-      if (isInternalId(instanceId)) {
-        return asset.id === instanceId.id;
-      }
-      if (isExternalId(instanceId)) {
-        return asset.externalId === instanceId.externalId;
-      }
-    } else if (isDmsInstance(instanceId)) {
-      return asset.externalId === instanceId.externalId && asset.space === instanceId.space;
-    }
-    return false;
-  }
-
-  private createInstanceKey(instanceId: InstanceReference): InstanceKey | undefined {
-    if (isInternalId(instanceId)) {
-      return instanceId.id;
-    }
-    if (isExternalId(instanceId)) {
-      return Number(instanceId.externalId);
-    }
-    if (isDmsInstance(instanceId)) {
-      return createFdmKey(instanceId);
-    }
-    return undefined;
+    return result;
   }
 }
