@@ -67,9 +67,9 @@ export const DomainObjectPanel = (): ReactElement => {
           <CommandButtons commands={commands} placement={'bottom'} />
         </Flex>
       </Flex>
-      <table style={{ gap: 8 }}>
+      <StyledTable>
         <tbody>{info.items.map((item, _i) => addTextWithNumber(item, unitSystem))}</tbody>
-      </table>
+      </StyledTable>
     </Container>
   );
 
@@ -114,3 +114,7 @@ const Container = withSuppressRevealEvents(styled.div`
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
 `);
+
+const StyledTable = styled.table`
+  gap: 8px;
+`;
