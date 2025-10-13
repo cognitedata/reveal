@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { useModelsVisibilityState } from './useModelsVisibliityState';
+import { useModelsVisibilityState } from './useModelsVisibilityState';
 import { renderHook } from '@testing-library/react';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
@@ -11,7 +11,6 @@ import {
   type ReactElement
 } from 'react';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
-import { type use3DModelName } from '../../../../query';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { Mock } from 'moq.ts';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
@@ -28,8 +27,6 @@ import {
 } from './useModelsVisibilityState.context';
 
 describe(useModelsVisibilityState.name, () => {
-  const use3DModelNameMock = vi.fn<typeof use3DModelName>();
-
   let cadObject: CadDomainObject;
   let pointCloudObject: PointCloudDomainObject;
   let image360CollectionObject: Image360CollectionDomainObject;
@@ -70,7 +67,6 @@ describe(useModelsVisibilityState.name, () => {
 
   test('returns model handlers and update callback', () => {
     const mockNameQueryResult = createUseQueryModelNameResult(['model0', 'model1']);
-    use3DModelNameMock.mockReturnValue(mockNameQueryResult);
 
     const { result } = renderHook(() => useModelsVisibilityState(undefined, renderTarget), {
       wrapper

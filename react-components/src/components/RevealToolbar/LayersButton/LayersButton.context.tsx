@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { useModelsVisibilityState } from './hooks/useModelsVisibliityState';
+import { useModelsVisibilityState } from './hooks/useModelsVisibilityState';
 import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';
 import { ModelLayerSelection } from './components/ModelLayerSelection';
 import { useRenderTarget } from '../../RevealCanvas';
