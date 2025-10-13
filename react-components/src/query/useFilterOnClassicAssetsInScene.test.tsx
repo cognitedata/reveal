@@ -28,7 +28,7 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
     mockDependencies = {
       useReveal3dResourcesFromScene: vi.fn().mockReturnValue([]),
       useAllMappedEquipmentAssetMappings: vi.fn().mockReturnValue({
-        data: { pages: [{ assets: [createMockAsset(1), createMockAsset(2)] }] },
+        data: { pages: [{ pages: [{ assets: [createMockAsset(1), createMockAsset(2)] }] }] },
         isFetching: false,
         hasNextPage: false,
         fetchNextPage: vi.fn()
