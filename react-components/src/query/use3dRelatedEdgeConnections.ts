@@ -1,7 +1,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
-import { zipWith } from 'lodash';
+import { zipWith } from 'lodash-es';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type FdmInstanceWithView } from '../utilities/instanceIds';
 

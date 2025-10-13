@@ -434,7 +434,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.34.1"
     happy-dom: "npm:^17.0.0"
     locize-cli: "npm:^8.0.1"
-    lodash: "npm:^4.17.21"
+    lodash-es: "npm:^4.17.21"
     madge: "npm:^8.0.0"
     ml-matrix: "npm:^6.12.1"
     moq.ts: "npm:10.0.8"
@@ -7882,6 +7882,13 @@ __metadata:
   version: 2.4.6
   resolution: "locize@npm:2.4.6"
   checksum: 10/eb470a603fe9c66dd646efa2384bbc72afb88b74384a8ce405fe10a131dc04f60505287c4d85d9c15e5eb32c9ff456706b64b9388b36e3df5f9c92e7024f4998
+  languageName: node
+  linkType: hard
+
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 10/03f39878ea1e42b3199bd3f478150ab723f93cc8730ad86fec1f2804f4a07c6e30deaac73cad53a88e9c3db33348bb8ceeb274552390e7a75d7849021c02df43
   languageName: node
   linkType: hard
 

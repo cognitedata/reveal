@@ -11,7 +11,7 @@ import {
 
 import { fetchAncestorNodesForTreeIndex, inspectNodes } from './requests';
 
-import { max } from 'lodash';
+import { max } from 'lodash-es';
 
 import assert from 'assert';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';

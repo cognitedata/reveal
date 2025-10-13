@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 import { round } from '../utilities/extensions/mathUtils';
 import { signal } from '@cognite/signals';
