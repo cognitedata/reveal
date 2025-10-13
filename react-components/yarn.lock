@@ -410,7 +410,7 @@ __metadata:
     "@tanstack/react-query-devtools": "npm:^5.32.0"
     "@testing-library/react": "npm:^16.0.0"
     "@tippyjs/react": "npm:4.2.6"
-    "@types/lodash": "npm:^4.17.0"
+    "@types/lodash-es": "npm:^4.17.0"
     "@types/node": "npm:^22.0.0"
     "@types/random-seed": "npm:^0.3.5"
     "@types/react": "npm:^18.3.1"
@@ -2842,7 +2842,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.0":
+"@types/lodash-es@npm:^4.17.0":
+  version: 4.17.12
+  resolution: "@types/lodash-es@npm:4.17.12"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10/56b9a433348b11c31051c6fa9028540a033a08fb80b400c589d740446c19444d73b217cf1471d4036448ef686a83e8cf2a35d1fadcb3f2105f26701f94aebb07
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
   version: 4.17.20
   resolution: "@types/lodash@npm:4.17.20"
   checksum: 10/8cd8ad3bd78d2e06a93ae8d6c9907981d5673655fec7cb274a4d9a59549aab5bb5b3017361280773b8990ddfccf363e14d1b37c97af8a9fe363de677f9a61524
