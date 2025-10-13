@@ -112,13 +112,11 @@ export const useSearchMappedEquipmentAssetMappings = (
 
   return useInfiniteQuery({
     queryKey,
-    queryFn: async (context: QueryFunctionContext<QueryKey, string>) => {
+    queryFn: async ({ pageParam }: QueryFunctionContext<QueryKey, string>) => {
       if (query === '' || assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
       }
       const mappedSearchedAssetIds = new Set<number>();
-
-      const pageParam = context.pageParam;
 
       const { assets, nextCursor } = await fetchAssets(pageParam, [], mappedSearchedAssetIds);
 
@@ -152,18 +150,17 @@ export const useAllMappedEquipmentAssetMappings = (
       limit,
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
-    queryFn: async (
-      context: QueryFunctionContext<
-        QueryKey,
-        Array<{
-          cursor: string | 'start' | undefined;
-          model: AddModelOptions;
-        }>
-      >
-    ) => {
+    queryFn: async ({
+      pageParam
+    }: QueryFunctionContext<
+      QueryKey,
+      Array<{
+        cursor: string | 'start' | undefined;
+        model: AddModelOptions;
+      }>
+    >) => {
       const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-        const nextCursors =
-          context.pageParam ?? models.map((model) => ({ cursor: 'start', model }));
+        const nextCursors = pageParam ?? models.map((model) => ({ cursor: 'start', model }));
         const nextCursor = nextCursors.find(
           (nextCursor) =>
             nextCursor.model.modelId === model.modelId &&
@@ -211,18 +208,17 @@ export const useMappingsForAssetIds = (
       ...models.map((model) => [model.modelId, model.revisionId]),
       ...assetIds
     ],
-    queryFn: async (
-      context: QueryFunctionContext<
-        QueryKey,
-        Array<{
-          cursor: string | 'start' | undefined;
-          model: AddModelOptions;
-        }>
-      >
-    ) => {
+    queryFn: async ({
+      pageParam
+    }: QueryFunctionContext<
+      QueryKey,
+      Array<{
+        cursor: string | 'start' | undefined;
+        model: AddModelOptions;
+      }>
+    >) => {
       const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-        const nextCursors =
-          context.pageParam ?? models.map((model) => ({ cursor: 'start', model }));
+        const nextCursors = pageParam ?? models.map((model) => ({ cursor: 'start', model }));
 
         const nextCursor = nextCursors.find(
           (nextCursor) =>
