@@ -1,50 +1,57 @@
-import { render, fireEvent } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import { describe, expect, test, beforeEach } from 'vitest';
 import { ModelLayersButton } from './ModelLayersButton';
-import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
-import { type ModelHandler } from '../ModelHandler';
+import { CadDomainObject, RevealRenderTarget } from '../../../../architecture';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 
 describe(ModelLayersButton.name, () => {
-  let mockCadHandler: ModelHandler;
+  let renderTarget: RevealRenderTarget;
 
   beforeEach(() => {
-    mockCadHandler = createCadHandlerMock();
+    renderTarget = createRenderTargetMock();
   });
 
   test('renders without crashing', () => {
-    const { getAllByRole } = render(
+    render(
       <ModelLayersButton
         icon="CubeIcon"
         label="CAD Models"
-        domainObjects={[mockCadHandler]}
-        update={vi.fn()}
+        domainObjects={[]}
+        renderTarget={renderTarget}
       />
     );
 
-    expect(getAllByRole('button')).toBeTruthy();
+    expect(screen.getAllByRole('button')[0]).toBeDefined();
   });
 
-  test('toggles visibility of model handlers when clicked', () => {
-    const updateMock = vi.fn();
+  test('toggles visibility of model handlers when clicked', async () => {
+    const cadObject = new CadDomainObject(createCadMock());
     const { getAllByRole } = render(
       <ModelLayersButton
         icon="CubeIcon"
         label="CAD Models"
-        domainObjects={[mockCadHandler]}
-        update={updateMock}
+        domainObjects={[cadObject]}
+        renderTarget={renderTarget}
       />
     );
 
-    const button = getAllByRole('button');
-    mockCadHandler.setVisibility(true);
-    expect(mockCadHandler.visible()).toBe(true);
+    const button = screen.getAllByRole('button');
 
-    fireEvent.click(button[0]);
-    mockCadHandler.setVisibility(false);
-    expect(mockCadHandler.visible()).toBe(false);
+    // Open panel
+    await userEvent.click(button[0]);
 
-    fireEvent.click(button[0]);
-    mockCadHandler.setVisibility(true);
-    expect(mockCadHandler.visible()).toBe(true);
+    // Find checkboxes (all models checkbox + single model checkbox)
+    const checkbox = screen.getAllByRole('menuitemcheckbox');
+
+    expect(checkbox).toHaveLength(2);
+    expect(cadObject.isVisible(renderTarget)).toBe(false);
+
+    await userEvent.click(checkbox[0]);
+    expect(cadObject.isVisible(renderTarget)).toBe(true);
+
+    await userEvent.click(checkbox[1]);
+    expect(cadObject.isVisible(renderTarget)).toBe(false);
   });
 });

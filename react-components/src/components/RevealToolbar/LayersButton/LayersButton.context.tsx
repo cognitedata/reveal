@@ -1,12 +1,12 @@
 import { createContext } from 'react';
-import { useModelHandlers } from './hooks/useModelHandlers';
+import { useModelsVisibilityState } from './hooks/useModelsVisibliityState';
 import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';
 import { ModelLayerSelection } from './components/ModelLayerSelection';
 import { useRenderTarget, useReveal } from '../../RevealCanvas';
 import { use3dModels } from '../../../hooks/use3dModels';
 
 export type LayersButtonDependencies = {
-  useModelHandlers: typeof useModelHandlers;
+  useModelsVisibilityState: typeof useModelsVisibilityState;
   useSyncExternalLayersState: typeof useSyncExternalLayersState;
   ModelLayerSelection: typeof ModelLayerSelection;
   useReveal: typeof useReveal;
@@ -15,7 +15,7 @@ export type LayersButtonDependencies = {
 };
 
 export const defaultLayersButtonDependencies: LayersButtonDependencies = {
-  useModelHandlers,
+  useModelsVisibilityState,
   useSyncExternalLayersState,
   ModelLayerSelection,
   useReveal,

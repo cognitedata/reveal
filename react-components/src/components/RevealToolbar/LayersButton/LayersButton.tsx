@@ -6,7 +6,6 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
 import { useLayersButtonViewModel } from './LayersButton.viewmodel';
 import { type LayersUrlStateParam } from './types';
-import { useRenderTarget } from '../../RevealCanvas';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -20,10 +19,11 @@ export const LayersButton = ({
   const { t } = useTranslation();
 
   const [layersActive, setLayersActive] = useState<boolean>(false);
-  const renderTarget = useRenderTarget();
 
-  const { modelLayerHandlers, /* updateCallback,  */ ModelLayerSelection } =
-    useLayersButtonViewModel(setExternalLayersState, externalLayersState);
+  const { modelLayerHandlers, ModelLayerSelection, renderTarget } = useLayersButtonViewModel(
+    setExternalLayersState,
+    externalLayersState
+  );
 
   return (
     <>
@@ -56,19 +56,16 @@ export const LayersButton = ({
               label={t({ key: 'CAD_MODELS' })}
               domainObjects={modelLayerHandlers.cadHandlers}
               renderTarget={renderTarget}
-              // update={updateCallback}
             />
             <ModelLayerSelection
               label={t({ key: 'POINT_CLOUDS' })}
               domainObjects={modelLayerHandlers.pointCloudHandlers}
               renderTarget={renderTarget}
-              // update={updateCallback}
             />
             <ModelLayerSelection
               label={t({ key: 'IMAGES_360' })}
               domainObjects={modelLayerHandlers.image360Handlers}
               renderTarget={renderTarget}
-              // update={updateCallback}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>

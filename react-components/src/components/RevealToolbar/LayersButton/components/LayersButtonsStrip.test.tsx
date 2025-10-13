@@ -3,28 +3,35 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { LayersButtonProps } from '../LayersButton';
 import { defaultLayersButtonDependencies, LayersButtonContext } from '../LayersButton.context';
 import {
-  createCadHandlerMock,
-  createPointCloudHandlerMock,
-  createImage360HandlerMock
-} from '#test-utils/fixtures/modelHandler';
-import {
   viewerMock,
   viewerImage360CollectionsMock,
   viewerModelsMock
 } from '#test-utils/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
-import { cadMock } from '#test-utils/fixtures/cadModel';
+import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { LayersButtonStrip } from './LayersButtonsStrip';
 import { type ReactNode, type ReactElement } from 'react';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import {
+  CadDomainObject,
+  Image360CollectionDomainObject,
+  PointCloudDomainObject,
+  RevealRenderTarget
+} from '../../../../architecture';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 
 describe(LayersButtonStrip.name, () => {
+  const CAD_REVISION_ID = 456;
+  const POINT_CLOUD_REVISION_ID = 123;
+  const IMAGE_360_COLLECTION_ID = 'site-id';
+
   const defaultProps = {
     layersState: {
-      cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
-      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
-      image360Layers: [{ siteId: 'site-id', applied: true }]
+      cadLayers: [{ revisionId: CAD_REVISION_ID, applied: true, index: 0 }],
+      pointCloudLayers: [{ revisionId: POINT_CLOUD_REVISION_ID, applied: true, index: 0 }],
+      image360Layers: [{ siteId: IMAGE_360_COLLECTION_ID, applied: true }]
     },
     setLayersState: vi.fn()
   } as const satisfies LayersButtonProps;
@@ -37,20 +44,28 @@ describe(LayersButtonStrip.name, () => {
     </LayersButtonContext.Provider>
   );
 
+  let cadObject: CadDomainObject;
+  let pointCloudObject: PointCloudDomainObject;
+  let image360Object: Image360CollectionDomainObject;
+  let renderTarget: RevealRenderTarget;
+
   beforeEach(() => {
-    const mockCadHandler = createCadHandlerMock();
-    const mockPointCloudHandler = createPointCloudHandlerMock();
-    const mockImage360Handler = createImage360HandlerMock();
-    defaultDependencies.useModelHandlers.mockReturnValue([
-      {
-        cadHandlers: [mockCadHandler],
-        pointCloudHandlers: [mockPointCloudHandler],
-        image360Handlers: [mockImage360Handler]
-      },
-      vi.fn()
-    ]);
+    renderTarget = createRenderTargetMock();
+    cadObject = new CadDomainObject(createCadMock({ revisionId: CAD_REVISION_ID }));
+    pointCloudObject = new PointCloudDomainObject(
+      createPointCloudMock({ revisionId: POINT_CLOUD_REVISION_ID })
+    );
+    image360Object = new Image360CollectionDomainObject(
+      createImage360ClassicMock({ siteId: IMAGE_360_COLLECTION_ID })
+    );
+    defaultDependencies.useModelsVisibilityState.mockReturnValue({
+      cadHandlers: [cadObject],
+      pointCloudHandlers: [pointCloudObject],
+      image360Handlers: [image360Object]
+    });
     defaultDependencies.useReveal.mockReturnValue(viewerMock);
     defaultDependencies.use3dModels.mockReturnValue([cadMock, cadMock]);
+    defaultDependencies.useRenderTarget.mockReturnValue(createRenderTargetMock());
   });
 
   test('renders without crashing', () => {
@@ -66,45 +81,6 @@ describe(LayersButtonStrip.name, () => {
     expect(getAllByRole('img', { name: 'CubeIcon' })).toBeTruthy();
     expect(getAllByRole('img', { name: 'PointCloudIcon' })).toBeTruthy();
     expect(getAllByRole('img', { name: 'View360Icon' })).toBeTruthy();
-  });
-
-  test('should update viewer models visibility when layersState changes', () => {
-    const mockCadHandler = createCadHandlerMock();
-    const mockPointCloudHandler = createPointCloudHandlerMock();
-    const mockImage360Handler = createImage360HandlerMock();
-    defaultDependencies.useModelHandlers.mockReturnValue([
-      {
-        cadHandlers: [mockCadHandler],
-        pointCloudHandlers: [mockPointCloudHandler],
-        image360Handlers: [mockImage360Handler]
-      },
-      vi.fn()
-    ]);
-
-    const mockModels: CogniteModel[] = [cadMock, cadMock];
-    viewerModelsMock.mockReturnValue(mockModels);
-    const mockImage360Collection = createImage360ClassicMock();
-    viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
-
-    const { rerender } = render(<LayersButtonStrip {...defaultProps} />, {
-      wrapper
-    });
-
-    const newLayersState = {
-      cadLayers: [{ revisionId: 456, applied: false, index: 0 }],
-      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
-      image360Layers: [{ siteId: 'site-id', applied: false }]
-    };
-
-    rerender(<LayersButtonStrip {...defaultProps} layersState={newLayersState} />);
-
-    mockCadHandler.setVisibility(newLayersState.cadLayers[0].applied);
-    mockPointCloudHandler.setVisibility(newLayersState.pointCloudLayers[0].applied);
-    mockImage360Handler.setVisibility(newLayersState.image360Layers[0].applied);
-
-    expect(mockCadHandler.visible()).toBe(false);
-    expect(mockPointCloudHandler.visible()).toBe(true);
-    expect(mockImage360Handler.visible()).toBe(false);
   });
 
   test('renders with empty layersState', () => {

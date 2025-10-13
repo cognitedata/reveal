@@ -1,33 +1,51 @@
 import { describe, expect, test, vi } from 'vitest';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
-import {
-  createCadHandlerMock,
-  createImage360HandlerMock,
-  createPointCloudHandlerMock
-} from '#test-utils/fixtures/modelHandler';
 import { type LayersUrlStateParam } from './types';
 import { type Dispatch, type SetStateAction } from 'react';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import {
+  CadDomainObject,
+  Image360CollectionDomainObject,
+  PointCloudDomainObject
+} from '../../../architecture';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 
 describe(updateExternalStateFromLayerHandlers.name, () => {
   test('outputs correct state for all layers', () => {
     const setLayerStateMock = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
 
-    const cadHandlerMock0 = createCadHandlerMock({ revisionId: 123, visible: true });
-    const cadHandlerMock1 = createCadHandlerMock({ revisionId: 234, visible: false });
+    const cadDomainObject0 = new CadDomainObject(createCadMock({ revisionId: 123 }));
+    const cadDomainObject1 = new CadDomainObject(
+      createCadMock({ revisionId: 234, visible: false })
+    );
 
-    const pointCloudHandlerMock0 = createPointCloudHandlerMock({ revisionId: 345, visible: false });
-    const pointCloudHandlerMock1 = createPointCloudHandlerMock({ revisionId: 456, visible: true });
+    const pointCloudDomainObject0 = new PointCloudDomainObject(
+      createPointCloudMock({ revisionId: 345 })
+    );
+    const pointCloudDomainObject1 = new PointCloudDomainObject(
+      createPointCloudMock({ revisionId: 456, visible: false })
+    );
 
-    const image360HandlerMock0 = createImage360HandlerMock({ siteId: 'site0', visible: true });
-    const image360HandlerMock1 = createImage360HandlerMock({ siteId: 'site1', visible: false });
+    const image360CollectionDomainObject0 = new Image360CollectionDomainObject(
+      createImage360ClassicMock()
+    );
+
+    const image360CollectionDomainObject1 = new Image360CollectionDomainObject(
+      createImage360ClassicMock({ visible: false })
+    );
+
+    const renderTargetMock = createRenderTargetMock();
 
     updateExternalStateFromLayerHandlers(
       {
-        cadHandlers: [cadHandlerMock0, cadHandlerMock1],
-        pointCloudHandlers: [pointCloudHandlerMock0, pointCloudHandlerMock1],
-        image360Handlers: [image360HandlerMock0, image360HandlerMock1]
+        cadHandlers: [cadDomainObject0, cadDomainObject1],
+        pointCloudHandlers: [pointCloudDomainObject0, pointCloudDomainObject1],
+        image360Handlers: [image360CollectionDomainObject0, image360CollectionDomainObject1]
       },
-      setLayerStateMock
+      setLayerStateMock,
+      renderTargetMock
     );
 
     const result = setLayerStateMock.mock.calls[0][0] as LayersUrlStateParam;
@@ -36,30 +54,38 @@ describe(updateExternalStateFromLayerHandlers.name, () => {
 
     expect(result.cadLayers).toHaveLength(2);
 
-    expect(result.cadLayers?.[0].applied).toBe(cadHandlerMock0.visible());
-    expect(result.cadLayers?.[0].revisionId).toBe(cadHandlerMock0.getRevisionId());
+    expect(result.cadLayers?.[0].applied).toBe(cadDomainObject0.isVisible(renderTargetMock));
+    expect(result.cadLayers?.[0].revisionId).toBe(cadDomainObject0.model.revisionId);
     expect(result.cadLayers?.[0].index).toBe(0);
 
-    expect(result.cadLayers?.[1].applied).toBe(cadHandlerMock1.visible());
-    expect(result.cadLayers?.[1].revisionId).toBe(cadHandlerMock1.getRevisionId());
+    expect(result.cadLayers?.[1].applied).toBe(cadDomainObject1.isVisible(renderTargetMock));
+    expect(result.cadLayers?.[1].revisionId).toBe(cadDomainObject1.model.revisionId);
     expect(result.cadLayers?.[1].index).toBe(1);
 
     expect(result.pointCloudLayers).toHaveLength(2);
 
-    expect(result.pointCloudLayers?.[0].applied).toBe(pointCloudHandlerMock0.visible());
-    expect(result.pointCloudLayers?.[0].revisionId).toBe(pointCloudHandlerMock0.getRevisionId());
+    expect(result.pointCloudLayers?.[0].applied).toBe(
+      pointCloudDomainObject0.isVisible(renderTargetMock)
+    );
+    expect(result.pointCloudLayers?.[0].revisionId).toBe(pointCloudDomainObject0.model.revisionId);
     expect(result.pointCloudLayers?.[0].index).toBe(0);
 
-    expect(result.pointCloudLayers?.[1].applied).toBe(pointCloudHandlerMock1.visible());
-    expect(result.pointCloudLayers?.[1].revisionId).toBe(pointCloudHandlerMock1.getRevisionId());
+    expect(result.pointCloudLayers?.[1].applied).toBe(
+      pointCloudDomainObject1.isVisible(renderTargetMock)
+    );
+    expect(result.pointCloudLayers?.[1].revisionId).toBe(pointCloudDomainObject1.model.revisionId);
     expect(result.pointCloudLayers?.[1].index).toBe(1);
 
     expect(result.image360Layers).toHaveLength(2);
 
-    expect(result.image360Layers?.[0].applied).toBe(image360HandlerMock0.visible());
-    expect(result.image360Layers?.[0].siteId).toBe(image360HandlerMock0.getSiteId());
+    expect(result.image360Layers?.[0].applied).toBe(
+      image360CollectionDomainObject0.isVisible(renderTargetMock)
+    );
+    expect(result.image360Layers?.[0].siteId).toBe(image360CollectionDomainObject0.model.id);
 
-    expect(result.image360Layers?.[1].applied).toBe(image360HandlerMock1.visible());
-    expect(result.image360Layers?.[1].siteId).toBe(image360HandlerMock1.getSiteId());
+    expect(result.image360Layers?.[1].applied).toBe(
+      image360CollectionDomainObject1.isVisible(renderTargetMock)
+    );
+    expect(result.image360Layers?.[1].siteId).toBe(image360CollectionDomainObject1.model.id);
   });
 });

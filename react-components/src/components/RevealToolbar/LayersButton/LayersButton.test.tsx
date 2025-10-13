@@ -7,14 +7,17 @@ import type { LayersButtonProps } from './LayersButton';
 import { defaultLayersButtonDependencies, LayersButtonContext } from './LayersButton.context';
 import userEvent from '@testing-library/user-event';
 
-import { cadMock } from '#test-utils/fixtures/cadModel';
+import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
 import { viewerMock } from '#test-utils/fixtures/viewer';
-import {
-  createCadHandlerMock,
-  createPointCloudHandlerMock,
-  createImage360HandlerMock
-} from '#test-utils/fixtures/modelHandler';
+
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
+import {
+  CadDomainObject,
+  Image360CollectionDomainObject,
+  PointCloudDomainObject
+} from '../../../architecture';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 
 describe(LayersButton.name, () => {
   const defaultProps = {
@@ -37,14 +40,11 @@ describe(LayersButton.name, () => {
   };
 
   beforeEach(() => {
-    defaultDependencies.useModelHandlers.mockReturnValue([
-      {
-        cadHandlers: [createCadHandlerMock()],
-        pointCloudHandlers: [createPointCloudHandlerMock()],
-        image360Handlers: [createImage360HandlerMock()]
-      },
-      vi.fn()
-    ]);
+    defaultDependencies.useModelsVisibilityState.mockReturnValue({
+      cadHandlers: [new CadDomainObject(createCadMock())],
+      pointCloudHandlers: [new PointCloudDomainObject(createPointCloudMock())],
+      image360Handlers: [new Image360CollectionDomainObject(createImage360ClassicMock())]
+    });
     defaultDependencies.useReveal.mockReturnValue(viewerMock);
     defaultDependencies.use3dModels.mockReturnValue([cadMock, cadMock]);
     defaultDependencies.ModelLayerSelection.mockImplementation(({ label }) => <div>{label}</div>);
@@ -87,40 +87,5 @@ describe(LayersButton.name, () => {
     await userEvent.click(screen.getByRole('button', { name: 'Filter 3D resource layers' }));
 
     expect(screen.getByText('CAD models').closest('[data-test-id="layers-button"]')).not.toBeNull();
-  });
-
-  test('should update viewer models visibility when layersState changes', () => {
-    const mockCadHandler = createCadHandlerMock();
-    const mockPointCloudHandler = createPointCloudHandlerMock();
-    const mockImage360Handler = createImage360HandlerMock();
-    defaultDependencies.useModelHandlers.mockReturnValue([
-      {
-        cadHandlers: [mockCadHandler],
-        pointCloudHandlers: [mockPointCloudHandler],
-        image360Handlers: [mockImage360Handler]
-      },
-      vi.fn()
-    ]);
-    const { rerender } = render(<LayersButton {...defaultProps} />, {
-      wrapper
-    });
-
-    const newLayersState = {
-      cadLayers: [{ revisionId: 456, applied: false, index: 0 }],
-      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
-      image360Layers: [{ siteId: 'site-id', applied: false }]
-    };
-
-    defaultProps.setLayersState(newLayersState);
-
-    rerender(<LayersButton {...defaultProps} layersState={newLayersState} />);
-
-    mockCadHandler.setVisibility(newLayersState.cadLayers[0].applied);
-    mockPointCloudHandler.setVisibility(newLayersState.pointCloudLayers[0].applied);
-    mockImage360Handler.setVisibility(newLayersState.image360Layers[0].applied);
-
-    expect(mockCadHandler.visible()).toBe(false);
-    expect(mockPointCloudHandler.visible()).toBe(true);
-    expect(mockImage360Handler.visible()).toBe(false);
   });
 });

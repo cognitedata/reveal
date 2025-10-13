@@ -1,21 +1,22 @@
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { ModelLayersList } from './ModelLayersList';
-import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { CadDomainObject } from '../../../../architecture';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 
 describe(ModelLayersList.name, () => {
   test('renders without crashing', () => {
-    const mockCadHandler = createCadHandlerMock();
+    const renderTarget = createRenderTargetMock();
     const { getAllByText } = render(
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
             <ModelLayersList
-              domainObjects={[mockCadHandler]}
+              domainObjects={[new CadDomainObject(createCadMock())]}
               label="CAD Models"
-              update={vi.fn()}
-              disabled={false}
+              renderTarget={renderTarget}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>

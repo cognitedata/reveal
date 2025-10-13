@@ -1,9 +1,7 @@
-import { useReveal } from '../../../RevealCanvas';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
 import { updateExternalStateFromLayerHandlers } from '../updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from '../updateViewerFromExternalState';
-import { type UpdateModelHandlersCallback } from './useModelHandlers';
 import { RevealRenderTarget } from '../../../../architecture';
 
 export const useSyncExternalLayersState = (
@@ -11,12 +9,9 @@ export const useSyncExternalLayersState = (
   externalLayersState: LayersUrlStateParam | undefined,
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
   renderTarget: RevealRenderTarget
-  // update: UpdateModelHandlersCallback
 ): void => {
   const lastExternalState = useRef(externalLayersState);
   const lastModelLayerHandlers = useRef(modelLayerHandlers);
-
-  const viewer = useReveal();
 
   useEffect(() => {
     if (areLayerStatesConsistent(modelLayerHandlers, externalLayersState, renderTarget)) {
@@ -29,17 +24,10 @@ export const useSyncExternalLayersState = (
       lastModelLayerHandlers.current === modelLayerHandlers ||
       lastExternalState.current !== externalLayersState
     ) {
-      console.log(
-        'Updating local state from external state because',
-        lastModelLayerHandlers.current === modelLayerHandlers,
-        lastExternalState.current !== externalLayersState
-      );
       // Change happened in external state
       updateViewerFromExternalState(externalLayersState, modelLayerHandlers, renderTarget);
-      // update(viewer.models, viewer.get360ImageCollections());
     } else {
       // Change happened in local state
-      console.log('Updating external state from local state');
       updateExternalStateFromLayerHandlers(
         modelLayerHandlers,
         setExternalLayersState,
