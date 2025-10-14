@@ -134,7 +134,6 @@ function useStickyCompensation(
     viewerDomElement.clientWidth,
     viewerDomElement.clientHeight,
     htmlRef,
-    stickyCompensation,
     viewerDomElement
   ]);
 

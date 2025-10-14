@@ -43,7 +43,7 @@ export const useModelHandlers = (
   useEffect(() => {
     const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
     setModelHandlers(newHandlers);
-  }, [models, modelNames.data, image360Collections, viewer, modelHandlers]);
+  }, [models, modelNames.data, image360Collections, viewer]);
 
   const update = useCallback(
     (
