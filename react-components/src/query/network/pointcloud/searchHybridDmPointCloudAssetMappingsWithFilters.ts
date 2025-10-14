@@ -36,7 +36,7 @@ export async function searchHybridDmPointCloudAssetMappingsWithFilters(
     )
   );
 
-  const mappedInstances: NodeItem[] = [];
+  const mappedInstances = new Map<FdmKey, NodeItem>();
 
   for (const modelsChunk of chunk(models, MODELS_CHUNK_SIZE)) {
     const modelMappingPromises = modelsChunk.map(
@@ -58,8 +58,10 @@ export async function searchHybridDmPointCloudAssetMappingsWithFilters(
       .map((instanceKey) => instanceKeyToInstanceMap.get(instanceKey))
       .filter(isDefined);
 
-    mappedInstances.push(...relevantInstancesForChunk);
+    relevantInstancesForChunk.forEach((instance) => {
+      mappedInstances.set(createFdmKey(instance), instance);
+    });
   }
 
-  return mappedInstances;
+  return Array.from(mappedInstances.values());
 }
