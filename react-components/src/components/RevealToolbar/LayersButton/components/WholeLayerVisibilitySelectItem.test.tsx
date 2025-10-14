@@ -38,16 +38,15 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
     expect(cadObject.isVisible(renderTarget)).toBe(false);
   });
 
-  test('disables item when disabled prop is true', () => {
+  test('disables item when no domain objects were provided', () => {
     const { getAllByText } = render(
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
             <WholeLayerVisibilitySelectItem
               label="CAD Models"
-              domainObjects={[cadObject]}
+              domainObjects={[]}
               renderTarget={renderTarget}
-              disabled={true}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>

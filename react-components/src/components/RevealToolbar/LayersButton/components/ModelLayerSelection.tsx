@@ -37,7 +37,6 @@ export const ModelLayerSelection = ({
                 <ChevronRightSmallIcon />
               </IconWrapper>
             }
-            disabled={isDisabled}
             renderTarget={renderTarget}
             shouldPropagate={false}
           />

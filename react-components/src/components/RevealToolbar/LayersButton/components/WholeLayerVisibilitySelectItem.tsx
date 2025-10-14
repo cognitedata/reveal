@@ -13,14 +13,12 @@ export const WholeLayerVisibilitySelectItem = ({
   label,
   trailingContent,
   domainObjects,
-  disabled,
   renderTarget,
   shouldPropagate = true
 }: {
   label?: string;
   domainObjects: RevealDomainObject[];
   trailingContent?: ReactNode;
-  disabled?: boolean;
   renderTarget: RevealRenderTarget;
   shouldPropagate?: boolean;
 }): ReactElement => {
@@ -30,7 +28,7 @@ export const WholeLayerVisibilitySelectItem = ({
       variant="checkbox"
       label={label}
       checked={checked}
-      disabled={disabled}
+      disabled={domainObjects.length === 0}
       onClick={(e) => {
         if (!shouldPropagate) {
           e.stopPropagation();
