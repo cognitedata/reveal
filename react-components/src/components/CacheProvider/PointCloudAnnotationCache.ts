@@ -6,13 +6,10 @@ import {
   type AnnotationId
 } from './types';
 import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
-import {
-  buildAssetKeyToAnnotationIdsMap,
-  getInstanceReferencesFromPointCloudAnnotation
-} from './utils';
+import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
-import { type AssetInstance } from '../../utilities/instances';
+import { isClassicAsset, type AssetInstance } from '../../utilities/instances';
 import {
   createInstanceReferenceKey,
   type InstanceReference,
@@ -178,4 +175,35 @@ export class PointCloudAnnotationCache {
     }
     return result;
   }
+}
+
+function buildAssetKeyToAnnotationIdsMap(
+  annotationAssetMappings: Map<AnnotationId, AssetInstance[]>
+): Map<InstanceReferenceKey, Set<AnnotationId>> {
+  const assetKeyToAnnotationIds = new Map<InstanceReferenceKey, Set<AnnotationId>>();
+
+  for (const [annotationId, assets] of annotationAssetMappings.entries()) {
+    for (const asset of assets) {
+      const keys: InstanceReferenceKey[] = [];
+      if (isClassicAsset(asset)) {
+        keys.push(String(asset.id));
+        if (asset.externalId !== undefined) {
+          keys.push(asset.externalId);
+        }
+      } else {
+        keys.push(createInstanceReferenceKey(asset));
+      }
+
+      for (const key of keys) {
+        let annotationIds = assetKeyToAnnotationIds.get(key);
+        if (annotationIds === undefined) {
+          annotationIds = new Set<AnnotationId>();
+          assetKeyToAnnotationIds.set(key, annotationIds);
+        }
+        annotationIds.add(annotationId);
+      }
+    }
+  }
+
+  return assetKeyToAnnotationIds;
 }
