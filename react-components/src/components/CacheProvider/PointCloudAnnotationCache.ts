@@ -6,17 +6,20 @@ import {
   type AnnotationId
 } from './types';
 import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
-import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
+import {
+  buildAssetKeyToAnnotationIdsMap,
+  getInstanceReferencesFromPointCloudAnnotation
+} from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
-import { createFdmKey, createModelRevisionKey } from './idAndKeyTranslation';
-import { isClassicAsset, type AssetInstance } from '../../utilities/instances';
+import { type AssetInstance } from '../../utilities/instances';
 import {
   createInstanceReferenceKey,
   type InstanceReference,
   type InstanceReferenceKey,
   isSameAssetReference
 } from '../../utilities/instanceIds';
+import { createModelRevisionKey } from './idAndKeyTranslation';
 
 type PointCloudAnnotationCacheDependencies = {
   fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;
@@ -114,30 +117,7 @@ export class PointCloudAnnotationCache {
       revisionId
     );
 
-    const assetKeyToAnnotationIds = new Map<InstanceReferenceKey, Set<AnnotationId>>();
-
-    for (const [annotationId, assets] of fetchedAnnotationAssetMappings.entries()) {
-      for (const asset of assets) {
-        const keys: InstanceReferenceKey[] = [];
-        if (isClassicAsset(asset)) {
-          keys.push(String(asset.id));
-          if (asset.externalId !== undefined) {
-            keys.push(asset.externalId);
-          }
-        } else {
-          keys.push(createFdmKey(asset));
-        }
-
-        for (const key of keys) {
-          let annotationIds = assetKeyToAnnotationIds.get(key);
-          if (annotationIds === undefined) {
-            annotationIds = new Set<AnnotationId>();
-            assetKeyToAnnotationIds.set(key, annotationIds);
-          }
-          annotationIds.add(annotationId);
-        }
-      }
-    }
+    const assetKeyToAnnotationIds = buildAssetKeyToAnnotationIdsMap(fetchedAnnotationAssetMappings);
 
     this._assetKeyToAnnotationIdsCache.set(modelRevisionKey, assetKeyToAnnotationIds);
     return assetKeyToAnnotationIds;

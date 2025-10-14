@@ -323,12 +323,12 @@ describe(PointCloudAnnotationCache.name, () => {
       expect(result3.get(createInstanceReferenceKey({ id: 2 }))).toEqual([annotationId + 1]);
     });
 
-    it('handles multiple annotations per asset using Set to avoid duplicates', async () => {
-      const duplicateAsset = createAssetMock(1);
+    it('handles multiple annotations referencing same asset', async () => {
+      const sharedAsset = createAssetMock(1);
       const mappingsWithDuplicates = new Map([
-        [annotationId, [duplicateAsset]],
-        [annotationId + 1, [duplicateAsset]],
-        [annotationId + 2, [duplicateAsset]]
+        [annotationId, [sharedAsset]],
+        [annotationId + 1, [sharedAsset]],
+        [annotationId + 2, [sharedAsset]]
       ]);
 
       mockFetchPointCloudAnnotationAssets.mockResolvedValue(mappingsWithDuplicates);

@@ -11,6 +11,9 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
+import { type AnnotationId } from './types';
+import { type AssetInstance } from '../../utilities/instances/AssetInstance';
+import { isClassicAsset } from '../../utilities/instances/typeGuards';
 
 export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel
@@ -72,4 +75,35 @@ function isCoreDmImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
 ): annotation is CoreDmImage360Annotation {
   return (annotation as CoreDmImage360Annotation).annotationIdentifier?.externalId !== undefined;
+}
+
+export function buildAssetKeyToAnnotationIdsMap(
+  annotationAssetMappings: Map<AnnotationId, AssetInstance[]>
+): Map<InstanceReferenceKey, Set<AnnotationId>> {
+  const assetKeyToAnnotationIds = new Map<InstanceReferenceKey, Set<AnnotationId>>();
+
+  for (const [annotationId, assets] of annotationAssetMappings.entries()) {
+    for (const asset of assets) {
+      const keys: InstanceReferenceKey[] = [];
+      if (isClassicAsset(asset)) {
+        keys.push(String(asset.id));
+        if (asset.externalId !== undefined) {
+          keys.push(asset.externalId);
+        }
+      } else {
+        keys.push(createInstanceReferenceKey(asset));
+      }
+
+      for (const key of keys) {
+        let annotationIds = assetKeyToAnnotationIds.get(key);
+        if (annotationIds === undefined) {
+          annotationIds = new Set<AnnotationId>();
+          assetKeyToAnnotationIds.set(key, annotationIds);
+        }
+        annotationIds.add(annotationId);
+      }
+    }
+  }
+
+  return assetKeyToAnnotationIds;
 }
