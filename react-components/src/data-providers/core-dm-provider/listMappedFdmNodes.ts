@@ -16,7 +16,7 @@ import {
   image360AssetsQueryPayload,
   pointCloudsAssetsQueryPayload
 } from './cadAndPointCloudAndImage360AssetQuery';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { isDmsInstance } from '../../utilities/instanceIds';
 
 export async function listAllMappedFdmNodes(

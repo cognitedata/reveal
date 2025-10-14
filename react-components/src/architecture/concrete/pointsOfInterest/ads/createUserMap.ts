@@ -1,5 +1,5 @@
 import { type CogniteClient } from '@cognite/sdk';
-import { uniq } from 'lodash';
+import { uniq } from 'lodash-es';
 import { isDefined } from '../../../../utilities/isDefined';
 
 export async function createUserMap(

@@ -12,7 +12,7 @@ import {
   useReveal3DResourceLoadFailCount,
   useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { useApplyPointCloudStyling } from './useApplyPointCloudStyling';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';

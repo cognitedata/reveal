@@ -3,7 +3,7 @@ import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInt
 import { DataGrid, type DatagridColumn } from '@cognite/cogs-lab';
 import { useTranslation } from '../../i18n/I18n';
 import { Button, Flex } from '@cognite/cogs.js';
-import { take } from 'lodash';
+import { take } from 'lodash-es';
 import { useFilterPointsOfInterest } from './useFilterPointsOfInterest';
 import { usePointsOfInterest } from './usePointsOfInterest';
 import { useSelectedPoi } from './useSelectedPoi';

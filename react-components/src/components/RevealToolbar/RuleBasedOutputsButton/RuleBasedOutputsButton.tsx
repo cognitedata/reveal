@@ -10,7 +10,7 @@ import {
   type AllRuleBasedStylingGroups
 } from '../../RuleBasedOutputs/types';
 import { type CadModelOptions } from '../../Reveal3DResources/types';
-import { offset } from '@floating-ui/dom';
+import { offset } from '@floating-ui/react';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { generateEmptyRuleForSelection } from '../../RuleBasedOutputs/core/generateEmptyRuleForSelection';
 import { getRuleBasedById } from '../../RuleBasedOutputs/core/getRuleBasedById';

@@ -7,7 +7,7 @@ import { Menu } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
-import { offset } from '@floating-ui/dom';
+import { offset } from '@floating-ui/react';
 import { SlicerButtonContext } from './SlicerButton.context';
 
 type SliceState = {
