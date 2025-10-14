@@ -112,7 +112,7 @@ describe(use3dScenes.name, () => {
       },
       {
         data: { scenes: createScenes(50, SCENE_QUERY_LIMIT) },
-        nextCursor: undefined
+        nextCursor: { scenes: 'no-data-cursor' }
       }
     ]);
     const { result } = renderHook(() => use3dScenes(), { wrapper });
@@ -144,7 +144,7 @@ describe(use3dScenes.name, () => {
         data: {
           sceneModels: secondBatchOfModels
         },
-        nextCursor: undefined // No more cursors
+        nextCursor: { sceneModels: 'no-models-data-cursor' }
       }
     ]);
 
@@ -187,7 +187,7 @@ describe(use3dScenes.name, () => {
         data: {
           scene360Collections: secondBatch
         },
-        nextCursor: undefined
+        nextCursor: { scene360Collections: 'no-360-data-cursor' }
       }
     ]);
 
@@ -240,7 +240,10 @@ describe(use3dScenes.name, () => {
           sceneModels: modelsPage2,
           scene360Collections: collectionsPage2
         },
-        nextCursor: undefined
+        nextCursor: {
+          sceneModels: 'no-models-data-cursor',
+          scene360Collections: 'no-360-data-cursor'
+        }
       }
     ]);
 
@@ -278,7 +281,10 @@ describe(use3dScenes.name, () => {
         data: {
           sceneModels: modelsPage2
         },
-        nextCursor: undefined
+        nextCursor: {
+          sceneModels: 'no-models-data-cursor',
+          scene360Collections: 'no-360-data-cursor'
+        }
       }
     ]);
 

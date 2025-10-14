@@ -30,11 +30,12 @@ import {
   type Use3dScenesResult,
   type ScenesMap,
   type Use3dScenesQueryResult,
-  type SceneNode
+  type SceneNode,
+  SCENE_RELATED_DATA_LIMIT
 } from './types';
 
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
-import { createGetScenesQuery } from './allScenesQuery';
+import { createGetScenesQuery, type SceneCursors } from './allScenesQuery';
 import { Use3dScenesContext } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
@@ -54,10 +55,10 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       sceneSkybox: []
     };
     let hasMoreScenes = true;
-    let sceneCursor: string | undefined;
+    let cursors: SceneCursors | undefined;
 
     while (hasMoreScenes) {
-      const scenesQuery = createGetScenesQuery(SCENE_QUERY_LIMIT, sceneCursor);
+      const scenesQuery = createGetScenesQuery(SCENE_QUERY_LIMIT, cursors);
       const scenesResponse = await fdmSdk.queryNodesAndEdges<
         typeof scenesQuery,
         [
@@ -81,7 +82,7 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       allScenes.scenes.push(...currentScenes);
 
       const needsModelsPagination = scene3dModels.length === sceneRelatedDataLimit;
-      const needs360Pagination = scene360Collections.length === sceneRelatedDataLimit;
+      const needs360CollectionsPagination = scene360Collections.length === sceneRelatedDataLimit;
 
       allScenes.sceneModels.push(...scene3dModels);
       allScenes.scene360Collections.push(...scene360Collections);
@@ -90,20 +91,20 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       allScenes.sceneSkybox.push(...scenesResponse.items.sceneSkybox);
 
       // If any related data needs pagination, handle it here
-      if (needsModelsPagination || needs360Pagination) {
+      if (needsModelsPagination || needs360CollectionsPagination) {
         // Need to use scene cursor from current response to paginate models and 360 collections from current scenes
         const cursorsForRelatedData = {
           sceneModels: needsModelsPagination ? scenesResponse.nextCursor?.sceneModels : undefined,
-          scene360Collections: needs360Pagination
+          scene360Collections: needs360CollectionsPagination
             ? scenesResponse.nextCursor?.scene360Collections
             : undefined,
           scenes: scenesResponse.nextCursor?.scenes
         };
-        await fetchRemainingRelatedData(fdmSdk, cursorsForRelatedData, allScenes);
+        await populateRemainingRelatedData(fdmSdk, cursorsForRelatedData, allScenes);
       }
 
-      sceneCursor = scenesResponse.nextCursor?.scenes;
-      hasMoreScenes = SCENE_QUERY_LIMIT === currentScenes.length && sceneCursor !== undefined;
+      cursors = { scenes: scenesResponse.nextCursor?.scenes };
+      hasMoreScenes = SCENE_QUERY_LIMIT === currentScenes.length && cursors.scenes !== undefined;
     }
 
     const scenesMap = createMapOfScenes(allScenes.scenes, allScenes.sceneSkybox);
@@ -318,24 +319,19 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
   return modelProps;
 }
 
-async function fetchRemainingRelatedData(
+async function populateRemainingRelatedData(
   fdmSdk: FdmSDK,
-  initialCursors: { sceneModels?: string; scene360Collections?: string; scenes?: string },
+  initialCursors: SceneCursors,
   allScenes: Use3dScenesQueryResult
 ): Promise<void> {
-  let currentCursors: { sceneModels?: string; scene360Collections?: string; scenes?: string } =
-    initialCursors;
+  let currentCursors: SceneCursors = initialCursors;
 
   // Loop as long as there is at least one cursor for any related data type
   while (
     currentCursors.sceneModels !== undefined ||
     currentCursors.scene360Collections !== undefined
   ) {
-    const paginatedQuery = createGetScenesQuery(
-      SCENE_QUERY_LIMIT,
-      currentCursors.scenes,
-      currentCursors
-    );
+    const paginatedQuery = createGetScenesQuery(SCENE_QUERY_LIMIT, currentCursors);
 
     const response = await fdmSdk.queryNodesAndEdges<
       typeof paginatedQuery,
@@ -355,8 +351,14 @@ async function fetchRemainingRelatedData(
     allScenes.scene360Collections.push(...new360Collections);
 
     currentCursors = {
-      sceneModels: response.nextCursor?.sceneModels,
-      scene360Collections: response.nextCursor?.scene360Collections
+      sceneModels:
+        response.items.sceneModels.length === SCENE_RELATED_DATA_LIMIT
+          ? response.nextCursor?.sceneModels
+          : undefined,
+      scene360Collections:
+        response.items.scene360Collections.length === SCENE_RELATED_DATA_LIMIT
+          ? response.nextCursor?.scene360Collections
+          : undefined
     };
   }
 }
