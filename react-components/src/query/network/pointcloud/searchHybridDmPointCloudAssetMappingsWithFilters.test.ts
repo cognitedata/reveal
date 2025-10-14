@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { searchHybridDmPointCloudAssetMappingsWithFilters } from './searchHybridDmPointCloudAssetMappingsWithFilters';
 import { viewDefinitionMock } from '#test-utils/fixtures/dm/viewDefinitions';
-import { Mock } from 'moq.ts';
+import { Mock, It } from 'moq.ts';
 import { type CogniteClient, type HttpResponse, type ListResponse } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type NodeItem } from '../../../data-providers';
 import { createDmsNodeItem } from '#test-utils/dms/createDmsNodeItem';
@@ -26,17 +26,22 @@ describe(searchHybridDmPointCloudAssetMappingsWithFilters.name, () => {
     { modelId: 456, revisionId: 789 }
   ];
 
-  const defaultPostImplementation = async (): Promise<HttpResponse<ListResponse<NodeItem[]>>> => ({
-    data: {
-      items: [dmsIdentifiers[0], dmsIdentifiers[2]].map((id) => createDmsNodeItem({ id }))
-    },
-    status: 200,
-    headers: {}
-  });
+  type PostDmsSearchFunction = (
+    url: string,
+    options: { data: unknown }
+  ) => Promise<HttpResponse<ListResponse<NodeItem[]>>>;
 
-  const mockSdkPost = vi.fn<CogniteClient['post']>(
-    defaultPostImplementation as CogniteClient['post']
-  );
+  async function defaultPostImplementation(): Promise<HttpResponse<ListResponse<NodeItem[]>>> {
+    return {
+      data: {
+        items: [dmsIdentifiers[0], dmsIdentifiers[2]].map((id) => createDmsNodeItem({ id }))
+      },
+      status: 200,
+      headers: {}
+    };
+  }
+
+  const mockSdkPost = vi.fn<PostDmsSearchFunction>(defaultPostImplementation);
 
   const mockGetAnnotations = vi.fn<
     PointCloudAnnotationCache['getPointCloudAnnotationsForInstanceIds']
@@ -52,13 +57,14 @@ describe(searchHybridDmPointCloudAssetMappingsWithFilters.name, () => {
     .returns(baseUrl)
     .setup((p) => p.project)
     .returns(project)
-    .setup((p) => p.post)
-    .returns(
-      mockSdkPost as <T = unknown>(
-        path: string,
-        options?: { data?: unknown }
-      ) => Promise<HttpResponse<T>>
+    .setup(
+      async (p) =>
+        await p.post(
+          It.Is((url) => typeof url === 'string' && url.includes('search')),
+          It.IsAny()
+        )
     )
+    .callback(async ({ args: [url, parameters] }) => await mockSdkPost(url, parameters))
     .object();
 
   const pointCloudAnnotationCacheMock = new Mock<PointCloudAnnotationCache>()
@@ -69,7 +75,7 @@ describe(searchHybridDmPointCloudAssetMappingsWithFilters.name, () => {
   beforeEach(() => {
     mockSdkPost.mockClear();
     mockGetAnnotations.mockClear();
-    mockSdkPost.mockImplementation(defaultPostImplementation as CogniteClient['post']);
+    mockSdkPost.mockImplementation(defaultPostImplementation);
     mockGetAnnotations.mockImplementation(
       async (_modelId, _revisionId, instanceIds) =>
         await Promise.resolve(
@@ -103,7 +109,7 @@ describe(searchHybridDmPointCloudAssetMappingsWithFilters.name, () => {
     );
     expect(result).toEqual([]);
 
-    mockSdkPost.mockImplementation(defaultPostImplementation as CogniteClient['post']);
+    mockSdkPost.mockImplementation(defaultPostImplementation);
     mockGetAnnotations.mockResolvedValue(new Map());
 
     result = await searchHybridDmPointCloudAssetMappingsWithFilters(

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { searchHybridDmAssetsForModels } from './searchHybridDmAssetsForModels';
 import { viewDefinitionMock } from '#test-utils/fixtures/dm/viewDefinitions';
-import { Mock } from 'moq.ts';
+import { Mock, It } from 'moq.ts';
 import {
   type CursorAndAsyncIterator,
   type AssetMapping3D,
@@ -34,38 +34,49 @@ const DMS_IDS = [
   { externalId: 'externalId2', space: 'space2' }
 ];
 
-const defaultPostImplementation = async (
-  path: string,
-  data?: {
-    data?:
+type PostDmsInstancesFunction = (
+  url: string,
+  options: {
+    data:
       | { items: DmsUniqueIdentifier[] }
       | { query: string; filter: TableExpressionFilterDefinition };
   }
-): Promise<HttpResponse<ListResponse<NodeItem[]>>> => {
-  if (path === instancesByExternalIdEndpointPath) {
+) => Promise<HttpResponse<ListResponse<NodeItem[]>>>;
+
+async function defaultPostImplementation(
+  url: string,
+  options: {
+    data:
+      | { items: DmsUniqueIdentifier[] }
+      | { query: string; filter: TableExpressionFilterDefinition };
+  }
+): Promise<HttpResponse<ListResponse<NodeItem[]>>> {
+  if (url === instancesByExternalIdEndpointPath) {
+    const data = options.data;
+    const items =
+      'items' in data
+        ? data.items.map((item: DmsUniqueIdentifier) => createDmsNodeItem({ id: item }))
+        : [];
     return {
-      data: {
-        items: ((data?.data as { items: DmsUniqueIdentifier[] }).items ?? []).map((item) =>
-          createDmsNodeItem({ id: item })
-        )
-      },
+      data: { items },
       status: 200,
       headers: {}
     };
   }
 
-  if (path === instancesSearchEndpointPath) {
+  if (url === instancesSearchEndpointPath) {
+    const items = [DMS_IDS[0], DMS_IDS[2]].map((id) => createDmsNodeItem({ id }));
     return {
-      data: {
-        items: [DMS_IDS[0], DMS_IDS[2]].map((id) => createDmsNodeItem({ id }))
-      },
+      data: { items },
       status: 200,
       headers: {}
     };
   }
 
   throw Error();
-};
+}
+
+const mockSdkPost = vi.fn<PostDmsInstancesFunction>(defaultPostImplementation);
 
 describe(searchHybridDmAssetsForModels.name, () => {
   describe('CAD', () => {
@@ -75,9 +86,6 @@ describe(searchHybridDmAssetsForModels.name, () => {
       createRawDmHybridAssetMappingMock({ assetInstanceId: id })
     );
 
-    const mockSdkPost = vi.fn<CogniteClient['post']>(
-      defaultPostImplementation as CogniteClient['post']
-    );
     const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(
       (): CursorAndAsyncIterator<AssetMapping3D> =>
         createCursorAndAsyncIteratorMock({
@@ -95,21 +103,7 @@ describe(searchHybridDmAssetsForModels.name, () => {
         )
     );
 
-    const sdkMock = new Mock<CogniteClient>()
-      .setup((p) => p.getBaseUrl())
-      .returns(BASE_URL)
-      .setup((p) => p.project)
-      .returns(PROJECT)
-      .setup((p) => p.post)
-      .returns(
-        mockSdkPost as <T = unknown>(
-          path: string,
-          options?: { data?: unknown }
-        ) => Promise<HttpResponse<T>>
-      )
-      .setup((p) => p.assetMappings3D.list)
-      .returns(mockAssetMappingsList)
-      .object();
+    const sdkMock = createSdkMock(mockAssetMappingsList);
 
     const classicCadCacheMock = new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getNodesForInstanceIds)
@@ -224,25 +218,10 @@ describe(searchHybridDmAssetsForModels.name, () => {
     const PC_MODEL = { modelId: 456, revisionId: 789 };
     const TAGGED_PC_MODEL = { type: 'pointcloud', addOptions: PC_MODEL } as const;
 
-    const mockSdkPost = vi.fn<CogniteClient['post']>(
-      defaultPostImplementation as CogniteClient['post']
-    );
     const mockPCCacheGetAnnotationsForInstanceIds =
       vi.fn<PointCloudAnnotationCache['getPointCloudAnnotationsForInstanceIds']>();
 
-    const sdkMock = new Mock<CogniteClient>()
-      .setup((p) => p.getBaseUrl())
-      .returns(BASE_URL)
-      .setup((p) => p.project)
-      .returns(PROJECT)
-      .setup((p) => p.post)
-      .returns(
-        mockSdkPost as <T = unknown>(
-          path: string,
-          options?: { data?: unknown }
-        ) => Promise<HttpResponse<T>>
-      )
-      .object();
+    const sdkMock = createSdkMock();
 
     const classicCadCacheMock = new Mock<ClassicCadAssetMappingCache>().object();
     const pointCloudAnnotationCacheMock = new Mock<PointCloudAnnotationCache>()
@@ -303,9 +282,6 @@ describe(searchHybridDmAssetsForModels.name, () => {
       createRawDmHybridAssetMappingMock({ assetInstanceId: DMS_IDS[0] })
     ];
 
-    const mockSdkPost = vi.fn<CogniteClient['post']>(
-      defaultPostImplementation as CogniteClient['post']
-    );
     const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(
       (): CursorAndAsyncIterator<AssetMapping3D> =>
         createCursorAndAsyncIteratorMock({
@@ -323,21 +299,7 @@ describe(searchHybridDmAssetsForModels.name, () => {
       PointCloudAnnotationCache['getPointCloudAnnotationsForInstanceIds']
     >(async () => await Promise.resolve(new Map([[createFdmKey(DMS_IDS[2]), [123, 456]]])));
 
-    const sdkMock = new Mock<CogniteClient>()
-      .setup((p) => p.getBaseUrl())
-      .returns(BASE_URL)
-      .setup((p) => p.project)
-      .returns(PROJECT)
-      .setup((p) => p.post)
-      .returns(
-        mockSdkPost as <T = unknown>(
-          path: string,
-          options?: { data?: unknown }
-        ) => Promise<HttpResponse<T>>
-      )
-      .setup((p) => p.assetMappings3D.list)
-      .returns(mockAssetMappingsList)
-      .object();
+    const sdkMock = createSdkMock(mockAssetMappingsList);
 
     const classicCadCacheMock = new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getNodesForInstanceIds)
@@ -389,4 +351,30 @@ describe(searchHybridDmAssetsForModels.name, () => {
       expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[0] }));
     });
   });
+
+  function createSdkMock(
+    mockAssetMappingsList?: CogniteClient['assetMappings3D']['list']
+  ): CogniteClient {
+    const mockSdkBuilder = new Mock<CogniteClient>()
+      .setup((p) => p.getBaseUrl())
+      .returns(BASE_URL)
+      .setup((p) => p.project)
+      .returns(PROJECT)
+      .setup(
+        async (p) =>
+          await p.post(
+            It.Is(
+              (url) => typeof url === 'string' && (url.includes('byids') || url.includes('search'))
+            ),
+            It.IsAny()
+          )
+      )
+      .callback(async ({ args: [url, parameters] }) => await mockSdkPost(url, parameters));
+
+    if (mockAssetMappingsList !== undefined) {
+      mockSdkBuilder.setup((p) => p.assetMappings3D.list).returns(mockAssetMappingsList);
+    }
+
+    return mockSdkBuilder.object();
+  }
 });
