@@ -1,18 +1,32 @@
 import { describe, expect, test } from 'vitest';
 import { CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
-import { CircleMarkerDomainObject, getOrCreateCircleMarker } from './CircleMarkerDomainObject';
+import {
+  CircleMarkerDomainObject,
+  CircleMarkerType,
+  getOrCreateCircleMarker,
+  getOrCreateFocusPointMarker
+} from './CircleMarkerDomainObject';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { DomainObject } from '../../base/domainObjects/DomainObject';
 import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 
 describe(CircleMarkerDomainObject.name, () => {
-  test('should have initial state', () => {
+  test('should have initial state for the circle marker', () => {
     const domainObject = new CircleMarkerDomainObject();
-    expect(domainObject.label).toBe('Circle marker');
+    expect(domainObject.label).toBe('Mouse circle marker');
     expect(domainObject.isVisibleInTree).toBe(false);
     expect(domainObject.hasIndexOnLabel).toBe(false);
     expect(domainObject.createRenderStyle()).toBeInstanceOf(CircleMarkerRenderStyle);
+    expect(domainObject.style.solidOpacity).toBe(0.25);
+  });
+
+  test('should have initial state for the focus point marker', () => {
+    const domainObject = new CircleMarkerDomainObject(CircleMarkerType.FocusPointMarker);
+    expect(domainObject.label).toBe('Focus point marker');
+    expect(domainObject.isVisibleInTree).toBe(false);
+    expect(domainObject.hasIndexOnLabel).toBe(false);
+    expect(domainObject.style.solidOpacity).toBe(1);
   });
 
   test('should change color', () => {
@@ -61,6 +75,14 @@ describe(CircleMarkerDomainObject.name, () => {
 
     expect(domainObject).toBeDefined();
     expect(getOrCreateCircleMarker(root)).toBe(domainObject);
+  });
+
+  test('should get the focus point marker from root and create it if not present', () => {
+    const root = new RootDomainObject();
+    const domainObject = getOrCreateFocusPointMarker(root);
+
+    expect(domainObject).toBeDefined();
+    expect(getOrCreateFocusPointMarker(root)).toBe(domainObject);
   });
 });
 

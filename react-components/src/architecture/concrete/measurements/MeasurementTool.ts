@@ -20,6 +20,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { updateMarker, tryCreateMeasureDiameter } from './diameter/measureDiameterToolUtils';
 import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
+import { updateFocusPointMarker } from './updateFocusPointMarker';
 
 const POINT_SIZE_CHANGE_FACTOR = 0.1;
 
@@ -39,6 +40,11 @@ export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
   // OVERRIDES of BaseTool
   // ==================================================
+
+  public override async onHover(event: PointerEvent): Promise<void> {
+    await updateFocusPointMarker(this, event);
+    super.onHover(event);
+  }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     if (this.primitiveType === PrimitiveType.Diameter) {

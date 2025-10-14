@@ -14,13 +14,15 @@ export const WholeLayerVisibilitySelectItem = ({
   trailingContent,
   domainObjects,
   disabled,
-  renderTarget
+  renderTarget,
+  shouldPropagate = true
 }: {
   label?: string;
   domainObjects: RevealDomainObject[];
   trailingContent?: ReactNode;
   disabled?: boolean;
   renderTarget: RevealRenderTarget;
+  shouldPropagate?: boolean;
 }): ReactElement => {
   const checked = useSomeDomainObjectsVisible(domainObjects, renderTarget);
   return (
@@ -29,7 +31,10 @@ export const WholeLayerVisibilitySelectItem = ({
       label={label}
       checked={checked}
       disabled={disabled}
-      onClick={() => {
+      onClick={(e) => {
+        if (!shouldPropagate) {
+          e.stopPropagation();
+        }
         domainObjects.forEach((domainObject) => {
           domainObject.setVisibleInteractive(!checked, renderTarget);
         });

@@ -4,6 +4,7 @@ import { type ReactElement } from 'react';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
+import { useHoverHandlers } from '../hooks/useHoverHandlers';
 
 type ModelLayerSelectionProps = {
   label: string;
@@ -17,23 +18,32 @@ export const ModelLayerSelection = ({
   renderTarget
 }: ModelLayerSelectionProps): ReactElement => {
   const isDisabled = domainObjects.length === 0;
+  const { hoverHandlers, isPanelOpen, setPanelToClose } = useHoverHandlers(isDisabled);
 
   return (
-    <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={!isDisabled}>
+    <SelectPanel
+      placement="right"
+      hideOnOutsideClick={true}
+      openOnHover={false}
+      visible={isPanelOpen}
+      onHide={setPanelToClose}>
       <SelectPanel.Trigger>
-        <WholeLayerVisibilitySelectItem
-          label={label}
-          domainObjects={domainObjects}
-          trailingContent={
-            <IconWrapper size={16}>
-              <ChevronRightSmallIcon />
-            </IconWrapper>
-          }
-          renderTarget={renderTarget}
-          disabled={isDisabled}
-        />
+        <div {...hoverHandlers}>
+          <WholeLayerVisibilitySelectItem
+            label={label}
+            domainObjects={domainObjects}
+            trailingContent={
+              <IconWrapper size={16}>
+                <ChevronRightSmallIcon />
+              </IconWrapper>
+            }
+            disabled={isDisabled}
+            renderTarget={renderTarget}
+            shouldPropagate={false}
+          />
+        </div>
       </SelectPanel.Trigger>
-      <SelectPanel.Body>
+      <SelectPanel.Body {...hoverHandlers}>
         <ModelLayersList
           domainObjects={domainObjects}
           disabled={isDisabled}

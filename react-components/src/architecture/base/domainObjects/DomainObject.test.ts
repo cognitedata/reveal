@@ -7,7 +7,7 @@ import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
@@ -78,8 +78,8 @@ describe(DomainObject.name, () => {
   test('should set color', () => {
     const domainObject = new ChildDomainObject();
     const color = new Color(1, 0, 1);
-    domainObject.color = color;
-    expect(domainObject.color).equals(color);
+    domainObject.setColor(color);
+    expect(domainObject.color).toStrictEqual(color);
   });
 
   test('should select', () => {

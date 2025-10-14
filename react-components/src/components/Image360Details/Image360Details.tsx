@@ -1,10 +1,7 @@
-import { useState, type ReactElement, useCallback, useEffect } from 'react';
+import { useState, type ReactElement, useCallback, useContext } from 'react';
 import styled from 'styled-components';
-import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
-import { type DataSourceType, type Image360 } from '@cognite/reveal';
 import { Button, CloseLargeIcon } from '@cognite/cogs.js';
-import { useReveal } from '../RevealCanvas/ViewerContext';
-import { useImage360Collections } from '../../hooks/useImage360Collections';
+import { Image360DetailsContext } from './Image360Details.context';
 
 type Image360DetailsProps = {
   appLanguage?: string;
@@ -15,35 +12,19 @@ export function Image360Details({
   appLanguage,
   enableExitButton = true
 }: Image360DetailsProps): ReactElement {
+  const { useReveal, useImage360Entity, Image360HistoricalDetails } =
+    useContext(Image360DetailsContext);
+
   const viewer = useReveal();
-  const [enteredEntity, setEnteredEntity] = useState<Image360<DataSourceType> | undefined>();
+  const enteredEntity = useImage360Entity(viewer);
   const [is360HistoricalPanelExpanded, setIs360HistoricalPanelExpanded] = useState<boolean>(false);
   const handleExpand = useCallback((isExpanded: boolean) => {
     setIs360HistoricalPanelExpanded(isExpanded);
   }, []);
 
-  const clearEnteredImage360 = useCallback((): void => {
-    setEnteredEntity(undefined);
-  }, [setEnteredEntity]);
-
   const exitImage360Image = useCallback((): void => {
     viewer.exit360Image();
   }, [viewer]);
-
-  const collections = useImage360Collections();
-
-  useEffect(() => {
-    collections.forEach((collection) => {
-      collection.on('image360Entered', setEnteredEntity);
-      collection.on('image360Exited', clearEnteredImage360);
-    });
-    return () => {
-      collections.forEach((collection) => {
-        collection.off('image360Entered', setEnteredEntity);
-        collection.off('image360Exited', clearEnteredImage360);
-      });
-    };
-  }, [viewer, collections, setEnteredEntity, clearEnteredImage360]);
 
   return (
     <>
