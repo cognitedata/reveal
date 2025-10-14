@@ -4,7 +4,7 @@ import {
   type InspectResultList,
   type DmsUniqueIdentifier
 } from '../../data-providers/FdmSDK';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { type ModelId, type NodeId, type RevisionId, type TreeIndex } from './types';
 
 export async function fetchAncestorNodesForTreeIndex(

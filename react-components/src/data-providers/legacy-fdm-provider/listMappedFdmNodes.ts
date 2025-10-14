@@ -1,7 +1,7 @@
 import { type AddModelOptions } from '@cognite/reveal';
 import { type FdmSDK, type InstanceFilter, type NodeItem, type Source } from '../FdmSDK';
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
-import { chunk, isEqual } from 'lodash';
+import { chunk, isEqual } from 'lodash-es';
 import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';
 import { type QueryRequest } from '@cognite/sdk';
 
