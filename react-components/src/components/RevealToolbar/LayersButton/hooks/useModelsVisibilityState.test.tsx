@@ -11,8 +11,6 @@ import {
   type ReactElement
 } from 'react';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
-import { type UseQueryResult } from '@tanstack/react-query';
-import { Mock } from 'moq.ts';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import {
   CadDomainObject,
