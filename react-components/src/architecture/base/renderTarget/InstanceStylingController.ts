@@ -1,4 +1,4 @@
-import { remove } from 'lodash';
+import { remove } from 'lodash-es';
 import { type InstanceStylingGroup } from '../../../components/Reveal3DResources/types';
 
 export class InstanceStylingController {

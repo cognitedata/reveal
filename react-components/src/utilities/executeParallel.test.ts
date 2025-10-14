@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { executeParallel } from './executeParallel';
-import { delay } from 'lodash';
+import { delay } from 'lodash-es';
 
 describe(executeParallel.name, () => {
   test('one call finishes', async () => {

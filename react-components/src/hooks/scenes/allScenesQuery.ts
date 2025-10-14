@@ -12,11 +12,14 @@ import {
 
 export type ScenesQuery = ReturnType<typeof getAllScenesQuery>;
 
+export type SceneCursors = {
+  scenes?: string;
+  sceneModels?: string;
+  scene360Collections?: string;
+};
+
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-const getAllScenesQuery = (
-  limit: number = SCENE_QUERY_LIMIT,
-  cursors?: { scenes?: string; sceneModels?: string; scene360Collections?: string }
-) => {
+const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, cursors?: SceneCursors) => {
   const query = {
     with: {
       scenes: {
@@ -137,19 +140,14 @@ const getAllScenesQuery = (
 
 export function createGetScenesQuery(
   limit: number = SCENE_QUERY_LIMIT,
-  sceneCursor?: string,
-  otherCursors?: { sceneModels?: string; scene360Collections?: string }
+  cursors?: SceneCursors
 ): ScenesQuery {
-  const cursors = {
-    scenes: sceneCursor,
-    ...otherCursors
-  };
-
   // Clean up undefined cursors so we don't send them in the request
-  if (cursors.scenes === undefined) delete cursors.scenes;
-  if (cursors.sceneModels === undefined) delete cursors.sceneModels;
-  if (cursors.scene360Collections === undefined) delete cursors.scene360Collections;
+  if (cursors?.scenes === undefined) delete cursors?.scenes;
+  if (cursors?.sceneModels === undefined) delete cursors?.sceneModels;
+  if (cursors?.scene360Collections === undefined) delete cursors?.scene360Collections;
 
-  const finalCursors = Object.keys(cursors).length > 0 ? cursors : undefined;
+  const finalCursors =
+    cursors !== undefined && Object.keys(cursors).length > 0 ? cursors : undefined;
   return getAllScenesQuery(limit, finalCursors);
 }
