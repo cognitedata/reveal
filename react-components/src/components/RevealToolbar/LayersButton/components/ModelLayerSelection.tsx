@@ -44,11 +44,7 @@ export const ModelLayerSelection = ({
         </div>
       </SelectPanel.Trigger>
       <SelectPanel.Body {...hoverHandlers}>
-        <ModelLayersList
-          domainObjects={domainObjects}
-          disabled={isDisabled}
-          renderTarget={renderTarget}
-        />
+        <ModelLayersList domainObjects={domainObjects} renderTarget={renderTarget} />
       </SelectPanel.Body>
     </SelectPanel>
   );

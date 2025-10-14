@@ -7,15 +7,13 @@ import { useOnUpdateDomainObject } from '../../../Architecture/hooks/useOnUpdate
 export const ModelLayersList = ({
   domainObjects,
   label,
-  disabled,
   renderTarget
 }: {
   domainObjects: RevealDomainObject[];
   label?: string;
-  disabled?: boolean;
   renderTarget: RevealRenderTarget;
 }): ReactElement => {
-  if (disabled === true) {
+  if (domainObjects.length === 0) {
     return <></>;
   }
 
