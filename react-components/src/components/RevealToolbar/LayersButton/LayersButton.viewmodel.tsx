@@ -1,6 +1,6 @@
 import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
-import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
+import { type ModelLayerContent, type LayersUrlStateParam } from './types';
 import { type RevealDomainObject, type RevealRenderTarget } from '../../../architecture';
 
 type ModelLayerSelectionProps = {
@@ -10,7 +10,7 @@ type ModelLayerSelectionProps = {
 };
 
 type UseLayersButtonViewModelResult = {
-  modelLayerHandlers: ModelLayerHandlers;
+  modelLayerContent: ModelLayerContent;
   ModelLayerSelection: (props: ModelLayerSelectionProps) => ReactElement;
   renderTarget: RevealRenderTarget;
 };
@@ -28,17 +28,17 @@ export function useLayersButtonViewModel(
 
   const renderTarget = useRenderTarget();
 
-  const modelLayerHandlers = useModelsVisibilityState(setExternalLayersState, renderTarget);
+  const modelLayerContent = useModelsVisibilityState(setExternalLayersState, renderTarget);
 
   useSyncExternalLayersState(
-    modelLayerHandlers,
+    modelLayerContent,
     externalLayersState,
     setExternalLayersState,
     renderTarget
   );
 
   return {
-    modelLayerHandlers,
+    modelLayerContent,
     ModelLayerSelection,
     renderTarget
   };

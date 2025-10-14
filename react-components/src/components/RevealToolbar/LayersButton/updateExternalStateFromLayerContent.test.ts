@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
+import { updateExternalStateFromLayerContent } from './updateExternalStateFromLayerContent';
 import { type LayersUrlStateParam } from './types';
 import { type Dispatch, type SetStateAction } from 'react';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
@@ -12,7 +12,7 @@ import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 
-describe(updateExternalStateFromLayerHandlers.name, () => {
+describe(updateExternalStateFromLayerContent.name, () => {
   test('outputs correct state for all layers', () => {
     const setLayerStateMock = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
 
@@ -38,11 +38,11 @@ describe(updateExternalStateFromLayerHandlers.name, () => {
 
     const renderTargetMock = createRenderTargetMock();
 
-    updateExternalStateFromLayerHandlers(
+    updateExternalStateFromLayerContent(
       {
-        cadHandlers: [cadDomainObject0, cadDomainObject1],
-        pointCloudHandlers: [pointCloudDomainObject0, pointCloudDomainObject1],
-        image360Handlers: [image360CollectionDomainObject0, image360CollectionDomainObject1]
+        cadModels: [cadDomainObject0, cadDomainObject1],
+        pointClouds: [pointCloudDomainObject0, pointCloudDomainObject1],
+        image360Collections: [image360CollectionDomainObject0, image360CollectionDomainObject1]
       },
       setLayerStateMock,
       renderTargetMock

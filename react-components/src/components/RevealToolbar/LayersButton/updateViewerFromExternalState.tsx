@@ -1,9 +1,9 @@
-import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
+import { type ModelLayerContent, type LayersUrlStateParam } from './types';
 import { type RevealRenderTarget } from '../../../architecture';
 
 export function updateViewerFromExternalState(
   layersState: LayersUrlStateParam | undefined,
-  modelLayerHandlers: ModelLayerHandlers,
+  modelLayerContent: ModelLayerContent,
   renderTarget: RevealRenderTarget
 ): void {
   if (layersState === undefined) {
@@ -12,30 +12,24 @@ export function updateViewerFromExternalState(
 
   layersState.cadLayers?.forEach((layer) => {
     if (
-      layer.index < modelLayerHandlers.cadHandlers.length &&
-      modelLayerHandlers.cadHandlers[layer.index].model.revisionId === layer.revisionId
+      layer.index < modelLayerContent.cadModels.length &&
+      modelLayerContent.cadModels[layer.index].model.revisionId === layer.revisionId
     ) {
-      modelLayerHandlers.cadHandlers[layer.index].setVisibleInteractive(
-        layer.applied,
-        renderTarget
-      );
+      modelLayerContent.cadModels[layer.index].setVisibleInteractive(layer.applied, renderTarget);
     }
   });
 
   layersState.pointCloudLayers?.forEach((layer) => {
     if (
-      layer.index < modelLayerHandlers.pointCloudHandlers.length &&
-      modelLayerHandlers.pointCloudHandlers[layer.index].model.revisionId === layer.revisionId
+      layer.index < modelLayerContent.pointClouds.length &&
+      modelLayerContent.pointClouds[layer.index].model.revisionId === layer.revisionId
     ) {
-      modelLayerHandlers.pointCloudHandlers[layer.index].setVisibleInteractive(
-        layer.applied,
-        renderTarget
-      );
+      modelLayerContent.pointClouds[layer.index].setVisibleInteractive(layer.applied, renderTarget);
     }
   });
 
   layersState.image360Layers?.forEach((layer) => {
-    modelLayerHandlers.image360Handlers
+    modelLayerContent.image360Collections
       .find((collection) => collection.model.id === layer.siteId)
       ?.setVisibleInteractive(layer.applied, renderTarget);
   });

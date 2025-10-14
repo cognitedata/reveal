@@ -40,9 +40,9 @@ describe(LayersButton.name, () => {
 
   beforeEach(() => {
     defaultDependencies.useModelsVisibilityState.mockReturnValue({
-      cadHandlers: [new CadDomainObject(createCadMock())],
-      pointCloudHandlers: [new PointCloudDomainObject(createPointCloudMock())],
-      image360Handlers: [new Image360CollectionDomainObject(createImage360ClassicMock())]
+      cadModels: [new CadDomainObject(createCadMock())],
+      pointClouds: [new PointCloudDomainObject(createPointCloudMock())],
+      image360Collections: [new Image360CollectionDomainObject(createImage360ClassicMock())]
     });
     defaultDependencies.ModelLayerSelection.mockImplementation(({ label }) => <div>{label}</div>);
   });

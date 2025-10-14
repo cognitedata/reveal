@@ -1,5 +1,5 @@
 import { type Dispatch, type SetStateAction, useContext, useEffect } from 'react';
-import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
+import { type LayersUrlStateParam, type ModelLayerContent } from '../types';
 import {
   CadDomainObject,
   Image360CollectionDomainObject,
@@ -12,7 +12,7 @@ import { UseModelsVisibilityStateContext } from './useModelsVisibilityState.cont
 export const useModelsVisibilityState = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
   renderTarget: RevealRenderTarget
-): ModelLayerHandlers => {
+): ModelLayerContent => {
   const { useRevealDomainObjects, useVisibleRevealDomainObjects } = useContext(
     UseModelsVisibilityStateContext
   );
@@ -29,33 +29,35 @@ export const useModelsVisibilityState = (
   return createModelLayersObject(domainObjects);
 };
 
-function createModelLayersObject(domainObjects: RevealDomainObject[]): ModelLayerHandlers {
+function createModelLayersObject(domainObjects: RevealDomainObject[]): ModelLayerContent {
   return {
-    cadHandlers: domainObjects.filter((obj) => obj instanceof CadDomainObject),
-    pointCloudHandlers: domainObjects.filter((obj) => obj instanceof PointCloudDomainObject),
-    image360Handlers: domainObjects.filter((obj) => obj instanceof Image360CollectionDomainObject)
+    cadModels: domainObjects.filter((obj) => obj instanceof CadDomainObject),
+    pointClouds: domainObjects.filter((obj) => obj instanceof PointCloudDomainObject),
+    image360Collections: domainObjects.filter(
+      (obj) => obj instanceof Image360CollectionDomainObject
+    )
   };
 }
 
 function createExternalStateFromLayers(
-  modelHandlers: ModelLayerHandlers,
+  models: ModelLayerContent,
   renderTarget: RevealRenderTarget
 ): LayersUrlStateParam {
   return {
-    cadLayers: modelHandlers.cadHandlers.map((cadHandler, handlerIndex) => ({
-      applied: cadHandler.isVisible(renderTarget),
-      revisionId: cadHandler.model.revisionId,
-      index: handlerIndex
+    cadLayers: models.cadModels.map((cadModel, index) => ({
+      applied: cadModel.isVisible(renderTarget),
+      revisionId: cadModel.model.revisionId,
+      index
     })),
-    pointCloudLayers: modelHandlers.pointCloudHandlers.map((pointCloudHandler, handlerIndex) => ({
-      applied: pointCloudHandler.isVisible(renderTarget),
-      revisionId: pointCloudHandler.model.revisionId,
-      index: handlerIndex
+    pointCloudLayers: models.pointClouds.map((pointCloud, index) => ({
+      applied: pointCloud.isVisible(renderTarget),
+      revisionId: pointCloud.model.revisionId,
+      index
     })),
-    image360Layers: modelHandlers.image360Handlers.map((image360Handler, handlerIndex) => ({
-      applied: image360Handler.isVisible(renderTarget),
-      siteId: image360Handler.model.id,
-      index: handlerIndex
+    image360Layers: models.image360Collections.map((image360Collection, index) => ({
+      applied: image360Collection.isVisible(renderTarget),
+      siteId: image360Collection.model.id,
+      index
     }))
   };
 }

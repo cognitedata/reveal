@@ -15,8 +15,8 @@ export type LayersUrlStateParam = {
   pointCloudLayers?: PointCloudLayersUrlStateParam[];
 };
 
-export type ModelLayerHandlers = {
-  cadHandlers: CadDomainObject[];
-  pointCloudHandlers: PointCloudDomainObject[];
-  image360Handlers: Image360CollectionDomainObject[];
+export type ModelLayerContent = {
+  cadModels: CadDomainObject[];
+  pointClouds: PointCloudDomainObject[];
+  image360Collections: Image360CollectionDomainObject[];
 };

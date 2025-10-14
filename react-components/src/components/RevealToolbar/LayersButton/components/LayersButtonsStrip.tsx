@@ -17,11 +17,11 @@ export const LayersButtonStrip = ({
 
   const renderTarget = useRenderTarget();
 
-  const modelLayerHandlers = useModelsVisibilityState(setExternalLayersState, renderTarget);
-  const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
+  const modelLayerContent = useModelsVisibilityState(setExternalLayersState, renderTarget);
+  const { cadModels, pointClouds, image360Collections } = modelLayerContent;
 
   useSyncExternalLayersState(
-    modelLayerHandlers,
+    modelLayerContent,
     externalLayersState,
     setExternalLayersState,
     renderTarget
@@ -32,19 +32,19 @@ export const LayersButtonStrip = ({
       <ModelLayersButton
         icon={'Cube'}
         label={t({ key: 'CAD_MODELS' })}
-        domainObjects={cadHandlers}
+        domainObjects={cadModels}
         renderTarget={renderTarget}
       />
       <ModelLayersButton
         icon={'PointCloud'}
         label={t({ key: 'POINT_CLOUDS' })}
-        domainObjects={pointCloudHandlers}
+        domainObjects={pointClouds}
         renderTarget={renderTarget}
       />
       <ModelLayersButton
         icon={'View360'}
         label={t({ key: 'IMAGES_360' })}
-        domainObjects={image360Handlers}
+        domainObjects={image360Collections}
         renderTarget={renderTarget}
       />
     </ButtonsContainer>

@@ -30,8 +30,8 @@ export const WholeLayerVisibilitySelectItem = ({
       checked={checked}
       disabled={disabled}
       onClick={() => {
-        domainObjects.forEach((handler) => {
-          handler.setVisibleInteractive(!checked, renderTarget);
+        domainObjects.forEach((domainObject) => {
+          domainObject.setVisibleInteractive(!checked, renderTarget);
         });
       }}
       trailingContent={
@@ -46,7 +46,7 @@ export const WholeLayerVisibilitySelectItem = ({
 };
 
 function useSomeDomainObjectsVisible(
-  currentDomainObjects: RevealDomainObject[],
+  relevantDomainObjects: RevealDomainObject[],
   renderTarget: RevealRenderTarget
 ): boolean {
   const disposableSignal = useMemo(
@@ -56,6 +56,6 @@ function useSomeDomainObjectsVisible(
 
   const allDomainObjects = useDisposableSignal(disposableSignal);
   return useMemo(() => {
-    return currentDomainObjects.some((obj) => obj.isVisible(renderTarget));
-  }, [allDomainObjects]);
+    return relevantDomainObjects.some((domainObject) => domainObject.isVisible(renderTarget));
+  }, [allDomainObjects, relevantDomainObjects, renderTarget]);
 }

@@ -65,16 +65,14 @@ describe(useModelsVisibilityState.name, () => {
     ]);
   });
 
-  test('returns model handlers and update callback', () => {
-    const mockNameQueryResult = createUseQueryModelNameResult(['model0', 'model1']);
-
+  test('returns models', () => {
     const { result } = renderHook(() => useModelsVisibilityState(undefined, renderTarget), {
       wrapper
     });
 
-    expect(result.current.cadHandlers).toEqual([cadObject]);
-    expect(result.current.pointCloudHandlers).toEqual([pointCloudObject]);
-    expect(result.current.image360Handlers).toEqual([image360CollectionObject]);
+    expect(result.current.cadModels).toEqual([cadObject]);
+    expect(result.current.pointClouds).toEqual([pointCloudObject]);
+    expect(result.current.image360Collections).toEqual([image360CollectionObject]);
   });
 
   test('calling update updates external layer state', () => {
@@ -104,12 +102,3 @@ describe(useModelsVisibilityState.name, () => {
     );
   });
 });
-
-function createUseQueryModelNameResult(
-  modelNames: Array<string | undefined>
-): UseQueryResult<Array<string | undefined>, unknown> {
-  return new Mock<UseQueryResult<Array<string | undefined>>>()
-    .setup((p) => p.data)
-    .returns(modelNames)
-    .object();
-}

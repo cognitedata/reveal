@@ -20,7 +20,7 @@ export const LayersButton = ({
 
   const [layersActive, setLayersActive] = useState<boolean>(false);
 
-  const { modelLayerHandlers, ModelLayerSelection, renderTarget } = useLayersButtonViewModel(
+  const { modelLayerContent, ModelLayerSelection, renderTarget } = useLayersButtonViewModel(
     setExternalLayersState,
     externalLayersState
   );
@@ -54,17 +54,17 @@ export const LayersButton = ({
           <SelectPanel.Section>
             <ModelLayerSelection
               label={t({ key: 'CAD_MODELS' })}
-              domainObjects={modelLayerHandlers.cadHandlers}
+              domainObjects={modelLayerContent.cadModels}
               renderTarget={renderTarget}
             />
             <ModelLayerSelection
               label={t({ key: 'POINT_CLOUDS' })}
-              domainObjects={modelLayerHandlers.pointCloudHandlers}
+              domainObjects={modelLayerContent.pointClouds}
               renderTarget={renderTarget}
             />
             <ModelLayerSelection
               label={t({ key: 'IMAGES_360' })}
-              domainObjects={modelLayerHandlers.image360Handlers}
+              domainObjects={modelLayerContent.image360Collections}
               renderTarget={renderTarget}
             />
           </SelectPanel.Section>

@@ -16,7 +16,7 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
     renderTarget = createRenderTargetMock();
   });
 
-  test('toggles visibility of model handlers when clicked', async () => {
+  test('toggles visibility of model when clicked', async () => {
     cadObject.setVisibleInteractive(true, renderTarget);
     const { getAllByText } = render(
       <SelectPanel visible={true}>

@@ -52,9 +52,9 @@ describe(LayersButtonStrip.name, () => {
       createImage360ClassicMock({ siteId: IMAGE_360_COLLECTION_ID })
     );
     defaultDependencies.useModelsVisibilityState.mockReturnValue({
-      cadHandlers: [cadObject],
-      pointCloudHandlers: [pointCloudObject],
-      image360Handlers: [image360Object]
+      cadModels: [cadObject],
+      pointClouds: [pointCloudObject],
+      image360Collections: [image360Object]
     });
     defaultDependencies.useRenderTarget.mockReturnValue(createRenderTargetMock());
   });

@@ -26,7 +26,7 @@ describe(ModelLayersButton.name, () => {
     expect(screen.getAllByRole('button')[0]).toBeDefined();
   });
 
-  test('toggles visibility of model handlers when clicked', async () => {
+  test('toggles visibility of models when clicked', async () => {
     const cadObject = new CadDomainObject(createCadMock());
     render(
       <ModelLayersButton
