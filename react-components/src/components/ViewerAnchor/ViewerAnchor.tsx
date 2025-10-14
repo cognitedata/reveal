@@ -126,6 +126,9 @@ function useStickyCompensation(
     } else {
       setStickyCompensation(new Vector2());
     }
+
+    // Reason: stickyCompensation intentionally omitted to prevent infinite update loop;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     originalPosition.x,
     originalPosition.y,

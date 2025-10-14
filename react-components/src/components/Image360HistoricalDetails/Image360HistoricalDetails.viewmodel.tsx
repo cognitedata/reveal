@@ -58,6 +58,10 @@ export function useImage360HistoricalDetailsViewModel({
       });
       setImageUrls([]);
     };
+
+    // Reason: imageUrls are created and cleaned up within this effect;
+    // including them would cause unnecessary re-renders and infinite loops.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image360Entity, revokeObjectUrl, formatDateTime]);
 
   useEffect(() => {
