@@ -3,21 +3,21 @@ import {
   type DataSourceType,
   isDMPointCloudModel,
   isClassicPointCloudModel,
-  type AddModelOptions,
-  type ClassicDataSourceType
+  type AddModelOptions
 } from '@cognite/reveal';
 import { useMemo } from 'react';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { isDM3DModelIdentifier } from '../typeGuards';
+import { isClassicModelIdentifier } from '../../../utilities/instanceIds';
 
 type MatchedPointCloudModel = {
   viewerModel: CognitePointCloudModel<DataSourceType>;
-  model: AddModelOptions<ClassicDataSourceType>;
+  model: AddModelOptions<DataSourceType>;
 };
 
 export function useMatchedPointCloudModels(
   viewerModels: Array<CognitePointCloudModel<DataSourceType>>,
-  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
+  classicModelOptions: Array<AddModelOptions<DataSourceType>>
 ): MatchedPointCloudModel[] {
   return useMemo(() => {
     return viewerModels.flatMap((viewerModel) => {
@@ -31,7 +31,7 @@ export function useMatchedPointCloudModels(
             model.modelIdentifier.revisionExternalId === modelOption.revisionExternalId &&
             model.modelIdentifier.revisionSpace === modelOption.revisionSpace
           );
-        } else if (isClassicPointCloudModel(model)) {
+        } else if (isClassicPointCloudModel(model) && isClassicModelIdentifier(modelOption)) {
           return (
             model.modelIdentifier.modelId === modelOption.modelId &&
             model.modelIdentifier.revisionId === modelOption.revisionId
