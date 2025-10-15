@@ -5,15 +5,22 @@ import {
   image360CollectionSourceWithProperties,
   revisionSourceWithProperties,
   SCENE_QUERY_LIMIT,
+  SCENE_RELATED_DATA_LIMIT,
   sceneSourceWithProperties,
   transformationSourceWithProperties
 } from './types';
 
 export type ScenesQuery = ReturnType<typeof getAllScenesQuery>;
 
+export type SceneCursors = {
+  scenes?: string;
+  sceneModels?: string;
+  scene360Collections?: string;
+};
+
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) => {
-  return {
+const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, cursors?: SceneCursors) => {
+  const query = {
     with: {
       scenes: {
         nodes: {
@@ -45,7 +52,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             }
           }
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       scene360Collections: {
         edges: {
@@ -62,7 +69,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             }
           }
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       sceneSkybox: {
         nodes: {
@@ -78,7 +85,7 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
           },
           direction: 'outwards'
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       sceneGroundPlaneEdges: {
         edges: {
@@ -95,14 +102,14 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
             }
           }
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       },
       sceneGroundPlanes: {
         nodes: {
           from: 'sceneGroundPlaneEdges',
           chainTo: 'destination'
         },
-        limit: 10000
+        limit: SCENE_RELATED_DATA_LIMIT
       }
     },
     select: {
@@ -125,13 +132,28 @@ const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, sceneCursor?: stri
         sources: groundPlaneSourceWithProperties
       }
     },
-    cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
+    ...(cursors !== undefined && { cursors })
   } as const satisfies Omit<QueryRequest, 'parameters'>;
+
+  return query;
 };
 
 export function createGetScenesQuery(
   limit: number = SCENE_QUERY_LIMIT,
-  sceneCursor?: string
+  cursors?: SceneCursors
 ): ScenesQuery {
-  return getAllScenesQuery(limit, sceneCursor);
+  // Clean up undefined cursors so we don't send them in the request
+  const cleanedCursors: SceneCursors = {};
+  if (cursors?.scenes !== undefined) {
+    cleanedCursors.scenes = cursors.scenes;
+  }
+  if (cursors?.sceneModels !== undefined) {
+    cleanedCursors.sceneModels = cursors.sceneModels;
+  }
+  if (cursors?.scene360Collections !== undefined) {
+    cleanedCursors.scene360Collections = cursors.scene360Collections;
+  }
+
+  const finalCursors = Object.keys(cleanedCursors).length > 0 ? cleanedCursors : undefined;
+  return getAllScenesQuery(limit, finalCursors);
 }
