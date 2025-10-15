@@ -4,10 +4,7 @@ import { useRenderTarget } from '../../RevealCanvas';
 import { type Scene } from '../sceneTypes';
 
 export type UseQualitySettingsFromSceneDependencies = {
-  useSceneConfig: (
-    sceneExternalId: string,
-    sceneSpaceId: string
-  ) => { data: Scene | null | undefined };
+  useSceneConfig: (sceneExternalId: string, sceneSpaceId: string) => Scene | undefined;
   useRenderTarget: typeof useRenderTarget;
 };
 
