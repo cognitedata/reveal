@@ -1,4 +1,4 @@
-import { type AddImage360CollectionOptions } from '../../components';
+import { type AddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { getClassicAssetMapped360Annotations } from './getClassicAssetMapped360Annotations';
 import { partition, take } from 'lodash-es';
