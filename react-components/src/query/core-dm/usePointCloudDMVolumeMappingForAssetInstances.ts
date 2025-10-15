@@ -1,19 +1,17 @@
 import { type AnyIntersection, type DMInstanceRef } from '@cognite/reveal';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { usePointCloudDMVolumes } from './usePointCloudDMVolumes';
-import { useMemo } from 'react';
-import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
+import { useMemo, useContext } from 'react';
 import { isDefined } from '../../utilities/isDefined';
 import { type Source, type DmsUniqueIdentifier } from '../../data-providers';
 import { queryKeys } from '../../utilities/queryKeys';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
-import { usePointCloudModelRevisionIdsFromReveal } from '../usePointCloudModelRevisionIdsFromReveal';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 import { inspectNodes } from '../../components/CacheProvider/requests';
 import { isPointCloudVolumeIntersection } from './typeGuards';
+import { UsePointCloudDMVolumeMappingForAssetInstancesContext } from './usePointCloudDMVolumeMappingForAssetInstances.context';
 
-export type PointCloudVolumeMappedAssetData = {
+export type PointCloudDMVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
   asset: DMInstanceRef & AssetProperties;
 };
@@ -23,9 +21,15 @@ export type PointCloudFdmVolumeMappingWithViews = {
   assetInstance: DMInstanceRef;
 };
 
-export const usePointCloudVolumeMappingForAssetInstances = (
+export const usePointCloudDMVolumeMappingForAssetInstances = (
   assetInstanceRefs: DmsUniqueIdentifier[]
-): PointCloudVolumeMappedAssetData[] => {
+): PointCloudDMVolumeMappedAssetData[] => {
+  const {
+    usePointCloudModelRevisionIdsFromReveal,
+    useModelIdRevisionIdFromModelOptions,
+    usePointCloudDMVolumes
+  } = useContext(UsePointCloudDMVolumeMappingForAssetInstancesContext);
+
   const { data: models } = usePointCloudModelRevisionIdsFromReveal();
   const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
@@ -36,7 +40,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
       return EMPTY_ARRAY;
     }
 
-    const result: PointCloudVolumeMappedAssetData[] =
+    const result: PointCloudDMVolumeMappedAssetData[] =
       pointCloudVolumeResults?.flatMap((pointCloudVolumeDataResult) =>
         pointCloudVolumeDataResult.pointCloudDMVolumeWithAsset
           .filter((pointCloudDMVolumeWithAsset) =>
@@ -81,7 +85,7 @@ export const usePointCloudFdmVolumeMappingForIntersection = (
     return [];
   }, [intersection]);
 
-  const volumeMappings = usePointCloudVolumeMappingForAssetInstances(assetInstanceRefs);
+  const volumeMappings = usePointCloudDMVolumeMappingForAssetInstances(assetInstanceRefs);
 
   return useQuery({
     queryKey: [
