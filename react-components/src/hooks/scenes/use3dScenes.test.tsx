@@ -45,7 +45,13 @@ describe(use3dScenes.name, () => {
     sceneRelatedDataLimit: 3
   };
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false // Disable retries to avoid multiple calls in tests
+      }
+    }
+  });
 
   type MockResponseData = Partial<Use3dScenesQueryResult>;
 
@@ -111,15 +117,15 @@ describe(use3dScenes.name, () => {
         nextCursor: { scenes: 'cursor-token' }
       },
       {
-        data: { scenes: createScenes(50, SCENE_QUERY_LIMIT) },
-        nextCursor: { scenes: 'no-data-cursor' }
+        data: { scenes: createScenes(5, SCENE_QUERY_LIMIT) },
+        nextCursor: { scenes: 'cursor-token-2' }
       }
     ]);
     const { result } = renderHook(() => use3dScenes(), { wrapper });
     const data = await waitForSuccessAndGetData(result);
     expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
     const allScenes = Object.values(data).flatMap((spaceScenes) => Object.values(spaceScenes));
-    expect(allScenes).toHaveLength(SCENE_QUERY_LIMIT + 50);
+    expect(allScenes).toHaveLength(SCENE_QUERY_LIMIT + 5);
   });
 
   test('should trigger and handle 3d models pagination when limit is reached', async () => {
@@ -138,13 +144,13 @@ describe(use3dScenes.name, () => {
           scenes: [createSceneNode(sceneId, TEST_SPACE)],
           sceneModels: firstBatchOfModels
         },
-        nextCursor: { sceneModels: 'model-cursor-1' } // Provide cursor to trigger pagination
+        nextCursor: { sceneModels: 'model-cursor-1' }
       },
       {
         data: {
           sceneModels: secondBatchOfModels
         },
-        nextCursor: { sceneModels: 'no-models-data-cursor' }
+        nextCursor: { sceneModels: 'model-cursor-2' }
       }
     ]);
 
@@ -170,10 +176,7 @@ describe(use3dScenes.name, () => {
       create360Edge(sceneId, TEST_SPACE, 'collection-3', 'image-space')
     ]; // Length is 3, equals the mocked limit
 
-    const secondBatch = [
-      create360Edge(sceneId, TEST_SPACE, 'collection-4', 'image-space'),
-      create360Edge(sceneId, TEST_SPACE, 'collection-5', 'image-space')
-    ];
+    const secondBatch = [create360Edge(sceneId, TEST_SPACE, 'collection-4', 'image-space')];
 
     setupMockResponse([
       {
@@ -187,7 +190,7 @@ describe(use3dScenes.name, () => {
         data: {
           scene360Collections: secondBatch
         },
-        nextCursor: { scene360Collections: 'no-360-data-cursor' }
+        nextCursor: { scene360Collections: '360-cursor-2' }
       }
     ]);
 
@@ -197,13 +200,12 @@ describe(use3dScenes.name, () => {
     expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
 
     const scene = data[TEST_SPACE][sceneId];
-    expect(scene.image360CollectionOptions).toHaveLength(5);
+    expect(scene.image360CollectionOptions).toHaveLength(4);
     expect(scene.image360CollectionOptions.map((c) => c.externalId)).toEqual([
       'collection-1',
       'collection-2',
       'collection-3',
-      'collection-4',
-      'collection-5'
+      'collection-4'
     ]);
   });
 
@@ -241,8 +243,8 @@ describe(use3dScenes.name, () => {
           scene360Collections: collectionsPage2
         },
         nextCursor: {
-          sceneModels: 'no-models-data-cursor',
-          scene360Collections: 'no-360-data-cursor'
+          sceneModels: 'model-cursor-2',
+          scene360Collections: '360-cursor-2'
         }
       }
     ]);
@@ -257,7 +259,7 @@ describe(use3dScenes.name, () => {
     expect(scene.image360CollectionOptions).toHaveLength(4);
   });
 
-  test('should pass previous scene cursor when paginating related data', async () => {
+  test('should use current scene cursor (not next) when paginating related data', async () => {
     const sceneId = 'scene-external-id';
     const modelsPage1 = [
       createModelEdge(sceneId, TEST_SPACE, 'model-1', 'models', 1),
@@ -282,8 +284,8 @@ describe(use3dScenes.name, () => {
           sceneModels: modelsPage2
         },
         nextCursor: {
-          sceneModels: 'no-models-data-cursor',
-          scene360Collections: 'no-360-data-cursor'
+          sceneModels: 'model-cursor-2',
+          scenes: 'scene-cursor-2'
         }
       }
     ]);
@@ -294,7 +296,7 @@ describe(use3dScenes.name, () => {
     expect(mockQueryNodesAndEdges).toHaveBeenCalledTimes(2);
 
     const secondCall = mockQueryNodesAndEdges.mock.calls[1][0];
-    expect(secondCall.cursors?.scenes).toBe('scene-cursor-1');
+    expect(secondCall.cursors?.scenes).toBeUndefined();
     expect(secondCall.cursors?.sceneModels).toBe('model-cursor-1');
   });
 
@@ -487,7 +489,7 @@ describe(use3dScenes.name, () => {
       | Array<{ data: MockResponseData; nextCursor?: Record<string, string> }>
   ): void => {
     if (!Array.isArray(responseData)) {
-      mockQueryNodesAndEdges.mockResolvedValue({
+      mockQueryNodesAndEdges.mockResolvedValueOnce({
         items: {
           scenes: [],
           sceneModels: [],
@@ -502,12 +504,8 @@ describe(use3dScenes.name, () => {
       return;
     }
 
-    let mockChain = mockQueryNodesAndEdges;
-    responseData.forEach((response, index) => {
-      const isLast = index === responseData.length - 1;
-      const mockMethod = isLast ? 'mockResolvedValue' : 'mockResolvedValueOnce';
-
-      mockChain = mockChain[mockMethod]({
+    responseData.forEach((response) => {
+      mockQueryNodesAndEdges.mockResolvedValueOnce({
         items: {
           scenes: [],
           sceneModels: [],
@@ -520,6 +518,11 @@ describe(use3dScenes.name, () => {
         nextCursor: response.nextCursor
       });
     });
+
+    // Add a fallback that throws an error if called more times than expected
+    mockQueryNodesAndEdges.mockRejectedValue(
+      new Error('Mock was called more times than expected - possible infinite loop')
+    );
   };
 
   const createDefaultTransformation = (
