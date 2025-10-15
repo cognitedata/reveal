@@ -92,6 +92,7 @@
   "MEASUREMENTS_ADD_VOLUME": "Measure volume of a box. Click at three points in a horizontal plan and the fourth to give it height.",
   "MEASUREMENTS_SHOW_ON_TOP": "Show all measurements on top",
   "MEASUREMENTS_TOOLTIP": "Distance measuring tool",
+  "MINIMUM": "Minimum",
   "MOUSE_INSTRUCTIONS": "Click+drag",
   "MOUSE_NAVIGATION_DESCRIPTION": "Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select",
   "MOUSE_NAVIGATION_TITLE": "Mouse",

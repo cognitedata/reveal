@@ -1,4 +1,4 @@
-import { partition } from 'lodash';
+import { partition } from 'lodash-es';
 import { isInternalId } from '../../../utilities/instanceIds';
 import { type IdEither } from '@cognite/sdk';
 import { type AssetAdvancedFilterProps } from './filters';

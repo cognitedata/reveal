@@ -13,11 +13,14 @@ import {
 import { fetchAssetsForAssetReferences } from './annotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { isInternalId, type InstanceReference } from '../../utilities/instanceIds';
+
 import {
   createInstanceReferenceKey,
   InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
-import { chunk, uniqBy } from 'lodash';
+
+import { chunk, uniqBy } from 'lodash-es';
+
 import { type AssetInstance } from '../../utilities/instances';
 
 export class Image360AnnotationCache {

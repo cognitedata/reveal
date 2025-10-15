@@ -64,6 +64,7 @@ export type SceneModelsResponse = EdgeResponse & {
 
 export type SceneModelsProperties = Transformation3d & {
   revisionId: number;
+  defaultVisible?: boolean;
 };
 
 export type Image360CollectionsResponse = EdgeResponse & {
@@ -73,6 +74,7 @@ export type Image360CollectionsResponse = EdgeResponse & {
 export type Scene360ImageCollectionsProperties = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
+  defaultVisible?: boolean;
 };
 
 export type SceneConfigurationProperties = {

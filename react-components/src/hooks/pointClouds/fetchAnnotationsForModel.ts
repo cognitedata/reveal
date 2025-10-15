@@ -1,11 +1,12 @@
 import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 import { isDefined } from '../../utilities/isDefined';
 import { type PointCloudAnnotationMappedAssetData } from '../types';
+import { type InstanceReference } from '../../utilities/instanceIds';
 
 export const fetchAnnotationsForModel = async (
   modelId: number | undefined,
   revisionId: number | undefined,
-  assetIds: Array<string | number> | undefined,
+  assetIds: InstanceReference[] | undefined,
   pointCloudAnnotationCache: PointCloudAnnotationCache
 ): Promise<PointCloudAnnotationMappedAssetData[] | undefined> => {
   if (modelId === undefined || revisionId === undefined || assetIds === undefined) {

@@ -1,7 +1,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type InternalId, type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { type DmsUniqueIdentifier } from '../data-providers';

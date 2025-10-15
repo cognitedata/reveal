@@ -4,7 +4,7 @@ import { Color } from 'three';
 import { useState } from 'react';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
-import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
+import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton/RuleBasedOutputsButton';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 
 const meta = {

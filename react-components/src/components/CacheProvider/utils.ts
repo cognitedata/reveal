@@ -4,6 +4,7 @@ import {
   type AnnotationsBoundingVolume,
   type IdEither
 } from '@cognite/sdk';
+
 import {
   isClassicPointCloudVolume,
   isDMPointCloudVolume,
@@ -30,7 +31,11 @@ export function getInstanceReferencesFromPointCloudAnnotation(
     instances.push(annotationData.assetRef);
   }
   if (annotationData.instanceRef !== undefined && isDmsInstance(annotationData.instanceRef)) {
-    instances.push(annotationData.instanceRef);
+    const dmsUniqueIdentifierFromInstanceRef: InstanceReference = {
+      space: annotationData.instanceRef.space,
+      externalId: annotationData.instanceRef.externalId
+    };
+    instances.push(dmsUniqueIdentifierFromInstanceRef);
   }
 
   return instances;

@@ -1,5 +1,5 @@
 import { type CogniteClient, type Asset, type IdEither } from '@cognite/sdk';
-import { uniqBy, chunk, partition, uniqWith } from 'lodash';
+import { uniqBy, chunk, partition, uniqWith } from 'lodash-es';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';
 import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
@@ -13,8 +13,8 @@ import {
 } from '../../data-providers/core-dm-provider/dataModels';
 import {
   createInstanceReferenceKey,
-  InstanceReference,
-  InstanceReferenceKey,
+  type InstanceReference,
+  type InstanceReferenceKey,
   isIdEither
 } from '../../utilities/instanceIds';
 import { isSameIdEither } from '../../utilities/instanceIds/equality';

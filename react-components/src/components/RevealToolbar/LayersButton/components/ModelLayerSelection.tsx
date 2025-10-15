@@ -4,6 +4,7 @@ import { type ReactElement, useCallback } from 'react';
 import { type ModelHandler } from '../ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
+import { useHoverHandlers } from '../hooks/useHoverHandlers';
 
 type UpdateCallback = () => void;
 
@@ -19,27 +20,36 @@ export const ModelLayerSelection = ({
   update
 }: ModelLayerSelectionProps): ReactElement => {
   const isDisabled = modelLayerHandlers.length === 0;
+  const { hoverHandlers, isPanelOpen, setPanelToClose } = useHoverHandlers(isDisabled);
 
   const updateCallback = useCallback(() => {
     update();
   }, [update]);
 
   return (
-    <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={!isDisabled}>
+    <SelectPanel
+      placement="right"
+      hideOnOutsideClick={true}
+      openOnHover={false}
+      visible={isPanelOpen}
+      onHide={setPanelToClose}>
       <SelectPanel.Trigger>
-        <WholeLayerVisibilitySelectItem
-          label={label}
-          modelLayerHandlers={modelLayerHandlers}
-          update={updateCallback}
-          trailingContent={
-            <IconWrapper size={16}>
-              <ChevronRightSmallIcon />
-            </IconWrapper>
-          }
-          disabled={isDisabled}
-        />
+        <div {...hoverHandlers}>
+          <WholeLayerVisibilitySelectItem
+            label={label}
+            modelLayerHandlers={modelLayerHandlers}
+            update={updateCallback}
+            trailingContent={
+              <IconWrapper size={16}>
+                <ChevronRightSmallIcon />
+              </IconWrapper>
+            }
+            disabled={isDisabled}
+            shouldPropagate={false}
+          />
+        </div>
       </SelectPanel.Trigger>
-      <SelectPanel.Body>
+      <SelectPanel.Body {...hoverHandlers}>
         <ModelLayersList
           modelLayerHandlers={modelLayerHandlers}
           update={updateCallback}
