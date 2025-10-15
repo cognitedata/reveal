@@ -1,8 +1,8 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { IconWrapper, ChevronRightSmallIcon } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
-import { ModelLayersList } from './ModelLayersList2';
-import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem2';
+import { ModelLayersList } from './ModelLayersList';
+import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { useHoverHandlers } from '../hooks/useHoverHandlers';
 

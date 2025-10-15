@@ -3,8 +3,8 @@ import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, LayersIcon, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
-import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
-import { useLayersButtonViewModel } from './LayersButton2.viewmodel';
+import { LabelWithShortcut } from '../LabelWithShortcut';
+import { useLayersButtonViewModel } from './LayersButton.viewmodel';
 import { type LayersUrlStateParam } from './types';
 
 export type LayersButtonProps = {

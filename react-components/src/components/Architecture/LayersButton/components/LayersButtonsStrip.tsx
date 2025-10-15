@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import { ModelLayersButton } from './ModelLayersButton';
 
-import { useCallback, useContext, type ReactElement } from 'react';
+import { useContext, type ReactElement } from 'react';
 import { useTranslation } from '../../../i18n/I18n';
 import { type LayersButtonProps } from '../LayersButton';
 import { LayersButtonContext } from '../LayersButton.context';
-import { use3DModelName } from '../../../../query/use3DModelName';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
@@ -13,50 +12,40 @@ export const LayersButtonStrip = ({
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
 
-  const { useModelHandlers, useSyncExternalLayersState, use3dModels, useReveal } =
+  const { useModelsVisibilityState, useSyncExternalLayersState, useRenderTarget } =
     useContext(LayersButtonContext);
 
-  const viewer = useReveal();
-  const models = use3dModels();
+  const renderTarget = useRenderTarget();
 
-  const [modelLayerHandlers, update] = useModelHandlers(
-    setExternalLayersState,
-    viewer,
-    models,
-    use3DModelName
-  );
-  const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
+  const modelLayerContent = useModelsVisibilityState(setExternalLayersState, renderTarget);
+  const { cadModels, pointClouds, image360Collections } = modelLayerContent;
 
   useSyncExternalLayersState(
-    modelLayerHandlers,
+    modelLayerContent,
     externalLayersState,
     setExternalLayersState,
-    update
+    renderTarget
   );
-
-  const updateCallback = useCallback(() => {
-    update();
-  }, [viewer, update]);
 
   return (
     <ButtonsContainer>
       <ModelLayersButton
         icon={'Cube'}
         label={t({ key: 'CAD_MODELS' })}
-        handlers={cadHandlers}
-        update={updateCallback}
+        domainObjects={cadModels}
+        renderTarget={renderTarget}
       />
       <ModelLayersButton
         icon={'PointCloud'}
         label={t({ key: 'POINT_CLOUDS' })}
-        handlers={pointCloudHandlers}
-        update={updateCallback}
+        domainObjects={pointClouds}
+        renderTarget={renderTarget}
       />
       <ModelLayersButton
         icon={'View360'}
         label={t({ key: 'IMAGES_360' })}
-        handlers={image360Handlers}
-        update={updateCallback}
+        domainObjects={image360Collections}
+        renderTarget={renderTarget}
       />
     </ButtonsContainer>
   );
