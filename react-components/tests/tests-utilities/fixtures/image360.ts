@@ -36,7 +36,10 @@ export const findImageAnnotationsMock = vi
   .fn<Image360Collection<ClassicDataSourceType>['findImageAnnotations']>()
   .mockResolvedValue([]);
 
-export function createImage360ClassicMock(parameters?: { visible?: boolean }): Image360Collection {
+export function createImage360ClassicMock(parameters?: {
+  siteId?: string;
+  visible?: boolean;
+}): Image360Collection {
   let isIconsVisibility = parameters?.visible ?? true;
   let isOccludedIconsVisible = true;
   let iconsOpacity = 1;
@@ -61,7 +64,7 @@ export function createImage360ClassicMock(parameters?: { visible?: boolean }): I
   return (
     new Mock<Image360Collection<ClassicDataSourceType>>()
       .setup((p) => p.id)
-      .returns('siteId')
+      .returns(parameters?.siteId ?? 'siteId')
       .setup((p) => p.label)
       .returns('360 Model Name')
       .setup((p) => p.getIconsVisibility)
