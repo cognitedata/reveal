@@ -148,13 +148,6 @@ function useCalculateInstanceStyling(
   models: CadModelOptions[],
   instanceGroups: Array<InstanceStylingGroup>
 ): ModelStyleGroupWithMappingsFetched {
-  /* const dmIdsForInstanceGroups = instanceGroups
-    .filter(isFdmAssetStylingGroup)
-    .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds);
-  const assetIdsFromInstanceGroups = instanceGroups
-    .filter(isClassicAssetMappingStylingGroup)
-    .flatMap((instanceGroup) => instanceGroup.assetIds); */
-
   const instanceReferences = instanceGroups.flatMap(getInstanceReferencesFromStylingGroup);
 
   const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
@@ -170,8 +163,6 @@ function useCalculateInstanceStyling(
       'reveal',
       'react-components',
       'cad-asset-mappings',
-      // dmIdsForInstanceGroups,
-      // assetIdsFromInstanceGroups,
       instanceReferences,
       models.map((model) => [model.modelId, model.revisionId])
     ],

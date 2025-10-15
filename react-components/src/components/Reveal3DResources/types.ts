@@ -122,19 +122,7 @@ export type ClassicAssetStylingGroup = InstanceStylingGroupBase & {
   assetIds: AssetId[];
 };
 
-/* export type Image360AssetStylingGroup = {
-  assetIds: CogniteInternalId[];
-  style: { image360?: Image360AnnotationAppearance };
-};
-
-export type Image360DMAssetStylingGroup = {
-  assetRefs: DmsUniqueIdentifier[];
-  style: { image360?: Image360AnnotationAppearance };
-}; */
-
 export type InstanceStylingGroup = FdmInstanceStylingGroup | ClassicAssetStylingGroup;
-/* | Image360AssetStylingGroup
-  | Image360DMAssetStylingGroup; */
 
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };

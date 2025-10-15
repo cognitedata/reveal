@@ -4,8 +4,6 @@ export type {
   FdmInstanceStylingGroup,
   ClassicAssetStylingGroup,
   DefaultResourceStyling,
-  // Image360AssetStylingGroup,
-  // Image360DMAssetStylingGroup,
   InstanceStylingGroup,
   CommonImage360Settings,
   TaggedAddCadResourceOptions,

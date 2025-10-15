@@ -3,9 +3,6 @@ import { isDefined } from '../../../utilities/isDefined';
 import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
-  // isImage360AssetMappingStylingGroup,
-  // isImage360AssetStylingGroup,
-  // isImage360DMAssetStylingGroup
 } from '../../../utilities/StylingGroupUtils';
 import { type Image360PolygonStylingGroup } from '../../Image360CollectionContainer';
 import { type InstanceStylingGroup } from '../types';

@@ -68,13 +68,6 @@ export const useCalculatePointCloudStyling = (
     ]);
   }, [styledPointCloudModels, modelInstanceStyleGroups, pointCloudModelOptions]);
 
-  console.log(
-    'Input instance groups: ',
-    instanceGroups,
-    ', combined styles = ',
-    combinedStyledPointCloudModels
-  );
-
   return combinedStyledPointCloudModels;
 };
 
