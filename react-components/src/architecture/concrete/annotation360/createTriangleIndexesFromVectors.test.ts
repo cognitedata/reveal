@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
-import { forEach } from 'lodash';
+import { forEach } from 'lodash-es';
 import { insertAt } from '../../base/utilities/extensions/arrayUtils';
 
 describe(createTriangleIndexesFromVectors.name, () => {

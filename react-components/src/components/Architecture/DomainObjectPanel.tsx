@@ -9,7 +9,6 @@ import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import {
-  type LengthUnit,
   UNDEFINED_UNIT_SYSTEM,
   type UnitSystem
 } from '../../architecture/base/renderTarget/UnitSystem';
@@ -18,9 +17,7 @@ import { type DomainObject } from '../../architecture';
 import { useSignalValue } from '@cognite/signals/react';
 import { useRenderTarget } from '../RevealCanvas';
 import { getRoot } from '../../architecture/base/domainObjects/getRoot';
-
-const TEXT_SIZE = 'x-small';
-const HEADER_SIZE = 'medium';
+import { DomainObjectPanelInput } from './DomainObjectPanelInput';
 
 export const DomainObjectPanel = (): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -31,8 +28,6 @@ export const DomainObjectPanel = (): ReactElement => {
   const root = domainObject === undefined ? undefined : getRoot(domainObject);
   const unitSystem = root === undefined ? UNDEFINED_UNIT_SYSTEM : root.unitSystem;
 
-  useSignalValue<LengthUnit>(unitSystem.lengthUnit);
-
   if (domainObject === undefined || commands === undefined || root === undefined) {
     return <></>;
   }
@@ -41,7 +36,6 @@ export const DomainObjectPanel = (): ReactElement => {
   if (style === undefined || info === undefined) {
     return <></>;
   }
-
   // Force the getString to be updated
   for (const command of commands) {
     if (command instanceof CopyToClipboardCommand)
@@ -60,38 +54,29 @@ export const DomainObjectPanel = (): ReactElement => {
         margin: style.marginPx,
         padding: style.paddingPx
       }}>
-      <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <Flex gap={8}>
+      <Flex gap={4} justifyContent={'space-between'} alignItems={'center'}>
+        <Flex gap={4}>
           {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
-          {label !== undefined && <Body size={HEADER_SIZE}>{label}</Body>}
+          {label !== undefined && (
+            <Body strong size="medium">
+              {label}
+            </Body>
+          )}
         </Flex>
-        <Flex>
+        <Flex gap={0}>
           <CommandButtons commands={commands} placement={'bottom'} />
         </Flex>
       </Flex>
-      <table>
+      <StyledTable>
         <tbody>{info.items.map((item, _i) => addTextWithNumber(item, unitSystem))}</tbody>
-      </table>
+      </StyledTable>
     </Container>
   );
 
   function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
-    const icon = item.icon;
-    const { quantity, value } = item;
-    const text = item?.getText();
     return (
       <tr key={JSON.stringify(item)}>
-        <PaddedTh>
-          {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
-          {icon !== undefined && <IconComponent type={icon} iconName={icon} />}
-        </PaddedTh>
-        <></>
-        <NumberTh>
-          <Body size={TEXT_SIZE}>{unitSystem.toString(value, quantity)}</Body>
-        </NumberTh>
-        <PaddedTh>
-          <Body size={TEXT_SIZE}>{unitSystem.getUnit(quantity)}</Body>
-        </PaddedTh>
+        <DomainObjectPanelInput item={item} unitSystem={unitSystem} />
       </tr>
     );
   }
@@ -110,26 +95,14 @@ function toString(
     }
   }
   for (const item of info.items) {
-    const text = item?.getText();
-    if (text !== undefined) {
-      result += `${text}: `;
+    const label = item.label;
+    if (label !== undefined) {
+      result += `${label}: `;
     }
     result += `${unitSystem.toStringWithUnit(item.value, item.quantity)}\n`;
   }
   return result;
 }
-
-const NumberTh = styled.th`
-  text-align: right;
-  padding-right: 8px;
-  min-width: 60px;
-  size: small;
-`;
-
-const PaddedTh = styled.th`
-  padding-right: 10px;
-  size: small;
-`;
 
 const Container = withSuppressRevealEvents(styled.div`
   z-index: 1000;
@@ -141,3 +114,7 @@ const Container = withSuppressRevealEvents(styled.div`
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
 `);
+
+const StyledTable = styled.table`
+  gap: 8px;
+`;

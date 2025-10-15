@@ -34,7 +34,7 @@ import { executeParallel } from '../../utilities/executeParallel';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
-import { partition, zip } from 'lodash';
+import { partition, zip } from 'lodash-es';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { transformViewItemToSource } from './utils/transformViewItemToSource';

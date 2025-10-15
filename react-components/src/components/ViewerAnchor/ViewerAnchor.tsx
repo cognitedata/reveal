@@ -11,7 +11,7 @@ import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
-import { clamp } from 'lodash';
+import { clamp } from 'lodash-es';
 
 type ViewerAnchorStyle = Omit<CSSProperties, 'position' | 'left' | 'top'>;
 

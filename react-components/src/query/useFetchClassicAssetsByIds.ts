@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type InternalId, type Asset } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type AllAssetFilterProps } from '../query/network/common/filters';
 import { executeParallel } from '../utilities/executeParallel';

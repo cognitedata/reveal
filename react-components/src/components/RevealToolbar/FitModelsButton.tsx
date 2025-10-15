@@ -16,7 +16,7 @@ export const FitModelsButton = (): ReactElement => {
     <CogsTooltip content={t({ key: 'FIT_VIEW_TOOLTIP' })} placement="right">
       <Button
         type="ghost"
-        icon=<ExpandAlternativeIcon />
+        icon={<ExpandAlternativeIcon />}
         aria-label="Fit camera to models"
         onClick={updateCamera}
       />

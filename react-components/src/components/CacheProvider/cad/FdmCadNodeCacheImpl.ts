@@ -21,7 +21,7 @@ import {
   revisionKeyToIds
 } from '../idAndKeyTranslation';
 
-import { partition } from 'lodash';
+import { partition } from 'lodash-es';
 
 import assert from 'assert';
 import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from '../requests';

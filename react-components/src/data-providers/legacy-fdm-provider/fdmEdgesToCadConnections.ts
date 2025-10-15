@@ -11,7 +11,7 @@ import { type DmsUniqueIdentifier, type EdgeItem } from '../FdmSDK';
 import { type InModel3dEdgeProperties } from './dataModels';
 import { executeParallel } from '../../utilities/executeParallel';
 import { isDefined } from '../../utilities/isDefined';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import {
   createModelRevisionKey,
   revisionKeyToIds

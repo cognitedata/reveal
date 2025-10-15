@@ -13,7 +13,7 @@ import {
   type ModelNodeIdKey
 } from './types';
 
-import { split } from 'lodash';
+import { split } from 'lodash-es';
 
 export function createModelRevisionKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {
   return `${modelId}/${revisionId}`;

@@ -1,3 +1,3 @@
 export { usePointCloudAnnotationMappingForIntersection } from './usePointCloudAnnotationMappingForIntersection';
-export { usePointCloudAnnotationMappingsForAssetIds } from './usePointCloudAnnotationMappingsForAssetIds';
+export { usePointCloudAnnotationMappingsForAssetInstances } from './usePointCloudAnnotationMappingsForAssetInstances';
 export { usePointCloudAnnotationMappingsForModels } from './usePointCloudAnnotationMappingsForModels';

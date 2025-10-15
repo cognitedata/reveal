@@ -6,7 +6,7 @@ import { type Image360AnnotationFilterOptions } from '@cognite/reveal';
 import { type DmsUniqueIdentifier } from '../data-providers';
 
 import { matchAssetWithQuery } from '../utilities/instances/matchAssetWithQuery';
-import { partition } from 'lodash';
+import { partition } from 'lodash-es';
 import { getClassicAssetMapped360Annotations } from './network/getClassicAssetMapped360Annotations';
 
 export const useAllAssetsMapped360Annotations = (

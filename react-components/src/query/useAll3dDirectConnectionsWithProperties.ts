@@ -1,7 +1,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type FdmKey, type FdmConnectionWithNode } from '../components/CacheProvider/types';
 import { type InstanceType } from '@cognite/sdk';
-import { chunk, uniqBy } from 'lodash';
+import { chunk, uniqBy } from 'lodash-es';
 import {
   type FdmInstanceNodeWithConnectionAndProperties,
   type FdmInstanceWithPropertiesAndTyping

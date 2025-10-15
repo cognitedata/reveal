@@ -6,7 +6,7 @@ import type {
   ClassicDataSourceType
 } from '@cognite/reveal';
 import type { Matrix4 } from 'three';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import type { CadModelStyling } from './types';

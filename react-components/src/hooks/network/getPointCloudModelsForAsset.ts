@@ -1,5 +1,5 @@
 import { type Revision3D } from '@cognite/sdk';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { type TaggedAddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';
 import { type ModelsForAssetParams } from './types';
 

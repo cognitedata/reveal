@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
-import { forEach } from 'lodash';
+import { forEach } from 'lodash-es';
 
 export const TEST_CONNECTED_IMAGE_ID = 'My Id';
 export const TEST_CENTER = new Vector3(5, 6, 7);

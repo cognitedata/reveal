@@ -1,6 +1,6 @@
 import { useContext, type ReactElement } from 'react';
 import styled from 'styled-components';
-import { uniqueId } from 'lodash';
+import { uniqueId } from 'lodash-es';
 import { type Image360HistoricalDetailsProps } from './types';
 import { Image360HistoricalDetailsContext } from './Image360HistoricalDetails.context';
 

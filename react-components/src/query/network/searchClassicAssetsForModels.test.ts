@@ -16,7 +16,7 @@ import assert from 'assert';
 import { isInternalId } from '../../utilities/instanceIds';
 import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import { type RevealRenderTarget } from '../../architecture';
-import { drop, take } from 'lodash';
+import { drop, take } from 'lodash-es';
 import { taggedPointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';

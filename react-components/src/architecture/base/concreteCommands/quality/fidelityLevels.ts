@@ -1,6 +1,6 @@
 import { assertNever } from '../../../../utilities/assertNever';
 
-import { clamp, maxBy } from 'lodash';
+import { clamp, maxBy } from 'lodash-es';
 import { type QualitySettings } from '../../utilities/quality/QualitySettings';
 import assert from 'assert';
 

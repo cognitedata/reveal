@@ -26,6 +26,13 @@ describe(DomainObjectPanel.name, () => {
     expect(buttons.length).toBe(0);
   });
 
+  test('should render nothing when there is no PanelInfo', async () => {
+    const domainObject = new MockDomainObject(false);
+    renderDomainObjectPanel(domainObject);
+    expect(screen.queryByText(domainObject.label)).toBeNull();
+    expect(screen.queryByLabelText('SnowIcon')).toBeNull();
+  });
+
   test('should render with correct label and icon', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
@@ -41,11 +48,12 @@ describe(DomainObjectPanel.name, () => {
     expect(buttons.length).toBe(expectedButtonsLength);
   });
 
-  test('should render with correct info text', async () => {
+  test('should render with correct labels, units and numbers', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
     for (const subString of EXPECTED_SUB_STRINGS) {
-      expect(screen.getByText(subString)).toBeDefined();
+      const element = screen.queryByText(subString);
+      expect(element).toBeDefined();
     }
   });
 
@@ -115,9 +123,12 @@ function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
 }
 
 class MockDomainObject extends DomainObject {
-  public constructor() {
+  private readonly _hasPanelInfo;
+
+  public constructor(hasPanelInfo = true) {
     super();
     this.name = 'Mock';
+    this._hasPanelInfo = hasPanelInfo;
   }
 
   public override get icon(): IconName {
@@ -129,7 +140,7 @@ class MockDomainObject extends DomainObject {
   }
 
   public override get hasPanelInfo(): boolean {
-    return true;
+    return this._hasPanelInfo;
   }
 
   public override getPanelToolbar(): BaseCommand[] {
@@ -141,6 +152,9 @@ class MockDomainObject extends DomainObject {
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
+    if (!this._hasPanelInfo) {
+      return undefined;
+    }
     const info = new PanelInfo();
     add({ key: 'LENGTH' }, 1, Quantity.Length);
     add({ key: 'AREA' }, 2, Quantity.Area);

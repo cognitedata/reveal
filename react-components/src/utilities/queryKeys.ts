@@ -39,7 +39,7 @@ export const queryKeys = {
   // Point Cloud Annotations
   pointCloudAnnotationMappings: (modelKeys: string[]) =>
     [...models, 'point-cloud-annotation-mappings', modelKeys] as const,
-  pointCloudAnnotationForAssetIds: (modelKeys: string[], assetIdKeys: string[]) =>
+  pointCloudAnnotationForAssetInstances: (modelKeys: string[], assetIdKeys: string[]) =>
     [...models, ...assets, 'point-cloud-all-annotations', modelKeys, assetIdKeys] as const,
   pointCloudAnnotationForAssetId: (modelKey: string, assetId: string) =>
     [...models, ...assets, 'asset-annotation-mapping-for-a-model', modelKey, assetId] as const,

@@ -1,4 +1,4 @@
-import { uniq } from 'lodash';
+import { uniq } from 'lodash-es';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
 import { type ModelsForAssetParams } from './types';

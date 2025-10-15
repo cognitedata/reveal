@@ -9,7 +9,7 @@ import {
 import { useEffect } from 'react';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { modelExists } from '../../utilities/modelExists';
 import {

@@ -165,7 +165,7 @@
   "WIDGET_WINDOW_CLOSE": "閉じる",
   "WIDGET_WINDOW_EXPAND": "展開",
   "WIDGET_WINDOW_MINIMIZE": "最小化",
-  "X:COORDINATE": "X 座標",
+  "X_COORDINATE": "X 座標",
   "X_RAY": "X 線",
   "Y_COORDINATE": "Y 座標",
   "Z_COORDINATE": "Z 座標"

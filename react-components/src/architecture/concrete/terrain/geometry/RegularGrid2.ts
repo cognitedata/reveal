@@ -3,7 +3,7 @@ import { type Range1 } from '../../../base/utilities/geometry/Range1';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { Grid2 } from './Grid2';
 
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from 'lodash-es/cloneDeep';
 import { type Shape } from '../../../base/utilities/geometry/Shape';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
 

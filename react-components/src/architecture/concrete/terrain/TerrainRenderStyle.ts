@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
 import { RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { ColorMapType } from '../../base/utilities/colors/ColorMapType';

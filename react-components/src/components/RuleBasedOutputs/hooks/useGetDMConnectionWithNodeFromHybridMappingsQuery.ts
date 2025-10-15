@@ -4,7 +4,7 @@ import { type FdmConnectionWithNode } from '../../CacheProvider/types';
 import { type CadModelOptions } from '../../Reveal3DResources';
 import { isDefined } from '../../../utilities/isDefined';
 import { inspectNodes } from '../../CacheProvider/requests';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { useContext, useMemo } from 'react';
 import { UseGetDMConnectionWithNodeFromHybridMappingsQueryContext } from './useGetDMConnectionWithNodeFromHybridMappingsQuery.context';
 import { type InspectResultList } from '../../../data-providers/FdmSDK';

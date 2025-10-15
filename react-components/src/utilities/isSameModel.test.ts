@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 import { Matrix4 } from 'three';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { isSameModel } from './isSameModel';
 import type { AddImage360CollectionOptions } from '../components/Reveal3DResources/types';
 

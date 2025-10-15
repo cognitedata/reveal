@@ -165,7 +165,7 @@
   "WIDGET_WINDOW_CLOSE": "닫기",
   "WIDGET_WINDOW_EXPAND": "확장",
   "WIDGET_WINDOW_MINIMIZE": "최소화",
-  "X:COORDINATE": "X 좌표",
+  "X_COORDINATE": "X 좌표",
   "X_RAY": "X선",
   "Y_COORDINATE": "Y 좌표",
   "Z_COORDINATE": "Z 좌표"

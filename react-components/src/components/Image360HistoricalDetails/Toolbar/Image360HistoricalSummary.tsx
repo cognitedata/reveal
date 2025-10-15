@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { type DataSourceType, type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
-import { uniqueId } from 'lodash';
+import { uniqueId } from 'lodash-es';
 import { useTranslation } from '../../i18n/I18n';
 
 export type Image360RevisionDetails = {

@@ -1,35 +1,39 @@
-import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { type TypedReveal3DModel } from '../../components/Reveal3DResources/types';
 import { type PointCloudAnnotationMappedAssetData } from '../types';
-import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../../utilities/queryKeys';
-import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { toIdEither } from '../../utilities/instanceIds/toIdEither';
+import { createInstanceReferenceKey, type InstanceReference } from '../../utilities/instanceIds';
+import { useContext } from 'react';
+import { UsePointCloudAnnotationMappingsForAssetInstancesContext } from './usePointCloudAnnotationMappingsForAssetInstances.context';
+import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 
-export const usePointCloudAnnotationMappingsForAssetIds = (
+export const usePointCloudAnnotationMappingsForAssetInstances = (
   models: TypedReveal3DModel[],
-  assetIds: Array<string | number> | undefined
+  assetInstances: InstanceReference[] | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
+  const { usePointCloudAnnotationCache, useModelIdRevisionIdFromModelOptions } = useContext(
+    UsePointCloudAnnotationMappingsForAssetInstancesContext
+  );
+
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
   const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudAnnotationForAssetIds(
+      queryKeys.pointCloudAnnotationForAssetInstances(
         classicAddModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-        assetIds?.map((assetId) => assetId.toString()).sort() ?? []
+        assetInstances?.map((assetInstance) => createInstanceReferenceKey(assetInstance)).sort() ??
+          []
       )
     ],
     queryFn: async () => {
-      const assetIdsAsIdEither = assetIds?.map(toIdEither);
       const allAnnotationMappingsPromisesResult = await Promise.all(
         classicAddModelOptions.map(async (model) => {
           const result = await fetchAnnotationsForModel(
             model.modelId,
             model.revisionId,
-            assetIdsAsIdEither,
+            assetInstances,
             pointCloudAnnotationCache
           );
           return result ?? EMPTY_ARRAY;
@@ -38,6 +42,6 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
       return allAnnotationMappingsPromisesResult.flat();
     },
     staleTime: Infinity,
-    enabled: assetIds !== undefined && assetIds.length > 0
+    enabled: assetInstances !== undefined && assetInstances.length > 0
   });
 };

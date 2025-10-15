@@ -3,7 +3,7 @@ import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloud
 import { It, Mock } from 'moq.ts';
 import { type CogniteClient, type AnnotationFilterProps, type IdEither } from '@cognite/sdk';
 import { type ClassicModelIdentifierType, type ClassicDataSourceType } from '@cognite/reveal';
-import { type AddPointCloudResourceOptions } from '../../components';
+import { type AddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';
 import { createAssetMock, createFdmNodeItem } from '../../../tests/tests-utilities/fixtures/assets';
 import { createPointCloudAnnotationMock } from '../../../tests/tests-utilities/fixtures/pointCloudAnnotation';
 import { type ExternalIdsResultList, type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';

@@ -1,5 +1,5 @@
 import type { Asset, CogniteClient, IdEither } from '@cognite/sdk';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { buildClassicAssetIdFilter, combineClassicAssetFilters } from './buildClassicAssetFilter';
 import { getAssetsList } from '../../../hooks/network/getAssetsList';
 import { hasFilters, type AllAssetFilterProps } from './filters';

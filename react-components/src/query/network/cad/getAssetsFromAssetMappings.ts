@@ -1,7 +1,7 @@
 import { type AddModelOptions } from '@cognite/reveal';
 import { type CogniteClient, type ListResponse } from '@cognite/sdk';
 import { type ClassicCadModelMappingsWithAssets } from '../../useSearchMappedEquipmentAssetMappings';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { type ClassicCadAssetMapping } from '../../../components/CacheProvider/cad/assetMappingTypes';
 
 const MODELS_MAPPING_CHUNK_SIZE = 10;

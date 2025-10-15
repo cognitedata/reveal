@@ -1,7 +1,7 @@
 import { type CogniteClient, type ListResponse } from '@cognite/sdk';
 import { type CursorForModel } from './fetchAllAssetsForCadModels';
 import { type ModelRevisionId } from '../../../components/CacheProvider/types';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { isSameModel } from '../../../utilities/isSameModel';
 import {
   convertToHybridAssetMapping,

@@ -17,7 +17,7 @@ import {
   isSameIdEither
 } from '../../utilities/instanceIds';
 import { isDefined } from '../../utilities/isDefined';
-import { chunk, uniqBy } from 'lodash';
+import { chunk, uniqBy } from 'lodash-es';
 import { isClassicImage360AssetAnnotationData } from '../../utilities/image360Annotations';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { type AllAssetFilterProps } from './common/filters';

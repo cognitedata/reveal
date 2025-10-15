@@ -1,4 +1,4 @@
-import { clamp } from 'lodash';
+import { clamp } from 'lodash-es';
 import { type Color } from 'three';
 
 export function colorToHex(color: Color, opacity: number = 1): string {

@@ -1,7 +1,7 @@
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
-import { remove } from 'lodash';
+import { remove } from 'lodash-es';
 
 export const ViewerContext = createContext<RevealRenderTarget | undefined>(undefined);
 

@@ -1,6 +1,6 @@
 import { type CogniteClient, type RelationshipResourceType } from '@cognite/sdk';
 import { type AssetAndTimeseriesIds } from '../../data-providers/types';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { executeParallel } from '../../utilities/executeParallel';
 import { getRelationships } from './getRelationships';
 import { isDefined } from '../../utilities/isDefined';

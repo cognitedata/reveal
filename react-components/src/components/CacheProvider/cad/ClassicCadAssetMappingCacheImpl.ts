@@ -7,7 +7,7 @@ import {
   type ModelInstanceIdKey,
   type ModelNodeIdKey
 } from '../types';
-import { chunk, maxBy, partition } from 'lodash';
+import { chunk, maxBy, partition } from 'lodash-es';
 import assert from 'assert';
 import {
   createModelInstanceIdKey,

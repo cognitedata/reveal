@@ -10,7 +10,7 @@ import {
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
-import { isEqual, uniq, chunk } from 'lodash';
+import { isEqual, uniq, chunk } from 'lodash-es';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';

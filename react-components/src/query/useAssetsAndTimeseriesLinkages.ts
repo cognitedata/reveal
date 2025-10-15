@@ -12,7 +12,7 @@ import { type AssetAndTimeseries } from '../data-providers/types';
 import { queryKeys } from '../utilities/queryKeys';
 import { isDefined } from '../utilities/isDefined';
 import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
-import { uniq, uniqBy } from 'lodash';
+import { uniq, uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 import { getLinkedTimeseriesForAsset } from '../hooks/network/getLinkedTimeseriesForAsset';
 import { fetchLinkFromRelationshipsByTimeseries } from '../hooks/network/fetchLinkFromRelationshipsByTimeseries';

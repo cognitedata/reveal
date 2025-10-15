@@ -6,7 +6,7 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { createEmptyImage360Annotation } from './testUtilities';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
-import { forEach } from 'lodash';
+import { forEach } from 'lodash-es';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
 describe(Image360AnnotationCreator.name, () => {
