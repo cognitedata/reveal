@@ -8,6 +8,9 @@ export async function getImage360CollectionsForAsset({
   assetId,
   sdk
 }: ModelsForAssetParams): Promise<TaggedAddImage360CollectionOptions[]> {
+  if (typeof assetId !== 'number') {
+    return [];
+  }
   const fileRefsResult = await sdk.annotations.reverseLookup({
     filter: {
       annotatedResourceType: 'file',

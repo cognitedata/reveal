@@ -51,7 +51,11 @@ export const useModelsForInstanceQuery = (
 
       if (isDmsInstance(instance)) {
         if (!isCoreDm) {
-          return await getCadModelsForHybridDmInstance(instance, cogniteClient);
+          const allPromises = Promise.all([
+            getPointCloudModelsForAsset({ assetId: instance, sdk: cogniteClient }),
+            getCadModelsForHybridDmInstance(instance, cogniteClient)
+          ]);
+          return (await allPromises).flat();
         }
         if (fdm3dDataProvider === undefined) {
           return [];

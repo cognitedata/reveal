@@ -5,6 +5,9 @@ export async function getCadModelsForAsset({
   assetId,
   sdk
 }: ModelsForAssetParams): Promise<TaggedAddCadResourceOptions[]> {
+  if (typeof assetId !== 'number') {
+    return [];
+  }
   const result = await sdk.get<{ items: CadModelNode[] }>(
     `api/v1/projects/${sdk.project}/3d/mappings/${assetId}/modelnodes`,
     {
