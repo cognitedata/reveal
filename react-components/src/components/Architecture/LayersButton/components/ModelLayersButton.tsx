@@ -1,9 +1,9 @@
 import { Button } from '@cognite/cogs.js';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { type ReactElement } from 'react';
-import { IconComponent } from '../../../Architecture/Factories/IconFactory';
+import { IconComponent } from '../../Factories/IconFactory';
 import { type IconName } from '../../../../architecture/base/utilities/types';
-import { ModelLayersList } from './ModelLayersList2';
+import { ModelLayersList } from './ModelLayersList';
 import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 
 export const ModelLayersButton = ({

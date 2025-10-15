@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, test, beforeEach } from 'vitest';
-import { ModelLayersButton } from './ModelLayersButton2';
+import { ModelLayersButton } from './ModelLayersButton';
 import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { createCadMock } from '#test-utils/fixtures/cadModel';

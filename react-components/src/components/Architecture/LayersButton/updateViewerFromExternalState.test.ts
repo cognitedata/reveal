@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { updateViewerFromExternalState } from './updateViewerFromExternalState2';
+import { updateViewerFromExternalState } from './updateViewerFromExternalState';
 import { viewerImage360CollectionsMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
