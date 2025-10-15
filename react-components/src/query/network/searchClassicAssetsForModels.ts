@@ -12,6 +12,7 @@ import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloud
 import { type AllAssetFilterProps } from './common/filters';
 import { type SearchClassicCadAssetsResponse } from './cad/types';
 import { isClassicAsset } from '../../utilities/instances';
+import { type FdmSDK } from '../../data-providers/FdmSDK';
 
 export type SearchQueryOptions = {
   limit: number;
@@ -28,7 +29,8 @@ export async function searchClassicAssetsForModels(
   resources: TaggedAddResourceOptions[],
   { limit, cadAssetsCursor, filters }: SearchQueryOptions,
   sdk: CogniteClient,
-  renderTarget: RevealRenderTarget
+  renderTarget: RevealRenderTarget,
+  fdmSDK?: FdmSDK
 ): Promise<SearchClassicCadAssetsResponse> {
   const isFirstPage = cadAssetsCursor === undefined;
 
@@ -58,7 +60,7 @@ export async function searchClassicAssetsForModels(
   );
 
   const pointCloudAssetsPromise = isFirstPage
-    ? getAssetsMappedPointCloudAnnotations(pointClouds, filters, sdk)
+    ? getAssetsMappedPointCloudAnnotations(pointClouds, filters, sdk, fdmSDK)
     : Promise.resolve([]);
 
   const image360AssetsPromise = isFirstPage
