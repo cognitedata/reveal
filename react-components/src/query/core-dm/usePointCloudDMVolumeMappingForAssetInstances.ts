@@ -6,10 +6,9 @@ import { type Source, type DmsUniqueIdentifier } from '../../data-providers';
 import { queryKeys } from '../../utilities/queryKeys';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
-import { inspectNodes } from '../../components/CacheProvider/requests';
 import { isPointCloudVolumeIntersection } from './typeGuards';
 import { UsePointCloudDMVolumeMappingForAssetInstancesContext } from './usePointCloudDMVolumeMappingForAssetInstances.context';
+import { inspectNodes } from '../../components/CacheProvider/requests';
 
 export type PointCloudDMVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
@@ -73,6 +72,8 @@ export const usePointCloudDMVolumeMappingForAssetInstances = (
 export const usePointCloudFdmVolumeMappingForIntersection = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudFdmVolumeMappingWithViews[]> => {
+  const { useFdmSdk } = useContext(UsePointCloudDMVolumeMappingForAssetInstancesContext);
+
   const fdmSdk = useFdmSdk();
 
   const assetInstanceRefs = useMemo(() => {
