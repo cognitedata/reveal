@@ -1,22 +1,21 @@
 import type { FilterDefinition, ViewDefinition, CogniteClient } from '@cognite/sdk';
-import { chunk } from 'lodash-es';
+import { chunk } from 'lodash';
 import { createFdmKey } from '../../../components/CacheProvider/idAndKeyTranslation';
-import type { ClassicCadAssetMappingCache } from '../../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import type { ModelRevisionId, FdmKey } from '../../../components/CacheProvider/types';
 import type { NodeItem } from '../../../data-providers';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
-import type { InstanceKey } from '../../../utilities/instanceIds';
 import { isDefined } from '../../../utilities/isDefined';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
+import { type PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
 
 const MODELS_CHUNK_SIZE = 10;
 
-export async function searchHybridDmCadAssetMappingsWithFilters(
+export async function searchHybridDmPointCloudAssetMappingsWithFilters(
   models: ModelRevisionId[],
-  options: { query?: string; filter?: FilterDefinition; limit?: number },
   view: ViewDefinition,
+  options: { query?: string; filter?: FilterDefinition; limit?: number },
   sdk: CogniteClient,
-  assetMappingAndNode3dCache: ClassicCadAssetMappingCache
+  assetMappingAndAnnotationCache: PointCloudAnnotationCache
 ): Promise<NodeItem[]> {
   if (models.length === 0) {
     return [];
@@ -31,18 +30,18 @@ export async function searchHybridDmCadAssetMappingsWithFilters(
     options.filter
   );
 
-  const instanceKeyToInstanceMap = new Map<InstanceKey, NodeItem>(
+  const instanceKeyToInstanceMap = new Map<string, NodeItem>(
     searchResult.instances.map(
       (instance) => [createFdmKey(instance), instance] as [FdmKey, NodeItem]
     )
   );
 
-  const mappedInstances: NodeItem[] = [];
+  const mappedInstances = new Map<FdmKey, NodeItem>();
 
   for (const modelsChunk of chunk(models, MODELS_CHUNK_SIZE)) {
     const modelMappingPromises = modelsChunk.map(
       async (model) =>
-        await assetMappingAndNode3dCache.getNodesForInstanceIds(
+        await assetMappingAndAnnotationCache.getPointCloudAnnotationsForInstanceIds(
           model.modelId,
           model.revisionId,
           searchResult.instances
@@ -59,8 +58,10 @@ export async function searchHybridDmCadAssetMappingsWithFilters(
       .map((instanceKey) => instanceKeyToInstanceMap.get(instanceKey))
       .filter(isDefined);
 
-    mappedInstances.push(...relevantInstancesForChunk);
+    relevantInstancesForChunk.forEach((instance) => {
+      mappedInstances.set(createFdmKey(instance), instance);
+    });
   }
 
-  return mappedInstances;
+  return Array.from(mappedInstances.values());
 }
