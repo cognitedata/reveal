@@ -8,7 +8,7 @@ import {
 import {
   isClassicPointCloudVolume,
   isDMPointCloudVolume,
-  PointCloudObjectMetadata,
+  type PointCloudObjectMetadata,
   type CoreDmImage360Annotation,
   type DataSourceType
 } from '@cognite/reveal';
@@ -18,7 +18,7 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
-import { PointCloudVolumeId } from './types';
+import { type PointCloudVolumeId } from './types';
 
 export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel

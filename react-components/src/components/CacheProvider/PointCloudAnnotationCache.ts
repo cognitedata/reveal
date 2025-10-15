@@ -5,7 +5,7 @@ import {
   type PointCloudAnnotationModel,
   type AnnotationId
 } from './types';
-import { type CogniteClient, type AnnotationFilterProps, type IdEither } from '@cognite/sdk';
+import { type CogniteClient, type AnnotationFilterProps } from '@cognite/sdk';
 import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
 import assert from 'assert';
@@ -17,7 +17,6 @@ import {
   isSameAssetReference
 } from '../../utilities/instanceIds';
 import { createModelRevisionKey } from './idAndKeyTranslation';
-import { type DmsUniqueIdentifier } from '../../data-providers';
 
 type PointCloudAnnotationCacheDependencies = {
   fetchAnnotationAssets: typeof fetchPointCloudAnnotationAssets;

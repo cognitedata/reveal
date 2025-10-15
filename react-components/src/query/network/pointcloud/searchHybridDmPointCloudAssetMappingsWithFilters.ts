@@ -7,7 +7,7 @@ import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { isDefined } from '../../../utilities/isDefined';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
 import { type PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
-import { InstanceReferenceKey } from '../../../utilities/instanceIds';
+import { type InstanceReferenceKey } from '../../../utilities/instanceIds';
 
 const MODELS_CHUNK_SIZE = 10;
 

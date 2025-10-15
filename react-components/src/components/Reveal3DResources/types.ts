@@ -11,7 +11,7 @@ import {
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
-import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 import {
   type AssetId,

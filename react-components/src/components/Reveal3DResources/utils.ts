@@ -2,12 +2,12 @@ import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
-import { InstanceStylingGroup } from './types';
+import { type InstanceStylingGroup } from './types';
 import {
   createInstanceReferenceKey,
-  InstanceId,
-  InstanceReference,
-  InstanceReferenceKey,
+  type InstanceId,
+  type InstanceReference,
+  type InstanceReferenceKey,
   isDmsInstance,
   isInternalId
 } from '../../utilities/instanceIds';
@@ -15,13 +15,13 @@ import { assertNever } from '../../utilities/assertNever';
 
 export function getInstanceKeysFromStylingGroup(
   stylingGroup: InstanceStylingGroup
-): Array<InstanceReferenceKey> {
+): InstanceReferenceKey[] {
   return getInstanceReferencesFromStylingGroup(stylingGroup).map(createInstanceReferenceKey);
 }
 
 export function getInstanceReferencesFromStylingGroup(
   stylingGroup: InstanceStylingGroup
-): Array<InstanceReference> {
+): InstanceReference[] {
   if (isClassicAssetMappingStylingGroup(stylingGroup)) {
     return stylingGroup.assetIds.map((id) => ({ id }));
   } else if (isFdmAssetStylingGroup(stylingGroup)) {
@@ -34,7 +34,7 @@ export function getInstanceReferencesFromStylingGroup(
 export function getInstanceIdsFromReferences(
   instanceReferences: InstanceReference[]
 ): InstanceId[] {
-  return instanceReferences.reduce((acc, reference) => {
+  return instanceReferences.reduce<InstanceId[]>((acc, reference) => {
     if (isInternalId(reference)) {
       acc.push(reference.id);
     } else if (isDmsInstance(reference)) {
@@ -42,5 +42,5 @@ export function getInstanceIdsFromReferences(
     }
 
     return acc;
-  }, [] as InstanceId[]);
+  }, []);
 }

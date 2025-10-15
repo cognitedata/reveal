@@ -16,7 +16,7 @@ import { isInternalId, type InstanceReference } from '../../utilities/instanceId
 
 import {
   createInstanceReferenceKey,
-  InstanceReferenceKey
+  type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 
 import { chunk, uniqBy } from 'lodash-es';
@@ -49,7 +49,10 @@ export class Image360AnnotationCache {
       return siteIds.includes(image360Collections.id);
     });
 
-    const key = assetInstances.map(createInstanceReferenceKey).sort().join();
+    const key = assetInstances
+      .map((instance) => String(createInstanceReferenceKey(instance)))
+      .sort()
+      .join();
     const cachedResult = this._annotationToAssetMappingsWithAssetInstance.get(key);
 
     if (cachedResult !== undefined) {

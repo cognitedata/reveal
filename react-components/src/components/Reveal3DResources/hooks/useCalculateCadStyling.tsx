@@ -1,4 +1,8 @@
-import { type CadModelOptions, type DefaultResourceStyling, InstanceStylingGroup } from '../types';
+import {
+  type CadModelOptions,
+  type DefaultResourceStyling,
+  type InstanceStylingGroup
+} from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
@@ -8,10 +12,6 @@ import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../../CadModelContainer/types';
-import {
-  isClassicAssetMappingStylingGroup,
-  isFdmAssetStylingGroup
-} from '../../../utilities/StylingGroupUtils';
 import { isSameModel } from '../../../utilities/isSameModel';
 import { useQuery } from '@tanstack/react-query';
 import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
@@ -24,7 +24,7 @@ import {
 } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
-import { InstanceReferenceKey, type InstanceKey } from '../../../utilities/instanceIds';
+import { type InstanceReferenceKey } from '../../../utilities/instanceIds';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -61,7 +61,7 @@ export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylin
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<InstanceStylingGroup>,
+  instanceGroups: InstanceStylingGroup[],
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -146,7 +146,7 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<InstanceStylingGroup>
+  instanceGroups: InstanceStylingGroup[]
 ): ModelStyleGroupWithMappingsFetched {
   const instanceReferences = instanceGroups.flatMap(getInstanceReferencesFromStylingGroup);
 
@@ -251,7 +251,7 @@ function getMappedStyleGroupFromInstanceToNodeMap(
 }
 
 function createStyleGroupsFromMappings(
-  stylingGroups: Array<InstanceStylingGroup>,
+  stylingGroups: InstanceStylingGroup[],
   mappings?: Map<InstanceReferenceKey, Node3D[]>
 ): TreeIndexStylingGroup[] {
   if (mappings === undefined || mappings.size === 0) {
