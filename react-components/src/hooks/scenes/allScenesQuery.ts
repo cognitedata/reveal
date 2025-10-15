@@ -143,11 +143,17 @@ export function createGetScenesQuery(
   cursors?: SceneCursors
 ): ScenesQuery {
   // Clean up undefined cursors so we don't send them in the request
-  if (cursors?.scenes === undefined) delete cursors?.scenes;
-  if (cursors?.sceneModels === undefined) delete cursors?.sceneModels;
-  if (cursors?.scene360Collections === undefined) delete cursors?.scene360Collections;
+  const cleanedCursors: SceneCursors = {};
+  if (cursors?.scenes !== undefined) {
+    cleanedCursors.scenes = cursors.scenes;
+  }
+  if (cursors?.sceneModels !== undefined) {
+    cleanedCursors.sceneModels = cursors.sceneModels;
+  }
+  if (cursors?.scene360Collections !== undefined) {
+    cleanedCursors.scene360Collections = cursors.scene360Collections;
+  }
 
-  const finalCursors =
-    cursors !== undefined && Object.keys(cursors).length > 0 ? cursors : undefined;
+  const finalCursors = Object.keys(cleanedCursors).length > 0 ? cleanedCursors : undefined;
   return getAllScenesQuery(limit, finalCursors);
 }

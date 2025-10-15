@@ -81,14 +81,17 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
       const currentScenes = scenesResponse.items.scenes;
       allScenes.scenes.push(...currentScenes);
 
-      const needsModelsPagination = scene3dModels.length === sceneRelatedDataLimit;
-      const needs360CollectionsPagination = scene360Collections.length === sceneRelatedDataLimit;
-
       allScenes.sceneModels.push(...scene3dModels);
       allScenes.scene360Collections.push(...scene360Collections);
       allScenes.sceneGroundPlanes.push(...scenesResponse.items.sceneGroundPlanes);
       allScenes.sceneGroundPlaneEdges.push(...scenesResponse.items.sceneGroundPlaneEdges);
       allScenes.sceneSkybox.push(...scenesResponse.items.sceneSkybox);
+
+      // Check if we need to paginate related data
+      const needsModelsPagination =
+        scenesResponse.items.sceneModels.length === sceneRelatedDataLimit;
+      const needs360CollectionsPagination =
+        scenesResponse.items.scene360Collections.length === sceneRelatedDataLimit;
 
       // If any related data needs pagination, handle it here
       if (needsModelsPagination || needs360CollectionsPagination) {
@@ -98,7 +101,7 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
           scene360Collections: needs360CollectionsPagination
             ? scenesResponse.nextCursor?.scene360Collections
             : undefined,
-          scenes: scenesResponse.nextCursor?.scenes
+          scenes: cursors?.scenes
         };
         await populateRemainingRelatedData(fdmSdk, cursorsForRelatedData, allScenes);
       }
@@ -350,15 +353,16 @@ async function populateRemainingRelatedData(
     allScenes.sceneModels.push(...newModels);
     allScenes.scene360Collections.push(...new360Collections);
 
+    const hasMoreModels = response.items.sceneModels.length === SCENE_RELATED_DATA_LIMIT;
+    const hasMore360Collections =
+      response.items.scene360Collections.length === SCENE_RELATED_DATA_LIMIT;
+
     currentCursors = {
-      sceneModels:
-        response.items.sceneModels.length === SCENE_RELATED_DATA_LIMIT
-          ? response.nextCursor?.sceneModels
-          : undefined,
-      scene360Collections:
-        response.items.scene360Collections.length === SCENE_RELATED_DATA_LIMIT
-          ? response.nextCursor?.scene360Collections
-          : undefined
+      sceneModels: hasMoreModels ? response.nextCursor?.sceneModels : undefined,
+      scene360Collections: hasMore360Collections
+        ? response.nextCursor?.scene360Collections
+        : undefined,
+      scenes: initialCursors.scenes // Preserve the initial scenes cursor throughout pagination
     };
   }
 }
