@@ -10,32 +10,29 @@ export const useSceneDefaultCamera = (
   sceneExternalId: string | undefined,
   sceneSpaceId: string | undefined
 ): { fitCameraToSceneDefault: () => void } | undefined => {
-  const { data, isFetched } = useSceneConfig(sceneExternalId, sceneSpaceId);
+  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
   const models = use3dModels();
 
   return useMemo(() => {
-    if (data === null) {
+    if (scene === undefined) {
       return {
         fitCameraToSceneDefault: () => {
           viewer.fitCameraToModels(models, 0, true);
         }
       };
     }
-    if (data === undefined || !isFetched) {
-      return undefined;
-    }
 
     const cameraNotSet =
-      data.sceneConfiguration.cameraTranslationX === 0 &&
-      data.sceneConfiguration.cameraTranslationY === 0 &&
-      data.sceneConfiguration.cameraTranslationZ === 0 &&
-      data.sceneConfiguration.cameraEulerRotationX === 0 &&
-      data.sceneConfiguration.cameraEulerRotationY === 0 &&
-      data.sceneConfiguration.cameraEulerRotationZ === 0 &&
-      data.sceneConfiguration.cameraTargetX === undefined &&
-      data.sceneConfiguration.cameraTargetY === undefined &&
-      data.sceneConfiguration.cameraTargetZ === undefined;
+      scene.sceneConfiguration.cameraTranslationX === 0 &&
+      scene.sceneConfiguration.cameraTranslationY === 0 &&
+      scene.sceneConfiguration.cameraTranslationZ === 0 &&
+      scene.sceneConfiguration.cameraEulerRotationX === 0 &&
+      scene.sceneConfiguration.cameraEulerRotationY === 0 &&
+      scene.sceneConfiguration.cameraEulerRotationZ === 0 &&
+      scene.sceneConfiguration.cameraTargetX === undefined &&
+      scene.sceneConfiguration.cameraTargetY === undefined &&
+      scene.sceneConfiguration.cameraTargetZ === undefined;
 
     // Use a good default camera position if no camera configuration is provided
     if (cameraNotSet) {
@@ -55,12 +52,12 @@ export const useSceneDefaultCamera = (
     }
 
     const position = new Vector3(
-      data.sceneConfiguration.cameraTranslationX,
-      data.sceneConfiguration.cameraTranslationY,
-      data.sceneConfiguration.cameraTranslationZ
+      scene.sceneConfiguration.cameraTranslationX,
+      scene.sceneConfiguration.cameraTranslationY,
+      scene.sceneConfiguration.cameraTranslationZ
     );
 
-    const target = extractCameraTarget(data.sceneConfiguration);
+    const target = extractCameraTarget(scene.sceneConfiguration);
     position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     target.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -84,7 +81,7 @@ export const useSceneDefaultCamera = (
         }
       }
     };
-  }, [viewer, data, isFetched, models]);
+  }, [viewer, scene, models]);
 };
 
 function extractCameraTarget(scene: SceneConfiguration): Vector3 {
