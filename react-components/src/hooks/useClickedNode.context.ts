@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { useFdm3dNodeDataPromises, useAssetMappingForTreeIndex } from './cad';
 import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
-import { usePointCloudFdmVolumeMappingForIntersection } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { usePointCloudFdmVolumeMappingForIntersection } from '../query/core-dm/usePointCloudDMVolumeMappingForAssetInstances';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
 
