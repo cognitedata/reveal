@@ -55,6 +55,9 @@ export const useReveal3dResourcesFromScene = (
       });
     });
     setResourceOptions(addResourceOptions);
+
+    // Reason: isCoreDm intentionally omitted due to unnecessary calls;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scene]);
 
   return resourceOptions;
