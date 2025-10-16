@@ -3,14 +3,10 @@ import { type ModelLayerContent } from './ModelLayerContent';
 import { type RevealRenderTarget } from '../../../architecture';
 
 export function updateViewerFromExternalState(
-  layersState: LayersUrlStateParam | undefined,
+  layersState: LayersUrlStateParam,
   modelLayerContent: ModelLayerContent,
   renderTarget: RevealRenderTarget
 ): void {
-  if (layersState === undefined) {
-    return;
-  }
-
   layersState.cadLayers?.forEach((layer) => {
     if (
       layer.index < modelLayerContent.cadModels.length &&
