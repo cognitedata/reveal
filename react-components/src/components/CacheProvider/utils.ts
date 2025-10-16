@@ -51,6 +51,14 @@ export function getVolumeAnnotationId(
   }
 }
 
+export function createPointCloudVolumeIdKey(id: PointCloudVolumeId): string {
+  if (typeof id === 'number') {
+    return String(id);
+  } else {
+    return createFdmKey(id);
+  }
+}
+
 export function getInstanceReferenceFromImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
 ): InstanceReference | undefined {
