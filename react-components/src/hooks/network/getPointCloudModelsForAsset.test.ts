@@ -1,8 +1,13 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getPointCloudModelsForAsset } from './getPointCloudModelsForAsset';
 import { Mock } from 'moq.ts';
-import { AnnotationsAssetRef, CursorAndAsyncIterator, Revision3D, type CogniteClient } from '@cognite/sdk';
-import { DmsUniqueIdentifier } from '../../data-providers';
+import {
+  type AnnotationsAssetRef,
+  type CursorAndAsyncIterator,
+  type Revision3D,
+  type CogniteClient
+} from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../../data-providers';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 
 describe(getPointCloudModelsForAsset.name, () => {

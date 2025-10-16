@@ -1,18 +1,18 @@
-import { AnnotationsInstanceRef, type Revision3D } from '@cognite/sdk';
+import { type AnnotationsInstanceRef, type Revision3D } from '@cognite/sdk';
 import { chunk } from 'lodash-es';
 import { type TaggedAddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';
-import { type ModelsForAssetParams } from './types';
-import { InstanceId } from '../../utilities/instanceIds';
+import { type ModelsForInstanceIdParams } from './types';
+import { type InstanceId } from '../../utilities/instanceIds';
 import { COGNITE_ASSET_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
 
 export async function getPointCloudModelsForAsset({
   sdk,
   assetId
-}: ModelsForAssetParams): Promise<TaggedAddPointCloudResourceOptions[]> {
+}: ModelsForInstanceIdParams): Promise<TaggedAddPointCloudResourceOptions[]> {
   const data = getData(assetId);
   const modelIdResult = await sdk.annotations
     .reverseLookup({
-      filter: { annotatedResourceType: 'threedmodel', data: data },
+      filter: { annotatedResourceType: 'threedmodel', data },
       limit: 1000
     })
     .autoPagingToArray({ limit: Infinity });
@@ -50,16 +50,19 @@ export async function getPointCloudModelsForAsset({
   }));
 }
 
-function getData(assetId: InstanceId) {
+type AssetOrInstanceRefType =
+  | { assetRef: { id: number } }
+  | { instanceRef: AnnotationsInstanceRef };
+
+function getData(assetId: InstanceId): AssetOrInstanceRefType {
   if (typeof assetId === 'number') {
     return { assetRef: { id: assetId } };
   }
   const instanceRef: AnnotationsInstanceRef = {
-    sources:[COGNITE_ASSET_SOURCE],
+    sources: [COGNITE_ASSET_SOURCE],
     externalId: assetId.externalId,
     space: assetId.space,
-    instanceType: 'node',
-
-  }
+    instanceType: 'node'
+  };
   return { instanceRef: { ...instanceRef } };
 }

@@ -1,5 +1,5 @@
 import { type CogniteClient } from '@cognite/sdk';
-import { InstanceId } from '../../utilities/instanceIds';
+import { type InstanceId } from '../../utilities/instanceIds';
 
 export type OutputTypes =
   | 'model-from-points:1'
@@ -35,7 +35,12 @@ export type ModelWithRevisionInfo = {
   };
 };
 
-export type ModelsForAssetParams = {
+export type ModelsForClassicAssetParams = {
+  assetId: number;
+  sdk: CogniteClient;
+};
+
+export type ModelsForInstanceIdParams = {
   assetId: InstanceId;
   sdk: CogniteClient;
 };
