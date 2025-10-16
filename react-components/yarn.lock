@@ -6801,13 +6801,13 @@ __metadata:
   linkType: hard
 
 "happy-dom@npm:^20.0.0":
-  version: 20.0.1
-  resolution: "happy-dom@npm:20.0.1"
+  version: 20.0.0
+  resolution: "happy-dom@npm:20.0.0"
   dependencies:
     "@types/node": "npm:^20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10/41e2de895c4465c13a5e5618b734d6d5a1cb103885daf4314775c606a1941414748cf2f822b96ae3bea0a97ffd91fc1c92503b0c58217faa1094f9b6f4e0805a
+  checksum: 10/0fa626e2051dfa5f1ea0da9e3776b5986d3700c261a8ba7c496e7ad89f4df0318920b7c286d3b310481712b378ffb7dee35ed782ff039e4166f4ba957a76b6df
   languageName: node
   linkType: hard
 
