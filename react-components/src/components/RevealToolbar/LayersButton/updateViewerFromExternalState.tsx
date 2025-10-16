@@ -1,43 +1,36 @@
-import {
-  type DataSourceType,
-  type Cognite3DViewer,
-  type CogniteCadModel,
-  type CognitePointCloudModel
-} from '@cognite/reveal';
-import { type LayersUrlStateParam } from './types';
+import { type ModelLayerContent, type LayersUrlStateParam } from './types';
+import { type RevealRenderTarget } from '../../../architecture';
 
 export function updateViewerFromExternalState(
   layersState: LayersUrlStateParam | undefined,
-  viewer: Cognite3DViewer<DataSourceType>
+  modelLayerContent: ModelLayerContent,
+  renderTarget: RevealRenderTarget
 ): void {
   if (layersState === undefined) {
     return;
   }
 
-  const cadModels = viewer.models.filter((model): model is CogniteCadModel => model.type === 'cad');
-  const pointCloudModels = viewer.models.filter(
-    (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'
-  );
-  const image360Collections = viewer.get360ImageCollections();
-
   layersState.cadLayers?.forEach((layer) => {
-    if (layer.index < cadModels.length && cadModels[layer.index].revisionId === layer.revisionId) {
-      cadModels[layer.index].visible = layer.applied;
+    if (
+      layer.index < modelLayerContent.cadModels.length &&
+      modelLayerContent.cadModels[layer.index].model.revisionId === layer.revisionId
+    ) {
+      modelLayerContent.cadModels[layer.index].setVisibleInteractive(layer.applied, renderTarget);
     }
   });
 
   layersState.pointCloudLayers?.forEach((layer) => {
     if (
-      layer.index < pointCloudModels.length &&
-      pointCloudModels[layer.index].revisionId === layer.revisionId
+      layer.index < modelLayerContent.pointClouds.length &&
+      modelLayerContent.pointClouds[layer.index].model.revisionId === layer.revisionId
     ) {
-      pointCloudModels[layer.index].visible = layer.applied;
+      modelLayerContent.pointClouds[layer.index].setVisibleInteractive(layer.applied, renderTarget);
     }
   });
 
   layersState.image360Layers?.forEach((layer) => {
-    image360Collections
-      .find((collection) => collection.id === layer.siteId)
-      ?.setIconsVisibility(layer.applied);
+    modelLayerContent.image360Collections
+      .find((collection) => collection.model.id === layer.siteId)
+      ?.setVisibleInteractive(layer.applied, renderTarget);
   });
 }

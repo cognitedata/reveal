@@ -1,21 +1,18 @@
 import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
-import { type ModelLayerHandlers, type LayersUrlStateParam } from './types';
-import { type ModelHandler } from './ModelHandler';
-import { use3DModelName } from '../../../query';
-
-type UpdateCallback = () => void;
+import { type ModelLayerContent, type LayersUrlStateParam } from './types';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../architecture';
 
 type ModelLayerSelectionProps = {
   label: string;
-  modelLayerHandlers: ModelHandler[];
-  update: UpdateCallback;
+  domainObjects: RevealDomainObject[];
+  renderTarget: RevealRenderTarget;
 };
 
 type UseLayersButtonViewModelResult = {
-  modelLayerHandlers: ModelLayerHandlers;
-  updateCallback: UpdateCallback;
+  modelLayerContent: ModelLayerContent;
   ModelLayerSelection: (props: ModelLayerSelectionProps) => ReactElement;
+  renderTarget: RevealRenderTarget;
 };
 
 export function useLayersButtonViewModel(
@@ -23,33 +20,26 @@ export function useLayersButtonViewModel(
   externalLayersState: LayersUrlStateParam | undefined
 ): UseLayersButtonViewModelResult {
   const {
-    useModelHandlers,
+    useModelsVisibilityState,
     useSyncExternalLayersState,
     ModelLayerSelection,
-    use3dModels,
-    useReveal
+    useRenderTarget
   } = useContext(LayersButtonContext);
 
-  const viewer = useReveal();
-  const models = use3dModels();
+  const renderTarget = useRenderTarget();
 
-  const [modelLayerHandlers, update] = useModelHandlers(
-    setExternalLayersState,
-    viewer,
-    models,
-    use3DModelName
-  );
+  const modelLayerContent = useModelsVisibilityState(setExternalLayersState, renderTarget);
 
   useSyncExternalLayersState(
-    modelLayerHandlers,
+    modelLayerContent,
     externalLayersState,
     setExternalLayersState,
-    update
+    renderTarget
   );
 
   return {
-    modelLayerHandlers,
-    updateCallback: update,
-    ModelLayerSelection
+    modelLayerContent,
+    ModelLayerSelection,
+    renderTarget
   };
 }

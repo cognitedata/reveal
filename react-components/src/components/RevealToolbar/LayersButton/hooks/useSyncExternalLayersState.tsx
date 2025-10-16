@@ -1,79 +1,79 @@
-import { useReveal } from '../../../RevealCanvas';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
-import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
-import { updateExternalStateFromLayerHandlers } from '../updateExternalStateFromLayerHandlers';
+import { type LayersUrlStateParam, type ModelLayerContent } from '../types';
+import { updateExternalStateFromLayerContent } from '../updateExternalStateFromLayerContent';
 import { updateViewerFromExternalState } from '../updateViewerFromExternalState';
-import { type UpdateModelHandlersCallback } from './useModelHandlers';
+import { type RevealRenderTarget } from '../../../../architecture';
 
 export const useSyncExternalLayersState = (
-  modelLayerHandlers: ModelLayerHandlers,
+  modelLayerContent: ModelLayerContent,
   externalLayersState: LayersUrlStateParam | undefined,
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  update: UpdateModelHandlersCallback
+  renderTarget: RevealRenderTarget
 ): void => {
   const lastExternalState = useRef(externalLayersState);
-  const lastModelLayerHandlers = useRef(modelLayerHandlers);
-
-  const viewer = useReveal();
+  const lastModelLayerContent = useRef(modelLayerContent);
 
   useEffect(() => {
-    if (areLayerStatesConsistent(modelLayerHandlers, externalLayersState)) {
+    if (areLayerStatesConsistent(modelLayerContent, externalLayersState, renderTarget)) {
+      lastExternalState.current = externalLayersState;
+      lastModelLayerContent.current = modelLayerContent;
       return;
     }
 
     if (
-      lastModelLayerHandlers.current === modelLayerHandlers ||
+      lastModelLayerContent.current === modelLayerContent ||
       lastExternalState.current !== externalLayersState
     ) {
       // Change happened in external state
-      updateViewerFromExternalState(externalLayersState, viewer);
-      update(viewer.models, viewer.get360ImageCollections());
+      updateViewerFromExternalState(externalLayersState, modelLayerContent, renderTarget);
     } else {
       // Change happened in local state
-      updateExternalStateFromLayerHandlers(modelLayerHandlers, setExternalLayersState);
+      updateExternalStateFromLayerContent(modelLayerContent, setExternalLayersState, renderTarget);
     }
 
     lastExternalState.current = externalLayersState;
-    lastModelLayerHandlers.current = modelLayerHandlers;
-  }, [externalLayersState, modelLayerHandlers]);
+    lastModelLayerContent.current = modelLayerContent;
+  }, [externalLayersState, modelLayerContent]);
 };
 
 function areLayerStatesConsistent(
-  handlers: ModelLayerHandlers,
-  externalState: LayersUrlStateParam | undefined
+  models: ModelLayerContent,
+  externalState: LayersUrlStateParam | undefined,
+  renderTarget: RevealRenderTarget
 ): boolean {
   if (externalState === undefined) {
     return (
-      handlers.cadHandlers.length === 0 &&
-      handlers.pointCloudHandlers.length === 0 &&
-      handlers.image360Handlers.length === 0
+      models.cadModels.length === 0 &&
+      models.pointClouds.length === 0 &&
+      models.image360Collections.length === 0
     );
   }
 
   const cadsConsistent =
-    externalState.cadLayers?.length === handlers.cadHandlers.length &&
+    externalState.cadLayers?.length === models.cadModels.length &&
     (externalState.cadLayers?.every(
       (layer, index) =>
-        handlers.cadHandlers[index].getRevisionId() === layer.revisionId &&
-        handlers.cadHandlers[index].visible() === layer.applied
+        models.cadModels[index].model.revisionId === layer.revisionId &&
+        models.cadModels[index].isVisible(renderTarget) === layer.applied
     ) ??
       false);
 
   const pointCloudsConsistent =
-    externalState.pointCloudLayers?.length === handlers.pointCloudHandlers.length &&
+    externalState.pointCloudLayers?.length === models.pointClouds.length &&
     (externalState.pointCloudLayers?.every(
       (layer, index) =>
-        handlers.pointCloudHandlers[index].getRevisionId() === layer.revisionId &&
-        handlers.pointCloudHandlers[index].visible() === layer.applied
+        models.pointClouds[index].model.revisionId === layer.revisionId &&
+        models.pointClouds[index].isVisible(renderTarget) === layer.applied
     ) ??
       false);
 
   const image360sConsistent =
-    externalState.image360Layers?.length === handlers.image360Handlers.length &&
+    externalState.image360Layers?.length === models.image360Collections.length &&
     (externalState.image360Layers?.every(
       (layer) =>
-        handlers.image360Handlers.find((image) => image.getSiteId() === layer.siteId)?.visible() ===
-        layer.applied
+        models.image360Collections
+          .find((image) => image.model.id === layer.siteId)
+          ?.isVisible(renderTarget) === layer.applied
     ) ??
       false);
 

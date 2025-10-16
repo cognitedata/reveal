@@ -66,6 +66,20 @@ describe(useVisibleRevealDomainObjects.name, () => {
     expect(result.current[0]).toBe(domainObject1);
     expect(result.current[1]).toBe(domainObject2);
   });
+
+  test('returns stable reference across rerenders', () => {
+    const [domainObject0, domainObject1] = populateRenderTargetAndGetModels(renderTarget);
+
+    domainObject0.setVisibleInteractive(true, renderTarget);
+    domainObject1.setVisibleInteractive(true, renderTarget);
+
+    const { rerender, result } = renderHook(() => useVisibleRevealDomainObjects(), { wrapper });
+    const initialResult = result.current;
+
+    rerender();
+
+    expect(initialResult).toBe(result.current);
+  });
 });
 
 function populateRenderTargetAndGetModels(renderTarget: RevealRenderTarget): RevealDomainObject[] {

@@ -1,27 +1,31 @@
-import { render, fireEvent } from '@testing-library/react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { render } from '@testing-library/react';
+import { beforeEach, describe, expect, test } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
-import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { type ModelHandler } from '../ModelHandler';
+import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 
 describe(WholeLayerVisibilitySelectItem.name, () => {
-  let mockCadHandler: ModelHandler;
+  let cadObject: CadDomainObject;
+  let renderTarget: RevealRenderTarget;
 
   beforeEach(() => {
-    mockCadHandler = createCadHandlerMock();
+    cadObject = new CadDomainObject(createCadMock());
+    renderTarget = createRenderTargetMock();
   });
 
-  test('calls update callback when clicked', () => {
-    const updateMock = vi.fn();
+  test('toggles visibility of model when clicked', async () => {
+    cadObject.setVisibleInteractive(true, renderTarget);
     const { getAllByText } = render(
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
             <WholeLayerVisibilitySelectItem
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
-              update={updateMock}
+              domainObjects={[cadObject]}
+              renderTarget={renderTarget}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>
@@ -29,48 +33,20 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
     );
 
     const element = getAllByText((content, _element) => content.includes('CAD Models'))[0];
-    fireEvent.click(element);
-    expect(updateMock).toHaveBeenCalled();
+
+    await userEvent.click(element);
+    expect(cadObject.isVisible(renderTarget)).toBe(false);
   });
 
-  test('toggles visibility of model handlers when clicked', () => {
+  test('disables item when no domain objects were provided', () => {
     const { getAllByText } = render(
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
             <WholeLayerVisibilitySelectItem
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
-              update={vi.fn()}
-            />
-          </SelectPanel.Section>
-        </SelectPanel.Body>
-      </SelectPanel>
-    );
-
-    const element = getAllByText((content, _element) => content.includes('CAD Models'))[0];
-    mockCadHandler.setVisibility(true);
-    expect(mockCadHandler.visible()).toBe(true);
-
-    fireEvent.click(element);
-    mockCadHandler.setVisibility(false);
-    expect(mockCadHandler.visible()).toBe(false);
-
-    fireEvent.click(element);
-    mockCadHandler.setVisibility(true);
-    expect(mockCadHandler.visible()).toBe(true);
-  });
-
-  test('disables item when disabled prop is true', () => {
-    const { getAllByText } = render(
-      <SelectPanel visible={true}>
-        <SelectPanel.Body>
-          <SelectPanel.Section>
-            <WholeLayerVisibilitySelectItem
-              label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
-              update={vi.fn()}
-              disabled={true}
+              domainObjects={[]}
+              renderTarget={renderTarget}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>

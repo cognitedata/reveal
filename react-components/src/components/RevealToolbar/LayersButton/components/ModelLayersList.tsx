@@ -1,20 +1,19 @@
 import { SelectPanel } from '@cognite/cogs-lab';
-import { type ModelHandler } from '../ModelHandler';
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
+import { useOnUpdateDomainObject } from '../../../Architecture/hooks/useOnUpdate';
 
 export const ModelLayersList = ({
-  modelLayerHandlers,
-  update,
+  domainObjects,
   label,
-  disabled
+  renderTarget
 }: {
-  modelLayerHandlers: ModelHandler[];
-  update: () => void;
+  domainObjects: RevealDomainObject[];
   label?: string;
-  disabled?: boolean;
+  renderTarget: RevealRenderTarget;
 }): ReactElement => {
-  if (disabled === true) {
+  if (domainObjects.length === 0) {
     return <></>;
   }
 
@@ -24,25 +23,46 @@ export const ModelLayersList = ({
         <SelectPanel.Section>
           <WholeLayerVisibilitySelectItem
             label={label}
-            modelLayerHandlers={modelLayerHandlers}
-            update={update}
+            domainObjects={domainObjects}
+            renderTarget={renderTarget}
           />
         </SelectPanel.Section>
       )}
       <SelectPanel.Section>
-        {modelLayerHandlers.map((handler) => (
-          <SelectPanel.Item
-            key={handler.key()}
-            label={handler.name}
-            variant="checkbox"
-            checked={handler.visible()}
-            onClick={() => {
-              handler.setVisibility(!handler.visible());
-              update();
-            }}
+        {domainObjects.map((domainObject) => (
+          <ModelVisibilityItem
+            key={domainObject.uniqueId}
+            domainObject={domainObject}
+            renderTarget={renderTarget}
           />
         ))}
       </SelectPanel.Section>
     </>
   );
 };
+
+function ModelVisibilityItem({
+  domainObject,
+  renderTarget
+}: {
+  domainObject: RevealDomainObject;
+  renderTarget: RevealRenderTarget;
+}): ReactElement {
+  const [isVisible, setVisible] = useState(domainObject.isVisible(renderTarget));
+
+  useOnUpdateDomainObject(domainObject, () => {
+    setVisible(domainObject.isVisible(renderTarget));
+  });
+
+  return (
+    <SelectPanel.Item
+      key={domainObject.uniqueId}
+      label={domainObject.name}
+      variant="checkbox"
+      checked={isVisible}
+      onClick={() => {
+        domainObject.setVisibleInteractive(!isVisible, renderTarget);
+      }}
+    />
+  );
+}

@@ -1,31 +1,40 @@
-import { render, fireEvent } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { ModelLayerSelection } from './ModelLayerSelection';
-import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';
+import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
 
 describe(ModelLayerSelection.name, () => {
-  const mockCadHandler = createCadHandlerMock();
+  let renderTarget: RevealRenderTarget;
+  let cadObject: CadDomainObject;
 
-  test('calls update callback when triggered', () => {
-    const updateMock = vi.fn();
+  beforeEach(() => {
+    cadObject = new CadDomainObject(createCadMock());
+    renderTarget = createRenderTargetMock();
+  });
+
+  test('calls update callback when triggered', async () => {
     const { getAllByText } = render(
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
             <ModelLayerSelection
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
-              update={updateMock}
+              domainObjects={[cadObject]}
+              renderTarget={renderTarget}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>
       </SelectPanel>
     );
 
+    expect(cadObject.isVisible(renderTarget)).toBe(false);
     const element = getAllByText((content, _element) => content.includes('CAD Models'))[0];
-    fireEvent.click(element);
-    expect(updateMock).toHaveBeenCalled();
+    await userEvent.click(element);
+    expect(cadObject.isVisible(renderTarget)).toBe(true);
   });
 
   test('renders without crashing', () => {
@@ -35,8 +44,8 @@ describe(ModelLayerSelection.name, () => {
           <SelectPanel.Section>
             <ModelLayerSelection
               label="CAD Models"
-              modelLayerHandlers={[mockCadHandler]}
-              update={vi.fn()}
+              domainObjects={[cadObject]}
+              renderTarget={renderTarget}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>
@@ -47,12 +56,16 @@ describe(ModelLayerSelection.name, () => {
     expect(element).toBeDefined();
   });
 
-  test('disables selection when no handlers are provided', () => {
+  test('handles case where no models are provided', () => {
     const { getAllByText } = render(
       <SelectPanel visible={true}>
         <SelectPanel.Body>
           <SelectPanel.Section>
-            <ModelLayerSelection label="CAD Models" modelLayerHandlers={[]} update={vi.fn()} />
+            <ModelLayerSelection
+              label="CAD Models"
+              domainObjects={[]}
+              renderTarget={renderTarget}
+            />
           </SelectPanel.Section>
         </SelectPanel.Body>
       </SelectPanel>

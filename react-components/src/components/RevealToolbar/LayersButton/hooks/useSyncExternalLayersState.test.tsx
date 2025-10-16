@@ -1,40 +1,81 @@
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { renderHook } from '@testing-library/react';
-import {
-  createCadHandlerMock,
-  createPointCloudHandlerMock,
-  createImage360HandlerMock
-} from '#test-utils/fixtures/modelHandler';
 import { wrapper } from '#test-components/fixtures/wrapper';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { CadDomainObject, type RevealRenderTarget } from '../../../../architecture';
+import { createCadMock } from '#test-utils/fixtures/cadModel';
+import { type LayersUrlStateParam, type ModelLayerContent } from '../types';
 
 describe(useSyncExternalLayersState.name, () => {
-  const mockCadHandler = createCadHandlerMock();
-  const mockPointCloudHandler = createPointCloudHandlerMock();
-  const mockImage360Handler = createImage360HandlerMock();
+  const CAD_REVISION_ID = 123;
 
-  test('syncs external layers state with viewer', () => {
-    const modelLayerHandlers = {
-      cadHandlers: [mockCadHandler],
-      pointCloudHandlers: [mockPointCloudHandler],
-      image360Handlers: [mockImage360Handler]
+  let renderTarget: RevealRenderTarget;
+  let cadObject: CadDomainObject;
+
+  beforeEach(() => {
+    renderTarget = createRenderTargetMock();
+    cadObject = new CadDomainObject(createCadMock({ revisionId: CAD_REVISION_ID }));
+  });
+
+  test('syncs external state into domain objects', () => {
+    const modelLayerContent: ModelLayerContent = {
+      cadModels: [cadObject],
+      pointClouds: [],
+      image360Collections: []
     };
-    const externalLayersState = undefined;
-    const setExternalLayersState = vi.fn();
-    const update = vi.fn();
+    const externalLayersState: LayersUrlStateParam = {
+      cadLayers: [{ revisionId: CAD_REVISION_ID, applied: true, index: 0 }]
+    };
+
+    expect(cadObject.isVisible(renderTarget)).toBe(false);
 
     renderHook(
       () => {
-        useSyncExternalLayersState(
-          modelLayerHandlers,
-          externalLayersState,
-          setExternalLayersState,
-          update
-        );
+        useSyncExternalLayersState(modelLayerContent, externalLayersState, vi.fn(), renderTarget);
       },
       { wrapper }
     );
 
-    expect(update).toHaveBeenCalled();
+    expect(cadObject.isVisible(renderTarget)).toBe(true);
+  });
+
+  test('syncs domain object state into external state if changed between rerenders', () => {
+    const modelLayerContent: ModelLayerContent = {
+      cadModels: [cadObject],
+      pointClouds: [],
+      image360Collections: []
+    };
+    const externalLayersState: LayersUrlStateParam = {
+      cadLayers: [{ revisionId: CAD_REVISION_ID, applied: true, index: 0 }]
+    };
+    const setExternalLayersState = vi.fn();
+
+    expect(cadObject.isVisible(renderTarget)).toBe(false);
+
+    const { rerender } = renderHook(
+      (props: { modelsState: ModelLayerContent }) => {
+        useSyncExternalLayersState(
+          props.modelsState,
+          externalLayersState,
+          setExternalLayersState,
+          renderTarget
+        );
+      },
+      { wrapper, initialProps: { modelsState: modelLayerContent } }
+    );
+
+    expect(cadObject.isVisible(renderTarget)).toBe(true);
+    cadObject.setVisibleInteractive(false, renderTarget);
+
+    rerender({
+      modelsState: { cadModels: [cadObject], pointClouds: [], image360Collections: [] }
+    });
+
+    expect(setExternalLayersState).toHaveBeenCalledWith({
+      cadLayers: [{ revisionId: CAD_REVISION_ID, applied: false, index: 0 }],
+      pointCloudLayers: [],
+      image360Layers: []
+    });
   });
 });

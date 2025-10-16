@@ -1,30 +1,24 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { IconWrapper, ChevronRightSmallIcon } from '@cognite/cogs.js';
-import { type ReactElement, useCallback } from 'react';
-import { type ModelHandler } from '../ModelHandler';
+import { type ReactElement } from 'react';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 import { useHoverHandlers } from '../hooks/useHoverHandlers';
-
-type UpdateCallback = () => void;
 
 type ModelLayerSelectionProps = {
   label: string;
-  modelLayerHandlers: ModelHandler[];
-  update: UpdateCallback;
+  domainObjects: RevealDomainObject[];
+  renderTarget: RevealRenderTarget;
 };
 
 export const ModelLayerSelection = ({
   label,
-  modelLayerHandlers,
-  update
+  domainObjects,
+  renderTarget
 }: ModelLayerSelectionProps): ReactElement => {
-  const isDisabled = modelLayerHandlers.length === 0;
+  const isDisabled = domainObjects.length === 0;
   const { hoverHandlers, isPanelOpen, setPanelToClose } = useHoverHandlers(isDisabled);
-
-  const updateCallback = useCallback(() => {
-    update();
-  }, [update]);
 
   return (
     <SelectPanel
@@ -37,24 +31,19 @@ export const ModelLayerSelection = ({
         <div {...hoverHandlers}>
           <WholeLayerVisibilitySelectItem
             label={label}
-            modelLayerHandlers={modelLayerHandlers}
-            update={updateCallback}
+            domainObjects={domainObjects}
             trailingContent={
               <IconWrapper size={16}>
                 <ChevronRightSmallIcon />
               </IconWrapper>
             }
-            disabled={isDisabled}
+            renderTarget={renderTarget}
             shouldPropagate={false}
           />
         </div>
       </SelectPanel.Trigger>
       <SelectPanel.Body {...hoverHandlers}>
-        <ModelLayersList
-          modelLayerHandlers={modelLayerHandlers}
-          update={updateCallback}
-          disabled={isDisabled}
-        />
+        <ModelLayersList domainObjects={domainObjects} renderTarget={renderTarget} />
       </SelectPanel.Body>
     </SelectPanel>
   );

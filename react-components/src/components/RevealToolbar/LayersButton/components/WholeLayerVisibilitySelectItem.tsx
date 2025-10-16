@@ -1,42 +1,45 @@
-import { type ReactElement, type ReactNode } from 'react';
-import { type ModelHandler } from '../ModelHandler';
+import { useMemo, type ReactElement, type ReactNode } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { CounterChip } from '@cognite/cogs.js';
+import {
+  Changes,
+  type RevealDomainObject,
+  type RevealRenderTarget
+} from '../../../../architecture';
+import { getRevealDomainUpdateSignal } from '../../../../architecture/concrete/reveal/signal/getRevealDomainObjectsSignal';
+import { useDisposableSignal } from '../../../../utilities/signal/useDisposableSignal';
 
 export const WholeLayerVisibilitySelectItem = ({
   label,
   trailingContent,
-  modelLayerHandlers,
-  update,
-  disabled,
+  domainObjects,
+  renderTarget,
   shouldPropagate = true
 }: {
   label?: string;
-  modelLayerHandlers: ModelHandler[];
-  update: () => void;
+  domainObjects: RevealDomainObject[];
   trailingContent?: ReactNode;
-  disabled?: boolean;
+  renderTarget: RevealRenderTarget;
   shouldPropagate?: boolean;
 }): ReactElement => {
-  const checked = modelLayerHandlers.some((handler) => handler.visible());
+  const checked = useSomeDomainObjectsVisible(domainObjects, renderTarget);
   return (
     <SelectPanel.Item
       variant="checkbox"
       label={label}
       checked={checked}
-      disabled={disabled}
+      disabled={domainObjects.length === 0}
       onClick={(e) => {
         if (!shouldPropagate) {
           e.stopPropagation();
         }
-        modelLayerHandlers.forEach((handler) => {
-          handler.setVisibility(!checked);
+        domainObjects.forEach((domainObject) => {
+          domainObject.setVisibleInteractive(!checked, renderTarget);
         });
-        update();
       }}
       trailingContent={
         <>
-          <CounterChip counter={modelLayerHandlers.length} />
+          <CounterChip counter={domainObjects.length} />
           {trailingContent}
         </>
       }
@@ -44,3 +47,18 @@ export const WholeLayerVisibilitySelectItem = ({
     />
   );
 };
+
+function useSomeDomainObjectsVisible(
+  relevantDomainObjects: RevealDomainObject[],
+  renderTarget: RevealRenderTarget
+): boolean {
+  const disposableSignal = useMemo(
+    () => getRevealDomainUpdateSignal(renderTarget, undefined, [Changes.visibleState]),
+    [renderTarget]
+  );
+
+  const allDomainObjects = useDisposableSignal(disposableSignal);
+  return useMemo(() => {
+    return relevantDomainObjects.some((domainObject) => domainObject.isVisible(renderTarget));
+  }, [allDomainObjects, relevantDomainObjects, renderTarget]);
+}

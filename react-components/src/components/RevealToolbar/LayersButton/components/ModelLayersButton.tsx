@@ -1,21 +1,21 @@
 import { Button } from '@cognite/cogs.js';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { type ModelHandler } from '../ModelHandler';
 import { type ReactElement } from 'react';
 import { IconComponent } from '../../../Architecture/Factories/IconFactory';
 import { type IconName } from '../../../../architecture/base/utilities/types';
 import { ModelLayersList } from './ModelLayersList';
+import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
 
 export const ModelLayersButton = ({
   icon,
   label,
-  handlers,
-  update
+  domainObjects,
+  renderTarget
 }: {
   icon: IconName;
   label: string;
-  handlers: ModelHandler[];
-  update: () => void;
+  domainObjects: RevealDomainObject[];
+  renderTarget: RevealRenderTarget;
 }): ReactElement => {
   return (
     <SelectPanel placement="bottom" hideOnOutsideClick={true}>
@@ -23,7 +23,7 @@ export const ModelLayersButton = ({
         <Button type="ghost" icon={<IconComponent iconName={icon} />} />
       </SelectPanel.Trigger>
       <SelectPanel.Body>
-        <ModelLayersList modelLayerHandlers={handlers} update={update} label={label} />
+        <ModelLayersList domainObjects={domainObjects} label={label} renderTarget={renderTarget} />
       </SelectPanel.Body>
     </SelectPanel>
   );
