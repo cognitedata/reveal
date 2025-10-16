@@ -58,7 +58,7 @@ describe(useModelsVisibilityState.name, () => {
     expect(result.current.image360Collections).toEqual([image360CollectionObject]);
   });
 
-  test('returns value across rerenders', () => {
+  test('returns stable value across rerenders', () => {
     const { result, rerender } = renderHook(() => useModelsVisibilityState(), {
       wrapper
     });
