@@ -12,7 +12,7 @@ import { getModelKeys } from '../utilities/getModelKeys';
 import { UsePointCloudModelRevisionIdsFromRevealContext } from './usePointCloudModelRevisionIdsFromReveal.context';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-type PointCloudModelRevisionIdAndType = ModelRevisionId & { type: 'pointcloud' };
+export type PointCloudModelRevisionIdAndType = ModelRevisionId & { type: 'pointcloud' };
 
 export const usePointCloudModelRevisionIdsFromReveal = (): UseQueryResult<
   PointCloudModelRevisionIdAndType[]
