@@ -23,6 +23,7 @@ import {
   defaultUseModelsVisibilityStateDependencies,
   UseModelsVisibilityStateContext
 } from './useModelsVisibilityState.context';
+import assert from 'assert';
 
 describe(useModelsVisibilityState.name, () => {
   let cadObject: CadDomainObject;
@@ -81,17 +82,18 @@ describe(useModelsVisibilityState.name, () => {
     });
 
     expect(setExternalState).toHaveBeenCalledOnce();
-    const returnedObject = setExternalState.mock.calls[0][0] as LayersUrlStateParam;
+    const returnedObject = setExternalState.mock.calls[0][0];
 
-    expect(returnedObject).toBeDefined();
+    assert(returnedObject !== undefined);
+    assert(typeof returnedObject !== 'function');
 
-    expect(returnedObject?.cadLayers).toHaveLength(1);
-    expect(returnedObject?.pointCloudLayers).toHaveLength(1);
-    expect(returnedObject?.image360Layers).toHaveLength(1);
+    expect(returnedObject.cadLayers).toHaveLength(1);
+    expect(returnedObject.pointCloudLayers).toHaveLength(1);
+    expect(returnedObject.image360Layers).toHaveLength(1);
 
-    expect(returnedObject?.cadLayers?.[0].applied).toBe(cadObject.isVisible(renderTarget));
+    expect(returnedObject.cadLayers?.[0].applied).toBe(cadObject.isVisible(renderTarget));
 
-    expect(returnedObject?.pointCloudLayers?.[0].applied).toBe(
+    expect(returnedObject.pointCloudLayers?.[0].applied).toBe(
       pointCloudObject.isVisible(renderTarget)
     );
 

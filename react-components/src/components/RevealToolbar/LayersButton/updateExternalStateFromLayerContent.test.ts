@@ -11,6 +11,7 @@ import {
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
+import assert from 'assert';
 
 describe(updateExternalStateFromLayerContent.name, () => {
   test('outputs correct state for all layers', () => {
@@ -48,44 +49,51 @@ describe(updateExternalStateFromLayerContent.name, () => {
       renderTargetMock
     );
 
-    const result = setLayerStateMock.mock.calls[0][0] as LayersUrlStateParam;
-
     expect(setLayerStateMock).toHaveBeenCalledOnce();
+
+    const result = setLayerStateMock.mock.calls[0][0];
+
+    assert(result !== undefined);
+    assert(typeof result !== 'function');
+
+    assert(result.cadLayers !== undefined);
+    assert(result.pointCloudLayers !== undefined);
+    assert(result.image360Layers !== undefined);
 
     expect(result.cadLayers).toHaveLength(2);
 
-    expect(result.cadLayers?.[0].applied).toBe(cadDomainObject0.isVisible(renderTargetMock));
-    expect(result.cadLayers?.[0].revisionId).toBe(cadDomainObject0.model.revisionId);
-    expect(result.cadLayers?.[0].index).toBe(0);
+    expect(result.cadLayers[0].applied).toBe(cadDomainObject0.isVisible(renderTargetMock));
+    expect(result.cadLayers[0].revisionId).toBe(cadDomainObject0.model.revisionId);
+    expect(result.cadLayers[0].index).toBe(0);
 
-    expect(result.cadLayers?.[1].applied).toBe(cadDomainObject1.isVisible(renderTargetMock));
-    expect(result.cadLayers?.[1].revisionId).toBe(cadDomainObject1.model.revisionId);
-    expect(result.cadLayers?.[1].index).toBe(1);
+    expect(result.cadLayers[1].applied).toBe(cadDomainObject1.isVisible(renderTargetMock));
+    expect(result.cadLayers[1].revisionId).toBe(cadDomainObject1.model.revisionId);
+    expect(result.cadLayers[1].index).toBe(1);
 
     expect(result.pointCloudLayers).toHaveLength(2);
 
-    expect(result.pointCloudLayers?.[0].applied).toBe(
+    expect(result.pointCloudLayers[0].applied).toBe(
       pointCloudDomainObject0.isVisible(renderTargetMock)
     );
-    expect(result.pointCloudLayers?.[0].revisionId).toBe(pointCloudDomainObject0.model.revisionId);
-    expect(result.pointCloudLayers?.[0].index).toBe(0);
+    expect(result.pointCloudLayers[0].revisionId).toBe(pointCloudDomainObject0.model.revisionId);
+    expect(result.pointCloudLayers[0].index).toBe(0);
 
-    expect(result.pointCloudLayers?.[1].applied).toBe(
+    expect(result.pointCloudLayers[1].applied).toBe(
       pointCloudDomainObject1.isVisible(renderTargetMock)
     );
-    expect(result.pointCloudLayers?.[1].revisionId).toBe(pointCloudDomainObject1.model.revisionId);
-    expect(result.pointCloudLayers?.[1].index).toBe(1);
+    expect(result.pointCloudLayers[1].revisionId).toBe(pointCloudDomainObject1.model.revisionId);
+    expect(result.pointCloudLayers[1].index).toBe(1);
 
     expect(result.image360Layers).toHaveLength(2);
 
-    expect(result.image360Layers?.[0].applied).toBe(
+    expect(result.image360Layers[0].applied).toBe(
       image360CollectionDomainObject0.isVisible(renderTargetMock)
     );
-    expect(result.image360Layers?.[0].siteId).toBe(image360CollectionDomainObject0.model.id);
+    expect(result.image360Layers[0].siteId).toBe(image360CollectionDomainObject0.model.id);
 
-    expect(result.image360Layers?.[1].applied).toBe(
+    expect(result.image360Layers[1].applied).toBe(
       image360CollectionDomainObject1.isVisible(renderTargetMock)
     );
-    expect(result.image360Layers?.[1].siteId).toBe(image360CollectionDomainObject1.model.id);
+    expect(result.image360Layers[1].siteId).toBe(image360CollectionDomainObject1.model.id);
   });
 });
