@@ -98,6 +98,7 @@ async function getPointCloudAnnotationMappingsFromIntersection(
   ) {
     instanceReferences.push(intersection.volumeMetadata.assetRef);
   }
+
   return instanceReferences;
 }
 

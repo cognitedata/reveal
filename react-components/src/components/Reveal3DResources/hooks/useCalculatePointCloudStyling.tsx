@@ -22,7 +22,7 @@ import { isDefined } from '../../../utilities/isDefined';
 import { createInstanceReferenceKey, type InstanceReference } from '../../../utilities/instanceIds';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import {
-  getInstanceReferencesFromPointCloudVolume,
+  getInstanceReferencesFromPointCloudAnnotation,
   getVolumeAnnotationId
 } from '../../CacheProvider/utils';
 import { type PointCloudVolumeId } from '../../CacheProvider/types';
@@ -154,7 +154,7 @@ function usePointCloudVolumesWithModel(
     return matchedPointCloudModels.map(({ viewerModel, model }) => {
       const pointCloudVolumesWithAsset = viewerModel.stylableObjects.flatMap(
         (pointCloudObjectData) =>
-          getInstanceReferencesFromPointCloudVolume(pointCloudObjectData).map(
+          getInstanceReferencesFromPointCloudAnnotation(pointCloudObjectData).map(
             (instanceReference) => ({
               pointCloudVolume: getVolumeAnnotationId(pointCloudObjectData),
               instance: instanceReference
