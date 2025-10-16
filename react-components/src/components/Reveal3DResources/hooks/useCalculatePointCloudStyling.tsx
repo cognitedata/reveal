@@ -21,12 +21,11 @@ import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { isDefined } from '../../../utilities/isDefined';
 import {
   createInstanceReferenceKey,
-  InstanceReferenceKey,
+  type InstanceReferenceKey,
   type InstanceReference
 } from '../../../utilities/instanceIds';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import {
-  getInstanceReferencesFromPointCloudAnnotation,
   getInstanceReferencesFromPointCloudVolume,
   getVolumeAnnotationId
 } from '../../CacheProvider/utils';

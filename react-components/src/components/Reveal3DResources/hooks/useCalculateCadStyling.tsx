@@ -1,19 +1,13 @@
 import {
-  type ClassicAssetStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
-  type FdmInstanceStylingGroup,
-  InstanceStylingGroup
+  type InstanceStylingGroup
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
 import { createContext, useContext, useMemo } from 'react';
-import { type AssetId, type FdmKey, type CadNodeTreeData } from '../../CacheProvider/types';
-import {
-  type CadStylingGroup,
-  type NodeStylingGroup,
-  type TreeIndexStylingGroup
-} from '../../CadModelContainer/types';
+import { type CadNodeTreeData } from '../../CacheProvider/types';
+import { type CadStylingGroup, type TreeIndexStylingGroup } from '../../CadModelContainer/types';
 import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
@@ -30,7 +24,7 @@ import { type InstanceKey } from '../../../utilities/instanceIds';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
-  styleGroup: Array<CadStylingGroup>;
+  styleGroup: CadStylingGroup[];
 };
 
 type ModelStyleGroupWithMappingsFetched = {
@@ -63,7 +57,7 @@ export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylin
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<InstanceStylingGroup>,
+  instanceGroups: InstanceStylingGroup[],
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -148,7 +142,7 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<InstanceStylingGroup>
+  instanceGroups: InstanceStylingGroup[]
 ): ModelStyleGroupWithMappingsFetched {
   const dmIdsForInstanceGroups = instanceGroups
     .filter(isFdmAssetStylingGroup)
@@ -259,7 +253,7 @@ function getMappedStyleGroupFromInstanceToNodeMap(
 }
 
 function createStyleGroupsFromMappings(
-  stylingGroups: Array<InstanceStylingGroup>,
+  stylingGroups: InstanceStylingGroup[],
   mappings?: Map<InstanceKey, Node3D[]>
 ): TreeIndexStylingGroup[] {
   if (mappings === undefined || mappings.size === 0) {

@@ -3,7 +3,7 @@ import {
   isFdmAssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type InstanceStylingGroup } from './types';
-import { type InstanceId, InstanceKey } from '../../utilities/instanceIds';
+import { type InstanceId, type InstanceKey } from '../../utilities/instanceIds';
 import { assertNever } from '../../utilities/assertNever';
 import { createInstanceKey } from '../CacheProvider/idAndKeyTranslation';
 
