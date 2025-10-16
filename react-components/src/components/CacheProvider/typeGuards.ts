@@ -1,4 +1,5 @@
 import { type AnnotationModel } from '@cognite/sdk';
+import { type PointCloudAnnotationModel } from './types';
 
 export function isPointCloudAnnotationModel(
   annotationModel: AnnotationModel
