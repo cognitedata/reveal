@@ -1,20 +1,14 @@
-import { type Dispatch, type SetStateAction, useContext, useEffect } from 'react';
-import { type LayersUrlStateParam } from '../types';
+import { useContext, useMemo } from 'react';
 import { type ModelLayerContent } from '../ModelLayerContent';
 import {
   CadDomainObject,
   Image360CollectionDomainObject,
   PointCloudDomainObject,
-  type RevealDomainObject,
-  type RevealRenderTarget
+  type RevealDomainObject
 } from '../../../../architecture';
 import { UseModelsVisibilityStateContext } from './useModelsVisibilityState.context';
-import { createExternalStateFromLayerContent } from './createExternalStateFromLayerContent';
 
-export const useModelsVisibilityState = (
-  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  renderTarget: RevealRenderTarget
-): ModelLayerContent => {
+export const useModelsVisibilityState = (): ModelLayerContent => {
   const { useRevealDomainObjects, useVisibleRevealDomainObjects } = useContext(
     UseModelsVisibilityStateContext
   );
@@ -22,13 +16,10 @@ export const useModelsVisibilityState = (
   const domainObjects = useRevealDomainObjects();
   const domainObjectsByVisibility = useVisibleRevealDomainObjects();
 
-  useEffect(() => {
-    setExternalLayersState?.(
-      createExternalStateFromLayerContent(createModelLayersObject(domainObjects), renderTarget)
-    );
-  }, [domainObjectsByVisibility]);
-
-  return createModelLayersObject(domainObjects);
+  return useMemo(
+    () => createModelLayersObject(domainObjects),
+    [domainObjects, domainObjectsByVisibility]
+  );
 };
 
 function createModelLayersObject(domainObjects: RevealDomainObject[]): ModelLayerContent {
