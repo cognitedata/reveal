@@ -1,7 +1,9 @@
 import {
+  type ClassicAssetStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
-  type InstanceStylingGroup
+  type FdmInstanceStylingGroup,
+  InstanceStylingGroup
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
@@ -12,23 +14,23 @@ import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../../CadModelContainer/types';
+import {
+  isClassicAssetMappingStylingGroup,
+  isFdmAssetStylingGroup
+} from '../../../utilities/StylingGroupUtils';
 import { isSameModel } from '../../../utilities/isSameModel';
 import { useQuery } from '@tanstack/react-query';
 import { DEFAULT_QUERY_STALE_TIME } from '../../../utilities/constants';
 import { useCadMappingsCache } from '../../CacheProvider/CacheProvider';
 import { isDefined } from '../../../utilities/isDefined';
-import {
-  getInstanceIdsFromReferences,
-  getInstanceKeysFromStylingGroup,
-  getInstanceReferencesFromStylingGroup
-} from '../utils';
+import { getInstanceKeysFromStylingGroup } from '../utils';
 import { createModelRevisionKey } from '../../CacheProvider/idAndKeyTranslation';
 import { type CadModelMappings } from '../../CacheProvider/cad/CadInstanceMappingsCache';
-import { type InstanceReferenceKey } from '../../../utilities/instanceIds';
+import { type InstanceKey } from '../../../utilities/instanceIds';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
-  styleGroup: Array<NodeStylingGroup | TreeIndexStylingGroup>;
+  styleGroup: Array<CadStylingGroup>;
 };
 
 type ModelStyleGroupWithMappingsFetched = {
@@ -61,7 +63,7 @@ export const UseCalculateCadStylingContext = createContext<UseCalculateCadStylin
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: InstanceStylingGroup[],
+  instanceGroups: Array<InstanceStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -146,9 +148,14 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: InstanceStylingGroup[]
+  instanceGroups: Array<InstanceStylingGroup>
 ): ModelStyleGroupWithMappingsFetched {
-  const instanceReferences = instanceGroups.flatMap(getInstanceReferencesFromStylingGroup);
+  const dmIdsForInstanceGroups = instanceGroups
+    .filter(isFdmAssetStylingGroup)
+    .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds);
+  const assetIdsFromInstanceGroups = instanceGroups
+    .filter(isClassicAssetMappingStylingGroup)
+    .flatMap((instanceGroup) => instanceGroup.assetIds);
 
   const { useCadMappingsCache } = useContext(UseCalculateCadStylingContext);
 
@@ -163,12 +170,13 @@ function useCalculateInstanceStyling(
       'reveal',
       'react-components',
       'cad-asset-mappings',
-      instanceReferences,
+      dmIdsForInstanceGroups,
+      assetIdsFromInstanceGroups,
       models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async () => {
       const mappings = await cadCache.getMappingsForModelsAndInstances(
-        getInstanceIdsFromReferences(instanceReferences),
+        [...dmIdsForInstanceGroups, ...assetIdsFromInstanceGroups],
         models
       );
 
@@ -239,7 +247,7 @@ function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
   });
 }
 function getMappedStyleGroupFromInstanceToNodeMap(
-  instanceToNodeMap: Map<AssetId | FdmKey, CadNodeTreeData[]>,
+  instanceToNodeMap: Map<InstanceKey, CadNodeTreeData[]>,
   style: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();
@@ -251,8 +259,8 @@ function getMappedStyleGroupFromInstanceToNodeMap(
 }
 
 function createStyleGroupsFromMappings(
-  stylingGroups: InstanceStylingGroup[],
-  mappings?: Map<InstanceReferenceKey, Node3D[]>
+  stylingGroups: Array<InstanceStylingGroup>,
+  mappings?: Map<InstanceKey, Node3D[]>
 ): TreeIndexStylingGroup[] {
   if (mappings === undefined || mappings.size === 0) {
     return [];
