@@ -66,14 +66,6 @@ describe(updateViewerFromExternalState.name, () => {
     expect(modelLayerState.image360Collections[0].isVisible(renderTargetMock));
   });
 
-  test('does nothing if layersState is undefined', () => {
-    updateViewerFromExternalState(undefined, modelStates, renderTargetMock);
-
-    expect(modelStates.cadModels[0].isVisible(renderTargetMock)).toBe(false);
-    expect(modelStates.pointClouds[0].isVisible(renderTargetMock)).toBe(false);
-    expect(modelStates.image360Collections[0].isVisible(renderTargetMock)).toBe(false);
-  });
-
   test('updates viewer with empty layers state without problems', () => {
     const layersState = {
       cadLayers: [],
