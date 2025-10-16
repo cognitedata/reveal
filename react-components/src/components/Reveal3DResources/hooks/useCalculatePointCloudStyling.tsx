@@ -19,10 +19,15 @@ import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/typ
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { isDefined } from '../../../utilities/isDefined';
-import { createInstanceReferenceKey, type InstanceReference } from '../../../utilities/instanceIds';
+import {
+  createInstanceReferenceKey,
+  InstanceReferenceKey,
+  type InstanceReference
+} from '../../../utilities/instanceIds';
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import {
   getInstanceReferencesFromPointCloudAnnotation,
+  getInstanceReferencesFromPointCloudVolume,
   getVolumeAnnotationId
 } from '../../CacheProvider/utils';
 import { type PointCloudVolumeId } from '../../CacheProvider/types';
@@ -106,7 +111,9 @@ function createVolumePointCloudStyleGroup(
   modelWithVolumes: PointCloudVolumeWithModel,
   instanceGroup: InstanceStylingGroup
 ): PointCloudVolumeStylingGroup | undefined {
-  const assetInstancesSet = new Set(getInstanceKeysFromStylingGroup(instanceGroup));
+  const assetInstancesSet = new Set<InstanceReferenceKey>(
+    getInstanceKeysFromStylingGroup(instanceGroup)
+  );
 
   const matchedVolumeRefModels = modelWithVolumes.volumesWithAsset
     .filter(({ instance }) => assetInstancesSet.has(createInstanceReferenceKey(instance)))
@@ -154,7 +161,7 @@ function usePointCloudVolumesWithModel(
     return matchedPointCloudModels.map(({ viewerModel, model }) => {
       const pointCloudVolumesWithAsset = viewerModel.stylableObjects.flatMap(
         (pointCloudObjectData) =>
-          getInstanceReferencesFromPointCloudAnnotation(pointCloudObjectData).map(
+          getInstanceReferencesFromPointCloudVolume(pointCloudObjectData).map(
             (instanceReference) => ({
               pointCloudVolume: getVolumeAnnotationId(pointCloudObjectData),
               instance: instanceReference

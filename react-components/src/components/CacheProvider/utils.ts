@@ -21,6 +21,27 @@ import { createFdmKey } from './idAndKeyTranslation';
 import { type PointCloudVolumeId } from './types';
 
 export function getInstanceReferencesFromPointCloudAnnotation(
+  annotation: AnnotationModel
+): InstanceReference[] {
+  const annotationData = annotation.data as AnnotationsBoundingVolume;
+
+  const instances: InstanceReference[] = [];
+
+  if (annotationData.assetRef !== undefined && isIdEither(annotationData.assetRef)) {
+    instances.push(annotationData.assetRef);
+  }
+  if (annotationData.instanceRef !== undefined && isDmsInstance(annotationData.instanceRef)) {
+    const dmsUniqueIdentifierFromInstanceRef: InstanceReference = {
+      space: annotationData.instanceRef.space,
+      externalId: annotationData.instanceRef.externalId
+    };
+    instances.push(dmsUniqueIdentifierFromInstanceRef);
+  }
+
+  return instances;
+}
+
+export function getInstanceReferencesFromPointCloudVolume(
   volume: PointCloudObjectMetadata<DataSourceType>
 ): InstanceReference[] {
   const instances: InstanceReference[] = [];
