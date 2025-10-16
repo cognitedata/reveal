@@ -38,8 +38,6 @@ export function RuleBasedOutputsSelector({
   onRuleSetChanged,
   onAllMappingsFetched
 }: ColorOverlayProps): ReactElement | undefined {
-  if (ruleSet === undefined) return;
-
   const {
     use3dModels,
     useAssetMappedNodesForRevisions,
@@ -124,16 +122,28 @@ export function RuleBasedOutputsSelector({
   const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
 
   useEffect(() => {
+    if (ruleSet === undefined) {
+      return;
+    }
+
     if (isAllClassicAssetConnectionsFetched) {
       setAllContextualizedAssets(allClassicAssetConnections);
     }
-  }, [allClassicAssetConnections, isAllClassicAssetConnectionsFetched]);
+  }, [ruleSet, allClassicAssetConnections, isAllClassicAssetConnectionsFetched]);
 
   useEffect(() => {
+    if (ruleSet === undefined) {
+      return;
+    }
+
     onAllMappingsFetched(allDataLoaded);
-  }, [allDataLoaded]);
+  }, [ruleSet, allDataLoaded, onAllMappingsFetched]);
 
   useEffect(() => {
+    if (ruleSet === undefined) {
+      return;
+    }
+
     if (
       !isReadyToInitializeRules(
         ruleSet,
@@ -149,6 +159,7 @@ export function RuleBasedOutputsSelector({
     )
       return;
 
+    if (ruleSet === undefined) return;
     const uniqueRuleSetKey = generateUniqueRuleSetKey(
       ruleSet,
       assetMappings,
@@ -205,7 +216,13 @@ export function RuleBasedOutputsSelector({
     allDataLoaded,
     allClassicAssetConnections,
     allFdmConnections,
-    models
+    models,
+    flatAssetsMappingsListPerModel,
+    generateRuleBasedOutputs,
+    isLoadingAssetIdsAndTimeseriesData,
+    onAllMappingsFetched,
+    onRuleSetChanged,
+    timeseriesExternalIds
   ]);
 
   return <></>;

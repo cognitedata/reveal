@@ -1,5 +1,5 @@
 import { Input } from '@cognite/cogs.js';
-import { useState, type ReactElement, useEffect } from 'react';
+import { useState, type ReactElement, useEffect, useCallback } from 'react';
 import { type UnitSystem, type LengthUnit } from '../../architecture/base/renderTarget/UnitSystem';
 import { useSignalValue } from '@cognite/signals/react';
 import { type NumberPanelItem } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
@@ -10,14 +10,15 @@ type Props = {
 };
 
 export function DomainObjectPanelInput({ item, unitSystem }: Props): ReactElement {
-  function getOriginalValue(): string {
+  const getOriginalValue = useCallback(() => {
     return unitSystem.toString(item.value, item.quantity, false);
-  }
+  }, [unitSystem, item.value, item.quantity]);
+
   const [value, setValue] = useState(getOriginalValue());
   const lengthUnit = useSignalValue<LengthUnit>(unitSystem.lengthUnit);
   useEffect(() => {
     setValue(getOriginalValue());
-  }, [lengthUnit, item.value]);
+  }, [lengthUnit, item.value, getOriginalValue]);
 
   function onChange(newStringValue: string): void {
     if (newStringValue === '-') {

@@ -56,7 +56,7 @@ export const SlicerButton = (): ReactElement => {
         bottomRatio
       });
     }
-  }, [models]);
+  }, [models, maxHeight, minHeight, topRatio, bottomRatio]);
 
   function changeSlicingState(newValues: number[]): void {
     setGlobalPlanes(newValues[0], newValues[1], maxHeight, minHeight);

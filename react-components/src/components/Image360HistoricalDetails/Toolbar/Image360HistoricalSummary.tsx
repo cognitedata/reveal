@@ -68,7 +68,7 @@ export const Image360HistoricalSummary = forwardRef(
       if (gridContainerRef.current !== null && isMutableRefObject(ref)) {
         gridContainerRef.current.scrollLeft = ref.current;
       }
-    }, []);
+    }, [ref]);
 
     return (
       <OverviewContainer>

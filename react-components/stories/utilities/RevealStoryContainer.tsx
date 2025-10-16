@@ -32,9 +32,11 @@ export const RevealStoryContext = ({
 
   const isLocal = sdkInstance.project === '';
 
+  const viewerRef = useRef<Cognite3DViewer<DataSourceType> | undefined>(viewer);
+
   const renderTarget = useMemo(() => {
-    if (viewer === undefined) {
-      viewer = new Cognite3DViewer<DataSourceType>({
+    if (viewerRef.current === undefined) {
+      viewerRef.current = new Cognite3DViewer<DataSourceType>({
         ...rest.viewerOptions,
         sdk: sdkInstance,
         // @ts-expect-error use local models
@@ -44,13 +46,13 @@ export const RevealStoryContext = ({
       });
     }
 
-    const renderTarget = new RevealRenderTarget(viewer, sdkInstance, {
+    const renderTarget = new RevealRenderTarget(viewerRef.current, sdkInstance, {
       coreDmOnly: rest.useCoreDm
     });
 
     renderTarget.setConfig(new StoryBookConfig());
     return renderTarget;
-  }, [viewer]);
+  }, [sdkInstance, isLocal, rest.viewerOptions, rest.useCoreDm]);
 
   const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);

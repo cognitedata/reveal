@@ -9,7 +9,7 @@ export function useNullableCommandProperty<T>(
 
   const memoizedUpdate = useCallback(() => {
     setValue(getValue());
-  }, [command]);
+  }, [getValue]);
 
   useEffect(() => {
     memoizedUpdate();
@@ -27,7 +27,7 @@ export function useCommandProperty<T>(command: BaseCommand, getValue: () => T): 
 
   const memoizedUpdate = useCallback(() => {
     setValue(getValue());
-  }, [command]);
+  }, [getValue]);
 
   useEffect(() => {
     memoizedUpdate();

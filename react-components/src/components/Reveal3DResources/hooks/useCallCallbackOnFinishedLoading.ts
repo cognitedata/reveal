@@ -18,5 +18,11 @@ export function useCallCallbackOnFinishedLoading(
     if (loadedCount === resources.length - reveal3DResourceLoadFailCount) {
       onResourcesAdded?.();
     }
-  }, [loadedCount, expectedLoadCount]);
+  }, [
+    loadedCount,
+    expectedLoadCount,
+    resources.length,
+    reveal3DResourceLoadFailCount,
+    onResourcesAdded
+  ]);
 }

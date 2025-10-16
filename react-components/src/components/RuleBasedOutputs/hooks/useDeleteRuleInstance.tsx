@@ -28,7 +28,7 @@ export const useDeleteRuleInstance = (): ((
 
       return resultFromSavingRule;
     },
-    []
+    [fdmSdk]
   );
   return deleteRule;
 };

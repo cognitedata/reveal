@@ -5,11 +5,11 @@ import { type ButtonProp } from './RevealButtons';
 import { createDividerByKey } from './DividerCreator';
 import { useComponentFactory } from '../RevealCanvas/ComponentFactoryContext';
 
-export function createButtonFromCommandConstructor(
+export function CreateButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
   prop: ButtonProp
 ): ReactElement {
-  const command = useMemo(commandConstructor, []);
+  const command = useMemo(() => commandConstructor(), [commandConstructor]);
   const factory = useComponentFactory();
   return factory.createElement(command, prop.toolbarPlacement ?? 'left');
 }

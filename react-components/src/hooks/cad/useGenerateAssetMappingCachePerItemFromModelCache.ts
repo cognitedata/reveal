@@ -21,5 +21,5 @@ export const useGenerateAssetMappingCachePerItemFromModelCache = (
         );
       }
     });
-  }, [cadModelOptions, assetMappings]);
+  }, [cadModelOptions, assetMappings, assetMappingAndNode3DCache]);
 };

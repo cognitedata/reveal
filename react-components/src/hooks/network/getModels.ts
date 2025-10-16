@@ -4,12 +4,10 @@ import {
   type HttpQueryParams,
   type CogniteClient
 } from '@cognite/sdk';
-import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { type ModelWithRevisionInfo, type LatestRevisionInfoResponse } from './types';
 import { mapModelsToRevisionInfo } from './utils';
 
-export async function getModels(userSdk?: CogniteClient): Promise<ModelWithRevisionInfo[]> {
-  const sdk = userSdk ?? useSDK();
+export async function getModels(sdk: CogniteClient): Promise<ModelWithRevisionInfo[]> {
   let allModels: Array<Model3D & LatestRevisionInfoResponse> = [];
   let cursor: string | undefined;
   do {

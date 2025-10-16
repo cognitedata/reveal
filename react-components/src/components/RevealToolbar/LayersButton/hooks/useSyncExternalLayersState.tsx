@@ -35,7 +35,7 @@ export const useSyncExternalLayersState = (
 
     lastExternalState.current = externalLayersState;
     lastModelLayerHandlers.current = modelLayerHandlers;
-  }, [externalLayersState, modelLayerHandlers]);
+  }, [externalLayersState, modelLayerHandlers, viewer, setExternalLayersState, update]);
 };
 
 function areLayerStatesConsistent(

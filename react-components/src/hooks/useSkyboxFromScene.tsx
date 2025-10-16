@@ -60,7 +60,7 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
     viewer.addCustomObject(customObject);
 
     return cleanupFunction;
-  }, [skyboxTexture]);
+  }, [skyboxTexture, viewer]);
 };
 
 function initializeSkybox(

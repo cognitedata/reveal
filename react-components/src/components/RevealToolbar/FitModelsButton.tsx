@@ -10,7 +10,7 @@ export const FitModelsButton = (): ReactElement => {
 
   const updateCamera = useCallback(() => {
     cameraNavigation.fitCameraToVisualSceneBoundingBox();
-  }, []);
+  }, [cameraNavigation]);
 
   return (
     <CogsTooltip content={t({ key: 'FIT_VIEW_TOOLTIP' })} placement="right">

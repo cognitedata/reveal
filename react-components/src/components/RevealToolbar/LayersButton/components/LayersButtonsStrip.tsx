@@ -36,7 +36,7 @@ export const LayersButtonStrip = ({
 
   const updateCallback = useCallback(() => {
     update();
-  }, [viewer, update]);
+  }, [update]);
 
   return (
     <ButtonsContainer>
