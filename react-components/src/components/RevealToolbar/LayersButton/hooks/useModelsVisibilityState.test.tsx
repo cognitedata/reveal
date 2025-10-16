@@ -1,36 +1,25 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { useModelsVisibilityState } from './useModelsVisibilityState';
 import { renderHook } from '@testing-library/react';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
-import { type LayersUrlStateParam } from '../types';
-import {
-  type PropsWithChildren,
-  type Dispatch,
-  type SetStateAction,
-  type ReactElement
-} from 'react';
+import { type PropsWithChildren, type ReactElement } from 'react';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import {
   CadDomainObject,
   Image360CollectionDomainObject,
-  PointCloudDomainObject,
-  type RevealRenderTarget
+  PointCloudDomainObject
 } from '../../../../architecture';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
   defaultUseModelsVisibilityStateDependencies,
   UseModelsVisibilityStateContext
 } from './useModelsVisibilityState.context';
-import assert from 'assert';
 
 describe(useModelsVisibilityState.name, () => {
   let cadObject: CadDomainObject;
   let pointCloudObject: PointCloudDomainObject;
   let image360CollectionObject: Image360CollectionDomainObject;
-
-  let renderTarget: RevealRenderTarget;
 
   const dependencies = getMocksByDefaultDependencies(defaultUseModelsVisibilityStateDependencies);
 
@@ -47,11 +36,6 @@ describe(useModelsVisibilityState.name, () => {
 
     pointCloudObject.setVisibleInteractive(false);
 
-    renderTarget = createRenderTargetMock();
-    renderTarget.root.addChildInteractive(cadObject);
-    renderTarget.root.addChildInteractive(pointCloudObject);
-    renderTarget.root.addChildInteractive(image360CollectionObject);
-
     dependencies.useRevealDomainObjects.mockReturnValue([
       cadObject,
       pointCloudObject,
@@ -65,7 +49,7 @@ describe(useModelsVisibilityState.name, () => {
   });
 
   test('returns models', () => {
-    const { result } = renderHook(() => useModelsVisibilityState(undefined, renderTarget), {
+    const { result } = renderHook(() => useModelsVisibilityState(), {
       wrapper
     });
 
@@ -74,31 +58,60 @@ describe(useModelsVisibilityState.name, () => {
     expect(result.current.image360Collections).toEqual([image360CollectionObject]);
   });
 
-  test('calling update updates external layer state', () => {
-    const setExternalState = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
-
-    renderHook(() => useModelsVisibilityState(setExternalState, renderTarget), {
+  test('returns value across rerenders', () => {
+    const { result, rerender } = renderHook(() => useModelsVisibilityState(), {
       wrapper
     });
 
-    expect(setExternalState).toHaveBeenCalledOnce();
-    const returnedObject = setExternalState.mock.calls[0][0];
+    const firstResult = result.current;
 
-    assert(returnedObject !== undefined);
-    assert(typeof returnedObject !== 'function');
+    rerender();
 
-    expect(returnedObject.cadLayers).toHaveLength(1);
-    expect(returnedObject.pointCloudLayers).toHaveLength(1);
-    expect(returnedObject.image360Layers).toHaveLength(1);
+    const secondResult = result.current;
 
-    expect(returnedObject.cadLayers?.[0].applied).toBe(cadObject.isVisible(renderTarget));
+    expect(secondResult).toBe(firstResult);
+  });
 
-    expect(returnedObject.pointCloudLayers?.[0].applied).toBe(
-      pointCloudObject.isVisible(renderTarget)
-    );
+  test('updates return value if domain model list updates', () => {
+    const { result, rerender } = renderHook(() => useModelsVisibilityState(), {
+      wrapper
+    });
 
-    expect(returnedObject?.image360Layers?.[0].applied).toBe(
-      image360CollectionObject.isVisible(renderTarget)
-    );
+    const firstResult = result.current;
+
+    dependencies.useRevealDomainObjects.mockReturnValue([cadObject, image360CollectionObject]);
+
+    rerender();
+
+    const secondResult = result.current;
+
+    expect(secondResult).not.toBe(firstResult);
+    expect(secondResult).toEqual({
+      cadModels: [cadObject],
+      pointClouds: [],
+      image360Collections: [image360CollectionObject]
+    });
+  });
+
+  test('updates return value if model visibility list updates', () => {
+    const { result, rerender } = renderHook(() => useModelsVisibilityState(), {
+      wrapper
+    });
+
+    const firstResult = result.current;
+
+    dependencies.useVisibleRevealDomainObjects.mockReturnValue([
+      cadObject,
+      pointCloudObject,
+      image360CollectionObject
+    ]);
+
+    rerender();
+
+    const secondResult = result.current;
+
+    // Result is same, but should return a new object
+    expect(secondResult).not.toBe(firstResult);
+    expect(secondResult).toEqual(firstResult);
   });
 });
