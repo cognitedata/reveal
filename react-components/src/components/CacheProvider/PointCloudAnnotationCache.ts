@@ -186,9 +186,10 @@ function buildAssetKeyToAnnotationIdsMap(
     for (const asset of assets) {
       const keys: InstanceReferenceKey[] = [];
       if (isClassicAsset(asset)) {
-        keys.push(String(asset.id));
+        // Make sure we propagate both `externalId` and `id` independently
+        keys.push(createInstanceReferenceKey({ id: asset.id }));
         if (asset.externalId !== undefined) {
-          keys.push(asset.externalId);
+          keys.push(createInstanceReferenceKey({ externalId: asset.externalId }));
         }
       } else {
         keys.push(createInstanceReferenceKey(asset));
