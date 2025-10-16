@@ -9,6 +9,7 @@ import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isPointCloudVolumeIntersection } from './typeGuards';
 import { UsePointCloudDMVolumeMappingForAssetInstancesContext } from './usePointCloudDMVolumeMappingForAssetInstances.context';
 import { inspectNodes } from '../../components/CacheProvider/requests';
+import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 
 export type PointCloudDMVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
@@ -72,8 +73,6 @@ export const usePointCloudDMVolumeMappingForAssetInstances = (
 export const usePointCloudFdmVolumeMappingForIntersection = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudFdmVolumeMappingWithViews[]> => {
-  const { useFdmSdk } = useContext(UsePointCloudDMVolumeMappingForAssetInstancesContext);
-
   const fdmSdk = useFdmSdk();
 
   const assetInstanceRefs = useMemo(() => {
