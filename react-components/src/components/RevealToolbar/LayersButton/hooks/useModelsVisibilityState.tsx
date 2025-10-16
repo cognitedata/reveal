@@ -9,6 +9,7 @@ import {
   type RevealRenderTarget
 } from '../../../../architecture';
 import { UseModelsVisibilityStateContext } from './useModelsVisibilityState.context';
+import { createExternalStateFromLayerContent } from './createExternalStateFromLayerContent';
 
 export const useModelsVisibilityState = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
@@ -23,7 +24,7 @@ export const useModelsVisibilityState = (
 
   useEffect(() => {
     setExternalLayersState?.(
-      createExternalStateFromLayers(createModelLayersObject(domainObjects), renderTarget)
+      createExternalStateFromLayerContent(createModelLayersObject(domainObjects), renderTarget)
     );
   }, [domainObjectsByVisibility]);
 
@@ -37,28 +38,5 @@ function createModelLayersObject(domainObjects: RevealDomainObject[]): ModelLaye
     image360Collections: domainObjects.filter(
       (obj) => obj instanceof Image360CollectionDomainObject
     )
-  };
-}
-
-function createExternalStateFromLayers(
-  models: ModelLayerContent,
-  renderTarget: RevealRenderTarget
-): LayersUrlStateParam {
-  return {
-    cadLayers: models.cadModels.map((cadModel, index) => ({
-      applied: cadModel.isVisible(renderTarget),
-      revisionId: cadModel.model.revisionId,
-      index
-    })),
-    pointCloudLayers: models.pointClouds.map((pointCloud, index) => ({
-      applied: pointCloud.isVisible(renderTarget),
-      revisionId: pointCloud.model.revisionId,
-      index
-    })),
-    image360Layers: models.image360Collections.map((image360Collection, index) => ({
-      applied: image360Collection.isVisible(renderTarget),
-      siteId: image360Collection.model.id,
-      index
-    }))
   };
 }
