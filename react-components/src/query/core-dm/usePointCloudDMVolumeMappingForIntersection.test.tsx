@@ -149,7 +149,7 @@ describe(usePointCloudDMVolumeMappingForIntersection.name, () => {
       { wrapper }
     );
 
-    expect(result.current.isFetching).toBe(false);
+    expect(result.current.data).toBeUndefined();
   });
 
   test('returns volume mappings with views when valid intersection provided', async () => {
