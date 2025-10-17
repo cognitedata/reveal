@@ -42,6 +42,11 @@ const fdmSdkMock = new FdmSDK(sdkMock);
 const mockGetCadModelsForHybrid = vi
   .fn<() => Promise<TaggedAddCadResourceOptions[]>>()
   .mockResolvedValue(mockAddOptionsData3);
+
+const mockGetPointCloudsForHybrid = vi
+  .fn<() => Promise<TaggedAddPointCloudResourceOptions[]>>()
+  .mockResolvedValue(mockAddOptionsData2);
+
 const defaultDependencies = getMocksByDefaultDependencies(
   defaultModelsForInstanceQueryDependencies
 );
@@ -65,6 +70,9 @@ describe(useModelsForInstanceQuery.name, () => {
     defaultDependencies.useIsCoreDmOnly.mockReturnValue(true);
     defaultDependencies.getCadModelsForHybridDmInstance.mockImplementation(
       async () => await mockGetCadModelsForHybrid()
+    );
+    defaultDependencies.getPointCloudModelsForAsset.mockImplementation(
+      async () => await mockGetPointCloudsForHybrid()
     );
     defaultDependencies.getPointCloudModelsForAssetInstance.mockResolvedValue([]);
   });
@@ -94,8 +102,9 @@ describe(useModelsForInstanceQuery.name, () => {
 
   it('calls getModelsForHybridInstance if isCoreDm is false', async () => {
     defaultDependencies.useIsCoreDmOnly.mockReturnValue(false);
-    const mockModels = mockAddOptionsData3;
-    mockGetCadModelsForHybrid.mockResolvedValueOnce(mockModels);
+    const mockModels: TaggedAddResourceOptions[] = [...mockAddOptionsData2, ...mockAddOptionsData3];
+    mockGetCadModelsForHybrid.mockResolvedValueOnce(mockAddOptionsData3);
+    mockGetPointCloudsForHybrid.mockResolvedValueOnce(mockAddOptionsData2);
 
     const { result } = renderHook(() => useModelsForInstanceQuery(dmsInstance1), { wrapper });
 
