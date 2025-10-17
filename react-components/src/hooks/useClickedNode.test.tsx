@@ -25,7 +25,7 @@ import {
 import { viewerGetAnyIntersectionFromPixelMock } from '#test-utils/fixtures/viewer';
 import { getClickCallback, simulateClick } from '#test-utils/viewerClickHelper/viewerClick';
 import { createAssetMock } from '#test-utils/fixtures/assets';
-import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForAssetInstances';
 
 describe(useClickedNodeData.name, () => {
   let renderTarget: RevealRenderTarget;

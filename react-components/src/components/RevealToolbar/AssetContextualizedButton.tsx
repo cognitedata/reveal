@@ -40,7 +40,7 @@ export const AssetContextualizedButton = ({
     <CogsTooltip content={t(tooltip)} placement="right">
       <Button
         type="ghost"
-        icon=<AssetsIcon />
+        icon={<AssetsIcon />}
         toggled={enableContextualizedStyling}
         aria-label="asset-labels-button"
         onClick={onClick}

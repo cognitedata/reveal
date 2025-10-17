@@ -13,7 +13,7 @@ import {
   type PointCloudAnnotationMappedAssetData
 } from './types';
 import { MOUSE, Vector2, type Vector3 } from 'three';
-import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForAssetInstances';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import {

@@ -10,7 +10,7 @@ import { type FdmNode } from '../data-providers/FdmSDK';
 import { type AssetProperties } from '../data-providers/core-dm-provider/utils/filters';
 import { type FdmKey } from '../components/CacheProvider/types';
 import { type MOUSE, type Vector2 } from 'three';
-import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForAssetInstances';
 import { type AssetInstance } from '../utilities/instances';
 
 export type ThreeDModelFdmMappings = {
