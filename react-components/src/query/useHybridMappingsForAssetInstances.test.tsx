@@ -110,7 +110,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
@@ -138,7 +138,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     });
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toBeUndefined();
@@ -153,7 +153,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([]);
@@ -171,7 +171,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual(expectedResult);
@@ -195,7 +195,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toHaveLength(2);
@@ -223,7 +223,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toBeDefined();
@@ -239,7 +239,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toBeDefined();
@@ -262,7 +262,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
@@ -284,7 +284,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toBeDefined();
@@ -327,7 +327,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([mockThreeDModelFdmMappings[0]]);
@@ -337,7 +337,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     rerender({ models: modelsMock });
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
@@ -361,7 +361,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual(mockThreeDModelFdmMappings);
@@ -374,7 +374,7 @@ describe(useHybridMappingsForAssetInstances.name, () => {
     rerender({ instanceIds: assetInstanceIdsMock });
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual(mockThreeDModelFdmMappings);

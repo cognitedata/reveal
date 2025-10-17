@@ -50,7 +50,7 @@ export const useFilterOnClassicAssetsInScene = (
   const {
     data: pagedCadAssetMappings,
     isFetching: isFetchingCadAssetMappings,
-    hasNextPage: hasNextCadAssetMappings,
+    hasNextPage: hasNextCadAssetMappings = false,
     fetchNextPage: fetchNextCadAssetMappingsPage
   } = useAllMappedEquipmentAssetMappings(cadAndPointCloudresources, sdk);
 
@@ -92,7 +92,7 @@ export const useFilterOnClassicAssetsInScene = (
     const flattenedCadAssetMappings =
       pagedCadAssetMappings?.pages
         .flat()
-        .map((mapping) => mapping.assets)
+        .map(({ pages }) => pages.flatMap((page) => page).flatMap((page) => page.assets))
         .flat() ?? [];
 
     const all360ImageAssets = image360AssetMappings?.map((mapping) => mapping.asset as Asset) ?? [];
