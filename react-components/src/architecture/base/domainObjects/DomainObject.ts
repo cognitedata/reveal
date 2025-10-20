@@ -92,10 +92,6 @@ export abstract class DomainObject implements TreeNodeType {
   // IMPLEMENTATION of TreeNodeType interface
   // ==================================================
 
-  public get id(): string {
-    return this.uniqueId;
-  }
-
   public get isVisibleInTree(): boolean {
     return true; // to be overridden
   }

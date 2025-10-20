@@ -46,10 +46,10 @@ describe(DomainObject.name, () => {
     expect(domainObject.getPanelToolbar().length).toBe(3);
   });
 
-  test('should have different ids', () => {
+  test('should have different uniqueIds', () => {
     const domainObject1 = new ChildDomainObject();
     const domainObject2 = new ChildDomainObject();
-    expect(domainObject1.id).not.toBe(domainObject2.id);
+    expect(domainObject1.uniqueId).not.toBe(domainObject2.uniqueId);
   });
 
   test('should have default label', () => {

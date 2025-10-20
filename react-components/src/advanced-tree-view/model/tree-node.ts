@@ -1,9 +1,11 @@
+import { type Class, isInstanceOf } from '../../architecture/base/domainObjectsHelpers/Class';
+import { insertAt, remove } from '../../architecture/base/utilities/extensions/arrayUtils';
 import {
   CheckboxState,
+  generateUniqueId,
   type IconColor,
   type IconName
 } from '../../architecture/base/utilities/types';
-import { type Class, isInstanceOf } from '../utilities/class';
 
 import { type ILazyLoader } from './i-lazy-loader';
 import { type TreeNodeType } from './tree-node-type';
@@ -20,7 +22,7 @@ export class TreeNode implements TreeNodeType {
   // INSTANCE FIELDS
   // ==================================================
 
-  private _id?: string;
+  private _uniqueId?: string;
   private _label: string = '';
   private _icon: IconName = undefined;
   private _iconColor: string | undefined = undefined;
@@ -42,11 +44,11 @@ export class TreeNode implements TreeNodeType {
   // INSTANCE PROPERTIES (Some are implementation of TreeNodeType)
   // ==================================================
 
-  public get id(): string {
-    if (this._id === undefined) {
-      this._id = TreeNode.generateId();
+  public get uniqueId(): string {
+    if (this._uniqueId === undefined) {
+      this._uniqueId = generateUniqueId();
     }
-    return this._id;
+    return this._uniqueId;
   }
 
   public get label(): string {
@@ -387,7 +389,7 @@ export class TreeNode implements TreeNodeType {
     if (this._children === undefined) {
       this._children = [];
     }
-    insert(this._children, index, child);
+    insertAt(this._children, index, child);
     child._parent = this;
     this.update();
   }
@@ -475,30 +477,4 @@ export class TreeNode implements TreeNodeType {
       listener(this);
     }
   }
-
-  // ==================================================
-  // STATIC METHODS:
-  // ==================================================
-
-  public static generateId(): string {
-    return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
-  }
-}
-
-function insert<T>(array: T[], index: number, element: T): void {
-  array.splice(index, 0, element);
-}
-
-function removeAt<T>(array: T[], index: number): void {
-  array.splice(index, 1);
-}
-
-function remove<T>(array: T[], element: T): boolean {
-  // Return true if changed
-  const index = array.indexOf(element);
-  if (index < 0) {
-    return false;
-  }
-  removeAt(array, index);
-  return true;
 }

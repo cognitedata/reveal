@@ -59,7 +59,7 @@ export const AdvancedTreeViewNode = ({
   return (
     <div>
       <div
-        id={inputNode.id}
+        id={inputNode.uniqueId}
         style={{
           backgroundColor,
           flexDirection: 'row',
@@ -100,7 +100,7 @@ export const AdvancedTreeViewNode = ({
       </div>
       {children !== undefined &&
         children.map((node) => (
-          <AdvancedTreeViewNode node={node} key={node.id} level={level + 1} props={props} />
+          <AdvancedTreeViewNode node={node} key={node.uniqueId} level={level + 1} props={props} />
         ))}
       {hasLoadMore && (
         <TreeViewLoadMore

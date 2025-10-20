@@ -6,12 +6,12 @@ export type ButtonType = 'ghost' | 'ghost-destructive' | 'primary';
 
 export type UniqueId = string;
 
-export function generateUniqueId(): UniqueId {
-  return crypto.randomUUID();
-}
-
 export enum CheckboxState {
   All,
   Some,
   None
+}
+
+export function generateUniqueId(): UniqueId {
+  return crypto.randomUUID();
 }

@@ -20,7 +20,7 @@ export const AdvancedTreeView = (props: AdvancedTreeViewProps): ReactElement => 
     return <Loader />;
   }
   if (props.showRoot !== false) {
-    return <AdvancedTreeViewNode node={root} key={root.id} level={0} props={props} />;
+    return <AdvancedTreeViewNode node={root} key={root.uniqueId} level={0} props={props} />;
   }
   const nodes = getChildrenAsArray(root, props.loader, false);
   if (nodes === undefined) {
@@ -29,7 +29,7 @@ export const AdvancedTreeView = (props: AdvancedTreeViewProps): ReactElement => 
   return (
     <div id={id}>
       {nodes.map((node) => (
-        <AdvancedTreeViewNode node={node} key={node.id} level={0} props={props} />
+        <AdvancedTreeViewNode node={node} key={node.uniqueId} level={0} props={props} />
       ))}
     </div>
   );

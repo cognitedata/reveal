@@ -27,7 +27,7 @@ export class CadTreeNode extends TreeNode {
   // Getter and setters
   // ==================================================
 
-  public override get id(): string {
+  public override get uniqueId(): string {
     return CadTreeNode.treeIndexToString(this.treeIndex);
   }
 

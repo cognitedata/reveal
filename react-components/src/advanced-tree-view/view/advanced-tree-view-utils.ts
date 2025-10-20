@@ -5,7 +5,7 @@ export function scrollToNode(container: HTMLElement | undefined, node: TreeNodeT
   if (node instanceof TreeNode) {
     node.expandAllAncestors();
   }
-  scrollToElementId(container, node.id);
+  scrollToElementId(container, node.uniqueId);
 }
 
 export function scrollToElementId(container: HTMLElement | undefined, id: string): void {
@@ -33,7 +33,7 @@ export function scrollToFirst(
   if (root === undefined) {
     return;
   }
-  scrollToElementId(container, root.id);
+  scrollToElementId(container, root.uniqueId);
 }
 
 export function scrollToLast(

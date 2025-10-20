@@ -7,7 +7,7 @@ import { type ILazyLoader } from './i-lazy-loader';
 import { type TreeNodeAction } from './types';
 
 export type TreeNodeType = {
-  id: string; // Returns the unique id of the node
+  uniqueId: string; // Returns the unique id of the node
 
   // Required Appearance
   label: string; // Returns the label
