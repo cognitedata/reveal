@@ -20,7 +20,7 @@ describe(RootDomainObject.name, () => {
     expect(domainObject.sdk).toBe(sdkMock);
     expect(domainObject.fdmSdk).toBeDefined();
     expect(domainObject.typeName).toBeDefined();
-    expect(domainObject.icon).toBeDefined();
+    expect(domainObject.icon).toBe('Tree');
     expect(domainObject.hasIconColor).toBe(false);
     expect(domainObject.hasIndexOnLabel).toBe(false);
     expect(domainObject.isRoot).toBe(true);
