@@ -1,5 +1,5 @@
+import { CheckboxState } from '../../architecture/base/utilities/types';
 import { TreeNode } from '../model/tree-node';
-import { CheckboxState } from '../model/types';
 
 type SimpleMockArgs = {
   hasColors?: boolean;

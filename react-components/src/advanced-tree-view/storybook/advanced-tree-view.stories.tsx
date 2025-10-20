@@ -19,11 +19,11 @@ import {
   onRecursiveToggleNode
 } from '../model/tree-node-functions';
 import { type TreeNodeType } from '../model/tree-node-type';
-import { type IconName } from '../model/types';
 import { AdvancedTreeView } from '../view/advanced-tree-view';
 
 import { createSimpleMock } from './create-simple-mock';
 import { LazyLoaderMock } from './lazy-loader-mock';
+import { type IconName } from '../../architecture/base/utilities/types';
 
 const meta: Meta<typeof AdvancedTreeView> = {
   component: AdvancedTreeView,

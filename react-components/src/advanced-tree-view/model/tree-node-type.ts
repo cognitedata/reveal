@@ -1,5 +1,10 @@
+import {
+  type CheckboxState,
+  type IconColor,
+  type IconName
+} from '../../architecture/base/utilities/types';
 import { type ILazyLoader } from './i-lazy-loader';
-import { type TreeNodeAction, type CheckboxState, type IconColor, type IconName } from './types';
+import { type TreeNodeAction } from './types';
 
 export type TreeNodeType = {
   id: string; // Returns the unique id of the node

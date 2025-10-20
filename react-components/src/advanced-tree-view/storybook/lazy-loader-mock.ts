@@ -1,7 +1,7 @@
+import { CheckboxState } from '../../architecture/base/utilities/types';
 import { type ILazyLoader } from '../model/i-lazy-loader';
 import { TreeNode } from '../model/tree-node';
 import { type TreeNodeType } from '../model/tree-node-type';
-import { CheckboxState } from '../model/types';
 
 import { getRandomColor } from './create-simple-mock';
 

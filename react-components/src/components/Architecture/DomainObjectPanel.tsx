@@ -56,7 +56,9 @@ export const DomainObjectPanel = (): ReactElement => {
       }}>
       <Flex gap={4} justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={4}>
-          {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
+          {icon !== undefined && (
+            <IconComponent iconName={icon} type={'ghost'} color={domainObject.iconColor} />
+          )}
           {label !== undefined && (
             <Body strong size="medium">
               {label}

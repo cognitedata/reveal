@@ -1,8 +1,13 @@
+import {
+  CheckboxState,
+  type IconColor,
+  type IconName
+} from '../../architecture/base/utilities/types';
 import { type Class, isInstanceOf } from '../utilities/class';
 
 import { type ILazyLoader } from './i-lazy-loader';
 import { type TreeNodeType } from './tree-node-type';
-import { CheckboxState, type TreeNodeAction, type IconColor, type IconName } from './types';
+import { type TreeNodeAction } from './types';
 
 /**
  * Represents a node in a tree structure.

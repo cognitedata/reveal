@@ -1,15 +1,5 @@
 import { type TreeNodeType } from './tree-node-type';
 
-export type IconName = string | undefined;
-
-export type IconColor = string | undefined;
-
-export enum CheckboxState {
-  All,
-  Some,
-  None
-}
-
 export type TreeNodeAction = (node: TreeNodeType) => void;
 
 /**

@@ -3,9 +3,7 @@ export type { AdvancedTreeViewProps, GetIconFromIconNameFn } from './view/advanc
 export type { TreeNodeType } from './model/tree-node-type';
 export type { ILazyLoader } from './model/i-lazy-loader';
 export { TreeNode } from './model/tree-node';
-export type { IconName, IconColor, TreeNodeAction, OnNodeLoadedAction } from './model/types';
-
-export { CheckboxState } from './model/types';
+export type { TreeNodeAction, OnNodeLoadedAction } from './model/types';
 
 export {
   scrollToNode,
