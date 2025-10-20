@@ -18,7 +18,7 @@ describe(getPointCloudModelsForAsset.name, () => {
 
   const ARBITRARY_REVISION: Revision3D = {
     id: ARBITRARY_REVISION_ID,
-    createdTime: new Date(),
+    createdTime: new Date('2025-01-01'),
     metadata: {},
     fileId: 0,
     published: false,
@@ -42,7 +42,11 @@ describe(getPointCloudModelsForAsset.name, () => {
     mockReverseLookup.mockImplementation(
       (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
         createCursorAndAsyncIteratorMock({
-          items: []
+          items: [
+            {
+              id: ARBITRARY_MODEL_ID
+            }
+          ]
         })
     );
     mockRevision3D.mockImplementation(
@@ -53,13 +57,6 @@ describe(getPointCloudModelsForAsset.name, () => {
     );
   });
   test('reverseLookup is called with expected input', async () => {
-    mockReverseLookup.mockImplementation(
-      (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
-        createCursorAndAsyncIteratorMock({
-          items: []
-        })
-    );
-
     await getPointCloudModelsForAsset({ assetId: ASSET_ID, sdk: sdkMock });
 
     expect(mockReverseLookup).toHaveBeenCalledWith({
@@ -72,17 +69,6 @@ describe(getPointCloudModelsForAsset.name, () => {
   });
 
   test('retrieve is called with expected input', async () => {
-    mockReverseLookup.mockImplementation(
-      (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
-        createCursorAndAsyncIteratorMock({
-          items: [
-            {
-              id: ARBITRARY_MODEL_ID
-            }
-          ]
-        })
-    );
-
     await getPointCloudModelsForAsset({ assetId: ASSET_ID, sdk: sdkMock });
     expect(mockReverseLookup).toHaveBeenCalledWith({
       filter: {
@@ -94,46 +80,32 @@ describe(getPointCloudModelsForAsset.name, () => {
   });
 
   test('returns an empty result from SDK', async () => {
+    mockReverseLookup.mockImplementation(
+      (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
+        createCursorAndAsyncIteratorMock({
+          items: []
+        })
+    );
     const result = await getPointCloudModelsForAsset({ assetId: ASSET_ID, sdk: sdkMock });
 
     expect(result).toEqual([]);
   });
 
-  test('returns relevant point cloud model options when a dm instance is provided', async () => {
-    mockReverseLookup.mockImplementation(
-      (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
-        createCursorAndAsyncIteratorMock({
-          items: [
-            {
-              id: ARBITRARY_MODEL_ID
-            }
-          ]
-        })
-    );
-
-    const result = await getPointCloudModelsForAsset({ assetId: DMS_ID, sdk: sdkMock });
-
-    expect(result).toEqual([
+  test.each([
+    [
+      'dm instance',
       {
-        type: 'pointcloud',
-        addOptions: { modelId: ARBITRARY_MODEL_ID, revisionId: ARBITRARY_REVISION_ID }
+        assetId: DMS_ID
       }
-    ]);
-  });
-
-  test('returns relevant point cloud model options when a classic asset id is provided', async () => {
-    mockReverseLookup.mockImplementation(
-      (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
-        createCursorAndAsyncIteratorMock({
-          items: [
-            {
-              id: ARBITRARY_MODEL_ID
-            }
-          ]
-        })
-    );
-
-    const result = await getPointCloudModelsForAsset({ assetId: ASSET_ID, sdk: sdkMock });
+    ],
+    [
+      'classic asset id',
+      {
+        assetId: ASSET_ID
+      }
+    ]
+  ])('returns relevant point cloud model options when a %s is provided', async (_, { assetId }) => {
+    const result = await getPointCloudModelsForAsset({ assetId, sdk: sdkMock });
 
     expect(result).toEqual([
       {
