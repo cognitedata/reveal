@@ -29,7 +29,7 @@ export function useLayersButtonViewModel(
 
   const renderTarget = useRenderTarget();
 
-  const modelLayerContent = useModelsVisibilityState(setExternalLayersState, renderTarget);
+  const modelLayerContent = useModelsVisibilityState();
 
   useSyncExternalLayersState(
     modelLayerContent,

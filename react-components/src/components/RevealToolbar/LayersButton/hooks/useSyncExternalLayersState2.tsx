@@ -15,7 +15,10 @@ export const useSyncExternalLayersState = (
   const lastModelLayerContent = useRef(modelLayerContent);
 
   useEffect(() => {
-    if (areLayerStatesConsistent(modelLayerContent, externalLayersState, renderTarget)) {
+    if (
+      externalLayersState === undefined ||
+      areLayerStatesConsistent(modelLayerContent, externalLayersState, renderTarget)
+    ) {
       lastExternalState.current = externalLayersState;
       lastModelLayerContent.current = modelLayerContent;
       return;
@@ -39,38 +42,32 @@ export const useSyncExternalLayersState = (
 
 function areLayerStatesConsistent(
   models: ModelLayerContent,
-  externalState: LayersUrlStateParam | undefined,
+  externalState: LayersUrlStateParam,
   renderTarget: RevealRenderTarget
 ): boolean {
-  if (externalState === undefined) {
-    return (
-      models.cadModels.length === 0 &&
-      models.pointClouds.length === 0 &&
-      models.image360Collections.length === 0
-    );
-  }
+  const externalCadLayers = externalState.cadLayers ?? [];
+  const externalPointCloudLayers = externalState.pointCloudLayers ?? [];
+  const externalImage360Layers = externalState.image360Layers ?? [];
 
   const cadsConsistent =
-    externalState.cadLayers?.length === models.cadModels.length &&
-    (externalState.cadLayers?.every(
+    externalCadLayers.length === models.cadModels.length &&
+    externalCadLayers.every(
       (layer, index) =>
         models.cadModels[index].model.revisionId === layer.revisionId &&
         models.cadModels[index].isVisible(renderTarget) === layer.applied
-    ) ??
-      false);
+    );
 
   const pointCloudsConsistent =
-    externalState.pointCloudLayers?.length === models.pointClouds.length &&
-    (externalState.pointCloudLayers?.every(
+    externalPointCloudLayers.length === models.pointClouds.length &&
+    externalPointCloudLayers.every(
       (layer, index) =>
         models.pointClouds[index].model.revisionId === layer.revisionId &&
         models.pointClouds[index].isVisible(renderTarget) === layer.applied
-    ) ??
-      false);
+    );
 
   const image360sConsistent =
-    externalState.image360Layers?.length === models.image360Collections.length &&
-    (externalState.image360Layers?.every(
+    externalImage360Layers.length === models.image360Collections.length &&
+    (externalImage360Layers.every(
       (layer) =>
         models.image360Collections
           .find((image) => image.model.id === layer.siteId)
