@@ -1,8 +1,8 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { useState, type ReactElement } from 'react';
-import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem2';
+import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { type RevealDomainObject, type RevealRenderTarget } from '../../../../architecture';
-import { useOnUpdateDomainObject } from '../../../Architecture/hooks/useOnUpdate';
+import { useOnUpdateDomainObject } from '../../hooks/useOnUpdate';
 
 export const ModelLayersList = ({
   domainObjects,
