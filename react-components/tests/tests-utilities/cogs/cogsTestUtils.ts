@@ -3,7 +3,7 @@ export function getButtonsInContainer(container: HTMLElement): HTMLButtonElement
 }
 
 export function isEnable(element: HTMLElement): boolean {
-  return element.getAttribute('aria-disabled') === 'false';
+  return !isDisable(element);
 }
 
 export function isDisable(element: HTMLElement): boolean {
@@ -23,9 +23,5 @@ export function getLabel(element: HTMLElement): string {
 }
 
 export function isToggled(element: HTMLButtonElement): boolean {
-  const attribute = element.getAttribute('class');
-  if (attribute === null) {
-    return false;
-  }
-  return attribute.includes('toggled');
+  return element.classList.contains('toggled');
 }

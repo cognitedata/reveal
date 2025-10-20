@@ -1,6 +1,5 @@
 import { assert, describe, expect, test } from 'vitest';
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import {
   BaseCommand,
   BaseOptionCommand,
