@@ -45,7 +45,7 @@
     "styled-components": "^6.1.12"
   },
   "dependencies": {
-    "@cognite/cogs-lab": "9.0.0-alpha.160",
+    "@cognite/cogs-lab": "9.0.0-alpha.173",
     "@cognite/cogs.js": "^10.51.0",
     "@cognite/signals": "^0.0.4",
     "@floating-ui/react": "^0.24.8",
