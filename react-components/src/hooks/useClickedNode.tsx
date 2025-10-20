@@ -13,7 +13,7 @@ import {
   type PointCloudAnnotationMappedAssetData
 } from './types';
 import { MOUSE, Vector2, type Vector3 } from 'three';
-import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForAssetInstances';
+import { type PointCloudDMVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForIntersection';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { type HybridCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicCadAssetMappingCache';
 import {
@@ -31,7 +31,7 @@ export const useClickedNodeData = (options?: {
     useFdm3dNodeDataPromises,
     useAssetMappingForTreeIndex,
     usePointCloudAnnotationMappingForIntersection,
-    usePointCloudFdmVolumeMappingForIntersection,
+    usePointCloudDMVolumeMappingForIntersection,
     useRenderTarget,
     useReveal,
     isActiveEditTool
@@ -109,7 +109,7 @@ export const useClickedNodeData = (options?: {
     usePointCloudAnnotationMappingForIntersection(intersection);
 
   const pointCloudFdmVolumeMappingResult =
-    usePointCloudFdmVolumeMappingForIntersection(intersection);
+    usePointCloudDMVolumeMappingForIntersection(intersection);
 
   return useCombinedClickedNodeData(
     mouseButton,
@@ -128,7 +128,7 @@ const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   hybridAssetMappings: HybridCadNodeAssetMappingResult | undefined,
   pointCloudAssetMappingsResult: UseQueryResult<PointCloudAnnotationMappedAssetData[]>,
-  pointCloudFdmVolumeMappingsResult: UseQueryResult<PointCloudFdmVolumeMappingWithViews[]>,
+  pointCloudFdmVolumeMappingsResult: UseQueryResult<PointCloudDMVolumeMappingWithViews[]>,
   intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType> | undefined
 ): ClickedNodeData | undefined => {
   const fdmData = useFdmData(fdmPromises);

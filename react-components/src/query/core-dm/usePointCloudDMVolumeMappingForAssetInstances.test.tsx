@@ -18,6 +18,11 @@ import {
 import { type PointCloudModelRevisionIdAndType } from '../usePointCloudModelRevisionIdsFromReveal';
 
 describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
+  const TEST_EXTERNAL_ID = 'test-external-id-1';
+  const TEST_SPACE = 'test-space';
+  const TEST_VOLUME_EXTERNAL_ID = 'test-volume-external-id-1';
+  const TEST_VOLUME_EXTERNAL_ID_2 = 'test-volume-external-id-2';
+
   const dependencies = getMocksByDefaultDependencies(
     defaultUsePointCloudDMVolumeMappingForAssetInstancesDependencies
   );
@@ -41,48 +46,48 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
   };
 
   const assetInstance1: DmsUniqueIdentifier = {
-    externalId: 'test-external-id-1',
-    space: 'test-space'
+    externalId: TEST_EXTERNAL_ID,
+    space: TEST_SPACE
   };
 
   const assetInstance2: DmsUniqueIdentifier = {
     externalId: 'test-external-id-2',
-    space: 'test-space'
+    space: TEST_SPACE
   };
 
   const volumeWithAsset1 = createPointCloudVolumeWithAsset({
-    externalId: 'test-volume-external-id-1',
-    space: 'test-space',
+    externalId: TEST_VOLUME_EXTERNAL_ID,
+    space: TEST_SPACE,
     dmAsset: {
-      externalId: 'test-external-id-1',
-      space: 'test-space',
+      externalId: TEST_EXTERNAL_ID,
+      space: TEST_SPACE,
       name: 'Asset 1',
       description: '',
       object3D: {
         externalId: 'test-object-external-id-1',
-        space: 'test-space'
+        space: TEST_SPACE
       }
     }
   });
 
   const volumeWithAsset2 = createPointCloudVolumeWithAsset({
-    externalId: 'test-volume-external-id-2',
-    space: 'test-space',
+    externalId: TEST_VOLUME_EXTERNAL_ID_2,
+    space: TEST_SPACE,
     dmAsset: {
       externalId: 'test-external-id-2',
-      space: 'test-space',
+      space: TEST_SPACE,
       name: 'Asset 2',
       description: '',
       object3D: {
         externalId: 'test-object-external-id-2',
-        space: 'test-space'
+        space: TEST_SPACE
       }
     }
   });
 
   const volumeWithoutAsset = createPointCloudVolumeWithAsset({
     externalId: 'test-volume-external-id-3',
-    space: 'test-space',
+    space: TEST_SPACE,
     dmAsset: undefined
   });
 
@@ -142,8 +147,8 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
     expect(result.current).toEqual([
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-1',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset1.dmAsset
       }
@@ -168,15 +173,15 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
     expect(result.current).toEqual([
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-1',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset1.dmAsset
       },
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-2',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID_2,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset2.dmAsset
       }
@@ -201,8 +206,8 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
     expect(result.current).toEqual([
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-1',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset1.dmAsset
       }
@@ -212,7 +217,7 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
   test('filters out non-matching asset instances', () => {
     const nonMatchingAsset: DmsUniqueIdentifier = {
       externalId: 'non-existing-asset',
-      space: 'test-space'
+      space: TEST_SPACE
     };
 
     const volumeResults: DMVolumeModelDataResult[] = [
@@ -258,15 +263,15 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
     expect(result.current).toEqual([
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-1',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset1.dmAsset
       },
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-2',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID_2,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset2.dmAsset
       }
@@ -275,7 +280,7 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
 
   test('matches by both externalId and space', () => {
     const assetDifferentSpace: DmsUniqueIdentifier = {
-      externalId: 'test-external-id-1',
+      externalId: TEST_EXTERNAL_ID,
       space: 'different-space'
     };
 
@@ -344,8 +349,8 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
     expect(result.current).toEqual([
       {
         volumeInstanceRef: {
-          externalId: 'test-volume-external-id-1',
-          space: 'test-space'
+          externalId: TEST_VOLUME_EXTERNAL_ID,
+          space: TEST_SPACE
         },
         asset: volumeWithAsset1.dmAsset
       }
@@ -357,9 +362,9 @@ describe(usePointCloudDMVolumeMappingForAssetInstances.name, () => {
   ): PointCloudVolumeWithAsset {
     return new Mock<PointCloudVolumeWithAsset>()
       .setup((p) => p.externalId)
-      .returns(overrides?.externalId ?? 'test-volume-external-id-1')
+      .returns(overrides?.externalId ?? TEST_VOLUME_EXTERNAL_ID)
       .setup((p) => p.space)
-      .returns(overrides?.space ?? 'test-space')
+      .returns(overrides?.space ?? TEST_SPACE)
       .setup((p) => p.dmAsset)
       .returns(overrides?.dmAsset)
       .object();
