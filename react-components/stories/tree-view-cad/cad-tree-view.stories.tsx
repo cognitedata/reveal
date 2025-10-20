@@ -15,7 +15,7 @@ import {
   scrollToNode
 } from '../../src/advanced-tree-view';
 
-import { CadNodesLoader } from './cad-nodes-loader';
+import { CadLazyLoader } from './cad-lazy-loader';
 import { CogniteClientMock } from './cognite-client-mock';
 
 // Note: This simulate the behavior of the real CadTreeNode. Can not use it here
@@ -31,7 +31,7 @@ type Story = StoryObj<typeof AdvancedTreeView>;
 export default meta;
 
 const sdk = new CogniteClientMock();
-const baseLoader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
+const baseLoader = new CadLazyLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const base: Story = {
   name: 'base',
@@ -48,7 +48,7 @@ export const base: Story = {
   }
 };
 
-const loader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
+const loader = new CadLazyLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const Main: Story = {
   name: 'main',

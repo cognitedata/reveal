@@ -6,9 +6,9 @@ import {
   onSingleSelectNode,
   type TreeNodeType
 } from '../../advanced-tree-view';
-import { type CadNodesLoader } from '../../../stories/tree-view-cad/cad-nodes-loader';
+import { type CadLazyLoader } from '../../../stories/tree-view-cad/cad-lazy-loader';
 
-export const NodeTreeView = (loader: CadNodesLoader): ReactElement => {
+export const NodeTreeView = (loader: CadLazyLoader): ReactElement => {
   return (
     <AdvancedTreeView
       loader={loader}

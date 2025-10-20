@@ -8,7 +8,7 @@ type SimpleMockArgs = {
   hasDisabledCheckboxes?: boolean;
 };
 
-export function createSimpleMock(args: SimpleMockArgs): TreeNode {
+export function createSimpleTreeMock(args: SimpleMockArgs): TreeNode {
   const root = new TreeNode();
   root.label = 'Europa';
   root.isExpanded = true;

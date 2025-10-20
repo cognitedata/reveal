@@ -3,7 +3,7 @@ import { TreeNode } from '../../src/advanced-tree-view/model/tree-node';
 import { type TreeNodeType } from '../../src/advanced-tree-view/model/tree-node-type';
 import { CheckboxState } from '../../src/advanced-tree-view/model/types';
 
-import { getRandomColor } from './create-simple-mock';
+import { getRandomColor } from './create-simple-tree-mock';
 
 /**
  * Creates a mock tree structure for testing purposes.
