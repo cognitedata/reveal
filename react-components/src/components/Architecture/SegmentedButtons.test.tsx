@@ -1,5 +1,6 @@
 import { assert, describe, expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import {
   BaseCommand,
   BaseOptionCommand,
@@ -13,78 +14,80 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { SegmentedButtons } from './SegmentedButtons';
 import userEvent from '@testing-library/user-event';
-
-const TEST_ID = 'segmented-control-button';
+import {
+  getButtonsInContainer,
+  getLabel,
+  isEnable,
+  isSelected,
+  isToggled
+} from '../../../tests/tests-utilities/cogs/cogsTestUtils';
 
 describe(SegmentedButtons.name, () => {
   test('should render with default values', () => {
     const command = new MockSegmentedCommand();
-    renderSegmentedButtons(command);
+    const container = renderSegmentedButtons(command);
 
     assert(command.children !== undefined);
 
     // Check button
-    const buttons = screen.queryAllByTestId(TEST_ID);
+    const buttons = getButtonsInContainer(container);
     expect(buttons.length).toBe(2);
 
     for (let i = 0; i < buttons.length; i++) {
       const button = buttons[i];
       const option = command.children[i];
 
-      expect(button.getAttribute('type')).toBe('button');
-      expect(button.getAttribute('aria-disabled')).toBe('false');
-      expect(button.getAttribute('aria-label')).toBe(option.label);
-      expect(button.getAttribute('aria-selected')).toBe(option.isChecked.toString());
-
-      const buttonClass = button.getAttribute('class');
-      expect(buttonClass).not.toContain('toggled');
+      expect(isEnable(button)).toBe(true);
+      expect(getLabel(button)).toBe(option.label);
+      expect(isSelected(button)).toBe(option.isChecked);
+      expect(isToggled(button)).toBe(false);
     }
   });
 
   test('should change from visible to invisible', () => {
     const command = new MockSegmentedCommand();
-    renderSegmentedButtons(command);
+    const container = renderSegmentedButtons(command);
 
-    const beforeButtons = screen.queryAllByTestId(TEST_ID);
+    const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
 
     act(() => {
       command.isVisible = false;
     });
-    const afterButtons = screen.queryAllByTestId(TEST_ID);
+    const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(0);
   });
 
   test('should change from enabled to disabled', () => {
     const command = new MockSegmentedCommand();
-    renderSegmentedButtons(command);
+    const container = renderSegmentedButtons(command);
 
-    const beforeButtons = screen.queryAllByTestId(TEST_ID);
+    const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
     for (const button of beforeButtons) {
-      expect(button.getAttribute('aria-disabled')).toBe('false');
+      expect(isEnable(button)).toBe(true);
     }
 
     act(() => {
       command.isEnabled = false;
     });
 
-    const afterButtons = screen.queryAllByTestId(TEST_ID);
+    const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(2);
     for (const button of afterButtons) {
-      expect(button.getAttribute('aria-disabled')).toBe('true');
+      expect(isEnable(button)).toBe(false);
     }
   });
 
   test('should select the second option', async () => {
     const command = new MockSegmentedCommand();
-    renderSegmentedButtons(command);
+    const container = renderSegmentedButtons(command);
 
     assert(command.children !== undefined);
-    const beforeButtons = screen.queryAllByTestId(TEST_ID);
+    const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
-    expect(beforeButtons[0].getAttribute('aria-selected')).toBe('true');
-    expect(beforeButtons[1].getAttribute('aria-selected')).toBe('false');
+    expect(isSelected(beforeButtons[0])).toBe(true);
+    expect(isSelected(beforeButtons[1])).toBe(false);
 
     expect(command.children[0].isChecked).toBe(true);
     expect(command.children[1].isChecked).toBe(false);
@@ -93,25 +96,26 @@ describe(SegmentedButtons.name, () => {
       await userEvent.click(beforeButtons[1]);
     });
 
-    const afterButtons = screen.queryAllByTestId(TEST_ID);
+    const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(2);
-    expect(afterButtons[0].getAttribute('aria-selected')).toBe('false');
-    expect(afterButtons[1].getAttribute('aria-selected')).toBe('true');
+    expect(isSelected(afterButtons[0])).toBe(false);
+    expect(isSelected(afterButtons[1])).toBe(true);
 
     expect(command.children[0].isChecked).toBe(false);
     expect(command.children[1].isChecked).toBe(true);
   });
 });
 
-function renderSegmentedButtons(command: BaseOptionCommand): void {
+function renderSegmentedButtons(command: BaseOptionCommand): HTMLElement {
   const renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <ViewerContextProvider renderTarget={renderTargetMock}>{children}</ViewerContextProvider>
   );
-  render(<SegmentedButtons inputCommand={command} placement={'top'} />, {
+  const { container } = render(<SegmentedButtons inputCommand={command} placement={'top'} />, {
     wrapper
   });
+  return container;
 }
 
 class MockSegmentedCommand extends BaseOptionCommand {

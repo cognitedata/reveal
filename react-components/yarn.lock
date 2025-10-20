@@ -274,7 +274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-core@npm:^10.51.0":
+"@cognite/cogs-core@npm:^10.41.0, @cognite/cogs-core@npm:^10.51.0":
   version: 10.51.0
   resolution: "@cognite/cogs-core@npm:10.51.0"
   dependencies:
@@ -309,7 +309,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-icons@npm:^10.51.0":
+"@cognite/cogs-icons@npm:^10.41.0, @cognite/cogs-icons@npm:^10.51.0":
   version: 10.51.0
   resolution: "@cognite/cogs-icons@npm:10.51.0"
   dependencies:
@@ -324,15 +324,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-lab@npm:9.0.0-alpha.173":
-  version: 9.0.0-alpha.173
-  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.173"
+"@cognite/cogs-lab@npm:9.0.0-alpha.160":
+  version: 9.0.0-alpha.160
+  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.160"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-    "@cognite/cogs-core": "npm:^10.51.0"
-    "@cognite/cogs-icons": "npm:^10.51.0"
-    "@cognite/cogs-utils": "npm:^10.51.0"
+    "@cognite/cogs-core": "npm:^10.41.0"
+    "@cognite/cogs-icons": "npm:^10.41.0"
+    "@cognite/cogs-utils": "npm:^10.41.0"
     "@floating-ui/react": "npm:^0.27.0"
+    "@mui/base": "npm:^5.0.0-beta.33"
     "@mui/material": "npm:^5.15.5"
     "@mui/utils": "npm:^5.15.6"
     "@mui/x-data-grid-premium": "npm:^6.19.8"
@@ -350,11 +351,11 @@ __metadata:
     "@types/react": ^18
     react: ^18
     react-dom: ^18
-  checksum: 10/806d81456bb02abe854a6168997f9e620cd7304ff3583b2a6bc8a0a156c1061942ae24f3212b64822ef70eda945bf431c38a768d9155be919ee2670c4e803cf9
+  checksum: 10/4271f36bc69a02756304488ebe14633d102c9cc580232f95e1eb434fc32f2f26b4b0cfc40743958e3c86a785bc4de14ecc9e79ba9ca9e5c7ea0361b64f6466bc
   languageName: node
   linkType: hard
 
-"@cognite/cogs-utils@npm:^10.51.0":
+"@cognite/cogs-utils@npm:^10.41.0, @cognite/cogs-utils@npm:^10.51.0":
   version: 10.51.0
   resolution: "@cognite/cogs-utils@npm:10.51.0"
   dependencies:
@@ -391,7 +392,7 @@ __metadata:
   resolution: "@cognite/reveal-react-components@workspace:."
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
-    "@cognite/cogs-lab": "npm:9.0.0-alpha.173"
+    "@cognite/cogs-lab": "npm:9.0.0-alpha.160"
     "@cognite/cogs.js": "npm:^10.51.0"
     "@cognite/reveal": "npm:4.27.0"
     "@cognite/sdk": "npm:^10.1.3"
