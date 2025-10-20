@@ -16,7 +16,7 @@ import userEvent from '@testing-library/user-event';
 import {
   getButtonsInContainer,
   getLabel,
-  isEnable,
+  isEnabled,
   isSelected,
   isToggled
 } from '../../../tests/tests-utilities/cogs/cogsTestUtils';
@@ -36,7 +36,7 @@ describe(SegmentedButtons.name, () => {
       const button = buttons[i];
       const option = command.children[i];
 
-      expect(isEnable(button)).toBe(true);
+      expect(isEnabled(button)).toBe(true);
       expect(getLabel(button)).toBe(option.label);
       expect(isSelected(button)).toBe(option.isChecked);
       expect(isToggled(button)).toBe(false);
@@ -64,7 +64,7 @@ describe(SegmentedButtons.name, () => {
     const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
     for (const button of beforeButtons) {
-      expect(isEnable(button)).toBe(true);
+      expect(isEnabled(button)).toBe(true);
     }
 
     act(() => {
@@ -74,7 +74,7 @@ describe(SegmentedButtons.name, () => {
     const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(2);
     for (const button of afterButtons) {
-      expect(isEnable(button)).toBe(false);
+      expect(isEnabled(button)).toBe(false);
     }
   });
 
