@@ -17,10 +17,10 @@ import {
   onSingleSelectNode,
   onSimpleToggleNode,
   onRecursiveToggleNode
-} from '../model/tree-node-functions';
-import { type TreeNodeType } from '../model/tree-node-type';
-import { type IconName } from '../model/types';
-import { AdvancedTreeView } from '../view/advanced-tree-view';
+} from '../../src/advanced-tree-view/model/tree-node-functions';
+import { type TreeNodeType } from '../../src/advanced-tree-view/model/tree-node-type';
+import { type IconName } from '../../src/advanced-tree-view/model/types';
+import { AdvancedTreeView } from '../../src/advanced-tree-view/view/advanced-tree-view';
 
 import { createSimpleMock } from './create-simple-mock';
 import { LazyLoaderMock } from './lazy-loader-mock';

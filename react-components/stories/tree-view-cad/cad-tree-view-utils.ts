@@ -1,4 +1,4 @@
-import { scrollToElementId } from '..';
+import { scrollToElementId } from '../../src/advanced-tree-view';
 
 import { CadTreeNode } from './cad-tree-node';
 

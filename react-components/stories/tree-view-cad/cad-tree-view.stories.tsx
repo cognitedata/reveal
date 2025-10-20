@@ -13,7 +13,7 @@ import {
   scrollToFirst,
   scrollToLast,
   scrollToNode
-} from '..';
+} from '../../src/advanced-tree-view';
 
 import { CadNodesLoader } from './cad-nodes-loader';
 import { CogniteClientMock } from './cognite-client-mock';

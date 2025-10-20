@@ -6,7 +6,7 @@ import {
   onSingleSelectNode,
   type TreeNodeType
 } from '../../advanced-tree-view';
-import { type CadNodesLoader } from '../../advanced-tree-view/storybook-cad/cad-nodes-loader';
+import { type CadNodesLoader } from '../../../stories/tree-view-cad/cad-nodes-loader';
 
 export const NodeTreeView = (loader: CadNodesLoader): ReactElement => {
   return (

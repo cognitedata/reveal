@@ -1,7 +1,7 @@
-import { type ILazyLoader } from '../model/i-lazy-loader';
-import { TreeNode } from '../model/tree-node';
-import { type TreeNodeType } from '../model/tree-node-type';
-import { CheckboxState } from '../model/types';
+import { type ILazyLoader } from '../../src/advanced-tree-view/model/i-lazy-loader';
+import { TreeNode } from '../../src/advanced-tree-view/model/tree-node';
+import { type TreeNodeType } from '../../src/advanced-tree-view/model/tree-node-type';
+import { CheckboxState } from '../../src/advanced-tree-view/model/types';
 
 import { getRandomColor } from './create-simple-mock';
 

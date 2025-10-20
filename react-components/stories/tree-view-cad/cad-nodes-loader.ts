@@ -1,10 +1,10 @@
 import { type Node3D } from '@cognite/sdk';
 
-import { type TreeNodeType, type ILazyLoader } from '..';
+import { type TreeNodeType, type ILazyLoader } from '../../src/advanced-tree-view';
 
 import { CadTreeNode } from './cad-tree-node';
 import { type ICogniteClient } from './i-cognite-client';
-import { type RevisionId, type SubsetOfNode3D } from './types';
+import { type SubsetOfNode3D, type RevisionId } from './types';
 
 export class CadNodesLoader implements ILazyLoader {
   private readonly _sdk: ICogniteClient;
