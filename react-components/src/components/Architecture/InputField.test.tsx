@@ -10,7 +10,7 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 
 import userEvent from '@testing-library/user-event';
 import assert from 'assert';
-import { getButtonsInContainer } from '../../../tests/tests-utilities/cogs/cogsTestUtils';
+import { getButtonsInContainer } from '../../../tests/tests-utilities/cogs/htmlTestUtils';
 
 describe(InputField.name, () => {
   let renderTargetMock: RevealRenderTarget;
