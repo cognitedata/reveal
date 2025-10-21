@@ -434,6 +434,10 @@ export class FdmSDK {
     queries: Array<{ instanceType: InstanceType; externalId: string; space: string }>,
     sources?: Source[]
   ): Promise<ExternalIdsResultList<PropertyType>> {
+    if (queries.length === 0) {
+      return { items: [] };
+    }
+
     const data: any = { items: queries, includeTyping: true };
     if (sources !== undefined) {
       data.sources = sources.map((source) => ({ source }));
