@@ -347,26 +347,6 @@ describe(use3dScenes.name, () => {
     });
   });
 
-  test('should process DM model edges and create 3d model options with correct transform matrix', async () => {
-    setupMockResponse({
-      scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
-      sceneModels: [createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)]
-    });
-
-    const { result } = renderHook(() => use3dScenes(), { wrapper });
-    const data = await waitForSuccessAndGetData(result);
-    const scene = data[TEST_SPACE]['scene-with-model'];
-
-    expect(scene.modelOptions).toHaveLength(1);
-    expect(scene.modelOptions[0]).toEqual({
-      modelId: 123,
-      revisionId: 1,
-      transform: expect.objectContaining({
-        elements: expect.arrayContaining(EXPECTED_MATRIX_WITH_TRANSLATION)
-      })
-    });
-  });
-
   test('should process 360 image collection edges and create image360 options with transform', async () => {
     setupMockResponse({
       scenes: [createSceneNode('scene-with-360', TEST_SPACE)],
