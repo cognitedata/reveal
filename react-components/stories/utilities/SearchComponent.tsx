@@ -101,7 +101,8 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions =>
+      ('siteId' in resource || 'externalId' in resource) && !('modelId' in resource)
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
