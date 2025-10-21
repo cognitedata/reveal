@@ -88,7 +88,7 @@ export abstract class DomainObject implements TreeNodeType {
   // IMPLEMENTATION of TreeNodeType interface
   // ==================================================
 
-  public get id(): string {
+  public get id(): UniqueId {
     return this.uniqueId;
   }
 

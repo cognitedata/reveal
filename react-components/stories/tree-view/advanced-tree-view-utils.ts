@@ -1,4 +1,5 @@
 import { TreeNode } from '#test-utils/tree-view/nodes/tree-node';
+import { type UniqueId } from '../../src/architecture/base/utilities/types';
 import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
 
 export function scrollToNode(container: HTMLElement | undefined, node: TreeNodeType): void {
@@ -8,7 +9,7 @@ export function scrollToNode(container: HTMLElement | undefined, node: TreeNodeT
   scrollToElementId(container, node.id);
 }
 
-export function scrollToElementId(container: HTMLElement | undefined, id: string): void {
+export function scrollToElementId(container: HTMLElement | undefined, id: UniqueId): void {
   if (container === undefined) {
     return;
   }

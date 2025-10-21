@@ -1,5 +1,6 @@
 import { TreeNode } from './tree-node';
 import { type SubsetOfNode3D } from '../lazy-loaders/types';
+import { type UniqueId } from '../../../../src/architecture/base/utilities/types';
 
 export class CadTreeNode extends TreeNode {
   // ==================================================
@@ -26,7 +27,7 @@ export class CadTreeNode extends TreeNode {
   // Getter and setters
   // ==================================================
 
-  public override get id(): string {
+  public override get id(): UniqueId {
     return CadTreeNode.treeIndexToString(this.treeIndex);
   }
 
