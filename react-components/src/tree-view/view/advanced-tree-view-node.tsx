@@ -3,7 +3,7 @@ import { type ReactElement, useReducer, useState } from 'react';
 
 import { Colors } from '@cognite/cogs.js';
 
-import { getChildrenAsArray } from '../model/get-children-as-array';
+import { getChildrenAsArray } from './get-children-as-array';
 import { type TreeNodeType } from '../model/tree-node-type';
 
 import { type AdvancedTreeViewProps } from './advanced-tree-view-props';

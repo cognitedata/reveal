@@ -1,7 +1,7 @@
 import type { CogniteClient, List3DNodesQuery, Node3D } from '@cognite/sdk';
-import { type ICogniteClient } from './i-cognite-client';
+import { type IListNodesSdk } from './i-list-nodes-sdk';
 
-export class MyCogniteClient implements ICogniteClient {
+export class ListNodesSdk implements IListNodesSdk {
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {

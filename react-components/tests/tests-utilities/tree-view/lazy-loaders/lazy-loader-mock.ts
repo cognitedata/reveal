@@ -1,8 +1,8 @@
-import { type ILazyLoader } from '../../../src/tree-view/model/i-lazy-loader';
-import { TreeNode } from './tree-node';
-import { type TreeNodeType } from '../../../src/tree-view/model/tree-node-type';
-import { getRandomColor } from './create-simple-tree-mock';
-import { CheckboxState } from '../../../src/architecture/base/utilities/types';
+import { type ILazyLoader } from '../../../../src/tree-view/model/i-lazy-loader';
+import { TreeNode } from '../nodes/tree-node';
+import { type TreeNodeType } from '../../../../src/tree-view/model/tree-node-type';
+import { CheckboxState } from '../../../../src/architecture/base/utilities/types';
+import { getRandomColor } from '../nodes/create-simple-tree-mock';
 
 /**
  * Creates a mock tree structure for testing purposes.

@@ -1,4 +1,4 @@
-import { CheckboxState } from '../../../src/architecture/base/utilities/types';
+import { CheckboxState } from '../../../../src/architecture/base/utilities/types';
 import { TreeNode } from './tree-node';
 
 type SimpleMockArgs = {

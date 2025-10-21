@@ -1,5 +1,5 @@
 import { TreeNode } from './tree-node';
-import { type SubsetOfNode3D } from './types';
+import { type SubsetOfNode3D } from '../lazy-loaders/types';
 
 export class CadTreeNode extends TreeNode {
   // ==================================================

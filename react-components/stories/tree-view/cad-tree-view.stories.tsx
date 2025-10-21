@@ -8,8 +8,8 @@ import { Button } from '@cognite/cogs.js';
 
 import { AdvancedTreeView } from '../../src/tree-view';
 
-import { CadLazyLoader } from '#test-utils/tree-view/cad-lazy-loader';
-import { CogniteClientMock } from '#test-utils/tree-view/cognite-client-mock';
+import { CadLazyLoader } from '#test-utils/tree-view/lazy-loaders/cad-lazy-loader';
+import { ListNodesSdkMock } from '#test-utils/tree-view/list-nodes-stk/list-nodes-sdk-mock';
 import { onRecursiveToggleNode, onSingleSelectNode } from './tree-node-functions';
 import { scrollToFirst, scrollToLast, scrollToNode } from './advanced-tree-view-utils';
 
@@ -25,7 +25,7 @@ type Story = StoryObj<typeof AdvancedTreeView>;
 
 export default meta;
 
-const sdk = new CogniteClientMock();
+const sdk = new ListNodesSdkMock();
 const baseLoader = new CadLazyLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const base: Story = {
