@@ -19,7 +19,7 @@ import {
   isEnabled,
   isSelected,
   isToggled
-} from '../../../tests/tests-utilities/cogs/htmlTestUtils';
+} from '#test-utils/cogs/htmlTestUtils';
 
 describe(SegmentedButtons.name, () => {
   test('should render with default values', () => {
