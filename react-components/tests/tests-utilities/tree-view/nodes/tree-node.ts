@@ -1,15 +1,21 @@
-import { type Class, isInstanceOf } from '../../architecture/base/domainObjectsHelpers/Class';
-import { insertAt, remove } from '../../architecture/base/utilities/extensions/arrayUtils';
+import {
+  type Class,
+  isInstanceOf
+} from '../../../../src/architecture/base/domainObjectsHelpers/Class';
+import {
+  insertAt,
+  remove
+} from '../../../../src/architecture/base/utilities/extensions/arrayUtils';
 import {
   type IconColor,
   type IconName,
   CheckboxState,
   generateUniqueId,
   type UniqueId
-} from '../../architecture/base/utilities/types';
-import { type ILazyLoader } from './i-lazy-loader';
-import { type TreeNodeType } from './tree-node-type';
-import { type TreeNodeAction } from './types';
+} from '../../../../src/architecture/base/utilities/types';
+import { type ILazyLoader } from '../../../../src/tree-view/model/i-lazy-loader';
+import { type TreeNodeType } from '../../../../src/tree-view/model/tree-node-type';
+import { type TreeNodeAction } from '../../../../src/tree-view/model/types';
 
 /**
  * Represents a node in a tree structure.

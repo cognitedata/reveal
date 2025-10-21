@@ -1,4 +1,4 @@
-import { TreeNode } from '../../../../src/tree-view/model/tree-node';
+import { TreeNode } from './tree-node';
 import { type SubsetOfNode3D } from '../lazy-loaders/types';
 import { type UniqueId } from '../../../../src/architecture/base/utilities/types';
 
