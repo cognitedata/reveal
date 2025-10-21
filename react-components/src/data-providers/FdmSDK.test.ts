@@ -1,10 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ExternalIdsResultList, FdmSDK } from './FdmSDK';
-import { HttpResponse, type CogniteClient, type QueryRequest } from '@cognite/sdk';
+import { FdmSDK } from './FdmSDK';
+import { type CogniteClient, type QueryRequest } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
-import { beforeEach } from 'node:test';
-import { createAssetMock, createDMAssetMock } from '#test-utils/fixtures/assets';
-import { headers } from 'happy-dom/lib/PropertySymbol';
+import { createDMAssetMock } from '#test-utils/fixtures/assets';
 import { COGNITE_ASSET_SOURCE } from './core-dm-provider/dataModels';
 
 describe(FdmSDK.name, () => {
