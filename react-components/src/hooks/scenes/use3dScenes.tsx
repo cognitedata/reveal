@@ -221,7 +221,7 @@ async function populateSceneMapWithModels(
 
     const parsedModelId = tryGetModelIdFromExternalId(edge.endNode.externalId);
     if (parsedModelId === undefined) {
-      throw new Error(`Could not parse model Id from externalId ${edge.endNode.externalId}`);
+      return;
     }
 
     scenesMap[space][externalId].modelOptions.push({
