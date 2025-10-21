@@ -5,8 +5,8 @@ import {
   onRecursiveToggleNode,
   onSingleSelectNode,
   type TreeNodeType
-} from '../../advanced-tree-view';
-import { type CadLazyLoader } from '../../../stories/tree-view-cad/cad-lazy-loader';
+} from '../../src/advanced-tree-view';
+import { type CadLazyLoader } from './cad-lazy-loader';
 
 export const NodeTreeView = (loader: CadLazyLoader): ReactElement => {
   return (
