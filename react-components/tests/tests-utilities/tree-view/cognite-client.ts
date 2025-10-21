@@ -1,5 +1,4 @@
 import type { CogniteClient, List3DNodesQuery, Node3D } from '@cognite/sdk';
-
 import { type ICogniteClient } from './i-cognite-client';
 
 export class MyCogniteClient implements ICogniteClient {

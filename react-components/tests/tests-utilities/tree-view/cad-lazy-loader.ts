@@ -1,7 +1,5 @@
 import { type Node3D } from '@cognite/sdk';
-
-import { type TreeNodeType, type ILazyLoader } from '../../src/advanced-tree-view';
-
+import { type TreeNodeType, type ILazyLoader } from '../../../src/tree-view';
 import { CadTreeNode } from './cad-tree-node';
 import { type ICogniteClient } from './i-cognite-client';
 import { type SubsetOfNode3D, type RevisionId } from './types';

@@ -17,13 +17,13 @@ import {
   onSingleSelectNode,
   onSimpleToggleNode,
   onRecursiveToggleNode
-} from '../../src/advanced-tree-view/model/tree-node-functions';
-import { type TreeNodeType } from '../../src/advanced-tree-view/model/tree-node-type';
-import { type IconName } from '../../src/advanced-tree-view/model/types';
-import { AdvancedTreeView } from '../../src/advanced-tree-view/view/advanced-tree-view';
+} from './tree-node-functions';
+import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
+import { type IconName } from '../../src/tree-view/model/types';
+import { AdvancedTreeView } from '../../src/tree-view/view/advanced-tree-view';
 
-import { createSimpleTreeMock } from './create-simple-tree-mock';
-import { LazyLoaderMock } from './lazy-loader-mock';
+import { createSimpleTreeMock } from '#test-utils/tree-view/create-simple-tree-mock';
+import { LazyLoaderMock } from '#test-utils/tree-view/lazy-loader-mock';
 
 const meta: Meta<typeof AdvancedTreeView> = {
   component: AdvancedTreeView,

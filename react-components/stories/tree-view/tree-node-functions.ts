@@ -1,6 +1,6 @@
-import { TreeNode } from './tree-node';
-import { type TreeNodeType } from './tree-node-type';
-import { CheckboxState } from './types';
+import { TreeNode } from '#test-utils/tree-view/tree-node';
+import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
+import { CheckboxState } from '../../src/tree-view/model/types';
 
 /**
  * Handles the single selection of a tree node.

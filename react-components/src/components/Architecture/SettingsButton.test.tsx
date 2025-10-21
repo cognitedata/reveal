@@ -15,7 +15,7 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { TestSliderCommand } from '#test-utils/architecture/commands/TestSliderCommand';
 import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
 import { TestOptionsCommand } from '#test-utils/architecture/commands/TestOptionsCommand';
-import { getButtonsInContainer } from '../../../tests/tests-utilities/cogs/htmlTestUtils';
+import { getButtonsInContainer } from '#test-utils/cogs/htmlTestUtils';
 
 let wrapper: (props: PropsWithChildren) => ReactElement;
 

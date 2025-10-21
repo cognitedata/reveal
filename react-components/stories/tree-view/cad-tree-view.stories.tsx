@@ -6,17 +6,12 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '@cognite/cogs.js';
 
-import {
-  AdvancedTreeView,
-  onRecursiveToggleNode,
-  onSingleSelectNode,
-  scrollToFirst,
-  scrollToLast,
-  scrollToNode
-} from '../../src/advanced-tree-view';
+import { AdvancedTreeView } from '../../src/tree-view';
 
-import { CadLazyLoader } from './cad-lazy-loader';
-import { CogniteClientMock } from './cognite-client-mock';
+import { CadLazyLoader } from '#test-utils/tree-view/cad-lazy-loader';
+import { CogniteClientMock } from '#test-utils/tree-view/cognite-client-mock';
+import { onRecursiveToggleNode, onSingleSelectNode } from './tree-node-functions';
+import { scrollToFirst, scrollToLast, scrollToNode } from './advanced-tree-view-utils';
 
 // Note: This simulate the behavior of the real CadTreeNode. Can not use it here
 // because of not connection to CDF.

@@ -1,5 +1,5 @@
-import { TreeNode } from '../model/tree-node';
-import { type TreeNodeType } from '../model/tree-node-type';
+import { TreeNode } from '#test-utils/tree-view/tree-node';
+import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
 
 export function scrollToNode(container: HTMLElement | undefined, node: TreeNodeType): void {
   if (node instanceof TreeNode) {

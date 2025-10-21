@@ -26,7 +26,7 @@ import {
   type ILazyLoader,
   type TreeNodeAction,
   type TreeNodeType
-} from '../../../advanced-tree-view';
+} from '../../../tree-view';
 import { getRenderTarget } from './getRoot';
 import { translate } from '../utilities/translation/translateUtils';
 import { effect } from '@cognite/signals';

@@ -1,5 +1,4 @@
 import type { List3DNodesQuery, Node3D } from '@cognite/sdk';
-
 import { CadTreeNode } from './cad-tree-node';
 import { type ICogniteClient } from './i-cognite-client';
 

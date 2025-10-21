@@ -1,4 +1,4 @@
-import { TreeNode } from '../../src/advanced-tree-view';
+import { TreeNode } from './tree-node';
 import { type SubsetOfNode3D } from './types';
 
 export class CadTreeNode extends TreeNode {
