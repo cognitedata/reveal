@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.91.0",
+  "version": "0.92.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@cognite/cogs-lab": "9.0.0-alpha.160",
-    "@cognite/cogs.js": "^10.36.0",
+    "@cognite/cogs.js": "^10.51.0",
     "@cognite/signals": "^0.0.4",
     "@floating-ui/react": "^0.24.8",
     "@tanstack/react-query": "^5.84.1",

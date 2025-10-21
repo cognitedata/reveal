@@ -28,7 +28,7 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
     case PrimitiveType.HorizontalCircle:
       return 'Circle';
     case PrimitiveType.Diameter:
-      return 'CylinderArbitrary';
+      return 'MeasurementDiameter';
     case PrimitiveType.Cylinder:
       return 'CylinderArbitrary';
     case PrimitiveType.VerticalCylinder:

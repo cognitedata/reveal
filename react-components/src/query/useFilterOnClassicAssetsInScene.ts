@@ -55,7 +55,8 @@ export const useFilterOnClassicAssetsInScene = (
   } = useAllMappedEquipmentAssetMappings(cadAndPointCloudresources, sdk);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions =>
+      ('siteId' in resource || 'externalId' in resource) && !('modelId' in resource)
   );
 
   const siteIds = filtered360ImageResources.map((filteredResource) => {
