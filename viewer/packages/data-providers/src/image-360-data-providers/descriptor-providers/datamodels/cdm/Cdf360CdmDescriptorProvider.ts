@@ -22,6 +22,7 @@ import partition from 'lodash/partition';
 import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
 import { DMDataSourceType } from '../../../../DataSourceType';
 import { DMInstanceRef } from '@reveal/utilities';
+import { BatchCollectionLoader } from '../../../BatchCollectionLoader';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
 
@@ -44,16 +45,32 @@ type CoreDmFileResponse = {
 export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<DMDataSourceType> {
   private readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
+  private readonly _batchLoader: BatchCollectionLoader | undefined;
+  private readonly _useBatching: boolean;
 
-  constructor(sdk: CogniteClient) {
+  constructor(sdk: CogniteClient, options?: { useBatching?: boolean; batchLoader?: BatchCollectionLoader }) {
     this._cogniteSdk = sdk;
     this._dmsSdk = new DataModelsSdk(sdk);
+    this._useBatching = options?.useBatching ?? true; // Enable batching by default
+
+    if (this._useBatching) {
+      this._batchLoader = options?.batchLoader ?? new BatchCollectionLoader(this._dmsSdk, sdk);
+    }
   }
 
   public async get360ImageDescriptors(
     collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet<DMDataSourceType>[]> {
+    // Use batch loader if enabled
+    if (this._useBatching && this._batchLoader) {
+      return this._batchLoader.getCollectionDescriptors({
+        externalId: collectionIdentifier.image360CollectionExternalId,
+        space: collectionIdentifier.space
+      });
+    }
+
+    // Fall back to individual query (for backward compatibility or when batching is disabled)
     const { image_collection, images } = await this.queryCollection(collectionIdentifier);
 
     if (image_collection.length === 0) {
@@ -146,13 +163,16 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
       imageProp.bottom as DirectRelationReference
     ]);
 
-    const externalIdBatches = chunk(chunk(cubeMapFileIds, 1000), 15);
+    // Batch file requests - 1000 per batch as per CDF API limits
+    const batchSize = 1000;
+    const batches = chunk(cubeMapFileIds, batchSize);
 
     const fileInfos: FileInfo[] = [];
-    for (const parallelBatches of externalIdBatches) {
-      const batchFileInfos = (
-        await Promise.all(parallelBatches.map(batch => getCdmFiles(this._cogniteSdk, batch)))
-      ).flatMap(p => p);
+
+    // Process batches sequentially to avoid overwhelming the API
+    // Each batch is a single API call, so we don't need nested chunking
+    for (const batch of batches) {
+      const batchFileInfos = await getCdmFiles(this._cogniteSdk, batch);
       fileInfos.push(...batchFileInfos);
     }
 
@@ -260,9 +280,17 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
 
 async function getCdmFiles(sdk: CogniteClient, identifiers: DirectRelationReference[]) {
   const url = `${sdk.getBaseUrl()}/api/v1/projects/${sdk.project}/files/byids`;
-  const res = (await sdk.post(url, {
-    data: { items: identifiers.map(id => ({ instanceId: id })) }
-  })) as CoreDmFileResponse;
 
-  return res.data.items;
+  try {
+    // Note: This is already called sequentially in batches by getFileDescriptors,
+    // so no additional throttling needed here
+    const res = (await sdk.post(url, {
+      data: { items: identifiers.map(id => ({ instanceId: id })) }
+    })) as CoreDmFileResponse;
+
+    return res.data.items;
+  } catch (error: any) {
+    // Add more context to the error
+    throw new Error(`Failed to fetch CDM files: ${error.message || error}`);
+  }
 }
