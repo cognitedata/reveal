@@ -1,11 +1,5 @@
 import { type TreeNodeType } from './tree-node-type';
 
-export enum CheckboxState {
-  All,
-  Some,
-  None
-}
-
 export type TreeNodeAction = (node: TreeNodeType) => void;
 
 /**
