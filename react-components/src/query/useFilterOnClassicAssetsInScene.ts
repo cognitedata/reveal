@@ -63,10 +63,10 @@ export const useFilterOnClassicAssetsInScene = (
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
-  const { data: image360AssetMappings, isLoading: isLoading360AssetMappings } =
+  const { data: image360AssetMappings, isInitialLoading: isLoading360AssetMappings } =
     useAllAssetsMapped360Annotations(sdk, siteIds);
 
-  const { data: allPointCloudAssets, isLoading: isLoadingAllPointCloudAssets } =
+  const { data: allPointCloudAssets, isInitialLoading: isLoadingAllPointCloudAssets } =
     useAllAssetsMappedPointCloudAnnotations(sdk, cadAndPointCloudresources);
 
   useEffect(() => {

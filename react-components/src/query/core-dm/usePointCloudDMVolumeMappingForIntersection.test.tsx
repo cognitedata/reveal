@@ -163,7 +163,7 @@ describe(usePointCloudDMVolumeMappingForIntersection.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     const expectedAsset = volumeResults[0].asset;
@@ -186,7 +186,7 @@ describe(usePointCloudDMVolumeMappingForIntersection.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(mockInspectInstances).toHaveBeenCalledTimes(1);
@@ -242,7 +242,7 @@ describe(usePointCloudDMVolumeMappingForIntersection.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     const expectedAsset = volumeResults[0].asset;
