@@ -10,10 +10,7 @@ import {
 } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import {
-  type DMModelIdentifier,
-  type GroundPlane
-} from '../../components/SceneContainer/sceneTypes';
+import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
 import {
   SCENE_QUERY_LIMIT,
