@@ -17,12 +17,11 @@ import { DeleteDomainObjectCommand } from '../concreteCommands/general/DeleteDom
 import { CopyToClipboardCommand } from '../concreteCommands/general/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
-import { type IconName } from '../../base/utilities/types';
+import { type IconColor, type IconName } from '../../base/utilities/types';
 import { CycleLengthUnitsCommand } from '../concreteCommands/units/CycleLengthUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import {
   CheckboxState,
-  type IconColor,
   type ILazyLoader,
   type TreeNodeAction,
   type TreeNodeType

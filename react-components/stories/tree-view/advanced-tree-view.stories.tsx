@@ -19,7 +19,7 @@ import {
   onRecursiveToggleNode
 } from './tree-node-functions';
 import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
-import { type IconName } from '../../src/tree-view/model/types';
+import { type IconName } from '../../src/architecture/base/utilities/types';
 import { AdvancedTreeView } from '../../src/tree-view/view/advanced-tree-view';
 
 import { createSimpleTreeMock } from '#test-utils/tree-view/create-simple-tree-mock';

@@ -3,15 +3,14 @@ import {
   isInstanceOf
 } from '../../../src/architecture/base/domainObjectsHelpers/Class';
 import { insertAt, remove } from '../../../src/architecture/base/utilities/extensions/arrayUtils';
-import { generateUniqueId } from '../../../src/architecture/base/utilities/types';
-import { type ILazyLoader } from '../../../src/tree-view/model/i-lazy-loader';
-import { type TreeNodeType } from '../../../src/tree-view/model/tree-node-type';
 import {
-  CheckboxState,
-  type TreeNodeAction,
+  generateUniqueId,
   type IconColor,
   type IconName
-} from '../../../src/tree-view/model/types';
+} from '../../../src/architecture/base/utilities/types';
+import { type ILazyLoader } from '../../../src/tree-view/model/i-lazy-loader';
+import { type TreeNodeType } from '../../../src/tree-view/model/tree-node-type';
+import { CheckboxState, type TreeNodeAction } from '../../../src/tree-view/model/types';
 
 /**
  * Represents a node in a tree structure.

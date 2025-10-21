@@ -2,8 +2,9 @@ import { type IconProps } from '@cognite/cogs.js';
 
 import { type ILazyLoader } from '../model/i-lazy-loader';
 import { type TreeNodeType } from '../model/tree-node-type';
-import { type IconName, type TreeNodeAction } from '../model/types';
+import { type TreeNodeAction } from '../model/types';
 import { type FC } from 'react';
+import { type IconName } from '../../architecture/base/utilities/types';
 
 export type AdvancedTreeViewProps = {
   // Appearance
