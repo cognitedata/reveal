@@ -1,5 +1,9 @@
-import { type Class, isInstanceOf } from '../../../src/tree-view/utilities/class';
-
+import {
+  type Class,
+  isInstanceOf
+} from '../../../src/architecture/base/domainObjectsHelpers/Class';
+import { insertAt, remove } from '../../../src/architecture/base/utilities/extensions/arrayUtils';
+import { generateUniqueId } from '../../../src/architecture/base/utilities/types';
 import { type ILazyLoader } from '../../../src/tree-view/model/i-lazy-loader';
 import { type TreeNodeType } from '../../../src/tree-view/model/tree-node-type';
 import {
@@ -44,7 +48,7 @@ export class TreeNode implements TreeNodeType {
 
   public get id(): string {
     if (this._id === undefined) {
-      this._id = TreeNode.generateId();
+      this._id = generateUniqueId();
     }
     return this._id;
   }
@@ -387,7 +391,7 @@ export class TreeNode implements TreeNodeType {
     if (this._children === undefined) {
       this._children = [];
     }
-    insert(this._children, index, child);
+    insertAt(this._children, index, child);
     child._parent = this;
     this.update();
   }
@@ -475,30 +479,4 @@ export class TreeNode implements TreeNodeType {
       listener(this);
     }
   }
-
-  // ==================================================
-  // STATIC METHODS:
-  // ==================================================
-
-  public static generateId(): string {
-    return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
-  }
-}
-
-function insert<T>(array: T[], index: number, element: T): void {
-  array.splice(index, 0, element);
-}
-
-function removeAt<T>(array: T[], index: number): void {
-  array.splice(index, 1);
-}
-
-function remove<T>(array: T[], element: T): boolean {
-  // Return true if changed
-  const index = array.indexOf(element);
-  if (index < 0) {
-    return false;
-  }
-  removeAt(array, index);
-  return true;
 }
