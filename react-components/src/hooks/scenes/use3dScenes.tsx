@@ -36,10 +36,8 @@ import {
 
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { createGetScenesQuery, type SceneCursors } from './allScenesQuery';
-import { Use3dScenesContext, Use3dScenesDependencies } from './use3dScenes.context';
+import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
-import { type RevisionId } from '../../components/CacheProvider/types';
-import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
   const { useSDK, createFdmSdk, sceneRelatedDataLimit, getRevisionExternalIdAndSpace } =
