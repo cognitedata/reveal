@@ -66,7 +66,6 @@ describe(use3dScenes.name, () => {
   beforeEach(() => {
     mockDependenciesWithLowLimit.useSDK.mockReturnValue(sdkMock);
     mockDependenciesWithLowLimit.createFdmSdk.mockReturnValue(mockFdmSdkInstance);
-    mockQueryNodesAndEdges.mockClear();
     queryClient.clear();
   });
 
@@ -301,6 +300,54 @@ describe(use3dScenes.name, () => {
   });
 
   test('should process model edges and create 3d model options with correct transform matrix', async () => {
+    setupMockResponse({
+      scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
+      sceneModels: [createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)]
+    });
+
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data[TEST_SPACE]['scene-with-model'];
+
+    expect(scene.modelOptions).toHaveLength(1);
+    expect(scene.modelOptions[0]).toEqual({
+      modelId: 123,
+      revisionId: 1,
+      transform: expect.objectContaining({
+        elements: expect.arrayContaining(EXPECTED_MATRIX_WITH_TRANSLATION)
+      })
+    });
+  });
+
+  test('should process model edges with DM models', async () => {
+    setupMockResponse({
+      scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
+      sceneModels: [createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)]
+    });
+
+    const revisionExternalId = 'revision-external-id';
+    const revisionSpace = 'revision-space';
+
+    mockDependencies.getRevisionExternalIdAndSpace.mockResolvedValue({
+      revisionExternalId,
+      revisionSpace
+    });
+
+    const { result } = renderHook(() => use3dScenes(), { wrapper });
+    const data = await waitForSuccessAndGetData(result);
+    const scene = data[TEST_SPACE]['scene-with-model'];
+
+    expect(scene.modelOptions).toHaveLength(1);
+    expect(scene.modelOptions[0]).toEqual({
+      revisionExternalId,
+      revisionSpace,
+      transform: expect.objectContaining({
+        elements: expect.arrayContaining(EXPECTED_MATRIX_WITH_TRANSLATION)
+      })
+    });
+  });
+
+  test('should process DM model edges and create 3d model options with correct transform matrix', async () => {
     setupMockResponse({
       scenes: [createSceneNode('scene-with-model', TEST_SPACE)],
       sceneModels: [createModelEdge('scene-with-model', TEST_SPACE, 'model_123', 'models', 1)]

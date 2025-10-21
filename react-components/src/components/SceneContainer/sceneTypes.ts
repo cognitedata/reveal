@@ -38,12 +38,12 @@ export type ClassicModelIdentifier = {
   revisionId: number;
 };
 
-export type DMModelIdenfitier = {
+export type DMModelIdentifier = {
   revisionExternalId: string;
   revisionSpace: string;
 };
 
-export type ModelIdentifier = ClassicModelIdentifier | DMModelIdenfitier;
+export type ModelIdentifier = ClassicModelIdentifier | DMModelIdentifier;
 
 export type CadOrPointCloudModel = {
   modelIdentifier: ModelIdentifier;
