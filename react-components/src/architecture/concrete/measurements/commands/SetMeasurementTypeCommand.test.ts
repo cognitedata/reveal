@@ -6,6 +6,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { MEASURE_PRIMITIVE_TYPES, SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
 import { MeasurementTool } from '../MeasurementTool';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 
 describe(SetMeasurementTypeCommand.name, () => {
   let renderTarget: RevealRenderTarget;
@@ -25,6 +26,7 @@ describe(SetMeasurementTypeCommand.name, () => {
       const command = getDefaultCommand(newCommand, renderTarget);
       expect(isEmpty(command.tooltip)).toBe(false);
       expect(command.icon).not.toBe('');
+      expect(command.icon).toBe(getIconByPrimitiveType(command.primitiveType));
     }
   });
 
