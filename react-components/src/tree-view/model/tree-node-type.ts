@@ -1,8 +1,14 @@
 import { type ILazyLoader } from './i-lazy-loader';
-import { type TreeNodeAction, type CheckboxState, type IconColor, type IconName } from './types';
+import { type TreeNodeAction } from './types';
+import {
+  type IconColor,
+  type IconName,
+  type CheckboxState,
+  type UniqueId
+} from '../../architecture/base/utilities/types';
 
 export type TreeNodeType = {
-  id: string; // Returns the unique id of the node
+  id: UniqueId; // Returns the unique id of the node
 
   // Required Appearance
   label: string; // Returns the label

@@ -2,7 +2,7 @@ import { useState, type ReactElement } from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-import { getChildrenAsArray } from '../model/get-children-as-array';
+import { getChildrenAsArray } from './get-children-as-array';
 
 import { AdvancedTreeViewNode } from './advanced-tree-view-node';
 import { type AdvancedTreeViewProps } from './advanced-tree-view-props';

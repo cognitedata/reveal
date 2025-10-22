@@ -13,6 +13,13 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { SegmentedButtons } from './SegmentedButtons';
 import userEvent from '@testing-library/user-event';
+import {
+  getButtonsInContainer,
+  getLabel,
+  isEnabled,
+  isSelected,
+  isToggled
+} from '#test-utils/cogs/htmlTestUtils';
 
 describe(SegmentedButtons.name, () => {
   let command: MockSegmentedCommand;
@@ -26,48 +33,66 @@ describe(SegmentedButtons.name, () => {
   test('should render with default values', () => {
     assert(command.children !== undefined);
 
-    expect(container.innerHTML).not.toBe('');
+    // Check button
+    const buttons = getButtonsInContainer(container);
+    expect(buttons.length).toBe(2);
 
     const allElements = container.querySelectorAll('*');
 
-    expect(allElements.length).toBeGreaterThan(0);
+    for (let i = 0; i < buttons.length; ++i) {
+      const button = buttons[i];
+      const option = command.children[i];
+      expect(isEnabled(button)).toBe(true);
+      expect(getLabel(button)).toBe(option.label);
+      expect(isSelected(button)).toBe(option.isChecked);
+      expect(isToggled(button)).toBe(false);
+    }
   });
 
   test('should change from visible to invisible', () => {
-    const beforeButtons = container.querySelectorAll('button');
+    const command = new MockSegmentedCommand();
+    const { container } = renderSegmentedButtons(command);
+
+    const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
 
     act(() => {
       command.isVisible = false;
     });
-    const afterButtons = container.querySelectorAll('button');
+    const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(0);
   });
 
   test('should change from enabled to disabled', () => {
-    const beforeButtons = container.querySelectorAll('button');
+    const command = new MockSegmentedCommand();
+    const { container } = renderSegmentedButtons(command);
+
+    const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
     for (const button of beforeButtons) {
-      expect(button.getAttribute('aria-disabled')).toBe('false');
+      expect(isEnabled(button)).toBe(true);
     }
 
     act(() => {
       command.isEnabled = false;
     });
 
-    const afterButtons = container.querySelectorAll('button');
+    const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(2);
     for (const button of afterButtons) {
-      expect(button.getAttribute('aria-disabled')).toBe('true');
+      expect(isEnabled(button)).toBe(false);
     }
   });
 
   test('should select the second option', async () => {
+    const command = new MockSegmentedCommand();
+    const { container } = renderSegmentedButtons(command);
+
     assert(command.children !== undefined);
-    const beforeButtons = container.querySelectorAll('button');
+    const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
-    expect(beforeButtons[0].getAttribute('aria-selected')).toBe('true');
-    expect(beforeButtons[1].getAttribute('aria-selected')).toBe('false');
+    expect(isSelected(beforeButtons[0])).toBe(true);
+    expect(isSelected(beforeButtons[1])).toBe(false);
 
     expect(command.children[0].isChecked).toBe(true);
     expect(command.children[1].isChecked).toBe(false);
@@ -76,10 +101,10 @@ describe(SegmentedButtons.name, () => {
       await userEvent.click(beforeButtons[1]);
     });
 
-    const afterButtons = container.querySelectorAll('button');
+    const afterButtons = getButtonsInContainer(container);
     expect(afterButtons.length).toBe(2);
-    expect(afterButtons[0].getAttribute('aria-selected')).toBe('false');
-    expect(afterButtons[1].getAttribute('aria-selected')).toBe('true');
+    expect(isSelected(afterButtons[0])).toBe(false);
+    expect(isSelected(afterButtons[1])).toBe(true);
 
     expect(command.children[0].isChecked).toBe(false);
     expect(command.children[1].isChecked).toBe(true);

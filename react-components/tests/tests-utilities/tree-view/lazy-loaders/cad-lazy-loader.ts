@@ -1,13 +1,11 @@
 import { type Node3D } from '@cognite/sdk';
+import { type TreeNodeType, type ILazyLoader } from '../../../../src/tree-view';
+import { CadTreeNode } from '../nodes/cad-tree-node';
+import { type IListNodesSdk } from '../list-nodes-stk/i-list-nodes-sdk';
+import { type SubsetOfNode3D, type RevisionId } from './types';
 
-import { type TreeNodeType, type ILazyLoader } from '..';
-
-import { CadTreeNode } from './cad-tree-node';
-import { type ICogniteClient } from './i-cognite-client';
-import { type RevisionId, type SubsetOfNode3D } from './types';
-
-export class CadNodesLoader implements ILazyLoader {
-  private readonly _sdk: ICogniteClient;
+export class CadLazyLoader implements ILazyLoader {
+  private readonly _sdk: IListNodesSdk;
   private readonly _revisionId: RevisionId;
   private _root: CadTreeNode | undefined;
   private readonly _listNodesLimit: number;
@@ -16,7 +14,7 @@ export class CadNodesLoader implements ILazyLoader {
     return this._root;
   }
 
-  constructor(sdk: ICogniteClient, revisionId: RevisionId, listNodesLimit = 100) {
+  constructor(sdk: IListNodesSdk, revisionId: RevisionId, listNodesLimit = 100) {
     this._sdk = sdk;
     this._revisionId = revisionId;
     this._listNodesLimit = listNodesLimit;

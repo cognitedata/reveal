@@ -14,7 +14,11 @@ import { TestSectionCommand } from '#test-utils/architecture/commands/TestSectio
 import { TestSliderCommand } from '#test-utils/architecture/commands/TestSliderCommand';
 import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
 import { TestOptionsCommand } from '#test-utils/architecture/commands/TestOptionsCommand';
+<<<<<<< HEAD
 import { TestGroupCommand } from '#test-utils/architecture/commands/TestGroupCommand';
+=======
+import { getButtonsInContainer } from '#test-utils/cogs/htmlTestUtils';
+>>>>>>> master
 
 let wrapper: (props: PropsWithChildren) => ReactElement;
 
@@ -119,7 +123,7 @@ describe(SettingsButton.name, () => {
 
     const labelComponent = await screen.findByText(label);
 
-    const buttonElements = container.querySelectorAll('button');
+    const buttonElements = getButtonsInContainer(container);
     const selectButtonElement = [...buttonElements].find((element) =>
       element.classList.contains('cogs-lab-select-toggle')
     );

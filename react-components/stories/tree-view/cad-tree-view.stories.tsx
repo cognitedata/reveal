@@ -6,17 +6,12 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '@cognite/cogs.js';
 
-import {
-  AdvancedTreeView,
-  onRecursiveToggleNode,
-  onSingleSelectNode,
-  scrollToFirst,
-  scrollToLast,
-  scrollToNode
-} from '..';
+import { AdvancedTreeView } from '../../src/tree-view';
 
-import { CadNodesLoader } from './cad-nodes-loader';
-import { CogniteClientMock } from './cognite-client-mock';
+import { CadLazyLoader } from '#test-utils/tree-view/lazy-loaders/cad-lazy-loader';
+import { ListNodesSdkMock } from '#test-utils/tree-view/list-nodes-stk/list-nodes-sdk-mock';
+import { onRecursiveToggleNode, onSingleSelectNode } from './tree-node-functions';
+import { scrollToFirst, scrollToLast, scrollToNode } from './advanced-tree-view-utils';
 
 // Note: This simulate the behavior of the real CadTreeNode. Can not use it here
 // because of not connection to CDF.
@@ -30,8 +25,8 @@ type Story = StoryObj<typeof AdvancedTreeView>;
 
 export default meta;
 
-const sdk = new CogniteClientMock();
-const baseLoader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
+const sdk = new ListNodesSdkMock();
+const baseLoader = new CadLazyLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const base: Story = {
   name: 'base',
@@ -48,7 +43,7 @@ export const base: Story = {
   }
 };
 
-const loader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
+const loader = new CadLazyLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const Main: Story = {
   name: 'main',

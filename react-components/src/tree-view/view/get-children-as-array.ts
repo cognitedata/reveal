@@ -1,5 +1,5 @@
-import { type ILazyLoader } from './i-lazy-loader';
-import { type TreeNodeType } from './tree-node-type';
+import { type ILazyLoader } from '../model/i-lazy-loader';
+import { type TreeNodeType } from '../model/tree-node-type';
 
 export function getChildrenAsArray(
   node: TreeNodeType,

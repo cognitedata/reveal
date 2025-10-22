@@ -1,11 +1,10 @@
 import type { List3DNodesQuery, Node3D } from '@cognite/sdk';
-
-import { CadTreeNode } from './cad-tree-node';
-import { type ICogniteClient } from './i-cognite-client';
+import { CadTreeNode } from '../nodes/cad-tree-node';
+import { type IListNodesSdk } from './i-list-nodes-sdk';
 
 const SLEEP_DURATION = 200;
 
-export class CogniteClientMock implements ICogniteClient {
+export class ListNodesSdkMock implements IListNodesSdk {
   public async list3DNodes(
     _modelId: number,
     _revisionId: number,

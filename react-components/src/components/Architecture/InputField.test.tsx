@@ -10,6 +10,7 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 
 import userEvent from '@testing-library/user-event';
 import assert from 'assert';
+import { getButtonsInContainer } from '#test-utils/cogs/htmlTestUtils';
 
 describe(InputField.name, () => {
   let renderTargetMock: RevealRenderTarget;
@@ -30,7 +31,7 @@ describe(InputField.name, () => {
     const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const inputFieldElement = container.querySelector('textarea');
-    const buttonElements = container.querySelectorAll('button');
+    const buttonElements = getButtonsInContainer(container);
 
     expect(inputFieldElement).not.toBeNull();
     expect(inputFieldElement?.value).toBe('');
@@ -56,7 +57,7 @@ describe(InputField.name, () => {
     const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const textArea = container.querySelector('textarea');
-    const [cancelButton, postButton] = container.querySelectorAll('button');
+    const [cancelButton, postButton] = getButtonsInContainer(container);
 
     expect(textArea?.placeholder).toBe(placeholder);
     expect(postButton.textContent).toBe(postButtonLabel);

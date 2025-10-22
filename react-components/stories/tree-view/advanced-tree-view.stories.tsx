@@ -17,13 +17,13 @@ import {
   onSingleSelectNode,
   onSimpleToggleNode,
   onRecursiveToggleNode
-} from '../model/tree-node-functions';
-import { type TreeNodeType } from '../model/tree-node-type';
-import { type IconName } from '../model/types';
-import { AdvancedTreeView } from '../view/advanced-tree-view';
+} from './tree-node-functions';
+import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
+import { type IconName } from '../../src/architecture/base/utilities/types';
+import { AdvancedTreeView } from '../../src/tree-view/view/advanced-tree-view';
 
-import { createSimpleMock } from './create-simple-mock';
-import { LazyLoaderMock } from './lazy-loader-mock';
+import { createSimpleTreeMock } from '#test-utils/tree-view/nodes/create-simple-tree-mock';
+import { LazyLoaderMock } from '#test-utils/tree-view/lazy-loaders/lazy-loader-mock';
 
 const meta: Meta<typeof AdvancedTreeView> = {
   component: AdvancedTreeView,
@@ -34,19 +34,19 @@ export default meta;
 
 type Story = StoryObj<typeof AdvancedTreeView>;
 
-const baseRoot = createSimpleMock({});
+const baseRoot = createSimpleTreeMock({});
 export const base: Story = {
   name: 'base',
   render: () => <AdvancedTreeView root={baseRoot} />
 };
 
-const rootWithHiddenRoot = createSimpleMock({});
+const rootWithHiddenRoot = createSimpleTreeMock({});
 export const HideRoot: Story = {
   name: 'hide root',
   render: () => <AdvancedTreeView root={rootWithHiddenRoot} showRoot={false} />
 };
 
-const rootWithMaxLabelLength = createSimpleMock({});
+const rootWithMaxLabelLength = createSimpleTreeMock({});
 for (const node of rootWithMaxLabelLength.getThisAndDescendants()) {
   node.label += ' is a very nice place to be';
 }
@@ -56,25 +56,25 @@ export const MaxLabelLengthRoot: Story = {
   render: () => <AdvancedTreeView root={rootWithMaxLabelLength} maxLabelLength={10} />
 };
 
-const rootWithSingleSelect = createSimpleMock({});
+const rootWithSingleSelect = createSimpleTreeMock({});
 export const SingleSelect: Story = {
   name: 'single selection',
   render: () => <AdvancedTreeView root={rootWithSingleSelect} onSelectNode={onSingleSelectNode} />
 };
 
-const rootWithMultiSelect = createSimpleMock({});
+const rootWithMultiSelect = createSimpleTreeMock({});
 export const MultiSelect: Story = {
   name: 'multi selection',
   render: () => <AdvancedTreeView root={rootWithMultiSelect} onSelectNode={onMultiSelectNode} />
 };
 
-const rootWithSimpleCB = createSimpleMock({ hasCheckboxes: true });
+const rootWithSimpleCB = createSimpleTreeMock({ hasCheckboxes: true });
 export const SimpleCheckboxes: Story = {
   name: 'simple checkboxes',
   render: () => <AdvancedTreeView root={rootWithSimpleCB} onToggleNode={onSimpleToggleNode} />
 };
 
-const rootWithDisabledCB = createSimpleMock({
+const rootWithDisabledCB = createSimpleTreeMock({
   hasCheckboxes: true,
   hasDisabledCheckboxes: true
 });
@@ -83,19 +83,19 @@ export const SimpleCheckboxesWithSomeDisabled: Story = {
   render: () => <AdvancedTreeView root={rootWithDisabledCB} onToggleNode={onSimpleToggleNode} />
 };
 
-const rootWithRecursiveCB = createSimpleMock({ hasCheckboxes: true });
+const rootWithRecursiveCB = createSimpleTreeMock({ hasCheckboxes: true });
 export const RecursiveCheckboxes: Story = {
   name: 'recursive checkboxes',
   render: () => <AdvancedTreeView root={rootWithRecursiveCB} onToggleNode={onRecursiveToggleNode} />
 };
 
-const rootWithIcon = createSimpleMock({});
+const rootWithIcon = createSimpleTreeMock({});
 export const WithIcons: Story = {
   name: 'icons',
   render: () => <AdvancedTreeView root={rootWithIcon} getIconFromIconName={getIconFromIconName} />
 };
 
-const rootWithColorIcon = createSimpleMock({ hasColors: true });
+const rootWithColorIcon = createSimpleTreeMock({ hasColors: true });
 export const WithColorIcons: Story = {
   name: 'icons and colors',
   render: () => (
@@ -103,7 +103,7 @@ export const WithColorIcons: Story = {
   )
 };
 
-const rootWithColorIconBold = createSimpleMock({
+const rootWithColorIconBold = createSimpleTreeMock({
   hasColors: true,
   hasBoldLabels: true
 });
@@ -114,7 +114,7 @@ export const WithBoldLabels: Story = {
   )
 };
 
-const infoRoot = createSimpleMock({});
+const infoRoot = createSimpleTreeMock({});
 export const WithInfo: Story = {
   name: 'info',
   render: () => <AdvancedTreeView root={infoRoot} onClickInfo={onClickInfo} />
