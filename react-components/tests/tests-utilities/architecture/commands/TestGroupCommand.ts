@@ -1,4 +1,8 @@
-import { BaseCommand, GroupCommand, type TranslationInput } from '../../../../src/architecture';
+import {
+  type BaseCommand,
+  GroupCommand,
+  type TranslationInput
+} from '../../../../src/architecture';
 import { TestButtonCommand } from './TestButtonCommand';
 import { TestSectionCommand } from './TestSectionCommand';
 
