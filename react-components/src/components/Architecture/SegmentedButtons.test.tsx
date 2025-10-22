@@ -37,8 +37,6 @@ describe(SegmentedButtons.name, () => {
     const buttons = getButtonsInContainer(container);
     expect(buttons.length).toBe(2);
 
-    const allElements = container.querySelectorAll('*');
-
     for (let i = 0; i < buttons.length; ++i) {
       const button = buttons[i];
       const option = command.children[i];
