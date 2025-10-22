@@ -34,8 +34,9 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   public add<T extends BaseCommand>(command: T): T {
     if (this._children.find((c) => c.equals(command)) !== undefined) {
       console.error('Duplicated command given: ' + command.name);
+    } else {
+      this._children.push(command);
     }
-    this._children.push(command);
     return command;
   }
 

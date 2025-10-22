@@ -1,9 +1,9 @@
-import { GroupCommand, type TranslationInput } from '../../../../src/architecture';
+import { BaseCommand, GroupCommand, type TranslationInput } from '../../../../src/architecture';
 import { TestButtonCommand } from './TestButtonCommand';
 import { TestSectionCommand } from './TestSectionCommand';
 
 export class TestGroupCommand extends GroupCommand {
-  constructor(title: string, commands?: any[]) {
+  constructor(title: string, commands?: BaseCommand[]) {
     const defaultCommands = commands ?? [
       new TestButtonCommand({
         onClick: () => {}
