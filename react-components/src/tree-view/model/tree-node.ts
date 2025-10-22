@@ -431,20 +431,20 @@ export class TreeNode implements TreeNodeType {
   }
 
   public async loadSiblings(loader: ILazyLoader): Promise<void> {
+    const parent = this.parent;
+    if (parent === undefined || parent._children === undefined) {
+      return;
+    }
     this.isLoadingSiblings = true;
     const siblings = await loader.loadSiblings(this);
     this.isLoadingSiblings = false;
     if (siblings === undefined || siblings.length === 0) {
       return;
     }
-    const parent = this.parent;
-    if (parent === undefined || parent._children === undefined) {
-      return;
-    }
     const children = parent._children;
     let index = children.indexOf(this);
     if (index === undefined || index < 0) {
-      return;
+      throw new Error('Illegal parent-child relationship');
     }
     for (const child of siblings) {
       if (!(child instanceof TreeNode)) {

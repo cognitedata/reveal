@@ -16,6 +16,23 @@ describe(TreeNode.name, () => {
     root.addTreeNodeListener(rootListener);
   });
 
+  describe('Event listener', () => {
+    test('Should add and remove event listener', () => {
+      const listener = vi.fn<TreeNodeAction>();
+
+      // Add the event listener, set the label and check that the listener was called
+      root.addTreeNodeListener(listener);
+      root.label = 'Testing';
+      expect(listener).toHaveBeenCalledOnce();
+
+      // Remove the event listener, set the label and check that the listener was not called
+      listener.mockClear();
+      root.removeTreeNodeListener(listener);
+      root.label = 'Testing more';
+      expect(listener).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Setters and getters', () => {
     test('should get id', () => {
       expect(root.id.length).toBeGreaterThan(10);
@@ -340,6 +357,17 @@ describe(TreeNode.name, () => {
       // Notified: isLoadingChildren (on/off) needLoadChildren(on) = 3
       expect(rootListener).toHaveBeenCalledTimes(3);
       expect(rootListener).toHaveBeenLastCalledWith(root);
+    });
+
+    test('should not lazy load siblings on root', async () => {
+      root.needLoadSiblings = true;
+      const lazyLoader = new LazyLoaderMock();
+      rootListener.mockClear();
+      await root.loadSiblings(lazyLoader);
+
+      // Check that nothings has changed
+      expect(rootListener).toHaveBeenCalledTimes(0);
+      expect(lazyLoader.onNodeLoaded).toHaveBeenCalledTimes(0);
     });
 
     test('should lazy load siblings', async () => {
