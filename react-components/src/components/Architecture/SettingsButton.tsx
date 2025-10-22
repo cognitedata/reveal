@@ -168,7 +168,6 @@ function QualityWarningBannerComponent({
     <StyledQualityWarningContainer>
       <WarningFilledIcon />
       <Body strong size="x-small">
-        {/* TODO: add translation  */}
         High details might overload CPU/GPU/RAM
       </Body>
     </StyledQualityWarningContainer>
@@ -246,7 +245,6 @@ function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode
 
   return (
     <SliderDiv>
-      {/* TODO: add translation */}
       <label>{label}</label>
       <StyledSlider
         disabled={!isEnabled}
@@ -321,7 +319,7 @@ const StyledToggleContainer = styled(Flex).attrs({
 
 const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
   max-height: 700px;
-  min-width: 340px;
+  min-width: 350px;
   max-width: 400px;
   overflow-x: hidden;
   overflow-y: auto;

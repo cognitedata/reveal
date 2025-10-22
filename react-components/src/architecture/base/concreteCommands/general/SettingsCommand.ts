@@ -64,12 +64,11 @@ export class SettingsCommand extends BaseSettingsCommand {
       images360GroupCommands.push(new Set360IconsSectionCommand());
       images360GroupCommands.push(
         new RowCommand({
-          commands: [new Set360IconsOccludedVisibleCommand(), new Set360IconsVisibleCommand()]
+          commands: [new Set360IconsVisibleCommand(), new Set360IconsOccludedVisibleCommand()]
         })
       );
     }
 
-    //TODO: translate all titles
     this.add(new GroupCommand({ title: 'General', commands: generalGroupCommands }));
     this.add(new GroupCommand({ title: 'CAD', commands: cadGroupCommands }));
     this.add(new GroupCommand({ title: 'Point cloud', commands: pointCloudGroupCommands }));

@@ -8,7 +8,7 @@ export type GroupCommandConfiguration = {
 
 /**
  * Represents a group of commands.
- * This is used to group commands together and display them as a single unit inside the accordion.
+ * This is used to group commands together and display them as a single unit.
  */
 export class GroupCommand extends RenderTargetCommand {
   // ==================================================
@@ -49,11 +49,6 @@ export class GroupCommand extends RenderTargetCommand {
       yield child;
     }
   }
-
-  // TODO: add translation
-  // public override get tooltip(): TranslationInput {
-  //   return { key: '' };
-  // }
 
   // ==================================================
   // GETTERS
