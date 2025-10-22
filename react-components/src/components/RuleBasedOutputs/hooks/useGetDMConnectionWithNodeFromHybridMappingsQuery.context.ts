@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useClassicCadAssetMappingCache } from '../../CacheProvider/CacheProvider';
 import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 
@@ -13,7 +13,7 @@ export const defaultUseGetDMConnectionWithNodeFromHybridMappingsQuery: UseGetDMC
     useFdmSdk
   };
 
-export const UseGetDMConnectionWithNodeFromHybridMappingsQueryContext =
+export const UseGetDMConnectionWithNodeFromHybridMappingsQueryContext: Context<UseGetDMConnectionWithNodeFromHybridMappingsQuery> =
   createContext<UseGetDMConnectionWithNodeFromHybridMappingsQuery>({
     useClassicCadAssetMappingCache,
     useFdmSdk

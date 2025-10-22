@@ -1,7 +1,72 @@
 import { type QueryRequest } from '@cognite/sdk';
 import { COGNITE_POINT_CLOUD_VOLUME_SOURCE, COGNITE_VISUALIZABLE_SOURCE } from './dataModels';
 
-export const pointCloudModelsForInstanceQuery = {
+export const pointCloudModelsForInstanceQuery: {
+    readonly with: {
+        readonly asset: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly and: [{
+                        readonly equals: {
+                            readonly property: ["node", "externalId"];
+                            readonly value: {
+                                readonly parameter: "instanceExternalId";
+                            };
+                        };
+                    }, {
+                        readonly equals: {
+                            readonly property: ["node", "space"];
+                            readonly value: {
+                                readonly parameter: "instanceSpace";
+                            };
+                        };
+                    }];
+                };
+            };
+        };
+        readonly object_3ds: {
+            readonly nodes: {
+                readonly from: "asset";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteVisualizable";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+        };
+        readonly pointcloud_volumes: {
+            readonly nodes: {
+                readonly from: "object_3ds";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CognitePointCloudVolume";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+            };
+        };
+    }; readonly select: {
+        readonly pointcloud_volumes: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CognitePointCloudVolume";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["revisions"];
+            }];
+        };
+    };
+} = {
   with: {
     asset: {
       nodes: {

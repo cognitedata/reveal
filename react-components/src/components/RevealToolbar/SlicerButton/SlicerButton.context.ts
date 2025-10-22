@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { useTranslation } from '../../i18n/I18n';
 import { use3dModels } from '../../../hooks/use3dModels';
@@ -15,6 +15,6 @@ export const defaultSlicerButtonDependencies: SlicerButtonDependencies = {
   use3dModels
 };
 
-export const SlicerButtonContext = createContext<SlicerButtonDependencies>(
+export const SlicerButtonContext: Context<SlicerButtonDependencies> = createContext<SlicerButtonDependencies>(
   defaultSlicerButtonDependencies
 );

@@ -10,7 +10,7 @@ import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIc
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type IconName } from '../../../base/utilities/types';
 
-export const CLIP_PRIMITIVE_TYPES = [
+export const CLIP_PRIMITIVE_TYPES: PrimitiveType[] = [
   PrimitiveType.PlaneX,
   PrimitiveType.PlaneY,
   PrimitiveType.PlaneZ,

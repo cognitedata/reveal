@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 import { usePointCloudDMVolumeMappingForAssetInstances } from './usePointCloudDMVolumeMappingForAssetInstances';
 
@@ -13,7 +13,7 @@ export const defaultUsePointCloudDMVolumeMappingForIntersectionDependencies: Use
     useFdmSdk
   };
 
-export const UsePointCloudDMVolumeMappingForIntersectionContext =
+export const UsePointCloudDMVolumeMappingForIntersectionContext: Context<UsePointCloudDMVolumeMappingForIntersectionDependencies> =
   createContext<UsePointCloudDMVolumeMappingForIntersectionDependencies>(
     defaultUsePointCloudDMVolumeMappingForIntersectionDependencies
   );

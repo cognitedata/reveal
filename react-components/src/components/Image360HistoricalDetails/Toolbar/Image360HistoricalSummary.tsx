@@ -24,7 +24,7 @@ export type Image360HistoricalSummaryProps = {
   fallbackLanguage?: string;
 };
 
-export const Image360HistoricalSummary = forwardRef(
+export const Image360HistoricalSummary: React.ForwardRefExoticComponent<Image360HistoricalSummaryProps & React.RefAttributes<number>> = forwardRef(
   (
     {
       stationId,

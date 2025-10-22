@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { usePointCloudModelRevisionIdsFromReveal } from '../usePointCloudModelRevisionIdsFromReveal';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { usePointCloudDMVolumes } from './usePointCloudDMVolumes';
@@ -19,7 +19,7 @@ export const defaultUsePointCloudDMVolumeMappingForAssetInstancesDependencies: U
     useFdmSdk
   };
 
-export const UsePointCloudDMVolumeMappingForAssetInstancesContext =
+export const UsePointCloudDMVolumeMappingForAssetInstancesContext: Context<UsePointCloudDMVolumeMappingForAssetInstancesDependencies> =
   createContext<UsePointCloudDMVolumeMappingForAssetInstancesDependencies>(
     defaultUsePointCloudDMVolumeMappingForAssetInstancesDependencies
   );

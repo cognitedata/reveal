@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 
@@ -13,7 +13,7 @@ export const defaultUsePointCloudAnnotationMappingForIntersectionDependencies: U
     fetchAnnotationsForModel
   };
 
-export const UsePointCloudAnnotationMappingForIntersectionContext =
+export const UsePointCloudAnnotationMappingForIntersectionContext: Context<UsePointCloudAnnotationMappingForIntersectionDependencies> =
   createContext<UsePointCloudAnnotationMappingForIntersectionDependencies>(
     defaultUsePointCloudAnnotationMappingForIntersectionDependencies
   );

@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 
 import {
   useReveal3DResourceLoadFailCount,
@@ -27,7 +27,7 @@ export const defaultImage360CollectionContainerContextDependencies: Image360Coll
     removeImage360CollectionDomainObject: RevealModelsUtils.remove.bind(this)
   };
 
-export const Image360CollectionContainerContext =
+export const Image360CollectionContainerContext: Context<Image360CollectionContainerContextDependencies> =
   createContext<Image360CollectionContainerContextDependencies>(
     defaultImage360CollectionContainerContextDependencies
   );

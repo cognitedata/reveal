@@ -19,7 +19,164 @@ export type SceneCursors = {
 };
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, cursors?: SceneCursors) => {
+const getAllScenesQuery = (limit: number = SCENE_QUERY_LIMIT, cursors?: SceneCursors): {
+    readonly cursors?: SceneCursors | undefined; readonly with: {
+        readonly scenes: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly type: "view";
+                        readonly space: "scene";
+                        readonly externalId: "SceneConfiguration";
+                        readonly version: "v1";
+                    }];
+                };
+            };
+            readonly limit: number;
+        };
+        readonly sceneModels: {
+            readonly edges: {
+                readonly from: "scenes";
+                readonly maxDistance: 1;
+                readonly direction: "outwards";
+                readonly filter: {
+                    readonly equals: {
+                        readonly property: ["edge", "type"];
+                        readonly value: {
+                            readonly space: "scene";
+                            readonly externalId: "SceneConfiguration.model3ds";
+                        };
+                    };
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly scene360Collections: {
+            readonly edges: {
+                readonly from: "scenes";
+                readonly maxDistance: 1;
+                readonly direction: "outwards";
+                readonly filter: {
+                    readonly equals: {
+                        readonly property: ["edge", "type"];
+                        readonly value: {
+                            readonly space: "scene";
+                            readonly externalId: "SceneConfiguration.images360Collections";
+                        };
+                    };
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly sceneSkybox: {
+            readonly nodes: {
+                readonly from: "scenes";
+                readonly through: {
+                    readonly view: {
+                        readonly type: "view";
+                        readonly space: "scene";
+                        readonly externalId: "SceneConfiguration";
+                        readonly version: "v1";
+                    };
+                    readonly identifier: "skybox";
+                };
+                readonly direction: "outwards";
+            };
+            readonly limit: 10000;
+        };
+        readonly sceneGroundPlaneEdges: {
+            readonly edges: {
+                readonly from: "scenes";
+                readonly maxDistance: 1;
+                readonly direction: "outwards";
+                readonly filter: {
+                    readonly equals: {
+                        readonly property: ["edge", "type"];
+                        readonly value: {
+                            readonly space: "scene";
+                            readonly externalId: "SceneConfiguration.texturedGroundPlanes";
+                        };
+                    };
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly sceneGroundPlanes: {
+            readonly nodes: {
+                readonly from: "sceneGroundPlaneEdges";
+                readonly chainTo: "destination";
+            };
+            readonly limit: 10000;
+        };
+    }; readonly select: {
+        readonly scenes: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "scene";
+                    readonly externalId: "SceneConfiguration";
+                    readonly version: "v1";
+                };
+                readonly properties: ["*"];
+            }];
+        };
+        readonly sceneModels: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "scene";
+                    readonly externalId: "RevisionProperties";
+                    readonly version: "v1";
+                };
+                readonly properties: ["*"];
+            }];
+        };
+        readonly scene360Collections: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "scene";
+                    readonly externalId: "Image360CollectionProperties";
+                    readonly version: "v1";
+                };
+                readonly properties: ["*"];
+            }];
+        };
+        readonly sceneSkybox: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "scene";
+                    readonly externalId: "EnvironmentMap";
+                    readonly version: "v1";
+                };
+                readonly properties: ["label", "file", "isSpherical"];
+            }];
+        };
+        readonly sceneGroundPlaneEdges: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_3d_schema";
+                    readonly externalId: "Transformation3d";
+                    readonly version: "v1";
+                };
+                readonly properties: ["translationX", "translationY", "translationZ", "eulerRotationX", "eulerRotationY", "eulerRotationZ", "scaleX", "scaleY", "scaleZ"];
+            }];
+        };
+        readonly sceneGroundPlanes: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "scene";
+                    readonly externalId: "TexturedPlane";
+                    readonly version: "v1";
+                };
+                readonly properties: ["file", "label", "wrapping", "repeatU", "repeatV"];
+            }];
+        };
+    };
+} => {
   const query = {
     with: {
       scenes: {

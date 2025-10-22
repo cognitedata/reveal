@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
 export type UseAll3dDirectConnectionsWithPropertiesDependencies = {
@@ -10,7 +10,7 @@ export const defaultUseAll3dDirectConnectionsWithPropertiesDependencies: UseAll3
     useFdmSdk
   };
 
-export const UseAll3dDirectConnectionsWithPropertiesContext =
+export const UseAll3dDirectConnectionsWithPropertiesContext: Context<UseAll3dDirectConnectionsWithPropertiesDependencies> =
   createContext<UseAll3dDirectConnectionsWithPropertiesDependencies>(
     defaultUseAll3dDirectConnectionsWithPropertiesDependencies
   );

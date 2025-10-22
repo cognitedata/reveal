@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useImage360AnnotationCache } from '../components/CacheProvider/CacheProvider';
 
 export type Image360AnnotationMappingsDependencies = {
@@ -10,7 +10,7 @@ export const defaultImage360AnnotationMappingsDependencies: Image360AnnotationMa
     useImage360AnnotationCache
   };
 
-export const Image360AnnotationMappingsContext =
+export const Image360AnnotationMappingsContext: Context<Image360AnnotationMappingsDependencies> =
   createContext<Image360AnnotationMappingsDependencies>(
     defaultImage360AnnotationMappingsDependencies
   );

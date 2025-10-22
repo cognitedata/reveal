@@ -8,9 +8,9 @@ export class LineRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
 
   public pipeRadius = 0.02;
-  public selectedPipeRadius = this.pipeRadius * 2;
+  public selectedPipeRadius: number = this.pipeRadius * 2;
   public lineWidth = 1;
-  public selectedLineWidth = this.lineWidth * 2;
+  public selectedLineWidth: number = this.lineWidth * 2;
   public transparent = false;
   public renderOrder?: number = undefined;
 
@@ -18,7 +18,7 @@ export class LineRenderStyle extends PrimitiveRenderStyle {
   public showSolid = false;
   public solidOpacityUse = true;
   public selectedSolidOpacity = 0.5;
-  public solidOpacity = this.selectedSolidOpacity / 2;
+  public solidOpacity: number = this.selectedSolidOpacity / 2;
 
   // ==================================================
   // OVERRIDES of BaseStyle

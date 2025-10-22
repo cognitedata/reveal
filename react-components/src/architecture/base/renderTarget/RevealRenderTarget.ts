@@ -14,7 +14,8 @@ import {
   DirectionalLight,
   type PerspectiveCamera,
   type Box3,
-  type Plane
+  type Plane,
+  Matrix4
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
@@ -66,8 +67,8 @@ export class RevealRenderTarget {
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
 
-  public readonly toViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
-  public readonly fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+  public readonly toViewerMatrix: Matrix4 = CDF_TO_VIEWER_TRANSFORMATION.clone();
+  public readonly fromViewerMatrix: Matrix4 = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
   public ghostMode = false;
 
   // ==================================================

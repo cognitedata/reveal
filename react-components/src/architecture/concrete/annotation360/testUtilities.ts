@@ -4,7 +4,7 @@ import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject
 import { forEach } from 'lodash-es';
 
 export const TEST_CONNECTED_IMAGE_ID = 'My Id';
-export const TEST_CENTER = new Vector3(5, 6, 7);
+export const TEST_CENTER: Vector3 = new Vector3(5, 6, 7);
 
 export function createEmptyImage360Annotation(): Image360AnnotationDomainObject {
   return new Image360AnnotationDomainObject(TEST_CONNECTED_IMAGE_ID);

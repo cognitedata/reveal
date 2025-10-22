@@ -9,7 +9,7 @@ import { type TranslationInput } from '../../../base/utilities/translation/Trans
 import { MeasurementTool } from '../MeasurementTool';
 import { type IconName } from '../../../base/utilities/types';
 
-export const MEASURE_PRIMITIVE_TYPES = [
+export const MEASURE_PRIMITIVE_TYPES: PrimitiveType[] = [
   PrimitiveType.Point,
   PrimitiveType.Line,
   PrimitiveType.Polyline,

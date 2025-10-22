@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
 import { useImage360HistoricalDetailsViewModel } from './Image360HistoricalDetails.viewmodel';
@@ -15,7 +15,7 @@ export const defaultImage360HistoricalDetailsDependencies: Image360HistoricalDet
   useImage360HistoricalDetailsViewModel
 };
 
-export const Image360HistoricalDetailsContext =
+export const Image360HistoricalDetailsContext: Context<Image360HistoricalDetailsDependencies> =
   createContext<Image360HistoricalDetailsDependencies>(
     defaultImage360HistoricalDetailsDependencies
   );

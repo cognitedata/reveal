@@ -27,7 +27,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly cylinder = new Cylinder();
+  public readonly cylinder: Cylinder = new Cylinder();
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================

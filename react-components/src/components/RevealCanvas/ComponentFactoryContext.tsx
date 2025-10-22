@@ -1,4 +1,5 @@
 import {
+    Context,
   createContext,
   type PropsWithChildren,
   type ReactElement,
@@ -12,7 +13,7 @@ type ComponentFactoryContextContent = {
   componentFactory: ComponentFactory;
 };
 
-export const ComponentFactoryContext = createContext<ComponentFactoryContextContent | undefined>(
+export const ComponentFactoryContext: Context<ComponentFactoryContextContent | undefined> = createContext<ComponentFactoryContextContent | undefined>(
   undefined
 );
 

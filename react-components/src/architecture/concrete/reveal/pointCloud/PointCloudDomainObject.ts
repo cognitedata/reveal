@@ -1,4 +1,4 @@
-import { signal } from '@cognite/signals';
+import { Signal, signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { type IconName } from '../../../base/utilities/types';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
@@ -12,9 +12,9 @@ export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
 
   private readonly _model: PointCloud;
-  public readonly pointSize = signal(0);
-  public readonly pointShape = signal<PointShape>(0);
-  public readonly pointColorType = signal<PointColorType>(0);
+  public readonly pointSize: Signal<number> = signal(0);
+  public readonly pointShape: Signal<PointShape> = signal<PointShape>(0);
+  public readonly pointColorType: Signal<PointColorType> = signal<PointColorType>(0);
 
   // ==================================================
   // INSTANCE PROPERTIES

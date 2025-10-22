@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
@@ -21,6 +21,6 @@ export const defaultSceneContainerViewModelDependencies: SceneContainerViewModel
   useQualitySettingsFromScene
 };
 
-export const SceneContainerViewModelContext = createContext<SceneContainerViewModelDependencies>(
+export const SceneContainerViewModelContext: Context<SceneContainerViewModelDependencies> = createContext<SceneContainerViewModelDependencies>(
   defaultSceneContainerViewModelDependencies
 );

@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { use3dModels } from '../hooks/use3dModels';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
@@ -13,7 +13,7 @@ export const defaultUsePointCloudModelRevisionIdsFromRevealDependencies: UsePoin
     useFdmSdk
   };
 
-export const UsePointCloudModelRevisionIdsFromRevealContext =
+export const UsePointCloudModelRevisionIdsFromRevealContext: Context<UsePointCloudModelRevisionIdsFromRevealDependencies> =
   createContext<UsePointCloudModelRevisionIdsFromRevealDependencies>({
     use3dModels,
     useFdmSdk

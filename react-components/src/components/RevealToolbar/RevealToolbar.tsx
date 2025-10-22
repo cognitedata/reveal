@@ -1,4 +1,4 @@
-import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
+import { type ReactElement, type JSX, forwardRef, type Ref, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { SlicerButton } from './SlicerButton/SlicerButton';
@@ -60,7 +60,9 @@ const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
   );
 };
 
-const RevealToolbarContainer = forwardRef(
+const RevealToolbarContainer: ForwardRefExoticComponent<Omit<ToolBarProps & CustomToolbarContent & {
+    toolBarContent?: JSX.Element;
+}, "ref"> & RefAttributes<HTMLDivElement>> = forwardRef(
   (
     {
       customSettingsContent,

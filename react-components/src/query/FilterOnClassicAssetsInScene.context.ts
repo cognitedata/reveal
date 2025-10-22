@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useReveal3dResourcesFromScene } from '../hooks';
 import { useAllAssetsMapped360Annotations } from './useSearchAssetsMapped360Annotations';
 import { useAllAssetsMappedPointCloudAnnotations } from './useSearchAssetsMappedPointCloudAnnotations';
@@ -11,7 +11,7 @@ export type FilterOnClassicAssetsInSceneDependencies = {
   useAllAssetsMappedPointCloudAnnotations: typeof useAllAssetsMappedPointCloudAnnotations;
 };
 
-export const FilterOnClassicAssetsInSceneContext =
+export const FilterOnClassicAssetsInSceneContext: Context<FilterOnClassicAssetsInSceneDependencies> =
   createContext<FilterOnClassicAssetsInSceneDependencies>({
     useReveal3dResourcesFromScene,
     useAllMappedEquipmentAssetMappings,

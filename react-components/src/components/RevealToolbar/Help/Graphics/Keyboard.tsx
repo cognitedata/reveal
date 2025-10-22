@@ -244,14 +244,14 @@ const DKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
   </svg>
 );
 
-export const ArrowKeysNavigation = {
+export const ArrowKeysNavigation: { Up: (props: SVGProps<SVGSVGElement>) => ReactElement; Down: (props: SVGProps<SVGSVGElement>) => ReactElement; Left: (props: SVGProps<SVGSVGElement>) => ReactElement; Right: (props: SVGProps<SVGSVGElement>) => ReactElement; } = {
   Up: UpArrowKey,
   Down: DownArrowKey,
   Left: LeftArrowKey,
   Right: RightArrowKey
 };
 
-export const QWEASDKeysNavigation = {
+export const QWEASDKeysNavigation: { Q: (props: SVGProps<SVGSVGElement>) => ReactElement; W: (props: SVGProps<SVGSVGElement>) => ReactElement; E: (props: SVGProps<SVGSVGElement>) => ReactElement; A: (props: SVGProps<SVGSVGElement>) => ReactElement; S: (props: SVGProps<SVGSVGElement>) => ReactElement; D: (props: SVGProps<SVGSVGElement>) => ReactElement; } = {
   Q: QKey,
   W: WKey,
   E: EKey,

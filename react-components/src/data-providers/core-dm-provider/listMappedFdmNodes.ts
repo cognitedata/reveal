@@ -18,6 +18,7 @@ import {
 } from './cadAndPointCloudAndImage360AssetQuery';
 import { uniqBy } from 'lodash-es';
 import { isDmsInstance } from '../../utilities/instanceIds';
+import { NodeDefinition, Timestamp } from '@cognite/sdk';
 
 export async function listAllMappedFdmNodes(
   revisionRefs: DmsUniqueIdentifier[],
@@ -119,7 +120,42 @@ export async function queryPointCloudsAssets(
   filter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   limit: number
-) {
+): Promise<(Omit<NodeDefinition, "properties"> & {
+    properties: {
+        [x: string]: {
+            [x: `${string}/${string}`]: {
+                [x: string]: unknown;
+            };
+        };
+        cdf_cdm: {
+            "CogniteAsset/v1": {
+                children: DmsUniqueIdentifier[];
+                name: string;
+                parent: DmsUniqueIdentifier;
+                type: DmsUniqueIdentifier;
+                root: DmsUniqueIdentifier;
+                object3D: DmsUniqueIdentifier;
+                description: string;
+                source: DmsUniqueIdentifier;
+                path: DmsUniqueIdentifier[];
+                tags: string[];
+                aliases: string[];
+                sourceId: string;
+                sourceContext: string;
+                sourceCreatedTime: Timestamp;
+                sourceUpdatedTime: Timestamp;
+                sourceCreatedUser: string;
+                sourceUpdatedUser: string;
+                pathLastUpdatedTime: Timestamp;
+                equipment: DmsUniqueIdentifier;
+                assetClass: DmsUniqueIdentifier;
+                files: DmsUniqueIdentifier[];
+                activities: DmsUniqueIdentifier[];
+                timeSeries: DmsUniqueIdentifier[];
+            };
+        };
+    };
+})[]> {
   const rawQueryPointClouds = pointCloudsAssetsQueryPayload(sourcesToSearch, filter, limit);
 
   const queryPointClouds = {
@@ -142,7 +178,42 @@ export async function queryImage360Assets(
   filter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   limit: number
-) {
+): Promise<(Omit<NodeDefinition, "properties"> & {
+    properties: {
+        [x: string]: {
+            [x: `${string}/${string}`]: {
+                [x: string]: unknown;
+            };
+        };
+        cdf_cdm: {
+            "CogniteAsset/v1": {
+                children: DmsUniqueIdentifier[];
+                name: string;
+                parent: DmsUniqueIdentifier;
+                type: DmsUniqueIdentifier;
+                root: DmsUniqueIdentifier;
+                object3D: DmsUniqueIdentifier;
+                description: string;
+                source: DmsUniqueIdentifier;
+                path: DmsUniqueIdentifier[];
+                tags: string[];
+                aliases: string[];
+                sourceId: string;
+                sourceContext: string;
+                sourceCreatedTime: Timestamp;
+                sourceUpdatedTime: Timestamp;
+                sourceCreatedUser: string;
+                sourceUpdatedUser: string;
+                pathLastUpdatedTime: Timestamp;
+                equipment: DmsUniqueIdentifier;
+                assetClass: DmsUniqueIdentifier;
+                files: DmsUniqueIdentifier[];
+                activities: DmsUniqueIdentifier[];
+                timeSeries: DmsUniqueIdentifier[];
+            };
+        };
+    };
+})[]> {
   const rawQueryImage360 = image360AssetsQueryPayload(sourcesToSearch, revisionRefs, filter, limit);
 
   const queryImage360 = {

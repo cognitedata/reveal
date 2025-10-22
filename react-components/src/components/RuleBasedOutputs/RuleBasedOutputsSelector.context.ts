@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import {
   use3dModels,
   useAssetMappedNodesForRevisions,
@@ -54,6 +54,6 @@ export const defaultRuleBasedOutputsSelectorDependencies: RuleBasedOutputsSelect
   generateRuleBasedOutputs
 };
 
-export const RuleBasedOutputsSelectorContext = createContext<RuleBasedOutputsSelectorDependencies>(
+export const RuleBasedOutputsSelectorContext: Context<RuleBasedOutputsSelectorDependencies> = createContext<RuleBasedOutputsSelectorDependencies>(
   defaultRuleBasedOutputsSelectorDependencies
 );

@@ -33,7 +33,7 @@ export class Annotation {
   public modelId: number = 0;
   public assetId: AssetId | undefined = undefined;
   public status: AnnotationStatus = 'suggested';
-  public primitives = new Array<Primitive>();
+  public primitives: Primitive[] = new Array<Primitive>();
   public confidence: number | undefined = undefined;
   public label: string | undefined = undefined;
   public selectedIndex: number | undefined = undefined;

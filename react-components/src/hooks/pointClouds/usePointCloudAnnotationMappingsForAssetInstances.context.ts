@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';
 
@@ -13,7 +13,7 @@ export const defaultUsePointCloudAnnotationMappingsForAssetInstancesDependencies
     useModelIdRevisionIdFromModelOptions
   };
 
-export const UsePointCloudAnnotationMappingsForAssetInstancesContext =
+export const UsePointCloudAnnotationMappingsForAssetInstancesContext: Context<UsePointCloudAnnotationMappingsForAssetInstancesDependencies> =
   createContext<UsePointCloudAnnotationMappingsForAssetInstancesDependencies>(
     defaultUsePointCloudAnnotationMappingsForAssetInstancesDependencies
   );

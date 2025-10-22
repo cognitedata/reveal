@@ -1,14 +1,17 @@
-import { createContext, useContext, useMemo } from 'react';
+import { Context, createContext, useContext, useMemo } from 'react';
 import { useRenderTarget } from '../components/RevealCanvas/ViewerContext';
 import { useDisposableSignal } from '../utilities/signal/useDisposableSignal';
 import { getRevealDomainUpdateSignal } from '../architecture/concrete/reveal/signal/getRevealDomainObjectsSignal';
 import { type RevealDomainObject } from '../architecture/concrete/reveal/RevealDomainObject';
+import { RevealRenderTarget } from '../architecture';
 
 export type UseRevealDomainObjectsDependencies = {
   useRenderTarget: typeof useRenderTarget;
 };
 
-export const UseRevealDomainObjectsContext = createContext({
+export const UseRevealDomainObjectsContext: Context<{
+    useRenderTarget: () => RevealRenderTarget;
+}> = createContext({
   useRenderTarget
 });
 

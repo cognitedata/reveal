@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { useFetchRuleInstances } from '../../RuleBasedOutputs/hooks/useFetchRuleInstances';
 import { use3dModels } from '../../../hooks/use3dModels';
@@ -27,6 +27,6 @@ export const defaultRuleBasedOutputsButtonDependencies: RuleBasedOutputsButtonDe
   RuleBasedSelectionItem
 };
 
-export const RuleBasedOutputsButtonContext = createContext<RuleBasedOutputsButtonDependencies>(
+export const RuleBasedOutputsButtonContext: Context<RuleBasedOutputsButtonDependencies> = createContext<RuleBasedOutputsButtonDependencies>(
   defaultRuleBasedOutputsButtonDependencies
 );

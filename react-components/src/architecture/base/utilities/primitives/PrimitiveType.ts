@@ -18,13 +18,13 @@ export enum PrimitiveType {
   PlaneXY
 }
 
-export const AlongAxisPlanePrimitiveTypes = [
+export const AlongAxisPlanePrimitiveTypes: PrimitiveType[] = [
   PrimitiveType.PlaneX,
   PrimitiveType.PlaneY,
   PrimitiveType.PlaneZ
 ];
 
-export const PlanePrimitiveTypes = [...AlongAxisPlanePrimitiveTypes, PrimitiveType.PlaneXY];
+export const PlanePrimitiveTypes: PrimitiveType[] = [...AlongAxisPlanePrimitiveTypes, PrimitiveType.PlaneXY];
 
 export function verifyPrimitiveType(
   legalTypes: PrimitiveType[],

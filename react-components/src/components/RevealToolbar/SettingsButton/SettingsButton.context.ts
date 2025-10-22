@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { HighFidelityContainer } from '../SettingsContainer/HighFidelityContainer';
 
@@ -12,6 +12,6 @@ export const defaultSettingsButtonDependencies: SettingsButtonDependencies = {
   HighFidelityContainer
 };
 
-export const SettingsButtonContext = createContext<SettingsButtonDependencies>(
+export const SettingsButtonContext: Context<SettingsButtonDependencies> = createContext<SettingsButtonDependencies>(
   defaultSettingsButtonDependencies
 );

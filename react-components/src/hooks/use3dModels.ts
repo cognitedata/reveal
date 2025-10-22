@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react';
+import { Context, createContext, useContext, useMemo } from 'react';
 import { type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import { useRevealDomainObjects } from './useRevealDomainObjects';
 import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';
@@ -13,7 +13,7 @@ export const defaultUse3dModelsDependencies: Use3dModelsDependencies = {
   useRevealDomainObjects
 };
 
-export const Use3dModelsContext = createContext<Use3dModelsDependencies>(
+export const Use3dModelsContext: Context<Use3dModelsDependencies> = createContext<Use3dModelsDependencies>(
   defaultUse3dModelsDependencies
 );
 

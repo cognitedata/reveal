@@ -11,7 +11,7 @@ export abstract class Transaction {
   public readonly changed: symbol;
   public readonly uniqueId: UniqueId;
   private readonly _parentUniqueId?: UniqueId;
-  public readonly timeStamp = Date.now();
+  public readonly timeStamp: number = Date.now();
 
   // ==================================================
   // CONSTRUCTOR

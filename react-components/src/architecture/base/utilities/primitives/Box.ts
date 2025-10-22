@@ -16,9 +16,9 @@ export class Box extends Primitive {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly size = new Vector3().setScalar(Box.MinSize);
-  public readonly center = new Vector3();
-  public readonly rotation = new Euler(0, 0, 0);
+  public readonly size: Vector3 = new Vector3().setScalar(Box.MinSize);
+  public readonly center: Vector3 = new Vector3();
+  public readonly rotation: Euler = new Euler(0, 0, 0);
 
   // ==================================================
   // OVERRIDES of Primitive

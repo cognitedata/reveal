@@ -8,7 +8,7 @@ export class Range3 {
   // STATIC FIELDS
   // ==================================================
 
-  public static readonly empty = new Range3();
+  public static readonly empty: Range3 = new Range3();
 
   // ==================================================
   // INSTANCE FIELDS

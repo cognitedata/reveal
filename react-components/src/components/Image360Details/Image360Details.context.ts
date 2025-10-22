@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useReveal } from '../RevealCanvas';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
 import { useImage360Entity } from './useImage360Entity';
@@ -15,6 +15,6 @@ export const defaultImage360DetailsContextDependencies: Image360DetailsContextDe
   Image360HistoricalDetails
 };
 
-export const Image360DetailsContext = createContext<Image360DetailsContextDependencies>(
+export const Image360DetailsContext: Context<Image360DetailsContextDependencies> = createContext<Image360DetailsContextDependencies>(
   defaultImage360DetailsContextDependencies
 );

@@ -11,7 +11,7 @@ import { bestFitVerticalCylinder } from './bestFitVerticalCylinder';
 import { getTransformedPoints } from './getTransformedPoints';
 import { count } from '../extensions/arrayUtils';
 
-export const MAIN_AXES = createMainAxes();
+export const MAIN_AXES: Vector3[] = createMainAxes();
 
 export type AcceptCylinder = (cylinder: LeastSquareCylinderResult) => boolean;
 

@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useFdm3dNodeDataPromises, useAssetMappingForTreeIndex } from './cad';
 import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
 import { usePointCloudDMVolumeMappingForIntersection } from '../query/core-dm/usePointCloudDMVolumeMappingForIntersection';
@@ -25,6 +25,6 @@ export const defaultUseClickedNodeDataDependencies: UseClickedNodeDataDependenci
   isActiveEditTool
 };
 
-export const UseClickedNodeDataContext = createContext<UseClickedNodeDataDependencies>(
+export const UseClickedNodeDataContext: Context<UseClickedNodeDataDependencies> = createContext<UseClickedNodeDataDependencies>(
   defaultUseClickedNodeDataDependencies
 );

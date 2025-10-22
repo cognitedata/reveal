@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useModelHandlers } from './hooks/useModelHandlers';
 import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';
 import { ModelLayerSelection } from './components/ModelLayerSelection';
@@ -21,6 +21,6 @@ export const defaultLayersButtonDependencies: LayersButtonDependencies = {
   use3dModels
 };
 
-export const LayersButtonContext = createContext<LayersButtonDependencies>(
+export const LayersButtonContext: Context<LayersButtonDependencies> = createContext<LayersButtonDependencies>(
   defaultLayersButtonDependencies
 );

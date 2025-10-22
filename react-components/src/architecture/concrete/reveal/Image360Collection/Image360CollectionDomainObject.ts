@@ -1,4 +1,4 @@
-import { signal } from '@cognite/signals';
+import { Signal, signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { type IconName } from '../../../base/utilities/types';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
@@ -11,10 +11,10 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
 
   private readonly _model: Image360Model;
-  public readonly isIconsVisible = signal(false);
-  public readonly isOccludedIconsVisible = signal(false);
-  public readonly iconsOpacity = signal(0);
-  public readonly imagesOpacity = signal(0);
+  public readonly isIconsVisible: Signal<boolean> = signal(false);
+  public readonly isOccludedIconsVisible: Signal<boolean> = signal(false);
+  public readonly iconsOpacity: Signal<number> = signal(0);
+  public readonly imagesOpacity: Signal<number> = signal(0);
   private readonly _updateCallback: () => void;
 
   // ==================================================

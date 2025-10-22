@@ -14,14 +14,14 @@ export class SolidPrimitiveRenderStyle extends PrimitiveRenderStyle {
   public selectedLineWidth = 1;
 
   // Line colors are not always used, often the domain object color is used
-  public lineColor = BLACK_COLOR.clone();
-  public selectedLineColor = WHITE_COLOR.clone();
+  public lineColor: Color = BLACK_COLOR.clone();
+  public selectedLineColor: Color = WHITE_COLOR.clone();
 
   // Solid
   public showSolid = true;
   public solidOpacityUse = true;
   public selectedSolidOpacity = 0.5;
-  public solidOpacity = this.selectedSolidOpacity / 4;
+  public solidOpacity: number = this.selectedSolidOpacity / 4;
 
   // ==================================================
   // OVERRIDES of BaseStyle

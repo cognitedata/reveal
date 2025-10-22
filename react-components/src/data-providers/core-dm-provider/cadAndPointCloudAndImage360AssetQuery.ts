@@ -1,4 +1,4 @@
-import { type TableExpressionLeafFilter, type QueryRequest } from '@cognite/sdk';
+import { type TableExpressionLeafFilter, type QueryRequest, TableExpressionFilterDefinition } from '@cognite/sdk';
 import { type Source, type InstanceFilter, type DmsUniqueIdentifier } from '../FdmSDK';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
 import {
@@ -53,7 +53,231 @@ export function cadAndPointCloudAndImage36AssetQuery(
   revisionRefs: DmsUniqueIdentifier[],
   filter: InstanceFilter | undefined,
   limit: number
-) {
+): {
+    readonly with: {
+        readonly cad_nodes: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly containsAny: {
+                        readonly property: ["cdf_cdm_3d", "CogniteCADNode", "revisions"];
+                        readonly values: {
+                            readonly parameter: "revisionRefs";
+                        };
+                    };
+                };
+            };
+            readonly limit: number;
+        };
+        readonly cad_object_3d: {
+            readonly nodes: {
+                readonly from: "cad_nodes";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteCADNode";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+            readonly limit: number;
+        };
+        readonly cad_assets: {
+            readonly nodes: {
+                readonly from: "cad_object_3d";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "inwards";
+                readonly filter: TableExpressionFilterDefinition | undefined;
+            };
+            readonly limit: number;
+        };
+        readonly pointcloud_volumes: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly containsAny: {
+                        readonly property: ["cdf_cdm_3d", "CognitePointCloudVolume", "revisions"];
+                        readonly values: {
+                            readonly parameter: "revisionRefs";
+                        };
+                    };
+                };
+            };
+            readonly limit: number;
+        };
+        readonly pointcloud_object_3d: {
+            readonly nodes: {
+                readonly from: "pointcloud_volumes";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CognitePointCloudVolume";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+            readonly limit: number;
+        };
+        readonly pointcloud_assets: {
+            readonly nodes: {
+                readonly from: "pointcloud_object_3d";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly filter: TableExpressionFilterDefinition | undefined;
+            };
+            readonly limit: number;
+        };
+        readonly image360_collections: {
+            readonly nodes: {
+                readonly filter: TableExpressionFilterDefinition;
+            };
+            readonly limit: number;
+        };
+        readonly image360_revisions: {
+            readonly nodes: {
+                readonly from: "image360_collections";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "Cognite360Image";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "collection360";
+                };
+                readonly direction: "inwards";
+            };
+            readonly limit: number;
+        };
+        readonly image360_annotations: {
+            readonly edges: {
+                readonly from: "image360_revisions";
+                readonly direction: "inwards";
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly externalId: "Cognite360ImageAnnotation";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    }];
+                };
+            };
+            readonly limit: number;
+        };
+        readonly image360_object3ds: {
+            readonly nodes: {
+                readonly from: "image360_annotations";
+                readonly chainTo: "destination";
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly externalId: "Cognite3DObject";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    }];
+                };
+            };
+            readonly limit: number;
+        };
+        readonly image360_assets: {
+            readonly nodes: {
+                readonly from: "image360_object3ds";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "inwards";
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    }];
+                };
+            };
+            readonly limit: number;
+        };
+    }; readonly select: {
+        readonly cad_nodes: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteCADNode";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["*"];
+            }];
+        };
+        readonly cad_assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "tags", "aliases", "object3D", "sourceId", "sourceContext", "source", "sourceCreatedTime", "sourceUpdatedTime", "sourceCreatedUser", "sourceUpdatedUser", "parent", "root", "path", "pathLastUpdatedTime", "equipment", "assetClass", "type", "files", "children", "activities", "timeSeries"];
+            }, ...{
+                source: Source;
+                properties: string[];
+            }[]];
+        };
+        readonly pointcloud_assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "tags", "aliases", "object3D", "sourceId", "sourceContext", "source", "sourceCreatedTime", "sourceUpdatedTime", "sourceCreatedUser", "sourceUpdatedUser", "parent", "root", "path", "pathLastUpdatedTime", "equipment", "assetClass", "type", "files", "children", "activities", "timeSeries"];
+            }, ...{
+                source: Source;
+                properties: string[];
+            }[]];
+        };
+        readonly image360_assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "tags", "aliases", "object3D", "sourceId", "sourceContext", "source", "sourceCreatedTime", "sourceUpdatedTime", "sourceCreatedUser", "sourceUpdatedUser", "parent", "root", "path", "pathLastUpdatedTime", "equipment", "assetClass", "type", "files", "children", "activities", "timeSeries"];
+            }, ...{
+                source: Source;
+                properties: string[];
+            }[]];
+        };
+    };
+} {
   return {
     with: {
       cad_nodes: {
@@ -177,7 +401,82 @@ export function cadAssetQueryPayload(
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
-) {
+): {
+    readonly with: {
+        readonly cad_nodes: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly containsAny: {
+                        readonly property: ["cdf_cdm_3d", "CogniteCADNode", "revisions"];
+                        readonly values: {
+                            readonly parameter: "revisionRefs";
+                        };
+                    };
+                };
+            };
+            readonly limit: number;
+        };
+        readonly cad_object_3d: {
+            readonly nodes: {
+                readonly from: "cad_nodes";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteCADNode";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+            readonly limit: number;
+        };
+        readonly cad_assets: {
+            readonly nodes: {
+                readonly from: "cad_object_3d";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "inwards";
+                readonly filter: TableExpressionFilterDefinition | undefined;
+            };
+            readonly limit: number;
+        };
+    }; readonly select: {
+        readonly cad_nodes: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteCADNode";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["*"];
+            }];
+        };
+        readonly cad_assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "tags", "aliases", "object3D", "sourceId", "sourceContext", "source", "sourceCreatedTime", "sourceUpdatedTime", "sourceCreatedUser", "sourceUpdatedUser", "parent", "root", "path", "pathLastUpdatedTime", "equipment", "assetClass", "type", "files", "children", "activities", "timeSeries"];
+            }, ...{
+                source: Source;
+                properties: string[];
+            }[]];
+        };
+    };
+} {
   return {
     with: {
       cad_nodes: {
@@ -228,7 +527,70 @@ export function pointCloudsAssetsQueryPayload(
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
-) {
+): {
+    readonly with: {
+        readonly pointcloud_volumes: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly containsAny: {
+                        readonly property: ["cdf_cdm_3d", "CognitePointCloudVolume", "revisions"];
+                        readonly values: {
+                            readonly parameter: "revisionRefs";
+                        };
+                    };
+                };
+            };
+            readonly limit: number;
+        };
+        readonly pointcloud_object_3d: {
+            readonly nodes: {
+                readonly from: "pointcloud_volumes";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CognitePointCloudVolume";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+            readonly limit: number;
+        };
+        readonly pointcloud_assets: {
+            readonly nodes: {
+                readonly from: "pointcloud_object_3d";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly filter: TableExpressionFilterDefinition | undefined;
+            };
+            readonly limit: number;
+        };
+    }; readonly select: {
+        readonly pointcloud_assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "tags", "aliases", "object3D", "sourceId", "sourceContext", "source", "sourceCreatedTime", "sourceUpdatedTime", "sourceCreatedUser", "sourceUpdatedUser", "parent", "root", "path", "pathLastUpdatedTime", "equipment", "assetClass", "type", "files", "children", "activities", "timeSeries"];
+            }, ...{
+                source: Source;
+                properties: string[];
+            }[]];
+        };
+    };
+} {
   return {
     with: {
       pointcloud_volumes: {
@@ -271,7 +633,94 @@ export function image360AssetsQueryPayload(
   revisionRefs: DmsUniqueIdentifier[],
   filter: InstanceFilter | undefined,
   limit: number
-) {
+): {
+    readonly with: {
+        readonly image360_collections: {
+            readonly nodes: {
+                readonly filter: TableExpressionFilterDefinition;
+            };
+            readonly limit: number;
+        };
+        readonly image360_revisions: {
+            readonly nodes: {
+                readonly from: "image360_collections";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "Cognite360Image";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "collection360";
+                };
+                readonly direction: "inwards";
+            };
+            readonly limit: number;
+        };
+        readonly image360_annotations: {
+            readonly edges: {
+                readonly from: "image360_revisions";
+                readonly direction: "inwards";
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly externalId: "Cognite360ImageAnnotation";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    }];
+                };
+            };
+            readonly limit: number;
+        };
+        readonly image360_object3ds: {
+            readonly nodes: {
+                readonly from: "image360_annotations";
+                readonly chainTo: "destination";
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly externalId: "Cognite3DObject";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    }];
+                };
+            };
+            readonly limit: number;
+        };
+        readonly image360_assets: {
+            readonly nodes: {
+                readonly from: "image360_object3ds";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "inwards";
+                readonly filter: TableExpressionFilterDefinition | undefined;
+            };
+            readonly limit: number;
+        };
+    }; readonly select: {
+        readonly image360_assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "tags", "aliases", "object3D", "sourceId", "sourceContext", "source", "sourceCreatedTime", "sourceUpdatedTime", "sourceCreatedUser", "sourceUpdatedUser", "parent", "root", "path", "pathLastUpdatedTime", "equipment", "assetClass", "type", "files", "children", "activities", "timeSeries"];
+            }, ...{
+                source: Source;
+                properties: string[];
+            }[]];
+        };
+    };
+} {
   return {
     with: {
       image360_collections: {

@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash-es';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 import { round } from '../utilities/extensions/mathUtils';
-import { signal } from '@cognite/signals';
+import { Signal, signal } from '@cognite/signals';
 
 const METER_TO_FT = 1 / 0.3048;
 const METER_TO_INCH = 12 * METER_TO_FT;
@@ -21,8 +21,8 @@ export class UnitSystem {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly lengthUnit = signal<LengthUnit>(LengthUnit.Meter);
-  public readonly _language;
+  public readonly lengthUnit: Signal<LengthUnit> = signal<LengthUnit>(LengthUnit.Meter);
+  public readonly _language: string;
 
   public constructor(language: string = 'default') {
     this._language = language;
@@ -159,4 +159,4 @@ function convert(value: number, factor: number, quantity: Quantity): number {
   }
 }
 
-export const UNDEFINED_UNIT_SYSTEM = new UnitSystem(); // Used when root is not present
+export const UNDEFINED_UNIT_SYSTEM: UnitSystem = new UnitSystem(); // Used when root is not present

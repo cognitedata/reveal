@@ -18,8 +18,8 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
 
   public connectedImageId: string | DmsUniqueIdentifier;
-  public readonly center = new Vector3(); // The points are unit vectors from the center
-  public vectorLength = DEFAULT_VECTOR_LENGTH;
+  public readonly center: Vector3 = new Vector3(); // The points are unit vectors from the center
+  public vectorLength: number = DEFAULT_VECTOR_LENGTH;
   public annotationIdentifier?: AnnotationIdentifier;
   public assetRef?: AssetIdentifier;
   public status: AnnotationStatus = 'pending';

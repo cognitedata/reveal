@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
 
@@ -13,7 +13,7 @@ export const defaultModelIdRevisionIdFromModelOptionsDependencies: ModelIdRevisi
     getModelIdAndRevisionIdFromExternalId
   };
 
-export const ModelIdRevisionIdFromModelOptionsContext =
+export const ModelIdRevisionIdFromModelOptionsContext: Context<ModelIdRevisionIdFromModelOptionsDependencies> =
   createContext<ModelIdRevisionIdFromModelOptionsDependencies>(
     defaultModelIdRevisionIdFromModelOptionsDependencies
   );

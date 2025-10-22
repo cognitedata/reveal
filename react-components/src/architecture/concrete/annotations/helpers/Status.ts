@@ -5,7 +5,7 @@ export enum Status {
   Rejected
 }
 
-export const ALL_STATUSES = [
+export const ALL_STATUSES: Status[] = [
   Status.Rejected,
   Status.Suggested,
   Status.Approved,

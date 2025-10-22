@@ -9,13 +9,13 @@ export abstract class PrimitiveRenderStyle extends CommonRenderStyle {
   // ==================================================
 
   // For the object itself
-  public colorType = ColorType.Specified;
+  public colorType: ColorType = ColorType.Specified;
 
   // For labels only
   public showLabel = true;
   public addLabels: boolean = true;
-  public labelColor = WHITE_COLOR.clone();
-  public labelBgColor = new Color('#232323');
+  public labelColor: Color = WHITE_COLOR.clone();
+  public labelBgColor: Color = new Color('#232323');
   public labelOpacity = 0.9;
   public relativeTextSize = 0.05; // Relative to diagonal of the object for box and average of length of line segments for line
 }

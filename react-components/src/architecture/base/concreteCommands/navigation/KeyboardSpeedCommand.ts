@@ -11,7 +11,7 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(supportedTypes = DEFAULT_OPTIONS) {
+  constructor(supportedTypes: number[] = DEFAULT_OPTIONS) {
     super();
     for (const value of supportedTypes) {
       this.add(new OptionItemCommand(value));

@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Context, createContext } from 'react';
 import { useRevealDomainObjects, useVisibleRevealDomainObjects } from '../../../../hooks';
 
 export type UseModelsVisibilityStateDependencies = {
@@ -11,6 +11,6 @@ export const defaultUseModelsVisibilityStateDependencies: UseModelsVisibilitySta
   useVisibleRevealDomainObjects
 };
 
-export const UseModelsVisibilityStateContext = createContext<UseModelsVisibilityStateDependencies>(
+export const UseModelsVisibilityStateContext: Context<UseModelsVisibilityStateDependencies> = createContext<UseModelsVisibilityStateDependencies>(
   defaultUseModelsVisibilityStateDependencies
 );
