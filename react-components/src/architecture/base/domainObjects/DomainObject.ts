@@ -17,16 +17,10 @@ import { DeleteDomainObjectCommand } from '../concreteCommands/general/DeleteDom
 import { CopyToClipboardCommand } from '../concreteCommands/general/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
-import { type IconName } from '../../base/utilities/types';
+import { type IconColor, type IconName, CheckboxState } from '../../base/utilities/types';
 import { CycleLengthUnitsCommand } from '../concreteCommands/units/CycleLengthUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
-import {
-  CheckboxState,
-  type IconColor,
-  type ILazyLoader,
-  type TreeNodeAction,
-  type TreeNodeType
-} from '../../../advanced-tree-view';
+import { type ILazyLoader, type TreeNodeAction, type TreeNodeType } from '../../../tree-view';
 import { getRenderTarget } from './getRoot';
 import { translate } from '../utilities/translation/translateUtils';
 import { effect } from '@cognite/signals';
@@ -94,7 +88,7 @@ export abstract class DomainObject implements TreeNodeType {
   // IMPLEMENTATION of TreeNodeType interface
   // ==================================================
 
-  public get id(): string {
+  public get id(): UniqueId {
     return this.uniqueId;
   }
 

@@ -1,6 +1,6 @@
 import type { List3DNodesQuery, Node3D } from '@cognite/sdk';
 
-export type ICogniteClient = {
+export type IListNodesSdk = {
   list3DNodes: (
     modelId: number,
     revisionId: number,

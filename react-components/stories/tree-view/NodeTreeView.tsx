@@ -1,14 +1,10 @@
 import { type ReactElement } from 'react';
 
-import {
-  AdvancedTreeView,
-  onRecursiveToggleNode,
-  onSingleSelectNode,
-  type TreeNodeType
-} from '../../advanced-tree-view';
-import { type CadNodesLoader } from '../../advanced-tree-view/storybook-cad/cad-nodes-loader';
+import { AdvancedTreeView, type TreeNodeType } from '../../src/tree-view';
+import { type CadLazyLoader } from '#test-utils/tree-view/lazy-loaders/cad-lazy-loader';
+import { onRecursiveToggleNode, onSingleSelectNode } from './tree-node-functions';
 
-export const NodeTreeView = (loader: CadNodesLoader): ReactElement => {
+export const NodeTreeView = (loader: CadLazyLoader): ReactElement => {
   return (
     <AdvancedTreeView
       loader={loader}

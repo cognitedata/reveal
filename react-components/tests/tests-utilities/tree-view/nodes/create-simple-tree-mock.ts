@@ -1,5 +1,5 @@
-import { TreeNode } from '../model/tree-node';
-import { CheckboxState } from '../model/types';
+import { CheckboxState } from '../../../../src/architecture/base/utilities/types';
+import { TreeNode } from './tree-node';
 
 type SimpleMockArgs = {
   hasColors?: boolean;
@@ -8,7 +8,7 @@ type SimpleMockArgs = {
   hasDisabledCheckboxes?: boolean;
 };
 
-export function createSimpleMock(args: SimpleMockArgs): TreeNode {
+export function createSimpleTreeMock(args: SimpleMockArgs): TreeNode {
   const root = new TreeNode();
   root.label = 'Europa';
   root.isExpanded = true;
