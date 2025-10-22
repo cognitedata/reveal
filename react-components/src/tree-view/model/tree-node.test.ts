@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, vi, assert } from 'vitest';
 import { TreeNode } from './tree-node';
 import { CheckboxState } from '../../architecture/base/utilities/types';
-import { type TreeNodeAction } from './types';
+import { OnNodeLoadedAction, type TreeNodeAction } from './types';
 import { count } from '../../architecture/base/utilities/extensions/generatorUtils';
 import { type ILazyLoader } from './i-lazy-loader';
 import { type TreeNodeType } from './tree-node-type';
@@ -317,7 +317,8 @@ describe(TreeNode.name, () => {
     test('should lazy load children', async () => {
       root.needLoadChildren = true;
 
-      await root.loadChildren(new LazyLoaderMock());
+      const lazyLoader = new LazyLoaderMock();
+      await root.loadChildren(lazyLoader);
 
       expect(root.childCount).toBe(3); // 4 new children
       expect(root.needLoadChildren).toBe(false); // Change to false
@@ -325,6 +326,7 @@ describe(TreeNode.name, () => {
       // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
       expect(rootListener).toHaveBeenCalledTimes(7);
       expect(rootListener).toHaveBeenLastCalledWith(root);
+      expect(lazyLoader.onNodeLoaded).toHaveBeenCalledTimes(3); // 3 children
     });
 
     test('should not lazy load children when the mock is empty', async () => {
@@ -351,7 +353,8 @@ describe(TreeNode.name, () => {
       const oldChildCount = root.childCount;
       child.needLoadSiblings = true;
 
-      await child.loadSiblings(new LazyLoaderMock());
+      const lazyLoader = new LazyLoaderMock();
+      await child.loadSiblings(lazyLoader);
 
       expect(root.childCount - oldChildCount).toBe(4); // 4 new children
       expect(child.needLoadSiblings).toBe(false); // Change to false
@@ -362,6 +365,7 @@ describe(TreeNode.name, () => {
       // Notified: isLoadingSiblings (on/off) needLoadSiblings(on/off)
       expect(childListener).toHaveBeenCalledTimes(4);
       expect(childListener).toHaveBeenLastCalledWith(child);
+      expect(lazyLoader.onNodeLoaded).toHaveBeenCalledTimes(4); // 4 children
     });
 
     test('should not lazy load siblings when the mock is empty', async () => {
@@ -455,6 +459,8 @@ class LazyLoaderMock implements ILazyLoader {
   async loadSiblings(_node: TreeNodeType): Promise<TreeNodeType[] | undefined> {
     return [new TreeNode(), new TreeNode(), new TreeNode(), new TreeNode()]; // 4 siblings
   }
+
+  onNodeLoaded: OnNodeLoadedAction = vi.fn<OnNodeLoadedAction>();
 }
 
 class EmptyLazyLoaderMock implements ILazyLoader {
