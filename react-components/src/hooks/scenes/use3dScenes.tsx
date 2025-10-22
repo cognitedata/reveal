@@ -36,11 +36,12 @@ import {
 
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { createGetScenesQuery, type SceneCursors } from './allScenesQuery';
-import { Use3dScenesContext } from './use3dScenes.context';
+import { Use3dScenesContext, type Use3dScenesDependencies } from './use3dScenes.context';
 import { isScene360CollectionEdge, isScene3dModelEdge } from './sceneResponseTypeGuards';
 
 export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
-  const { useSDK, createFdmSdk, sceneRelatedDataLimit } = useContext(Use3dScenesContext);
+  const { useSDK, createFdmSdk, sceneRelatedDataLimit, getRevisionExternalIdAndSpace } =
+    useContext(Use3dScenesContext);
 
   const sdk = useSDK(userSdk);
   const fdmSdk = useMemo(() => createFdmSdk(sdk), [createFdmSdk, sdk]);
@@ -111,7 +112,12 @@ export function use3dScenes(userSdk?: CogniteClient): Use3dScenesResult {
     }
 
     const scenesMap = createMapOfScenes(allScenes.scenes, allScenes.sceneSkybox);
-    populateSceneMapWithModels(allScenes.sceneModels, scenesMap, tryGetModelIdFromExternalId);
+    await populateSceneMapWithModels(
+      allScenes.sceneModels,
+      scenesMap,
+      getRevisionExternalIdAndSpace,
+      fdmSdk
+    );
     populateSceneMapWith360Images(allScenes.scene360Collections, scenesMap);
     populateSceneMapWithGroundplanes(
       allScenes.sceneGroundPlanes,
@@ -184,36 +190,47 @@ function createMapOfScenes(
   }, {});
 }
 
-function populateSceneMapWithModels(
+async function populateSceneMapWithModels(
   sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>,
-  tryGetModelIdFromExternalId: (externalId: string) => number | undefined
-): void {
-  sceneModels.forEach((edge) => {
+  getRevisionExternalIdAndSpace: Use3dScenesDependencies['getRevisionExternalIdAndSpace'],
+  fdmSdk: FdmSDK
+): Promise<void> {
+  const promises = sceneModels.map(async (edge) => {
     const { space, externalId } = edge.startNode;
 
     const properties = Object.values(Object.values(edge.properties)[0])[0];
-
-    const newModelId = tryGetModelIdFromExternalId(edge.endNode.externalId);
-    const newModelRevisionId = Number(properties?.revisionId);
-
-    if (newModelId === undefined || isNaN(newModelRevisionId)) {
-      return;
-    }
-
-    if (scenesMap[space]?.[externalId] === undefined) {
-      return;
-    }
-
     const transform = createTransformFromEdge(properties);
-    const newModel = {
-      modelId: newModelId,
-      revisionId: newModelRevisionId,
-      transform
-    };
 
-    scenesMap[space]?.[externalId].modelOptions.push(newModel);
+    const dmModelIdentifier = await getRevisionExternalIdAndSpace(
+      edge.endNode.externalId,
+      properties.revisionId,
+      fdmSdk
+    );
+
+    if (dmModelIdentifier !== undefined) {
+      scenesMap[space][externalId].modelOptions.push({
+        ...dmModelIdentifier,
+        defaultVisible: properties.defaultVisible,
+        transform
+      });
+      return;
+    }
+
+    const parsedModelId = tryGetModelIdFromExternalId(edge.endNode.externalId);
+    if (parsedModelId === undefined) {
+      return;
+    }
+
+    scenesMap[space][externalId].modelOptions.push({
+      modelId: parsedModelId,
+      revisionId: properties.revisionId,
+      defaultVisible: properties.defaultVisible,
+      transform
+    });
   });
+
+  await Promise.allSettled(promises);
 }
 
 function populateSceneMapWith360Images(

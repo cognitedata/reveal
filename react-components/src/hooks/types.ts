@@ -10,7 +10,7 @@ import { type FdmNode } from '../data-providers/FdmSDK';
 import { type AssetProperties } from '../data-providers/core-dm-provider/utils/filters';
 import { type FdmKey } from '../components/CacheProvider/types';
 import { type MOUSE, type Vector2 } from 'three';
-import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { type PointCloudDMVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForIntersection';
 import { type AssetInstance } from '../utilities/instances';
 
 export type ThreeDModelFdmMappings = {
@@ -106,6 +106,6 @@ export type ClickedNodeData = {
    * A value of `undefined` means it's not yet finished evaluating.
    * A value of `null` means there was no result
    */
-  pointCloudFdmVolumeMappingResult?: PointCloudFdmVolumeMappingWithViews[] | null;
+  pointCloudFdmVolumeMappingResult?: PointCloudDMVolumeMappingWithViews[] | null;
   intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType>;
 };

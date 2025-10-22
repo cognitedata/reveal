@@ -49,7 +49,7 @@ export const RuleBasedOutputsButton = ({
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
+  const { isInitialLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
     useAssetMappedNodesForRevisions(cadModels);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
@@ -147,7 +147,7 @@ export const RuleBasedOutputsButton = ({
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'RULESET_SELECT_HEADER' })} placement="right">
           <Button
-            icon=<ColorPaletteIcon />
+            icon={<ColorPaletteIcon />}
             disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"

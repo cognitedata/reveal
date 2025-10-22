@@ -93,7 +93,7 @@ function useCalculateMappedStyling(
 
   const {
     data: modelMappingsMap,
-    isLoading,
+    isInitialLoading,
     isError
   } = useQuery<CadModelMappings>({
     queryKey: [
@@ -135,7 +135,7 @@ function useCalculateMappedStyling(
 
   return {
     combinedMappedStyleGroups: styleGroupsWithModels,
-    isModelMappingsLoading: isLoading,
+    isModelMappingsLoading: isInitialLoading,
     isError
   };
 }
@@ -157,7 +157,7 @@ function useCalculateInstanceStyling(
 
   const {
     data: modelStyleGroups,
-    isLoading: isModelMappingsLoading,
+    isInitialLoading: isModelMappingsLoading,
     isError
   } = useQuery({
     queryKey: [

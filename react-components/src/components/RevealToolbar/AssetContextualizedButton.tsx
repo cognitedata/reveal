@@ -26,8 +26,8 @@ export const AssetContextualizedButton = ({
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
   const [enableContextualizedStyling, setEnableContextualizedStyling] = useState<boolean>(false);
-  const { isLoading, isFetched } = useAssetMappedNodesForRevisions(cadModels);
-  const disabled = isLoading && !isFetched;
+  const { isInitialLoading, isFetched } = useAssetMappedNodesForRevisions(cadModels);
+  const disabled = isInitialLoading && !isFetched;
 
   const tooltip = disabled ? tooltipMapping.true : tooltipMapping.false;
 
@@ -40,7 +40,7 @@ export const AssetContextualizedButton = ({
     <CogsTooltip content={t(tooltip)} placement="right">
       <Button
         type="ghost"
-        icon=<AssetsIcon />
+        icon={<AssetsIcon />}
         toggled={enableContextualizedStyling}
         aria-label="asset-labels-button"
         onClick={onClick}
