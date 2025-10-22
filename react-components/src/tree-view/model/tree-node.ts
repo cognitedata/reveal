@@ -418,7 +418,13 @@ export class TreeNode implements TreeNodeType {
           continue;
         }
         this.addChild(child);
-        loader.onNodeLoaded?.(child, this);
+
+        try {
+          loader.onNodeLoaded?.(child, this);
+        } catch (error) {
+          console.error('Error in onNodeLoaded in loadChildren', error);
+          throw error; // Re-throw the error to prevent loadChildren from being set to false
+        }
       }
     }
     this.needLoadChildren = false;
@@ -449,7 +455,12 @@ export class TreeNode implements TreeNodeType {
       }
       index++;
       parent.insertChild(index, child);
-      loader.onNodeLoaded?.(child, parent);
+      try {
+        loader.onNodeLoaded?.(child, parent);
+      } catch (error) {
+        console.error('Error in onNodeLoaded in loadSiblings', error);
+        throw error; // Re-throw the error to prevent needLoadSiblings from being set to false
+      }
     }
     this.needLoadSiblings = false;
   }
