@@ -1,5 +1,5 @@
 import type { FilterDefinition, ViewDefinition, CogniteClient } from '@cognite/sdk';
-import { chunk } from 'lodash';
+import { chunk } from 'lodash-es';
 import { createFdmKey } from '../../../components/CacheProvider/idAndKeyTranslation';
 import type { ModelRevisionId, FdmKey } from '../../../components/CacheProvider/types';
 import type { NodeItem } from '../../../data-providers';
