@@ -135,7 +135,7 @@ describe(TreeNode.name, () => {
 
     test('should have parent', () => {
       addChildren(root, true);
-      const grandChild = getGrandChild(root);
+      const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
       expect(grandChild.parent).toBeDefined();
     });
@@ -147,7 +147,7 @@ describe(TreeNode.name, () => {
 
     test('should be root', () => {
       addChildren(root, true);
-      const grandChild = getGrandChild(root);
+      const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
       expect(grandChild.getRoot()).toBe(root);
     });
@@ -293,21 +293,21 @@ describe(TreeNode.name, () => {
 
     test('should get ancestors', () => {
       addChildren(root, true);
-      const grandChild = getGrandChild(root);
+      const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
       expect(count(grandChild.getAncestors())).toBe(2);
     });
 
     test('should get ancestors by type', () => {
       addChildren(root, true);
-      const grandChild = getGrandChild(root);
+      const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
       expect(count(grandChild.getAncestorsByType(TreeNode))).toBe(2);
     });
 
     test('should get this and ancestors by type', () => {
       addChildren(root, true);
-      const grandChild = getGrandChild(root);
+      const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
       expect(count(grandChild.getThisAndAncestorsByType(TreeNode))).toBe(3);
     });
@@ -325,11 +325,11 @@ describe(TreeNode.name, () => {
     // Wait a tick for the children to load
     await sleep(1);
 
-    // Now the children should be loaded
+    // Now the 3 children should be loaded
     expect(root.children).toHaveLength(3);
 
-    // isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children
-    expect(updateListener).toHaveBeenCalledTimes(2 + 2 + 3);
+    // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
+    expect(updateListener).toHaveBeenCalledTimes(7);
     expect(updateListener).toHaveBeenLastCalledWith(root);
   });
 
@@ -345,34 +345,33 @@ describe(TreeNode.name, () => {
     // Wait a tick for the children to load
     await sleep(1);
 
-    // Now the children should be loaded
+    // Now the 0 children should be loaded
     expect(childrenCount).toBe(0);
     expect(root.children).toBeUndefined();
 
-    // isLoadingChildren (on/off) needLoadChildren(on/off)
+    // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) = 4
     expect(updateListener).toHaveBeenCalledTimes(4);
     expect(updateListener).toHaveBeenLastCalledWith(root);
+  });
+
+  test('should load siblings', async () => {
+    root.needLoadChildren = true;
+    addChildren(root, true);
+    const node = getLastGrandChild(root);
+
+    assert(node !== undefined);
+    const oldChildCount = node.parent?.children?.length ?? 0;
+    await node.loadSiblings(new LazyLoaderMock());
+    const newChildCount = node.parent?.children?.length ?? 0;
+
+    expect(newChildCount - oldChildCount).toBe(4);
+
+    // Notified: isLoadingSiblings (on/off) needLoadSiblings(on/off) + 4 children = 8
   });
 });
 
 const CHILDREN_COUNT = 5;
 const GRAND_CHILDREN_COUNT = 6;
-
-function getGrandChild(node: TreeNode): TreeNode | undefined {
-  const { children } = node;
-  if (children === undefined) {
-    return undefined;
-  }
-  const child = children[children.length - 1];
-  if (child === undefined) {
-    return undefined;
-  }
-  const grandChildren = child.children;
-  if (grandChildren === undefined) {
-    return undefined;
-  }
-  return grandChildren[grandChildren.length - 1];
-}
 
 function addChildren(
   parent: TreeNode,
@@ -395,6 +394,22 @@ function addChildren(
   }
 }
 
+function getLastGrandChild(node: TreeNode): TreeNode | undefined {
+  const { children } = node;
+  if (children === undefined) {
+    return undefined;
+  }
+  const child = children[children.length - 1];
+  if (child === undefined) {
+    return undefined;
+  }
+  const grandChildren = child.children;
+  if (grandChildren === undefined) {
+    return undefined;
+  }
+  return grandChildren[grandChildren.length - 1];
+}
+
 class LazyLoaderMock implements ILazyLoader {
   root: TreeNodeType | undefined;
 
@@ -403,7 +418,7 @@ class LazyLoaderMock implements ILazyLoader {
   }
 
   async loadSiblings(_node: TreeNodeType): Promise<TreeNodeType[] | undefined> {
-    return [new TreeNode(), new TreeNode(), new TreeNode()];
+    return [new TreeNode(), new TreeNode(), new TreeNode(), new TreeNode()];
   }
 }
 
