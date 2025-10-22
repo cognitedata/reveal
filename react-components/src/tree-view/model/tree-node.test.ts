@@ -9,11 +9,11 @@ import { sleep } from '../../../tests/tests-utilities/tree-view/list-nodes-stk/l
 
 describe(TreeNode.name, () => {
   let root: TreeNode;
-  const updateListener = vi.fn<TreeNodeAction>();
+  const rootListener = vi.fn<TreeNodeAction>();
 
   beforeEach(() => {
     root = new TreeNode();
-    root.addTreeNodeListener(updateListener);
+    root.addTreeNodeListener(rootListener);
   });
 
   describe('Setters and getters', () => {
@@ -25,8 +25,8 @@ describe(TreeNode.name, () => {
       const expected = 'Test';
       root.label = expected;
       expect(root.label).toBe(expected);
-      expect(updateListener).toHaveBeenCalledOnce();
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledOnce();
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get bold label', () => {
@@ -34,16 +34,16 @@ describe(TreeNode.name, () => {
         root.hasBoldLabel = expected;
         expect(root.hasBoldLabel).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get icon color', () => {
       const expected = '#0099ff';
       root.iconColor = expected;
       expect(root.iconColor).toBe(expected);
-      expect(updateListener).toHaveBeenCalledOnce();
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledOnce();
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get info icon', () => {
@@ -51,8 +51,8 @@ describe(TreeNode.name, () => {
         root.hasInfoIcon = expected;
         expect(root.hasInfoIcon).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get selected', () => {
@@ -60,8 +60,8 @@ describe(TreeNode.name, () => {
         root.isSelected = expected;
         expect(root.isSelected).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get expanded', () => {
@@ -69,8 +69,8 @@ describe(TreeNode.name, () => {
         root.isExpanded = expected;
         expect(root.isExpanded).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get isCheckboxEnabled', () => {
@@ -78,8 +78,8 @@ describe(TreeNode.name, () => {
         root.isCheckboxEnabled = expected;
         expect(root.isCheckboxEnabled).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get checkboxState', () => {
@@ -87,8 +87,8 @@ describe(TreeNode.name, () => {
         root.checkboxState = expected;
         expect(root.checkboxState).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(3);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(3);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get needLoadChildren', () => {
@@ -96,8 +96,8 @@ describe(TreeNode.name, () => {
         root.needLoadChildren = expected;
         expect(root.needLoadChildren).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get needLoadSiblings', () => {
@@ -105,8 +105,8 @@ describe(TreeNode.name, () => {
         root.needLoadSiblings = expected;
         expect(root.needLoadSiblings).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
 
     test('should set and get isLoadingSiblings', () => {
@@ -114,8 +114,8 @@ describe(TreeNode.name, () => {
         root.isLoadingSiblings = expected;
         expect(root.isLoadingSiblings).toBe(expected);
       }
-      expect(updateListener).toHaveBeenCalledTimes(2);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(2);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
   });
 
@@ -161,8 +161,8 @@ describe(TreeNode.name, () => {
       root.addChild(child);
 
       // Assert
-      expect(updateListener).toHaveBeenCalledTimes(1);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(1);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
       assert(root.children !== undefined);
       expect(child.parent).toBe(root);
       expect(root.children[0]).toBe(child);
@@ -173,14 +173,14 @@ describe(TreeNode.name, () => {
       const addedChild = new TreeNode();
       const insertedChild = new TreeNode();
       root.addChild(addedChild);
-      updateListener.mockClear();
+      rootListener.mockClear();
 
       // Act
       root.insertChild(0, insertedChild);
 
       // Assert
-      expect(updateListener).toHaveBeenCalledTimes(1);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
+      expect(rootListener).toHaveBeenCalledTimes(1);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
       expect(addedChild.parent).toBe(root);
       assert(root.children !== undefined);
       expect(root.children[0]).toBe(insertedChild);
@@ -314,6 +314,78 @@ describe(TreeNode.name, () => {
   });
 
   describe('Lazy loading', () => {
+    test('should lazy load children', async () => {
+      root.needLoadChildren = true;
+
+      await root.loadChildren(new LazyLoaderMock());
+
+      expect(root.childCount).toBe(3); // 4 new children
+      expect(root.needLoadChildren).toBe(false); // Change to false
+
+      // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
+      expect(rootListener).toHaveBeenCalledTimes(7);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
+    });
+
+    test('should not lazy load children when the mock is empty', async () => {
+      root.needLoadChildren = true;
+
+      await root.loadChildren(new EmptyLazyLoaderMock());
+
+      expect(root.childCount).toBe(0); // 4 new children
+      expect(root.needLoadChildren).toBe(true); // Still true
+
+      // Notified: isLoadingChildren (on/off) needLoadChildren(on) = 3
+      expect(rootListener).toHaveBeenCalledTimes(3);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
+    });
+
+    test('should lazy load siblings', async () => {
+      addChildren(root);
+      rootListener.mockClear();
+      const child = getLastChild(root);
+      assert(child !== undefined);
+
+      const childListener = vi.fn<TreeNodeAction>();
+      child.addTreeNodeListener(childListener);
+      const oldChildCount = root.childCount;
+      child.needLoadSiblings = true;
+
+      await child.loadSiblings(new LazyLoaderMock());
+
+      expect(root.childCount - oldChildCount).toBe(4); // 4 new children
+      expect(child.needLoadSiblings).toBe(false); // Change to false
+
+      expect(rootListener).toHaveBeenCalledTimes(4); // 4 children added
+      expect(rootListener).toHaveBeenLastCalledWith(root);
+
+      // Notified: isLoadingSiblings (on/off) needLoadSiblings(on/off)
+      expect(childListener).toHaveBeenCalledTimes(4);
+      expect(childListener).toHaveBeenLastCalledWith(child);
+    });
+
+    test('should not lazy load siblings when the mock is empty', async () => {
+      addChildren(root);
+      rootListener.mockClear();
+      const child = getLastChild(root);
+      assert(child !== undefined);
+
+      const childListener = vi.fn<TreeNodeAction>();
+      child.addTreeNodeListener(childListener);
+      const oldChildCount = root.childCount;
+      child.needLoadSiblings = true;
+
+      await child.loadSiblings(new EmptyLazyLoaderMock());
+
+      expect(root.childCount - oldChildCount).toBe(0); // No new children
+      expect(child.needLoadSiblings).toBe(true); // Still true
+      expect(rootListener).toHaveBeenCalledTimes(0); // No new children added
+
+      // Notified: isLoadingSiblings (on/off) needLoadSiblings(on)
+      expect(childListener).toHaveBeenCalledTimes(3);
+      expect(childListener).toHaveBeenLastCalledWith(child);
+    });
+
     test('get children with lazy loader', async () => {
       root.needLoadChildren = true;
 
@@ -330,41 +402,8 @@ describe(TreeNode.name, () => {
       expect(root.children).toHaveLength(3);
 
       // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
-      expect(updateListener).toHaveBeenCalledTimes(7);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
-    });
-
-    test('get children with empty lazy loader', async () => {
-      root.needLoadChildren = true;
-
-      // Since we have to await for the children to load, we need to test that
-      // nothing is return yet
-      const childrenCount = count(root.getChildren(new EmptyLazyLoaderMock()));
-      expect(childrenCount).toBe(0);
-      expect(root.children).toBeUndefined();
-
-      // Wait a tick for the children to load
-      await sleep(1);
-
-      // Now the 0 children should be loaded
-      expect(childrenCount).toBe(0);
-      expect(root.children).toBeUndefined();
-
-      // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) = 4
-      expect(updateListener).toHaveBeenCalledTimes(4);
-      expect(updateListener).toHaveBeenLastCalledWith(root);
-    });
-
-    test('should load siblings', async () => {
-      root.needLoadChildren = true;
-      addChildren(root, true);
-      const node = getLastGrandChild(root);
-      assert(node !== undefined);
-      const oldChildCount = node.parent?.children?.length ?? 0;
-      await node.loadSiblings(new LazyLoaderMock());
-
-      const newChildCount = node.parent?.children?.length ?? 0;
-      expect(newChildCount - oldChildCount).toBe(4);
+      expect(rootListener).toHaveBeenCalledTimes(7);
+      expect(rootListener).toHaveBeenLastCalledWith(root);
     });
   });
 });
@@ -393,20 +432,17 @@ function addChildren(
   }
 }
 
-function getLastGrandChild(node: TreeNode): TreeNode | undefined {
+function getLastChild(node: TreeNode): TreeNode | undefined {
   const { children } = node;
-  if (children === undefined) {
+  if (children === undefined || children.length === 0) {
     return undefined;
   }
-  const child = children[children.length - 1];
-  if (child === undefined) {
-    return undefined;
-  }
-  const grandChildren = child.children;
-  if (grandChildren === undefined) {
-    return undefined;
-  }
-  return grandChildren[grandChildren.length - 1];
+  return children[children.length - 1];
+}
+
+function getLastGrandChild(node: TreeNode): TreeNode | undefined {
+  const lastChild = getLastChild(node);
+  return lastChild === undefined ? undefined : getLastChild(lastChild);
 }
 
 class LazyLoaderMock implements ILazyLoader {

@@ -40,6 +40,10 @@ export class TreeNode implements TreeNodeType {
   protected _children: TreeNode[] | undefined = undefined;
   protected _parent: TreeNode | undefined = undefined;
 
+  public get childCount(): number {
+    return this.children?.length ?? 0;
+  }
+
   // ==================================================
   // INSTANCE PROPERTIES (Some are implementation of TreeNodeType)
   // ==================================================
@@ -398,22 +402,23 @@ export class TreeNode implements TreeNodeType {
   // INSTANCE METHODS: Loading
   // ==================================================
 
-  private async loadChildren(loader: ILazyLoader): Promise<void> {
+  public async loadChildren(loader: ILazyLoader): Promise<void> {
     this.isLoadingChildren = true;
     const children = await loader.loadChildren(this);
     this.isLoadingChildren = false;
-    if (children !== undefined && children.length > 0) {
-      if (this._children === undefined) {
-        this._children = [];
-      }
-      if (children !== undefined) {
-        for (const child of children) {
-          if (!(child instanceof TreeNode)) {
-            continue;
-          }
-          this.addChild(child);
-          loader.onNodeLoaded?.(child, this);
+    if (children === undefined || children.length === 0) {
+      return;
+    }
+    if (this._children === undefined) {
+      this._children = [];
+    }
+    if (children !== undefined) {
+      for (const child of children) {
+        if (!(child instanceof TreeNode)) {
+          continue;
         }
+        this.addChild(child);
+        loader.onNodeLoaded?.(child, this);
       }
     }
     this.needLoadChildren = false;
@@ -447,7 +452,6 @@ export class TreeNode implements TreeNodeType {
       loader.onNodeLoaded?.(child, parent);
     }
     this.needLoadSiblings = false;
-    parent.update();
   }
 
   public hasChild(child: TreeNode): boolean {
