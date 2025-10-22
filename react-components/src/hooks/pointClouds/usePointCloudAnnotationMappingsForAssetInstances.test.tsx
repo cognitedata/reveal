@@ -128,7 +128,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([{ annotationId: 1, asset: classicAssetInstance }]);
@@ -157,7 +157,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([
@@ -176,7 +176,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([{ annotationId: 1, asset: dmAssetInstance }]);
@@ -205,7 +205,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([
@@ -237,7 +237,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([
@@ -256,7 +256,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([]);
@@ -288,7 +288,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(result.current.data).toEqual([
@@ -311,7 +311,7 @@ describe(usePointCloudAnnotationMappingsForAssetInstances.name, () => {
     );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isInitialLoading).toBe(false);
     });
 
     expect(dependencies.useModelIdRevisionIdFromModelOptions).toHaveBeenCalledWith(typedModels);
