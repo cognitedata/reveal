@@ -313,60 +313,59 @@ describe(TreeNode.name, () => {
     });
   });
 
-  test('get children with lazy loader', async () => {
-    root.needLoadChildren = true;
+  describe('Lazy loading', () => {
+    test('get children with lazy loader', async () => {
+      root.needLoadChildren = true;
 
-    // Since we have to await for the children to load, we need to test that
-    // nothing is return yet
-    const childrenCount = count(root.getChildren(new LazyLoaderMock()));
-    expect(childrenCount).toBe(0);
-    expect(root.children).toBeUndefined();
+      // Since we have to await for the children to load, we need to test that
+      // nothing is return yet
+      const childrenCount = count(root.getChildren(new LazyLoaderMock()));
+      expect(childrenCount).toBe(0);
+      expect(root.children).toBeUndefined();
 
-    // Wait a tick for the children to load
-    await sleep(1);
+      // Wait a tick for the children to load
+      await sleep(1);
 
-    // Now the 3 children should be loaded
-    expect(root.children).toHaveLength(3);
+      // Now the 3 children should be loaded
+      expect(root.children).toHaveLength(3);
 
-    // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
-    expect(updateListener).toHaveBeenCalledTimes(7);
-    expect(updateListener).toHaveBeenLastCalledWith(root);
-  });
+      // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
+      expect(updateListener).toHaveBeenCalledTimes(7);
+      expect(updateListener).toHaveBeenLastCalledWith(root);
+    });
 
-  test('get children with empty lazy loader', async () => {
-    root.needLoadChildren = true;
+    test('get children with empty lazy loader', async () => {
+      root.needLoadChildren = true;
 
-    // Since we have to await for the children to load, we need to test that
-    // nothing is return yet
-    const childrenCount = count(root.getChildren(new EmptyLazyLoaderMock()));
-    expect(childrenCount).toBe(0);
-    expect(root.children).toBeUndefined();
+      // Since we have to await for the children to load, we need to test that
+      // nothing is return yet
+      const childrenCount = count(root.getChildren(new EmptyLazyLoaderMock()));
+      expect(childrenCount).toBe(0);
+      expect(root.children).toBeUndefined();
 
-    // Wait a tick for the children to load
-    await sleep(1);
+      // Wait a tick for the children to load
+      await sleep(1);
 
-    // Now the 0 children should be loaded
-    expect(childrenCount).toBe(0);
-    expect(root.children).toBeUndefined();
+      // Now the 0 children should be loaded
+      expect(childrenCount).toBe(0);
+      expect(root.children).toBeUndefined();
 
-    // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) = 4
-    expect(updateListener).toHaveBeenCalledTimes(4);
-    expect(updateListener).toHaveBeenLastCalledWith(root);
-  });
+      // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) = 4
+      expect(updateListener).toHaveBeenCalledTimes(4);
+      expect(updateListener).toHaveBeenLastCalledWith(root);
+    });
 
-  test('should load siblings', async () => {
-    root.needLoadChildren = true;
-    addChildren(root, true);
-    const node = getLastGrandChild(root);
+    test('should load siblings', async () => {
+      root.needLoadChildren = true;
+      addChildren(root, true);
+      const node = getLastGrandChild(root);
+      assert(node !== undefined);
+      const oldChildCount = node.parent?.children?.length ?? 0;
+      await node.loadSiblings(new LazyLoaderMock());
 
-    assert(node !== undefined);
-    const oldChildCount = node.parent?.children?.length ?? 0;
-    await node.loadSiblings(new LazyLoaderMock());
-    const newChildCount = node.parent?.children?.length ?? 0;
-
-    expect(newChildCount - oldChildCount).toBe(4);
-
-    // Notified: isLoadingSiblings (on/off) needLoadSiblings(on/off) + 4 children = 8
+      const newChildCount = node.parent?.children?.length ?? 0;
+      expect(newChildCount - oldChildCount).toBe(4);
+    });
   });
 });
 
@@ -375,7 +374,7 @@ const GRAND_CHILDREN_COUNT = 6;
 
 function addChildren(
   parent: TreeNode,
-  addGrandChildren = false,
+  alsoAddGrandChildren = false,
   count: number = CHILDREN_COUNT
 ): void {
   for (let i = 0; i < count; i++) {
@@ -383,7 +382,7 @@ function addChildren(
     child.label = 'Child ' + i;
     parent.addChild(child);
 
-    if (!addGrandChildren) {
+    if (!alsoAddGrandChildren) {
       continue;
     }
     for (let j = 0; j < GRAND_CHILDREN_COUNT; j++) {
@@ -414,11 +413,11 @@ class LazyLoaderMock implements ILazyLoader {
   root: TreeNodeType | undefined;
 
   async loadChildren(_node: TreeNodeType): Promise<TreeNodeType[] | undefined> {
-    return [new TreeNode(), new TreeNode(), new TreeNode()];
+    return [new TreeNode(), new TreeNode(), new TreeNode()]; // 3 children
   }
 
   async loadSiblings(_node: TreeNodeType): Promise<TreeNodeType[] | undefined> {
-    return [new TreeNode(), new TreeNode(), new TreeNode(), new TreeNode()];
+    return [new TreeNode(), new TreeNode(), new TreeNode(), new TreeNode()]; // 4 siblings
   }
 }
 
