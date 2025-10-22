@@ -54,7 +54,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     if (!hasSomeClasses(domainObject.model)) {
       return [];
     }
-    const children = [];
+    const children: FilterItemCommand[] = [];
     for (const item of domainObject.model.getClasses()) {
       if (!domainObject.model.hasClass(item.code)) {
         continue;
