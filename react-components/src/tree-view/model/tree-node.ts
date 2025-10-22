@@ -402,19 +402,18 @@ export class TreeNode implements TreeNodeType {
     this.isLoadingChildren = true;
     const children = await loader.loadChildren(this);
     this.isLoadingChildren = false;
-    if (children === undefined || children.length === 0) {
-      return;
-    }
-    if (this._children === undefined) {
-      this._children = [];
-    }
-    if (children !== undefined) {
-      for (const child of children) {
-        if (!(child instanceof TreeNode)) {
-          continue;
+    if (children !== undefined && children.length > 0) {
+      if (this._children === undefined) {
+        this._children = [];
+      }
+      if (children !== undefined) {
+        for (const child of children) {
+          if (!(child instanceof TreeNode)) {
+            continue;
+          }
+          this.addChild(child);
+          loader.onNodeLoaded?.(child, this);
         }
-        this.addChild(child);
-        loader.onNodeLoaded?.(child, this);
       }
     }
     this.needLoadChildren = false;
