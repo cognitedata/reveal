@@ -1,4 +1,4 @@
-import { BaseCommand } from './BaseCommand';
+import type { BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export type GroupCommandConfiguration = {
@@ -33,7 +33,7 @@ export class GroupCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get isVisible(): boolean {
-    return this._commands.some(({ isVisible }) => isVisible === true);
+    return this._commands.some(({ isVisible }) => isVisible);
   }
 
   public override equals(other: BaseCommand): boolean {

@@ -12,7 +12,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { BaseOptionCommand, OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
+import { TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
 import { type PlacementType } from './types';

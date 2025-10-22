@@ -1,5 +1,5 @@
 import { assert, beforeEach, describe, expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import {
   BaseCommand,
   BaseOptionCommand,
@@ -102,7 +102,7 @@ class MockSegmentedCommand extends BaseOptionCommand {
   public _isVisible = true;
   public _isEnabled = true;
   public selectedValue: number = 1;
-  private _optionCommands: OptionCommand[] = [];
+  private readonly _optionCommands: OptionCommand[] = [];
 
   public constructor() {
     super(OptionType.Segmented);

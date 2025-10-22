@@ -1,4 +1,4 @@
-import { BaseCommand } from './BaseCommand';
+import type { BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export type RowCommandConfiguration = {

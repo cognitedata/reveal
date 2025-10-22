@@ -4,10 +4,14 @@ import { TestSectionCommand } from './TestSectionCommand';
 
 export class TestGroupCommand extends GroupCommand {
   constructor(title: string, commands?: any[]) {
-    const defaultCommands = commands || [
-      new TestButtonCommand({ onClick: () => console.log('Group button 1 clicked') }),
+    const defaultCommands = commands ?? [
+      new TestButtonCommand({
+        onClick: () => {}
+      }),
       new TestSectionCommand('Group section'),
-      new TestButtonCommand({ onClick: () => console.log('Group button 2 clicked') })
+      new TestButtonCommand({
+        onClick: () => {}
+      })
     ];
 
     super({ title, commands: defaultCommands });

@@ -18,7 +18,7 @@ import { getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
-import { DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
+import { SELECT_DROPDOWN_ICON_COLOR } from './constants';
 import { type IconName } from '../../architecture/base/utilities/types';
 import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
