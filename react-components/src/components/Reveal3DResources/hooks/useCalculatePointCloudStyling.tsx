@@ -12,12 +12,10 @@ import {
   type StyledPointCloudModel,
   type InstanceStylingGroup
 } from '../types';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { isSameModel } from '../../../utilities/isSameModel';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/types';
-import { use3dModels } from '../../../hooks/use3dModels';
-import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { isDefined } from '../../../utilities/isDefined';
 import {
   createInstanceReferenceKey,
@@ -30,6 +28,8 @@ import {
   getVolumeAnnotationId
 } from '../../CacheProvider/utils';
 import { type PointCloudVolumeId } from '../../CacheProvider/types';
+import { UseCalculatePointCloudStylingContext } from './useCalculatePointCloudStyling.context';
+import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 
 type PointCloudVolumeWithModel = {
   model: PointCloudModelOptions;
@@ -118,6 +118,10 @@ function createVolumePointCloudStyleGroup(
     .filter(({ instance }) => assetInstancesSet.has(createInstanceReferenceKey(instance)))
     .map(({ pointCloudVolume }) => pointCloudVolume);
 
+  if (matchedVolumeRefModels.length === 0) {
+    return undefined;
+  }
+
   return {
     pointCloudVolumes: matchedVolumeRefModels,
     style: instanceGroup.style.pointcloud ?? {}
@@ -142,6 +146,8 @@ function useCalculateMappedPointCloudStyling(
 function usePointCloudVolumesWithModel(
   models: PointCloudModelOptions[]
 ): PointCloudVolumeWithModel[] {
+  const { use3dModels } = useContext(UseCalculatePointCloudStylingContext);
+
   const viewerModels = use3dModels();
 
   const pointCloudViewerModels = viewerModels.filter(
@@ -216,11 +222,16 @@ function groupStyleGroupByModel(
 ): StyledPointCloudModel[] {
   const initialStyleGroups = models.map((model) => ({ model, styleGroups: [] }));
 
-  return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
-    const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSameModel(group.model, currentGroup.model)
-    );
-    existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
-    return accumulatedGroups;
-  }, initialStyleGroups);
+  const accumulatedStyleGroups = styleGroup.reduce<StyledPointCloudModel[]>(
+    (accumulatedGroups, currentGroup) => {
+      const existingGroupWithModel = accumulatedGroups.find((group) =>
+        isSameModel(group.model, currentGroup.model)
+      );
+      existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
+      return accumulatedGroups;
+    },
+    initialStyleGroups
+  );
+
+  return accumulatedStyleGroups.filter((group) => group.styleGroups.length > 0);
 }
