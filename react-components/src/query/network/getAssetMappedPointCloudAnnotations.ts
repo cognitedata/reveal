@@ -1,5 +1,10 @@
 import { type ClassicDataSourceType } from '@cognite/reveal';
-import { type AnnotationFilterProps, type Asset, type CogniteClient } from '@cognite/sdk';
+import {
+  type AnnotationFilterProps,
+  type AnnotationsInstanceRef,
+  type Asset,
+  type CogniteClient
+} from '@cognite/sdk';
 import { chunk, uniq, uniqBy } from 'lodash-es';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
@@ -97,7 +102,10 @@ async function getPointCloudAnnotationDmInstances(
     .map((annotation) => annotation.data.instanceRef)
     .filter((instanceRef) => instanceRef !== undefined);
 
-  const uniqueMappingDmsInstances = uniqBy(annotationMappingDms, createFdmKey);
+  const uniqueMappingDmsInstances = uniqBy<AnnotationsInstanceRef>(
+    annotationMappingDms,
+    createFdmKey
+  );
 
   const allResultLists = await fdmSdk.getByExternalIds<AssetProperties>(
     uniqueMappingDmsInstances.filter((instance) =>
