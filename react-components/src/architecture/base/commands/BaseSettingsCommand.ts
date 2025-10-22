@@ -31,12 +31,12 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public add(command: BaseCommand): void {
+  public add<T extends BaseCommand>(command: T): T {
     if (this._children.find((c) => c.equals(command)) !== undefined) {
       console.error('Duplicated command given: ' + command.name);
-      return;
     }
     this._children.push(command);
+    return command;
   }
 
   public clear(): void {

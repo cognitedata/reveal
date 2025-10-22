@@ -1,11 +1,19 @@
 import { BannerComponent } from './BannerComponent';
-import { BaseBannerCommand } from '../../architecture';
+import { BaseBannerCommand, GroupCommand } from '../../architecture';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
-import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
+import {
+  Button,
+  Tooltip as CogsTooltip,
+  Flex,
+  Slider,
+  Switch,
+  Accordion,
+  WarningFilledIcon,
+  Body
+} from '@cognite/cogs.js';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
-import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { DropdownButton } from './DropdownButton';
 import { FilterButton } from './FilterButton';
@@ -25,6 +33,10 @@ import { type ReactNode, useState, type ReactElement } from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
+import { QualityWarningBannerCommand } from '../../architecture/base/concreteCommands/quality/QualityWarningBannerCommand';
+import { SetLengthUnitCommand } from '../../architecture/base/concreteCommands/units/SetLengthUnitCommand';
+import { SegmentedButtons } from './SegmentedButtons';
+import { RowCommand } from '../../architecture/base/commands/RowCommand';
 
 export function createSettingsButton(
   command: BaseCommand,
@@ -59,8 +71,7 @@ export const SettingsButton = ({
       disabled={!isEnabled}
       content={
         <StyledMenuPanel $flexDirection={flexDirection}>
-          <StyledMenuHeader>{label}</StyledMenuHeader>
-          {command.children.map((child) => createMenuItem(child))}
+          {command.children.map(createMenuItem)}
         </StyledMenuPanel>
       }
       onShow={(open) => {
@@ -89,11 +100,42 @@ export const SettingsButton = ({
 };
 
 function createMenuItem(command: BaseCommand): ReactNode {
+  if (command instanceof BaseBannerCommand) {
+    return <BannerComponent key={command.uniqueId} command={command} />;
+  }
+  if (command instanceof GroupCommand) {
+    return <GroupComponent key={command.uniqueId} command={command} />;
+  }
+}
+
+function createGroupItem(command: BaseCommand): ReactNode {
+  if (command instanceof QualityWarningBannerCommand) {
+    return <QualityWarningBannerComponent key={command.uniqueId} command={command} />;
+  }
   if (command instanceof BaseSliderCommand) {
     return <SliderComponent key={command.uniqueId} command={command} />;
   }
+  if (command instanceof SetLengthUnitCommand) {
+    return (
+      <SegmentedButtons
+        key={command.uniqueId}
+        inputCommand={command}
+        placement="bottom"
+        fullWidth
+      />
+    );
+  }
+  if (command instanceof RowCommand) {
+    return <RowComponent key={command.uniqueId} command={command} />;
+  }
   if (command instanceof BaseOptionCommand) {
     return <DropdownButtonComponent key={command.uniqueId} command={command} />;
+  }
+  if (command instanceof GroupCommand) {
+    return <GroupComponent key={command.uniqueId} command={command} />;
+  }
+  if (command instanceof SectionCommand) {
+    return <SectionComponent key={command.uniqueId} command={command} />;
   }
   if (command instanceof BaseFilterCommand) {
     return <FilterButtonComponent key={command.uniqueId} command={command} />;
@@ -101,32 +143,49 @@ function createMenuItem(command: BaseCommand): ReactNode {
   if (command.isToggle) {
     return <ToggleComponent key={command.uniqueId} command={command} />;
   }
-  if (command instanceof DividerCommand) {
-    return <DividerComponent key={command.uniqueId} command={command} />;
-  }
-  if (command instanceof SectionCommand) {
-    return <SectionComponent key={command.uniqueId} command={command} />;
-  }
-  if (command instanceof BaseBannerCommand) {
-    return <BannerComponent key={command.uniqueId} command={command} />;
-  }
   return <ButtonComponent key={command.uniqueId} command={command} />;
 }
 
-function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
-  const isVisible = useCommandVisible(command);
+function RowComponent({ command }: { command: RowCommand }): ReactNode {
+  const { isVisible } = useCommandProps(command);
   if (!isVisible) {
     return null;
   }
-  return <Menu.Divider />;
+  return <StyledRowComponent>{command.commands.map(createGroupItem)}</StyledRowComponent>;
 }
 
-function SectionComponent({ command }: { command: BaseCommand }): ReactNode {
+function QualityWarningBannerComponent({
+  command
+}: {
+  command: QualityWarningBannerCommand;
+}): ReactNode {
   const isVisible = useCommandVisible(command);
   if (!isVisible) {
     return null;
   }
-  return <StyledSectionHeader>{command.label} </StyledSectionHeader>;
+
+  return (
+    <StyledQualityWarningContainer>
+      <WarningFilledIcon />
+      <Body strong size="x-small">
+        {/* TODO: add translation  */}
+        High details might overload CPU/GPU/RAM
+      </Body>
+    </StyledQualityWarningContainer>
+  );
+}
+
+function GroupComponent({ command }: { command: GroupCommand }): ReactNode {
+  const isGroupVisible = useCommandVisible(command);
+  if (!isGroupVisible) {
+    return null;
+  }
+
+  return (
+    <StyledAccordion expanded title={command.title}>
+      <StyledGroupContent>{command.commands.map(createGroupItem)}</StyledGroupContent>
+    </StyledAccordion>
+  );
 }
 
 function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {
@@ -142,9 +201,18 @@ function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {
         }
       }}>
       <Switch checked={isChecked} disabled={!isEnabled} />
-      <TextLabel text={command.label} />
+      <Body size="medium">{command.label}</Body>
     </StyledToggleContainer>
   );
+}
+
+function SectionComponent({ command }: { command: BaseCommand }): ReactNode {
+  const isVisible = useCommandVisible(command);
+  if (!isVisible) {
+    return null;
+  }
+
+  return <Body size="medium">{command.label}</Body>;
 }
 
 function ButtonComponent({ command }: { command: BaseCommand }): ReactNode {
@@ -169,13 +237,16 @@ function ButtonComponent({ command }: { command: BaseCommand }): ReactNode {
 function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode {
   const { isVisible, isEnabled } = useCommandProps(command);
   const value = useSliderCommandValue(command);
+
   if (!isVisible) {
     return null;
   }
+
   const label = command.label + ': ' + command.getValueLabel();
 
   return (
     <SliderDiv>
+      {/* TODO: add translation */}
       <label>{label}</label>
       <StyledSlider
         disabled={!isEnabled}
@@ -198,6 +269,7 @@ function DropdownButtonComponent({ command }: { command: BaseOptionCommand }): R
   if (!isVisible) {
     return null;
   }
+
   return <DropdownButton inputCommand={command} placement={'bottom'} usedInSettings={true} />;
 }
 
@@ -228,23 +300,21 @@ const StyledSlider = styled(Slider)`
   justify-content: space-around;
 `;
 
-const StyledSectionHeader = styled.span`
-  color: var(--text-icon-muted, rgba(0, 0, 0, 0.55));
-  font-feature-settings: 'cv05' on;
+const StyledQualityWarningContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cogs-text-icon--status-warning);
 
-  /* Label/XSmall */
-  font-family: Inter;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 20px; /* 166.667% */
-  letter-spacing: -0.036px;
+  .cogs-typography {
+    color: var(--cogs-text-icon--status-warning);
+  }
 `;
 
 const StyledToggleContainer = styled(Flex).attrs({
   direction: 'row'
 })`
-  width: 100%;
+  width: fit-content;
   justify-content: start;
   gap: 8px;
 `;
@@ -258,10 +328,10 @@ const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
   flexdirection: ${({ $flexDirection }) => $flexDirection};
 
   display: flex;
-  padding: var(--Padding-Small-Small-8, 8px) var(--space-8, 8px);
+  padding: 12px;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--Padding-Small-Small-8, 0px);
+  gap: 12px;
 
   border-radius: var(--Radius-Large, 8px);
   background: #fff;
@@ -272,18 +342,19 @@ const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
     0px 1px 2px 0px rgba(79, 82, 104, 0.24);
 `;
 
-const StyledMenuHeader = styled(Flex).attrs({
-  direction: 'row'
-})`
-  flex: 1 0 0;
+const StyledAccordion = styled(Accordion)`
+  .cogs-accordion__content {
+    padding: 4px 12px 12px !important;
+  }
+`;
 
-  color: var(--color-text-icon-strong, rgba(0, 0, 0, 0.9));
+const StyledGroupContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 
-  /* Body/Medium strong */
-  font-family: var(--typography-font-family-default, Inter);
-  font-size: var(--typography-body-medium-strong-size, 14px);
-  font-style: normal;
-  font-weight: 500;
-  line-height: var(--typography-body-medium-strong-line-height, 20px); /* 142.857% */
-  letter-spacing: var(--typography-body-medium-strong-letter-spacing, -0.084px);
+const StyledRowComponent = styled.div`
+  display: flex;
+  gap: 12px;
 `;

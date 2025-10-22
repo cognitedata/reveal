@@ -6,26 +6,23 @@ import { SetPointSizeCommand } from '../../../concrete/reveal/pointCloud/command
 import { SetPointColorTypeCommand } from '../../../concrete/reveal/pointCloud/commands/SetPointColorTypeCommand';
 import { SetPointShapeCommand } from '../../../concrete/reveal/pointCloud/commands/SetPointShapeCommand';
 import { PointCloudFilterCommand } from '../../../concrete/reveal/pointCloud/commands/PointCloudFilterCommand';
-import { PointCloudDividerCommand } from '../../../concrete/reveal/pointCloud/commands/PointCloudDividerCommand';
-import { Image360CollectionDividerCommand } from '../../../concrete/reveal/Image360Collection/commands/Image360CollectionDividerCommand';
-import { Set360ImagesSectionCommand } from '../../../concrete/reveal/Image360Collection/commands/Set360ImagesSectionCommand';
 import { Set360ImagesOpacityCommand } from '../../../concrete/reveal/Image360Collection/commands/Set360ImagesOpacityCommand';
 import { Set360IconsSectionCommand } from '../../../concrete/reveal/Image360Collection/commands/Set360IconsSectionCommand';
 import { Set360IconsVisibleCommand } from '../../../concrete/reveal/Image360Collection/commands/Set360IconsVisibleCommand';
 import { Set360IconsOpacityCommand } from '../../../concrete/reveal/Image360Collection/commands/Set360IconsOpacityCommand';
 import { Set360IconsOccludedVisibleCommand } from '../../../concrete/reveal/Image360Collection/commands/Set360IconsOccludedVisibleCommand';
 import { SetPointsOfInterestVisibleCommand } from '../../../concrete/pointsOfInterest/SetPointsOfInterestVisibleCommand';
-import { PointsOfInterestDividerCommand } from '../../../concrete/pointsOfInterest/PointsOfInterestDividerCommand';
-import { PointsOfInterestSectionCommand } from '../../../concrete/pointsOfInterest/PointsOfInterestSectionCommand';
 import { SetGhostModeCommand } from '../../../concrete/reveal/cad/commands/SetGhostModeCommand';
 import { SetQualitySliderCommand } from '../quality/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from '../quality/QualityWarningBannerCommand';
-import { DividerCommand } from '../../commands/DividerCommand';
 import { SetLengthUnitCommand } from '../units/SetLengthUnitCommand';
 import {
   GeneralBannerCommand,
   type GeneralBannerContent
 } from '../../commands/GeneralBannerCommand';
+import { GroupCommand } from '../../commands/GroupCommand';
+import { BaseCommand } from '../../commands/BaseCommand';
+import { RowCommand } from '../../commands/RowCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -43,40 +40,40 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new GeneralBannerCommand(topBannerContent));
     }
 
-    this.add(new SetQualitySliderCommand());
-    this.add(new QualityWarningBannerCommand());
-
-    this.add(new DividerCommand());
-    this.add(new SetGhostModeCommand());
-
-    // Point clouds
-    this.add(new PointCloudDividerCommand());
-    this.add(new SetPointSizeCommand());
-    this.add(new SetPointColorTypeCommand());
-    this.add(new SetPointShapeCommand());
-    this.add(new PointCloudFilterCommand());
-
-    if (include360Images) {
-      // 360 Images
-      this.add(new Image360CollectionDividerCommand());
-      this.add(new Set360ImagesSectionCommand());
-      this.add(new Set360ImagesOpacityCommand());
-
-      // 360 Markers
-      this.add(new Set360IconsSectionCommand());
-      this.add(new Set360IconsVisibleCommand());
-      this.add(new Set360IconsOccludedVisibleCommand());
-      this.add(new Set360IconsOpacityCommand());
-    }
-
-    this.add(new DividerCommand());
-    this.add(new SetLengthUnitCommand());
+    const generalGroupCommands: BaseCommand[] = [
+      new SetQualitySliderCommand(),
+      new QualityWarningBannerCommand(),
+      new SetLengthUnitCommand()
+    ];
+    const cadGroupCommands: BaseCommand[] = [new SetGhostModeCommand()];
+    const pointCloudGroupCommands: BaseCommand[] = [
+      new SetPointSizeCommand(),
+      new SetPointColorTypeCommand(),
+      new SetPointShapeCommand(),
+      new PointCloudFilterCommand()
+    ];
+    const images360GroupCommands: BaseCommand[] = [];
 
     if (includePois) {
-      this.add(new PointsOfInterestDividerCommand());
-      this.add(new PointsOfInterestSectionCommand());
-      this.add(new SetPointsOfInterestVisibleCommand());
+      generalGroupCommands.push(new SetPointsOfInterestVisibleCommand());
     }
+    if (include360Images) {
+      images360GroupCommands.push(new Set360ImagesOpacityCommand());
+      images360GroupCommands.push(new Set360IconsOpacityCommand());
+
+      images360GroupCommands.push(new Set360IconsSectionCommand());
+      images360GroupCommands.push(
+        new RowCommand({
+          commands: [new Set360IconsOccludedVisibleCommand(), new Set360IconsVisibleCommand()]
+        })
+      );
+    }
+
+    //TODO: translate all titles
+    this.add(new GroupCommand({ title: 'General', commands: generalGroupCommands }));
+    this.add(new GroupCommand({ title: 'CAD', commands: cadGroupCommands }));
+    this.add(new GroupCommand({ title: 'Point cloud', commands: pointCloudGroupCommands }));
+    this.add(new GroupCommand({ title: '360', commands: images360GroupCommands }));
   }
 
   // ==================================================

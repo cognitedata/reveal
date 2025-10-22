@@ -6,6 +6,7 @@ import {
   type SetStateAction
 } from 'react';
 import {
+  Body,
   Button,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -160,7 +161,9 @@ const FilterDropdown = ({
 }): ReactElement => {
   return (
     <StyledDropdownRow>
-      <StyledLabel>{label}</StyledLabel>
+      <StyledDropdownLabel size="medium" title={label}>
+        {label}
+      </StyledDropdownLabel>
       <StyledSelectPanel placement={'right-end'} visible={isOpen}>
         <SelectPanel.Trigger>
           <StyledSelectPanelButton
@@ -231,12 +234,14 @@ const StyledDropdownRow = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
-  padding: ${DEFAULT_PADDING};
+  gap: 12px;
 `;
 
-const StyledLabel = styled.label`
-  flex: 2 2;
+const StyledDropdownLabel = styled(Body)`
+  width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const StyledSelectPanelButton = styled(Button)`

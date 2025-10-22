@@ -14,6 +14,8 @@ export { InstanceCommand } from './base/commands/InstanceCommand';
 export { RenderTargetCommand } from './base/commands/RenderTargetCommand';
 export { BaseEditTool } from './base/commands/BaseEditTool';
 export { BaseSettingsCommand } from './base/commands/BaseSettingsCommand';
+export { GroupCommand } from './base/commands/GroupCommand';
+export { RowCommand } from './base/commands/RowCommand';
 export { ShowAllDomainObjectsCommand } from './base/commands/ShowAllDomainObjectsCommand';
 export { ShowDomainObjectsOnTopCommand } from './base/commands/ShowDomainObjectsOnTopCommand';
 

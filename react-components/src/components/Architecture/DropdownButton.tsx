@@ -1,4 +1,10 @@
-import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
+import {
+  Button,
+  Tooltip as CogsTooltip,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Body
+} from '@cognite/cogs.js';
 import { Menu, Option, Select } from '@cognite/cogs-lab';
 import { useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
@@ -37,6 +43,7 @@ export const DropdownButton = ({
   if (!isVisible) {
     return <></>;
   }
+
   return usedInSettings ? (
     <MenuItemWithDropdown command={command} />
   ) : (
@@ -62,6 +69,7 @@ const DropdownElement = ({
   const selectedLabel = command.selectedChild?.label;
   const isDisabled = label === undefined || isOpen;
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
+
   return (
     <Menu
       onOpenChange={(open: boolean) => {
@@ -108,12 +116,14 @@ const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): Reac
   if (command.children === undefined) {
     return <></>;
   }
+
   return (
     <StyledDropdownRow>
-      <StyledLabel>{label}</StyledLabel>
+      <StyledDropdownLabel title={label} size="medium">
+        {label}
+      </StyledDropdownLabel>
       <StyledSelect
         defaultValue={command.selectedChild}
-        fullWidth
         aria-label={command.label}
         onChange={(_event, value) => {
           value?.invoke();
@@ -147,12 +157,12 @@ function createMenuItem(
   );
 }
 
-const StyledLabel = styled.label`
-  flex: 1 1;
-`;
-
 const StyledSelect = styled(Select<BaseCommand>)`
   flex: 1 1;
+
+  .cogs-lab-select-toggle {
+    min-width: 100% !important;
+  }
 `;
 
 const StyledDropdownRow = styled.div`
@@ -160,5 +170,12 @@ const StyledDropdownRow = styled.div`
   flex-direction: row;
   align-self: stretch;
   align-items: center;
-  padding: ${DEFAULT_PADDING};
+  gap: 12px;
+`;
+
+const StyledDropdownLabel = styled(Body)`
+  width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

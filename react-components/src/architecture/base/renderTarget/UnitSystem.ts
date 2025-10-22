@@ -134,11 +134,11 @@ export class UnitSystem {
   public static getFullTextForLengthUnit(lengthUnit: LengthUnit): string {
     switch (lengthUnit) {
       case LengthUnit.Feet:
-        return 'Feet';
+        return 'Feet (ft)';
       case LengthUnit.Inch:
-        return 'Inches';
+        return 'Inches (in)';
       default:
-        return 'Meters';
+        return 'Meters (m)';
     }
   }
 }

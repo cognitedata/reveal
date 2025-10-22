@@ -1,7 +1,7 @@
 import { getTooltipPlacement } from './utilities';
 import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { SegmentedControl, Tooltip as CogsTooltip, Body } from '@cognite/cogs.js';
 import { TOOLTIP_DELAY } from './constants';
 import { BaseOptionCommand, OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { type PlacementType } from './types';
@@ -25,10 +25,12 @@ export function createSegmentedButtons(
 
 export const SegmentedButtons = ({
   inputCommand,
-  placement
+  placement,
+  fullWidth = false
 }: {
   inputCommand: BaseOptionCommand;
   placement: PlacementType;
+  fullWidth?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const command = useCommand(inputCommand);
@@ -45,6 +47,7 @@ export const SegmentedButtons = ({
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       enterDelay={TOOLTIP_DELAY}
+      style={fullWidth ? { width: '100%' } : {}}
       placement={getTooltipPlacement(placement)}>
       <SegmentedControl
         key={uniqueId}
@@ -69,7 +72,9 @@ export const SegmentedButtons = ({
             icon={<IconComponent iconName={child.icon} />}
             disabled={!isEnabled}
             aria-label={child.label}>
-            {child.label}
+            <Body strong size="medium">
+              {child.label}
+            </Body>
           </SegmentedControl.Button>
         ))}
       </SegmentedControl>
