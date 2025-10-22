@@ -1,14 +1,10 @@
 import {
   type CognitePointCloudModel,
   type DataSourceType,
-  isDMPointCloudModel,
-  isClassicPointCloudModel,
   type AddModelOptions
 } from '@cognite/reveal';
 import { useMemo } from 'react';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
-import { isDM3DModelIdentifier } from '../typeGuards';
-import { isClassicModelIdentifier } from '../../../utilities/instanceIds';
 import { isSameModel } from '../../../utilities/isSameModel';
 
 type MatchedPointCloudModel = {

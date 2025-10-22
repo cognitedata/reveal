@@ -7,7 +7,7 @@ import {
   PointColorType,
   type PointCloudIntersection,
   type DMInstanceRef,
-  PointCloudObjectMetadata
+  type PointCloudObjectMetadata
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Color, Matrix4, Vector3 } from 'three';

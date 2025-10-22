@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { use3dModels } from '../../../hooks';
 
 export type UseCalculatePointCloudStylingDependendencies = {

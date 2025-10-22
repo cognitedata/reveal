@@ -6,18 +6,21 @@ import {
   UseCalculatePointCloudStylingContext
 } from './useCalculatePointCloudStyling.context';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
-import { PropsWithChildren } from 'react';
-import { createPointCloudDMMock, createPointCloudMock } from '#test-utils/fixtures/pointCloud';
+import { type ReactElement, type PropsWithChildren } from 'react';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { Box3, Color } from 'three';
-import { NodeAppearance } from '@cognite/reveal';
-import { ClassicAssetStylingGroup, DefaultResourceStyling, PointCloudModelOptions } from '../types';
+import { type NodeAppearance } from '@cognite/reveal';
+import {
+  type ClassicAssetStylingGroup,
+  type DefaultResourceStyling,
+  type PointCloudModelOptions
+} from '../types';
 
 describe(useCalculatePointCloudStyling.name, () => {
   const MODEL_ID = 123;
   const REVISION_ID = 234;
   const ANNOTATION_ID0 = 345;
-  const ANNOTATION_ID1 = 465;
   const ASSET_ID = 567;
 
   const ARBITRARY_POINT_CLOUD_APPEARANCE: NodeAppearance = {
@@ -40,7 +43,7 @@ describe(useCalculatePointCloudStyling.name, () => {
     defaultUseCalculatePointCloudStylingDependencies
   );
 
-  const wrapper = ({ children }: PropsWithChildren) => (
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <UseCalculatePointCloudStylingContext.Provider value={mockDependencies}>
       {children}
     </UseCalculatePointCloudStylingContext.Provider>
