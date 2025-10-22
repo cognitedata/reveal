@@ -106,6 +106,7 @@ function createMenuItem(command: BaseCommand): ReactNode {
   if (command instanceof GroupCommand) {
     return <GroupComponent key={command.uniqueId} command={command} />;
   }
+  return createGroupItem(command);
 }
 
 function createGroupItem(command: BaseCommand): ReactNode {

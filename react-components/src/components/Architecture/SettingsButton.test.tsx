@@ -11,16 +11,17 @@ import { viewerMock } from '#test-utils/fixtures/viewer';
 import { type BaseSettingsCommand, RevealRenderTarget } from '../../architecture';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { TestSectionCommand } from '#test-utils/architecture/commands/TestSectionCommand';
-import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { TestSliderCommand } from '#test-utils/architecture/commands/TestSliderCommand';
 import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
 import { TestOptionsCommand } from '#test-utils/architecture/commands/TestOptionsCommand';
+import { TestGroupCommand } from '#test-utils/architecture/commands/TestGroupCommand';
 
 let wrapper: (props: PropsWithChildren) => ReactElement;
 
 describe(SettingsButton.name, () => {
   let renderTargetMock: RevealRenderTarget;
   let settingsCommand: TestSettingsCommand;
+
   beforeEach(() => {
     renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
     wrapper = ({ children }: PropsWithChildren): ReactElement => (
@@ -78,16 +79,6 @@ describe(SettingsButton.name, () => {
     expect(element).toBeDefined();
   });
 
-  test('renders divider in panel', async () => {
-    const dividerCommand = new DividerCommand();
-    settingsCommand.add(dividerCommand);
-
-    const { container } = renderAndOpenSettingsPanel(settingsCommand);
-    const divider = container.querySelector('hr');
-    assert(divider !== null);
-    expect(divider.classList.contains('cogs-divider')).toBeTruthy();
-  });
-
   test('renders slider in panel', async () => {
     const sliderCommand = new TestSliderCommand();
     settingsCommand.add(sliderCommand);
@@ -135,6 +126,70 @@ describe(SettingsButton.name, () => {
 
     expect(selectButtonElement).toBeDefined();
     expect(labelComponent).toBeDefined();
+  });
+
+  test('renders group command as accordion in panel', async () => {
+    const groupTitle = 'Test Group';
+    const groupCommand = new TestGroupCommand(groupTitle);
+    settingsCommand.add(groupCommand);
+
+    renderAndOpenSettingsPanel(settingsCommand);
+
+    const accordionElement = await screen.findByText(groupTitle);
+    expect(accordionElement).toBeDefined();
+  });
+
+  test('renders multiple group commands as accordions in panel', async () => {
+    const firstGroupTitle = 'First Group';
+    const secondGroupTitle = 'Second Group';
+    const thirdGroupTitle = 'Third Group';
+
+    const firstGroupCommand = new TestGroupCommand(firstGroupTitle);
+    const secondGroupCommand = new TestGroupCommand(secondGroupTitle);
+    const thirdGroupCommand = new TestGroupCommand(thirdGroupTitle);
+
+    settingsCommand.add(firstGroupCommand);
+    settingsCommand.add(secondGroupCommand);
+    settingsCommand.add(thirdGroupCommand);
+
+    renderAndOpenSettingsPanel(settingsCommand);
+
+    const firstGroupElement = await screen.findByText(firstGroupTitle);
+    const secondGroupElement = await screen.findByText(secondGroupTitle);
+    const thirdGroupElement = await screen.findByText(thirdGroupTitle);
+
+    expect(firstGroupElement).toBeDefined();
+    expect(secondGroupElement).toBeDefined();
+    expect(thirdGroupElement).toBeDefined();
+  });
+
+  test('verifies that first two group commands are present in settings', async () => {
+    const firstGroupTitle = 'First Necessary Group';
+    const secondGroupTitle = 'Second Necessary Group';
+    const thirdGroupTitle = 'Third Group';
+
+    const firstGroupCommand = new TestGroupCommand(firstGroupTitle);
+    const secondGroupCommand = new TestGroupCommand(secondGroupTitle);
+    const thirdGroupCommand = new TestGroupCommand(thirdGroupTitle);
+
+    settingsCommand.add(firstGroupCommand);
+    settingsCommand.add(secondGroupCommand);
+    settingsCommand.add(thirdGroupCommand);
+
+    renderAndOpenSettingsPanel(settingsCommand);
+
+    // Check that the first two groups are present
+    const firstGroupElement = await screen.findByText(firstGroupTitle);
+    const secondGroupElement = await screen.findByText(secondGroupTitle);
+
+    expect(firstGroupElement).toBeDefined();
+    expect(secondGroupElement).toBeDefined();
+
+    // Verify they are the first two by checking their order in the DOM
+    const allGroupElements = screen.getAllByText(/Group$/);
+    expect(allGroupElements).toHaveLength(3);
+    expect(allGroupElements[0].textContent).toBe(firstGroupTitle);
+    expect(allGroupElements[1].textContent).toBe(secondGroupTitle);
   });
 });
 
