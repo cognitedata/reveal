@@ -35,7 +35,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly plane = new Plane();
+  public readonly plane: Plane = new Plane();
   private readonly _primitiveType: PrimitiveType;
   protected _backSideColor: Color | undefined = undefined;
 

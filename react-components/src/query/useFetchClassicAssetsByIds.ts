@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { type InternalId, type Asset } from '@cognite/sdk';
-import { createContext, useContext, useMemo } from 'react';
+import { type InternalId, type Asset, type CogniteClient } from '@cognite/sdk';
+import { type Context, createContext, useContext, useMemo } from 'react';
 import { chunk } from 'lodash-es';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type AllAssetFilterProps } from '../query/network/common/filters';
@@ -12,13 +12,14 @@ export type UseFetchAllClassicAssetsDependencies = {
   useSDK: typeof useSDK;
 };
 
-export const defaultUseFetchAllClassicAssetsDependencies = {
+export const defaultUseFetchAllClassicAssetsDependencies: {
+  useSDK: (userSdk?: CogniteClient) => CogniteClient;
+} = {
   useSDK
 };
 
-export const UseFetchAllClassicAssetsContext = createContext<UseFetchAllClassicAssetsDependencies>(
-  defaultUseFetchAllClassicAssetsDependencies
-);
+export const UseFetchAllClassicAssetsContext: Context<UseFetchAllClassicAssetsDependencies> =
+  createContext<UseFetchAllClassicAssetsDependencies>(defaultUseFetchAllClassicAssetsDependencies);
 
 const MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS = 100;
 

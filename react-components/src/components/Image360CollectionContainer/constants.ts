@@ -1,2 +1,2 @@
-export const DEFAULT_IMAGE360_ICON_CULLING_RADIUS = Infinity;
+export const DEFAULT_IMAGE360_ICON_CULLING_RADIUS: number = Infinity;
 export const DEFAULT_IMAGE360_ICON_COUNT_LIMIT = 50;

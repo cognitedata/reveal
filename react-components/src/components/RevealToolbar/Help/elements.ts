@@ -1,8 +1,9 @@
 import { Body, Heading } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import styled, { type IStyledComponent } from 'styled-components';
 import { Mouse } from './Graphics/Mouse';
+import type { ComponentProps, FC } from 'react';
 
-export const SectionContainer = styled.div`
+export const SectionContainer: FC<ComponentProps<'div'>> = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -10,22 +11,26 @@ export const SectionContainer = styled.div`
   max-width: fit-content;
 `;
 
-export const SectionTitle = styled(Heading).attrs({ level: 3 })`
+export const SectionTitle: FC<ComponentProps<typeof Heading>> = styled(Heading).attrs({ level: 3 })`
   color: #ffffff;
 `;
 
-export const SectionSubTitle = styled(Heading).attrs({ level: 5 })`
+export const SectionSubTitle: FC<ComponentProps<typeof Heading>> = styled(Heading).attrs({
+  level: 5
+})`
   color: #ffffff;
 `;
 
-export const SectionContent = styled.div`
+export const SectionContent: FC<ComponentProps<'div'>> = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
   height: 100%;
 `;
 
-export const InstructionText = styled(Body).attrs({
+export const InstructionText: IStyledComponent<'web', ComponentProps<typeof Body>> = styled(
+  Body
+).attrs({
   level: 3,
   strong: true
 })`
@@ -36,7 +41,7 @@ export const InstructionText = styled(Body).attrs({
   line-height: 20px;
 `;
 
-export const InstructionDetail = styled(Body).attrs({
+export const InstructionDetail: FC<ComponentProps<typeof Body>> = styled(Body).attrs({
   size: 'small'
 })`
   color: rgba(255, 255, 255, 0.7);
@@ -46,7 +51,7 @@ export const InstructionDetail = styled(Body).attrs({
   white-space: pre-line;
 `;
 
-export const MouseNavigationInstructionGrid = styled.div`
+export const MouseNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr;
   gap: 8px;
@@ -66,12 +71,12 @@ export const MouseNavigationInstructionGrid = styled.div`
   }
 `;
 
-export const MouseNavigationCombinedGridItem = styled.div`
+export const MouseNavigationCombinedGridItem: FC<ComponentProps<'div'>> = styled.div`
   grid-column: 2 / 3;
   grid-row: 2 / 3;
 `;
 
-export const KeyboardNavigationInstructionGrid = styled.div`
+export const KeyboardNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
@@ -81,7 +86,7 @@ export const KeyboardNavigationInstructionGrid = styled.div`
   text-align: center;
 `;
 
-export const ArrowKeyboardNavigationInstructionGrid = styled.div`
+export const ArrowKeyboardNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
@@ -101,7 +106,7 @@ export const ArrowKeyboardNavigationInstructionGrid = styled.div`
   }
 `;
 
-export const TouchNavigationInstructionGrid = styled.div`
+export const TouchNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr;
   width: fit-content;
@@ -119,13 +124,13 @@ export const TouchNavigationInstructionGrid = styled.div`
   }
 `;
 
-export const TouchNavigationCombinedGridItem = styled.div`
+export const TouchNavigationCombinedGridItem: FC<ComponentProps<'div'>> = styled.div`
   grid-column: 2 / 3;
   grid-row: 1 / 3;
   padding-top: 40px;
 `;
 
-export const StyledMouse = styled(Mouse)`
+export const StyledMouse: FC<ComponentProps<typeof Mouse>> = styled(Mouse)`
   display: flex;
   justify-content: center;
 

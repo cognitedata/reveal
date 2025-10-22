@@ -9,11 +9,11 @@ export class TerrainRenderStyle extends RenderStyle {
   // ==================================================
 
   public showContours = true;
-  public contoursColorType = ColorType.Black;
+  public contoursColorType: ColorType = ColorType.Black;
 
   public showSolid = true;
-  public solidColorType = ColorType.ColorMap;
-  public solidColorMapType = ColorMapType.Rainbow;
+  public solidColorType: ColorType = ColorType.ColorMap;
+  public solidColorMapType: ColorMapType = ColorMapType.Rainbow;
 
   public solidContourVolume = 0.5;
   public solidContourUse = true;

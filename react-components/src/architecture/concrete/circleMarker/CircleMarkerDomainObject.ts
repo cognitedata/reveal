@@ -36,7 +36,7 @@ export enum CircleMarkerType {
 export class CircleMarkerDomainObject extends VisualDomainObject {
   public readonly position: Vector3 = new Vector3();
   public radius = 0.3;
-  public legalRadiusRange = new Range1(RADIUS_MIN, RADIUS_MAX);
+  public legalRadiusRange: Range1 = new Range1(RADIUS_MIN, RADIUS_MAX);
   public readonly type: CircleMarkerType;
 
   constructor(type: CircleMarkerType = CircleMarkerType.MouseCircleMarker) {

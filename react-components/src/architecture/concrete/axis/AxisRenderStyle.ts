@@ -26,14 +26,14 @@ export class AxisRenderStyle extends RenderStyle {
   public tickFontSize = 2; // In fraction of the real tickLength
   public axisLabelFontSize = 4; // In fraction of the real tickLength
 
-  public gridColor = COLOR_LIGHT_GREY;
-  public wallColor = COLOR_DARK_GREY;
-  public textColor = COLOR_WHITE;
+  public gridColor: Color = COLOR_LIGHT_GREY;
+  public wallColor: Color = COLOR_DARK_GREY;
+  public textColor: Color = COLOR_WHITE;
 
-  public mainAxisColor = COLOR_WHITE;
-  public xAxisColor = getMixedColor(COLOR_WHITE, COLOR_RED, 0.6);
-  public yAxisColor = getMixedColor(COLOR_WHITE, COLOR_GREEN, 0.6);
-  public zAxisColor = getMixedColor(COLOR_WHITE, COLOR_BLUE, 0.6);
+  public mainAxisColor: Color = COLOR_WHITE;
+  public xAxisColor: Color = getMixedColor(COLOR_WHITE, COLOR_RED, 0.6);
+  public yAxisColor: Color = getMixedColor(COLOR_WHITE, COLOR_GREEN, 0.6);
+  public zAxisColor: Color = getMixedColor(COLOR_WHITE, COLOR_BLUE, 0.6);
 
   // ==================================================
   // OVERRIDES of BaseStyle

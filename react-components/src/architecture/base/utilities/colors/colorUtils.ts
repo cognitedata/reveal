@@ -1,8 +1,8 @@
 import { Color, type HSL } from 'three';
 
-export const WHITE_COLOR = new Color(1, 1, 1);
-export const BLACK_COLOR = new Color(0, 0, 0);
-export const GREY_COLOR = new Color(0.67, 0.67, 0.67);
+export const WHITE_COLOR: Color = new Color(1, 1, 1);
+export const BLACK_COLOR: Color = new Color(0, 0, 0);
+export const GREY_COLOR: Color = new Color(0.67, 0.67, 0.67);
 export const MAX_BYTE = 255;
 
 export function isGreyScale(color: Color): boolean {

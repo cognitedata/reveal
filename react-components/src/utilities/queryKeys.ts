@@ -3,29 +3,30 @@ import { type DmsUniqueIdentifier } from '../data-providers';
 import { type InstanceReference } from './instanceIds';
 import { type CadModelOptions } from '../components';
 import { type AllAssetFilterProps } from '../query/network/common/filters';
+import type { QueryKey } from '@tanstack/react-query';
 
 export const queryKeys = {
   all: ['cdf'] as const,
-  all3DResources: () => [...queryKeys.all, 'all-3d-resources'] as const,
+  all3DResources: (): QueryKey => [...queryKeys.all, 'all-3d-resources'] as const,
   // ASSETS
-  assetsById: (ids: IdEither[]) => [...assets, ids] as const,
-  assetsByIdsWithFilter: (ids: IdEither[], filter: AllAssetFilterProps) =>
+  assetsById: (ids: IdEither[]): QueryKey => [...assets, ids] as const,
+  assetsByIdsWithFilter: (ids: IdEither[], filter: AllAssetFilterProps): QueryKey =>
     [...queryKeys.assetsById(ids), filter] as const,
   // DM nodes
-  dmNodesById: (ids: DmsUniqueIdentifier[]) => [...dm, ids] as const,
+  dmNodesById: (ids: DmsUniqueIdentifier[]): QueryKey => [...dm, ids] as const,
   // Points of interest
-  poiCommentsById: (id: unknown) => [...pois, id] as const,
+  poiCommentsById: (id: unknown): QueryKey => [...pois, id] as const,
   // TIMESERIES
-  timeseriesById: (ids: IdEither[]) => [...timeseries, ids] as const,
-  timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
+  timeseriesById: (ids: IdEither[]): QueryKey => [...timeseries, ids] as const,
+  timeseriesLatestDatapoint: (): QueryKey => [...timeseries, 'latest-datapoints'] as const,
   // TIMESERIES RELATIONSHIPS WITH ASSETS
-  timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const,
+  timeseriesLinkedToAssets: (): QueryKey => [...timeseries, 'timeseries-linked-assets'] as const,
   // ASSETS AND TIMESERIES LINKAGE DATA
   assetsAndTimeseriesLinkageData: (
     timeseriesExternalIds: string[],
     relationshipResourceTypes: string[],
     assetExternalIds: string[]
-  ) =>
+  ): QueryKey =>
     [
       ...timeseries,
       'assets-and-timeseries-linkage-data',
@@ -34,19 +35,19 @@ export const queryKeys = {
       assetExternalIds
     ] as const,
   // FDM CONNECTION WITH NODE BY DM IDS
-  fdmConnectionWithNode: (dmIds: DmsUniqueIdentifier[], models: CadModelOptions[]) =>
+  fdmConnectionWithNode: (dmIds: DmsUniqueIdentifier[], models: CadModelOptions[]): QueryKey =>
     ['fdm-connection-with-node', dmIds, models] as const,
   // Point Cloud Annotations
-  pointCloudAnnotationMappings: (modelKeys: string[]) =>
+  pointCloudAnnotationMappings: (modelKeys: string[]): QueryKey =>
     [...models, 'point-cloud-annotation-mappings', modelKeys] as const,
-  pointCloudAnnotationForAssetInstances: (modelKeys: string[], assetIdKeys: string[]) =>
+  pointCloudAnnotationForAssetInstances: (modelKeys: string[], assetIdKeys: string[]): QueryKey =>
     [...models, ...assets, 'point-cloud-all-annotations', modelKeys, assetIdKeys] as const,
-  pointCloudAnnotationForAssetId: (modelKey: string, assetId: string) =>
+  pointCloudAnnotationForAssetId: (modelKey: string, assetId: string): QueryKey =>
     [...models, ...assets, 'asset-annotation-mapping-for-a-model', modelKey, assetId] as const,
   // PointCloud Volume for CoreDM
-  pointCloudDMVolumeMappings: (modelKeys: string[]) =>
+  pointCloudDMVolumeMappings: (modelKeys: string[]): QueryKey =>
     [...models, 'point-cloud-dm-volume-mappings', modelKeys] as const,
-  pointCloudDMVolumeAssetMappings: (modelKeys: string[], assetInstanceKeys: string[]) =>
+  pointCloudDMVolumeAssetMappings: (modelKeys: string[], assetInstanceKeys: string[]): QueryKey =>
     [
       ...models,
       ...assetInstanceRefs,
@@ -54,16 +55,19 @@ export const queryKeys = {
       modelKeys,
       assetInstanceKeys
     ] as const,
-  pointCloudDMModelIdRevisionIds: (modelKeys: string[]) =>
+  pointCloudDMModelIdRevisionIds: (modelKeys: string[]): QueryKey =>
     [...models, 'point-cloud-dm-model-id-revision-ids', modelKeys] as const,
-  pointCloudDMVolumeAssetMappingsWithViews: (assetRefKeys: string[]) =>
+  pointCloudDMVolumeAssetMappingsWithViews: (assetRefKeys: string[]): QueryKey =>
     [...assets, 'point-cloud-dm-volume-asset-mappings-with-views', assetRefKeys] as const,
-  modelRevisionId: (revisionKeys: string[]) =>
+  modelRevisionId: (revisionKeys: string[]): QueryKey =>
     [...revisions, 'model-revision-id', revisionKeys] as const,
-  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const,
-  modelsForAssetPerInstanceReference: (instance: InstanceReference | undefined) =>
+  timeseriesFromRelationship: (): QueryKey => [...timeseries, 'timeseries-relationship'] as const,
+  modelsForAssetPerInstanceReference: (instance: InstanceReference | undefined): QueryKey =>
     ['react-components', 'models-for-assets-per-instance-reference', instance] as const,
-  hybridDmAssetMappingsForInstances: (modelKeys: string[], instances: DmsUniqueIdentifier[]) =>
+  hybridDmAssetMappingsForInstances: (
+    modelKeys: string[],
+    instances: DmsUniqueIdentifier[]
+  ): QueryKey =>
     ['react-components', 'hybrid-dm-asset-mappings-for-instances', modelKeys, instances] as const
 } as const;
 

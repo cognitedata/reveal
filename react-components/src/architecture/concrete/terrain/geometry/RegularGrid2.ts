@@ -20,8 +20,8 @@ export class RegularGrid2 extends Grid2 {
   private _rotationAngle = 0;
   private _sinRotationAngle = 0; // Due to speed
   private _cosRotationAngle = 1; // Due to speed
-  static _tempVectorA = new Vector3();
-  static _tempVectorB = new Vector3();
+  static _tempVectorA: Vector3 = new Vector3();
+  static _tempVectorB: Vector3 = new Vector3();
 
   // ==================================================
   // INSTANCE PROPERTIES

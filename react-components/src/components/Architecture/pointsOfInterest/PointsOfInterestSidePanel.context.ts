@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useSelectedPoi } from './useSelectedPoi';
 import { PoiList } from './PoiList';
 import { PoiInfoPanelContent } from './PoiInfoPanelContent';
@@ -11,14 +11,14 @@ export type PointsOfInterestSidePanelDependencies = {
   PoiInfoPanelContent: typeof PoiInfoPanelContent;
 };
 
-export const defaultPointsOfInterestSidePanelDependencies = {
+export const defaultPointsOfInterestSidePanelDependencies: PointsOfInterestSidePanelDependencies = {
   useSelectedPoi,
   usePointsOfInterestTool,
   PoiList,
   PoiInfoPanelContent
 };
 
-export const PointsOfInterestSidePanelContext =
+export const PointsOfInterestSidePanelContext: Context<PointsOfInterestSidePanelDependencies> =
   createContext<PointsOfInterestSidePanelDependencies>(
     defaultPointsOfInterestSidePanelDependencies
   );

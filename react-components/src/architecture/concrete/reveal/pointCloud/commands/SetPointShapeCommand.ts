@@ -12,7 +12,7 @@ export class SetPointShapeCommand extends BaseOptionCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(supportedTypes = DEFAULT_OPTIONS) {
+  constructor(supportedTypes: PointShape[] = DEFAULT_OPTIONS) {
     super();
     for (const value of supportedTypes) {
       this.add(new OptionItemCommand(value));

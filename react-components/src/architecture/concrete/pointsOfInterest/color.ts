@@ -2,10 +2,10 @@ import { Color } from 'three';
 import { assertNever } from '../../../utilities/assertNever';
 import { PointsOfInterestStatus } from './types';
 
-export const DEFAULT_OVERLAY_COLOR = new Color('#C945DB');
-export const PENDING_OVERLAY_COLOR = new Color('#33AA33');
-export const SELECTED_COLOR = new Color('#5151ce');
-export const PENDING_DELETION_OVERLAY_COLOR = new Color('#AA3333');
+export const DEFAULT_OVERLAY_COLOR: Color = new Color('#C945DB');
+export const PENDING_OVERLAY_COLOR: Color = new Color('#33AA33');
+export const SELECTED_COLOR: Color = new Color('#5151ce');
+export const PENDING_DELETION_OVERLAY_COLOR: Color = new Color('#AA3333');
 
 export function convertToSelectedColor(color: Color): Color {
   const hsl = { h: 0, s: 0, l: 0 };

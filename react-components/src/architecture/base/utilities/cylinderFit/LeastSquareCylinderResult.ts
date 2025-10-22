@@ -1,7 +1,7 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
 import { type Cylinder } from '../primitives/Cylinder';
 
-export const UP_VECTOR = new Vector3(0, 0, 1);
+export const UP_VECTOR: Vector3 = new Vector3(0, 0, 1);
 
 export class LeastSquareCylinderResult {
   public height: number;
@@ -9,8 +9,8 @@ export class LeastSquareCylinderResult {
   public readonly center: Vector3 = new Vector3();
   private readonly _axis: Vector3 = new Vector3(); // Will be normalized with Z >= 0
 
-  public rms = Number.NaN; // Root mean square of the fit, 0 is perfect fit
-  public angularCoverage = Number.NaN; // Fraction of angles covered by points, 0 to 1, should be close to 1 if equal distributes points
+  public rms: number = Number.NaN; // Root mean square of the fit, 0 is perfect fit
+  public angularCoverage: number = Number.NaN; // Fraction of angles covered by points, 0 to 1, should be close to 1 if equal distributes points
 
   get axis(): Vector3 {
     return this._axis;

@@ -13,7 +13,7 @@ export class RootDomainObject extends DomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly unitSystem = new UnitSystem();
+  public readonly unitSystem: UnitSystem = new UnitSystem();
   private readonly _renderTarget: RevealRenderTarget;
   private readonly _sdk: CogniteClient;
   private readonly _fdmSdk: FdmSDK;

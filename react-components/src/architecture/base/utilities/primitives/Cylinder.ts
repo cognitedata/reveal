@@ -8,15 +8,15 @@ const UP_AXIS = new Vector3(0, 0, 1);
 
 export class Cylinder extends Primitive {
   public static MinSize = 0.01;
-  public static HalfMinSize = Cylinder.MinSize * 0.5;
+  public static HalfMinSize: number = Cylinder.MinSize * 0.5;
 
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public radius = Cylinder.MinSize;
-  public readonly centerA = new Vector3(0, 0, -Cylinder.HalfMinSize);
-  public readonly centerB = new Vector3(0, 0, +Cylinder.HalfMinSize);
+  public radius: number = Cylinder.MinSize;
+  public readonly centerA: Vector3 = new Vector3(0, 0, -Cylinder.HalfMinSize);
+  public readonly centerB: Vector3 = new Vector3(0, 0, +Cylinder.HalfMinSize);
 
   // Redundant variable, calculated when needed
   private readonly _center = new Vector3();

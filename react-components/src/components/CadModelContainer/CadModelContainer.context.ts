@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useRenderTarget } from '../RevealCanvas';
 import {
@@ -28,6 +28,5 @@ export const defaultCadModelContextDependencies: CadModelContextDependencies = {
   removeCadDomainObject: RevealModelsUtils.remove.bind(this)
 };
 
-export const CadModelContext = createContext<CadModelContextDependencies>(
-  defaultCadModelContextDependencies
-);
+export const CadModelContext: Context<CadModelContextDependencies> =
+  createContext<CadModelContextDependencies>(defaultCadModelContextDependencies);

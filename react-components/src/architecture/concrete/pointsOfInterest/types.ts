@@ -42,7 +42,7 @@ export function createPointsOfInterestPropertiesFromPointAndTitle(
   };
 }
 
-const poiMarker = Symbol('poiMarker');
+const poiMarker: unique symbol = Symbol('poiMarker');
 
 export type PointsOfInterestIntersection<PoiIdType> = Omit<
   DomainObjectIntersection,

@@ -1,4 +1,4 @@
-import { type ReactElement, type SVGProps } from 'react';
+import { type ComponentProps, type FC, type ReactElement, type SVGProps } from 'react';
 
 const UpArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
   <svg
@@ -244,14 +244,20 @@ const DKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
   </svg>
 );
 
-export const ArrowKeysNavigation = {
+export const ArrowKeysNavigation: Record<
+  'Up' | 'Down' | 'Left' | 'Right',
+  FC<ComponentProps<'svg'>>
+> = {
   Up: UpArrowKey,
   Down: DownArrowKey,
   Left: LeftArrowKey,
   Right: RightArrowKey
 };
 
-export const QWEASDKeysNavigation = {
+export const QWEASDKeysNavigation: Record<
+  'Q' | 'W' | 'E' | 'A' | 'S' | 'D',
+  FC<ComponentProps<'svg'>>
+> = {
   Q: QKey,
   W: WKey,
   E: EKey,

@@ -27,7 +27,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly box = new Box();
+  public readonly box: Box = new Box();
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================

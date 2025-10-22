@@ -5,7 +5,7 @@ import { PrimitiveUtils } from './PrimitiveUtils';
 import { getCorners } from '../geometry/getCorners';
 
 const HALF_SIDE = 0.5;
-export const CUBE_CORNERS = createCubeCorners();
+export const CUBE_CORNERS: Vector3[] = createCubeCorners();
 
 export class BoxUtils {
   public static createUnitGeometry(): BoxGeometry {

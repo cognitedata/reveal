@@ -23,7 +23,7 @@ export class ExampleDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly center = new Vector3();
+  public readonly center: Vector3 = new Vector3();
 
   // ==================================================
   // INSTANCE PROPERTIES
