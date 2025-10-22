@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { use3dModels } from '../hooks/use3dModels';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 

@@ -1,4 +1,4 @@
-import { Signal, signal } from '@cognite/signals';
+import { type Signal, signal } from '@cognite/signals';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { type IconName } from '../../../base/utilities/types';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';

@@ -24,7 +24,10 @@ export const AlongAxisPlanePrimitiveTypes: PrimitiveType[] = [
   PrimitiveType.PlaneZ
 ];
 
-export const PlanePrimitiveTypes: PrimitiveType[] = [...AlongAxisPlanePrimitiveTypes, PrimitiveType.PlaneXY];
+export const PlanePrimitiveTypes: PrimitiveType[] = [
+  ...AlongAxisPlanePrimitiveTypes,
+  PrimitiveType.PlaneXY
+];
 
 export function verifyPrimitiveType(
   legalTypes: PrimitiveType[],

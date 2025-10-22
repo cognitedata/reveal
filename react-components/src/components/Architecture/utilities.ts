@@ -30,8 +30,8 @@ export function getTooltipPlacement(toolbarPlacement: PlacementType): PlacementT
 }
 
 export const DROP_DOWN_OFFSET: {
-    mainAxis: number;
-    crossAxis: number;
+  mainAxis: number;
+  crossAxis: number;
 } = { mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 0 };
 
 // This ensures the rule for where the dropdown panel should open:

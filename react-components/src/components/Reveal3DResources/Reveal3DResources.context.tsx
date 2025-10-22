@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useRenderTarget, useReveal } from '../RevealCanvas';
 import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
 
@@ -62,6 +62,5 @@ export const defaultReveal3DResourcesDependencies: Reveal3DResourcesDependencies
   Image360CollectionContainer
 };
 
-export const Reveal3DResourcesContext: Context<Reveal3DResourcesDependencies> = createContext<Reveal3DResourcesDependencies>(
-  defaultReveal3DResourcesDependencies
-);
+export const Reveal3DResourcesContext: Context<Reveal3DResourcesDependencies> =
+  createContext<Reveal3DResourcesDependencies>(defaultReveal3DResourcesDependencies);

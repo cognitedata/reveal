@@ -1,5 +1,5 @@
 import {
-    Context,
+  type Context,
   createContext,
   type PropsWithChildren,
   type ReactElement,
@@ -13,9 +13,8 @@ type ComponentFactoryContextContent = {
   componentFactory: ComponentFactory;
 };
 
-export const ComponentFactoryContext: Context<ComponentFactoryContextContent | undefined> = createContext<ComponentFactoryContextContent | undefined>(
-  undefined
-);
+export const ComponentFactoryContext: Context<ComponentFactoryContextContent | undefined> =
+  createContext<ComponentFactoryContextContent | undefined>(undefined);
 
 export const ComponentFactoryContextProvider = ({ children }: PropsWithChildren): ReactElement => {
   const componentFactory = useMemo(() => createComponentFactory(), []);

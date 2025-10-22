@@ -6,7 +6,7 @@ import {
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
-import { Context, createContext, useContext, useMemo } from 'react';
+import { type Context, createContext, useContext, useMemo } from 'react';
 import { type AssetId, type FdmKey, type CadNodeTreeData } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
@@ -56,9 +56,8 @@ export const defaultUseCalculateCadStylingDependencies: UseCalculateCadStylingDe
   useCadMappingsCache
 };
 
-export const UseCalculateCadStylingContext: Context<UseCalculateCadStylingDependencies> = createContext<UseCalculateCadStylingDependencies>(
-  defaultUseCalculateCadStylingDependencies
-);
+export const UseCalculateCadStylingContext: Context<UseCalculateCadStylingDependencies> =
+  createContext<UseCalculateCadStylingDependencies>(defaultUseCalculateCadStylingDependencies);
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],

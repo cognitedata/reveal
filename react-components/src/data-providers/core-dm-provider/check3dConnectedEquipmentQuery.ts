@@ -1,5 +1,5 @@
 import {
-    TableExpressionLeafFilter,
+  type TableExpressionLeafFilter,
   type QueryEdgeTableExpressionV3,
   type QueryNodeTableExpressionV3,
   type QueryRequest,
@@ -124,120 +124,140 @@ export function createCheck3dConnectedEquipmentQuery(
   initialNodes: DmsUniqueIdentifier[],
   revisionRefs: DmsUniqueIdentifier[]
 ): {
-    readonly with: {
-        readonly initial_nodes: {
-            readonly nodes: {
-                readonly filter: {
-                    readonly and: [TableExpressionLeafFilter, {
-                        readonly hasData: [{
-                            readonly externalId: "CogniteVisualizable";
-                            readonly space: "cdf_cdm";
-                            readonly version: "v1";
-                            readonly type: "view";
-                        }];
-                    }];
-                };
-            };
+  readonly with: {
+    readonly initial_nodes: {
+      readonly nodes: {
+        readonly filter: {
+          readonly and: [
+            TableExpressionLeafFilter,
+            {
+              readonly hasData: [
+                {
+                  readonly externalId: 'CogniteVisualizable';
+                  readonly space: 'cdf_cdm';
+                  readonly version: 'v1';
+                  readonly type: 'view';
+                }
+              ];
+            }
+          ];
         };
-        readonly initial_nodes_object_3ds: QueryTableExpressionV3;
-        readonly initial_nodes_cad_nodes: QueryTableExpressionV3;
-        readonly initial_nodes_point_cloud_volumes: QueryTableExpressionV3;
-        readonly initial_edges_360_image_annotations: QueryEdgeTableExpressionV3;
-        readonly initial_nodes_360_images: QueryNodeTableExpressionV3;
-        readonly indirectly_referenced_edges: {
-            readonly edges: {
-                readonly from: "initial_nodes";
-                readonly direction: "outwards";
-                readonly nodeFilter: {
-                    readonly hasData: [{
-                        readonly externalId: "CogniteVisualizable";
-                        readonly space: "cdf_cdm";
-                        readonly version: "v1";
-                        readonly type: "view";
-                    }];
-                };
-            };
-        };
-        readonly indirectly_referenced_nodes: {
-            readonly nodes: {
-                readonly from: "indirectly_referenced_edges";
-            };
-        };
-        readonly indirect_nodes_object_3ds: QueryTableExpressionV3;
-        readonly indirect_nodes_cad_nodes: QueryTableExpressionV3;
-        readonly indirect_nodes_point_cloud_volumes: QueryTableExpressionV3;
-        readonly indirect_edges_360_image_annotations: QueryEdgeTableExpressionV3;
-        readonly indirect_nodes_360_images: QueryNodeTableExpressionV3;
-    }; readonly select: {
-        readonly initial_nodes_cad_nodes: {
-            readonly sources: [{
-                readonly source: {
-                    readonly externalId: "CogniteCADNode";
-                    readonly space: "cdf_cdm";
-                    readonly version: "v1";
-                    readonly type: "view";
-                };
-                readonly properties: ["object3D"];
-            }];
-        };
-        readonly initial_nodes_point_cloud_volumes: {
-            readonly sources: [{
-                readonly source: {
-                    readonly externalId: "CognitePointCloudVolume";
-                    readonly space: "cdf_cdm";
-                    readonly version: "v1";
-                    readonly type: "view";
-                };
-                readonly properties: ["object3D"];
-            }];
-        };
-        readonly initial_edges_360_image_annotations: {};
-        readonly initial_nodes_360_images: {
-            readonly sources: [{
-                readonly source: {
-                    readonly externalId: "Cognite360Image";
-                    readonly space: "cdf_cdm";
-                    readonly version: "v1";
-                    readonly type: "view";
-                };
-                readonly properties: ["collection360"];
-            }];
-        };
-        readonly indirect_nodes_cad_nodes: {
-            readonly sources: [{
-                readonly source: {
-                    readonly externalId: "CogniteCADNode";
-                    readonly space: "cdf_cdm";
-                    readonly version: "v1";
-                    readonly type: "view";
-                };
-                readonly properties: ["object3D"];
-            }];
-        };
-        readonly indirect_nodes_point_cloud_volumes: {
-            readonly sources: [{
-                readonly source: {
-                    readonly externalId: "CognitePointCloudVolume";
-                    readonly space: "cdf_cdm";
-                    readonly version: "v1";
-                    readonly type: "view";
-                };
-                readonly properties: ["object3D"];
-            }];
-        };
-        readonly indirect_edges_360_image_annotations: {};
-        readonly indirect_nodes_360_images: {
-            readonly sources: [{
-                readonly source: {
-                    readonly externalId: "Cognite360Image";
-                    readonly space: "cdf_cdm";
-                    readonly version: "v1";
-                    readonly type: "view";
-                };
-                readonly properties: ["collection360"];
-            }];
-        };
+      };
     };
+    readonly initial_nodes_object_3ds: QueryTableExpressionV3;
+    readonly initial_nodes_cad_nodes: QueryTableExpressionV3;
+    readonly initial_nodes_point_cloud_volumes: QueryTableExpressionV3;
+    readonly initial_edges_360_image_annotations: QueryEdgeTableExpressionV3;
+    readonly initial_nodes_360_images: QueryNodeTableExpressionV3;
+    readonly indirectly_referenced_edges: {
+      readonly edges: {
+        readonly from: 'initial_nodes';
+        readonly direction: 'outwards';
+        readonly nodeFilter: {
+          readonly hasData: [
+            {
+              readonly externalId: 'CogniteVisualizable';
+              readonly space: 'cdf_cdm';
+              readonly version: 'v1';
+              readonly type: 'view';
+            }
+          ];
+        };
+      };
+    };
+    readonly indirectly_referenced_nodes: {
+      readonly nodes: {
+        readonly from: 'indirectly_referenced_edges';
+      };
+    };
+    readonly indirect_nodes_object_3ds: QueryTableExpressionV3;
+    readonly indirect_nodes_cad_nodes: QueryTableExpressionV3;
+    readonly indirect_nodes_point_cloud_volumes: QueryTableExpressionV3;
+    readonly indirect_edges_360_image_annotations: QueryEdgeTableExpressionV3;
+    readonly indirect_nodes_360_images: QueryNodeTableExpressionV3;
+  };
+  readonly select: {
+    readonly initial_nodes_cad_nodes: {
+      readonly sources: [
+        {
+          readonly source: {
+            readonly externalId: 'CogniteCADNode';
+            readonly space: 'cdf_cdm';
+            readonly version: 'v1';
+            readonly type: 'view';
+          };
+          readonly properties: ['object3D'];
+        }
+      ];
+    };
+    readonly initial_nodes_point_cloud_volumes: {
+      readonly sources: [
+        {
+          readonly source: {
+            readonly externalId: 'CognitePointCloudVolume';
+            readonly space: 'cdf_cdm';
+            readonly version: 'v1';
+            readonly type: 'view';
+          };
+          readonly properties: ['object3D'];
+        }
+      ];
+    };
+    readonly initial_edges_360_image_annotations: {};
+    readonly initial_nodes_360_images: {
+      readonly sources: [
+        {
+          readonly source: {
+            readonly externalId: 'Cognite360Image';
+            readonly space: 'cdf_cdm';
+            readonly version: 'v1';
+            readonly type: 'view';
+          };
+          readonly properties: ['collection360'];
+        }
+      ];
+    };
+    readonly indirect_nodes_cad_nodes: {
+      readonly sources: [
+        {
+          readonly source: {
+            readonly externalId: 'CogniteCADNode';
+            readonly space: 'cdf_cdm';
+            readonly version: 'v1';
+            readonly type: 'view';
+          };
+          readonly properties: ['object3D'];
+        }
+      ];
+    };
+    readonly indirect_nodes_point_cloud_volumes: {
+      readonly sources: [
+        {
+          readonly source: {
+            readonly externalId: 'CognitePointCloudVolume';
+            readonly space: 'cdf_cdm';
+            readonly version: 'v1';
+            readonly type: 'view';
+          };
+          readonly properties: ['object3D'];
+        }
+      ];
+    };
+    readonly indirect_edges_360_image_annotations: {};
+    readonly indirect_nodes_360_images: {
+      readonly sources: [
+        {
+          readonly source: {
+            readonly externalId: 'Cognite360Image';
+            readonly space: 'cdf_cdm';
+            readonly version: 'v1';
+            readonly type: 'view';
+          };
+          readonly properties: ['collection360'];
+        }
+      ];
+    };
+  };
 } {
   return {
     with: {

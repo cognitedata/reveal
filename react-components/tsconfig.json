@@ -15,5 +15,16 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
     "rootDir": ".",
-  }
+    "types": []
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ]
 }

@@ -15,7 +15,7 @@ import {
   type PerspectiveCamera,
   type Box3,
   type Plane,
-  Matrix4
+  type Matrix4
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';

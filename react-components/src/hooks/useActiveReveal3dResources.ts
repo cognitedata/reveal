@@ -11,14 +11,14 @@ import {
 } from '@cognite/reveal';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
 import { type LayersUrlStateParam } from '../components/RevealToolbar/LayersButton/types';
-import { Context, createContext, useContext, useMemo } from 'react';
+import { type Context, createContext, useContext, useMemo } from 'react';
 import { EMPTY_ARRAY } from '../utilities/constants';
 import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';
 import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
 import { isDefined } from '../utilities/isDefined';
 import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { useVisibleRevealDomainObjects } from './useVisibleRevealDomainObjects';
-import { FdmSDK } from '../data-providers/FdmSDK';
+import { type FdmSDK } from '../data-providers/FdmSDK';
 
 export type UseActiveReveal3dResourcesDependencies = {
   useVisibleRevealDomainObjects: typeof useVisibleRevealDomainObjects;
@@ -26,8 +26,8 @@ export type UseActiveReveal3dResourcesDependencies = {
 };
 
 export const defaultUseActiveReveal3dResourcesDependencies: {
-    useVisibleRevealDomainObjects: typeof useVisibleRevealDomainObjects;
-    useFdmSdk: () => FdmSDK;
+  useVisibleRevealDomainObjects: typeof useVisibleRevealDomainObjects;
+  useFdmSdk: () => FdmSDK;
 } = {
   useVisibleRevealDomainObjects,
   useFdmSdk

@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useReveal3dResourcesFromScene } from '../hooks';
 import { useAllAssetsMapped360Annotations } from './useSearchAssetsMapped360Annotations';
 import { useAllAssetsMappedPointCloudAnnotations } from './useSearchAssetsMappedPointCloudAnnotations';

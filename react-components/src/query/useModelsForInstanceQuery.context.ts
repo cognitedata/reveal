@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getPointCloudModelsForAssetInstance } from '../hooks/network/getPointCloudModelsForAssetInstance';
 import { getCadModelsForHybridDmInstance } from '../hooks/network/getCadModelsForHybridDmInstance';
@@ -32,6 +32,5 @@ export const defaultModelsForInstanceQueryDependencies: ModelsForInstanceQueryDe
   getImage360CollectionsForAsset
 };
 
-export const UseModelsForInstanceQueryContext: Context<ModelsForInstanceQueryDependencies> = createContext<ModelsForInstanceQueryDependencies>(
-  defaultModelsForInstanceQueryDependencies
-);
+export const UseModelsForInstanceQueryContext: Context<ModelsForInstanceQueryDependencies> =
+  createContext<ModelsForInstanceQueryDependencies>(defaultModelsForInstanceQueryDependencies);

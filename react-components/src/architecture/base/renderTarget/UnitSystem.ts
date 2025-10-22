@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash-es';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 import { round } from '../utilities/extensions/mathUtils';
-import { Signal, signal } from '@cognite/signals';
+import { type Signal, signal } from '@cognite/signals';
 
 const METER_TO_FT = 1 / 0.3048;
 const METER_TO_INCH = 12 * METER_TO_FT;

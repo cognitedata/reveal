@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useClassicCadAssetMappingCache } from '../../CacheProvider/CacheProvider';
 import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 

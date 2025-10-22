@@ -1,4 +1,4 @@
-import { Context, createContext, useContext, useMemo } from 'react';
+import { type Context, createContext, useContext, useMemo } from 'react';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { useRevealDomainObjects } from './useRevealDomainObjects';
@@ -8,9 +8,10 @@ export type UseImage360CollectionsDependencies = {
   useRevealDomainObjects: typeof useRevealDomainObjects;
 };
 
-export const UseImage360CollectionsContext: Context<UseImage360CollectionsDependencies> = createContext<UseImage360CollectionsDependencies>({
-  useRevealDomainObjects
-});
+export const UseImage360CollectionsContext: Context<UseImage360CollectionsDependencies> =
+  createContext<UseImage360CollectionsDependencies>({
+    useRevealDomainObjects
+  });
 
 export const useImage360Collections = (): Array<Image360Collection<DataSourceType>> => {
   const { useRevealDomainObjects } = useContext(UseImage360CollectionsContext);

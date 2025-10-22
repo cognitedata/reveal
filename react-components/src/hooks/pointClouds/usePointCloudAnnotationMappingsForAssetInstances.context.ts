@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';
 

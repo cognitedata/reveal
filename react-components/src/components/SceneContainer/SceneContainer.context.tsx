@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { Reveal3DResources } from '../Reveal3DResources/Reveal3DResources';
 import { useSceneContainerViewModel } from './SceneContainer.viewmodel';
 
@@ -12,6 +12,5 @@ export const defaultSceneContainerDependencies: SceneContainerDependencies = {
   useSceneContainerViewModel
 };
 
-export const SceneContainerContext: Context<SceneContainerDependencies> = createContext<SceneContainerDependencies>(
-  defaultSceneContainerDependencies
-);
+export const SceneContainerContext: Context<SceneContainerDependencies> =
+  createContext<SceneContainerDependencies>(defaultSceneContainerDependencies);

@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
 export type UseAll3dDirectConnectionsWithPropertiesDependencies = {

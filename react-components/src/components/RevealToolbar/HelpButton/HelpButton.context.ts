@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { MouseNavigation } from '../Help/MouseNavigation';
 import { TouchNavigation } from '../Help/TouchNavigation';
@@ -18,6 +18,5 @@ export const defaultHelpButtonDependencies: HelpButtonDependencies = {
   KeyboardNavigation
 };
 
-export const HelpButtonContext: Context<HelpButtonDependencies> = createContext<HelpButtonDependencies>(
-  defaultHelpButtonDependencies
-);
+export const HelpButtonContext: Context<HelpButtonDependencies> =
+  createContext<HelpButtonDependencies>(defaultHelpButtonDependencies);

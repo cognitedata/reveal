@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
 import { useImage360HistoricalDetailsViewModel } from './Image360HistoricalDetails.viewmodel';

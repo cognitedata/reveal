@@ -1,6 +1,7 @@
-import { Context, createContext, useContext } from 'react';
+import { type Context, createContext, useContext } from 'react';
 
-export const RevealCanvasElementContext: Context<HTMLDivElement | null> = createContext<HTMLDivElement | null>(null);
+export const RevealCanvasElementContext: Context<HTMLDivElement | null> =
+  createContext<HTMLDivElement | null>(null);
 
 export const useRevealContainerElement = (): HTMLDivElement => {
   const element = useContext(RevealCanvasElementContext);

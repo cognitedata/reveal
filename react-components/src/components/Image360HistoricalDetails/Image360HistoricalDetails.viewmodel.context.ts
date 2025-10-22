@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { formatDateTime } from '../../utilities/date-time-utils';
 
 export type Image360HistoricalDetailsViewModelDependencies = {

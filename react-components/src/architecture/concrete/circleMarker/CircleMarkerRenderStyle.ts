@@ -2,7 +2,7 @@ import { BLACK_COLOR } from '../../base/utilities/colors/colorUtils';
 import { cloneDeep } from 'lodash-es';
 import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { Color } from 'three';
+import { type Color } from 'three';
 
 export class CircleMarkerRenderStyle extends CommonRenderStyle {
   public solidOpacity = 0.25;

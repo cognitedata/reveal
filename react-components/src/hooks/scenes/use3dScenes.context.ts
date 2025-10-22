@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { FdmSDK } from '../../data-providers/FdmSDK';
@@ -16,6 +16,5 @@ export const defaultUse3dScenesDependencies: Use3dScenesDependencies = {
   sceneRelatedDataLimit: SCENE_RELATED_DATA_LIMIT
 };
 
-export const Use3dScenesContext: Context<Use3dScenesDependencies> = createContext<Use3dScenesDependencies>(
-  defaultUse3dScenesDependencies
-);
+export const Use3dScenesContext: Context<Use3dScenesDependencies> =
+  createContext<Use3dScenesDependencies>(defaultUse3dScenesDependencies);

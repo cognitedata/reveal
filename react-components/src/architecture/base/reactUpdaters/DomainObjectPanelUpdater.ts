@@ -1,4 +1,4 @@
-import { Signal, signal } from '@cognite/signals';
+import { type Signal, signal } from '@cognite/signals';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
@@ -19,7 +19,10 @@ export class DomainObjectPanelUpdater {
   // STATIC FIELDS
   // ==================================================
 
-  public readonly selectedDomainObject: Signal<DomainObject | undefined> = signal<DomainObject | undefined>();
+  public readonly selectedDomainObject: Signal<DomainObject | undefined> = signal<
+    DomainObject | undefined
+  >();
+
   public readonly domainObjectChanged: Signal<number> = signal(0); // This increment by one when something happens with the domain object
 
   // ==================================================

@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useSceneConfig } from '../../../hooks/scenes/useSceneConfig';
 import { useRenderTarget } from '../../RevealCanvas';
 import { type Scene } from '../sceneTypes';

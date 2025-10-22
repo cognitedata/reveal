@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 import { useClassicCadAssetMappingCache } from '../components/CacheProvider/CacheProvider';
 
 export type UseHybridMappingsForAssetInstancesDependencies = {

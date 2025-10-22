@@ -12,24 +12,15 @@ export type AssetProperties = {
   description: string;
 };
 
-export const ASSET_PROPERTIES_LIST: [
-    "name",
-    "description",
-    "object3D"
-] = ['name', 'description', 'object3D'] as const satisfies Array<
-  keyof AssetProperties
->;
+export const ASSET_PROPERTIES_LIST = ['name', 'description', 'object3D'] as const;
+ASSET_PROPERTIES_LIST satisfies Readonly<Array<keyof AssetProperties>>;
 
-export const isPointCloudVolumeFilter: {
-    readonly hasData: [{
-        readonly externalId: "CognitePointCloudVolume";
-        readonly space: "cdf_cdm";
-        readonly version: "v1";
-        readonly type: "view";
-    }];
-} = {
-  hasData: [COGNITE_POINT_CLOUD_VOLUME_SOURCE]
-} as const satisfies HasExistingDataFilterV3;
+export const isPointCloudVolumeFilter = {
+  hasData: [COGNITE_POINT_CLOUD_VOLUME_SOURCE] satisfies [
+    typeof COGNITE_POINT_CLOUD_VOLUME_SOURCE
+  ] as [typeof COGNITE_POINT_CLOUD_VOLUME_SOURCE]
+} as const;
+isPointCloudVolumeFilter satisfies HasExistingDataFilterV3;
 
 export type PointCloudVolumeObject3DProperties = {
   revisions: DmsUniqueIdentifier[];

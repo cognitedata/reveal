@@ -144,30 +144,44 @@ export const GROUND_PLANE_SOURCE = {
   version: 'v1'
 } as const;
 
-export const groundPlaneSourceWithProperties: [{
+export const groundPlaneSourceWithProperties: [
+  {
     readonly source: {
-        readonly type: "view";
-        readonly space: "scene";
-        readonly externalId: "TexturedPlane";
-        readonly version: "v1";
+      readonly type: 'view';
+      readonly space: 'scene';
+      readonly externalId: 'TexturedPlane';
+      readonly version: 'v1';
     };
-    readonly properties: ["file", "label", "wrapping", "repeatU", "repeatV"];
-}] = [
+    readonly properties: ['file', 'label', 'wrapping', 'repeatU', 'repeatV'];
+  }
+] = [
   {
     source: GROUND_PLANE_SOURCE,
     properties: ['file', 'label', 'wrapping', 'repeatU', 'repeatV']
   }
 ] as const satisfies SourceSelectorV3;
 
-export const transformationSourceWithProperties: [{
+export const transformationSourceWithProperties: [
+  {
     readonly source: {
-        readonly type: "view";
-        readonly space: "cdf_3d_schema";
-        readonly externalId: "Transformation3d";
-        readonly version: "v1";
+      readonly type: 'view';
+      readonly space: 'cdf_3d_schema';
+      readonly externalId: 'Transformation3d';
+      readonly version: 'v1';
     };
-    readonly properties: ["translationX", "translationY", "translationZ", "eulerRotationX", "eulerRotationY", "eulerRotationZ", "scaleX", "scaleY", "scaleZ"];
-}] = [
+    readonly properties: [
+      'translationX',
+      'translationY',
+      'translationZ',
+      'eulerRotationX',
+      'eulerRotationY',
+      'eulerRotationZ',
+      'scaleX',
+      'scaleY',
+      'scaleZ'
+    ];
+  }
+] = [
   {
     source: TRANSFORMATION_SOURCE,
     properties: [
@@ -184,60 +198,68 @@ export const transformationSourceWithProperties: [{
   }
 ] as const satisfies SourceSelectorV3;
 
-export const sceneSourceWithProperties: [{
+export const sceneSourceWithProperties: [
+  {
     readonly source: {
-        readonly type: "view";
-        readonly space: "scene";
-        readonly externalId: "SceneConfiguration";
-        readonly version: "v1";
+      readonly type: 'view';
+      readonly space: 'scene';
+      readonly externalId: 'SceneConfiguration';
+      readonly version: 'v1';
     };
-    readonly properties: ["*"];
-}] = [
+    readonly properties: ['*'];
+  }
+] = [
   {
     source: SCENE_SOURCE,
     properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
-export const revisionSourceWithProperties: [{
+export const revisionSourceWithProperties: [
+  {
     readonly source: {
-        readonly type: "view";
-        readonly space: "scene";
-        readonly externalId: "RevisionProperties";
-        readonly version: "v1";
+      readonly type: 'view';
+      readonly space: 'scene';
+      readonly externalId: 'RevisionProperties';
+      readonly version: 'v1';
     };
-    readonly properties: ["*"];
-}] = [
+    readonly properties: ['*'];
+  }
+] = [
   {
     source: REVISION_SOURCE,
     properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
-export const image360CollectionSourceWithProperties: [{
+export const image360CollectionSourceWithProperties: [
+  {
     readonly source: {
-        readonly type: "view";
-        readonly space: "scene";
-        readonly externalId: "Image360CollectionProperties";
-        readonly version: "v1";
+      readonly type: 'view';
+      readonly space: 'scene';
+      readonly externalId: 'Image360CollectionProperties';
+      readonly version: 'v1';
     };
-    readonly properties: ["*"];
-}] = [
+    readonly properties: ['*'];
+  }
+] = [
   {
     source: IMAGE_360_COLLECTION_SOURCE,
     properties: ['*']
   }
 ] as const satisfies SourceSelectorV3;
 
-export const environmentMapSourceWithProperties: [{
+export const environmentMapSourceWithProperties: [
+  {
     readonly source: {
-        readonly type: "view";
-        readonly space: "scene";
-        readonly externalId: "EnvironmentMap";
-        readonly version: "v1";
+      readonly type: 'view';
+      readonly space: 'scene';
+      readonly externalId: 'EnvironmentMap';
+      readonly version: 'v1';
     };
-    readonly properties: ["label", "file", "isSpherical"];
-}] = [
+    readonly properties: ['label', 'file', 'isSpherical'];
+  }
+] = [
   {
     source: ENVIRONMENT_MAP_SOURCE,
     properties: ['label', 'file', 'isSpherical']
