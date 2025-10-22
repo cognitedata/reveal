@@ -1,14 +1,9 @@
-import { Body, BodySize, Heading, TypographyProps } from '@cognite/cogs.js';
-import styled, { FastOmit } from 'styled-components';
+import { Body, Heading } from '@cognite/cogs.js';
+import styled, { type IStyledComponent } from 'styled-components';
 import { Mouse } from './Graphics/Mouse';
-import { SVGProps, DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES, RefObject, ReactElement, Component } from 'react';
-import { IStyledComponentBase } from 'styled-components/dist/types';
-import { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { IStyledComponentBase } from 'styled-components/dist/types';
-import { BaseHTMLAttributes, RefAttributes, DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES, RefObject, ForwardRefExoticComponent, Component } from 'react';
-import { IStyledComponentBase, Substitute } from 'styled-components/dist/types';
+import type { ComponentProps, FC } from 'react';
 
-export const SectionContainer: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const SectionContainer: FC<ComponentProps<'div'>> = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -16,85 +11,26 @@ export const SectionContainer: IStyledComponentBase<"web", FastOmit<DetailedHTML
   max-width: fit-content;
 `;
 
-export const SectionTitle: IStyledComponentBase<"web", FastOmit<FastOmit<Substitute<Omit<Omit<BaseHTMLAttributes<HTMLHeadingElement>, "inverted" | "muted" | "as" | "level"> & {
-    level?: 1 | 2 | 3 | 4 | 5 | 6;
-    as?: string;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLHeadingElement>, "ref"> & {
-    ref?: ((instance: HTMLHeadingElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLHeadingElement> | null | undefined;
-}, Omit<Omit<BaseHTMLAttributes<HTMLHeadingElement>, "inverted" | "muted" | "as" | "level"> & {
-    level?: 1 | 2 | 3 | 4 | 5 | 6;
-    as?: string;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLHeadingElement>, "ref"> & {
-    ref?: ((instance: HTMLHeadingElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLHeadingElement> | null | undefined;
-}>, never>, never>> & string & Omit<ForwardRefExoticComponent<Omit<BaseHTMLAttributes<HTMLHeadingElement>, "inverted" | "muted" | "as" | "level"> & {
-    level?: 1 | 2 | 3 | 4 | 5 | 6;
-    as?: string;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLHeadingElement>>, keyof Component<any, {}, any>> = styled(Heading).attrs({ level: 3 })`
+export const SectionTitle: FC<ComponentProps<typeof Heading>> = styled(Heading).attrs({ level: 3 })`
   color: #ffffff;
 `;
 
-export const SectionSubTitle: IStyledComponentBase<"web", FastOmit<FastOmit<Substitute<Omit<Omit<BaseHTMLAttributes<HTMLHeadingElement>, "inverted" | "muted" | "as" | "level"> & {
-    level?: 1 | 2 | 3 | 4 | 5 | 6;
-    as?: string;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLHeadingElement>, "ref"> & {
-    ref?: ((instance: HTMLHeadingElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLHeadingElement> | null | undefined;
-}, Omit<Omit<BaseHTMLAttributes<HTMLHeadingElement>, "inverted" | "muted" | "as" | "level"> & {
-    level?: 1 | 2 | 3 | 4 | 5 | 6;
-    as?: string;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLHeadingElement>, "ref"> & {
-    ref?: ((instance: HTMLHeadingElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLHeadingElement> | null | undefined;
-}>, never>, never>> & string & Omit<ForwardRefExoticComponent<Omit<BaseHTMLAttributes<HTMLHeadingElement>, "inverted" | "muted" | "as" | "level"> & {
-    level?: 1 | 2 | 3 | 4 | 5 | 6;
-    as?: string;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLHeadingElement>>, keyof Component<any, {}, any>> = styled(Heading).attrs({ level: 5 })`
+export const SectionSubTitle: FC<ComponentProps<typeof Heading>> = styled(Heading).attrs({
+  level: 5
+})`
   color: #ffffff;
 `;
 
-export const SectionContent: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const SectionContent: FC<ComponentProps<'div'>> = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
   height: 100%;
 `;
 
-export const InstructionText: IStyledComponentBase<"web", FastOmit<FastOmit<Substitute<Omit<Omit<BaseHTMLAttributes<HTMLSpanElement>, "inverted" | "muted" | "as" | "strong" | "size" | "noOfLines"> & {
-    size?: BodySize;
-    noOfLines?: number;
-    as?: string;
-    strong?: boolean;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLSpanElement>, "ref"> & {
-    ref?: ((instance: HTMLSpanElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLSpanElement> | null | undefined;
-}, Omit<Omit<BaseHTMLAttributes<HTMLSpanElement>, "inverted" | "muted" | "as" | "strong" | "size" | "noOfLines"> & {
-    size?: BodySize;
-    noOfLines?: number;
-    as?: string;
-    strong?: boolean;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLSpanElement>, "ref"> & {
-    ref?: ((instance: HTMLSpanElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLSpanElement> | null | undefined;
-}>, never>, never>> & string & Omit<ForwardRefExoticComponent<Omit<BaseHTMLAttributes<HTMLSpanElement>, "inverted" | "muted" | "as" | "strong" | "size" | "noOfLines"> & {
-    size?: BodySize;
-    noOfLines?: number;
-    as?: string;
-    strong?: boolean;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLSpanElement>>, keyof Component<any, {}, any>> = styled(Body).attrs({
+export const InstructionText: IStyledComponent<'web', ComponentProps<typeof Body>> = styled(
+  Body
+).attrs({
   level: 3,
   strong: true
 })`
@@ -105,32 +41,7 @@ export const InstructionText: IStyledComponentBase<"web", FastOmit<FastOmit<Subs
   line-height: 20px;
 `;
 
-export const InstructionDetail: IStyledComponentBase<"web", FastOmit<FastOmit<Substitute<Omit<Omit<BaseHTMLAttributes<HTMLSpanElement>, "inverted" | "muted" | "as" | "strong" | "size" | "noOfLines"> & {
-    size?: BodySize;
-    noOfLines?: number;
-    as?: string;
-    strong?: boolean;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLSpanElement>, "ref"> & {
-    ref?: ((instance: HTMLSpanElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLSpanElement> | null | undefined;
-}, Omit<Omit<BaseHTMLAttributes<HTMLSpanElement>, "inverted" | "muted" | "as" | "strong" | "size" | "noOfLines"> & {
-    size?: BodySize;
-    noOfLines?: number;
-    as?: string;
-    strong?: boolean;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLSpanElement>, "ref"> & {
-    ref?: ((instance: HTMLSpanElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<HTMLSpanElement> | null | undefined;
-}>, never>, never>> & string & Omit<ForwardRefExoticComponent<Omit<BaseHTMLAttributes<HTMLSpanElement>, "inverted" | "muted" | "as" | "strong" | "size" | "noOfLines"> & {
-    size?: BodySize;
-    noOfLines?: number;
-    as?: string;
-    strong?: boolean;
-    muted?: boolean;
-    inverted?: boolean;
-} & TypographyProps & RefAttributes<HTMLSpanElement>>, keyof Component<any, {}, any>> = styled(Body).attrs({
+export const InstructionDetail: FC<ComponentProps<typeof Body>> = styled(Body).attrs({
   size: 'small'
 })`
   color: rgba(255, 255, 255, 0.7);
@@ -140,7 +51,7 @@ export const InstructionDetail: IStyledComponentBase<"web", FastOmit<FastOmit<Su
   white-space: pre-line;
 `;
 
-export const MouseNavigationInstructionGrid: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const MouseNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr;
   gap: 8px;
@@ -160,12 +71,12 @@ export const MouseNavigationInstructionGrid: IStyledComponentBase<"web", FastOmi
   }
 `;
 
-export const MouseNavigationCombinedGridItem: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const MouseNavigationCombinedGridItem: FC<ComponentProps<'div'>> = styled.div`
   grid-column: 2 / 3;
   grid-row: 2 / 3;
 `;
 
-export const KeyboardNavigationInstructionGrid: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const KeyboardNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
@@ -175,7 +86,7 @@ export const KeyboardNavigationInstructionGrid: IStyledComponentBase<"web", Fast
   text-align: center;
 `;
 
-export const ArrowKeyboardNavigationInstructionGrid: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const ArrowKeyboardNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
@@ -195,7 +106,7 @@ export const ArrowKeyboardNavigationInstructionGrid: IStyledComponentBase<"web",
   }
 `;
 
-export const TouchNavigationInstructionGrid: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const TouchNavigationInstructionGrid: FC<ComponentProps<'div'>> = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr;
   width: fit-content;
@@ -213,15 +124,13 @@ export const TouchNavigationInstructionGrid: IStyledComponentBase<"web", FastOmi
   }
 `;
 
-export const TouchNavigationCombinedGridItem: IStyledComponentBase<"web", FastOmit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, never>> & string = styled.div`
+export const TouchNavigationCombinedGridItem: FC<ComponentProps<'div'>> = styled.div`
   grid-column: 2 / 3;
   grid-row: 1 / 3;
   padding-top: 40px;
 `;
 
-export const StyledMouse: IStyledComponentBase<"web", FastOmit<Omit<SVGProps<SVGSVGElement>, "ref"> & {
-    ref?: ((instance: SVGSVGElement | null) => void | DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES[keyof DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES]) | RefObject<SVGSVGElement> | null | undefined;
-}, never>> & string & Omit<(props: SVGProps<SVGSVGElement>) => ReactElement, keyof Component<any, {}, any>> = styled(Mouse)`
+export const StyledMouse: FC<ComponentProps<typeof Mouse>> = styled(Mouse)`
   display: flex;
   justify-content: center;
 
