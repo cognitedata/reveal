@@ -222,16 +222,11 @@ function groupStyleGroupByModel(
 ): StyledPointCloudModel[] {
   const initialStyleGroups = models.map((model) => ({ model, styleGroups: [] }));
 
-  const accumulatedStyleGroups = styleGroup.reduce<StyledPointCloudModel[]>(
-    (accumulatedGroups, currentGroup) => {
-      const existingGroupWithModel = accumulatedGroups.find((group) =>
-        isSameModel(group.model, currentGroup.model)
-      );
-      existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
-      return accumulatedGroups;
-    },
-    initialStyleGroups
-  );
-
-  return accumulatedStyleGroups.filter((group) => group.styleGroups.length > 0);
+  return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
+    const existingGroupWithModel = accumulatedGroups.find((group) =>
+      isSameModel(group.model, currentGroup.model)
+    );
+    existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
+    return accumulatedGroups;
+  }, initialStyleGroups);
 }

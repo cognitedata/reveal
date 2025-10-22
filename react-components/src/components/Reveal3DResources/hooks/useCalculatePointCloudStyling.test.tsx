@@ -75,7 +75,12 @@ describe(useCalculatePointCloudStyling.name, () => {
         ),
       { wrapper }
     );
-    expect(result.current).toHaveLength(0);
+    expect(result.current).toEqual([
+      {
+        model: MODEL_OPTIONS,
+        styleGroups: []
+      }
+    ]);
   });
 
   test('should return no styling groups if there are no viewer models', () => {
@@ -88,7 +93,12 @@ describe(useCalculatePointCloudStyling.name, () => {
         ),
       { wrapper }
     );
-    expect(result.current).toHaveLength(0);
+    expect(result.current).toEqual([
+      {
+        model: MODEL_OPTIONS,
+        styleGroups: []
+      }
+    ]);
   });
 
   test('should return one styling group when there is one styling group in input', () => {
