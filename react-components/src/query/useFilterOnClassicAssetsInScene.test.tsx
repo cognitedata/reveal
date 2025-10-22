@@ -36,11 +36,11 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
       }),
       useAllAssetsMapped360Annotations: vi.fn().mockReturnValue({
         data: [{ asset: createMockAsset(3) }],
-        isLoading: false
+        isInitialLoading: false
       }),
       useAllAssetsMappedPointCloudAnnotations: vi.fn().mockReturnValue({
         data: [createMockAsset(4)],
-        isLoading: false
+        isInitialLoading: false
       })
     };
   });
