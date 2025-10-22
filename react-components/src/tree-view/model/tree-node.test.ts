@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, vi, assert } from 'vitest';
 import { TreeNode } from './tree-node';
 import { CheckboxState } from '../../architecture/base/utilities/types';
-import { OnNodeLoadedAction, type TreeNodeAction } from './types';
+import { type OnNodeLoadedAction, type TreeNodeAction } from './types';
 import { count } from '../../architecture/base/utilities/extensions/generatorUtils';
 import { type ILazyLoader } from './i-lazy-loader';
 import { type TreeNodeType } from './tree-node-type';
