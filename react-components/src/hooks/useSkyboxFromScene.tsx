@@ -24,13 +24,13 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
   const sdk = useSDK();
 
   const { data: skyboxTexture } = useQuery({
-    queryKey: ['reveal', 'react-components', 'skyboxUrl', scene],
+    queryKey: ['reveal', 'react-components', 'skyboxUrl', scene.data],
     queryFn: async () => {
-      if (scene?.skybox === undefined) {
+      if (scene.data?.skybox === undefined) {
         return null;
       }
 
-      const skyboxExternalId = scene.skybox.file;
+      const skyboxExternalId = scene.data.skybox.file;
       const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
 
       if (skyBoxUrls.length === 0) {

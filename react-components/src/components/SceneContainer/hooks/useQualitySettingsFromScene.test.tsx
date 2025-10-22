@@ -44,9 +44,9 @@ describe(useQualitySettingsFromScene.name, () => {
   const defaultCurrentSettings: QualitySettings = DEFAULT_REVEAL_QUALITY_SETTINGS;
 
   const renderHookWithScene = (
-    sceneData: Scene | undefined
+    sceneData: Scene | null | undefined
   ): RenderHookResult<{ onPointCloudSettingsCallback: () => void }, [string, string]> => {
-    defaultDependencies.useSceneConfig.mockReturnValue(sceneData);
+    defaultDependencies.useSceneConfig.mockReturnValue({ data: sceneData });
     return renderHook(() => useQualitySettingsFromScene('test-scene', 'test-space'), { wrapper });
   };
 
@@ -59,7 +59,7 @@ describe(useQualitySettingsFromScene.name, () => {
     renderHookWithScene(undefined);
     expect(mockQualitySettingsPeek).not.toHaveBeenCalled();
 
-    renderHookWithScene(undefined);
+    renderHookWithScene(null);
     expect(mockQualitySettingsPeek).not.toHaveBeenCalled();
   });
 
@@ -116,12 +116,12 @@ describe(useQualitySettingsFromScene.name, () => {
     defaultDependencies.useSceneConfig.mockImplementation(
       (sceneExternalId: string, sceneSpaceId: string) => {
         if (sceneExternalId === 'initial-scene' && sceneSpaceId === 'initial-space') {
-          return initialScene;
+          return { data: initialScene };
         }
         if (sceneExternalId === 'updated-scene' && sceneSpaceId === 'updated-space') {
-          return updatedScene;
+          return { data: updatedScene };
         }
-        return undefined;
+        return { data: null };
       }
     );
 
