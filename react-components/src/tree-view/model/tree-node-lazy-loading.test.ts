@@ -22,7 +22,7 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
     const lazyLoader = new LazyLoaderMock();
     await root.loadChildren(lazyLoader);
 
-    expect(root.childCount).toBe(3); // 4 new children
+    expect(root.childCount).toBe(3); // initially has 3 children
     expect(root.needLoadChildren).toBe(false); // Change to false
 
     // Notified: isLoadingChildren (on/off) needLoadChildren(on/off) + 3 children = 7
