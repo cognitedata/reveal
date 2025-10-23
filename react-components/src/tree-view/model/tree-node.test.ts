@@ -168,7 +168,7 @@ describe(TreeNode.name, () => {
       expect(root.isParent).toBe(true);
     });
 
-    test('should be root', () => {
+    test('getting root of grandchild should return correct root', () => {
       addChildren(root, true);
       const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
