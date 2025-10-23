@@ -4,7 +4,6 @@ import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../../utilities/StylingGroupUtils';
-import { type Image360PolygonStylingGroup } from '../../Image360CollectionContainer';
 import { type AnnotationIdStylingGroup } from '../../Image360CollectionContainer/useApply360AnnotationStyling';
 import { type InstanceStylingGroup } from '../types';
 
