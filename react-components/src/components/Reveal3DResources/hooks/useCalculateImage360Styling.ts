@@ -8,10 +8,6 @@ import { type Image360PolygonStylingGroup } from '../../Image360CollectionContai
 import { type AnnotationIdStylingGroup } from '../../Image360CollectionContainer/useApply360AnnotationStyling';
 import { type InstanceStylingGroup } from '../types';
 
-export type Image360StyledGroup = Image360PolygonStylingGroup & {
-  assetRefs: number[];
-};
-
 export const useCalculateImage360Styling = (
   instanceStyling: InstanceStylingGroup[] | undefined
 ): AnnotationIdStylingGroup[] => {
