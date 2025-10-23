@@ -17,7 +17,7 @@ export const LayersButtonStrip = ({
 
   const renderTarget = useRenderTarget();
 
-  const modelLayerContent = useModelsVisibilityState(setExternalLayersState, renderTarget);
+  const modelLayerContent = useModelsVisibilityState();
   const { cadModels, pointClouds, image360Collections } = modelLayerContent;
 
   useSyncExternalLayersState(
