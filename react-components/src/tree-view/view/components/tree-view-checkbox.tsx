@@ -23,6 +23,7 @@ export const TreeViewCheckbox = ({
         defaultChecked={true}
         checked={true}
         disabled={node.isCheckboxEnabled !== true}
+        aria-disabled={node.isCheckboxEnabled !== true}
         onChange={() => {
           if (onToggleNode !== undefined) onToggleNode(node);
         }}
@@ -34,6 +35,7 @@ export const TreeViewCheckbox = ({
     <Checkbox
       checked={checked}
       disabled={node.isCheckboxEnabled !== true}
+      aria-disabled={node.isCheckboxEnabled !== true}
       onChange={() => {
         if (onToggleNode !== undefined) onToggleNode(node);
       }}

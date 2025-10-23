@@ -26,16 +26,18 @@ describe(TreeViewCheckbox.name, () => {
   });
 
   test('should click', async () => {
-    const onToggleNode = vi.fn<TreeNodeAction>();
-    const node = new TreeNode();
-    node.checkboxState = CheckboxState.All;
-    node.isCheckboxEnabled = true;
+    for (const checkboxState of [CheckboxState.None, CheckboxState.Some, CheckboxState.All]) {
+      const onToggleNode = vi.fn<TreeNodeAction>();
+      const node = new TreeNode();
+      node.checkboxState = checkboxState;
+      node.isCheckboxEnabled = true;
 
-    const { container } = render(<TreeViewCheckbox node={node} onToggleNode={onToggleNode} />);
-    const checkboxes = getInputsInContainer(container);
+      const { container } = render(<TreeViewCheckbox node={node} onToggleNode={onToggleNode} />);
+      const checkboxes = getInputsInContainer(container);
 
-    await userEvent.click(checkboxes[0]);
-    expect(onToggleNode).toBeCalledTimes(1);
-    expect(onToggleNode).toBeCalledWith(node);
+      await userEvent.click(checkboxes[0]);
+      expect(onToggleNode).toBeCalledTimes(1);
+      expect(onToggleNode).toBeCalledWith(node);
+    }
   });
 });
