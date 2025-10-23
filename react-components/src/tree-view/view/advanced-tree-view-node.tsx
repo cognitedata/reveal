@@ -1,11 +1,8 @@
 /* eslint-disable react/prop-types */
 import { type ReactElement, useReducer, useState } from 'react';
-
 import { Colors } from '@cognite/cogs.js';
-
 import { getChildrenAsArray } from './get-children-as-array';
 import { type TreeNodeType } from '../model/tree-node-type';
-
 import { type AdvancedTreeViewProps } from './advanced-tree-view-props';
 import { TreeViewCaret } from './components/tree-view-caret';
 import { TreeViewCheckbox } from './components/tree-view-checkbox';
@@ -94,7 +91,9 @@ export const AdvancedTreeViewNode = ({
             <TreeViewIcon node={inputNode} getIconFromIconName={props.getIconFromIconName} />
           )}
           {isLoadingChildren && <TreeViewLoading label={props.loadingLabel} />}
-          {!isLoadingChildren && <TreeViewLabel node={inputNode} props={props} />}
+          {!isLoadingChildren && (
+            <TreeViewLabel node={inputNode} maxLabelLength={props.maxLabelLength} />
+          )}
         </div>
         {hasInfo && <TreeViewInfo node={inputNode} onClick={props.onClickInfo} />}
       </div>

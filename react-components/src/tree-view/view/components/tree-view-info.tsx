@@ -1,8 +1,5 @@
-/* eslint-disable react/prop-types */
 import { useState, type ReactElement } from 'react';
-
 import { InfoIcon } from '@cognite/cogs.js';
-
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { HOVER_INFO_COLOR, INFO_COLOR } from '../constants';
 import { type TreeNodeAction } from '../../model/types';

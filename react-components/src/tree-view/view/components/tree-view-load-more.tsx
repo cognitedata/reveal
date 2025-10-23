@@ -1,8 +1,5 @@
-/* eslint-disable react/prop-types */
 import { type ReactElement } from 'react';
-
 import { Button } from '@cognite/cogs.js';
-
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { type TreeNodeAction } from '../../model/types';
 import { HORIZONTAL_SPACING, INDENTATION, LOAD_MORE_LABEL } from '../constants';
