@@ -219,7 +219,7 @@ describe(TreeNode.name, () => {
   });
 
   describe('equal', () => {
-    test('should be equal', () => {
+    test('should be equal to itself', () => {
       expect(root.areEqual(root)).toBe(true);
     });
 
