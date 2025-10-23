@@ -79,7 +79,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const {
     data: assetSearchData,
     isFetching: isAssetSearchFetching,
-    hasNextPage: assetSearchHasNextPage,
+    hasNextPage: assetSearchHasNextPage = false,
     fetchNextPage: fetchAssetSearchNextPage
   } = useSearchMappedEquipmentAssetMappings(
     mainSearchQuery,
@@ -96,12 +96,13 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const {
     data: allAssets,
     isFetching,
-    hasNextPage,
+    hasNextPage = false,
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions =>
+      ('siteId' in resource || 'externalId' in resource) && !('modelId' in resource)
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;

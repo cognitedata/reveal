@@ -14,7 +14,7 @@ export const useQualitySettingsFromScene = (
   sceneSpaceId: string
 ): UseQualitySettingsFromSceneResult => {
   const { useSceneConfig, useRenderTarget } = useContext(UseQualitySettingsFromSceneContext);
-  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
+  const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
   const renderTarget = useRenderTarget();
 
   useEffect(() => {

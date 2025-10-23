@@ -51,13 +51,12 @@ describe(Image360Details.name, () => {
   });
 
   it('should show exit button by default and trigger exit360Image on click', async () => {
-    const user = userEvent.setup();
     render(<Image360Details />, { wrapper });
 
     const exitButton = screen.getByRole('button');
     expect(exitButton).toBeDefined();
 
-    await user.click(exitButton);
+    await userEvent.click(exitButton);
     await waitFor(() => {
       expect(viewerExit360ImageMock).toHaveBeenCalledTimes(1);
     });
