@@ -114,5 +114,10 @@
   "packageManager": "yarn@4.10.2",
   "files": [
     "dist"
-  ]
+  ],
+  "resolutions": {
+    "@cognite/cogs-core": "10.50.1",
+    "@cognite/cogs-icons": "10.50.1",
+    "@cognite/cogs-utils": "10.50.1"
+  }
 }
