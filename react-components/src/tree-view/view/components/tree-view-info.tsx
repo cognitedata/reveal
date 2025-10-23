@@ -4,21 +4,20 @@ import { useState, type ReactElement } from 'react';
 import { InfoIcon } from '@cognite/cogs.js';
 
 import { type TreeNodeType } from '../../model/tree-node-type';
-import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
 import { HOVER_INFO_COLOR, INFO_COLOR } from '../constants';
+import { type TreeNodeAction } from '../../model/types';
 
 export const TreeViewInfo = ({
   node,
-  props
+  onClick
 }: {
   node: TreeNodeType;
-  props: AdvancedTreeViewProps;
+  onClick?: TreeNodeAction;
 }): ReactElement => {
-  const Icon = InfoIcon;
   const [isHover, setHover] = useState(false);
   const color = getColor(isHover);
   return (
-    <Icon
+    <InfoIcon
       style={{ color, marginTop: '2px' }}
       onClick={() => {
         onClickInfo(node);
@@ -33,10 +32,10 @@ export const TreeViewInfo = ({
   );
 
   function onClickInfo(inputNode: TreeNodeType): void {
-    if (props.onClickInfo === undefined) {
+    if (onClick === undefined) {
       return;
     }
-    props.onClickInfo(inputNode);
+    onClick(inputNode);
   }
 };
 

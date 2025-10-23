@@ -4,7 +4,6 @@ import { CaretDownIcon, CaretRightIcon } from '@cognite/cogs.js';
 
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { type TreeNodeAction } from '../../model/types';
-import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
 import { CARET_COLOR, CARET_SIZE, HOVER_CARET_COLOR } from '../constants';
 
 export const TreeViewCaret = ({
@@ -13,7 +12,6 @@ export const TreeViewCaret = ({
 }: {
   node: TreeNodeType;
   onClick: TreeNodeAction;
-  props: AdvancedTreeViewProps;
 }): ReactElement => {
   const [isHover, setHover] = useState(false);
   const color = getColor(isHover);

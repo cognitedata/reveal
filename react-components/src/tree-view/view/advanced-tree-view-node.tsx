@@ -77,7 +77,7 @@ export const AdvancedTreeViewNode = ({
         onMouseLeave={() => {
           onHover(inputNode, false);
         }}>
-        <TreeViewCaret node={inputNode} onClick={onExpandNode} props={props} />
+        <TreeViewCaret node={inputNode} onClick={onExpandNode} />
         {hasCheckboxes && <TreeViewCheckbox node={inputNode} onClick={onToggleNode} />}
         <div
           style={{
@@ -96,7 +96,7 @@ export const AdvancedTreeViewNode = ({
           {isLoadingChildren && <TreeViewLoading level={undefined} {...props} />}
           {!isLoadingChildren && <TreeViewLabel node={inputNode} props={props} />}
         </div>
-        {hasInfo && <TreeViewInfo node={inputNode} props={props} />}
+        {hasInfo && <TreeViewInfo node={inputNode} onClick={props.onClickInfo} />}
       </div>
       {children !== undefined &&
         children.map((node) => (
