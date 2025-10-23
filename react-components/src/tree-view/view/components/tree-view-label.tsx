@@ -25,6 +25,7 @@ export const TreeViewLabel = ({
     <Tooltip
       content={node.label}
       disabled={disabledTooltip}
+      aria-disabled={disabledTooltip}
       appendTo={document.body}
       enterDelay={TOOLTIP_DELAY}
       placement="right">
