@@ -1,9 +1,10 @@
-import { Button, Comment, Flex, Input, Textarea } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 import {
   type BaseSyntheticEvent,
   type ReactElement,
   type ReactNode,
   useCallback,
+  useContext,
   useMemo,
   useState
 } from 'react';
@@ -18,6 +19,7 @@ import { useCommand } from './hooks/useCommand';
 import { useCommandEnable } from './hooks/useCommandProps';
 import { translateIfExists } from '../../architecture/base/utilities/translation/translateUtils';
 import { useCommandProperty } from './hooks/useCommandProperty';
+import { CustomInputFieldContext } from './CustomInputField.context';
 
 export function createCustomInputField(
   command: BaseCommand,
@@ -35,6 +37,8 @@ export const CustomInputField = ({
   inputCommand: CustomBaseInputCommand;
   placement: string;
 }): ReactNode => {
+  const { Button, Input, Textarea, Comment } = useContext(CustomInputFieldContext);
+
   const command = useCommand(inputCommand);
   const isEnabled = useCommandEnable(command);
   const postLabel = useCommandProperty(command, () =>
