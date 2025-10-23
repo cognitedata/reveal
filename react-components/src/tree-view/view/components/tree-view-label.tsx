@@ -10,12 +10,11 @@ export const TreeViewLabel = ({
   node: TreeNodeType;
   maxLabelLength?: number;
 }): ReactElement => {
-  let disabledTooltip = true;
-  let label = node.label;
-
   if (maxLabelLength === undefined) {
     maxLabelLength = MAX_LABEL_LENGTH;
   }
+  let disabledTooltip = true;
+  let label = node.label;
   if (label.length > maxLabelLength) {
     label = label.substring(0, maxLabelLength) + '...';
     disabledTooltip = false;
