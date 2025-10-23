@@ -143,7 +143,7 @@ describe(TreeNode.name, () => {
   });
 
   describe('Parent and children', () => {
-    test('should not be parent', () => {
+    test('should not be parent when it has no children', () => {
       expect(root.isParent).toBe(false);
     });
 
