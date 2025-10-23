@@ -143,7 +143,7 @@ describe(TreeNode.name, () => {
   });
 
   describe('Parent and children', () => {
-    test('should not be parent', () => {
+    test('should not be parent when it has no children', () => {
       expect(root.isParent).toBe(false);
     });
 
@@ -151,12 +151,12 @@ describe(TreeNode.name, () => {
       expect(root.parent).toBeUndefined();
     });
 
-    test('should be parent', () => {
+    test('should be parent when it has children', () => {
       addChildren(root, true);
       expect(root.isParent).toBe(true);
     });
 
-    test('should have parent', () => {
+    test('child should have parent', () => {
       addChildren(root, true);
       const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
@@ -168,7 +168,7 @@ describe(TreeNode.name, () => {
       expect(root.isParent).toBe(true);
     });
 
-    test('should be root', () => {
+    test('getting root of grandchild should return correct root', () => {
       addChildren(root, true);
       const grandChild = getLastGrandChild(root);
       assert(grandChild !== undefined);
@@ -219,11 +219,11 @@ describe(TreeNode.name, () => {
   });
 
   describe('equal', () => {
-    test('should be equal', () => {
+    test('should be equal to itself', () => {
       expect(root.areEqual(root)).toBe(true);
     });
 
-    test('should not be equal', () => {
+    test('should not be equal to a new instance', () => {
       expect(root.areEqual(new TreeNode())).toBe(false);
     });
   });

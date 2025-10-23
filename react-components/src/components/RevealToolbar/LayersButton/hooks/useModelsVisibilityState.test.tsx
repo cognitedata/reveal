@@ -20,7 +20,6 @@ describe(useModelsVisibilityState.name, () => {
   let cadObject: CadDomainObject;
   let pointCloudObject: PointCloudDomainObject;
   let image360CollectionObject: Image360CollectionDomainObject;
-
   const dependencies = getMocksByDefaultDependencies(defaultUseModelsVisibilityStateDependencies);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
@@ -35,7 +34,6 @@ describe(useModelsVisibilityState.name, () => {
     image360CollectionObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
     pointCloudObject.setVisibleInteractive(false);
-
     dependencies.useRevealDomainObjects.mockReturnValue([
       cadObject,
       pointCloudObject,
