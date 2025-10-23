@@ -69,13 +69,13 @@ export const AdvancedTreeViewNode = ({
           borderRadius: '4px'
         }}
         onMouseEnter={() => {
-          onHover(inputNode, true);
+          if (hasHover) setHover(true);
         }}
         onMouseLeave={() => {
-          onHover(inputNode, false);
+          if (hasHover) setHover(false);
         }}>
-        <TreeViewCaret node={inputNode} onClick={onExpandNode} />
-        {hasCheckboxes && <TreeViewCheckbox node={inputNode} onClick={onToggleNode} />}
+        <TreeViewCaret node={inputNode} />
+        {hasCheckboxes && <TreeViewCheckbox node={inputNode} onToggleNode={props.onToggleNode} />}
         <div
           style={{
             flexDirection: 'row',
@@ -83,7 +83,7 @@ export const AdvancedTreeViewNode = ({
             gap: horizontalSpacing
           }}
           onClick={(event) => {
-            onSelectNode(inputNode);
+            if (props.onSelectNode !== undefined) props.onSelectNode(inputNode);
             event.stopPropagation();
             event.preventDefault();
           }}>
@@ -101,12 +101,12 @@ export const AdvancedTreeViewNode = ({
         children.map((node) => (
           <AdvancedTreeViewNode node={node} key={node.id} level={level + 1} props={props} />
         ))}
-      {hasLoadMore && (
+      {hasLoadMore && props.loader !== undefined && (
         <TreeViewLoadMore
           node={inputNode}
-          onClick={onLoadMore}
           level={level}
           label={props.loadMoreLabel}
+          loader={props.loader}
         />
       )}
       {inputNode.isLoadingSiblings === true && (
@@ -114,47 +114,6 @@ export const AdvancedTreeViewNode = ({
       )}
     </div>
   );
-
-  function onSelectNode(node: TreeNodeType): void {
-    if (props.onSelectNode === undefined) {
-      return;
-    }
-    props.onSelectNode(node);
-  }
-
-  function onToggleNode(node: TreeNodeType): void {
-    if (node.isCheckboxEnabled !== true || node.checkboxState === undefined) {
-      return;
-    }
-    if (props.onToggleNode === undefined) {
-      return;
-    }
-    props.onToggleNode(node);
-  }
-
-  function onExpandNode(node: TreeNodeType): void {
-    if (!node.isParent) {
-      return;
-    }
-    node.isExpanded = !node.isExpanded;
-  }
-
-  function onLoadMore(node: TreeNodeType): void {
-    if (props.loader === undefined) {
-      return;
-    }
-    if (node.loadSiblings === undefined) {
-      return;
-    }
-    void node.loadSiblings(props.loader);
-  }
-
-  function onHover(node: TreeNodeType, value: boolean): void {
-    if (!hasHover) {
-      return;
-    }
-    setHover(value);
-  }
 };
 
 function getBackgroundColor(node: TreeNodeType, hover: boolean): string | undefined {

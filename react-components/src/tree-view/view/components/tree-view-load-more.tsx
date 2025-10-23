@@ -1,19 +1,19 @@
 import { type ReactElement } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { type TreeNodeType } from '../../model/tree-node-type';
-import { type TreeNodeAction } from '../../model/types';
 import { HORIZONTAL_SPACING, INDENTATION, LOAD_MORE_LABEL } from '../constants';
+import { type ILazyLoader } from '../../model/i-lazy-loader';
 
 export const TreeViewLoadMore = ({
   node,
-  onClick,
   level,
-  label
+  label,
+  loader
 }: {
   node: TreeNodeType;
-  onClick: TreeNodeAction;
   level: number;
   label?: string;
+  loader: ILazyLoader;
 }): ReactElement => {
   const horizontalSpacing = HORIZONTAL_SPACING / 2 + 'px';
   const marginLeft = (level + 1) * INDENTATION + 'px';
@@ -28,8 +28,10 @@ export const TreeViewLoadMore = ({
         marginTop: horizontalSpacing,
         marginLeft
       }}
-      onClick={() => {
-        onClick(node);
+      onClick={async () => {
+        if (node.loadSiblings !== undefined) {
+          await node.loadSiblings(loader);
+        }
       }}>
       {label ?? LOAD_MORE_LABEL}
     </Button>
