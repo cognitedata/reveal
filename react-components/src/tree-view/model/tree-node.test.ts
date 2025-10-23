@@ -223,7 +223,7 @@ describe(TreeNode.name, () => {
       expect(root.areEqual(root)).toBe(true);
     });
 
-    test('should not be equal', () => {
+    test('should not be equal to a new instance', () => {
       expect(root.areEqual(new TreeNode())).toBe(false);
     });
   });
