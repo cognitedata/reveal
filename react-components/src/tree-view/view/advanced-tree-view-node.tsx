@@ -93,7 +93,7 @@ export const AdvancedTreeViewNode = ({
           {props.getIconFromIconName !== undefined && inputNode.icon !== undefined && (
             <TreeViewIcon node={inputNode} getIconFromIconName={props.getIconFromIconName} />
           )}
-          {isLoadingChildren && <TreeViewLoading level={undefined} {...props} />}
+          {isLoadingChildren && <TreeViewLoading label={props.loadingLabel} />}
           {!isLoadingChildren && <TreeViewLabel node={inputNode} props={props} />}
         </div>
         {hasInfo && <TreeViewInfo node={inputNode} onClick={props.onClickInfo} />}
@@ -107,10 +107,12 @@ export const AdvancedTreeViewNode = ({
           node={inputNode}
           onClick={onLoadMore}
           level={level}
-          props={{ ...props }}
+          label={props.loadMoreLabel}
         />
       )}
-      {inputNode.isLoadingSiblings === true && <TreeViewLoading level={level} {...props} />}
+      {inputNode.isLoadingSiblings === true && (
+        <TreeViewLoading level={level} label={props.loadingLabel} />
+      )}
     </div>
   );
 

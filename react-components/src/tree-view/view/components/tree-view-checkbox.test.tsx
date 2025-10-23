@@ -8,7 +8,7 @@ import { TreeViewCheckbox } from './tree-view-checkbox';
 import { CheckboxState } from '../../../architecture/base/utilities/types';
 
 describe(TreeViewCheckbox.name, () => {
-  test('should render with correct checkboxState', () => {
+  test('should render the checkbox with correct checkboxState', () => {
     const onClick = vi.fn<TreeNodeAction>();
     for (const state of [CheckboxState.None, CheckboxState.Some, CheckboxState.All, undefined]) {
       const node = new TreeNode();
@@ -27,7 +27,6 @@ describe(TreeViewCheckbox.name, () => {
 
   test('should click', async () => {
     const onClick = vi.fn<TreeNodeAction>();
-
     const node = new TreeNode();
     node.checkboxState = CheckboxState.All;
     node.isCheckboxEnabled = true;

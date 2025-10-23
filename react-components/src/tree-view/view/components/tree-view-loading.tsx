@@ -2,19 +2,22 @@ import { type ReactElement } from 'react';
 
 import { Body, LoaderIcon } from '@cognite/cogs.js';
 
-import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
 import { HORIZONTAL_SPACING, INDENTATION, LOADING_LABEL, VERTICAL_SPACING } from '../constants';
 
-type Props = AdvancedTreeViewProps & { level?: number };
-
-export const TreeViewLoading = (props: Props): ReactElement => {
+export const TreeViewLoading = ({
+  level,
+  label
+}: {
+  level?: number;
+  label?: string;
+}): ReactElement => {
   const horizontalSpacing = HORIZONTAL_SPACING + 'px';
 
   let marginVertical: string | undefined;
   let marginLeft: string | undefined;
-  if (props.level !== undefined) {
+  if (level !== undefined) {
     marginVertical = VERTICAL_SPACING + 'px';
-    marginLeft = (props.level + 1) * INDENTATION + HORIZONTAL_SPACING + 'px';
+    marginLeft = (level + 1) * INDENTATION + HORIZONTAL_SPACING + 'px';
   }
 
   return (
@@ -29,7 +32,7 @@ export const TreeViewLoading = (props: Props): ReactElement => {
       }}>
       <LoaderIcon style={{ marginTop: '2px' }} />
       <Body size="small" strong>
-        {props.loadingLabel ?? LOADING_LABEL}
+        {label ?? LOADING_LABEL}
       </Body>
     </div>
   );

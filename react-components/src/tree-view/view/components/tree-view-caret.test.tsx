@@ -7,16 +7,17 @@ import type { TreeNodeAction } from '../../model/types';
 import { TreeViewCaret } from './tree-view-caret';
 
 describe(TreeViewCaret.name, () => {
-  test('should not render with icon when it is leaf', () => {
+  test('should not render the caret when it is leaf', () => {
     const onClick = vi.fn<TreeNodeAction>();
     const node = new TreeNode();
 
     const { container } = render(<TreeViewCaret node={node} onClick={onClick} />);
     const icons = getIconsInContainer(container);
+
     expect(icons).toHaveLength(0);
   });
 
-  test('should render with correct icon when it is parent', () => {
+  test('should render he caret with correct icon when it is parent', () => {
     const onClick = vi.fn<TreeNodeAction>();
     const node = new TreeNode();
     node.addChild(new TreeNode());
@@ -25,6 +26,7 @@ describe(TreeViewCaret.name, () => {
       node.isExpanded = expanded;
       const { container } = render(<TreeViewCaret node={node} onClick={onClick} />);
       const icons = getIconsInContainer(container);
+
       expect(icons).toHaveLength(1);
       expect(getIconName(icons[0])).toBe(expanded ? 'CaretDownIcon' : 'CaretRightIcon');
     }
@@ -42,6 +44,3 @@ describe(TreeViewCaret.name, () => {
     expect(onClick).toBeCalledTimes(1);
   });
 });
-
-// import { render, screen } from '@testing-library/react';
-// //   //const button = screen.getByLabelText('sss');

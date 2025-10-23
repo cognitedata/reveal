@@ -7,7 +7,7 @@ import { TreeViewIcon } from './tree-view-icon';
 import { SnowIcon } from '@cognite/cogs.js';
 
 describe(TreeViewIcon.name, () => {
-  test('should render with icon', () => {
+  test('should render the icon', () => {
     const node = new TreeNode();
 
     const { container } = render(<TreeViewIcon node={node} getIconFromIconName={() => SnowIcon} />);
@@ -16,7 +16,7 @@ describe(TreeViewIcon.name, () => {
     expect(getIconName(icons[0])).toBe('SnowIcon');
   });
 
-  test('should render with colored icon', () => {
+  test('should render the icon with color', () => {
     const node = new TreeNode();
     const expected = '#012345';
     node.iconColor = expected;

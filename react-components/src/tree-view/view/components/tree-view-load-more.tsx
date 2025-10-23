@@ -5,19 +5,18 @@ import { Button } from '@cognite/cogs.js';
 
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { type TreeNodeAction } from '../../model/types';
-import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
 import { HORIZONTAL_SPACING, INDENTATION, LOAD_MORE_LABEL } from '../constants';
 
 export const TreeViewLoadMore = ({
   node,
   onClick,
   level,
-  props
+  label
 }: {
   node: TreeNodeType;
   onClick: TreeNodeAction;
   level: number;
-  props: AdvancedTreeViewProps;
+  label?: string;
 }): ReactElement => {
   const horizontalSpacing = HORIZONTAL_SPACING / 2 + 'px';
   const marginLeft = (level + 1) * INDENTATION + 'px';
@@ -25,6 +24,7 @@ export const TreeViewLoadMore = ({
     <Button
       type="secondary"
       size="small"
+      aria-label={label}
       style={{
         gap: horizontalSpacing,
         padding: '4px',
@@ -34,7 +34,7 @@ export const TreeViewLoadMore = ({
       onClick={() => {
         onClick(node);
       }}>
-      {props.loadMoreLabel ?? LOAD_MORE_LABEL}
+      {label ?? LOAD_MORE_LABEL}
     </Button>
   );
 };

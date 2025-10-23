@@ -51,6 +51,14 @@ export function isToggled(element: HTMLButtonElement): boolean {
   return element.classList.contains('toggled');
 }
 
+export function isSecondary(element: HTMLButtonElement): boolean {
+  const attribute = element.getAttribute('class');
+  if (attribute === null) {
+    return false;
+  }
+  return attribute.includes('type-secondary');
+}
+
 export function getCheckboxState(element: HTMLInputElement): CheckboxState | undefined {
   const attribute = element.getAttribute('aria-checked');
   if (attribute === 'true') {
