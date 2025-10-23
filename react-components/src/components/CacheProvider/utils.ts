@@ -62,7 +62,7 @@ export function getInstanceReferencesFromPointCloudVolume(
   return instances;
 }
 
-export function getVolumeAnnotationId(
+export function getPointCloudVolumeId(
   volume: PointCloudObjectMetadata<DataSourceType>
 ): PointCloudVolumeId {
   if (isClassicPointCloudVolume(volume)) {

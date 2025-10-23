@@ -25,7 +25,7 @@ import {
 import { getInstanceKeysFromStylingGroup } from '../utils';
 import {
   getInstanceReferencesFromPointCloudVolume,
-  getVolumeAnnotationId
+  getPointCloudVolumeId
 } from '../../CacheProvider/utils';
 import { type PointCloudVolumeId } from '../../CacheProvider/types';
 import { UseCalculatePointCloudStylingContext } from './useCalculatePointCloudStyling.context';
@@ -33,7 +33,7 @@ import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 
 type PointCloudVolumeWithModel = {
   model: PointCloudModelOptions;
-  volumesWithAsset: Array<{ pointCloudVolume: PointCloudVolumeId; instance: InstanceReference }>;
+  volumesWithAsset: Array<{ pointCloudVolumeId: PointCloudVolumeId; instance: InstanceReference }>;
 };
 
 export const useCalculatePointCloudStyling = (
@@ -116,7 +116,7 @@ function createVolumePointCloudStyleGroup(
 
   const matchedVolumeRefModels = modelWithVolumes.volumesWithAsset
     .filter(({ instance }) => assetInstancesSet.has(createInstanceReferenceKey(instance)))
-    .map(({ pointCloudVolume }) => pointCloudVolume);
+    .map(({ pointCloudVolumeId }) => pointCloudVolumeId);
 
   if (matchedVolumeRefModels.length === 0) {
     return undefined;
@@ -168,7 +168,7 @@ function usePointCloudVolumesWithModel(
         (pointCloudObjectData) =>
           getInstanceReferencesFromPointCloudVolume(pointCloudObjectData).map(
             (instanceReference) => ({
-              pointCloudVolume: getVolumeAnnotationId(pointCloudObjectData),
+              pointCloudVolumeId: getPointCloudVolumeId(pointCloudObjectData),
               instance: instanceReference
             })
           )
@@ -210,7 +210,7 @@ function getMappedStyleGroupFromPointCloudVolume(
   nodeAppearance: NodeAppearance
 ): PointCloudVolumeStylingGroup {
   const pointCloudVolumes = pointCloudVolumeData.flatMap((data) => {
-    return data.volumesWithAsset.map((volumeWithAsset) => volumeWithAsset.pointCloudVolume);
+    return data.volumesWithAsset.map(({ pointCloudVolumeId }) => pointCloudVolumeId);
   });
 
   return { pointCloudVolumes, style: nodeAppearance };
