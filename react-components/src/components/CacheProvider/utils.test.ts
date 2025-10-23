@@ -5,10 +5,6 @@ import {
   getPointCloudVolumeId
 } from './utils';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
-import { ClassicDataSourceType, DMDataSourceType, PointCloudObjectMetadata } from '@cognite/reveal';
-import { Box3 } from 'three';
-import { DmsUniqueIdentifier } from '../../data-providers';
-import { IdEither } from '@cognite/sdk';
 import {
   createClassicPointCloudVolumeMock,
   createDmPointCloudVolumeMock

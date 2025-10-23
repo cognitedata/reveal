@@ -1,7 +1,11 @@
-import { ClassicDataSourceType, DMDataSourceType, PointCloudObjectMetadata } from '@cognite/reveal';
+import {
+  type ClassicDataSourceType,
+  type DMDataSourceType,
+  type PointCloudObjectMetadata
+} from '@cognite/reveal';
 import { Box3 } from 'three';
-import { DmsUniqueIdentifier } from '../../../src';
-import { IdEither } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../../../src';
+import { type IdEither } from '@cognite/sdk';
 
 export function createClassicPointCloudVolumeMock(params?: {
   id?: number;
