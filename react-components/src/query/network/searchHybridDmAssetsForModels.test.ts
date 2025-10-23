@@ -112,7 +112,7 @@ describe(searchHybridDmAssetsForModels.name, () => {
 
     const pointCloudAnnotationCacheMock = new Mock<PointCloudAnnotationCache>().object();
 
-    test('returns empty when no models and calls byIds endpoint', async () => {
+    test('returns empty when no models provided', async () => {
       const result = await searchHybridDmAssetsForModels(
         [],
         COGNITE_ASSET_DMS_VIEW,
@@ -122,14 +122,8 @@ describe(searchHybridDmAssetsForModels.name, () => {
         pointCloudAnnotationCacheMock
       );
 
-      expect(mockSdkPost).toHaveBeenCalledWith(instancesByExternalIdEndpointPath, {
-        data: {
-          items: [],
-          sources: [{ source: restrictToViewReference(viewDefinitionMock) }],
-          includeTyping: true
-        }
-      });
       expect(result).toEqual([]);
+      expect(mockSdkPost).not.toHaveBeenCalled();
     });
 
     test('returns results based on asset mappings and filters correctly', async () => {

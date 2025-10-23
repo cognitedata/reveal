@@ -46,7 +46,7 @@ describe(RuleBasedOutputsButton.name, () => {
     deps.use3dModels.mockReturnValue([mockCadModel]);
 
     const mockAssetMappingsResult = new Mock<UseQueryResult<ModelWithAssetMappings[]>>()
-      .setup((x) => x.isLoading)
+      .setup((x) => x.isInitialLoading)
       .returns(false)
       .setup((x) => x.isFetched)
       .returns(true)
@@ -87,7 +87,7 @@ describe(RuleBasedOutputsButton.name, () => {
     const mockRuleInstancesResult = new Mock<UseQueryResult<RuleAndEnabled[], undefined>>()
       .setup((x) => x.data)
       .returns(mockRuleInstances)
-      .setup((x) => x.isLoading)
+      .setup((x) => x.isInitialLoading)
       .returns(false)
       .setup((x) => x.isFetched)
       .returns(true)

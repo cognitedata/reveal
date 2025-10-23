@@ -17,24 +17,30 @@ export type RuleBasedOutputsSelectorDependencies = {
   use3dModels: typeof use3dModels;
   useAssetMappedNodesForRevisions: (
     cadModels: CadModelOptions[]
-  ) => Pick<ReturnType<typeof useAssetMappedNodesForRevisions>, 'data' | 'isLoading'>;
+  ) => Pick<ReturnType<typeof useAssetMappedNodesForRevisions>, 'data' | 'isInitialLoading'>;
   useMappedEdgesForRevisions: (
     cadModels: CadModelOptions[],
     enabled: boolean
-  ) => Pick<ReturnType<typeof useMappedEdgesForRevisions>, 'data' | 'isLoading'>;
+  ) => Pick<ReturnType<typeof useMappedEdgesForRevisions>, 'data' | 'isInitialLoading'>;
   useAll3dDirectConnectionsWithProperties: (
     connectionWithNodeAndView: FdmConnectionWithNode[]
-  ) => Pick<ReturnType<typeof useAll3dDirectConnectionsWithProperties>, 'data' | 'isLoading'>;
+  ) => Pick<
+    ReturnType<typeof useAll3dDirectConnectionsWithProperties>,
+    'data' | 'isInitialLoading'
+  >;
   useGetDMConnectionWithNodeFromHybridMappingsQuery: (
     nodeWithDmIdsFromHybridMappings: DmCadAssetMapping[],
     models: CadModelOptions[]
   ) => Pick<
     ReturnType<typeof useGetDMConnectionWithNodeFromHybridMappingsQuery>,
-    'data' | 'isLoading'
+    'data' | 'isInitialLoading'
   >;
   useFetchClassicAssetsByIds: (
     assetIdsToFilter: InternalId[]
-  ) => Pick<ReturnType<typeof useFetchClassicAssetsByIds>, 'data' | 'isLoading' | 'isFetched'>;
+  ) => Pick<
+    ReturnType<typeof useFetchClassicAssetsByIds>,
+    'data' | 'isInitialLoading' | 'isFetched'
+  >;
   generateRuleBasedOutputs: typeof generateRuleBasedOutputs;
 };
 

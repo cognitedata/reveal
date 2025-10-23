@@ -1,4 +1,4 @@
-import { type Matrix4 } from 'three';
+import { type Transformation3d } from './SceneFdmTypes';
 
 export type Scene = {
   sceneConfiguration: SceneConfiguration;
@@ -45,17 +45,15 @@ export type DMModelIdenfitier = {
 
 export type ModelIdentifier = ClassicModelIdentifier | DMModelIdenfitier;
 
-export type CadOrPointCloudModel = {
+export type CadOrPointCloudModel = Transformation3d & {
   modelIdentifier: ModelIdentifier;
   defaultVisible?: boolean;
-  transform?: Matrix4;
 };
 
-export type Image360Collection = {
+export type Image360Collection = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
   defaultVisible?: boolean;
-  transform?: Matrix4;
 };
 
 export type Skybox = {
@@ -75,16 +73,4 @@ export type GroundPlane = Transformation3d & {
 export type SceneIdentifiers = {
   externalId: string;
   spaceId: string;
-};
-
-export type Transformation3d = {
-  translationX: number;
-  translationY: number;
-  translationZ: number;
-  eulerRotationX: number;
-  eulerRotationY: number;
-  eulerRotationZ: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
 };

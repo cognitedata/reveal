@@ -1,4 +1,7 @@
-import { type AddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
+import {
+  type AddImage360CollectionEventsOptions,
+  type AddImage360CollectionOptions
+} from '../../components/Reveal3DResources/types';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { getClassicAssetMapped360Annotations } from './getClassicAssetMapped360Annotations';
 import { partition, take } from 'lodash-es';
@@ -11,7 +14,10 @@ export async function searchClassicImage360Assets(
   limit: number,
   sdk: CogniteClient
 ): Promise<Asset[]> {
-  const [classicImage360s, dmImage360s] = partition(image360s, is360ImageEventsAddOptions);
+  const [classicImage360s, dmImage360s] = partition<
+    AddImage360CollectionOptions,
+    AddImage360CollectionEventsOptions
+  >(image360s, is360ImageEventsAddOptions);
 
   const siteIds = [
     ...classicImage360s.map((image360) => image360.siteId),
