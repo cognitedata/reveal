@@ -151,7 +151,7 @@ describe(TreeNode.name, () => {
       expect(root.parent).toBeUndefined();
     });
 
-    test('should be parent', () => {
+    test('should be parent when it has children', () => {
       addChildren(root, true);
       expect(root.isParent).toBe(true);
     });
