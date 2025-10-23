@@ -108,7 +108,7 @@ describe(BoxFace.name, () => {
   });
 
   test('should get all faces as a generator', () => {
-    const faces = [];
+    const faces: number[] = [];
     for (const boxFace of BoxFace.getAllFaces()) {
       faces.push(boxFace.face);
     }

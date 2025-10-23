@@ -49,7 +49,7 @@ export const RuleBasedOutputsButton = ({
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
+  const { isInitialLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
     useAssetMappedNodesForRevisions(cadModels);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();

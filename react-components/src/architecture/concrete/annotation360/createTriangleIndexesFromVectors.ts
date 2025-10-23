@@ -92,7 +92,7 @@ function removeEqualAndColinearPoints(start: Point): Point {
 }
 
 function createIndexedTrianglesFromLinkedList(current: Point): number[] | undefined {
-  const triangles = [];
+  const triangles: number[] = [];
   let end = current;
 
   while (current.prev !== current.next) {

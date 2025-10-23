@@ -26,5 +26,5 @@ export async function getCadModelsForHybridDmInstance(
     type: 'cad',
     addOptions: { modelId, revisionId }
   }));
-  return uniqBy(items, createAddOptionsKey);
+  return uniqBy<TaggedAddCadResourceOptions>(items, createAddOptionsKey);
 }

@@ -1,5 +1,5 @@
 import { type CogniteClient, type Asset, type IdEither } from '@cognite/sdk';
-import { uniqBy, chunk, partition, uniqWith } from 'lodash-es';
+import { uniqBy, chunk, uniqWith } from 'lodash-es';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';
 import { getInstanceReferencesFromPointCloudAnnotation } from './utils';
@@ -15,6 +15,7 @@ import {
   createInstanceReferenceKey,
   type InstanceReference,
   type InstanceReferenceKey,
+  isDmsInstance,
   isIdEither
 } from '../../utilities/instanceIds';
 import { isSameIdEither } from '../../utilities/instanceIds/equality';
@@ -63,7 +64,8 @@ export async function fetchAssetsForAssetReferences(
   assetIds: InstanceReference[],
   sdk: CogniteClient
 ): Promise<AssetInstance[]> {
-  const [classicIds, dmIds] = partition(assetIds, isIdEither);
+  const classicIds = assetIds.filter(isIdEither);
+  const dmIds = assetIds.filter(isDmsInstance);
   return ([] as AssetInstance[])
     .concat(await fetchAssetsForAssetIds(classicIds, sdk))
     .concat(await fetchAssetsForDmsIds(dmIds, sdk));

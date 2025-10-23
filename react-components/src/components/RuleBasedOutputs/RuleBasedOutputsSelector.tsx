@@ -60,14 +60,14 @@ export function RuleBasedOutputsSelector({
       return { type: 'cad', modelId: model.modelId, revisionId: model.revisionId };
     });
 
-  const { data: assetMappings, isLoading: isAssetMappingsLoading } =
+  const { data: assetMappings, isInitialLoading: isAssetMappingsLoading } =
     useAssetMappedNodesForRevisions(cadModels);
 
   const assetIdsFromMapped = useExtractUniqueClassicAssetIdsFromMapped(assetMappings);
 
   const {
     data: allClassicAsset,
-    isLoading: isAllClassicAssetConnectionsLoading,
+    isInitialLoading: isAllClassicAssetConnectionsLoading,
     isFetched: isAllClassicAssetConnectionsFetched
   } = useFetchClassicAssetsByIds(assetIdsFromMapped);
 
@@ -83,7 +83,7 @@ export function RuleBasedOutputsSelector({
     return assetMappings?.flatMap((item) => item.assetMappings.filter(isDmCadAssetMapping));
   }, [assetMappings]);
 
-  const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
+  const { data: fdmMappedEquipmentEdges, isInitialLoading: isFdmMappingsEdgesLoading } =
     useMappedEdgesForRevisions(cadModels, true);
 
   const { data: dmConnectionWithNodeFromHybridDataList } =
@@ -102,7 +102,7 @@ export function RuleBasedOutputsSelector({
     return fdmConnectionWithNodeAndViewList.concat(dmConnectionWithNodeFromHybridDataList ?? []);
   }, [fdmConnectionWithNodeAndViewList, dmConnectionWithNodeFromHybridDataList]);
 
-  const { data: fdmMappings, isLoading: isFdmMappingsLoading } =
+  const { data: fdmMappings, isInitialLoading: isFdmMappingsLoading } =
     useAll3dDirectConnectionsWithProperties(allFdmConnections);
 
   const allDataLoaded =
@@ -115,7 +115,7 @@ export function RuleBasedOutputsSelector({
 
   const timeseriesExternalIds = useExtractTimeseriesIdsFromRuleSet(ruleSet);
 
-  const { isLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
+  const { isInitialLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
     useAssetsAndTimeseriesLinkageDataQuery({
       timeseriesExternalIds,
       assetNodes: contextualizedAssetNodes
