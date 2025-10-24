@@ -1,5 +1,5 @@
 import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
-import { LayersButtonContext } from './LayersButton2.context';
+import { LayersButtonContext } from './LayersButton.context';
 import { type LayersUrlStateParam } from './types';
 import { type ModelLayerContent } from './ModelLayerContent';
 import { type RevealDomainObject, type RevealRenderTarget } from '../../../architecture';

@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import { ModelLayersButton } from './ModelLayersButton2';
+import { ModelLayersButton } from './ModelLayersButton';
 
 import { useContext, type ReactElement } from 'react';
 import { useTranslation } from '../../../i18n/I18n';
-import { type LayersButtonProps } from '../LayersButton2';
-import { LayersButtonContext } from '../LayersButton2.context';
+import { type LayersButtonProps } from '../LayersButton';
+import { LayersButtonContext } from '../LayersButton.context';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,

@@ -16,7 +16,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 import { type AddModelOptions } from '@cognite/reveal';
-import { LayersButtonStrip } from '../src/components/RevealToolbar/LayersButton/components/LayersButtonsStrip';
+import { LayersButtonStrip } from '../src/components/Architecture/LayersButton/components/LayersButtonsStrip';
 import { type QualitySettings } from '../src/architecture';
 
 const meta = {
