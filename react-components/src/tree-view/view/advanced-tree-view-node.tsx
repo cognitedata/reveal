@@ -1,11 +1,8 @@
 /* eslint-disable react/prop-types */
 import { type ReactElement, useReducer, useState } from 'react';
-
 import { Colors } from '@cognite/cogs.js';
-
 import { getChildrenAsArray } from './get-children-as-array';
 import { type TreeNodeType } from '../model/tree-node-type';
-
 import { type AdvancedTreeViewProps } from './advanced-tree-view-props';
 import { TreeViewCaret } from './components/tree-view-caret';
 import { TreeViewCheckbox } from './components/tree-view-checkbox';
@@ -17,20 +14,17 @@ import { TreeViewLoading } from './components/tree-view-loading';
 import { HORIZONTAL_SPACING, INDENTATION, VERTICAL_SPACING } from './constants';
 import { useOnTreeNodeUpdate } from './use-on-tree-node-update';
 
-// ==================================================
-// MAIN COMPONENT
-// ==================================================
+export type AdvancedTreeViewNodeProps = {
+  node: TreeNodeType;
+  level: number;
+  props: AdvancedTreeViewProps;
+};
 
 export const AdvancedTreeViewNode = ({
   node: inputNode,
   level,
   props
-}: {
-  node: TreeNodeType;
-  level: number;
-  props: AdvancedTreeViewProps;
-}): ReactElement => {
-  // Props
+}: AdvancedTreeViewNodeProps): ReactElement => {
   const [isHover, setHover] = useState(false);
   // This force to update the component when the node changes
   // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
@@ -72,13 +66,13 @@ export const AdvancedTreeViewNode = ({
           borderRadius: '4px'
         }}
         onMouseEnter={() => {
-          onHover(inputNode, true);
+          if (hasHover) setHover(true);
         }}
         onMouseLeave={() => {
-          onHover(inputNode, false);
+          if (hasHover) setHover(false);
         }}>
-        <TreeViewCaret node={inputNode} onClick={onExpandNode} props={props} />
-        {hasCheckboxes && <TreeViewCheckbox node={inputNode} onClick={onToggleNode} />}
+        <TreeViewCaret node={inputNode} />
+        {hasCheckboxes && <TreeViewCheckbox node={inputNode} onToggleNode={props.onToggleNode} />}
         <div
           style={{
             flexDirection: 'row',
@@ -86,74 +80,37 @@ export const AdvancedTreeViewNode = ({
             gap: horizontalSpacing
           }}
           onClick={(event) => {
-            onSelectNode(inputNode);
+            if (props.onSelectNode !== undefined) props.onSelectNode(inputNode);
             event.stopPropagation();
             event.preventDefault();
           }}>
           {props.getIconFromIconName !== undefined && inputNode.icon !== undefined && (
             <TreeViewIcon node={inputNode} getIconFromIconName={props.getIconFromIconName} />
           )}
-          {isLoadingChildren && <TreeViewLoading level={undefined} {...props} />}
-          {!isLoadingChildren && <TreeViewLabel node={inputNode} props={props} />}
+          {isLoadingChildren && <TreeViewLoading label={props.loadingLabel} />}
+          {!isLoadingChildren && (
+            <TreeViewLabel node={inputNode} maxLabelLength={props.maxLabelLength} />
+          )}
         </div>
-        {hasInfo && <TreeViewInfo node={inputNode} props={props} />}
+        {hasInfo && <TreeViewInfo node={inputNode} onClick={props.onClickInfo} />}
       </div>
       {children !== undefined &&
         children.map((node) => (
           <AdvancedTreeViewNode node={node} key={node.id} level={level + 1} props={props} />
         ))}
-      {hasLoadMore && (
+      {hasLoadMore && props.loader !== undefined && (
         <TreeViewLoadMore
           node={inputNode}
-          onClick={onLoadMore}
           level={level}
-          props={{ ...props }}
+          label={props.loadMoreLabel}
+          loader={props.loader}
         />
       )}
-      {inputNode.isLoadingSiblings === true && <TreeViewLoading level={level} {...props} />}
+      {inputNode.isLoadingSiblings === true && (
+        <TreeViewLoading level={level} label={props.loadingLabel} />
+      )}
     </div>
   );
-
-  function onSelectNode(node: TreeNodeType): void {
-    if (props.onSelectNode === undefined) {
-      return;
-    }
-    props.onSelectNode(node);
-  }
-
-  function onToggleNode(node: TreeNodeType): void {
-    if (node.isCheckboxEnabled !== true || node.checkboxState === undefined) {
-      return;
-    }
-    if (props.onToggleNode === undefined) {
-      return;
-    }
-    props.onToggleNode(node);
-  }
-
-  function onExpandNode(node: TreeNodeType): void {
-    if (!node.isParent) {
-      return;
-    }
-    node.isExpanded = !node.isExpanded;
-  }
-
-  function onLoadMore(node: TreeNodeType): void {
-    if (props.loader === undefined) {
-      return;
-    }
-    if (node.loadSiblings === undefined) {
-      return;
-    }
-    void node.loadSiblings(props.loader);
-  }
-
-  function onHover(node: TreeNodeType, value: boolean): void {
-    if (!hasHover) {
-      return;
-    }
-    setHover(value);
-  }
 };
 
 function getBackgroundColor(node: TreeNodeType, hover: boolean): string | undefined {

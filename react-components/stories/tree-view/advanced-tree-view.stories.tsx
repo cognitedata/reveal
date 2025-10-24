@@ -115,6 +115,9 @@ export const WithBoldLabels: Story = {
 };
 
 const infoRoot = createSimpleTreeMock({});
+for (const node of infoRoot.getThisAndDescendants()) {
+  node.hasInfoIcon = true;
+}
 export const WithInfo: Story = {
   name: 'info',
   render: () => <AdvancedTreeView root={infoRoot} onClickInfo={onClickInfo} />

@@ -6,13 +6,12 @@ import { type TreeNodeType } from '../../model/tree-node-type';
 import { type TreeNodeAction } from '../../model/types';
 import { CheckboxState } from '../../../architecture/base/utilities/types';
 
-export const TreeViewCheckbox = ({
-  node,
-  onClick
-}: {
+export type TreeViewCheckboxProps = {
   node: TreeNodeType;
-  onClick: TreeNodeAction;
-}): ReactElement => {
+  onToggleNode?: TreeNodeAction;
+};
+
+export const TreeViewCheckbox = ({ node, onToggleNode }: TreeViewCheckboxProps): ReactElement => {
   if (node.checkboxState === undefined) {
     return <></>;
   }
@@ -23,8 +22,9 @@ export const TreeViewCheckbox = ({
         defaultChecked={true}
         checked={true}
         disabled={node.isCheckboxEnabled !== true}
+        aria-disabled={node.isCheckboxEnabled !== true}
         onChange={() => {
-          onClick(node);
+          if (onToggleNode !== undefined) onToggleNode(node);
         }}
       />
     );
@@ -34,8 +34,9 @@ export const TreeViewCheckbox = ({
     <Checkbox
       checked={checked}
       disabled={node.isCheckboxEnabled !== true}
+      aria-disabled={node.isCheckboxEnabled !== true}
       onChange={() => {
-        onClick(node);
+        if (onToggleNode !== undefined) onToggleNode(node);
       }}
     />
   );
