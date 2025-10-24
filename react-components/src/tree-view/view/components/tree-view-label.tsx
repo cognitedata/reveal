@@ -3,13 +3,12 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { MAX_LABEL_LENGTH, TOOLTIP_DELAY } from '../constants';
 
-export const TreeViewLabel = ({
-  node,
-  maxLabelLength
-}: {
+export type TreeViewLabelProps = {
   node: TreeNodeType;
   maxLabelLength?: number;
-}): ReactElement => {
+};
+
+export const TreeViewLabel = ({ node, maxLabelLength }: TreeViewLabelProps): ReactElement => {
   if (maxLabelLength === undefined) {
     maxLabelLength = MAX_LABEL_LENGTH;
   }

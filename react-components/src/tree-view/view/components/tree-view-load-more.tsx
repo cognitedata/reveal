@@ -4,17 +4,19 @@ import { type TreeNodeType } from '../../model/tree-node-type';
 import { HORIZONTAL_SPACING, INDENTATION, LOAD_MORE_LABEL } from '../constants';
 import { type ILazyLoader } from '../../model/i-lazy-loader';
 
+export type TreeViewLoadMoreProps = {
+  node: TreeNodeType;
+  level: number;
+  label?: string;
+  loader: ILazyLoader;
+};
+
 export const TreeViewLoadMore = ({
   node,
   level,
   label,
   loader
-}: {
-  node: TreeNodeType;
-  level: number;
-  label?: string;
-  loader: ILazyLoader;
-}): ReactElement => {
+}: TreeViewLoadMoreProps): ReactElement => {
   const horizontalSpacing = HORIZONTAL_SPACING / 2 + 'px';
   const marginLeft = (level + 1) * INDENTATION + 'px';
   return (

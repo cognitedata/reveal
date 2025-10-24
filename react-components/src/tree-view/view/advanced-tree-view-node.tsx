@@ -14,20 +14,17 @@ import { TreeViewLoading } from './components/tree-view-loading';
 import { HORIZONTAL_SPACING, INDENTATION, VERTICAL_SPACING } from './constants';
 import { useOnTreeNodeUpdate } from './use-on-tree-node-update';
 
-// ==================================================
-// MAIN COMPONENT
-// ==================================================
+export type AdvancedTreeViewNodeProps = {
+  node: TreeNodeType;
+  level: number;
+  props: AdvancedTreeViewProps;
+};
 
 export const AdvancedTreeViewNode = ({
   node: inputNode,
   level,
   props
-}: {
-  node: TreeNodeType;
-  level: number;
-  props: AdvancedTreeViewProps;
-}): ReactElement => {
-  // Props
+}: AdvancedTreeViewNodeProps): ReactElement => {
   const [isHover, setHover] = useState(false);
   // This force to update the component when the node changes
   // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/

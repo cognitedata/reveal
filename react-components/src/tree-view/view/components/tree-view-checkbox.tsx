@@ -6,13 +6,12 @@ import { type TreeNodeType } from '../../model/tree-node-type';
 import { type TreeNodeAction } from '../../model/types';
 import { CheckboxState } from '../../../architecture/base/utilities/types';
 
-export const TreeViewCheckbox = ({
-  node,
-  onToggleNode
-}: {
+export type TreeViewCheckboxProps = {
   node: TreeNodeType;
   onToggleNode?: TreeNodeAction;
-}): ReactElement => {
+};
+
+export const TreeViewCheckbox = ({ node, onToggleNode }: TreeViewCheckboxProps): ReactElement => {
   if (node.checkboxState === undefined) {
     return <></>;
   }

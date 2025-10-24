@@ -4,13 +4,12 @@ import { Body, LoaderIcon } from '@cognite/cogs.js';
 
 import { HORIZONTAL_SPACING, INDENTATION, LOADING_LABEL, VERTICAL_SPACING } from '../constants';
 
-export const TreeViewLoading = ({
-  level,
-  label
-}: {
+export type TreeViewLoadingProps = {
   level?: number;
   label?: string;
-}): ReactElement => {
+};
+
+export const TreeViewLoading = ({ level, label }: TreeViewLoadingProps): ReactElement => {
   const horizontalSpacing = HORIZONTAL_SPACING + 'px';
 
   let marginVertical: string | undefined;
