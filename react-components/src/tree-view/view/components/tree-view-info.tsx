@@ -4,13 +4,12 @@ import { type TreeNodeType } from '../../model/tree-node-type';
 import { HOVER_INFO_COLOR, INFO_COLOR } from '../constants';
 import { type TreeNodeAction } from '../../model/types';
 
-export const TreeViewInfo = ({
-  node,
-  onClick
-}: {
+export type TreeViewInfoProps = {
   node: TreeNodeType;
   onClick?: TreeNodeAction;
-}): ReactElement => {
+};
+
+export const TreeViewInfo = ({ node, onClick }: TreeViewInfoProps): ReactElement => {
   const [isHover, setHover] = useState(false);
   const color = getColor(isHover);
   return (
