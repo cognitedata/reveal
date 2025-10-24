@@ -23,8 +23,9 @@ export const usePointCloudAnnotationMappingsForAssetInstances = (
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetInstances(
         classicAddModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-        assetInstances?.map((assetInstance) => createInstanceReferenceKey(assetInstance)).sort() ??
-          []
+        assetInstances
+          ?.map((assetInstance) => String(createInstanceReferenceKey(assetInstance)))
+          .sort() ?? []
       )
     ],
     queryFn: async () => {

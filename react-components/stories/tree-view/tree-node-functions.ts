@@ -1,4 +1,4 @@
-import { TreeNode } from '#test-utils/tree-view/nodes/tree-node';
+import { TreeNode } from '../../src/tree-view/model/tree-node';
 import { CheckboxState } from '../../src/architecture/base/utilities/types';
 import { type TreeNodeType } from '../../src/tree-view/model/tree-node-type';
 

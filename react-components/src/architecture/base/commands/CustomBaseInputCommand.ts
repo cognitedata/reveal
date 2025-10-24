@@ -18,7 +18,7 @@ export type FieldContent =
 
 export abstract class CustomBaseInputCommand extends RenderTargetCommand {
   protected _placeholders?: TranslationInput[];
-  protected _contents?: FieldContent[];
+  protected _contents: FieldContent[] = [];
   protected _okButtonLabel?: TranslationInput;
 
   protected _onFinish?: () => void;
@@ -35,7 +35,7 @@ export abstract class CustomBaseInputCommand extends RenderTargetCommand {
   public abstract getAllPlaceholders(): TranslationInput[] | undefined;
 
   public get contents(): FieldContent[] {
-    return this._contents ?? [];
+    return this._contents;
   }
 
   public get onFinish(): (() => void) | undefined {

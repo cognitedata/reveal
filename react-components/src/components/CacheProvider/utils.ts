@@ -4,13 +4,21 @@ import {
   type AnnotationsBoundingVolume,
   type IdEither
 } from '@cognite/sdk';
-import { type CoreDmImage360Annotation, type DataSourceType } from '@cognite/reveal';
+
+import {
+  isClassicPointCloudVolume,
+  isDMPointCloudVolume,
+  type PointCloudObjectMetadata,
+  type CoreDmImage360Annotation,
+  type DataSourceType
+} from '@cognite/reveal';
 import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
 import {
   createInstanceReferenceKey,
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
+import { type PointCloudVolumeId } from './types';
 
 export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel
@@ -31,6 +39,37 @@ export function getInstanceReferencesFromPointCloudAnnotation(
   }
 
   return instances;
+}
+
+export function getInstanceReferencesFromPointCloudVolume(
+  volume: PointCloudObjectMetadata<DataSourceType>
+): InstanceReference[] {
+  const instances: InstanceReference[] = [];
+
+  if (isClassicPointCloudVolume(volume)) {
+    if (isIdEither(volume.assetRef)) {
+      instances.push(volume.assetRef);
+    }
+
+    if (isDmsInstance(volume.instanceRef)) {
+      instances.push(volume.instanceRef);
+    }
+  }
+  if (isDMPointCloudVolume(volume) && volume.assetRef !== undefined) {
+    instances.push(volume.assetRef);
+  }
+
+  return instances;
+}
+
+export function getPointCloudVolumeId(
+  volume: PointCloudObjectMetadata<DataSourceType>
+): PointCloudVolumeId {
+  if (isClassicPointCloudVolume(volume)) {
+    return volume.annotationId;
+  } else {
+    return volume.volumeInstanceRef;
+  }
 }
 
 export function getInstanceReferenceFromImage360Annotation(

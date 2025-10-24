@@ -56,7 +56,7 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
   };
 
   public override get contents(): FieldContent[] {
-    return this._contents ?? [];
+    return this._contents;
   }
 
   public override getPostButtonLabel(): TranslationInput {
@@ -80,10 +80,6 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
   }
 
   public override invokeCore(): boolean {
-    if (this._contents === undefined) {
-      return false;
-    }
-
     const domainObject = this.renderTarget.root.getDescendantByType(PointsOfInterestDomainObject);
 
     if (domainObject === undefined) {

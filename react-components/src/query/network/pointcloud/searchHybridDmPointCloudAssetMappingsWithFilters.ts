@@ -7,6 +7,7 @@ import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { isDefined } from '../../../utilities/isDefined';
 import { restrictToViewReference } from '../../../utilities/restrictToViewReference';
 import { type PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
+import { type InstanceReferenceKey } from '../../../utilities/instanceIds';
 
 const MODELS_CHUNK_SIZE = 10;
 
@@ -30,7 +31,7 @@ export async function searchHybridDmPointCloudAssetMappingsWithFilters(
     options.filter
   );
 
-  const instanceKeyToInstanceMap = new Map<string, NodeItem>(
+  const instanceKeyToInstanceMap = new Map<InstanceReferenceKey, NodeItem>(
     searchResult.instances.map(
       (instance) => [createFdmKey(instance), instance] as [FdmKey, NodeItem]
     )
