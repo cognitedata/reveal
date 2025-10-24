@@ -11,7 +11,7 @@ import {
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
-import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 import {
   type AssetId,
@@ -79,7 +79,6 @@ export type AddPointCloudResourceOptions<T extends DataSourceType = DataSourceTy
     styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
     defaultVisible?: boolean;
   };
-
 export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
   transform?: Matrix4;
   styling?: {
@@ -106,37 +105,23 @@ export type NodeDataResult = {
   cadNode: Node3D;
 };
 
-export type FdmInstanceStylingGroup = {
+export type InstanceStylingGroupBase = {
+  style: {
+    cad?: NodeAppearance;
+    pointcloud?: NodeAppearance;
+    image360?: Image360AnnotationAppearance;
+  };
+};
+
+export type FdmInstanceStylingGroup = InstanceStylingGroupBase & {
   fdmAssetExternalIds: DmsUniqueIdentifier[];
-  style: {
-    cad?: NodeAppearance;
-    pointcloud?: NodeAppearance;
-  };
 };
 
-export type ClassicAssetStylingGroup = {
+export type ClassicAssetStylingGroup = InstanceStylingGroupBase & {
   assetIds: AssetId[];
-  style: {
-    cad?: NodeAppearance;
-    pointcloud?: NodeAppearance;
-  };
 };
 
-export type Image360AssetStylingGroup = {
-  assetIds: CogniteInternalId[];
-  style: { image360?: Image360AnnotationAppearance };
-};
-
-export type Image360DMAssetStylingGroup = {
-  assetRefs: DmsUniqueIdentifier[];
-  style: { image360?: Image360AnnotationAppearance };
-};
-
-export type InstanceStylingGroup =
-  | FdmInstanceStylingGroup
-  | ClassicAssetStylingGroup
-  | Image360AssetStylingGroup
-  | Image360DMAssetStylingGroup;
+export type InstanceStylingGroup = FdmInstanceStylingGroup | ClassicAssetStylingGroup;
 
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
@@ -173,7 +158,7 @@ export type StyledPointCloudModel = {
 
 export type AnnotationModelDataResult = {
   model: PointCloudModelOptions;
-  annotationModel: PointCloudAnnotationModel[];
+  annotations: PointCloudAnnotationModel[];
 };
 
 export type DMVolumeModelDataResult = {
