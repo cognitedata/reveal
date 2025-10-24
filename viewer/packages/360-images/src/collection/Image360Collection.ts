@@ -9,7 +9,12 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  ImageInstanceLinkAnnotationInfo
+} from '@reveal/data-providers';
 import { Matrix4 } from 'three';
 import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers';
 
@@ -18,7 +23,7 @@ import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-pr
  * annotation types are visible in Reveal, but not linkable to assets
  */
 export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType
-  ? ImageAssetLinkAnnotationInfo
+  ? ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo
   : T['image360AnnotationType'];
 
 /**

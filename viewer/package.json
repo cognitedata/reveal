@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "^3.13.0",
-    "@cognite/sdk": "^10.0.0",
+    "@cognite/sdk": "^10.1.3",
     "@microsoft/api-extractor": "^7.43.1",
     "@types/dat.gui": "^0.7.13",
     "@types/gl": "^6.0.5",
