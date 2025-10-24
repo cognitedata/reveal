@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 import { getIconName, getIconsInContainer } from '#test-utils/cogs/htmlTestUtils';
-import { TreeViewLoading } from './tree-view-loading';
+import { TreeViewLoading, type TreeViewLoadingProps } from './tree-view-loading';
 
 const LABEL = 'Custom loading label';
 
 describe(TreeViewLoading.name, () => {
   test('should render with correct icon', () => {
-    const { container } = render(<TreeViewLoading level={1} label={LABEL} />);
+    const container = renderMe({ level: 1, label: LABEL });
     const icons = getIconsInContainer(container);
 
     expect(icons).toHaveLength(1);
@@ -15,7 +15,11 @@ describe(TreeViewLoading.name, () => {
   });
 
   test('should render with correct label', () => {
-    render(<TreeViewLoading level={1} label={LABEL} />);
+    renderMe({ level: 1, label: LABEL });
     expect(screen.getByText(LABEL)).toBeDefined();
   });
 });
+
+function renderMe(props: TreeViewLoadingProps): HTMLElement {
+  return render(<TreeViewLoading {...props} />).container;
+}

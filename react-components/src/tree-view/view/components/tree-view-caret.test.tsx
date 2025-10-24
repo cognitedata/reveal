@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
 import { getIconName, getIconsInContainer } from '#test-utils/cogs/htmlTestUtils';
 import { TreeNode } from '../../model/tree-node';
-import { TreeViewCaret } from './tree-view-caret';
+import { TreeViewCaret, type TreeViewCaretProps } from './tree-view-caret';
 
 describe(TreeViewCaret.name, () => {
   test('should not render the caret when it is leaf', () => {
     const node = new TreeNode();
 
-    const { container } = render(<TreeViewCaret node={node} />);
+    const container = renderMe({ node });
     const icons = getIconsInContainer(container);
 
     expect(icons).toHaveLength(0);
@@ -21,7 +21,7 @@ describe(TreeViewCaret.name, () => {
 
     for (const expanded of [true, false]) {
       node.isExpanded = expanded;
-      const { container } = render(<TreeViewCaret node={node} />);
+      const container = renderMe({ node });
       const icons = getIconsInContainer(container);
 
       expect(icons).toHaveLength(1);
@@ -34,7 +34,7 @@ describe(TreeViewCaret.name, () => {
     node.addChild(new TreeNode());
 
     node.isExpanded = false;
-    const { container } = render(<TreeViewCaret node={node} />);
+    const container = renderMe({ node });
     const icons = getIconsInContainer(container);
 
     await userEvent.click(icons[0]);
@@ -46,10 +46,14 @@ describe(TreeViewCaret.name, () => {
     node.addChild(new TreeNode());
 
     node.isExpanded = true;
-    const { container } = render(<TreeViewCaret node={node} />);
+    const container = renderMe({ node });
     const icons = getIconsInContainer(container);
 
     await userEvent.click(icons[0]);
     expect(node.isExpanded).toBe(false);
   });
 });
+
+function renderMe(props: TreeViewCaretProps): HTMLElement {
+  return render(<TreeViewCaret {...props} />).container;
+}

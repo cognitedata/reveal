@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 import { getButtonsInContainer, isSecondary } from '#test-utils/cogs/htmlTestUtils';
 import { TreeNode } from '../../model/tree-node';
-import { TreeViewLoadMore } from './tree-view-load-more';
+import { TreeViewLoadMore, type TreeViewLoadMoreProps } from './tree-view-load-more';
 import { type ILazyLoader } from '../../model/i-lazy-loader';
 import { type TreeNodeType } from '../../model/tree-node-type';
 
@@ -14,9 +14,7 @@ describe(TreeViewLoadMore.name, () => {
 
   test('should render the button with correct label and type', () => {
     const node = new TreeNode();
-    const { container } = render(
-      <TreeViewLoadMore node={node} level={1} label={LABEL} loader={loader} />
-    );
+    const container = renderMe({ node, level: 1, label: LABEL, loader });
     const buttons = getButtonsInContainer(container);
 
     expect(buttons).toHaveLength(1);
@@ -28,7 +26,7 @@ describe(TreeViewLoadMore.name, () => {
     const node = new TreeNode();
     node.loadSiblings = vi.fn();
 
-    const { container } = render(<TreeViewLoadMore node={node} level={1} loader={loader} />);
+    const container = renderMe({ node, level: 1, loader });
     const buttons = getButtonsInContainer(container);
 
     await userEvent.click(buttons[0]);
@@ -36,6 +34,10 @@ describe(TreeViewLoadMore.name, () => {
     expect(node.loadSiblings).toBeCalledWith(loader);
   });
 });
+
+function renderMe(props: TreeViewLoadMoreProps): HTMLElement {
+  return render(<TreeViewLoadMore {...props} />).container;
+}
 
 class EmptyLazyLoaderMock implements ILazyLoader {
   root: TreeNodeType | undefined;
