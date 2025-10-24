@@ -74,6 +74,27 @@ describe(LayersButtonStrip.name, () => {
     expect(getAllByRole('img', { name: 'View360Icon' })).toBeTruthy();
   });
 
+  test('renders also when visibility state does not contain models', () => {
+    const mockModels: CogniteModel[] = [cadMock, cadMock];
+    viewerModelsMock.mockReturnValue(mockModels);
+    const mockImage360Collection = createImage360ClassicMock();
+    viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
+
+    defaultDependencies.useModelsVisibilityState.mockReturnValue({
+      cadModels: [],
+      pointClouds: [],
+      image360Collections: []
+    });
+
+    const { getAllByRole } = render(<LayersButtonStrip {...defaultProps} />, {
+      wrapper
+    });
+
+    expect(getAllByRole('img', { name: 'CubeIcon' })).toBeTruthy();
+    expect(getAllByRole('img', { name: 'PointCloudIcon' })).toBeTruthy();
+    expect(getAllByRole('img', { name: 'View360Icon' })).toBeTruthy();
+  });
+
   test('renders with empty layersState', () => {
     const mockModels: CogniteModel[] = [cadMock, cadMock];
     viewerModelsMock.mockReturnValue(mockModels);
