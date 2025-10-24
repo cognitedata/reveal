@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import { getCheckboxState, getInputsInContainer } from '#test-utils/cogs/htmlTestUtils';
 import { TreeNode } from '../../model/tree-node';
 import type { TreeNodeAction } from '../../model/types';
-import { TreeViewCheckbox } from './tree-view-checkbox';
+import { TreeViewCheckbox, type TreeViewCheckboxProps } from './tree-view-checkbox';
 import { CheckboxState } from '../../../architecture/base/utilities/types';
 
 describe(TreeViewCheckbox.name, () => {
@@ -15,7 +15,7 @@ describe(TreeViewCheckbox.name, () => {
       node.checkboxState = state;
       node.isCheckboxEnabled = true;
 
-      const { container } = render(<TreeViewCheckbox node={node} onToggleNode={onToggleNode} />);
+      const container = renderMe({ node, onToggleNode });
       const checkboxes = getInputsInContainer(container);
 
       expect(checkboxes).toHaveLength(state === undefined ? 0 : 1);
@@ -32,7 +32,7 @@ describe(TreeViewCheckbox.name, () => {
       node.checkboxState = checkboxState;
       node.isCheckboxEnabled = true;
 
-      const { container } = render(<TreeViewCheckbox node={node} onToggleNode={onToggleNode} />);
+      const container = renderMe({ node, onToggleNode });
       const checkboxes = getInputsInContainer(container);
 
       await userEvent.click(checkboxes[0]);
@@ -40,4 +40,8 @@ describe(TreeViewCheckbox.name, () => {
       expect(onToggleNode).toBeCalledWith(node);
     }
   });
+
+  function renderMe(props: TreeViewCheckboxProps): HTMLElement {
+    return render(<TreeViewCheckbox {...props} />).container;
+  }
 });
