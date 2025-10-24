@@ -1,7 +1,7 @@
-import { type PropsWithChildren } from 'react';
+import { type ReactElement, type PropsWithChildren } from 'react';
 import { describe, expect, test, vi } from 'vitest';
 import { createCustomInputField, CustomInputField } from './CustomInputField';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { RevealRenderTarget, type TranslationInput } from '../../architecture';
 import { CustomBaseInputCommand } from '../../architecture/base/commands/CustomBaseInputCommand';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
@@ -17,7 +17,7 @@ import { translate } from '../../architecture/base/utilities/translation/transla
 describe(CustomInputField.name, () => {
   const mockDependencies = getMocksByDefaultDependencies(defaultCustomInputFieldDependencies);
 
-  const wrapper = ({ children }: PropsWithChildren) => (
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <ViewerContext.Provider value={new RevealRenderTarget(createViewerMock(), sdkMock)}>
       <CustomInputFieldContext.Provider value={mockDependencies}>
         {children}
@@ -133,10 +133,6 @@ describe(CustomInputField.name, () => {
 });
 
 class TestCustomBaseInputCommand extends CustomBaseInputCommand {
-  constructor() {
-    super();
-  }
-
   getPostButtonLabel(): TranslationInput {
     return { untranslated: 'post button label' };
   }

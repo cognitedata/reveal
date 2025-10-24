@@ -3,12 +3,12 @@ import {
   Input,
   Textarea,
   Comment,
-  InputProps,
-  ButtonProps,
-  TextareaProps,
-  CommentProps
+  type InputProps,
+  type ButtonProps,
+  type TextareaProps,
+  type CommentProps
 } from '@cognite/cogs.js';
-import { createContext, ReactElement } from 'react';
+import { createContext, type ReactElement } from 'react';
 
 export type CustomInputFieldDependencies = {
   Input: (props: InputProps) => ReactElement;
