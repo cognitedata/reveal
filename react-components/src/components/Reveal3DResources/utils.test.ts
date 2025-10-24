@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { getInstanceKeysFromStylingGroup, getInstanceReferencesFromStylingGroup } from './utils';
+import { getInstanceKeysFromStylingGroup } from './utils';
 import { createFdmKey } from '../CacheProvider';
 
 describe(getInstanceKeysFromStylingGroup.name, () => {
