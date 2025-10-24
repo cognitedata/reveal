@@ -1,6 +1,6 @@
 import { partition } from 'lodash-es';
 import { isInternalId } from '../../../utilities/instanceIds';
-import { type IdEither } from '@cognite/sdk';
+import { type IdEither, type InternalId } from '@cognite/sdk';
 import { type AssetAdvancedFilterProps } from './filters';
 import { isDefined } from '../../../utilities/isDefined';
 
@@ -26,7 +26,11 @@ export function buildClassicAssetIdFilter(
     return undefined;
   }
 
-  const [internalIdEithers, externalIdEithers] = partition(assetRefs, isInternalId);
+  const [internalIdEithers, externalIdEithers] = partition<IdEither, InternalId>(
+    assetRefs,
+    isInternalId
+  );
+
   const internalIds = internalIdEithers.map((internalIdEither) => internalIdEither.id);
   const externalIds = externalIdEithers.map((externalIdEither) => externalIdEither.externalId);
 

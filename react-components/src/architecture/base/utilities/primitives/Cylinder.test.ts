@@ -74,7 +74,7 @@ describe(Cylinder.name, () => {
   });
 
   test('should only return points inside cylinder', () => {
-    const points = [];
+    const points: Vector3[] = [];
     const random = new Random(42);
 
     const cylinder = new Cylinder();

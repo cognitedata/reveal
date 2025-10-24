@@ -46,5 +46,5 @@ export async function searchHybridDmAssetsForModels(
     sdk,
     classicCadCache
   );
-  return uniqBy([...cadSearchedAssets, ...pointCloudSearchedAssets], createFdmKey);
+  return uniqBy<NodeItem>([...cadSearchedAssets, ...pointCloudSearchedAssets], createFdmKey);
 }
