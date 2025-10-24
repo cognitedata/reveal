@@ -25,7 +25,7 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
     expect(root.childCount).toBe(CHILDREN_COUNT);
     expect(root.needLoadChildren).toBe(false); // Change to false
 
-    expect(rootListener).toHaveBeenCalledTimes(CHILDREN_LOAD_SUCCESS);
+    expect(rootListener).toHaveBeenCalledTimes(NOTIFICATIONS.CHILDREN_LOAD_SUCCESS);
     expect(rootListener).toHaveBeenLastCalledWith(root);
     expect(lazyLoader.onNodeLoaded).toHaveBeenCalledTimes(CHILDREN_COUNT);
   });
@@ -39,7 +39,7 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
     expect(root.childCount).toBe(0);
     expect(root.needLoadChildren).toBe(true); // Still true
 
-    expect(rootListener).toHaveBeenCalledTimes(CHILDREN_LOAD_EMPTY);
+    expect(rootListener).toHaveBeenCalledTimes(NOTIFICATIONS.CHILDREN_LOAD_EMPTY);
     expect(rootListener).toHaveBeenLastCalledWith(root);
   });
 
@@ -74,7 +74,7 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
     expect(rootListener).toHaveBeenCalledTimes(SIBLINGS_COUNT);
     expect(rootListener).toHaveBeenLastCalledWith(root);
 
-    expect(childListener).toHaveBeenCalledTimes(SIBLINGS_LOAD);
+    expect(childListener).toHaveBeenCalledTimes(NOTIFICATIONS.SIBLINGS_LOAD_SUCCESS);
     expect(childListener).toHaveBeenLastCalledWith(child);
     expect(lazyLoader.onNodeLoaded).toHaveBeenCalledTimes(SIBLINGS_COUNT);
   });
@@ -97,7 +97,7 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
     expect(child.needLoadSiblings).toBe(true); // Still true
     expect(rootListener).toHaveBeenCalledTimes(0); // No new children added
 
-    expect(childListener).toHaveBeenCalledTimes(SIBLINGS_LOAD_EMPTY);
+    expect(childListener).toHaveBeenCalledTimes(NOTIFICATIONS.SIBLINGS_LOAD_EMPTY);
     expect(childListener).toHaveBeenLastCalledWith(child);
   });
 
@@ -107,7 +107,6 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
 
     // Since we have to await for the children to load, we need to test that
     // nothing is return yet
-
     const childrenCount = count(root.getChildren(loader));
     expect(childrenCount).toBe(0);
     expect(root.children).toBeUndefined();
@@ -117,7 +116,7 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
 
     // Now the children should be loaded
     expect(root.children).toHaveLength(CHILDREN_COUNT);
-    expect(rootListener).toHaveBeenCalledTimes(CHILDREN_LOAD_SUCCESS);
+    expect(rootListener).toHaveBeenCalledTimes(NOTIFICATIONS.CHILDREN_LOAD_SUCCESS);
     expect(rootListener).toHaveBeenLastCalledWith(root);
   });
 });
@@ -125,10 +124,12 @@ describe(TreeNode.name + ' (Lazy loading)', () => {
 const CHILDREN_COUNT = 3;
 const SIBLINGS_COUNT = 4;
 
-const CHILDREN_LOAD_SUCCESS = 7; // isLoadingChildren (on/off) + needLoadChildren(on/off) + 3 children
-const CHILDREN_LOAD_EMPTY = 3; // isLoadingChildren (on/off) + needLoadChildren(on)
-const SIBLINGS_LOAD = 4; // isLoadingSiblings (on/off) + needLoadSiblings(on/off)
-const SIBLINGS_LOAD_EMPTY = 3; // isLoadingSiblings (on/off) + needLoadSiblings(on)
+const NOTIFICATIONS = {
+  CHILDREN_LOAD_SUCCESS: 7, // isLoadingChildren (on/off) + needLoadChildren(on/off) + 3 children
+  CHILDREN_LOAD_EMPTY: 3, // isLoadingChildren (on/off) + needLoadChildren(on)
+  SIBLINGS_LOAD_SUCCESS: 4, // isLoadingSiblings (on/off) + needLoadSiblings(on/off)
+  SIBLINGS_LOAD_EMPTY: 3 // isLoadingSiblings (on/off) + needLoadSiblings(on)
+} as const;
 
 class LazyLoaderMock implements ILazyLoader {
   root: TreeNodeType | undefined;
