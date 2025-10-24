@@ -1,52 +1,12 @@
 import { createContext, type ReactElement } from 'react';
-import { TreeViewCaret } from './components/tree-view-caret';
-import { type TreeNodeType } from '../model/tree-node-type';
-import { TreeViewCheckbox } from './components/tree-view-checkbox';
-import { type TreeNodeAction } from '../model/types';
-import { type GetIconFromIconNameFn } from './advanced-tree-view-props';
-import { TreeViewIcon } from './components/tree-view-icon';
-import { TreeViewInfo } from './components/tree-view-info';
-import { TreeViewLabel } from './components/tree-view-label';
-import { type ILazyLoader } from '../model/i-lazy-loader';
-import { TreeViewLoadMore } from './components/tree-view-load-more';
-import { TreeViewLoading } from './components/tree-view-loading';
+import { TreeViewCaret, type TreeViewCaretProps } from './components/tree-view-caret';
+import { TreeViewCheckbox, type TreeViewCheckboxProps } from './components/tree-view-checkbox';
+import { TreeViewIcon, type TreeViewIconProps } from './components/tree-view-icon';
+import { TreeViewInfo, type TreeViewInfoProps } from './components/tree-view-info';
+import { TreeViewLabel, type TreeViewLabelProps } from './components/tree-view-label';
+import { TreeViewLoadMore, type TreeViewLoadMoreProps } from './components/tree-view-load-more';
+import { TreeViewLoading, type TreeViewLoadingProps } from './components/tree-view-loading';
 import { AdvancedTreeViewNode, type AdvancedTreeViewNodeProps } from './advanced-tree-view-node';
-
-type TreeViewCaretProps = {
-  node: TreeNodeType;
-};
-
-type TreeViewCheckboxProps = {
-  node: TreeNodeType;
-  onToggleNode?: TreeNodeAction;
-};
-
-type TreeViewIconProps = {
-  node: TreeNodeType;
-  getIconFromIconName: GetIconFromIconNameFn;
-};
-
-type TreeViewInfoProps = {
-  node: TreeNodeType;
-  onClick?: TreeNodeAction;
-};
-
-type TreeViewLabelProps = {
-  node: TreeNodeType;
-  maxLabelLength?: number;
-};
-
-type TreeViewLoadMoreProps = {
-  node: TreeNodeType;
-  level: number;
-  label?: string;
-  loader: ILazyLoader;
-};
-
-type TreeViewLoadingProps = {
-  level?: number;
-  label?: string;
-};
 
 export type CustomInputFieldDependencies = {
   TreeViewCaret: (props: TreeViewCaretProps) => ReactElement;
