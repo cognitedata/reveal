@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { type TranslationInput } from './TranslateInput';
 
 import english from '../../../../common/i18n/en/reveal-react-components.json';
-import { setCurrentLanguage, translate } from './translateUtils';
+import { setCurrentLanguage, translate, translateIfExists } from './translateUtils';
 import { getLanguage } from '../../../../components/i18n/utils';
 
 describe('translateUtils', () => {
@@ -17,6 +17,16 @@ describe('translateUtils', () => {
     const input: TranslationInput = { untranslated: 'Hello world' };
     const actual = translate(input);
     expect(actual).toBe(input.untranslated);
+  });
+
+  test('Should translate the key by translateIfExists', () => {
+    const actual = translateIfExists({ key: 'BOX' });
+    expect(actual).toBe(english.BOX);
+  });
+
+  test('Should not translate the key', () => {
+    const actual = translateIfExists(undefined);
+    expect(actual).toBeUndefined();
   });
 
   test('Change language to spanish', async () => {
