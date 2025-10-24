@@ -4,8 +4,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { getButtonsInContainer, isSecondary } from '#test-utils/cogs/htmlTestUtils';
 import { TreeNode } from '../../model/tree-node';
 import { TreeViewLoadMore, type TreeViewLoadMoreProps } from './tree-view-load-more';
-import { type ILazyLoader } from '../../model/i-lazy-loader';
-import { type TreeNodeType } from '../../model/tree-node-type';
+import { EmptyLazyLoaderMock } from '#test-utils/tree-view/lazy-loaders/empty_lazy-loader-mock';
 
 const LABEL = 'Custom load more items';
 
@@ -37,16 +36,4 @@ describe(TreeViewLoadMore.name, () => {
 
 function renderMe(props: TreeViewLoadMoreProps): HTMLElement {
   return render(<TreeViewLoadMore {...props} />).container;
-}
-
-class EmptyLazyLoaderMock implements ILazyLoader {
-  root: TreeNodeType | undefined;
-
-  async loadChildren(_node: TreeNodeType): Promise<TreeNodeType[] | undefined> {
-    return undefined;
-  }
-
-  async loadSiblings(_node: TreeNodeType): Promise<TreeNodeType[] | undefined> {
-    return undefined;
-  }
 }
