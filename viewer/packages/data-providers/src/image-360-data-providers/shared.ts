@@ -1,9 +1,15 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Image360RevisionId, ImageAssetLinkAnnotationInfo } from '../types';
+import { Image360RevisionId, ImageAssetLinkAnnotationInfo, ImageInstanceLinkAnnotationInfo } from '../types';
 import { DataSourceType } from '../DataSourceType';
-import { AnnotationData, AnnotationModel, AnnotationsTypesImagesAssetLink, Metadata } from '@cognite/sdk';
+import {
+  AnnotationData,
+  AnnotationModel,
+  AnnotationsTypesImagesAssetLink,
+  AnnotationsTypesImagesInstanceLink,
+  Metadata
+} from '@cognite/sdk';
 import {
   Image360DataModelIdentifier,
   Image360LegacyDataModelIdentifier
@@ -67,4 +73,17 @@ export function isImageAssetLinkAnnotation(annotation: AnnotationModel): annotat
 function isAssetLinkAnnotationData(annotationData: AnnotationData): annotationData is AnnotationsTypesImagesAssetLink {
   const data = annotationData as AnnotationsTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
+}
+
+export function isImageInstanceLinkAnnotation(
+  annotation: AnnotationModel
+): annotation is ImageInstanceLinkAnnotationInfo {
+  return isInstanceLinkAnnotationData(annotation.data);
+}
+
+function isInstanceLinkAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsTypesImagesInstanceLink {
+  const data = annotationData as AnnotationsTypesImagesInstanceLink;
+  return data.text !== undefined && data.textRegion !== undefined && data.instanceRef !== undefined;
 }
