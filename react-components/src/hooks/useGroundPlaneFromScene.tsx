@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
-import { useSceneConfig } from './scenes/useSceneConfig';
+import { useContext, useEffect } from 'react';
 import {
   DoubleSide,
+  Euler,
+  MathUtils,
+  Matrix4,
   Mesh,
   MeshBasicMaterial,
   PlaneGeometry,
@@ -9,13 +11,14 @@ import {
   type Texture,
   TextureLoader
 } from 'three';
-import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION, CustomObject } from '@cognite/reveal';
-import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import { useQuery } from '@tanstack/react-query';
 import { clear } from '../architecture/base/utilities/extensions/arrayUtils';
+import { GroundPlaneFromSceneContext } from './useGroundPlaneFromScene.context';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
+  const { useSceneConfig, useSDK, useReveal } = useContext(GroundPlaneFromSceneContext);
+
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const sdk = useSDK();
   const viewer = useReveal();
@@ -102,9 +105,16 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
         groundPlane.translationY,
         groundPlane.translationZ
       );
-      mesh.rotation.set(-Math.PI / 2, 0, 0);
 
-      mesh.position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      mesh.rotation.setFromRotationMatrix(
+        transformRotationToViewerMatrix(
+          groundPlane.eulerRotationX,
+          groundPlane.eulerRotationY,
+          groundPlane.eulerRotationZ
+        )
+      );
+
+      mesh.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       const customObject = new CustomObject(mesh);
       customObject.isPartOfBoundingBox = false;
@@ -141,5 +151,27 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
     const groundPlaneScaleFormatChangedDate = new Date('2024-08-01T10:44:00.000Z');
 
     return dateModified > groundPlaneScaleFormatChangedDate;
+  }
+
+  function transformRotationToViewerMatrix(
+    rotationX: number,
+    rotationY: number,
+    rotationZ: number
+  ): Matrix4 {
+    const euler = new Euler(
+      MathUtils.degToRad(positiveModulus(rotationX - 90, 360)),
+      MathUtils.degToRad(rotationY),
+      MathUtils.degToRad(rotationZ),
+      'XYZ'
+    );
+
+    return new Matrix4()
+      .makeRotationFromEuler(euler)
+      .premultiply(CDF_TO_VIEWER_TRANSFORMATION.clone().invert())
+      .multiply(CDF_TO_VIEWER_TRANSFORMATION);
+  }
+
+  function positiveModulus(value: number, modulus: number): number {
+    return ((value % modulus) + modulus) % modulus;
   }
 };
