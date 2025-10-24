@@ -1,18 +1,12 @@
 /* eslint-disable react/prop-types */
-import { type ReactElement, useReducer, useState } from 'react';
+import { type ReactElement, useContext, useReducer, useState } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import { getChildrenAsArray } from './get-children-as-array';
 import { type TreeNodeType } from '../model/tree-node-type';
 import { type AdvancedTreeViewProps } from './advanced-tree-view-props';
-import { TreeViewCaret } from './components/tree-view-caret';
-import { TreeViewCheckbox } from './components/tree-view-checkbox';
-import { TreeViewIcon } from './components/tree-view-icon';
-import { TreeViewInfo } from './components/tree-view-info';
-import { TreeViewLabel } from './components/tree-view-label';
-import { TreeViewLoadMore } from './components/tree-view-load-more';
-import { TreeViewLoading } from './components/tree-view-loading';
 import { HORIZONTAL_SPACING, INDENTATION, VERTICAL_SPACING } from './constants';
 import { useOnTreeNodeUpdate } from './use-on-tree-node-update';
+import { CustomAdvancedTreeViewNodeContext } from './advanced-tree-view-node.context';
 
 // ==================================================
 // MAIN COMPONENT
@@ -35,6 +29,18 @@ export const AdvancedTreeViewNode = ({
   useOnTreeNodeUpdate(inputNode, () => {
     forceUpdate();
   });
+
+  const {
+    TreeViewCaret,
+    TreeViewCheckbox,
+    TreeViewIcon,
+    TreeViewInfo,
+    TreeViewLabel,
+    TreeViewLoadMore,
+    TreeViewLoading,
+    TreeViewChild
+  } = useContext(CustomAdvancedTreeViewNodeContext);
+
   if (inputNode.isVisibleInTree === false) {
     return <></>;
   }
@@ -82,6 +88,7 @@ export const AdvancedTreeViewNode = ({
             display: 'flex',
             gap: horizontalSpacing
           }}
+          data-testid="selectable-area" // Used in tests, no other ways to find it
           onClick={(event) => {
             if (props.onSelectNode !== undefined) props.onSelectNode(inputNode);
             event.stopPropagation();
@@ -98,8 +105,8 @@ export const AdvancedTreeViewNode = ({
         {hasInfo && <TreeViewInfo node={inputNode} onClick={props.onClickInfo} />}
       </div>
       {children !== undefined &&
-        children.map((node) => (
-          <AdvancedTreeViewNode node={node} key={node.id} level={level + 1} props={props} />
+        children.map((child) => (
+          <TreeViewChild node={child} key={child.id} level={level + 1} props={props} />
         ))}
       {hasLoadMore && props.loader !== undefined && (
         <TreeViewLoadMore
