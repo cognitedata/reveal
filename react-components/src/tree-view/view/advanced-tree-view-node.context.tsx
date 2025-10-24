@@ -8,7 +8,7 @@ import { TreeViewLoadMore, type TreeViewLoadMoreProps } from './components/tree-
 import { TreeViewLoading, type TreeViewLoadingProps } from './components/tree-view-loading';
 import { AdvancedTreeViewNode, type AdvancedTreeViewNodeProps } from './advanced-tree-view-node';
 
-export type CustomInputFieldDependencies = {
+type CustomAdvancedTreeViewNodeDependencies = {
   TreeViewCaret: (props: TreeViewCaretProps) => ReactElement;
   TreeViewCheckbox: (props: TreeViewCheckboxProps) => ReactElement;
   TreeViewIcon: (props: TreeViewIconProps) => ReactElement;
@@ -19,7 +19,7 @@ export type CustomInputFieldDependencies = {
   TreeViewChild: (props: AdvancedTreeViewNodeProps) => ReactElement;
 };
 
-export const defaultAdvancedTreeViewNodeDependencies: CustomInputFieldDependencies = {
+export const defaultAdvancedTreeViewNodeDependencies: CustomAdvancedTreeViewNodeDependencies = {
   TreeViewCaret: (props) => <TreeViewCaret {...props} />,
   TreeViewCheckbox: (props) => <TreeViewCheckbox {...props} />,
   TreeViewIcon: (props) => <TreeViewIcon {...props} />,
