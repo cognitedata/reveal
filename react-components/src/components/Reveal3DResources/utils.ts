@@ -11,9 +11,7 @@ export function getInstanceKeysFromStylingGroup(stylingGroup: InstanceStylingGro
   return getInstanceReferencesFromStylingGroup(stylingGroup).map(createInstanceKey);
 }
 
-export function getInstanceReferencesFromStylingGroup(
-  stylingGroup: InstanceStylingGroup
-): InstanceId[] {
+function getInstanceReferencesFromStylingGroup(stylingGroup: InstanceStylingGroup): InstanceId[] {
   if (isClassicAssetMappingStylingGroup(stylingGroup)) {
     return stylingGroup.assetIds;
   } else if (isFdmAssetStylingGroup(stylingGroup)) {
