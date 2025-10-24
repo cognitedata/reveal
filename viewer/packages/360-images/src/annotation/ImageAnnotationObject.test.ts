@@ -5,6 +5,7 @@
 import { ImageAnnotationObject } from './ImageAnnotationObject';
 import { Matrix4 } from 'three';
 import {
+  AnnotationsBoundingBox,
   AnnotationsInstanceRef,
   AnnotationsTypesImagesInstanceLink,
   AnnotationsTypesPrimitivesGeometry2DGeometry
@@ -16,7 +17,7 @@ describe(ImageAnnotationObject.name, () => {
   const mockVisualizationBoxTransform = new Matrix4().identity();
 
   const annotationText = 'Test instance';
-  const annotationTextRegionMock = {
+  const annotationTextRegionMock: AnnotationsBoundingBox = {
     xMin: 0.1,
     xMax: 0.3,
     yMin: 0.2,
