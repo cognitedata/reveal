@@ -11,7 +11,7 @@ export class SetPointsOfInterestVisibleCommand<
   }
 
   public override get tooltip(): TranslationInput {
-    return { key: 'VISIBLE' };
+    return { key: 'POINT_OF_INTEREST_PLURAL' };
   }
 
   public override get isChecked(): boolean {

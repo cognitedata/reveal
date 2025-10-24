@@ -1,4 +1,4 @@
-import { assert, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { render } from '@testing-library/react';
 import {
   BaseCommand,
@@ -22,20 +22,24 @@ import {
 } from '#test-utils/cogs/htmlTestUtils';
 
 describe(SegmentedButtons.name, () => {
-  test('should render with default values', () => {
-    const command = new MockSegmentedCommand();
-    const container = renderSegmentedButtons(command);
+  let command: MockSegmentedCommand;
+  let container: HTMLElement;
 
+  beforeEach(() => {
+    command = new MockSegmentedCommand();
+    container = renderSegmentedButtons(command).container;
+  });
+
+  test('should render with default values', () => {
     assert(command.children !== undefined);
 
     // Check button
     const buttons = getButtonsInContainer(container);
     expect(buttons.length).toBe(2);
 
-    for (let i = 0; i < buttons.length; i++) {
+    for (let i = 0; i < buttons.length; ++i) {
       const button = buttons[i];
       const option = command.children[i];
-
       expect(isEnabled(button)).toBe(true);
       expect(getLabel(button)).toBe(option.label);
       expect(isSelected(button)).toBe(option.isChecked);
@@ -45,7 +49,7 @@ describe(SegmentedButtons.name, () => {
 
   test('should change from visible to invisible', () => {
     const command = new MockSegmentedCommand();
-    const container = renderSegmentedButtons(command);
+    const { container } = renderSegmentedButtons(command);
 
     const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
@@ -59,7 +63,7 @@ describe(SegmentedButtons.name, () => {
 
   test('should change from enabled to disabled', () => {
     const command = new MockSegmentedCommand();
-    const container = renderSegmentedButtons(command);
+    const { container } = renderSegmentedButtons(command);
 
     const beforeButtons = getButtonsInContainer(container);
     expect(beforeButtons.length).toBe(2);
@@ -80,7 +84,7 @@ describe(SegmentedButtons.name, () => {
 
   test('should select the second option', async () => {
     const command = new MockSegmentedCommand();
-    const container = renderSegmentedButtons(command);
+    const { container } = renderSegmentedButtons(command);
 
     assert(command.children !== undefined);
     const beforeButtons = getButtonsInContainer(container);
@@ -105,7 +109,7 @@ describe(SegmentedButtons.name, () => {
   });
 });
 
-function renderSegmentedButtons(command: BaseOptionCommand): HTMLElement {
+function renderSegmentedButtons(command: BaseOptionCommand): { container: HTMLElement } {
   const renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
@@ -114,17 +118,22 @@ function renderSegmentedButtons(command: BaseOptionCommand): HTMLElement {
   const { container } = render(<SegmentedButtons inputCommand={command} placement={'top'} />, {
     wrapper
   });
-  return container;
+  return { container };
 }
 
 class MockSegmentedCommand extends BaseOptionCommand {
   public _isVisible = true;
   public _isEnabled = true;
   public selectedValue: number = 1;
+  private readonly _optionCommands: OptionCommand[] = [];
+
   public constructor() {
     super(OptionType.Segmented);
-    this.add(new OptionCommand(this, 1));
-    this.add(new OptionCommand(this, 2));
+    this._optionCommands = [new OptionCommand(this, 1), new OptionCommand(this, 2)];
+  }
+
+  protected override createChildren(): BaseCommand[] {
+    return this._optionCommands;
   }
 
   public override get isEnabled(): boolean {

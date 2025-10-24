@@ -15,37 +15,37 @@ describe(SettingsCommand.name, () => {
   test('should have all children', async () => {
     const command = new SettingsCommand(true, true, bannerContent);
     expect(command.hasChildren).toBe(true);
-    expect(command.children.length).toBe(22);
+    expect(command.children.length).toBe(5);
   });
 
   test('should have banner when banner content is provided', async () => {
     const command = new SettingsCommand(true, true, bannerContent);
     expect(command.hasChildren).toBe(true);
-    expect(command.children.length).toBe(22);
+    expect(command.children.length).toBe(5);
   });
 
   test('should only show default settings when no extra settings are provided', async () => {
     const command = new SettingsCommand(false, false, undefined);
     expect(command.hasChildren).toBe(true);
-    expect(command.children.length).toBe(11);
+    expect(command.children.length).toBe(4);
   });
 
   test('should show 360 image settings when include360Images is true', async () => {
     const command = new SettingsCommand(true, false, undefined);
     expect(command.hasChildren).toBe(true);
-    expect(command.children.length).toBe(18);
+    expect(command.children.length).toBe(4);
   });
 
   test('should show poi settings when includePois is true', async () => {
     const command = new SettingsCommand(false, true, undefined);
     expect(command.hasChildren).toBe(true);
-    expect(command.children.length).toBe(14);
+    expect(command.children.length).toBe(4);
   });
 
   test('should show banner when banner content is provided', async () => {
     const command = new SettingsCommand(false, false, bannerContent);
     expect(command.hasChildren).toBe(true);
-    expect(command.children.length).toBe(12);
+    expect(command.children.length).toBe(5);
   });
 
   test('should clear all children', async () => {

@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, PointCloudContainer, RevealButtons, RevealCanvas } from '../src';
+import {
+  CadModelContainer,
+  Image360CollectionContainer,
+  PointCloudContainer,
+  RevealButtons,
+  RevealCanvas
+} from '../src';
 import { Color } from 'three';
 import { type ReactNode, type ReactElement } from 'react';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
@@ -65,6 +71,13 @@ function StoryContent({
         }}
       />
       <PointCloudContainer addModelOptions={pointCloudModelOptions} />
+      <Image360CollectionContainer
+        addImage360CollectionOptions={{
+          externalId: 'site-3677334624356151-592500802548857',
+          space: 'threed_data',
+          source: 'dm'
+        }}
+      />
     </>
   );
 }
