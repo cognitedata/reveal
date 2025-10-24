@@ -94,7 +94,7 @@
     "locize-cli": "^8.0.1",
     "madge": "^8.0.0",
     "moq.ts": "10.0.8",
-    "playwright": "1.55.0",
+    "playwright": "1.55.1",
     "prettier": "^3.2.5",
     "random-seed": "^0.3.0",
     "react": "^18.3.1",
