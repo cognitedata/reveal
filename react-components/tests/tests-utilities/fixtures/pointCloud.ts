@@ -4,11 +4,14 @@ import {
   type ClassicDataSourceType,
   type DMDataSourceType,
   PointShape,
-  PointColorType
+  PointColorType,
+  type PointCloudIntersection,
+  type DMInstanceRef
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
-import { Color, Matrix4 } from 'three';
+import { Color, Matrix4, Vector3 } from 'three';
 import { type TaggedAddPointCloudResourceOptions } from '../../../src/components/Reveal3DResources/types';
+import { type AnnotationsAssetRef } from '@cognite/sdk';
 
 export const pointCloudModelOptions: AddModelOptions<ClassicDataSourceType> = {
   modelId: 321,
@@ -37,6 +40,7 @@ export function createPointCloudMock(parameters?: {
 }): CognitePointCloudModel {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
+  const modelTransformation = new Matrix4().identity();
 
   const pointCloud = new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
     .setup((p) => p.modelId)
@@ -45,8 +49,6 @@ export function createPointCloudMock(parameters?: {
     .returns(revisionId)
     .setup((p) => p.modelIdentifier)
     .returns({ modelId, revisionId })
-    .setup((p) => p.getModelTransformation())
-    .returns(new Matrix4())
     .setup((p) => p.type)
     .returns('pointcloud')
 
@@ -75,6 +77,10 @@ export function createPointCloudMock(parameters?: {
   pointCloud.pointShape = PointShape.Circle;
   pointCloud.pointSize = 1;
   pointCloud.pointColorType = PointColorType.Rgb;
+  pointCloud.getModelTransformation = () => modelTransformation;
+  pointCloud.setModelTransformation = (matrix: Matrix4) => {
+    modelTransformation.copy(matrix);
+  };
 
   return pointCloud;
 }
@@ -92,4 +98,25 @@ export function createPointCloudDMMock(parameters?: {
     .setup((p) => p.type)
     .returns('pointcloud')
     .object();
+}
+
+export function createPointCloudIntersectionMock(parameters: {
+  model: CognitePointCloudModel<ClassicDataSourceType | DMDataSourceType>;
+  assetRef: AnnotationsAssetRef | DMInstanceRef | undefined;
+  instanceRef: DMInstanceRef | undefined;
+  annotationId?: number;
+}): PointCloudIntersection<ClassicDataSourceType | DMDataSourceType> {
+  return {
+    type: 'pointcloud',
+    model: parameters.model,
+    volumeMetadata: {
+      assetRef: parameters?.assetRef ?? { id: 123 },
+      instanceRef: parameters?.instanceRef,
+      annotationId: parameters?.annotationId ?? 1
+    },
+    point: new Vector3(1, 2, 3),
+    pointIndex: 0,
+    distanceToCamera: 0,
+    annotationId: parameters?.annotationId ?? 1
+  };
 }
