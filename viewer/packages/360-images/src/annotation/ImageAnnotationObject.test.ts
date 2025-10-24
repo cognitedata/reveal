@@ -79,7 +79,7 @@ describe(ImageAnnotationObject.name, () => {
     });
 
     test('returns false for InstanceLink with missing text', () => {
-      const mockannotationInstanceLinkMissingText = {
+      const mockannotationInstanceLinkMissingText: Partial<AnnotationsTypesImagesInstanceLink> = {
         textRegion: annotationTextRegionMock,
         instanceRef: annotationInstanceRefMock
       };
@@ -91,7 +91,7 @@ describe(ImageAnnotationObject.name, () => {
     });
 
     test('returns false for InstanceLink with missing textRegion', () => {
-      const mockAnnotationInstanceLinkMissingTextRegion = {
+      const mockAnnotationInstanceLinkMissingTextRegion: Partial<AnnotationsTypesImagesInstanceLink> = {
         text: annotationText,
         instanceRef: annotationInstanceRefMock
       };
