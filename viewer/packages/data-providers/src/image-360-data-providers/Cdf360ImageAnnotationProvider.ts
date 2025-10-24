@@ -30,7 +30,7 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isImageAssetLinkAnnotation } from './shared';
+import { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from './shared';
 import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
@@ -141,7 +141,11 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap(collection);
     const annotations = await this.fetchAllAnnotations(collection, annotationFilter);
 
-    return pairAnnotationsWithEntityAndRevision(annotations.filter(isImageAssetLinkAnnotation));
+    return pairAnnotationsWithEntityAndRevision(
+      annotations.filter(
+        annotation => isImageAssetLinkAnnotation(annotation) || isImageInstanceLinkAnnotation(annotation)
+      )
+    );
 
     function pairAnnotationsWithEntityAndRevision(
       annotations: InstanceLinkable360ImageAnnotationType<ClassicDataSourceType>[]
