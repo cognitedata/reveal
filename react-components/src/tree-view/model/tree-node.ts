@@ -1,21 +1,15 @@
-import {
-  type Class,
-  isInstanceOf
-} from '../../../../src/architecture/base/domainObjectsHelpers/Class';
-import {
-  insertAt,
-  remove
-} from '../../../../src/architecture/base/utilities/extensions/arrayUtils';
+import { type Class, isInstanceOf } from '../../architecture/base/domainObjectsHelpers/Class';
+import { insertAt, remove } from '../../architecture/base/utilities/extensions/arrayUtils';
 import {
   type IconColor,
   type IconName,
   CheckboxState,
   generateUniqueId,
   type UniqueId
-} from '../../../../src/architecture/base/utilities/types';
-import { type ILazyLoader } from '../../../../src/tree-view/model/i-lazy-loader';
-import { type TreeNodeType } from '../../../../src/tree-view/model/tree-node-type';
-import { type TreeNodeAction } from '../../../../src/tree-view/model/types';
+} from '../../architecture/base/utilities/types';
+import { type ILazyLoader } from './i-lazy-loader';
+import { type TreeNodeType } from './tree-node-type';
+import { type TreeNodeAction } from './types';
 
 /**
  * Represents a node in a tree structure.
@@ -45,6 +39,10 @@ export class TreeNode implements TreeNodeType {
 
   protected _children: TreeNode[] | undefined = undefined;
   protected _parent: TreeNode | undefined = undefined;
+
+  public get childCount(): number {
+    return this.children?.length ?? 0;
+  }
 
   // ==================================================
   // INSTANCE PROPERTIES (Some are implementation of TreeNodeType)
@@ -318,7 +316,7 @@ export class TreeNode implements TreeNodeType {
     }
     for (const child of this.getChildren()) {
       yield child;
-      yield* child.getDescendants();
+      yield* child.getExpandedDescendants();
     }
   }
 
@@ -404,7 +402,7 @@ export class TreeNode implements TreeNodeType {
   // INSTANCE METHODS: Loading
   // ==================================================
 
-  private async loadChildren(loader: ILazyLoader): Promise<void> {
+  public async loadChildren(loader: ILazyLoader): Promise<void> {
     this.isLoadingChildren = true;
     const children = await loader.loadChildren(this);
     this.isLoadingChildren = false;
@@ -420,27 +418,33 @@ export class TreeNode implements TreeNodeType {
           continue;
         }
         this.addChild(child);
-        loader.onNodeLoaded?.(child, this);
+
+        try {
+          loader.onNodeLoaded?.(child, this);
+        } catch (error) {
+          console.error('Error in onNodeLoaded in loadChildren', error);
+          throw error; // Re-throw the error to prevent loadChildren from being set to false
+        }
       }
     }
     this.needLoadChildren = false;
   }
 
   public async loadSiblings(loader: ILazyLoader): Promise<void> {
+    const parent = this.parent;
+    if (parent === undefined || parent._children === undefined) {
+      return;
+    }
     this.isLoadingSiblings = true;
     const siblings = await loader.loadSiblings(this);
     this.isLoadingSiblings = false;
     if (siblings === undefined || siblings.length === 0) {
       return;
     }
-    const parent = this.parent;
-    if (parent === undefined || parent._children === undefined) {
-      return;
-    }
     const children = parent._children;
     let index = children.indexOf(this);
     if (index === undefined || index < 0) {
-      return;
+      throw new Error('Illegal parent-child relationship');
     }
     for (const child of siblings) {
       if (!(child instanceof TreeNode)) {
@@ -451,10 +455,14 @@ export class TreeNode implements TreeNodeType {
       }
       index++;
       parent.insertChild(index, child);
-      loader.onNodeLoaded?.(child, parent);
+      try {
+        loader.onNodeLoaded?.(child, parent);
+      } catch (error) {
+        console.error('Error in onNodeLoaded in loadSiblings', error);
+        throw error; // Re-throw the error to prevent needLoadSiblings from being set to false
+      }
     }
     this.needLoadSiblings = false;
-    parent.update();
   }
 
   public hasChild(child: TreeNode): boolean {
