@@ -4,7 +4,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import { EmptyLazyLoaderMock } from '#test-utils/tree-view/lazy-loaders/empty_lazy-loader-mock';
-import { AdvancedTreeViewNode } from './advanced-tree-view-node';
+import {
+  AdvancedTreeViewNode,
+  CustomTreeViewChildContext,
+  defaultTreeViewChildDependencies
+} from './advanced-tree-view-node';
 import {
   CustomAdvancedTreeViewNodeContext,
   defaultAdvancedTreeViewNodeDependencies
@@ -17,6 +21,7 @@ import { type IconProps, SnowIcon } from '@cognite/cogs.js';
 import { createParentWithChildren } from '../../../tests/tests-utilities/tree-view/nodes/create-simple-tree-mock';
 
 const mockDependencies = getMocksByDefaultDependencies(defaultAdvancedTreeViewNodeDependencies);
+const mockDependencies2 = getMocksByDefaultDependencies(defaultTreeViewChildDependencies);
 
 describe(AdvancedTreeViewNode.name, () => {
   test('should render', () => {
@@ -200,7 +205,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const node = new TreeNode();
       const props: AdvancedTreeViewProps = {};
       renderMe(node, props);
-      expect(mockDependencies.TreeViewChild).not.toHaveBeenCalled();
+      expect(mockDependencies2.TreeViewChild).not.toHaveBeenCalled();
     });
 
     test('not render children when parent is not expanded', () => {
@@ -210,7 +215,7 @@ describe(AdvancedTreeViewNode.name, () => {
       parent.isExpanded = false;
       const props: AdvancedTreeViewProps = { showRoot: true };
       renderMe(parent, props);
-      expect(mockDependencies.TreeViewChild).not.toHaveBeenCalled();
+      expect(mockDependencies2.TreeViewChild).not.toHaveBeenCalled();
     });
 
     test('render children when parent is expanded', () => {
@@ -223,7 +228,7 @@ describe(AdvancedTreeViewNode.name, () => {
       renderMe(parent, props, level);
 
       for (let index = 0; index < parent.childCount; index++) {
-        expect(mockDependencies.TreeViewChild).toHaveBeenNthCalledWith(
+        expect(mockDependencies2.TreeViewChild).toHaveBeenNthCalledWith(
           index + 1,
           { node: parent.children[index], level: level + 1, props },
           expect.anything()
@@ -235,9 +240,11 @@ describe(AdvancedTreeViewNode.name, () => {
 
 function renderMe(node: TreeNode, props: AdvancedTreeViewProps, level = 1): HTMLElement {
   const { container } = render(
-    <CustomAdvancedTreeViewNodeContext.Provider value={mockDependencies}>
-      <AdvancedTreeViewNode node={node} level={level} props={props} />
-    </CustomAdvancedTreeViewNodeContext.Provider>
+    <CustomTreeViewChildContext.Provider value={mockDependencies2}>
+      <CustomAdvancedTreeViewNodeContext.Provider value={mockDependencies}>
+        <AdvancedTreeViewNode node={node} level={level} props={props} />
+      </CustomAdvancedTreeViewNodeContext.Provider>
+    </CustomTreeViewChildContext.Provider>
   );
   return container;
 }
