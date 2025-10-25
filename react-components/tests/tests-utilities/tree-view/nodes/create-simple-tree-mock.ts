@@ -8,6 +8,17 @@ type SimpleMockArgs = {
   hasDisabledCheckboxes?: boolean;
 };
 
+export function createParentWithChildren(count: number): TreeNode {
+  const parent = new TreeNode();
+  parent.label = 'Parent';
+  for (let i = 0; i < count; i++) {
+    const child = new TreeNode();
+    child.label = 'Child ' + (i + 1);
+    parent.addChild(child);
+  }
+  return parent;
+}
+
 export function createSimpleTreeMock(args: SimpleMockArgs): TreeNode {
   const root = new TreeNode();
   root.label = 'Europa';

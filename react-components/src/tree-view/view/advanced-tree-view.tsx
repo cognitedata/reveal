@@ -1,15 +1,12 @@
-import { useState, type ReactElement } from 'react';
-
-import { Loader } from '@cognite/cogs.js';
-
+import { useContext, useState, type ReactElement } from 'react';
 import { getChildrenAsArray } from './get-children-as-array';
-
-import { AdvancedTreeViewNode } from './advanced-tree-view-node';
 import { type AdvancedTreeViewProps } from './advanced-tree-view-props';
+import { CustomAdvancedTreeViewContext } from './advanced-tree-view.context';
 
 export const AdvancedTreeView = (props: AdvancedTreeViewProps): ReactElement => {
   const id = 'advancedTreeView';
   const [root, setRoot] = useState(props.loader?.root ?? props.root);
+  const { Loader, AdvancedTreeViewNode } = useContext(CustomAdvancedTreeViewContext);
 
   if (props.loader !== undefined && props.loader.loadInitialRoot !== undefined) {
     void props.loader.loadInitialRoot().then(() => {
