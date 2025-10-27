@@ -59,7 +59,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/reveal": "4.27.0",
     "@cognite/sdk": "^10.1.3",
-    "@playwright/test": "1.55.0",
+    "@playwright/test": "1.55.1",
     "@storybook/addon-essentials": "8.6.14",
     "@storybook/addon-interactions": "8.6.14",
     "@storybook/addon-links": "8.6.14",
