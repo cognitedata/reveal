@@ -141,7 +141,7 @@ export class Image360Facade<T extends DataSourceType> {
           continue;
         }
         // The intersection is in model coordinates
-        intersection.setFromMatrixPosition(entity.transform);
+        intersection.copy(entity.icon.getPosition());
         if (!isInRayDirection(intersection, modelRay)) {
           continue;
         }
@@ -166,7 +166,7 @@ export class Image360Facade<T extends DataSourceType> {
     }
 
     function isInRayDirection(position: Vector3, ray: Ray): boolean {
-      const direction = new Vector3().subVectors(position, camera.position);
+      const direction = new Vector3().subVectors(position, ray.origin);
       return direction.dot(ray.direction) > 0 && direction.lengthSq() > 0.00001;
     }
 

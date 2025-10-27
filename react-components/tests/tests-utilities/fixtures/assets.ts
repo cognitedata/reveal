@@ -1,10 +1,19 @@
 import { type Asset } from '@cognite/sdk';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
-import { type ExternalIdsResultList, type NodeItem } from '../../../src/data-providers/FdmSDK';
+import {
+  type FdmNode,
+  type ExternalIdsResultList,
+  type NodeItem
+} from '../../../src/data-providers/FdmSDK';
 
 const fixedDate = new Date('2025-01-01T00:00:00.000Z');
 
-export function createAssetMock(id: number, name?: string, description?: string): Asset {
+export function createAssetMock(
+  id: number,
+  externalId?: string,
+  name?: string,
+  description?: string
+): Asset {
   return {
     id,
     name: name ?? `asset-${id}`,
@@ -13,7 +22,7 @@ export function createAssetMock(id: number, name?: string, description?: string)
     createdTime: fixedDate,
     lastUpdatedTime: fixedDate,
     rootId: 0,
-    externalId: 'external-id-123',
+    externalId: externalId ?? 'external-id-123',
     metadata: { key: 'value' },
     source: 'source',
     dataSetId: 0,
@@ -46,5 +55,27 @@ export function createDMAssetMock(externalId: string): ExternalIdsResultList<Ass
   return {
     items: [nodeItem],
     typing: {}
+  };
+}
+
+export function createFdmNodeItem(id: {
+  externalId: string;
+  space: string;
+}): FdmNode<AssetProperties> {
+  return {
+    instanceType: 'node',
+    version: 0,
+    space: id.space,
+    externalId: id.externalId,
+    createdTime: 0,
+    lastUpdatedTime: 0,
+    properties: {
+      object3D: {
+        space: id.space,
+        externalId: `${id.externalId}-object3D`
+      },
+      name: '',
+      description: ''
+    }
   };
 }

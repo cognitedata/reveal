@@ -9,7 +9,7 @@ import { SceneList, type SceneWithName } from './SceneList';
 import styled from 'styled-components';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
-import { offset } from '@floating-ui/dom';
+import { offset } from '@floating-ui/react';
 
 export type SelectSceneButtonProps = {
   selectedScene: DmsUniqueIdentifier | undefined;
@@ -46,7 +46,7 @@ export const SelectSceneButton = ({
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'SCENE_SELECT_HEADER' })}>
-          <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost" {...props}>
+          <Button icon={<WorldIcon />} aria-label="Select 3D location" type="ghost" {...props}>
             {orientation === 'horizontal' && sceneName}
           </Button>
         </CogsTooltip>

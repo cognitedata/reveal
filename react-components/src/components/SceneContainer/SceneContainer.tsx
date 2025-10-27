@@ -1,26 +1,34 @@
-import { type ReactNode } from 'react';
-import { type CommonResourceContainerProps } from '../Reveal3DResources/types';
-import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
-import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
-import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
-import { Reveal3DResources } from '../Reveal3DResources/Reveal3DResources';
-import { useLoadPoisForScene } from '../Architecture/pointsOfInterest/useLoadPoisForScene';
-
-export type SceneContainerProps = {
-  sceneExternalId: string;
-  sceneSpaceId: string;
-} & CommonResourceContainerProps;
+import { type ReactNode, useContext, useCallback } from 'react';
+import { type SceneContainerProps } from './types';
+import { SceneContainerContext } from './SceneContainer.context';
 
 export function SceneContainer({
   sceneExternalId,
   sceneSpaceId,
+  onResourcesAdded,
   ...rest
 }: SceneContainerProps): ReactNode {
-  const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
+  const { Reveal3DResources, useSceneContainerViewModel } = useContext(SceneContainerContext);
+  const { resourceOptions, hasResources, onPointCloudSettingsCallback } =
+    useSceneContainerViewModel({
+      sceneExternalId,
+      sceneSpaceId
+    });
 
-  useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
-  useSkyboxFromScene(sceneExternalId, sceneSpaceId);
-  useLoadPoisForScene(sceneExternalId, sceneSpaceId);
+  const combinedOnResourcesAdded = useCallback(() => {
+    onPointCloudSettingsCallback();
+    onResourcesAdded?.();
+  }, [onPointCloudSettingsCallback, onResourcesAdded]);
 
-  return resourceOptions.length > 0 && <Reveal3DResources resources={resourceOptions} {...rest} />;
+  if (!hasResources) {
+    return null;
+  }
+
+  return (
+    <Reveal3DResources
+      resources={resourceOptions}
+      onResourcesAdded={combinedOnResourcesAdded}
+      {...rest}
+    />
+  );
 }

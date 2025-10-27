@@ -8,13 +8,15 @@ export const WholeLayerVisibilitySelectItem = ({
   trailingContent,
   modelLayerHandlers,
   update,
-  disabled
+  disabled,
+  shouldPropagate = true
 }: {
   label?: string;
   modelLayerHandlers: ModelHandler[];
   update: () => void;
   trailingContent?: ReactNode;
   disabled?: boolean;
+  shouldPropagate?: boolean;
 }): ReactElement => {
   const checked = modelLayerHandlers.some((handler) => handler.visible());
   return (
@@ -23,7 +25,10 @@ export const WholeLayerVisibilitySelectItem = ({
       label={label}
       checked={checked}
       disabled={disabled}
-      onClick={() => {
+      onClick={(e) => {
+        if (!shouldPropagate) {
+          e.stopPropagation();
+        }
         modelLayerHandlers.forEach((handler) => {
           handler.setVisibility(!checked);
         });

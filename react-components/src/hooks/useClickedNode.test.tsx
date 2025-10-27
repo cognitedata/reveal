@@ -25,7 +25,7 @@ import {
 import { viewerGetAnyIntersectionFromPixelMock } from '#test-utils/fixtures/viewer';
 import { getClickCallback, simulateClick } from '#test-utils/viewerClickHelper/viewerClick';
 import { createAssetMock } from '#test-utils/fixtures/assets';
-import { type PointCloudFdmVolumeMappingWithViews } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { type PointCloudDMVolumeMappingWithViews } from '../query/core-dm/usePointCloudDMVolumeMappingForIntersection';
 
 describe(useClickedNodeData.name, () => {
   let renderTarget: RevealRenderTarget;
@@ -76,8 +76,8 @@ describe(useClickedNodeData.name, () => {
     vi.fn<UseClickedNodeDataDependencies['useAssetMappingForTreeIndex']>();
   const mockUsePointCloudAnnotationMappingForIntersection =
     vi.fn<UseClickedNodeDataDependencies['usePointCloudAnnotationMappingForIntersection']>();
-  const mockUsePointCloudFdmVolumeMappingForIntersection =
-    vi.fn<UseClickedNodeDataDependencies['usePointCloudFdmVolumeMappingForIntersection']>();
+  const mockUsePointCloudDMVolumeMappingForIntersection =
+    vi.fn<UseClickedNodeDataDependencies['usePointCloudDMVolumeMappingForIntersection']>();
   const mockReveal = vi.fn<UseClickedNodeDataDependencies['useReveal']>();
   const mockIsActiveEditTool = vi.fn<UseClickedNodeDataDependencies['isActiveEditTool']>();
   const mockUseRenderTarget = vi.fn<UseClickedNodeDataDependencies['useRenderTarget']>();
@@ -105,8 +105,8 @@ describe(useClickedNodeData.name, () => {
     mockUsePointCloudAnnotationMappingForIntersection.mockReturnValue(
       createMockQueryResultNoData<PointCloudAnnotationMappedAssetData[]>()
     );
-    mockUsePointCloudFdmVolumeMappingForIntersection.mockReturnValue(
-      createMockQueryResultNoData<PointCloudFdmVolumeMappingWithViews[]>()
+    mockUsePointCloudDMVolumeMappingForIntersection.mockReturnValue(
+      createMockQueryResultNoData<PointCloudDMVolumeMappingWithViews[]>()
     );
 
     mockDependencies = {
@@ -114,8 +114,7 @@ describe(useClickedNodeData.name, () => {
       useAssetMappingForTreeIndex: mockUseAssetMappingForTreeIndex,
       usePointCloudAnnotationMappingForIntersection:
         mockUsePointCloudAnnotationMappingForIntersection,
-      usePointCloudFdmVolumeMappingForIntersection:
-        mockUsePointCloudFdmVolumeMappingForIntersection,
+      usePointCloudDMVolumeMappingForIntersection: mockUsePointCloudDMVolumeMappingForIntersection,
       useRenderTarget: mockUseRenderTarget,
       useReveal: mockReveal,
       isActiveEditTool: mockIsActiveEditTool
@@ -231,7 +230,7 @@ describe(useClickedNodeData.name, () => {
 
     viewerGetAnyIntersectionFromPixelMock.mockResolvedValue(mockCadIntersection);
 
-    mockUsePointCloudFdmVolumeMappingForIntersection.mockReturnValue(
+    mockUsePointCloudDMVolumeMappingForIntersection.mockReturnValue(
       createMockQueryResult(mockVolumeData, false)
     );
 

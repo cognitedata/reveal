@@ -18,7 +18,7 @@ import { PoiSharePanel } from './PoiSharePanel';
 import { usePoiDomainObject } from './usePoiDomainObject';
 import { useSelectedPoi } from './useSelectedPoi';
 import { type PointOfInterest } from '../../../architecture';
-import { formatDateTime } from '@cognite/cdf-utilities';
+import { formatDateTime } from '../../../utilities/date-time-utils';
 
 export const PoiHeader = (): ReactNode => {
   const { t } = useTranslation();

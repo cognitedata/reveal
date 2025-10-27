@@ -1,7 +1,11 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type InternalId, type CogniteClient } from '@cognite/sdk';
-import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
-import { uniqBy } from 'lodash';
+import {
+  type TaggedAddCadResourceOptions,
+  type TaggedAddPointCloudResourceOptions,
+  type TaggedAddResourceOptions
+} from '../components/Reveal3DResources/types';
+import { uniqBy } from 'lodash-es';
 import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { type DmsUniqueIdentifier } from '../data-providers';
@@ -9,7 +13,10 @@ import { type FdmSDK } from '../data-providers/FdmSDK';
 import { type InstanceReference, isDmsInstance, isInternalId } from '../utilities/instanceIds';
 import { useContext } from 'react';
 import { UseModelsForInstanceQueryContext } from './useModelsForInstanceQuery.context';
-import { type ModelsForAssetParams } from '../hooks/network/types';
+import {
+  type ModelsForInstanceIdParams,
+  type ModelsForClassicAssetParams
+} from '../hooks/network/types';
 import { queryKeys } from '../utilities/queryKeys';
 
 export const useModelsForInstanceQuery = (
@@ -51,7 +58,12 @@ export const useModelsForInstanceQuery = (
 
       if (isDmsInstance(instance)) {
         if (!isCoreDm) {
-          return await getCadModelsForHybridDmInstance(instance, cogniteClient);
+          return await getClassicModelsForDmInstance(
+            instance,
+            cogniteClient,
+            getPointCloudModelsForAsset,
+            getCadModelsForHybridDmInstance
+          );
         }
         if (fdm3dDataProvider === undefined) {
           return [];
@@ -73,21 +85,40 @@ export const useModelsForInstanceQuery = (
   });
 };
 
+async function getClassicModelsForDmInstance(
+  instance: DmsUniqueIdentifier,
+  sdk: CogniteClient,
+  getPointCloudModelsForAsset: ({
+    assetId,
+    sdk
+  }: ModelsForInstanceIdParams) => Promise<TaggedAddPointCloudResourceOptions[]>,
+  getCadModelsForHybridDmInstance: (
+    instance: DmsUniqueIdentifier,
+    sdk: CogniteClient
+  ) => Promise<TaggedAddCadResourceOptions[]>
+): Promise<TaggedAddResourceOptions[]> {
+  const allResults = await Promise.all([
+    getPointCloudModelsForAsset({ assetId: instance, sdk }),
+    getCadModelsForHybridDmInstance(instance, sdk)
+  ]);
+  return allResults.flat();
+}
+
 async function getModelsForAssetInstance(
   instance: InternalId,
   sdk: CogniteClient,
   getCadModelsForAsset: ({
     assetId,
     sdk
-  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>,
+  }: ModelsForClassicAssetParams) => Promise<TaggedAddResourceOptions[]>,
   getPointCloudModelsForAsset: ({
     assetId,
     sdk
-  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>,
+  }: ModelsForInstanceIdParams) => Promise<TaggedAddResourceOptions[]>,
   getImage360CollectionsForAsset: ({
     assetId,
     sdk
-  }: ModelsForAssetParams) => Promise<TaggedAddResourceOptions[]>
+  }: ModelsForClassicAssetParams) => Promise<TaggedAddResourceOptions[]>
 ): Promise<TaggedAddResourceOptions[]> {
   const cadModelsPromise = getCadModelsForAsset({ assetId: instance.id, sdk });
   const pointCloudModelsPromise = getPointCloudModelsForAsset({ assetId: instance.id, sdk });

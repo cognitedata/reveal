@@ -29,11 +29,20 @@ import { Image360AnnotationCreateTool } from '../../architecture/concrete/annota
 import { Image360AnnotationSelectTool } from '../../architecture/concrete/annotation360/Image360AnnotationSelectTool';
 import { PointCloudFilterCommand } from '../../architecture/concrete/reveal/pointCloud/commands/PointCloudFilterCommand';
 import { UndoCommand } from '../../architecture/base/concreteCommands/general/UndoCommand';
+import { HelpCommand } from '../../architecture/base/concreteCommands/general/HelpCommand';
+import { ShareCommand } from '../../architecture/base/concreteCommands/general/ShareCommand';
+import { type GeneralBannerContent } from '../../architecture';
 
 export class RevealButtons {
+  static Help = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new HelpCommand(), prop);
+
+  static Share = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new ShareCommand(), prop);
+
   static Settings = (props: SettingsProp): ReactElement =>
     createButtonFromCommandConstructor(
-      () => new SettingsCommand(props.include360Images, props.includePois),
+      () => new SettingsCommand(props.include360Images, props.includePois, props.topBanner),
       props
     );
 
@@ -132,6 +141,7 @@ export type ButtonProp = {
 type SettingsProp = ButtonProp & {
   include360Images?: boolean;
   includePois?: boolean;
+  topBanner?: GeneralBannerContent;
 };
 
 type Image360Prop = ButtonProp & {

@@ -1,4 +1,4 @@
-import { type CogniteClient, type FilterDefinition, type ViewDefinition } from '@cognite/sdk';
+import { type CogniteClient, type FilterDefinition } from '@cognite/sdk';
 import { type NodeItem } from '../../data-providers';
 import {
   isClassicIdentifier,
@@ -6,15 +6,11 @@ import {
 } from '../../components/Reveal3DResources';
 import { searchHybridDmAssetsForCadModels } from './cad/searchHybridDmAssetsForCadModels';
 import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicCadAssetMappingCache';
-
-export type SearchSort = {
-  property: string[];
-  direction: 'ascending' | 'descending';
-};
-
-export type DMSView = {
-  rawView: ViewDefinition;
-};
+import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
+import { searchHybridPointCloudDmAssetsForModels } from './pointcloud/searchHybridPointCloudDmAssetsForModels';
+import { type DMSView } from './types';
+import { uniqBy } from 'lodash-es';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 
 export async function searchHybridDmAssetsForModels(
   resources: TaggedAddResourceOptions[],
@@ -25,7 +21,8 @@ export async function searchHybridDmAssetsForModels(
     limit?: number;
   },
   sdk: CogniteClient,
-  classicCadCache: ClassicCadAssetMappingCache
+  classicCadCache: ClassicCadAssetMappingCache,
+  pointCloudAnnotationCache: PointCloudAnnotationCache
 ): Promise<NodeItem[]> {
   const rawView = view.rawView;
 
@@ -34,11 +31,20 @@ export async function searchHybridDmAssetsForModels(
     .map((resource) => resource.addOptions)
     .filter(isClassicIdentifier);
 
-  return await searchHybridDmAssetsForCadModels(
+  const pointCloudSearchedAssets = await searchHybridPointCloudDmAssetsForModels(
+    resources,
+    view,
+    options,
+    sdk,
+    pointCloudAnnotationCache
+  );
+
+  const cadSearchedAssets = await searchHybridDmAssetsForCadModels(
     cadResources,
     rawView,
     options,
     sdk,
     classicCadCache
   );
+  return uniqBy<NodeItem>([...cadSearchedAssets, ...pointCloudSearchedAssets], createFdmKey);
 }

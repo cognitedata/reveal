@@ -8,7 +8,7 @@ import {
   type ResolutionOptions
 } from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
-import { cameraManagerMock } from './cameraManager';
+import { createFlexibleCameraManager } from './cameraManager';
 import { Box3, type Plane } from 'three';
 
 const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
@@ -24,6 +24,7 @@ export const viewerSetCadModelBudgetMock = vi.fn<(budget: CadModelBudget) => voi
 export const viewerSetPointCloudModelBudgetMock = vi.fn<(budget: PointCloudBudget) => void>();
 export const viewerSetResolutionOptionsMock =
   vi.fn<(resolutionOptions: ResolutionOptions) => void>();
+export const viewerExit360ImageMock = vi.fn<Cognite3DViewer['exit360Image']>();
 
 // Fit camera
 export const fitCameraToBoundingBoxMock = vi.fn<Cognite3DViewer['fitCameraToBoundingBox']>();
@@ -54,15 +55,18 @@ export function createViewerMock(): ViewerMock {
   const sceneBoundingBox = new Box3().makeEmpty();
   const visualSceneBoundingBox = new Box3().makeEmpty();
   let clippingPlanes = new Array<Plane>();
+  const manager = createFlexibleCameraManager();
 
   return (
     new Mock<ViewerMock>()
-      .setup((viewer) => {
-        viewer.setBackgroundColor(It.IsAny());
+      .setup((p) => {
+        p.setBackgroundColor(It.IsAny());
       })
       .returns()
-      .setup((viewer) => viewer.domElement)
+      .setup((p) => p.domElement)
       .returns(domElement)
+      .setup((p) => p.models)
+      .callback(viewerModelsMock)
       .setup((p) => p.models)
       .callback(viewerModelsMock)
       .setup((p) => p.get360ImageCollections)
@@ -77,8 +81,10 @@ export function createViewerMock(): ViewerMock {
       .returns(viewerAddPointCloudModelMock)
       .setup((p) => p.add360ImageSet)
       .returns(viewerAdd360ImageSetMock)
+      .setup((p) => p.exit360Image)
+      .returns(viewerExit360ImageMock)
       .setup((p) => p.cameraManager)
-      .returns(cameraManagerMock)
+      .returns(manager)
 
       .setup((p) => p.requestRedraw)
       .returns(vi.fn())
@@ -112,6 +118,11 @@ export function createViewerMock(): ViewerMock {
       .returns(fitCameraToVisualSceneBoundingBoxMock)
       .setup((p) => p.fitCameraToModels)
       .returns(fitCameraToModelsMock)
+
+      .setup((p) => p.onClick360Images)
+      .returns(async (_event: PointerEvent) => {
+        return await Promise.resolve(false);
+      })
 
       // Get and set scene bounding box
       .setup((p) => p.getSceneBoundingBox)

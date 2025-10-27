@@ -2,6 +2,8 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 import { type PlacementType, type FlexDirection } from './types';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { type Placement } from '@floating-ui/react';
 
 export function getFlexDirection(placement: PlacementType): FlexDirection {
   return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
@@ -25,6 +27,18 @@ export function getTooltipPlacement(toolbarPlacement: PlacementType): PlacementT
     default:
       return 'top';
   }
+}
+
+export const DROP_DOWN_OFFSET = { mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 0 };
+
+// This ensures the rule for where the dropdown panel should open:
+// Horizontal toolbar at top:    Below the button
+// Horizontal toolbar at bottom: Above the button
+// Vertical toolbar at left:     Right of the button
+// Vertical toolbar at right:    Left of the button
+
+export function getDropdownPlacement(placement: PlacementType): Placement {
+  return placement === 'top' || placement === 'bottom' ? 'bottom-end' : 'right-start';
 }
 
 export function getDefaultCommand<T extends BaseCommand>(
