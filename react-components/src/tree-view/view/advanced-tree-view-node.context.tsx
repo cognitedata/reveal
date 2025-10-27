@@ -6,7 +6,6 @@ import { TreeViewInfo, type TreeViewInfoProps } from './components/tree-view-inf
 import { TreeViewLabel, type TreeViewLabelProps } from './components/tree-view-label';
 import { TreeViewLoadMore, type TreeViewLoadMoreProps } from './components/tree-view-load-more';
 import { TreeViewLoading, type TreeViewLoadingProps } from './components/tree-view-loading';
-// import { AdvancedTreeViewNode, type AdvancedTreeViewNodeProps } from './advanced-tree-view-node';
 
 type CustomAdvancedTreeViewNodeDependencies = {
   TreeViewCaret: (props: TreeViewCaretProps) => ReactElement;
@@ -16,7 +15,6 @@ type CustomAdvancedTreeViewNodeDependencies = {
   TreeViewLabel: (props: TreeViewLabelProps) => ReactElement;
   TreeViewLoadMore: (props: TreeViewLoadMoreProps) => ReactElement;
   TreeViewLoading: (props: TreeViewLoadingProps) => ReactElement;
-  // TreeViewChild: (props: AdvancedTreeViewNodeProps) => ReactElement;
 };
 
 export const defaultAdvancedTreeViewNodeDependencies: CustomAdvancedTreeViewNodeDependencies = {
@@ -27,7 +25,6 @@ export const defaultAdvancedTreeViewNodeDependencies: CustomAdvancedTreeViewNode
   TreeViewLabel: (props) => <TreeViewLabel {...props} />,
   TreeViewLoadMore: (props) => <TreeViewLoadMore {...props} />,
   TreeViewLoading: (props) => <TreeViewLoading {...props} />
-  // TreeViewChild: (props) => <AdvancedTreeViewNode {...props} />
 };
 
 export const CustomAdvancedTreeViewNodeContext = createContext(

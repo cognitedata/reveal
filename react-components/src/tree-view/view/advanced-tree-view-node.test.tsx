@@ -20,7 +20,7 @@ import { type IconName } from '../../architecture/base/utilities/types';
 import { type IconProps, SnowIcon } from '@cognite/cogs.js';
 import { createParentWithChildren } from '../../../tests/tests-utilities/tree-view/nodes/create-simple-tree-mock';
 
-const mockDependencies = getMocksByDefaultDependencies(defaultAdvancedTreeViewNodeDependencies);
+const mockDependencies1 = getMocksByDefaultDependencies(defaultAdvancedTreeViewNodeDependencies);
 const mockDependencies2 = getMocksByDefaultDependencies(defaultTreeViewChildDependencies);
 
 describe(AdvancedTreeViewNode.name, () => {
@@ -46,7 +46,7 @@ describe(AdvancedTreeViewNode.name, () => {
     const node = new TreeNode();
     const props: AdvancedTreeViewProps = {};
     renderMe(node, props);
-    expect(mockDependencies.TreeViewCaret).toHaveBeenCalledWith({ node }, expect.anything());
+    expect(mockDependencies1.TreeViewCaret).toHaveBeenCalledWith({ node }, expect.anything());
   });
 
   describe('should test checkbox', () => {
@@ -55,7 +55,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const props: AdvancedTreeViewProps = { hasCheckboxes: false };
       renderMe(node, props);
 
-      expect(mockDependencies.TreeViewCheckbox).not.toHaveBeenCalled();
+      expect(mockDependencies1.TreeViewCheckbox).not.toHaveBeenCalled();
     });
 
     test('render', () => {
@@ -63,7 +63,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const onToggleNode = vi.fn<TreeNodeAction>();
       const props: AdvancedTreeViewProps = { hasCheckboxes: true, onToggleNode };
       renderMe(node, props);
-      expect(mockDependencies.TreeViewCheckbox).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewCheckbox).toHaveBeenCalledWith(
         { node, onToggleNode },
         expect.anything()
       );
@@ -75,7 +75,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const node = new TreeNode();
       const props: AdvancedTreeViewProps = {};
       renderMe(node, props);
-      expect(mockDependencies.TreeViewIcon).not.toHaveBeenCalledWith();
+      expect(mockDependencies1.TreeViewIcon).not.toHaveBeenCalledWith();
     });
 
     test('render', () => {
@@ -85,7 +85,7 @@ describe(AdvancedTreeViewNode.name, () => {
 
       const props: AdvancedTreeViewProps = { getIconFromIconName };
       renderMe(node, props);
-      expect(mockDependencies.TreeViewIcon).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewIcon).toHaveBeenCalledWith(
         { node, getIconFromIconName },
         expect.anything()
       );
@@ -97,7 +97,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const node = new TreeNode();
       const props: AdvancedTreeViewProps = {};
       renderMe(node, props);
-      expect(mockDependencies.TreeViewLoading).not.toHaveBeenCalled();
+      expect(mockDependencies1.TreeViewLoading).not.toHaveBeenCalled();
     });
 
     test('render (when loading children)', () => {
@@ -108,7 +108,7 @@ describe(AdvancedTreeViewNode.name, () => {
         loadingLabel
       };
       renderMe(node, props);
-      expect(mockDependencies.TreeViewLoading).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewLoading).toHaveBeenCalledWith(
         { label: loadingLabel },
         expect.anything()
       );
@@ -123,7 +123,7 @@ describe(AdvancedTreeViewNode.name, () => {
       };
       const level = 4;
       renderMe(node, props, level);
-      expect(mockDependencies.TreeViewLoading).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewLoading).toHaveBeenCalledWith(
         { label: loadingLabel, level },
         expect.anything()
       );
@@ -137,7 +137,7 @@ describe(AdvancedTreeViewNode.name, () => {
       node.label = 'My label';
       const props: AdvancedTreeViewProps = {};
       renderMe(node, props);
-      expect(mockDependencies.TreeViewLabel).not.toHaveBeenCalled();
+      expect(mockDependencies1.TreeViewLabel).not.toHaveBeenCalled();
     });
 
     test('render', () => {
@@ -147,7 +147,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const maxLabelLength = 10;
       const props: AdvancedTreeViewProps = { maxLabelLength };
       renderMe(node, props);
-      expect(mockDependencies.TreeViewLabel).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewLabel).toHaveBeenCalledWith(
         { node, maxLabelLength },
         expect.anything()
       );
@@ -159,7 +159,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const node = new TreeNode();
       const props: AdvancedTreeViewProps = {};
       renderMe(node, props);
-      expect(mockDependencies.TreeViewInfo).not.toHaveBeenCalled();
+      expect(mockDependencies1.TreeViewInfo).not.toHaveBeenCalled();
     });
 
     test('render', () => {
@@ -169,7 +169,7 @@ describe(AdvancedTreeViewNode.name, () => {
 
       const props: AdvancedTreeViewProps = { onClickInfo };
       renderMe(node, props);
-      expect(mockDependencies.TreeViewInfo).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewInfo).toHaveBeenCalledWith(
         { node, onClick: onClickInfo },
         expect.anything()
       );
@@ -181,7 +181,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const node = new TreeNode();
       const props: AdvancedTreeViewProps = {};
       renderMe(node, props);
-      expect(mockDependencies.TreeViewLoadMore).not.toHaveBeenCalled();
+      expect(mockDependencies1.TreeViewLoadMore).not.toHaveBeenCalled();
     });
 
     test('render', () => {
@@ -193,7 +193,7 @@ describe(AdvancedTreeViewNode.name, () => {
       const props: AdvancedTreeViewProps = { loadMoreLabel, loader };
       const level = 4;
       renderMe(node, props, level);
-      expect(mockDependencies.TreeViewLoadMore).toHaveBeenCalledWith(
+      expect(mockDependencies1.TreeViewLoadMore).toHaveBeenCalledWith(
         { node, level, label: loadMoreLabel, loader },
         expect.anything()
       );
@@ -241,7 +241,7 @@ describe(AdvancedTreeViewNode.name, () => {
 function renderMe(node: TreeNode, props: AdvancedTreeViewProps, level = 1): HTMLElement {
   const { container } = render(
     <CustomTreeViewChildContext.Provider value={mockDependencies2}>
-      <CustomAdvancedTreeViewNodeContext.Provider value={mockDependencies}>
+      <CustomAdvancedTreeViewNodeContext.Provider value={mockDependencies1}>
         <AdvancedTreeViewNode node={node} level={level} props={props} />
       </CustomAdvancedTreeViewNodeContext.Provider>
     </CustomTreeViewChildContext.Provider>

@@ -8,16 +8,6 @@ import { HORIZONTAL_SPACING, INDENTATION, VERTICAL_SPACING } from './constants';
 import { useOnTreeNodeUpdate } from './use-on-tree-node-update';
 import { CustomAdvancedTreeViewNodeContext } from './advanced-tree-view-node.context';
 
-type CustomTreeViewChildDependencies = {
-  TreeViewChild: (props: AdvancedTreeViewNodeProps) => ReactElement;
-};
-
-export const defaultTreeViewChildDependencies: CustomTreeViewChildDependencies = {
-  TreeViewChild: (props) => <AdvancedTreeViewNode {...props} />
-};
-
-export const CustomTreeViewChildContext = createContext(defaultTreeViewChildDependencies);
-
 export type AdvancedTreeViewNodeProps = {
   node: TreeNodeType;
   level: number;
@@ -38,7 +28,6 @@ export const AdvancedTreeViewNode = ({
   });
 
   const { TreeViewChild } = useContext(CustomTreeViewChildContext);
-
   const {
     TreeViewCaret,
     TreeViewCheckbox,
@@ -47,7 +36,6 @@ export const AdvancedTreeViewNode = ({
     TreeViewLabel,
     TreeViewLoadMore,
     TreeViewLoading
-    // TreeViewChild
   } = useContext(CustomAdvancedTreeViewNodeContext);
 
   if (inputNode.isVisibleInTree === false) {
@@ -145,3 +133,16 @@ function getBackgroundColor(node: TreeNodeType, hover: boolean): string | undefi
 function getTextColor(_node: TreeNodeType): string | undefined {
   return Colors['text-icon--strong'];
 }
+
+// This should actually be in CustomAdvancedTreeViewNodeDependencies,
+// but to avoid circular dependencies we keep it here
+
+type CustomTreeViewChildDependencies = {
+  TreeViewChild: (props: AdvancedTreeViewNodeProps) => ReactElement;
+};
+
+export const defaultTreeViewChildDependencies: CustomTreeViewChildDependencies = {
+  TreeViewChild: (props) => <AdvancedTreeViewNode {...props} />
+};
+
+export const CustomTreeViewChildContext = createContext(defaultTreeViewChildDependencies);
