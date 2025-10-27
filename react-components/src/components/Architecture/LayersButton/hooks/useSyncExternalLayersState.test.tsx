@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { useSyncExternalLayersState } from './useSyncExternalLayersState2';
+import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { renderHook } from '@testing-library/react';
 import { wrapper } from '#test-components/fixtures/wrapper';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';

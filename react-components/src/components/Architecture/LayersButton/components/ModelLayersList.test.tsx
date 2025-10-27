@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
-import { ModelLayersList } from './ModelLayersList2';
+import { ModelLayersList } from './ModelLayersList';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CadDomainObject } from '../../../../architecture';

@@ -1,12 +1,12 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { LayersButtonProps } from '../LayersButton2';
-import { defaultLayersButtonDependencies, LayersButtonContext } from '../LayersButton2.context';
+import type { LayersButtonProps } from '../LayersButton';
+import { defaultLayersButtonDependencies, LayersButtonContext } from '../LayersButton.context';
 import { viewerImage360CollectionsMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
 import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
-import { LayersButtonStrip } from './LayersButtonsStrip2';
+import { LayersButtonStrip } from './LayersButtonsStrip';
 import { type ReactNode, type ReactElement } from 'react';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 import {
