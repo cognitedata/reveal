@@ -1,5 +1,5 @@
 import { type RelationshipResourceType, type Asset, type Timeseries } from '@cognite/sdk';
-import { isUndefined } from 'lodash';
+import { isUndefined } from 'lodash-es';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getResourceRelationship } from '../hooks/network/getResourceRelationship';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';

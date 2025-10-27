@@ -4,20 +4,72 @@ import {
   type AnnotationsBoundingVolume,
   type IdEither
 } from '@cognite/sdk';
-import { type CoreDmImage360Annotation, type DataSourceType } from '@cognite/reveal';
-import { type InstanceReference, isIdEither } from '../../utilities/instanceIds';
+
+import {
+  isClassicPointCloudVolume,
+  isDMPointCloudVolume,
+  type PointCloudObjectMetadata,
+  type CoreDmImage360Annotation,
+  type DataSourceType
+} from '@cognite/reveal';
+import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
 import {
   createInstanceReferenceKey,
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
+import { type PointCloudVolumeId } from './types';
 
-export function getInstanceReferenceFromPointCloudAnnotation(
+export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel
-): IdEither | undefined {
+): InstanceReference[] {
   const annotationData = annotation.data as AnnotationsBoundingVolume;
-  const assetRef = annotationData.assetRef;
-  return assetRef !== undefined && isIdEither(assetRef) ? assetRef : undefined;
+
+  const instances: InstanceReference[] = [];
+
+  if (annotationData.assetRef !== undefined && isIdEither(annotationData.assetRef)) {
+    instances.push(annotationData.assetRef);
+  }
+  if (annotationData.instanceRef !== undefined && isDmsInstance(annotationData.instanceRef)) {
+    const dmsUniqueIdentifierFromInstanceRef: InstanceReference = {
+      space: annotationData.instanceRef.space,
+      externalId: annotationData.instanceRef.externalId
+    };
+    instances.push(dmsUniqueIdentifierFromInstanceRef);
+  }
+
+  return instances;
+}
+
+export function getInstanceReferencesFromPointCloudVolume(
+  volume: PointCloudObjectMetadata<DataSourceType>
+): InstanceReference[] {
+  const instances: InstanceReference[] = [];
+
+  if (isClassicPointCloudVolume(volume)) {
+    if (isIdEither(volume.assetRef)) {
+      instances.push(volume.assetRef);
+    }
+
+    if (isDmsInstance(volume.instanceRef)) {
+      instances.push(volume.instanceRef);
+    }
+  }
+  if (isDMPointCloudVolume(volume) && volume.assetRef !== undefined) {
+    instances.push(volume.assetRef);
+  }
+
+  return instances;
+}
+
+export function getPointCloudVolumeId(
+  volume: PointCloudObjectMetadata<DataSourceType>
+): PointCloudVolumeId {
+  if (isClassicPointCloudVolume(volume)) {
+    return volume.annotationId;
+  } else {
+    return volume.volumeInstanceRef;
+  }
 }
 
 export function getInstanceReferenceFromImage360Annotation(

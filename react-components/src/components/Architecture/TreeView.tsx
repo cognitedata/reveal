@@ -4,7 +4,7 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type IconName } from '../../architecture/base/utilities/types';
 import { IconFactory } from './Factories/IconFactory';
 
-import { AdvancedTreeView, type TreeNodeType } from '../../advanced-tree-view';
+import { AdvancedTreeView, type TreeNodeType } from '../../tree-view';
 import { DomainObject } from '../../architecture';
 
 export const TreeView = (): ReactElement => {

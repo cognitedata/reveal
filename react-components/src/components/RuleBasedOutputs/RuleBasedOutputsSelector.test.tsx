@@ -184,7 +184,7 @@ describe(RuleBasedOutputsSelector.name, () => {
 
     const mockuseAssetMappedNodesForRevisionsResult = {
       data: [mockAssetMappings, mockHybridAssetMappings],
-      isLoading: false
+      isInitialLoading: false
     };
     defaultDependencies.useAssetMappedNodesForRevisions.mockReturnValue(
       mockuseAssetMappedNodesForRevisionsResult
@@ -192,14 +192,14 @@ describe(RuleBasedOutputsSelector.name, () => {
 
     const mockAllClassicAssetsReturn = {
       data: mockClassicAssetConnections,
-      isLoading: false,
+      isInitialLoading: false,
       isFetched: true
     };
     defaultDependencies.useFetchClassicAssetsByIds.mockReturnValue(mockAllClassicAssetsReturn);
 
     const mockUseMappedEdgesForRevisionsResult = {
       data: mockFdmMappedEquipmentEdges,
-      isLoading: false
+      isInitialLoading: false
     };
 
     defaultDependencies.useMappedEdgesForRevisions.mockReturnValue(
@@ -208,7 +208,7 @@ describe(RuleBasedOutputsSelector.name, () => {
 
     const mockUseGetDMConnectionWithNodeFromHybridMappingsQueryReturn = {
       data: mockDmConnectionWithNodeFromHybridDataList,
-      isLoading: false
+      isInitialLoading: false
     };
     defaultDependencies.useGetDMConnectionWithNodeFromHybridMappingsQuery.mockReturnValue(
       mockUseGetDMConnectionWithNodeFromHybridMappingsQueryReturn
@@ -216,7 +216,7 @@ describe(RuleBasedOutputsSelector.name, () => {
 
     const mockUseAll3dDirectConnectionsWithPropertiesReturn = {
       data: mockFdmMappings,
-      isLoading: false
+      isInitialLoading: false
     };
     defaultDependencies.useAll3dDirectConnectionsWithProperties.mockReturnValue(
       mockUseAll3dDirectConnectionsWithPropertiesReturn

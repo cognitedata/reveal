@@ -59,7 +59,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
     const { result } = renderHook(() => usePointCloudModelRevisionIdsFromReveal(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
+      expect(result.current.isInitialLoading).toBeFalsy();
     });
 
     expect(result.current.data).toHaveLength(0);
@@ -89,7 +89,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
     const { result } = renderHook(() => usePointCloudModelRevisionIdsFromReveal(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
+      expect(result.current.isInitialLoading).toBeFalsy();
     });
 
     expect(result.current.data).toHaveLength(1);
@@ -131,7 +131,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
     });
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
+      expect(result.current.isInitialLoading).toBeFalsy();
     });
 
     expect(result.current.data).toHaveLength(1);
@@ -159,7 +159,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
     rerender();
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
+      expect(result.current.isInitialLoading).toBeFalsy();
     });
 
     expect(result.current.data).toHaveLength(1);

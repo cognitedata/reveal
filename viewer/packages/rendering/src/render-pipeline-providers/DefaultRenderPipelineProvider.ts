@@ -24,7 +24,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: {
     cadNode: THREE.Object3D;
-    modelIdentifier: string;
+    modelIdentifier: symbol;
   }[];
   private readonly _pointCloudModels: {
     pointCloudNode: THREE.Object3D;

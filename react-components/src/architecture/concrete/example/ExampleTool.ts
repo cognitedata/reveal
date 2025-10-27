@@ -1,7 +1,7 @@
 import { ExampleDomainObject } from './ExampleDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { clamp } from 'lodash';
+import { clamp } from 'lodash-es';
 import { type HSL } from 'three';
 import { type TranslationInput } from '../../base/utilities/translation/TranslateInput';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';

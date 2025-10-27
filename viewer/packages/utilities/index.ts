@@ -29,7 +29,6 @@ export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensio
 export { IndexSet } from './src/IndexSet';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
 export { AttributeDataAccessor } from './src/three/AttributeDataAccessor';
-export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { toThreeBox3 } from './src/three/toThreeBox3';
 export { fromThreeVector3 } from './src/three/fromThreeVector3';
 export { unionBoxes } from './src/three/unionBoxes';

@@ -1,7 +1,7 @@
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 
 import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { searchClassicImage360Assets } from './searchClassicImage360Assets';
 
 import { type CogniteClient } from '@cognite/sdk';
@@ -11,6 +11,8 @@ import { searchClassicAssetsForCadModels } from './cad/searchClassicAssetsForCad
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
 import { type AllAssetFilterProps } from './common/filters';
 import { type SearchClassicCadAssetsResponse } from './cad/types';
+import { isClassicAsset } from '../../utilities/instances';
+import { type FdmSDK } from '../../data-providers/FdmSDK';
 
 export type SearchQueryOptions = {
   limit: number;
@@ -27,7 +29,8 @@ export async function searchClassicAssetsForModels(
   resources: TaggedAddResourceOptions[],
   { limit, cadAssetsCursor, filters }: SearchQueryOptions,
   sdk: CogniteClient,
-  renderTarget: RevealRenderTarget
+  renderTarget: RevealRenderTarget,
+  fdmSDK?: FdmSDK
 ): Promise<SearchClassicCadAssetsResponse> {
   const isFirstPage = cadAssetsCursor === undefined;
 
@@ -57,7 +60,7 @@ export async function searchClassicAssetsForModels(
   );
 
   const pointCloudAssetsPromise = isFirstPage
-    ? getAssetsMappedPointCloudAnnotations(pointClouds, filters, sdk)
+    ? getAssetsMappedPointCloudAnnotations(pointClouds, filters, sdk, fdmSDK)
     : Promise.resolve([]);
 
   const image360AssetsPromise = isFirstPage
@@ -68,8 +71,9 @@ export async function searchClassicAssetsForModels(
   const pointCloudAssets = await pointCloudAssetsPromise;
   const image360Assets = await image360AssetsPromise;
 
+  const classicPointCloudAssets = pointCloudAssets.filter((asset) => isClassicAsset(asset));
   const assetResult = uniqBy(
-    [...cadAssets, ...pointCloudAssets, ...image360Assets],
+    [...cadAssets, ...classicPointCloudAssets, ...image360Assets],
     (asset) => asset.id
   );
 

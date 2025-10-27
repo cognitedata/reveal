@@ -1,13 +1,13 @@
-import { uniq } from 'lodash';
+import { uniq } from 'lodash-es';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
-import { type ModelsForAssetParams } from './types';
+import { type ModelsForClassicAssetParams } from './types';
 import { isIdEither } from '../../utilities/instanceIds';
 
 export async function getImage360CollectionsForAsset({
   assetId,
   sdk
-}: ModelsForAssetParams): Promise<TaggedAddImage360CollectionOptions[]> {
+}: ModelsForClassicAssetParams): Promise<TaggedAddImage360CollectionOptions[]> {
   const fileRefsResult = await sdk.annotations.reverseLookup({
     filter: {
       annotatedResourceType: 'file',

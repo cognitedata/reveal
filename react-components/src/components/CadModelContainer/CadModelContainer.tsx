@@ -6,7 +6,7 @@ import type {
   ClassicDataSourceType
 } from '@cognite/reveal';
 import type { Matrix4 } from 'three';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import type { CadModelStyling } from './types';
@@ -17,6 +17,7 @@ export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
   styling?: CadModelStyling;
   transform?: Matrix4;
+  defaultVisible?: boolean;
   onLoad?: (model: CogniteCadModel) => void;
   onLoadError?: (options: AddModelOptions<ClassicDataSourceType>, error: any) => void;
 };
@@ -25,6 +26,7 @@ export function CadModelContainer({
   addModelOptions,
   transform,
   styling,
+  defaultVisible,
   onLoad,
   onLoadError
 }: CogniteCadModelProps): ReactElement {
@@ -112,10 +114,10 @@ export function CadModelContainer({
         );
       });
       if (viewerModel !== undefined) {
-        return await Promise.resolve(viewerModel as CogniteCadModel);
+        return viewerModel as CogniteCadModel;
       }
       initializingModelsGeometryFilter.current = geometryFilter;
-      return await createCadDomainObject(renderTarget, addModelOptions);
+      return await createCadDomainObject(renderTarget, addModelOptions, defaultVisible);
     }
   }
 
