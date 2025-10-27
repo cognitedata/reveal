@@ -32,11 +32,7 @@ export const TreeViewLoadMore = ({
       }}
       onClick={async () => {
         if (node.loadSiblings === undefined) return;
-        try {
-          await node.loadSiblings(loader);
-        } catch (error) {
-          console.error('Failed to load more nodes:', error);
-        }
+        await node.loadSiblings(loader);
       }}>
       {label ?? LOAD_MORE_LABEL}
     </Button>
