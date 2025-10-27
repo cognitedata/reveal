@@ -22,19 +22,20 @@ export const WholeLayerVisibilitySelectItem = ({
   renderTarget: RevealRenderTarget;
   shouldPropagate?: boolean;
 }): ReactElement => {
-  const checked = useSomeDomainObjectsVisible(domainObjects, renderTarget);
+  const { someVisible, allVisible } = useSomeDomainObjectsVisible(domainObjects, renderTarget);
   return (
     <SelectPanel.Item
       variant="checkbox"
       label={label}
-      checked={checked}
+      checked={someVisible}
+      indeterminate={someVisible && !allVisible}
       disabled={domainObjects.length === 0}
       onClick={(e) => {
         if (!shouldPropagate) {
           e.stopPropagation();
         }
         domainObjects.forEach((domainObject) => {
-          domainObject.setVisibleInteractive(!checked, renderTarget);
+          domainObject.setVisibleInteractive(!someVisible, renderTarget);
         });
       }}
       trailingContent={
@@ -51,7 +52,7 @@ export const WholeLayerVisibilitySelectItem = ({
 function useSomeDomainObjectsVisible(
   relevantDomainObjects: RevealDomainObject[],
   renderTarget: RevealRenderTarget
-): boolean {
+): { someVisible: boolean; allVisible: boolean } {
   const disposableSignal = useMemo(
     () => getRevealDomainUpdateSignal(renderTarget, undefined, [Changes.visibleState]),
     [renderTarget]
@@ -59,6 +60,16 @@ function useSomeDomainObjectsVisible(
 
   const allDomainObjects = useDisposableSignal(disposableSignal);
   return useMemo(() => {
-    return relevantDomainObjects.some((domainObject) => domainObject.isVisible(renderTarget));
+    const someVisible = relevantDomainObjects.some((domainObject) =>
+      domainObject.isVisible(renderTarget)
+    );
+    const allVisible = relevantDomainObjects.every((domainObject) =>
+      domainObject.isVisible(renderTarget)
+    );
+
+    return {
+      someVisible,
+      allVisible
+    };
   }, [allDomainObjects, relevantDomainObjects, renderTarget]);
 }
