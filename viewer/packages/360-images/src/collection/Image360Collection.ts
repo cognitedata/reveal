@@ -33,7 +33,9 @@ export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicData
   /**
    * Reference to the wanted asset
    */
-  assetRef: InstanceReference<T>;
+  assetRef: T extends ClassicDataSourceType
+    ? InstanceReference<ClassicDataSourceType | DMDataSourceType>
+    : InstanceReference<DMDataSourceType>;
 };
 
 /**
