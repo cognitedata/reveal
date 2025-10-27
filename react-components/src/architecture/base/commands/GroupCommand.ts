@@ -1,8 +1,9 @@
 import type { BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
+import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 export type GroupCommandConfiguration = {
-  title: string;
+  title: TranslationInput;
   commands: BaseCommand[];
 };
 
@@ -15,7 +16,7 @@ export class GroupCommand extends RenderTargetCommand {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _title: string;
+  private readonly _title: TranslationInput;
   private readonly _commands: BaseCommand[];
 
   // ==================================================
@@ -54,7 +55,11 @@ export class GroupCommand extends RenderTargetCommand {
   // GETTERS
   // ==================================================
 
-  public get title(): string {
+  public get title(): TranslationInput {
+    return this._title;
+  }
+
+  public override get tooltip(): TranslationInput {
     return this._title;
   }
 

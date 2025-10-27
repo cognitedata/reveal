@@ -3,11 +3,13 @@ import {
   GroupCommand,
   type TranslationInput
 } from '../../../../src/architecture';
+import { type UntranslatedString } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
+
 import { TestButtonCommand } from './TestButtonCommand';
 import { TestSectionCommand } from './TestSectionCommand';
 
 export class TestGroupCommand extends GroupCommand {
-  constructor(title: string, commands?: BaseCommand[]) {
+  constructor(title: TranslationInput, commands?: BaseCommand[]) {
     const defaultCommands = commands ?? [
       new TestButtonCommand({
         onClick: () => {}
@@ -22,7 +24,9 @@ export class TestGroupCommand extends GroupCommand {
   }
 
   public override get tooltip(): TranslationInput {
-    return { untranslated: `Test group: ${this.title}` };
+    return {
+      untranslated: `Test group: ${(this.title as UntranslatedString).untranslated}`
+    };
   }
 
   public override get isVisible(): boolean {

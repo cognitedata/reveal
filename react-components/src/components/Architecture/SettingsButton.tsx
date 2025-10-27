@@ -1,5 +1,6 @@
 import { BannerComponent } from './BannerComponent';
 import { BaseBannerCommand, GroupCommand } from '../../architecture';
+import { useTranslation } from '../i18n/I18n';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
@@ -176,13 +177,14 @@ function QualityWarningBannerComponent({
 }
 
 function GroupComponent({ command }: { command: GroupCommand }): ReactNode {
+  const { t } = useTranslation();
   const isGroupVisible = useCommandVisible(command);
   if (!isGroupVisible) {
     return null;
   }
 
   return (
-    <StyledAccordion expanded title={command.title}>
+    <StyledAccordion expanded title={t(command.tooltip)}>
       <StyledGroupContent>{command.commands.map(createGroupItem)}</StyledGroupContent>
     </StyledAccordion>
   );

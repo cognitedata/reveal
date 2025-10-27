@@ -131,12 +131,12 @@ describe(SettingsButton.name, () => {
 
   test('renders group command as accordion in panel', async () => {
     const groupTitle = 'Test Group';
-    const groupCommand = new TestGroupCommand(groupTitle);
+    const groupCommand = new TestGroupCommand({ untranslated: groupTitle });
     settingsCommand.add(groupCommand);
 
     renderAndOpenSettingsPanel(settingsCommand);
 
-    const accordionElement = await screen.findByText(groupTitle);
+    const accordionElement = await screen.findByText(`Test group: ${groupTitle}`);
     expect(accordionElement).toBeDefined();
   });
 
@@ -145,9 +145,9 @@ describe(SettingsButton.name, () => {
     const secondGroupTitle = 'Second Group';
     const thirdGroupTitle = 'Third Group';
 
-    const firstGroupCommand = new TestGroupCommand(firstGroupTitle);
-    const secondGroupCommand = new TestGroupCommand(secondGroupTitle);
-    const thirdGroupCommand = new TestGroupCommand(thirdGroupTitle);
+    const firstGroupCommand = new TestGroupCommand({ untranslated: firstGroupTitle });
+    const secondGroupCommand = new TestGroupCommand({ untranslated: secondGroupTitle });
+    const thirdGroupCommand = new TestGroupCommand({ untranslated: thirdGroupTitle });
 
     settingsCommand.add(firstGroupCommand);
     settingsCommand.add(secondGroupCommand);
@@ -155,9 +155,9 @@ describe(SettingsButton.name, () => {
 
     renderAndOpenSettingsPanel(settingsCommand);
 
-    const firstGroupElement = await screen.findByText(firstGroupTitle);
-    const secondGroupElement = await screen.findByText(secondGroupTitle);
-    const thirdGroupElement = await screen.findByText(thirdGroupTitle);
+    const firstGroupElement = await screen.findByText(`Test group: ${firstGroupTitle}`);
+    const secondGroupElement = await screen.findByText(`Test group: ${secondGroupTitle}`);
+    const thirdGroupElement = await screen.findByText(`Test group: ${thirdGroupTitle}`);
 
     expect(firstGroupElement).toBeDefined();
     expect(secondGroupElement).toBeDefined();
@@ -169,9 +169,9 @@ describe(SettingsButton.name, () => {
     const secondGroupTitle = 'Second Necessary Group';
     const thirdGroupTitle = 'Third Group';
 
-    const firstGroupCommand = new TestGroupCommand(firstGroupTitle);
-    const secondGroupCommand = new TestGroupCommand(secondGroupTitle);
-    const thirdGroupCommand = new TestGroupCommand(thirdGroupTitle);
+    const firstGroupCommand = new TestGroupCommand({ untranslated: firstGroupTitle });
+    const secondGroupCommand = new TestGroupCommand({ untranslated: secondGroupTitle });
+    const thirdGroupCommand = new TestGroupCommand({ untranslated: thirdGroupTitle });
 
     settingsCommand.add(firstGroupCommand);
     settingsCommand.add(secondGroupCommand);
@@ -180,17 +180,17 @@ describe(SettingsButton.name, () => {
     renderAndOpenSettingsPanel(settingsCommand);
 
     // Check that the first two groups are present
-    const firstGroupElement = await screen.findByText(firstGroupTitle);
-    const secondGroupElement = await screen.findByText(secondGroupTitle);
+    const firstGroupElement = await screen.findByText(`Test group: ${firstGroupTitle}`);
+    const secondGroupElement = await screen.findByText(`Test group: ${secondGroupTitle}`);
 
     expect(firstGroupElement).toBeDefined();
     expect(secondGroupElement).toBeDefined();
 
     // Verify they are the first two by checking their order in the DOM
-    const allGroupElements = screen.getAllByText(/Group$/);
+    const allGroupElements = screen.getAllByText(/Test group: .*Group$/);
     expect(allGroupElements).toHaveLength(3);
-    expect(allGroupElements[0].textContent).toBe(firstGroupTitle);
-    expect(allGroupElements[1].textContent).toBe(secondGroupTitle);
+    expect(allGroupElements[0].textContent).toBe(`Test group: ${firstGroupTitle}`);
+    expect(allGroupElements[1].textContent).toBe(`Test group: ${secondGroupTitle}`);
   });
 });
 

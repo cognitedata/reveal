@@ -69,10 +69,19 @@ export class SettingsCommand extends BaseSettingsCommand {
       );
     }
 
-    this.add(new GroupCommand({ title: 'General', commands: generalGroupCommands }));
-    this.add(new GroupCommand({ title: 'CAD', commands: cadGroupCommands }));
-    this.add(new GroupCommand({ title: 'Point cloud', commands: pointCloudGroupCommands }));
-    this.add(new GroupCommand({ title: '360', commands: images360GroupCommands }));
+    this.add(
+      new GroupCommand({ title: { untranslated: 'General' }, commands: generalGroupCommands })
+    );
+    this.add(new GroupCommand({ title: { untranslated: 'CAD' }, commands: cadGroupCommands }));
+    this.add(
+      new GroupCommand({
+        title: { untranslated: 'Point cloud' },
+        commands: pointCloudGroupCommands
+      })
+    );
+    this.add(
+      new GroupCommand({ title: { untranslated: '360' }, commands: images360GroupCommands })
+    );
   }
 
   // ==================================================

@@ -13,26 +13,26 @@ describe(GroupCommand.name, () => {
   test('should create GroupCommand with valid configuration', () => {
     const commands = createMockCommands({ count: 3 });
     const config: GroupCommandConfiguration = {
-      title: 'Test Group',
+      title: { untranslated: 'Test Group' },
       commands
     };
 
     const groupCommand = createGroupCommand(config);
 
-    expect(groupCommand.title).toBe('Test Group');
+    expect(groupCommand.title).toEqual({ untranslated: 'Test Group' });
     expect(groupCommand.commands).toEqual(commands);
     expect(groupCommand.hasCommands).toBe(true);
   });
 
   test('should create GroupCommand with empty commands array', () => {
     const config: GroupCommandConfiguration = {
-      title: 'Empty Group',
+      title: { untranslated: 'Empty Group' },
       commands: []
     };
 
     const groupCommand = createGroupCommand(config);
 
-    expect(groupCommand.title).toBe('Empty Group');
+    expect(groupCommand.title).toEqual({ untranslated: 'Empty Group' });
     expect(groupCommand.commands).toEqual([]);
     expect(groupCommand.hasCommands).toBe(false);
   });
@@ -40,17 +40,17 @@ describe(GroupCommand.name, () => {
   test('should return correct title', () => {
     const commands = createMockCommands({ count: 2 });
     const groupCommand = createGroupCommand({
-      title: 'My Group Title',
+      title: { untranslated: 'My Group Title' },
       commands
     });
 
-    expect(groupCommand.title).toBe('My Group Title');
+    expect(groupCommand.title).toEqual({ untranslated: 'My Group Title' });
   });
 
   test('should return correct commands array', () => {
     const commands = createMockCommands({ count: 3 });
     const groupCommand = createGroupCommand({
-      title: 'Test',
+      title: { untranslated: 'Test' },
       commands
     });
 
@@ -61,12 +61,12 @@ describe(GroupCommand.name, () => {
   test('should return hasCommands correctly', () => {
     const commandsWithItems = createMockCommands({ count: 2 });
     const groupWithCommands = createGroupCommand({
-      title: 'With Commands',
+      title: { untranslated: 'With Commands' },
       commands: commandsWithItems
     });
 
     const groupWithoutCommands = createGroupCommand({
-      title: 'Without Commands',
+      title: { untranslated: 'Without Commands' },
       commands: []
     });
 
@@ -82,7 +82,7 @@ describe(GroupCommand.name, () => {
     hiddenCommand.isVisible = false;
 
     const groupCommand = createGroupCommand({
-      title: 'Mixed Visibility',
+      title: { untranslated: 'Mixed Visibility' },
       commands: [visibleCommand, hiddenCommand]
     });
 
@@ -97,7 +97,7 @@ describe(GroupCommand.name, () => {
     hiddenCommand2.isVisible = false;
 
     const groupCommand = createGroupCommand({
-      title: 'All Hidden',
+      title: { untranslated: 'All Hidden' },
       commands: [hiddenCommand1, hiddenCommand2]
     });
 
@@ -106,7 +106,7 @@ describe(GroupCommand.name, () => {
 
   test('should be hidden when no commands exist', () => {
     const groupCommand = createGroupCommand({
-      title: 'No Commands',
+      title: { untranslated: 'No Commands' },
       commands: []
     });
 
@@ -121,7 +121,7 @@ describe(GroupCommand.name, () => {
     visibleCommand2.isVisible = true;
 
     const groupCommand = createGroupCommand({
-      title: 'All Visible',
+      title: { untranslated: 'All Visible' },
       commands: [visibleCommand1, visibleCommand2]
     });
 
