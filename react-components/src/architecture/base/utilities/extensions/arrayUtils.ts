@@ -1,4 +1,4 @@
-import { every } from 'lodash';
+import { every } from 'lodash-es';
 
 /*
  * Utility function for missing array methods

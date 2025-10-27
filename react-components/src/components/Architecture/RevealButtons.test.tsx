@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { type ButtonProp, RevealButtons } from './RevealButtons';
 import { type PropsWithChildren, type ReactElement } from 'react';
-import { sdkMock } from '../../../tests/tests-utilities/fixtures/sdk';
-import { viewerMock } from '../../../tests/tests-utilities/fixtures/viewer';
 import { RevealRenderTarget } from '../../architecture';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { render } from '@testing-library/react';
 import { ComponentFactoryContextProvider } from '../RevealCanvas/ComponentFactoryContext';
+import { sdkMock } from '#test-utils/fixtures/sdk';
+import { viewerMock } from '#test-utils/fixtures/viewer';
 
 describe(RevealButtons.name, () => {
   let wrapper: (props: PropsWithChildren) => ReactElement;

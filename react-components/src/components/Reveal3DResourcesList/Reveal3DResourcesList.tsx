@@ -31,7 +31,7 @@ export function Reveal3DResourcesList({
   setSelectedRevisions
 }: Reveal3DResourcesListProps): ReactElement {
   const { t } = useTranslation();
-  const { data: modelsWithRevision, isLoading: isItemsLoading } = useAllResourcesList(sdk);
+  const { data: modelsWithRevision, isInitialLoading: isItemsLoading } = useAllResourcesList(sdk);
   const [revisions, setRevisions] = useState<Array<{ id: number; createdTime: Date }>>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isRevisionsLoading, setIsRevisionsLoading] = useState(false);

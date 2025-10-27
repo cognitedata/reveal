@@ -10,7 +10,6 @@ export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): Reac
   );
 
   const tool = usePointsOfInterestTool();
-
   const selectedPoi = useSelectedPoi();
 
   const isOpen = useNullableCommandProperty(tool, () =>

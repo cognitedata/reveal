@@ -63,7 +63,7 @@ export class RootDomainObject extends DomainObject {
   }
 
   public override get icon(): IconName {
-    return 'TreeIcon';
+    return 'Tree';
   }
 
   public override get hasIconColor(): boolean {

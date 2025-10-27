@@ -28,7 +28,7 @@ export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';
 export { useFetchTimeseriesFromRelationshipByAsset } from './useFetchTimeseriesFromRelationshipByAsset';
 export { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
-export { usePointCloudVolumeMappingForAssetInstances } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
+export { usePointCloudDMVolumeMappingForAssetInstances } from './core-dm/usePointCloudDMVolumeMappingForAssetInstances';
 export { useFilterOnClassicAssetsInScene } from './useFilterOnClassicAssetsInScene';
 
 export type {
@@ -38,7 +38,7 @@ export type {
   ModelAssetPage
 } from './useSearchMappedEquipmentAssetMappings';
 export type { InstancesWithView } from './useSearchMappedEquipmentFDM';
-export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
+export type { PointCloudDMVolumeMappedAssetData } from './core-dm/usePointCloudDMVolumeMappingForAssetInstances';
 
 export { searchClassicAssetsForModels } from './network/searchClassicAssetsForModels';
 export { searchHybridDmAssetsForModels } from './network/searchHybridDmAssetsForModels';

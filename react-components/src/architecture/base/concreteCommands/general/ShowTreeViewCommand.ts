@@ -20,7 +20,7 @@ export class ShowTreeViewCommand extends RenderTargetCommand {
   }
 
   public override get icon(): IconName {
-    return 'TreeIcon';
+    return 'Tree';
   }
 
   public override get isEnabled(): boolean {
