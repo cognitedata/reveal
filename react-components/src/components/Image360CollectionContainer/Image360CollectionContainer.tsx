@@ -1,7 +1,5 @@
-import { type ReactElement, useEffect, useRef } from 'react';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
+import { type ReactElement, useContext, useEffect, useRef } from 'react';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
-import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
 import {
   type ImageCollectionModelStyling,
@@ -12,16 +10,14 @@ import {
   DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
   DEFAULT_IMAGE360_ICON_CULLING_RADIUS
 } from './constants';
-import {
-  useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount
-} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
-import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
+
+import { Image360CollectionContainerContext } from './Image360CollectionContainer.context';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
   styling?: ImageCollectionModelStyling;
+  defaultVisible?: boolean;
   onLoad?: (image360: Image360Collection<DataSourceType>) => void;
   onLoadError?: (addOptions: AddImage360CollectionOptions, error: any) => void;
 };
@@ -29,16 +25,26 @@ type Image360CollectionContainerProps = {
 export function Image360CollectionContainer({
   addImage360CollectionOptions,
   styling,
+  defaultVisible,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
+  const {
+    useRenderTarget,
+    useRevealKeepAlive,
+    useReveal3DResourcesCount,
+    useReveal3DResourceLoadFailCount,
+    createImage360CollectionDomainObject,
+    removeImage360CollectionDomainObject
+  } = useContext(Image360CollectionContainerContext);
+
   const cachedViewerRef = useRevealKeepAlive();
-  const modelRef = useRef<Image360Collection<DataSourceType>>();
   const renderTarget = useRenderTarget();
-  const viewer = renderTarget.viewer;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
 
+  const viewer = renderTarget.viewer;
+  const modelRef = useRef<Image360Collection<DataSourceType>>();
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
   );
@@ -114,9 +120,10 @@ export function Image360CollectionContainer({
       if (collection !== undefined) {
         return collection;
       }
-      return await RevealModelsUtils.addImage360Collection(
+      return await createImage360CollectionDomainObject(
         renderTarget,
-        addImage360CollectionOptions
+        addImage360CollectionOptions,
+        defaultVisible
       );
     }
   }
@@ -127,7 +134,7 @@ export function Image360CollectionContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    RevealModelsUtils.remove(renderTarget, modelRef.current);
+    removeImage360CollectionDomainObject(renderTarget, modelRef.current);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     modelRef.current = undefined;
   }

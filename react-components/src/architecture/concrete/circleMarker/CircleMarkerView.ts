@@ -1,10 +1,11 @@
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { colorToHex } from '../../base/utilities/colors/colorToHex';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
-import { Sprite, CanvasTexture, SpriteMaterial } from 'three';
+import { Sprite, CanvasTexture, SpriteMaterial, type PerspectiveCamera } from 'three';
 import { type CircleMarkerDomainObject } from './CircleMarkerDomainObject';
 import { type CircleMarkerRenderStyle } from './CircleMarkerRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { type CustomObjectIntersectInput, type CustomObjectIntersection } from '@cognite/reveal';
 
 const TEXTURE_SIZE = 200;
 const CANVAS_PADDING = 1; // To avoid artifacts on the edge when drawing
@@ -22,6 +23,28 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     }
   }
 
+  public override beforeRender(camera: PerspectiveCamera): void {
+    super.beforeRender(camera);
+
+    const { domainObject, object, style } = this;
+
+    let size = 2 * domainObject.radius;
+    const maxDistance = style.maxDistanceForSizeAdjustments;
+    if (maxDistance !== undefined && maxDistance > 0) {
+      // This will make the size smaller when it is close to the camera,
+      // in order to not blow up the size when it come very close to the camera
+      const distanceToCamera = camera.position.distanceTo(domainObject.position);
+      if (distanceToCamera < maxDistance) {
+        const fraction = distanceToCamera / maxDistance;
+        size *= fraction;
+      }
+    }
+    if (object.scale.x !== size) {
+      object.scale.setScalar(size);
+      object.updateMatrixWorld();
+    }
+  }
+
   protected override get style(): CircleMarkerRenderStyle {
     return super.style as CircleMarkerRenderStyle;
   }
@@ -36,6 +59,14 @@ export class CircleMarkerView extends GroupThreeView<CircleMarkerDomainObject> {
     const sprite = new Sprite(material);
     sprite.updateMatrixWorld();
     this.addChild(sprite);
+    this.updateGeometry();
+  }
+
+  public override intersectIfCloser(
+    _intersectInput: CustomObjectIntersectInput,
+    _closestDistance: number | undefined
+  ): undefined | CustomObjectIntersection {
+    return undefined; // CircleMarker is not pick-able
   }
 
   private updateGeometry(): void {

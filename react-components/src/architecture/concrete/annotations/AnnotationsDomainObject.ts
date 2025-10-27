@@ -259,7 +259,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     gizmoRenderStyle.lineWidth = renderStyle.lineWidth;
     gizmoRenderStyle.selectedLineWidth = renderStyle.selectedLineWidth;
     gizmoRenderStyle.depthTest = renderStyle.depthTest;
-    gizmo.color.set(renderStyle.getColorByStatus(annotation.getStatus()));
+    gizmo.setColor(renderStyle.getColorByStatus(annotation.getStatus()));
     return gizmo;
   }
 
@@ -277,7 +277,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     gizmoRenderStyle.lineWidth = renderStyle.lineWidth;
     gizmoRenderStyle.selectedLineWidth = renderStyle.selectedLineWidth;
     gizmoRenderStyle.depthTest = false;
-    gizmo.color.set(renderStyle.pendingColor);
+    gizmo.setColor(renderStyle.pendingColor);
     return gizmo;
   }
 

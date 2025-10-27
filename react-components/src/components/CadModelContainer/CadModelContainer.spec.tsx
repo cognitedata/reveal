@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CadModelContainer } from './CadModelContainer';
 import { CadModelContext, defaultCadModelContextDependencies } from './CadModelContainer.context';
 import type { PropsWithChildren, ReactElement } from 'react';
@@ -15,18 +15,21 @@ describe(CadModelContainer.name, () => {
     <CadModelContext.Provider value={deps}>{children}</CadModelContext.Provider>
   );
 
-  it('should properly add and remove Cad Model when mounting and unmounting CadModelContainer', async () => {
-    const models = vi.fn<() => CogniteModel[]>();
-    const renderTargetMock = new Mock<RevealRenderTarget>()
-      .setup((x) => x.viewer)
-      .returns(
-        new Mock<Cognite3DViewer>()
-          .setup((x) => x.models)
-          .callback(models)
-          .setup((x) => x.get360ImageCollections)
-          .returns(() => [])
-          .object()
-      );
+  const modelsGetter = vi.fn<() => CogniteModel[]>();
+  const cadModel = new Mock<CogniteCadModel>().object();
+
+  const renderTargetMock = new Mock<RevealRenderTarget>()
+    .setup((x) => x.viewer)
+    .returns(
+      new Mock<Cognite3DViewer>()
+        .setup((x) => x.models)
+        .callback(modelsGetter)
+        .setup((x) => x.get360ImageCollections)
+        .returns(() => [])
+        .object()
+    );
+
+  beforeEach(() => {
     deps.useRenderTarget.mockReturnValue(renderTargetMock.object());
 
     deps.useReveal3DResourcesCount.mockReturnValue({
@@ -38,11 +41,11 @@ describe(CadModelContainer.name, () => {
       reveal3DResourceLoadFailCount: 0,
       setReveal3DResourceLoadFailCount: vi.fn()
     });
-
-    const cadModel = new Mock<CogniteCadModel>().object();
     deps.createCadDomainObject.mockResolvedValue(cadModel);
-    models.mockReturnValue([]);
+    modelsGetter.mockReturnValue([]);
+  });
 
+  it('should properly add and remove Cad Model when mounting and unmounting CadModelContainer', async () => {
     const addModelOptions1 = { modelId: 1, revisionId: 1 };
 
     const { unmount } = render(
@@ -54,7 +57,7 @@ describe(CadModelContainer.name, () => {
       expect(deps.createCadDomainObject).toHaveBeenCalled();
     });
 
-    models.mockReturnValue([cadModel]);
+    modelsGetter.mockReturnValue([cadModel]);
 
     unmount();
 
@@ -62,4 +65,28 @@ describe(CadModelContainer.name, () => {
       expect(deps.removeCadDomainObject).toHaveBeenCalled();
     });
   });
+
+  it.each([undefined, false, true])(
+    'should propagate defaultVisible flag %s to `createCadModel`',
+    async (defaultVisibleFlag) => {
+      const addModelOptions1 = { modelId: 1, revisionId: 1 };
+
+      render(
+        <CadModelContainer
+          addModelOptions={addModelOptions1}
+          onLoad={vi.fn()}
+          defaultVisible={defaultVisibleFlag}
+        />,
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(deps.createCadDomainObject).toHaveBeenCalledWith(
+          renderTargetMock.object(),
+          addModelOptions1,
+          defaultVisibleFlag
+        );
+      });
+    }
+  );
 });

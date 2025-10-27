@@ -54,8 +54,7 @@ export class Cylinder extends Primitive {
   public override setMatrix(matrix: Matrix4): void {
     const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
     const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
-    const scale = new Vector3();
-    matrix.decompose(new Vector3(), new Quaternion(), scale);
+    const scale = new Vector3().setFromMatrixScale(matrix);
 
     this.centerA.copy(centerA);
     this.centerB.copy(centerB);
@@ -164,6 +163,14 @@ export class Cylinder extends Primitive {
 
   public get height(): number {
     return this.centerA.distanceTo(this.centerB);
+  }
+
+  public set height(value: number) {
+    const center = this.center;
+    const halfHeight = value * 0.5;
+    const axis = this.axis;
+    this.centerA.copy(center).addScaledVector(axis, -halfHeight);
+    this.centerB.copy(center).addScaledVector(axis, +halfHeight);
   }
 
   public get center(): Vector3 {

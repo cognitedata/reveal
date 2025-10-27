@@ -5,7 +5,7 @@ import { type PointCloudIntersection } from '@cognite/reveal';
 import { Vector3 } from 'three';
 
 const MIN_POINTS_FOR_FIT = 10;
-const MAX_RMS = 0.05;
+const MAX_RMS = 0.075;
 const MIN_ANGULAR_COVERAGE = 0.2;
 const MAX_RELATIVE_RADIUS = 2;
 const MAX_DISTANCE_BEHIND = 1.5;
@@ -31,6 +31,7 @@ export function getBestFitCylinderByIntersection(
   markerRadius: number
 ): LeastSquareCylinderResult | undefined {
   const pointCloud = intersection.model;
+
   const centerA = intersection.point.clone();
   const centerB = intersection.point.clone();
   const direction = new Vector3().subVectors(intersection.point, cameraPosition).normalize();
@@ -43,8 +44,13 @@ export function getBestFitCylinderByIntersection(
   boundingCylinder.centerB.copy(centerB);
   boundingCylinder.radius = markerRadius;
 
+  const modelMatrix = pointCloud.getModelTransformation();
+  const inverseModelMatrix = modelMatrix.clone().invert();
+  boundingCylinder.applyMatrix4(inverseModelMatrix);
+
   const box = boundingCylinder.getBoundingBox();
   const points = pointCloud.getPointsByBoundingBox(box);
+
   if (points.length < MIN_POINTS_FOR_FIT) {
     return undefined;
   }
@@ -52,12 +58,14 @@ export function getBestFitCylinderByIntersection(
   if (filteredPoints.length < MIN_POINTS_FOR_FIT) {
     return undefined;
   }
+  const worldSpacePoints = filteredPoints.map((p) => p.clone().applyMatrix4(modelMatrix));
+
   const acceptCylinder = (cylinder: LeastSquareCylinderResult): boolean => {
-    return (
+    const accepted =
       cylinder.rms < MAX_RMS &&
       cylinder.radius < MAX_RELATIVE_RADIUS * markerRadius &&
-      cylinder.angularCoverage > MIN_ANGULAR_COVERAGE
-    );
+      cylinder.angularCoverage > MIN_ANGULAR_COVERAGE;
+    return accepted; // Want to have it like this because it is easier to debug
   };
-  return bestFitCylinder(filteredPoints, acceptCylinder);
+  return bestFitCylinder(worldSpacePoints, acceptCylinder);
 }

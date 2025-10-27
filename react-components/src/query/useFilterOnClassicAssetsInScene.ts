@@ -13,6 +13,7 @@ import {
 } from '../components/Reveal3DResources/typeGuards';
 import { FilterOnClassicAssetsInSceneContext } from './FilterOnClassicAssetsInScene.context';
 import { isDefined } from '../utilities/isDefined';
+import { isClassicAsset } from '../utilities/instances';
 
 export type FilterOnClassicAssetsInScene = (assets: Asset[]) => Asset[];
 
@@ -49,22 +50,23 @@ export const useFilterOnClassicAssetsInScene = (
   const {
     data: pagedCadAssetMappings,
     isFetching: isFetchingCadAssetMappings,
-    hasNextPage: hasNextCadAssetMappings,
+    hasNextPage: hasNextCadAssetMappings = false,
     fetchNextPage: fetchNextCadAssetMappingsPage
   } = useAllMappedEquipmentAssetMappings(cadAndPointCloudresources, sdk);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions =>
+      ('siteId' in resource || 'externalId' in resource) && !('modelId' in resource)
   );
 
   const siteIds = filtered360ImageResources.map((filteredResource) => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
-  const { data: image360AssetMappings, isLoading: isLoading360AssetMappings } =
+  const { data: image360AssetMappings, isInitialLoading: isLoading360AssetMappings } =
     useAllAssetsMapped360Annotations(sdk, siteIds);
 
-  const { data: allPointCloudAssets, isLoading: isLoadingAllPointCloudAssets } =
+  const { data: allPointCloudAssets, isInitialLoading: isLoadingAllPointCloudAssets } =
     useAllAssetsMappedPointCloudAnnotations(sdk, cadAndPointCloudresources);
 
   useEffect(() => {
@@ -84,6 +86,10 @@ export const useFilterOnClassicAssetsInScene = (
       return undefined;
     }
 
+    const filteredClassicPointCloudAssets = allPointCloudAssets?.filter((asset) =>
+      isClassicAsset(asset)
+    );
+
     const flattenedCadAssetMappings =
       pagedCadAssetMappings?.pages
         .flat()
@@ -94,7 +100,7 @@ export const useFilterOnClassicAssetsInScene = (
     const allAssetsArray = [
       ...flattenedCadAssetMappings,
       ...all360ImageAssets,
-      ...(allPointCloudAssets ?? [])
+      ...(filteredClassicPointCloudAssets ?? [])
     ];
 
     const assetMap = new Map<number, Asset>();

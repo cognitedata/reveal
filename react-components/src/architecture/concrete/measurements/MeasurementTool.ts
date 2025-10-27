@@ -18,6 +18,9 @@ import { MeasurePointDomainObject } from './point/MeasurePointDomainObject';
 import { MeasurePointCreator } from './point/MeasurePointCreator';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { updateMarker, tryCreateMeasureDiameter } from './diameter/measureDiameterToolUtils';
+import { getCircleMarker } from '../circleMarker/CircleMarkerDomainObject';
+import { updateFocusPointMarker } from './updateFocusPointMarker';
 
 const POINT_SIZE_CHANGE_FACTOR = 0.1;
 
@@ -37,6 +40,29 @@ export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
   // OVERRIDES of BaseTool
   // ==================================================
+
+  public override async onHover(event: PointerEvent): Promise<void> {
+    await updateFocusPointMarker(this, event);
+    super.onHover(event);
+  }
+
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
+    if (this.primitiveType === PrimitiveType.Diameter) {
+      if (await updateMarker(this, event)) {
+        return;
+      }
+    }
+    await super.onHoverByDebounce(event);
+  }
+
+  public override async onClick(event: PointerEvent): Promise<void> {
+    if (this.primitiveType === PrimitiveType.Diameter) {
+      if (await tryCreateMeasureDiameter(this, this.renderTarget.camera.position, event)) {
+        return;
+      }
+    }
+    await super.onClick(event);
+  }
 
   public override onActivate(): void {
     super.onActivate();
@@ -71,6 +97,13 @@ export class MeasurementTool extends PrimitiveEditTool {
   }
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    if (this.primitiveType === PrimitiveType.Diameter && event.shiftKey) {
+      const circleMarker = getCircleMarker(this.root);
+      if (circleMarker !== undefined && circleMarker.isVisible()) {
+        circleMarker.onWheel(delta);
+        return;
+      }
+    }
     const intersection = await this.getIntersection(event);
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (!(domainObject instanceof MeasurePointDomainObject)) {
@@ -86,6 +119,12 @@ export class MeasurementTool extends PrimitiveEditTool {
     const factor = 1 - Math.sign(delta) * POINT_SIZE_CHANGE_FACTOR;
     domainObject.size *= factor;
     domainObject.notify(Changes.geometry);
+  }
+
+  public override clearDragging(): void {
+    const circleMarker = getCircleMarker(this.root);
+    circleMarker?.setVisibleInteractive(false);
+    super.clearDragging();
   }
 
   // ==================================================
@@ -139,5 +178,16 @@ export class MeasurementTool extends PrimitiveEditTool {
       default:
         return undefined;
     }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public createMeasureDiameter(): MeasureCylinderDomainObject {
+    const parent = this.getOrCreateParent();
+    const domainObject = new MeasureCylinderDomainObject(PrimitiveType.Diameter);
+    parent.addChildInteractive(domainObject);
+    return domainObject;
   }
 }

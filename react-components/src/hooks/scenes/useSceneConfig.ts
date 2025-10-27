@@ -2,10 +2,13 @@ import { sceneQuery } from './sceneQuery';
 import {
   type GroundPlaneProperties,
   type Transformation3d,
-  type SceneResponse,
   type SkyboxProperties,
   type SceneModelsProperties,
-  type Scene360ImageCollectionsProperties
+  type Scene360ImageCollectionsProperties,
+  type GroundPlaneResponse,
+  type GroundPlaneEdgeResponse,
+  type SceneModelsResponse,
+  type Image360CollectionsResponse
 } from '../../components/SceneContainer/SceneFdmTypes';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
@@ -31,6 +34,11 @@ import {
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import {
+  isScene360CollectionEdge,
+  isScene3dModelEdge,
+  isSceneConfigurationProperties
+} from './sceneResponseTypeGuards';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -40,7 +48,16 @@ const DefaultScene: Scene = {
     cameraTranslationZ: 0,
     cameraEulerRotationX: 0,
     cameraEulerRotationY: 0,
-    cameraEulerRotationZ: 0
+    cameraEulerRotationZ: 0,
+    qualitySettings: {
+      cadBudget: 0,
+      pointCloudBudget: 0,
+      maxRenderResolution: 0,
+      movingCameraResolutionFactor: 0,
+      pointCloudPointSize: 0,
+      pointCloudPointShape: '',
+      pointCloudColor: ''
+    }
   },
   skybox: undefined,
   groundPlanes: [],
@@ -87,7 +104,7 @@ export const useSceneConfig = (
       >(query);
 
       const sceneResponse = queryResult;
-      const sceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
+      const sceneConfigurationProperties = extractSceneProperties(
         sceneResponse.items.myScene[0]?.properties
       );
 
@@ -103,12 +120,29 @@ export const useSceneConfig = (
           cameraTargetX: sceneConfigurationProperties.cameraTargetX,
           cameraTargetY: sceneConfigurationProperties.cameraTargetY,
           cameraTargetZ: sceneConfigurationProperties.cameraTargetZ,
-          updatedAt: sceneConfigurationProperties.updatedAt
+          updatedAt: sceneConfigurationProperties.updatedAt,
+          qualitySettings: {
+            cadBudget: sceneConfigurationProperties.cadBudget,
+            pointCloudBudget: sceneConfigurationProperties.pointCloudBudget,
+            maxRenderResolution: sceneConfigurationProperties.maxRenderResolution,
+            movingCameraResolutionFactor: sceneConfigurationProperties.movingCameraResolutionFactor,
+            pointCloudPointSize: sceneConfigurationProperties.pointCloudPointSize,
+            pointCloudPointShape: sceneConfigurationProperties.pointCloudPointShape,
+            pointCloudColor: sceneConfigurationProperties.pointCloudColor
+          }
         },
-        skybox: getSkybox(sceneResponse),
-        groundPlanes: getGroundPlanes(sceneResponse),
-        sceneModels: await getSceneModels(sceneResponse, fdmSdk),
-        image360Collections: getImageCollections(sceneResponse)
+        skybox: getSkybox(sceneResponse.items.skybox[0]?.properties),
+        groundPlanes: getGroundPlanes(
+          sceneResponse.items.groundPlanes,
+          sceneResponse.items.groundPlaneEdges
+        ),
+        sceneModels: await getSceneModels(
+          sceneResponse.items.sceneModels.filter(isScene3dModelEdge),
+          fdmSdk
+        ),
+        image360Collections: getImageCollections(
+          sceneResponse.items.image360CollectionsEdges.filter(isScene360CollectionEdge)
+        )
       };
       return scene;
     },
@@ -129,6 +163,16 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
   return await fdmViewsExist(fdmSdk, neededViews);
 }
 
+function extractSceneProperties(
+  scenesProperties: Record<string, Record<string, unknown>>
+): SceneConfigurationProperties {
+  const currentSceneProperties = scenesProperties.scene['SceneConfiguration/v1'];
+  if (!isSceneConfigurationProperties(currentSceneProperties)) {
+    throw new Error('Scene configuration properties are missing or invalid');
+  }
+  return currentSceneProperties;
+}
+
 function extractProperties<T>(object: Record<string, Record<string, T>>): T {
   const firstKey = Object.keys(object)[0];
   const secondKey = Object.keys(object[firstKey])[0];
@@ -136,11 +180,9 @@ function extractProperties<T>(object: Record<string, Record<string, T>>): T {
 }
 
 async function getSceneModels(
-  sceneResponse: SceneResponse,
+  sceneModels: SceneModelsResponse[],
   fdmSdk: FdmSDK
 ): Promise<CadOrPointCloudModel[]> {
-  const sceneModels = sceneResponse.items.sceneModels;
-
   if (sceneModels.length === 0) {
     return EMPTY_ARRAY;
   }
@@ -169,10 +211,9 @@ async function getSceneModels(
   return await Promise.all(modelPromises);
 }
 
-function getImageCollections(sceneResponse: SceneResponse): Image360Collection[] {
+function getImageCollections(sceneModels: Image360CollectionsResponse[]): Image360Collection[] {
   const imageCollections: Image360Collection[] = [];
-  if (sceneResponse.items.image360CollectionsEdges.length > 0) {
-    const sceneModels = sceneResponse.items.image360CollectionsEdges;
+  if (sceneModels.length > 0) {
     sceneModels.forEach((sceneModel) => {
       const imageCollectionProperties = extractProperties<Cdf3dImage360CollectionProperties>(
         sceneModel.properties
@@ -187,12 +228,12 @@ function getImageCollections(sceneResponse: SceneResponse): Image360Collection[]
   return imageCollections;
 }
 
-function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
+function getGroundPlanes(
+  groundPlaneResponse: GroundPlaneResponse[],
+  groundPlaneEdgeResponse: GroundPlaneEdgeResponse[]
+): GroundPlane[] {
   const groundPlanes: GroundPlane[] = [];
-  if (sceneResponse.items.groundPlanes.length > 0) {
-    const groundPlaneResponse = sceneResponse.items.groundPlanes;
-    const groundPlaneEdgeResponse = sceneResponse.items.groundPlaneEdges;
-
+  if (groundPlaneResponse.length > 0) {
     // Match groundplanes with their edges
     groundPlaneEdgeResponse.forEach((groundPlaneEdge) => {
       const mappedGroundPlane = groundPlaneResponse.find(
@@ -222,14 +263,13 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
   return groundPlanes;
 }
 
-function getSkybox(sceneResponse: SceneResponse): Skybox | undefined {
-  if (sceneResponse.items.skybox.length === 0) {
+function getSkybox(
+  skyBoxProperties: Record<string, Record<string, SkyboxProperties>> | undefined
+): Skybox | undefined {
+  if (skyBoxProperties === undefined) {
     return undefined;
   }
-
-  const { label, isSpherical, file } = extractProperties<SkyboxProperties>(
-    sceneResponse.items.skybox[0].properties
-  );
+  const { label, isSpherical, file } = extractProperties<SkyboxProperties>(skyBoxProperties);
   return {
     label,
     isSpherical,

@@ -8,13 +8,14 @@ import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/
 import { defaultRenderOptions, RenderOptions } from '../src/rendering/types';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { NumericRange } from '@reveal/utilities';
+import { CadNode } from '@reveal/cad-model';
 
 export default class BlendingTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { cadMaterialManager, pcMaterialManager, sceneHandler, model } = testFixtureComponents;
 
     if (model.geometryNode.type !== 'CadNode') {
-      return Promise.resolve();
+      return;
     }
 
     const renderOptions = { ...defaultRenderOptions, multiSampleCountHint: 4 } as RenderOptions;
@@ -27,7 +28,12 @@ export default class BlendingTestFixture extends StreamingVisualTestFixture {
 
     this.render();
 
-    const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider('0');
+    if (!(model.geometryNode instanceof CadNode)) {
+      return;
+    }
+    const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider(
+      model.geometryNode.cadModelIdentifier
+    );
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 100)),
       DefaultNodeAppearance.Ghosted

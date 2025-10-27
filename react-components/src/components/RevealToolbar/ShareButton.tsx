@@ -2,6 +2,9 @@ import { type ReactElement } from 'react';
 import { useTranslation } from '../i18n/I18n';
 import { Button, Tooltip as CogsTooltip, ShareIcon } from '@cognite/cogs.js';
 
+/**
+ * @deprecated
+ */
 export const ShareButton = (): ReactElement => {
   const { t } = useTranslation();
 
@@ -12,7 +15,7 @@ export const ShareButton = (): ReactElement => {
 
   return (
     <CogsTooltip content={t({ key: 'COPY_URL_TO_SHARE' })} placement="right">
-      <Button icon=<ShareIcon /> type="ghost" aria-label="share-button" onClick={handleShare} />
+      <Button icon={<ShareIcon />} type="ghost" aria-label="share-button" onClick={handleShare} />
     </CogsTooltip>
   );
 };
