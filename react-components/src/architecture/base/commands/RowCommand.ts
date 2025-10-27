@@ -1,10 +1,9 @@
-import type { BaseCommand } from './BaseCommand';
-import { RenderTargetCommand } from './RenderTargetCommand';
+import { BaseCommand } from './BaseCommand';
 
 /**
  * Represents a Row of commands in a row.
  */
-export class RowCommand extends RenderTargetCommand {
+export class RowCommand extends BaseCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

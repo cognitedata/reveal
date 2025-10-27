@@ -1,12 +1,11 @@
-import type { BaseCommand } from './BaseCommand';
-import { RenderTargetCommand } from './RenderTargetCommand';
+import { BaseCommand } from './BaseCommand';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
 /**
  * Represents a group of commands.
  * This is used to group commands together and display them as a single unit.
  */
-export class GroupCommand extends RenderTargetCommand {
+export class GroupCommand extends BaseCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
