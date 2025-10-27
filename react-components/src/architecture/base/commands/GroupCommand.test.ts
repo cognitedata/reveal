@@ -20,7 +20,13 @@ describe(GroupCommand.name, () => {
     ];
   };
   const createGroupCommand = (title: string, commands: BaseCommand[]): GroupCommand => {
-    const groupCommand = new GroupCommand({ untranslated: title });
+    const groupCommand = new GroupCommand({ untranslated: title }, true);
+    commands.forEach((command) => groupCommand.add(command));
+    return groupCommand;
+  };
+
+  const createRowCommand = (commands: BaseCommand[]): GroupCommand => {
+    const groupCommand = new GroupCommand(undefined, false);
     commands.forEach((command) => groupCommand.add(command));
     return groupCommand;
   };
@@ -108,5 +114,37 @@ describe(GroupCommand.name, () => {
     const groupCommand = createGroupCommand('All Visible', [visibleCommand1, visibleCommand2]);
 
     expect(groupCommand.isVisible).toBe(true);
+  });
+
+  // Tests for row functionality (isAccordion = false)
+  test('should create row command without title', () => {
+    const commands = createMockCommands();
+    const rowCommand = createRowCommand(commands);
+
+    expect(rowCommand.title).toBeUndefined();
+    expect(rowCommand.isAccordion).toBe(false);
+    expect(rowCommand.commands).toEqual(commands);
+    expect(rowCommand.hasCommands).toBe(true);
+  });
+
+  test('should create row command with empty commands', () => {
+    const rowCommand = createRowCommand([]);
+
+    expect(rowCommand.title).toBeUndefined();
+    expect(rowCommand.isAccordion).toBe(false);
+    expect(rowCommand.commands).toEqual([]);
+    expect(rowCommand.hasCommands).toBe(false);
+  });
+
+  test('should handle row command visibility correctly', () => {
+    const visibleCommand = new MockCommand1();
+    visibleCommand.isVisible = true;
+
+    const hiddenCommand = new MockCommand2();
+    hiddenCommand.isVisible = false;
+
+    const rowCommand = createRowCommand([visibleCommand, hiddenCommand]);
+
+    expect(rowCommand.isVisible).toBe(true);
   });
 });

@@ -37,7 +37,6 @@ import styled from 'styled-components';
 import { QualityWarningBannerCommand } from '../../architecture/base/concreteCommands/quality/QualityWarningBannerCommand';
 import { SetLengthUnitCommand } from '../../architecture/base/concreteCommands/units/SetLengthUnitCommand';
 import { SegmentedButtons } from './SegmentedButtons';
-import { RowCommand } from '../../architecture/base/commands/RowCommand';
 
 export function createSettingsButton(
   command: BaseCommand,
@@ -127,9 +126,6 @@ function createGroupItem(command: BaseCommand): ReactNode {
       />
     );
   }
-  if (command instanceof RowCommand) {
-    return <RowComponent key={command.uniqueId} command={command} />;
-  }
   if (command instanceof BaseOptionCommand) {
     return <DropdownButtonComponent key={command.uniqueId} command={command} />;
   }
@@ -146,14 +142,6 @@ function createGroupItem(command: BaseCommand): ReactNode {
     return <ToggleComponent key={command.uniqueId} command={command} />;
   }
   return <ButtonComponent key={command.uniqueId} command={command} />;
-}
-
-function RowComponent({ command }: { command: RowCommand }): ReactNode {
-  const { isVisible } = useCommandProps(command);
-  if (!isVisible) {
-    return null;
-  }
-  return <StyledRowComponent>{command.commands.map(createGroupItem)}</StyledRowComponent>;
 }
 
 function QualityWarningBannerComponent({
@@ -183,11 +171,14 @@ function GroupComponent({ command }: { command: GroupCommand }): ReactNode {
     return null;
   }
 
-  return (
-    <StyledAccordion expanded title={t(command.tooltip)}>
-      <StyledGroupContent>{command.commands.map(createGroupItem)}</StyledGroupContent>
-    </StyledAccordion>
-  );
+  if (command.isAccordion) {
+    return (
+      <StyledAccordion expanded title={t(command.tooltip!)}>
+        <StyledGroupContent>{command.commands.map(createGroupItem)}</StyledGroupContent>
+      </StyledAccordion>
+    );
+  }
+  return <StyledRowComponent>{command.commands.map(createGroupItem)}</StyledRowComponent>;
 }
 
 function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {

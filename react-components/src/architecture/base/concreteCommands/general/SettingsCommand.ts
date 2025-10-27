@@ -22,7 +22,6 @@ import {
 } from '../../commands/GeneralBannerCommand';
 import { GroupCommand } from '../../commands/GroupCommand';
 import { type BaseCommand } from '../../commands/BaseCommand';
-import { RowCommand } from '../../commands/RowCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -62,7 +61,7 @@ export class SettingsCommand extends BaseSettingsCommand {
       images360GroupCommands.push(new Set360IconsOpacityCommand());
       images360GroupCommands.push(new Set360IconsSectionCommand());
 
-      const rowCommand = new RowCommand();
+      const rowCommand = new GroupCommand(undefined, false);
       rowCommand.add(new Set360IconsVisibleCommand());
       rowCommand.add(new Set360IconsOccludedVisibleCommand());
 

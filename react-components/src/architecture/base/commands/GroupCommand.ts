@@ -1,25 +1,29 @@
 import { BaseCommand } from './BaseCommand';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
+import { RenderTargetCommand } from './RenderTargetCommand';
 
 /**
  * Represents a group of commands.
  * This is used to group commands together and display them as a single unit.
+ * Can be used as either a collapsible accordion (with title) or a simple row (without title).
  */
-export class GroupCommand extends BaseCommand {
+export class GroupCommand extends RenderTargetCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _title: TranslationInput;
+  private readonly _title?: TranslationInput;
+  private readonly _isAccordion: boolean;
   private _commands: BaseCommand[] = [];
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(title: TranslationInput) {
+  public constructor(title?: TranslationInput, isAccordion: boolean = true) {
     super();
     this._title = title;
+    this._isAccordion = isAccordion;
   }
 
   // ==================================================
@@ -61,11 +65,15 @@ export class GroupCommand extends BaseCommand {
   // GETTERS
   // ==================================================
 
-  public get title(): TranslationInput {
+  public get title(): TranslationInput | undefined {
     return this._title;
   }
 
-  public override get tooltip(): TranslationInput {
+  public get isAccordion(): boolean {
+    return this._isAccordion;
+  }
+
+  public override get tooltip(): TranslationInput | undefined {
     return this._title;
   }
 
