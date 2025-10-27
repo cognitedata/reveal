@@ -55,6 +55,24 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
 };
 
 /**
+ * Asset search return type, including information about the image in which the asset is found
+ */
+export type AssetHybridAnnotationImage360Info = {
+  /**
+   * Reference to the relevant asset
+   */
+  annotationInfo: ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo;
+  /**
+   * The image entity in which the asset was found
+   */
+  imageEntity: Image360<ClassicDataSourceType>;
+  /**
+   * The image revision in which the asset was found
+   */
+  imageRevision: Image360Revision<ClassicDataSourceType>;
+};
+
+/**
  * Result item from an asset annotation query
  */
 export type Image360AnnotationAssetQueryResult<T extends DataSourceType = ClassicDataSourceType> = {
@@ -216,6 +234,12 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Fetches annotations from the CDF Core Data Model
    */
+
+  getAnnotationsInfo(source: 'hybrid'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Core Data Model
+   */
+
   getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
   /**
    * Get info of assets and annotations associated with this
@@ -224,10 +248,11 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @param source What source data to pull the annotation info from. Must be `'asset'`, `'cdm'` or `'all'`
    */
   getAnnotationsInfo(
-    source: 'assets' | 'cdm' | 'all'
+    source: 'assets' | 'hybrid' | 'cdm' | 'all'
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   >;
 }

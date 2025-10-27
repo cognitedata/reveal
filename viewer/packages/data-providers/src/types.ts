@@ -11,6 +11,7 @@ import * as THREE from 'three';
 import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
@@ -62,6 +63,11 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
   getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
+  getAllImage360AnnotationInfos(
     source: 'cdm',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
@@ -72,13 +78,14 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
   getAllImage360AnnotationInfos(
-    source: 'assets' | 'cdm' | 'all',
+    source: 'assets' | 'hybrid' | 'cdm' | 'all',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   >;
 }
 

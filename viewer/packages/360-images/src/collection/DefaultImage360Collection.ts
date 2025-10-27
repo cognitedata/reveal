@@ -7,6 +7,7 @@ import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
@@ -299,12 +300,14 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
   getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
   getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
   getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
   async getAnnotationsInfo(
-    source: 'assets' | 'cdm' | 'all'
+    source: 'assets' | 'hybrid' | 'cdm' | 'all'
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   > {
     return this._image360DataProvider.getAllImage360AnnotationInfos(source, this, annotation =>
       this._annotationFilter.filter(annotation)

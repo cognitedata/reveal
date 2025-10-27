@@ -9,7 +9,8 @@ export {
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   InstanceLinkable360ImageAnnotationType,
-  AssetAnnotationImage360Info
+  AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info
 } from './src/collection/Image360Collection';
 export { Image360Facade } from './src/Image360Facade';
 export { Image360CollectionFactory } from './src/collection/Image360CollectionFactory';
