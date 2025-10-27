@@ -61,26 +61,26 @@ export class SettingsCommand extends BaseSettingsCommand {
       images360GroupCommands.push(new Set360IconsOpacityCommand());
       images360GroupCommands.push(new Set360IconsSectionCommand());
 
-      const rowCommand = new GroupCommand(undefined, false);
+      const rowCommand = new GroupCommand({ isAccordion: false });
       rowCommand.add(new Set360IconsVisibleCommand());
       rowCommand.add(new Set360IconsOccludedVisibleCommand());
 
       images360GroupCommands.push(rowCommand);
     }
 
-    const generalGroup = new GroupCommand({ untranslated: 'General' });
+    const generalGroup = new GroupCommand({ title: { untranslated: 'General' } });
     generalGroupCommands.forEach((command) => generalGroup.add(command));
     this.add(generalGroup);
 
-    const cadGroup = new GroupCommand({ untranslated: 'CAD' });
+    const cadGroup = new GroupCommand({ title: { untranslated: 'CAD' } });
     cadGroupCommands.forEach((command) => cadGroup.add(command));
     this.add(cadGroup);
 
-    const pointCloudGroup = new GroupCommand({ untranslated: 'Point cloud' });
+    const pointCloudGroup = new GroupCommand({ title: { untranslated: 'Point cloud' } });
     pointCloudGroupCommands.forEach((command) => pointCloudGroup.add(command));
     this.add(pointCloudGroup);
 
-    const images360Group = new GroupCommand({ untranslated: '360' });
+    const images360Group = new GroupCommand({ title: { untranslated: '360' } });
     images360GroupCommands.forEach((command) => images360Group.add(command));
     this.add(images360Group);
   }

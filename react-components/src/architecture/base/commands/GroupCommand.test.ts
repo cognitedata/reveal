@@ -4,7 +4,7 @@ import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand'
 import { MockActionCommand } from '#test-utils/architecture/mock-commands/MockActionCommand';
 import { MockToggleCommand } from '#test-utils/architecture/mock-commands/MockToggleCommand';
 import { MockCheckableCommand } from '#test-utils/architecture/mock-commands/MockCheckableCommand';
-import { BaseCommand } from './BaseCommand';
+import { type BaseCommand } from './BaseCommand';
 
 // Custom mock commands for testing visibility
 class MockCommand1 extends MockCommand {}
@@ -20,13 +20,13 @@ describe(GroupCommand.name, () => {
     ];
   };
   const createGroupCommand = (title: string, commands: BaseCommand[]): GroupCommand => {
-    const groupCommand = new GroupCommand({ untranslated: title }, true);
+    const groupCommand = new GroupCommand({ title: { untranslated: title } });
     commands.forEach((command) => groupCommand.add(command));
     return groupCommand;
   };
 
   const createRowCommand = (commands: BaseCommand[]): GroupCommand => {
-    const groupCommand = new GroupCommand(undefined, false);
+    const groupCommand = new GroupCommand({ isAccordion: false });
     commands.forEach((command) => groupCommand.add(command));
     return groupCommand;
   };

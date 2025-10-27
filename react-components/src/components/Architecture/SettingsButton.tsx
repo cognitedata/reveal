@@ -173,7 +173,7 @@ function GroupComponent({ command }: { command: GroupCommand }): ReactNode {
 
   if (command.isAccordion) {
     return (
-      <StyledAccordion expanded title={t(command.tooltip!)}>
+      <StyledAccordion expanded title={command.tooltip ? t(command.tooltip) : undefined}>
         <StyledGroupContent>{command.commands.map(createGroupItem)}</StyledGroupContent>
       </StyledAccordion>
     );

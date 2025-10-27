@@ -1,6 +1,11 @@
-import { BaseCommand } from './BaseCommand';
+import { type BaseCommand } from './BaseCommand';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
+
+export type GroupCommandConfiguration = {
+  title?: TranslationInput;
+  isAccordion?: boolean;
+};
 
 /**
  * Represents a group of commands.
@@ -14,13 +19,13 @@ export class GroupCommand extends RenderTargetCommand {
 
   private readonly _title?: TranslationInput;
   private readonly _isAccordion: boolean;
-  private _commands: BaseCommand[] = [];
+  private readonly _commands: BaseCommand[] = [];
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(title?: TranslationInput, isAccordion: boolean = true) {
+  public constructor({ title, isAccordion = true }: GroupCommandConfiguration) {
     super();
     this._title = title;
     this._isAccordion = isAccordion;
