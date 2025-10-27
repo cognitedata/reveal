@@ -3,13 +3,12 @@ import { type ReactElement } from 'react';
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { type GetIconFromIconNameFn } from '../advanced-tree-view-props';
 
-export const TreeViewIcon = ({
-  node,
-  getIconFromIconName
-}: {
+export type TreeViewIconProps = {
   node: TreeNodeType;
   getIconFromIconName: GetIconFromIconNameFn;
-}): ReactElement => {
+};
+
+export const TreeViewIcon = ({ node, getIconFromIconName }: TreeViewIconProps): ReactElement => {
   const Icon = getIconFromIconName(node.icon);
   return <Icon style={{ color: node.iconColor, marginTop: '2px' }} />;
 };
