@@ -60,28 +60,30 @@ export class SettingsCommand extends BaseSettingsCommand {
     if (include360Images) {
       images360GroupCommands.push(new Set360ImagesOpacityCommand());
       images360GroupCommands.push(new Set360IconsOpacityCommand());
-
       images360GroupCommands.push(new Set360IconsSectionCommand());
-      images360GroupCommands.push(
-        new RowCommand({
-          commands: [new Set360IconsVisibleCommand(), new Set360IconsOccludedVisibleCommand()]
-        })
-      );
+
+      const rowCommand = new RowCommand();
+      rowCommand.add(new Set360IconsVisibleCommand());
+      rowCommand.add(new Set360IconsOccludedVisibleCommand());
+
+      images360GroupCommands.push(rowCommand);
     }
 
-    this.add(
-      new GroupCommand({ title: { untranslated: 'General' }, commands: generalGroupCommands })
-    );
-    this.add(new GroupCommand({ title: { untranslated: 'CAD' }, commands: cadGroupCommands }));
-    this.add(
-      new GroupCommand({
-        title: { untranslated: 'Point cloud' },
-        commands: pointCloudGroupCommands
-      })
-    );
-    this.add(
-      new GroupCommand({ title: { untranslated: '360' }, commands: images360GroupCommands })
-    );
+    const generalGroup = new GroupCommand({ untranslated: 'General' });
+    generalGroupCommands.forEach((command) => generalGroup.add(command));
+    this.add(generalGroup);
+
+    const cadGroup = new GroupCommand({ untranslated: 'CAD' });
+    cadGroupCommands.forEach((command) => cadGroup.add(command));
+    this.add(cadGroup);
+
+    const pointCloudGroup = new GroupCommand({ untranslated: 'Point cloud' });
+    pointCloudGroupCommands.forEach((command) => pointCloudGroup.add(command));
+    this.add(pointCloudGroup);
+
+    const images360Group = new GroupCommand({ untranslated: '360' });
+    images360GroupCommands.forEach((command) => images360Group.add(command));
+    this.add(images360Group);
   }
 
   // ==================================================

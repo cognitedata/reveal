@@ -1,10 +1,6 @@
 import type { BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
-export type RowCommandConfiguration = {
-  commands: BaseCommand[];
-};
-
 /**
  * Represents a Row of commands in a row.
  */
@@ -13,15 +9,27 @@ export class RowCommand extends RenderTargetCommand {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _commands: BaseCommand[];
+  private _commands: BaseCommand[] = [];
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor({ commands }: RowCommandConfiguration) {
+  public constructor() {
     super();
-    this._commands = commands;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public add<T extends BaseCommand>(command: T): T {
+    if (this._commands.find((c) => c.equals(command)) !== undefined) {
+      console.error('Duplicated command given: ' + command.name);
+    } else {
+      this._commands.push(command);
+    }
+    return command;
   }
 
   // ==================================================

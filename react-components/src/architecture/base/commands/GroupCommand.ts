@@ -2,11 +2,6 @@ import type { BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 
-export type GroupCommandConfiguration = {
-  title: TranslationInput;
-  commands: BaseCommand[];
-};
-
 /**
  * Represents a group of commands.
  * This is used to group commands together and display them as a single unit.
@@ -17,16 +12,28 @@ export class GroupCommand extends RenderTargetCommand {
   // ==================================================
 
   private readonly _title: TranslationInput;
-  private readonly _commands: BaseCommand[];
+  private _commands: BaseCommand[] = [];
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor({ title, commands }: GroupCommandConfiguration) {
+  public constructor(title: TranslationInput) {
     super();
     this._title = title;
-    this._commands = commands;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public add<T extends BaseCommand>(command: T): T {
+    if (this._commands.find((c) => c.equals(command)) !== undefined) {
+      console.error('Duplicated command given: ' + command.name);
+    } else {
+      this._commands.push(command);
+    }
+    return command;
   }
 
   // ==================================================

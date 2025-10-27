@@ -10,6 +10,8 @@ import { TestSectionCommand } from './TestSectionCommand';
 
 export class TestGroupCommand extends GroupCommand {
   constructor(title: TranslationInput, commands?: BaseCommand[]) {
+    super(title);
+
     const defaultCommands = commands ?? [
       new TestButtonCommand({
         onClick: () => {}
@@ -20,7 +22,7 @@ export class TestGroupCommand extends GroupCommand {
       })
     ];
 
-    super({ title, commands: defaultCommands });
+    defaultCommands.forEach((command) => this.add(command));
   }
 
   public override get tooltip(): TranslationInput {

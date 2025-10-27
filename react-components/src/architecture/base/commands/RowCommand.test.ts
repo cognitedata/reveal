@@ -1,101 +1,97 @@
 import { describe, expect, test } from 'vitest';
-import { RowCommand, type RowCommandConfiguration } from './RowCommand';
+import { RowCommand } from './RowCommand';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
+import { MockActionCommand } from '#test-utils/architecture/mock-commands/MockActionCommand';
+import { MockToggleCommand } from '#test-utils/architecture/mock-commands/MockToggleCommand';
+import { MockCheckableCommand } from '#test-utils/architecture/mock-commands/MockCheckableCommand';
+import { BaseCommand } from './BaseCommand';
+
+// Custom mock commands for testing visibility
+class MockCommand1 extends MockCommand {}
+class MockCommand2 extends MockCommand {}
 
 describe(RowCommand.name, () => {
-  const createMockCommands = ({ count }: { count: number }): MockCommand[] => {
-    return Array.from({ length: count }, () => new MockCommand());
+  const createMockCommands = (): BaseCommand[] => {
+    return [
+      new MockCommand(),
+      new MockActionCommand(),
+      new MockToggleCommand(),
+      new MockCheckableCommand()
+    ];
   };
-  const createRowCommand = (config: RowCommandConfiguration): RowCommand => {
-    return new RowCommand(config);
+  const createRowCommand = (commands: BaseCommand[]): RowCommand => {
+    const rowCommand = new RowCommand();
+    commands.forEach((command) => rowCommand.add(command));
+    return rowCommand;
   };
 
   test('should create RowCommand with valid configuration', () => {
-    const commands = createMockCommands({ count: 3 });
-    const config: RowCommandConfiguration = {
-      commands
-    };
+    const commands = createMockCommands();
 
-    const rowCommand = createRowCommand(config);
+    const rowCommand = createRowCommand(commands);
 
     expect(rowCommand.commands).toEqual(commands);
     expect(rowCommand.hasCommands).toBe(true);
   });
 
   test('should create RowCommand with empty commands array', () => {
-    const config: RowCommandConfiguration = {
-      commands: []
-    };
-
-    const rowCommand = createRowCommand(config);
+    const rowCommand = createRowCommand([]);
 
     expect(rowCommand.commands).toEqual([]);
     expect(rowCommand.hasCommands).toBe(false);
   });
 
   test('should return correct commands array and hasCommands property', () => {
-    const commands = createMockCommands({ count: 3 });
-    const rowCommand = createRowCommand({
-      commands
-    });
+    const commands = createMockCommands();
+    const rowCommand = createRowCommand(commands);
 
     expect(rowCommand.commands).toEqual(commands);
-    expect(rowCommand.commands).toHaveLength(3);
+    expect(rowCommand.commands).toHaveLength(4);
     expect(rowCommand.hasCommands).toBe(true);
 
-    const emptyRowCommand = createRowCommand({
-      commands: []
-    });
+    const emptyRowCommand = createRowCommand([]);
 
     expect(emptyRowCommand.hasCommands).toBe(false);
   });
 
   test('should be visible when at least one command is visible', () => {
-    const visibleCommand = new MockCommand();
+    const visibleCommand = new MockCommand1();
     visibleCommand.isVisible = true;
 
-    const hiddenCommand = new MockCommand();
+    const hiddenCommand = new MockCommand2();
     hiddenCommand.isVisible = false;
 
-    const rowCommand = createRowCommand({
-      commands: [visibleCommand, hiddenCommand]
-    });
+    const rowCommand = createRowCommand([visibleCommand, hiddenCommand]);
 
     expect(rowCommand.isVisible).toBe(true);
   });
 
   test('should be hidden when all commands are hidden', () => {
-    const hiddenCommand1 = new MockCommand();
+    const hiddenCommand1 = new MockCommand1();
     hiddenCommand1.isVisible = false;
 
-    const hiddenCommand2 = new MockCommand();
+    const hiddenCommand2 = new MockCommand2();
     hiddenCommand2.isVisible = false;
 
-    const rowCommand = createRowCommand({
-      commands: [hiddenCommand1, hiddenCommand2]
-    });
+    const rowCommand = createRowCommand([hiddenCommand1, hiddenCommand2]);
 
     expect(rowCommand.isVisible).toBe(false);
   });
 
   test('should be hidden when no commands exist', () => {
-    const rowCommand = createRowCommand({
-      commands: []
-    });
+    const rowCommand = createRowCommand([]);
 
     expect(rowCommand.isVisible).toBe(false);
   });
 
   test('should be visible when all commands are visible', () => {
-    const visibleCommand1 = new MockCommand();
+    const visibleCommand1 = new MockCommand1();
     visibleCommand1.isVisible = true;
 
-    const visibleCommand2 = new MockCommand();
+    const visibleCommand2 = new MockCommand2();
     visibleCommand2.isVisible = true;
 
-    const rowCommand = createRowCommand({
-      commands: [visibleCommand1, visibleCommand2]
-    });
+    const rowCommand = createRowCommand([visibleCommand1, visibleCommand2]);
 
     expect(rowCommand.isVisible).toBe(true);
   });
