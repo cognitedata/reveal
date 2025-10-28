@@ -3,30 +3,47 @@
  */
 
 import { CogniteClient, DirectRelationReference, FileInfo } from '@cognite/sdk';
-import { DataModelsSdk } from '../DataModelsSdk';
-import { get360BatchCollectionQuery } from './descriptor-providers/datamodels/cdm/get360CdmBatchCollectionQuery';
-import type { Historical360ImageSet, Image360Descriptor, Image360FileDescriptor, Image360RevisionId } from '../types';
-import type { DMDataSourceType } from '../DataSourceType';
+import { DataModelsSdk } from '../../../../DataModelsSdk';
+import { get360BatchCollectionQuery } from './get360CdmBatchCollectionQuery';
+import type {
+  Historical360ImageSet,
+  Image360Descriptor,
+  Image360FileDescriptor,
+  Image360RevisionId
+} from '../../../../types';
+import type { DMDataSourceType } from '../../../../DataSourceType';
 import chunk from 'lodash/chunk';
 import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { DMInstanceRef } from '@reveal/utilities';
 import { Euler, Matrix4 } from 'three';
+import type { ImageInstanceResult, ImageResultProperties, CollectionInstanceResult, CoreDmFileResponse } from './types';
 
-type ImageInstanceResult = any;
-type ImageResultProperties = any;
+// Batch query result type - similar to single query but with plural 'image_collections'
+interface BatchQueryResult {
+  image_collections: CollectionInstanceResult[];
+  images: ImageInstanceResult[];
+  stations?: Array<{ externalId: string; space: string }>;
+  nextCursor?: Record<string, string>;
+}
 
-type CoreDmFileResponse = {
-  data: {
-    items: FileInfo[];
-  };
-};
+interface FileInfoWithInstanceId extends FileInfo {
+  instanceId?: DirectRelationReference;
+}
+
+// Note: DMS properties are returned as string | number | DMInstanceRef (which is DirectRelationReference)
+// We need to handle this flexibility and convert to the correct types when needed
+type DmsPropertyValue = string | number | DMInstanceRef;
 
 /**
  * Coordinates batched loading of multiple 360 image collections.
  * Instead of loading each collection individually (1000 queries for 1000 collections),
- * it batches them into groups and makes far fewer queries (e.g., 10 queries for 1000 collections).
+ * it batches them into groups and makes far fewer queries (e.g., 20 queries for 1000 collections).
+ *
+ * Note: DMS API has a limit of 10,000 items per query. With a batch size of 50 collections,
+ * this allows ~200 images per collection on average. If your collections have more images,
+ * consider reducing the batch size.
  */
 export class BatchCollectionLoader {
   private readonly _dmsSdk: DataModelsSdk;
@@ -35,10 +52,11 @@ export class BatchCollectionLoader {
   private _pendingBatch: Array<{
     identifier: { externalId: string; space: string };
     resolve: (descriptors: Historical360ImageSet<DMDataSourceType>[]) => void;
-    reject: (error: any) => void;
+    reject: (error: unknown) => void;
   }> = [];
   private _batchTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly _batchDelayMs: number;
+  private _isProcessing = false; // Flag to ensure sequential batch execution
 
   constructor(
     dmsSdk: DataModelsSdk,
@@ -47,16 +65,18 @@ export class BatchCollectionLoader {
   ) {
     this._dmsSdk = dmsSdk;
     this._cogniteSdk = cogniteSdk;
-    this._batchSize = options?.batchSize ?? 100; // Load up to 100 collections per query
-    this._batchDelayMs = options?.batchDelayMs ?? 50; // Wait 50ms to accumulate requests
+    this._batchSize = options?.batchSize ?? 20; // Load up to 20 collections per query (allows ~200 images per collection with 10k DMS limit)
+    this._batchDelayMs = options?.batchDelayMs ?? 100; // Wait 100ms to accumulate requests
   }
 
   /**
    * Request descriptors for a collection. This will be batched with other concurrent requests.
+   * Batches are processed sequentially to avoid overwhelming the API.
    */
-  public async getCollectionDescriptors(
-    identifier: { externalId: string; space: string }
-  ): Promise<Historical360ImageSet<DMDataSourceType>[]> {
+  public async getCollectionDescriptors(identifier: {
+    externalId: string;
+    space: string;
+  }): Promise<Historical360ImageSet<DMDataSourceType>[]> {
     return new Promise((resolve, reject) => {
       this._pendingBatch.push({ identifier, resolve, reject });
 
@@ -65,16 +85,41 @@ export class BatchCollectionLoader {
         clearTimeout(this._batchTimer);
       }
 
-      // If we've hit the batch size, execute immediately
+      // If we've hit the batch size, execute immediately (if not already processing)
       if (this._pendingBatch.length >= this._batchSize) {
-        void this.executeBatch();
+        void this.tryExecuteBatch();
       } else {
         // Otherwise, wait a bit to accumulate more requests
         this._batchTimer = setTimeout(() => {
-          void this.executeBatch();
+          void this.tryExecuteBatch();
         }, this._batchDelayMs);
       }
     });
+  }
+
+  /**
+   * Try to execute a batch. If already processing, this will be a no-op.
+   * The next batch will be picked up when the current one finishes.
+   */
+  private async tryExecuteBatch(): Promise<void> {
+    if (this._isProcessing || this._pendingBatch.length === 0) {
+      return;
+    }
+
+    this._isProcessing = true;
+    try {
+      await this.executeBatch();
+    } finally {
+      this._isProcessing = false;
+
+      // If there are more pending requests, process the next batch
+      if (this._pendingBatch.length > 0) {
+        // Small delay before next batch to avoid rapid-fire requests
+        setTimeout(() => {
+          void this.tryExecuteBatch();
+        }, 50);
+      }
+    }
   }
 
   private async executeBatch(): Promise<void> {
@@ -88,15 +133,14 @@ export class BatchCollectionLoader {
     const collectionRefs = batch.map(item => item.identifier);
 
     try {
-      console.log(`🚀 Batching ${batch.length} collection queries into 1 DMS query`);
-
       // Execute batch query directly - no throttling needed
       // The batching itself (10 queries instead of 1000) prevents API overload
       const query = get360BatchCollectionQuery(collectionRefs);
+
       const result = await this._dmsSdk.queryNodesAndEdges(query);
 
       // Group results by collection
-      const resultsByCollection = await this.groupResultsByCollection(result, collectionRefs);
+      const resultsByCollection = await this.groupResultsByCollection(result);
 
       // Resolve each request with its specific results
       batch.forEach(({ identifier, resolve }) => {
@@ -107,22 +151,27 @@ export class BatchCollectionLoader {
           resolve(descriptors);
         } else {
           // Collection not found
+          console.warn(`⚠️  Collection not found: ${key}`);
           resolve([]);
         }
       });
     } catch (error) {
       // If batch query fails, reject all requests
+      console.error('❌ Batch query failed:', error);
       batch.forEach(({ reject }) => reject(error));
     }
   }
 
   private async groupResultsByCollection(
-    result: any,
-    collectionRefs: Array<{ externalId: string; space: string }>
+    result: BatchQueryResult
   ): Promise<Map<string, Historical360ImageSet<DMDataSourceType>[]>> {
     const grouped = new Map<string, Historical360ImageSet<DMDataSourceType>[]>();
 
     if (!result.image_collections || !result.images) {
+      console.warn('⚠️  Missing image_collections or images in result:', {
+        hasCollections: !!result.image_collections,
+        hasImages: !!result.images
+      });
       return grouped;
     }
 
@@ -132,9 +181,9 @@ export class BatchCollectionLoader {
     // Group images by their collection
     const imagesByCollection = new Map<string, ImageInstanceResult[]>();
 
-    result.images.forEach((image: ImageInstanceResult, index: number) => {
+    result.images.forEach(image => {
       const collectionRef = image.properties?.cdf_cdm?.['Cognite360Image/v1']?.collection360;
-      if (collectionRef) {
+      if (collectionRef && typeof collectionRef === 'object' && 'externalId' in collectionRef) {
         const key = `${collectionRef.externalId}:${collectionRef.space}`;
         if (!imagesByCollection.has(key)) {
           imagesByCollection.set(key, []);
@@ -144,7 +193,7 @@ export class BatchCollectionLoader {
     });
 
     // Process each collection
-    result.image_collections.forEach((collection: any) => {
+    result.image_collections.forEach(collection => {
       const collectionKey = `${collection.externalId}:${collection.space}`;
       const collectionImages = imagesByCollection.get(collectionKey) || [];
 
@@ -154,18 +203,16 @@ export class BatchCollectionLoader {
       }
 
       const collectionId = collection.externalId;
-      const collectionLabel = collection.properties?.cdf_cdm?.['Cognite360ImageCollection/v1']?.name as string;
+      const name = collection.properties?.cdf_cdm?.['Cognite360ImageCollection/v1']?.name;
+      const collectionLabel = typeof name === 'string' ? name : typeof name === 'number' ? String(name) : undefined;
 
       // Get file descriptors for this collection's images
-      const fileDescriptorsForCollection = this.getFileDescriptorsForImages(
-        collectionImages,
-        allFileDescriptors
-      );
+      const fileDescriptorsForCollection = this.getFileDescriptorsForImages(collectionImages, allFileDescriptors);
 
       // Create Historical360ImageSet
       const historicalSets = this.createHistoricalImageSets(
         collectionId,
-        collectionLabel,
+        collectionLabel ?? collectionId,
         collectionImages,
         fileDescriptorsForCollection
       );
@@ -178,49 +225,68 @@ export class BatchCollectionLoader {
 
   private async getFileDescriptorsForBatch(images: ImageInstanceResult[]): Promise<Map<string, FileInfo>> {
     const imageProps = images.map(image => image.properties.cdf_cdm['Cognite360Image/v1']);
-    const cubeMapFileIds = imageProps.flatMap(imageProp => [
-      imageProp.front as DirectRelationReference,
-      imageProp.back as DirectRelationReference,
-      imageProp.left as DirectRelationReference,
-      imageProp.right as DirectRelationReference,
-      imageProp.top as DirectRelationReference,
-      imageProp.bottom as DirectRelationReference
-    ]);
+    const cubeMapFileIds = imageProps.flatMap(imageProp => {
+      const faces = [imageProp.front, imageProp.back, imageProp.left, imageProp.right, imageProp.top, imageProp.bottom];
+      return faces.filter((face): face is DirectRelationReference => typeof face === 'object' && 'externalId' in face);
+    });
 
-    // Batch file requests - 1000 per batch as per CDF API limits
-    const batchSize = 1000;
+    // Batch file requests - reduce to 100 per batch to avoid timeout
+    // The /files/byids endpoint seems to have performance issues with large batches
+    const batchSize = 100;
     const batches = chunk(cubeMapFileIds, batchSize);
 
     const fileInfos: FileInfo[] = [];
 
     // Process batches sequentially
-    for (const batch of batches) {
-      const batchFileInfos = await this.getCdmFiles(batch);
-      fileInfos.push(...batchFileInfos);
+    for (let i = 0; i < batches.length; i++) {
+      const batch = batches[i];
+
+      try {
+        const batchFileInfos = await this.getCdmFiles(batch);
+        fileInfos.push(...batchFileInfos);
+      } catch (error) {
+        console.error(`❌ Failed to fetch file batch ${i + 1}/${batches.length}:`, error);
+        throw error;
+      }
     }
 
-    // Create map for quick lookup
+    // Create map for quick lookup by externalId:space
+    // DMS DirectRelationReference uses { space: "...", externalId: "..." }
+    // where externalId is a string UUID, not a numeric ID
     const fileMap = new Map<string, FileInfo>();
+
     fileInfos.forEach(file => {
-      const key = `${file.externalId}:${(file as any).space || 'cdf_cdm'}`;
-      fileMap.set(key, file);
+      // The /files/byids response includes the instanceId (DirectRelationReference) in the file object
+      const fileWithInstanceId = file as FileInfoWithInstanceId;
+      const instanceId = fileWithInstanceId.instanceId;
+
+      if (instanceId) {
+        // Use the instanceId from the response to create the key
+        const key = `${instanceId.externalId}:${instanceId.space}`;
+        fileMap.set(key, file);
+      } else {
+        console.warn(`⚠️  File ${file.id} missing instanceId in response`);
+      }
     });
 
     return fileMap;
   }
 
-  private getFileDescriptorsForImages(
-    images: ImageInstanceResult[],
-    fileMap: Map<string, FileInfo>
-  ): FileInfo[][] {
+  private getFileDescriptorsForImages(images: ImageInstanceResult[], fileMap: Map<string, FileInfo>): FileInfo[][] {
     return images.map(image => {
       const props = image.properties.cdf_cdm['Cognite360Image/v1'];
       const faces = [props.front, props.back, props.left, props.right, props.top, props.bottom];
 
-      return faces.map(face => {
-        const key = `${(face as DirectRelationReference).externalId}:${(face as DirectRelationReference).space}`;
-        return fileMap.get(key)!;
-      }).filter(f => f !== undefined);
+      const faceFiles = faces
+        .filter((face): face is DirectRelationReference => typeof face === 'object' && 'externalId' in face)
+        .map(ref => {
+          // Create the same key format used in the file map
+          const key = `${ref.externalId}:${ref.space}`;
+          return fileMap.get(key);
+        })
+        .filter((f): f is FileInfo => f !== undefined);
+
+      return faceFiles;
     });
   }
 
@@ -238,12 +304,16 @@ export class BatchCollectionLoader {
       .map(([image, fileDescriptors]) => ({ image, fileDescriptors }));
 
     const [imagesWithoutStation, imagesWithStation] = partition(imagesGroupedWithFileDescriptors, image => {
-      return image.image.properties.cdf_cdm['Cognite360Image/v1'].station360 === undefined;
+      const station = image.image.properties.cdf_cdm['Cognite360Image/v1'].station360;
+      return !station || !(typeof station === 'object' && 'externalId' in station);
     });
 
     const groups = groupBy(imagesWithStation, imageResult => {
-      const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360 as DMInstanceRef;
-      return `${station.externalId}-${station.space}`;
+      const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360;
+      if (station && typeof station === 'object' && 'externalId' in station) {
+        return `${station.externalId}-${station.space}`;
+      }
+      return 'unknown';
     });
 
     return Object.values(groups)
@@ -275,7 +345,7 @@ export class BatchCollectionLoader {
         )
       ),
       label: '',
-      transform: this.getRevisionTransform(mainImagePropsArray[0] as any)
+      transform: this.getRevisionTransform(mainImagePropsArray[0])
     };
   }
 
@@ -284,10 +354,12 @@ export class BatchCollectionLoader {
     imageProps: ImageResultProperties,
     fileInfos: FileInfo[]
   ): Image360Descriptor<DMDataSourceType> {
+    const timestamp = imageProps.takenAt;
     return {
       id: revisionId,
       faceDescriptors: this.getFaceDescriptors(fileInfos),
-      timestamp: imageProps.takenAt as string
+      timestamp:
+        typeof timestamp === 'string' ? timestamp : typeof timestamp === 'number' ? String(timestamp) : undefined
     };
   }
 
@@ -302,18 +374,24 @@ export class BatchCollectionLoader {
     ] as Image360FileDescriptor[];
   }
 
-  private getRevisionTransform(revision: {
-    translationX: number;
-    translationY: number;
-    translationZ: number;
-    eulerRotationX: number;
-    eulerRotationY: number;
-    eulerRotationZ: number;
-  }): Matrix4 {
-    const [x, y, z] = [revision.translationX, revision.translationY, revision.translationZ];
+  private getRevisionTransform(revision: ImageResultProperties): Matrix4 {
+    // Convert DmsPropertyValue to number
+    const toNumber = (value: DmsPropertyValue): number => {
+      return typeof value === 'number' ? value : parseFloat(String(value));
+    };
+
+    const [x, y, z] = [
+      toNumber(revision.translationX),
+      toNumber(revision.translationY),
+      toNumber(revision.translationZ)
+    ];
     const translation = new Matrix4().makeTranslation(x, z, -y);
 
-    const [rx, ry, rz] = [revision.eulerRotationX, revision.eulerRotationY, revision.eulerRotationZ];
+    const [rx, ry, rz] = [
+      toNumber(revision.eulerRotationX),
+      toNumber(revision.eulerRotationY),
+      toNumber(revision.eulerRotationZ)
+    ];
     const eulerRotation = new Euler(rx, rz, -ry, 'XYZ');
     const rotation = new Matrix4().makeRotationFromEuler(eulerRotation);
 
@@ -329,9 +407,10 @@ export class BatchCollectionLoader {
       })) as CoreDmFileResponse;
 
       return res.data.items;
-    } catch (error: any) {
-      throw new Error(`Failed to fetch CDM files: ${error.message || error}`);
+    } catch (error: unknown) {
+      console.error(`❌ CDM files API error:`, error);
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch CDM files: ${message}`);
     }
   }
 }
-

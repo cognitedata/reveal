@@ -31,16 +31,32 @@ type Event360Filter = {
   station_name?: string;
 };
 
+import { BatchEventCollectionLoader } from './BatchEventCollectionLoader';
+
 export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
-  constructor(client: CogniteClient) {
+  private readonly _batchLoader: BatchEventCollectionLoader | undefined;
+  private readonly _useBatching: boolean;
+
+  constructor(client: CogniteClient, options?: { useBatching?: boolean; batchLoader?: BatchEventCollectionLoader }) {
     this._client = client;
+    this._useBatching = options?.useBatching ?? true; // Enable batching by default
+
+    if (this._useBatching) {
+      this._batchLoader = options?.batchLoader ?? new BatchEventCollectionLoader(client);
+    }
   }
 
   public async get360ImageDescriptors(
     metadataFilter: Metadata,
     preMultipliedRotation: boolean
   ): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
+    // Use batch loader if enabled
+    if (this._useBatching && this._batchLoader) {
+      return this._batchLoader.getCollectionDescriptors(metadataFilter, preMultipliedRotation);
+    }
+
+    // Fall back to individual query (for backward compatibility or when batching is disabled)
     const [events, files] = await Promise.all([
       this.listEvents({ metadata: metadataFilter }),
       this.listFiles({ metadata: metadataFilter, uploaded: true })

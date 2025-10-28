@@ -7,13 +7,12 @@ const coreDmSpace = 'cdf_cdm';
 /**
  * Creates a DMS query to fetch multiple 360 image collections in a single request.
  * This is much more efficient than making individual queries per collection.
- * 
+ *
  * @param collectionRefs - Array of collection identifiers to fetch
  * @returns DMS query that fetches all collections and their images in one request
  */
-export function get360BatchCollectionQuery(
-  collectionRefs: Array<{ externalId: string; space: string }>
-) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function get360BatchCollectionQuery(collectionRefs: Array<{ externalId: string; space: string }>) {
   // Create OR filter for multiple collections
   const collectionFilters = collectionRefs.map(ref => ({
     and: [
@@ -55,7 +54,7 @@ export function get360BatchCollectionQuery(
             identifier: 'collection360'
           }
         },
-        limit: 10000 * collectionRefs.length // Scale limit with number of collections
+        limit: 10000 // DMS API max limit
       },
       stations: {
         nodes: {
@@ -71,7 +70,7 @@ export function get360BatchCollectionQuery(
           },
           direction: 'outwards'
         },
-        limit: 10000 * collectionRefs.length
+        limit: 10000 // DMS API max limit
       }
     },
     select: {
@@ -136,4 +135,3 @@ export function get360BatchCollectionQuery(
     }
   } as const;
 }
-

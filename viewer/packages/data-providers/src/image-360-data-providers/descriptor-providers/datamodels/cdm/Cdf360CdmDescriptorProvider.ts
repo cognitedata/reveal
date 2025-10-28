@@ -22,24 +22,13 @@ import partition from 'lodash/partition';
 import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
 import { DMDataSourceType } from '../../../../DataSourceType';
 import { DMInstanceRef } from '@reveal/utilities';
-import { BatchCollectionLoader } from '../../../BatchCollectionLoader';
-
-type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
-
-type ImageResult = QueryResult['images'];
-type ImageInstanceResult = QueryResult['images'][number];
-type ImageResultProperties = ImageInstanceResult['properties']['cdf_cdm']['Cognite360Image/v1'];
+import { BatchCollectionLoader } from './BatchCollectionLoader';
+import type { QueryResult, ImageResult, ImageInstanceResult, ImageResultProperties, CoreDmFileResponse } from './types';
 
 type ExhaustedQueryResult = {
   image_collection: QueryResult['image_collection'];
   images: QueryResult['images'];
   stations: QueryResult['stations'];
-};
-
-type CoreDmFileResponse = {
-  data: {
-    items: FileInfo[];
-  };
 };
 
 export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<DMDataSourceType> {
@@ -164,7 +153,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
     ]);
 
     // Batch file requests - 1000 per batch as per CDF API limits
-    const batchSize = 1000;
+    const batchSize = 100;
     const batches = chunk(cubeMapFileIds, batchSize);
 
     const fileInfos: FileInfo[] = [];
@@ -202,7 +191,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
         )
       ),
       label: '',
-      transform: this.getRevisionTransform(mainImagePropsArray[0] as any)
+      transform: this.getRevisionTransform(mainImagePropsArray[0])
     };
   }
 
@@ -253,26 +242,35 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
     }
   }
 
-  private getRevisionTransform(revision: {
-    translationX: number;
-    translationY: number;
-    translationZ: number;
-    eulerRotationX: number;
-    eulerRotationY: number;
-    eulerRotationZ: number;
-  }): Matrix4 {
+  private getRevisionTransform(revision: ImageResultProperties): Matrix4 {
     const transform = getTranslation();
     transform.multiply(getEulerRotation());
     return transform;
 
     function getEulerRotation(): Matrix4 {
-      const [x, y, z] = [revision.eulerRotationX, revision.eulerRotationY, revision.eulerRotationZ];
+      // Convert DMS property values to numbers
+      const toNumber = (value: string | number | DMInstanceRef): number => {
+        return typeof value === 'number' ? value : parseFloat(String(value));
+      };
+      const [x, y, z] = [
+        toNumber(revision.eulerRotationX),
+        toNumber(revision.eulerRotationY),
+        toNumber(revision.eulerRotationZ)
+      ];
       const eulerRotation = new Euler(x, z, -y, 'XYZ');
       return new Matrix4().makeRotationFromEuler(eulerRotation);
     }
 
     function getTranslation(): Matrix4 {
-      const [x, y, z] = [revision.translationX, revision.translationY, revision.translationZ];
+      // Convert DMS property values to numbers
+      const toNumber = (value: string | number | DMInstanceRef): number => {
+        return typeof value === 'number' ? value : parseFloat(String(value));
+      };
+      const [x, y, z] = [
+        toNumber(revision.translationX),
+        toNumber(revision.translationY),
+        toNumber(revision.translationZ)
+      ];
       return new Matrix4().makeTranslation(x, z, -y);
     }
   }
@@ -289,8 +287,8 @@ async function getCdmFiles(sdk: CogniteClient, identifiers: DirectRelationRefere
     })) as CoreDmFileResponse;
 
     return res.data.items;
-  } catch (error: any) {
-    // Add more context to the error
-    throw new Error(`Failed to fetch CDM files: ${error.message || error}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to fetch CDM files: ${message}`);
   }
 }
