@@ -10,6 +10,7 @@ import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import { MathUtils, Matrix4, Vector3 } from 'three';
 import { ClassicDataSourceType } from '../../../DataSourceType';
+import { BATCH_DELAY_MS, BATCH_SIZE } from '../../../utilities/constants';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -41,13 +42,13 @@ export class BatchEventCollectionLoader {
     reject: (error: unknown) => void;
   }> = [];
   private _batchTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly _batchDelayMs: number;
+  private readonly _batchDelay: number;
   private _isProcessing = false; // Flag to ensure sequential batch execution
 
-  constructor(client: CogniteClient, options?: { batchSize?: number; batchDelayMs?: number }) {
+  constructor(client: CogniteClient) {
     this._client = client;
-    this._batchSize = options?.batchSize ?? 50; // Load up to 50 site_ids per query
-    this._batchDelayMs = options?.batchDelayMs ?? 50; // Wait 50ms to accumulate requests
+    this._batchSize = BATCH_SIZE;
+    this._batchDelay = BATCH_DELAY_MS;
   }
 
   /**
@@ -78,7 +79,7 @@ export class BatchEventCollectionLoader {
         // Otherwise, wait a bit to accumulate more requests
         this._batchTimer = setTimeout(() => {
           void this.tryExecuteBatch();
-        }, this._batchDelayMs);
+        }, this._batchDelay);
       }
     });
   }

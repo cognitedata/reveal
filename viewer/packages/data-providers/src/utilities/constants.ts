@@ -41,3 +41,6 @@ export const COGNITE_360_IMAGE_SOURCE = {
   version: 'v1',
   type: 'view'
 } as const satisfies ViewReference;
+
+export const BATCH_SIZE = 20;
+export const BATCH_DELAY_MS = 50;

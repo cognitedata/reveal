@@ -231,44 +231,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
     };
   };
 
-  test('should fetch 360 image descriptors without batching', async () => {
-    const sdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('query')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(mock))
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(createMockFiles()))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const provider = new Cdf360CdmDescriptorProvider(sdkMock.object(), { useBatching: false });
-
-    const descriptors = await provider.get360ImageDescriptors(
-      {
-        source: 'cdm',
-        space: 'christjt-test-system-360',
-        image360CollectionExternalId: 'c_RC_2'
-      },
-      true
-    );
-
-    expect(descriptors.length).toBe(3);
-    expect(descriptors[0].collectionId).toBe('test_image_1');
-    expect(descriptors[0].imageRevisions).toHaveLength(1);
-  });
-
-  test('should fetch 360 image descriptors with batching enabled', async () => {
+  test('should fetch 360 image descriptors with batching', async () => {
     const sdkMock = new Mock<CogniteClient>()
       .setup(instance =>
         instance.post(
@@ -300,19 +263,19 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
       .setup(instance => instance.project)
       .returns('test-project');
 
-    const provider = new Cdf360CdmDescriptorProvider(sdkMock.object(), { useBatching: true });
+    const provider = new Cdf360CdmDescriptorProvider(sdkMock.object());
 
     const descriptors = await provider.get360ImageDescriptors(
       {
         source: 'cdm',
-        space: 'christjt-test-system-360',
-        image360CollectionExternalId: 'c_RC_2'
+        space: 'test_space',
+        image360CollectionExternalId: 'test_collection'
       },
       true
     );
 
     expect(descriptors.length).toBe(3);
-    expect(descriptors[0].collectionId).toBe('test_image_1');
+    expect(descriptors[0].collectionId).toBe('test_collection');
     expect(descriptors[0].imageRevisions).toHaveLength(1);
   });
 
@@ -348,25 +311,25 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
       .setup(instance => instance.project)
       .returns('test-project');
 
-    // Create two providers sharing the same batch loader
-    const provider1 = new Cdf360CdmDescriptorProvider(sdkMock.object(), { useBatching: true });
-    const provider2 = new Cdf360CdmDescriptorProvider(sdkMock.object(), { useBatching: true });
+    // Create two providers - each will have its own batch loader by default
+    const provider1 = new Cdf360CdmDescriptorProvider(sdkMock.object());
+    const provider2 = new Cdf360CdmDescriptorProvider(sdkMock.object());
 
     // Request from both providers simultaneously
     const [descriptors1, descriptors2] = await Promise.all([
       provider1.get360ImageDescriptors(
         {
           source: 'cdm',
-          space: 'christjt-test-system-360',
-          image360CollectionExternalId: 'c_RC_2'
+          space: 'test_space',
+          image360CollectionExternalId: 'test_collection'
         },
         true
       ),
       provider2.get360ImageDescriptors(
         {
           source: 'cdm',
-          space: 'christjt-test-system-360',
-          image360CollectionExternalId: 'c_RC_2'
+          space: 'test_space',
+          image360CollectionExternalId: 'test_collection'
         },
         true
       )
@@ -401,7 +364,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
       .setup(instance => instance.project)
       .returns('test-project');
 
-    const provider = new Cdf360CdmDescriptorProvider(sdkMock.object(), { useBatching: true });
+    const provider = new Cdf360CdmDescriptorProvider(sdkMock.object());
 
     const descriptors = await provider.get360ImageDescriptors(
       {
@@ -424,7 +387,18 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
           It.IsAny()
         )
       )
-      .returns(Promise.resolve(mock))
+      .returns(
+        Promise.resolve({
+          ...mock,
+          data: {
+            items: {
+              image_collections: mock.data.items.image_collection,
+              images: mock.data.items.images,
+              stations: mock.data.items.stations
+            }
+          }
+        })
+      )
       .setup(instance =>
         instance.post(
           It.Is((path: string) => path.includes('files')),
@@ -442,8 +416,8 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
     const descriptors = await provider.get360ImageDescriptors(
       {
         source: 'cdm',
-        space: 'christjt-test-system-360',
-        image360CollectionExternalId: 'c_RC_2'
+        space: 'test_space',
+        image360CollectionExternalId: 'test_collection'
       },
       true
     );

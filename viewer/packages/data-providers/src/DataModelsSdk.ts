@@ -22,7 +22,6 @@ export class DataModelsSdk {
     query: T,
     nextCursor?: QueryNextCursors<T>
   ): Promise<QueryResult<T>> {
-    // Direct query - batching is now handled at a higher level by BatchCollectionLoader
     const result = await this._sdk.post<{ items: any; nextCursor: any }>(this._queryEndpoint, {
       data: { cursors: nextCursor, ...query }
     });

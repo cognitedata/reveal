@@ -4,7 +4,7 @@
 
 import { CogniteClient, DirectRelationReference, FileInfo } from '@cognite/sdk';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
-import { get360BatchCollectionQuery } from './get360CdmBatchCollectionQuery';
+import { get360BatchCollectionQuery } from './get360CdmCollectionsQuery';
 import type {
   Historical360ImageSet,
   Image360Descriptor,
@@ -19,14 +19,14 @@ import partition from 'lodash/partition';
 import { DMInstanceRef } from '@reveal/utilities';
 import { Euler, Matrix4 } from 'three';
 import type { ImageInstanceResult, ImageResultProperties, CollectionInstanceResult, CoreDmFileResponse } from './types';
+import { BATCH_SIZE, BATCH_DELAY_MS } from '../../../../utilities/constants';
 
-// Batch query result type - similar to single query but with plural 'image_collections'
-interface BatchQueryResult {
+type BatchQueryResult = {
   image_collections: CollectionInstanceResult[];
   images: ImageInstanceResult[];
   stations?: Array<{ externalId: string; space: string }>;
   nextCursor?: Record<string, string>;
-}
+};
 
 interface FileInfoWithInstanceId extends FileInfo {
   instanceId?: DirectRelationReference;
@@ -55,18 +55,14 @@ export class BatchCollectionLoader {
     reject: (error: unknown) => void;
   }> = [];
   private _batchTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly _batchDelayMs: number;
+  private readonly _batchDelay: number;
   private _isProcessing = false; // Flag to ensure sequential batch execution
 
-  constructor(
-    dmsSdk: DataModelsSdk,
-    cogniteSdk: CogniteClient,
-    options?: { batchSize?: number; batchDelayMs?: number }
-  ) {
+  constructor(dmsSdk: DataModelsSdk, cogniteSdk: CogniteClient) {
     this._dmsSdk = dmsSdk;
     this._cogniteSdk = cogniteSdk;
-    this._batchSize = options?.batchSize ?? 20; // Load up to 20 collections per query (allows ~200 images per collection with 10k DMS limit)
-    this._batchDelayMs = options?.batchDelayMs ?? 100; // Wait 100ms to accumulate requests
+    this._batchSize = BATCH_SIZE;
+    this._batchDelay = BATCH_DELAY_MS;
   }
 
   /**
@@ -92,7 +88,7 @@ export class BatchCollectionLoader {
         // Otherwise, wait a bit to accumulate more requests
         this._batchTimer = setTimeout(() => {
           void this.tryExecuteBatch();
-        }, this._batchDelayMs);
+        }, this._batchDelay);
       }
     });
   }
@@ -151,13 +147,13 @@ export class BatchCollectionLoader {
           resolve(descriptors);
         } else {
           // Collection not found
-          console.warn(`⚠️  Collection not found: ${key}`);
+          console.warn(`Collection not found: ${key}`);
           resolve([]);
         }
       });
     } catch (error) {
       // If batch query fails, reject all requests
-      console.error('❌ Batch query failed:', error);
+      console.error('Batch query failed:', error);
       batch.forEach(({ reject }) => reject(error));
     }
   }
@@ -168,7 +164,7 @@ export class BatchCollectionLoader {
     const grouped = new Map<string, Historical360ImageSet<DMDataSourceType>[]>();
 
     if (!result.image_collections || !result.images) {
-      console.warn('⚠️  Missing image_collections or images in result:', {
+      console.warn('Missing image_collections or images in result:', {
         hasCollections: !!result.image_collections,
         hasImages: !!result.images
       });
@@ -232,8 +228,7 @@ export class BatchCollectionLoader {
 
     // Batch file requests - reduce to 100 per batch to avoid timeout
     // The /files/byids endpoint seems to have performance issues with large batches
-    const batchSize = 100;
-    const batches = chunk(cubeMapFileIds, batchSize);
+    const batches = chunk(cubeMapFileIds, BATCH_SIZE);
 
     const fileInfos: FileInfo[] = [];
 
@@ -245,7 +240,7 @@ export class BatchCollectionLoader {
         const batchFileInfos = await this.getCdmFiles(batch);
         fileInfos.push(...batchFileInfos);
       } catch (error) {
-        console.error(`❌ Failed to fetch file batch ${i + 1}/${batches.length}:`, error);
+        console.error(`Failed to fetch file batch ${i + 1}/${batches.length}:`, error);
         throw error;
       }
     }
@@ -265,7 +260,7 @@ export class BatchCollectionLoader {
         const key = `${instanceId.externalId}:${instanceId.space}`;
         fileMap.set(key, file);
       } else {
-        console.warn(`⚠️  File ${file.id} missing instanceId in response`);
+        console.warn(`File ${file.id} missing instanceId in response`);
       }
     });
 
@@ -305,7 +300,7 @@ export class BatchCollectionLoader {
 
     const [imagesWithoutStation, imagesWithStation] = partition(imagesGroupedWithFileDescriptors, image => {
       const station = image.image.properties.cdf_cdm['Cognite360Image/v1'].station360;
-      return !station || !(typeof station === 'object' && 'externalId' in station);
+      return !(typeof station === 'object' && 'externalId' in station);
     });
 
     const groups = groupBy(imagesWithStation, imageResult => {
@@ -408,7 +403,7 @@ export class BatchCollectionLoader {
 
       return res.data.items;
     } catch (error: unknown) {
-      console.error(`❌ CDM files API error:`, error);
+      console.error(`CDM files API error:`, error);
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to fetch CDM files: ${message}`);
     }
