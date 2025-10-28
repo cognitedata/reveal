@@ -1,24 +1,19 @@
-/* eslint-disable react/prop-types */
 import { useState, type ReactElement } from 'react';
-
 import { InfoIcon } from '@cognite/cogs.js';
-
 import { type TreeNodeType } from '../../model/tree-node-type';
-import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
 import { HOVER_INFO_COLOR, INFO_COLOR } from '../constants';
+import { type TreeNodeAction } from '../../model/types';
 
-export const TreeViewInfo = ({
-  node,
-  props
-}: {
+export type TreeViewInfoProps = {
   node: TreeNodeType;
-  props: AdvancedTreeViewProps;
-}): ReactElement => {
-  const Icon = InfoIcon;
+  onClick?: TreeNodeAction;
+};
+
+export const TreeViewInfo = ({ node, onClick }: TreeViewInfoProps): ReactElement => {
   const [isHover, setHover] = useState(false);
   const color = getColor(isHover);
   return (
-    <Icon
+    <InfoIcon
       style={{ color, marginTop: '2px' }}
       onClick={() => {
         onClickInfo(node);
@@ -33,10 +28,10 @@ export const TreeViewInfo = ({
   );
 
   function onClickInfo(inputNode: TreeNodeType): void {
-    if (props.onClickInfo === undefined) {
+    if (onClick === undefined) {
       return;
     }
-    props.onClickInfo(inputNode);
+    onClick(inputNode);
   }
 };
 

@@ -10,7 +10,7 @@ import {
   isDMPointCloudModel
 } from '@cognite/reveal';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
-import { type LayersUrlStateParam } from '../components/RevealToolbar/LayersButton/types';
+import { type LayersUrlStateParam } from '../components/Architecture/LayersButton/types';
 import { createContext, useContext, useMemo } from 'react';
 import { EMPTY_ARRAY } from '../utilities/constants';
 import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';

@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
 import { RuleBasedOutputsButton } from './RuleBasedOutputsButton/RuleBasedOutputsButton';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
-import { LayersButton } from './LayersButton/LayersButton';
+import { LayersButton } from '../Architecture/LayersButton/LayersButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute !important;

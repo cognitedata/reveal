@@ -6,7 +6,8 @@ import {
   PointShape,
   PointColorType,
   type PointCloudIntersection,
-  type DMInstanceRef
+  type DMInstanceRef,
+  type PointCloudObjectMetadata
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Color, Matrix4, Vector3 } from 'three';
@@ -37,6 +38,7 @@ export function createPointCloudMock(parameters?: {
   visible?: boolean;
   modelId?: number;
   revisionId?: number;
+  stylableObjects?: Array<PointCloudObjectMetadata<ClassicDataSourceType>>;
 }): CognitePointCloudModel {
   const modelId = parameters?.modelId ?? pointCloudModelOptions.modelId;
   const revisionId = parameters?.revisionId ?? pointCloudModelOptions.revisionId;
@@ -69,6 +71,8 @@ export function createPointCloudMock(parameters?: {
     .returns(() => {
       return pointCloudClasses;
     })
+    .setup((p) => p.stylableObjects)
+    .returns(parameters?.stylableObjects ?? [])
     .prototypeof(CognitePointCloudModel.prototype)
     .object();
 
