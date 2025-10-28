@@ -4,7 +4,7 @@
 
 import { CogniteClient, DirectRelationReference, FileInfo } from '@cognite/sdk';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
-import { get360BatchCollectionQuery } from './get360CdmCollectionsQuery';
+import { get360CdmCollectionsQuery, CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
 import type {
   Historical360ImageSet,
   Image360Descriptor,
@@ -131,9 +131,12 @@ export class BatchCollectionLoader {
     try {
       // Execute batch query directly - no throttling needed
       // The batching itself (10 queries instead of 1000) prevents API overload
-      const query = get360BatchCollectionQuery(collectionRefs);
+      const query = get360CdmCollectionsQuery(collectionRefs);
 
-      const result = await this._dmsSdk.queryNodesAndEdges(query);
+      // Type assertion is safe here since get360CdmCollectionsQuery returns a query compatible with CdfImage360CollectionDmQuery structure
+      const result = await this._dmsSdk.queryNodesAndEdges<CdfImage360CollectionDmQuery>(
+        query as CdfImage360CollectionDmQuery
+      );
 
       // Group results by collection
       const resultsByCollection = await this.groupResultsByCollection(result);
@@ -228,7 +231,8 @@ export class BatchCollectionLoader {
 
     // Batch file requests - reduce to 100 per batch to avoid timeout
     // The /files/byids endpoint seems to have performance issues with large batches
-    const batches = chunk(cubeMapFileIds, BATCH_SIZE);
+    const batchSize = 100;
+    const batches = chunk(cubeMapFileIds, batchSize);
 
     const fileInfos: FileInfo[] = [];
 
