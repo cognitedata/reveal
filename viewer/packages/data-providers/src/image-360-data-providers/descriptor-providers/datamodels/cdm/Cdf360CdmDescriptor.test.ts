@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import { CogniteClient, FileInfo, HttpResponse } from '@cognite/sdk';
 import { Cdf360CdmDescriptorProvider } from './Cdf360CdmDescriptorProvider';
 import { It, Mock } from 'moq.ts';
 
@@ -207,62 +207,8 @@ const mock = {
 };
 
 describe(Cdf360CdmDescriptorProvider.name, () => {
-  const createMockFiles = () => {
-    return {
-      data: {
-        items: mock.data.items.images
-          .map((_, n) =>
-            Array.from(Array(6).keys()).map(
-              idx =>
-                ({
-                  id: n * 10 + idx,
-                  mimeType: 'image/jpeg',
-                  instanceId: {
-                    externalId: `test_image_3_${['Top', 'Back', 'Left', 'Front', 'Right', 'Bottom'][idx]}`,
-                    space: 'test_space'
-                  }
-                }) as FileInfo
-            )
-          )
-          .flatMap(p => p)
-      },
-      headers: {},
-      status: 200
-    };
-  };
-
   test('should fetch 360 image descriptors with batching', async () => {
-    const sdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('query')),
-          It.IsAny()
-        )
-      )
-      .returns(
-        Promise.resolve({
-          ...mock,
-          data: {
-            items: {
-              image_collections: mock.data.items.image_collection,
-              images: mock.data.items.images,
-              stations: mock.data.items.stations
-            }
-          }
-        })
-      )
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(createMockFiles()))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
+    const sdkMock = createMockClient();
     const provider = new Cdf360CdmDescriptorProvider(sdkMock.object());
 
     const descriptors = await provider.get360ImageDescriptors(
@@ -280,36 +226,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
   });
 
   test('should use shared batch loader when provided', async () => {
-    const sdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('query')),
-          It.IsAny()
-        )
-      )
-      .returns(
-        Promise.resolve({
-          ...mock,
-          data: {
-            items: {
-              image_collections: mock.data.items.image_collection,
-              images: mock.data.items.images,
-              stations: mock.data.items.stations
-            }
-          }
-        })
-      )
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(createMockFiles()))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
+    const sdkMock = createMockClient();
 
     // Create two providers - each will have its own batch loader by default
     const provider1 = new Cdf360CdmDescriptorProvider(sdkMock.object());
@@ -340,7 +257,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
   });
 
   test('should handle empty collections gracefully with batching', async () => {
-    const emptyMock = {
+    const emptyQueryResponse = {
       ...mock,
       data: {
         items: {
@@ -351,19 +268,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
       }
     };
 
-    const sdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('query')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(emptyMock))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
+    const sdkMock = createMockClient(emptyQueryResponse, undefined);
     const provider = new Cdf360CdmDescriptorProvider(sdkMock.object());
 
     const descriptors = await provider.get360ImageDescriptors(
@@ -380,37 +285,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
 
   // Keep the original test for backward compatibility
   test('MyTest (legacy)', async () => {
-    const sdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('query')),
-          It.IsAny()
-        )
-      )
-      .returns(
-        Promise.resolve({
-          ...mock,
-          data: {
-            items: {
-              image_collections: mock.data.items.image_collection,
-              images: mock.data.items.images,
-              stations: mock.data.items.stations
-            }
-          }
-        })
-      )
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(createMockFiles()))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
+    const sdkMock = createMockClient();
     const provider = new Cdf360CdmDescriptorProvider(sdkMock.object());
 
     const descriptors = await provider.get360ImageDescriptors(
@@ -424,4 +299,64 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
 
     expect(descriptors.length).toBe(3);
   });
+
+  // Helper to create mock CogniteClient with query and files responses
+  function createMockClient(queryResponse?: unknown, filesResponse = createMockFiles()) {
+    const defaultQueryResponse = {
+      ...mock,
+      data: {
+        items: {
+          image_collections: mock.data.items.image_collection,
+          images: mock.data.items.images,
+          stations: mock.data.items.stations
+        }
+      }
+    };
+
+    const actualQueryResponse = queryResponse || defaultQueryResponse;
+
+    return new Mock<CogniteClient>()
+      .setup(instance =>
+        instance.post(
+          It.Is((path: string) => path.includes('query')),
+          It.IsAny()
+        )
+      )
+      .returns(Promise.resolve(actualQueryResponse) as Promise<HttpResponse<unknown>>)
+      .setup(instance =>
+        instance.post(
+          It.Is((path: string) => path.includes('files')),
+          It.IsAny()
+        )
+      )
+      .returns(Promise.resolve(filesResponse) as Promise<HttpResponse<unknown>>)
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com')
+      .setup(instance => instance.project)
+      .returns('test-project');
+  }
+
+  function createMockFiles() {
+    return {
+      data: {
+        items: mock.data.items.images
+          .map((_, n) =>
+            Array.from(Array(6).keys()).map(
+              idx =>
+                ({
+                  id: n * 10 + idx,
+                  mimeType: 'image/jpeg',
+                  instanceId: {
+                    externalId: `test_image_3_${['Top', 'Back', 'Left', 'Front', 'Right', 'Bottom'][idx]}`,
+                    space: 'test_space'
+                  }
+                }) as FileInfo
+            )
+          )
+          .flatMap(p => p)
+      },
+      headers: {},
+      status: 200
+    };
+  }
 });
