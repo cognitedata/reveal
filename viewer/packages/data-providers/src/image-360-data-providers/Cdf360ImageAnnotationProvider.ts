@@ -33,6 +33,7 @@ import {
 } from '@reveal/360-images';
 import { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from './shared';
 import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images';
+import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
@@ -42,7 +43,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   }
 
   public async findImageAnnotationsForInstance(
-    asset: InstanceReference<ClassicDataSourceType>,
+    asset: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
     const entities = collection.image360Entities;
@@ -95,21 +96,35 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     });
   }
 
-  private async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
+  private async getFilesByAssetRef(assetRef: IdEither | DMInstanceRef): Promise<CogniteInternalId[]> {
+    const annotationData = this.getAnnotationDataByAssetRefType(assetRef);
+
     const response = await this._client.annotations
       .reverseLookup({
         limit: 1000,
         filter: {
           annotatedResourceType: 'file',
-          annotationType: 'images.AssetLink',
-          data: {
-            assetRef
-          }
+          annotationType: annotationData.type,
+          data: annotationData.data
         }
       })
       .autoPagingToArray();
 
     return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
+  }
+
+  private getAnnotationDataByAssetRefType(assetRef: IdEither | DMInstanceRef): {
+    type: 'images.InstanceLink' | 'images.AssetLink';
+    data: {
+      instanceRef?: DMInstanceRef;
+      assetRef?: IdEither;
+    };
+  } {
+    if (isDmIdentifier(assetRef)) {
+      return { type: 'images.InstanceLink', data: { instanceRef: assetRef } };
+    } else {
+      return { type: 'images.AssetLink', data: { assetRef } };
+    }
   }
 
   getAllImage360AnnotationInfos(

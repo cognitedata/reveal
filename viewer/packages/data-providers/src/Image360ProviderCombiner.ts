@@ -64,7 +64,7 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
   }
 
   findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<T>,
+    instanceFilter: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]> {
     return this._annotationProvider.findImageAnnotationsForInstance(instanceFilter, collection);

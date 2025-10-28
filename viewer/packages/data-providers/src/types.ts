@@ -53,7 +53,7 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     annotationSpecifier: Image360AnnotationSpecifier<T>
   ): Promise<T['image360AnnotationType'][]>;
   findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<T>,
+    instanceFilter: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 
