@@ -59,7 +59,7 @@ export class Cdf360BatchEventCollectionLoader {
     metadataFilter: Metadata,
     preMultipliedRotation: boolean
   ): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
-    const siteId = metadataFilter.site_id as string;
+    const siteId = metadataFilter.site_id;
     if (!siteId) {
       throw new Error('site_id is required for events-based 360 collections');
     }
@@ -152,22 +152,27 @@ export class Cdf360BatchEventCollectionLoader {
   }
 
   private async listEventsForMultipleSites(siteIds: string[]): Promise<CogniteEvent[]> {
-    // Create OR filter for multiple site_ids
-    const filter: EventFilter = {
-      metadata: {
-        site_id: siteIds // CDF Events API supports array for OR matching
-      } as unknown as Metadata
-    };
+    const allEvents = await Promise.all(
+      siteIds.map(async siteId => {
+        const filter: EventFilter = {
+          metadata: {
+            site_id: siteId
+          }
+        };
 
-    const partitions = 10;
-    const partitionedRequests = range(1, partitions + 1).map(async index =>
-      this._client.events
-        .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
-        .autoPagingToArray({ limit: Infinity })
+        const partitions = 10;
+        const partitionedRequests = range(1, partitions + 1).map(async index =>
+          this._client.events
+            .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
+            .autoPagingToArray({ limit: Infinity })
+        );
+
+        const results = await Promise.all(partitionedRequests);
+        return results.flat();
+      })
     );
 
-    const results = await Promise.all(partitionedRequests);
-    return results.flat();
+    return allEvents.flat();
   }
 
   private async listFilesForMultipleSites(siteIds: string[]): Promise<Map<string, Map<string, FileInfo[]>>> {
@@ -178,36 +183,39 @@ export class Cdf360BatchEventCollectionLoader {
       mainMap.set(siteId, new Map<string, FileInfo[]>());
     });
 
-    // Create OR filter for multiple site_ids
-    const filter: FileFilterProps = {
-      metadata: {
-        site_id: siteIds // CDF Files API supports array for OR matching
-      } as unknown as Metadata,
-      uploaded: true
-    };
+    await Promise.all(
+      siteIds.map(async siteId => {
+        const filter: FileFilterProps = {
+          metadata: {
+            site_id: siteId
+          },
+          uploaded: true
+        };
 
-    const partitions = 10;
-    const partitionedRequests = range(1, partitions + 1).map(async index => {
-      const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
-      return this._client.files.list(req).autoPagingEach(fileInfo => {
-        const siteId = fileInfo.metadata?.site_id as string;
-        const stationId = fileInfo.metadata?.station_id as string;
-        if (!siteId || !stationId) return undefined;
+        const partitions = 10;
+        const partitionedRequests = range(1, partitions + 1).map(async index => {
+          const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
+          return this._client.files.list(req).autoPagingEach(fileInfo => {
+            const stationId = fileInfo.metadata?.station_id as string;
+            if (!stationId) return undefined;
 
-        const siteMap = mainMap.get(siteId);
-        if (siteMap) {
-          const existingFiles = siteMap.get(stationId);
-          if (existingFiles) {
-            existingFiles.push(fileInfo);
-          } else {
-            siteMap.set(stationId, [fileInfo]);
-          }
-        }
-        return undefined;
-      });
-    });
+            const siteMap = mainMap.get(siteId);
+            if (siteMap) {
+              const existingFiles = siteMap.get(stationId);
+              if (existingFiles) {
+                existingFiles.push(fileInfo);
+              } else {
+                siteMap.set(stationId, [fileInfo]);
+              }
+            }
+            return undefined;
+          });
+        });
 
-    await Promise.all(partitionedRequests);
+        await Promise.all(partitionedRequests);
+      })
+    );
+
     return mainMap;
   }
 

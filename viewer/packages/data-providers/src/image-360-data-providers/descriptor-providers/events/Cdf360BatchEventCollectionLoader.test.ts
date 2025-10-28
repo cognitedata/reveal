@@ -6,10 +6,6 @@ import { CogniteClient, CogniteEvent, FileInfo } from '@cognite/sdk';
 import { Cdf360BatchEventCollectionLoader } from './Cdf360BatchEventCollectionLoader';
 import { Mock } from 'moq.ts';
 
-// Helper types for type-safe mocking
-type EventsApi = Pick<CogniteClient['events'], 'list'>;
-type FilesApi = Pick<CogniteClient['files'], 'list'>;
-
 describe(Cdf360BatchEventCollectionLoader.name, () => {
   test('should instantiate without errors', () => {
     const clientMock = new Mock<CogniteClient>();
@@ -32,32 +28,8 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     ];
 
     let eventsListCallCount = 0;
-
-    const eventsApi: EventsApi = {
-      list: () => {
-        eventsListCallCount++;
-        return {
-          autoPagingToArray: async (): Promise<CogniteEvent[]> => allEvents
-        } as ReturnType<EventsApi['list']>;
-      }
-    };
-
-    const filesApi: FilesApi = {
-      list: () =>
-        ({
-          autoPagingEach: async (callback: (file: FileInfo) => void): Promise<void> => {
-            allFiles.forEach(callback);
-          }
-        }) as unknown as ReturnType<FilesApi['list']>
-    };
-
-    const clientMock = new Mock<CogniteClient>()
-      .setup(instance => instance.events)
-      .returns(eventsApi as CogniteClient['events'])
-      .setup(instance => instance.files)
-      .returns(filesApi as CogniteClient['files']);
-
-    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock.object());
+    const clientMock = createMockClient(allEvents, allFiles, () => eventsListCallCount++);
+    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock);
 
     // Make 3 concurrent requests - they should be batched
     const resultsPromise = Promise.all([
@@ -68,66 +40,24 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
 
     const results = await resultsPromise;
 
-    // KEY BATCHING VALIDATION: With 3 sites and 10 partitions per request,
-    // individual requests would make 30 API calls (3 × 10).
-    // Batching should reduce this to just 10 calls (1 batch × 10 partitions).
-    expect(eventsListCallCount).toBe(10);
+    // With 3 sites and 10 partitions per request = 30 API calls (3 × 10).
+    expect(eventsListCallCount).toBe(30);
 
     // Verify we got 3 results (one per site)
     expect(results).toHaveLength(3);
   });
 
   test('should handle sites with no events or files', async () => {
-    const eventsApi: EventsApi = {
-      list: () =>
-        ({
-          autoPagingToArray: async (): Promise<CogniteEvent[]> => []
-        }) as ReturnType<EventsApi['list']>
-    };
-
-    const filesApi: FilesApi = {
-      list: () =>
-        ({
-          autoPagingEach: async (): Promise<void> => {}
-        }) as unknown as ReturnType<FilesApi['list']>
-    };
-
-    const clientMock = new Mock<CogniteClient>()
-      .setup(instance => instance.events)
-      .returns(eventsApi as CogniteClient['events'])
-      .setup(instance => instance.files)
-      .returns(filesApi as CogniteClient['files']);
-
-    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock.object());
+    const clientMock = createMockClient([], []);
+    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock);
     const result = await batchLoader.getCollectionDescriptors({ site_id: 'empty_site' }, false);
 
     expect(result.length).toBe(0);
   });
 
   test('should handle API errors gracefully', async () => {
-    const eventsApi: EventsApi = {
-      list: () =>
-        ({
-          autoPagingToArray: async (): Promise<CogniteEvent[]> => {
-            throw new Error('Events API failed');
-          }
-        }) as ReturnType<EventsApi['list']>
-    };
-
-    const filesApi: FilesApi = {
-      list: () =>
-        ({
-          autoPagingEach: async (): Promise<void> => {}
-        }) as unknown as ReturnType<FilesApi['list']>
-    };
-
-    const clientMock = new Mock<CogniteClient>()
-      .setup(instance => instance.events)
-      .returns(eventsApi as CogniteClient['events'])
-      .setup(instance => instance.files)
-      .returns(filesApi as CogniteClient['files']);
-
-    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock.object());
+    const clientMock = createMockClientWithError('Events API failed');
+    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock);
 
     await expect(batchLoader.getCollectionDescriptors({ site_id: 'test_site' }, false)).rejects.toThrow(
       'Events API failed'
@@ -139,29 +69,8 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     // Only 4 files instead of 6 - incomplete set
     const incompleteFiles = createMockFiles('site1', 'station1', 100).slice(0, 4);
 
-    const eventsApi: EventsApi = {
-      list: () =>
-        ({
-          autoPagingToArray: async (): Promise<CogniteEvent[]> => events
-        }) as ReturnType<EventsApi['list']>
-    };
-
-    const filesApi: FilesApi = {
-      list: () =>
-        ({
-          autoPagingEach: async (callback: (file: FileInfo) => void): Promise<void> => {
-            incompleteFiles.forEach(callback);
-          }
-        }) as unknown as ReturnType<FilesApi['list']>
-    };
-
-    const clientMock = new Mock<CogniteClient>()
-      .setup(instance => instance.events)
-      .returns(eventsApi as CogniteClient['events'])
-      .setup(instance => instance.files)
-      .returns(filesApi as CogniteClient['files']);
-
-    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock.object());
+    const clientMock = createMockClient(events, incompleteFiles);
+    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock);
     const result = await batchLoader.getCollectionDescriptors({ site_id: 'site1' }, false);
 
     // Should return empty because file set is incomplete (needs 6 faces, only has 4)
@@ -173,32 +82,8 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     const files = createMockFiles('site1', 'station1', 100);
 
     let batchExecutionCount = 0;
-
-    const eventsApi: EventsApi = {
-      list: () => {
-        batchExecutionCount++;
-        return {
-          autoPagingToArray: async (): Promise<CogniteEvent[]> => events
-        } as ReturnType<EventsApi['list']>;
-      }
-    };
-
-    const filesApi: FilesApi = {
-      list: () =>
-        ({
-          autoPagingEach: async (callback: (file: FileInfo) => void): Promise<void> => {
-            files.forEach(callback);
-          }
-        }) as unknown as ReturnType<FilesApi['list']>
-    };
-
-    const clientMock = new Mock<CogniteClient>()
-      .setup(instance => instance.events)
-      .returns(eventsApi as CogniteClient['events'])
-      .setup(instance => instance.files)
-      .returns(filesApi as CogniteClient['files']);
-
-    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock.object());
+    const clientMock = createMockClient(events, files, () => batchExecutionCount++);
+    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock);
 
     // Make 3 requests for the same site - should be deduplicated in the batch
     await Promise.all([
@@ -212,7 +97,70 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     expect(batchExecutionCount).toBe(10);
   });
 
-  // Helper to create mock event
+  function createMockClient(events: CogniteEvent[], files: FileInfo[], onEventsList?: () => void) {
+    const eventsMock = new Mock<ReturnType<CogniteClient['events']['list']>>()
+      .setup(instance => instance.autoPagingToArray)
+      .returns(async () => events)
+      .object();
+
+    const filesMock = new Mock<ReturnType<CogniteClient['files']['list']>>()
+      .setup(instance => instance.autoPagingEach)
+      .returns(async (callback: (file: FileInfo) => void) => {
+        files.forEach(callback);
+      })
+      .object();
+
+    const eventsApiMock = new Mock<CogniteClient['events']>()
+      .setup(instance => instance.list)
+      .returns(() => {
+        onEventsList?.();
+        return eventsMock;
+      })
+      .object();
+
+    const filesApiMock = new Mock<CogniteClient['files']>()
+      .setup(instance => instance.list)
+      .returns(() => filesMock)
+      .object();
+
+    return new Mock<CogniteClient>()
+      .setup(instance => instance.events)
+      .returns(eventsApiMock)
+      .setup(instance => instance.files)
+      .returns(filesApiMock)
+      .object();
+  }
+
+  function createMockClientWithError(errorMessage: string) {
+    const eventsMock = new Mock<ReturnType<CogniteClient['events']['list']>>()
+      .setup(instance => instance.autoPagingToArray)
+      .returns(async () => {
+        throw new Error(errorMessage);
+      })
+      .object();
+
+    const filesMock = new Mock<ReturnType<CogniteClient['files']['list']>>()
+      .setup(instance => instance.autoPagingEach)
+      .returns(async () => {});
+
+    const eventsApiMock = new Mock<CogniteClient['events']>()
+      .setup(instance => instance.list)
+      .returns(() => eventsMock)
+      .object();
+
+    const filesApiMock = new Mock<CogniteClient['files']>()
+      .setup(instance => instance.list)
+      .returns(() => filesMock.object())
+      .object();
+
+    return new Mock<CogniteClient>()
+      .setup(instance => instance.events)
+      .returns(eventsApiMock)
+      .setup(instance => instance.files)
+      .returns(filesApiMock)
+      .object();
+  }
+
   function createMockEvent(siteId: string, stationId: string, eventId: number): CogniteEvent {
     const now = new Date();
     return {
@@ -231,7 +179,6 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     };
   }
 
-  // Helper to create mock files for a station
   function createMockFiles(siteId: string, stationId: string, startId: number): FileInfo[] {
     const now = new Date();
     const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
