@@ -167,14 +167,21 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       { externalId: imageProp.cubeMapTop } as ExternalId,
       { externalId: imageProp.cubeMapBottom } as ExternalId
     ]);
-    const externalIdBatches = chunk(chunk(cubeMapExternalIds, 1000), 15);
+
+    // Batch file retrieval - 1000 per batch as per CDF API limits
+    const batchSize = 1000;
+    const batches = chunk(cubeMapExternalIds, batchSize);
 
     const fileInfos: FileInfo[] = [];
-    for (const parallelBatches of externalIdBatches) {
-      const batchFileInfos = (
-        await Promise.all(parallelBatches.map(batch => this._cogniteSdk.files.retrieve(batch)))
-      ).flatMap(p => p);
-      fileInfos.push(...batchFileInfos);
+
+    // Process batches sequentially to avoid overwhelming the API
+    for (const batch of batches) {
+      try {
+        const batchFileInfos = await this._cogniteSdk.files.retrieve(batch);
+        fileInfos.push(...batchFileInfos);
+      } catch (error: any) {
+        throw new Error(`Failed to retrieve 360 image files: ${error.message || error}`);
+      }
     }
 
     return chunk(fileInfos, 6);
