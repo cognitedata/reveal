@@ -179,8 +179,10 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       try {
         const batchFileInfos = await this._cogniteSdk.files.retrieve(batch);
         fileInfos.push(...batchFileInfos);
-      } catch (error: any) {
-        throw new Error(`Failed to retrieve 360 image files: ${error.message || error}`);
+      } catch (error: unknown) {
+        throw new Error(
+          `Failed to retrieve 360 image files: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
 
