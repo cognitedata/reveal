@@ -130,13 +130,10 @@ export class Cdf360CdmBatchCollectionLoader {
 
     try {
       // Execute batch query directly - no throttling needed
-      // The batching itself (10 queries instead of 1000) prevents API overload
+      // The batching itself (BATCH_SIZE queries instead of 1000) prevents API overload
       const query = get360CdmCollectionsQuery(collectionRefs);
 
-      // Type assertion is safe here since get360CdmCollectionsQuery returns a query compatible with CdfImage360CollectionDmQuery structure
-      const result = await this._dmsSdk.queryNodesAndEdges<CdfImage360CollectionDmQuery>(
-        query as CdfImage360CollectionDmQuery
-      );
+      const result = await this._dmsSdk.queryNodesAndEdges<CdfImage360CollectionDmQuery>(query);
 
       // Group results by collection
       const resultsByCollection = await this.groupResultsByCollection(result);
