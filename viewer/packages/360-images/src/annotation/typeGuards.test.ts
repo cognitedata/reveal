@@ -1,10 +1,10 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { isImageInstanceLinkAnnotation } from './shared';
 import { AnnotationData, AnnotationModel } from '@cognite/sdk';
+import { isAnnotationInstanceLink } from './typeGuards';
 
-describe('shared', () => {
+describe('typeGuard', () => {
   function createAnnotationModel(overrides: Partial<AnnotationModel>): AnnotationModel {
     return {
       id: 1,
@@ -31,7 +31,7 @@ describe('shared', () => {
     sources: []
   };
 
-  describe(isImageInstanceLinkAnnotation.name, () => {
+  describe(isAnnotationInstanceLink.name, () => {
     it('should return true for valid instance link annotation', () => {
       const annotation = createAnnotationModel({
         data: {
@@ -41,7 +41,7 @@ describe('shared', () => {
         }
       });
 
-      expect(isImageInstanceLinkAnnotation(annotation)).toBe(true);
+      expect(isAnnotationInstanceLink(annotation)).toBe(true);
     });
 
     it('should return false for asset link annotation', () => {
@@ -54,7 +54,7 @@ describe('shared', () => {
         }
       });
 
-      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
+      expect(isAnnotationInstanceLink(annotation)).toBe(false);
     });
 
     it('should return false when instanceRef is missing', () => {
@@ -65,7 +65,7 @@ describe('shared', () => {
         }
       });
 
-      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
+      expect(isAnnotationInstanceLink(annotation)).toBe(false);
     });
 
     it('should return false when text is missing', () => {
@@ -76,7 +76,7 @@ describe('shared', () => {
         }
       });
 
-      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
+      expect(isAnnotationInstanceLink(annotation)).toBe(false);
     });
 
     it('should return false when textRegion is missing', () => {
@@ -87,7 +87,7 @@ describe('shared', () => {
         }
       });
 
-      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
+      expect(isAnnotationInstanceLink(annotation)).toBe(false);
     });
 
     it('should return false for empty data object', () => {
@@ -95,7 +95,7 @@ describe('shared', () => {
         data: {}
       });
 
-      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
+      expect(isAnnotationInstanceLink(annotation)).toBe(false);
     });
   });
 });
