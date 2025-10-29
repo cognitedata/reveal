@@ -11,8 +11,7 @@ import {
   Image360DescriptorProvider,
   Image360Face,
   Image360FileDescriptor,
-  Image360FileProvider,
-  InstanceReference
+  Image360FileProvider
 } from './types';
 import {
   AssetAnnotationImage360Info,
@@ -20,6 +19,7 @@ import {
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
+import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
 
 export class Image360ProviderCombiner<T extends DataSourceType> implements Image360Provider<T> {
   private readonly _descriptorProvider: Image360DescriptorProvider<T>;
@@ -64,7 +64,7 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
   }
 
   findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<DataSourceType>,
+    instanceFilter: Image360AnnotationInstanceReference<T>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]> {
     return this._annotationProvider.findImageAnnotationsForInstance(instanceFilter, collection);

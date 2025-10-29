@@ -5,7 +5,7 @@
 import { Image360 } from './../entity/Image360';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
-import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360AnnotationAppearance, Image360AnnotationInstanceReference } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
@@ -16,7 +16,7 @@ import {
   ImageInstanceLinkAnnotationInfo
 } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
-import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers';
+import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 
 /**
  * Annotation type that may be linked to assets. Only relevant for classic annotations, where some
@@ -33,9 +33,7 @@ export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicData
   /**
    * Reference to the wanted asset
    */
-  assetRef: T extends ClassicDataSourceType
-    ? InstanceReference<ClassicDataSourceType | DMDataSourceType>
-    : InstanceReference<DMDataSourceType>;
+  assetRef: Image360AnnotationInstanceReference<T>;
 };
 
 /**

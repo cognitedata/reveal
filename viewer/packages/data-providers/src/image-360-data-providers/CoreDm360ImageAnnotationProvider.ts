@@ -110,7 +110,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     | AssetAnnotationImage360Info<DataSourceType>[]
     | AssetHybridAnnotationImage360Info[]
   > {
-    if (source === 'assets' || source === 'hybrid') {
+    if (source !== 'cdm' && source !== 'all') {
       return [];
     }
 

@@ -2,7 +2,6 @@
  * Copyright 2025 Cognite AS
  */
 
-import { ImageAnnotationObject } from './ImageAnnotationObject';
 import { Matrix4 } from 'three';
 import {
   AnnotationsBoundingBox,
@@ -11,7 +10,8 @@ import {
   AnnotationsTypesPrimitivesGeometry2DGeometry
 } from '@cognite/sdk';
 import { ClassicDataSourceType } from '@reveal/data-providers';
-import { isAnnotationInstanceLink } from './typeGuards';
+import { createAnnotationModel } from 'test-utilities';
+import { ImageAnnotationObject } from './ImageAnnotationObject';
 
 describe(ImageAnnotationObject.name, () => {
   const mockVisualizationBoxTransform = new Matrix4().identity();
@@ -29,7 +29,6 @@ describe(ImageAnnotationObject.name, () => {
     instanceType: 'node' as const,
     sources: []
   };
-
   const objectRegionBoundingBoxMock: AnnotationsTypesPrimitivesGeometry2DGeometry = {
     boundingBox: {
       xMin: 0.15,
@@ -49,70 +48,19 @@ describe(ImageAnnotationObject.name, () => {
       ]
     }
   };
+
   const annotationInstanceLink: AnnotationsTypesImagesInstanceLink = {
     text: annotationText,
     textRegion: annotationTextRegionMock,
     instanceRef: annotationInstanceRefMock
   };
 
-  const annotationModelMock: ClassicDataSourceType['image360AnnotationType'] = {
-    id: 1,
+  const annotationInstanceLinkMock = createAnnotationModel({
     annotationType: 'images.InstanceLink',
-    data: annotationInstanceLink,
-    annotatedResourceId: 123,
-    annotatedResourceType: 'file',
-    createdTime: new Date('2025-01-01'),
-    lastUpdatedTime: new Date('2025-01-02'),
-    status: 'approved',
-    creatingApp: 'test-app',
-    creatingAppVersion: '1.0',
-    creatingUser: 'test-user'
-  };
-
-  describe('isAnnotationInstanceLink', () => {
-    test('returns true for valid InstanceLink annotation', () => {
-      const annotationType = 'images.InstanceLink';
-
-      const result = isAnnotationInstanceLink(annotationType, annotationInstanceLink);
-
-      expect(result).toBe(true);
-    });
-
-    test('returns false for InstanceLink with missing text', () => {
-      const mockannotationInstanceLinkMissingText: Partial<AnnotationsTypesImagesInstanceLink> = {
-        textRegion: annotationTextRegionMock,
-        instanceRef: annotationInstanceRefMock
-      };
-      const annotationType = 'images.InstanceLink';
-
-      const result = isAnnotationInstanceLink(annotationType, mockannotationInstanceLinkMissingText);
-
-      expect(result).toBe(false);
-    });
-
-    test('returns false for InstanceLink with missing textRegion', () => {
-      const mockAnnotationInstanceLinkMissingTextRegion: Partial<AnnotationsTypesImagesInstanceLink> = {
-        text: annotationText,
-        instanceRef: annotationInstanceRefMock
-      };
-      const annotationType = 'images.InstanceLink';
-
-      const result = isAnnotationInstanceLink(annotationType, mockAnnotationInstanceLinkMissingTextRegion);
-
-      expect(result).toBe(false);
-    });
-
-    test('returns false for wrong annotation type', () => {
-      const annotationType = 'images.AssetLink';
-
-      const result = isAnnotationInstanceLink(annotationType, annotationInstanceLink);
-
-      expect(result).toBe(false);
-    });
+    data: annotationInstanceLink
   });
-
   describe('createInstanceLinkAnnotationData', () => {
-    test('creates PolygonAnnotationGeometryData when objectRegion has polygon for instance link', () => {
+    test('creates PolygonAnnotationGeometryData when objectRegion has polygon for instance link and check if the object exists', () => {
       const instanceLink: AnnotationsTypesImagesInstanceLink = {
         text: annotationText,
         textRegion: annotationTextRegionMock,
@@ -121,13 +69,14 @@ describe(ImageAnnotationObject.name, () => {
       };
 
       const annotation: ClassicDataSourceType['image360AnnotationType'] = {
-        ...annotationModelMock,
+        ...annotationInstanceLinkMock,
         data: instanceLink
       };
 
       const result = ImageAnnotationObject.createAnnotationObject(annotation, 'front', mockVisualizationBoxTransform);
 
       expect(result).toBeInstanceOf(ImageAnnotationObject);
+      expect(result?.getObject().children.length).toEqual(2);
     });
 
     test('creates BoxAnnotationGeometryData when objectRegion has boundingBox for instance link', () => {
@@ -139,7 +88,7 @@ describe(ImageAnnotationObject.name, () => {
       };
 
       const annotation: ClassicDataSourceType['image360AnnotationType'] = {
-        ...annotationModelMock,
+        ...annotationInstanceLinkMock,
         data: instanceLink
       };
 
@@ -157,7 +106,7 @@ describe(ImageAnnotationObject.name, () => {
       };
 
       const annotation: ClassicDataSourceType['image360AnnotationType'] = {
-        ...annotationModelMock,
+        ...annotationInstanceLinkMock,
         data: instanceLink
       };
 

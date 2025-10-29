@@ -20,7 +20,8 @@ module.exports = () => {
       '\\.(frag|vert)$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/glslMocks.js'),
       '\\.css$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/cssMock.js'),
       '\\.svg$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/svgMock.js'),
-      '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js')
+      '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js'),
+      '^test-utilities$': path.resolve(__dirname, './test-utilities/src/index.ts')
     },
     coverageDirectory: './coverage',
     coverageProvider: 'v8',

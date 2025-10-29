@@ -118,10 +118,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
 
   private getAnnotationDataByAssetRefType(assetRef: IdEither | DMInstanceRef): {
     type: 'images.InstanceLink' | 'images.AssetLink';
-    data: {
-      instanceRef?: DMInstanceRef;
-      assetRef?: IdEither;
-    };
+    data: { instanceRef: DMInstanceRef } | { assetRef: IdEither };
   } {
     if (isDmIdentifier(assetRef)) {
       return { type: 'images.InstanceLink', data: { instanceRef: assetRef } };
@@ -166,10 +163,13 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap(collection);
     const annotations = await this.fetchAllAnnotations(collection, annotationFilter);
 
+    if (source === 'hybrid') {
+      return pairAnnotationsWithEntityAndRevision(
+        annotations.filter(annotation => isImageInstanceLinkAnnotation(annotation))
+      );
+    }
     return pairAnnotationsWithEntityAndRevision(
-      annotations.filter(
-        annotation => isImageAssetLinkAnnotation(annotation) || isImageInstanceLinkAnnotation(annotation)
-      )
+      annotations.filter(annotation => isImageAssetLinkAnnotation(annotation))
     );
 
     function pairAnnotationsWithEntityAndRevision(
@@ -215,8 +215,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
         annotatedResourceIds: idList.map(id => ({ id })),
-        annotatedResourceType: 'file',
-        annotationType: 'images.AssetLink'
+        annotatedResourceType: 'file'
       });
 
       const assetAnnotations = annotationArray.filter(annotationFilter);

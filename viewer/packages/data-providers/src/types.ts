@@ -16,6 +16,7 @@ import {
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
 import { DMInstanceRef } from '@reveal/utilities';
+import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']
@@ -53,7 +54,7 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     annotationSpecifier: Image360AnnotationSpecifier<T>
   ): Promise<T['image360AnnotationType'][]>;
   findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<DataSourceType>,
+    instanceFilter: Image360AnnotationInstanceReference<T>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 

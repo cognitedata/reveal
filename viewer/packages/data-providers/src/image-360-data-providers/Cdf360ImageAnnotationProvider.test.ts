@@ -9,7 +9,7 @@ import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } fro
 import { ClassicDataSourceType } from '../DataSourceType';
 import { Image360Descriptor } from '../types';
 import { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
-import { createCursorAndAsyncIteratorMock, createAnnotationModel } from '../../../../test-utilities/src';
+import { createCursorAndAsyncIterator, createAnnotationModel } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
 
 describe(Cdf360ImageAnnotationProvider.name, () => {
@@ -55,12 +55,9 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     status: 'approved'
   });
 
-  const mockReverseLookup = jest.fn<CogniteClient['annotations']['reverseLookup']>();
-  const mockAnnotationList = jest.fn<CogniteClient['annotations']['list']>();
-
-  mockReverseLookup.mockImplementation(
+  const mockReverseLookup = jest.fn<CogniteClient['annotations']['reverseLookup']>().mockImplementation(
     (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
-      createCursorAndAsyncIteratorMock({
+      createCursorAndAsyncIterator({
         items: [
           {
             id: ARBITRARY_FILE_ID
@@ -68,22 +65,10 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
         ]
       })
   );
-
-  mockAnnotationList.mockImplementation(
+  const mockAnnotationList = jest.fn<CogniteClient['annotations']['list']>().mockImplementation(
     (): CursorAndAsyncIterator<AnnotationModel> =>
-      createCursorAndAsyncIteratorMock({
-        items: [
-          createAnnotationModel({
-            annotatedResourceId: 30,
-            annotationType: 'images.AssetLink',
-            data: {
-              text: 'annotation for file ' + ARBITRARY_FILE_ID,
-              textRegion: { xMin: 0, xMax: 0.1, yMin: 0, yMax: 0.1 },
-              assetRef: { id: 10 }
-            },
-            status: 'approved'
-          })
-        ]
+      createCursorAndAsyncIterator({
+        items: [matchingAnnotation]
       })
   );
 
@@ -94,11 +79,10 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     .returns(mockAnnotationList)
     .object();
 
-  // Minimal mock implementations for entity/revision/collection sufficient for provider logic
   function createMockRevision(
     fileId: number,
     annotations: AnnotationModel[]
-  ): Partial<Image360RevisionEntity<ClassicDataSourceType>> {
+  ): Image360RevisionEntity<ClassicDataSourceType> {
     const descriptor = new Mock<Image360Descriptor<ClassicDataSourceType>>()
       .setup(d => d.faceDescriptors)
       .returns([{ fileId, face: 'front', mimeType: 'image/jpeg' }])
@@ -114,15 +98,19 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       .returns(annotations[1])
       .object();
 
-    const revision = new Mock<Image360RevisionEntity<ClassicDataSourceType>>();
-    revision.setup(r => r.identifier).returns('revision-' + fileId);
-    revision.setup(r => r.getDescriptors()).returns(descriptor);
-    revision.setup(r => r.getAnnotations()).returns(Promise.resolve([annotationObject1, annotationObject2]));
+    const revision = new Mock<Image360RevisionEntity<ClassicDataSourceType>>()
+      .setup(r => r.identifier)
+      .returns('revision-' + fileId)
+      .setup(r => r.getDescriptors())
+      .returns(descriptor)
+      .setup(r => r.getAnnotations())
+      .returns(Promise.resolve([annotationObject1, annotationObject2]));
+
     return revision.object();
   }
 
   function createMockEntity(
-    revisions: Partial<Image360RevisionEntity<ClassicDataSourceType>>[]
+    revisions: Image360RevisionEntity<ClassicDataSourceType>[]
   ): Image360Entity<ClassicDataSourceType> {
     const entity = new Mock<Image360Entity<ClassicDataSourceType>>()
       .setup(e => e.getRevisions)
@@ -168,6 +156,13 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
   describe('getAllImage360AnnotationInfos (hybrid)', () => {
     test('maps instance link annotations to entity + revision', async () => {
+      mockAnnotationList.mockImplementation(
+        (): CursorAndAsyncIterator<AnnotationModel> =>
+          createCursorAndAsyncIterator({
+            items: [matchingHybridAnnotation]
+          })
+      );
+
       const client = sdkMock;
       const provider = new Cdf360ImageAnnotationProvider(client);
 
