@@ -21,7 +21,6 @@ import {
   type GeneralBannerContent
 } from '../../commands/GeneralBannerCommand';
 import { GroupCommand } from '../../commands/GroupCommand';
-import { type BaseCommand } from '../../commands/BaseCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
