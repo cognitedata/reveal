@@ -2,8 +2,6 @@
  * Copyright 2025 Cognite AS
  */
 
-import type { Query } from '../../../../types';
-
 const coreDmSpace = 'cdf_cdm';
 
 function createCollectionsQuery(collectionRefs: Array<{ externalId: string; space: string }>) {
@@ -140,6 +138,8 @@ export type CdfImage360CollectionDmQuery = ReturnType<typeof createCollectionsQu
  * @param collectionRefs - Array of collection identifiers to fetch
  * @returns DMS query that fetches all collections and their images in one request
  */
-export function get360CdmCollectionsQuery(collectionRefs: Array<{ externalId: string; space: string }>): Query {
+export function get360CdmCollectionsQuery(
+  collectionRefs: Array<{ externalId: string; space: string }>
+): CdfImage360CollectionDmQuery {
   return createCollectionsQuery(collectionRefs);
 }
