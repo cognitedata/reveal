@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, DirectRelationReference, FileInfo } from '@cognite/sdk';
+import { CogniteClient, DirectRelationReference, FileInfo, HttpResponse } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
@@ -17,23 +17,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     const collectionIds = ['collection_1', 'collection_2', 'collection_3'];
     const dmsResponse = createMockDmsResponse(collectionIds);
     const filesResponse = createMockFilesResponse(collectionIds);
-
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files/byids')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(filesResponse))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-      .returns(Promise.resolve(dmsResponse));
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse, filesResponse);
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -45,7 +29,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     // Verify results - all 3 collections should return data
     expect(results).toHaveLength(3);
     results.forEach((result, idx) => {
-      expect(result.length).toBeGreaterThan(0); // Has images
+      expect(result.length).toBeGreaterThan(0);
       if (result.length > 0) {
         expect(result[0].collectionId).toBe(collectionIds[idx]);
       }
@@ -75,16 +59,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       stations: []
     };
 
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-      .returns(Promise.resolve(dmsResponse));
-
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse);
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
     const result = await batchLoader.getCollectionDescriptors({
@@ -99,23 +74,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     const collectionIds = ['collection_1', 'collection_2'];
     const dmsResponse = createMockDmsResponse(collectionIds);
     const filesResponse = createMockFilesResponse(collectionIds);
-
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files/byids')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(filesResponse))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-      .returns(Promise.resolve(dmsResponse));
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse, filesResponse);
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -142,15 +101,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
   });
 
   test('should handle DMS query errors gracefully', async () => {
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-      .callback(() => Promise.reject(new Error('DMS query failed')));
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks({}, undefined, new Error('DMS query failed'));
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -161,23 +112,12 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
   test('should handle file fetching errors gracefully', async () => {
     const dmsResponse = createMockDmsResponse(['collection_1']);
-
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files/byids')),
-          It.IsAny()
-        )
-      )
-      .callback(() => Promise.reject(new Error('Files API failed')))
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-      .returns(Promise.resolve(dmsResponse));
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(
+      dmsResponse,
+      undefined,
+      undefined,
+      new Error('Files API failed')
+    );
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -193,16 +133,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       stations: []
     };
 
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
-
-    const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-      .returns(Promise.resolve(dmsResponse));
-
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse);
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
     const result = await batchLoader.getCollectionDescriptors({
@@ -213,7 +144,48 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(result).toHaveLength(0);
   });
 
-  // Helper function to create mock DMS response
+  function createMockSdks(dmsResponse: unknown, filesResponse?: unknown, dmsError?: Error, filesError?: Error) {
+    const cogniteSdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com')
+      .setup(instance => instance.project)
+      .returns('test-project');
+
+    if (filesResponse) {
+      cogniteSdkMock
+        .setup(instance =>
+          instance.post(
+            It.Is((path: string) => path.includes('files/byids')),
+            It.IsAny()
+          )
+        )
+        .returns(
+          filesError ? Promise.reject(filesError) : (Promise.resolve(filesResponse) as Promise<HttpResponse<unknown>>)
+        );
+    } else if (filesError) {
+      cogniteSdkMock
+        .setup(instance =>
+          instance.post(
+            It.Is((path: string) => path.includes('files/byids')),
+            It.IsAny()
+          )
+        )
+        .callback(() => Promise.reject(filesError));
+    }
+
+    const dmsSdkMock = new Mock<DataModelsSdk>();
+
+    if (dmsError) {
+      dmsSdkMock.setup(instance => instance.queryNodesAndEdges(It.IsAny())).callback(() => Promise.reject(dmsError));
+    } else {
+      dmsSdkMock
+        .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
+        .returns(Promise.resolve(dmsResponse) as ReturnType<DataModelsSdk['queryNodesAndEdges']>);
+    }
+
+    return { cogniteSdkMock, dmsSdkMock };
+  }
+
   function createMockDmsResponse(collectionIds: string[]) {
     const collections = collectionIds.map(id => ({
       instanceType: 'node' as const,
@@ -272,7 +244,6 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     };
   }
 
-  // Helper function to create mock files response
   function createMockFilesResponse(collectionIds: string[]) {
     const files: FileInfoWithInstanceId[] = collectionIds.flatMap((collectionId, idx) =>
       Array.from({ length: 2 }, (_, imageIdx) =>
@@ -280,7 +251,6 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
           const fileId = idx * 100 + imageIdx * 10 + face.length;
           const externalId = `file_${collectionId}_${imageIdx}_${face}`;
 
-          // Create plain object that satisfies FileInfoWithInstanceId interface
           return {
             id: fileId,
             name: `${face}.jpg`,
