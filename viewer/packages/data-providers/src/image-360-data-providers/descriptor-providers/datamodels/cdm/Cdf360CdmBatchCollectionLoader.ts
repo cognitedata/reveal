@@ -373,7 +373,18 @@ export class Cdf360CdmBatchCollectionLoader {
   private getRevisionTransform(revision: ImageResultProperties): Matrix4 {
     // Convert DmsPropertyValue to number
     const toNumber = (value: DmsPropertyValue): number => {
-      return typeof value === 'number' ? value : parseFloat(String(value));
+      if (typeof value === 'number') {
+        return value;
+      }
+      if (typeof value === 'string') {
+        const num = parseFloat(value);
+        if (isFinite(num)) {
+          return num;
+        }
+      }
+      throw new Error(
+        `Invalid value for transformation property, expected number or numeric string, got ${JSON.stringify(value)}`
+      );
     };
 
     const [x, y, z] = [
