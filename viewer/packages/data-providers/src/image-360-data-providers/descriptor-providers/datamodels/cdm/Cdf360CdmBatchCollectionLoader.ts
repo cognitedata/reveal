@@ -404,6 +404,9 @@ export class Cdf360CdmBatchCollectionLoader {
 
       return res.data.items;
     } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to fetch CDM files: ${error.message}`);
+      }
       throw new Error(`Failed to fetch CDM files: ${JSON.stringify(error)}`);
     }
   }
