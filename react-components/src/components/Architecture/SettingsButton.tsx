@@ -149,16 +149,18 @@ function QualityWarningBannerComponent({
 }: {
   command: QualityWarningBannerCommand;
 }): ReactNode {
+  const { t } = useTranslation();
   const isVisible = useCommandVisible(command);
   if (!isVisible) {
     return null;
   }
 
   return (
-    <StyledQualityWarningContainer>
+    <StyledQualityWarningContainer
+      title={command.tooltip !== undefined ? t(command.tooltip) : undefined}>
       <WarningFilledIcon />
       <Body strong size="x-small">
-        High details might overload CPU/GPU/RAM
+        {t(command.content)}
       </Body>
     </StyledQualityWarningContainer>
   );
