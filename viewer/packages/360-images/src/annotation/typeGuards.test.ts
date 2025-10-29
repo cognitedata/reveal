@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { AnnotationData, AnnotationModel } from '@cognite/sdk';
-import { isAnnotationInstanceLink } from './typeGuards';
+import { isImageInstanceLinkAnnotation } from './typeGuards';
 
 describe('typeGuard', () => {
   function createAnnotationModel(overrides: Partial<AnnotationModel>): AnnotationModel {
@@ -31,7 +31,7 @@ describe('typeGuard', () => {
     sources: []
   };
 
-  describe(isAnnotationInstanceLink.name, () => {
+  describe(isImageInstanceLinkAnnotation.name, () => {
     it('should return true for valid instance link annotation', () => {
       const annotation = createAnnotationModel({
         data: {
@@ -41,7 +41,7 @@ describe('typeGuard', () => {
         }
       });
 
-      expect(isAnnotationInstanceLink(annotation)).toBe(true);
+      expect(isImageInstanceLinkAnnotation(annotation)).toBe(true);
     });
 
     it('should return false for asset link annotation', () => {
@@ -54,7 +54,7 @@ describe('typeGuard', () => {
         }
       });
 
-      expect(isAnnotationInstanceLink(annotation)).toBe(false);
+      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
     });
 
     it('should return false when instanceRef is missing', () => {
@@ -65,7 +65,7 @@ describe('typeGuard', () => {
         }
       });
 
-      expect(isAnnotationInstanceLink(annotation)).toBe(false);
+      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
     });
 
     it('should return false when text is missing', () => {
@@ -76,7 +76,7 @@ describe('typeGuard', () => {
         }
       });
 
-      expect(isAnnotationInstanceLink(annotation)).toBe(false);
+      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
     });
 
     it('should return false when textRegion is missing', () => {
@@ -87,7 +87,7 @@ describe('typeGuard', () => {
         }
       });
 
-      expect(isAnnotationInstanceLink(annotation)).toBe(false);
+      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
     });
 
     it('should return false for empty data object', () => {
@@ -95,7 +95,7 @@ describe('typeGuard', () => {
         data: {}
       });
 
-      expect(isAnnotationInstanceLink(annotation)).toBe(false);
+      expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
     });
   });
 });

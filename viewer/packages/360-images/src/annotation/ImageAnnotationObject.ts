@@ -22,14 +22,13 @@ type FaceType = Image360FileDescriptor['face'];
 import { VariableWidthLine } from '@reveal/utilities';
 import { DmMesh3dAnnotationGeometryData } from './geometry/DmMesh3dAnnotationGeometryData';
 import {
-  isAnnotationAssetLink,
-  isAnnotationInstanceLink,
   isAnnotationsObjectDetection,
-  isCoreDmImage360Annotation
+  isCoreDmImage360Annotation,
+  isImageAssetLinkAnnotation,
+  isImageInstanceLinkAnnotation
 } from './typeGuards';
 
 const DEFAULT_ANNOTATION_COLOR = new Color(0.8, 0.8, 0.3);
-
 export class ImageAnnotationObject<T extends DataSourceType> implements Image360Annotation<T> {
   private readonly _annotation: T['image360AnnotationType'];
 
@@ -68,14 +67,13 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     }
 
     const annotationType = annotation.annotationType;
-    const detection = annotation.data;
 
-    if (isAnnotationsObjectDetection(annotationType, detection)) {
-      return this.createObjectDetectionAnnotationGeometry(detection);
-    } else if (isAnnotationAssetLink(annotationType, detection)) {
-      return this.createAssetLinkAnnotationData(detection);
-    } else if (isAnnotationInstanceLink(annotationType, detection)) {
-      return this.createInstanceLinkAnnotationData(detection);
+    if (isAnnotationsObjectDetection(annotationType, annotation.data)) {
+      return this.createObjectDetectionAnnotationGeometry(annotation.data);
+    } else if (isImageAssetLinkAnnotation(annotation)) {
+      return this.createAssetLinkAnnotationData(annotation.data);
+    } else if (isImageInstanceLinkAnnotation(annotation)) {
+      return this.createInstanceLinkAnnotationData(annotation.data);
     } else {
       return undefined;
     }

@@ -3,8 +3,7 @@
  */
 import { DataSourceType } from '@reveal/data-providers';
 import { InstanceReference } from '@reveal/data-providers/src/types';
-import { isCoreDmImage360Annotation } from './typeGuards';
-import { isImageAssetLinkAnnotation } from '@reveal/data-providers';
+import { isCoreDmImage360Annotation, isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from './typeGuards';
 
 export function getInstanceIdFromAnnotation<T extends DataSourceType>(
   annotation: T['image360AnnotationType']
@@ -12,13 +11,16 @@ export function getInstanceIdFromAnnotation<T extends DataSourceType>(
   if (isCoreDmImage360Annotation(annotation)) {
     return annotation.assetRef;
   } else {
-    if (!isImageAssetLinkAnnotation(annotation)) {
-      return undefined;
-    }
-
-    const assetRef = annotation.data.assetRef;
-    if (assetRef.externalId !== undefined || assetRef.id !== undefined) {
-      return assetRef as InstanceReference<T>;
+    if (isImageAssetLinkAnnotation(annotation)) {
+      const assetRef = annotation.data.assetRef;
+      if (assetRef.externalId !== undefined || assetRef.id !== undefined) {
+        return assetRef as InstanceReference<T>;
+      }
+    } else if (isImageInstanceLinkAnnotation(annotation)) {
+      const instanceRef = annotation.data.instanceRef;
+      if (instanceRef.externalId !== undefined && instanceRef.space !== undefined) {
+        return instanceRef as InstanceReference<T>;
+      }
     }
     return undefined;
   }

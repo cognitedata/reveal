@@ -31,9 +31,12 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from './shared';
 import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images';
 import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
+import {
+  isImageAssetLinkAnnotation,
+  isImageInstanceLinkAnnotation
+} from '@reveal/360-images/src/annotation/typeGuards';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
