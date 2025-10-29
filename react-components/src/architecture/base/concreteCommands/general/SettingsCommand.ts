@@ -24,6 +24,12 @@ import { GroupCommand } from '../../commands/GroupCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  private _isOpened: boolean = false;
+
+  // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
@@ -83,5 +89,23 @@ export class SettingsCommand extends BaseSettingsCommand {
 
   public override get icon(): IconName {
     return 'Settings';
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public setIsOpened(value: boolean): boolean {
+    this._isOpened = value;
+
+    return this.isOpened;
+  }
+
+  // ==================================================
+  // GETTERS
+  // ==================================================
+
+  public get isOpened(): boolean {
+    return this._isOpened;
   }
 }

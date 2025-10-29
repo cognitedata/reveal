@@ -1,7 +1,7 @@
-import { BaseSettingsCommand, type TranslationInput } from '../../../../src/architecture';
+import { SettingsCommand, type TranslationInput } from '../../../../src/architecture';
 import { type IconName } from '../../../../src/architecture/base/utilities/types';
 
-export class TestSettingsCommand extends BaseSettingsCommand {
+export class TestSettingsCommand extends SettingsCommand {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================

@@ -8,7 +8,7 @@ import assert from 'assert';
 import { type PropsWithChildren, type ReactElement } from 'react';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { viewerMock } from '#test-utils/fixtures/viewer';
-import { type BaseSettingsCommand, RevealRenderTarget } from '../../architecture';
+import { RevealRenderTarget, type SettingsCommand } from '../../architecture';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { TestSectionCommand } from '#test-utils/architecture/commands/TestSectionCommand';
 import { TestSliderCommand } from '#test-utils/architecture/commands/TestSliderCommand';
@@ -75,9 +75,9 @@ describe(SettingsButton.name, () => {
 
     renderAndOpenSettingsPanel(settingsCommand);
 
-    const element = await screen.findByRole('switch');
+    const element = await screen.findAllByRole('switch');
 
-    expect(element).toBeDefined();
+    expect(element).toHaveLength(2);
   });
 
   test('renders slider in panel', async () => {
@@ -86,9 +86,9 @@ describe(SettingsButton.name, () => {
 
     renderAndOpenSettingsPanel(settingsCommand);
 
-    const sliderComponent = screen.getByRole('slider');
+    const sliderComponent = screen.getAllByRole('slider');
 
-    expect(sliderComponent).toBeDefined();
+    expect(sliderComponent).toHaveLength(2);
   });
 
   test('renders filter button with label in panel', async () => {
@@ -194,7 +194,7 @@ describe(SettingsButton.name, () => {
   });
 });
 
-function renderAndOpenSettingsPanel(settingsCommand: BaseSettingsCommand): {
+function renderAndOpenSettingsPanel(settingsCommand: SettingsCommand): {
   container: HTMLElement;
 } {
   const { container } = render(

@@ -1,5 +1,5 @@
 import { BannerComponent } from './BannerComponent';
-import { BaseBannerCommand, GroupCommand } from '../../architecture';
+import { BaseBannerCommand, GroupCommand, SettingsCommand } from '../../architecture';
 import { useTranslation } from '../i18n/I18n';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
@@ -28,9 +28,16 @@ import { IconComponent } from './Factories/IconFactory';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { type FlexDirection, type PlacementType } from './types';
-import { type ReactNode, useState, type ReactElement } from 'react';
+import {
+  type ReactNode,
+  useState,
+  type ReactElement,
+  type PropsWithChildren,
+  type FC,
+  createContext,
+  useContext
+} from 'react';
 import { useCommand } from './hooks/useCommand';
 import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
@@ -38,11 +45,57 @@ import { QualityWarningBannerCommand } from '../../architecture/base/concreteCom
 import { SetLengthUnitCommand } from '../../architecture/base/concreteCommands/units/SetLengthUnitCommand';
 import { SegmentedButtons } from './SegmentedButtons';
 
+type SettingsButtonContextType = {
+  setHiddenGroupId: (groupId: string) => void;
+  removeHiddenGroupId: (groupId: string) => void;
+  isHiddenGroupId: (groupId: string) => boolean;
+};
+
+const SettingsButtonContext = createContext<SettingsButtonContextType | undefined>(undefined);
+
+export const SettingsButtonProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [hiddenGroupIds, setHiddenGroupIds] = useState<Set<string>>(new Set());
+
+  const setHiddenGroupId = (groupId: string): void => {
+    setHiddenGroupIds((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(groupId);
+      return newSet;
+    });
+  };
+  const removeHiddenGroupId = (groupId: string): void => {
+    setHiddenGroupIds((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(groupId);
+      return newSet;
+    });
+  };
+  const isHiddenGroupId = (groupId: string): boolean => {
+    return hiddenGroupIds.has(groupId);
+  };
+
+  const value: SettingsButtonContextType = {
+    setHiddenGroupId,
+    removeHiddenGroupId,
+    isHiddenGroupId
+  };
+
+  return <SettingsButtonContext.Provider value={value}>{children}</SettingsButtonContext.Provider>;
+};
+
+export const useSettingsButton = (): SettingsButtonContextType => {
+  const context = useContext(SettingsButtonContext);
+  if (context === undefined) {
+    throw new Error('useSettingsButton must be used within a SettingsButtonProvider');
+  }
+  return context;
+};
+
 export function createSettingsButton(
   command: BaseCommand,
   placement: PlacementType
 ): ReactElement | undefined {
-  if (command instanceof BaseSettingsCommand) {
+  if (command instanceof SettingsCommand) {
     return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
   return undefined;
@@ -52,50 +105,48 @@ export const SettingsButton = ({
   inputCommand,
   placement
 }: {
-  inputCommand: BaseSettingsCommand;
+  inputCommand: SettingsCommand;
   placement: PlacementType;
 }): ReactElement => {
   const command = useCommand(inputCommand);
   const { isVisible, isEnabled, icon } = useCommandProps(command);
-  const [isOpen, setOpen] = useState(false);
 
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
+
   const label = command.label;
   const flexDirection = getFlexDirection(placement);
-  const isTooltipDisabled = isOpen || label === undefined;
+  const isTooltipDisabled = command.isOpened || label === undefined;
 
   return (
-    <Dropdown
-      disabled={!isEnabled}
-      content={
-        <StyledMenuPanel $flexDirection={flexDirection}>
-          {command.children.map(createMenuItem)}
-        </StyledMenuPanel>
-      }
-      onShow={(open) => {
-        setOpen(open);
-      }}
-      onHide={(open) => {
-        setOpen(open);
-      }}
-      placement={getDropdownPlacement(placement)}
-      offset={DROP_DOWN_OFFSET}>
-      <CogsTooltip
-        content={<LabelWithShortcut label={label} command={command} />}
-        disabled={isTooltipDisabled}
-        enterDelay={TOOLTIP_DELAY}
-        placement={getTooltipPlacement(placement)}>
-        <Button
-          type={command.buttonType}
-          icon={<IconComponent iconName={icon} />}
-          disabled={!isEnabled}
-          toggled={isOpen}
-          aria-label={label}
-        />
-      </CogsTooltip>
-    </Dropdown>
+    <SettingsButtonProvider>
+      <Dropdown
+        disabled={!isEnabled}
+        content={
+          <StyledMenuPanel $flexDirection={flexDirection}>
+            {command.children.map(createMenuItem)}
+          </StyledMenuPanel>
+        }
+        onShow={() => command.setIsOpened(true)}
+        onHide={() => command.setIsOpened(false)}
+        placement={getDropdownPlacement(placement)}
+        offset={DROP_DOWN_OFFSET}>
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={isTooltipDisabled}
+          enterDelay={TOOLTIP_DELAY}
+          placement={getTooltipPlacement(placement)}>
+          <Button
+            type={command.buttonType}
+            icon={<IconComponent iconName={icon} />}
+            disabled={!isEnabled}
+            toggled={command.isOpened}
+            aria-label={label}
+          />
+        </CogsTooltip>
+      </Dropdown>
+    </SettingsButtonProvider>
   );
 };
 
@@ -169,14 +220,26 @@ function QualityWarningBannerComponent({
 function GroupComponent({ command }: { command: GroupCommand }): ReactNode {
   const { t } = useTranslation();
   const isGroupVisible = useCommandVisible(command);
+  const { isHiddenGroupId, removeHiddenGroupId, setHiddenGroupId } = useSettingsButton();
+
   if (!isGroupVisible) {
     return null;
   }
 
   if (command.isAccordion) {
+    const accordionId = command.uniqueId;
+    const isHidden = isHiddenGroupId(accordionId);
+
     return (
       <StyledAccordion
-        expanded
+        expanded={!isHidden}
+        onChange={(expanded: boolean) => {
+          if (expanded) {
+            removeHiddenGroupId(accordionId);
+          } else {
+            setHiddenGroupId(accordionId);
+          }
+        }}
         title={command.tooltip !== undefined ? t(command.tooltip) : undefined}>
         <StyledGroupContent>{command.commands.map(createGroupItem)}</StyledGroupContent>
       </StyledAccordion>
