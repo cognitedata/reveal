@@ -368,7 +368,7 @@ export class Cdf360CdmBatchCollectionLoader {
       { fileId: fileInfos[1].id, face: 'back', mimeType: fileInfos[1].mimeType! },
       { fileId: fileInfos[2].id, face: 'left', mimeType: fileInfos[2].mimeType! },
       { fileId: fileInfos[3].id, face: 'right', mimeType: fileInfos[3].mimeType! },
-      { fileId: fileInfos[4].id, face: 'top', mimeType: fileInfos[5].mimeType! },
+      { fileId: fileInfos[4].id, face: 'top', mimeType: fileInfos[4].mimeType! },
       { fileId: fileInfos[5].id, face: 'bottom', mimeType: fileInfos[5].mimeType! }
     ] as Image360FileDescriptor[];
   }
