@@ -12,6 +12,8 @@ interface FileInfoWithInstanceId extends FileInfo {
   instanceId: DirectRelationReference;
 }
 
+type DmsSdkQueryResult = Awaited<ReturnType<DataModelsSdk['queryNodesAndEdges']>>;
+
 describe(Cdf360CdmBatchCollectionLoader.name, () => {
   test('should batch multiple collection requests into a single DMS query', async () => {
     const collectionIds = ['collection_1', 'collection_2', 'collection_3'];
@@ -101,7 +103,15 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
   });
 
   test('should handle DMS query errors gracefully', async () => {
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks({}, undefined, new Error('DMS query failed'));
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(
+      {
+        image_collections: [],
+        images: [],
+        stations: []
+      },
+      undefined,
+      new Error('DMS query failed')
+    );
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -144,7 +154,12 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(result).toHaveLength(0);
   });
 
-  function createMockSdks(dmsResponse: unknown, filesResponse?: unknown, dmsError?: Error, filesError?: Error) {
+  function createMockSdks(
+    dmsResponse: DmsSdkQueryResult,
+    filesResponse?: unknown,
+    dmsError?: Error,
+    filesError?: Error
+  ) {
     const cogniteSdkMock = new Mock<CogniteClient>()
       .setup(instance => instance.getBaseUrl())
       .returns('https://example.com')
@@ -178,15 +193,13 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     if (dmsError) {
       dmsSdkMock.setup(instance => instance.queryNodesAndEdges(It.IsAny())).callback(() => Promise.reject(dmsError));
     } else {
-      dmsSdkMock
-        .setup(instance => instance.queryNodesAndEdges(It.IsAny()))
-        .returns(Promise.resolve(dmsResponse) as ReturnType<DataModelsSdk['queryNodesAndEdges']>);
+      dmsSdkMock.setup(instance => instance.queryNodesAndEdges(It.IsAny())).returns(Promise.resolve(dmsResponse));
     }
 
     return { cogniteSdkMock, dmsSdkMock };
   }
 
-  function createMockDmsResponse(collectionIds: string[]) {
+  function createMockDmsResponse(collectionIds: string[]): DmsSdkQueryResult {
     const collections = collectionIds.map(id => ({
       instanceType: 'node' as const,
       version: 1,
