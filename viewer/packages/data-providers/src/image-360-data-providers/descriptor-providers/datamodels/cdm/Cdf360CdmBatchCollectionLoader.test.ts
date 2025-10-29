@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, DirectRelationReference, FileInfo, HttpResponse } from '@cognite/sdk';
+import { CogniteClient, DirectRelationReference, FileInfo } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
@@ -13,6 +13,7 @@ interface FileInfoWithInstanceId extends FileInfo {
 }
 
 type DmsSdkQueryResult = Awaited<ReturnType<DataModelsSdk['queryNodesAndEdges']>>;
+type HttpPostResponse = Awaited<ReturnType<CogniteClient['post']>>;
 
 describe(Cdf360CdmBatchCollectionLoader.name, () => {
   test('should batch multiple collection requests into a single DMS query', async () => {
@@ -156,7 +157,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
   function createMockSdks(
     dmsResponse: DmsSdkQueryResult,
-    filesResponse?: unknown,
+    filesResponse?: HttpPostResponse,
     dmsError?: Error,
     filesError?: Error
   ) {
@@ -174,9 +175,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
             It.IsAny()
           )
         )
-        .returns(
-          filesError ? Promise.reject(filesError) : (Promise.resolve(filesResponse) as Promise<HttpResponse<unknown>>)
-        );
+        .returns(filesError ? Promise.reject(filesError) : Promise.resolve(filesResponse));
     } else if (filesError) {
       cogniteSdkMock
         .setup(instance =>
@@ -257,7 +256,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     };
   }
 
-  function createMockFilesResponse(collectionIds: string[]) {
+  function createMockFilesResponse(collectionIds: string[]): HttpPostResponse {
     const files: FileInfoWithInstanceId[] = collectionIds.flatMap((collectionId, idx) =>
       Array.from({ length: 2 }, (_, imageIdx) =>
         ['top', 'back', 'left', 'front', 'right', 'bottom'].map(face => {
