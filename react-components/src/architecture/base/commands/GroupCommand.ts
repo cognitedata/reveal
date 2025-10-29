@@ -53,7 +53,10 @@ export class GroupCommand extends RenderTargetCommand {
   }
 
   public override equals(other: BaseCommand): boolean {
-    return this === other;
+    if (!(other instanceof GroupCommand)) {
+      return false;
+    }
+    return this._title === other._title && this._isAccordion === other._isAccordion;
   }
 
   protected override invokeCore(): boolean {

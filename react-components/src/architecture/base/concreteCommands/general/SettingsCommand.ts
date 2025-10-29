@@ -39,49 +39,38 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new GeneralBannerCommand(topBannerContent));
     }
 
-    const generalGroupCommands: BaseCommand[] = [
-      new SetQualitySliderCommand(),
-      new QualityWarningBannerCommand(),
-      new SetLengthUnitCommand()
-    ];
-    const cadGroupCommands: BaseCommand[] = [new SetGhostModeCommand()];
-    const pointCloudGroupCommands: BaseCommand[] = [
-      new SetPointSizeCommand(),
-      new SetPointColorTypeCommand(),
-      new SetPointShapeCommand(),
-      new PointCloudFilterCommand()
-    ];
-    const images360GroupCommands: BaseCommand[] = [];
-
+    const generalGroup = new GroupCommand({ title: { untranslated: 'General' } });
+    generalGroup.add(new SetQualitySliderCommand());
+    generalGroup.add(new QualityWarningBannerCommand());
+    generalGroup.add(new SetLengthUnitCommand());
     if (includePois) {
-      generalGroupCommands.push(new SetPointsOfInterestVisibleCommand());
+      generalGroup.add(new SetPointsOfInterestVisibleCommand());
     }
+
+    const cadGroup = new GroupCommand({ title: { key: 'CAD_MODELS' } });
+    cadGroup.add(new SetGhostModeCommand());
+
+    const pointCloudGroup = new GroupCommand({ title: { key: 'POINT_CLOUDS' } });
+    pointCloudGroup.add(new SetPointSizeCommand());
+    pointCloudGroup.add(new SetPointColorTypeCommand());
+    pointCloudGroup.add(new SetPointShapeCommand());
+    pointCloudGroup.add(new PointCloudFilterCommand());
+
+    const images360Group = new GroupCommand({ title: { key: 'IMAGES_360' } });
     if (include360Images) {
-      images360GroupCommands.push(new Set360ImagesOpacityCommand());
-      images360GroupCommands.push(new Set360IconsOpacityCommand());
-      images360GroupCommands.push(new Set360IconsSectionCommand());
+      images360Group.add(new Set360ImagesOpacityCommand());
+      images360Group.add(new Set360IconsOpacityCommand());
+      images360Group.add(new Set360IconsSectionCommand());
 
       const rowCommand = new GroupCommand({ isAccordion: false });
       rowCommand.add(new Set360IconsVisibleCommand());
       rowCommand.add(new Set360IconsOccludedVisibleCommand());
-
-      images360GroupCommands.push(rowCommand);
+      images360Group.add(rowCommand);
     }
 
-    const generalGroup = new GroupCommand({ title: { untranslated: 'General' } });
-    generalGroupCommands.forEach((command) => generalGroup.add(command));
     this.add(generalGroup);
-
-    const cadGroup = new GroupCommand({ title: { untranslated: 'CAD' } });
-    cadGroupCommands.forEach((command) => cadGroup.add(command));
     this.add(cadGroup);
-
-    const pointCloudGroup = new GroupCommand({ title: { untranslated: 'Point cloud' } });
-    pointCloudGroupCommands.forEach((command) => pointCloudGroup.add(command));
     this.add(pointCloudGroup);
-
-    const images360Group = new GroupCommand({ title: { untranslated: '360' } });
-    images360GroupCommands.forEach((command) => images360Group.add(command));
     this.add(images360Group);
   }
 

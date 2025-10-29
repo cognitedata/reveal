@@ -3,7 +3,6 @@ import {
   GroupCommand,
   type TranslationInput
 } from '../../../../src/architecture';
-import { type UntranslatedString } from '../../../../src/architecture/base/utilities/translation/TranslateInput';
 
 import { TestButtonCommand } from './TestButtonCommand';
 import { TestSectionCommand } from './TestSectionCommand';
@@ -13,25 +12,19 @@ export class TestGroupCommand extends GroupCommand {
     super({ title });
 
     const defaultCommands = commands ?? [
-      new TestButtonCommand({
-        onClick: () => {}
-      }),
+      new TestButtonCommand({}),
       new TestSectionCommand('Group section'),
-      new TestButtonCommand({
-        onClick: () => {}
-      })
+      new TestButtonCommand({})
     ];
 
     defaultCommands.forEach((command) => this.add(command));
   }
 
   public override get tooltip(): TranslationInput {
-    if (this.title === undefined) {
+    if (this.title === undefined || super.tooltip === undefined) {
       return { untranslated: 'Test group' };
     }
-    return {
-      untranslated: `Test group: ${(this.title as UntranslatedString).untranslated}`
-    };
+    return super.tooltip;
   }
 
   public override get isVisible(): boolean {

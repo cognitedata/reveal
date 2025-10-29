@@ -136,7 +136,7 @@ describe(SettingsButton.name, () => {
 
     renderAndOpenSettingsPanel(settingsCommand);
 
-    const accordionElement = await screen.findByText(`Test group: ${groupTitle}`);
+    const accordionElement = await screen.findByText(groupTitle);
     expect(accordionElement).toBeDefined();
   });
 
@@ -155,9 +155,9 @@ describe(SettingsButton.name, () => {
 
     renderAndOpenSettingsPanel(settingsCommand);
 
-    const firstGroupElement = await screen.findByText(`Test group: ${firstGroupTitle}`);
-    const secondGroupElement = await screen.findByText(`Test group: ${secondGroupTitle}`);
-    const thirdGroupElement = await screen.findByText(`Test group: ${thirdGroupTitle}`);
+    const firstGroupElement = await screen.findByText(firstGroupTitle);
+    const secondGroupElement = await screen.findByText(secondGroupTitle);
+    const thirdGroupElement = await screen.findByText(thirdGroupTitle);
 
     expect(firstGroupElement).toBeDefined();
     expect(secondGroupElement).toBeDefined();
@@ -180,17 +180,17 @@ describe(SettingsButton.name, () => {
     renderAndOpenSettingsPanel(settingsCommand);
 
     // Check that the first two groups are present
-    const firstGroupElement = await screen.findByText(`Test group: ${firstGroupTitle}`);
-    const secondGroupElement = await screen.findByText(`Test group: ${secondGroupTitle}`);
+    const firstGroupElement = await screen.findByText(firstGroupTitle);
+    const secondGroupElement = await screen.findByText(secondGroupTitle);
 
     expect(firstGroupElement).toBeDefined();
     expect(secondGroupElement).toBeDefined();
 
     // Verify they are the first two by checking their order in the DOM
-    const allGroupElements = screen.getAllByText(/Test group: .*Group$/);
+    const allGroupElements = screen.getAllByText(/.*Group$/);
     expect(allGroupElements).toHaveLength(3);
-    expect(allGroupElements[0].textContent).toBe(`Test group: ${firstGroupTitle}`);
-    expect(allGroupElements[1].textContent).toBe(`Test group: ${secondGroupTitle}`);
+    expect(allGroupElements[0].textContent).toBe(firstGroupTitle);
+    expect(allGroupElements[1].textContent).toBe(secondGroupTitle);
   });
 });
 
