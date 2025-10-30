@@ -21,13 +21,14 @@ import {
   type GeneralBannerContent
 } from '../../commands/GeneralBannerCommand';
 import { GroupCommand } from '../../commands/GroupCommand';
+import { signal } from '@cognite/signals';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  private _isOpened: boolean = false;
+  public readonly isOpen = signal(false);
 
   // ==================================================
   // CONSTRUCTOR
@@ -89,23 +90,5 @@ export class SettingsCommand extends BaseSettingsCommand {
 
   public override get icon(): IconName {
     return 'Settings';
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  public setIsOpened(value: boolean): boolean {
-    this._isOpened = value;
-
-    return this.isOpened;
-  }
-
-  // ==================================================
-  // GETTERS
-  // ==================================================
-
-  public get isOpened(): boolean {
-    return this._isOpened;
   }
 }

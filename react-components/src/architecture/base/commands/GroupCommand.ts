@@ -1,6 +1,7 @@
 import { type BaseCommand } from './BaseCommand';
 import { type TranslationInput } from '../utilities/translation/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
+import { signal } from '@cognite/signals';
 
 export type GroupCommandConfiguration = {
   title?: TranslationInput;
@@ -20,6 +21,7 @@ export class GroupCommand extends RenderTargetCommand {
   private readonly _title?: TranslationInput;
   private readonly _isAccordion: boolean;
   private readonly _commands: BaseCommand[] = [];
+  public readonly isOpen = signal(true);
 
   // ==================================================
   // CONSTRUCTOR
