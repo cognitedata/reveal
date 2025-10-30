@@ -13,7 +13,6 @@ import type {
 } from '../../../../types';
 import type { DMDataSourceType } from '../../../../DataSourceType';
 import chunk from 'lodash/chunk';
-import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
@@ -29,13 +28,6 @@ type ImageResultProperties = ImageInstanceResult['properties']['cdf_cdm']['Cogni
 
 // Collection types - batch query uses 'image_collections' (plural)
 type CollectionInstanceResult = QueryResult['image_collections'][number];
-
-// File response type from CDM files API
-type CoreDmFileResponse = {
-  data: {
-    items: FileInfo[];
-  };
-};
 
 type BatchQueryResult = {
   image_collections: CollectionInstanceResult[];
@@ -107,7 +99,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
    * Return an empty array when a collection is not found.
    */
   protected getDefaultResult(_identifier: DMInstanceRef): Historical360ImageSet<DMDataSourceType>[] {
-    console.warn(`Collection not found: ${dmInstanceRefToKey(_identifier)}`);
+    console.warn(`[${Cdf360CdmBatchCollectionLoader.name}] Collection not found: ${dmInstanceRefToKey(_identifier)}`);
     return [];
   }
 
@@ -174,7 +166,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     const grouped = new Map<string, Historical360ImageSet<DMDataSourceType>[]>();
 
     if (!result.image_collections || !result.images) {
-      console.warn('Missing image_collections or images in result:', {
+      console.warn(`[${Cdf360CdmBatchCollectionLoader.name}] Missing image_collections or images in result:`, {
         hasCollections: !!result.image_collections,
         hasImages: !!result.images
       });
@@ -212,15 +204,14 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       const name = collection.properties?.cdf_cdm?.['Cognite360ImageCollection/v1']?.name;
       const collectionLabel = typeof name === 'string' ? name : typeof name === 'number' ? String(name) : undefined;
 
-      // Get file descriptors for this collection's images
-      const fileDescriptorsForCollection = this.getFileDescriptorsForImages(collectionImages, allFileDescriptors);
+      // Get paired image and file descriptor data for this collection's images
+      const imagesWithFiles = this.getFileDescriptorsForImages(collectionImages, allFileDescriptors);
 
       // Create Historical360ImageSet
       const historicalSets = this.createHistoricalImageSets(
         collectionId,
         collectionLabel ?? collectionId,
-        collectionImages,
-        fileDescriptorsForCollection
+        imagesWithFiles
       );
 
       grouped.set(collectionKey, historicalSets);
@@ -271,19 +262,26 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
         const key = dmInstanceRefToKey(instanceId);
         fileMap.set(key, file);
       } else {
-        console.warn(`File ${file.id} missing instanceId in response`);
+        console.warn(`[${Cdf360CdmBatchCollectionLoader.name}] File ${file.id} missing instanceId in response`);
       }
     });
 
     return fileMap;
   }
 
-  private getFileDescriptorsForImages(images: ImageInstanceResult[], fileMap: Map<string, FileInfo>): FileInfo[][] {
+  /**
+   * Get file descriptors for each image, returning explicit pairs of image and its files.
+   * This avoids implicit assumptions about array ordering.
+   */
+  private getFileDescriptorsForImages(
+    images: ImageInstanceResult[],
+    fileMap: Map<string, FileInfo>
+  ): Array<{ image: ImageInstanceResult; fileDescriptors: FileInfo[] }> {
     return images.map(image => {
       const props = image.properties.cdf_cdm['Cognite360Image/v1'];
       const faces = [props.front, props.back, props.left, props.right, props.top, props.bottom];
 
-      const faceFiles = faces
+      const fileDescriptors = faces
         .filter(isDmIdentifier)
         .map(ref => {
           // Create the same key format used in the file map
@@ -292,22 +290,19 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
         })
         .filter(isDefined);
 
-      return faceFiles;
+      return { image, fileDescriptors };
     });
   }
 
   private createHistoricalImageSets(
     collectionId: string,
     collectionLabel: string,
-    images: ImageInstanceResult[],
-    fileDescriptors: FileInfo[][]
+    imagesWithFiles: Array<{ image: ImageInstanceResult; fileDescriptors: FileInfo[] }>
   ): Historical360ImageSet<DMDataSourceType>[] {
-    const imagesGroupedWithFileDescriptors = zip(images, fileDescriptors)
-      .filter(
-        (pair): pair is [ImageInstanceResult, FileInfo[]] =>
-          pair[0] !== undefined && pair[1] !== undefined && pair[1].length === 6
-      )
-      .map(([image, fileDescriptors]) => ({ image, fileDescriptors }));
+    // Filter out images that don't have all 6 face files
+    const imagesGroupedWithFileDescriptors = imagesWithFiles.filter(
+      ({ fileDescriptors }) => fileDescriptors.length === 6
+    );
 
     const [imagesWithoutStation, imagesWithStation] = partition(imagesGroupedWithFileDescriptors, image => {
       const station = image.image.properties.cdf_cdm['Cognite360Image/v1'].station360;
@@ -400,14 +395,10 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   }
 
   private async getCdmFiles(identifiers: DirectRelationReference[]): Promise<FileInfo[]> {
-    const url = `${this._cogniteSdk.getBaseUrl()}/api/v1/projects/${this._cogniteSdk.project}/files/byids`;
-
     try {
-      const res = (await this._cogniteSdk.post(url, {
-        data: { items: identifiers.map(id => ({ instanceId: id })) }
-      })) as CoreDmFileResponse;
+      const result = await this._cogniteSdk.files.retrieve(identifiers.map(id => ({ instanceId: id })));
 
-      return res.data.items;
+      return result;
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to fetch CDM files: ${error.message}`);
