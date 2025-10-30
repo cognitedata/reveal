@@ -19,6 +19,7 @@ import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
+  ImageAssetLinkAnnotationInfo,
   ImageInstanceLinkAnnotationInfo,
   InstanceReference
 } from '../types';

@@ -95,6 +95,7 @@ describe(ImageAnnotationObject.name, () => {
       const result = ImageAnnotationObject.createAnnotationObject(annotation, 'front', mockVisualizationBoxTransform);
 
       expect(result).toBeInstanceOf(ImageAnnotationObject);
+      expect(result?.getObject().children.length).toEqual(2);
     });
 
     test('uses textRegion as fallback when objectRegion is empty for instance link', () => {
@@ -117,6 +118,7 @@ describe(ImageAnnotationObject.name, () => {
       );
 
       expect(result).toBeInstanceOf(ImageAnnotationObject);
+      expect(result?.getObject().children.length).toEqual(2);
     });
   });
 });
