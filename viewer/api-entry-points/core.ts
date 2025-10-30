@@ -140,7 +140,7 @@ export {
   Image360Action,
   InstanceLinkable360ImageAnnotationType,
   Image360AnnotationInstanceReference,
-  AssetHybridAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info
 } from '../packages/360-images';
 
 export {
