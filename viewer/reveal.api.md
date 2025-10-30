@@ -1315,7 +1315,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
     getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
     getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
-    getAnnotationsInfo(source: 'hybrid'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+    getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
     getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
     getAnnotationsInfo(source: 'assets' | 'hybrid' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[] | AssetHybridAnnotationImage360Info[]>;
     // @deprecated
@@ -1457,7 +1457,7 @@ export class IndexSet {
 }
 
 // @public
-export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType ? ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo : T['image360AnnotationType'];
+export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType ? ImageAssetLinkAnnotationInfo : T['image360AnnotationType'];
 
 // @public
 export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;

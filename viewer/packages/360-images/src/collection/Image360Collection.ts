@@ -23,7 +23,7 @@ import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
  * annotation types are visible in Reveal, but not linkable to assets
  */
 export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType
-  ? ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo
+  ? ImageAssetLinkAnnotationInfo
   : T['image360AnnotationType'];
 
 /**
@@ -235,7 +235,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * Fetches annotations from the CDF Core Data Model
    */
 
-  getAnnotationsInfo(source: 'hybrid'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
   /**
    * Fetches annotations from the CDF Core Data Model
    */

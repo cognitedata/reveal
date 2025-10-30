@@ -19,6 +19,7 @@ import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
+  ImageInstanceLinkAnnotationInfo,
   InstanceReference
 } from '../types';
 import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
@@ -165,7 +166,9 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
 
     if (source === 'hybrid') {
       return pairAnnotationsWithEntityAndRevision(
-        annotations.filter(annotation => isImageInstanceLinkAnnotation(annotation))
+        annotations.filter(
+          annotation => isImageInstanceLinkAnnotation(annotation) || isImageAssetLinkAnnotation(annotation)
+        )
       );
     }
     return pairAnnotationsWithEntityAndRevision(
@@ -173,7 +176,9 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     );
 
     function pairAnnotationsWithEntityAndRevision(
-      annotations: InstanceLinkable360ImageAnnotationType<ClassicDataSourceType>[]
+      annotations: Array<
+        InstanceLinkable360ImageAnnotationType<ClassicDataSourceType> | ImageInstanceLinkAnnotationInfo
+      >
     ) {
       return annotations
         .map(annotation => {
