@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { isAnnotationInstanceLink } from './typeGuards';
+import { isImageInstanceLinkAnnotation } from './typeGuards';
 import { createAnnotationModel } from '../../../../test-utilities';
 
 describe('typeGuard', () => {
