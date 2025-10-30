@@ -154,8 +154,8 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
   });
 
-  describe('getAllImage360AnnotationInfos (hybrid)', () => {
-    test('maps instance link annotations to entity + revision', async () => {
+  describe('getAllImage360AnnotationInfos', () => {
+    test('maps instance link annotations to entity + revision for hybrid', async () => {
       mockAnnotationList.mockImplementation(
         (): CursorAndAsyncIterator<AnnotationModel> =>
           createCursorAndAsyncIterator({
@@ -174,6 +174,31 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       const annotatedIds = results.map(r => r.annotationInfo.annotatedResourceId).sort();
       expect(annotatedIds).toEqual([30]);
+      results.forEach(r => {
+        expect(r.imageEntity).toBe(entity);
+        expect(r.imageRevision).toBeDefined();
+      });
+    });
+
+    test('maps asset link annotations to entity + revision for classic', async () => {
+      mockAnnotationList.mockImplementation(
+        (): CursorAndAsyncIterator<AnnotationModel> =>
+          createCursorAndAsyncIterator({
+            items: [matchingAnnotation]
+          })
+      );
+
+      const client = sdkMock;
+      const provider = new Cdf360ImageAnnotationProvider(client);
+
+      const revision1 = createMockRevision(10, [matchingHybridAnnotation]);
+      const entity = createMockEntity([revision1]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.getAllImage360AnnotationInfos('assets', collection, () => true);
+
+      const annotatedIds = results.map(r => r.annotationInfo.annotatedResourceId).sort();
+      expect(annotatedIds).toEqual([10]);
       results.forEach(r => {
         expect(r.imageEntity).toBe(entity);
         expect(r.imageRevision).toBeDefined();
