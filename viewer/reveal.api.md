@@ -8,6 +8,7 @@ import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -1271,7 +1272,7 @@ export type Image360AnnotationAppearance = {
 
 // @public
 export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicDataSourceType> = {
-    assetRef: InstanceReference<T>;
+    assetRef: Image360AnnotationInstanceReference<T>;
 };
 
 // @public
@@ -1304,8 +1305,9 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
     getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
     getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+    getAnnotationsInfo(source: 'hybrid'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
     getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
-    getAnnotationsInfo(source: 'assets' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[]>;
+    getAnnotationsInfo(source: 'assets' | 'hybrid' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[] | AssetHybridAnnotationImage360Info[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
@@ -1440,7 +1442,7 @@ export class IndexSet {
 }
 
 // @public
-export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType ? ImageAssetLinkAnnotationInfo : T['image360AnnotationType'];
+export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType ? ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo : T['image360AnnotationType'];
 
 // @public
 export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
