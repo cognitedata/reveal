@@ -338,7 +338,7 @@ const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
   padding: 12px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
 
   border-radius: var(--Radius-Large, 8px);
   background: #fff;
