@@ -168,14 +168,27 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       .returns('test-project');
 
     if (filesResponse) {
-      cogniteSdkMock
-        .setup(instance =>
-          instance.post(
-            It.Is((path: string) => path.includes('files/byids')),
-            It.IsAny()
+      if (filesError) {
+        cogniteSdkMock
+          .setup(instance =>
+            instance.post(
+              It.Is((path: string) => path.includes('files/byids')),
+              It.IsAny()
+            )
           )
-        )
-        .returns(filesError ? Promise.reject(filesError) : Promise.resolve(filesResponse));
+          .callback(async () => {
+            throw filesError;
+          });
+      } else {
+        cogniteSdkMock
+          .setup(instance =>
+            instance.post(
+              It.Is((path: string) => path.includes('files/byids')),
+              It.IsAny()
+            )
+          )
+          .returns(Promise.resolve(filesResponse));
+      }
     } else if (filesError) {
       cogniteSdkMock
         .setup(instance =>
@@ -184,15 +197,23 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
             It.IsAny()
           )
         )
-        .callback(() => Promise.reject(filesError));
+        .callback(async () => {
+          throw filesError;
+        });
     }
 
     const dmsSdkMock = new Mock<DataModelsSdk>();
 
     if (dmsError) {
-      dmsSdkMock.setup(instance => instance.queryNodesAndEdges(It.IsAny())).callback(() => Promise.reject(dmsError));
+      dmsSdkMock
+        .setup(instance => instance.queryNodesAndEdges(It.IsAny(), It.IsAny()))
+        .callback(async () => {
+          throw dmsError;
+        });
     } else {
-      dmsSdkMock.setup(instance => instance.queryNodesAndEdges(It.IsAny())).returns(Promise.resolve(dmsResponse));
+      dmsSdkMock
+        .setup(instance => instance.queryNodesAndEdges(It.IsAny(), It.IsAny()))
+        .returns(Promise.resolve(dmsResponse));
     }
 
     return { cogniteSdkMock, dmsSdkMock };
@@ -233,6 +254,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
               right: { externalId: `file_${collectionId}_${imageIdx}_right`, space: 'test_space' },
               bottom: { externalId: `file_${collectionId}_${imageIdx}_bottom`, space: 'test_space' },
               collection360: { space: 'test_space', externalId: collectionId },
+              station360: { space: 'test_space', externalId: `station_${collectionId}` },
               scaleX: 1,
               scaleY: 1,
               scaleZ: 1,

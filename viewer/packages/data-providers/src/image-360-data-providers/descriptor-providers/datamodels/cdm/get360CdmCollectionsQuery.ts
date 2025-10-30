@@ -2,10 +2,15 @@
  * Copyright 2025 Cognite AS
  */
 
-const coreDmSpace = 'cdf_cdm';
+import {
+  COGNITE_360_IMAGE_COLLECTION_SOURCE,
+  COGNITE_360_IMAGE_SOURCE,
+  COGNITE_360_IMAGE_STATION_SOURCE
+} from '../../../../utilities/constants';
+import { DMInstanceRef } from '@reveal/utilities';
+import { CORE_DM_IMAGE_360_PROPERTIES_LIST } from '../../../cdm/queryProperties';
 
-function createCollectionsQuery(collectionRefs: Array<{ externalId: string; space: string }>) {
-  // Create OR filter for multiple collections
+function createCollectionsQuery(collectionRefs: DMInstanceRef[]) {
   const collectionFilters = collectionRefs.map(ref => ({
     and: [
       {
@@ -37,44 +42,29 @@ function createCollectionsQuery(collectionRefs: Array<{ externalId: string; spac
         nodes: {
           from: 'image_collections',
           through: {
-            view: {
-              type: 'view' as const,
-              space: coreDmSpace,
-              externalId: 'Cognite360Image',
-              version: 'v1'
-            },
+            view: COGNITE_360_IMAGE_SOURCE,
             identifier: 'collection360'
           }
         },
-        limit: 10000 // DMS API max limit
+        limit: 10000
       },
       stations: {
         nodes: {
           from: 'images',
           through: {
-            view: {
-              type: 'view' as const,
-              space: coreDmSpace,
-              externalId: 'Cognite360Image',
-              version: 'v1'
-            },
+            view: COGNITE_360_IMAGE_SOURCE,
             identifier: 'station360'
           },
           direction: 'outwards' as const
         },
-        limit: 10000 // DMS API max limit
+        limit: 10000
       }
     },
     select: {
       image_collections: {
         sources: [
           {
-            source: {
-              type: 'view' as const,
-              space: coreDmSpace,
-              externalId: 'Cognite360ImageCollection',
-              version: 'v1'
-            },
+            source: COGNITE_360_IMAGE_COLLECTION_SOURCE,
             properties: ['name']
           }
         ]
@@ -82,44 +72,15 @@ function createCollectionsQuery(collectionRefs: Array<{ externalId: string; spac
       images: {
         sources: [
           {
-            source: {
-              type: 'view' as const,
-              space: coreDmSpace,
-              externalId: 'Cognite360Image',
-              version: 'v1'
-            },
-            properties: [
-              'translationX',
-              'translationY',
-              'translationZ',
-              'eulerRotationX',
-              'eulerRotationY',
-              'eulerRotationZ',
-              'scaleX',
-              'scaleY',
-              'scaleZ',
-              'front',
-              'back',
-              'left',
-              'right',
-              'top',
-              'bottom',
-              'collection360',
-              'station360',
-              'takenAt'
-            ]
+            source: COGNITE_360_IMAGE_SOURCE,
+            properties: CORE_DM_IMAGE_360_PROPERTIES_LIST
           }
         ]
       },
       stations: {
         sources: [
           {
-            source: {
-              type: 'view' as const,
-              space: coreDmSpace,
-              externalId: 'Cognite360ImageStation',
-              version: 'v1'
-            },
+            source: COGNITE_360_IMAGE_STATION_SOURCE,
             properties: ['name']
           }
         ]
