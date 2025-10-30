@@ -1,27 +1,10 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { AnnotationData, AnnotationModel } from '@cognite/sdk';
-import { isImageInstanceLinkAnnotation } from './typeGuards';
+import { isAnnotationInstanceLink } from './typeGuards';
+import { createAnnotationModel } from '../../../../test-utilities';
 
 describe('typeGuard', () => {
-  function createAnnotationModel(overrides: Partial<AnnotationModel>): AnnotationModel {
-    return {
-      id: 1,
-      annotationType: 'images.InstanceLink',
-      status: 'approved',
-      createdTime: new Date('2025-01-01'),
-      lastUpdatedTime: new Date('2025-01-01'),
-      annotatedResourceId: 123,
-      annotatedResourceType: 'file',
-      creatingApp: 'test-app',
-      creatingAppVersion: '1.0.0',
-      creatingUser: 'test-user',
-      data: {} as AnnotationData,
-      ...overrides
-    };
-  }
-
   const textRegionMock = { xMin: 0.1, xMax: 0.5, yMin: 0.2, yMax: 0.6 };
 
   const instanceRefMock = {
