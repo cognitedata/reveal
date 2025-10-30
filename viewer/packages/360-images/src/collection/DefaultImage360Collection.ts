@@ -29,7 +29,7 @@ import { Matrix4 } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
 import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
 import { createCollectionIdString } from './createCollectionIdString';
-import { getInstanceIdFromAnnotation } from '../annotation/getInstanceId';
+import { getClassicInstanceRef } from '../annotation/getInstanceId';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -293,7 +293,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     );
 
     return annotations
-      .map(annotationInfo => getInstanceIdFromAnnotation<T>(annotationInfo.annotationInfo))
+      .map(annotationInfo => getClassicInstanceRef<T>(annotationInfo.annotationInfo))
       .filter(result => result !== undefined);
   }
 
