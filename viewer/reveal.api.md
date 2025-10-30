@@ -78,6 +78,13 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
 };
 
 // @public
+export type AssetHybridAnnotationImage360Info = {
+    annotationInfo: ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo;
+    imageEntity: Image360<ClassicDataSourceType>;
+    imageRevision: Image360Revision<ClassicDataSourceType>;
+};
+
+// @public
 export class AssetNodeCollection extends NodeCollection {
     constructor(client: CogniteClient, modelMetadataProvider: CdfModelNodeCollectionDataProvider);
     // (undocumented)
@@ -1288,6 +1295,9 @@ export type Image360AnnotationFilterOptions = {
 };
 
 // @public
+export type Image360AnnotationInstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? InstanceReference<ClassicDataSourceType | DMDataSourceType> : InstanceReference<DMDataSourceType>;
+
+// @public
 export type Image360AnnotationIntersection<T extends DataSourceType = ClassicDataSourceType> = {
     type: 'image360Annotation';
     annotation: Image360Annotation<T>;
@@ -1397,6 +1407,11 @@ export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceT
 // @public
 export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
     data: AnnotationsTypesImagesAssetLink;
+};
+
+// @public
+export type ImageInstanceLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
+    data: AnnotationsTypesImagesInstanceLink;
 };
 
 // @public (undocumented)
