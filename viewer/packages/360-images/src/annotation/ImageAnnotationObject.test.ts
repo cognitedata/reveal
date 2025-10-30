@@ -10,7 +10,7 @@ import {
   AnnotationsTypesPrimitivesGeometry2DGeometry
 } from '@cognite/sdk';
 import { ClassicDataSourceType } from '@reveal/data-providers';
-import { createAnnotationModel } from 'test-utilities';
+import { createAnnotationModel } from '../../../../test-utilities';
 import { ImageAnnotationObject } from './ImageAnnotationObject';
 
 describe(ImageAnnotationObject.name, () => {
