@@ -32,7 +32,6 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images';
 import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
 import {
   isImageAssetLinkAnnotation,
@@ -176,9 +175,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     );
 
     function pairAnnotationsWithEntityAndRevision(
-      annotations: Array<
-        InstanceLinkable360ImageAnnotationType<ClassicDataSourceType> | ImageInstanceLinkAnnotationInfo
-      >
+      annotations: Array<ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo>
     ) {
       return annotations
         .map(annotation => {
