@@ -11,6 +11,7 @@ import orderBy from 'lodash/orderBy';
 import { MathUtils, Matrix4, Vector3 } from 'three';
 import { ClassicDataSourceType } from '../../../DataSourceType';
 import { BATCH_DELAY_MS, BATCH_SIZE } from '../../../utilities/constants';
+import { BatchLoader } from '../../../utilities/BatchLoader';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -27,28 +28,25 @@ type Event360Filter = {
   station_name?: string;
 };
 
+type EventCollectionIdentifier = {
+  siteId: string;
+  preMultipliedRotation: boolean;
+};
+
 /**
  * Coordinates batched loading of multiple events-based 360 image collections.
  * Instead of querying events/files individually per site_id (1000 queries for 1000 sites),
  * it batches them into groups (e.g., 20 queries for 1000 sites).
  */
-export class Cdf360BatchEventCollectionLoader {
+export class Cdf360BatchEventCollectionLoader extends BatchLoader<
+  EventCollectionIdentifier,
+  Historical360ImageSet<ClassicDataSourceType>[]
+> {
   private readonly _client: CogniteClient;
-  private readonly _batchSize: number;
-  private _pendingBatch: Array<{
-    siteId: string;
-    preMultipliedRotation: boolean;
-    resolve: (descriptors: Historical360ImageSet<ClassicDataSourceType>[]) => void;
-    reject: (error: unknown) => void;
-  }> = [];
-  private _batchTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly _batchDelay: number;
-  private _isProcessing = false; // Flag to ensure sequential batch execution
 
   constructor(client: CogniteClient) {
+    super(BATCH_SIZE, BATCH_DELAY_MS);
     this._client = client;
-    this._batchSize = BATCH_SIZE;
-    this._batchDelay = BATCH_DELAY_MS;
   }
 
   /**
@@ -64,91 +62,57 @@ export class Cdf360BatchEventCollectionLoader {
       throw new Error('site_id is required for events-based 360 collections');
     }
 
-    return new Promise((resolve, reject) => {
-      this._pendingBatch.push({ siteId, preMultipliedRotation, resolve, reject });
-
-      // Clear existing timer
-      if (this._batchTimer) {
-        clearTimeout(this._batchTimer);
-      }
-
-      // If we've hit the batch size, execute immediately (if not already processing)
-      if (this._pendingBatch.length >= this._batchSize) {
-        void this.tryExecuteBatch();
-      } else {
-        // Otherwise, wait a bit to accumulate more requests
-        this._batchTimer = setTimeout(() => {
-          void this.tryExecuteBatch();
-        }, this._batchDelay);
-      }
-    });
+    return this.load({ siteId, preMultipliedRotation });
   }
 
   /**
-   * Try to execute a batch. If already processing, this will be a no-op.
-   * The next batch will be picked up when the current one finishes.
+   * Fetch a batch of event collection descriptors.
+   * This method is called by the base BatchLoader class.
    */
-  private async tryExecuteBatch(): Promise<void> {
-    if (this._isProcessing || this._pendingBatch.length === 0) {
-      return;
-    }
+  protected async fetchBatch(
+    identifiers: EventCollectionIdentifier[]
+  ): Promise<Map<string, Historical360ImageSet<ClassicDataSourceType>[]>> {
+    // Extract unique site IDs from the batch
+    const siteIds = Array.from(new Set(identifiers.map(id => id.siteId)));
 
-    this._isProcessing = true;
-    try {
-      await this.executeBatch();
-    } finally {
-      this._isProcessing = false;
+    // Fetch events and files for all site_ids in parallel
+    const [events, files] = await Promise.all([
+      this.listEventsForMultipleSites(siteIds),
+      this.listFilesForMultipleSites(siteIds)
+    ]);
 
-      // If there are more pending requests, process the next batch
-      if (this._pendingBatch.length > 0) {
-        // Small delay before next batch to avoid rapid-fire requests
-        setTimeout(() => {
-          void this.tryExecuteBatch();
-        }, 50);
-      }
-    }
+    // Group events and files by site_id
+    const eventsBySiteId = this.groupEventsBySiteId(events);
+    const filesBySiteId = files;
+
+    // Build results map
+    const results = new Map<string, Historical360ImageSet<ClassicDataSourceType>[]>();
+
+    identifiers.forEach(identifier => {
+      const key = this.getKeyForIdentifier(identifier);
+      const siteEvents = eventsBySiteId.get(identifier.siteId) || [];
+      const siteFiles = filesBySiteId.get(identifier.siteId) || new Map();
+
+      const descriptors = this.mergeDescriptors(siteFiles, siteEvents, identifier.preMultipliedRotation);
+      results.set(key, descriptors);
+    });
+
+    return results;
   }
 
-  private async executeBatch(): Promise<void> {
-    if (this._pendingBatch.length === 0) return;
+  /**
+   * Convert an identifier to a string key for result mapping.
+   */
+  protected getKeyForIdentifier(identifier: EventCollectionIdentifier): string {
+    // Include preMultipliedRotation in key since results may differ based on this flag
+    return `${identifier.siteId}:${identifier.preMultipliedRotation}`;
+  }
 
-    // Take current batch and reset for next batch
-    const batch = this._pendingBatch;
-    this._pendingBatch = [];
-    this._batchTimer = null;
-
-    const siteIds = batch.map(item => item.siteId);
-    const uniqueSiteIds = Array.from(new Set(siteIds));
-
-    try {
-      // Fetch events and files for all site_ids in one request
-      const [events, files] = await Promise.all([
-        this.listEventsForMultipleSites(uniqueSiteIds),
-        this.listFilesForMultipleSites(uniqueSiteIds)
-      ]);
-
-      // Group events and files by site_id
-      const eventsBySiteId = this.groupEventsBySiteId(events);
-      const filesBySiteId = files;
-
-      // Resolve each request with its specific results
-      batch.forEach(({ siteId, preMultipliedRotation, resolve }) => {
-        const siteEvents = eventsBySiteId.get(siteId) || [];
-        const siteFiles = filesBySiteId.get(siteId) || new Map();
-
-        const descriptors = this.mergeDescriptors(siteFiles, siteEvents, preMultipliedRotation);
-
-        if (descriptors.length === 0) {
-          // Empty result, not an error
-          resolve([]);
-        } else {
-          resolve(descriptors);
-        }
-      });
-    } catch (error) {
-      // If batch query fails, reject all requests
-      batch.forEach(({ reject }) => reject(error));
-    }
+  /**
+   * Return an empty array when a collection is not found.
+   */
+  protected getDefaultResult(_identifier: EventCollectionIdentifier): Historical360ImageSet<ClassicDataSourceType>[] {
+    return [];
   }
 
   private async listEventsForMultipleSites(siteIds: string[]): Promise<CogniteEvent[]> {
