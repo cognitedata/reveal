@@ -85,6 +85,10 @@ const mock = {
                   space: 'test_space',
                   externalId: 'test_collection'
                 },
+                station360: {
+                  space: 'test_space',
+                  externalId: 'test_station_1'
+                },
                 scaleX: 1,
                 scaleY: 1,
                 scaleZ: 1,
@@ -136,6 +140,10 @@ const mock = {
                   space: 'test_space',
                   externalId: 'test_collection'
                 },
+                station360: {
+                  space: 'test_space',
+                  externalId: 'test_station_2'
+                },
                 scaleX: 1,
                 scaleY: 1,
                 scaleZ: 1,
@@ -186,6 +194,10 @@ const mock = {
                 collection360: {
                   space: 'test_space',
                   externalId: 'test_collection'
+                },
+                station360: {
+                  space: 'test_space',
+                  externalId: 'test_station_3'
                 },
                 scaleX: 1,
                 scaleY: 1,
