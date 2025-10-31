@@ -42,5 +42,19 @@ export const COGNITE_360_IMAGE_SOURCE = {
   type: 'view'
 } as const satisfies ViewReference;
 
+export const COGNITE_360_IMAGE_COLLECTION_SOURCE = {
+  externalId: 'Cognite360ImageCollection',
+  space: CORE_DM_SPACE,
+  version: 'v1',
+  type: 'view'
+} as const satisfies ViewReference;
+
+export const COGNITE_360_IMAGE_STATION_SOURCE = {
+  externalId: 'Cognite360ImageStation',
+  space: CORE_DM_SPACE,
+  version: 'v1',
+  type: 'view'
+} as const satisfies ViewReference;
+
 export const BATCH_SIZE = 50;
 export const BATCH_DELAY_MS = 50;
