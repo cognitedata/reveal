@@ -202,7 +202,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
       const collectionId = collection.externalId;
       const name = collection.properties?.cdf_cdm?.['Cognite360ImageCollection/v1']?.name;
-      const collectionLabel = typeof name === 'string' ? name : typeof name === 'number' ? String(name) : undefined;
+      const collectionLabel = this.stringifyValue(name);
 
       // Get paired image and file descriptor data for this collection's images
       const imagesWithFiles = this.getFileDescriptorsForImages(collectionImages, allFileDescriptors);
@@ -359,8 +359,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     return {
       id: revisionId,
       faceDescriptors: this.getFaceDescriptors(fileInfos),
-      timestamp:
-        typeof timestamp === 'string' ? timestamp : typeof timestamp === 'number' ? String(timestamp) : undefined
+      timestamp: this.stringifyValue(timestamp)
     };
   }
 
@@ -405,6 +404,10 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       }
       throw new Error(`Failed to fetch CDM files: ${JSON.stringify(error)}`);
     }
+  }
+
+  private stringifyValue(value: RawPropertyValueV3): string | undefined {
+    return typeof value === 'string' ? value : typeof value === 'number' ? String(value) : undefined;
   }
 
   private toNumber(value: RawPropertyValueV3): number {
