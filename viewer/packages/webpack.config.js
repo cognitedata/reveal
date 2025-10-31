@@ -100,7 +100,19 @@ module.exports = env => {
         {
           test: /\.(glsl|vert|frag)$/,
           type: 'asset/source',
-          use: ['glslify-loader']
+          use: [
+            {
+              // Help Webpack track #pragma glslify: import dependencies for --watch mode
+              loader: path.resolve(`${__dirname}/../glsl-import-tracker-loader.js`)
+            },
+            {
+              loader: 'glslify-loader',
+              options: {
+                // Enable glslify-import transform to handle #pragma glslify: import statements
+                transform: ['glslify-import']
+              }
+            }
+          ]
         },
         {
           test: /\.css$/,
