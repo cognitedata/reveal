@@ -69,7 +69,7 @@ module.exports = env => {
           use: [
             {
               // Help Webpack track #pragma glslify: import dependencies for --watch mode
-              loader: path.resolve(`${__dirname}/glsl-import-tracker-loader.js`)
+              loader: path.resolve(`${__dirname}/glsl-import-tracker-loader.cjs`)
             },
             {
               loader: 'glslify-loader',
