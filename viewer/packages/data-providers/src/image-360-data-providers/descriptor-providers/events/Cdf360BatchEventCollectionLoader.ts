@@ -72,20 +72,16 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
   protected async fetchBatch(
     identifiers: EventCollectionIdentifier[]
   ): Promise<Map<string, Historical360ImageSet<ClassicDataSourceType>[]>> {
-    // Extract unique site IDs from the batch
     const siteIds = Array.from(new Set(identifiers.map(id => id.siteId)));
 
-    // Fetch events and files for all site_ids in parallel
     const [events, files] = await Promise.all([
       this.listEventsForMultipleSites(siteIds),
       this.listFilesForMultipleSites(siteIds)
     ]);
 
-    // Group events and files by site_id
     const eventsBySiteId = this.groupEventsBySiteId(events);
     const filesBySiteId = files;
 
-    // Build results map
     const results = new Map<string, Historical360ImageSet<ClassicDataSourceType>[]>();
 
     identifiers.forEach(identifier => {
@@ -100,85 +96,77 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
     return results;
   }
 
-  /**
-   * Convert an identifier to a string key for result mapping.
-   */
   protected getKeyForIdentifier(identifier: EventCollectionIdentifier): string {
-    // Include preMultipliedRotation in key since results may differ based on this flag
-    return `${identifier.siteId}:${identifier.preMultipliedRotation}`;
+    return `${identifier.siteId}`;
   }
 
-  /**
-   * Return an empty array when a collection is not found.
-   */
   protected getDefaultResult(_identifier: EventCollectionIdentifier): Historical360ImageSet<ClassicDataSourceType>[] {
     return [];
   }
 
   private async listEventsForMultipleSites(siteIds: string[]): Promise<CogniteEvent[]> {
-    const allEvents = await Promise.all(
-      siteIds.map(async siteId => {
-        const filter: EventFilter = {
-          metadata: {
-            site_id: siteId
-          }
-        };
+    const allEvents: CogniteEvent[] = [];
 
-        const partitions = 10;
-        const partitionedRequests = range(1, partitions + 1).map(async index =>
-          this._client.events
-            .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
-            .autoPagingToArray({ limit: Infinity })
-        );
+    // Process each siteId sequentially to avoid too many parallel requests
+    for (const siteId of siteIds) {
+      const filter: EventFilter = {
+        metadata: {
+          site_id: siteId
+        }
+      };
 
-        const results = await Promise.all(partitionedRequests);
-        return results.flat();
-      })
-    );
+      const partitions = 10;
+      // For each siteId, partition requests can run in parallel (10 requests per siteId)
+      const partitionedRequests = range(1, partitions + 1).map(async index =>
+        this._client.events
+          .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
+          .autoPagingToArray({ limit: Infinity })
+      );
 
-    return allEvents.flat();
+      const results = await Promise.all(partitionedRequests);
+      allEvents.push(...results.flat());
+    }
+
+    return allEvents;
   }
 
   private async listFilesForMultipleSites(siteIds: string[]): Promise<Map<string, Map<string, FileInfo[]>>> {
     const mainMap = new Map<string, Map<string, FileInfo[]>>();
 
-    // Initialize maps for each site_id
-    siteIds.forEach(siteId => {
+    // Process each siteId sequentially to avoid too many parallel requests
+    for (const siteId of siteIds) {
       mainMap.set(siteId, new Map<string, FileInfo[]>());
-    });
 
-    await Promise.all(
-      siteIds.map(async siteId => {
-        const filter: FileFilterProps = {
-          metadata: {
-            site_id: siteId
-          },
-          uploaded: true
-        };
+      const filter: FileFilterProps = {
+        metadata: {
+          site_id: siteId
+        },
+        uploaded: true
+      };
 
-        const partitions = 10;
-        const partitionedRequests = range(1, partitions + 1).map(async index => {
-          const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
-          return this._client.files.list(req).autoPagingEach(fileInfo => {
-            const stationId = fileInfo.metadata?.station_id as string;
-            if (!stationId) return undefined;
+      const partitions = 10;
+      // For each siteId, partition requests can run in parallel (10 requests per siteId)
+      const partitionedRequests = range(1, partitions + 1).map(async index => {
+        const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
+        return this._client.files.list(req).autoPagingEach(fileInfo => {
+          const stationId = fileInfo.metadata?.station_id as string;
+          if (!stationId) return undefined;
 
-            const siteMap = mainMap.get(siteId);
-            if (siteMap) {
-              const existingFiles = siteMap.get(stationId);
-              if (existingFiles) {
-                existingFiles.push(fileInfo);
-              } else {
-                siteMap.set(stationId, [fileInfo]);
-              }
+          const siteMap = mainMap.get(siteId);
+          if (siteMap) {
+            const existingFiles = siteMap.get(stationId);
+            if (existingFiles) {
+              existingFiles.push(fileInfo);
+            } else {
+              siteMap.set(stationId, [fileInfo]);
             }
-            return undefined;
-          });
+          }
+          return undefined;
         });
+      });
 
-        await Promise.all(partitionedRequests);
-      })
-    );
+      await Promise.all(partitionedRequests);
+    }
 
     return mainMap;
   }
