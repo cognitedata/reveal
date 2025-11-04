@@ -85,42 +85,44 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   }
 
   private async fetchAllPages(query: CdfImage360CollectionDmQuery): Promise<BatchQueryResult> {
-    let currentCursor: Record<string, string> | undefined;
+    let imagesCursor: string | undefined;
     const accumulatedResults: BatchQueryResult = {
       image_collections: [],
       images: [],
       stations: []
     };
 
+    const imagesLimit = 10000; // Must match the limit in get360CdmCollectionsQuery
+
     do {
-      const result = await this._dmsSdk.queryNodesAndEdges<CdfImage360CollectionDmQuery>(query, currentCursor);
+      // Only pass the images cursor for pagination
+      const cursors = imagesCursor ? { images: imagesCursor } : undefined;
+      const result = await this._dmsSdk.queryNodesAndEdges<CdfImage360CollectionDmQuery>(query, cursors);
 
       if (!result) {
         break;
       }
 
-      const hasDataInPage =
-        (result.image_collections && result.image_collections.length > 0) ||
-        (result.images && result.images.length > 0) ||
-        (result.stations && result.stations.length > 0);
-
-      if (!hasDataInPage) {
-        break;
-      }
-
-      if (result.image_collections) {
+      // Accumulate image_collections (only on first page, subsequent pages won't have them)
+      if (result.image_collections && result.image_collections.length > 0) {
         accumulatedResults.image_collections = [...accumulatedResults.image_collections, ...result.image_collections];
       }
-      if (result.images) {
+
+      // Accumulate images
+      if (result.images && result.images.length > 0) {
         accumulatedResults.images = [...accumulatedResults.images, ...result.images];
       }
-      if (result.stations) {
+
+      // Accumulate stations (only relevant when images are fetched)
+      if (result.stations && result.stations.length > 0) {
         accumulatedResults.stations = [...(accumulatedResults.stations || []), ...result.stations];
       }
 
-      currentCursor = result.nextCursor;
+      // Only continue pagination if we got a full page of images (meaning there might be more)
+      const hasMoreImages = result.images && result.images.length >= imagesLimit;
+      imagesCursor = result.nextCursor?.images;
 
-      if (!currentCursor) {
+      if (!hasMoreImages || !imagesCursor) {
         break;
       }
     } while (true);
