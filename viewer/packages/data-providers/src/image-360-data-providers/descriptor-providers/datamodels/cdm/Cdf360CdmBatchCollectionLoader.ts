@@ -17,8 +17,9 @@ import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
 import { BATCH_SIZE, BATCH_DELAY_MS, MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
-import { DMInstanceRef, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
+import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
 import { BatchLoader } from '../../../../utilities/BatchLoader';
+import { getDmsPaginationCursor } from '../../../../utilities/dmsPaginationUtils';
 
 // DMS query result type - using batch query structure
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfImage360CollectionDmQuery>>>;
@@ -32,7 +33,7 @@ type CollectionInstanceResult = QueryResult['image_collections'][number];
 type BatchQueryResult = {
   image_collections: CollectionInstanceResult[];
   images: ImageInstanceResult[];
-  stations?: DMInstanceRef[];
+  stations: DMInstanceRef[];
   nextCursor?: Record<string, string>;
 };
 
@@ -65,7 +66,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
   protected async fetchBatch(
     identifiers: DMInstanceRef[]
-  ): Promise<Map<string, Historical360ImageSet<DMDataSourceType>[]>> {
+  ): Promise<Map<DMInstanceKey, Historical360ImageSet<DMDataSourceType>[]>> {
     // Execute batch query directly
     // The batching itself (BATCH_SIZE queries instead of 1000) prevents API overload
     const query = get360CdmCollectionsQuery(identifiers);
@@ -75,7 +76,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     return this.groupResultsByCollection(allResults);
   }
 
-  protected getKeyForIdentifier(identifier: DMInstanceRef): string {
+  protected getKeyForIdentifier(identifier: DMInstanceRef): DMInstanceKey {
     return dmInstanceRefToKey(identifier);
   }
 
@@ -113,11 +114,10 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
         accumulatedResults.stations = [...(accumulatedResults.stations || []), ...result.stations];
       }
 
-      // Only continue pagination if we got a full page of images (meaning there might be more)
-      const hasMoreImages = result.images && result.images.length >= MAX_DMS_QUERY_LIMIT;
-      imagesCursor = result.nextCursor?.images;
+      // Check if we should continue pagination for images
+      imagesCursor = getDmsPaginationCursor(result.images, result.nextCursor, 'images', MAX_DMS_QUERY_LIMIT);
 
-      if (!hasMoreImages || !imagesCursor) {
+      if (!imagesCursor) {
         break;
       }
     } while (true);
@@ -127,8 +127,8 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
   private async groupResultsByCollection(
     result: BatchQueryResult
-  ): Promise<Map<string, Historical360ImageSet<DMDataSourceType>[]>> {
-    const grouped = new Map<string, Historical360ImageSet<DMDataSourceType>[]>();
+  ): Promise<Map<DMInstanceKey, Historical360ImageSet<DMDataSourceType>[]>> {
+    const grouped = new Map<DMInstanceKey, Historical360ImageSet<DMDataSourceType>[]>();
 
     if (!result.image_collections || !result.images) {
       console.warn(`[${Cdf360CdmBatchCollectionLoader.name}] Missing image_collections or images in result:`, {
@@ -140,7 +140,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
     const allFileDescriptors = await this.getFileDescriptorsForBatch(result.images);
 
-    const imagesByCollection = new Map<string, ImageInstanceResult[]>();
+    const imagesByCollection = new Map<DMInstanceKey, ImageInstanceResult[]>();
 
     result.images.forEach(image => {
       const collectionRef = image.properties?.cdf_cdm?.['Cognite360Image/v1']?.collection360;
@@ -206,7 +206,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       }
     }
 
-    const fileMap = new Map<string, FileInfo>();
+    const fileMap = new Map<DMInstanceKey, FileInfo>();
 
     fileInfos.forEach(file => {
       const fileWithInstanceId = file as FileInfoWithInstanceId;
