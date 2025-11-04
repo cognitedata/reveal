@@ -327,6 +327,10 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
 
     const actualQueryResponse = queryResponse || defaultQueryResponse;
 
+    const filesMock = new Mock<CogniteClient['files']>()
+      .setup(instance => instance.retrieve(It.IsAny()))
+      .returns(Promise.resolve(filesResponse.data.items));
+
     return new Mock<CogniteClient>()
       .setup(instance =>
         instance.post(
@@ -335,20 +339,15 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
         )
       )
       .returns(Promise.resolve(actualQueryResponse) as Promise<HttpResponse<unknown>>)
-      .setup(instance =>
-        instance.post(
-          It.Is((path: string) => path.includes('files')),
-          It.IsAny()
-        )
-      )
-      .returns(Promise.resolve(filesResponse) as Promise<HttpResponse<unknown>>)
+      .setup(instance => instance.files)
+      .returns(filesMock.object())
       .setup(instance => instance.getBaseUrl())
       .returns('https://example.com')
       .setup(instance => instance.project)
       .returns('test-project');
   }
 
-  function createMockFiles() {
+  function createMockFiles(): { data: { items: FileInfo[] } } {
     return {
       data: {
         items: mock.data.items.images
@@ -366,9 +365,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
             )
           )
           .flatMap(p => p)
-      },
-      headers: {},
-      status: 200
+      }
     };
   }
 });
