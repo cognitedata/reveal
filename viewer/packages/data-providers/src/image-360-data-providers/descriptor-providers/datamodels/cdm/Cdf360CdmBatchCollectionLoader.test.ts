@@ -24,12 +24,10 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
-    // Request all 3 collections concurrently - they should be batched
     const results = await Promise.all(
       collectionIds.map(id => batchLoader.getCollectionDescriptors({ externalId: id, space: 'test_space' }))
     );
 
-    // Verify results - all 3 collections should return data
     expect(results).toHaveLength(3);
     results.forEach((result, idx) => {
       expect(result.length).toBeGreaterThan(0);
@@ -81,13 +79,11 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
-    // Request first collection
     const promise1 = batchLoader.getCollectionDescriptors({
       externalId: 'collection_1',
       space: 'test_space'
     });
 
-    // Request second collection after 20ms (within batch delay)
     await new Promise(resolve => setTimeout(resolve, 20));
     const promise2 = batchLoader.getCollectionDescriptors({
       externalId: 'collection_2',
@@ -96,7 +92,6 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
     const results = await Promise.all([promise1, promise2]);
 
-    // Both requests should succeed and be batched
     expect(results).toHaveLength(2);
     results.forEach(result => {
       expect(result.length).toBeGreaterThan(0);

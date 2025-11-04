@@ -44,10 +44,7 @@ interface FileInfoWithInstanceId extends FileInfo {
  * Coordinates batched loading of multiple 360 image collections.
  * Instead of loading each collection individually (1000 queries for 1000 collections),
  * it batches them into groups and makes far fewer queries (e.g., 20 queries for 1000 collections).
- *
- * Handles DMS API pagination automatically: If a batch exceeds the 10,000 item limit,
- * additional queries are made to fetch all data. This allows collections with any number
- * of images, not just ~200 per collection (10,000 / 50 batch size).
+ * This allows collections with any number of images, not just ~200 per collection (10,000 / 50 batch size).
  */
 export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   DMInstanceRef,
@@ -62,53 +59,31 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     this._cogniteSdk = cogniteSdk;
   }
 
-  /**
-   * Request descriptors for a collection. This will be batched with other concurrent requests.
-   * Batches are processed sequentially to avoid overwhelming the API.
-   */
   public async getCollectionDescriptors(identifier: DMInstanceRef): Promise<Historical360ImageSet<DMDataSourceType>[]> {
     return this.load(identifier);
   }
 
-  /**
-   * Fetch a batch of collection descriptors from DMS.
-   * This method is called by the base BatchLoader class.
-   */
   protected async fetchBatch(
     identifiers: DMInstanceRef[]
   ): Promise<Map<string, Historical360ImageSet<DMDataSourceType>[]>> {
-    // Execute batch query directly - no throttling needed
+    // Execute batch query directly
     // The batching itself (BATCH_SIZE queries instead of 1000) prevents API overload
     const query = get360CdmCollectionsQuery(identifiers);
 
-    // Fetch all pages if data exceeds DMS API limit
     const allResults = await this.fetchAllPages(query);
 
-    // Group results by collection
     return this.groupResultsByCollection(allResults);
   }
 
-  /**
-   * Convert a DMInstanceRef to a string key for result mapping.
-   */
   protected getKeyForIdentifier(identifier: DMInstanceRef): string {
     return dmInstanceRefToKey(identifier);
   }
 
-  /**
-   * Return an empty array when a collection is not found.
-   */
   protected getDefaultResult(_identifier: DMInstanceRef): Historical360ImageSet<DMDataSourceType>[] {
     console.warn(`[${Cdf360CdmBatchCollectionLoader.name}] Collection not found: ${dmInstanceRefToKey(_identifier)}`);
     return [];
   }
 
-  /**
-   * Fetches all pages of results if data exceeds the DMS API limit of 10,000 items.
-   * This allows handling collections with more than 200 images on average (10,000 / 50 batch size).
-   *
-   * Note: DMS API always returns nextCursor, but returns empty arrays when no more data exists.
-   */
   private async fetchAllPages(query: CdfImage360CollectionDmQuery): Promise<BatchQueryResult> {
     let currentCursor: Record<string, string> | undefined;
     const accumulatedResults: BatchQueryResult = {
@@ -117,27 +92,22 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       stations: []
     };
 
-    // Keep fetching until no more pages
     do {
       const result = await this._dmsSdk.queryNodesAndEdges<CdfImage360CollectionDmQuery>(query, currentCursor);
 
-      // Handle case where result might be undefined or missing properties
       if (!result) {
         break;
       }
 
-      // Check if this page has any data
       const hasDataInPage =
         (result.image_collections && result.image_collections.length > 0) ||
         (result.images && result.images.length > 0) ||
         (result.stations && result.stations.length > 0);
 
       if (!hasDataInPage) {
-        // No more data to fetch (empty arrays indicate end of pagination)
         break;
       }
 
-      // Accumulate results from this page
       if (result.image_collections) {
         accumulatedResults.image_collections = [...accumulatedResults.image_collections, ...result.image_collections];
       }
@@ -148,10 +118,8 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
         accumulatedResults.stations = [...(accumulatedResults.stations || []), ...result.stations];
       }
 
-      // Update cursor for next page
       currentCursor = result.nextCursor;
 
-      // Stop if no cursor (backward compat with mocks/older implementations)
       if (!currentCursor) {
         break;
       }
@@ -173,10 +141,8 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       return grouped;
     }
 
-    // Get file descriptors for all images in batch
     const allFileDescriptors = await this.getFileDescriptorsForBatch(result.images);
 
-    // Group images by their collection
     const imagesByCollection = new Map<string, ImageInstanceResult[]>();
 
     result.images.forEach(image => {
@@ -190,7 +156,6 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       }
     });
 
-    // Process each collection
     result.image_collections.forEach(collection => {
       const collectionKey = dmInstanceRefToKey(collection);
       const collectionImages = imagesByCollection.get(collectionKey) ?? [];
@@ -204,10 +169,8 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       const name = collection.properties?.cdf_cdm?.['Cognite360ImageCollection/v1']?.name;
       const collectionLabel = this.stringifyValue(name);
 
-      // Get paired image and file descriptor data for this collection's images
       const imagesWithFiles = this.getFileDescriptorsForImages(collectionImages, allFileDescriptors);
 
-      // Create Historical360ImageSet
       const historicalSets = this.createHistoricalImageSets(
         collectionId,
         collectionLabel ?? collectionId,
@@ -234,7 +197,6 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
     const fileInfos: FileInfo[] = [];
 
-    // Process batches sequentially
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
 
@@ -247,18 +209,13 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       }
     }
 
-    // Create map for quick lookup by externalId:space
-    // DMS DirectRelationReference uses { space: "...", externalId: "..." }
-    // where externalId is a string UUID, not a numeric ID
     const fileMap = new Map<string, FileInfo>();
 
     fileInfos.forEach(file => {
-      // The /files/byids response includes the instanceId (DirectRelationReference) in the file object
       const fileWithInstanceId = file as FileInfoWithInstanceId;
       const instanceId = fileWithInstanceId.instanceId;
 
       if (instanceId) {
-        // Use the instanceId from the response to create the key
         const key = dmInstanceRefToKey(instanceId);
         fileMap.set(key, file);
       } else {
@@ -269,10 +226,6 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     return fileMap;
   }
 
-  /**
-   * Get file descriptors for each image, returning explicit pairs of image and its files.
-   * This avoids implicit assumptions about array ordering.
-   */
   private getFileDescriptorsForImages(
     images: ImageInstanceResult[],
     fileMap: Map<string, FileInfo>
