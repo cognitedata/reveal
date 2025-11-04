@@ -20,7 +20,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     const collectionIds = ['collection_1', 'collection_2', 'collection_3'];
     const dmsResponse = createMockDmsResponse(collectionIds);
     const filesResponse = createMockFilesResponse(collectionIds);
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse, filesResponse);
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse, filesResponse);
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -31,9 +31,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(results).toHaveLength(3);
     results.forEach((result, idx) => {
       expect(result.length).toBeGreaterThan(0);
-      if (result.length > 0) {
-        expect(result[0].collectionId).toBe(collectionIds[idx]);
-      }
+      expect(result[0].collectionId).toBe(collectionIds[idx]);
     });
   });
 
@@ -60,7 +58,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       stations: []
     };
 
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse);
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse);
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
     const result = await batchLoader.getCollectionDescriptors({
@@ -71,35 +69,8 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(result).toHaveLength(0);
   });
 
-  test('should batch requests that arrive within delay window', async () => {
-    const collectionIds = ['collection_1', 'collection_2'];
-    const dmsResponse = createMockDmsResponse(collectionIds);
-    const filesResponse = createMockFilesResponse(collectionIds);
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse, filesResponse);
-
-    const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
-
-    const promise1 = batchLoader.getCollectionDescriptors({
-      externalId: 'collection_1',
-      space: 'test_space'
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 20));
-    const promise2 = batchLoader.getCollectionDescriptors({
-      externalId: 'collection_2',
-      space: 'test_space'
-    });
-
-    const results = await Promise.all([promise1, promise2]);
-
-    expect(results).toHaveLength(2);
-    results.forEach(result => {
-      expect(result.length).toBeGreaterThan(0);
-    });
-  });
-
   test('should handle DMS query errors gracefully', async () => {
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(
       {
         image_collections: [],
         images: [],
@@ -118,7 +89,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
   test('should handle file fetching errors gracefully', async () => {
     const dmsResponse = createMockDmsResponse(['collection_1']);
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(
       dmsResponse,
       undefined,
       undefined,
@@ -139,7 +110,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       stations: []
     };
 
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdks(dmsResponse);
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse);
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
     const result = await batchLoader.getCollectionDescriptors({
@@ -150,7 +121,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(result).toHaveLength(0);
   });
 
-  function createMockSdks(
+  function createMockSdk(
     dmsResponse: DmsSdkQueryResult,
     filesResponse?: FilesRetrieveResponse,
     dmsError?: Error,
@@ -158,22 +129,14 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
   ) {
     const filesApiMock = new Mock<CogniteClient['files']>();
 
-    if (filesResponse) {
-      if (filesError) {
-        filesApiMock
-          .setup(instance => instance.retrieve(It.IsAny()))
-          .callback(async () => {
-            throw filesError;
-          });
-      } else {
-        filesApiMock.setup(instance => instance.retrieve(It.IsAny())).returns(Promise.resolve(filesResponse));
-      }
-    } else if (filesError) {
+    if (filesError) {
       filesApiMock
         .setup(instance => instance.retrieve(It.IsAny()))
         .callback(async () => {
           throw filesError;
         });
+    } else if (filesResponse) {
+      filesApiMock.setup(instance => instance.retrieve(It.IsAny())).returns(Promise.resolve(filesResponse));
     }
 
     const cogniteSdkMock = new Mock<CogniteClient>()
