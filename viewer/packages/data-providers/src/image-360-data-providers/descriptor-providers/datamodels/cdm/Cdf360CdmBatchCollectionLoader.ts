@@ -16,7 +16,7 @@ import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
-import { BATCH_SIZE, BATCH_DELAY_MS } from '../../../../utilities/constants';
+import { BATCH_SIZE, BATCH_DELAY_MS, MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
 import { DMInstanceRef, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
 import { BatchLoader } from '../../../../utilities/BatchLoader';
 
@@ -92,8 +92,6 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       stations: []
     };
 
-    const imagesLimit = 10000; // Must match the limit in get360CdmCollectionsQuery
-
     do {
       // Only pass the images cursor for pagination
       const cursors = imagesCursor ? { images: imagesCursor } : undefined;
@@ -103,23 +101,20 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
         break;
       }
 
-      // Accumulate image_collections (only on first page, subsequent pages won't have them)
       if (result.image_collections && result.image_collections.length > 0) {
         accumulatedResults.image_collections = [...accumulatedResults.image_collections, ...result.image_collections];
       }
 
-      // Accumulate images
       if (result.images && result.images.length > 0) {
         accumulatedResults.images = [...accumulatedResults.images, ...result.images];
       }
 
-      // Accumulate stations (only relevant when images are fetched)
       if (result.stations && result.stations.length > 0) {
         accumulatedResults.stations = [...(accumulatedResults.stations || []), ...result.stations];
       }
 
       // Only continue pagination if we got a full page of images (meaning there might be more)
-      const hasMoreImages = result.images && result.images.length >= imagesLimit;
+      const hasMoreImages = result.images && result.images.length >= MAX_DMS_QUERY_LIMIT;
       imagesCursor = result.nextCursor?.images;
 
       if (!hasMoreImages || !imagesCursor) {
