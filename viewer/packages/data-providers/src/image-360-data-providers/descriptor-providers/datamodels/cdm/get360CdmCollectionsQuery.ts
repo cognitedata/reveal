@@ -89,7 +89,6 @@ function createCollectionsQuery(collectionRefs: DMInstanceRef[]) {
   };
 }
 
-// Derive the detailed query type from the helper function's inferred return type
 export type CdfImage360CollectionDmQuery = ReturnType<typeof createCollectionsQuery>;
 
 /**
