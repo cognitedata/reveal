@@ -5,7 +5,8 @@
 import {
   COGNITE_360_IMAGE_COLLECTION_SOURCE,
   COGNITE_360_IMAGE_SOURCE,
-  COGNITE_360_IMAGE_STATION_SOURCE
+  COGNITE_360_IMAGE_STATION_SOURCE,
+  MAX_DMS_QUERY_LIMIT
 } from '../../../../utilities/constants';
 import { DMInstanceRef } from '@reveal/utilities';
 import { CORE_DM_IMAGE_360_PROPERTIES_LIST } from '../../../cdm/queryProperties';
@@ -46,7 +47,7 @@ function createCollectionsQuery(collectionRefs: DMInstanceRef[]) {
             identifier: 'collection360'
           }
         },
-        limit: 10000
+        limit: MAX_DMS_QUERY_LIMIT
       },
       stations: {
         nodes: {
@@ -57,7 +58,7 @@ function createCollectionsQuery(collectionRefs: DMInstanceRef[]) {
           },
           direction: 'outwards' as const
         },
-        limit: 10000
+        limit: MAX_DMS_QUERY_LIMIT
       }
     },
     select: {
