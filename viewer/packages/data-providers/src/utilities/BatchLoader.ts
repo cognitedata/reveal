@@ -82,10 +82,7 @@ export abstract class BatchLoader<TIdentifier, TResult> {
 
       // If there are more pending requests, process the next batch
       if (this._pendingBatch.length > 0) {
-        // Small delay before next batch to avoid rapid-fire requests
-        setTimeout(() => {
-          void this.tryExecuteBatch();
-        }, 50);
+        void this.tryExecuteBatch();
       }
     }
   }

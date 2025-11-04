@@ -307,8 +307,8 @@ describe('BatchLoader', () => {
       await new Promise(resolve => setTimeout(resolve, 25));
       const promise2 = loader.load('b');
 
-      // Wait another 25ms, add third request (should reset timer again)
-      await new Promise(resolve => setTimeout(resolve, 25));
+      // Wait another 35ms, add third request (should reset timer again)
+      await new Promise(resolve => setTimeout(resolve, 35));
       const promise3 = loader.load('c');
 
       const results = await Promise.all([promise1, promise2, promise3]);
