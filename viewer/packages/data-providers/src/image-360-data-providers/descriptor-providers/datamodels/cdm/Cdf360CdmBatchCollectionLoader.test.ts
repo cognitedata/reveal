@@ -13,7 +13,7 @@ interface FileInfoWithInstanceId extends FileInfo {
 }
 
 type DmsSdkQueryResult = Awaited<ReturnType<DataModelsSdk['queryNodesAndEdges']>>;
-type HttpPostResponse = Awaited<ReturnType<CogniteClient['post']>>;
+type FilesRetrieveResponse = FileInfo[];
 
 describe(Cdf360CdmBatchCollectionLoader.name, () => {
   test('should batch multiple collection requests into a single DMS query', async () => {
@@ -157,50 +157,37 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
 
   function createMockSdks(
     dmsResponse: DmsSdkQueryResult,
-    filesResponse?: HttpPostResponse,
+    filesResponse?: FilesRetrieveResponse,
     dmsError?: Error,
     filesError?: Error
   ) {
-    const cogniteSdkMock = new Mock<CogniteClient>()
-      .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.project)
-      .returns('test-project');
+    const filesApiMock = new Mock<CogniteClient['files']>();
 
     if (filesResponse) {
       if (filesError) {
-        cogniteSdkMock
-          .setup(instance =>
-            instance.post(
-              It.Is((path: string) => path.includes('files/byids')),
-              It.IsAny()
-            )
-          )
+        filesApiMock
+          .setup(instance => instance.retrieve(It.IsAny()))
           .callback(async () => {
             throw filesError;
           });
       } else {
-        cogniteSdkMock
-          .setup(instance =>
-            instance.post(
-              It.Is((path: string) => path.includes('files/byids')),
-              It.IsAny()
-            )
-          )
-          .returns(Promise.resolve(filesResponse));
+        filesApiMock.setup(instance => instance.retrieve(It.IsAny())).returns(Promise.resolve(filesResponse));
       }
     } else if (filesError) {
-      cogniteSdkMock
-        .setup(instance =>
-          instance.post(
-            It.Is((path: string) => path.includes('files/byids')),
-            It.IsAny()
-          )
-        )
+      filesApiMock
+        .setup(instance => instance.retrieve(It.IsAny()))
         .callback(async () => {
           throw filesError;
         });
     }
+
+    const cogniteSdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com')
+      .setup(instance => instance.project)
+      .returns('test-project')
+      .setup(instance => instance.files)
+      .returns(filesApiMock.object());
 
     const dmsSdkMock = new Mock<DataModelsSdk>();
 
@@ -278,7 +265,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     };
   }
 
-  function createMockFilesResponse(collectionIds: string[]): HttpPostResponse {
+  function createMockFilesResponse(collectionIds: string[]): FilesRetrieveResponse {
     const files: FileInfoWithInstanceId[] = collectionIds.flatMap((collectionId, idx) =>
       Array.from({ length: 2 }, (_, imageIdx) =>
         ['top', 'back', 'left', 'front', 'right', 'bottom'].map(face => {
@@ -295,12 +282,6 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       ).flat()
     );
 
-    return {
-      data: {
-        items: files
-      },
-      headers: {},
-      status: 200
-    };
+    return files;
   }
 });
