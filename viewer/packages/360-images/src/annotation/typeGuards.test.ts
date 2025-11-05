@@ -40,7 +40,7 @@ describe('typeGuard', () => {
       expect(isImageInstanceLinkAnnotation(annotation)).toBe(false);
     });
 
-    it('should return false when instanceRef is missing', () => {
+    it('should return false when instanceRef is missing in data', () => {
       const annotation = createAnnotationModel({
         data: {
           text: 'Test instance link',
