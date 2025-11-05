@@ -1,4 +1,8 @@
-import type { CoreDmImage360Annotation, ImageAssetLinkAnnotationInfo } from '@cognite/reveal';
+import type {
+  CoreDmImage360Annotation,
+  ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo
+} from '@cognite/reveal';
 import { Vector3 } from 'three';
 
 export const classic360AnnotationFixture: ImageAssetLinkAnnotationInfo =
@@ -26,10 +30,10 @@ export function createClassic360AnnotationMock(params?: {
         }
       }
     },
-    createdTime: new Date(),
-    lastUpdatedTime: new Date(),
+    createdTime: new Date('2025-06-01T12:00:00Z'),
+    lastUpdatedTime: new Date('2025-06-01T12:00:00Z'),
     status: 'approved',
-    annotationType: 'image.AssetLink',
+    annotationType: 'images.AssetLink',
     annotatedResourceId: params?.fileId ?? Math.random(),
     annotatedResourceType: 'file',
     creatingApp: 'test',
@@ -37,6 +41,38 @@ export function createClassic360AnnotationMock(params?: {
     creatingUser: 'dummy'
   };
 }
+
+export const hybrid360AnnotationFixture: ImageInstanceLinkAnnotationInfo = {
+  id: 456,
+  data: {
+    instanceRef: {
+      externalId: 'instanceId', space: 'space0',
+      instanceType: 'node',
+      sources: []
+    },
+    text: 'Hybrid annotation',
+    textRegion: { xMax: 0.5, xMin: 0.1, yMax: 0.5, yMin: 0.1 },
+    objectRegion: {
+      polygon: {
+        vertices: [
+          { x: 0.1, y: 0.1 },
+          { x: 0.1, y: 0.4 },
+          { x: 0.4, y: 0.4 },
+          { x: 0.4, y: 0.1 }
+        ]
+      }
+    }
+  },
+  createdTime: new Date('2025-06-01T12:00:00Z'),
+  lastUpdatedTime: new Date('2025-06-01T12:00:00Z'),
+  status: 'approved',
+  annotationType: 'image.InstanceLink',
+  annotatedResourceId: 789,
+  annotatedResourceType: 'file',
+  creatingApp: 'test',
+  creatingAppVersion: '0',
+  creatingUser: 'dummy'
+};
 
 export const coreDm360AnnotationFixture: CoreDmImage360Annotation = {
   sourceType: 'dm',

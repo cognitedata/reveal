@@ -52,11 +52,11 @@ export type PointCloudAnnotationMappedAssetData = {
 };
 
 export type Image360AnnotationMappedAssetData =
-  | ClassicImage360AnnotationMappedData
+  | Image360AnnotationMappedData
   | DmImage360AnnotationMappedData;
 
-export type ClassicImage360AnnotationMappedData = {
-  asset: Asset;
+export type Image360AnnotationMappedData = {
+  asset: AssetInstance;
   annotationIds: number[];
 };
 

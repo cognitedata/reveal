@@ -2,18 +2,19 @@ import {
   type AddImage360CollectionEventsOptions,
   type AddImage360CollectionOptions
 } from '../../components/Reveal3DResources/types';
-import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { getClassicAssetMapped360Annotations } from './getClassicAssetMapped360Annotations';
 import { partition, take } from 'lodash-es';
 import { is360ImageEventsAddOptions } from '../../components/Reveal3DResources/typeGuards';
 import { type AllAssetFilterProps } from './common/filters';
+import { AssetInstance } from '../../utilities/instances';
 
 export async function searchClassicImage360Assets(
   image360s: AddImage360CollectionOptions[],
   assetFilters: AllAssetFilterProps | undefined,
   limit: number,
   sdk: CogniteClient
-): Promise<Asset[]> {
+): Promise<AssetInstance[]> {
   const [classicImage360s, dmImage360s] = partition<
     AddImage360CollectionOptions,
     AddImage360CollectionEventsOptions

@@ -9,7 +9,6 @@ import {
   isClassicPointCloudVolume,
   isDMPointCloudVolume,
   type PointCloudObjectMetadata,
-  type CoreDmImage360Annotation,
   type DataSourceType
 } from '@cognite/reveal';
 import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
@@ -19,6 +18,11 @@ import {
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
 import { type PointCloudVolumeId } from './types';
+import {
+  isClassicImage360AssetAnnotationData,
+  isDMImage360Annotation,
+  isHybridImage360AssetAnnotationData
+} from '../../utilities/image360Annotations';
 
 export function getInstanceReferencesFromPointCloudAnnotation(
   annotation: AnnotationModel
@@ -75,14 +79,22 @@ export function getPointCloudVolumeId(
 export function getInstanceReferenceFromImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
 ): InstanceReference | undefined {
-  if (isCoreDmImage360Annotation(annotation)) {
+  if (isDMImage360Annotation(annotation)) {
+    // CoreDM Image360 Annotation
     return annotation.assetRef;
   } else {
-    const annotationData = annotation.data as AnnotationsTypesImagesAssetLink;
-    const assetRef = annotationData.assetRef;
-    return assetRef !== undefined && isIdEither(assetRef as IdEither)
-      ? (assetRef as IdEither)
-      : undefined;
+    // Annotation Model - hybrid or classic
+    if (isHybridImage360AssetAnnotationData(annotation.data)) {
+      return annotation.data.instanceRef;
+    }
+
+    if (isClassicImage360AssetAnnotationData(annotation.data)) {
+      const assetRef = annotation.data.assetRef;
+      return assetRef !== undefined && isIdEither(assetRef as IdEither)
+        ? (assetRef as IdEither)
+        : undefined;
+    }
+    return undefined;
   }
 }
 
@@ -99,16 +111,9 @@ export function getAssetIdKeyForImage360Annotation(
 export function getIdKeyForImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
 ): string | number {
-  if (isCoreDmImage360Annotation(annotation)) {
+  if (isDMImage360Annotation(annotation)) {
     return createFdmKey(annotation.annotationIdentifier);
   } else {
     return annotation.id;
   }
-}
-
-// TODO: Implement this in Reveal instead
-function isCoreDmImage360Annotation(
-  annotation: DataSourceType['image360AnnotationType']
-): annotation is CoreDmImage360Annotation {
-  return (annotation as CoreDmImage360Annotation).annotationIdentifier?.externalId !== undefined;
 }

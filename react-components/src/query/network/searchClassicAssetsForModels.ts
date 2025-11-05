@@ -72,8 +72,9 @@ export async function searchClassicAssetsForModels(
   const image360Assets = await image360AssetsPromise;
 
   const classicPointCloudAssets = pointCloudAssets.filter((asset) => isClassicAsset(asset));
+  const classicImage360Assets = image360Assets.filter((asset) => isClassicAsset(asset));
   const assetResult = uniqBy(
-    [...cadAssets, ...classicPointCloudAssets, ...image360Assets],
+    [...cadAssets, ...classicPointCloudAssets, ...classicImage360Assets],
     (asset) => asset.id
   );
 

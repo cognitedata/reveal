@@ -21,7 +21,7 @@ export type { CameraNavigationActions } from './useCameraNavigation';
 export type {
   PointCloudAnnotationMappedAssetData,
   Image360AnnotationMappedAssetData,
-  ClassicImage360AnnotationMappedData,
+  Image360AnnotationMappedData,
   DmImage360AnnotationMappedData,
   ThreeDModelFdmMappings,
   ClickedNodeData,

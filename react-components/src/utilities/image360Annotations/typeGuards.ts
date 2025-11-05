@@ -1,4 +1,5 @@
 import {
+  AnnotationsTypesImagesInstanceLink,
   type AnnotationData,
   type AnnotationModel,
   type AnnotationsTypesImagesAssetLink
@@ -36,6 +37,13 @@ export function isClassicImage360AssetAnnotationData(
 ): annotationData is AnnotationsTypesImagesAssetLink {
   const data = annotationData as AnnotationsTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
+}
+
+export function isHybridImage360AssetAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsTypesImagesInstanceLink {
+  const data = annotationData as AnnotationsTypesImagesInstanceLink;
+  return data.text !== undefined && data.textRegion !== undefined && data.instanceRef !== undefined;
 }
 
 export function isDMImage360Annotation(
