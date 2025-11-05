@@ -12,16 +12,12 @@ import { DMInstanceRef } from '@reveal/utilities';
 import { CORE_DM_IMAGE_360_PROPERTIES_LIST } from '../../../cdm/queryProperties';
 
 function createCollectionsQuery(collectionRefs: DMInstanceRef[]) {
-  const collectionFilters = collectionRefs.map(ref => ({
-    instanceReferences: ref
-  }));
-
   return {
     with: {
       image_collections: {
         nodes: {
           filter: {
-            or: collectionFilters
+            instanceReferences: collectionRefs.map(ref => ref)
           }
         },
         limit: collectionRefs.length
