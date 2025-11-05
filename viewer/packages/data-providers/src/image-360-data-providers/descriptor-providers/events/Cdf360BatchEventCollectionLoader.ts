@@ -10,7 +10,6 @@ import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import { MathUtils, Matrix4, Vector3 } from 'three';
 import { ClassicDataSourceType } from '../../../DataSourceType';
-import { BATCH_DELAY_MS, BATCH_SIZE } from '../../../utilities/constants';
 import { BatchLoader } from '../../../utilities/BatchLoader';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
@@ -32,6 +31,9 @@ type EventCollectionIdentifier = {
   siteId: string;
   preMultipliedRotation: boolean;
 };
+
+const BATCH_SIZE = 50;
+const BATCH_DELAY_MS = 50;
 
 /**
  * Coordinates batched loading of multiple events-based 360 image collections.
@@ -86,8 +88,8 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
 
     identifiers.forEach(identifier => {
       const key = this.getKeyForIdentifier(identifier);
-      const siteEvents = eventsBySiteId.get(identifier.siteId) || [];
-      const siteFiles = filesBySiteId.get(identifier.siteId) || new Map();
+      const siteEvents = eventsBySiteId.get(identifier.siteId) ?? [];
+      const siteFiles = filesBySiteId.get(identifier.siteId) ?? new Map();
 
       const descriptors = this.mergeDescriptors(siteFiles, siteEvents, identifier.preMultipliedRotation);
       results.set(key, descriptors);
@@ -123,8 +125,8 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
           .autoPagingToArray({ limit: Infinity })
       );
 
-      const results = await Promise.all(partitionedRequests);
-      allEvents.push(...results.flat());
+      const results = (await Promise.all(partitionedRequests)).flat();
+      allEvents.push(...results);
     }
 
     return allEvents;
@@ -153,15 +155,13 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
           if (!stationId) return undefined;
 
           const siteMap = mainMap.get(siteId);
-          if (siteMap) {
-            const existingFiles = siteMap.get(stationId);
-            if (existingFiles) {
-              existingFiles.push(fileInfo);
-            } else {
-              siteMap.set(stationId, [fileInfo]);
-            }
+          if (siteMap === undefined) return undefined;
+          const existingFiles = siteMap.get(stationId);
+          if (existingFiles) {
+            existingFiles.push(fileInfo);
+          } else {
+            siteMap.set(stationId, [fileInfo]);
           }
-          return undefined;
         });
       });
 
@@ -194,7 +194,7 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
   ): Historical360ImageSet<ClassicDataSourceType>[] {
     const eventDescriptors = events
       .map(event => event.metadata)
-      .filter((metadata): metadata is Event360Metadata => !!metadata)
+      .filter(isEvent360Metadata)
       .map(metadata => this.parseEventMetadata(metadata, preMultipliedRotation));
 
     const uniqueEventDescriptors = uniqBy(eventDescriptors, eventDescriptor => eventDescriptor.id);
@@ -255,6 +255,26 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
 
   private parseTransform(transformationData: Event360TransformationData, preMultipliedRotation: boolean): Matrix4 {
     const translationComponents = transformationData.translation.split(',').map(parseFloat);
+    if (translationComponents.length !== 3 || translationComponents.some(isNaN)) {
+      throw new Error(
+        `Invalid translation data: expected 3 numeric components, got "${transformationData.translation}"`
+      );
+    }
+
+    const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
+    if (rotationAxisComponents.length !== 3 || rotationAxisComponents.some(isNaN)) {
+      throw new Error(
+        `Invalid rotation_axis data: expected 3 numeric components, got "${transformationData.rotation_axis}"`
+      );
+    }
+
+    const rotationAngle = parseFloat(transformationData.rotation_angle);
+    if (isNaN(rotationAngle)) {
+      throw new Error(
+        `Invalid rotation_angle data: expected numeric value, got "${transformationData.rotation_angle}"`
+      );
+    }
+
     const millimetersInMeters = 1000;
     const translation = new Vector3(
       translationComponents[0],
@@ -262,11 +282,10 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
       -translationComponents[1]
     ).divideScalar(millimetersInMeters);
 
-    const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
     const rotationAxis = new Vector3(rotationAxisComponents[0], rotationAxisComponents[2], -rotationAxisComponents[1]);
 
-    const rotationAngle = MathUtils.DEG2RAD * parseFloat(transformationData.rotation_angle);
-    const rotationMatrix = new Matrix4().makeRotationAxis(rotationAxis, rotationAngle);
+    const rotationAngleRadians = MathUtils.DEG2RAD * rotationAngle;
+    const rotationMatrix = new Matrix4().makeRotationAxis(rotationAxis, rotationAngleRadians);
 
     const translationMatrix = new Matrix4().makeTranslation(translation.x, translation.y, translation.z);
 
@@ -279,4 +298,15 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
 
     return entityTransform;
   }
+}
+function isEvent360Metadata(metadata: Metadata | undefined): metadata is Event360Metadata {
+  return (
+    metadata !== undefined &&
+    typeof metadata === 'object' &&
+    typeof metadata.site_id === 'string' &&
+    typeof metadata.station_id === 'string' &&
+    typeof metadata.rotation_angle === 'string' &&
+    typeof metadata.rotation_axis === 'string' &&
+    typeof metadata.translation === 'string'
+  );
 }
