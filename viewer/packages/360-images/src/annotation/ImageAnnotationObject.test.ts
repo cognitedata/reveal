@@ -23,12 +23,14 @@ describe(ImageAnnotationObject.name, () => {
     yMin: 0.2,
     yMax: 0.4
   };
-  const annotationInstanceRefMock: AnnotationsInstanceRef = {
+
+  const annotationInstanceRefMock = {
     space: 'test-space',
     externalId: 'test-instance',
-    instanceType: 'node' as const,
+    instanceType: 'node',
     sources: []
-  };
+  } as const satisfies AnnotationsInstanceRef;
+
   const objectRegionBoundingBoxMock: AnnotationsTypesPrimitivesGeometry2DGeometry = {
     boundingBox: {
       xMin: 0.15,

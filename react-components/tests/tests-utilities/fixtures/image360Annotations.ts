@@ -29,7 +29,7 @@ export function createClassic360AnnotationMock(params?: {
     createdTime: new Date(),
     lastUpdatedTime: new Date(),
     status: 'approved',
-    annotationType: 'images.AssetLink',
+    annotationType: 'image.AssetLink',
     annotatedResourceId: params?.fileId ?? Math.random(),
     annotatedResourceType: 'file',
     creatingApp: 'test',
