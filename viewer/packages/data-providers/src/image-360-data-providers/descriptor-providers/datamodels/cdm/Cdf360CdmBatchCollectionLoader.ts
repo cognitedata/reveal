@@ -16,7 +16,7 @@ import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
-import { BATCH_SIZE, BATCH_DELAY_MS, MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
+import { MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
 import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
 import { BatchLoader } from '../../../../utilities/BatchLoader';
 import { getDmsPaginationCursor } from '../../../../utilities/dmsPaginationUtils';
@@ -37,9 +37,8 @@ type BatchQueryResult = {
   nextCursor?: Record<string, string>;
 };
 
-interface FileInfoWithInstanceId extends FileInfo {
-  instanceId?: DirectRelationReference;
-}
+const BATCH_SIZE = 50;
+const BATCH_DELAY_MS = 50;
 
 /**
  * Coordinates batched loading of multiple 360 image collections.
@@ -144,13 +143,15 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
     result.images.forEach(image => {
       const collectionRef = image.properties?.cdf_cdm?.['Cognite360Image/v1']?.collection360;
-      if (isDmIdentifier(collectionRef)) {
-        const key = dmInstanceRefToKey(collectionRef);
-        if (!imagesByCollection.has(key)) {
-          imagesByCollection.set(key, []);
-        }
-        imagesByCollection.get(key)?.push(image);
+      if (!isDmIdentifier(collectionRef)) {
+        return;
       }
+
+      const key = dmInstanceRefToKey(collectionRef);
+      if (!imagesByCollection.has(key)) {
+        imagesByCollection.set(key, []);
+      }
+      imagesByCollection.get(key)?.push(image);
     });
 
     result.image_collections.forEach(collection => {
@@ -209,8 +210,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     const fileMap = new Map<DMInstanceKey, FileInfo>();
 
     fileInfos.forEach(file => {
-      const fileWithInstanceId = file as FileInfoWithInstanceId;
-      const instanceId = fileWithInstanceId.instanceId;
+      const instanceId = file.instanceId;
 
       if (instanceId) {
         const key = dmInstanceRefToKey(instanceId);
@@ -262,7 +262,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     const groups = groupBy(imagesWithStation, imageResult => {
       const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360;
       if (isDmIdentifier(station)) {
-        return `${station.externalId}-${station.space}`;
+        return dmInstanceRefToKey(station);
       }
       return 'unknown';
     });
