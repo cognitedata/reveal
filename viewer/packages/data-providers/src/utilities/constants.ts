@@ -41,3 +41,19 @@ export const COGNITE_360_IMAGE_SOURCE = {
   version: 'v1',
   type: 'view'
 } as const satisfies ViewReference;
+
+export const COGNITE_360_IMAGE_COLLECTION_SOURCE = {
+  externalId: 'Cognite360ImageCollection',
+  space: CORE_DM_SPACE,
+  version: 'v1',
+  type: 'view'
+} as const satisfies ViewReference;
+
+export const COGNITE_360_IMAGE_STATION_SOURCE = {
+  externalId: 'Cognite360ImageStation',
+  space: CORE_DM_SPACE,
+  version: 'v1',
+  type: 'view'
+} as const satisfies ViewReference;
+
+export const MAX_DMS_QUERY_LIMIT = 10000;

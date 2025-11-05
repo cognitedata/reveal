@@ -221,6 +221,7 @@ export type NodeResultSetExpression = {
     from?: any;
     through?: any;
     chainTo?: any;
+    direction?: 'outwards' | 'inwards';
   };
 };
 
