@@ -1,7 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { AnnotationModel, AnnotationsTypesImagesAssetLink, IdEither } from '@cognite/sdk';
+import {
+  AnnotationModel,
+  AnnotationsTypesImagesAssetLink,
+  AnnotationsTypesImagesInstanceLink,
+  IdEither
+} from '@cognite/sdk';
 import * as THREE from 'three';
 import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
 import {
@@ -104,6 +109,16 @@ export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
    * The data associated with the image asset link
    */
   data: AnnotationsTypesImagesAssetLink;
+};
+
+/**
+ * A CDF AnnotationModel with a narrower type representing an image instance link
+ */
+export type ImageInstanceLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
+  /**
+   * The data associated with the image instance link
+   */
+  data: AnnotationsTypesImagesInstanceLink;
 };
 
 export type Historical360ImageSet<T extends DataSourceType> = Image360RevisionDescriptor<T> & {
