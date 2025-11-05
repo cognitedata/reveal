@@ -5,13 +5,18 @@
 import { Image360 } from './../entity/Image360';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
-import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360AnnotationAppearance, Image360AnnotationInstanceReference } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  ImageInstanceLinkAnnotationInfo
+} from '@reveal/data-providers';
 import { Matrix4 } from 'three';
-import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers';
+import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 
 /**
  * Annotation type that may be linked to assets. Only relevant for classic annotations, where some
@@ -28,7 +33,7 @@ export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicData
   /**
    * Reference to the wanted asset
    */
-  assetRef: InstanceReference<T>;
+  assetRef: Image360AnnotationInstanceReference<T>;
 };
 
 /**
@@ -47,6 +52,24 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
    * The image revision in which the asset was found
    */
   imageRevision: Image360Revision<T>;
+};
+
+/**
+ * Asset search return type, including information about the image in which the asset is found
+ */
+export type AssetHybridAnnotationImage360Info = {
+  /**
+   * Reference to the relevant asset
+   */
+  annotationInfo: ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo;
+  /**
+   * The image entity in which the asset was found
+   */
+  imageEntity: Image360<ClassicDataSourceType>;
+  /**
+   * The image revision in which the asset was found
+   */
+  imageRevision: Image360Revision<ClassicDataSourceType>;
 };
 
 /**
@@ -211,6 +234,12 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Fetches annotations from the CDF Core Data Model
    */
+
+  getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
+  /**
+   * Fetches annotations from the CDF Core Data Model
+   */
+
   getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
   /**
    * Get info of assets and annotations associated with this
@@ -219,10 +248,11 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @param source What source data to pull the annotation info from. Must be `'asset'`, `'cdm'` or `'all'`
    */
   getAnnotationsInfo(
-    source: 'assets' | 'cdm' | 'all'
+    source: 'assets' | 'hybrid' | 'cdm' | 'all'
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   >;
 }

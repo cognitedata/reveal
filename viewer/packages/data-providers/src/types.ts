@@ -11,10 +11,12 @@ import * as THREE from 'three';
 import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
 import { DMInstanceRef } from '@reveal/utilities';
+import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']
@@ -52,7 +54,7 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     annotationSpecifier: Image360AnnotationSpecifier<T>
   ): Promise<T['image360AnnotationType'][]>;
   findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<T>,
+    instanceFilter: Image360AnnotationInstanceReference<T>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 
@@ -61,6 +63,11 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
   getAllImage360AnnotationInfos(
     source: 'cdm',
     collection: DefaultImage360Collection<T>,
@@ -72,13 +79,14 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
   getAllImage360AnnotationInfos(
-    source: 'assets' | 'cdm' | 'all',
+    source: 'assets' | 'hybrid' | 'cdm' | 'all',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   >;
 }
 
