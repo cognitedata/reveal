@@ -56,6 +56,4 @@ export const COGNITE_360_IMAGE_STATION_SOURCE = {
   type: 'view'
 } as const satisfies ViewReference;
 
-export const BATCH_SIZE = 50;
-export const BATCH_DELAY_MS = 50;
 export const MAX_DMS_QUERY_LIMIT = 10000;
