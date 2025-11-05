@@ -56,6 +56,7 @@ export {
   Image360Texture,
   Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo,
   InstanceReference,
   Image360Id,
   Image360RevisionId
