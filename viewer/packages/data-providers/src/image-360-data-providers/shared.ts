@@ -1,9 +1,9 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Image360RevisionId, ImageAssetLinkAnnotationInfo } from '../types';
+import { Image360RevisionId } from '../types';
 import { DataSourceType } from '../DataSourceType';
-import { AnnotationData, AnnotationModel, AnnotationsTypesImagesAssetLink, Metadata } from '@cognite/sdk';
+import { Metadata } from '@cognite/sdk';
 import {
   Image360DataModelIdentifier,
   Image360LegacyDataModelIdentifier
@@ -58,13 +58,4 @@ export function isSameImage360RevisionId<T extends DataSourceType>(
   }
 
   return false;
-}
-
-export function isImageAssetLinkAnnotation(annotation: AnnotationModel): annotation is ImageAssetLinkAnnotationInfo {
-  return isAssetLinkAnnotationData(annotation.data);
-}
-
-function isAssetLinkAnnotationData(annotationData: AnnotationData): annotationData is AnnotationsTypesImagesAssetLink {
-  const data = annotationData as AnnotationsTypesImagesAssetLink;
-  return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
 }

@@ -19,19 +19,27 @@ import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
+  ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo,
   InstanceReference
 } from '../types';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdentifier } from '../DataSourceType';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360Annotation,
   Image360AnnotationAssetQueryResult,
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isImageAssetLinkAnnotation } from './shared';
-import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images';
+import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
+import {
+  isAnnotationsTypesImagesInstanceLink,
+  isAssetLinkAnnotationData,
+  isImageAssetLinkAnnotation,
+  isImageInstanceLinkAnnotation
+} from '@reveal/360-images/src/annotation/typeGuards';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
@@ -41,7 +49,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   }
 
   public async findImageAnnotationsForInstance(
-    asset: InstanceReference<ClassicDataSourceType>,
+    asset: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
     const entities = collection.image360Entities;
@@ -77,8 +85,17 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       const annotations = await revision.getAnnotations();
 
       return annotations.filter(a => {
-        const assetLink = a.annotation.data as AnnotationsTypesImagesAssetLink;
-        return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, asset);
+        const annotationData = a.annotation.data;
+        if (isDmIdentifier(asset)) {
+          if (isAnnotationsTypesImagesInstanceLink(annotationData)) {
+            return isSameDMIdentifier(annotationData.instanceRef, asset);
+          }
+        } else {
+          if (isAssetLinkAnnotationData(annotationData)) {
+            return matchesAssetRef(annotationData, asset);
+          }
+        }
+        return false;
       });
     }
   }
@@ -94,16 +111,16 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     });
   }
 
-  private async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
+  private async getFilesByAssetRef(assetRef: IdEither | DMInstanceRef): Promise<CogniteInternalId[]> {
+    const annotationData = this.getAnnotationDataByAssetRefType(assetRef);
+
     const response = await this._client.annotations
       .reverseLookup({
         limit: 1000,
         filter: {
           annotatedResourceType: 'file',
-          annotationType: 'images.AssetLink',
-          data: {
-            assetRef
-          }
+          annotationType: annotationData.type,
+          data: annotationData.data
         }
       })
       .autoPagingToArray();
@@ -111,11 +128,27 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
   }
 
+  private getAnnotationDataByAssetRefType(assetRef: IdEither | DMInstanceRef): {
+    type: 'images.InstanceLink' | 'images.AssetLink';
+    data: { instanceRef: DMInstanceRef } | { assetRef: IdEither };
+  } {
+    if (isDmIdentifier(assetRef)) {
+      return { type: 'images.InstanceLink', data: { instanceRef: assetRef } };
+    } else {
+      return { type: 'images.AssetLink', data: { assetRef } };
+    }
+  }
+
   getAllImage360AnnotationInfos(
     source: 'assets',
     collection: DefaultImage360Collection<ClassicDataSourceType>,
     annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
   ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
   getAllImage360AnnotationInfos(
     source: 'cdm',
     collection: DefaultImage360Collection<ClassicDataSourceType>,
@@ -127,13 +160,14 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
   ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
   public async getAllImage360AnnotationInfos(
-    source: 'all' | 'assets' | 'cdm',
+    source: 'all' | 'assets' | 'hybrid' | 'cdm',
     collection: DefaultImage360Collection<ClassicDataSourceType>,
     annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   > {
     if (source === 'cdm') {
       return [];
@@ -141,10 +175,19 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap(collection);
     const annotations = await this.fetchAllAnnotations(collection, annotationFilter);
 
-    return pairAnnotationsWithEntityAndRevision(annotations.filter(isImageAssetLinkAnnotation));
+    if (source === 'hybrid') {
+      return pairAnnotationsWithEntityAndRevision(
+        annotations.filter(
+          annotation => isImageInstanceLinkAnnotation(annotation) || isImageAssetLinkAnnotation(annotation)
+        )
+      );
+    }
+    return pairAnnotationsWithEntityAndRevision(
+      annotations.filter(annotation => isImageAssetLinkAnnotation(annotation))
+    );
 
     function pairAnnotationsWithEntityAndRevision(
-      annotations: InstanceLinkable360ImageAnnotationType<ClassicDataSourceType>[]
+      annotations: Array<ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo>
     ) {
       return annotations
         .map(annotation => {
@@ -186,8 +229,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
         annotatedResourceIds: idList.map(id => ({ id })),
-        annotatedResourceType: 'file',
-        annotationType: 'images.AssetLink'
+        annotatedResourceType: 'file'
       });
 
       const assetAnnotations = annotationArray.filter(annotationFilter);

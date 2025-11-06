@@ -9,7 +9,12 @@ import {
   AnnotationsTypesImagesInstanceLink,
   AnnotationType
 } from '@cognite/sdk';
-import { DataSourceType, DMDataSourceType, ImageInstanceLinkAnnotationInfo } from '@reveal/data-providers';
+import {
+  DataSourceType,
+  DMDataSourceType,
+  ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo
+} from '@reveal/data-providers';
 import { isDmIdentifier } from '@reveal/utilities';
 
 export function isCoreDmImage360Annotation(
@@ -32,15 +37,20 @@ export function isAnnotationsObjectDetection(
   );
 }
 
-export function isAnnotationAssetLink(
-  annotationType: AnnotationType,
-  annotation: AnnotationData
-): annotation is AnnotationsTypesImagesAssetLink {
-  const link = annotation as AnnotationsTypesImagesAssetLink;
-  return annotationType === 'images.AssetLink' && link.text !== undefined && link.textRegion !== undefined;
+export function isImageAssetLinkAnnotation(annotation: AnnotationModel): annotation is ImageAssetLinkAnnotationInfo {
+  return isAssetLinkAnnotationData(annotation.data);
 }
 
-export function isAnnotationInstanceLink(annotation: AnnotationModel): annotation is ImageInstanceLinkAnnotationInfo {
+export function isAssetLinkAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsTypesImagesAssetLink {
+  const data = annotationData as AnnotationsTypesImagesAssetLink;
+  return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
+}
+
+export function isImageInstanceLinkAnnotation(
+  annotation: AnnotationModel
+): annotation is ImageInstanceLinkAnnotationInfo {
   return isAnnotationsTypesImagesInstanceLink(annotation.data);
 }
 

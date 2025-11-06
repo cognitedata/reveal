@@ -88,6 +88,7 @@ export {
   PointCloudObjectMetadata,
   CoreDmImage360Annotation,
   ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo,
   Image360DataModelIdentifier,
   Image360BaseIdentifier,
   Image360CoreDataModelIdentifier,
@@ -137,7 +138,9 @@ export {
   Image360AnnotationAssetQueryResult,
   Image360AnnotationFilterOptions,
   Image360Action,
-  InstanceLinkable360ImageAnnotationType
+  InstanceLinkable360ImageAnnotationType,
+  Image360AnnotationInstanceReference,
+  AssetHybridAnnotationImage360Info
 } from '../packages/360-images';
 
 export {
