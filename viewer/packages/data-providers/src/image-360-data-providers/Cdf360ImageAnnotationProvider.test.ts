@@ -4,18 +4,33 @@
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
-import { CogniteClient, AnnotationModel, InternalId, CursorAndAsyncIterator, AnnotationsAssetRef } from '@cognite/sdk';
+import {
+  CogniteClient,
+  AnnotationModel,
+  InternalId,
+  CursorAndAsyncIterator,
+  AnnotationsAssetRef,
+  AnnotationsInstanceRef
+} from '@cognite/sdk';
 import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
 import { ClassicDataSourceType } from '../DataSourceType';
 import { Image360Descriptor } from '../types';
 import { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
 import { createCursorAndAsyncIterator, createAnnotationModel } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
+import assert from 'assert';
 
 describe(Cdf360ImageAnnotationProvider.name, () => {
   const ARBITRARY_FILE_ID = 10;
 
   const assetRef: InternalId = { id: 10 };
+
+  const instanceRef: AnnotationsInstanceRef = {
+    externalId: 'instance-1',
+    space: 'space-1',
+    instanceType: 'node',
+    sources: []
+  };
 
   const matchingAnnotation = createAnnotationModel({
     annotatedResourceId: 10,
@@ -45,12 +60,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     data: {
       text: 'hybrid annotation for file ' + ARBITRARY_FILE_ID,
       textRegion: { xMin: 0, xMax: 0.1, yMin: 0, yMax: 0.1 },
-      instanceRef: {
-        externalId: 'instance-1',
-        space: 'space-1',
-        instanceType: 'node',
-        sources: []
-      }
+      instanceRef: instanceRef
     },
     status: 'approved'
   });
@@ -150,7 +160,22 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       const results = await provider.findImageAnnotationsForInstance(assetRef, collection);
 
+      assert(results.length === 1);
       expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
+    });
+
+    test('returns annotations matching instance ref and image fileIds', async () => {
+      const client = sdkMock;
+      const provider = new Cdf360ImageAnnotationProvider(client);
+
+      const revision = createMockRevision(10, [matchingHybridAnnotation, nonMatchingAnnotation]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(instanceRef, collection);
+
+      assert(results.length === 1);
+      expect(results[0].annotation.annotation).toEqual(matchingHybridAnnotation);
     });
   });
 

@@ -23,7 +23,7 @@ import {
   ImageInstanceLinkAnnotationInfo,
   InstanceReference
 } from '../types';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdentifier } from '../DataSourceType';
 import {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
@@ -35,6 +35,8 @@ import {
 } from '@reveal/360-images';
 import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
 import {
+  isAnnotationsTypesImagesInstanceLink,
+  isAssetLinkAnnotationData,
   isImageAssetLinkAnnotation,
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
@@ -83,8 +85,17 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       const annotations = await revision.getAnnotations();
 
       return annotations.filter(a => {
-        const assetLink = a.annotation.data as AnnotationsTypesImagesAssetLink;
-        return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, asset);
+        const annotationData = a.annotation.data;
+        if (isDmIdentifier(asset)) {
+          if (isAnnotationsTypesImagesInstanceLink(annotationData)) {
+            return isSameDMIdentifier(annotationData.instanceRef, asset);
+          }
+        } else {
+          if (isAssetLinkAnnotationData(annotationData)) {
+            return matchesAssetRef(annotationData, asset);
+          }
+        }
+        return false;
       });
     }
   }
