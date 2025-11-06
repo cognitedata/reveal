@@ -18,6 +18,7 @@ import { Image360Descriptor } from '../types';
 import { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
 import { createCursorAndAsyncIterator, createAnnotationModel } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
+import assert from 'assert';
 
 describe(Cdf360ImageAnnotationProvider.name, () => {
   const ARBITRARY_FILE_ID = 10;
@@ -159,6 +160,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       const results = await provider.findImageAnnotationsForInstance(assetRef, collection);
 
+      assert(results.length === 1);
       expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
     });
 
@@ -172,6 +174,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       const results = await provider.findImageAnnotationsForInstance(instanceRef, collection);
 
+      assert(results.length === 1);
       expect(results[0].annotation.annotation).toEqual(matchingHybridAnnotation);
     });
   });
