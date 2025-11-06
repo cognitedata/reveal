@@ -86,16 +86,14 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
 
       return annotations.filter(a => {
         const annotationData = a.annotation.data;
-        if (isAssetLinkAnnotationData(annotationData)) {
-          return annotationData.assetRef !== undefined && matchesAssetRef(annotationData, asset);
-        }
-        if (isAnnotationsTypesImagesInstanceLink(annotationData)) {
-          const instanceLink = annotationData;
-          return (
-            instanceLink.instanceRef !== undefined &&
-            isDmIdentifier(asset) &&
-            isSameDMIdentifier(instanceLink.instanceRef, asset)
-          );
+        if (isDmIdentifier(asset)) {
+          if (isAnnotationsTypesImagesInstanceLink(annotationData)) {
+            return isSameDMIdentifier(annotationData.instanceRef, asset);
+          }
+        } else {
+          if (isAssetLinkAnnotationData(annotationData)) {
+            return matchesAssetRef(annotationData, asset);
+          }
         }
         return false;
       });
