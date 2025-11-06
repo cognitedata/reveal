@@ -1,4 +1,4 @@
-import { AnnotationsInstanceRef, IdEither, type ViewDefinition } from '@cognite/sdk';
+import { type AnnotationsInstanceRef, type IdEither, type ViewDefinition } from '@cognite/sdk';
 
 export type DMSView = {
   rawView: ViewDefinition;

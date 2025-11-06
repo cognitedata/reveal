@@ -20,8 +20,8 @@ import {
 } from '../../utilities/image360Annotations';
 import { getAssetsForIds } from './common/getAssetsForIds';
 import { type AllAssetFilterProps } from './common/filters';
-import { ClassicAnnotationIdAndAssetReference } from './types';
-import { AssetInstance } from '../../utilities/instances';
+import { type ClassicAnnotationIdAndAssetReference } from './types';
+import { type AssetInstance } from '../../utilities/instances';
 import { getDMAssetsForAnnotationReference } from './common/getDMAssetsForAnnotationReference';
 
 const MAX_PARALLEL_ANNOTATION_QUERIES = 5;

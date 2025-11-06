@@ -1,9 +1,4 @@
-import {
-  type AnnotationsTypesImagesAssetLink,
-  type AnnotationModel,
-  type AnnotationsBoundingVolume,
-  type IdEither
-} from '@cognite/sdk';
+import { type AnnotationModel, type AnnotationsBoundingVolume, type IdEither } from '@cognite/sdk';
 
 import {
   isClassicPointCloudVolume,

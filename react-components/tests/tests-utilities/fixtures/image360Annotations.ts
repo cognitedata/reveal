@@ -46,7 +46,8 @@ export const hybrid360AnnotationFixture: ImageInstanceLinkAnnotationInfo = {
   id: 456,
   data: {
     instanceRef: {
-      externalId: 'instanceId', space: 'space0',
+      externalId: 'instanceId',
+      space: 'space0',
       instanceType: 'node',
       sources: []
     },

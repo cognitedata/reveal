@@ -1,5 +1,5 @@
 import {
-  AnnotationsTypesImagesInstanceLink,
+  type AnnotationsTypesImagesInstanceLink,
   type AnnotationData,
   type AnnotationModel,
   type AnnotationsTypesImagesAssetLink

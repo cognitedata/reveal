@@ -1,9 +1,13 @@
 import type { AnnotationsInstanceRef, CogniteClient } from '@cognite/sdk';
 import { uniqBy } from 'lodash-es';
-import { FdmNode, FdmSDK } from '../../../data-providers/FdmSDK';
-import { AssetProperties } from '../../../data-providers/core-dm-provider/utils/filters';
+import { type FdmNode, FdmSDK } from '../../../data-providers/FdmSDK';
+import { type AssetProperties } from '../../../data-providers/core-dm-provider/utils/filters';
 import { createFdmKey } from '../../../components';
-import { COGNITE_ASSET_SOURCE, COGNITE_ASSET_VIEW_VERSION_KEY, CORE_DM_SPACE } from '../../../data-providers/core-dm-provider/dataModels';
+import {
+  COGNITE_ASSET_SOURCE,
+  COGNITE_ASSET_VIEW_VERSION_KEY,
+  CORE_DM_SPACE
+} from '../../../data-providers/core-dm-provider/dataModels';
 
 export async function getDMAssetsForAnnotationReference(
   annotationInstanceRefs: AnnotationsInstanceRef[],
@@ -40,4 +44,3 @@ async function getDmInstancesFromAnnotation(
     properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
   }));
 }
-
