@@ -7,6 +7,7 @@ import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
@@ -28,7 +29,7 @@ import { Matrix4 } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
 import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
 import { createCollectionIdString } from './createCollectionIdString';
-import { getInstanceIdFromAnnotation } from '../annotation/getInstanceId';
+import { getClassicInstanceRef } from '../annotation/getInstanceId';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -292,19 +293,21 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     );
 
     return annotations
-      .map(annotationInfo => getInstanceIdFromAnnotation<T>(annotationInfo.annotationInfo))
+      .map(annotationInfo => getClassicInstanceRef<T>(annotationInfo.annotationInfo))
       .filter(result => result !== undefined);
   }
 
   getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
   getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
   getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
   async getAnnotationsInfo(
-    source: 'assets' | 'cdm' | 'all'
+    source: 'assets' | 'hybrid' | 'cdm' | 'all'
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   > {
     return this._image360DataProvider.getAllImage360AnnotationInfos(source, this, annotation =>
       this._annotationFilter.filter(annotation)

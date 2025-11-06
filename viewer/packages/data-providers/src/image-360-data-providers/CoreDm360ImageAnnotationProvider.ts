@@ -10,6 +10,7 @@ import {
 } from '../types';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult,
   Image360Entity,
@@ -85,6 +86,11 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     annotationFilter: Image360AnnotationFilterDelegate<DMDataSourceType>
   ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
   getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<DMDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<DMDataSourceType>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
+  getAllImage360AnnotationInfos(
     source: 'cdm',
     collection: DefaultImage360Collection<DMDataSourceType>,
     annotationFilter: Image360AnnotationFilterDelegate<DMDataSourceType>
@@ -95,15 +101,16 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     annotationFilter: Image360AnnotationFilterDelegate<DMDataSourceType>
   ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
   public async getAllImage360AnnotationInfos(
-    source: 'all' | 'assets' | 'cdm',
+    source: 'all' | 'assets' | 'hybrid' | 'cdm',
     collection: DefaultImage360Collection<DMDataSourceType>,
     annotationFilter: Image360AnnotationFilterDelegate<DMDataSourceType>
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   > {
-    if (source === 'assets') {
+    if (source !== 'cdm' && source !== 'all') {
       return [];
     }
 

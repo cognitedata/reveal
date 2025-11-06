@@ -11,14 +11,15 @@ import {
   Image360DescriptorProvider,
   Image360Face,
   Image360FileDescriptor,
-  Image360FileProvider,
-  InstanceReference
+  Image360FileProvider
 } from './types';
 import {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
+import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
 
 export class Image360ProviderCombiner<T extends DataSourceType> implements Image360Provider<T> {
   private readonly _descriptorProvider: Image360DescriptorProvider<T>;
@@ -63,7 +64,7 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
   }
 
   findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<T>,
+    instanceFilter: Image360AnnotationInstanceReference<T>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]> {
     return this._annotationProvider.findImageAnnotationsForInstance(instanceFilter, collection);
@@ -75,6 +76,11 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
   getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
+  getAllImage360AnnotationInfos(
     source: 'cdm',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
@@ -85,13 +91,14 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
   getAllImage360AnnotationInfos(
-    source: 'all' | 'assets' | 'cdm',
+    source: 'all' | 'assets' | 'hybrid' | 'cdm',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   > {
     return this._annotationProvider.getAllImage360AnnotationInfos(source, collection, annotationFilter);
   }
