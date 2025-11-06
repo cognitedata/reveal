@@ -183,7 +183,6 @@ async function get360ImageAnnotations(
 
     const chunkBatchAnnotationArrays = await Promise.all(annotationChunkBatchPromises);
 
-    console.log('TEST Fetched annotations for 360 images:', chunkBatchAnnotationArrays);
     annotationsResult.push(...chunkBatchAnnotationArrays.flat());
   }
 
