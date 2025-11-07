@@ -54,7 +54,13 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   forceInsert(id: Key, data: Data): void {
     if (this.isFull()) {
       this.cleanCache(this._defaultCleanupCount);
+
+      // If cache is still full after normal cleaning (all items referenced), force-clean
+      if (this.isFull()) {
+        this.cleanCache(this._defaultCleanupCount, true);
+      }
     }
+
     this.insert(id, data);
   }
 
@@ -91,10 +97,10 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     return this._data.size >= this._maxElementsInCache;
   }
 
-  cleanCache(count: number): void {
+  cleanCache(count: number, forceRemoval: boolean = false): void {
     const allResults = Array.from(this._data.entries());
-    // Filter out items with active references - they should not be cleaned
-    const cleanableItems = allResults.filter(([key]) => this.getReferenceCount(key) === 0);
+
+    const cleanableItems = forceRemoval ? allResults : allResults.filter(([key]) => this.getReferenceCount(key) === 0);
 
     cleanableItems.sort((left, right) => {
       return right[1].lastAccessTime - left[1].lastAccessTime;
