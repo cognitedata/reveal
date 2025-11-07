@@ -340,5 +340,36 @@ describe('MemoryRequestCache', () => {
       expect(disposeCallback).toHaveBeenCalledWith(sector1);
       expect(disposeCallback).toHaveBeenCalledWith(sector2);
     });
+
+    test('forceInsert should succeed even when all cached items are referenced (deadlock scenario)', () => {
+      const disposeCallback = jest.fn();
+      const cache = new MemoryRequestCache<number, string>(2, 1, disposeCallback);
+
+      // Fill cache and reference all items
+      cache.insert(1, 'test1');
+      cache.insert(2, 'test2');
+      cache.addReference(1);
+      cache.addReference(2);
+
+      // Verify cache is full and all items are referenced
+      expect(cache.isFull()).toBe(true);
+      expect(cache.getReferenceCount(1)).toBe(1);
+      expect(cache.getReferenceCount(2)).toBe(1);
+
+      // This should succeed by force-removing oldest item even though it's referenced
+      expect(() => cache.forceInsert(3, 'test3')).not.toThrow();
+
+      // Verify new item was inserted
+      expect(cache.has(3)).toBe(true);
+      expect(cache.get(3)).toBe('test3');
+
+      // One of the referenced items should have been force-removed
+      expect(disposeCallback).toHaveBeenCalledTimes(1);
+      const removedItem = disposeCallback.mock.calls[0][0];
+      expect(['test1', 'test2']).toContain(removedItem);
+
+      // Cache should still be full but functional
+      expect(cache.isFull()).toBe(true);
+    });
   });
 });
