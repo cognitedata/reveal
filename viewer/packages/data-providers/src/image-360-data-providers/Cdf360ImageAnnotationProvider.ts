@@ -123,7 +123,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
           data: annotationData.data
         }
       })
-      .autoPagingToArray();
+      .autoPagingToArray({ limit: Infinity });
 
     return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
   }
