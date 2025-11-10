@@ -101,13 +101,13 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     events: CogniteEvent[],
     files: FileInfo[],
     onEventsList?: () => void,
-    shouldThrowError?: string
+    errorMessage?: string
   ) {
     const eventsMock = new Mock<ReturnType<CogniteClient['events']['list']>>()
       .setup(instance => instance.autoPagingToArray)
       .returns(async () => {
-        if (shouldThrowError) {
-          throw new Error(shouldThrowError);
+        if (errorMessage) {
+          throw new Error(errorMessage);
         }
         return events;
       })
@@ -116,7 +116,7 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     const filesMock = new Mock<ReturnType<CogniteClient['files']['list']>>()
       .setup(instance => instance.autoPagingEach)
       .returns(async (callback?: (file: FileInfo) => void) => {
-        if (!shouldThrowError && callback) {
+        if (!errorMessage && callback) {
           files.forEach(callback);
         }
       })
