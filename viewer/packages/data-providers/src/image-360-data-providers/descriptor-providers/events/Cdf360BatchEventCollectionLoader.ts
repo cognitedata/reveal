@@ -151,7 +151,7 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
       const partitionedRequests = range(1, partitions + 1).map(async index => {
         const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
         return this._client.files.list(req).autoPagingEach(fileInfo => {
-          const stationId = fileInfo.metadata?.station_id as string;
+          const stationId = fileInfo.metadata?.station_id;
           if (!stationId) return undefined;
 
           const siteMap = mainMap.get(siteId);
@@ -175,7 +175,7 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
     const grouped = new Map<string, CogniteEvent[]>();
 
     events.forEach(event => {
-      const siteId = event.metadata?.site_id as string;
+      const siteId = event.metadata?.site_id;
       if (siteId) {
         if (!grouped.has(siteId)) {
           grouped.set(siteId, []);
@@ -232,7 +232,7 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
 
   private sortFileInfoSetByNewest(fileInfos: FileInfo[]): FileInfo[][] {
     if (fileInfos[0].metadata?.timestamp !== undefined) {
-      const sets = groupBy(fileInfos, fileInfo => fileInfo.metadata!.timestamp);
+      const sets = groupBy(fileInfos, fileInfo => fileInfo.metadata?.timestamp);
       return orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc')
         .map(timeStampSets => timeStampSets[1])
         .filter(fileInfoSets => fileInfoSets.length === 6);
@@ -303,10 +303,10 @@ function isEvent360Metadata(metadata: Metadata | undefined): metadata is Event36
   return (
     metadata !== undefined &&
     typeof metadata === 'object' &&
-    typeof metadata.site_id === 'string' &&
-    typeof metadata.station_id === 'string' &&
-    typeof metadata.rotation_angle === 'string' &&
-    typeof metadata.rotation_axis === 'string' &&
-    typeof metadata.translation === 'string'
+    'site_id' in metadata &&
+    'station_id' in metadata &&
+    'rotation_angle' in metadata &&
+    'rotation_axis' in metadata &&
+    'translation' in metadata
   );
 }

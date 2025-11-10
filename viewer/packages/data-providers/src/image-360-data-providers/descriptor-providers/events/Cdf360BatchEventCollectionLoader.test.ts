@@ -97,16 +97,28 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     expect(batchExecutionCount).toBe(10);
   });
 
-  function createMockClient(events: CogniteEvent[], files: FileInfo[], onEventsList?: () => void) {
+  function createMockClient(
+    events: CogniteEvent[],
+    files: FileInfo[],
+    onEventsList?: () => void,
+    shouldThrowError?: string
+  ) {
     const eventsMock = new Mock<ReturnType<CogniteClient['events']['list']>>()
       .setup(instance => instance.autoPagingToArray)
-      .returns(async () => events)
+      .returns(async () => {
+        if (shouldThrowError) {
+          throw new Error(shouldThrowError);
+        }
+        return events;
+      })
       .object();
 
     const filesMock = new Mock<ReturnType<CogniteClient['files']['list']>>()
       .setup(instance => instance.autoPagingEach)
-      .returns(async (callback: (file: FileInfo) => void) => {
-        files.forEach(callback);
+      .returns(async (callback?: (file: FileInfo) => void) => {
+        if (!shouldThrowError && callback) {
+          files.forEach(callback);
+        }
       })
       .object();
 
@@ -132,33 +144,7 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
   }
 
   function createMockClientWithError(errorMessage: string) {
-    const eventsMock = new Mock<ReturnType<CogniteClient['events']['list']>>()
-      .setup(instance => instance.autoPagingToArray)
-      .returns(async () => {
-        throw new Error(errorMessage);
-      })
-      .object();
-
-    const filesMock = new Mock<ReturnType<CogniteClient['files']['list']>>()
-      .setup(instance => instance.autoPagingEach)
-      .returns(async () => {});
-
-    const eventsApiMock = new Mock<CogniteClient['events']>()
-      .setup(instance => instance.list)
-      .returns(() => eventsMock)
-      .object();
-
-    const filesApiMock = new Mock<CogniteClient['files']>()
-      .setup(instance => instance.list)
-      .returns(() => filesMock.object())
-      .object();
-
-    return new Mock<CogniteClient>()
-      .setup(instance => instance.events)
-      .returns(eventsApiMock)
-      .setup(instance => instance.files)
-      .returns(filesApiMock)
-      .object();
+    return createMockClient([], [], undefined, errorMessage);
   }
 
   function createMockEvent(siteId: string, stationId: string, eventId: number): CogniteEvent {
