@@ -4,6 +4,7 @@ import { type IconName } from '../../../base/utilities/types';
 import { type TranslationInput } from '../../../base/utilities/translation/TranslateInput';
 import { RevealDomainObject } from '../RevealDomainObject';
 import { type Image360Model } from '../RevealTypes';
+import { type Box3, Vector3 } from 'three';
 
 export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
@@ -69,6 +70,15 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
 
   public override get hasIconColor(): boolean {
     return false;
+  }
+
+  public override expandBoundingBox(boundingBox: Box3): void {
+    const model = this.model;
+    const position = new Vector3();
+    for (const entity of model.image360Entities) {
+      position.setFromMatrixPosition(entity.transform);
+      boundingBox.expandByPoint(position);
+    }
   }
 
   public override dispose(): void {
