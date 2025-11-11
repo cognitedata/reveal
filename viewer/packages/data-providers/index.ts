@@ -21,7 +21,6 @@ export {
   isCoreDmImage360Identifier,
   isLegacyDM360Identifier,
   isFdm360ImageCollectionIdentifier,
-  isImageAssetLinkAnnotation,
   isClassicMetadata360Identifier
 } from './src/image-360-data-providers/shared';
 export { CoreDmImage360Annotation } from './src/image-360-data-providers/cdm/types';
@@ -56,6 +55,7 @@ export {
   Image360Texture,
   Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo,
   InstanceReference,
   Image360Id,
   Image360RevisionId

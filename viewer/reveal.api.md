@@ -8,6 +8,7 @@ import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -74,6 +75,13 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
     annotationInfo: InstanceLinkable360ImageAnnotationType<T>;
     imageEntity: Image360<T>;
     imageRevision: Image360Revision<T>;
+};
+
+// @public
+export type AssetHybridAnnotationImage360Info = {
+    annotationInfo: ImageAssetLinkAnnotationInfo | ImageInstanceLinkAnnotationInfo;
+    imageEntity: Image360<ClassicDataSourceType>;
+    imageRevision: Image360Revision<ClassicDataSourceType>;
 };
 
 // @public
@@ -1271,7 +1279,7 @@ export type Image360AnnotationAppearance = {
 
 // @public
 export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicDataSourceType> = {
-    assetRef: InstanceReference<T>;
+    assetRef: Image360AnnotationInstanceReference<T>;
 };
 
 // @public
@@ -1285,6 +1293,9 @@ export type Image360AnnotationAssetQueryResult<T extends DataSourceType = Classi
 export type Image360AnnotationFilterOptions = {
     status?: 'all' | AnnotationStatus | AnnotationStatus[];
 };
+
+// @public
+export type Image360AnnotationInstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? InstanceReference<ClassicDataSourceType | DMDataSourceType> : InstanceReference<DMDataSourceType>;
 
 // @public
 export type Image360AnnotationIntersection<T extends DataSourceType = ClassicDataSourceType> = {
@@ -1304,8 +1315,9 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
     getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
     getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+    getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
     getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
-    getAnnotationsInfo(source: 'assets' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[]>;
+    getAnnotationsInfo(source: 'assets' | 'hybrid' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[] | AssetHybridAnnotationImage360Info[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
@@ -1395,6 +1407,11 @@ export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceT
 // @public
 export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
     data: AnnotationsTypesImagesAssetLink;
+};
+
+// @public
+export type ImageInstanceLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
+    data: AnnotationsTypesImagesInstanceLink;
 };
 
 // @public (undocumented)
