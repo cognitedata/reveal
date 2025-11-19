@@ -177,10 +177,11 @@ export class Cdf360BatchEventCollectionLoader extends BatchLoader<
     events.forEach(event => {
       const siteId = event.metadata?.site_id;
       if (siteId) {
-        if (!grouped.has(siteId)) {
-          grouped.set(siteId, []);
+        const normalizedSiteId = siteId.toLowerCase();
+        if (!grouped.has(normalizedSiteId)) {
+          grouped.set(normalizedSiteId, []);
         }
-        grouped.get(siteId)!.push(event);
+        grouped.get(normalizedSiteId)?.push(event);
       }
     });
 
