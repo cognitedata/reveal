@@ -140,7 +140,7 @@ describe(useAll3dDirectConnectionsWithProperties.name, () => {
     const { result } = renderHook(() => useAll3dDirectConnectionsWithProperties([]), { wrapper });
 
     expect(result.current.data).toBeUndefined();
-    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isInitialLoading).toBe(false);
   });
 
   it('should process connections and return multiple instance data', async () => {

@@ -226,7 +226,9 @@ export const viewDefinitionMock: ViewDefinition = {
   createdTime: 0,
   lastUpdatedTime: 0,
   writable: false,
+  queryable: false,
   usedFor: 'node',
   isGlobal: true,
-  properties: {}
+  properties: {},
+  mappedContainers: []
 };

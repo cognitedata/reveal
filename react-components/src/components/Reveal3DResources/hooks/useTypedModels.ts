@@ -74,7 +74,7 @@ function useRegisterFailedResources(
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
 
   useEffect(() => {
-    if (typeResult.data === undefined || typeResult.isLoading) {
+    if (typeResult.data === undefined || typeResult.isInitialLoading) {
       return;
     }
 
@@ -84,7 +84,7 @@ function useRegisterFailedResources(
     return () => {
       setReveal3DResourceLoadFailCount((p) => p - numResourcesFailed);
     };
-  }, [typeResult.data, typeResult.isLoading, cadOrPointCloudResources]);
+  }, [typeResult.data, typeResult.isInitialLoading, cadOrPointCloudResources]);
 }
 
 const defaultLoadFailHandler = (resource: AddResourceOptions, error: any): void => {

@@ -168,7 +168,7 @@
   "WIDGET_WINDOW_EXPAND": "Expand",
   "WIDGET_WINDOW_MINIMIZE": "Minimize",
   "X_RAY": "X-ray",
-  "X:COORDINATE": "X coordinate",
+  "X_COORDINATE": "X coordinate",
   "Y_COORDINATE": "Y coordinate",
   "Z_COORDINATE": "Z coordinate"
 }

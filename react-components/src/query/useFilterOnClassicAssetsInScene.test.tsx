@@ -9,6 +9,7 @@ import {
 import { useFilterOnClassicAssetsInScene } from './useFilterOnClassicAssetsInScene';
 import { Mock } from 'moq.ts';
 import assert from 'assert';
+import { type AddResourceOptions } from '../components/Reveal3DResources/types';
 
 describe(useFilterOnClassicAssetsInScene.name, () => {
   let sdk: CogniteClient;
@@ -35,11 +36,11 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
       }),
       useAllAssetsMapped360Annotations: vi.fn().mockReturnValue({
         data: [{ asset: createMockAsset(3) }],
-        isLoading: false
+        isInitialLoading: false
       }),
       useAllAssetsMappedPointCloudAnnotations: vi.fn().mockReturnValue({
         data: [createMockAsset(4)],
-        isLoading: false
+        isInitialLoading: false
       })
     };
   });
@@ -68,6 +69,25 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
     const { result } = renderHook(() => useFilterOnClassicAssetsInScene(sdk, scene), { wrapper });
 
     expect(result.current).toBeUndefined();
+  });
+
+  it('calls useAllAssetsMapped360Annotations with siteIds when 360 image identifier is found', () => {
+    const mockResources: AddResourceOptions[] = [
+      { source: 'events', siteId: 'siteid-1' }, // events based 360 image resource
+      { source: 'dm', externalId: 'externalid-1', space: 'space1' }, // dm based 360 image resource
+      { modelId: 123, revisionId: 456 } // CAD resource (should be ignored)
+    ];
+
+    mockDependencies.useReveal3dResourcesFromScene = vi
+      .fn<FilterOnClassicAssetsInSceneDependencies['useReveal3dResourcesFromScene']>()
+      .mockReturnValue(mockResources);
+
+    renderHook(() => useFilterOnClassicAssetsInScene(sdk, scene), { wrapper });
+
+    expect(mockDependencies.useAllAssetsMapped360Annotations).toHaveBeenCalledWith(sdk, [
+      'siteid-1',
+      'externalid-1'
+    ]);
   });
 });
 

@@ -1,9 +1,9 @@
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import {
   PlanePrimitiveTypes,
   PrimitiveType
 } from '../../../base/utilities/primitives/PrimitiveType';
-import { isEmpty } from '../../../base/utilities/translation/TranslateInput';
+import { isEmpty, type TranslationKey } from '../../../base/utilities/translation/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PlaneDomainObject } from './PlaneDomainObject';
@@ -65,6 +65,47 @@ describe(PlaneDomainObject.name, () => {
         return;
       }
       expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
+    }
+  });
+
+  test('Should create info', () => {
+    testMe(PrimitiveType.PlaneX, Quantity.Length, 1);
+    testMe(PrimitiveType.PlaneY, Quantity.Length, 1);
+    testMe(PrimitiveType.PlaneZ, Quantity.Length, 1);
+    testMe(PrimitiveType.PlaneXY, Quantity.Length, 1);
+    testMe(PrimitiveType.PlaneXY, Quantity.Angle, 1);
+
+    function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
+      const domainObject = createPlaneDomainObjectMock(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
+      const info = domainObject.getPanelInfo();
+      expect(info).toBeDefined();
+      if (info === undefined) {
+        return;
+      }
+      expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
+    }
+  });
+
+  test('should set and get angle in degrees', () => {
+    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
+    for (let expectedAngle = 0; expectedAngle < 360; expectedAngle += 30) {
+      // Also Check that the coordinate should not change when setting angle
+      const coordinate = domainObject.coordinate;
+      domainObject.horizontalAngleInDegrees = expectedAngle;
+
+      expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedAngle);
+      expect(domainObject.coordinate).toBeCloseTo(coordinate);
+    }
+  });
+
+  test('should set and get coordinate', () => {
+    for (const primitiveType of PlanePrimitiveTypes) {
+      const domainObject = createPlaneDomainObjectMock(primitiveType);
+      for (const expectedCoordinate of [-10, 0, 10]) {
+        domainObject.coordinate = expectedCoordinate;
+        expect(domainObject.coordinate).toBeCloseTo(expectedCoordinate);
+      }
     }
   });
 
@@ -131,6 +172,48 @@ describe(PlaneDomainObject.name, () => {
 
     expect(domainObject1.plane).toStrictEqual(expectedPlane1);
     expect(domainObject2.plane).toStrictEqual(expectedPlane2);
+  });
+
+  test('Should set value by panel-info.item for coordinate', () => {
+    const keys: TranslationKey[] = [
+      'X_COORDINATE',
+      'Y_COORDINATE',
+      'Z_COORDINATE',
+      'DISTANCE_TO_ORIGIN'
+    ];
+
+    for (let index = 0; index < PlanePrimitiveTypes.length; index++) {
+      const domainObject = createPlaneDomainObjectMock(PlanePrimitiveTypes[index]);
+      const info = domainObject.getPanelInfo();
+      const item = info?.getItemTranslationKey(keys[index]);
+
+      expect(item).toBeDefined();
+      assert(item !== undefined);
+
+      expect(item.setValue).toBeDefined();
+      expect(item.verifyValue).toBeUndefined();
+      assert(item.setValue !== undefined);
+
+      const expectedValue = 1 + index;
+      item.setValue(expectedValue);
+      expect(domainObject.coordinate).toBeCloseTo(expectedValue);
+    }
+  });
+
+  test('Should set value by panel-info.item for horizontal angle', () => {
+    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
+    const info = domainObject.getPanelInfo();
+    const item = info?.getItemTranslationKey('HORIZONTAL_ANGLE');
+
+    expect(item).toBeDefined();
+    assert(item !== undefined);
+    expect(item.setValue).toBeDefined();
+    expect(item.verifyValue).toBeUndefined();
+    assert(item.setValue !== undefined);
+
+    const expectedValue = 10;
+    item.setValue(expectedValue);
+    expect(domainObject.horizontalAngleInDegrees).toBeCloseTo(expectedValue);
   });
 });
 

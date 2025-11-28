@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { searchHybridDmAssetsForModels } from './searchHybridDmAssetsForModels';
 import { viewDefinitionMock } from '#test-utils/fixtures/dm/viewDefinitions';
-import { Mock } from 'moq.ts';
+import { Mock, It } from 'moq.ts';
 import {
   type CursorAndAsyncIterator,
   type AssetMapping3D,
@@ -17,8 +17,9 @@ import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createRawDmHybridAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
 import { isDmsInstance } from '../../utilities/instanceIds';
-import { createFdmKey } from '../../components';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { createCadNodeMock } from '#test-utils/fixtures/cadNode';
+import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 
 const COGNITE_ASSET_DMS_VIEW = { rawView: viewDefinitionMock } as const;
 const BASE_URL = 'dummy.cognite.com';
@@ -28,29 +29,63 @@ const instancesByExternalIdEndpointPath = `${BASE_URL}/api/v1/projects/${PROJECT
 const instancesSearchEndpointPath = `${BASE_URL}/api/v1/projects/${PROJECT}/models/instances/search`;
 
 const DMS_IDS = [
-  {
-    externalId: 'externalId0',
-    space: 'space0'
-  },
-  {
-    externalId: 'externalId1',
-    space: 'space1'
-  },
+  { externalId: 'externalId0', space: 'space0' },
+  { externalId: 'externalId1', space: 'space1' },
   { externalId: 'externalId2', space: 'space2' }
 ];
+
+type PostDmsInstancesFunction = (
+  url: string,
+  options: {
+    data:
+      | { items: DmsUniqueIdentifier[] }
+      | { query: string; filter: TableExpressionFilterDefinition };
+  }
+) => Promise<HttpResponse<ListResponse<NodeItem[]>>>;
+
+async function defaultPostImplementation(
+  url: string,
+  options: {
+    data:
+      | { items: DmsUniqueIdentifier[] }
+      | { query: string; filter: TableExpressionFilterDefinition };
+  }
+): Promise<HttpResponse<ListResponse<NodeItem[]>>> {
+  if (url === instancesByExternalIdEndpointPath) {
+    const data = options.data;
+    const items =
+      'items' in data
+        ? data.items.map((item: DmsUniqueIdentifier) => createDmsNodeItem({ id: item }))
+        : [];
+    return {
+      data: { items },
+      status: 200,
+      headers: {}
+    };
+  }
+
+  if (url === instancesSearchEndpointPath) {
+    const items = [DMS_IDS[0], DMS_IDS[2]].map((id) => createDmsNodeItem({ id }));
+    return {
+      data: { items },
+      status: 200,
+      headers: {}
+    };
+  }
+
+  throw Error();
+}
+
+const mockSdkPost = vi.fn<PostDmsInstancesFunction>(defaultPostImplementation);
 
 describe(searchHybridDmAssetsForModels.name, () => {
   describe('CAD', () => {
     const MODEL = { modelId: 123, revisionId: 234 };
     const TAGGED_MODEL = { type: 'cad', addOptions: MODEL } as const;
-
     const HYBRID_ASSET_MAPPINGS = DMS_IDS.map((id) =>
       createRawDmHybridAssetMappingMock({ assetInstanceId: id })
     );
 
-    const mockSdkPost = vi.fn<CogniteClient['post']>(
-      defaultPostImplementation as CogniteClient['post']
-    );
     const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(
       (): CursorAndAsyncIterator<AssetMapping3D> =>
         createCursorAndAsyncIteratorMock({
@@ -68,179 +103,272 @@ describe(searchHybridDmAssetsForModels.name, () => {
         )
     );
 
-    const sdkMock = new Mock<CogniteClient>()
-      .setup((p) => p.getBaseUrl())
-      .returns(BASE_URL)
-      .setup((p) => p.project)
-      .returns(PROJECT)
-      .setup((p) => p.post)
-      .returns(
-        mockSdkPost as <T = unknown>(
-          path: string,
-          options?: { data?: unknown }
-        ) => Promise<HttpResponse<T>>
-      )
-      .setup((p) => p.assetMappings3D.list)
-      .returns(mockAssetMappingsList)
-      .object();
+    const sdkMock = createSdkMock(mockAssetMappingsList);
 
     const classicCadCacheMock = new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getNodesForInstanceIds)
       .returns(mockCadCacheGetNodesForInstanceIds)
       .object();
 
-    describe('without filter', () => {
-      test("returns empty result when no models are supplied, calling the fdmSdk's by-ID method with empty list", async () => {
-        const result = await searchHybridDmAssetsForModels(
-          [],
-          COGNITE_ASSET_DMS_VIEW,
-          {},
-          sdkMock,
-          classicCadCacheMock
-        );
+    const pointCloudAnnotationCacheMock = new Mock<PointCloudAnnotationCache>().object();
 
-        expect(mockSdkPost).toHaveBeenCalledWith(instancesByExternalIdEndpointPath, {
-          data: {
-            items: [],
-            sources: [
-              {
-                source: restrictToViewReference(viewDefinitionMock)
-              }
-            ],
-            includeTyping: true
-          }
-        });
-        expect(result).toEqual([]);
-      });
+    test('returns empty when no models provided', async () => {
+      const result = await searchHybridDmAssetsForModels(
+        [],
+        COGNITE_ASSET_DMS_VIEW,
+        {},
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
 
-      test('returns no result when model has no asset mappings', async () => {
-        mockAssetMappingsList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
-        const result = await searchHybridDmAssetsForModels(
-          [TAGGED_MODEL],
-          COGNITE_ASSET_DMS_VIEW,
-          {},
-          sdkMock,
-          classicCadCacheMock
-        );
-
-        expect(result).toEqual([]);
-      });
-
-      test('returns result with assets when models has asset mappings', async () => {
-        const result = await searchHybridDmAssetsForModels(
-          [TAGGED_MODEL],
-          COGNITE_ASSET_DMS_VIEW,
-          {},
-          sdkMock,
-          classicCadCacheMock
-        );
-
-        const expectedResultInstances = DMS_IDS.map((item) => createDmsNodeItem({ id: item }));
-        expect(result).toEqual(expectedResultInstances);
-      });
+      expect(result).toEqual([]);
+      expect(mockSdkPost).not.toHaveBeenCalled();
     });
 
-    describe('with filter', () => {
-      test('returns empty when no models are supplied', async () => {
-        const result = await searchHybridDmAssetsForModels(
-          [],
-          COGNITE_ASSET_DMS_VIEW,
-          { query: 'some-query' },
-          sdkMock,
-          classicCadCacheMock
-        );
+    test('returns results based on asset mappings and filters correctly', async () => {
+      mockAssetMappingsList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
+      let result = await searchHybridDmAssetsForModels(
+        [TAGGED_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        {},
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toEqual([]);
 
-        expect(result).toEqual([]);
-      });
+      mockAssetMappingsList.mockReturnValue(
+        createCursorAndAsyncIteratorMock({
+          items: HYBRID_ASSET_MAPPINGS as AssetMapping3D[]
+        })
+      );
+      result = await searchHybridDmAssetsForModels(
+        [TAGGED_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        {},
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
 
-      test('returns empty when search through FDM-SDK returns no result', async () => {
-        mockSdkPost.mockResolvedValue({ data: { items: [] }, status: 200, headers: {} });
-        const result = await searchHybridDmAssetsForModels(
-          [TAGGED_MODEL],
-          COGNITE_ASSET_DMS_VIEW,
-          { query: 'some-query' },
-          sdkMock,
-          classicCadCacheMock
-        );
+      expect(result).toEqual(DMS_IDS.map((item) => createDmsNodeItem({ id: item })));
 
-        expect(result).toEqual([]);
-      });
+      mockCadCacheGetNodesForInstanceIds.mockResolvedValue(
+        new Map([[createFdmKey(DMS_IDS[2]), [createCadNodeMock()]]])
+      );
+      result = await searchHybridDmAssetsForModels(
+        [TAGGED_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        { query: 'some-query' },
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
 
-      test('calls FDM SDK search method with filters', async () => {
-        const options = {
-          filter: {
-            in: { property: ['node', 'id'], values: ['id0', 'id1'] }
-          },
-          query: 'some-query',
-          limit: 123
-        };
+      expect(result).toEqual([createDmsNodeItem({ id: DMS_IDS[2] })]);
+    });
 
-        await searchHybridDmAssetsForModels(
-          [TAGGED_MODEL],
-          COGNITE_ASSET_DMS_VIEW,
-          options,
-          sdkMock,
-          classicCadCacheMock
-        );
+    test('handles empty search results and calls FDM SDK with filters', async () => {
+      mockSdkPost.mockResolvedValue({ data: { items: [] }, status: 200, headers: {} });
+      const result = await searchHybridDmAssetsForModels(
+        [TAGGED_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        { query: 'some-query' },
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toEqual([]);
 
-        expect(mockSdkPost).toHaveBeenCalledWith(instancesSearchEndpointPath, {
-          data: {
-            view: restrictToViewReference(viewDefinitionMock),
-            query: options.query,
-            instanceType: 'node',
-            filter: options.filter,
-            limit: options.limit
-          }
-        });
-      });
+      const options = {
+        filter: { in: { property: ['node', 'id'], values: ['id0', 'id1'] } },
+        query: 'some-query',
+        limit: 123
+      };
 
-      test('returns search result values filtered by mappings from cache', async () => {
-        mockCadCacheGetNodesForInstanceIds.mockResolvedValue(
-          new Map([[createFdmKey(DMS_IDS[2]), [createCadNodeMock()]]])
-        );
-        const result = await searchHybridDmAssetsForModels(
-          [TAGGED_MODEL],
-          COGNITE_ASSET_DMS_VIEW,
-          { query: 'some-query' },
-          sdkMock,
-          classicCadCacheMock
-        );
+      await searchHybridDmAssetsForModels(
+        [TAGGED_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        options,
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
 
-        expect(result).toEqual([createDmsNodeItem({ id: DMS_IDS[2] })]);
+      expect(mockSdkPost).toHaveBeenCalledWith(instancesSearchEndpointPath, {
+        data: {
+          view: restrictToViewReference(viewDefinitionMock),
+          query: options.query,
+          instanceType: 'node',
+          filter: options.filter,
+          limit: options.limit
+        }
       });
     });
   });
+
+  describe('PointCloud', () => {
+    const PC_MODEL = { modelId: 456, revisionId: 789 };
+    const TAGGED_PC_MODEL = { type: 'pointcloud', addOptions: PC_MODEL } as const;
+
+    const mockPCCacheGetAnnotationsForInstanceIds =
+      vi.fn<PointCloudAnnotationCache['getPointCloudAnnotationsForInstanceIds']>();
+
+    const sdkMock = createSdkMock();
+
+    const classicCadCacheMock = new Mock<ClassicCadAssetMappingCache>().object();
+    const pointCloudAnnotationCacheMock = new Mock<PointCloudAnnotationCache>()
+      .setup((p) => p.getPointCloudAnnotationsForInstanceIds)
+      .returns(mockPCCacheGetAnnotationsForInstanceIds)
+      .object();
+
+    test('returns annotations based on cache and filters correctly', async () => {
+      mockPCCacheGetAnnotationsForInstanceIds.mockResolvedValue(new Map());
+      let result = await searchHybridDmAssetsForModels(
+        [TAGGED_PC_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        {},
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toEqual([]);
+
+      mockPCCacheGetAnnotationsForInstanceIds.mockResolvedValue(
+        new Map([
+          [createFdmKey(DMS_IDS[0]), [123, 456]],
+          [createFdmKey(DMS_IDS[2]), [789]]
+        ])
+      );
+      result = await searchHybridDmAssetsForModels(
+        [TAGGED_PC_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        {},
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toHaveLength(2);
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[0] }));
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[2] }));
+
+      mockSdkPost.mockResolvedValue({ data: { items: [] }, status: 200, headers: {} });
+      result = await searchHybridDmAssetsForModels(
+        [TAGGED_PC_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        { query: 'some-query' },
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('Combined CAD and PointCloud', () => {
+    const CAD_MODEL = { modelId: 123, revisionId: 234 };
+    const TAGGED_CAD_MODEL = { type: 'cad', addOptions: CAD_MODEL } as const;
+    const PC_MODEL = { modelId: 456, revisionId: 789 };
+    const TAGGED_PC_MODEL = { type: 'pointcloud', addOptions: PC_MODEL } as const;
+
+    const CAD_HYBRID_ASSET_MAPPINGS = [
+      createRawDmHybridAssetMappingMock({ assetInstanceId: DMS_IDS[0] })
+    ];
+
+    const mockAssetMappingsList = vi.fn<CogniteClient['assetMappings3D']['list']>(
+      (): CursorAndAsyncIterator<AssetMapping3D> =>
+        createCursorAndAsyncIteratorMock({
+          items: CAD_HYBRID_ASSET_MAPPINGS as AssetMapping3D[]
+        })
+    );
+    const mockCadCacheGetNodesForInstanceIds = vi.fn<
+      ClassicCadAssetMappingCache['getNodesForInstanceIds']
+    >(
+      async () =>
+        await Promise.resolve(new Map([[createFdmKey(DMS_IDS[0]), [createCadNodeMock()]]]))
+    );
+
+    const mockPCCacheGetAnnotationsForInstanceIds = vi.fn<
+      PointCloudAnnotationCache['getPointCloudAnnotationsForInstanceIds']
+    >(async () => await Promise.resolve(new Map([[createFdmKey(DMS_IDS[2]), [123, 456]]])));
+
+    const sdkMock = createSdkMock(mockAssetMappingsList);
+
+    const classicCadCacheMock = new Mock<ClassicCadAssetMappingCache>()
+      .setup((p) => p.getNodesForInstanceIds)
+      .returns(mockCadCacheGetNodesForInstanceIds)
+      .object();
+
+    const pointCloudAnnotationCacheMock = new Mock<PointCloudAnnotationCache>()
+      .setup((p) => p.getPointCloudAnnotationsForInstanceIds)
+      .returns(mockPCCacheGetAnnotationsForInstanceIds)
+      .object();
+
+    test('returns combined and filtered results from both CAD and PointCloud models', async () => {
+      let result = await searchHybridDmAssetsForModels(
+        [TAGGED_CAD_MODEL, TAGGED_PC_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        {},
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toHaveLength(2);
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[0] }));
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[2] }));
+
+      result = await searchHybridDmAssetsForModels(
+        [TAGGED_CAD_MODEL, TAGGED_PC_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        { query: 'some-query' },
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toHaveLength(2);
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[0] }));
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[2] }));
+
+      mockPCCacheGetAnnotationsForInstanceIds.mockResolvedValue(
+        new Map([[createFdmKey(DMS_IDS[1]), [123, 456]]])
+      );
+      result = await searchHybridDmAssetsForModels(
+        [TAGGED_CAD_MODEL, TAGGED_PC_MODEL],
+        COGNITE_ASSET_DMS_VIEW,
+        { query: 'some-query' },
+        sdkMock,
+        classicCadCacheMock,
+        pointCloudAnnotationCacheMock
+      );
+      expect(result).toHaveLength(1);
+      expect(result).toContainEqual(createDmsNodeItem({ id: DMS_IDS[0] }));
+    });
+  });
+
+  function createSdkMock(
+    mockAssetMappingsList?: CogniteClient['assetMappings3D']['list']
+  ): CogniteClient {
+    const mockSdkBuilder = new Mock<CogniteClient>()
+      .setup((p) => p.getBaseUrl())
+      .returns(BASE_URL)
+      .setup((p) => p.project)
+      .returns(PROJECT)
+      .setup(
+        async (p) =>
+          await p.post(
+            It.Is(
+              (url) => typeof url === 'string' && (url.includes('byids') || url.includes('search'))
+            ),
+            It.IsAny()
+          )
+      )
+      .callback(async ({ args: [url, parameters] }) => await mockSdkPost(url, parameters));
+
+    if (mockAssetMappingsList !== undefined) {
+      mockSdkBuilder.setup((p) => p.assetMappings3D.list).returns(mockAssetMappingsList);
+    }
+
+    return mockSdkBuilder.object();
+  }
 });
-
-const defaultPostImplementation = async (
-  path: string,
-  data?: {
-    data?:
-      | { items: DmsUniqueIdentifier[] }
-      | { query: string; filter: TableExpressionFilterDefinition };
-  }
-): Promise<HttpResponse<ListResponse<NodeItem[]>>> => {
-  if (path === instancesByExternalIdEndpointPath) {
-    return {
-      data: {
-        items: (data?.data as { items: DmsUniqueIdentifier[] }).items.map(
-          (item: DmsUniqueIdentifier) => createDmsNodeItem({ id: item })
-        )
-      },
-      status: 200,
-      headers: {}
-    };
-  }
-
-  if (path === instancesSearchEndpointPath) {
-    return {
-      data: {
-        items: [DMS_IDS[0], DMS_IDS[2]].map((id) => createDmsNodeItem({ id }))
-      },
-      status: 200,
-      headers: {}
-    };
-  }
-
-  throw Error();
-};

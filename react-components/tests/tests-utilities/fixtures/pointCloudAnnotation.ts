@@ -1,16 +1,33 @@
-import { type AnnotationModel } from '@cognite/sdk';
+import { type PointCloudAnnotationModel } from '../../../src/components/CacheProvider/types';
 
 export function createPointCloudAnnotationMock(params?: {
+  annotationId?: number;
   assetId?: number;
+  dmIdentifier?: { space: string; externalId: string };
   modelId?: number;
-}): AnnotationModel {
+}): PointCloudAnnotationModel {
   return {
-    id: Math.random(),
+    id: params?.annotationId ?? Math.random(),
     annotatedResourceId: params?.modelId ?? 123,
     annotatedResourceType: 'threedmodel',
-    annotationType: 'threed.BoundingVolume',
+    annotationType: 'pointcloud.BoundingVolume',
     data: {
-      assetRef: { id: params?.assetId ?? 0 },
+      assetRef: params?.assetId !== undefined ? { id: params.assetId } : undefined,
+      instanceRef:
+        params?.dmIdentifier !== undefined
+          ? {
+              ...params.dmIdentifier,
+              instanceType: 'node',
+              sources: [
+                {
+                  externalId: 'source-external-id',
+                  space: 'source-space',
+                  type: 'view' as const,
+                  version: '1'
+                }
+              ]
+            }
+          : undefined,
       region: []
     },
     createdTime: new Date(),

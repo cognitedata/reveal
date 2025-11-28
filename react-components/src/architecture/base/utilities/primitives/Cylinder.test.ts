@@ -74,7 +74,7 @@ describe(Cylinder.name, () => {
   });
 
   test('should only return points inside cylinder', () => {
-    const points = [];
+    const points: Vector3[] = [];
     const random = new Random(42);
 
     const cylinder = new Cylinder();
@@ -218,6 +218,18 @@ describe(Cylinder.name, () => {
     expect(primitive.height).toBeCloseTo(2);
     expectEqualVector3(primitive.centerA, new Vector3(1, 1, 3));
     expectEqualVector3(primitive.centerB, new Vector3(1, 3, 3));
+  });
+
+  test('Should set and get height', () => {
+    const primitive = new Cylinder();
+    primitive.radius = 2;
+    // Just make a arbitrary, none zero center A and B
+    primitive.centerA.set(1, 2, 3);
+    primitive.centerB.set(4, 6, 8);
+
+    const expectedHeight = 10;
+    primitive.height = expectedHeight;
+    expect(primitive.height).toBeCloseTo(expectedHeight);
   });
 });
 

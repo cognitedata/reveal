@@ -23,7 +23,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
 
   public constructor(primitiveType: PrimitiveType = PrimitiveType.Cylinder) {
     super(primitiveType);
-    this.color = new Color(Color.NAMES.white);
+    this.setColor(Color.NAMES.white);
   }
   // ==================================================
   // OVERRIDES of DomainObject

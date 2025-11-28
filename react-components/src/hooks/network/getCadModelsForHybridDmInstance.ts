@@ -1,7 +1,7 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { createAddOptionsKey } from '../../utilities/createAddOptionsKey';
 import { type CadModelNode } from './types';
 
@@ -26,5 +26,5 @@ export async function getCadModelsForHybridDmInstance(
     type: 'cad',
     addOptions: { modelId, revisionId }
   }));
-  return uniqBy(items, createAddOptionsKey);
+  return uniqBy<TaggedAddCadResourceOptions>(items, createAddOptionsKey);
 }
