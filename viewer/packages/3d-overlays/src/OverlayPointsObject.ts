@@ -27,6 +27,8 @@ import overlay3DIconFrag from './overlay3DIcon.frag';
 
 export type OverlayPointsParameters = {
   spriteTexture: Texture;
+  clusterTexture?: Texture;
+  numberTexture?: Texture;
   maskTexture?: Texture;
   minPixelSize: number;
   maxPixelSize: number;
@@ -47,6 +49,10 @@ export class OverlayPointsObject extends Group {
   private readonly _colorAttribute: BufferAttribute;
   private readonly _sizeScaleBuffer: Float32Array;
   private readonly _sizeScaleAttribute: BufferAttribute;
+  private readonly _isClusterBuffer: Float32Array;
+  private readonly _isClusterAttribute: BufferAttribute;
+  private readonly _clusterSizeBuffer: Float32Array;
+  private readonly _clusterSizeAttribute: BufferAttribute;
   private readonly _points: {
     frontPoints: Points<BufferGeometry, RawShaderMaterial>;
     backPoints: Points<BufferGeometry, RawShaderMaterial>;
@@ -67,14 +73,22 @@ export class OverlayPointsObject extends Group {
     this._colorAttribute = new BufferAttribute(this._colorBuffer, 3);
     this._sizeScaleBuffer = new Float32Array(maxNumberOfPoints).fill(1);
     this._sizeScaleAttribute = new BufferAttribute(this._sizeScaleBuffer, 1);
+    this._isClusterBuffer = new Float32Array(maxNumberOfPoints).fill(0);
+    this._isClusterAttribute = new BufferAttribute(this._isClusterBuffer, 1);
+    this._clusterSizeBuffer = new Float32Array(maxNumberOfPoints).fill(0);
+    this._clusterSizeAttribute = new BufferAttribute(this._clusterSizeBuffer, 1);
     this._modelTransform = new Matrix4();
     geometry.setAttribute('position', this._positionAttribute);
     geometry.setAttribute('color', this._colorAttribute);
     geometry.setAttribute('sizeScale', this._sizeScaleAttribute);
+    geometry.setAttribute('isCluster', this._isClusterAttribute);
+    geometry.setAttribute('clusterSize', this._clusterSizeAttribute);
     geometry.setDrawRange(0, 0);
 
     const {
       spriteTexture,
+      clusterTexture,
+      numberTexture,
       minPixelSize,
       maxPixelSize,
       radius,
@@ -86,6 +100,8 @@ export class OverlayPointsObject extends Group {
 
     const frontMaterial = this.createIconsMaterial(
       spriteTexture,
+      clusterTexture || spriteTexture,
+      numberTexture || spriteTexture,
       maskTexture,
       collectionOpacity,
       depthMode,
@@ -98,6 +114,8 @@ export class OverlayPointsObject extends Group {
 
     const backMaterial = this.createIconsMaterial(
       spriteTexture,
+      clusterTexture || spriteTexture,
+      numberTexture || spriteTexture,
       maskTexture,
       DEFAULT_OVERLAY_BACK_OPACITY,
       GreaterDepth,
@@ -136,12 +154,24 @@ export class OverlayPointsObject extends Group {
     this._points.backPoints.visible = value;
   }
 
-  public setPoints(points: Vector3[], colors?: Color[], sizeScales?: number[]): void {
+  public setPoints(
+    points: Vector3[],
+    colors?: Color[],
+    sizeScales?: number[],
+    isClusterFlags?: boolean[],
+    clusterSizes?: number[]
+  ): void {
     if (colors && points.length !== colors?.length)
       throw new Error('Points positions and colors arrays must have the same length');
 
     if (sizeScales && points.length !== sizeScales?.length)
       throw new Error('Points positions and sizeScales arrays must have the same length');
+
+    if (isClusterFlags && points.length !== isClusterFlags?.length)
+      throw new Error('Points positions and isClusterFlags arrays must have the same length');
+
+    if (clusterSizes && points.length !== clusterSizes?.length)
+      throw new Error('Points positions and clusterSizes arrays must have the same length');
 
     if (points.length * 3 > this._positionBuffer.length) {
       throw new Error('Points array length exceeds the maximum number of points');
@@ -163,6 +193,18 @@ export class OverlayPointsObject extends Group {
       } else {
         this._sizeScaleBuffer[index] = 1;
       }
+
+      if (isClusterFlags) {
+        this._isClusterBuffer[index] = isClusterFlags[index] ? 1 : 0;
+      } else {
+        this._isClusterBuffer[index] = 0;
+      }
+
+      if (clusterSizes) {
+        this._clusterSizeBuffer[index] = clusterSizes[index];
+      } else {
+        this._clusterSizeBuffer[index] = 0;
+      }
     }
 
     this._positionAttribute.clearUpdateRanges();
@@ -176,6 +218,14 @@ export class OverlayPointsObject extends Group {
     this._sizeScaleAttribute.clearUpdateRanges();
     this._sizeScaleAttribute.updateRanges.push({ start: 0, count: points.length });
     this._sizeScaleAttribute.needsUpdate = true;
+
+    this._isClusterAttribute.clearUpdateRanges();
+    this._isClusterAttribute.updateRanges.push({ start: 0, count: points.length });
+    this._isClusterAttribute.needsUpdate = true;
+
+    this._clusterSizeAttribute.clearUpdateRanges();
+    this._clusterSizeAttribute.updateRanges.push({ start: 0, count: points.length });
+    this._clusterSizeAttribute.needsUpdate = true;
 
     this._geometry.setDrawRange(0, points.length);
 
@@ -240,6 +290,8 @@ export class OverlayPointsObject extends Group {
 
   private createIconsMaterial(
     colorTexture: Texture,
+    clusterTexture: Texture,
+    numberTexture: Texture,
     maskTexture: Texture | undefined,
     collectionOpacity: number,
     depthFunction: DepthModes,
@@ -252,6 +304,8 @@ export class OverlayPointsObject extends Group {
     return new RawShaderMaterial({
       uniforms: {
         colorTexture: { value: colorTexture },
+        clusterTexture: { value: clusterTexture },
+        numberTexture: { value: numberTexture },
         maskTexture: { value: maskTexture },
         radius: { value: radius },
         colorTint: { value: colorTint },

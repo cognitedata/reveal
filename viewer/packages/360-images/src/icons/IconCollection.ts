@@ -19,6 +19,8 @@ export class IconCollection {
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
+  private readonly _clusterTexture: Texture;
+  private readonly _numberTexture: Texture;
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
   private readonly _pointsObject: OverlayPointsObject;
@@ -78,9 +80,13 @@ export class IconCollection {
     );
 
     const sharedTexture = this.createOuterRingsTexture();
+    const clusterTexture = this.createClusterTexture();
+    const numberTexture = this.createNumberTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
+      clusterTexture: clusterTexture,
+      numberTexture: numberTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,
@@ -90,6 +96,8 @@ export class IconCollection {
     const spriteTexture = this.createHoverIconTexture();
     this._hoverSprite = this.createHoverSprite(spriteTexture);
     this._sharedTexture = sharedTexture;
+    this._clusterTexture = clusterTexture;
+    this._numberTexture = numberTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
@@ -127,7 +135,7 @@ export class IconCollection {
 
     // Clustering parameters
     const clusterDistanceThreshold = 50; // Distance beyond which clustering is applied
-    const clusterSizeMultiplier = 10.5; // How much bigger clustered points appear
+    const clusterSizeMultiplier = 5.5; // How much bigger clustered points appear
 
     return ({ camera }) => {
       projection
@@ -218,24 +226,21 @@ export class IconCollection {
       // Prepare rendering data with size scaling for clusters
       const visibleIcons = visibleClusteredIcons.filter(item => item.icon.getVisible());
 
-      // For rendering, we need positions, colors, and size scales
+      // For rendering, we need positions, colors, size scales, cluster flags, and cluster sizes
       const renderPositions: Vector3[] = [];
       const renderColors: Color[] = [];
       const renderSizeScales: number[] = [];
+      const renderIsClusterFlags: boolean[] = [];
+      const renderClusterSizes: number[] = [];
 
       visibleIcons.forEach(item => {
         // Use cluster position (centroid for clusters, original position for individuals)
         renderPositions.push(item.clusterPosition);
 
-        // For clusters, make them visually distinct with brighter/blue-tinted color
+        // For clusters, use a distinct blue color matching the texture
         if (item.isCluster) {
-          const baseColor = item.icon.getColor();
-          // Make cluster icons brighter and blue-tinted to indicate grouping
-          const clusterColor = new Color(
-            Math.min(baseColor.r * 1.5, 1),
-            Math.min(baseColor.g * 1.5, 1),
-            Math.min(baseColor.b * 1.5 + 0.3, 1)
-          );
+          // Bright blue color for clusters (#3b82f6)
+          const clusterColor = new Color(0.231, 0.51, 0.965);
           renderColors.push(clusterColor);
         } else {
           renderColors.push(item.icon.getColor());
@@ -243,17 +248,23 @@ export class IconCollection {
 
         // Add size scale
         renderSizeScales.push(item.sizeScale);
+
+        // Add cluster flag
+        renderIsClusterFlags.push(item.isCluster);
+
+        // Add cluster size (number of points in cluster)
+        renderClusterSizes.push(item.clusterSize);
       });
 
       console.log('TEST Visible icons count:', visibleIcons.length, ' out of ', this._icons.length);
       console.log('TEST Clusters:', visibleIcons.filter(v => v.isCluster).length);
       console.log('TEST Individual points:', visibleIcons.filter(v => !v.isCluster).length);
 
-      iconSprites.setPoints(renderPositions, renderColors, renderSizeScales);
+      iconSprites.setPoints(renderPositions, renderColors, renderSizeScales, renderIsClusterFlags, renderClusterSizes);
     };
   }
 
-  // Helper method to recursively get all leaf icons under a node
+  // Recursively get all leaf icons under a node
   private getNodeLeafIcons(node: any): Overlay3DIcon[] {
     const leafIcons: Overlay3DIcon[] = [];
 
@@ -273,7 +284,7 @@ export class IconCollection {
     return leafIcons;
   }
 
-  // Helper method to calculate the 3D centroid (center) of a group of icons
+  // Calculate the 3D centroid of a group of icons
   private calculateCentroid(icons: Overlay3DIcon[]): Vector3 {
     if (icons.length === 0) {
       return new Vector3();
@@ -373,6 +384,8 @@ export class IconCollection {
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
+    this._clusterTexture.dispose();
+    this._numberTexture.dispose();
   }
 
   private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
@@ -443,6 +456,121 @@ export class IconCollection {
       );
       context.fill();
     }
+  }
+
+  private createClusterTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const textureSize = this._maxPixelSize;
+    canvas.width = textureSize;
+    canvas.height = textureSize;
+
+    const halfTextureSize = textureSize * 0.5;
+    const context = canvas.getContext('2d')!;
+    // Draw background circle with gradient
+    const bgGradient = context.createRadialGradient(
+      halfTextureSize,
+      halfTextureSize * 0.8,
+      0,
+      halfTextureSize,
+      halfTextureSize,
+      halfTextureSize * 0.9
+    );
+    bgGradient.addColorStop(0, '#60a5fa');
+    bgGradient.addColorStop(1, '#3b82f6');
+    context.fillStyle = bgGradient;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize * 0.88, 0, 2 * Math.PI);
+    context.fill();
+
+    context.shadowBlur = 0;
+
+    context.strokeStyle = '#FFFFFF';
+    context.lineWidth = textureSize / 10;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize * 0.88 - context.lineWidth / 2, 0, 2 * Math.PI);
+    context.stroke();
+
+    // Draw inner circle with darker blue
+    context.fillStyle = '#2563eb'; // Darker blue
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize * 0.65, 0, 2 * Math.PI);
+    context.fill();
+
+    const ringCount = 3;
+    for (let i = 0; i < ringCount; i++) {
+      const ringRadius = halfTextureSize * (0.5 - i * 0.1);
+      context.strokeStyle = `rgba(255, 255, 255, ${0.6 - i * 0.15})`;
+      context.lineWidth = textureSize / 30;
+      context.beginPath();
+      context.arc(halfTextureSize, halfTextureSize, ringRadius, 0, 2 * Math.PI);
+      context.stroke();
+    }
+
+    const shineGradient = context.createRadialGradient(
+      halfTextureSize * 0.7,
+      halfTextureSize * 0.7,
+      0,
+      halfTextureSize * 0.7,
+      halfTextureSize * 0.7,
+      halfTextureSize * 0.5
+    );
+    shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+    shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    context.fillStyle = shineGradient;
+    context.beginPath();
+    context.arc(halfTextureSize * 0.7, halfTextureSize * 0.7, halfTextureSize * 0.4, 0, 2 * Math.PI);
+    context.fill();
+
+    return new CanvasTexture(canvas);
+  }
+
+  private createNumberTexture(): CanvasTexture {
+    // Create a high-resolution texture atlas containing digits 0-9 in a single row
+    const canvas = document.createElement('canvas');
+    const digitCount = 10;
+    const digitWidth = 256; // Increased from 64 to 256 for 4x resolution
+    const digitHeight = 384; // Increased from 96 to 384 for 4x resolution
+    canvas.width = digitWidth * digitCount;
+    canvas.height = digitHeight;
+
+    const context = canvas.getContext('2d')!;
+
+    // Enable high-quality rendering
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+
+    // Clear background
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Configure text rendering with larger, crisper font
+    context.font = 'bold 300px Arial, sans-serif'; // Increased from 72px to 300px
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+
+    // Draw each digit
+    for (let i = 0; i < digitCount; i++) {
+      const x = digitWidth * i + digitWidth / 2;
+      const y = digitHeight / 2;
+
+      // Draw thick black outline for better visibility and contrast
+      context.strokeStyle = '#000000';
+      context.lineWidth = 24; // Increased from 6 to 24
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeText(i.toString(), x, y);
+
+      // Draw white number fill
+      context.fillStyle = '#FFFFFF';
+      context.fillText(i.toString(), x, y);
+    }
+
+    const texture = new CanvasTexture(canvas);
+
+    // Configure texture for crisp rendering
+    texture.generateMipmaps = false;
+    texture.needsUpdate = true;
+
+    return texture;
   }
 
   //================================================

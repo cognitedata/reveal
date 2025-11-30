@@ -8,12 +8,18 @@ uniform float radius;
 in vec3 position;
 in vec3 color;
 in float sizeScale;
+in float isCluster;
+in float clusterSize;
 
 out vec3 vColor;
+out float vIsCluster;
+out float vClusterSize;
 
 //adopted from https://stackoverflow.com/questions/25780145/gl-pointsize-corresponding-to-world-space-size
 void main() {
   vColor = color;
+  vIsCluster = isCluster;
+  vClusterSize = clusterSize;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   float scaledRadius = radius * sizeScale;
