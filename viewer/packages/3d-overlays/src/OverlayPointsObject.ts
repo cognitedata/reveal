@@ -45,6 +45,8 @@ export class OverlayPointsObject extends Group {
   private readonly _positionAttribute: BufferAttribute;
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
+  private readonly _sizeScaleBuffer: Float32Array;
+  private readonly _sizeScaleAttribute: BufferAttribute;
   private readonly _points: {
     frontPoints: Points<BufferGeometry, RawShaderMaterial>;
     backPoints: Points<BufferGeometry, RawShaderMaterial>;
@@ -63,9 +65,12 @@ export class OverlayPointsObject extends Group {
     this._positionAttribute = new BufferAttribute(this._positionBuffer, 3);
     this._colorBuffer = new Float32Array(maxNumberOfPoints * 3).fill(1);
     this._colorAttribute = new BufferAttribute(this._colorBuffer, 3);
+    this._sizeScaleBuffer = new Float32Array(maxNumberOfPoints).fill(1);
+    this._sizeScaleAttribute = new BufferAttribute(this._sizeScaleBuffer, 1);
     this._modelTransform = new Matrix4();
     geometry.setAttribute('position', this._positionAttribute);
     geometry.setAttribute('color', this._colorAttribute);
+    geometry.setAttribute('sizeScale', this._sizeScaleAttribute);
     geometry.setDrawRange(0, 0);
 
     const {
@@ -116,7 +121,6 @@ export class OverlayPointsObject extends Group {
 
   public getOpacity(): number {
     return this._points.frontPoints.material.uniforms.collectionOpacity.value;
-    return 1;
   }
 
   public setOpacity(value: number): void {
@@ -132,9 +136,12 @@ export class OverlayPointsObject extends Group {
     this._points.backPoints.visible = value;
   }
 
-  public setPoints(points: Vector3[], colors?: Color[]): void {
+  public setPoints(points: Vector3[], colors?: Color[], sizeScales?: number[]): void {
     if (colors && points.length !== colors?.length)
       throw new Error('Points positions and colors arrays must have the same length');
+
+    if (sizeScales && points.length !== sizeScales?.length)
+      throw new Error('Points positions and sizeScales arrays must have the same length');
 
     if (points.length * 3 > this._positionBuffer.length) {
       throw new Error('Points array length exceeds the maximum number of points');
@@ -150,6 +157,12 @@ export class OverlayPointsObject extends Group {
         this._colorBuffer[index * 3 + 1] = colors[index].g;
         this._colorBuffer[index * 3 + 2] = colors[index].b;
       }
+
+      if (sizeScales) {
+        this._sizeScaleBuffer[index] = sizeScales[index];
+      } else {
+        this._sizeScaleBuffer[index] = 1;
+      }
     }
 
     this._positionAttribute.clearUpdateRanges();
@@ -159,6 +172,11 @@ export class OverlayPointsObject extends Group {
     this._colorAttribute.clearUpdateRanges();
     this._colorAttribute.updateRanges.push({ start: 0, count: points.length * 3 });
     this._colorAttribute.needsUpdate = true;
+
+    this._sizeScaleAttribute.clearUpdateRanges();
+    this._sizeScaleAttribute.updateRanges.push({ start: 0, count: points.length });
+    this._sizeScaleAttribute.needsUpdate = true;
+
     this._geometry.setDrawRange(0, points.length);
 
     this._geometry.computeBoundingBox();
