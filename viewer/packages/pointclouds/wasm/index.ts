@@ -8,7 +8,9 @@ import wasm from './pkg/pointclouds_wasm_bg.wasm';
 import { AABB, Vec3 } from '@reveal/utilities';
 
 function getWasmInitPromise(): Promise<void> {
-  return typeof init === 'function' ? (init as (buffer: any) => Promise<any>)(wasm).then(() => {}) : Promise.resolve();
+  return typeof init === 'function'
+    ? (init as (buffer: any) => Promise<any>)({ module_or_path: wasm }).then(() => {})
+    : Promise.resolve();
 }
 
 // Sadly, I was unable to generate these types automatically with wasm-bindgen,
