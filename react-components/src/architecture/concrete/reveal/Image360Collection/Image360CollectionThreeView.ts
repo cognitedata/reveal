@@ -1,5 +1,5 @@
 import { type Image360CollectionDomainObject } from './Image360CollectionDomainObject';
-import { Box3, Vector3 } from 'three';
+import { type Box3 } from 'three';
 import { ThreeView } from '../../../base/views/ThreeView';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -43,13 +43,6 @@ export class Image360CollectionThreeView extends ThreeView<Image360CollectionDom
   // ==================================================
 
   protected override calculateBoundingBox(): Box3 {
-    const model = this.model;
-    const boundingBox = new Box3().makeEmpty();
-    const position = new Vector3();
-    for (const entity of model.image360Entities) {
-      position.setFromMatrixPosition(entity.transform);
-      boundingBox.expandByPoint(position);
-    }
-    return boundingBox;
+    return this.domainObject.getBoundingBox();
   }
 }
