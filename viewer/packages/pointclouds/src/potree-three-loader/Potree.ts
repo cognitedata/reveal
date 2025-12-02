@@ -38,7 +38,7 @@ export class QueueItem {
     public weight: number,
     public node: IPointCloudTreeNodeBase,
     public parent?: IPointCloudTreeNodeBase | undefined
-  ) {}
+  ) { }
 }
 
 type VisibilityUpdateInfo = {
@@ -76,6 +76,9 @@ export class Potree implements IPotree {
   // Cascade prevention: Track update state to prevent feedback loop
   private _updateInProgress: boolean = false;
   private _pendingUpdateRequest: boolean = false;
+
+  private readonly _tempCameraForward: Vector3 = new Vector3();
+  private readonly _tempToNode: Vector3 = new Vector3();
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   lru = new LRU(this._pointBudget);
@@ -389,15 +392,13 @@ export class Potree implements IPotree {
 
       // 2. Boost priority for nodes in center of view (reduces pop-in at focus point)
       if (camera.type === PERSPECTIVE_CAMERA) {
-        // Calculate view direction (camera forward vector)
-        const cameraForward = new Vector3(0, 0, -1);
-        cameraForward.applyQuaternion(camera.quaternion).normalize();
+        this._tempCameraForward.set(0, 0, -1);
+        this._tempCameraForward.applyQuaternion(camera.quaternion).normalize();
 
-        // Vector from camera to node
-        const toNode = new Vector3().subVectors(sphere.center, cameraPosition).normalize();
+        this._tempToNode.subVectors(sphere.center, cameraPosition).normalize();
 
         // Dot product gives alignment: 1 = directly ahead, -1 = behind, 0 = perpendicular
-        const alignment = toNode.dot(cameraForward);
+        const alignment = this._tempToNode.dot(this._tempCameraForward);
 
         // Boost priority for nodes in center of view (0-30% boost)
         // Nodes directly ahead get highest boost, edges get less
