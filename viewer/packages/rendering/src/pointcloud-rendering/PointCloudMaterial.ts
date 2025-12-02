@@ -224,7 +224,6 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.vertexShader = this.applyDefines(pointCloudShaders.pointcloud.vertex);
     this.fragmentShader = this.applyDefines(pointCloudShaders.pointcloud.fragment);
 
-    this.blending = NoBlending;
     this.transparent = true;
     this.blending = NormalBlending;
     this.depthTest = true;

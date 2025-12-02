@@ -304,12 +304,12 @@ void main() {
 			: mix(classification.rgb, rgb, 0.4);
 	#endif
 
+	vFadeOpacity = fadeOpacity;
 	if (outColorAlpha == 0.0) {
                 gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
                 return;
 	}
 
-	vFadeOpacity = fadeOpacity;
 
 	// ---------------------
 	// CLIPPING
