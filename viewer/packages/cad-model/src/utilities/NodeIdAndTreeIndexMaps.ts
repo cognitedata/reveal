@@ -2,11 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Subject, Observable } from 'rxjs';
-import { bufferTime, mergeMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteInternalId } from '@cognite/sdk';
 
 import { NodesApiClient } from '@reveal/nodes-api';
+import { batchedDebounce, type BatchedDebounce } from '@reveal/utilities';
 
 type NodeIdRequest = CogniteInternalId;
 type TreeIndexRequest = number;
@@ -25,14 +24,9 @@ export class NodeIdAndTreeIndexMaps {
   private readonly nodeIdToTreeIndexMap: Map<number, number>;
   private readonly treeIndexToNodeIdMap: Map<number, number>;
 
-  private readonly nodeIdRequestObservable: Subject<NodeIdRequest>;
-  private readonly nodeIdResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
-
-  private readonly treeIndexRequestObservable: Subject<TreeIndexRequest>;
-  private readonly treeIndexResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
-
-  private readonly subtreeSizeObservable: Subject<CogniteInternalId>;
-  private readonly subtreeSizeResponse: Observable<{ treeIndex: number; subtreeSize: number }>;
+  private readonly _debouncedGetNodeIdByTreeIndex: BatchedDebounce<number, number>;
+  private readonly _debouncedGetTreeIndexByNodeId: BatchedDebounce<number, number>;
+  private readonly _debouncedGetSubtreeSize: BatchedDebounce<number, { treeIndex: number; subtreeSize: number }>;
 
   constructor(modelId: number, revisionId: number, nodesApiClient: NodesApiClient) {
     this.modelId = modelId;
@@ -43,58 +37,43 @@ export class NodeIdAndTreeIndexMaps {
     this.treeIndexToNodeIdMap = new Map();
     this.treeIndexSubTreeSizeMap = new Map();
 
-    // Setup pipeline for requests for mapping nodeId -> treeIndex
-    this.nodeIdRequestObservable = new Subject();
-    this.nodeIdResponse = this.nodeIdRequestObservable.pipe(
-      bufferTime(50),
-      filter((requests: NodeIdRequest[]) => requests.length > 0),
-      mergeMap(async (requests: NodeIdRequest[]) => {
-        const treeIndices = await this.nodesApiClient.mapNodeIdsToTreeIndices(this.modelId, this.revisionId, requests);
-        return requests.map((nodeId, index) => {
-          return { nodeId, treeIndex: treeIndices[index] };
-        });
-      }),
-      mergeAll(),
-      tap((node: { nodeId: CogniteInternalId; treeIndex: number }) => {
-        this.nodeIdToTreeIndexMap.set(node.nodeId, node.treeIndex);
-        this.treeIndexToNodeIdMap.set(node.treeIndex, node.nodeId);
-      }),
-      share()
-    );
+    this._debouncedGetTreeIndexByNodeId = batchedDebounce(async (requests: NodeIdRequest[]) => {
+      const treeIndices = await this.nodesApiClient.mapNodeIdsToTreeIndices(this.modelId, this.revisionId, requests);
 
-    // Setup pipeline for requests for mapping nodeId -> treeIndex
-    this.treeIndexRequestObservable = new Subject();
-    this.treeIndexResponse = this.treeIndexRequestObservable.pipe(
-      bufferTime(50),
-      filter((requests: TreeIndexRequest[]) => requests.length > 0),
-      mergeMap(async (requests: TreeIndexRequest[]) => {
-        const nodeIds = await this.nodesApiClient.mapTreeIndicesToNodeIds(this.modelId, this.revisionId, requests);
-        return requests.map((treeIndex, index) => {
-          return { nodeId: nodeIds[index], treeIndex };
-        });
-      }),
-      mergeAll(),
-      tap((node: { nodeId: CogniteInternalId; treeIndex: number }) => {
-        this.nodeIdToTreeIndexMap.set(node.nodeId, node.treeIndex);
-        this.treeIndexToNodeIdMap.set(node.treeIndex, node.nodeId);
-      }),
-      share()
-    );
+      requests.forEach((nodeId, index) => {
+        const treeIndex = treeIndices[index];
+        this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
+        this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
+      });
 
-    // Setup pipeline for request for determining subtree size given nodeId
-    this.subtreeSizeObservable = new Subject();
-    this.subtreeSizeResponse = this.subtreeSizeObservable.pipe(
-      bufferTime(50),
-      filter((requests: CogniteInternalId[]) => requests.length > 0),
-      mergeMap(async (requests: CogniteInternalId[]) => {
-        return this.nodesApiClient.determineTreeIndexAndSubtreeSizesByNodeIds(this.modelId, this.revisionId, requests);
-      }),
-      mergeAll(),
-      tap((node: { treeIndex: number; subtreeSize: number }) => {
+      return treeIndices;
+    }, 50);
+
+    this._debouncedGetNodeIdByTreeIndex = batchedDebounce(async (requests: TreeIndexRequest[]) => {
+      const nodeIds = await this.nodesApiClient.mapTreeIndicesToNodeIds(this.modelId, this.revisionId, requests);
+
+      requests.forEach((treeIndex, index) => {
+        const nodeId = nodeIds[index];
+        this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
+        this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
+      });
+
+      return nodeIds;
+    }, 50);
+
+    this._debouncedGetSubtreeSize = batchedDebounce(async (requests: CogniteInternalId[]) => {
+      const subtreeSizes = await this.nodesApiClient.determineTreeIndexAndSubtreeSizesByNodeIds(
+        this.modelId,
+        this.revisionId,
+        requests
+      );
+
+      subtreeSizes.forEach(node => {
         this.treeIndexSubTreeSizeMap.set(node.treeIndex, node.subtreeSize);
-      }),
-      share()
-    );
+      });
+
+      return subtreeSizes;
+    }, 50);
   }
 
   async getTreeIndex(nodeId: CogniteInternalId): Promise<number> {
@@ -103,15 +82,7 @@ export class NodeIdAndTreeIndexMaps {
       return treeIndex;
     }
 
-    const result = this.nodeIdResponse
-      .pipe(
-        first(node => node.nodeId === nodeId),
-        map(node => node.treeIndex)
-      )
-      .toPromise();
-
-    this.nodeIdRequestObservable.next(nodeId);
-    return (await result)!;
+    return this._debouncedGetTreeIndexByNodeId(nodeId);
   }
 
   async getNodeId(treeIndex: number): Promise<number> {
@@ -120,15 +91,7 @@ export class NodeIdAndTreeIndexMaps {
       return nodeId;
     }
 
-    const result = this.treeIndexResponse
-      .pipe(
-        first(node => node.treeIndex === treeIndex),
-        map(node => node.nodeId)
-      )
-      .toPromise();
-
-    this.treeIndexRequestObservable.next(treeIndex);
-    return (await result)!;
+    return this._debouncedGetNodeIdByTreeIndex(treeIndex);
   }
 
   async getSubtreeSize(treeIndex: number): Promise<number> {
@@ -137,16 +100,9 @@ export class NodeIdAndTreeIndexMaps {
       return subtreeSize;
     }
 
-    const nodeId = await this.getNodeId(treeIndex);
-    const result = this.subtreeSizeResponse
-      .pipe(
-        first(node => node.treeIndex === treeIndex),
-        map(node => node.subtreeSize)
-      )
-      .toPromise();
-    this.subtreeSizeObservable.next(nodeId);
+    const nodeId = await this._debouncedGetNodeIdByTreeIndex(treeIndex);
 
-    return (await result)!;
+    return (await this._debouncedGetSubtreeSize(nodeId)).subtreeSize;
   }
 
   async getTreeIndices(nodeIds: number[]): Promise<number[]> {
