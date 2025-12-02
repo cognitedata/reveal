@@ -92,6 +92,12 @@ export function makeOnBeforeRender(
 
     materialUniforms.pcIndex.value = pcIndex;
 
+    if (node.fadeOpacity) {
+      materialUniforms.fadeOpacity.value = node.fadeOpacity.opacity;
+    } else {
+      materialUniforms.fadeOpacity.value = 1.0;
+    }
+
     // Note: when changing uniforms in onBeforeRender, the flag uniformsNeedUpdate has to be
     // set to true to instruct ThreeJS to upload them. See also
     // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.

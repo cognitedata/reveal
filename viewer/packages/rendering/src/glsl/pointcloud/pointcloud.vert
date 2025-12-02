@@ -23,6 +23,7 @@ uniform float screenHeight;
 uniform float fov;
 uniform float spacing;
 
+uniform float fadeOpacity;
 uniform float heightMin;
 uniform float heightMax;
 uniform float size; // pixel size factor
@@ -47,6 +48,7 @@ uniform sampler2D classificationLUT;
 uniform sampler2D objectIdLUT;
 
 out vec3 vColor;
+out float vFadeOpacity;
 
 #if defined(weighted_splats)
 	out float vLinearDepth;
@@ -306,6 +308,8 @@ void main() {
                 gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
                 return;
 	}
+
+	vFadeOpacity = fadeOpacity;
 
 	// ---------------------
 	// CLIPPING

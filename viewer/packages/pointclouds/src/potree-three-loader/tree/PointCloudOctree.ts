@@ -118,24 +118,15 @@ export class PointCloudOctree extends PointCloudTree {
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
 
-    // Smooth fade-in animation for newly loaded nodes using TWEEN
+    // Smooth fade-in animation for newly loaded nodes using shader-based per-node opacity
     const fadeState = { opacity: 0.0 };
+    node.fadeOpacity = fadeState;
+
     const tween = new TWEEN.Tween(fadeState)
       .to({ opacity: 1.0 }, POINT_CLOUD_FADE_IN_DURATION_MS)
-      .easing(TWEEN.Easing.Cubic.Out) // Ease-out cubic for smooth finish
-      .onStart(() => {
-        this.material.transparent = true;
-      })
-      .onUpdate(() => {
-        this.material.opacity = fadeState.opacity;
-      })
-      .onComplete(() => {
-        this.material.opacity = 1.0;
-        this.material.transparent = false;
-      })
+      .easing(TWEEN.Easing.Cubic.Out)
       .start(TWEEN.now());
 
-    // Add tween to global TWEEN manager
     TWEEN.add(tween);
 
     // Clean up tween on node disposal

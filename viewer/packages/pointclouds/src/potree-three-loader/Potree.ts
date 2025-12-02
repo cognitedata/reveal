@@ -124,10 +124,10 @@ export class Potree implements IPotree {
     if (this._updateInProgress) {
       this._pendingUpdateRequest = true;
       return {
-        visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
+        visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b), []),
         numVisiblePoints: pointClouds
-          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
-          .reduce((a, b) => a + b),
+          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b, 0))
+          .reduce((a, b) => a + b, 0),
         exceededMaxLoadsToGPU: false,
         nodeLoadFailed: false,
         nodeLoadPromises: []
@@ -140,10 +140,10 @@ export class Potree implements IPotree {
     try {
       if (!this._shouldLoad) {
         return {
-          visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
+          visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b), []),
           numVisiblePoints: pointClouds
-            .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
-            .reduce((a, b) => a + b),
+            .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b, 0))
+            .reduce((a, b) => a + b, 0),
           exceededMaxLoadsToGPU: false,
           nodeLoadFailed: false,
           nodeLoadPromises: []

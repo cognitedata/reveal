@@ -41,6 +41,7 @@ export interface IPointCloudMaterialParameters {
 
 export interface IPointCloudMaterialUniforms {
   classificationLUT: IUniform<Texture>;
+  fadeOpacity: IUniform<number>;
   fov: IUniform<number>;
   gradient: IUniform<Texture>;
   heightMax: IUniform<number>;
@@ -112,6 +113,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   uniforms: IPointCloudMaterialUniforms & Record<string, IUniform<any>> = {
     classificationLUT: makeUniform('t', this.classificationTexture || new Texture()),
+    fadeOpacity: makeUniform('f', 1.0),
     fov: makeUniform('f', 1.0),
     gradient: makeUniform('t', this.gradientTexture || new Texture()),
     heightMax: makeUniform('f', 1.0),

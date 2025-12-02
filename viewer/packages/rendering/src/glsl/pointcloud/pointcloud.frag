@@ -18,6 +18,7 @@ out vec4 outputColor;
 #endif
 
 in vec3 vColor;
+in float vFadeOpacity;
 
 #if defined(weighted_splats)
 	in float vLinearDepth;
@@ -59,6 +60,9 @@ void main() {
 	#else
 		outputColor = vec4(color, 1.0);
 	#endif
+
+	outputColor.rgb *= vFadeOpacity;
+	outputColor.a *= vFadeOpacity;
 
 	#if defined paraboloid_point_shape
 		float wi = 0.0 - ( u*u + v*v);
