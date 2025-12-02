@@ -8,6 +8,7 @@ import {
   LessEqualDepth,
   NearestFilter,
   NoBlending,
+  NormalBlending,
   PerspectiveCamera,
   RawShaderMaterial,
   Texture,
@@ -224,7 +225,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.fragmentShader = this.applyDefines(pointCloudShaders.pointcloud.fragment);
 
     this.blending = NoBlending;
-    this.transparent = false;
+    this.transparent = true;
+    this.blending = NormalBlending;
     this.depthTest = true;
     this.depthWrite = true;
     this.depthFunc = LessEqualDepth;
