@@ -75,7 +75,6 @@ export class Potree implements IPotree {
 
   // Cascade prevention: Track update state to prevent feedback loop
   private _updateInProgress: boolean = false;
-  private _pendingUpdateRequest: boolean = false;
 
   private readonly _tempCameraForward: Vector3 = new Vector3();
   private readonly _tempToNode: Vector3 = new Vector3();
@@ -132,14 +131,12 @@ export class Potree implements IPotree {
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
-    // Cascade prevention: If already updating, queue a single pending request
+    // Cascade prevention: If already updating, return early
     if (this._updateInProgress) {
-      this._pendingUpdateRequest = true;
       return this.createEmptyVisibilityResult(pointClouds);
     }
 
     this._updateInProgress = true;
-    this._pendingUpdateRequest = false;
 
     try {
       if (!this._shouldLoad) {
@@ -173,11 +170,6 @@ export class Potree implements IPotree {
       return result;
     } finally {
       this._updateInProgress = false;
-
-      // If update was requested while we were busy, trigger one more update
-      if (this._pendingUpdateRequest) {
-        this._throttledUpdateFunc(pointClouds, camera, renderer);
-      }
     }
   }
 
