@@ -29,13 +29,8 @@ vec2 calculateObscurance(float depth, float screenWidth, float screenHeight, vec
 
 		bool otherOutside = neighbourDepth == 0.0;
 
-		// Enhanced depth comparison: more sensitive to subtle depth differences
-		// Exponential falloff makes nearby geometry differences more pronounced
-		float depthDiff = max(0.0, depth - neighbourDepth);
-		float weight = exp(-depthDiff * 2.0);  // Emphasize small depth differences
-
 		sum += otherOutside ? 0.0
-		    : (thisOutside ? 100.0 : depthDiff * weight);
+		    : (thisOutside ? 100.0 : max(0.0, depth - neighbourDepth));
 	}
 
 	// First component is the obscurance value, second component is the depth of the closest neighbour required to properly set depth on "glowing" part of the point.
