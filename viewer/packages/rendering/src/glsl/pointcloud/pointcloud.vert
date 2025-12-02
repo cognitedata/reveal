@@ -6,6 +6,17 @@ precision highp int;
 
 #define max_clip_boxes 30
 
+// LOD clamping to prevent extreme size variations
+#define min_lod_clamp 2.0
+#define max_lod_clamp 10.0
+
+// Distance-based point size reduction for close low-LOD nodes
+#define close_point_distance_threshold 10.0
+#define close_point_lod_threshold 4.0
+#define close_point_smoothstep_near 1.0
+#define close_point_min_scale 0.15
+#define close_point_scale_range 0.85
+
 in vec3 position;
 in vec3 color;
 in float intensity;
@@ -160,7 +171,7 @@ float getLOD() {
 float getPointSizeAttenuation() {
 	float lod = getLOD();
 	// Clamp LOD to prevent extreme size variations (especially on low-LOD coarse nodes)
-	lod = clamp(lod, 2.0, 10.0);
+	lod = clamp(lod, min_lod_clamp, max_lod_clamp);
 	return 0.5 * pow(2.0, lod);
 }
 
@@ -253,15 +264,12 @@ void main() {
 
 	// Distance-based size limiting to prevent oversized close points from low-LOD nodes
 	#if defined(adaptive_point_size)
-		// ONLY reduce point size when VERY close to camera for low-LOD nodes
-		// This prevents giant "blocky" points when detailed nodes not yet loaded
 		float distanceToCamera = length(mvPosition.xyz);
 		float lod = getLOD();
 
-		if (distanceToCamera < 10.0 && lod < 4.0) {
-			// Reduce oversized points when very close to low-LOD geometry
-			float closeScale = smoothstep(1.0, 10.0, distanceToCamera);
-			closeScale = 0.15 + closeScale * 0.85;  // Scale 15%-100% (was 25%)
+		if (distanceToCamera < close_point_distance_threshold && lod < close_point_lod_threshold) {
+			float closeScale = smoothstep(close_point_smoothstep_near, close_point_distance_threshold, distanceToCamera);
+			closeScale = close_point_min_scale + closeScale * close_point_scale_range;
 			pointSize = pointSize * closeScale;
 		}
 	#endif

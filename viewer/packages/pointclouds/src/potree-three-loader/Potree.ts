@@ -32,6 +32,8 @@ import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
 import { createVisibilityTextureData } from './utils/utils';
 
+const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view
+
 export class QueueItem {
   constructor(
     public pointCloudIndex: number,
@@ -389,7 +391,7 @@ export class Potree implements IPotree {
 
         // Boost priority for nodes in center of view (0-30% boost)
         // Nodes directly ahead get highest boost, edges get less
-        const viewCenterBoost = Math.max(0, alignment) * 0.3;
+        const viewCenterBoost = Math.max(0, alignment) * VIEW_CENTER_BOOST_FACTOR;
         weight = weight * (1.0 + viewCenterBoost);
       }
 
