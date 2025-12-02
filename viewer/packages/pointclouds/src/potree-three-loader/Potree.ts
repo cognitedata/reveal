@@ -38,7 +38,7 @@ export class QueueItem {
     public weight: number,
     public node: IPointCloudTreeNodeBase,
     public parent?: IPointCloudTreeNodeBase | undefined
-  ) { }
+  ) {}
 }
 
 type VisibilityUpdateInfo = {

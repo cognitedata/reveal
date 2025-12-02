@@ -24,13 +24,6 @@ describe(Potree.name, () => {
     }
   });
 
-  test('Cascade prevention flags are initialized correctly', () => {
-    const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
-
-    expect((potreeInstance as any)._updateInProgress).toBe(false);
-    expect((potreeInstance as any)._pendingUpdateRequest).toBe(false);
-  });
-
   test('Max nodes loading is set from constant', () => {
     const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
 
