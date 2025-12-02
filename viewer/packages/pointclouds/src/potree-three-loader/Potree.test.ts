@@ -23,4 +23,33 @@ describe(Potree.name, () => {
       expect(potreeInstance.pointBudget).toEqual(budget);
     }
   });
+
+  test('Cascade prevention flags are initialized correctly', () => {
+    const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
+
+    expect((potreeInstance as any)._updateInProgress).toBe(false);
+    expect((potreeInstance as any)._pendingUpdateRequest).toBe(false);
+  });
+
+  test('Max nodes loading is set from constant', () => {
+    const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
+
+    expect(potreeInstance.maxNumNodesLoading).toBeGreaterThan(0);
+    expect(potreeInstance.maxNumNodesLoading).toBeLessThanOrEqual(20);
+  });
+
+  test('LRU is initialized with point budget', () => {
+    const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
+
+    expect(potreeInstance.lru.pointBudget).toBe(potreeInstance.pointBudget);
+  });
+
+  test('Changing point budget updates LRU budget', () => {
+    const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
+
+    const newBudget = 1_000_000;
+    potreeInstance.pointBudget = newBudget;
+
+    expect(potreeInstance.lru.pointBudget).toBe(newBudget);
+  });
 });

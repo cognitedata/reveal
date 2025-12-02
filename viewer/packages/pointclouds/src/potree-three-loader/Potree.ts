@@ -73,6 +73,10 @@ export class Potree implements IPotree {
 
   private _shouldLoad: boolean = true;
 
+  // Cascade prevention: Track update state to prevent feedback loop
+  private _updateInProgress: boolean = false;
+  private _pendingUpdateRequest: boolean = false;
+
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   lru = new LRU(this._pointBudget);
 
@@ -113,7 +117,9 @@ export class Potree implements IPotree {
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
-    if (!this._shouldLoad) {
+    // Cascade prevention: If already updating, queue a single pending request
+    if (this._updateInProgress) {
+      this._pendingUpdateRequest = true;
       return {
         visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
         numVisiblePoints: pointClouds
@@ -125,31 +131,55 @@ export class Potree implements IPotree {
       };
     }
 
-    const result = this.updateVisibility(pointClouds, camera, renderer);
+    this._updateInProgress = true;
+    this._pendingUpdateRequest = false;
 
-    for (let i = 0; i < pointClouds.length; i++) {
-      const pointCloud = pointClouds[i];
-      if (pointCloud.disposed) {
-        continue;
+    try {
+      if (!this._shouldLoad) {
+        return {
+          visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
+          numVisiblePoints: pointClouds
+            .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
+            .reduce((a, b) => a + b),
+          exceededMaxLoadsToGPU: false,
+          nodeLoadFailed: false,
+          nodeLoadPromises: []
+        };
       }
 
-      const visibilityTextureData = createVisibilityTextureData(
-        pointCloud.visibleNodes,
-        pointCloud.material.visibleNodeTextureOffsets
-      );
-      const octreeMaterialParams: OctreeMaterialParams = {
-        scale: pointCloud.scale,
-        boundingBox: pointCloud.pcoGeometry.boundingBox,
-        spacing: pointCloud.pcoGeometry.spacing
-      };
+      const result = this.updateVisibility(pointClouds, camera, renderer);
 
-      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
-      pointCloud.updateVisibleBounds();
+      for (let i = 0; i < pointClouds.length; i++) {
+        const pointCloud = pointClouds[i];
+        if (pointCloud.disposed) {
+          continue;
+        }
+
+        const visibilityTextureData = createVisibilityTextureData(
+          pointCloud.visibleNodes,
+          pointCloud.material.visibleNodeTextureOffsets
+        );
+        const octreeMaterialParams: OctreeMaterialParams = {
+          scale: pointCloud.scale,
+          boundingBox: pointCloud.pcoGeometry.boundingBox,
+          spacing: pointCloud.pcoGeometry.spacing
+        };
+
+        pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
+        pointCloud.updateVisibleBounds();
+      }
+
+      this.lru.freeMemory();
+
+      return result;
+    } finally {
+      this._updateInProgress = false;
+
+      // If update was requested while we were busy, trigger one more update
+      if (this._pendingUpdateRequest) {
+        this._throttledUpdateFunc(pointClouds, camera, renderer);
+      }
     }
-
-    this.lru.freeMemory();
-
-    return result;
   }
 
   get pointBudget(): number {
@@ -353,8 +383,27 @@ export class Potree implements IPotree {
         continue;
       }
 
-      // Nodes which are larger will have priority in loading/displaying.
-      const weight = distance < radius ? Number.MAX_VALUE : screenPixelRadius + 1 / distance;
+      // Enhanced priority calculation:
+      // 1. Base priority from screen size and distance
+      let weight = distance < radius ? Number.MAX_VALUE : screenPixelRadius + 1 / distance;
+
+      // 2. Boost priority for nodes in center of view (reduces pop-in at focus point)
+      if (camera.type === PERSPECTIVE_CAMERA) {
+        // Calculate view direction (camera forward vector)
+        const cameraForward = new Vector3(0, 0, -1);
+        cameraForward.applyQuaternion(camera.quaternion).normalize();
+
+        // Vector from camera to node
+        const toNode = new Vector3().subVectors(sphere.center, cameraPosition).normalize();
+
+        // Dot product gives alignment: 1 = directly ahead, -1 = behind, 0 = perpendicular
+        const alignment = toNode.dot(cameraForward);
+
+        // Boost priority for nodes in center of view (0-30% boost)
+        // Nodes directly ahead get highest boost, edges get less
+        const viewCenterBoost = Math.max(0, alignment) * 0.3;
+        weight = weight * (1.0 + viewCenterBoost);
+      }
 
       priorityQueue.push(new QueueItem(queueItem.pointCloudIndex, weight, child, node));
     }

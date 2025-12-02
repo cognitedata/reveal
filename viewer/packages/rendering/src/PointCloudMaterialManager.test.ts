@@ -52,4 +52,30 @@ describe('PointCloudMaterialManager', () => {
     expect(material1.blending).toBe(materialParameters.blending);
     expect(material2.blending).toBe(materialParameters.blending);
   });
+
+  test('material transparency can be toggled', () => {
+    const modelIdentifier = Symbol('model');
+    materialManager.addModelMaterial(modelIdentifier, objectData);
+
+    const material = materialManager.getModelMaterial(modelIdentifier);
+
+    material.transparent = true;
+    expect(material.transparent).toBe(true);
+
+    material.transparent = false;
+    expect(material.transparent).toBe(false);
+  });
+
+  test('material opacity can be set', () => {
+    const modelIdentifier = Symbol('model');
+    materialManager.addModelMaterial(modelIdentifier, objectData);
+
+    const material = materialManager.getModelMaterial(modelIdentifier);
+
+    material.opacity = 0.5;
+    expect(material.opacity).toBe(0.5);
+
+    material.opacity = 1.0;
+    expect(material.opacity).toBe(1.0);
+  });
 });

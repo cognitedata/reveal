@@ -158,7 +158,10 @@ float getLOD() {
 }
 
 float getPointSizeAttenuation() {
-	return 0.5 * pow(2.0, getLOD());
+	float lod = getLOD();
+	// Clamp LOD to prevent extreme size variations (especially on low-LOD coarse nodes)
+	lod = clamp(lod, 2.0, 10.0);
+	return 0.5 * pow(2.0, lod);
 }
 
 #endif
@@ -247,6 +250,21 @@ void main() {
 
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
+
+	// Distance-based size limiting to prevent oversized close points from low-LOD nodes
+	#if defined(adaptive_point_size)
+		// ONLY reduce point size when VERY close to camera for low-LOD nodes
+		// This prevents giant "blocky" points when detailed nodes not yet loaded
+		float distanceToCamera = length(mvPosition.xyz);
+		float lod = getLOD();
+
+		if (distanceToCamera < 10.0 && lod < 4.0) {
+			// Reduce oversized points when very close to low-LOD geometry
+			float closeScale = smoothstep(1.0, 10.0, distanceToCamera);
+			closeScale = 0.15 + closeScale * 0.85;  // Scale 15%-100% (was 25%)
+			pointSize = pointSize * closeScale;
+		}
+	#endif
 
 	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;

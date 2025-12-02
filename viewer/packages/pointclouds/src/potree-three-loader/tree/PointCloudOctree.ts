@@ -1,4 +1,5 @@
 import { Box3, Camera, Object3D, Plane, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
+import TWEEN from '@tweenjs/tween.js';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { PointCloudOctreeNode } from './PointCloudOctreeNode';
@@ -10,7 +11,13 @@ import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
 
-import { RenderLayer, PointCloudMaterial, PointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
+import {
+  RenderLayer,
+  PointCloudMaterial,
+  PointSizeType,
+  DEFAULT_MIN_NODE_PIXEL_SIZE,
+  POINT_CLOUD_FADE_IN_DURATION_MS
+} from '@reveal/rendering';
 import { makeOnBeforeRender } from '../utils/utils';
 
 export class PointCloudOctree extends PointCloudTree {
@@ -110,6 +117,32 @@ export class PointCloudOctree extends PointCloudTree {
     points.name = geometryNode.name;
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
+
+    // Smooth fade-in animation for newly loaded nodes using TWEEN
+    const fadeState = { opacity: 0.0 };
+    const tween = new TWEEN.Tween(fadeState)
+      .to({ opacity: 1.0 }, POINT_CLOUD_FADE_IN_DURATION_MS)
+      .easing(TWEEN.Easing.Cubic.Out) // Ease-out cubic for smooth finish
+      .onStart(() => {
+        this.material.transparent = true;
+      })
+      .onUpdate(() => {
+        this.material.opacity = fadeState.opacity;
+      })
+      .onComplete(() => {
+        this.material.opacity = 1.0;
+        this.material.transparent = false;
+      })
+      .start(TWEEN.now());
+
+    // Add tween to global TWEEN manager
+    TWEEN.add(tween);
+
+    // Clean up tween on node disposal
+    geometryNode.oneTimeDisposeHandlers.push(() => {
+      tween.stop();
+    });
+
     points.onBeforeRender = makeOnBeforeRender(node, this.visibleNodes.indexOf(node));
     points.layers.set(RenderLayer.PointCloud);
     points.updateMatrix();
