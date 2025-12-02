@@ -7,7 +7,6 @@ import {
   GLSL3,
   LessEqualDepth,
   NearestFilter,
-  NoBlending,
   NormalBlending,
   PerspectiveCamera,
   RawShaderMaterial,
