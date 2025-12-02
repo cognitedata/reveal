@@ -388,8 +388,7 @@ export class Potree implements IPotree {
 
       // 2. Boost priority for nodes in center of view (reduces pop-in at focus point)
       if (camera.type === PERSPECTIVE_CAMERA) {
-        this._tempCameraForward.set(0, 0, -1);
-        this._tempCameraForward.applyQuaternion(camera.quaternion).normalize();
+        camera.getWorldDirection(this._tempCameraForward);
 
         this._tempToNode.subVectors(sphere.center, cameraPosition).normalize();
 
