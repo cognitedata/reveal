@@ -61,9 +61,6 @@ void main() {
 		outputColor = vec4(color, 1.0);
 	#endif
 
-	// Apply fade opacity to RGB only here; alpha is handled specially for EDL/weighted splats
-	outputColor.rgb *= vFadeOpacity;
-
 	#if defined paraboloid_point_shape
 		float wi = 0.0 - ( u*u + v*v);
 		vec4 pos = vec4(vViewPosition, 1.0);
@@ -82,19 +79,22 @@ void main() {
 	#endif
 
 	#if defined(use_edl)
-		// Note: potree library use different depth value for Paraboloid shape namely log2(linearDepth).
-		// Alpha channel stores depth for EDL post-processing, not visual opacity
+		// EDL mode: Alpha stores depth for post-processing, not visual opacity
+		// Fade is applied to RGB only (EDL post-processor handles final compositing)
+		outputColor.rgb *= vFadeOpacity;
 		outputColor.a = vLogDepth;
 	#elif defined(weighted_splats)
+		// Weighted splats use additive blending - alpha is ignored
+		// Apply fade and weight to RGB for correct additive result
 		float distance = 2.0 * length(gl_PointCoord.xy - 0.5);
 		float weight = max(0.0, 1.0 - distance);
 		weight = pow(weight, 1.5);
 
-		// Apply fade opacity to splat weight for smooth fade-in
-		outputColor.a = weight * vFadeOpacity;
-		outputColor.rgb = outputColor.rgb * weight;
+		outputColor.a = weight;
+		outputColor.rgb = outputColor.rgb * weight * vFadeOpacity;
 	#else
-		// Standard mode: apply fade opacity to alpha channel
+		// Standard mode with normal blending: only modify alpha for fade
+		// Don't premultiply RGB - NormalBlending expects non-premultiplied alpha
 		outputColor.a *= vFadeOpacity;
 	#endif
 }
