@@ -20,12 +20,12 @@ describe(batchedDebounce.name, () => {
     const promise3 = batched(3);
 
     jest.advanceTimersByTime(100);
-    await Promise.resolve();
+
+    const [result1, result2, result3] = await Promise.all([promise1, promise2, promise3]);
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith([1, 2, 3]);
 
-    const [result1, result2, result3] = await Promise.all([promise1, promise2, promise3]);
     expect(result1).toBe(2);
     expect(result2).toBe(4);
     expect(result3).toBe(6);
@@ -97,5 +97,25 @@ describe(batchedDebounce.name, () => {
     await expect(promise1).rejects.toThrow('Debounce cancelled');
     await expect(promise2).rejects.toThrow('Debounce cancelled');
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('should handle void callbacks', async () => {
+    const callback = jest.fn<(_: number[]) => void>();
+    const batched = batchedDebounce(callback, 100);
+
+    const promise1 = batched(1);
+    const promise2 = batched(2);
+    const promise3 = batched(3);
+
+    jest.advanceTimersByTime(100);
+
+    const [result1, result2, result3] = await Promise.all([promise1, promise2, promise3]);
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledWith([1, 2, 3]);
+
+    expect(result1).toBeUndefined();
+    expect(result2).toBeUndefined();
+    expect(result3).toBeUndefined();
   });
 });
