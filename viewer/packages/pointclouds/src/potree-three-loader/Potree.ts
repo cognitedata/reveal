@@ -115,6 +115,18 @@ export class Potree implements IPotree {
     this._shouldLoad = value;
   }
 
+  private createEmptyVisibilityResult(pointClouds: PointCloudOctree[]): IVisibilityUpdateResult {
+    return {
+      visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b), []),
+      numVisiblePoints: pointClouds
+        .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b, 0))
+        .reduce((a, b) => a + b, 0),
+      exceededMaxLoadsToGPU: false,
+      nodeLoadFailed: false,
+      nodeLoadPromises: []
+    };
+  }
+
   private innerUpdatePointClouds(
     pointClouds: PointCloudOctree[],
     camera: Camera,
@@ -123,15 +135,7 @@ export class Potree implements IPotree {
     // Cascade prevention: If already updating, queue a single pending request
     if (this._updateInProgress) {
       this._pendingUpdateRequest = true;
-      return {
-        visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b), []),
-        numVisiblePoints: pointClouds
-          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b, 0))
-          .reduce((a, b) => a + b, 0),
-        exceededMaxLoadsToGPU: false,
-        nodeLoadFailed: false,
-        nodeLoadPromises: []
-      };
+      return this.createEmptyVisibilityResult(pointClouds);
     }
 
     this._updateInProgress = true;
@@ -139,15 +143,7 @@ export class Potree implements IPotree {
 
     try {
       if (!this._shouldLoad) {
-        return {
-          visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b), []),
-          numVisiblePoints: pointClouds
-            .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b, 0))
-            .reduce((a, b) => a + b, 0),
-          exceededMaxLoadsToGPU: false,
-          nodeLoadFailed: false,
-          nodeLoadPromises: []
-        };
+        return this.createEmptyVisibilityResult(pointClouds);
       }
 
       const result = this.updateVisibility(pointClouds, camera, renderer);
