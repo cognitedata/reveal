@@ -11,7 +11,6 @@ export const DEFAULT_POINT_BUDGET = 3_000_000;
 export const MAX_LOADS_TO_GPU = 15; // Increased with cascade prevention
 export const MAX_NUM_NODES_LOADING = 8; // Conservative to prevent cascade
 export const UPDATE_THROTTLE_TIME_MS = 100;
-export const POINT_CLOUD_FADE_IN_DURATION_MS = 200; // Smooth appearance animation
 export const PERSPECTIVE_CAMERA = 'PerspectiveCamera';
 export const COLOR_BLACK = new Color(0, 0, 0);
 export const COLOR_WHITE = new Color(1, 1, 1);
