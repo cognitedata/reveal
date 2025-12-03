@@ -57,7 +57,6 @@ describe(CadManager.name, () => {
     expect(cadManager).toBeInstanceOf(CadManager);
     expect(cadManager.dispose).toBeDefined();
     expect(cadManager.updateCamera).toBeDefined();
-    expect(cadManager.getLoadingStateObserver).toBeDefined();
   });
 
   test('should register materials changed listener on initialization', () => {
@@ -69,13 +68,6 @@ describe(CadManager.name, () => {
     expect(budget).toBeDefined();
     expect(budget.highDetailProximityThreshold).toBe(100);
     expect(budget.maximumRenderCost).toBe(95000000);
-  });
-
-  test('should handle loading state observer', () => {
-    const loadingObserver = cadManager.getLoadingStateObserver();
-
-    expect(loadingObserver).toBeDefined();
-    expect(loadingObserver.subscribe).toBeDefined();
   });
 
   test('should handle camera update correctly', () => {
