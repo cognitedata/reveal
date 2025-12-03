@@ -4,13 +4,12 @@
 
 import * as THREE from 'three';
 
-import { assertNever } from '@reveal/utilities';
+import { assertNever, EventTrigger, type EventListener } from '@reveal/utilities';
 import { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 
-import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
+import { Subject, combineLatest, asyncScheduler, type Subscription } from 'rxjs';
 import {
   scan,
-  share,
   startWith,
   auditTime,
   filter,
@@ -31,7 +30,10 @@ import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/ty
 import { ModelStateHandler } from './sector/ModelStateHandler';
 import { CadNode } from '@reveal/cad-model';
 
-const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
+type CadModelUpdateHandlerEvents = {
+  onNewConsumedSector: EventTrigger<(consumedSector: ConsumedSector) => void>;
+  onLoadingStateChanged: EventTrigger<(loadingState: LoadingState) => void>;
+};
 
 export class CadModelUpdateHandler {
   private readonly _sectorCuller: SectorCuller;
@@ -46,9 +48,9 @@ export class CadModelUpdateHandler {
   private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
-  private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
-  private _updateObservable: Observable<ConsumedSector> | undefined;
+  private readonly _consumedSectorSubscription: Subscription;
+  private readonly _events: CadModelUpdateHandlerEvents;
 
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = true) {
     this._sectorCuller = sectorCuller;
@@ -64,6 +66,11 @@ export class CadModelUpdateHandler {
       forcedDetailedSectorCount: 0,
       totalSectorCount: 0,
       accumulatedPriority: 0
+    };
+
+    this._events = {
+      onNewConsumedSector: new EventTrigger<(consumedSector: ConsumedSector) => void>(),
+      onLoadingStateChanged: new EventTrigger<(loadingState: LoadingState) => void>()
     };
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
@@ -105,7 +112,7 @@ export class CadModelUpdateHandler {
         itemsLoaded: loaded,
         itemsCulled: culled
       };
-      this._progressSubject.next(state);
+      this._events.onLoadingStateChanged.fire(state);
     };
     this._determineSectorsHandler = new SectorLoader(
       sectorCuller,
@@ -121,19 +128,22 @@ export class CadModelUpdateHandler {
       }
     }
 
-    this._updateObservable = combinator.pipe(
-      observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
-      map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
-      filter(loadingEnabled), // should we load?
-      mergeMap(async x => loadSectors(x, this._determineSectorsHandler)),
-      mergeMap(x => x)
-    );
+    this._consumedSectorSubscription = combinator
+      .pipe(
+        observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
+        map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
+        filter(loadingEnabled), // should we load?
+        mergeMap(async x => loadSectors(x, this._determineSectorsHandler)),
+        mergeMap(x => x)
+      )
+      .subscribe(sector => this._events.onNewConsumedSector.fire(sector));
   }
 
   dispose(): void {
-    delete this._updateObservable;
+    this._consumedSectorSubscription.unsubscribe();
     this._modelSubject.unsubscribe();
     this._sectorCuller.dispose();
+    Object.values(this._events).forEach(eventTrigger => eventTrigger.unsubscribeAll());
   }
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
@@ -175,12 +185,12 @@ export class CadModelUpdateHandler {
     this._prioritizedLoadingHintsSubject.next();
   }
 
-  consumedSectorObservable(): Observable<ConsumedSector> {
-    return this._updateObservable!.pipe(share());
-  }
-
-  getLoadingStateObserver(): Observable<LoadingState> {
-    return this._progressSubject;
+  on<EventKey extends keyof CadModelUpdateHandlerEvents>(
+    event: EventKey,
+    listener: EventListener<CadModelUpdateHandlerEvents, EventKey>
+  ): () => void {
+    this._events[event].subscribe(listener);
+    return () => this._events[event].unsubscribe(listener);
   }
 
   reportNewSectorsLoaded(loadedCountChange: number): void {

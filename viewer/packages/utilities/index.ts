@@ -8,7 +8,7 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 
-export { EventTrigger } from './src/events/EventTrigger';
+export { EventTrigger, EventListener } from './src/events/EventTrigger';
 export { InputHandler } from './src/events/InputHandler';
 export { PointerEvents } from './src/events/PointerEvents';
 export { PointerEventsTarget } from './src/events/PointerEventsTarget';
