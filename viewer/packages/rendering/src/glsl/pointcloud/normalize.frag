@@ -17,7 +17,7 @@ uniform sampler2D tDiffuse;
 	#endif
 #endif
 
-#define EDL_STRENGTH_FACTOR 400.0  // Increased from 300.0 for more pronounced depth
+#define EDL_STRENGTH_FACTOR 400.0
 
 in vec2 vUv;
 

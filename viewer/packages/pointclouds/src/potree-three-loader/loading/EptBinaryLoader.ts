@@ -47,7 +47,13 @@ export class EptBinaryLoader implements ILoader {
     // Skip loading sectors if number of points is zero.
     if (node.getNumPoints() !== 0) {
       const fullFileName = node.fileName() + this.extension();
-      data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+      try {
+        data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+      } catch (error) {
+        MetricsLogger.trackError(error as Error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
+        node.markAsNotLoading();
+        return;
+      }
     }
 
     const parsedResultOrError = await this.parse(node, data);

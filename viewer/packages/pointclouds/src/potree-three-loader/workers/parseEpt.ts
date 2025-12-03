@@ -79,15 +79,12 @@ export async function parseEpt(
 
   const pointSize = schema.reduce((p: number, c) => p + c.size, 0);
 
-  // Validate buffer size
   if (pointSize === 0 || buffer.byteLength === 0) {
     throw new Error(`Invalid buffer: pointSize=${pointSize}, byteLength=${buffer.byteLength}`);
   }
 
-  // Ensure integer to prevent buffer alignment issues
   const numPoints = Math.floor(buffer.byteLength / pointSize);
 
-  // Validate we have at least some points
   if (numPoints === 0) {
     throw new Error(`Buffer too small: ${buffer.byteLength} bytes for point size ${pointSize}`);
   }

@@ -118,10 +118,8 @@ export class Potree implements IPotree {
 
   private createEmptyVisibilityResult(pointClouds: PointCloudOctree[]): IVisibilityUpdateResult {
     return {
-      visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b), []),
-      numVisiblePoints: pointClouds
-        .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b, 0))
-        .reduce((a, b) => a + b, 0),
+      visibleNodes: pointClouds.flatMap(p => p.visibleNodes),
+      numVisiblePoints: pointClouds.flatMap(p => p.visibleNodes.map(n => n.numPoints)).reduce((a, b) => a + b, 0),
       exceededMaxLoadsToGPU: false,
       nodeLoadFailed: false,
       nodeLoadPromises: []
@@ -133,7 +131,6 @@ export class Potree implements IPotree {
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
-    // Cascade prevention: If already updating, return early
     if (this._updateInProgress) {
       return this.createEmptyVisibilityResult(pointClouds);
     }
@@ -376,7 +373,6 @@ export class Potree implements IPotree {
         continue;
       }
 
-      // Enhanced priority calculation:
       // 1. Base priority from screen size and distance
       let weight = distance < radius ? Number.MAX_VALUE : screenPixelRadius + 1 / distance;
 
