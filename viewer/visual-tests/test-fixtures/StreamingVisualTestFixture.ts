@@ -339,8 +339,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     const modelLoadedPromise = new DeferredPromise<void>();
 
     if (model instanceof CadNode) {
-      const subscriber = cadManager.getLoadingStateObserver().subscribe(onLoadingStateChange);
-      modelLoadedPromise.then(() => subscriber.unsubscribe());
+      cadManager.on('loadingStateChanged', onLoadingStateChange);
+      modelLoadedPromise.then(() => cadManager.off('loadingStateChanged', onLoadingStateChange));
     } else if (model instanceof PointCloudNode) {
       const subscriber = pointCloudManager.getLoadingStateObserver().subscribe(onLoadingStateChange);
       modelLoadedPromise.then(() => subscriber.unsubscribe());

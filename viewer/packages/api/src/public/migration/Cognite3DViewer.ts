@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
-import { Subscription, fromEventPattern } from 'rxjs';
 import pick from 'lodash/pick';
 
 import { defaultRenderOptions, EdlOptions } from '@reveal/rendering';
@@ -125,6 +124,7 @@ type Cognite3DViewerEvents =
 export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSourceType> {
   private readonly _domElementResizeObserver: ResizeObserver;
   private readonly _image360ApiHelper: Image360ApiHelper<DataSourceT> | undefined;
+  private readonly _unsubsribeOnLoading: () => void;
 
   /**
    * Returns the rendering canvas, the DOM element where the renderer draws its output.
@@ -164,7 +164,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   private readonly _sceneHandler: SceneHandler;
   private readonly _activeCameraManager: ProxyCameraManager;
-  private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
@@ -371,24 +370,15 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this._pointCloudPickingHandler = new PointCloudPickingHandler(this._renderer);
 
-    this._subscription.add(
-      fromEventPattern<LoadingState>(
-        h => this.revealManager.on('loadingStateChanged', h),
-        h => this.revealManager.off('loadingStateChanged', h)
-      ).subscribe(
-        loadingState => {
-          this.spinner.loading = loadingState.itemsLoaded != loadingState.itemsRequested;
-          if (options.onLoading) {
-            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
-          }
-        },
-        error =>
-          MetricsLogger.trackError(error, {
-            moduleName: 'Cognite3DViewer',
-            methodName: 'constructor'
-          })
-      )
-    );
+    const handleLoading = (loadingState: LoadingState) => {
+      this.spinner.loading = loadingState.itemsLoaded != loadingState.itemsRequested;
+      if (options.onLoading) {
+        options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
+      }
+    };
+
+    this.revealManager.on('loadingStateChanged', handleLoading);
+    this._unsubsribeOnLoading = () => this.revealManager.off('loadingStateChanged', handleLoading);
 
     this.animate(0);
 
@@ -482,7 +472,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       this.removeModel(model);
     }
 
-    this._subscription.unsubscribe();
+    this._unsubsribeOnLoading();
     this._activeCameraManager.dispose();
     this.revealManager.dispose();
     this._image360ApiHelper?.dispose();

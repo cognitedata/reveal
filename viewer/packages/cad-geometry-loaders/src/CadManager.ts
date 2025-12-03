@@ -4,17 +4,16 @@
 
 import * as THREE from 'three';
 
-import { Subscription, Observable, auditTime, buffer } from 'rxjs';
-
 import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { LoadingState } from '@reveal/model-base';
 import { CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
-import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { batchedDebounce, EventTrigger } from '@reveal/utilities';
+import assert from 'assert';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -22,7 +21,7 @@ export class CadManager {
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
   private readonly _cadModelMap: Map<symbol, CadNode> = new Map();
-  private readonly _subscription: Subscription = new Subscription();
+  private readonly _unsubscribeConsumedSectors: () => void;
   private _compatibleFileFormat:
     | {
         format: File3dFormat;
@@ -31,6 +30,8 @@ export class CadManager {
     | undefined = undefined;
 
   private _needsRedraw: boolean = false;
+
+  private readonly _loadingStateChangedTrigger = new EventTrigger<(loadingState: LoadingState) => void>();
 
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
   private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
@@ -113,33 +114,27 @@ export class CadManager {
       this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
-    const consumeNextSectors = (sectors: ConsumedSector[]) => {
+    const debouncedConsumeSectors = batchedDebounce((sectors: ConsumedSector[]) => {
       for (const sector of sectors) {
         consumeNextSector(sector);
       }
       this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
-    };
+    }, this._sectorBufferTime);
 
-    const consumedSectorsObservable = this._cadModelUpdateHandler.consumedSectorObservable();
-    const flushAt = consumedSectorsObservable.pipe(auditTime(this._sectorBufferTime));
-    this._subscription.add(
-      consumedSectorsObservable.pipe(buffer(flushAt)).subscribe({
-        next: consumeNextSectors,
-        error: error => {
-          MetricsLogger.trackError(error, {
-            moduleName: 'CadManager',
-            methodName: 'constructor'
-          });
-        }
-      })
-    );
+    const subscription = this._cadModelUpdateHandler.consumedSectorObservable().subscribe(debouncedConsumeSectors);
+    this._unsubscribeConsumedSectors = () => subscription.unsubscribe();
+
+    this._cadModelUpdateHandler.getLoadingStateObserver().subscribe(loadingState => {
+      this._loadingStateChangedTrigger.fire(loadingState);
+    });
   }
 
   dispose(): void {
     this._cadModelUpdateHandler.dispose();
     this._materialManager.dispose();
     this._cadModelFactory.dispose();
-    this._subscription.unsubscribe();
+    this._unsubscribeConsumedSectors();
+    this._loadingStateChangedTrigger.unsubscribeAll();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
 
@@ -224,8 +219,16 @@ export class CadManager {
     this._cadModelUpdateHandler.removeModel(model);
   }
 
-  getLoadingStateObserver(): Observable<LoadingState> {
-    return this._cadModelUpdateHandler.getLoadingStateObserver();
+  on(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {
+    assert(event === 'loadingStateChanged', `Unsupported event '${event}'`);
+
+    this._loadingStateChangedTrigger.subscribe(listener);
+  }
+
+  off(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {
+    assert(event === 'loadingStateChanged', `Unsupported event '${event}'`);
+
+    this._loadingStateChangedTrigger.unsubscribe(listener);
   }
 
   /**
