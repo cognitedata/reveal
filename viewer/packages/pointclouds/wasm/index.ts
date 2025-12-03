@@ -9,7 +9,7 @@ import { AABB, Vec3 } from '@reveal/utilities';
 
 function getWasmInitPromise(): Promise<void> {
   return typeof init === 'function'
-    ? (init as (buffer: any) => Promise<any>)({ module_or_path: wasm }).then(() => {})
+    ? (init as (input: { module_or_path: unknown }) => Promise<unknown>)({ module_or_path: wasm }).then(() => {})
     : Promise.resolve();
 }
 
