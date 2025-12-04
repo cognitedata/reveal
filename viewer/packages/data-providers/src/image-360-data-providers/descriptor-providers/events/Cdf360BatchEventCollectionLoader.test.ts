@@ -97,6 +97,23 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     expect(batchExecutionCount).toBe(10);
   });
 
+  test('should normalize uppercase event site_id when grouping events', async () => {
+    const allEvents = [createMockEvent('Site1', 'station1', 1)];
+
+    const allFiles = createMockFiles('site1', 'station1', 0);
+
+    let eventsListCallCount = 0;
+    const clientMock = createMockClient(allEvents, allFiles, () => eventsListCallCount++);
+    const batchLoader = new Cdf360BatchEventCollectionLoader(clientMock);
+
+    const resultsPromise = Promise.all([batchLoader.getCollectionDescriptors({ site_id: 'site1' }, false)]);
+
+    const results = await resultsPromise;
+
+    expect(results).toHaveLength(1);
+    expect(results[0].length).toBeGreaterThan(0);
+  });
+
   function createMockClient(
     events: CogniteEvent[],
     files: FileInfo[],
@@ -113,11 +130,18 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
       })
       .object();
 
+    // Track globally across all file list calls
+    let globalFileCallCount = 0;
+
     const filesMock = new Mock<ReturnType<CogniteClient['files']['list']>>()
       .setup(instance => instance.autoPagingEach)
       .returns(async (callback?: (file: FileInfo) => void) => {
         if (!errorMessage && callback) {
-          files.forEach(callback);
+          // Only process files once globally, not once per list call
+          if (globalFileCallCount === 0) {
+            files.forEach(file => callback(file));
+          }
+          globalFileCallCount++;
         }
       })
       .object();
@@ -165,22 +189,35 @@ describe(Cdf360BatchEventCollectionLoader.name, () => {
     };
   }
 
-  function createMockFiles(siteId: string, stationId: string, startId: number): FileInfo[] {
-    const now = new Date();
+  function createMockFiles(siteId: string, stationId: string, startId: number, numStations: number = 1): FileInfo[] {
     const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
+    const files: FileInfo[] = [];
 
-    return faces.map((face, index) => ({
-      id: startId + index,
-      name: `${face}.jpg`,
-      mimeType: 'image/jpeg' as const,
-      createdTime: now,
-      lastUpdatedTime: now,
-      uploaded: true,
-      metadata: {
-        site_id: siteId,
-        station_id: stationId,
-        face
-      }
-    }));
+    for (let stationIndex = 0; stationIndex < numStations; stationIndex++) {
+      const currentStationId = numStations === 1 ? stationId : `${stationId}_${stationIndex + 1}`;
+      const baseTime = new Date(Date.now() + stationIndex * 60000);
+
+      faces.forEach((face, faceIndex) => {
+        const uniqueId = startId + stationIndex * faces.length + faceIndex;
+        const faceTime = new Date(baseTime.getTime() + faceIndex * 1000);
+
+        files.push({
+          id: uniqueId,
+          name: `${face}.jpg`,
+          mimeType: 'image/jpeg' as const,
+          createdTime: faceTime,
+          lastUpdatedTime: faceTime,
+          uploaded: true,
+          metadata: {
+            site_id: siteId,
+            station_id: currentStationId,
+            face,
+            timestamp: baseTime.getTime().toString()
+          }
+        });
+      });
+    }
+
+    return files;
   }
 });

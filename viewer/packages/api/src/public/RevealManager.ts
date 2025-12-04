@@ -4,8 +4,9 @@
 
 import * as THREE from 'three';
 
-import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
-import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
+import isEqual from 'lodash/isEqual';
+
+import { Subscription, combineLatest, fromEventPattern } from 'rxjs';
 import { PointCloudBudget } from './types';
 
 import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
@@ -21,7 +22,6 @@ import {
   ResizeHandler,
   SettableRenderTarget
 } from '@reveal/rendering';
-import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
@@ -56,12 +56,11 @@ export class RevealManager {
   private _cameraInMotion: boolean = false;
 
   private _isDisposed = false;
-  private readonly _subscriptions = new Subscription();
+  private readonly _subscriptions;
   private readonly _events = {
     loadingStateChanged: new EventTrigger<LoadingStateChangeListener>()
   };
 
-  private readonly _updateSubject: Subject<void>;
   private readonly _cameraManager: CameraManager;
 
   private readonly _onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void;
@@ -80,23 +79,13 @@ export class RevealManager {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this._resizeHandler = resizeHandler;
-    this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
+    this._subscriptions = this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
     this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => (this._cameraInMotion = true);
     this._onCameraStop = () => (this._cameraInMotion = false);
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
-
-    this._updateSubject = new Subject();
-    this._updateSubject
-      .pipe(
-        auditTime(5000),
-        tap(() => {
-          MetricsLogger.trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
-        })
-      )
-      .subscribe();
   }
 
   public dispose(): void {
@@ -108,7 +97,6 @@ export class RevealManager {
     this._pipelineExecutor.dispose();
     this._renderPipeline.dispose();
     this._resizeHandler.dispose();
-    this._updateSubject.unsubscribe();
     this._subscriptions.unsubscribe();
     this._isDisposed = true;
 
@@ -144,7 +132,6 @@ export class RevealManager {
 
     if (this._cameraInMotion) {
       this._pointCloudManager.updateCamera(camera);
-      this._updateSubject.next();
     }
   }
 
@@ -282,33 +269,29 @@ export class RevealManager {
     }
   }
 
-  private notifyLoadingStateChanged(loadingState: LoadingState) {
-    this._events.loadingStateChanged.fire(loadingState);
-  }
+  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager): Subscription {
+    let lastLoadingState: LoadingState | undefined;
 
-  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager) {
-    this._subscriptions.add(
-      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
-        .pipe(
-          observeOn(asyncScheduler),
-          subscribeOn(asyncScheduler),
-          map(([cadLoadingState, pointCloudLoadingState]) => {
-            const state: LoadingState = {
-              isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
-              itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
-              itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
-              itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
-            };
-            return state;
-          }),
-          distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
-        )
-        .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
-          MetricsLogger.trackError(error, {
-            moduleName: 'RevealManager',
-            methodName: 'constructor'
-          })
-        )
-    );
+    return combineLatest([
+      fromEventPattern<LoadingState>(
+        eventHandler => cadManager.on('loadingStateChanged', eventHandler),
+        eventHandler => cadManager.off('loadingStateChanged', eventHandler)
+      ),
+      pointCloudManager.getLoadingStateObserver()
+    ]).subscribe(([cadLoadingState, pointCloudLoadingState]) => {
+      const state: LoadingState = {
+        isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+        itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+        itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
+        itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
+      };
+
+      if (isEqual(state, lastLoadingState)) {
+        return;
+      }
+
+      lastLoadingState = state;
+      this._events.loadingStateChanged.fire(state);
+    });
   }
 }
