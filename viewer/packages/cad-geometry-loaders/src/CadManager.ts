@@ -22,6 +22,8 @@ export class CadManager {
 
   private readonly _cadModelMap: Map<symbol, CadNode> = new Map();
   private readonly _unsubscribeConsumedSectors: () => void;
+  private readonly _unsubscribeLoadingState: () => void;
+
   private _compatibleFileFormat:
     | {
         format: File3dFormat;
@@ -121,10 +123,8 @@ export class CadManager {
       this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
     }, this._sectorBufferTime);
 
-    const subscription = this._cadModelUpdateHandler.consumedSectorObservable().subscribe(debouncedConsumeSectors);
-    this._unsubscribeConsumedSectors = () => subscription.unsubscribe();
-
-    this._cadModelUpdateHandler.getLoadingStateObserver().subscribe(loadingState => {
+    this._unsubscribeConsumedSectors = this._cadModelUpdateHandler.on('onNewConsumedSector', debouncedConsumeSectors);
+    this._unsubscribeLoadingState = this._cadModelUpdateHandler.on('onLoadingStateChanged', loadingState => {
       this._loadingStateChangedTrigger.fire(loadingState);
     });
   }
@@ -134,6 +134,7 @@ export class CadManager {
     this._materialManager.dispose();
     this._cadModelFactory.dispose();
     this._unsubscribeConsumedSectors();
+    this._unsubscribeLoadingState();
     this._loadingStateChangedTrigger.unsubscribeAll();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
@@ -202,7 +203,7 @@ export class CadManager {
 
     this.updateModelCompatibilityFormat(modelMetadata);
 
-    const model = await this._cadModelFactory.createModel(modelMetadata, geometryFilter);
+    const model = this._cadModelFactory.createModel(modelMetadata, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
 
     this._cadModelMap.set(model.cadModelIdentifier, model);
