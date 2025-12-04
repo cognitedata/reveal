@@ -4,7 +4,7 @@
 
 import { Potree } from './Potree';
 import { ModelDataProvider } from '@reveal/data-providers';
-import { PointCloudMaterialManager } from '@reveal/rendering';
+import { MAX_NUM_NODES_LOADING, PointCloudMaterialManager } from '@reveal/rendering';
 
 import { Mock } from 'moq.ts';
 
@@ -28,7 +28,7 @@ describe(Potree.name, () => {
     const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
 
     expect(potreeInstance.maxNumNodesLoading).toBeGreaterThan(0);
-    expect(potreeInstance.maxNumNodesLoading).toBeLessThanOrEqual(20);
+    expect(potreeInstance.maxNumNodesLoading).toBeLessThanOrEqual(MAX_NUM_NODES_LOADING);
   });
 
   test('LRU is initialized with point budget', () => {
