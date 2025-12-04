@@ -120,8 +120,8 @@ export class IconCollection {
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
-    const screenSpaceAreaThreshold = 0.04;
-    const minimumLevel = 3;
+    const screenSpaceAreaThreshold = 0.01;
+    const minimumLevel = 2;
     return ({ camera }) => {
       projection
         .copy(camera.projectionMatrix)
