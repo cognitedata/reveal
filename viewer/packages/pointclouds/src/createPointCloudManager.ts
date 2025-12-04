@@ -11,7 +11,8 @@ import {
   DMDataSourceType,
   ModelDataProvider,
   ModelMetadataProvider,
-  PointCloudStylableObjectProvider
+  PointCloudStylableObjectProvider,
+  CachedModelDataProvider
 } from '@reveal/data-providers';
 import { Potree } from './potree-three-loader';
 import { PointCloudFactory } from './PointCloudFactory';
@@ -31,7 +32,15 @@ export function createPointCloudManager(
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
 
-  const potreeInstance = new Potree(modelDataProvider, pointCloudMaterialManager);
+  const cachedProvider = new CachedModelDataProvider(modelDataProvider, {
+    cacheName: 'reveal-pointcloud-v1',
+    maxCacheSize: 500 * 1024 * 1024,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    enableMetrics: true,
+    enableLogging: true
+  });
+
+  const potreeInstance = new Potree(cachedProvider, pointCloudMaterialManager);
   const pointCloudFactory = new PointCloudFactory(
     potreeInstance,
     pointCloudStylableObjectProvider,

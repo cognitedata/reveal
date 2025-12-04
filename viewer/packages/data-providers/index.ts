@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 export { CdfModelDataProvider } from './src/model-data-providers/CdfModelDataProvider';
+export { CachedModelDataProvider } from './src/model-data-providers/CachedModelDataProvider';
 export { CdfModelIdentifier } from './src/model-identifiers/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/metadata-providers/CdfModelMetadataProvider';
 export { Cdf360ImageAnnotationProvider } from './src/image-360-data-providers/Cdf360ImageAnnotationProvider';

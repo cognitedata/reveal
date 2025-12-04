@@ -5,3 +5,4 @@
 import { PointCloudMetadata } from './PointCloudMetadata';
 
 export { PointCloudMetadata };
+export { PointCloudCacheDebugger } from './PointCloudCacheDebugger';
