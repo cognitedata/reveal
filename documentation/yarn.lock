@@ -9353,8 +9353,8 @@ __metadata:
   linkType: hard
 
 "mdast-util-to-hast@npm:^13.0.0":
-  version: 13.2.0
-  resolution: "mdast-util-to-hast@npm:13.2.0"
+  version: 13.2.1
+  resolution: "mdast-util-to-hast@npm:13.2.1"
   dependencies:
     "@types/hast": ^3.0.0
     "@types/mdast": ^4.0.0
@@ -9365,7 +9365,7 @@ __metadata:
     unist-util-position: ^5.0.0
     unist-util-visit: ^5.0.0
     vfile: ^6.0.0
-  checksum: 7e5231ff3d4e35e1421908437577fd5098141f64918ff5cc8a0f7a8a76c5407f7a3ee88d75f7a1f7afb763989c9f357475fa0ba8296c00aaff1e940098fe86a6
+  checksum: 20537df653be3653c3c6ea4be09ea1f67ca2f5e6afea027fcc3cde531656dc669a5e733d34a95b08b3ee71ab164c7b24352c8212891f723ddcec74d5a046bfd6
   languageName: node
   linkType: hard
 
@@ -10336,9 +10336,9 @@ __metadata:
   linkType: hard
 
 "node-forge@npm:^1":
-  version: 1.3.1
-  resolution: "node-forge@npm:1.3.1"
-  checksum: 08fb072d3d670599c89a1704b3e9c649ff1b998256737f0e06fbd1a5bf41cae4457ccaee32d95052d80bbafd9ffe01284e078c8071f0267dc9744e51c5ed42a9
+  version: 1.3.3
+  resolution: "node-forge@npm:1.3.3"
+  checksum: 045b650d61eeba57588744b7be4671044e83871e2c4dc5d4a38a8eb5af7e55fa790c93ba9db1d1ee14a567d25fde41e97a5132e076cff738622e0916c77b48d2
   languageName: node
   linkType: hard
 
