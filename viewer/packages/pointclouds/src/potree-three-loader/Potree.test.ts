@@ -27,8 +27,7 @@ describe(Potree.name, () => {
   test('Max nodes loading is set from constant', () => {
     const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
 
-    expect(potreeInstance.maxNumNodesLoading).toBeGreaterThan(0);
-    expect(potreeInstance.maxNumNodesLoading).toBeLessThanOrEqual(MAX_NUM_NODES_LOADING);
+    expect(potreeInstance.maxNumNodesLoading).toEqual(MAX_NUM_NODES_LOADING);
   });
 
   test('LRU is initialized with point budget', () => {

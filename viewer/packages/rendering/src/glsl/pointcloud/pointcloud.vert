@@ -10,13 +10,6 @@ precision highp int;
 #define min_lod_clamp 2.0
 #define max_lod_clamp 10.0
 
-// Distance-based point size reduction for close low-LOD nodes
-#define close_point_distance_threshold 10.0
-#define close_point_lod_threshold 4.0
-#define close_point_smoothstep_near 1.0
-#define close_point_min_scale 0.15
-#define close_point_scale_range 0.85
-
 in vec3 position;
 in vec3 color;
 in float intensity;
@@ -261,18 +254,6 @@ void main() {
 
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
-
-	// Distance-based size limiting to prevent oversized close points from low-LOD nodes
-	#if defined(adaptive_point_size)
-		float distanceToCamera = length(mvPosition.xyz);
-		float lod = getLOD();
-
-		if (distanceToCamera < close_point_distance_threshold && lod < close_point_lod_threshold) {
-			float closeScale = smoothstep(close_point_smoothstep_near, close_point_distance_threshold, distanceToCamera);
-			closeScale = close_point_min_scale + closeScale * close_point_scale_range;
-			pointSize = pointSize * closeScale;
-		}
-	#endif
 
 	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;
