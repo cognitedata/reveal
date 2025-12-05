@@ -78,7 +78,16 @@ export async function parseEpt(
   }
 
   const pointSize = schema.reduce((p: number, c) => p + c.size, 0);
-  const numPoints = buffer.byteLength / pointSize;
+
+  if (pointSize === 0 || buffer.byteLength === 0) {
+    throw new Error(`Invalid buffer: pointSize=${pointSize}, byteLength=${buffer.byteLength}`);
+  }
+
+  const numPoints = Math.floor(buffer.byteLength / pointSize);
+
+  if (numPoints === 0) {
+    throw new Error(`Buffer too small: ${buffer.byteLength} bytes for point size ${pointSize}`);
+  }
 
   let rgbBuffer: ArrayBuffer | undefined;
   let intensityBuffer: ArrayBuffer | undefined;
