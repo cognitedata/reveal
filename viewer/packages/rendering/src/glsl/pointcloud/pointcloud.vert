@@ -6,10 +6,6 @@ precision highp int;
 
 #define max_clip_boxes 30
 
-// LOD clamping to prevent extreme size variations
-#define min_lod_clamp 2.0
-#define max_lod_clamp 10.0
-
 in vec3 position;
 in vec3 color;
 in float intensity;
@@ -162,10 +158,7 @@ float getLOD() {
 }
 
 float getPointSizeAttenuation() {
-	float lod = getLOD();
-	// Clamp LOD to prevent extreme size variations (especially on low-LOD coarse nodes)
-	lod = clamp(lod, min_lod_clamp, max_lod_clamp);
-	return 0.5 * pow(2.0, lod);
+	return 0.5 * pow(2.0, getLOD());
 }
 
 #endif
