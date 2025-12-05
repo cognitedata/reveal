@@ -5,7 +5,6 @@ import { CadManager } from './CadManager';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelFactory } from '@reveal/cad-model';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { EMPTY } from 'rxjs';
 import { It, Mock, IMock } from 'moq.ts';
 import { PerspectiveCamera } from 'three';
 
@@ -32,12 +31,10 @@ describe(CadManager.name, () => {
         highDetailProximityThreshold: 100,
         maximumRenderCost: 95000000
       })
-      .setup(p => p.consumedSectorObservable())
-      .returns(EMPTY)
-      .setup(p => p.getLoadingStateObserver())
-      .returns(EMPTY)
       .setup(p => p.dispose())
       .returns()
+      .setup(p => p.on(It.IsAny(), It.IsAny()))
+      .returns(() => {})
       .setup(p => p.reportNewSectorsLoaded(It.IsAny()))
       .returns()
       .setup(p => p.addModel(It.IsAny()))
