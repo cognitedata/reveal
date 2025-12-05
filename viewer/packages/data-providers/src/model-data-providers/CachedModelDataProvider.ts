@@ -9,17 +9,7 @@ import { CacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
  * Wraps a ModelDataProvider with caching capabilities using the Cache API.
  *
  * This provider intercepts getBinaryFile and getJsonFile calls and caches
- * the responses for faster subsequent access and offline support.
- *
- * @example
- * ```typescript
- * const baseProvider = new CdfModelDataProvider(cogniteClient);
- * const cachedProvider = new CachedModelDataProvider(baseProvider, {
- *   cacheName: 'reveal-pointcloud-v1',
- *   maxCacheSize: 500 * 1024 * 1024, // 500MB
- *   maxAge: 7 * 24 * 60 * 60 * 1000   // 7 days
- * });
- * ```
+ * the responses for faster subsequent access.
  */
 export class CachedModelDataProvider implements ModelDataProvider {
   private readonly baseProvider: ModelDataProvider;

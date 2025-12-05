@@ -6,7 +6,7 @@ import { CacheManager } from './RevealCacheManager';
 import { CacheConfig } from './types';
 
 /**
- * Unified cache configuration for all Reveal 3D resources.
+ * Cache configuration for all Reveal 3D resources.
  *
  * We use a single shared cache that all resources (point clouds, CAD models, 360 images)
  * can use. This provides:
@@ -33,8 +33,6 @@ export function getRevealResourceCache(overrides?: Partial<CacheConfig>): CacheM
     cacheName: 'reveal-3d-resources-v1',
     maxCacheSize: 2048 * 1024 * 1024,
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    enableMetrics: true,
-    enableLogging: false,
     ...overrides
   });
 }

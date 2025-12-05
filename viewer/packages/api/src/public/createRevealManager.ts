@@ -164,7 +164,6 @@ export function createRevealManager(
   const cachedProvider = new CachedModelDataProvider(modelDataProvider, unifiedCache.cacheConfig);
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
-    modelDataProvider,
     annotationProvider,
     pointClassificationsProvider,
     pointCloudDMProvider,

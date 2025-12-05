@@ -36,8 +36,6 @@ export class CacheManager {
       cacheName: config.cacheName ?? 'reveal-cache-v1',
       maxCacheSize: config.maxCacheSize ?? 5000 * 1024 * 1024,
       maxAge: config.maxAge ?? 7 * 24 * 60 * 60 * 1000,
-      enableMetrics: config.enableMetrics ?? false,
-      enableLogging: config.enableLogging ?? false,
       cacheKeyGenerator: config.cacheKeyGenerator ?? ((url: string) => url)
     };
   }

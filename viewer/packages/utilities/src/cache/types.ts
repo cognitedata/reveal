@@ -8,37 +8,21 @@
 export interface CacheConfig {
   /**
    * Name of the cache storage.
-   * @default 'reveal-cache-v1'
    */
   cacheName?: string;
 
   /**
    * Maximum cache size in bytes before eviction starts
-   * @default 5000MB (5000 * 1024 * 1024)
    */
   maxCacheSize?: number;
 
   /**
    * Maximum age of cached items in milliseconds
-   * @default 7 days (7 * 24 * 60 * 60 * 1000)
    */
   maxAge?: number;
 
   /**
-   * Enable detailed metrics tracking
-   * @default false
-   */
-  enableMetrics?: boolean;
-
-  /**
-   * Enable console logging for cache operations
-   * @default false
-   */
-  enableLogging?: boolean;
-
-  /**
    * Custom cache key generator function
-   * @default Uses full URL as key
    */
   cacheKeyGenerator?: (url: string) => string;
 }
