@@ -32,7 +32,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const url = `${baseUrl}/${fileName}`;
-    const startTime = performance.now();
 
     try {
       const cached = await this.cacheManager.getCachedResponse(url);
@@ -40,7 +39,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
         return await cached.arrayBuffer();
       }
 
-      this.cacheManager.recordMiss(performance.now() - startTime);
       const data = await this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
 
       this.cacheManager
@@ -56,7 +54,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     const url = `${baseUrl}/${fileName}`;
-    const startTime = performance.now();
 
     try {
       const cached = await this.cacheManager.getCachedResponse(url);
@@ -64,7 +61,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
         return await cached.json();
       }
 
-      this.cacheManager.recordMiss(performance.now() - startTime);
       const data = await this.baseProvider.getJsonFile(baseUrl, fileName);
 
       this.cacheManager

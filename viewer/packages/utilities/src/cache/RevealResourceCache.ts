@@ -2,7 +2,8 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CacheConfig, CacheManager } from './CacheManager';
+import { CacheManager } from './RevealCacheManager';
+import { CacheConfig } from './types';
 
 /**
  * Unified cache configuration for all Reveal 3D resources.
@@ -23,7 +24,7 @@ import { CacheConfig, CacheManager } from './CacheManager';
  *
  * @example
  * ```typescript
- * const cache = getUnifiedRevealCache();
+ * const cache = getRevealResourceCache();
  * const data = await cache.fetchBinary('https://example.com/tile.bin');
  * ```
  */
@@ -46,14 +47,14 @@ export function getRevealResourceCacheName(): string {
 }
 
 /**
- * Clear the resource Reveal cache
+ * Clear the resource cache
  */
 export async function clearRevealResourceCache(): Promise<void> {
   await caches.delete('reveal-3d-resources-v1');
 }
 
 /**
- * Get total size of resource Reveal cache
+ * Get total size of resource cache
  */
 export async function getRevealResourceCacheSize(): Promise<number> {
   try {

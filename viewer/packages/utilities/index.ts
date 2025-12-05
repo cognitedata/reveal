@@ -49,8 +49,8 @@ export { TypedArray, TypedArrayConstructor } from './src/types';
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
-export { CacheManager } from './src/cache/CacheManager';
-export type { CacheConfig, CacheMetrics, CacheEntry, CacheStats, FetchOptions } from './src/cache/CacheManager';
+export { CacheManager } from './src/cache/RevealCacheManager';
+export type { CacheConfig, CacheEntry, CacheStats, FetchOptions } from './src/cache/types';
 
 export {
   getRevealResourceCache,
