@@ -12,7 +12,7 @@ import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange, CameraConfiguration } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { NodeTransformProvider } from '@reveal/rendering';
+import { NodeTransformProvider } from '@reveal/cad-styling';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
 import { NodeIdAndTreeIndexMaps } from '../utilities/NodeIdAndTreeIndexMaps';
 import { CadNode } from './CadNode';

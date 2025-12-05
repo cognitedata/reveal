@@ -35,3 +35,6 @@ export { AreaCollection } from './src/prioritized/AreaCollection';
 export { EmptyAreaCollection } from './src/prioritized/EmptyAreaCollection';
 export { ClusteredAreaCollection } from './src/prioritized/ClusteredAreaCollection';
 export { PrioritizedArea } from './src/prioritized/types';
+export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
+export { NodeTransformTextureBuilder } from './src/transform/NodeTransformTextureBuilder';
+export { NodeAppearanceTextureBuilder } from './src/NodeAppearanceTextureBuilder';

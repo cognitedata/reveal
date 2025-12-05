@@ -2,17 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
+import {
+  NodeAppearanceProvider,
+  NodeAppearance,
+  PrioritizedArea,
+  type NodeTransformProvider
+} from '@reveal/cad-styling';
 import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
-import {
-  CadMaterialManager,
-  NodeTransformProvider,
-  RenderMode,
-  setModelRenderLayers,
-  StyledTreeIndexSets
-} from '@reveal/rendering';
+import { CadMaterialManager, RenderMode, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
 
 import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
 
