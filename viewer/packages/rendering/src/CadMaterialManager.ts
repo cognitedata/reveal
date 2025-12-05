@@ -4,13 +4,16 @@
 
 import * as THREE from 'three';
 
-import { NodeAppearanceTextureBuilder } from './rendering/NodeAppearanceTextureBuilder';
-import { NodeTransformTextureBuilder } from './transform/NodeTransformTextureBuilder';
-import { NodeTransformProvider } from './transform/NodeTransformProvider';
 import { createMaterials, Materials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
-import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
+import {
+  NodeAppearance,
+  NodeAppearanceProvider,
+  NodeAppearanceTextureBuilder,
+  NodeTransformProvider,
+  NodeTransformTextureBuilder
+} from '@reveal/cad-styling';
 import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
