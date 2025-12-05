@@ -32,22 +32,48 @@ export class CachedModelDataProvider implements ModelDataProvider {
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const url = `${baseUrl}/${fileName}`;
+    const startTime = performance.now();
 
     try {
-      return await this.cacheManager.fetchBinary(url, { signal: abortSignal });
+      const cached = await this.cacheManager.getCachedResponse(url);
+      if (cached) {
+        return await cached.arrayBuffer();
+      }
+
+      this.cacheManager.recordMiss(performance.now() - startTime);
+      const data = await this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
+
+      this.cacheManager
+        .storeResponse(url, data, 'application/octet-stream')
+        .catch(err => console.warn('[CachedModelDataProvider] Failed to cache:', err));
+
+      return data;
     } catch (error) {
-      console.warn('[CachedModelDataProvider] Cache fetch failed, using base provider:', error);
+      console.warn('[CachedModelDataProvider] Error:', error);
       return this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
     }
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     const url = `${baseUrl}/${fileName}`;
+    const startTime = performance.now();
 
     try {
-      return await this.cacheManager.fetchJSON(url);
+      const cached = await this.cacheManager.getCachedResponse(url);
+      if (cached) {
+        return await cached.json();
+      }
+
+      this.cacheManager.recordMiss(performance.now() - startTime);
+      const data = await this.baseProvider.getJsonFile(baseUrl, fileName);
+
+      this.cacheManager
+        .storeResponse(url, JSON.stringify(data), 'application/json')
+        .catch(err => console.warn('[CachedModelDataProvider] Failed to cache:', err));
+
+      return data;
     } catch (error) {
-      console.warn('[CachedModelDataProvider] Cache fetch failed, using base provider:', error);
+      console.warn('[CachedModelDataProvider] Error:', error);
       return this.baseProvider.getJsonFile(baseUrl, fileName);
     }
   }
@@ -79,12 +105,5 @@ export class CachedModelDataProvider implements ModelDataProvider {
    */
   async getCacheStats(): Promise<CacheStats> {
     return this.cacheManager.getStats();
-  }
-
-  /**
-   * Print cache statistics to console
-   */
-  async printCacheStats(): Promise<void> {
-    await this.cacheManager.printStats();
   }
 }

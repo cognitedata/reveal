@@ -50,24 +50,14 @@ export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
 export { CacheManager } from './src/cache/CacheManager';
-export type {
-  CacheConfig,
-  CacheMetrics,
-  CacheEntry,
-  CacheStats,
-  FetchOptions
-} from './src/cache/CacheManager';
+export type { CacheConfig, CacheMetrics, CacheEntry, CacheStats, FetchOptions } from './src/cache/CacheManager';
+
 export {
-  createPointCloudCache,
-  createCadModelCache,
-  createImage360Cache,
-  createMetadataCache,
-  createTextureCache,
-  getAllRevealCacheNames,
-  clearAllRevealCaches,
-  getTotalRevealCacheSize,
-  printAllRevealCacheStats
-} from './src/cache/ResourceCaches';
+  getRevealResourceCache,
+  getRevealResourceCacheName,
+  clearRevealResourceCache,
+  getRevealResourceCacheSize
+} from './src/cache/RevealResourceCache';
 
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 

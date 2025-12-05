@@ -7,14 +7,14 @@
  */
 export interface CacheConfig {
   /**
-   * Name of the cache storage. Different resource types should use different cache names.
+   * Name of the cache storage.
    * @default 'reveal-cache-v1'
    */
   cacheName?: string;
 
   /**
    * Maximum cache size in bytes before eviction starts
-   * @default 500MB (500 * 1024 * 1024)
+   * @default 5000MB (5000 * 1024 * 1024)
    */
   maxCacheSize?: number;
 
@@ -133,10 +133,14 @@ export class CacheManager {
     errors: 0
   };
 
+  get cacheConfig(): CacheConfig {
+    return this.config;
+  }
+
   constructor(config: CacheConfig = {}) {
     this.config = {
       cacheName: config.cacheName ?? 'reveal-cache-v1',
-      maxCacheSize: config.maxCacheSize ?? 500 * 1024 * 1024,
+      maxCacheSize: config.maxCacheSize ?? 5000 * 1024 * 1024,
       maxAge: config.maxAge ?? 7 * 24 * 60 * 60 * 1000,
       enableMetrics: config.enableMetrics ?? false,
       enableLogging: config.enableLogging ?? false,
@@ -153,7 +157,6 @@ export class CacheManager {
     const startTime = performance.now();
 
     try {
-      // Bypass cache if requested
       if (options.bypassCache) {
         this.log(`[BYPASS] ${this.getFileName(url)}`);
         return await this.fetchFromNetwork(url, options);
@@ -291,13 +294,87 @@ export class CacheManager {
       this.log(`[CLEAR] Cache cleared: ${this.config.cacheName}`);
     }
 
-    // Reset metrics
     this.metrics.hits = 0;
     this.metrics.misses = 0;
     this.metrics.totalHitTime = 0;
     this.metrics.totalMissTime = 0;
     this.metrics.evictions = 0;
     this.metrics.errors = 0;
+  }
+
+  /**
+   * Get a cached response if it exists and is not expired
+   * Used by CachedModelDataProvider to check cache before using authenticated fetch
+   */
+  async getCachedResponse(url: string): Promise<Response | null> {
+    const startTime = performance.now();
+    const cacheKey = this.config.cacheKeyGenerator(url);
+    const cache = await caches.open(this.config.cacheName);
+    const response = await cache.match(cacheKey);
+
+    if (!response) {
+      return null;
+    }
+
+    if (this.isExpired(response)) {
+      await cache.delete(cacheKey);
+      return null;
+    }
+
+    if (this.config.enableMetrics) {
+      this.metrics.hits++;
+      this.metrics.totalHitTime += performance.now() - startTime;
+    }
+
+    this.log(`[HIT] ${this.getFileName(url)} (${(performance.now() - startTime).toFixed(2)}ms)`);
+    return response.clone();
+  }
+
+  /**
+   * Store data in cache
+   * Used by CachedModelDataProvider to cache responses from authenticated requests
+   */
+  async storeResponse(url: string, data: ArrayBuffer | string, contentType: string): Promise<void> {
+    try {
+      const cacheKey = this.config.cacheKeyGenerator(url);
+
+      const blob =
+        typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
+      const size = blob.size;
+
+      await this.evictIfNeeded(size);
+
+      const cache = await caches.open(this.config.cacheName);
+
+      const headers = new Headers({
+        'Content-Type': contentType,
+        'X-Cache-Date': Date.now().toString(),
+        'X-Cache-Size': size.toString()
+      });
+
+      const response = new Response(blob, {
+        status: 200,
+        statusText: 'OK',
+        headers
+      });
+
+      await cache.put(cacheKey, response);
+      this.log(`[STORE] ${this.getFileName(url)} (${this.formatBytes(size)})`);
+    } catch (error) {
+      this.metrics.errors++;
+      throw new Error(`Failed to store in cache: ${error}`);
+    }
+  }
+
+  /**
+   * Record a cache miss for metrics
+   * Used by CachedModelDataProvider when fetching from network
+   */
+  recordMiss(timeMs: number): void {
+    if (this.config.enableMetrics) {
+      this.metrics.misses++;
+      this.metrics.totalMissTime += timeMs;
+    }
   }
 
   /**
@@ -406,35 +483,6 @@ export class CacheManager {
     };
   }
 
-  /**
-   * Print cache statistics to console
-   */
-  async printStats(): Promise<void> {
-    const stats = await this.getStats();
-
-    console.log('=== Cache Statistics ===');
-    console.log(`Cache Name: ${stats.cacheName}`);
-    console.log(`Total Entries: ${stats.count}`);
-    console.log(`Total Size: ${stats.sizeFormatted}`);
-    console.log(`Hit Rate: ${stats.hitRate.toFixed(2)}%`);
-    console.log(`Avg Hit Time: ${stats.avgHitTime.toFixed(2)}ms`);
-    console.log(`Avg Miss Time: ${stats.avgMissTime.toFixed(2)}ms`);
-    console.log(`Evictions: ${stats.evictions}`);
-    console.log(`Errors: ${stats.errors}`);
-    console.log('\nTop 10 Cached Items:');
-
-    stats.entries.slice(0, 10).forEach((entry, i) => {
-      const filename = this.getFileName(entry.url);
-      const age = this.formatAge(entry.cachedAt);
-      console.log(`  ${i + 1}. ${filename}`);
-      console.log(`     Size: ${this.formatBytes(entry.size)} | Cached: ${age} ago | Type: ${entry.contentType}`);
-    });
-
-    if (stats.entries.length > 10) {
-      console.log(`  ... and ${stats.entries.length - 10} more`);
-    }
-  }
-
   private async fetchFromNetwork(url: string, options: FetchOptions): Promise<Response> {
     const fetchOptions: RequestInit = {
       signal: options.signal,
@@ -512,7 +560,6 @@ export class CacheManager {
 
     entries.sort((a, b) => a.date - b.date);
 
-    // Evict oldest entries
     let freedSpace = 0;
     let evictedCount = 0;
 
@@ -563,15 +610,6 @@ export class CacheManager {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  private formatAge(date: Date): string {
-    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-
-    if (seconds < 60) return `${seconds}s`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
-    return `${Math.floor(seconds / 86400)}d`;
   }
 
   private log(message: string): void {

@@ -27,18 +27,11 @@ export function createPointCloudManager(
   classificationsProvider: IPointClassificationsProvider,
   pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
   pointCloudMaterialManager: PointCloudMaterialManager,
+  cachedProvider: CachedModelDataProvider,
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
-
-  const cachedProvider = new CachedModelDataProvider(modelDataProvider, {
-    cacheName: 'reveal-pointcloud-v1',
-    maxCacheSize: 500 * 1024 * 1024,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    enableMetrics: true,
-    enableLogging: true
-  });
 
   const potreeInstance = new Potree(cachedProvider, pointCloudMaterialManager);
   const pointCloudFactory = new PointCloudFactory(
