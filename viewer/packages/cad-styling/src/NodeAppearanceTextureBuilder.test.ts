@@ -4,16 +4,17 @@
 
 import * as THREE from 'three';
 
-import { NodeAppearance, NodeOutlineColor } from '@reveal/cad-styling';
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
-import { TreeIndexNodeCollection, NodeAppearanceProvider } from '@reveal/cad-styling';
-
 import { IndexSet, createUint8View } from '@reveal/utilities';
+
+import { NodeAppearanceProvider } from './NodeAppearanceProvider';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 import { Color } from 'three';
 
 import { jest } from '@jest/globals';
+import { NodeOutlineColor, type NodeAppearance } from './NodeAppearance';
 
 function toByteTuple(color: Color): [number, number, number] {
   return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];

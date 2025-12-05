@@ -37,3 +37,4 @@ export { ClusteredAreaCollection } from './src/prioritized/ClusteredAreaCollecti
 export { PrioritizedArea } from './src/prioritized/types';
 export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
 export { NodeTransformTextureBuilder } from './src/transform/NodeTransformTextureBuilder';
+export { NodeAppearanceTextureBuilder } from './src/NodeAppearanceTextureBuilder';

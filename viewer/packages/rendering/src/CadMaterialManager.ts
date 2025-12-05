@@ -4,13 +4,13 @@
 
 import * as THREE from 'three';
 
-import { NodeAppearanceTextureBuilder } from './rendering/NodeAppearanceTextureBuilder';
 import { createMaterials, Materials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import {
   NodeAppearance,
   NodeAppearanceProvider,
+  NodeAppearanceTextureBuilder,
   NodeTransformProvider,
   NodeTransformTextureBuilder
 } from '@reveal/cad-styling';
