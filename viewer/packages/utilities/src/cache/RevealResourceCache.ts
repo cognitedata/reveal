@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CacheManager } from './RevealCacheManager';
+import { RevealCacheManager } from './RevealCacheManager';
 import { CacheConfig } from './types';
 
 /**
@@ -28,8 +28,8 @@ import { CacheConfig } from './types';
  * const data = await cache.fetchBinary('https://example.com/tile.bin');
  * ```
  */
-export function getRevealResourceCache(overrides?: Partial<CacheConfig>): CacheManager {
-  return new CacheManager({
+export function getRevealResourceCache(overrides?: Partial<CacheConfig>): RevealCacheManager {
+  return new RevealCacheManager({
     cacheName: 'reveal-3d-resources-v1',
     maxCacheSize: 2048 * 1024 * 1024,
     maxAge: 7 * 24 * 60 * 60 * 1000,

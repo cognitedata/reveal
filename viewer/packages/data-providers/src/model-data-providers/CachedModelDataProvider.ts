@@ -3,7 +3,7 @@
  */
 
 import { ModelDataProvider } from '../ModelDataProvider';
-import { CacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
+import { RevealCacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
 
 /**
  * Wraps a ModelDataProvider with caching capabilities using the Cache API.
@@ -13,11 +13,11 @@ import { CacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
  */
 export class CachedModelDataProvider implements ModelDataProvider {
   private readonly baseProvider: ModelDataProvider;
-  private readonly cacheManager: CacheManager;
+  private readonly cacheManager: RevealCacheManager;
 
   constructor(baseProvider: ModelDataProvider, cacheConfig?: CacheConfig) {
     this.baseProvider = baseProvider;
-    this.cacheManager = new CacheManager(cacheConfig);
+    this.cacheManager = new RevealCacheManager(cacheConfig);
   }
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
@@ -67,7 +67,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
   /**
    * Get the underlying cache manager for direct cache operations
    */
-  getCacheManager(): CacheManager {
+  getCacheManager(): RevealCacheManager {
     return this.cacheManager;
   }
 

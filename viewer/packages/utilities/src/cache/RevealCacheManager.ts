@@ -24,7 +24,7 @@ import { CacheConfig, FetchOptions, CacheStats, CacheEntry } from './types';
  * const data = await pointCloudCache.fetch('https://example.com/data.bin');
  * ```
  */
-export class CacheManager {
+export class RevealCacheManager {
   private readonly config: Required<CacheConfig>;
 
   get cacheConfig(): CacheConfig {

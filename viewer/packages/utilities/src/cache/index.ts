@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-export { CacheManager } from './RevealCacheManager';
-export type { CacheConfig, CacheMetrics, CacheEntry, CacheStats, FetchOptions } from './RevealCacheManager';
+export { RevealCacheManager } from './RevealCacheManager';
+export type { CacheConfig, CacheEntry, CacheStats, FetchOptions } from './types';
 
 export {
   getRevealResourceCache,
