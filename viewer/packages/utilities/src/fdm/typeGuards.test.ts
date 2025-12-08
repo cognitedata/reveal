@@ -8,8 +8,12 @@ describe(isDmIdentifier.name, () => {
     expect(isDmIdentifier({ externalId: 'external-id', space: 'space' })).toBeTrue();
   });
 
-  test('does not recognize classic asset ID', () => {
+  test('does not recognize classic asset internal ID', () => {
     expect(isDmIdentifier({ id: 123 })).toBeFalse();
+  });
+
+  test('does not recognize classic asset external ID', () => {
+    expect(isDmIdentifier({ externalId: 'classic-external-id' })).toBeFalse();
   });
 
   test('does not recognize null', () => {
