@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { isDmIdentifier } from './typeGuards';
 
 describe(isDmIdentifier.name, () => {
