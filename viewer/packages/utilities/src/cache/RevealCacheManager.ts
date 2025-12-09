@@ -24,6 +24,7 @@ import { CacheConfig, CacheStats, CacheEntry } from './types';
  */
 export class RevealCacheManager {
   private readonly config: Required<CacheConfig>;
+  private storeQueue: Promise<void> = Promise.resolve();
 
   get cacheConfig(): CacheConfig {
     return this.config;
@@ -60,7 +61,6 @@ export class RevealCacheManager {
 
   /**
    * Get a cached response if it exists and is not expired
-   * Used by CachedModelDataProvider to check cache before using authenticated fetch
    */
   async getCachedResponse(url: string): Promise<Response | null> {
     const cacheKey = this.config.cacheKeyGenerator(url);
@@ -81,36 +81,45 @@ export class RevealCacheManager {
 
   /**
    * Store data in cache
-   * Used by CachedModelDataProvider to cache responses from authenticated requests
    */
   async storeResponse(url: string, data: ArrayBuffer | string, contentType: string): Promise<void> {
-    try {
-      const cacheKey = this.config.cacheKeyGenerator(url);
+    const currentOperation = this.storeQueue.then(async () => {
+      try {
+        const cacheKey = this.config.cacheKeyGenerator(url);
 
-      const blob =
-        typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
-      const size = blob.size;
+        const blob =
+          typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
+        const size = blob.size;
 
-      await this.evictIfNeeded(size);
+        await this.evictIfNeeded(size);
 
-      const cache = await caches.open(this.config.cacheName);
+        const cache = await caches.open(this.config.cacheName);
 
-      const headers = new Headers({
-        'Content-Type': contentType,
-        'X-Cache-Date': Date.now().toString(),
-        'X-Cache-Size': size.toString()
-      });
+        const headers = new Headers({
+          'Content-Type': contentType,
+          'X-Cache-Date': Date.now().toString(),
+          'X-Cache-Size': size.toString()
+        });
 
-      const response = new Response(blob, {
-        status: 200,
-        statusText: 'OK',
-        headers
-      });
+        const response = new Response(blob, {
+          status: 200,
+          statusText: 'OK',
+          headers
+        });
 
-      await cache.put(cacheKey, response);
-    } catch (error) {
-      throw new Error(`Failed to store in cache: ${error}`, { cause: error as Error });
-    }
+        await cache.put(cacheKey, response);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        throw new Error(`Failed to store in cache: ${message}`, { cause: error });
+      }
+    });
+
+    this.storeQueue = currentOperation.catch(error => {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn('[RevealCacheManager] Store operation failed, continuing queue:', message);
+    });
+
+    await currentOperation;
   }
 
   /**
