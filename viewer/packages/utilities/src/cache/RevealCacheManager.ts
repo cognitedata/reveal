@@ -126,9 +126,10 @@ export class RevealCacheManager {
 
         const cache = await caches.open(this._config.cacheName);
 
+        const now = Date.now();
         const headers = new Headers({
           'Content-Type': contentType,
-          'X-Cache-Date': Date.now().toString(),
+          'X-Cache-Date': now.toString(),
           'X-Cache-Size': size.toString()
         });
 
@@ -140,7 +141,7 @@ export class RevealCacheManager {
 
         await cache.put(cacheKey, response);
 
-        this._metadataIndex?.set(cacheKey, { size, date: Date.now() });
+        this._metadataIndex?.set(cacheKey, { size, date: now });
         this._currentSize += size;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
