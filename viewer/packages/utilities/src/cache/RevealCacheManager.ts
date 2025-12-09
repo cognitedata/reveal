@@ -133,7 +133,7 @@ export class RevealCacheManager {
         return size;
       }
       const sizeHeader = response.headers.get('X-Cache-Size');
-      return size + (sizeHeader ? parseInt(sizeHeader, 10) : 0);
+      return size + safeParseInt(sizeHeader);
     }, 0);
 
     return totalSize;
@@ -153,10 +153,10 @@ export class RevealCacheManager {
       if (response) {
         const sizeHeader = response.headers.get('X-Cache-Size');
         const dateHeader = response.headers.get('X-Cache-Date');
-        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
-        const cachedAt = dateHeader ? new Date(parseInt(dateHeader, 10)) : new Date(0);
+        const size = safeParseInt(sizeHeader);
+        const cachedAt = new Date(safeParseInt(dateHeader));
         const expiresAt = new Date(cachedAt.getTime() + this.config.maxAge);
-        const contentType = response.headers.get('Content-Type') || 'unknown';
+        const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
         totalSize += size;
         entries.push({
@@ -189,12 +189,12 @@ export class RevealCacheManager {
       if (response) {
         const dateHeader = response.headers.get('X-Cache-Date');
         const sizeHeader = response.headers.get('X-Cache-Size');
-        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
+        const size = safeParseInt(sizeHeader);
 
         currentSize += size;
         entries.push({
           url: response.url,
-          date: dateHeader ? parseInt(dateHeader, 10) : 0,
+          date: safeParseInt(dateHeader),
           size
         });
       }
@@ -223,7 +223,9 @@ export class RevealCacheManager {
     const dateHeader = response.headers.get('X-Cache-Date');
     if (!dateHeader) return true;
 
-    const cachedAt = parseInt(dateHeader);
+    const cachedAt = safeParseInt(dateHeader);
+    if (cachedAt === 0) return true;
+
     return Date.now() - cachedAt > this.config.maxAge;
   }
 
@@ -235,4 +237,11 @@ export class RevealCacheManager {
 
     return parseFloat((bytes / Math.pow(BYTES_PER_KB, i)).toFixed(2)) + ' ' + sizes[i];
   }
+}
+
+function safeParseInt(value: string | null | undefined): number {
+  const defaultValue = 0;
+  if (!value) return defaultValue;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
 }

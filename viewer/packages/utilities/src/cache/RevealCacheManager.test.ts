@@ -247,6 +247,27 @@ describe(RevealCacheManager.name, () => {
     expect(customKeyGen).toHaveBeenCalledWith(TEST_URL);
   });
 
+  test('should handle invalid header values gracefully', async () => {
+    const cache = await caches.open('test-cache');
+
+    const invalidHeaders = new Headers({
+      'Content-Type': 'application/octet-stream',
+      'X-Cache-Date': 'invalid-date',
+      'X-Cache-Size': 'not-a-number'
+    });
+    await cache.put(
+      'https://example.com/invalid.bin',
+      new Response(new ArrayBuffer(100), { status: 200, headers: invalidHeaders })
+    );
+
+    const stats = await cacheManager.getStats();
+    expect(stats).toBeDefined();
+    expect(stats.count).toBeGreaterThanOrEqual(0);
+
+    const size = await cacheManager.getSize();
+    expect(size).toBeGreaterThanOrEqual(0);
+  });
+
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
       match: async (key: string) => storage.get(key) || undefined,
