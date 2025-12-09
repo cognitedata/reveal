@@ -59,6 +59,8 @@ export {
   getRevealResourceCacheSize
 } from './src/cache/RevealResourceCache';
 
+export { calculateOptimalCacheSize } from './src/cache/StorageQuotaManager';
+
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';

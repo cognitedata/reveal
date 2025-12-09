@@ -2,6 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
+import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { CacheConfig, FetchOptions, CacheStats, CacheEntry } from './types';
 
 /**
@@ -33,9 +34,9 @@ export class RevealCacheManager {
 
   constructor(config: CacheConfig = {}) {
     this.config = {
-      cacheName: config.cacheName ?? 'reveal-cache-v1',
-      maxCacheSize: config.maxCacheSize ?? 5000 * 1024 * 1024,
-      maxAge: config.maxAge ?? 7 * 24 * 60 * 60 * 1000,
+      cacheName: config.cacheName ?? CACHE_NAME,
+      maxCacheSize: config.maxCacheSize ?? DEFAULT_DESKTOP_STORAGE_LIMIT,
+      maxAge: config.maxAge ?? DEFAULT_MAX_CACHE_AGE,
       cacheKeyGenerator: config.cacheKeyGenerator ?? ((url: string) => url)
     };
   }

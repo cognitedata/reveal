@@ -2,8 +2,9 @@
  * Copyright 2025 Cognite AS
  */
 
+import { CACHE_NAME, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { RevealCacheManager } from './RevealCacheManager';
-import { CacheConfig } from './types';
+import { calculateOptimalCacheSize } from './StorageQuotaManager';
 
 /**
  * Cache configuration for all Reveal 3D resources.
@@ -14,26 +15,26 @@ import { CacheConfig } from './types';
  * - Better resource utilization (unused quota from one type benefits others)
  * - Simpler management (single cache to monitor and clear)
  * - Consistent behavior across all 3D resources
+ * - Automatic cache size optimization based on device and available storage
  */
 
 /**
  * Get the resource cache for all Reveal 3D resources
  *
+ * The cache size is automatically determined based on device type and characteristics.
+ *
  * @param overrides Optional configuration overrides
  * @returns CacheManager instance for 3D resources
- *
- * @example
- * ```typescript
- * const cache = getRevealResourceCache();
- * const data = await cache.fetchBinary('https://example.com/tile.bin');
- * ```
- */
-export function getRevealResourceCache(overrides?: Partial<CacheConfig>): RevealCacheManager {
+ * */
+
+export function getRevealResourceCache(): RevealCacheManager {
+  const recommendationSize = calculateOptimalCacheSize();
+
   return new RevealCacheManager({
-    cacheName: 'reveal-3d-resources-v1',
-    maxCacheSize: 2048 * 1024 * 1024,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    ...overrides
+    cacheName: CACHE_NAME,
+    maxCacheSize: recommendationSize,
+    maxAge: DEFAULT_MAX_CACHE_AGE,
+    cacheKeyGenerator: (url: string) => url
   });
 }
 
@@ -41,14 +42,14 @@ export function getRevealResourceCache(overrides?: Partial<CacheConfig>): Reveal
  * Get the resource cache name
  */
 export function getRevealResourceCacheName(): string {
-  return 'reveal-3d-resources-v1';
+  return CACHE_NAME;
 }
 
 /**
  * Clear the resource cache
  */
 export async function clearRevealResourceCache(): Promise<void> {
-  await caches.delete('reveal-3d-resources-v1');
+  await caches.delete(CACHE_NAME);
 }
 
 /**
@@ -56,7 +57,7 @@ export async function clearRevealResourceCache(): Promise<void> {
  */
 export async function getRevealResourceCacheSize(): Promise<number> {
   try {
-    const cache = await caches.open('reveal-3d-resources-v1');
+    const cache = await caches.open(CACHE_NAME);
     const requests = await cache.keys();
 
     let totalSize = 0;
