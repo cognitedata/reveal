@@ -109,7 +109,7 @@ export class RevealCacheManager {
 
       await cache.put(cacheKey, response);
     } catch (error) {
-      throw new Error(`Failed to store in cache: ${error}`);
+      throw new Error(`Failed to store in cache: ${error}`, { cause: error as Error });
     }
   }
 
@@ -120,14 +120,14 @@ export class RevealCacheManager {
     const cache = await caches.open(this.config.cacheName);
     const requests = await cache.keys();
 
-    let totalSize = 0;
-    for (const request of requests) {
-      const response = await cache.match(request);
-      if (response) {
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        totalSize += sizeHeader ? parseInt(sizeHeader) : 0;
+    const responses = await Promise.all(requests.map(request => cache.match(request)));
+    const totalSize = responses.reduce((size, response) => {
+      if (!response) {
+        return size;
       }
-    }
+      const sizeHeader = response.headers.get('X-Cache-Size');
+      return size + (sizeHeader ? parseInt(sizeHeader, 10) : 0);
+    }, 0);
 
     return totalSize;
   }
@@ -142,13 +142,15 @@ export class RevealCacheManager {
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
-    for (const request of requests) {
-      const response = await cache.match(request);
+    const responses = await Promise.all(requests.map(request => cache.match(request)));
+
+    responses.forEach((response, i) => {
       if (response) {
+        const request = requests[i];
         const sizeHeader = response.headers.get('X-Cache-Size');
         const dateHeader = response.headers.get('X-Cache-Date');
-        const size = sizeHeader ? parseInt(sizeHeader) : 0;
-        const cachedAt = dateHeader ? new Date(parseInt(dateHeader)) : new Date();
+        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
+        const cachedAt = dateHeader ? new Date(parseInt(dateHeader, 10)) : new Date();
         const expiresAt = new Date(cachedAt.getTime() + this.config.maxAge);
         const contentType = response.headers.get('Content-Type') || 'unknown';
 
@@ -161,7 +163,7 @@ export class RevealCacheManager {
           contentType
         });
       }
-    }
+    });
 
     return {
       cacheName: this.config.cacheName,
@@ -173,47 +175,46 @@ export class RevealCacheManager {
   }
 
   private async evictIfNeeded(newEntrySize: number): Promise<void> {
-    const currentSize = await this.getSize();
-
-    if (currentSize + newEntrySize <= this.config.maxCacheSize) {
-      return;
-    }
-    await this.evictOldestEntries(newEntrySize);
-  }
-
-  private async evictOldestEntries(spaceNeeded: number): Promise<void> {
     const cache = await caches.open(this.config.cacheName);
     const requests = await cache.keys();
 
     const entries: Array<{ request: Request; date: number; size: number }> = [];
+    let currentSize = 0;
 
-    for (const request of requests) {
-      const response = await cache.match(request);
+    const responses = await Promise.all(requests.map(request => cache.match(request)));
+
+    for (let i = 0; i < requests.length; i++) {
+      const response = responses[i];
       if (response) {
         const dateHeader = response.headers.get('X-Cache-Date');
         const sizeHeader = response.headers.get('X-Cache-Size');
+        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
 
+        currentSize += size;
         entries.push({
-          request,
-          date: dateHeader ? parseInt(dateHeader) : 0,
-          size: sizeHeader ? parseInt(sizeHeader) : 0
+          request: requests[i],
+          date: dateHeader ? parseInt(dateHeader, 10) : 0,
+          size
         });
       }
     }
 
+    if (currentSize + newEntrySize <= this.config.maxCacheSize) {
+      return;
+    }
+
+    const spaceToFree = currentSize + newEntrySize - this.config.maxCacheSize;
+
     entries.sort((a, b) => a.date - b.date);
 
     let freedSpace = 0;
-    let evictedCount = 0;
-
     for (const entry of entries) {
-      if (freedSpace >= spaceNeeded) {
+      if (freedSpace >= spaceToFree) {
         break;
       }
 
       await cache.delete(entry.request);
       freedSpace += entry.size;
-      evictedCount++;
     }
   }
 
