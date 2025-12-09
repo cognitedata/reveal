@@ -59,9 +59,17 @@ export class RevealCacheManager {
    * Clear all cached entries and reset the in-memory index
    */
   async clear(): Promise<void> {
-    await caches.delete(this._config.cacheName);
-    this._metadataIndex = undefined;
-    this._currentSize = 0;
+    const clearOperation = this._storeQueue.then(async () => {
+      await caches.delete(this._config.cacheName);
+      this._metadataIndex = undefined;
+      this._currentSize = 0;
+    });
+
+    this._storeQueue = clearOperation.catch(() => {
+      // Ensure queue continues on error
+    });
+
+    await clearOperation;
   }
 
   /**
