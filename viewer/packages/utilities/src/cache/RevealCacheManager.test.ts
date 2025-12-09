@@ -275,6 +275,13 @@ describe(RevealCacheManager.name, () => {
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
       match: async (key: string) => storage.get(key) || null,
+      matchAll: async () => {
+        return Array.from(storage.entries()).map(([url, response]) => {
+          const cloned = response.clone();
+          Object.defineProperty(cloned, 'url', { value: url, writable: false });
+          return cloned;
+        });
+      },
       put: async (key: string, response: Response) => {
         storage.set(key, response);
       },

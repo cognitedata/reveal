@@ -118,9 +118,8 @@ export class RevealCacheManager {
    */
   async getSize(): Promise<number> {
     const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
-    const responses = await Promise.all(requests.map(request => cache.match(request)));
     const totalSize = responses.reduce((size, response) => {
       if (!response) {
         return size;
@@ -137,26 +136,23 @@ export class RevealCacheManager {
    */
   async getStats(): Promise<CacheStats> {
     const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
-    const responses = await Promise.all(requests.map(request => cache.match(request)));
-
-    responses.forEach((response, i) => {
+    responses.forEach(response => {
       if (response) {
-        const request = requests[i];
         const sizeHeader = response.headers.get('X-Cache-Size');
         const dateHeader = response.headers.get('X-Cache-Date');
         const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
-        const cachedAt = dateHeader ? new Date(parseInt(dateHeader, 10)) : new Date();
+        const cachedAt = dateHeader ? new Date(parseInt(dateHeader, 10)) : new Date(0);
         const expiresAt = new Date(cachedAt.getTime() + this.config.maxAge);
         const contentType = response.headers.get('Content-Type') || 'unknown';
 
         totalSize += size;
         entries.push({
-          url: request.url,
+          url: response.url,
           size,
           cachedAt,
           expiresAt,
@@ -176,15 +172,12 @@ export class RevealCacheManager {
 
   private async evictIfNeeded(newEntrySize: number): Promise<void> {
     const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
-    const entries: Array<{ request: Request; date: number; size: number }> = [];
+    const entries: Array<{ url: string; date: number; size: number }> = [];
     let currentSize = 0;
 
-    const responses = await Promise.all(requests.map(request => cache.match(request)));
-
-    for (let i = 0; i < requests.length; i++) {
-      const response = responses[i];
+    for (const response of responses) {
       if (response) {
         const dateHeader = response.headers.get('X-Cache-Date');
         const sizeHeader = response.headers.get('X-Cache-Size');
@@ -192,7 +185,7 @@ export class RevealCacheManager {
 
         currentSize += size;
         entries.push({
-          request: requests[i],
+          url: response.url,
           date: dateHeader ? parseInt(dateHeader, 10) : 0,
           size
         });
@@ -213,7 +206,7 @@ export class RevealCacheManager {
         break;
       }
 
-      await cache.delete(entry.request);
+      await cache.delete(entry.url);
       freedSpace += entry.size;
     }
   }
