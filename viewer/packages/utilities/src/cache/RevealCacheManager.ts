@@ -87,8 +87,7 @@ export class RevealCacheManager {
       try {
         const cacheKey = this.config.cacheKeyGenerator(url);
 
-        const blob =
-          typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
+        const blob = new Blob([data], { type: contentType });
         const size = blob.size;
 
         await this.evictIfNeeded(size);
@@ -161,7 +160,7 @@ export class RevealCacheManager {
 
         totalSize += size;
         entries.push({
-          url: response.url,
+          cacheKey: response.url,
           size,
           cachedAt,
           expiresAt,
