@@ -38,7 +38,7 @@ describe(RevealCacheManager.name, () => {
     jest.clearAllMocks();
   });
 
-  test('should use custom config or defaults', () => {
+  test('should use provided config or defaults', () => {
     const custom = new RevealCacheManager({
       cacheName: 'custom',
       maxCacheSize: 512 * 1024,
@@ -53,32 +53,26 @@ describe(RevealCacheManager.name, () => {
     expect(defaults.cacheConfig.maxAge).toBe(DEFAULT_MAX_CACHE_AGE);
   });
 
-  test('should store and retrieve data with correct content type', async () => {
-    const binaryData = new ArrayBuffer(100);
-    await cacheManager.storeResponse(TEST_URL, binaryData, 'application/octet-stream');
+  test('should store, retrieve, check and clear cached data', async () => {
+    const data = new ArrayBuffer(100);
+    await cacheManager.storeResponse(TEST_URL, data, 'application/octet-stream');
 
     const cached = await cacheManager.getCachedResponse(TEST_URL);
-    expect(cached).not.toBeNull();
+    expect(cached).toBeDefined();
     expect(cached!.headers.get('Content-Type')).toBe('application/octet-stream');
 
-    const jsonData = JSON.stringify({ test: 'value' });
-    await cacheManager.storeResponse(FILE1_URL, jsonData, 'application/json');
+    expect(await cacheManager.has(TEST_URL)).toBe(true);
 
-    const cachedJson = await cacheManager.getCachedResponse(FILE1_URL);
-    expect(cachedJson!.headers.get('Content-Type')).toBe('application/json');
-  });
-
-  test('should return null for cache miss', async () => {
-    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeNull();
+    await cacheManager.clear();
     expect(await cacheManager.has(TEST_URL)).toBe(false);
   });
 
-  test('should check if URL is cached', async () => {
-    await cacheManager.storeResponse(TEST_URL, new ArrayBuffer(50), 'application/octet-stream');
-    expect(await cacheManager.has(TEST_URL)).toBe(true);
+  test('should return undefined for cache miss', async () => {
+    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeUndefined();
+    expect(await cacheManager.has(TEST_URL)).toBe(false);
   });
 
-  test('should remove expired entries on retrieval', async () => {
+  test('should remove expired entries', async () => {
     const cache = await caches.open('test-cache');
     const expiredDate = Date.now() - 2 * 60 * 60 * 1000;
     const headers = new Headers({
@@ -88,8 +82,7 @@ describe(RevealCacheManager.name, () => {
     });
     await cache.put(TEST_URL, new Response(new ArrayBuffer(50), { status: 200, headers }));
 
-    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeNull();
-    expect(await cacheManager.has(TEST_URL)).toBe(false);
+    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeUndefined();
   });
 
   test('should evict oldest entries when cache is full', async () => {
@@ -124,39 +117,33 @@ describe(RevealCacheManager.name, () => {
     expect(await smallCache.getSize()).toBeLessThanOrEqual(350);
   });
 
-  test('should clear all entries', async () => {
-    await cacheManager.storeResponse(FILE1_URL, new ArrayBuffer(50), 'application/octet-stream');
-    await cacheManager.storeResponse(FILE2_URL, new ArrayBuffer(50), 'application/octet-stream');
-    await cacheManager.clear();
-
-    expect(await cacheManager.has(FILE1_URL)).toBe(false);
-    expect(await cacheManager.has(FILE2_URL)).toBe(false);
-  });
-
-  test('should calculate size and return formatted stats', async () => {
+  test('should calculate size and return stats using in-memory index', async () => {
     expect(await cacheManager.getSize()).toBe(0);
 
     await cacheManager.storeResponse(FILE1_URL, new ArrayBuffer(100), 'application/octet-stream');
+    expect(await cacheManager.getSize()).toBe(100);
 
-    expect(await cacheManager.getSize()).toBeGreaterThanOrEqual(0);
+    await cacheManager.storeResponse(FILE2_URL, new ArrayBuffer(200), 'application/octet-stream');
+    expect(await cacheManager.getSize()).toBe(300);
 
     const stats = await cacheManager.getStats();
     expect(stats.cacheName).toBe('test-cache');
-    expect(stats.count).toBeGreaterThanOrEqual(0);
+    expect(stats.count).toBe(2);
+    expect(stats.size).toBe(300);
     expect(stats.sizeFormatted).toBeDefined();
     expect(Array.isArray(stats.entries)).toBe(true);
   });
 
-  test('should handle cache errors gracefully', async () => {
+  test('should handle errors gracefully', async () => {
     const failingMock: CacheStorage = {
       open: jest.fn(async () => {
         throw new Error('Cache error');
       }),
-      delete: jest.fn(),
-      has: jest.fn(),
-      keys: jest.fn(),
-      match: jest.fn()
-    } as CacheStorage;
+      delete: jest.fn(async () => false),
+      has: jest.fn(async () => false),
+      keys: jest.fn(async () => []),
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
 
     global.caches = failingMock;
 
@@ -166,7 +153,7 @@ describe(RevealCacheManager.name, () => {
     ).rejects.toThrow('Failed to store in cache');
   });
 
-  test('should serialize concurrent writes to prevent exceeding cache limit', async () => {
+  test('should serialize concurrent writes to prevent race conditions', async () => {
     const smallCache = new RevealCacheManager({
       cacheName: 'concurrent-cache',
       maxCacheSize: 300,
@@ -212,11 +199,11 @@ describe(RevealCacheManager.name, () => {
         }
         return createMockCache(mockCacheStorageMap.get(cacheName)!);
       }),
-      delete: jest.fn(),
-      has: jest.fn(),
-      keys: jest.fn(),
-      match: jest.fn()
-    } as unknown as CacheStorage;
+      delete: jest.fn(async () => false),
+      has: jest.fn(async () => false),
+      keys: jest.fn(async () => []),
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
 
     global.caches = failingMock;
     const resilientCache = new RevealCacheManager({
@@ -234,6 +221,21 @@ describe(RevealCacheManager.name, () => {
     ).resolves.not.toThrow();
   });
 
+  test('should serialize clear() to prevent race conditions', async () => {
+    const storePromises = [
+      cacheManager.storeResponse('https://example.com/r1.bin', new ArrayBuffer(100), 'application/octet-stream'),
+      cacheManager.storeResponse('https://example.com/r2.bin', new ArrayBuffer(100), 'application/octet-stream'),
+      cacheManager.storeResponse('https://example.com/r3.bin', new ArrayBuffer(100), 'application/octet-stream')
+    ];
+
+    const clearPromise = cacheManager.clear();
+    await Promise.all([...storePromises, clearPromise]);
+
+    const size = await cacheManager.getSize();
+    const stats = await cacheManager.getStats();
+    expect(stats.size).toBe(size);
+  });
+
   test('should use custom cache key generator', async () => {
     const customKeyGen = jest.fn((url: string) => `custom-${url}`);
     const customManager = new RevealCacheManager({
@@ -245,6 +247,27 @@ describe(RevealCacheManager.name, () => {
 
     await customManager.storeResponse(TEST_URL, new ArrayBuffer(50), 'application/octet-stream');
     expect(customKeyGen).toHaveBeenCalledWith(TEST_URL);
+  });
+
+  test('should handle invalid header values gracefully', async () => {
+    const cache = await caches.open('test-cache');
+
+    const invalidHeaders = new Headers({
+      'Content-Type': 'application/octet-stream',
+      'X-Cache-Date': 'invalid-date',
+      'X-Cache-Size': 'not-a-number'
+    });
+    await cache.put(
+      'https://example.com/invalid.bin',
+      new Response(new ArrayBuffer(100), { status: 200, headers: invalidHeaders })
+    );
+
+    const stats = await cacheManager.getStats();
+    expect(stats).toBeDefined();
+    expect(stats.count).toBeGreaterThanOrEqual(0);
+
+    const size = await cacheManager.getSize();
+    expect(size).toBeGreaterThanOrEqual(0);
   });
 
   function createMockCache(storage: Map<string, Response>): Cache {

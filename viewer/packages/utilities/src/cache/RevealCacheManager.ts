@@ -3,7 +3,7 @@
  */
 
 import { BYTES_PER_KB, CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
-import { CacheConfig, CacheStats, CacheEntry } from './types';
+import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 
 /**
  * Generic Cache Manager using the Cache API for storing 3D resources
@@ -23,15 +23,18 @@ import { CacheConfig, CacheStats, CacheEntry } from './types';
  * ```
  */
 export class RevealCacheManager {
-  private readonly config: Required<CacheConfig>;
-  private storeQueue: Promise<void> = Promise.resolve();
+  private readonly _config: Required<CacheConfig>;
+  private _storeQueue: Promise<void> = Promise.resolve();
+
+  private _metadataIndex: Map<string, CacheEntryMetadata> | undefined = undefined;
+  private _currentSize: number = 0;
 
   get cacheConfig(): CacheConfig {
-    return this.config;
+    return this._config;
   }
 
   constructor(config: CacheConfig = {}) {
-    this.config = {
+    this._config = {
       cacheName: config.cacheName ?? CACHE_NAME,
       maxCacheSize: config.maxCacheSize ?? DEFAULT_DESKTOP_STORAGE_LIMIT,
       maxAge: config.maxAge ?? DEFAULT_MAX_CACHE_AGE,
@@ -43,8 +46,8 @@ export class RevealCacheManager {
    * Check if a URL is cached
    */
   async has(url: string): Promise<boolean> {
-    const cacheKey = this.config.cacheKeyGenerator(url);
-    const cache = await caches.open(this.config.cacheName);
+    const cacheKey = this._config.cacheKeyGenerator(url);
+    const cache = await caches.open(this._config.cacheName);
     const response = await cache.match(cacheKey);
 
     if (!response) return false;
@@ -53,51 +56,89 @@ export class RevealCacheManager {
   }
 
   /**
-   * Clear all cached entries
+   * Clear all cached entries and reset the in-memory index
    */
   async clear(): Promise<void> {
-    await caches.delete(this.config.cacheName);
+    const clearOperation = this._storeQueue.then(async () => {
+      await caches.delete(this._config.cacheName);
+      this._metadataIndex = undefined;
+      this._currentSize = 0;
+    });
+
+    this._storeQueue = clearOperation.catch(() => {
+      // Ensure queue continues on error
+    });
+
+    await clearOperation;
   }
 
   /**
    * Get a cached response if it exists and is not expired
    */
-  async getCachedResponse(url: string): Promise<Response | null> {
-    const cacheKey = this.config.cacheKeyGenerator(url);
-    const cache = await caches.open(this.config.cacheName);
+  async getCachedResponse(url: string): Promise<Response | undefined> {
+    const cacheKey = this._config.cacheKeyGenerator(url);
+    const cache = await caches.open(this._config.cacheName);
     const response = await cache.match(cacheKey);
 
     if (!response) {
-      return null;
+      return undefined;
     }
 
     if (this.isExpired(response)) {
       await cache.delete(cacheKey);
-      return null;
+      return undefined;
     }
 
     return response.clone();
   }
 
   /**
+   * Initialize the in-memory metadata index by scanning the cache
+   */
+  private async initializeIndex(): Promise<void> {
+    if (this._metadataIndex !== undefined) {
+      return;
+    }
+
+    this._metadataIndex = new Map();
+    this._currentSize = 0;
+
+    const cache = await caches.open(this._config.cacheName);
+    const responses = await cache.matchAll();
+
+    for (const response of responses) {
+      if (response) {
+        const size = safeParseInt(response.headers.get('X-Cache-Size'));
+        const date = safeParseInt(response.headers.get('X-Cache-Date'));
+        const contentType = response.headers.get('Content-Type') ?? 'unknown';
+
+        this._metadataIndex.set(response.url, { size, date, contentType });
+        this._currentSize += size;
+      }
+    }
+  }
+
+  /**
    * Store data in cache
    */
   async storeResponse(url: string, data: ArrayBuffer | string, contentType: string): Promise<void> {
-    const currentOperation = this.storeQueue.then(async () => {
+    const currentOperation = this._storeQueue.then(async () => {
       try {
-        const cacheKey = this.config.cacheKeyGenerator(url);
+        await this.initializeIndex();
 
-        const blob =
-          typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
+        const cacheKey = this._config.cacheKeyGenerator(url);
+
+        const blob = new Blob([data], { type: contentType });
         const size = blob.size;
 
         await this.evictIfNeeded(size);
 
-        const cache = await caches.open(this.config.cacheName);
+        const cache = await caches.open(this._config.cacheName);
 
+        const now = Date.now();
         const headers = new Headers({
           'Content-Type': contentType,
-          'X-Cache-Date': Date.now().toString(),
+          'X-Cache-Date': now.toString(),
           'X-Cache-Size': size.toString()
         });
 
@@ -108,13 +149,16 @@ export class RevealCacheManager {
         });
 
         await cache.put(cacheKey, response);
+
+        this._metadataIndex?.set(cacheKey, { size, date: now, contentType });
+        this._currentSize += size;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(`Failed to store in cache: ${message}`, { cause: error });
       }
     });
 
-    this.storeQueue = currentOperation.catch(error => {
+    this._storeQueue = currentOperation.catch(error => {
       const message = error instanceof Error ? error.message : String(error);
       console.warn('[RevealCacheManager] Store operation failed, continuing queue:', message);
     });
@@ -126,52 +170,35 @@ export class RevealCacheManager {
    * Get current cache size in bytes
    */
   async getSize(): Promise<number> {
-    const cache = await caches.open(this.config.cacheName);
-    const responses = await cache.matchAll();
-
-    const totalSize = responses.reduce((size, response) => {
-      if (!response) {
-        return size;
-      }
-      const sizeHeader = response.headers.get('X-Cache-Size');
-      return size + (sizeHeader ? parseInt(sizeHeader, 10) : 0);
-    }, 0);
-
-    return totalSize;
+    await this.initializeIndex();
+    return this._currentSize;
   }
 
   /**
    * Get detailed cache statistics
    */
   async getStats(): Promise<CacheStats> {
-    const cache = await caches.open(this.config.cacheName);
-    const responses = await cache.matchAll();
+    await this.initializeIndex();
 
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
-    responses.forEach(response => {
-      if (response) {
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        const dateHeader = response.headers.get('X-Cache-Date');
-        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
-        const cachedAt = dateHeader ? new Date(parseInt(dateHeader, 10)) : new Date(0);
-        const expiresAt = new Date(cachedAt.getTime() + this.config.maxAge);
-        const contentType = response.headers.get('Content-Type') || 'unknown';
+    for (const [cacheKey, metadata] of this._metadataIndex?.entries() ?? []) {
+      const cachedAt = new Date(metadata.date);
+      const expiresAt = new Date(cachedAt.getTime() + this._config.maxAge);
 
-        totalSize += size;
-        entries.push({
-          url: response.url,
-          size,
-          cachedAt,
-          expiresAt,
-          contentType
-        });
-      }
-    });
+      totalSize += metadata.size;
+      entries.push({
+        cacheKey,
+        size: metadata.size,
+        cachedAt,
+        expiresAt,
+        contentType: metadata.contentType
+      });
+    }
 
     return {
-      cacheName: this.config.cacheName,
+      cacheName: this._config.cacheName,
       count: entries.length,
       size: totalSize,
       sizeFormatted: this.formatBytes(totalSize),
@@ -179,35 +206,22 @@ export class RevealCacheManager {
     };
   }
 
+  /**
+   * Evict entries if needed to make space for a new entry
+   */
   private async evictIfNeeded(newEntrySize: number): Promise<void> {
-    const cache = await caches.open(this.config.cacheName);
-    const responses = await cache.matchAll();
+    await this.initializeIndex();
 
-    const entries: Array<{ url: string; date: number; size: number }> = [];
-    let currentSize = 0;
-
-    for (const response of responses) {
-      if (response) {
-        const dateHeader = response.headers.get('X-Cache-Date');
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
-
-        currentSize += size;
-        entries.push({
-          url: response.url,
-          date: dateHeader ? parseInt(dateHeader, 10) : 0,
-          size
-        });
-      }
-    }
-
-    if (currentSize + newEntrySize <= this.config.maxCacheSize) {
+    if (this._currentSize + newEntrySize <= this._config.maxCacheSize) {
       return;
     }
 
-    const spaceToFree = currentSize + newEntrySize - this.config.maxCacheSize;
+    const cache = await caches.open(this._config.cacheName);
+    const spaceToFree = this._currentSize + newEntrySize - this._config.maxCacheSize;
 
-    entries.sort((a, b) => a.date - b.date);
+    const entries = Array.from(this._metadataIndex?.entries() ?? [])
+      .map(([url, metadata]) => ({ url, ...metadata }))
+      .sort((a, b) => a.date - b.date);
 
     let freedSpace = 0;
     for (const entry of entries) {
@@ -216,6 +230,8 @@ export class RevealCacheManager {
       }
 
       await cache.delete(entry.url);
+      this._metadataIndex?.delete(entry.url);
+      this._currentSize -= entry.size;
       freedSpace += entry.size;
     }
   }
@@ -224,8 +240,10 @@ export class RevealCacheManager {
     const dateHeader = response.headers.get('X-Cache-Date');
     if (!dateHeader) return true;
 
-    const cachedAt = parseInt(dateHeader);
-    return Date.now() - cachedAt > this.config.maxAge;
+    const cachedAt = safeParseInt(dateHeader);
+    if (cachedAt === 0) return true;
+
+    return Date.now() - cachedAt > this._config.maxAge;
   }
 
   private formatBytes(bytes: number): string {
@@ -236,4 +254,11 @@ export class RevealCacheManager {
 
     return parseFloat((bytes / Math.pow(BYTES_PER_KB, i)).toFixed(2)) + ' ' + sizes[i];
   }
+}
+
+function safeParseInt(value: string | null | undefined): number {
+  const defaultValue = 0;
+  if (!value) return defaultValue;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
 }
