@@ -48,23 +48,3 @@ export interface CacheStats {
   sizeFormatted: string;
   entries: CacheEntry[];
 }
-
-/**
- * Options for fetching data
- */
-export interface FetchOptions {
-  /**
-   * AbortSignal to cancel the fetch operation
-   */
-  signal?: AbortSignal;
-
-  /**
-   * Force bypass cache and fetch from network
-   */
-  bypassCache?: boolean;
-
-  /**
-   * Custom headers to include in the request
-   */
-  headers?: Record<string, string>;
-}

@@ -166,16 +166,6 @@ describe(RevealCacheManager.name, () => {
     expect(exists).toBe(true);
   });
 
-  test('should delete specific cached entry', async () => {
-    const url = 'https://example.com/test.bin';
-    await cacheManager.storeResponse(url, new ArrayBuffer(50), 'application/octet-stream');
-
-    await cacheManager.delete(url);
-
-    const exists = await cacheManager.has(url);
-    expect(exists).toBe(false);
-  });
-
   test('should clear all cached entries', async () => {
     await cacheManager.storeResponse('https://example.com/file1.bin', new ArrayBuffer(50), 'application/octet-stream');
     await cacheManager.storeResponse('https://example.com/file2.bin', new ArrayBuffer(50), 'application/octet-stream');

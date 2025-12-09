@@ -3,7 +3,7 @@
  */
 
 import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
-import { CacheConfig, FetchOptions, CacheStats, CacheEntry } from './types';
+import { CacheConfig, CacheStats, CacheEntry } from './types';
 
 /**
  * Generic Cache Manager using the Cache API for storing 3D resources
@@ -20,9 +20,6 @@ import { CacheConfig, FetchOptions, CacheStats, CacheEntry } from './types';
  *   maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
  *   enableMetrics: true
  * });
- *
- * // Fetch with caching
- * const data = await pointCloudCache.fetch('https://example.com/data.bin');
  * ```
  */
 export class RevealCacheManager {
@@ -42,91 +39,6 @@ export class RevealCacheManager {
   }
 
   /**
-   * Fetch data with caching support
-   * Checks cache first, falls back to network on miss
-   */
-  async fetch(url: string, options: FetchOptions = {}): Promise<Response> {
-    const cacheKey = this.config.cacheKeyGenerator(url);
-
-    try {
-      if (options.bypassCache) {
-        return await this.fetchFromNetwork(url, options);
-      }
-
-      const cache = await caches.open(this.config.cacheName);
-      const cachedResponse = await cache.match(cacheKey);
-
-      if (cachedResponse) {
-        if (!this.isExpired(cachedResponse)) {
-          return cachedResponse.clone();
-        } else {
-          await cache.delete(cacheKey);
-        }
-      }
-
-      const response = await this.fetchFromNetwork(url, options);
-
-      this.storeInCache(cacheKey, response.clone()).catch(err => {
-        console.warn(`[Cache] Failed to store ${this.getFileName(url)}:`, err);
-      });
-
-      return response;
-    } catch (error) {
-      console.error(`[Cache] Error fetching ${this.getFileName(url)}:`, error);
-      throw error;
-    }
-  }
-
-  /**
-   * Fetch binary data as ArrayBuffer with caching
-   */
-  async fetchBinary(url: string, options: FetchOptions = {}): Promise<ArrayBuffer> {
-    const response = await this.fetch(url, options);
-    return response.arrayBuffer();
-  }
-
-  /**
-   * Fetch JSON data with caching
-   */
-  async fetchJSON<T = any>(url: string, options: FetchOptions = {}): Promise<T> {
-    const response = await this.fetch(url, options);
-    return response.json();
-  }
-
-  /**
-   * Fetch image as Blob with caching
-   */
-  async fetchImage(url: string, options: FetchOptions = {}): Promise<Blob> {
-    const response = await this.fetch(url, options);
-    return response.blob();
-  }
-
-  /**
-   * Fetch text data with caching
-   */
-  async fetchText(url: string, options: FetchOptions = {}): Promise<string> {
-    const response = await this.fetch(url, options);
-    return response.text();
-  }
-
-  /**
-   * Preload multiple resources into cache
-   */
-  async preload(urls: string[], concurrency: number = 5): Promise<void> {
-    const chunks = this.chunkArray(urls, concurrency);
-
-    for (const chunk of chunks) {
-      await Promise.allSettled(
-        chunk.map(url =>
-          this.fetch(url).catch(err => {
-            console.warn(`[Preload] Failed to load ${this.getFileName(url)}:`, err);
-          })
-        )
-      );
-    }
-  }
-
-  /**
    * Check if a URL is cached
    */
   async has(url: string): Promise<boolean> {
@@ -137,17 +49,6 @@ export class RevealCacheManager {
     if (!response) return false;
 
     return !this.isExpired(response);
-  }
-
-  /**
-   * Delete a specific cached entry
-   */
-  async delete(url: string): Promise<boolean> {
-    const cacheKey = this.config.cacheKeyGenerator(url);
-    const cache = await caches.open(this.config.cacheName);
-    const deleted = await cache.delete(cacheKey);
-
-    return deleted;
   }
 
   /**
@@ -213,26 +114,6 @@ export class RevealCacheManager {
   }
 
   /**
-   * Delete all expired entries
-   */
-  async deleteExpired(): Promise<number> {
-    const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
-
-    let deletedCount = 0;
-
-    for (const request of requests) {
-      const response = await cache.match(request);
-      if (response && this.isExpired(response)) {
-        await cache.delete(request);
-        deletedCount++;
-      }
-    }
-
-    return deletedCount;
-  }
-
-  /**
    * Get current cache size in bytes
    */
   async getSize(): Promise<number> {
@@ -291,47 +172,6 @@ export class RevealCacheManager {
     };
   }
 
-  private async fetchFromNetwork(url: string, options: FetchOptions): Promise<Response> {
-    const fetchOptions: RequestInit = {
-      signal: options.signal,
-      headers: options.headers
-    };
-
-    const response = await fetch(url, fetchOptions);
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    return response;
-  }
-
-  private async storeInCache(cacheKey: string, response: Response): Promise<void> {
-    try {
-      const contentLength = parseInt(response.headers.get('Content-Length') || '0');
-      const blob = await response.blob();
-      const actualSize = blob.size || contentLength;
-
-      await this.evictIfNeeded(actualSize);
-
-      const cache = await caches.open(this.config.cacheName);
-
-      const headers = new Headers(response.headers);
-      headers.set('X-Cache-Date', Date.now().toString());
-      headers.set('X-Cache-Size', actualSize.toString());
-
-      const cachedResponse = new Response(blob, {
-        status: response.status,
-        statusText: response.statusText,
-        headers
-      });
-
-      await cache.put(cacheKey, cachedResponse);
-    } catch (error) {
-      throw new Error(`Failed to store in cache: ${error}`);
-    }
-  }
-
   private async evictIfNeeded(newEntrySize: number): Promise<void> {
     const currentSize = await this.getSize();
 
@@ -383,23 +223,6 @@ export class RevealCacheManager {
 
     const cachedAt = parseInt(dateHeader);
     return Date.now() - cachedAt > this.config.maxAge;
-  }
-
-  private chunkArray<T>(array: T[], chunkSize: number): T[][] {
-    const chunks: T[][] = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-      chunks.push(array.slice(i, i + chunkSize));
-    }
-    return chunks;
-  }
-
-  private getFileName(url: string): string {
-    try {
-      const urlObj = new URL(url);
-      return urlObj.pathname.split('/').pop() || url;
-    } catch {
-      return url;
-    }
   }
 
   private formatBytes(bytes: number): string {

@@ -50,7 +50,7 @@ export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
 export { RevealCacheManager } from './src/cache/RevealCacheManager';
-export type { CacheConfig, CacheEntry, CacheStats, FetchOptions } from './src/cache/types';
+export type { CacheConfig, CacheEntry, CacheStats } from './src/cache/types';
 
 export {
   getRevealResourceCache,
