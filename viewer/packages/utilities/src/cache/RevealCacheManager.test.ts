@@ -288,7 +288,7 @@ describe(RevealCacheManager.name, () => {
         storage.delete(key);
         return had;
       },
-      keys: async () => Array.from(storage.keys()).map(url => ({ url }) as Request),
+keys: async () => Array.from(storage.keys()).map(url => new Request(url)),
       add: jest.fn(async () => undefined),
       addAll: jest.fn(async () => undefined)
     } satisfies Cache;
