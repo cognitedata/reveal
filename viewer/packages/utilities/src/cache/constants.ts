@@ -3,7 +3,7 @@
  */
 export const DEFAULT_MAX_CACHE_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 export const CACHE_NAME = 'reveal-3d-resources-v1';
-const BYTES_PER_KB = 1024;
+export const BYTES_PER_KB = 1024;
 
 const ONE_GB_IN_BYTES = BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB;
 

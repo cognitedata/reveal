@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
+import { BYTES_PER_KB, CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { CacheConfig, CacheStats, CacheEntry } from './types';
 
 /**
@@ -24,6 +24,7 @@ import { CacheConfig, CacheStats, CacheEntry } from './types';
  */
 export class RevealCacheManager {
   private readonly config: Required<CacheConfig>;
+  private storeQueue: Promise<void> = Promise.resolve();
 
   get cacheConfig(): CacheConfig {
     return this.config;
@@ -60,7 +61,6 @@ export class RevealCacheManager {
 
   /**
    * Get a cached response if it exists and is not expired
-   * Used by CachedModelDataProvider to check cache before using authenticated fetch
    */
   async getCachedResponse(url: string): Promise<Response | null> {
     const cacheKey = this.config.cacheKeyGenerator(url);
@@ -81,36 +81,45 @@ export class RevealCacheManager {
 
   /**
    * Store data in cache
-   * Used by CachedModelDataProvider to cache responses from authenticated requests
    */
   async storeResponse(url: string, data: ArrayBuffer | string, contentType: string): Promise<void> {
-    try {
-      const cacheKey = this.config.cacheKeyGenerator(url);
+    const currentOperation = this.storeQueue.then(async () => {
+      try {
+        const cacheKey = this.config.cacheKeyGenerator(url);
 
-      const blob =
-        typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
-      const size = blob.size;
+        const blob =
+          typeof data === 'string' ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
+        const size = blob.size;
 
-      await this.evictIfNeeded(size);
+        await this.evictIfNeeded(size);
 
-      const cache = await caches.open(this.config.cacheName);
+        const cache = await caches.open(this.config.cacheName);
 
-      const headers = new Headers({
-        'Content-Type': contentType,
-        'X-Cache-Date': Date.now().toString(),
-        'X-Cache-Size': size.toString()
-      });
+        const headers = new Headers({
+          'Content-Type': contentType,
+          'X-Cache-Date': Date.now().toString(),
+          'X-Cache-Size': size.toString()
+        });
 
-      const response = new Response(blob, {
-        status: 200,
-        statusText: 'OK',
-        headers
-      });
+        const response = new Response(blob, {
+          status: 200,
+          statusText: 'OK',
+          headers
+        });
 
-      await cache.put(cacheKey, response);
-    } catch (error) {
-      throw new Error(`Failed to store in cache: ${error}`);
-    }
+        await cache.put(cacheKey, response);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        throw new Error(`Failed to store in cache: ${message}`, { cause: error });
+      }
+    });
+
+    this.storeQueue = currentOperation.catch(error => {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn('[RevealCacheManager] Store operation failed, continuing queue:', message);
+    });
+
+    await currentOperation;
   }
 
   /**
@@ -118,16 +127,15 @@ export class RevealCacheManager {
    */
   async getSize(): Promise<number> {
     const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
-    let totalSize = 0;
-    for (const request of requests) {
-      const response = await cache.match(request);
-      if (response) {
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        totalSize += sizeHeader ? parseInt(sizeHeader) : 0;
+    const totalSize = responses.reduce((size, response) => {
+      if (!response) {
+        return size;
       }
-    }
+      const sizeHeader = response.headers.get('X-Cache-Size');
+      return size + (sizeHeader ? parseInt(sizeHeader, 10) : 0);
+    }, 0);
 
     return totalSize;
   }
@@ -137,31 +145,30 @@ export class RevealCacheManager {
    */
   async getStats(): Promise<CacheStats> {
     const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
-    for (const request of requests) {
-      const response = await cache.match(request);
+    responses.forEach(response => {
       if (response) {
         const sizeHeader = response.headers.get('X-Cache-Size');
         const dateHeader = response.headers.get('X-Cache-Date');
-        const size = sizeHeader ? parseInt(sizeHeader) : 0;
-        const cachedAt = dateHeader ? new Date(parseInt(dateHeader)) : new Date();
+        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
+        const cachedAt = dateHeader ? new Date(parseInt(dateHeader, 10)) : new Date(0);
         const expiresAt = new Date(cachedAt.getTime() + this.config.maxAge);
         const contentType = response.headers.get('Content-Type') || 'unknown';
 
         totalSize += size;
         entries.push({
-          url: request.url,
+          url: response.url,
           size,
           cachedAt,
           expiresAt,
           contentType
         });
       }
-    }
+    });
 
     return {
       cacheName: this.config.cacheName,
@@ -173,47 +180,43 @@ export class RevealCacheManager {
   }
 
   private async evictIfNeeded(newEntrySize: number): Promise<void> {
-    const currentSize = await this.getSize();
-
-    if (currentSize + newEntrySize <= this.config.maxCacheSize) {
-      return;
-    }
-    await this.evictOldestEntries(newEntrySize);
-  }
-
-  private async evictOldestEntries(spaceNeeded: number): Promise<void> {
     const cache = await caches.open(this.config.cacheName);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
-    const entries: Array<{ request: Request; date: number; size: number }> = [];
+    const entries: Array<{ url: string; date: number; size: number }> = [];
+    let currentSize = 0;
 
-    for (const request of requests) {
-      const response = await cache.match(request);
+    for (const response of responses) {
       if (response) {
         const dateHeader = response.headers.get('X-Cache-Date');
         const sizeHeader = response.headers.get('X-Cache-Size');
+        const size = sizeHeader ? parseInt(sizeHeader, 10) : 0;
 
+        currentSize += size;
         entries.push({
-          request,
-          date: dateHeader ? parseInt(dateHeader) : 0,
-          size: sizeHeader ? parseInt(sizeHeader) : 0
+          url: response.url,
+          date: dateHeader ? parseInt(dateHeader, 10) : 0,
+          size
         });
       }
     }
 
+    if (currentSize + newEntrySize <= this.config.maxCacheSize) {
+      return;
+    }
+
+    const spaceToFree = currentSize + newEntrySize - this.config.maxCacheSize;
+
     entries.sort((a, b) => a.date - b.date);
 
     let freedSpace = 0;
-    let evictedCount = 0;
-
     for (const entry of entries) {
-      if (freedSpace >= spaceNeeded) {
+      if (freedSpace >= spaceToFree) {
         break;
       }
 
-      await cache.delete(entry.request);
+      await cache.delete(entry.url);
       freedSpace += entry.size;
-      evictedCount++;
     }
   }
 
@@ -228,10 +231,9 @@ export class RevealCacheManager {
   private formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
 
-    const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const i = Math.floor(Math.log(bytes) / Math.log(BYTES_PER_KB));
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(BYTES_PER_KB, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }
