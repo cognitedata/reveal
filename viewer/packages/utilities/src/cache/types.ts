@@ -40,4 +40,5 @@ export type CacheStats = {
 export type CacheEntryMetadata = {
   size: number;
   date: number;
+  contentType: string;
 };

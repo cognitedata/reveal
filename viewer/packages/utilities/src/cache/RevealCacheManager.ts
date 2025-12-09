@@ -102,8 +102,9 @@ export class RevealCacheManager {
       if (response) {
         const size = safeParseInt(response.headers.get('X-Cache-Size'));
         const date = safeParseInt(response.headers.get('X-Cache-Date'));
+        const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
-        this._metadataIndex.set(response.url, { size, date });
+        this._metadataIndex.set(response.url, { size, date, contentType });
         this._currentSize += size;
       }
     }
@@ -141,7 +142,7 @@ export class RevealCacheManager {
 
         await cache.put(cacheKey, response);
 
-        this._metadataIndex?.set(cacheKey, { size, date: now });
+        this._metadataIndex?.set(cacheKey, { size, date: now, contentType });
         this._currentSize += size;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -174,11 +175,7 @@ export class RevealCacheManager {
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
-    const cache = await caches.open(this._config.cacheName);
     for (const [cacheKey, metadata] of this._metadataIndex?.entries() ?? []) {
-      const response = await cache.match(cacheKey);
-      const contentType = response?.headers.get('Content-Type') ?? 'unknown';
-
       const cachedAt = new Date(metadata.date);
       const expiresAt = new Date(cachedAt.getTime() + this._config.maxAge);
 
@@ -188,7 +185,7 @@ export class RevealCacheManager {
         size: metadata.size,
         cachedAt,
         expiresAt,
-        contentType
+        contentType: metadata.contentType
       });
     }
 
