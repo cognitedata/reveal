@@ -249,7 +249,7 @@ describe(RevealCacheManager.name, () => {
 
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
-      match: async (key: string) => storage.get(key) || null,
+      match: async (key: string) => storage.get(key) || undefined,
       matchAll: async () => {
         return Array.from(storage.entries()).map(([url, response]) => {
           const cloned = response.clone();
@@ -265,8 +265,10 @@ describe(RevealCacheManager.name, () => {
         storage.delete(key);
         return had;
       },
-      keys: async () => Array.from(storage.keys()).map(url => ({ url }) as Request)
-    } as unknown as Cache;
+      keys: async () => Array.from(storage.keys()).map(url => ({ url }) as Request),
+      add: jest.fn(async () => undefined),
+      addAll: jest.fn(async () => undefined)
+    } satisfies Cache;
   }
 
   function createMockCacheStorage(cacheStorageMap: Map<string, Map<string, Response>>): CacheStorage {
@@ -284,7 +286,7 @@ describe(RevealCacheManager.name, () => {
       },
       has: async (cacheName: string) => cacheStorageMap.has(cacheName),
       keys: async () => Array.from(cacheStorageMap.keys()),
-      match: jest.fn()
-    } as CacheStorage;
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
   }
 });
