@@ -174,8 +174,8 @@ export class RevealCacheManager {
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
+    const cache = await caches.open(this._config.cacheName);
     for (const [cacheKey, metadata] of this._metadataIndex?.entries() ?? []) {
-      const cache = await caches.open(this._config.cacheName);
       const response = await cache.match(cacheKey);
       const contentType = response?.headers.get('Content-Type') ?? 'unknown';
 
