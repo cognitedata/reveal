@@ -3,7 +3,7 @@
  */
 
 import { BYTES_PER_KB, CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
-import { CacheConfig, CacheStats, CacheEntry } from './types';
+import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 
 /**
  * Generic Cache Manager using the Cache API for storing 3D resources
@@ -23,15 +23,18 @@ import { CacheConfig, CacheStats, CacheEntry } from './types';
  * ```
  */
 export class RevealCacheManager {
-  private readonly config: Required<CacheConfig>;
-  private storeQueue: Promise<void> = Promise.resolve();
+  private readonly _config: Required<CacheConfig>;
+  private _storeQueue: Promise<void> = Promise.resolve();
+
+  private _metadataIndex: Map<string, CacheEntryMetadata> | undefined = undefined;
+  private _currentSize: number = 0;
 
   get cacheConfig(): CacheConfig {
-    return this.config;
+    return this._config;
   }
 
   constructor(config: CacheConfig = {}) {
-    this.config = {
+    this._config = {
       cacheName: config.cacheName ?? CACHE_NAME,
       maxCacheSize: config.maxCacheSize ?? DEFAULT_DESKTOP_STORAGE_LIMIT,
       maxAge: config.maxAge ?? DEFAULT_MAX_CACHE_AGE,
@@ -43,8 +46,8 @@ export class RevealCacheManager {
    * Check if a URL is cached
    */
   async has(url: string): Promise<boolean> {
-    const cacheKey = this.config.cacheKeyGenerator(url);
-    const cache = await caches.open(this.config.cacheName);
+    const cacheKey = this._config.cacheKeyGenerator(url);
+    const cache = await caches.open(this._config.cacheName);
     const response = await cache.match(cacheKey);
 
     if (!response) return false;
@@ -53,46 +56,75 @@ export class RevealCacheManager {
   }
 
   /**
-   * Clear all cached entries
+   * Clear all cached entries and reset the in-memory index
    */
   async clear(): Promise<void> {
-    await caches.delete(this.config.cacheName);
+    await caches.delete(this._config.cacheName);
+    this._metadataIndex = undefined;
+    this._currentSize = 0;
   }
 
   /**
    * Get a cached response if it exists and is not expired
    */
-  async getCachedResponse(url: string): Promise<Response | null> {
-    const cacheKey = this.config.cacheKeyGenerator(url);
-    const cache = await caches.open(this.config.cacheName);
+  async getCachedResponse(url: string): Promise<Response | undefined> {
+    const cacheKey = this._config.cacheKeyGenerator(url);
+    const cache = await caches.open(this._config.cacheName);
     const response = await cache.match(cacheKey);
 
     if (!response) {
-      return null;
+      return undefined;
     }
 
     if (this.isExpired(response)) {
       await cache.delete(cacheKey);
-      return null;
+      return undefined;
     }
 
     return response.clone();
   }
 
   /**
+   * Initialize the in-memory metadata index by scanning the cache
+   */
+  private async initializeIndex(): Promise<void> {
+    if (this._metadataIndex !== undefined) {
+      return;
+    }
+
+    this._metadataIndex = new Map();
+    this._currentSize = 0;
+
+    const cache = await caches.open(this._config.cacheName);
+    const responses = await cache.matchAll();
+
+    for (const response of responses) {
+      if (response) {
+        const size = safeParseInt(response.headers.get('X-Cache-Size'));
+        const date = safeParseInt(response.headers.get('X-Cache-Date'));
+
+        this._metadataIndex.set(response.url, { size, date });
+        this._currentSize += size;
+      }
+    }
+  }
+
+  /**
    * Store data in cache
    */
   async storeResponse(url: string, data: ArrayBuffer | string, contentType: string): Promise<void> {
-    const currentOperation = this.storeQueue.then(async () => {
+    const currentOperation = this._storeQueue.then(async () => {
       try {
-        const cacheKey = this.config.cacheKeyGenerator(url);
+        await this.initializeIndex();
+
+        const cacheKey = this._config.cacheKeyGenerator(url);
 
         const blob = new Blob([data], { type: contentType });
         const size = blob.size;
 
         await this.evictIfNeeded(size);
 
-        const cache = await caches.open(this.config.cacheName);
+        const cache = await caches.open(this._config.cacheName);
 
         const headers = new Headers({
           'Content-Type': contentType,
@@ -107,13 +139,16 @@ export class RevealCacheManager {
         });
 
         await cache.put(cacheKey, response);
+
+        this._metadataIndex?.set(cacheKey, { size, date: Date.now() });
+        this._currentSize += size;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(`Failed to store in cache: ${message}`, { cause: error });
       }
     });
 
-    this.storeQueue = currentOperation.catch(error => {
+    this._storeQueue = currentOperation.catch(error => {
       const message = error instanceof Error ? error.message : String(error);
       console.warn('[RevealCacheManager] Store operation failed, continuing queue:', message);
     });
@@ -125,52 +160,39 @@ export class RevealCacheManager {
    * Get current cache size in bytes
    */
   async getSize(): Promise<number> {
-    const cache = await caches.open(this.config.cacheName);
-    const responses = await cache.matchAll();
-
-    const totalSize = responses.reduce((size, response) => {
-      if (!response) {
-        return size;
-      }
-      const sizeHeader = response.headers.get('X-Cache-Size');
-      return size + safeParseInt(sizeHeader);
-    }, 0);
-
-    return totalSize;
+    await this.initializeIndex();
+    return this._currentSize;
   }
 
   /**
    * Get detailed cache statistics
    */
   async getStats(): Promise<CacheStats> {
-    const cache = await caches.open(this.config.cacheName);
-    const responses = await cache.matchAll();
+    await this.initializeIndex();
 
     const entries: CacheEntry[] = [];
     let totalSize = 0;
 
-    responses.forEach(response => {
-      if (response) {
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        const dateHeader = response.headers.get('X-Cache-Date');
-        const size = safeParseInt(sizeHeader);
-        const cachedAt = new Date(safeParseInt(dateHeader));
-        const expiresAt = new Date(cachedAt.getTime() + this.config.maxAge);
-        const contentType = response.headers.get('Content-Type') ?? 'unknown';
+    for (const [cacheKey, metadata] of this._metadataIndex?.entries() ?? []) {
+      const cache = await caches.open(this._config.cacheName);
+      const response = await cache.match(cacheKey);
+      const contentType = response?.headers.get('Content-Type') ?? 'unknown';
 
-        totalSize += size;
-        entries.push({
-          cacheKey: response.url,
-          size,
-          cachedAt,
-          expiresAt,
-          contentType
-        });
-      }
-    });
+      const cachedAt = new Date(metadata.date);
+      const expiresAt = new Date(cachedAt.getTime() + this._config.maxAge);
+
+      totalSize += metadata.size;
+      entries.push({
+        cacheKey,
+        size: metadata.size,
+        cachedAt,
+        expiresAt,
+        contentType
+      });
+    }
 
     return {
-      cacheName: this.config.cacheName,
+      cacheName: this._config.cacheName,
       count: entries.length,
       size: totalSize,
       sizeFormatted: this.formatBytes(totalSize),
@@ -178,35 +200,22 @@ export class RevealCacheManager {
     };
   }
 
+  /**
+   * Evict entries if needed to make space for a new entry
+   */
   private async evictIfNeeded(newEntrySize: number): Promise<void> {
-    const cache = await caches.open(this.config.cacheName);
-    const responses = await cache.matchAll();
+    await this.initializeIndex();
 
-    const entries: Array<{ url: string; date: number; size: number }> = [];
-    let currentSize = 0;
-
-    for (const response of responses) {
-      if (response) {
-        const dateHeader = response.headers.get('X-Cache-Date');
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        const size = safeParseInt(sizeHeader);
-
-        currentSize += size;
-        entries.push({
-          url: response.url,
-          date: safeParseInt(dateHeader),
-          size
-        });
-      }
-    }
-
-    if (currentSize + newEntrySize <= this.config.maxCacheSize) {
+    if (this._currentSize + newEntrySize <= this._config.maxCacheSize) {
       return;
     }
 
-    const spaceToFree = currentSize + newEntrySize - this.config.maxCacheSize;
+    const cache = await caches.open(this._config.cacheName);
+    const spaceToFree = this._currentSize + newEntrySize - this._config.maxCacheSize;
 
-    entries.sort((a, b) => a.date - b.date);
+    const entries = Array.from(this._metadataIndex?.entries() ?? [])
+      .map(([url, metadata]) => ({ url, ...metadata }))
+      .sort((a, b) => a.date - b.date);
 
     let freedSpace = 0;
     for (const entry of entries) {
@@ -215,6 +224,8 @@ export class RevealCacheManager {
       }
 
       await cache.delete(entry.url);
+      this._metadataIndex?.delete(entry.url);
+      this._currentSize -= entry.size;
       freedSpace += entry.size;
     }
   }
@@ -226,7 +237,7 @@ export class RevealCacheManager {
     const cachedAt = safeParseInt(dateHeader);
     if (cachedAt === 0) return true;
 
-    return Date.now() - cachedAt > this.config.maxAge;
+    return Date.now() - cachedAt > this._config.maxAge;
   }
 
   private formatBytes(bytes: number): string {

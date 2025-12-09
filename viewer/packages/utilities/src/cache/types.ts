@@ -33,3 +33,11 @@ export type CacheStats = {
   sizeFormatted: string;
   entries: CacheEntry[];
 };
+
+/**
+ * Metadata about a cached entry
+ */
+export type CacheEntryMetadata = {
+  size: number;
+  date: number;
+};

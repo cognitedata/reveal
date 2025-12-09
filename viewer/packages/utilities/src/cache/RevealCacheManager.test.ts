@@ -68,8 +68,8 @@ describe(RevealCacheManager.name, () => {
     expect(cachedJson!.headers.get('Content-Type')).toBe('application/json');
   });
 
-  test('should return null for cache miss', async () => {
-    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeNull();
+  test('should return undefined for cache miss', async () => {
+    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeUndefined();
     expect(await cacheManager.has(TEST_URL)).toBe(false);
   });
 
@@ -88,7 +88,7 @@ describe(RevealCacheManager.name, () => {
     });
     await cache.put(TEST_URL, new Response(new ArrayBuffer(50), { status: 200, headers }));
 
-    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeNull();
+    expect(await cacheManager.getCachedResponse(TEST_URL)).toBeUndefined();
     expect(await cacheManager.has(TEST_URL)).toBe(false);
   });
 
@@ -266,6 +266,20 @@ describe(RevealCacheManager.name, () => {
 
     const size = await cacheManager.getSize();
     expect(size).toBeGreaterThanOrEqual(0);
+  });
+
+  test('should use in-memory index for fast size calculations', async () => {
+    await cacheManager.storeResponse(FILE1_URL, new ArrayBuffer(100), 'application/octet-stream');
+    const size1 = await cacheManager.getSize();
+    expect(size1).toBe(100);
+
+    await cacheManager.storeResponse(FILE2_URL, new ArrayBuffer(200), 'application/octet-stream');
+    const size2 = await cacheManager.getSize();
+    expect(size2).toBe(300);
+
+    await cacheManager.clear();
+    const size3 = await cacheManager.getSize();
+    expect(size3).toBe(0);
   });
 
   function createMockCache(storage: Map<string, Response>): Cache {
