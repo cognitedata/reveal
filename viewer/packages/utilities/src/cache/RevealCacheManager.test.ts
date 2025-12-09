@@ -152,11 +152,11 @@ describe(RevealCacheManager.name, () => {
       open: jest.fn(async () => {
         throw new Error('Cache error');
       }),
-      delete: jest.fn(),
-      has: jest.fn(),
-      keys: jest.fn(),
-      match: jest.fn()
-    } as CacheStorage;
+      delete: jest.fn(async () => false),
+      has: jest.fn(async () => false),
+      keys: jest.fn(async () => []),
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
 
     global.caches = failingMock;
 
@@ -212,11 +212,11 @@ describe(RevealCacheManager.name, () => {
         }
         return createMockCache(mockCacheStorageMap.get(cacheName)!);
       }),
-      delete: jest.fn(),
-      has: jest.fn(),
-      keys: jest.fn(),
-      match: jest.fn()
-    } as unknown as CacheStorage;
+      delete: jest.fn(async () => false),
+      has: jest.fn(async () => false),
+      keys: jest.fn(async () => []),
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
 
     global.caches = failingMock;
     const resilientCache = new RevealCacheManager({
