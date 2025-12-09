@@ -6,15 +6,13 @@ import { BYTES_PER_KB, CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CA
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 
 /**
- * Generic Cache Manager using the Cache API for storing 3D resources
- *
+ * Generic Reveal Cache Manager using the Cache API for storing 3D resources
  * Supports caching of binary files (point clouds, CAD models) and images (360 images)
- * with automatic eviction, expiration, and performance metrics.
  *
  * @example
  * ```typescript
  * // Create cache for point clouds
- * const pointCloudCache = new CacheManager({
+ * const pointCloudCache = new RevealCacheManager({
  *   cacheName: 'reveal-pointcloud-v1',
  *   maxCacheSize: 500 * 1024 * 1024, // 500MB
  *   maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
@@ -65,8 +63,9 @@ export class RevealCacheManager {
       this._currentSize = 0;
     });
 
-    this._storeQueue = clearOperation.catch(() => {
-      // Ensure queue continues on error
+    this._storeQueue = clearOperation.catch(error => {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn('[RevealCacheManager] Clear operation failed, continuing queue:', message);
     });
 
     await clearOperation;
@@ -154,7 +153,7 @@ export class RevealCacheManager {
         this._currentSize += size;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        throw new Error(`Failed to store in cache: ${message}`, { cause: error });
+        throw new Error(`[RevealCacheManager] Failed to store in cache: ${message}`, { cause: error });
       }
     });
 

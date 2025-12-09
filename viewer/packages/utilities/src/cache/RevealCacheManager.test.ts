@@ -139,7 +139,9 @@ describe(RevealCacheManager.name, () => {
       open: jest.fn(async () => {
         throw new Error('Cache error');
       }),
-      delete: jest.fn(async () => false),
+      delete: jest.fn(async () => {
+        throw new Error('Delete error');
+      }),
       has: jest.fn(async () => false),
       keys: jest.fn(async () => []),
       match: jest.fn(async () => undefined)
@@ -151,6 +153,13 @@ describe(RevealCacheManager.name, () => {
     await expect(
       cacheManager.storeResponse(TEST_URL, new ArrayBuffer(100), 'application/octet-stream')
     ).rejects.toThrow('Failed to store in cache');
+
+    await expect(cacheManager.clear()).rejects.toThrow('Delete error');
+
+    global.caches = createMockCacheStorage(mockCacheStorageMap);
+    await expect(
+      cacheManager.storeResponse(TEST_URL, new ArrayBuffer(50), 'application/octet-stream')
+    ).resolves.not.toThrow();
   });
 
   test('should serialize concurrent writes to prevent race conditions', async () => {
@@ -272,7 +281,7 @@ describe(RevealCacheManager.name, () => {
 
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
-      match: async (key: string) => storage.get(key) || undefined,
+      match: async (key: string) => storage.get(key) ?? undefined,
       matchAll: async () => {
         return Array.from(storage.entries()).map(([url, response]) => {
           const cloned = response.clone();
