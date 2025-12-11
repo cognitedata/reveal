@@ -3,6 +3,13 @@
  */
 import { DMInstanceRef } from './types';
 
-export function isDmIdentifier(id: any): id is DMInstanceRef {
-  return (id as DMInstanceRef).externalId !== undefined && (id as DMInstanceRef).space !== undefined;
+export function isDmIdentifier(id: unknown): id is DMInstanceRef {
+  return (
+    typeof id === 'object' &&
+    id !== null &&
+    'externalId' in id &&
+    'space' in id &&
+    typeof id.externalId === 'string' &&
+    typeof id.space === 'string'
+  );
 }
