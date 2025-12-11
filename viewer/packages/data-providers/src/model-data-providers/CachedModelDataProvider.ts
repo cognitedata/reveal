@@ -42,7 +42,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
     }
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
+  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
     const url = `${baseUrl}/${fileName}`;
 
     try {
