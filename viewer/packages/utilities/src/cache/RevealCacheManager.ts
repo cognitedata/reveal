@@ -4,6 +4,7 @@
 
 import { BYTES_PER_KB, CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
+import { safeParseInt } from './utils';
 
 /**
  * Generic Reveal Cache Manager using the Cache API for storing 3D resources
@@ -253,11 +254,4 @@ export class RevealCacheManager {
 
     return parseFloat((bytes / Math.pow(BYTES_PER_KB, i)).toFixed(2)) + ' ' + sizes[i];
   }
-}
-
-function safeParseInt(value: string | null | undefined): number {
-  const defaultValue = 0;
-  if (!value) return defaultValue;
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) ? defaultValue : parsed;
 }

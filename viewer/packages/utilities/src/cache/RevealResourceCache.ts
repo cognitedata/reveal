@@ -5,27 +5,17 @@
 import { CACHE_NAME, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { RevealCacheManager } from './RevealCacheManager';
 import { calculateOptimalCacheSize } from './StorageQuotaManager';
+import { safeParseInt } from './utils';
 
 /**
  * Cache configuration for all Reveal 3D resources.
- *
  * We use a single shared cache that all resources (point clouds, CAD models, 360 images)
- * can use. This provides:
- *
- * - Better resource utilization (unused quota from one type benefits others)
- * - Simpler management (single cache to monitor and clear)
- * - Consistent behavior across all 3D resources
- * - Automatic cache size optimization based on device and available storage
+ * can use.
  */
 
 /**
  * Get the resource cache for all Reveal 3D resources
- *
- * The cache size is automatically determined based on device type and characteristics.
- *
- * @param overrides Optional configuration overrides
- * @returns CacheManager instance for 3D resources
- * */
+ */
 
 export function getRevealResourceCache(): RevealCacheManager {
   const recommendationSize = calculateOptimalCacheSize();
@@ -58,14 +48,14 @@ export async function clearRevealResourceCache(): Promise<void> {
 export async function getRevealResourceCacheSize(): Promise<number> {
   try {
     const cache = await caches.open(CACHE_NAME);
-    const requests = await cache.keys();
+    const responses = await cache.matchAll();
 
     let totalSize = 0;
-    for (const request of requests) {
-      const response = await cache.match(request);
+    for (const response of responses) {
       if (response) {
         const sizeHeader = response.headers.get('X-Cache-Size');
-        totalSize += sizeHeader ? parseInt(sizeHeader) : 0;
+        const size = safeParseInt(sizeHeader);
+        totalSize += size;
       }
     }
 
