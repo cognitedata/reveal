@@ -12,8 +12,8 @@ describe(CachedModelDataProvider.name, () => {
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
   let originalCaches: CacheStorage;
 
-  const testBaseUrl = 'https://example.com';
-  const testFileName = 'test.bin';
+  const TEST_URL = 'https://example.com';
+  const TEST_FILENAME = 'test.bin';
 
   beforeAll(() => {
     originalCaches = global.caches;
@@ -44,88 +44,93 @@ describe(CachedModelDataProvider.name, () => {
   });
 
   test('should fetch from base provider on cache miss', async () => {
-    const data = await cachedProvider.getBinaryFile(testBaseUrl, testFileName);
+    const data = await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
 
     expect(data).toBeInstanceOf(ArrayBuffer);
     expect(data.byteLength).toBe(100);
-    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith(testBaseUrl, testFileName, undefined);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith(TEST_URL, TEST_FILENAME, undefined);
   });
 
   test('should return cached data on cache hit', async () => {
-    await cachedProvider.getBinaryFile(testBaseUrl, testFileName);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    const data = await cachedProvider.getBinaryFile(testBaseUrl, testFileName);
+    const data = await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
     expect(data).toBeInstanceOf(ArrayBuffer);
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
   });
 
   test('should pass abort signal to base provider', async () => {
     const abortController = new AbortController();
-    await cachedProvider.getBinaryFile(testBaseUrl, testFileName, abortController.signal);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME, abortController.signal);
 
-    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith(testBaseUrl, testFileName, abortController.signal);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith(TEST_URL, TEST_FILENAME, abortController.signal);
   });
 
   test('should store data with correct content type', async () => {
-    await cachedProvider.getBinaryFile(testBaseUrl, testFileName);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    const isCached = await cachedProvider.isCached(testBaseUrl, testFileName);
+    const isCached = await cachedProvider.isCached(TEST_URL, TEST_FILENAME);
     expect(isCached).toBe(true);
   });
 
   test('should fetch JSON from base provider on cache miss', async () => {
-    const data = await cachedProvider.getJsonFile(testBaseUrl, 'test.json');
+    const data = await cachedProvider.getJsonFile(TEST_URL, 'test.json');
 
     expect(data).toEqual({ test: 'data' });
-    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledWith(testBaseUrl, 'test.json');
+    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledWith(TEST_URL, 'test.json');
   });
 
   test('should return cached JSON on cache hit', async () => {
-    await cachedProvider.getJsonFile(testBaseUrl, 'test.json');
+    await cachedProvider.getJsonFile(TEST_URL, 'test.json');
     expect(mockBaseProvider.getJsonFile).toHaveBeenCalledTimes(1);
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    const data = await cachedProvider.getJsonFile(testBaseUrl, 'test.json');
+    const data = await cachedProvider.getJsonFile(TEST_URL, 'test.json');
     expect(data).toEqual({ test: 'data' });
     expect(mockBaseProvider.getJsonFile).toHaveBeenCalledTimes(1);
   });
 
   test('should return false for uncached files', async () => {
-    const isCached = await cachedProvider.isCached(testBaseUrl, testFileName);
+    const isCached = await cachedProvider.isCached(TEST_URL, TEST_FILENAME);
     expect(isCached).toBe(false);
   });
 
   test('should return true for cached files', async () => {
-    await cachedProvider.getBinaryFile(testBaseUrl, testFileName);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    const isCached = await cachedProvider.isCached(testBaseUrl, testFileName);
+    const isCached = await cachedProvider.isCached(TEST_URL, TEST_FILENAME);
     expect(isCached).toBe(true);
   });
 
   test('should clear all cached data', async () => {
-    await cachedProvider.getBinaryFile(testBaseUrl, 'file1.bin');
-    await cachedProvider.getBinaryFile(testBaseUrl, 'file2.bin');
+    const TEST_FILENAME_1 = 'file1.bin';
+    const TEST_FILENAME_2 = 'file2.bin';
 
-    expect(await cachedProvider.isCached(testBaseUrl, 'file1.bin')).toBe(true);
-    expect(await cachedProvider.isCached(testBaseUrl, 'file2.bin')).toBe(true);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME_1);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME_2);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_1)).toBe(true);
+    expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_2)).toBe(true);
 
     await cachedProvider.clearCache();
 
-    expect(await cachedProvider.isCached(testBaseUrl, 'file1.bin')).toBe(false);
-    expect(await cachedProvider.isCached(testBaseUrl, 'file2.bin')).toBe(false);
+    expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_1)).toBe(false);
+    expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_2)).toBe(false);
   });
 
   test('should return cache statistics', async () => {
-    await cachedProvider.getBinaryFile(testBaseUrl, 'file1.bin');
-    await cachedProvider.getJsonFile(testBaseUrl, 'file2.json');
+    await cachedProvider.getBinaryFile(TEST_URL, 'file1.bin');
+    await cachedProvider.getJsonFile(TEST_URL, 'file2.json');
 
     const stats = await cachedProvider.getCacheStats();
 
@@ -141,9 +146,9 @@ describe(CachedModelDataProvider.name, () => {
 
   test('should handle concurrent requests for the same file', async () => {
     const promises = [
-      cachedProvider.getBinaryFile(testBaseUrl, testFileName),
-      cachedProvider.getBinaryFile(testBaseUrl, testFileName),
-      cachedProvider.getBinaryFile(testBaseUrl, testFileName)
+      cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME),
+      cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME),
+      cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME)
     ];
 
     const results = await Promise.all(promises);
@@ -160,7 +165,7 @@ describe(CachedModelDataProvider.name, () => {
       throw new Error('Network error');
     });
 
-    await expect(cachedProvider.getBinaryFile(testBaseUrl, testFileName)).rejects.toThrow('Network error');
+    await expect(cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME)).rejects.toThrow('Network error');
   });
 
   test('should warn on cache storage failures', async () => {
@@ -170,23 +175,26 @@ describe(CachedModelDataProvider.name, () => {
       open: jest.fn(
         async () =>
           ({
-            match: jest.fn(async () => null),
+            match: jest.fn(async () => undefined),
+            matchAll: jest.fn(async () => []),
             put: jest.fn(async () => {
               throw new Error('Storage full');
             }),
-            delete: jest.fn(),
-            keys: jest.fn()
-          }) as unknown as Cache
+            delete: jest.fn(async () => true),
+            keys: jest.fn(async () => []),
+            add: jest.fn(async () => undefined),
+            addAll: jest.fn(async () => undefined)
+          }) satisfies Cache
       ),
-      delete: jest.fn(),
-      has: jest.fn(),
-      keys: jest.fn(),
-      match: jest.fn()
-    } as CacheStorage;
+      delete: jest.fn(async () => true),
+      has: jest.fn(async () => false),
+      keys: jest.fn(async () => []),
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
 
     global.caches = failingMock;
 
-    await cachedProvider.getBinaryFile(testBaseUrl, testFileName);
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
 
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalled();
 
@@ -195,7 +203,14 @@ describe(CachedModelDataProvider.name, () => {
 
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
-      match: async (key: string) => storage.get(key) || null,
+      match: async (key: string) => storage.get(key) ?? undefined,
+      matchAll: async () => {
+        return Array.from(storage.entries()).map(([url, response]) => {
+          const clonedResponse = response.clone();
+          Object.defineProperty(clonedResponse, 'url', { value: url, writable: false });
+          return clonedResponse;
+        });
+      },
       put: async (key: string, response: Response) => {
         storage.set(key, response);
       },
@@ -204,8 +219,10 @@ describe(CachedModelDataProvider.name, () => {
         storage.delete(key);
         return had;
       },
-      keys: async () => Array.from(storage.keys()).map(url => ({ url }) as Request)
-    } as unknown as Cache;
+      keys: async () => Array.from(storage.keys()).map(url => new Request(url)),
+      add: jest.fn(async () => undefined),
+      addAll: jest.fn(async () => undefined)
+    } satisfies Cache;
   }
 
   function createMockCacheStorage(cacheStorageMap: Map<string, Map<string, Response>>): CacheStorage {
@@ -223,7 +240,7 @@ describe(CachedModelDataProvider.name, () => {
       },
       has: async (cacheName: string) => cacheStorageMap.has(cacheName),
       keys: async () => Array.from(cacheStorageMap.keys()),
-      match: jest.fn()
-    } as CacheStorage;
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
   }
 });
