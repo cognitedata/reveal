@@ -21,7 +21,8 @@ import {
   DummyPointCloudStylableObjectProvider,
   CdfPointCloudDMStylableObjectProvider,
   DMDataSourceType,
-  DummyPointCloudDMStylableObjectProvider
+  DummyPointCloudDMStylableObjectProvider,
+  CachedModelDataProvider
 } from '@reveal/data-providers';
 import { createPointCloudManager } from '@reveal/pointclouds';
 import {
@@ -34,7 +35,7 @@ import {
 } from '@reveal/data-providers';
 
 import { CogniteClient } from '@cognite/sdk';
-import { SceneHandler } from '@reveal/utilities';
+import { getRevealResourceCache, SceneHandler } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
 import {
   IPointClassificationsProvider,
@@ -159,13 +160,15 @@ export function createRevealManager(
   const resizeHandler = new ResizeHandler(renderer, cameraManager, {
     renderResolutionThreshold: revealOptions.rendererResolutionThreshold
   });
+  const unifiedCache = getRevealResourceCache();
+  const cachedProvider = new CachedModelDataProvider(modelDataProvider, unifiedCache.cacheConfig);
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
-    modelDataProvider,
     annotationProvider,
     pointClassificationsProvider,
     pointCloudDMProvider,
     pointCloudMaterialManager,
+    cachedProvider,
     sceneHandler.scene,
     renderer
   );
