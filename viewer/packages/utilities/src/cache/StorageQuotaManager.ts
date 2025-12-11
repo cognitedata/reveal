@@ -26,7 +26,7 @@ export function detectDeviceCharacteristics(): DeviceCharacteristics {
   const currentDevice = determineCurrentDevice();
 
   // Device memory in GB (if available)
-  const deviceMemory = 'deviceMemory' in navigator ? (navigator as any).deviceMemory : undefined;
+  const deviceMemory = 'deviceMemory' in navigator ? (navigator as { deviceMemory: number }).deviceMemory : undefined;
 
   const LOW_END_MEMORY_THRESHOLD = 4;
   const HIGH_END_MEMORY_THRESHOLD = 8;
@@ -48,8 +48,6 @@ export function detectDeviceCharacteristics(): DeviceCharacteristics {
 
 /**
  * Calculates optimal cache size based on device characteristics
- * This is synchronous and uses device detection to determine appropriate cache size.
- * No async storage quota checks are performed during initialization for better performance.
  */
 export function calculateOptimalCacheSize(): number {
   const device = detectDeviceCharacteristics();

@@ -13,6 +13,10 @@ import { RevealCacheManager } from './RevealCacheManager';
 import { DEFAULT_MAX_CACHE_AGE, CACHE_NAME } from './constants';
 
 describe('RevealResourceCache', () => {
+  const TEST_URL = 'https://example.com/test.bin';
+  const TEST_POINT_CLOUD_URL = 'https://example.com/pointcloud.bin';
+  const TEST_CAD_MODEL_URL = 'https://example.com/cad-model.glb';
+  const TEST_360_IMAGE_URL = 'https://example.com/360-image.jpg';
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
   let originalCaches: CacheStorage;
 
@@ -38,7 +42,7 @@ describe('RevealResourceCache', () => {
 
     expect(cache).toBeInstanceOf(RevealCacheManager);
     expect(cache.cacheConfig.cacheName).toBe(CACHE_NAME);
-    expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0); // Auto-detected based on device
+    expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0);
   });
 
   test('should return the cache name', () => {
@@ -48,13 +52,13 @@ describe('RevealResourceCache', () => {
 
   test('should clear the cache', async () => {
     const cache = getRevealResourceCache();
-    await cache.storeResponse('https://example.com/test.bin', new ArrayBuffer(100), 'application/octet-stream');
+    await cache.storeResponse(TEST_URL, new ArrayBuffer(100), 'application/octet-stream');
 
-    expect(await cache.has('https://example.com/test.bin')).toBe(true);
+    expect(await cache.has(TEST_URL)).toBe(true);
 
     await clearRevealResourceCache();
 
-    expect(await cache.has('https://example.com/test.bin')).toBe(false);
+    expect(await cache.has(TEST_URL)).toBe(false);
   });
 
   test('should return 0 for empty cache', async () => {
@@ -100,24 +104,23 @@ describe('RevealResourceCache', () => {
   test('should cache different resource types in same pool', async () => {
     const cache = getRevealResourceCache();
 
-    await cache.storeResponse('https://example.com/pointcloud.bin', new ArrayBuffer(1000), 'application/octet-stream');
-    await cache.storeResponse('https://example.com/cad-model.bin', new ArrayBuffer(2000), 'application/octet-stream');
-    await cache.storeResponse('https://example.com/360-image.jpg', new ArrayBuffer(3000), 'image/jpeg');
+    await cache.storeResponse(TEST_POINT_CLOUD_URL, new ArrayBuffer(1000), 'application/octet-stream');
+    await cache.storeResponse(TEST_CAD_MODEL_URL, new ArrayBuffer(2000), 'application/octet-stream');
+    await cache.storeResponse(TEST_360_IMAGE_URL, new ArrayBuffer(3000), 'image/jpeg');
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    expect(await cache.has('https://example.com/pointcloud.bin')).toBe(true);
-    expect(await cache.has('https://example.com/cad-model.bin')).toBe(true);
-    expect(await cache.has('https://example.com/360-image.jpg')).toBe(true);
+    expect(await cache.has(TEST_POINT_CLOUD_URL)).toBe(true);
+    expect(await cache.has(TEST_CAD_MODEL_URL)).toBe(true);
+    expect(await cache.has(TEST_360_IMAGE_URL)).toBe(true);
   });
 
   test('should share cache size limit across all resource types', async () => {
-    // This test verifies the cache works across different resource types
     const cache = getRevealResourceCache();
 
-    await cache.storeResponse('https://example.com/pointcloud.bin', new ArrayBuffer(1000), 'application/octet-stream');
-    await cache.storeResponse('https://example.com/cad-model.bin', new ArrayBuffer(2000), 'application/octet-stream');
-    await cache.storeResponse('https://example.com/360-image.jpg', new ArrayBuffer(3000), 'image/jpeg');
+    await cache.storeResponse(TEST_POINT_CLOUD_URL, new ArrayBuffer(1000), 'application/octet-stream');
+    await cache.storeResponse(TEST_CAD_MODEL_URL, new ArrayBuffer(2000), 'application/octet-stream');
+    await cache.storeResponse(TEST_360_IMAGE_URL, new ArrayBuffer(3000), 'image/jpeg');
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
@@ -162,7 +165,7 @@ describe('RevealResourceCache', () => {
       keys: async () => Array.from(storage.keys()).map(url => new Request(url)),
       add: jest.fn(async () => undefined),
       addAll: jest.fn(async () => undefined)
-    } as unknown as Cache;
+    } satisfies Cache;
   }
 
   function createMockCacheStorage(cacheStorageMap: Map<string, Map<string, Response>>): CacheStorage {
@@ -180,7 +183,7 @@ describe('RevealResourceCache', () => {
       },
       has: async (cacheName: string) => cacheStorageMap.has(cacheName),
       keys: async () => Array.from(cacheStorageMap.keys()),
-      match: jest.fn()
-    } as CacheStorage;
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
   }
 });
