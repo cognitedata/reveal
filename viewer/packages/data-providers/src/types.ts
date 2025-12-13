@@ -17,17 +17,27 @@ import {
 } from '@reveal/360-images';
 import { DMInstanceRef } from '@reveal/utilities';
 import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
+import { ModelIdentifier } from './ModelIdentifier';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']
 ) => boolean;
 
 export interface JsonFileProvider {
-  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+  getJsonFile(baseUrl: string, fileName: string, modelIdentifier?: ModelIdentifier): Promise<any>;
 }
 
 export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+}
+
+export interface DMSBinaryFileProvider {
+  getSignedBinaryFiles(
+    baseUrl: string,
+    fileNames: string[],
+    modelIdentifier?: ModelIdentifier,
+    abortSignal?: AbortSignal
+  ): Promise<ArrayBuffer[]>;
 }
 
 /**

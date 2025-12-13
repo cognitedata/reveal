@@ -10,6 +10,7 @@ import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelT
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
+import { isClassicIdentifier, isDMIdentifier } from '../DataSourceType';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -68,10 +69,18 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
   }
 
   public async getModelUri(modelIdentifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string> {
-    if (!(modelIdentifier instanceof CdfModelIdentifier)) {
-      throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    if (modelIdentifier instanceof CdfModelIdentifier) {
+      if (isDMIdentifier(modelIdentifier)) {
+        const data = `${this._client.getBaseUrl()}${this.getRequestPathForSignedFiles()}`;
+        return data;
+      }
+      if (isClassicIdentifier(modelIdentifier)) {
+        const data = `${this._client.getBaseUrl()}${this.getRequestPath(formatMetadata.blobId)}`;
+        return data;
+      }
     }
-    return `${this._client.getBaseUrl()}${this.getRequestPath(formatMetadata.blobId)}`;
+
+    throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
   }
 
   public async getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
@@ -96,5 +105,9 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
 
   private getRequestPath(directoryId: number): string {
     return `/api/v1/projects/${this._client.project}/3d/files/${directoryId}`;
+  }
+
+  private getRequestPathForSignedFiles(): string {
+    return `/api/v1/projects/${this._client.project}/3d/output/files`;
   }
 }

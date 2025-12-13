@@ -43,7 +43,8 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
-    const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
+
+    const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName, modelIdentifier);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();

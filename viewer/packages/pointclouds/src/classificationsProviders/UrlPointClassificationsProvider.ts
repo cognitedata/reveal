@@ -17,7 +17,7 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
 
   async getClassifications(modelMetadata: PointCloudMetadata): Promise<ClassificationInfo> {
     return this._dataProvider
-      .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
+      .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE, modelMetadata.modelIdentifier)
       .then(json => json as ClassificationInfo)
       .catch(_ => ({ classificationSets: [] }));
   }
