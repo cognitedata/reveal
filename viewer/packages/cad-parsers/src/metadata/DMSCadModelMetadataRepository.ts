@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
 import * as THREE from 'three';
@@ -19,7 +19,7 @@ import {
   BlobOutputMetadata
 } from '@reveal/data-providers';
 
-export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
+export class DMSCadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadSceneParser: CadMetadataParser;
@@ -43,12 +43,21 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
-
     const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
+
+    console.log(
+      'TEST SCENE JSON CAD',
+      'blobBaseUrl',
+      blobBaseUrl,
+      'this._blobFileName',
+      this._blobFileName,
+      'scene',
+      scene
+    );
 
     return {
       modelIdentifier,
