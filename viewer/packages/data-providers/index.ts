@@ -26,6 +26,7 @@ export {
 export { CoreDmImage360Annotation } from './src/image-360-data-providers/cdm/types';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
+export { DMModelIdentifier } from'./src/model-identifiers/DMModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
 export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
 export { ModelIdentifier, createModelIdentifier } from './src/ModelIdentifier';

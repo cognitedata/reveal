@@ -11,23 +11,18 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from '@reveal/model-base';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import {
-  ModelDataProvider,
-  ModelMetadataProvider,
-  ModelIdentifier,
-  File3dFormat,
-  BlobOutputMetadata
-} from '@reveal/data-providers';
+import { ModelMetadataProvider, ModelIdentifier, File3dFormat, BlobOutputMetadata } from '@reveal/data-providers';
+import { DMSModelDataProvider } from '@reveal/data-providers/src/DMSModelDataProvider';
 
 export class DMSCadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
-  private readonly _modelDataProvider: ModelDataProvider;
+  private readonly _modelDataProvider: DMSModelDataProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
 
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
-    modelDataProvider: ModelDataProvider,
+    modelDataProvider: DMSModelDataProvider,
     blobFileName: string = 'scene.json'
   ) {
     this._cadSceneParser = new CadMetadataParser();

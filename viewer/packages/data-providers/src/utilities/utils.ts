@@ -5,7 +5,7 @@
 import { TableExpressionEqualsFilterV3 } from '@cognite/sdk';
 import { PointCloudObject, PointCloudObjectMetadata } from '../pointcloud-stylable-object-providers/types';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
-import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, ClassicModelIdentifierType, DMDataSourceType, DMModelIdentifierType, DataSourceType } from '../DataSourceType';
 
 /**
  * Type guard to check if a point cloud object contains data type DMDataSourceType

@@ -59,7 +59,7 @@ export class PointCloudFactory {
         ? this._pointCloudDMProvider.getPointCloudObjects(identifier)
         : this._pointCloudObjectProvider.getPointCloudObjects(identifier);
 
-    const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
+    const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata, modelIdentifier);
 
     const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
 
@@ -74,7 +74,7 @@ export class PointCloudFactory {
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       stylableObject,
-      modelIdentifier.revealInternalId
+      modelIdentifier
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;

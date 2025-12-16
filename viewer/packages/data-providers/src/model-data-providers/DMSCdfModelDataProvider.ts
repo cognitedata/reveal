@@ -33,24 +33,26 @@ export class DmsCdfModelDataProvider implements DMSModelDataProvider, DMSBinaryF
 
     // Paginate through all signed URLs
     do {
-      const payload: any = {
-        revision: {
-          instanceId: {
-            space: modelIdentifier.revisionSpace,
-            externalId: modelIdentifier.revisionExternalId
-          }
-        },
-        filter: {
-          paths: fileNames
-        },
-        limit: 100
+      const payload = {
+        data: {
+          revision: {
+            instanceId: {
+              space: modelIdentifier.revisionSpace,
+              externalId: modelIdentifier.revisionExternalId
+            }
+          },
+          filter: {
+            paths: fileNames
+          },
+          limit: 100
+        }
       };
 
-      if (cursor) {
-        payload.cursor = cursor;
+      if (cursor && 'cursor' in payload.data) {
+        payload.data.cursor = cursor;
       }
 
-      const response = await this.client.post(`${baseUrl}`, { data: payload });
+      const response = await this.client.post(`${baseUrl}`, payload);
       const responseData = response.data as { items?: Array<{ signedUrl?: string }>; nextCursor?: string };
       const items = responseData?.items ?? [];
 

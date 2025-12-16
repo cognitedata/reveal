@@ -23,7 +23,7 @@ export class CadModelFactory {
   constructor(
     materialManager: CadMaterialManager,
     modelMetadataProvider: ModelMetadataProvider,
-    modelDataProvider: ModelDataProvider
+    modelDataProvider: ModelDataProvider,
   ) {
     this._materialManager = materialManager;
     this._modelDataProvider = modelDataProvider;

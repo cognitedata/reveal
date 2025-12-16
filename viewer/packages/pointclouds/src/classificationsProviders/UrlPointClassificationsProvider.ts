@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ModelDataProvider } from '@reveal/data-providers';
+import { DMModelIdentifier, isDMIdentifier, ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../constants';
 import { IPointClassificationsProvider } from './IPointClassificationsProvider';
 import { PointCloudMetadata } from '../PointCloudMetadata';
@@ -15,7 +15,16 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
     this._dataProvider = dataProvider;
   }
 
-  async getClassifications(modelMetadata: PointCloudMetadata): Promise<ClassificationInfo> {
+  async getClassifications(
+    modelMetadata: PointCloudMetadata,
+    modelIdentifier: ModelIdentifier
+  ): Promise<ClassificationInfo> {
+    if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier)) {
+      return this._dataProvider
+        .getDMSJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE, modelIdentifier)
+        .then(json => json as ClassificationInfo)
+        .catch(_ => ({ classificationSets: [] }));
+    }
     return this._dataProvider
       .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
       .then(json => json as ClassificationInfo)

@@ -16,7 +16,9 @@ import {
   ModelMetadataProvider,
   ModelIdentifier,
   File3dFormat,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  isDMIdentifier,
+  DMModelIdentifier
 } from '@reveal/data-providers';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
@@ -44,12 +46,23 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 
     const blobBaseUrl = await blobBaseUrlPromise;
 
-    const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
+    const json = await this.getJsonFileBasedOnModelIdentifier(modelIdentifier, blobBaseUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
+    console.log(
+      'TEST SCENE JSON CAD',
+      'blobBaseUrl',
+      blobBaseUrl,
+      'this._blobFileName',
+      this._blobFileName,
+      'json',
+      json,
+      'scene',
+      scene
+    );
     return {
       modelIdentifier,
       modelBaseUrl: blobBaseUrl,
@@ -62,6 +75,17 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
+  }
+
+  private async getJsonFileBasedOnModelIdentifier(
+    modelIdentifier: ModelIdentifier,
+    baseUrl: string,
+    fileName: string
+  ): Promise<unknown> {
+    if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier)) {
+      return this._modelDataProvider.getDMSJsonFile(baseUrl, fileName, modelIdentifier);
+    }
+    return this._modelDataProvider.getJsonFile(baseUrl, fileName);
   }
 
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {

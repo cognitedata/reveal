@@ -12,7 +12,9 @@ import {
   ModelMetadataProvider,
   ModelIdentifier,
   File3dFormat,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  DMModelIdentifier,
+  isDMIdentifier
 } from '@reveal/data-providers';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
@@ -37,7 +39,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
-    const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
+    const scene = await this.getJsonFileBasedOnModelIdentifier(modelIdentifier, modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       modelIdentifier: modelIdentifier,
@@ -48,6 +50,17 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
+  }
+
+  private async getJsonFileBasedOnModelIdentifier(
+    modelIdentifier: ModelIdentifier,
+    baseUrl: string,
+    fileName: string
+  ): Promise<unknown> {
+    if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier)) {
+      return this._modelDataProvider.getDMSJsonFile(baseUrl, fileName, modelIdentifier);
+    }
+    return this._modelDataProvider.getJsonFile(baseUrl, fileName);
   }
 
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {

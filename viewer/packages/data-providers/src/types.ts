@@ -17,7 +17,7 @@ import {
 } from '@reveal/360-images';
 import { DMInstanceRef } from '@reveal/utilities';
 import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
-import { ModelIdentifier } from './ModelIdentifier';
+import { DMModelIdentifier } from './model-identifiers/DMModelIdentifier';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']
@@ -35,13 +35,13 @@ export interface DMSBinaryFileProvider {
   getSignedBinaryFiles(
     baseUrl: string,
     fileNames: string[],
-    modelIdentifier?: ModelIdentifier,
+    modelIdentifier?: DMModelIdentifier,
     abortSignal?: AbortSignal
   ): Promise<ArrayBuffer[]>;
 }
 
 export interface DMSJsonFileProvider {
-  getJsonFile(baseUrl: string, fileName: string, modelIdentifier?: ModelIdentifier): Promise<unknown>;
+  getJsonFile(baseUrl: string, fileName: string, modelIdentifier?: DMModelIdentifier): Promise<unknown>;
 }
 
 /**

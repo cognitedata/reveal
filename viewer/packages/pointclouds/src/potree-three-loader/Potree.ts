@@ -28,9 +28,10 @@ import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
 import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
-import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
+import { DMModelIdentifier, ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
 import { createVisibilityTextureData } from './utils/utils';
+import { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
 
 const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view
 
@@ -102,10 +103,19 @@ export class Potree implements IPotree {
     baseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
-    modelIdentifier: symbol
+    modelIdentifier: ModelIdentifier
   ): Promise<PointCloudOctree> {
-    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObject);
-    return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
+    let geometry: PointCloudEptGeometry;
+    if (modelIdentifier instanceof DMModelIdentifier) {
+      geometry = await EptLoader.dmsLoad(baseUrl, fileName, this._modelDataProvider, stylableObject, modelIdentifier);
+    } else {
+      geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObject);
+    }
+    return new PointCloudOctree(
+      this,
+      geometry,
+      this._materialManager.getModelMaterial(modelIdentifier.revealInternalId)
+    );
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {
