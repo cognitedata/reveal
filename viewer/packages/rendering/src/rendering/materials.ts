@@ -6,8 +6,7 @@ import * as THREE from 'three';
 import { sectorShaders } from './shaders';
 import { RenderMode } from './RenderMode';
 
-export interface Materials {
-  // Materials
+export type Materials = {
   box: THREE.RawShaderMaterial;
   circle: THREE.RawShaderMaterial;
   generalRing: THREE.RawShaderMaterial;
@@ -21,18 +20,27 @@ export interface Materials {
   ellipsoidSegment: THREE.RawShaderMaterial;
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
-  texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
-}
+  texturedMaterials: Record<string, THREE.RawShaderMaterial>;
+};
+
+type MaterialOrMaterialSet = Materials[keyof Materials];
 
 export function forEachMaterial(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void): void {
-  for (const materialOrMaterialSet of Object.values(materials)) {
-    if (materialOrMaterialSet.isMaterial === true) {
-      callback(materialOrMaterialSet as THREE.RawShaderMaterial);
+  for (const materialOrMaterialSet of Object.values<MaterialOrMaterialSet>(materials)) {
+    if (isRawShaderMaterial(materialOrMaterialSet)) {
+      callback(materialOrMaterialSet);
     } else {
-      const materialSet = materialOrMaterialSet as { [key: string]: THREE.RawShaderMaterial };
-
-      Object.values(materialSet).forEach(material => callback(material));
+      Object.values(materialOrMaterialSet).forEach(material => callback(material));
     }
+  }
+
+  function isRawShaderMaterial(material: unknown): material is THREE.RawShaderMaterial {
+    return (
+      typeof material === 'object' &&
+      material !== null &&
+      'isRawShaderMaterial' in material &&
+      material.isRawShaderMaterial === true
+    );
   }
 }
 
