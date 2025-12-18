@@ -16,6 +16,8 @@ type NodeMetadata = {
   level: number;
 };
 
+type IconsFromClusteredNodes<ContentType> = { closeIcons: Overlay3DIcon<ContentType>[]; showRepresentative: boolean };
+
 export class IconOctree<ContentType = DefaultOverlay3DContentType> extends PointOctree<Overlay3DIcon<ContentType>> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
@@ -36,6 +38,46 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
     return nodeMetadata.icon;
   }
 
+  /**
+   * Get all icons from a node's subtree recursively
+   * @param node - The octree node to get icons from
+   * @returns Array of Overlay3DIcons contained in the node's subtree
+   */
+  public getAllIconsFromNode(node: Node): Overlay3DIcon<ContentType>[] {
+    if (this.hasData(node) && node.data) {
+      return node.data.data as Overlay3DIcon<ContentType>[];
+    }
+    if (this.hasChildren(node)) {
+      return node.children!.flatMap(child => (this.isPointOctant(child) ? this.getAllIconsFromNode(child) : []));
+    }
+    return [];
+  }
+
+  /**
+   * Check if a node or any of its descendants exists in the given set
+   * @param node - The octree node to check
+   * @param nodeSet - Set of nodes to check against
+   * @returns True if the node or any descendant is in the set, false otherwise
+   */
+  public hasDescendantInSet(node: Node, nodeSet: Set<Node>): boolean {
+    if (nodeSet.has(node)) {
+      return true;
+    }
+    if (!this.hasChildren(node)) {
+      return false;
+    }
+    return node.children!.some(child => this.hasDescendantInSet(child, nodeSet));
+  }
+
+  /**
+   * Get LOD nodes based on projected screen area.
+   * Nodes with projected area above the threshold are expanded,
+   * while those below are selected as LOD representatives.
+   * @param areaThreshold - Screen area threshold (0 to 1) for LOD selection
+   * @param projection - View projection matrix
+   * @param minimumLevel - Minimum octree level to expand to (default: 0)
+   * @returns Set of PointOctant nodes selected for LOD based on screen area
+   */
   public getLODByScreenArea(
     areaThreshold: number,
     projection: Matrix4,
@@ -83,6 +125,128 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
       const rootProjectedBounds = getApproximateProjectedBounds(new Box3(node.min, node.max), projection);
       return getScreenArea(rootProjectedBounds);
     }
+  }
+
+  /**
+   * Get LOD nodes based purely on camera distance.
+   * This provides consistent behavior regardless of view angle.
+   *
+   * @param cameraPosition - Camera position in model space
+   * @param distanceThreshold - Distance from camera within which all icons are shown (no clustering)
+   * @param clusteringLevel - The octree level at which to cluster far icons (higher = finer clusters)
+   * @returns Set of PointOctant nodes selected for LOD based on distance
+   */
+  public getLODByDistance(
+    cameraPosition: Vector3 | undefined,
+    distanceThreshold: number,
+    clusteringLevel = 2
+  ): Set<PointOctant<Overlay3DIcon>> {
+    const root = this.findNodesByLevel(0)[0];
+    const selectedNodes = new Set<PointOctant<Overlay3DIcon>>();
+
+    if (!this._nodeCenters.has(root)) {
+      return selectedNodes;
+    }
+
+    const nodesToProcess: Array<{ node: Node; depth: number }> = [{ node: root, depth: 0 }];
+
+    while (nodesToProcess.length > 0) {
+      const { node: currentNode, depth } = nodesToProcess.shift()!;
+
+      if (!this.isPointOctant(currentNode)) {
+        continue;
+      }
+
+      if (!this.hasChildren(currentNode) && this.hasData(currentNode)) {
+        selectedNodes.add(currentNode);
+        continue;
+      }
+
+      const hasIconsWithinDistance =
+        cameraPosition === undefined || this.isNodeWithinDistance(currentNode, cameraPosition, distanceThreshold);
+
+      if (hasIconsWithinDistance) {
+        currentNode.children?.forEach(child => {
+          if (this.isPointOctant(child)) {
+            nodesToProcess.push({ node: child, depth: depth + 1 });
+          }
+        });
+      } else {
+        if (depth < clusteringLevel && this.hasChildren(currentNode)) {
+          currentNode.children?.forEach(child => {
+            if (this.isPointOctant(child)) {
+              nodesToProcess.push({ node: child, depth: depth + 1 });
+            }
+          });
+        } else {
+          selectedNodes.add(currentNode);
+        }
+      }
+    }
+
+    return selectedNodes;
+  }
+
+  /**
+   * Get all icons from a node's subtree that are within the given distance from a point.
+   * Also returns the representative icon if no close icons are found (for clustering).
+   *
+   * @param node - The octree node to get icons from
+   * @param cameraPosition - Camera position for distance calculation
+   * @param distanceThreshold - Distance threshold for "close" icons
+   * @returns Object containing close icons and whether to show representative
+   */
+  public getIconsFromClusteredNode(
+    node: Node,
+    cameraPosition: Vector3,
+    distanceThreshold: number
+  ): IconsFromClusteredNodes<ContentType> {
+    const closeIcons: Overlay3DIcon<ContentType>[] = [];
+    const allIcons = this.getAllIconsFromNode(node);
+
+    for (const icon of allIcons) {
+      if (cameraPosition.distanceTo(icon.getPosition()) <= distanceThreshold) {
+        closeIcons.push(icon);
+      }
+    }
+
+    if (closeIcons.length > 0) {
+      return { closeIcons, showRepresentative: false };
+    }
+
+    return { closeIcons: [], showRepresentative: true };
+  }
+
+  /**
+   * Check if any icon in the node's subtree is within the given distance from a point
+   * @param node - The octree node to check
+   * @param point - The point to measure distance from
+   * @param distance - Distance threshold
+   * @returns True if any icon is within distance, false otherwise
+   */
+  private isNodeWithinDistance(node: Node, point: Vector3, distance: number): boolean {
+    const nodeBox = new Box3(node.min, node.max);
+    const closestPointOnBox = nodeBox.clampPoint(point, new Vector3());
+    const distanceToBox = point.distanceTo(closestPointOnBox);
+
+    if (distanceToBox > distance) {
+      return false;
+    }
+
+    const nodeMetadata = this._nodeCenters.get(node);
+    if (nodeMetadata && point.distanceTo(nodeMetadata.icon.getPosition()) <= distance) {
+      return true;
+    }
+
+    if (this.hasData(node) && node.data) {
+      return node.data.data.some((icon: Overlay3DIcon) => point.distanceTo(icon.getPosition()) <= distance);
+    }
+
+    if (this.hasChildren(node)) {
+      return node.children!.some(child => this.isNodeWithinDistance(child, point, distance));
+    }
+
+    return false;
   }
 
   private populateNodeCenters(): Map<Node, NodeMetadata> {
