@@ -80,25 +80,28 @@ describe(IconOctree.name, () => {
     });
 
     test('Single icon returns one node', () => {
-      const octree = new IconOctree([iconMocks[0]], unitBounds, 8);
-      expect(octree.getLODByDistance(positions[6], 10).size).toBe(1);
+      const testIcons = [iconMocks[0]];
+      const octree = new IconOctree(testIcons, unitBounds, 8);
+      expect(octree.getLODByDistance(positions[6], 10).size).toBe(testIcons.length);
     });
 
     test('All icons returned when camera position is undefined (no clustering)', () => {
-      const octree = new IconOctree([iconMocks[0], iconMocks[1]], unitBounds, 1);
+      const testIcons = [iconMocks[0], iconMocks[1]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
       const result = octree.getLODByDistance(undefined, 10);
-      expect(result.size).toBe(2);
+      expect(result.size).toBe(testIcons.length);
     });
 
     test('Icons within distance threshold are all returned individually', () => {
-      const octree = new IconOctree([iconMocks[0], iconMocks[1]], unitBounds, 1);
+      const testIcons = [iconMocks[0], iconMocks[1]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
       const result = octree.getLODByDistance(positions[2], 1);
-      expect(result.size).toBe(2);
+      expect(result.size).toBe(testIcons.length);
     });
 
     test('Icons beyond distance threshold are clustered', () => {
       // Use 6 icons spread across the bounds
-      const testIcons = [...iconMocks.slice(0, 6)];
+      const testIcons = iconMocks.slice(0, 6);
       const octree = new IconOctree(testIcons, unitBounds, 1);
 
       // Camera far from all icons - should cluster them into fewer nodes than total icons
@@ -113,9 +116,10 @@ describe(IconOctree.name, () => {
     });
 
     test('Camera close to some icons shows them individually while clustering distant ones', () => {
-      const octree = new IconOctree([iconMocks[0], iconMocks[1], iconMocks[4]], unitBounds, 1);
+      const testIcons = [iconMocks[0], iconMocks[1], iconMocks[4]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
       const lods = [...octree.getLODByDistance(positions[3], 0.2, 1)];
-      expect(lods.find(node => node.data?.data.includes(iconMocks[0]))).toBeDefined();
+      expect(lods.find(node => node.data?.data.includes(testIcons[0]))).toBeDefined();
     });
 
     test('Moving camera changes which icons are clustered', () => {
