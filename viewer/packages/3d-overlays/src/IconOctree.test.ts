@@ -182,20 +182,19 @@ describe(IconOctree.name, () => {
   });
 
   describe('getIconsFromClusteredNode', () => {
-    test('Returns close icons with showRepresentative false, or empty with showRepresentative true', () => {
+    test('Returns close icons when within threshold, or representative when none are close', () => {
       const octree = new IconOctree([iconMocks[3], iconMocks[4]], unitBounds, 2); // 0.1 and 0.9
       const root = octree.findNodesByLevel(0)[0];
 
-      // Close icon within threshold
+      // Close icon within threshold - returns close icons
       const resultWithClose = octree.getIconsFromClusteredNode(root, positions[6], 0.3);
-      expect(resultWithClose.closeIcons).toContain(iconMocks[3]);
-      expect(resultWithClose.closeIcons).not.toContain(iconMocks[4]);
-      expect(resultWithClose.showRepresentative).toBe(false);
+      expect(resultWithClose).toContain(iconMocks[3]);
+      expect(resultWithClose).not.toContain(iconMocks[4]);
 
-      // No icons within threshold
+      // No icons within threshold - returns representative icon
       const resultNoClose = octree.getIconsFromClusteredNode(root, positions[6], 0.01);
-      expect(resultNoClose.closeIcons.length).toBe(0);
-      expect(resultNoClose.showRepresentative).toBe(true);
+      expect(resultNoClose.length).toBe(1);
+      expect(resultNoClose[0]).toBe(octree.getNodeIcon(root));
     });
 
     test('Handles boundary conditions: zero threshold and exact distance match', () => {
@@ -204,13 +203,13 @@ describe(IconOctree.name, () => {
 
       // Zero threshold: only includes icon at exact camera position (distance 0 <= 0)
       const zeroThreshold = octree.getIconsFromClusteredNode(root, positions[6], 0);
-      expect(zeroThreshold.closeIcons).toContain(iconMocks[6]);
-      expect(zeroThreshold.closeIcons).not.toContain(iconMocks[7]);
+      expect(zeroThreshold).toContain(iconMocks[6]);
+      expect(zeroThreshold).not.toContain(iconMocks[7]);
 
       // Exact threshold: includes icon at exactly threshold distance (distance 1 <= 1)
       const exactThreshold = octree.getIconsFromClusteredNode(root, positions[6], 1);
-      expect(exactThreshold.closeIcons).toContain(iconMocks[6]);
-      expect(exactThreshold.closeIcons).toContain(iconMocks[7]);
+      expect(exactThreshold).toContain(iconMocks[6]);
+      expect(exactThreshold).toContain(iconMocks[7]);
     });
 
     test('Returns all icons when all are within distance threshold', () => {
@@ -219,8 +218,8 @@ describe(IconOctree.name, () => {
       const root = octree.findNodesByLevel(0)[0];
 
       const result = octree.getIconsFromClusteredNode(root, positions[2], 10);
-      expect(result.closeIcons.length).toBe(testIcons.length);
-      expect(result.showRepresentative).toBe(false);
+      expect(result.length).toBe(testIcons.length);
+      testIcons.forEach(icon => expect(result).toContain(icon));
     });
   });
 });

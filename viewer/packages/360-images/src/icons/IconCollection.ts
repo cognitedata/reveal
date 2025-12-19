@@ -144,24 +144,7 @@ export class IconCollection {
       const selectedIcons = nodes
         .flatMap(node => {
           if (node.data === null) {
-            const { closeIcons, showRepresentative } = octree.getIconsFromClusteredNode(
-              node,
-              cameraModelSpacePosition,
-              distanceThreshold
-            );
-
-            // There are close icons in this cluster - return all of them
-            if (closeIcons.length > 0) {
-              return closeIcons;
-            }
-
-            // No close icons - return only the representative for clustering
-            if (showRepresentative) {
-              const representativeIcon = octree.getNodeIcon(node);
-              return representativeIcon ? [representativeIcon] : [];
-            }
-
-            return [];
+            return octree.getIconsFromClusteredNode(node, cameraModelSpacePosition, distanceThreshold);
           }
           return node.data.data;
         })

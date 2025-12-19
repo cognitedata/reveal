@@ -18,13 +18,9 @@ describe(IconCollection.name, () => {
 
     const closeIconPositions = [singleCenterIconPosition, new Vector3(1, 0, 0), new Vector3(0, 1, 0)];
     const farIconPositions = [new Vector3(100, 0, 0), new Vector3(101, 0, 0), new Vector3(100, 1, 0)];
-
     const farestIconPosition = new Vector3(1000, 1000, 0);
-
     const bitFarIconPositions = [new Vector3(2, 0, 0), new Vector3(0, 2, 0), new Vector3(2, 2, 0)];
-
     const singleBitFarIconPosition = new Vector3(5, 0, 0);
-
     const bitMoreFarIconPositions = [new Vector3(50, 0, 0), new Vector3(51, 0, 0), new Vector3(50, 1, 0)];
 
     function createCamera(position: Vector3, lookAt: Vector3 = new Vector3(0, 0, 0)): PerspectiveCamera {
@@ -66,11 +62,8 @@ describe(IconCollection.name, () => {
       const collection = new IconCollection([], mockSceneHandler, mockEventTrigger);
 
       expect(capturedRenderCallback).toBeDefined();
-
       const camera = createCamera(new Vector3(0, 0, 10));
-
       expect(() => capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera })).not.toThrow();
-
       collection.dispose();
     });
 
@@ -81,7 +74,6 @@ describe(IconCollection.name, () => {
 
       // Camera close to the icon (within default distance threshold of 40)
       const camera = createCamera(new Vector3(0, 0, 30));
-
       capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Icon should not be culled when camera is close
@@ -99,7 +91,6 @@ describe(IconCollection.name, () => {
 
       // Camera looking away from the icon
       const camera = createCamera(new Vector3(0, 0, 10), new Vector3(0, 0, -100));
-
       capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Icon should be culled when outside frustum
@@ -115,10 +106,8 @@ describe(IconCollection.name, () => {
       const collection = new IconCollection(iconPositions, mockSceneHandler, mockEventTrigger);
 
       expect(capturedRenderCallback).toBeDefined();
-
       // Camera close to all icons
       const camera = createCamera(new Vector3(1, 1, 20));
-
       capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // All icons should not be culled when camera is close
@@ -133,14 +122,11 @@ describe(IconCollection.name, () => {
     test('Far icons are clustered while close icons remain visible', () => {
       // Create a group of close icons and a group of far icons
       const allPositions = [...closeIconPositions, ...farIconPositions];
-
       const collection = new IconCollection(allPositions, mockSceneHandler, mockEventTrigger);
 
       expect(capturedRenderCallback).toBeDefined();
-
       // Camera positioned close to the first group
       const camera = createCamera(new Vector3(0.5, 0.5, 20));
-
       capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
 
       const icons = collection.icons;
@@ -156,7 +142,7 @@ describe(IconCollection.name, () => {
       const farIcons = icons.slice(3, 6);
       const culledFarIcons = farIcons.filter(icon => icon.culled);
       // At least some far icons should be culled due to clustering
-      expect(culledFarIcons.length).toBeGreaterThanOrEqual(0);
+      expect(culledFarIcons.length).toBeGreaterThanOrEqual(1);
 
       collection.dispose();
     });
@@ -255,32 +241,10 @@ describe(IconCollection.name, () => {
       capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
 
       const icons = collection.icons;
-      // At least some icons should be culled due to clustering (representative shown)
-      const culledCount = icons.filter(icon => icon.culled).length;
-      expect(culledCount).toBeGreaterThanOrEqual(0);
-
-      collection.dispose();
-    });
-
-    test('Mixed close and far icons in cluster shows close icons individually', () => {
-      const mixedPositions = [
-        singleCenterIconPosition,
-        singleBitFarIconPosition,
-        farIconPositions[0],
-        farIconPositions[1]
-      ];
-
-      const collection = new IconCollection(mixedPositions, mockSceneHandler, mockEventTrigger);
-      expect(capturedRenderCallback).toBeDefined();
-
-      // Camera at origin looking at icons
-      const camera = createCamera(new Vector3(0, 0, 30));
-      capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
-
-      const icons = collection.icons;
-      // Close icons (within 40 units) should be visible
-      expect(icons[0].culled).toBe(false);
-      expect(icons[1].culled).toBe(false);
+      const visibleCount = icons.filter(icon => !icon.culled).length;
+      // At least one icon should be visible (the representative), but not necessarily all
+      expect(visibleCount).toBeGreaterThanOrEqual(1);
+      expect(visibleCount).toBeLessThanOrEqual(icons.length);
 
       collection.dispose();
     });

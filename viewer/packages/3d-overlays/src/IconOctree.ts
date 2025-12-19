@@ -16,8 +16,6 @@ type NodeMetadata = {
   level: number;
 };
 
-type IconsFromClusteredNodes<ContentType> = { closeIcons: Overlay3DIcon<ContentType>[]; showRepresentative: boolean };
-
 export class IconOctree<ContentType = DefaultOverlay3DContentType> extends PointOctree<Overlay3DIcon<ContentType>> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
@@ -200,7 +198,7 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
     node: Node,
     cameraPosition: Vector3,
     distanceThreshold: number
-  ): IconsFromClusteredNodes<ContentType> {
+  ): Overlay3DIcon<ContentType | DefaultOverlay3DContentType>[] {
     const closeIcons: Overlay3DIcon<ContentType>[] = [];
     const allIcons = this.getAllIconsFromNode(node);
 
@@ -211,10 +209,10 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
     }
 
     if (closeIcons.length > 0) {
-      return { closeIcons, showRepresentative: false };
+      return closeIcons;
     }
-
-    return { closeIcons: [], showRepresentative: true };
+    const representativeIcon = this.getNodeIcon(node);
+    return representativeIcon ? [representativeIcon] : [];
   }
 
   /**
