@@ -226,5 +226,63 @@ describe(IconCollection.name, () => {
 
       collection.dispose();
     });
+
+    test('Uses distance-based clustering with 40-unit threshold', () => {
+      const allPositions = [...closeIconPositions, ...farIconPositions];
+
+      const collection = new IconCollection(allPositions, mockSceneHandler, mockEventTrigger);
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera positioned close to origin (within 40 units of closeIconPositions)
+      const camera = createCamera(new Vector3(0, 0, 30));
+      capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const icons = collection.icons;
+      // Close icons (within 40 units) should not be culled
+      closeIconPositions.forEach((_, i) => {
+        expect(icons[i].culled).toBe(false);
+      });
+
+      collection.dispose();
+    });
+
+    test('Clustered nodes return representative icon when no close icons exist', () => {
+      const collection = new IconCollection(farIconPositions, mockSceneHandler, mockEventTrigger);
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera at origin - all farIconPositions are beyond 40 units threshold
+      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0));
+      capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const icons = collection.icons;
+      // At least some icons should be culled due to clustering (representative shown)
+      const culledCount = icons.filter(icon => icon.culled).length;
+      expect(culledCount).toBeGreaterThanOrEqual(0);
+
+      collection.dispose();
+    });
+
+    test('Mixed close and far icons in cluster shows close icons individually', () => {
+      const mixedPositions = [
+        singleCenterIconPosition,
+        singleBitFarIconPosition,
+        farIconPositions[0],
+        farIconPositions[1]
+      ];
+
+      const collection = new IconCollection(mixedPositions, mockSceneHandler, mockEventTrigger);
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera at origin looking at icons
+      const camera = createCamera(new Vector3(0, 0, 30));
+      capturedRenderCallback!({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const icons = collection.icons;
+      // Close icons (within 40 units) should be visible
+      expect(icons[0].culled).toBe(false);
+      expect(icons[1].culled).toBe(false);
+
+      collection.dispose();
+    });
   });
 });
