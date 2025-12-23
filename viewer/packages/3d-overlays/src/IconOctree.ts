@@ -19,6 +19,11 @@ type NodeMetadata = {
 export class IconOctree<ContentType = DefaultOverlay3DContentType> extends PointOctree<Overlay3DIcon<ContentType>> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
+  private readonly _distanceBoxChecker = {
+    box: new Box3(),
+    vector: new Vector3()
+  };
+
   public static getMinimalOctreeBoundsFromIcons<ContentType>(icons: Overlay3DIcon<ContentType>[]): Box3 {
     return new Box3().setFromPoints(icons.map(icon => icon.getPosition()));
   }
@@ -223,8 +228,8 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
    * @returns True if any icon is within distance, false otherwise
    */
   private isNodeWithinDistance(node: Node, point: Vector3, distance: number): boolean {
-    const nodeBox = new Box3(node.min, node.max);
-    const closestPointOnBox = nodeBox.clampPoint(point, new Vector3());
+    this._distanceBoxChecker.box.set(node.min, node.max);
+    const closestPointOnBox = this._distanceBoxChecker.box.clampPoint(point, this._distanceBoxChecker.vector);
     const distanceToBox = point.distanceTo(closestPointOnBox);
 
     if (distanceToBox > distance) {
