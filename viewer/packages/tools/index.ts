@@ -42,3 +42,4 @@ export {
   MeasurementStartedDelegate,
   MeasurementEndedDelegate
 } from './src/Measurement/types';
+export { CursorSurfaceCircleTool, CursorSurfaceCircleOptions } from './src/CursorSurfaceCircle/CursorSurfaceCircleTool';

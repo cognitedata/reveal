@@ -27,6 +27,7 @@ __metadata:
   dependencies:
     "@azure/msal-browser": "npm:^3.0.0"
     "@cognite/reveal": "link:../viewer"
+    "@cognite/reveal-react-components": "link:../react-components"
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk"
     "@types/dat.gui": "npm:^0.7.5"
     "@types/lodash": "npm:^4.14.190"
@@ -53,6 +54,12 @@ __metadata:
     webpack-dev-server: "npm:^5.0.0"
     webpack-log: "npm:^3.0.2"
   languageName: unknown
+  linkType: soft
+
+"@cognite/reveal-react-components@link:../react-components::locator=%40cognite%2Freveal-examples%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@cognite/reveal-react-components@link:../react-components::locator=%40cognite%2Freveal-examples%40workspace%3A."
+  languageName: node
   linkType: soft
 
 "@cognite/reveal@link:../viewer::locator=%40cognite%2Freveal-examples%40workspace%3A.":

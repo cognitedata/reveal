@@ -20,7 +20,7 @@ import {
   DataSourceType,
   isDMPointCloudModel
 } from '@cognite/reveal';
-import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, AxisGizmoTool, CursorSurfaceCircleTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -63,6 +63,7 @@ export function Viewer() {
       Custom: CustomCameraManager;
     };
     let pointCloudObjectsUi: PointCloudObjectStylingUI<DataSourceType>;
+    let cursorTool: CursorSurfaceCircleTool;
 
     async function main() {
       const project = urlParams.get('project');
@@ -151,6 +152,16 @@ export function Viewer() {
         Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1, 0.01, 1000))
       };
       cameraManagers.Custom.deactivate();
+
+      // Enable cursor surface circle tool (visible over CAD/point clouds and 360)
+      cursorTool = new CursorSurfaceCircleTool(viewer, {
+        pixelRadius: 40,
+        strokePx: 10,
+        sizeMode: 'world',
+        visibleOnlyIn360: true,
+        fadeAfterMs: 800,
+        fadeDurationMs: 250
+      });
 
       // Add GUI for loading models and such
       const guiState = {
@@ -500,6 +511,7 @@ export function Viewer() {
 
     return () => {
       gui.destroy();
+      cursorTool?.dispose();
       viewer?.dispose();
     };
   }, []);
