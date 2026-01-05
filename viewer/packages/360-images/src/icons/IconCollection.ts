@@ -141,14 +141,19 @@ export class IconCollection {
 
       const nodes = [...nodesLOD];
 
-      const selectedIcons = nodes
-        .flatMap(node => {
-          if (node.data === null) {
-            return octree.getIconsFromClusteredNode(node, cameraModelSpacePosition, distanceThreshold);
+      const selectedIcons: Overlay3DIcon[] = [];
+      for (const node of nodes) {
+        const icons =
+          node.data === null
+            ? octree.getIconsFromClusteredNode(node, cameraModelSpacePosition, distanceThreshold)
+            : node.data.data;
+
+        for (const icon of icons) {
+          if (frustum.containsPoint(icon.getPosition())) {
+            selectedIcons.push(icon);
           }
-          return node.data.data;
-        })
-        .filter(icon => frustum.containsPoint(icon.getPosition()));
+        }
+      }
 
       this._icons.forEach(icon => (icon.culled = true));
       selectedIcons.forEach(icon => (icon.culled = false));

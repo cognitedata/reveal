@@ -50,8 +50,8 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
     if (this.hasData(node) && node.data) {
       return node.data.data as Overlay3DIcon<ContentType>[];
     }
-    if (this.hasChildren(node)) {
-      return node.children!.flatMap(child => (this.isPointOctant(child) ? this.getAllIconsFromNode(child) : []));
+    if (this.hasChildren(node) && node.children) {
+      return node.children.flatMap(child => (this.isPointOctant(child) ? this.getAllIconsFromNode(child) : []));
     }
     return [];
   }
@@ -66,10 +66,10 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
     if (nodeSet.has(node)) {
       return true;
     }
-    if (!this.hasChildren(node)) {
+    if (!this.hasChildren(node) || !node.children) {
       return false;
     }
-    return node.children!.some(child => this.hasDescendantInSet(child, nodeSet));
+    return node.children.some(child => this.hasDescendantInSet(child, nodeSet));
   }
 
   /**
@@ -153,8 +153,8 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
 
     const nodesToProcess: Array<{ node: Node; depth: number }> = [{ node: root, depth: 0 }];
 
-    while (nodesToProcess.length > 0) {
-      const { node: currentNode, depth } = nodesToProcess.shift()!;
+    for (let i = 0; i < nodesToProcess.length; i++) {
+      const { node: currentNode, depth } = nodesToProcess[i];
 
       if (!this.isPointOctant(currentNode)) {
         continue;
