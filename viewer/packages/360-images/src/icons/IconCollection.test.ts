@@ -64,10 +64,7 @@ describe(IconCollection.name, () => {
       expect(capturedRenderCallback).toBeDefined();
       const camera = createCamera(new Vector3(0, 0, 10));
 
-      const capturedCallback = capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
-      expect(() => capturedCallback).not.toThrow();
+      expect(() => capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera })).not.toThrow();
       collection.dispose();
     });
 
@@ -78,9 +75,7 @@ describe(IconCollection.name, () => {
 
       // Camera close to the icon (within default distance threshold of 40)
       const camera = createCamera(new Vector3(0, 0, 30));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Icon should not be culled when camera is close
       const icons = collection.icons;
@@ -97,9 +92,7 @@ describe(IconCollection.name, () => {
 
       // Camera looking away from the icon
       const camera = createCamera(new Vector3(0, 0, 10), new Vector3(0, 0, -100));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Icon should be culled when outside frustum
       const icons = collection.icons;
@@ -116,9 +109,7 @@ describe(IconCollection.name, () => {
       expect(capturedRenderCallback).toBeDefined();
       // Camera close to all icons
       const camera = createCamera(new Vector3(1, 1, 20));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // All icons should not be culled when camera is close
       const icons = collection.icons;
@@ -137,9 +128,7 @@ describe(IconCollection.name, () => {
       expect(capturedRenderCallback).toBeDefined();
       // Camera positioned close to the first group
       const camera = createCamera(new Vector3(0.5, 0.5, 20));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       const icons = collection.icons;
       expect(icons.length).toBe(6);
@@ -166,18 +155,14 @@ describe(IconCollection.name, () => {
 
       // Camera far from icons initially
       const camera = createCamera(new Vector3(0, 0, 10));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Now move camera closer to icons
       camera.position.set(50, 0, 10);
       camera.lookAt(new Vector3(50, 0, 0));
       camera.updateMatrixWorld();
 
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Icons should not be culled when camera is close
       const icons = collection.icons;
@@ -198,9 +183,7 @@ describe(IconCollection.name, () => {
 
       // Before render callback, icons should have default culled state
       // After render callback, the method should first mark all as culled, then un-cull the selected ones
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       // Verify icons are properly processed
       const icons = collection.icons;
@@ -220,9 +203,7 @@ describe(IconCollection.name, () => {
       // Camera should need to account for transform
       const camera = createCamera(new Vector3(10, 0, 30));
 
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       const icons = collection.icons;
       expect(icons.length).toBe(1);
@@ -241,9 +222,7 @@ describe(IconCollection.name, () => {
 
       // Camera positioned close to origin (within 40 units of closeIconPositions)
       const camera = createCamera(new Vector3(0, 0, 30));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       const icons = collection.icons;
       // Close icons (within 40 units) should not be culled
@@ -260,9 +239,7 @@ describe(IconCollection.name, () => {
 
       // Camera at origin - all farIconPositions are beyond 40 units threshold
       const camera = createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0));
-      capturedRenderCallback
-        ? capturedRenderCallback({ frameNumber: 0, renderer: mockRenderer, camera })
-        : fail('Render callback was not captured');
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
       const icons = collection.icons;
       const visibleCount = icons.filter(icon => !icon.culled).length;
