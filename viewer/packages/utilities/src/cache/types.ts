@@ -6,10 +6,10 @@
  * Configuration for cache behavior
  */
 export type CacheConfig = {
-  cacheName?: string;
-  maxCacheSize?: number;
-  maxAge?: number;
-  cacheKeyGenerator?: (url: string) => string;
+  cacheName: string;
+  maxCacheSize: number;
+  maxAge: number;
+  cacheKeyGenerator: (url: string) => string;
 };
 
 /**
@@ -19,6 +19,7 @@ export type CacheEntry = {
   cacheKey: string;
   size: number;
   cachedAt: Date;
+  lastUsed: Date;
   contentType: string;
   expiresAt: Date;
 };
@@ -35,10 +36,11 @@ export type CacheStats = {
 };
 
 /**
- * Metadata about a cached entry
+ * Metadata about a cached entry (stored in-memory for fast access)
  */
 export type CacheEntryMetadata = {
   size: number;
   date: number;
+  lastUsed: number;
   contentType: string;
 };
