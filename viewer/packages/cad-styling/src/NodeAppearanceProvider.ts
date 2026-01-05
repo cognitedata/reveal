@@ -86,9 +86,10 @@ export class NodeAppearanceProvider {
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
       existingCollection.importance = importance;
-
+      console.log('b');
       this.handleNodeCollectionChanged(existingCollection);
     } else {
+      console.log('c');
       const styledCollection: StyledNodeCollection = {
         nodeCollection: nodeCollection,
         appearance,

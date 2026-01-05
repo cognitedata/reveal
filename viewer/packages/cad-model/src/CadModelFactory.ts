@@ -38,7 +38,7 @@ export class CadModelFactory {
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const { modelIdentifier, scene, format, formatVersion } = modelMetadata;
+    const { modelIdentifier, format, formatVersion } = modelMetadata;
     const modelType: SupportedModelTypes = 'cad';
     MetricsLogger.trackLoadModel(
       {
@@ -49,8 +49,11 @@ export class CadModelFactory {
     );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
-    this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, scene.maxTreeIndex);
     const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
+    this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, cadModel.cadMaterial);
+
+    //Cleanup on dispose
+    this._materialManager.on('materialsChanged', () => cadModel.setModelRenderLayers());
 
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);

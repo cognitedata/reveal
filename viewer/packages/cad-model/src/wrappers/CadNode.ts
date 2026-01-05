@@ -11,7 +11,13 @@ import {
 import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
-import { CadMaterialManager, RenderMode, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
+import {
+  CadMaterialManager,
+  RenderMode,
+  setModelRenderLayers,
+  StyledTreeIndexSets,
+  createCadMaterial
+} from '@reveal/rendering';
 
 import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
 
@@ -37,9 +43,10 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   private readonly _sourceTransform: Matrix4;
   private readonly _customTransform: Matrix4;
-  private readonly _setModelRenderLayers = () => this.setModelRenderLayers();
   private readonly _batchedGeometryMeshGroup: Group;
   private readonly _styledTreeIndexSets: StyledTreeIndexSets;
+  //cleaup type
+  private readonly _cadMaterial: ReturnType<typeof createCadMaterial>;
 
   private _isDisposed: boolean = false;
 
@@ -59,22 +66,19 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._sectorRepository = sectorRepository;
     this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
-    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier.revealInternalId);
-    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier.revealInternalId);
-    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier.revealInternalId);
-    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier.revealInternalId);
+    this._cadMaterial = createCadMaterial(model.scene.maxTreeIndex);
 
     this._styledTreeIndexSets = {
-      back,
-      ghost,
-      inFront,
-      visible
+      back: this._cadMaterial.nodeAppearanceTextureBuilder.regularNodeTreeIndices,
+      ghost: this._cadMaterial.nodeAppearanceTextureBuilder.ghostedNodeTreeIndices,
+      inFront: this._cadMaterial.nodeAppearanceTextureBuilder.infrontNodeTreeIndices,
+      visible: this._cadMaterial.nodeAppearanceTextureBuilder.visibleNodeTreeIndices
     };
 
     this._batchedGeometryMeshGroup = new Group();
     this._batchedGeometryMeshGroup.name = 'Batched Geometry';
 
-    const materials = materialManager.getModelMaterials(model.modelIdentifier.revealInternalId);
+    const materials = this._cadMaterial.materials;
     this._geometryBatchingManager = new MultiBufferBatchingManager(
       this._batchedGeometryMeshGroup,
       materials,
@@ -105,8 +109,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
     this._sourceTransform = new Matrix4().copy(model.modelMatrix);
     this._customTransform = new Matrix4();
-
-    this.materialManager.on('materialsChanged', this._setModelRenderLayers);
   }
 
   get needsRedraw(): boolean {
@@ -117,18 +119,21 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._needsRedraw = false;
   }
 
+  // TODO: cleanup type
+  get cadMaterial(): ReturnType<typeof createCadMaterial> {
+    return this._cadMaterial;
+  }
+
   get nodeTransformProvider(): NodeTransformProvider {
-    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    return this._cadMaterial.nodeTransformProvider;
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {
-    return this._materialManager.getModelNodeAppearanceProvider(
-      this._cadModelMetadata.modelIdentifier.revealInternalId
-    );
+    return this._cadMaterial.nodeAppearanceProvider;
   }
 
   get defaultNodeAppearance(): NodeAppearance {
-    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    return this._cadMaterial.nodeAppearanceTextureBuilder.getDefaultAppearance();
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
@@ -161,10 +166,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   get rootSector(): RootSectorNode {
     return this._rootSector;
-  }
-
-  get materialManager(): CadMaterialManager {
-    return this._materialManager;
   }
 
   set renderMode(mode: RenderMode) {
@@ -246,7 +247,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
-    this.materialManager.off('materialsChanged', this._setModelRenderLayers);
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
     this._geometryBatchingManager?.dispose();
 
