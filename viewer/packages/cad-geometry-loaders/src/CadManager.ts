@@ -36,7 +36,6 @@ export class CadManager {
   private readonly _loadingStateChangedTrigger = new EventTrigger<(loadingState: LoadingState) => void>();
 
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
-  private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
   private readonly _sectorBufferTime = 350;
 
@@ -68,7 +67,6 @@ export class CadManager {
     this._materialManager = materialManger;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
-    this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
       const modelSymbol = sector.modelIdentifier.revealInternalId;
@@ -136,7 +134,6 @@ export class CadManager {
     this._unsubscribeConsumedSectors();
     this._unsubscribeLoadingState();
     this._loadingStateChangedTrigger.unsubscribeAll();
-    this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
 
   requestRedraw(): void {
@@ -145,11 +142,14 @@ export class CadManager {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+    this._materialManager.resetRedraw();
     [...this._cadModelMap.values()].some(m => m.resetRedraw());
   }
 
   get needsRedraw(): boolean {
-    return this._needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw);
+    return (
+      this._needsRedraw || this._materialManager.needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw)
+    );
   }
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
@@ -255,10 +255,6 @@ export class CadManager {
 
   private markNeedsRedraw(): void {
     this._needsRedraw = true;
-  }
-
-  private handleMaterialsChanged() {
-    this.requestRedraw();
   }
 
   private updateTreeIndexToSectorsMap(cadModel: CadNode, sector: ConsumedSector): void {

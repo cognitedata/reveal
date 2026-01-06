@@ -11,12 +11,12 @@ import { CadMaterialManager } from '../../packages/rendering';
 export function createCadNode(
   depth: number = 3,
   children: number = 3,
-  overrides?: { sectorRepository?: SectorRepository }
+  overrides?: { sectorRepository?: SectorRepository },
+  maxTreeIndex: number = 1
 ): CadNode {
   const materialManager = new CadMaterialManager();
   const cadRoot = generateV9SectorTree(depth, children);
-  const cadMetadata = createCadModelMetadata(9, cadRoot);
-  materialManager.addModelMaterials(cadMetadata.modelIdentifier.revealInternalId, cadMetadata.scene.maxTreeIndex);
+  const cadMetadata = createCadModelMetadata(9, cadRoot, maxTreeIndex);
 
   const mockSectorRepository =
     overrides?.sectorRepository ??
@@ -27,5 +27,8 @@ export function createCadNode(
       .returns(() => {})
       .object();
 
-  return new CadNode(cadMetadata, materialManager, mockSectorRepository);
+  const cadNode = new CadNode(cadMetadata, materialManager, mockSectorRepository);
+  materialManager.addModelMaterials(cadMetadata.modelIdentifier.revealInternalId, cadNode.cadMaterial);
+
+  return cadNode;
 }

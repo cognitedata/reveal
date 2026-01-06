@@ -8,15 +8,16 @@ import {
   PrioritizedArea,
   type NodeTransformProvider
 } from '@reveal/cad-styling';
+import throttle from 'lodash/throttle';
 import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
 import {
   CadMaterialManager,
-  RenderMode,
   setModelRenderLayers,
   StyledTreeIndexSets,
-  createCadMaterial
+  createCadMaterial,
+  type CadMaterial
 } from '@reveal/rendering';
 
 import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
@@ -46,7 +47,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   private readonly _batchedGeometryMeshGroup: Group;
   private readonly _styledTreeIndexSets: StyledTreeIndexSets;
   //cleaup type
-  private readonly _cadMaterial: ReturnType<typeof createCadMaterial>;
+  private readonly _cadMaterial: CadMaterial;
 
   private _isDisposed: boolean = false;
 
@@ -74,6 +75,24 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
       inFront: this._cadMaterial.nodeAppearanceTextureBuilder.infrontNodeTreeIndices,
       visible: this._cadMaterial.nodeAppearanceTextureBuilder.visibleNodeTreeIndices
     };
+
+    const materialUpdateThrottleDelay = 75;
+    const updateMaterialsCallback: () => void = throttle(
+      () => {
+        if (this._cadMaterial.nodeAppearanceTextureBuilder.needsUpdate) {
+          this._cadMaterial.nodeAppearanceTextureBuilder.build();
+        }
+        this._needsRedraw = true;
+        this.setModelRenderLayers();
+      },
+      materialUpdateThrottleDelay,
+      {
+        leading: true,
+        trailing: true
+      }
+    );
+
+    this._cadMaterial.nodeAppearanceProvider.on('changed', updateMaterialsCallback);
 
     this._batchedGeometryMeshGroup = new Group();
     this._batchedGeometryMeshGroup.name = 'Batched Geometry';
@@ -120,7 +139,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   // TODO: cleanup type
-  get cadMaterial(): ReturnType<typeof createCadMaterial> {
+  get cadMaterial(): CadMaterial {
     return this._cadMaterial;
   }
 
@@ -137,11 +156,12 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
-    this._materialManager.setModelDefaultNodeAppearance(
-      this._cadModelMetadata.modelIdentifier.revealInternalId,
-      appearance
-    );
+    this._cadMaterial.nodeAppearanceTextureBuilder.setDefaultAppearance(appearance);
+    if (this._cadMaterial.nodeAppearanceTextureBuilder.needsUpdate) {
+      this._cadMaterial.nodeAppearanceTextureBuilder.build();
+    }
     this.setModelRenderLayers();
+    this._needsRedraw = true;
   }
 
   get clippingPlanes(): Plane[] {
@@ -166,14 +186,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   get rootSector(): RootSectorNode {
     return this._rootSector;
-  }
-
-  set renderMode(mode: RenderMode) {
-    this._materialManager.setRenderMode(mode);
-  }
-
-  get renderMode(): RenderMode {
-    return this._materialManager.getRenderMode();
   }
 
   get isDisposed(): boolean {

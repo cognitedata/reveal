@@ -52,9 +52,6 @@ export class CadModelFactory {
     const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
     this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, cadModel.cadMaterial);
 
-    //Cleanup on dispose
-    this._materialManager.on('materialsChanged', () => cadModel.setModelRenderLayers());
-
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
       const clippingPlanes = new BoundingBoxClipper(clipBox).clippingPlanes;
