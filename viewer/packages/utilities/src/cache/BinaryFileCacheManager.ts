@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
+import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE, METADATA_CACHE_KEY } from './constants';
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 import { AsyncSequencer } from '../AsyncSequencer';
 
@@ -32,6 +32,8 @@ export class BinaryFileCacheManager {
   private readonly _asyncSequencer = new AsyncSequencer();
   private readonly _caches: CacheStorage;
 
+  private _initializePromise: Promise<void> | undefined = undefined;
+
   private _metadata:
     | {
         index: Map<string, CacheEntryMetadata>;
@@ -43,7 +45,7 @@ export class BinaryFileCacheManager {
     return this._config;
   }
 
-  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = caches) {
+  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = global.caches) {
     this._config = { ...this._config, ...config };
     this._caches = cacheStorage;
   }
@@ -98,6 +100,7 @@ export class BinaryFileCacheManager {
             this._metadata.index.delete(url);
           }
         }
+        await this.persistMetadata(cache);
       });
       return undefined;
     }
@@ -107,13 +110,21 @@ export class BinaryFileCacheManager {
       const metadata = this._metadata.index.get(url);
       if (metadata) {
         metadata.lastUsed = Date.now();
+        this.updateLastUsedAsync(cache).catch(err =>
+          console.warn('[BinaryFileCacheManager] Failed to persist lastUsed:', err)
+        );
       }
     }
 
     return response.clone();
   }
 
-  private _initializePromise: Promise<void> | undefined = undefined;
+  private async updateLastUsedAsync(cache: Cache): Promise<void> {
+    const sequencer = this._asyncSequencer.getNextSequencer<void>();
+    await sequencer(async () => {
+      await this.persistMetadata(cache);
+    });
+  }
 
   /**
    * Initialize the in-memory metadata index by scanning the cache
@@ -135,8 +146,14 @@ export class BinaryFileCacheManager {
         const cache = await this._caches.open(this._config.cacheName);
         const responses = await cache.matchAll();
 
+        const persistedMetadata = await this.loadPersistedMetadata(cache);
+
         for (const response of responses) {
           if (!response) {
+            continue;
+          }
+
+          if (response.url === METADATA_CACHE_KEY) {
             continue;
           }
 
@@ -144,7 +161,9 @@ export class BinaryFileCacheManager {
           const date = safeParseInt(response.headers.get('X-Cache-Date'));
           const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
-          index.set(response.url, { size, date, lastUsed: date, contentType });
+          const lastUsed = persistedMetadata[response.url] ?? date;
+
+          index.set(response.url, { size, date, lastUsed, contentType });
           currentSize += size;
         }
 
@@ -155,6 +174,45 @@ export class BinaryFileCacheManager {
     })();
 
     await this._initializePromise;
+  }
+
+  private async loadPersistedMetadata(cache: Cache): Promise<Record<string, number>> {
+    try {
+      const metadataResponse = await cache.match(METADATA_CACHE_KEY);
+      if (!metadataResponse) {
+        return {};
+      }
+
+      const text = await metadataResponse.text();
+      return JSON.parse(text);
+    } catch (error) {
+      console.warn('[BinaryFileCacheManager] Failed to load persisted metadata:', error);
+      return {};
+    }
+  }
+
+  private async persistMetadata(cache: Cache): Promise<void> {
+    if (!this._metadata) {
+      return;
+    }
+
+    try {
+      const metadata: Record<string, number> = {};
+      for (const [url, entry] of this._metadata.index.entries()) {
+        metadata[url] = entry.lastUsed;
+      }
+
+      const metadataJson = JSON.stringify(metadata);
+      const metadataResponse = new Response(metadataJson, {
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      });
+
+      await cache.put(METADATA_CACHE_KEY, metadataResponse);
+    } catch (error) {
+      console.warn('[BinaryFileCacheManager] Failed to persist metadata:', error);
+    }
   }
 
   /**
@@ -192,6 +250,8 @@ export class BinaryFileCacheManager {
           this._metadata.index.set(url, { size, date: now, lastUsed: now, contentType });
           this._metadata.currentSize += size;
         }
+
+        await this.persistMetadata(cache);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(`[BinaryFileCacheManager] Failed to store in cache: ${message}`, { cause: error });
@@ -269,6 +329,10 @@ export class BinaryFileCacheManager {
         this._metadata.currentSize -= entry.size;
       }
       freedSpace += entry.size;
+    }
+
+    if (freedSpace > 0) {
+      await this.persistMetadata(cache);
     }
   }
 }
