@@ -2,7 +2,14 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE, METADATA_CACHE_KEY } from './constants';
+import {
+  CACHE_NAME,
+  DEFAULT_DESKTOP_STORAGE_LIMIT,
+  DEFAULT_MAX_CACHE_AGE,
+  METADATA_CACHE_KEY,
+  CACHE_HEADER_DATE,
+  CACHE_HEADER_SIZE
+} from './constants';
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 import { AsyncSequencer } from '../AsyncSequencer';
 
@@ -153,16 +160,12 @@ export class BinaryFileCacheManager {
         const persistedMetadata = await this.loadPersistedMetadata(cache);
 
         for (const response of responses) {
-          if (!response) {
-            continue;
-          }
-
           if (response.url === METADATA_CACHE_KEY) {
             continue;
           }
 
-          const size = safeParseInt(response.headers.get('X-Cache-Size'));
-          const date = safeParseInt(response.headers.get('X-Cache-Date'));
+          const size = getCacheSize(response);
+          const date = getCacheDate(response);
           const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
           const lastUsed = persistedMetadata[response.url] ?? date;
@@ -238,8 +241,8 @@ export class BinaryFileCacheManager {
         const contentType = response.headers.get('Content-Type') ?? 'application/octet-stream';
 
         const headers = new Headers(response.headers);
-        headers.set('X-Cache-Date', now.toString());
-        headers.set('X-Cache-Size', size.toString());
+        headers.set(CACHE_HEADER_DATE, now.toString());
+        headers.set(CACHE_HEADER_SIZE, size.toString());
 
         const cachedResponse = new Response(response.body, {
           status: response.status,
@@ -335,11 +338,16 @@ export class BinaryFileCacheManager {
   }
 }
 
-function isExpired(response: Response, maxAge: number): boolean {
-  const dateHeader = response.headers.get('X-Cache-Date');
-  if (!dateHeader) return true;
+function getCacheDate(response: Response): number {
+  return safeParseInt(response.headers.get(CACHE_HEADER_DATE));
+}
 
-  const cachedAt = safeParseInt(dateHeader);
+function getCacheSize(response: Response): number {
+  return safeParseInt(response.headers.get(CACHE_HEADER_SIZE));
+}
+
+function isExpired(response: Response, maxAge: number): boolean {
+  const cachedAt = getCacheDate(response);
   if (cachedAt === 0) return true;
 
   return Date.now() - cachedAt > maxAge;
