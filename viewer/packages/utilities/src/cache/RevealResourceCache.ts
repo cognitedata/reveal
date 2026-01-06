@@ -15,16 +15,20 @@ import { safeParseInt } from './utils';
 
 /**
  * Get the resource cache for all Reveal 3D resources
+ * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
  */
 
-export function getRevealResourceCache(): BinaryFileCacheManager {
+export function getRevealResourceCache(cacheStorage: CacheStorage = caches): BinaryFileCacheManager {
   const recommendationSize = calculateOptimalCacheSize();
 
-  return new BinaryFileCacheManager({
-    cacheName: CACHE_NAME,
-    maxCacheSize: recommendationSize,
-    maxAge: DEFAULT_MAX_CACHE_AGE
-  });
+  return new BinaryFileCacheManager(
+    {
+      cacheName: CACHE_NAME,
+      maxCacheSize: recommendationSize,
+      maxAge: DEFAULT_MAX_CACHE_AGE
+    },
+    cacheStorage
+  );
 }
 
 /**
@@ -36,17 +40,19 @@ export function getRevealResourceCacheName(): string {
 
 /**
  * Clear the resource cache
+ * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
  */
-export async function clearRevealResourceCache(): Promise<void> {
-  await caches.delete(CACHE_NAME);
+export async function clearRevealResourceCache(cacheStorage: CacheStorage = caches): Promise<void> {
+  await cacheStorage.delete(CACHE_NAME);
 }
 
 /**
  * Get total size of resource cache
+ * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
  */
-export async function getRevealResourceCacheSize(): Promise<number> {
+export async function getRevealResourceCacheSize(cacheStorage: CacheStorage = caches): Promise<number> {
   try {
-    const cache = await caches.open(CACHE_NAME);
+    const cache = await cacheStorage.open(CACHE_NAME);
     const responses = await cache.matchAll();
 
     let totalSize = 0;
