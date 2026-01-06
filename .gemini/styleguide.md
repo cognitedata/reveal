@@ -1,21 +1,7 @@
 # Code Best Practices
 
 ## Scope Note
-Unless otherwise specified, these rules apply to all code changes in the repository. The rules under "Mocking Practices" are specifically limited to files within the `react-components/` directory.
-
----
-
-## 1. Mocking Practices (React-Components Scope)
-
-### Rule: Avoid 'vi.mock' for Module Mocks
-- **Scope:** This rule ONLY applies to files located within the `react-components/` directory and its subdirectories (e.g., test files).
-- **Guidance:** In files under `react-components/`, DO NOT use the global `vi.mock` function. This often leads to unnecessary global state and confusion, especially in a modular component library.
-- **Action:** Flag any usage of `vi.mock` that occurs in files under the `react-components/` path.
-
-### Rule: Avoid 'vi.mocked'
-- **Scope:** This rule ONLY applies to files located within the `react-components/` directory and its subdirectories.
-- **Guidance:** In files under `react-components/`, DO NOT use the `vi.mocked` helper. Prefer using explicitly defining the type of the mock object for clearer intent.
-- **Action:** Flag any usage of `vi.mocked` that occurs in files under the `react-components/` path.
+Unless otherwise specified, these rules apply to all code changes in the repository.
 
 ---
 

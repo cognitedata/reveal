@@ -6,4 +6,3 @@ flag_management:
     carryforward: true
     paths:
       - viewer/
-      - react-components/

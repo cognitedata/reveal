@@ -39,8 +39,7 @@
         "@types/three"
       ],
       "matchPaths": [
-        "documentation/versioned_docs/*/package.json",
-        "react-components/package.json"
+        "documentation/versioned_docs/*/package.json"
       ],
       "enabled": false
     },

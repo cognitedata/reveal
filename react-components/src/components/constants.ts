@@ -1,1 +1,0 @@
-export const TOOLBAR_HORIZONTAL_PANEL_OFFSET = 12;
