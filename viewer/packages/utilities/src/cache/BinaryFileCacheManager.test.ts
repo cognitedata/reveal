@@ -31,10 +31,6 @@ describe(BinaryFileCacheManager.name, () => {
     );
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   function createResponse(data: ArrayBuffer, contentType: string, url?: string): Response {
     const response = new Response(data, {
       status: 200,
