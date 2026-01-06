@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-export { RevealCacheManager } from './RevealCacheManager';
+export { BinaryFileCacheManager } from './BinaryFileCacheManager';
 export type { CacheConfig, CacheEntry, CacheStats } from './types';
 
 export {

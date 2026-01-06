@@ -10,37 +10,29 @@ describe(CachedModelDataProvider.name, () => {
   let mockBaseProvider: ModelDataProvider;
   let cachedProvider: CachedModelDataProvider;
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
-  let originalCaches: CacheStorage;
+  let mockCacheStorage: CacheStorage;
 
   const TEST_URL = 'https://example.com';
   const TEST_FILENAME = 'test.bin';
 
-  beforeAll(() => {
-    originalCaches = global.caches;
-  });
-
-  afterAll(() => {
-    global.caches = originalCaches;
-  });
-
   beforeEach(() => {
     mockCacheStorageMap = new Map();
-    global.caches = createMockCacheStorage(mockCacheStorageMap);
+    mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
 
     mockBaseProvider = {
       getBinaryFile: jest.fn(async () => new ArrayBuffer(100)),
       getJsonFile: jest.fn(async () => ({ test: 'data' }))
     };
 
-    cachedProvider = new CachedModelDataProvider(mockBaseProvider, {
-      cacheName: 'test-cache',
-      maxCacheSize: 1024 * 1024,
-      maxAge: 1000 * 60 * 60
-    });
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    cachedProvider = new CachedModelDataProvider(
+      mockBaseProvider,
+      {
+        cacheName: 'test-cache',
+        maxCacheSize: 1024 * 1024,
+        maxAge: 1000 * 60 * 60
+      },
+      mockCacheStorage
+    );
   });
 
   test('should fetch from base provider on cache miss', async () => {
@@ -192,9 +184,17 @@ describe(CachedModelDataProvider.name, () => {
       match: jest.fn(async () => undefined)
     } satisfies CacheStorage;
 
-    global.caches = failingMock;
+    const failingProvider = new CachedModelDataProvider(
+      mockBaseProvider,
+      {
+        cacheName: 'failing-cache',
+        maxCacheSize: 1024 * 1024,
+        maxAge: 1000 * 60 * 60
+      },
+      failingMock
+    );
 
-    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
+    await failingProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
 
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalled();
 
@@ -203,16 +203,17 @@ describe(CachedModelDataProvider.name, () => {
 
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
-      match: async (key: string) => storage.get(key) ?? undefined,
+      match: async (key: string) => {
+        const stored = storage.get(key);
+        return stored ? stored.clone() : undefined;
+      },
       matchAll: async () => {
-        return Array.from(storage.entries()).map(([url, response]) => {
-          const clonedResponse = response.clone();
-          Object.defineProperty(clonedResponse, 'url', { value: url, writable: false });
-          return clonedResponse;
-        });
+        return Array.from(storage.values());
       },
       put: async (key: string, response: Response) => {
-        storage.set(key, response);
+        const responseWithUrl = response.clone();
+        Object.defineProperty(responseWithUrl, 'url', { value: key, writable: false });
+        storage.set(key, responseWithUrl);
       },
       delete: async (key: string) => {
         const had = storage.has(key);

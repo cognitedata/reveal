@@ -3,7 +3,7 @@
  */
 
 import { ModelDataProvider } from '../ModelDataProvider';
-import { RevealCacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
+import { BinaryFileCacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
 
 /**
  * Wraps a ModelDataProvider with caching capabilities using the Cache API.
@@ -13,11 +13,11 @@ import { RevealCacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
  */
 export class CachedModelDataProvider implements ModelDataProvider {
   private readonly baseProvider: ModelDataProvider;
-  private readonly cacheManager: RevealCacheManager;
+  private readonly cacheManager: BinaryFileCacheManager;
 
-  constructor(baseProvider: ModelDataProvider, cacheConfig?: CacheConfig) {
+  constructor(baseProvider: ModelDataProvider, cacheConfig?: CacheConfig, cacheStorage?: CacheStorage) {
     this.baseProvider = baseProvider;
-    this.cacheManager = new RevealCacheManager(cacheConfig);
+    this.cacheManager = new BinaryFileCacheManager(cacheConfig, cacheStorage);
   }
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
@@ -31,8 +31,15 @@ export class CachedModelDataProvider implements ModelDataProvider {
 
       const data = await this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
 
+      const response = new Response(data, {
+        headers: new Headers({
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': data.byteLength.toString()
+        })
+      });
+
       this.cacheManager
-        .storeResponse(url, data, 'application/octet-stream')
+        .storeResponse(url, response)
         .catch(err => console.warn('[CachedModelDataProvider] Failed to cache:', err));
 
       return data;
@@ -53,8 +60,16 @@ export class CachedModelDataProvider implements ModelDataProvider {
 
       const data = await this.baseProvider.getJsonFile(baseUrl, fileName);
 
+      const jsonString = JSON.stringify(data);
+      const response = new Response(jsonString, {
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'Content-Length': new Blob([jsonString]).size.toString()
+        })
+      });
+
       this.cacheManager
-        .storeResponse(url, JSON.stringify(data), 'application/json')
+        .storeResponse(url, response)
         .catch(err => console.warn('[CachedModelDataProvider] Failed to cache:', err));
 
       return data;
@@ -67,7 +82,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
   /**
    * Get the underlying cache manager for direct cache operations
    */
-  getCacheManager(): RevealCacheManager {
+  getCacheManager(): BinaryFileCacheManager {
     return this.cacheManager;
   }
 

@@ -18,7 +18,7 @@ import { safeParseInt } from './utils';
  * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
  */
 
-export function getRevealResourceCache(cacheStorage: CacheStorage = caches): BinaryFileCacheManager {
+export function getRevealResourceCache(cacheStorage: CacheStorage = global.caches): BinaryFileCacheManager {
   const recommendationSize = calculateOptimalCacheSize();
 
   return new BinaryFileCacheManager(
@@ -42,7 +42,7 @@ export function getRevealResourceCacheName(): string {
  * Clear the resource cache
  * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
  */
-export async function clearRevealResourceCache(cacheStorage: CacheStorage = caches): Promise<void> {
+export async function clearRevealResourceCache(cacheStorage: CacheStorage = global.caches): Promise<void> {
   await cacheStorage.delete(CACHE_NAME);
 }
 
@@ -50,7 +50,7 @@ export async function clearRevealResourceCache(cacheStorage: CacheStorage = cach
  * Get total size of resource cache
  * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
  */
-export async function getRevealResourceCacheSize(cacheStorage: CacheStorage = caches): Promise<number> {
+export async function getRevealResourceCacheSize(cacheStorage: CacheStorage = global.caches): Promise<number> {
   try {
     const cache = await cacheStorage.open(CACHE_NAME);
     const responses = await cache.matchAll();

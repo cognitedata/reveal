@@ -44,7 +44,7 @@ export class BinaryFileCacheManager {
     return this._config;
   }
 
-  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = caches) {
+  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = global.caches) {
     this._config = { ...this._config, ...config };
     this._caches = cacheStorage;
   }
@@ -167,8 +167,9 @@ export class BinaryFileCacheManager {
       try {
         await this.initializeIndex();
 
-        const contentLength = response.headers.get('Content-Length');
-        const size = contentLength ? safeParseInt(contentLength) : (await response.clone().arrayBuffer()).byteLength;
+        const responseClone = response.clone();
+        const arrayBuffer = await responseClone.arrayBuffer();
+        const size = arrayBuffer.byteLength;
 
         await this.evictIfNeeded(size);
 
@@ -181,7 +182,7 @@ export class BinaryFileCacheManager {
         headers.set('X-Cache-Date', now.toString());
         headers.set('X-Cache-Size', size.toString());
 
-        const cachedResponse = new Response(response.body, {
+        const cachedResponse = new Response(arrayBuffer, {
           status: response.status,
           statusText: response.statusText,
           headers
