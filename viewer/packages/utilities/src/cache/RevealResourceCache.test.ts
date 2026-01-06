@@ -9,38 +9,29 @@ import {
   clearRevealResourceCache,
   getRevealResourceCacheSize
 } from './RevealResourceCache';
-import { RevealCacheManager } from './RevealCacheManager';
 import { DEFAULT_MAX_CACHE_AGE, CACHE_NAME } from './constants';
+import { BinaryFileCacheManager } from './BinaryFileCacheManager';
 
 describe('RevealResourceCache', () => {
   const TEST_URL = 'https://example.com/test.bin';
   const TEST_POINT_CLOUD_URL = 'https://example.com/pointcloud.bin';
   const TEST_CAD_MODEL_URL = 'https://example.com/cad-model.glb';
   const TEST_360_IMAGE_URL = 'https://example.com/360-image.jpg';
+  const APPLICATION_CONTENT_TYPE = 'application/octet-stream';
+  const IMAGE_CONTENT_TYPE = 'image/jpeg';
+
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
-  let originalCaches: CacheStorage;
-
-  beforeAll(() => {
-    originalCaches = global.caches;
-  });
-
-  afterAll(() => {
-    global.caches = originalCaches;
-  });
+  let mockCacheStorage: CacheStorage;
 
   beforeEach(() => {
     mockCacheStorageMap = new Map();
-    global.caches = createMockCacheStorage(mockCacheStorageMap);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
   });
 
   test('should return a CacheManager instance with auto-detected size', () => {
-    const cache = getRevealResourceCache();
+    const cache = getRevealResourceCache(mockCacheStorage);
 
-    expect(cache).toBeInstanceOf(RevealCacheManager);
+    expect(cache).toBeInstanceOf(BinaryFileCacheManager);
     expect(cache.cacheConfig.cacheName).toBe(CACHE_NAME);
     expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0);
   });
@@ -51,18 +42,18 @@ describe('RevealResourceCache', () => {
   });
 
   test('should clear the cache', async () => {
-    const cache = getRevealResourceCache();
-    await cache.storeResponse(TEST_URL, new ArrayBuffer(100), 'application/octet-stream');
+    const cache = getRevealResourceCache(mockCacheStorage);
+    await cache.storeResponse(TEST_URL, createResponse(new ArrayBuffer(100), APPLICATION_CONTENT_TYPE));
 
     expect(await cache.has(TEST_URL)).toBe(true);
 
-    await clearRevealResourceCache();
+    await clearRevealResourceCache(mockCacheStorage);
 
     expect(await cache.has(TEST_URL)).toBe(false);
   });
 
   test('should return 0 for empty cache', async () => {
-    const size = await getRevealResourceCacheSize();
+    const size = await getRevealResourceCacheSize(mockCacheStorage);
     expect(size).toBe(0);
   });
 
@@ -77,9 +68,7 @@ describe('RevealResourceCache', () => {
       match: jest.fn()
     } as CacheStorage;
 
-    global.caches = failingMock;
-
-    const size = await getRevealResourceCacheSize();
+    const size = await getRevealResourceCacheSize(failingMock);
 
     expect(size).toBe(0);
     expect(consoleWarnSpy).toHaveBeenCalled();
@@ -96,17 +85,17 @@ describe('RevealResourceCache', () => {
     });
     cacheMap.set('https://example.com/no-size.bin', response);
 
-    const size = await getRevealResourceCacheSize();
+    const size = await getRevealResourceCacheSize(mockCacheStorage);
 
     expect(size).toBe(0);
   });
 
   test('should cache different resource types in same pool', async () => {
-    const cache = getRevealResourceCache();
+    const cache = getRevealResourceCache(mockCacheStorage);
 
-    await cache.storeResponse(TEST_POINT_CLOUD_URL, new ArrayBuffer(1000), 'application/octet-stream');
-    await cache.storeResponse(TEST_CAD_MODEL_URL, new ArrayBuffer(2000), 'application/octet-stream');
-    await cache.storeResponse(TEST_360_IMAGE_URL, new ArrayBuffer(3000), 'image/jpeg');
+    await cache.storeResponse(TEST_POINT_CLOUD_URL, createResponse(new ArrayBuffer(1000), APPLICATION_CONTENT_TYPE));
+    await cache.storeResponse(TEST_CAD_MODEL_URL, createResponse(new ArrayBuffer(2000), APPLICATION_CONTENT_TYPE));
+    await cache.storeResponse(TEST_360_IMAGE_URL, createResponse(new ArrayBuffer(3000), IMAGE_CONTENT_TYPE));
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
@@ -116,15 +105,18 @@ describe('RevealResourceCache', () => {
   });
 
   test('should share cache size limit across all resource types', async () => {
-    const cache = getRevealResourceCache();
+    const cache = getRevealResourceCache(mockCacheStorage);
 
-    await cache.storeResponse(TEST_POINT_CLOUD_URL, new ArrayBuffer(1000), 'application/octet-stream');
-    await cache.storeResponse(TEST_CAD_MODEL_URL, new ArrayBuffer(2000), 'application/octet-stream');
-    await cache.storeResponse(TEST_360_IMAGE_URL, new ArrayBuffer(3000), 'image/jpeg');
+    await cache.storeResponse(TEST_POINT_CLOUD_URL, createResponse(new ArrayBuffer(1000), APPLICATION_CONTENT_TYPE));
+    await cache.storeResponse(TEST_CAD_MODEL_URL, createResponse(new ArrayBuffer(2000), APPLICATION_CONTENT_TYPE));
+    await cache.storeResponse(TEST_360_IMAGE_URL, createResponse(new ArrayBuffer(3000), IMAGE_CONTENT_TYPE));
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    await cache.storeResponse('https://example.com/large-file.bin', new ArrayBuffer(2000), 'application/octet-stream');
+    await cache.storeResponse(
+      'https://example.com/large-file.bin',
+      createResponse(new ArrayBuffer(2000), APPLICATION_CONTENT_TYPE)
+    );
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
@@ -135,14 +127,24 @@ describe('RevealResourceCache', () => {
   });
 
   test('should use auto-detected cache size by default', () => {
-    const cache = getRevealResourceCache();
+    const cache = getRevealResourceCache(mockCacheStorage);
     expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0);
   });
 
   test('should use 7 days default max age', () => {
-    const cache = getRevealResourceCache();
+    const cache = getRevealResourceCache(mockCacheStorage);
     expect(cache.cacheConfig.maxAge).toBe(DEFAULT_MAX_CACHE_AGE);
   });
+
+  function createResponse(data: ArrayBuffer, contentType: string): Response {
+    return new Response(data, {
+      status: 200,
+      headers: new Headers({
+        'Content-Type': contentType,
+        'Content-Length': data.byteLength.toString()
+      })
+    });
+  }
 
   function createMockCache(storage: Map<string, Response>): Cache {
     return {
