@@ -197,17 +197,15 @@ export class BinaryFileCacheManager {
   }
 
   private async persistMetadata(cache: Cache): Promise<void> {
-    if (!this._metadata) {
-      return;
-    }
+    const metadata = await this.getOrInitializeIndex();
 
     try {
-      const metadata: Record<string, number> = {};
-      for (const [url, entry] of this._metadata.index.entries()) {
-        metadata[url] = entry.lastUsed;
+      const metadataToStore: Record<string, number> = {};
+      for (const [url, entry] of metadata.index.entries()) {
+        metadataToStore[url] = entry.lastUsed;
       }
 
-      const metadataJson = JSON.stringify(metadata);
+      const metadataJson = JSON.stringify(metadataToStore);
       const metadataResponse = new Response(metadataJson, {
         headers: new Headers({
           'Content-Type': 'application/json'
