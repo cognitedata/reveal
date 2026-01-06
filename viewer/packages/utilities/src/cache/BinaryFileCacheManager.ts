@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { BYTES_PER_KB, CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
+import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 import { AsyncSequencer } from '../AsyncSequencer';
 
@@ -25,12 +25,12 @@ export class BinaryFileCacheManager {
   private readonly DEFAULT_CONFIG: CacheConfig = {
     cacheName: CACHE_NAME,
     maxCacheSize: DEFAULT_DESKTOP_STORAGE_LIMIT,
-    maxAge: DEFAULT_MAX_CACHE_AGE,
-    cacheKeyGenerator: (url: string) => url
+    maxAge: DEFAULT_MAX_CACHE_AGE
   };
 
   private readonly _config: CacheConfig = { ...this.DEFAULT_CONFIG };
   private readonly _asyncSequencer = new AsyncSequencer();
+  private readonly _caches: CacheStorage;
 
   private _metadata:
     | {
@@ -43,21 +43,21 @@ export class BinaryFileCacheManager {
     return this._config;
   }
 
-  constructor(config: Partial<CacheConfig> = {}) {
+  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = caches) {
     this._config = { ...this._config, ...config };
+    this._caches = cacheStorage;
   }
 
   /**
    * Check if a URL is cached
    */
   async has(url: string): Promise<boolean> {
-    const cacheKey = this._config.cacheKeyGenerator(url);
-    const cache = await caches.open(this._config.cacheName);
-    const response = await cache.match(cacheKey);
+    const cache = await this._caches.open(this._config.cacheName);
+    const response = await cache.match(url);
 
     if (!response) return false;
 
-    return !this.isExpired(response);
+    return !isExpired(response, this._config.maxAge);
   }
 
   /**
@@ -67,7 +67,7 @@ export class BinaryFileCacheManager {
     const sequencer = this._asyncSequencer.getNextSequencer<void>();
     await sequencer(async () => {
       try {
-        await caches.delete(this._config.cacheName);
+        await this._caches.delete(this._config.cacheName);
         this._metadata = undefined;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -80,23 +80,22 @@ export class BinaryFileCacheManager {
    * Get a cached response if it exists and is not expired
    */
   async getCachedResponse(url: string): Promise<Response | undefined> {
-    const cacheKey = this._config.cacheKeyGenerator(url);
-    const cache = await caches.open(this._config.cacheName);
-    const response = await cache.match(cacheKey);
+    const cache = await this._caches.open(this._config.cacheName);
+    const response = await cache.match(url);
 
     if (!response) {
       return undefined;
     }
 
-    if (this.isExpired(response)) {
-      await cache.delete(cacheKey);
+    if (isExpired(response, this._config.maxAge)) {
+      await cache.delete(url);
       return undefined;
     }
 
     // Update last used time for LRU eviction
     await this.initializeIndex();
     if (this._metadata) {
-      const metadata = this._metadata.index.get(cacheKey);
+      const metadata = this._metadata.index.get(url);
       if (metadata) {
         metadata.lastUsed = Date.now();
       }
@@ -124,7 +123,7 @@ export class BinaryFileCacheManager {
         const index = new Map<string, CacheEntryMetadata>();
         let currentSize = 0;
 
-        const cache = await caches.open(this._config.cacheName);
+        const cache = await this._caches.open(this._config.cacheName);
         const responses = await cache.matchAll();
 
         for (const response of responses) {
@@ -136,8 +135,7 @@ export class BinaryFileCacheManager {
           const date = safeParseInt(response.headers.get('X-Cache-Date'));
           const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
-          const cacheKey = this._config.cacheKeyGenerator(response.url);
-          index.set(cacheKey, { size, date, lastUsed: date, contentType });
+          index.set(response.url, { size, date, lastUsed: date, contentType });
           currentSize += size;
         }
 
@@ -159,14 +157,12 @@ export class BinaryFileCacheManager {
       try {
         await this.initializeIndex();
 
-        const cacheKey = this._config.cacheKeyGenerator(url);
-
         const contentLength = response.headers.get('Content-Length');
         const size = contentLength ? safeParseInt(contentLength) : (await response.clone().arrayBuffer()).byteLength;
 
         await this.evictIfNeeded(size);
 
-        const cache = await caches.open(this._config.cacheName);
+        const cache = await this._caches.open(this._config.cacheName);
 
         const now = Date.now();
         const contentType = response.headers.get('Content-Type') ?? 'application/octet-stream';
@@ -181,10 +177,10 @@ export class BinaryFileCacheManager {
           headers
         });
 
-        await cache.put(cacheKey, cachedResponse);
+        await cache.put(url, cachedResponse);
 
         if (this._metadata) {
-          this._metadata.index.set(cacheKey, { size, date: now, lastUsed: now, contentType });
+          this._metadata.index.set(url, { size, date: now, lastUsed: now, contentType });
           this._metadata.currentSize += size;
         }
       } catch (error) {
@@ -231,7 +227,6 @@ export class BinaryFileCacheManager {
       cacheName: this._config.cacheName,
       count: entries.length,
       size: totalSize,
-      sizeFormatted: this.formatBytes(totalSize),
       entries: entries.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())
     };
   }
@@ -246,7 +241,7 @@ export class BinaryFileCacheManager {
       return;
     }
 
-    const cache = await caches.open(this._config.cacheName);
+    const cache = await this._caches.open(this._config.cacheName);
     const spaceToFree = (this._metadata?.currentSize ?? 0) + newEntrySize - this._config.maxCacheSize;
 
     const entries = Array.from(this._metadata?.index.entries() ?? [])
@@ -267,25 +262,16 @@ export class BinaryFileCacheManager {
       freedSpace += entry.size;
     }
   }
+}
 
-  private isExpired(response: Response): boolean {
-    const dateHeader = response.headers.get('X-Cache-Date');
-    if (!dateHeader) return true;
+function isExpired(response: Response, maxAge: number): boolean {
+  const dateHeader = response.headers.get('X-Cache-Date');
+  if (!dateHeader) return true;
 
-    const cachedAt = safeParseInt(dateHeader);
-    if (cachedAt === 0) return true;
+  const cachedAt = safeParseInt(dateHeader);
+  if (cachedAt === 0) return true;
 
-    return Date.now() - cachedAt > this._config.maxAge;
-  }
-
-  private formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(BYTES_PER_KB));
-
-    return parseFloat((bytes / Math.pow(BYTES_PER_KB, i)).toFixed(2)) + ' ' + sizes[i];
-  }
+  return Date.now() - cachedAt > maxAge;
 }
 
 function safeParseInt(value: string | null | undefined): number {

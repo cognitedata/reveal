@@ -9,7 +9,6 @@ export type CacheConfig = {
   cacheName: string;
   maxCacheSize: number;
   maxAge: number;
-  cacheKeyGenerator: (url: string) => string;
 };
 
 /**
@@ -31,7 +30,6 @@ export type CacheStats = {
   cacheName: string;
   count: number;
   size: number;
-  sizeFormatted: string;
   entries: CacheEntry[];
 };
 
