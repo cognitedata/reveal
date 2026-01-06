@@ -9,8 +9,8 @@ import {
   clearRevealResourceCache,
   getRevealResourceCacheSize
 } from './RevealResourceCache';
-import { RevealCacheManager } from './RevealCacheManager';
 import { DEFAULT_MAX_CACHE_AGE, CACHE_NAME } from './constants';
+import { BinaryFileCacheManager } from './BinaryFileCacheManager';
 
 describe('RevealResourceCache', () => {
   const TEST_URL = 'https://example.com/test.bin';
@@ -40,7 +40,7 @@ describe('RevealResourceCache', () => {
   test('should return a CacheManager instance with auto-detected size', () => {
     const cache = getRevealResourceCache();
 
-    expect(cache).toBeInstanceOf(RevealCacheManager);
+    expect(cache).toBeInstanceOf(BinaryFileCacheManager);
     expect(cache.cacheConfig.cacheName).toBe(CACHE_NAME);
     expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0);
   });

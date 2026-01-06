@@ -2,8 +2,8 @@
  * Copyright 2025 Cognite AS
  */
 
+import { BinaryFileCacheManager } from './BinaryFileCacheManager';
 import { CACHE_NAME, DEFAULT_MAX_CACHE_AGE } from './constants';
-import { RevealCacheManager } from './RevealCacheManager';
 import { calculateOptimalCacheSize } from './StorageQuotaManager';
 import { safeParseInt } from './utils';
 
@@ -17,14 +17,13 @@ import { safeParseInt } from './utils';
  * Get the resource cache for all Reveal 3D resources
  */
 
-export function getRevealResourceCache(): RevealCacheManager {
+export function getRevealResourceCache(): BinaryFileCacheManager {
   const recommendationSize = calculateOptimalCacheSize();
 
-  return new RevealCacheManager({
+  return new BinaryFileCacheManager({
     cacheName: CACHE_NAME,
     maxCacheSize: recommendationSize,
-    maxAge: DEFAULT_MAX_CACHE_AGE,
-    cacheKeyGenerator: (url: string) => url
+    maxAge: DEFAULT_MAX_CACHE_AGE
   });
 }
 

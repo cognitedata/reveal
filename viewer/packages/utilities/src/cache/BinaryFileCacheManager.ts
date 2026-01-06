@@ -5,6 +5,7 @@
 import { CACHE_NAME, DEFAULT_DESKTOP_STORAGE_LIMIT, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 import { AsyncSequencer } from '../AsyncSequencer';
+import { safeParseInt } from './utils';
 
 /**
  * Generic Binary File Cache Manager using the Browser Cache API for storing 3D resources
@@ -281,11 +282,4 @@ function isExpired(response: Response, maxAge: number): boolean {
   if (cachedAt === 0) return true;
 
   return Date.now() - cachedAt > maxAge;
-}
-
-function safeParseInt(value: string | null | undefined): number {
-  const defaultValue = 0;
-  if (!value) return defaultValue;
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) ? defaultValue : parsed;
 }
