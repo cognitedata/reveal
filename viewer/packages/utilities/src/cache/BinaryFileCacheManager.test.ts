@@ -13,6 +13,7 @@ describe(BinaryFileCacheManager.name, () => {
   const FILE3_URL = 'https://example.com/file3.bin';
   const MAX_CACHE_AGE = 1000 * 60 * 60;
   const DEFAULT_MAX_CACHE_SIZE = 1024 * 1024;
+  const TEST_CONTENT_TYPE = 'application/octet-stream';
 
   let cacheManager: BinaryFileCacheManager;
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
@@ -65,12 +66,11 @@ describe(BinaryFileCacheManager.name, () => {
 
   test('should store, retrieve, check and clear cached data', async () => {
     const data = new ArrayBuffer(100);
-    await cacheManager.storeResponse(TEST_URL, createResponse(data, 'application/octet-stream'));
+    await cacheManager.storeResponse(TEST_URL, createResponse(data, TEST_CONTENT_TYPE));
 
     const cached = await cacheManager.getCachedResponse(TEST_URL);
     expect(cached).toBeDefined();
-    expect(cached!.headers.get('Content-Type')).toBe('application/octet-stream');
-
+    expect(cached!.headers.get('Content-Type')).toBe(TEST_CONTENT_TYPE);
     expect(await cacheManager.has(TEST_URL)).toBe(true);
 
     await cacheManager.clear();
@@ -86,7 +86,7 @@ describe(BinaryFileCacheManager.name, () => {
     const cache = await mockCacheStorage.open('test-cache');
     const expiredDate = Date.now() - 2 * 60 * 60 * 1000;
     const headers = new Headers({
-      'Content-Type': 'application/octet-stream',
+      'Content-Type': TEST_CONTENT_TYPE,
       'X-Cache-Date': expiredDate.toString(),
       'X-Cache-Size': '50'
     });
@@ -105,9 +105,9 @@ describe(BinaryFileCacheManager.name, () => {
       mockCacheStorage
     );
 
-    await smallCache.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
-    await smallCache.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
-    await smallCache.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await smallCache.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
+    await smallCache.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
+    await smallCache.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
 
     expect(await smallCache.getSize()).toBeLessThanOrEqual(250);
   });
@@ -122,15 +122,15 @@ describe(BinaryFileCacheManager.name, () => {
       mockCacheStorage
     );
 
-    await smallCache.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await smallCache.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
     await new Promise(resolve => setTimeout(resolve, 50));
-    await smallCache.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await smallCache.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
     await new Promise(resolve => setTimeout(resolve, 50));
-    await smallCache.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await smallCache.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
     await new Promise(resolve => setTimeout(resolve, 50));
     await smallCache.storeResponse(
       'https://example.com/file4.bin',
-      createResponse(new ArrayBuffer(150), 'application/octet-stream')
+      createResponse(new ArrayBuffer(150), TEST_CONTENT_TYPE)
     );
 
     expect(await smallCache.getSize()).toBeLessThanOrEqual(350);
@@ -139,10 +139,10 @@ describe(BinaryFileCacheManager.name, () => {
   test('should calculate size and return stats using in-memory index', async () => {
     expect(await cacheManager.getSize()).toBe(0);
 
-    await cacheManager.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await cacheManager.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
     expect(await cacheManager.getSize()).toBe(100);
 
-    await cacheManager.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(200), 'application/octet-stream'));
+    await cacheManager.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(200), TEST_CONTENT_TYPE));
     expect(await cacheManager.getSize()).toBe(300);
 
     const stats = await cacheManager.getStats();
@@ -185,7 +185,7 @@ describe(BinaryFileCacheManager.name, () => {
       failingMock
     );
     await expect(
-      errorManager2.storeResponse(TEST_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'))
+      errorManager2.storeResponse(TEST_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE))
     ).rejects.toThrow('Failed to store in cache');
 
     const errorManager3 = new BinaryFileCacheManager(
@@ -210,18 +210,9 @@ describe(BinaryFileCacheManager.name, () => {
     );
 
     const promises = [
-      smallCache.storeResponse(
-        'https://example.com/c1.bin',
-        createResponse(new ArrayBuffer(150), 'application/octet-stream')
-      ),
-      smallCache.storeResponse(
-        'https://example.com/c2.bin',
-        createResponse(new ArrayBuffer(150), 'application/octet-stream')
-      ),
-      smallCache.storeResponse(
-        'https://example.com/c3.bin',
-        createResponse(new ArrayBuffer(150), 'application/octet-stream')
-      )
+      smallCache.storeResponse('https://example.com/c1.bin', createResponse(new ArrayBuffer(150), TEST_CONTENT_TYPE)),
+      smallCache.storeResponse('https://example.com/c2.bin', createResponse(new ArrayBuffer(150), TEST_CONTENT_TYPE)),
+      smallCache.storeResponse('https://example.com/c3.bin', createResponse(new ArrayBuffer(150), TEST_CONTENT_TYPE))
     ];
 
     await Promise.all(promises);
@@ -232,13 +223,13 @@ describe(BinaryFileCacheManager.name, () => {
     const order: number[] = [];
     const promises = [
       cacheManager
-        .storeResponse('https://example.com/o1.bin', createResponse(new ArrayBuffer(100), 'application/octet-stream'))
+        .storeResponse('https://example.com/o1.bin', createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE))
         .then(() => order.push(1)),
       cacheManager
-        .storeResponse('https://example.com/o2.bin', createResponse(new ArrayBuffer(100), 'application/octet-stream'))
+        .storeResponse('https://example.com/o2.bin', createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE))
         .then(() => order.push(2)),
       cacheManager
-        .storeResponse('https://example.com/o3.bin', createResponse(new ArrayBuffer(100), 'application/octet-stream'))
+        .storeResponse('https://example.com/o3.bin', createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE))
         .then(() => order.push(3))
     ];
 
@@ -248,18 +239,9 @@ describe(BinaryFileCacheManager.name, () => {
 
   test('should serialize clear() to prevent race conditions', async () => {
     const storePromises = [
-      cacheManager.storeResponse(
-        'https://example.com/r1.bin',
-        createResponse(new ArrayBuffer(100), 'application/octet-stream')
-      ),
-      cacheManager.storeResponse(
-        'https://example.com/r2.bin',
-        createResponse(new ArrayBuffer(100), 'application/octet-stream')
-      ),
-      cacheManager.storeResponse(
-        'https://example.com/r3.bin',
-        createResponse(new ArrayBuffer(100), 'application/octet-stream')
-      )
+      cacheManager.storeResponse('https://example.com/r1.bin', createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE)),
+      cacheManager.storeResponse('https://example.com/r2.bin', createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE)),
+      cacheManager.storeResponse('https://example.com/r3.bin', createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE))
     ];
 
     const clearPromise = cacheManager.clear();
@@ -274,7 +256,7 @@ describe(BinaryFileCacheManager.name, () => {
     const cache = await mockCacheStorage.open('test-cache');
 
     const invalidHeaders = new Headers({
-      'Content-Type': 'application/octet-stream',
+      'Content-Type': TEST_CONTENT_TYPE,
       'X-Cache-Date': 'invalid-date',
       'X-Cache-Size': 'not-a-number'
     });
@@ -292,7 +274,7 @@ describe(BinaryFileCacheManager.name, () => {
     expect(size).toBe(0);
   });
 
-  test('should evict least recently used items (LRU)', async () => {
+  test('should evict least recently used items', async () => {
     const lruCache = new BinaryFileCacheManager(
       {
         cacheName: 'lru-cache',
@@ -302,27 +284,64 @@ describe(BinaryFileCacheManager.name, () => {
       mockCacheStorage
     );
 
-    // Store three files (300 bytes total, under 350 limit)
-    await lruCache.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await lruCache.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
     await new Promise(resolve => setTimeout(resolve, 10));
-    await lruCache.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await lruCache.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
     await new Promise(resolve => setTimeout(resolve, 10));
-    await lruCache.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(100), 'application/octet-stream'));
+    await lruCache.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
 
     // Access FILE1 to make it "recently used"
     await lruCache.getCachedResponse(FILE1_URL);
     await new Promise(resolve => setTimeout(resolve, 10));
 
-    // Store a new file that will trigger eviction (400 bytes total needs to evict at least 50 bytes)
-    // FILE2 should be evicted (least recently used), not FILE1 even though it was stored first
     await lruCache.storeResponse(
       'https://example.com/file4.bin',
-      createResponse(new ArrayBuffer(100), 'application/octet-stream')
+      createResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE)
     );
 
     expect(await lruCache.has(FILE1_URL)).toBe(true);
     expect(await lruCache.has(FILE2_URL)).toBe(false);
     expect(await lruCache.has(FILE3_URL)).toBe(true);
+  });
+
+  test('should persist lastUsed timestamps across sessions', async () => {
+    const mockCacheStorageMap = new Map<string, Map<string, Response>>();
+    const mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
+
+    const manager1 = new BinaryFileCacheManager(
+      { cacheName: 'test-cache', maxCacheSize: 5000, maxAge: MAX_CACHE_AGE },
+      mockCacheStorage
+    );
+
+    await manager1.storeResponse(FILE1_URL, createResponse(new ArrayBuffer(1000), TEST_CONTENT_TYPE));
+    await manager1.storeResponse(FILE2_URL, createResponse(new ArrayBuffer(1000), TEST_CONTENT_TYPE));
+    await manager1.storeResponse(FILE3_URL, createResponse(new ArrayBuffer(1000), TEST_CONTENT_TYPE));
+
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    await manager1.getCachedResponse(FILE1_URL);
+    await manager1.getCachedResponse(FILE2_URL);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // Session 2: New cache manager instance (simulates page reload/new session)
+    const manager2 = new BinaryFileCacheManager(
+      { cacheName: 'test-cache', maxCacheSize: 5000, maxAge: MAX_CACHE_AGE },
+      mockCacheStorage
+    );
+
+    await manager2.storeResponse(
+      'https://example.com/large.bin',
+      createResponse(new ArrayBuffer(3000), TEST_CONTENT_TYPE)
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    expect(await manager2.has(FILE3_URL)).toBe(false);
+
+    // FILE1 and FILE2 should still exist (were accessed in session 1)
+    expect(await manager2.has(FILE1_URL)).toBe(true);
+    expect(await manager2.has(FILE2_URL)).toBe(true);
   });
 
   function createMockCache(storage: Map<string, Response>): Cache {
