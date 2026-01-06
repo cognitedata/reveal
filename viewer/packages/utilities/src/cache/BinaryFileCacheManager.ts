@@ -88,11 +88,20 @@ export class BinaryFileCacheManager {
     }
 
     if (isExpired(response, this._config.maxAge)) {
-      await cache.delete(url);
+      const sequencer = this._asyncSequencer.getNextSequencer<void>();
+      await sequencer(async () => {
+        await cache.delete(url);
+        if (this._metadata) {
+          const metadata = this._metadata.index.get(url);
+          if (metadata) {
+            this._metadata.currentSize -= metadata.size;
+            this._metadata.index.delete(url);
+          }
+        }
+      });
       return undefined;
     }
 
-    // Update last used time for LRU eviction
     await this.initializeIndex();
     if (this._metadata) {
       const metadata = this._metadata.index.get(url);
