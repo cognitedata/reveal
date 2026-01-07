@@ -29,7 +29,7 @@ import { CacheConfig } from './types';
  * ```
  */
 export class BinaryFileCacheManager {
-  private readonly DEFAULT_CONFIG: Required<CacheConfig> = {
+  private readonly DEFAULT_CONFIG: CacheConfig = {
     cacheName: CACHE_NAME,
     maxAge: Infinity, // Cache forever until browser evicts
     maxCacheSize: Infinity // No limit - browser manages storage quota
