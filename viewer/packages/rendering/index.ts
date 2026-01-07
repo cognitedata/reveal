@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadMaterialManager } from './src/CadMaterialManager';
+export { CadMaterialManager, createCadMaterial, CadMaterial } from './src/CadMaterialManager';
 export { PointCloudMaterialManager } from './src/PointCloudMaterialManager';
 
 export {

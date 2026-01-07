@@ -230,21 +230,13 @@ export class PickingHandler {
   }
 
   private async pickTreeIndex(input: TreeIndexPickingInput, shouldRunAsync: boolean): Promise<number | undefined> {
-    const { cadNode } = input;
-    const previousRenderMode = cadNode.renderMode;
-    cadNode.renderMode = RenderMode.TreeIndex;
-    let pixelBuffer: Uint8Array;
-    try {
-      pixelBuffer = await this.pickPixel(
-        input,
-        this._treeIndexRenderPipeline,
-        this._clearColor,
-        this._clearAlpha,
-        shouldRunAsync
-      );
-    } finally {
-      cadNode.renderMode = previousRenderMode;
-    }
+    const pixelBuffer = await this.pickPixel(
+      input,
+      this._treeIndexRenderPipeline,
+      this._clearColor,
+      this._clearAlpha,
+      shouldRunAsync
+    );
 
     if (pixelBuffer[3] === 0) {
       return;
@@ -260,9 +252,6 @@ export class PickingHandler {
   }
 
   private async pickDepth(input: PickingInput, shouldRunAsync: boolean): Promise<number> {
-    const { cadNodes } = input;
-    const previousRenderMode = cadNodes[0].renderMode;
-    cadNodes.forEach(cadeNode => (cadeNode.renderMode = RenderMode.Depth));
     const pixelBuffer = await this.pickPixel(
       input,
       this._depthRenderPipeline,
@@ -270,10 +259,8 @@ export class PickingHandler {
       this._clearAlpha,
       shouldRunAsync
     );
-    cadNodes.forEach(cadeNode => (cadeNode.renderMode = previousRenderMode));
 
-    const depth = this.unpackRGBAToDepth(pixelBuffer);
-    return depth;
+    return this.unpackRGBAToDepth(pixelBuffer);
   }
 
   private getPosition(input: PickingInput, viewZ: number): THREE.Vector3 {
