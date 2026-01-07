@@ -52,6 +52,7 @@ export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 export { DataFileCacheManager } from './src/cache/DataFileCacheManager';
 export type { CacheConfig } from './src/cache/types';
 export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
+export { createMockCache, createMockCacheStorage } from './src/cache/test-utils';
 
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
