@@ -51,13 +51,7 @@ export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
 export { BinaryFileCacheManager } from './src/cache/BinaryFileCacheManager';
 export type { CacheConfig } from './src/cache/types';
-
-export {
-  getRevealResourceCache,
-  getRevealResourceCacheName,
-  clearRevealResourceCache,
-  getRevealResourceCacheSize
-} from './src/cache/RevealResourceCache';
+export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
 
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 

@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CACHE_HEADER_DATE, CACHE_HEADER_SIZE } from './constants';
+import { BINARY_FILES_CACHE_HEADER_DATE, BINARY_FILES_CACHE_HEADER_SIZE } from './constants';
 
 export function safeParseInt(value: string | null | undefined): number {
   if (!value) return 0;
@@ -11,9 +11,9 @@ export function safeParseInt(value: string | null | undefined): number {
 }
 
 export function getCacheDate(response: Response): number {
-  return safeParseInt(response.headers.get(CACHE_HEADER_DATE));
+  return safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_DATE));
 }
 
 export function getCacheSize(response: Response): number {
-  return safeParseInt(response.headers.get(CACHE_HEADER_SIZE));
+  return safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_SIZE));
 }

@@ -3,7 +3,7 @@
  */
 import { jest } from '@jest/globals';
 import { BinaryFileCacheManager } from './BinaryFileCacheManager';
-import { CACHE_NAME } from './constants';
+import { BINARY_FILES_CACHE_NAME } from './constants';
 
 describe(BinaryFileCacheManager.name, () => {
   const DEFAULT_MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1GB
@@ -47,7 +47,7 @@ describe(BinaryFileCacheManager.name, () => {
     expect(custom.cacheConfig.maxAge).toBe(3600000);
 
     const defaults = new BinaryFileCacheManager({}, mockCacheStorage);
-    expect(defaults.cacheConfig.cacheName).toBe(CACHE_NAME);
+    expect(defaults.cacheConfig.cacheName).toBe(BINARY_FILES_CACHE_NAME);
     expect(defaults.cacheConfig.maxAge).toBe(Infinity);
   });
 

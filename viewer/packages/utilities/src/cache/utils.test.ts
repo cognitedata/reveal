@@ -3,7 +3,7 @@
  */
 
 import { safeParseInt, getCacheDate, getCacheSize } from './utils';
-import { CACHE_HEADER_DATE, CACHE_HEADER_SIZE } from './constants';
+import { BINARY_FILES_CACHE_HEADER_DATE, BINARY_FILES_CACHE_HEADER_SIZE } from './constants';
 
 interface CachedResponseOptions {
   cacheDate: number;
@@ -52,7 +52,7 @@ describe('cacheUtils', () => {
     test('should return 0 for invalid cache date header', () => {
       const response = new Response(null, {
         headers: new Headers({
-          [CACHE_HEADER_DATE]: 'invalid-date'
+          [BINARY_FILES_CACHE_HEADER_DATE]: 'invalid-date'
         })
       });
 
@@ -82,7 +82,7 @@ describe('cacheUtils', () => {
     test('should return 0 for invalid cache size header', () => {
       const response = new Response(null, {
         headers: new Headers({
-          [CACHE_HEADER_SIZE]: 'not-a-number'
+          [BINARY_FILES_CACHE_HEADER_SIZE]: 'not-a-number'
         })
       });
 
@@ -98,8 +98,8 @@ describe('cacheUtils', () => {
       headers: new Headers({
         'Content-Type': contentType,
         'Content-Length': data.byteLength.toString(),
-        [CACHE_HEADER_DATE]: cacheDate.toString(),
-        [CACHE_HEADER_SIZE]: cacheSize.toString()
+        [BINARY_FILES_CACHE_HEADER_DATE]: cacheDate.toString(),
+        [BINARY_FILES_CACHE_HEADER_SIZE]: cacheSize.toString()
       })
     });
   }

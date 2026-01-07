@@ -4,10 +4,4 @@
 
 export { BinaryFileCacheManager } from './BinaryFileCacheManager';
 export type { CacheConfig } from './types';
-
-export {
-  getRevealResourceCache,
-  getRevealResourceCacheName,
-  clearRevealResourceCache,
-  getRevealResourceCacheSize
-} from './RevealResourceCache';
+export { BINARY_FILES_CACHE_NAME } from './constants';

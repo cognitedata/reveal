@@ -1,7 +1,7 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { CACHE_HEADER_DATE, CACHE_HEADER_SIZE, CACHE_NAME } from './constants';
+import { BINARY_FILES_CACHE_HEADER_DATE, BINARY_FILES_CACHE_HEADER_SIZE, BINARY_FILES_CACHE_NAME } from './constants';
 import { CacheConfig } from './types';
 import { safeParseInt } from './utils';
 
@@ -31,7 +31,7 @@ import { safeParseInt } from './utils';
  */
 export class BinaryFileCacheManager {
   private readonly DEFAULT_CONFIG: CacheConfig = {
-    cacheName: CACHE_NAME,
+    cacheName: BINARY_FILES_CACHE_NAME,
     maxAge: Infinity, // Cache forever until browser evicts
     maxCacheSize: Infinity // No limit - browser manages storage quota
   };
@@ -110,8 +110,8 @@ export class BinaryFileCacheManager {
       const now = Date.now();
 
       const headers = new Headers(response.headers);
-      headers.set(CACHE_HEADER_DATE, now.toString());
-      headers.set(CACHE_HEADER_SIZE, size.toString());
+      headers.set(BINARY_FILES_CACHE_HEADER_DATE, now.toString());
+      headers.set(BINARY_FILES_CACHE_HEADER_SIZE, size.toString());
 
       const cachedResponse = new Response(bodyData, {
         status: response.status,
@@ -128,7 +128,7 @@ export class BinaryFileCacheManager {
 }
 
 function isExpired(response: Response, maxAge: number): boolean {
-  const cachedAt = safeParseInt(response.headers.get(CACHE_HEADER_DATE));
+  const cachedAt = safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_DATE));
   if (cachedAt === 0) return true;
   return Date.now() - cachedAt > maxAge;
 }

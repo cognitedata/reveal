@@ -28,25 +28,24 @@ export class CachedModelDataProvider implements ModelDataProvider {
       if (cached) {
         return await cached.arrayBuffer();
       }
-
-      const data = await this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
-
-      const response = new Response(data, {
-        headers: new Headers({
-          'Content-Type': 'application/octet-stream',
-          'Content-Length': data.byteLength.toString()
-        })
-      });
-
-      this.cacheManager
-        .storeResponse(url, response)
-        .catch(err => console.warn('[CachedModelDataProvider] Failed to cache:', err));
-
-      return data;
     } catch (error) {
-      console.warn('[CachedModelDataProvider] Error:', error);
-      return this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
+      console.warn(`[CachedModelDataProvider] Cache read for ${url} failed, falling back to network.`, error);
     }
+
+    const data = await this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
+
+    const response = new Response(data, {
+      headers: new Headers({
+        'Content-Type': 'application/octet-stream',
+        'Content-Length': data.byteLength.toString()
+      })
+    });
+
+    this.cacheManager
+      .storeResponse(url, response)
+      .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
+
+    return data;
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
@@ -57,26 +56,25 @@ export class CachedModelDataProvider implements ModelDataProvider {
       if (cached) {
         return await cached.json();
       }
-
-      const data = await this.baseProvider.getJsonFile(baseUrl, fileName);
-
-      const jsonString = JSON.stringify(data);
-      const response = new Response(jsonString, {
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          'Content-Length': new Blob([jsonString]).size.toString()
-        })
-      });
-
-      this.cacheManager
-        .storeResponse(url, response)
-        .catch(err => console.warn('[CachedModelDataProvider] Failed to cache:', err));
-
-      return data;
     } catch (error) {
-      console.warn('[CachedModelDataProvider] Error:', error);
-      return this.baseProvider.getJsonFile(baseUrl, fileName);
+      console.warn(`[CachedModelDataProvider] Cache read for ${url} failed, falling back to network.`, error);
     }
+
+    const data = await this.baseProvider.getJsonFile(baseUrl, fileName);
+
+    const jsonString = JSON.stringify(data);
+    const response = new Response(jsonString, {
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        'Content-Length': new Blob([jsonString]).size.toString()
+      })
+    });
+
+    this.cacheManager
+      .storeResponse(url, response)
+      .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
+
+    return data;
   }
 
   /**
