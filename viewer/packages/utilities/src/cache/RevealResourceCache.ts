@@ -5,7 +5,7 @@
 import { BinaryFileCacheManager } from './BinaryFileCacheManager';
 import { CACHE_NAME, DEFAULT_MAX_CACHE_AGE } from './constants';
 import { calculateOptimalCacheSize } from './StorageQuotaManager';
-import { safeParseInt } from './utils';
+import { getCacheSize } from './utils';
 
 /**
  * Cache configuration for all Reveal 3D resources.
@@ -15,10 +15,10 @@ import { safeParseInt } from './utils';
 
 /**
  * Get the resource cache for all Reveal 3D resources
- * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
+ * @param cacheStorage - Optional CacheStorage instance
  */
 
-export function getRevealResourceCache(cacheStorage: CacheStorage = caches): BinaryFileCacheManager {
+export function getRevealResourceCache(cacheStorage: CacheStorage = global.caches): BinaryFileCacheManager {
   const recommendationSize = calculateOptimalCacheSize();
 
   return new BinaryFileCacheManager(
@@ -40,17 +40,17 @@ export function getRevealResourceCacheName(): string {
 
 /**
  * Clear the resource cache
- * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
+ * @param cacheStorage - Optional CacheStorage instance
  */
-export async function clearRevealResourceCache(cacheStorage: CacheStorage = caches): Promise<void> {
+export async function clearRevealResourceCache(cacheStorage: CacheStorage = global.caches): Promise<void> {
   await cacheStorage.delete(CACHE_NAME);
 }
 
 /**
  * Get total size of resource cache
- * @param cacheStorage - Optional CacheStorage instance (defaults to global caches)
+ * @param cacheStorage - Optional CacheStorage instance
  */
-export async function getRevealResourceCacheSize(cacheStorage: CacheStorage = caches): Promise<number> {
+export async function getRevealResourceCacheSize(cacheStorage: CacheStorage = global.caches): Promise<number> {
   try {
     const cache = await cacheStorage.open(CACHE_NAME);
     const responses = await cache.matchAll();
@@ -58,8 +58,7 @@ export async function getRevealResourceCacheSize(cacheStorage: CacheStorage = ca
     let totalSize = 0;
     for (const response of responses) {
       if (response) {
-        const sizeHeader = response.headers.get('X-Cache-Size');
-        const size = safeParseInt(sizeHeader);
+        const size = getCacheSize(response);
         totalSize += size;
       }
     }

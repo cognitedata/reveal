@@ -12,7 +12,7 @@ import {
 } from './constants';
 import { CacheConfig, CacheStats, CacheEntry, CacheEntryMetadata } from './types';
 import { AsyncSequencer } from '../AsyncSequencer';
-import { safeParseInt } from './utils';
+import { getCacheDate, getCacheSize, safeParseInt } from './utils';
 
 /**
  * Generic Binary File Cache Manager using the Browser Cache API for storing 3D resources
@@ -337,14 +337,6 @@ export class BinaryFileCacheManager {
       await this.persistMetadata(cache);
     }
   }
-}
-
-function getCacheDate(response: Response): number {
-  return safeParseInt(response.headers.get(CACHE_HEADER_DATE));
-}
-
-function getCacheSize(response: Response): number {
-  return safeParseInt(response.headers.get(CACHE_HEADER_SIZE));
 }
 
 function isExpired(response: Response, maxAge: number): boolean {
