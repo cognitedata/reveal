@@ -40,8 +40,6 @@ export class BinaryFileCacheManager {
   private readonly _asyncSequencer = new AsyncSequencer();
   private readonly _caches: CacheStorage;
 
-  private _initializePromise: Promise<void> | undefined = undefined;
-
   private _metadata:
     | {
         index: Map<string, CacheEntryMetadata>;
@@ -88,11 +86,6 @@ export class BinaryFileCacheManager {
 
   /**
    * Get a cached response if it exists and is not expired
-   *
-   * Note: lastUsed updates are consistent (not serialized) to maintain
-   * read performance. This should be acceptable because LRU eviction doesn't require
-   * perfect accuracy - the race window is very low and worst case is evicting a
-   * slightly suboptimal entry.
    */
   async getCachedResponse(url: string): Promise<Response | undefined> {
     const cache = await this._caches.open(this._config.cacheName);
@@ -145,44 +138,41 @@ export class BinaryFileCacheManager {
       return this._metadata;
     }
 
-    if (this._initializePromise !== undefined) {
-      await this._initializePromise;
-      return this._metadata!;
-    }
+    const sequencer = this._asyncSequencer.getNextSequencer<{
+      index: Map<string, CacheEntryMetadata>;
+      currentSize: number;
+    }>();
+    return sequencer(async () => {
+      if (this._metadata !== undefined) {
+        return this._metadata;
+      }
 
-    this._initializePromise = (async () => {
-      try {
-        const index = new Map<string, CacheEntryMetadata>();
-        let currentSize = 0;
+      const index = new Map<string, CacheEntryMetadata>();
+      let currentSize = 0;
 
-        const cache = await this._caches.open(this._config.cacheName);
-        const responses = await cache.matchAll();
+      const cache = await this._caches.open(this._config.cacheName);
+      const responses = await cache.matchAll();
 
-        const persistedMetadata = await this.loadPersistedMetadata(cache);
+      const persistedMetadata = await this.loadPersistedMetadata(cache);
 
-        for (const response of responses) {
-          if (response.url === METADATA_CACHE_KEY) {
-            continue;
-          }
-
-          const size = getCacheSize(response);
-          const date = getCacheDate(response);
-          const contentType = response.headers.get('Content-Type') ?? 'unknown';
-
-          const lastUsed = persistedMetadata[response.url] ?? date;
-
-          index.set(response.url, { size, date, lastUsed, contentType });
-          currentSize += size;
+      for (const response of responses) {
+        if (response.url === METADATA_CACHE_KEY) {
+          continue;
         }
 
-        this._metadata = { index, currentSize };
-      } finally {
-        this._initializePromise = undefined;
-      }
-    })();
+        const size = getCacheSize(response);
+        const date = getCacheDate(response);
+        const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
-    await this._initializePromise;
-    return this._metadata!;
+        const lastUsed = persistedMetadata[response.url] ?? date;
+
+        index.set(response.url, { size, date, lastUsed, contentType });
+        currentSize += size;
+      }
+
+      this._metadata = { index, currentSize };
+      return this._metadata;
+    });
   }
 
   private async loadPersistedMetadata(cache: Cache): Promise<Record<string, number>> {
@@ -201,11 +191,13 @@ export class BinaryFileCacheManager {
   }
 
   private async persistMetadata(cache: Cache): Promise<void> {
-    const metadata = await this.getOrInitializeIndex();
+    if (!this._metadata) {
+      return;
+    }
 
     try {
       const metadataToStore: Record<string, number> = {};
-      for (const [url, entry] of metadata.index.entries()) {
+      for (const [url, entry] of this._metadata.index.entries()) {
         metadataToStore[url] = entry.lastUsed;
       }
 
@@ -226,16 +218,14 @@ export class BinaryFileCacheManager {
    * Store response in cache
    */
   async storeResponse(url: string, response: Response): Promise<void> {
-    const sequencer = this._asyncSequencer.getNextSequencer<void>();
-    await sequencer(async () => {
-      try {
-        const metadata = await this.getOrInitializeIndex();
+    try {
+      const metadata = await this.getOrInitializeIndex();
+      const sequencer = this._asyncSequencer.getNextSequencer<void>();
+      await sequencer(async () => {
+        const contentLength = response.headers.get('Content-Length');
+        const size = contentLength ? safeParseInt(contentLength) : (await response.clone().arrayBuffer()).byteLength;
 
-        const responseClone = response.clone();
-        const arrayBuffer = await responseClone.arrayBuffer();
-        const size = arrayBuffer.byteLength;
-
-        await this.evictIfNeeded(size);
+        await this.evictIfNeeded(metadata, size);
 
         const cache = await this._caches.open(this._config.cacheName);
 
@@ -258,11 +248,11 @@ export class BinaryFileCacheManager {
         metadata.currentSize += size;
 
         await this.persistMetadata(cache);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        throw new Error(`[BinaryFileCacheManager] Failed to store in cache: ${message}`, { cause: error });
-      }
-    });
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`[BinaryFileCacheManager] Failed to store in cache: ${message}`, { cause: error });
+    }
   }
 
   /**
@@ -308,9 +298,10 @@ export class BinaryFileCacheManager {
   /**
    * Evict entries if needed to make space for a new entry
    */
-  private async evictIfNeeded(newEntrySize: number): Promise<void> {
-    const metadata = await this.getOrInitializeIndex();
-
+  private async evictIfNeeded(
+    metadata: { index: Map<string, CacheEntryMetadata>; currentSize: number },
+    newEntrySize: number
+  ): Promise<void> {
     if (metadata.currentSize + newEntrySize <= this._config.maxCacheSize) {
       return;
     }
