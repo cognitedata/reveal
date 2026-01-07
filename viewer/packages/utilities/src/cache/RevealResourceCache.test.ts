@@ -62,11 +62,11 @@ describe('RevealResourceCache', () => {
 
     const failingMock: CacheStorage = {
       open: jest.fn(() => Promise.reject(new Error('Cache error'))),
-      delete: jest.fn(),
-      has: jest.fn(),
-      keys: jest.fn(),
-      match: jest.fn()
-    } as CacheStorage;
+      delete: jest.fn(async () => false),
+      has: jest.fn(async () => false),
+      keys: jest.fn(async () => []),
+      match: jest.fn(async () => undefined)
+    } satisfies CacheStorage;
 
     const size = await getRevealResourceCacheSize(failingMock);
 
@@ -96,8 +96,6 @@ describe('RevealResourceCache', () => {
     await cache.storeResponse(TEST_POINT_CLOUD_URL, createResponse(new ArrayBuffer(1000), APPLICATION_CONTENT_TYPE));
     await cache.storeResponse(TEST_CAD_MODEL_URL, createResponse(new ArrayBuffer(2000), APPLICATION_CONTENT_TYPE));
     await cache.storeResponse(TEST_360_IMAGE_URL, createResponse(new ArrayBuffer(3000), IMAGE_CONTENT_TYPE));
-
-    await new Promise(resolve => setTimeout(resolve, 50));
 
     expect(await cache.has(TEST_POINT_CLOUD_URL)).toBe(true);
     expect(await cache.has(TEST_CAD_MODEL_URL)).toBe(true);
