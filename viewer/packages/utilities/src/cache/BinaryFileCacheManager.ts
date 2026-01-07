@@ -236,7 +236,7 @@ export class BinaryFileCacheManager {
         headers.set(CACHE_HEADER_DATE, now.toString());
         headers.set(CACHE_HEADER_SIZE, size.toString());
 
-        const cachedResponse = new Response(arrayBuffer, {
+        const cachedResponse = new Response(response.body, {
           status: response.status,
           statusText: response.statusText,
           headers
