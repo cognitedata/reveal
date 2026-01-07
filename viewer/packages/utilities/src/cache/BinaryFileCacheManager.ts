@@ -98,9 +98,9 @@ export class BinaryFileCacheManager {
     try {
       const cache = await this._caches.open(this._config.cacheName);
 
-      const contentLength = response.headers.get('Content-Length');
-      const responseClone = response.clone();
-      const size = contentLength ? safeParseInt(contentLength) : (await responseClone.arrayBuffer()).byteLength;
+      const responseToCache = response.clone();
+      const bodyData = await responseToCache.arrayBuffer();
+      const size = bodyData.byteLength;
 
       const now = Date.now();
 
@@ -108,7 +108,6 @@ export class BinaryFileCacheManager {
       headers.set(CACHE_HEADER_DATE, now.toString());
       headers.set(CACHE_HEADER_SIZE, size.toString());
 
-      const bodyData = await response.clone().arrayBuffer();
       const cachedResponse = new Response(bodyData, {
         status: response.status,
         statusText: response.statusText,
