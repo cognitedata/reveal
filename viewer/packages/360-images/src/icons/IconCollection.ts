@@ -120,28 +120,40 @@ export class IconCollection {
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
-    const screenSpaceAreaThreshold = 0.01;
-    const minimumLevel = 2;
+    const worldTransformInverse = new Matrix4();
+    const cameraModelSpacePosition = new Vector3();
+
+    const distanceThreshold = 40; // Icons within this distance from camera are always visible (no clustering)
+    const clusteringLevel = 3; // Octree depth for clustering far icons (higher = finer clusters, more icons shown)
+
     return ({ camera }) => {
+      this._pointsObject.getTransform(worldTransformInverse);
+      worldTransformInverse.invert();
+      cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransformInverse);
+
+      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, distanceThreshold, clusteringLevel);
+
       projection
         .copy(camera.projectionMatrix)
         .multiply(camera.matrixWorldInverse)
         .multiply(this._pointsObject.getTransform());
-      const nodesLOD = octree.getLODByScreenArea(screenSpaceAreaThreshold, projection, minimumLevel);
-
       frustum.setFromProjectionMatrix(projection);
 
       const nodes = [...nodesLOD];
 
-      const selectedIcons = nodes
-        .flatMap(node => {
-          if (node.data === null) {
-            return octree.getNodeIcon(node)!;
-          }
+      const selectedIcons: Overlay3DIcon[] = [];
+      for (const node of nodes) {
+        const icons =
+          node.data === null
+            ? octree.getIconsFromClusteredNode(node, cameraModelSpacePosition, distanceThreshold)
+            : node.data.data;
 
-          return node.data.data;
-        })
-        .filter(icon => frustum.containsPoint(icon.getPosition()));
+        for (const icon of icons) {
+          if (frustum.containsPoint(icon.getPosition())) {
+            selectedIcons.push(icon);
+          }
+        }
+      }
 
       this._icons.forEach(icon => (icon.culled = true));
       selectedIcons.forEach(icon => (icon.culled = false));
