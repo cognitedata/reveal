@@ -35,7 +35,7 @@ import {
 } from '@reveal/data-providers';
 
 import { CogniteClient } from '@cognite/sdk';
-import { BINARY_FILES_CACHE_NAME, BinaryFileCacheManager, SceneHandler } from '@reveal/utilities';
+import { BINARY_FILES_CACHE_NAME, DataFileCacheManager, SceneHandler } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
 import {
   IPointClassificationsProvider,
@@ -160,7 +160,7 @@ export function createRevealManager(
   const resizeHandler = new ResizeHandler(renderer, cameraManager, {
     renderResolutionThreshold: revealOptions.rendererResolutionThreshold
   });
-  const binaryFileCacheManager = new BinaryFileCacheManager(
+  const binaryFileCacheManager = new DataFileCacheManager(
     {
       cacheName: BINARY_FILES_CACHE_NAME,
       maxCacheSize: Infinity,

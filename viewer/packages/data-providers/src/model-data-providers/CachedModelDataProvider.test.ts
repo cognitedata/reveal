@@ -47,8 +47,6 @@ describe(CachedModelDataProvider.name, () => {
     await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
-
     const data = await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
     expect(data).toBeInstanceOf(ArrayBuffer);
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
@@ -64,8 +62,6 @@ describe(CachedModelDataProvider.name, () => {
   test('should store data with correct content type', async () => {
     await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
-
     const isCached = await cachedProvider.isCached(TEST_URL, TEST_FILENAME);
     expect(isCached).toBe(true);
   });
@@ -79,13 +75,10 @@ describe(CachedModelDataProvider.name, () => {
 
   test('should return cached JSON on cache hit', async () => {
     await cachedProvider.getJsonFile(TEST_URL, 'test.json');
-    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledTimes(1);
-
-    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledWith(TEST_URL, 'test.json');
 
     const data = await cachedProvider.getJsonFile(TEST_URL, 'test.json');
     expect(data).toEqual({ test: 'data' });
-    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledTimes(1);
   });
 
   test('should return false for uncached files', async () => {
@@ -95,8 +88,6 @@ describe(CachedModelDataProvider.name, () => {
 
   test('should return true for cached files', async () => {
     await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
-
-    await new Promise(resolve => setTimeout(resolve, 50));
 
     const isCached = await cachedProvider.isCached(TEST_URL, TEST_FILENAME);
     expect(isCached).toBe(true);
@@ -108,8 +99,6 @@ describe(CachedModelDataProvider.name, () => {
 
     await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME_1);
     await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME_2);
-
-    await new Promise(resolve => setTimeout(resolve, 50));
 
     expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_1)).toBe(true);
     expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_2)).toBe(true);

@@ -3,7 +3,7 @@
  */
 
 import { ModelDataProvider } from '../ModelDataProvider';
-import { BinaryFileCacheManager, CacheConfig } from '@reveal/utilities';
+import { DataFileCacheManager, CacheConfig } from '@reveal/utilities';
 
 /**
  * Wraps a ModelDataProvider with caching capabilities using the Cache API.
@@ -13,65 +13,66 @@ import { BinaryFileCacheManager, CacheConfig } from '@reveal/utilities';
  */
 export class CachedModelDataProvider implements ModelDataProvider {
   private readonly baseProvider: ModelDataProvider;
-  private readonly cacheManager: BinaryFileCacheManager;
+  private readonly cacheManager: DataFileCacheManager;
 
   constructor(baseProvider: ModelDataProvider, cacheConfig?: CacheConfig, cacheStorage?: CacheStorage) {
     this.baseProvider = baseProvider;
-    this.cacheManager = new BinaryFileCacheManager(cacheConfig, cacheStorage);
+    this.cacheManager = new DataFileCacheManager(cacheConfig, cacheStorage);
   }
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const url = `${baseUrl}/${fileName}`;
+    const convertToArrayBuffer = (data: ArrayBuffer): ArrayBuffer => data;
 
-    try {
-      const cached = await this.cacheManager.getCachedResponse(url);
-      if (cached) {
-        return await cached.arrayBuffer();
-      }
-    } catch (error) {
-      console.warn(`[CachedModelDataProvider] Cache read for ${url} failed, falling back to network.`, error);
-    }
-
-    const data = await this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
-
-    const response = new Response(data, {
-      headers: new Headers({
-        'Content-Type': 'application/octet-stream',
-        'Content-Length': data.byteLength.toString()
-      })
-    });
-
-    this.cacheManager
-      .storeResponse(url, response)
-      .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
-
-    return data;
+    return this.fetchWithCache(
+      baseUrl,
+      fileName,
+      response => response.arrayBuffer(),
+      () => this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal),
+      convertToArrayBuffer,
+      'application/octet-stream'
+    );
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+    const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
+      const jsonString = JSON.stringify(data);
+      return new TextEncoder().encode(jsonString).buffer;
+    };
+
+    return this.fetchWithCache(
+      baseUrl,
+      fileName,
+      response => response.json(),
+      () => this.baseProvider.getJsonFile(baseUrl, fileName),
+      convertToArrayBuffer,
+      'application/json'
+    );
+  }
+
+  private async fetchWithCache<T>(
+    baseUrl: string,
+    fileName: string,
+    extractFromCache: (response: Response) => Promise<T>,
+    fetchFromProvider: () => Promise<T>,
+    convertToArrayBuffer: (data: T) => ArrayBuffer,
+    contentType: string
+  ): Promise<T> {
     const url = `${baseUrl}/${fileName}`;
 
     try {
       const cached = await this.cacheManager.getCachedResponse(url);
       if (cached) {
-        return await cached.json();
+        return await extractFromCache(cached);
       }
     } catch (error) {
       console.warn(`[CachedModelDataProvider] Cache read for ${url} failed, falling back to network.`, error);
     }
 
-    const data = await this.baseProvider.getJsonFile(baseUrl, fileName);
+    const data = await fetchFromProvider();
 
-    const jsonString = JSON.stringify(data);
-    const response = new Response(jsonString, {
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        'Content-Length': new Blob([jsonString]).size.toString()
-      })
-    });
-
+    const arrayBuffer = convertToArrayBuffer(data);
     this.cacheManager
-      .storeResponse(url, response)
+      .storeResponse(url, arrayBuffer, contentType)
       .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
 
     return data;
@@ -80,7 +81,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
   /**
    * Get the underlying cache manager for direct cache operations
    */
-  getCacheManager(): BinaryFileCacheManager {
+  getCacheManager(): DataFileCacheManager {
     return this.cacheManager;
   }
 

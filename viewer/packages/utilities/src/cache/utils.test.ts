@@ -21,12 +21,12 @@ describe('cacheUtils', () => {
       expect(safeParseInt('123.45')).toBe(123);
     });
 
-    test('should return 0 for invalid inputs', () => {
-      expect(safeParseInt(null)).toBe(0);
-      expect(safeParseInt(undefined)).toBe(0);
-      expect(safeParseInt('')).toBe(0);
-      expect(safeParseInt('abc')).toBe(0);
-      expect(safeParseInt('NaN')).toBe(0);
+    test('should return undefined for invalid inputs', () => {
+      expect(safeParseInt(null)).toBeUndefined();
+      expect(safeParseInt(undefined)).toBeUndefined();
+      expect(safeParseInt('')).toBeUndefined();
+      expect(safeParseInt('abc')).toBeUndefined();
+      expect(safeParseInt('NaN')).toBeUndefined();
     });
   });
 
@@ -41,22 +41,22 @@ describe('cacheUtils', () => {
       expect(getCacheDate(response)).toBe(timestamp);
     });
 
-    test('should return 0 for missing cache date header', () => {
+    test('should return undefined for missing cache date header', () => {
       const response = new Response(null, {
         headers: new Headers()
       });
 
-      expect(getCacheDate(response)).toBe(0);
+      expect(getCacheDate(response)).toBeUndefined();
     });
 
-    test('should return 0 for invalid cache date header', () => {
+    test('should return undefined for invalid cache date header', () => {
       const response = new Response(null, {
         headers: new Headers({
           [BINARY_FILES_CACHE_HEADER_DATE]: 'invalid-date'
         })
       });
 
-      expect(getCacheDate(response)).toBe(0);
+      expect(getCacheDate(response)).toBeUndefined();
     });
   });
 
@@ -71,22 +71,22 @@ describe('cacheUtils', () => {
       expect(getCacheSize(response)).toBe(size);
     });
 
-    test('should return 0 for missing cache size header', () => {
+    test('should return undefined for missing cache size header', () => {
       const response = new Response(null, {
         headers: new Headers()
       });
 
-      expect(getCacheSize(response)).toBe(0);
+      expect(getCacheSize(response)).toBeUndefined();
     });
 
-    test('should return 0 for invalid cache size header', () => {
+    test('should return undefined for invalid cache size header', () => {
       const response = new Response(null, {
         headers: new Headers({
           [BINARY_FILES_CACHE_HEADER_SIZE]: 'not-a-number'
         })
       });
 
-      expect(getCacheSize(response)).toBe(0);
+      expect(getCacheSize(response)).toBeUndefined();
     });
   });
 

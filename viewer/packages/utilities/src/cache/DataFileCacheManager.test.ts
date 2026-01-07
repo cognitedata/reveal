@@ -2,10 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import { jest } from '@jest/globals';
-import { BinaryFileCacheManager } from './BinaryFileCacheManager';
+import { DataFileCacheManager } from './DataFileCacheManager';
 import { BINARY_FILES_CACHE_NAME } from './constants';
 
-describe(BinaryFileCacheManager.name, () => {
+describe(DataFileCacheManager.name, () => {
   const DEFAULT_MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1GB
   const MAX_CACHE_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
   const TEST_CONTENT_TYPE = 'application/octet-stream';
@@ -13,12 +13,12 @@ describe(BinaryFileCacheManager.name, () => {
 
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
   let mockCacheStorage: CacheStorage;
-  let cacheManager: BinaryFileCacheManager;
+  let cacheManager: DataFileCacheManager;
 
   beforeEach(() => {
     mockCacheStorageMap = new Map();
     mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
-    cacheManager = new BinaryFileCacheManager(
+    cacheManager = new DataFileCacheManager(
       {
         cacheName: 'test-cache',
         maxCacheSize: DEFAULT_MAX_CACHE_SIZE,
@@ -33,7 +33,7 @@ describe(BinaryFileCacheManager.name, () => {
   });
 
   test('should use provided config or defaults', () => {
-    const custom = new BinaryFileCacheManager(
+    const custom = new DataFileCacheManager(
       {
         cacheName: 'custom-cache',
         maxCacheSize: 500000,
@@ -46,14 +46,14 @@ describe(BinaryFileCacheManager.name, () => {
     expect(custom.cacheConfig.maxCacheSize).toBe(500000);
     expect(custom.cacheConfig.maxAge).toBe(3600000);
 
-    const defaults = new BinaryFileCacheManager({}, mockCacheStorage);
+    const defaults = new DataFileCacheManager({}, mockCacheStorage);
     expect(defaults.cacheConfig.cacheName).toBe(BINARY_FILES_CACHE_NAME);
     expect(defaults.cacheConfig.maxAge).toBe(Infinity);
   });
 
   test('should store and retrieve cached data', async () => {
     const data = new ArrayBuffer(100);
-    await cacheManager.storeResponse(TEST_FILE_URL, createCachedResponse(data, TEST_CONTENT_TYPE));
+    await cacheManager.storeResponse(TEST_FILE_URL, data, TEST_CONTENT_TYPE);
 
     const hasCache = await cacheManager.has(TEST_FILE_URL);
     expect(hasCache).toBe(true);
@@ -77,8 +77,8 @@ describe(BinaryFileCacheManager.name, () => {
 
   test('should clear all cached data', async () => {
     const TEST_FILE_URL_2 = 'https://example.com/file2.bin';
-    await cacheManager.storeResponse(TEST_FILE_URL, createCachedResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
-    await cacheManager.storeResponse(TEST_FILE_URL_2, createCachedResponse(new ArrayBuffer(200), TEST_CONTENT_TYPE));
+    await cacheManager.storeResponse(TEST_FILE_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+    await cacheManager.storeResponse(TEST_FILE_URL_2, new ArrayBuffer(200), TEST_CONTENT_TYPE);
 
     expect(await cacheManager.has(TEST_FILE_URL)).toBe(true);
     expect(await cacheManager.has(TEST_FILE_URL_2)).toBe(true);
@@ -92,7 +92,7 @@ describe(BinaryFileCacheManager.name, () => {
   test('should remove expired entries when maxAge is set', async () => {
     jest.useFakeTimers();
 
-    const shortLivedCache = new BinaryFileCacheManager(
+    const shortLivedCache = new DataFileCacheManager(
       {
         cacheName: 'short-cache',
         maxCacheSize: DEFAULT_MAX_CACHE_SIZE,
@@ -101,7 +101,7 @@ describe(BinaryFileCacheManager.name, () => {
       mockCacheStorage
     );
 
-    await shortLivedCache.storeResponse(TEST_FILE_URL, createCachedResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
+    await shortLivedCache.storeResponse(TEST_FILE_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE);
 
     expect(await shortLivedCache.has(TEST_FILE_URL)).toBe(true);
 
@@ -115,7 +115,7 @@ describe(BinaryFileCacheManager.name, () => {
   test('should never expire entries when maxAge is Infinity', async () => {
     jest.useFakeTimers();
 
-    const foreverCache = new BinaryFileCacheManager(
+    const foreverCache = new DataFileCacheManager(
       {
         cacheName: 'forever-cache',
         maxCacheSize: DEFAULT_MAX_CACHE_SIZE,
@@ -124,7 +124,7 @@ describe(BinaryFileCacheManager.name, () => {
       mockCacheStorage
     );
 
-    await foreverCache.storeResponse(TEST_FILE_URL, createCachedResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE));
+    await foreverCache.storeResponse(TEST_FILE_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE);
 
     expect(await foreverCache.has(TEST_FILE_URL)).toBe(true);
 
@@ -148,7 +148,7 @@ describe(BinaryFileCacheManager.name, () => {
       match: jest.fn(async () => undefined)
     } satisfies CacheStorage;
 
-    const errorManager = new BinaryFileCacheManager(
+    const errorManager = new DataFileCacheManager(
       {
         cacheName: 'error-cache',
         maxCacheSize: DEFAULT_MAX_CACHE_SIZE,
@@ -158,9 +158,9 @@ describe(BinaryFileCacheManager.name, () => {
     );
 
     await expect(errorManager.getCachedResponse(TEST_FILE_URL)).rejects.toThrow('Cache error');
-    await expect(
-      errorManager.storeResponse(TEST_FILE_URL, createCachedResponse(new ArrayBuffer(100), TEST_CONTENT_TYPE))
-    ).rejects.toThrow('Failed to store in cache');
+    await expect(errorManager.storeResponse(TEST_FILE_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE)).rejects.toThrow(
+      'Failed to store in cache'
+    );
     await expect(errorManager.clear()).rejects.toThrow('Delete error');
   });
 
@@ -178,20 +178,6 @@ describe(BinaryFileCacheManager.name, () => {
     const hasCache = await cacheManager.has(INVALID_FILE_URL);
     expect(hasCache).toBe(false);
   });
-
-  function createCachedResponse(data: ArrayBuffer, contentType: string, url?: string): Response {
-    const response = new Response(data, {
-      status: 200,
-      headers: new Headers({
-        'Content-Type': contentType,
-        'Content-Length': data.byteLength.toString()
-      })
-    });
-    if (url) {
-      Object.defineProperty(response, 'url', { value: url, writable: false });
-    }
-    return response;
-  }
 
   function createMockCache(storage: Map<string, Response>): Cache {
     return {

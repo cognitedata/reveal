@@ -49,7 +49,7 @@ export { TypedArray, TypedArrayConstructor } from './src/types';
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
-export { BinaryFileCacheManager } from './src/cache/BinaryFileCacheManager';
+export { DataFileCacheManager } from './src/cache/DataFileCacheManager';
 export type { CacheConfig } from './src/cache/types';
 export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
 
