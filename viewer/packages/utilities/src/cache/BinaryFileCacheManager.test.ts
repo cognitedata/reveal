@@ -28,6 +28,10 @@ describe(BinaryFileCacheManager.name, () => {
     );
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   test('should use provided config or defaults', () => {
     const custom = new BinaryFileCacheManager(
       {
@@ -86,6 +90,8 @@ describe(BinaryFileCacheManager.name, () => {
   });
 
   test('should remove expired entries when maxAge is set', async () => {
+    jest.useFakeTimers();
+
     const shortLivedCache = new BinaryFileCacheManager(
       {
         cacheName: 'short-cache',
@@ -99,7 +105,7 @@ describe(BinaryFileCacheManager.name, () => {
 
     expect(await shortLivedCache.has(TEST_FILE_URL)).toBe(true);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    jest.advanceTimersByTime(100);
 
     expect(await shortLivedCache.has(TEST_FILE_URL)).toBe(false);
     const cached = await shortLivedCache.getCachedResponse(TEST_FILE_URL);
@@ -107,6 +113,8 @@ describe(BinaryFileCacheManager.name, () => {
   });
 
   test('should never expire entries when maxAge is Infinity', async () => {
+    jest.useFakeTimers();
+
     const foreverCache = new BinaryFileCacheManager(
       {
         cacheName: 'forever-cache',
@@ -120,7 +128,7 @@ describe(BinaryFileCacheManager.name, () => {
 
     expect(await foreverCache.has(TEST_FILE_URL)).toBe(true);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    jest.advanceTimersByTime(100);
 
     expect(await foreverCache.has(TEST_FILE_URL)).toBe(true);
     const cached = await foreverCache.getCachedResponse(TEST_FILE_URL);
