@@ -30,7 +30,7 @@ import { safeParseInt } from './utils';
  * ```
  */
 export class BinaryFileCacheManager {
-  private readonly DEFAULT_CONFIG: Required<CacheConfig> = {
+  private readonly DEFAULT_CONFIG: CacheConfig = {
     cacheName: CACHE_NAME,
     maxAge: Infinity, // Cache forever until browser evicts
     maxCacheSize: Infinity // No limit - browser manages storage quota
@@ -57,7 +57,11 @@ export class BinaryFileCacheManager {
 
     if (!response) return false;
 
-    return !isExpired(response, this._config.maxAge);
+    if (isExpired(response, this._config.maxAge)) {
+      await cache.delete(url);
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -124,8 +128,6 @@ export class BinaryFileCacheManager {
 }
 
 function isExpired(response: Response, maxAge: number): boolean {
-  if (maxAge === Infinity) return false;
-
   const cachedAt = safeParseInt(response.headers.get(CACHE_HEADER_DATE));
   if (cachedAt === 0) return true;
   return Date.now() - cachedAt > maxAge;
