@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { CadMaterialManager } from '@reveal/rendering';
+import { CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { IntersectInput } from '@reveal/model-base';
 
 import { PickingHandler } from './PickingHandler';
@@ -29,7 +29,11 @@ describe(PickingHandler.name, () => {
   const cadNode = createCadModel(1, 2).cadNode;
 
   beforeEach(() => {
-    const materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.setRenderMode(It.IsAny())).returns();
+    const materialManagerMock = new Mock<CadMaterialManager>()
+      .setup(p => p.getRenderMode())
+      .returns(RenderMode.Color)
+      .setup(p => p.setRenderMode(It.IsAny()))
+      .returns();
     pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new SceneHandler());
   });
 

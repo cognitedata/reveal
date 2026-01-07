@@ -15,13 +15,7 @@ describe(CadManager.name, () => {
   let updateHandlerMock: IMock<CadModelUpdateHandler>;
 
   beforeEach(() => {
-    materialManagerMock = new Mock<CadMaterialManager>()
-      .setup(p => p.on(It.IsAny(), It.IsAny()))
-      .returns()
-      .setup(p => p.off(It.IsAny(), It.IsAny()))
-      .returns()
-      .setup(p => p.dispose())
-      .returns();
+    materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.dispose()).returns();
 
     cadModelFactoryMock = new Mock<CadModelFactory>().setup(p => p.dispose()).returns();
 
@@ -56,10 +50,6 @@ describe(CadManager.name, () => {
     expect(cadManager.updateCamera).toBeDefined();
   });
 
-  test('should register materials changed listener on initialization', () => {
-    materialManagerMock.verify(p => p.on('materialsChanged', It.IsAny()));
-  });
-
   test('should access budget correctly', () => {
     const budget = cadManager.budget;
     expect(budget).toBeDefined();
@@ -79,7 +69,6 @@ describe(CadManager.name, () => {
   test('should dispose properly', () => {
     expect(() => cadManager.dispose()).not.toThrow();
     updateHandlerMock.verify(p => p.dispose());
-    materialManagerMock.verify(p => p.off('materialsChanged', It.IsAny()));
   });
 
   test('should access material manager correctly', () => {
