@@ -3,7 +3,7 @@
  */
 
 export { BinaryFileCacheManager } from './BinaryFileCacheManager';
-export type { CacheConfig, CacheEntry, CacheStats } from './types';
+export type { CacheConfig } from './types';
 
 export {
   getRevealResourceCache,

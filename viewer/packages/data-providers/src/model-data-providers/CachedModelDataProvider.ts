@@ -3,7 +3,7 @@
  */
 
 import { ModelDataProvider } from '../ModelDataProvider';
-import { BinaryFileCacheManager, CacheConfig, CacheStats } from '@reveal/utilities';
+import { BinaryFileCacheManager, CacheConfig } from '@reveal/utilities';
 
 /**
  * Wraps a ModelDataProvider with caching capabilities using the Cache API.
@@ -99,12 +99,5 @@ export class CachedModelDataProvider implements ModelDataProvider {
    */
   async clearCache(): Promise<void> {
     await this.cacheManager.clear();
-  }
-
-  /**
-   * Get cache statistics
-   */
-  async getCacheStats(): Promise<CacheStats> {
-    return this.cacheManager.getStats();
   }
 }

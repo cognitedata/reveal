@@ -50,7 +50,7 @@ export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
 export { BinaryFileCacheManager } from './src/cache/BinaryFileCacheManager';
-export type { CacheConfig, CacheEntry, CacheStats } from './src/cache/types';
+export type { CacheConfig } from './src/cache/types';
 
 export {
   getRevealResourceCache,
@@ -58,8 +58,6 @@ export {
   clearRevealResourceCache,
   getRevealResourceCacheSize
 } from './src/cache/RevealResourceCache';
-
-export { calculateOptimalCacheSize } from './src/cache/StorageQuotaManager';
 
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 

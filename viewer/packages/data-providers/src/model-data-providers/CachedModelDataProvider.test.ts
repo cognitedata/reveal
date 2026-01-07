@@ -120,16 +120,6 @@ describe(CachedModelDataProvider.name, () => {
     expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME_2)).toBe(false);
   });
 
-  test('should return cache statistics', async () => {
-    await cachedProvider.getBinaryFile(TEST_URL, 'file1.bin');
-    await cachedProvider.getJsonFile(TEST_URL, 'file2.json');
-
-    const stats = await cachedProvider.getCacheStats();
-
-    expect(stats).toBeDefined();
-    expect(stats.cacheName).toBe('test-cache');
-  });
-
   test('should return the underlying cache manager', () => {
     const cacheManager = cachedProvider.getCacheManager();
     expect(cacheManager).toBeDefined();
