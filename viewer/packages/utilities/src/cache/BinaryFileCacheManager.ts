@@ -3,6 +3,7 @@
  */
 import { CACHE_HEADER_DATE, CACHE_HEADER_SIZE, CACHE_NAME } from './constants';
 import { CacheConfig } from './types';
+import { safeParseInt } from './utils';
 
 /**
  * Generic Binary File Cache Manager using the Browser Cache API for storing 3D resources

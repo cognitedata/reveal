@@ -3,8 +3,7 @@
  */
 
 import { BinaryFileCacheManager } from './BinaryFileCacheManager';
-import { CACHE_NAME, DEFAULT_MAX_CACHE_AGE } from './constants';
-import { calculateOptimalCacheSize } from './StorageQuotaManager';
+import { CACHE_NAME } from './constants';
 import { getCacheSize } from './utils';
 
 /**
@@ -19,13 +18,11 @@ import { getCacheSize } from './utils';
  */
 
 export function getRevealResourceCache(cacheStorage: CacheStorage = global.caches): BinaryFileCacheManager {
-  const recommendationSize = calculateOptimalCacheSize();
-
   return new BinaryFileCacheManager(
     {
       cacheName: CACHE_NAME,
-      maxCacheSize: recommendationSize,
-      maxAge: DEFAULT_MAX_CACHE_AGE
+      maxCacheSize: Infinity,
+      maxAge: Infinity
     },
     cacheStorage
   );

@@ -9,7 +9,7 @@ import {
   clearRevealResourceCache,
   getRevealResourceCacheSize
 } from './RevealResourceCache';
-import { DEFAULT_MAX_CACHE_AGE, CACHE_NAME } from './constants';
+import { CACHE_NAME } from './constants';
 import { BinaryFileCacheManager } from './BinaryFileCacheManager';
 
 describe('RevealResourceCache', () => {
@@ -33,7 +33,7 @@ describe('RevealResourceCache', () => {
 
     expect(cache).toBeInstanceOf(BinaryFileCacheManager);
     expect(cache.cacheConfig.cacheName).toBe(CACHE_NAME);
-    expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0);
+    expect(cache.cacheConfig.maxCacheSize).toBe(Infinity);
   });
 
   test('should return the cache name', () => {
@@ -102,38 +102,6 @@ describe('RevealResourceCache', () => {
     expect(await cache.has(TEST_POINT_CLOUD_URL)).toBe(true);
     expect(await cache.has(TEST_CAD_MODEL_URL)).toBe(true);
     expect(await cache.has(TEST_360_IMAGE_URL)).toBe(true);
-  });
-
-  test('should share cache size limit across all resource types', async () => {
-    const cache = getRevealResourceCache(mockCacheStorage);
-
-    await cache.storeResponse(TEST_POINT_CLOUD_URL, createResponse(new ArrayBuffer(1000), APPLICATION_CONTENT_TYPE));
-    await cache.storeResponse(TEST_CAD_MODEL_URL, createResponse(new ArrayBuffer(2000), APPLICATION_CONTENT_TYPE));
-    await cache.storeResponse(TEST_360_IMAGE_URL, createResponse(new ArrayBuffer(3000), IMAGE_CONTENT_TYPE));
-
-    await new Promise(resolve => setTimeout(resolve, 50));
-
-    await cache.storeResponse(
-      'https://example.com/large-file.bin',
-      createResponse(new ArrayBuffer(2000), APPLICATION_CONTENT_TYPE)
-    );
-
-    await new Promise(resolve => setTimeout(resolve, 50));
-
-    const size = await cache.getSize();
-    const maxSize = cache.cacheConfig.maxCacheSize;
-    expect(maxSize).toBeDefined();
-    expect(size).toBeLessThanOrEqual(maxSize!);
-  });
-
-  test('should use auto-detected cache size by default', () => {
-    const cache = getRevealResourceCache(mockCacheStorage);
-    expect(cache.cacheConfig.maxCacheSize).toBeGreaterThan(0);
-  });
-
-  test('should use 7 days default max age', () => {
-    const cache = getRevealResourceCache(mockCacheStorage);
-    expect(cache.cacheConfig.maxAge).toBe(DEFAULT_MAX_CACHE_AGE);
   });
 
   function createResponse(data: ArrayBuffer, contentType: string): Response {
