@@ -38,6 +38,7 @@ export class BinaryFileCacheManager {
 
   private readonly _config: CacheConfig = { ...this.DEFAULT_CONFIG };
   private readonly _asyncSequencer = new AsyncSequencer();
+  private readonly _initSequencer = new AsyncSequencer();
   private readonly _caches: CacheStorage;
 
   private _metadata:
@@ -46,6 +47,8 @@ export class BinaryFileCacheManager {
         currentSize: number;
       }
     | undefined = undefined;
+
+  private _isInitialized = false;
 
   get cacheConfig(): CacheConfig {
     return this._config;
@@ -77,6 +80,7 @@ export class BinaryFileCacheManager {
       try {
         await this._caches.delete(this._config.cacheName);
         this._metadata = undefined;
+        this._isInitialized = false;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(`[BinaryFileCacheManager] Clear operation failed: ${message}`, { cause: error });
@@ -95,6 +99,8 @@ export class BinaryFileCacheManager {
       return undefined;
     }
 
+    await this.getOrInitializeIndex();
+
     if (isExpired(response, this._config.maxAge)) {
       const sequencer = this._asyncSequencer.getNextSequencer<void>();
       await sequencer(async () => {
@@ -111,20 +117,22 @@ export class BinaryFileCacheManager {
       return undefined;
     }
 
-    const metadata = (await this.getOrInitializeIndex()).index.get(url);
-    if (metadata) {
-      metadata.lastUsed = Date.now();
-      this.updateLastUsedAsync(cache).catch(err =>
-        console.warn('[BinaryFileCacheManager] Failed to persist lastUsed:', err)
-      );
-    }
+    this.updateLastUsedAsync(url, cache).catch(err =>
+      console.warn('[BinaryFileCacheManager] Failed to persist lastUsed:', err)
+    );
 
     return response.clone();
   }
 
-  private async updateLastUsedAsync(cache: Cache): Promise<void> {
+  private async updateLastUsedAsync(url: string, cache: Cache): Promise<void> {
     const sequencer = this._asyncSequencer.getNextSequencer<void>();
     await sequencer(async () => {
+      if (this._metadata) {
+        const metadata = this._metadata.index.get(url);
+        if (metadata) {
+          metadata.lastUsed = Date.now();
+        }
+      }
       await this.persistMetadata(cache);
     });
   }
@@ -132,18 +140,22 @@ export class BinaryFileCacheManager {
   /**
    * Get or initialize the in-memory metadata index by scanning the cache
    * Returns the metadata object after ensuring it's initialized
+   *
+   * Uses a dedicated AsyncSequencer (_initSequencer) separate from write operations
+   * to prevent initialization from being queued behind writes
    */
   private async getOrInitializeIndex(): Promise<{ index: Map<string, CacheEntryMetadata>; currentSize: number }> {
-    if (this._metadata !== undefined) {
+    if (this._isInitialized && this._metadata !== undefined) {
       return this._metadata;
     }
 
-    const sequencer = this._asyncSequencer.getNextSequencer<{
+    const sequencer = this._initSequencer.getNextSequencer<{
       index: Map<string, CacheEntryMetadata>;
       currentSize: number;
     }>();
+
     return sequencer(async () => {
-      if (this._metadata !== undefined) {
+      if (this._isInitialized && this._metadata !== undefined) {
         return this._metadata;
       }
 
@@ -151,12 +163,18 @@ export class BinaryFileCacheManager {
       let currentSize = 0;
 
       const cache = await this._caches.open(this._config.cacheName);
-      const responses = await cache.matchAll();
+      const requests = await cache.keys();
 
       const persistedMetadata = await this.loadPersistedMetadata(cache);
 
-      for (const response of responses) {
-        if (response.url === METADATA_CACHE_KEY) {
+      for (const request of requests) {
+        const url = request.url;
+        if (url === METADATA_CACHE_KEY || url.endsWith('/' + METADATA_CACHE_KEY)) {
+          continue;
+        }
+
+        const response = await cache.match(url);
+        if (!response) {
           continue;
         }
 
@@ -164,13 +182,15 @@ export class BinaryFileCacheManager {
         const date = getCacheDate(response);
         const contentType = response.headers.get('Content-Type') ?? 'unknown';
 
-        const lastUsed = persistedMetadata[response.url] ?? date;
+        const lastUsed = persistedMetadata[url] ?? date;
 
-        index.set(response.url, { size, date, lastUsed, contentType });
+        index.set(url, { size, date, lastUsed, contentType });
         currentSize += size;
       }
 
       this._metadata = { index, currentSize };
+      this._isInitialized = true;
+
       return this._metadata;
     });
   }
@@ -191,7 +211,7 @@ export class BinaryFileCacheManager {
   }
 
   private async persistMetadata(cache: Cache): Promise<void> {
-    if (!this._metadata) {
+    if (!this._metadata || !this._isInitialized) {
       return;
     }
 
