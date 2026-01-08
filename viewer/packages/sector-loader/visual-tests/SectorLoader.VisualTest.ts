@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import assert from 'assert';
 
 import { ModelIdentifier } from '@reveal/data-providers';
-import { CadMaterialManager, Materials } from '@reveal/rendering';
+import { CadMaterialManager, createCadMaterial, Materials } from '@reveal/rendering';
 import { GltfSectorRepository, SectorRepository } from '..';
 import { assertNever } from '../../utilities';
 import { ConsumedSector } from '@reveal/cad-parsers';
@@ -60,7 +60,8 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
   ): Promise<THREE.Group> {
     const internalId = modelIdentifier.revealInternalId;
 
-    cadMaterialManager.addModelMaterials(internalId, sceneJson.maxTreeIndex);
+    const cadMaterial = createCadMaterial(sceneJson.maxTreeIndex);
+    cadMaterialManager.addModelMaterials(internalId, cadMaterial);
     for (const material of Object.values(
       cadMaterialManager.getModelMaterials(internalId)
     ) as THREE.RawShaderMaterial[]) {

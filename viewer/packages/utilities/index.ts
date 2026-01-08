@@ -49,6 +49,10 @@ export { TypedArray, TypedArrayConstructor } from './src/types';
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
+export { DataFileCacheManager } from './src/cache/DataFileCacheManager';
+export type { CacheConfig } from './src/cache/types';
+export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
+
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
