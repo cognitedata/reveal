@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Color, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
@@ -13,12 +13,21 @@ export type IconsOptions = {
   platformMaxPointsSize?: number;
 };
 
+type ClusteredIcon = {
+  icon: Overlay3DIcon;
+  isCluster: boolean;
+  clusterSize: number;
+  clusterPosition: Vector3;
+  sizeScale: number;
+};
 export class IconCollection {
   private static readonly MinPixelSize = 16;
   private static readonly DefaultMaxPixelSize = 256;
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
+  private readonly _clusterTexture: Texture;
+  private readonly _numberTexture: Texture;
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
   private readonly _pointsObject: OverlayPointsObject;
@@ -78,9 +87,13 @@ export class IconCollection {
     );
 
     const sharedTexture = this.createOuterRingsTexture();
+    const clusterTexture = this.createClusterTexture();
+    const numberTexture = this.createNumberTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
+      clusterTexture: clusterTexture,
+      numberTexture: numberTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,
@@ -90,6 +103,8 @@ export class IconCollection {
     const spriteTexture = this.createHoverIconTexture();
     this._hoverSprite = this.createHoverSprite(spriteTexture);
     this._sharedTexture = sharedTexture;
+    this._clusterTexture = clusterTexture;
+    this._numberTexture = numberTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
@@ -117,21 +132,33 @@ export class IconCollection {
     return this._pointsObject.getTransform(out);
   }
 
+  /**
+   * Distance-based clustering approach:
+   * - Uses camera distance to decide when to show clusters vs individual icons
+   * - When camera is far (> clusterDistanceThreshold), show cluster icons at centroids
+   * - When camera is close (< clusterDistanceThreshold), show individual icons
+   * - Cluster icons are rendered with a different texture and show the count
+   * @param octree - Octree containing the icons
+   * @param iconSprites - OverlayPointsObject to update icon rendering
+   * @return BeforeSceneRenderedDelegate to be called
+   */
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
     const worldTransformInverse = new Matrix4();
     const cameraModelSpacePosition = new Vector3();
 
-    const distanceThreshold = 40; // Icons within this distance from camera are always visible (no clustering)
-    const clusteringLevel = 3; // Octree depth for clustering far icons (higher = finer clusters, more icons shown)
+    // Distance-based clustering parameters
+    const clusterDistanceThreshold = 50; // Distance beyond which clustering is applied
+    const clusteringLevel = 3; // Octree depth for clustering (higher = finer clusters)
+    const clusterSizeMultiplier = 1.5; // How much bigger clustered points appear
 
     return ({ camera }) => {
       this._pointsObject.getTransform(worldTransformInverse);
       worldTransformInverse.invert();
       cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransformInverse);
 
-      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, distanceThreshold, clusteringLevel);
+      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, clusterDistanceThreshold, clusteringLevel);
 
       projection
         .copy(camera.projectionMatrix)
@@ -141,28 +168,133 @@ export class IconCollection {
 
       const nodes = [...nodesLOD];
 
-      const selectedIcons: Overlay3DIcon[] = [];
-      for (const node of nodes) {
-        const icons =
-          node.data === null
-            ? octree.getIconsFromClusteredNode(node, cameraModelSpacePosition, distanceThreshold)
-            : node.data.data;
+      const clusteredIcons: ClusteredIcon[] = [];
 
-        for (const icon of icons) {
-          if (frustum.containsPoint(icon.getPosition())) {
-            selectedIcons.push(icon);
+      for (const node of nodes) {
+        // If node has data (leaf), show the individual icon(s)
+        if (node.data !== null) {
+          const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
+          for (const icon of icons) {
+            clusteredIcons.push({
+              icon,
+              isCluster: false,
+              clusterSize: 1,
+              clusterPosition: icon.getPosition(),
+              sizeScale: 1
+            });
+          }
+        } else {
+          // Node is a parent (cluster) - check distance to camera
+          const representativeIcon = octree.getNodeIcon(node);
+          if (!representativeIcon) continue;
+
+          // Get all leaf icons under this cluster node
+          const clusterIcons = this.getNodeLeafIcons(node);
+          const clusterSize = clusterIcons.length;
+
+          // Calculate distance from camera to the node center
+          const distanceToCamera = representativeIcon.getPosition().distanceTo(cameraModelSpacePosition);
+
+          // If camera is far enough and we have multiple icons, show as cluster
+          if (distanceToCamera > clusterDistanceThreshold && clusterSize > 1) {
+            // Calculate the 3D centroid (center) of all icons in this cluster
+            const centroid = this.calculateCentroid(clusterIcons);
+
+            // Show as cluster - single icon at centroid position with scaled size
+            clusteredIcons.push({
+              icon: representativeIcon,
+              isCluster: true,
+              clusterSize,
+              clusterPosition: centroid,
+              sizeScale: clusterSizeMultiplier
+            });
+          } else {
+            // Camera is close - show individual points
+            for (const icon of clusterIcons) {
+              clusteredIcons.push({
+                icon,
+                isCluster: false,
+                clusterSize: 1,
+                clusterPosition: icon.getPosition(),
+                sizeScale: 1
+              });
+            }
           }
         }
       }
 
+      // Filter by frustum - use cluster position for frustum test
+      const visibleClusteredIcons = clusteredIcons.filter(item => frustum.containsPoint(item.clusterPosition));
+
       this._icons.forEach(icon => (icon.culled = true));
-      selectedIcons.forEach(icon => (icon.culled = false));
-      const visibleIcons = selectedIcons.filter(icon => icon.getVisible());
-      iconSprites.setPoints(
-        visibleIcons.map(icon => icon.getPosition()),
-        visibleIcons.map(icon => icon.getColor())
-      );
+      visibleClusteredIcons.forEach(item => (item.icon.culled = false));
+
+      // Prepare rendering data with size scaling for clusters
+      const visibleIcons = visibleClusteredIcons.filter(item => item.icon.getVisible());
+
+      const renderPositions: Vector3[] = [];
+      const renderColors: Color[] = [];
+      const renderSizeScales: number[] = [];
+      const renderIsClusterFlags: boolean[] = [];
+      const renderClusterSizes: number[] = [];
+
+      for (const item of visibleIcons) {
+        // Use cluster position (centroid for clusters, original position for individuals)
+        renderPositions.push(item.clusterPosition);
+
+        // For clusters, use a distinct blue color matching the texture
+        if (item.isCluster) {
+          // Bright blue color for clusters (#3b82f6)
+          const clusterColor = new Color(0.231, 0.51, 0.965);
+          renderColors.push(clusterColor);
+        } else {
+          renderColors.push(item.icon.getColor());
+        }
+
+        renderSizeScales.push(item.sizeScale);
+        renderIsClusterFlags.push(item.isCluster);
+        renderClusterSizes.push(item.clusterSize);
+      }
+
+      iconSprites.setPoints(renderPositions, renderColors, renderSizeScales, renderIsClusterFlags, renderClusterSizes);
     };
+  }
+
+  /**
+   * Recursively get all leaf icons under a node
+   */
+  private getNodeLeafIcons(node: any): Overlay3DIcon[] {
+    const leafIcons: Overlay3DIcon[] = [];
+
+    if (node.data !== null) {
+      const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
+      return icons;
+    }
+
+    if (node.children && node.children.length > 0) {
+      for (const child of node.children) {
+        leafIcons.push(...this.getNodeLeafIcons(child));
+      }
+    }
+
+    return leafIcons;
+  }
+
+  /**
+   * Calculate the 3D centroid of a group of icons
+   */
+  private calculateCentroid(icons: Overlay3DIcon[]): Vector3 {
+    if (icons.length === 0) {
+      return new Vector3();
+    }
+
+    const centroid = new Vector3();
+    for (const icon of icons) {
+      centroid.add(icon.getPosition());
+    }
+    centroid.divideScalar(icons.length);
+
+    return centroid;
   }
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
@@ -184,7 +316,7 @@ export class IconCollection {
               .filter((point): point is Overlay3DIcon => point !== null);
 
       const closestPoints = points
-        .sort((a, b) => {
+        .toSorted((a, b) => {
           return (
             a.getPosition().distanceToSquared(cameraModelSpacePosition) -
             b.getPosition().distanceToSquared(cameraModelSpacePosition)
@@ -250,6 +382,8 @@ export class IconCollection {
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
+    this._clusterTexture.dispose();
+    this._numberTexture.dispose();
   }
 
   private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
@@ -320,6 +454,117 @@ export class IconCollection {
       );
       context.fill();
     }
+  }
+
+  /**
+   * Create a cluster texture
+   */
+  private createClusterTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const textureSize = this._maxPixelSize;
+    canvas.width = textureSize;
+    canvas.height = textureSize;
+
+    const halfTextureSize = textureSize * 0.5;
+    const context = canvas.getContext('2d')!;
+
+    const bgGradient = context.createRadialGradient(
+      halfTextureSize,
+      halfTextureSize * 0.8,
+      0,
+      halfTextureSize,
+      halfTextureSize,
+      halfTextureSize * 0.9
+    );
+    bgGradient.addColorStop(0, '#60a5fa');
+    bgGradient.addColorStop(1, '#3b82f6');
+    context.fillStyle = bgGradient;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize * 0.88, 0, 2 * Math.PI);
+    context.fill();
+
+    context.shadowBlur = 0;
+
+    context.strokeStyle = '#FFFFFF';
+    context.lineWidth = textureSize / 10;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize * 0.88 - context.lineWidth / 2, 0, 2 * Math.PI);
+    context.stroke();
+
+    context.fillStyle = '#2563eb';
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize * 0.65, 0, 2 * Math.PI);
+    context.fill();
+
+    const ringCount = 3;
+    for (let i = 0; i < ringCount; i++) {
+      const ringRadius = halfTextureSize * (0.5 - i * 0.1);
+      context.strokeStyle = `rgba(255, 255, 255, ${0.6 - i * 0.15})`;
+      context.lineWidth = textureSize / 30;
+      context.beginPath();
+      context.arc(halfTextureSize, halfTextureSize, ringRadius, 0, 2 * Math.PI);
+      context.stroke();
+    }
+
+    const shineGradient = context.createRadialGradient(
+      halfTextureSize * 0.7,
+      halfTextureSize * 0.7,
+      0,
+      halfTextureSize * 0.7,
+      halfTextureSize * 0.7,
+      halfTextureSize * 0.5
+    );
+    shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+    shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    context.fillStyle = shineGradient;
+    context.beginPath();
+    context.arc(halfTextureSize * 0.7, halfTextureSize * 0.7, halfTextureSize * 0.4, 0, 2 * Math.PI);
+    context.fill();
+
+    return new CanvasTexture(canvas);
+  }
+
+  /**
+   * Create a number texture atlas
+   */
+  private createNumberTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const digitCount = 10;
+    const digitWidth = 256;
+    const digitHeight = 384;
+    canvas.width = digitWidth * digitCount;
+    canvas.height = digitHeight;
+
+    const context = canvas.getContext('2d')!;
+
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.font = 'bold 300px Arial, sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+
+    for (let i = 0; i < digitCount; i++) {
+      const x = digitWidth * i + digitWidth / 2;
+      const y = digitHeight / 2;
+
+      context.strokeStyle = '#000000';
+      context.lineWidth = 24;
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeText(i.toString(), x, y);
+
+      context.fillStyle = '#FFFFFF';
+      context.fillText(i.toString(), x, y);
+    }
+
+    const texture = new CanvasTexture(canvas);
+    texture.generateMipmaps = false;
+    texture.needsUpdate = true;
+
+    return texture;
   }
 
   //================================================
