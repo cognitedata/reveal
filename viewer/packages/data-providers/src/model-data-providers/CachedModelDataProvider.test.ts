@@ -5,7 +5,7 @@
 import { jest } from '@jest/globals';
 import { CachedModelDataProvider } from './CachedModelDataProvider';
 import { ModelDataProvider } from '../ModelDataProvider';
-import { createMockCacheStorage } from '@reveal/utilities';
+import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
 
 describe(CachedModelDataProvider.name, () => {
   let mockBaseProvider: ModelDataProvider;

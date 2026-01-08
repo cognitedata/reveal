@@ -4,7 +4,7 @@
 import { jest } from '@jest/globals';
 import { DataFileCacheManager } from './DataFileCacheManager';
 import { BINARY_FILES_CACHE_NAME } from './constants';
-import { createMockCacheStorage } from './test-utils';
+import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
 
 describe(DataFileCacheManager.name, () => {
   const DEFAULT_MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1GB
