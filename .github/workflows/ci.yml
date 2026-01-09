@@ -15,28 +15,7 @@ on:
       - "**"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
-    steps:
-      # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v3
-        id: filter
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          filters: |
-            should-run:
-              - '.github/**'
-              - 'viewer/**'
-              - 'documentation/**'
-              - 'examples/**'
-
   populate-caches:
-    needs: changes
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Update NPM and Cargo caches
     runs-on: ubuntu-latest
     steps:
@@ -68,8 +47,7 @@ jobs:
         run: cargo update --workspace --locked
 
   build-viewer:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Build Reveal
     runs-on: ubuntu-latest
     steps:
@@ -129,8 +107,7 @@ jobs:
           path: viewer/dist/
 
   run-coverage-tests:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
@@ -168,8 +145,7 @@ jobs:
           flags: viewer
 
   run-visual-tests:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Visual Tests
     runs-on: ubuntu-latest
     steps:
@@ -218,8 +194,7 @@ jobs:
           exit 1
 
   ci-examples:
-    needs: [changes, build-viewer]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: build-viewer
     name: Examples
     runs-on: ubuntu-latest
     steps:
@@ -260,8 +235,7 @@ jobs:
         run: yarn build
 
   build-preview-documentation:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Build preview documentation
     runs-on: ubuntu-latest
     steps:
@@ -326,8 +300,8 @@ jobs:
           path: documentation/build/
 
   deploy-preview-documentation:
-    needs: [changes, build-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' && contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
+    needs: build-preview-documentation
+    if: "${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}"
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
     # across all ongoing Github Action executions
@@ -369,8 +343,8 @@ jobs:
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
   cleanup:
-    needs: [changes, ci-examples, build-viewer, deploy-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' && always() }}
+    needs: [ci-examples, build-viewer, deploy-preview-documentation]
+    if: always()
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
