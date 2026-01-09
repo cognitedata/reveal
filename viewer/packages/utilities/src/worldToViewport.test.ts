@@ -4,7 +4,11 @@
 
 import * as THREE from 'three';
 
-import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './worldToViewport';
+import {
+  worldToNormalizedViewportCoordinates,
+  worldToViewportCoordinates,
+  getNormalizedPixelCoordinates
+} from './worldToViewport';
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
@@ -185,3 +189,30 @@ function ndcToWorld(ndcPoint: THREE.Vector3, camera: THREE.Camera): THREE.Vector
   p.applyMatrix4(camera.matrixWorldInverse);
   return new THREE.Vector3(p.x, p.y, p.z);
 }
+
+describe('getNormalizedPixelCoordinates', () => {
+  test('uses getBoundingClientRect() not clientWidth/clientHeight for CSS transforms', () => {
+    const element = document.createElement('div');
+
+    jest.spyOn(element, 'clientWidth', 'get').mockReturnValue(100);
+    jest.spyOn(element, 'clientHeight', 'get').mockReturnValue(200);
+
+    const rect = {
+      width: 200,
+      height: 400,
+      left: 0,
+      top: 0,
+      right: 200,
+      bottom: 400,
+      x: 0,
+      y: 0,
+      toJSON: () => ({})
+    } satisfies DOMRect;
+    jest.spyOn(element, 'getBoundingClientRect').mockReturnValue(rect);
+
+    const coords = getNormalizedPixelCoordinates(element, 100, 200);
+
+    expect(coords.x).toBeCloseTo(0.0);
+    expect(coords.y).toBeCloseTo(0.0);
+  });
+});
