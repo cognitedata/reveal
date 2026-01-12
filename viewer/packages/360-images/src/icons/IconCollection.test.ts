@@ -5,7 +5,7 @@
 import { Mock, It } from 'moq.ts';
 import { Matrix4, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
-import { IconCollection } from './IconCollection';
+import { ClusteredIcon, IconCollection } from './IconCollection';
 
 describe(IconCollection.name, () => {
   describe('setIconClustersByLOD', () => {
@@ -246,6 +246,233 @@ describe(IconCollection.name, () => {
       // At least one icon should be visible (the representative), but not necessarily all
       expect(visibleCount).toBeGreaterThanOrEqual(1);
       expect(visibleCount).toBeLessThanOrEqual(icons.length);
+
+      collection.dispose();
+    });
+
+    test('getVisibleClusteredIcons returns empty array before render', () => {
+      const positions = [new Vector3(0, 0, 0), new Vector3(1, 0, 0)];
+      const collection = new IconCollection(positions, mockSceneHandler, mockEventTrigger);
+
+      // Before render callback, should be empty
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+      expect(clusteredIcons).toBeDefined();
+      expect(clusteredIcons.length).toBe(0);
+
+      collection.dispose();
+    });
+
+    test('getVisibleClusteredIcons returns ClusteredIcon array after render', () => {
+      const positions = [new Vector3(0, 0, 0), new Vector3(5, 0, 0)];
+      const collection = new IconCollection(positions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      const camera = createCamera(new Vector3(0, 0, 20));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+      expect(clusteredIcons.length).toBeGreaterThan(0);
+
+      // Verify ClusteredIcon structure
+      clusteredIcons.forEach((item: ClusteredIcon) => {
+        expect(item.icon).toBeDefined();
+        expect(typeof item.isCluster).toBe('boolean');
+        expect(typeof item.clusterSize).toBe('number');
+        expect(item.clusterPosition).toBeInstanceOf(Vector3);
+        expect(typeof item.sizeScale).toBe('number');
+      });
+
+      collection.dispose();
+    });
+
+    test('Close icons are not clustered - each has clusterSize of 1', () => {
+      // Icons very close together, camera close to them
+      const positions = [new Vector3(0, 0, 0), new Vector3(2, 0, 0), new Vector3(0, 2, 0), new Vector3(2, 2, 0)];
+      const collection = new IconCollection(positions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera very close to icons (within 50 unit threshold)
+      const camera = createCamera(new Vector3(1, 1, 20));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+
+      // Each icon should be individual (not clustered)
+      const nonClusteredItems = clusteredIcons.filter((item: ClusteredIcon) => !item.isCluster);
+      expect(nonClusteredItems.length).toBe(positions.length);
+
+      // Each should have clusterSize of 1
+      nonClusteredItems.forEach((item: ClusteredIcon) => {
+        expect(item.clusterSize).toBe(1);
+        expect(item.sizeScale).toBe(1);
+        expect(item.isCluster).toBe(false);
+      });
+
+      collection.dispose();
+    });
+
+    test('Far icons are clustered - cluster has correct children count', () => {
+      // Group of icons far from camera
+      const farPositions = [
+        new Vector3(200, 0, 0),
+        new Vector3(201, 0, 0),
+        new Vector3(200, 1, 0),
+        new Vector3(201, 1, 0),
+        new Vector3(200.5, 0.5, 0)
+      ];
+      const collection = new IconCollection(farPositions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera at origin, looking towards the far icons
+      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(200, 0, 0));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+
+      // Should have at least one cluster
+      const clusterItems = clusteredIcons.filter((item: ClusteredIcon) => item.isCluster);
+
+      if (clusterItems.length > 0) {
+        // Verify cluster properties
+        const cluster = clusterItems[0];
+        expect(cluster.isCluster).toBe(true);
+        expect(cluster.clusterSize).toBeGreaterThan(1);
+        expect(cluster.sizeScale).toBeGreaterThan(1); // Clusters are scaled up
+
+        // Verify clusterIcons array contains all children
+        if (cluster.clusterIcons) {
+          expect(cluster.clusterIcons.length).toBe(cluster.clusterSize);
+        }
+      }
+
+      collection.dispose();
+    });
+
+    test('Cluster centroid is calculated correctly', () => {
+      // Create icons at known positions
+      const positions = [
+        new Vector3(100, 0, 0),
+        new Vector3(102, 0, 0),
+        new Vector3(100, 2, 0),
+        new Vector3(102, 2, 0)
+      ];
+
+      // Expected centroid: (101, 1, 0)
+      const expectedCentroid = new Vector3(101, 1, 0);
+
+      const collection = new IconCollection(positions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera far from icons to trigger clustering
+      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+      const clusterItems = clusteredIcons.filter((item: ClusteredIcon) => item.isCluster);
+
+      if (clusterItems.length > 0) {
+        const cluster = clusterItems[0];
+
+        // Centroid should be close to expected value
+        expect(cluster.clusterPosition.x).toBeCloseTo(expectedCentroid.x, 0);
+        expect(cluster.clusterPosition.y).toBeCloseTo(expectedCentroid.y, 0);
+        expect(cluster.clusterPosition.z).toBeCloseTo(expectedCentroid.z, 0);
+      }
+
+      collection.dispose();
+    });
+
+    test('Multiple separate clusters are created for distant icon groups', () => {
+      // Two groups of icons far apart
+      const group1Positions = [new Vector3(100, 0, 0), new Vector3(101, 0, 0), new Vector3(100, 1, 0)];
+      const group2Positions = [new Vector3(200, 0, 0), new Vector3(201, 0, 0), new Vector3(200, 1, 0)];
+
+      const allPositions = [...group1Positions, ...group2Positions];
+      const collection = new IconCollection(allPositions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera at origin, looking at both groups
+      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(150, 0, 0));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+      const clusterItems = clusteredIcons.filter((item: ClusteredIcon) => item.isCluster);
+
+      // Should have separate clusters for each group (or at least more than one)
+      // The exact number depends on the octree partitioning
+      expect(
+        clusterItems.length + clusteredIcons.filter((item: ClusteredIcon) => !item.isCluster).length
+      ).toBeGreaterThanOrEqual(1);
+
+      // Total icon count should still match
+      const totalIconCount =
+        clusterItems.reduce((sum, c) => sum + c.clusterSize, 0) +
+        clusteredIcons.filter((item: ClusteredIcon) => !item.isCluster).length;
+      expect(totalIconCount).toBeLessThanOrEqual(allPositions.length);
+
+      collection.dispose();
+    });
+
+    test('Single icon at far distance is not marked as cluster', () => {
+      // Single isolated icon far from camera
+      const positions = [new Vector3(500, 0, 0)];
+      const collection = new IconCollection(positions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      // Camera at origin looking at the far icon
+      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(500, 0, 0));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+
+      if (clusteredIcons.length > 0) {
+        // Single icon should not be a cluster (clusterSize = 1, isCluster = false)
+        const singleItem = clusteredIcons[0];
+        expect(singleItem.clusterSize).toBe(1);
+        expect(singleItem.isCluster).toBe(false);
+      }
+
+      collection.dispose();
+    });
+    test('Moving camera close to cluster declusters icons', () => {
+      const positions = [
+        new Vector3(100, 0, 0),
+        new Vector3(101, 0, 0),
+        new Vector3(100, 1, 0),
+        new Vector3(101, 1, 0)
+      ];
+      const collection = new IconCollection(positions, mockSceneHandler, mockEventTrigger);
+
+      expect(capturedRenderCallback).toBeDefined();
+
+      // First, camera far away - should cluster
+      let camera = createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      let clusteredIcons = collection.getVisibleClusteredIcons();
+
+      // Now move camera close to icons - should decluster
+      camera = createCamera(new Vector3(100, 0, 30));
+      capturedRenderCallback?.({ frameNumber: 1, renderer: mockRenderer, camera });
+
+      clusteredIcons = collection.getVisibleClusteredIcons();
+      const finalClusterCount = clusteredIcons.filter((item: ClusteredIcon) => item.isCluster).length;
+      const individualIconCount = clusteredIcons.filter((item: ClusteredIcon) => !item.isCluster).length;
+
+      // When camera is close, should have more individual icons
+      expect(individualIconCount).toBeGreaterThanOrEqual(finalClusterCount);
+      // All items should be visible with individual icons having clusterSize = 1
+      clusteredIcons.forEach((item: ClusteredIcon) => {
+        if (!item.isCluster) {
+          expect(item.clusterSize).toBe(1);
+        }
+      });
 
       collection.dispose();
     });

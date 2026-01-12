@@ -2,10 +2,23 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  Color,
+  Frustum,
+  Matrix4,
+  Ray,
+  Sphere,
+  Sprite,
+  SpriteMaterial,
+  Texture,
+  Vector2,
+  Vector3
+} from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
-import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
+import { DefaultOverlay3DContentType, IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
+import { PointOctant } from 'sparse-octree';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
@@ -13,12 +26,29 @@ export type IconsOptions = {
   platformMaxPointsSize?: number;
 };
 
+export type ClusteredIcon = {
+  icon: Overlay3DIcon;
+  isCluster: boolean;
+  clusterSize: number;
+  clusterPosition: Vector3;
+  sizeScale: number;
+  clusterIcons?: Overlay3DIcon[]; // All icons in this cluster (for click expansion)
+};
+
+export type ClusterIntersectionData = {
+  clusterPosition: Vector3;
+  clusterSize: number;
+  clusterIcons: Overlay3DIcon[];
+  representativeIcon: Overlay3DIcon;
+};
 export class IconCollection {
   private static readonly MinPixelSize = 16;
   private static readonly DefaultMaxPixelSize = 256;
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
+  private readonly _clusterTexture: Texture;
+  private readonly _numberTexture: Texture;
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
   private readonly _pointsObject: OverlayPointsObject;
@@ -27,10 +57,29 @@ export class IconCollection {
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconRadius = 0.3;
 
+  // Cache for LOD computation to prevent flickering during small camera movements
+  private readonly _lastLODCameraPosition: Vector3 = new Vector3();
+
+  // Cluster minimum pixel size (same as in shader: MinPixelSize * 1.5)
+  private readonly _minClusterPixelSize = IconCollection.MinPixelSize * 2.5;
+  private readonly _setNeedsRedraw: (() => void) | undefined;
+
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
   private _proximityRadius = Infinity;
   private _proximityPointLimit = 50;
+
+  // Cluster hover state tracking
+  private _visibleClusteredIcons: ClusteredIcon[] = [];
+  // Store the hovered cluster's representative icon (not index) to handle array changes between frames
+  private _hoveredClusterIcon: Overlay3DIcon | null = null;
+
+  // Store camera projection info for accurate cluster intersection radius calculation
+  private _lastProjectionMatrixElement: number = 1.73; // ~1.73 for 60° FOV
+  private _lastRenderHeight: number = 1080;
+
+  // Cache for clustered icons to avoid recomputation
+  private _cachedClusteredIcons: ClusteredIcon[] = [];
 
   get icons(): Overlay3DIcon[] {
     return this._icons;
@@ -70,17 +119,23 @@ export class IconCollection {
     points: Vector3[],
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
-    iconOptions?: IconsOptions
+    iconOptions?: IconsOptions,
+    setNeedsRedraw?: () => void
   ) {
+    this._setNeedsRedraw = setNeedsRedraw;
     this._maxPixelSize = Math.min(
       IconCollection.DefaultMaxPixelSize,
       iconOptions?.platformMaxPointsSize ?? IconCollection.DefaultMaxPixelSize
     );
 
     const sharedTexture = this.createOuterRingsTexture();
+    const clusterTexture = this.createClusterTexture();
+    const numberTexture = this.createNumberTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
+      clusterTexture: clusterTexture,
+      numberTexture: numberTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,
@@ -90,6 +145,8 @@ export class IconCollection {
     const spriteTexture = this.createHoverIconTexture();
     this._hoverSprite = this.createHoverSprite(spriteTexture);
     this._sharedTexture = sharedTexture;
+    this._clusterTexture = clusterTexture;
+    this._numberTexture = numberTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
@@ -117,21 +174,189 @@ export class IconCollection {
     return this._pointsObject.getTransform(out);
   }
 
+  /**
+   * Intersect a ray with visible clusters. Returns cluster data if a cluster is hit.
+   * @param ray - Ray in model space (ray.origin is camera position in model space)
+   * @returns ClusterIntersectionData if a cluster is hit, undefined otherwise
+   */
+  public intersectCluster(ray: Ray): ClusterIntersectionData | undefined {
+    const tempSphere = new Sphere();
+
+    let closestDistance = Infinity;
+    let closestCluster: ClusterIntersectionData | undefined;
+    let newHoveredIcon: Overlay3DIcon | null = null;
+
+    const cameraPosition = ray.origin;
+
+    const hoverMargin = 1.2;
+
+    for (let i = 0; i < this._visibleClusteredIcons.length; i++) {
+      const item = this._visibleClusteredIcons[i];
+      if (!item.isCluster) continue;
+
+      const distanceToCentroid = cameraPosition.distanceTo(item.clusterPosition);
+
+      const worldRadiusFromScale = this._iconRadius * item.sizeScale;
+      const unclampedPixelSize =
+        (this._lastRenderHeight * this._lastProjectionMatrixElement * worldRadiusFromScale) / distanceToCentroid;
+
+      // The actual pixel size after clamping
+      const actualPixelSize = Math.max(unclampedPixelSize, this._minClusterPixelSize);
+      // Convert back to world-space radius for intersection
+      const visualWorldRadius =
+        (actualPixelSize * distanceToCentroid) / (this._lastRenderHeight * this._lastProjectionMatrixElement);
+
+      // Apply hover margin for more forgiving interaction
+      const intersectionRadius = visualWorldRadius * hoverMargin;
+
+      tempSphere.set(item.clusterPosition, intersectionRadius);
+
+      const intersection = new Vector3();
+      if (ray.intersectSphere(tempSphere, intersection)) {
+        const distance = ray.origin.distanceTo(intersection);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestCluster = {
+            clusterPosition: item.clusterPosition.clone(),
+            clusterSize: item.clusterSize,
+            clusterIcons: item.clusterIcons ?? [],
+            representativeIcon: item.icon
+          };
+          newHoveredIcon = item.icon;
+        }
+      }
+    }
+
+    // Check if hover state changed and trigger redraw if needed
+    const hoverStateChanged = this._hoveredClusterIcon !== newHoveredIcon;
+    this._hoveredClusterIcon = newHoveredIcon;
+
+    if (hoverStateChanged && this._setNeedsRedraw) {
+      this._setNeedsRedraw();
+    }
+
+    return closestCluster;
+  }
+
+  /**
+   * Set the hovered cluster by its representative icon.
+   */
+  public setHoveredClusterIcon(icon: Overlay3DIcon | null): void {
+    this._hoveredClusterIcon = icon;
+  }
+
+  /**
+   * Clear the hovered cluster state.
+   */
+  public clearHoveredCluster(): void {
+    const hadHoveredCluster = this._hoveredClusterIcon !== null;
+    this._hoveredClusterIcon = null;
+
+    // Trigger redraw if we cleared a hover state
+    if (hadHoveredCluster && this._setNeedsRedraw) {
+      this._setNeedsRedraw();
+    }
+  }
+
+  /**
+   * Get the currently visible clustered icons (for external intersection handling).
+   */
+  public getVisibleClusteredIcons(): readonly ClusteredIcon[] {
+    return this._visibleClusteredIcons;
+  }
+
+  /**
+   * Distance-based clustering approach:
+   * - Uses camera distance to decide when to show clusters vs individual icons
+   * - When camera is far (> clusterDistanceThreshold), show cluster icons at centroids
+   * - When camera is close (< clusterDistanceThreshold), show individual icons
+   * - Cluster icons are rendered with a different texture and show the count
+   * @param octree - Octree containing the icons
+   * @param iconSprites - OverlayPointsObject to update icon rendering
+   * @returns BeforeSceneRenderedDelegate to be called
+   */
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
     const worldTransformInverse = new Matrix4();
     const cameraModelSpacePosition = new Vector3();
 
-    const distanceThreshold = 40; // Icons within this distance from camera are always visible (no clustering)
-    const clusteringLevel = 3; // Octree depth for clustering far icons (higher = finer clusters, more icons shown)
+    // Distance-based clustering parameters
+    const clusterDistanceThreshold = 50; // Distance beyond which clustering is applied
+    const clusteringLevel = 3; // Octree depth for clustering (higher = finer clusters)
+    const clusterIconSizeMultiplier = 5.5; // How much bigger clustered points appear
 
-    return ({ camera }) => {
+    const renderSize = new Vector2();
+
+    return ({ camera, renderer }) => {
       this._pointsObject.getTransform(worldTransformInverse);
       worldTransformInverse.invert();
       cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransformInverse);
 
-      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, distanceThreshold, clusteringLevel);
+      // Store camera projection info for accurate cluster intersection radius calculation
+      this._lastProjectionMatrixElement = camera.projectionMatrix.elements[5];
+      renderer.getSize(renderSize);
+      this._lastRenderHeight = renderSize.y;
+
+      this._lastLODCameraPosition.copy(cameraModelSpacePosition);
+
+      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, clusterDistanceThreshold, clusteringLevel);
+      const nodes = [...nodesLOD];
+
+      const clusteredIcons: ClusteredIcon[] = [];
+
+      for (const node of nodes) {
+        // If node has data (leaf), show the individual icon(s)
+        if (node.data !== null) {
+          const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
+          for (const icon of icons) {
+            clusteredIcons.push({
+              icon,
+              isCluster: false,
+              clusterSize: 1,
+              clusterPosition: icon.getPosition(),
+              sizeScale: 1
+            });
+          }
+        } else {
+          // Node is a parent (cluster) - the octree has already decided
+          // this node should be clustered, so show the cluster.
+          const representativeIcon = octree.getNodeIcon(node);
+          if (!representativeIcon) continue;
+
+          // Get all leaf icons under this cluster node
+          const clusterIcons = this.getNodeLeafIcons(node);
+          const clusterSize = clusterIcons.length;
+
+          // Show as cluster if we have multiple icons, otherwise show as individual
+          if (clusterSize > 1) {
+            const centroid = this.calculateCentroid(clusterIcons);
+
+            // Show as cluster - single icon at centroid position with scaled size
+            clusteredIcons.push({
+              icon: representativeIcon,
+              isCluster: true,
+              clusterSize,
+              clusterPosition: centroid,
+              sizeScale: clusterIconSizeMultiplier,
+              clusterIcons: clusterIcons // Store all icons for click expansion
+            });
+          } else {
+            // Only one icon in this "cluster" - show as individual
+            for (const icon of clusterIcons) {
+              clusteredIcons.push({
+                icon,
+                isCluster: false,
+                clusterSize: 1,
+                clusterPosition: icon.getPosition(),
+                sizeScale: 1
+              });
+            }
+          }
+        }
+      }
+
+      this._cachedClusteredIcons = clusteredIcons;
 
       projection
         .copy(camera.projectionMatrix)
@@ -139,30 +364,90 @@ export class IconCollection {
         .multiply(this._pointsObject.getTransform());
       frustum.setFromProjectionMatrix(projection);
 
-      const nodes = [...nodesLOD];
-
-      const selectedIcons: Overlay3DIcon[] = [];
-      for (const node of nodes) {
-        const icons =
-          node.data === null
-            ? octree.getIconsFromClusteredNode(node, cameraModelSpacePosition, distanceThreshold)
-            : node.data.data;
-
-        for (const icon of icons) {
-          if (frustum.containsPoint(icon.getPosition())) {
-            selectedIcons.push(icon);
-          }
-        }
-      }
+      // Filter by frustum - use cluster position for frustum test
+      const visibleClusteredIcons = this._cachedClusteredIcons.filter(item =>
+        frustum.containsPoint(item.clusterPosition)
+      );
 
       this._icons.forEach(icon => (icon.culled = true));
-      selectedIcons.forEach(icon => (icon.culled = false));
-      const visibleIcons = selectedIcons.filter(icon => icon.getVisible());
+      visibleClusteredIcons.forEach(item => (item.icon.culled = false));
+
+      const visibleIcons = visibleClusteredIcons.filter(item => item.icon.getVisible());
+
+      // Store for hover detection
+      this._visibleClusteredIcons = visibleIcons;
+
+      const renderPositions: Vector3[] = [];
+      const renderColors: Color[] = [];
+      const renderSizeScales: number[] = [];
+      const renderIsClusterFlags: boolean[] = [];
+      const renderClusterSizes: number[] = [];
+      const renderIsHoveredFlags: boolean[] = [];
+
+      for (let i = 0; i < visibleIcons.length; i++) {
+        const item = visibleIcons[i];
+        // Use cluster position (centroid for clusters, original position for individuals)
+        renderPositions.push(item.clusterPosition);
+
+        // Use icon color (clusters use gray texture, hover tinting is done in shader)
+        renderColors.push(item.icon.getColor());
+
+        renderSizeScales.push(item.sizeScale);
+        renderIsClusterFlags.push(item.isCluster);
+        renderClusterSizes.push(item.clusterSize);
+        // Compare by icon reference (not index) for stable hover across frame changes
+        renderIsHoveredFlags.push(item.isCluster && item.icon === this._hoveredClusterIcon);
+      }
+
       iconSprites.setPoints(
-        visibleIcons.map(icon => icon.getPosition()),
-        visibleIcons.map(icon => icon.getColor())
+        renderPositions,
+        renderColors,
+        renderSizeScales,
+        renderIsClusterFlags,
+        renderClusterSizes,
+        renderIsHoveredFlags
       );
     };
+  }
+
+  /**
+   * Recursively get all leaf icons under a node
+   */
+  private getNodeLeafIcons(
+    node: PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>
+  ): Overlay3DIcon<DefaultOverlay3DContentType>[] {
+    const leafIcons: Overlay3DIcon<DefaultOverlay3DContentType>[] = [];
+
+    if (node.data !== null) {
+      const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
+      return icons;
+    }
+
+    if (node.children && node.children.length > 0) {
+      for (const child of node.children) {
+        const childNode = child as PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>;
+        leafIcons.push(...this.getNodeLeafIcons(childNode));
+      }
+    }
+
+    return leafIcons;
+  }
+
+  /**
+   * Calculate the 3D centroid of a group of icons
+   */
+  private calculateCentroid(icons: Overlay3DIcon[]): Vector3 {
+    if (icons.length === 0) {
+      return new Vector3();
+    }
+
+    const centroid = new Vector3();
+    for (const icon of icons) {
+      centroid.add(icon.getPosition());
+    }
+    centroid.divideScalar(icons.length);
+
+    return centroid;
   }
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
@@ -184,7 +469,7 @@ export class IconCollection {
               .filter((point): point is Overlay3DIcon => point !== null);
 
       const closestPoints = points
-        .sort((a, b) => {
+        .toSorted((a, b) => {
           return (
             a.getPosition().distanceToSquared(cameraModelSpacePosition) -
             b.getPosition().distanceToSquared(cameraModelSpacePosition)
@@ -250,6 +535,8 @@ export class IconCollection {
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
+    this._clusterTexture.dispose();
+    this._numberTexture.dispose();
   }
 
   private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
@@ -320,6 +607,121 @@ export class IconCollection {
       );
       context.fill();
     }
+  }
+
+  /**
+   * Create a cluster texture
+   */
+  private createClusterTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const textureSize = this._maxPixelSize;
+    canvas.width = textureSize;
+    canvas.height = textureSize;
+
+    const halfTextureSize = textureSize * 0.5;
+    const context = canvas.getContext('2d')!;
+
+    // Clear canvas to transparent
+    context.clearRect(0, 0, textureSize, textureSize);
+
+    const outerRadius = halfTextureSize * 0.98;
+
+    // Ring thicknesses
+    const transparentOuterGap = halfTextureSize * 0.1; // Transparent outermost gap
+    const whiteOuterRingThickness = halfTextureSize * 0.06; // White ring
+    const transparentMiddleGap = halfTextureSize * 0.1; // Transparent gap
+    const whiteInnerRingThickness = halfTextureSize * 0.05; // White ring (inner)
+    const grayRingThickness = halfTextureSize * 0.22; // Gray middle ring
+
+    // Calculate radii for each ring center (for stroke-based drawing)
+    const whiteOuterRingRadius = outerRadius - transparentOuterGap - whiteOuterRingThickness / 2;
+    const whiteInnerRingRadius =
+      outerRadius - transparentOuterGap - whiteOuterRingThickness - transparentMiddleGap - whiteInnerRingThickness / 2;
+    const grayRingOuterRadius =
+      outerRadius - transparentOuterGap - whiteOuterRingThickness - transparentMiddleGap - whiteInnerRingThickness;
+
+    // Draw white outer ring using stroke
+    context.strokeStyle = '#FFFFFF';
+    context.lineWidth = whiteOuterRingThickness;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, whiteOuterRingRadius, 0, 2 * Math.PI);
+    context.stroke();
+
+    // Draw white inner ring using stroke
+    context.strokeStyle = '#FFFFFF';
+    context.lineWidth = whiteInnerRingThickness;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, whiteInnerRingRadius, 0, 2 * Math.PI);
+    context.stroke();
+
+    // Draw gray ring using stroke
+    context.strokeStyle = '#a0a0a0';
+    context.lineWidth = grayRingThickness;
+    context.beginPath();
+    context.arc(halfTextureSize, halfTextureSize, grayRingOuterRadius - grayRingThickness / 2, 0, 2 * Math.PI);
+    context.stroke();
+
+    return new CanvasTexture(canvas);
+  }
+
+  /**
+   * Create a number texture atlas (digits 0-9 plus "+" symbol)
+   */
+  private createNumberTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const charCount = 11; // 0-9 plus "+"
+    // Higher resolution for better quality when scaled down
+    const charWidth = 128;
+    const charHeight = 192;
+    canvas.width = charWidth * charCount;
+    canvas.height = charHeight;
+
+    const context = canvas.getContext('2d')!;
+
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Larger font for higher resolution texture
+    context.font = '160px Arial, sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+
+    // Draw digits 0-9
+    for (let i = 0; i < 10; i++) {
+      const x = charWidth * i + charWidth / 2;
+      const y = charHeight / 2;
+
+      context.strokeStyle = '#000000';
+      context.lineWidth = 3;
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeText(i.toString(), x, y);
+
+      context.fillStyle = '#FFFFFF';
+      context.fillText(i.toString(), x, y);
+    }
+
+    // Draw "+" symbol at index 10
+    const plusX = charWidth * 10 + charWidth / 2;
+    const plusY = charHeight / 2;
+
+    context.strokeStyle = '#000000';
+    context.lineWidth = 4;
+    context.lineJoin = 'round';
+    context.lineCap = 'round';
+    context.strokeText('+', plusX, plusY);
+
+    context.fillStyle = '#FFFFFF';
+    context.fillText('+', plusX, plusY);
+
+    const texture = new CanvasTexture(canvas);
+    // Enable mipmaps for better quality when scaled down
+    texture.generateMipmaps = true;
+    texture.needsUpdate = true;
+
+    return texture;
   }
 
   //================================================
