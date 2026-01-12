@@ -222,4 +222,147 @@ describe(IconOctree.name, () => {
       testIcons.forEach(icon => expect(result).toContain(icon));
     });
   });
+
+  describe('Cluster creation and children count verification', () => {
+    test('getLODByDistance with clusteringLevel creates expected cluster structure', () => {
+      // 6 icons spread across the bounds
+      const testIcons = iconMocks.slice(0, 6);
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      // Camera very far - should cluster
+      const farCameraResult = octree.getLODByDistance(new Vector3(10, 10, 10), 0.3, 2);
+
+      expect(farCameraResult.size).toBeLessThan(testIcons.length);
+
+      farCameraResult.forEach(node => {
+        expect(node).toBeDefined();
+      });
+    });
+
+    test('getAllIconsFromNode returns correct count for clustered nodes', () => {
+      const testIcons = iconMocks.slice(0, 5);
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+      const root = octree.findNodesByLevel(0)[0];
+
+      const allIcons = octree.getAllIconsFromNode(root);
+
+      // Should return all icons from the tree
+      expect(allIcons.length).toBe(testIcons.length);
+      testIcons.forEach(icon => {
+        expect(allIcons).toContain(icon);
+      });
+    });
+
+    test('Cluster representative icon is closest to centroid', () => {
+      // Two icons - the one closest to center should be the representative
+      const octree = new IconOctree([iconMocks[3], iconMocks[4]], unitBounds, 2); // 0.1 and 0.9
+      const root = octree.findNodesByLevel(0)[0];
+
+      const representative = octree.getNodeIcon(root);
+
+      // Both icons at 0.1 and 0.9 are equidistant from centroid (0.5, 0.5, 0.5)
+      // so either could be representative
+      expect([iconMocks[3], iconMocks[4]]).toContain(representative);
+    });
+
+    test('getLODByDistance clusteringLevel 0 creates coarser clusters', () => {
+      const testIcons = iconMocks.slice(0, 6);
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      const farCamera = new Vector3(10, 10, 10);
+
+      // With clusteringLevel 0, should create fewer, larger clusters
+      const level0Result = octree.getLODByDistance(farCamera, 0.1, 0);
+
+      // With clusteringLevel 3, should create more, smaller clusters
+      const level3Result = octree.getLODByDistance(farCamera, 0.1, 3);
+
+      // Higher level should have equal or more nodes (finer granularity)
+      expect(level3Result.size).toBeGreaterThanOrEqual(level0Result.size);
+    });
+
+    test('Cluster children count is preserved in getAllIconsFromNode', () => {
+      const testIcons = [iconMocks[0], iconMocks[1], iconMocks[2], iconMocks[3]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      // Get LOD nodes for a far camera
+      const lodNodes = octree.getLODByDistance(new Vector3(5, 5, 5), 0.05, 1);
+
+      // For each clustered node, getAllIconsFromNode should return correct count
+      let totalIconCount = 0;
+      lodNodes.forEach(node => {
+        const nodeIcons = octree.getAllIconsFromNode(node);
+        totalIconCount += nodeIcons.length;
+
+        // Each icon should be from our original set
+        nodeIcons.forEach(icon => {
+          expect(testIcons).toContain(icon);
+        });
+      });
+
+      // Total should match original icon count
+      expect(totalIconCount).toBe(testIcons.length);
+    });
+
+    test('getLODByDistance returns leaf nodes with data for close camera', () => {
+      const testIcons = [iconMocks[0], iconMocks[1]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      // Camera at position of first icon - very close
+      const result = octree.getLODByDistance(positions[0], 1);
+
+      // Should return all leaf nodes (2 for 2 icons with maxLeafSize 1)
+      expect(result.size).toBe(testIcons.length);
+
+      // Each node should have data
+      result.forEach(node => {
+        if (node.data !== null) {
+          expect(node.data.data.length).toBeGreaterThanOrEqual(1);
+        }
+      });
+    });
+
+    test('getLODByDistance with undefined camera returns all leaf nodes', () => {
+      const testIcons = iconMocks.slice(0, 4);
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      const result = octree.getLODByDistance(undefined, 10);
+
+      // Should return all icons individually (no clustering when camera is undefined)
+      expect(result.size).toBe(testIcons.length);
+    });
+
+    test('getIconsFromClusteredNode returns correct children count', () => {
+      const testIcons = [iconMocks[3], iconMocks[5], iconMocks[4], iconMocks[1]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+      const root = octree.findNodesByLevel(0)[0];
+
+      // Camera far away - should get representative only
+      const farResult = octree.getIconsFromClusteredNode(root, new Vector3(10, 10, 10), 0.01);
+      expect(farResult.length).toBe(1); // Only representative
+
+      // Camera close - should get all icons
+      const closeResult = octree.getIconsFromClusteredNode(root, positions[2], 2);
+      expect(closeResult.length).toBe(testIcons.length);
+    });
+
+    test('Nested clusters preserve total icon count', () => {
+      // Create octree with many icons to ensure multiple levels
+      const allIcons = iconMocks;
+      const octree = new IconOctree(allIcons, unitBounds, 1);
+
+      // Get clustered nodes at different distances
+      const veryFarResult = octree.getLODByDistance(new Vector3(100, 100, 100), 0.01, 1);
+
+      // Count all icons in all returned nodes
+      let totalFromClusters = 0;
+      veryFarResult.forEach(node => {
+        const nodeIcons = octree.getAllIconsFromNode(node);
+        totalFromClusters += nodeIcons.length;
+      });
+
+      // Total should equal original icon count
+      expect(totalFromClusters).toBe(allIcons.length);
+    });
+  });
 });

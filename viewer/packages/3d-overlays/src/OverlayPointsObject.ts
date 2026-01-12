@@ -53,6 +53,8 @@ export class OverlayPointsObject extends Group {
   private readonly _isClusterAttribute: BufferAttribute;
   private readonly _clusterSizeBuffer: Float32Array;
   private readonly _clusterSizeAttribute: BufferAttribute;
+  private readonly _isHoveredBuffer: Float32Array;
+  private readonly _isHoveredAttribute: BufferAttribute;
   private readonly _points: {
     frontPoints: Points<BufferGeometry, RawShaderMaterial>;
     backPoints: Points<BufferGeometry, RawShaderMaterial>;
@@ -77,12 +79,15 @@ export class OverlayPointsObject extends Group {
     this._isClusterAttribute = new BufferAttribute(this._isClusterBuffer, 1);
     this._clusterSizeBuffer = new Float32Array(maxNumberOfPoints).fill(0);
     this._clusterSizeAttribute = new BufferAttribute(this._clusterSizeBuffer, 1);
+    this._isHoveredBuffer = new Float32Array(maxNumberOfPoints).fill(0);
+    this._isHoveredAttribute = new BufferAttribute(this._isHoveredBuffer, 1);
     this._modelTransform = new Matrix4();
     geometry.setAttribute('position', this._positionAttribute);
     geometry.setAttribute('color', this._colorAttribute);
     geometry.setAttribute('sizeScale', this._sizeScaleAttribute);
     geometry.setAttribute('isCluster', this._isClusterAttribute);
     geometry.setAttribute('clusterSize', this._clusterSizeAttribute);
+    geometry.setAttribute('isHovered', this._isHoveredAttribute);
     geometry.setDrawRange(0, 0);
 
     const {
@@ -159,7 +164,8 @@ export class OverlayPointsObject extends Group {
     colors?: Color[],
     sizeScales?: number[],
     isClusterFlags?: boolean[],
-    clusterSizes?: number[]
+    clusterSizes?: number[],
+    isHoveredFlags?: boolean[]
   ): void {
     if (colors && points.length !== colors?.length)
       throw new Error('Points positions and colors arrays must have the same length');
@@ -172,6 +178,9 @@ export class OverlayPointsObject extends Group {
 
     if (clusterSizes && points.length !== clusterSizes?.length)
       throw new Error('Points positions and clusterSizes arrays must have the same length');
+
+    if (isHoveredFlags && points.length !== isHoveredFlags?.length)
+      throw new Error('Points positions and isHoveredFlags arrays must have the same length');
 
     if (points.length * 3 > this._positionBuffer.length) {
       throw new Error('Points array length exceeds the maximum number of points');
@@ -205,6 +214,12 @@ export class OverlayPointsObject extends Group {
       } else {
         this._clusterSizeBuffer[index] = 0;
       }
+
+      if (isHoveredFlags) {
+        this._isHoveredBuffer[index] = isHoveredFlags[index] ? 1 : 0;
+      } else {
+        this._isHoveredBuffer[index] = 0;
+      }
     }
 
     this._positionAttribute.clearUpdateRanges();
@@ -226,6 +241,10 @@ export class OverlayPointsObject extends Group {
     this._clusterSizeAttribute.clearUpdateRanges();
     this._clusterSizeAttribute.updateRanges.push({ start: 0, count: points.length });
     this._clusterSizeAttribute.needsUpdate = true;
+
+    this._isHoveredAttribute.clearUpdateRanges();
+    this._isHoveredAttribute.updateRanges.push({ start: 0, count: points.length });
+    this._isHoveredAttribute.needsUpdate = true;
 
     this._geometry.setDrawRange(0, points.length);
 

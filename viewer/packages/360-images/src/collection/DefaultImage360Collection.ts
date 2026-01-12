@@ -14,7 +14,7 @@ import {
 } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
+import { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Image360AnnotationAppearance } from '../annotation/types';
 
 import {
@@ -25,7 +25,7 @@ import {
   Image360Provider
 } from '@reveal/data-providers';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Matrix4 } from 'three';
+import { Matrix4, Ray } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
 import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
 import { createCollectionIdString } from './createCollectionIdString';
@@ -249,6 +249,14 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
 
   public setCullingScheme(scheme: IconCullingScheme): void {
     this._icons.setCullingScheme(scheme);
+  }
+
+  public intersectCluster(ray: Ray): ClusterIntersectionData | undefined {
+    return this._icons.intersectCluster(ray);
+  }
+
+  public clearHoveredCluster(): void {
+    this._icons.clearHoveredCluster();
   }
 
   public remove(entity: Image360Entity<T>): void {
