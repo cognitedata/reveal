@@ -13,7 +13,7 @@ import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
-import { Image360IconIntersectionData } from './types';
+import { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
 import { ClosestGeometryFinder } from '@reveal/utilities';
 
 export class Image360Facade<T extends DataSourceType> {
@@ -128,6 +128,9 @@ export class Image360Facade<T extends DataSourceType> {
     const intersection = new Vector3();
     const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
 
+    // Also check for cluster hover and update hover state automatically
+    this.updateClusterHoverState(coords, camera);
+
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
@@ -173,6 +176,84 @@ export class Image360Facade<T extends DataSourceType> {
     function hasVisibleIcon(entity: Image360Entity<T>) {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
+  }
+
+  /**
+   * Update cluster hover state based on mouse position.
+   * This is called automatically by intersect() but can also be called directly.
+   */
+  private updateClusterHoverState(coords: Vector2, camera: Camera): void {
+    const modelMatrix = new Matrix4();
+    const invModelMatrix = new Matrix4();
+
+    // Clear all hover states first to ensure clean state
+    this.clearHoveredClusters();
+
+    for (const collection of this._image360Collections) {
+      collection.getModelTransformation(modelMatrix);
+      invModelMatrix.copy(modelMatrix).invert();
+
+      // Create a ray in model coordinates
+      this._rayCaster.setFromCamera(coords, camera);
+      const modelRay = this._rayCaster.ray.clone().applyMatrix4(invModelMatrix);
+
+      const clusterData = collection.intersectCluster(modelRay);
+      if (clusterData) {
+        // Hover state is set inside intersectCluster()
+        // Only one cluster can be hovered at a time, so break after finding one
+        break;
+      }
+    }
+  }
+
+  /**
+   * Intersect with cluster icons. Returns cluster data if a cluster is hit.
+   * @param coords - Normalized screen coordinates (-1 to 1)
+   * @param camera - The camera used for the intersection
+   * @returns Cluster intersection data if a cluster is hit, undefined otherwise
+   */
+  public intersectCluster(coords: Vector2, camera: Camera): Image360ClusterIntersectionData<T> | undefined {
+    const modelMatrix = new Matrix4();
+    const invModelMatrix = new Matrix4();
+    const closestFinder = new ClosestGeometryFinder<Image360ClusterIntersectionData<T>>(camera.position);
+
+    for (const collection of this._image360Collections) {
+      collection.getModelTransformation(modelMatrix);
+      invModelMatrix.copy(modelMatrix).invert();
+
+      // Create a ray in model coordinates
+      this._rayCaster.setFromCamera(coords, camera);
+      const modelRay = this._rayCaster.ray.clone().applyMatrix4(invModelMatrix);
+
+      const clusterData = collection.intersectCluster(modelRay);
+      if (clusterData) {
+        const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
+
+        // Map Overlay3DIcon[] to Image360Entity[] by matching icons
+        const clusterEntities = collection.image360Entities.filter(entity =>
+          clusterData.clusterIcons.includes(entity.icon)
+        );
+
+        closestFinder.addLazy(worldPosition, () => {
+          return {
+            image360Collection: collection,
+            clusterPosition: worldPosition,
+            clusterSize: clusterData.clusterSize,
+            clusterIcons: clusterEntities,
+            distanceToCamera: closestFinder.minDistance
+          };
+        });
+      }
+    }
+
+    return closestFinder.getClosestGeometry();
+  }
+
+  /**
+   * Clear hovered cluster state for all collections.
+   */
+  public clearHoveredClusters(): void {
+    this._image360Collections.forEach(collection => collection.clearHoveredCluster());
   }
 
   public dispose(): void {
