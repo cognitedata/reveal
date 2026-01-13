@@ -469,7 +469,7 @@ export class IconCollection {
               .filter((point): point is Overlay3DIcon => point !== null);
 
       const closestPoints = points
-        .toSorted((a, b) => {
+        .sort((a, b) => {
           return (
             a.getPosition().distanceToSquared(cameraModelSpacePosition) -
             b.getPosition().distanceToSquared(cameraModelSpacePosition)
