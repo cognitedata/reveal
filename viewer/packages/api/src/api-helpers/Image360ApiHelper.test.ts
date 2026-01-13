@@ -8,7 +8,12 @@ import { jest } from '@jest/globals';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
 import { SceneHandler, InputHandler, EventTrigger, BeforeSceneRenderedDelegate } from '@reveal/utilities';
-import { ProxyCameraManager, CameraManager } from '@reveal/camera-manager';
+import {
+  ProxyCameraManager,
+  CameraManager,
+  FlexibleCameraManager,
+  CameraManagerCallbackData
+} from '@reveal/camera-manager';
 import { DataSourceType } from '@reveal/data-providers';
 import {
   Image360ClusterIntersectionData,
@@ -56,14 +61,20 @@ function createMockCameraManager(camera: PerspectiveCamera): ProxyCameraManager 
     .object();
 }
 
-function createTestHelper(domElement: HTMLElement): Image360ApiHelper<DataSourceType> {
-  const sdk = new CogniteClient({
-    appId: 'cognite.reveal.unittest',
-    project: 'dummy',
-    getToken: async () => 'dummy'
-  });
-  mockClientAuthentication(sdk);
+function createMockClusterData(): Image360ClusterIntersectionData<DataSourceType> {
+  const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>().object();
+  const mockEntity = new Mock<Image360Entity<DataSourceType>>().object();
 
+  return {
+    image360Collection: mockCollection,
+    clusterPosition: new Vector3(5, 0, 0),
+    clusterSize: 3,
+    clusterIcons: [mockEntity],
+    distanceToCamera: 15
+  };
+}
+
+function createTestHelper(domElement: HTMLElement, sdk: CogniteClient): Image360ApiHelper<DataSourceType> {
   const mockCamera = new PerspectiveCamera();
   mockCamera.position.set(0, 0, 10);
   mockCamera.lookAt(new Vector3(0, 0, 0));
@@ -85,17 +96,66 @@ function createTestHelper(domElement: HTMLElement): Image360ApiHelper<DataSource
   );
 }
 
+function createFlexibleCameraTestHelper(
+  domElement: HTMLElement,
+  sdk: CogniteClient
+): Image360ApiHelper<DataSourceType> {
+  const mockCamera = new PerspectiveCamera();
+  mockCamera.position.set(0, 0, 10);
+  mockCamera.lookAt(new Vector3(0, 0, 0));
+  mockCamera.updateMatrixWorld();
+
+  // Create a real FlexibleCameraManager instance
+  const mockRaycastCallback = jest.fn<() => Promise<CameraManagerCallbackData>>();
+  const flexibleCameraManager = new FlexibleCameraManager(
+    domElement,
+    mockRaycastCallback,
+    mockCamera,
+    undefined,
+    false // disable keyboard
+  );
+
+  const proxyCameraManager = new Mock<ProxyCameraManager>()
+    .setup(p => p.getCamera())
+    .returns(mockCamera)
+    .setup(p => p.innerCameraManager)
+    .returns(flexibleCameraManager)
+    .object();
+
+  const mockSceneHandler = createMockSceneHandler();
+  const mockInputHandler = createMockInputHandler();
+  const onBeforeSceneRendered = new EventTrigger<BeforeSceneRenderedDelegate>();
+
+  return new Image360ApiHelper(
+    sdk,
+    mockSceneHandler,
+    domElement,
+    proxyCameraManager,
+    mockInputHandler,
+    onBeforeSceneRendered,
+    false
+  );
+}
+
 describe(Image360ApiHelper.name, () => {
   let helper: Image360ApiHelper<DataSourceType>;
   let domElement: HTMLElement;
 
+  let sdk: CogniteClient;
   beforeEach(() => {
     domElement = document.createElement('div');
     domElement.style.width = '640px';
     domElement.style.height = '480px';
     fakeGetBoundingClientRect(domElement, 0, 0, 640, 480);
 
-    helper = createTestHelper(domElement);
+    sdk = new CogniteClient({
+      appId: 'cognite.reveal.unittest',
+      project: 'dummy',
+      oidcTokenProvider: async () => 'dummy'
+    });
+    mockClientAuthentication(sdk);
+
+    helper = createTestHelper(domElement, sdk);
   });
 
   describe('enter360ImageOnIntersect (via onClick)', () => {
@@ -112,17 +172,7 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('prioritizes cluster intersection over icon intersection', async () => {
-      const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>().object();
-      const mockEntity = new Mock<Image360Entity<DataSourceType>>().object();
-
-      const clusterPosition = new Vector3(5, 0, 0);
-      const mockClusterData: Image360ClusterIntersectionData<DataSourceType> = {
-        image360Collection: mockCollection,
-        clusterPosition,
-        clusterSize: 3,
-        clusterIcons: [mockEntity],
-        distanceToCamera: 15
-      };
+      const mockClusterData = createMockClusterData();
 
       jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(mockClusterData);
       const iconIntersectSpy = jest.spyOn(helper, 'intersect360ImageIcons');
@@ -194,6 +244,32 @@ describe(Image360ApiHelper.name, () => {
       const result = helper.intersect360ImageIcons(320, 240);
 
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('zoomToCluster', () => {
+    test('returns false when transition is already in progress', async () => {
+      const mockClusterData = createMockClusterData();
+
+      helper.zoomToCluster(mockClusterData);
+
+      const secondResult = await helper.zoomToCluster(mockClusterData);
+      expect(secondResult).toBe(false);
+    });
+
+    test('uses FlexibleCameraManager path and returns true', async () => {
+      jest.useFakeTimers();
+
+      const flexibleHelper = createFlexibleCameraTestHelper(domElement, sdk);
+      const mockClusterData = createMockClusterData();
+
+      const zoomPromise = flexibleHelper.zoomToCluster(mockClusterData);
+      await jest.advanceTimersByTimeAsync(1000);
+      const result = await zoomPromise;
+
+      expect(result).toBe(true);
+
+      jest.useRealTimers();
     });
   });
 });
