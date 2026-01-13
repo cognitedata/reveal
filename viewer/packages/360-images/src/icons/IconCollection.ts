@@ -60,7 +60,7 @@ export class IconCollection {
   // Cache for LOD computation to prevent flickering during small camera movements
   private readonly _lastLODCameraPosition: Vector3 = new Vector3();
 
-  // Cluster minimum pixel size (same as in shader: MinPixelSize * 1.5)
+  // Cluster minimum pixel size (same as in the shader)
   private readonly _minClusterPixelSize = IconCollection.MinPixelSize * 2.5;
   private readonly _setNeedsRedraw: (() => void) | undefined;
 
@@ -238,16 +238,10 @@ export class IconCollection {
     return closestCluster;
   }
 
-  /**
-   * Set the hovered cluster by its representative icon.
-   */
   public setHoveredClusterIcon(icon: Overlay3DIcon | null): void {
     this._hoveredClusterIcon = icon;
   }
 
-  /**
-   * Clear the hovered cluster state.
-   */
   public clearHoveredCluster(): void {
     const hadHoveredCluster = this._hoveredClusterIcon !== null;
     this._hoveredClusterIcon = null;
