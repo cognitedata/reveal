@@ -658,7 +658,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
    * @param clusterData - The cluster intersection data
    * @returns Promise that resolves to true when the zoom is complete
    */
-  private async zoomToCluster(clusterData: Image360ClusterIntersectionData<DataSourceT>): Promise<boolean> {
+  public async zoomToCluster(clusterData: Image360ClusterIntersectionData<DataSourceT>): Promise<boolean> {
     if (this._transitionInProgress) {
       return false;
     }

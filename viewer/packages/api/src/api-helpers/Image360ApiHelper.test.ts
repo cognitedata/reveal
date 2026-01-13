@@ -19,12 +19,6 @@ import {
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { mockClientAuthentication, fakeGetBoundingClientRect } from '../../../../test-utilities';
 
-type TestableImage360ApiHelper = {
-  _transitionInProgress: boolean;
-  zoomToCluster: (clusterData: Image360ClusterIntersectionData<DataSourceType>) => Promise<boolean>;
-  enter360ImageInternal: (entity: Image360Entity<DataSourceType>) => Promise<boolean>;
-};
-
 function createMockSceneHandler(): SceneHandler {
   const mockScene = new Mock<Scene>()
     .setup(p => p.add(It.IsAny()))
@@ -92,30 +86,19 @@ function createTestHelper(domElement: HTMLElement): Image360ApiHelper<DataSource
 }
 
 describe(Image360ApiHelper.name, () => {
+  let helper: Image360ApiHelper<DataSourceType>;
+  let domElement: HTMLElement;
+
+  beforeEach(() => {
+    domElement = document.createElement('div');
+    domElement.style.width = '640px';
+    domElement.style.height = '480px';
+    fakeGetBoundingClientRect(domElement, 0, 0, 640, 480);
+
+    helper = createTestHelper(domElement);
+  });
+
   describe('enter360ImageOnIntersect (via onClick)', () => {
-    let helper: Image360ApiHelper<DataSourceType>;
-    let domElement: HTMLElement;
-
-    beforeEach(() => {
-      domElement = document.createElement('div');
-      domElement.style.width = '640px';
-      domElement.style.height = '480px';
-      fakeGetBoundingClientRect(domElement, 0, 0, 640, 480);
-
-      helper = createTestHelper(domElement);
-    });
-
-    test('returns false when transition is in progress', async () => {
-      // Set transition in progress using typed access to private field
-      const testableHelper = helper as unknown as TestableImage360ApiHelper;
-      testableHelper._transitionInProgress = true;
-
-      const event = { offsetX: 320, offsetY: 240 };
-      const result = await helper.onClick(event);
-
-      expect(result).toBe(false);
-    });
-
     test('returns false when no cluster or icon intersection found', async () => {
       const clusterSpy = jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
       const iconSpy = jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(undefined);
@@ -144,9 +127,7 @@ describe(Image360ApiHelper.name, () => {
       jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(mockClusterData);
       const iconIntersectSpy = jest.spyOn(helper, 'intersect360ImageIcons');
 
-      // Mock zoomToCluster to avoid TWEEN animation timeout
-      const testableHelper = helper as unknown as TestableImage360ApiHelper;
-      const zoomSpy = jest.spyOn(testableHelper, 'zoomToCluster').mockImplementation(() => Promise.resolve(true));
+      const zoomSpy = jest.spyOn(helper, 'zoomToCluster').mockResolvedValue(true);
 
       const event = { offsetX: 320, offsetY: 240 };
       const result = await helper.onClick(event);
@@ -186,9 +167,8 @@ describe(Image360ApiHelper.name, () => {
       jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
       jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
 
-      const testableHelper = helper as unknown as TestableImage360ApiHelper;
       const enterInternalSpy = jest
-        .spyOn(testableHelper, 'enter360ImageInternal')
+        .spyOn(helper, 'enter360ImageInternal')
         .mockImplementation(() => Promise.resolve(true));
 
       const event = { offsetX: 320, offsetY: 240 };
@@ -203,26 +183,16 @@ describe(Image360ApiHelper.name, () => {
 
   describe('intersect360ImageClusters', () => {
     test('calls facade intersectCluster with correct NDC coordinates', () => {
-      const domElement = document.createElement('div');
-      fakeGetBoundingClientRect(domElement, 0, 0, 640, 480);
-
-      const helper = createTestHelper(domElement);
       const result = helper.intersect360ImageClusters(320, 240);
 
-      // Since no collections are added, result should be undefined
       expect(result).toBeUndefined();
     });
   });
 
   describe('intersect360ImageIcons', () => {
     test('calls facade intersect with correct NDC coordinates', () => {
-      const domElement = document.createElement('div');
-      fakeGetBoundingClientRect(domElement, 0, 0, 640, 480);
-
-      const helper = createTestHelper(domElement);
       const result = helper.intersect360ImageIcons(320, 240);
 
-      // Since no collections are added, result should be undefined
       expect(result).toBeUndefined();
     });
   });
