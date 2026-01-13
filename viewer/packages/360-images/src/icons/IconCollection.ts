@@ -133,9 +133,7 @@ export class IconCollection {
     const numberTexture = this.createNumberTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
-      spriteTexture: sharedTexture,
-      clusterTexture: clusterTexture,
-      numberTexture: numberTexture,
+      iconAtlasTexture: sharedTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,
