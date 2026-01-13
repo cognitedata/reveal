@@ -173,7 +173,7 @@ export class OverlayPointsObject extends Group {
     if (sizeScales && points.length !== sizeScales.length)
       throw new Error('Points positions and sizeScales arrays must have the same length');
 
-    if (isClusterFlags && points.length !== isClusterFlags?.length)
+    if (isClusterFlags && points.length !== isClusterFlags.length)
       throw new Error('Points positions and isClusterFlags arrays must have the same length');
 
     if (clusterSizes && points.length !== clusterSizes.length)
