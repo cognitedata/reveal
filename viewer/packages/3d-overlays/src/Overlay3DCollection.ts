@@ -87,10 +87,13 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       mask: options?.overlayTextureMask ?? (options?.overlayTexture ? undefined : defaultOverlayTextures.mask)
     };
 
+    // Create icon atlas with same icon on both halves (no clustering in this collection)
+    const iconAtlasTexture = this.createIconAtlasFromTexture(this._sharedTextures.color);
+
     this._overlayPoints = new OverlayPointsObject(
       overlayInfos.length > 0 ? overlayInfos.length : this.DefaultMaxPoints,
       {
-        spriteTexture: this._sharedTextures.color,
+        iconAtlasTexture: iconAtlasTexture,
         maskTexture: this._sharedTextures.mask,
         minPixelSize: this.MinPixelSize,
         maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
@@ -293,5 +296,49 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       color: colorTexture,
       mask: maskTexture
     };
+  }
+
+  /**
+   * Create an icon atlas texture by duplicating the same texture on both halves.
+   * This is used for generic overlays without cluster distinction.
+   */
+  private createIconAtlasFromTexture(texture: Texture): CanvasTexture {
+    const textureSize = this.MaxPixelSize * 2;
+    const canvas = document.createElement('canvas');
+    // Double width for side-by-side atlas
+    canvas.width = textureSize * 2;
+    canvas.height = textureSize;
+
+    const context = canvas.getContext('2d')!;
+
+    // If it's a CanvasTexture, we can draw from its source canvas
+    if (texture instanceof CanvasTexture && texture.image instanceof HTMLCanvasElement) {
+      // Draw the same texture on both left and right halves
+      context.drawImage(texture.image, 0, 0, textureSize, textureSize);
+      context.drawImage(texture.image, textureSize, 0, textureSize, textureSize);
+    } else {
+      // For other texture types, draw a default circle on both halves
+      this.drawDefaultCircle(context, 0, textureSize);
+      this.drawDefaultCircle(context, textureSize, textureSize);
+    }
+
+    return new CanvasTexture(canvas);
+  }
+
+  /**
+   * Draw a default circle icon at a given x offset
+   */
+  private drawDefaultCircle(context: CanvasRenderingContext2D, xOffset: number, size: number): void {
+    const halfSize = size / 2;
+    const centerX = xOffset + halfSize;
+    const centerY = halfSize;
+    const lineWidth = size / 12;
+
+    context.beginPath();
+    context.lineWidth = lineWidth;
+    context.strokeStyle = 'white';
+    context.arc(centerX, centerY, halfSize - (lineWidth / 2) * 1.1, 0, 2 * Math.PI);
+    context.stroke();
+    context.closePath();
   }
 }

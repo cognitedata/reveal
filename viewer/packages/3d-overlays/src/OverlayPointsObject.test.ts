@@ -21,7 +21,7 @@ describe(OverlayPointsObject.name, () => {
 
   function createDefaultParameters(): OverlayPointsParameters {
     return {
-      spriteTexture: createMockTexture(),
+      iconAtlasTexture: createMockTexture(),
       minPixelSize: 10,
       maxPixelSize: 100,
       radius: 0.5
@@ -39,10 +39,9 @@ describe(OverlayPointsObject.name, () => {
       overlay.dispose();
     });
 
-    test('creates object with cluster and number textures', () => {
+    test('creates object with atlas and number textures', () => {
       const params: OverlayPointsParameters = {
-        spriteTexture: createMockTexture(),
-        clusterTexture: createMockTexture(),
+        iconAtlasTexture: createMockTexture(),
         numberTexture: createMockTexture(),
         minPixelSize: 10,
         maxPixelSize: 100,

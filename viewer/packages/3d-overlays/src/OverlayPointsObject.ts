@@ -26,8 +26,7 @@ import overlay3DIconVert from './overlay3DIcon.vert';
 import overlay3DIconFrag from './overlay3DIcon.frag';
 
 export type OverlayPointsParameters = {
-  spriteTexture: Texture;
-  clusterTexture?: Texture;
+  iconAtlasTexture: Texture;
   numberTexture?: Texture;
   maskTexture?: Texture;
   minPixelSize: number;
@@ -91,8 +90,7 @@ export class OverlayPointsObject extends Group {
     geometry.setDrawRange(0, 0);
 
     const {
-      spriteTexture,
-      clusterTexture,
+      iconAtlasTexture,
       numberTexture,
       minPixelSize,
       maxPixelSize,
@@ -104,9 +102,8 @@ export class OverlayPointsObject extends Group {
     } = materialParameters;
 
     const frontMaterial = this.createIconsMaterial(
-      spriteTexture,
-      clusterTexture || spriteTexture,
-      numberTexture || spriteTexture,
+      iconAtlasTexture,
+      numberTexture || iconAtlasTexture,
       maskTexture,
       collectionOpacity,
       depthMode,
@@ -118,9 +115,8 @@ export class OverlayPointsObject extends Group {
     );
 
     const backMaterial = this.createIconsMaterial(
-      spriteTexture,
-      clusterTexture || spriteTexture,
-      numberTexture || spriteTexture,
+      iconAtlasTexture,
+      numberTexture || iconAtlasTexture,
       maskTexture,
       DEFAULT_OVERLAY_BACK_OPACITY,
       GreaterDepth,
@@ -308,8 +304,7 @@ export class OverlayPointsObject extends Group {
   }
 
   private createIconsMaterial(
-    colorTexture: Texture,
-    clusterTexture: Texture,
+    iconAtlasTexture: Texture,
     numberTexture: Texture,
     maskTexture: Texture | undefined,
     collectionOpacity: number,
@@ -322,8 +317,7 @@ export class OverlayPointsObject extends Group {
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
-        colorTexture: { value: colorTexture },
-        clusterTexture: { value: clusterTexture },
+        iconAtlasTexture: { value: iconAtlasTexture },
         numberTexture: { value: numberTexture },
         maskTexture: { value: maskTexture },
         radius: { value: radius },

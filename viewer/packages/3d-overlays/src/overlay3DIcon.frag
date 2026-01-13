@@ -1,7 +1,7 @@
 precision highp float;
 
-uniform sampler2D colorTexture;
-uniform sampler2D clusterTexture;
+// Icon atlas texture: left half = regular icon, right half = cluster icon
+uniform sampler2D iconAtlasTexture;
 uniform sampler2D numberTexture;
 
 #if defined(isMaskDefined)
@@ -38,18 +38,20 @@ void main() {
   float isCluster = step(0.5, vIsCluster);
   float isHovered = step(0.5, vIsHovered);
 
-  // Texture sampling - sample both textures and blend
-  vec4 regularSample = texture(colorTexture, gl_PointCoord);
-  vec4 clusterSample = texture(clusterTexture, gl_PointCoord);
-  vec4 colorSample = mix(regularSample, clusterSample, isCluster);
+  // Sample from icon atlas using UV offset (left half = regular, right half = cluster)
+  // Scale x to [0, 0.5] and offset by 0.5 for clusters
+  vec2 atlasUV = vec2(gl_PointCoord.x * 0.5 + isCluster * 0.5, gl_PointCoord.y);
+  vec4 colorSample = texture(iconAtlasTexture, atlasUV);
 
   float computedAlpha = colorSample.a;
   vec3 computedColor = colorSample.rgb;
 
   #if defined(isMaskDefined)
-    // Mask sampling
+    // Mask sampling from maskTexture, cluster mask from right half of atlas
     vec4 maskRegular = texture(maskTexture, gl_PointCoord);
-    vec4 maskSample = mix(maskRegular, clusterSample, isCluster);
+    vec2 clusterAtlasUV = vec2(gl_PointCoord.x * 0.5 + 0.5, gl_PointCoord.y);
+    vec4 clusterMaskSample = texture(iconAtlasTexture, clusterAtlasUV);
+    vec4 maskSample = mix(maskRegular, clusterMaskSample, isCluster);
 
     computedAlpha = colorSample.a + (1.0 - colorSample.a) * maskSample.r;
     computedColor = mix(colorSample.rgb, vColor, maskSample.r);
