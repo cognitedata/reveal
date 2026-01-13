@@ -425,6 +425,7 @@ export class IconCollection {
 
     if (node.children && node.children.length > 0) {
       for (const child of node.children) {
+        if (child === null) continue;
         const childNode = child as PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>;
         leafIcons.push(...this.getNodeLeafIcons(childNode));
       }
