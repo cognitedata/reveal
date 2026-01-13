@@ -95,49 +95,47 @@ void main() {
     vec2 numberArea = abs(centerCoord);
     float inNumberArea = step(numberArea.x, totalWidth * 0.5) * step(numberArea.y, charHeight * 0.5);
 
-    if (inNumberArea > 0.5) {
-      // Normalize coordinates to number rendering area
-      vec2 numberCoord;
-      numberCoord.x = (centerCoord.x + totalWidth * 0.5) / totalWidth;
-      numberCoord.y = (centerCoord.y + charHeight * 0.5) / charHeight;
+    // Normalize coordinates to number rendering area
+    vec2 numberCoord;
+    numberCoord.x = (centerCoord.x + totalWidth * 0.5) / totalWidth;
+    numberCoord.y = (centerCoord.y + charHeight * 0.5) / charHeight;
 
-      // Clamp coordinates
-      numberCoord = clamp(numberCoord, 0.0, 1.0);
+    // Clamp coordinates
+    numberCoord = clamp(numberCoord, 0.0, 1.0);
 
-      // Determine which character we're rendering
-      float charIndex = floor(numberCoord.x * charCount);
-      charIndex = clamp(charIndex, 0.0, charCount - 1.0);
+    // Determine which character we're rendering
+    float charIndex = floor(numberCoord.x * charCount);
+    charIndex = clamp(charIndex, 0.0, charCount - 1.0);
 
-      // Character value calculation for "99+" case
-      // For showPlus: charIndex 0,1 -> 9, charIndex 2 -> 10
-      float plusCharValue = 9.0 + step(1.5, charIndex); // 9 for idx 0,1; 10 for idx 2
+    // Character value calculation for "99+" case
+    // For showPlus: charIndex 0,1 -> 9, charIndex 2 -> 10
+    float plusCharValue = 9.0 + step(1.5, charIndex); // 9 for idx 0,1; 10 for idx 2
 
-      // For normal numbers
-      float digitPos = charCount - 1.0 - charIndex;
-      float normalCharValue = getDigit(displaySize, digitPos);
+    // For normal numbers
+    float digitPos = charCount - 1.0 - charIndex;
+    float normalCharValue = getDigit(displaySize, digitPos);
 
-      // Select based on showPlus (branchless)
-      float charValue = mix(normalCharValue, plusCharValue, showPlus);
+    // Select based on showPlus (branchless)
+    float charValue = mix(normalCharValue, plusCharValue, showPlus);
 
-      // Calculate UV within the current character
-      float charLocalX = fract(numberCoord.x * charCount);
+    // Calculate UV within the current character
+    float charLocalX = fract(numberCoord.x * charCount);
 
-      // Map to sample only the center portion of the cell
-      float cellPadding = (1.0 - cellUsage) * 0.5;
-      float mappedLocalX = cellPadding + charLocalX * cellUsage;
+    // Map to sample only the center portion of the cell
+    float cellPadding = (1.0 - cellUsage) * 0.5;
+    float mappedLocalX = cellPadding + charLocalX * cellUsage;
 
-      // Sample from number texture atlas
-      vec2 charUV;
-      charUV.x = (charValue + mappedLocalX) / 11.0;
-      charUV.y = 1.0 - numberCoord.y;
+    // Sample from number texture atlas
+    vec2 charUV;
+    charUV.x = (charValue + mappedLocalX) / 11.0;
+    charUV.y = 1.0 - numberCoord.y;
 
-      vec4 numberSample = texture(numberTexture, charUV);
+    vec4 numberSample = texture(numberTexture, charUV);
 
-      // Blend based on alpha threshold
-      float showNumber = step(0.5, numberSample.a);
-      computedColor = mix(computedColor, vec3(1.0), showNumber);
-      computedAlpha = mix(computedAlpha, 1.0, showNumber);
-    }
+    // Blend based on alpha threshold
+    float showNumber = step(0.5, numberSample.a) * inNumberArea;
+    computedColor = mix(computedColor, vec3(1.0), showNumber);
+    computedAlpha = mix(computedAlpha, 1.0, showNumber);
   }
 
   fragmentColor = vec4(computedColor * colorTint, computedAlpha * collectionOpacity);
