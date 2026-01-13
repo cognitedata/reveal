@@ -681,6 +681,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
     if (flexibleCameraManager) {
       moveCameraPositionAndTargetTo(flexibleCameraManager, targetPosition, clusterPosition, transitionDuration);
+      await new Promise(resolve => setTimeout(resolve, transitionDuration));
     } else if (this._stationaryCameraManager) {
       await this._stationaryCameraManager.moveTo(targetPosition, transitionDuration);
     }
