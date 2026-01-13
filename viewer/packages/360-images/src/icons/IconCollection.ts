@@ -60,7 +60,7 @@ export class IconCollection {
   // Cache for LOD computation to prevent flickering during small camera movements
   private readonly _lastLODCameraPosition: Vector3 = new Vector3();
 
-  // Cluster minimum pixel size (same as in shader: MinPixelSize * 1.5)
+  // Cluster minimum pixel size (same as in the shader)
   private readonly _minClusterPixelSize = IconCollection.MinPixelSize * 2.5;
   private readonly _setNeedsRedraw: (() => void) | undefined;
 
@@ -133,9 +133,7 @@ export class IconCollection {
     const numberTexture = this.createNumberTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
-      spriteTexture: sharedTexture,
-      clusterTexture: clusterTexture,
-      numberTexture: numberTexture,
+      iconAtlasTexture: sharedTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,
@@ -238,16 +236,10 @@ export class IconCollection {
     return closestCluster;
   }
 
-  /**
-   * Set the hovered cluster by its representative icon.
-   */
   public setHoveredClusterIcon(icon: Overlay3DIcon | null): void {
     this._hoveredClusterIcon = icon;
   }
 
-  /**
-   * Clear the hovered cluster state.
-   */
   public clearHoveredCluster(): void {
     const hadHoveredCluster = this._hoveredClusterIcon !== null;
     this._hoveredClusterIcon = null;
@@ -297,66 +289,12 @@ export class IconCollection {
       this._lastProjectionMatrixElement = camera.projectionMatrix.elements[5];
       renderer.getSize(renderSize);
       this._lastRenderHeight = renderSize.y;
-
       this._lastLODCameraPosition.copy(cameraModelSpacePosition);
 
       const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, clusterDistanceThreshold, clusteringLevel);
       const nodes = [...nodesLOD];
 
-      const clusteredIcons: ClusteredIcon[] = [];
-
-      for (const node of nodes) {
-        // If node has data (leaf), show the individual icon(s)
-        if (node.data !== null) {
-          const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
-          for (const icon of icons) {
-            clusteredIcons.push({
-              icon,
-              isCluster: false,
-              clusterSize: 1,
-              clusterPosition: icon.getPosition(),
-              sizeScale: 1
-            });
-          }
-        } else {
-          // Node is a parent (cluster) - the octree has already decided
-          // this node should be clustered, so show the cluster.
-          const representativeIcon = octree.getNodeIcon(node);
-          if (!representativeIcon) continue;
-
-          // Get all leaf icons under this cluster node
-          const clusterIcons = this.getNodeLeafIcons(node);
-          const clusterSize = clusterIcons.length;
-
-          // Show as cluster if we have multiple icons, otherwise show as individual
-          if (clusterSize > 1) {
-            const centroid = this.calculateCentroid(clusterIcons);
-
-            // Show as cluster - single icon at centroid position with scaled size
-            clusteredIcons.push({
-              icon: representativeIcon,
-              isCluster: true,
-              clusterSize,
-              clusterPosition: centroid,
-              sizeScale: clusterIconSizeMultiplier,
-              clusterIcons: clusterIcons // Store all icons for click expansion
-            });
-          } else {
-            // Only one icon in this "cluster" - show as individual
-            for (const icon of clusterIcons) {
-              clusteredIcons.push({
-                icon,
-                isCluster: false,
-                clusterSize: 1,
-                clusterPosition: icon.getPosition(),
-                sizeScale: 1
-              });
-            }
-          }
-        }
-      }
-
-      this._cachedClusteredIcons = clusteredIcons;
+      this._cachedClusteredIcons = this.buildClusteredIconsFromNodes(octree, nodes, clusterIconSizeMultiplier);
 
       projection
         .copy(camera.projectionMatrix)
@@ -364,74 +302,10 @@ export class IconCollection {
         .multiply(this._pointsObject.getTransform());
       frustum.setFromProjectionMatrix(projection);
 
-      // Filter by frustum - use cluster position for frustum test
-      const visibleClusteredIcons = this._cachedClusteredIcons.filter(item =>
-        frustum.containsPoint(item.clusterPosition)
-      );
+      this._visibleClusteredIcons = this.filterVisibleClusteredIcons(frustum, this._cachedClusteredIcons);
 
-      this._icons.forEach(icon => (icon.culled = true));
-      visibleClusteredIcons.forEach(item => (item.icon.culled = false));
-
-      const visibleIcons = visibleClusteredIcons.filter(item => item.icon.getVisible());
-
-      // Store for hover detection
-      this._visibleClusteredIcons = visibleIcons;
-
-      const renderPositions: Vector3[] = [];
-      const renderColors: Color[] = [];
-      const renderSizeScales: number[] = [];
-      const renderIsClusterFlags: boolean[] = [];
-      const renderClusterSizes: number[] = [];
-      const renderIsHoveredFlags: boolean[] = [];
-
-      for (let i = 0; i < visibleIcons.length; i++) {
-        const item = visibleIcons[i];
-        // Use cluster position (centroid for clusters, original position for individuals)
-        renderPositions.push(item.clusterPosition);
-
-        // Use icon color (clusters use gray texture, hover tinting is done in shader)
-        renderColors.push(item.icon.getColor());
-
-        renderSizeScales.push(item.sizeScale);
-        renderIsClusterFlags.push(item.isCluster);
-        renderClusterSizes.push(item.clusterSize);
-        // Compare by icon reference (not index) for stable hover across frame changes
-        renderIsHoveredFlags.push(item.isCluster && item.icon === this._hoveredClusterIcon);
-      }
-
-      iconSprites.setPoints(
-        renderPositions,
-        renderColors,
-        renderSizeScales,
-        renderIsClusterFlags,
-        renderClusterSizes,
-        renderIsHoveredFlags
-      );
+      this.updateIconSpritesRenderData(this._visibleClusteredIcons, iconSprites);
     };
-  }
-
-  /**
-   * Recursively get all leaf icons under a node
-   */
-  private getNodeLeafIcons(
-    node: PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>
-  ): Overlay3DIcon<DefaultOverlay3DContentType>[] {
-    const leafIcons: Overlay3DIcon<DefaultOverlay3DContentType>[] = [];
-
-    if (node.data !== null) {
-      const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
-      return icons;
-    }
-
-    if (node.children && node.children.length > 0) {
-      for (const child of node.children) {
-        if (child === null) continue;
-        const childNode = child as PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>;
-        leafIcons.push(...this.getNodeLeafIcons(childNode));
-      }
-    }
-
-    return leafIcons;
   }
 
   /**
@@ -449,6 +323,118 @@ export class IconCollection {
     centroid.divideScalar(icons.length);
 
     return centroid;
+  }
+
+  /**
+   * Build clustered icons from octree LOD nodes.
+   * Processes each node to determine if it should be shown as a cluster or individual icons.
+   */
+  private buildClusteredIconsFromNodes(
+    octree: IconOctree,
+    nodes: PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>[],
+    clusterIconSizeMultiplier: number
+  ): ClusteredIcon[] {
+    const clusteredIcons: ClusteredIcon[] = [];
+
+    for (const node of nodes) {
+      // If node has data (leaf), show the individual icon(s)
+      if (node.data !== null) {
+        const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
+        for (const icon of icons) {
+          clusteredIcons.push({
+            icon,
+            isCluster: false,
+            clusterSize: 1,
+            clusterPosition: icon.getPosition(),
+            sizeScale: 1
+          });
+        }
+      } else {
+        // Node is a parent (cluster) - the octree has already decided
+        // this node should be clustered, so show the cluster.
+        const representativeIcon = octree.getNodeIcon(node);
+        if (!representativeIcon) continue;
+
+        // Get all leaf icons under this cluster node
+        const clusterIcons = octree.getAllIconsFromNode(node);
+        const clusterSize = clusterIcons.length;
+
+        // Show as cluster if we have multiple icons, otherwise show as individual
+        if (clusterSize > 1) {
+          const centroid = this.calculateCentroid(clusterIcons);
+
+          clusteredIcons.push({
+            icon: representativeIcon,
+            isCluster: true,
+            clusterSize,
+            clusterPosition: centroid,
+            sizeScale: clusterIconSizeMultiplier,
+            clusterIcons: clusterIcons // Store all icons for click expansion
+          });
+        } else {
+          // Only one icon in this "cluster" - show as individual
+          for (const icon of clusterIcons) {
+            clusteredIcons.push({
+              icon,
+              isCluster: false,
+              clusterSize: 1,
+              clusterPosition: icon.getPosition(),
+              sizeScale: 1
+            });
+          }
+        }
+      }
+    }
+
+    return clusteredIcons;
+  }
+
+  /**
+   * Filter clustered icons by frustum visibility and update culled state.
+   * Returns only the visible icons that pass frustum culling and visibility checks.
+   */
+  private filterVisibleClusteredIcons(frustum: Frustum, clusteredIcons: ClusteredIcon[]): ClusteredIcon[] {
+    const frustumVisibleIcons = clusteredIcons.filter(item => frustum.containsPoint(item.clusterPosition));
+
+    this._icons.forEach(icon => (icon.culled = true));
+    frustumVisibleIcons.forEach(item => (item.icon.culled = false));
+
+    return frustumVisibleIcons.filter(item => item.icon.getVisible());
+  }
+
+  /**
+   * Build render data arrays from visible icons and update the icon sprites.
+   */
+  private updateIconSpritesRenderData(visibleIcons: ClusteredIcon[], iconSprites: OverlayPointsObject): void {
+    const renderPositions: Vector3[] = [];
+    const renderColors: Color[] = [];
+    const renderSizeScales: number[] = [];
+    const renderIsClusterFlags: boolean[] = [];
+    const renderClusterSizes: number[] = [];
+    const renderIsHoveredFlags: boolean[] = [];
+
+    for (const item of visibleIcons) {
+      // Use cluster position (centroid for clusters, original position for individuals)
+      renderPositions.push(item.clusterPosition);
+
+      // Use icon color (clusters use gray texture, hover tinting is done in shader)
+      renderColors.push(item.icon.getColor());
+
+      renderSizeScales.push(item.sizeScale);
+      renderIsClusterFlags.push(item.isCluster);
+      renderClusterSizes.push(item.clusterSize);
+      // Compare by icon reference (not index) for stable hover across frame changes
+      renderIsHoveredFlags.push(item.isCluster && item.icon === this._hoveredClusterIcon);
+    }
+
+    iconSprites.setPoints(
+      renderPositions,
+      renderColors,
+      renderSizeScales,
+      renderIsClusterFlags,
+      renderClusterSizes,
+      renderIsHoveredFlags
+    );
   }
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
