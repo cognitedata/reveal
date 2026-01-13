@@ -26,7 +26,7 @@ export {
 export { Image360AnnotationIntersection } from './src/annotation/Image360AnnotationIntersection';
 export { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
-export { IconsOptions } from './src/icons/IconCollection';
+export { ClusterIntersectionData, IconsOptions } from './src/icons/IconCollection';
 export {
   Image360ClusterIntersectionData,
   Image360CollectionSourceType,
