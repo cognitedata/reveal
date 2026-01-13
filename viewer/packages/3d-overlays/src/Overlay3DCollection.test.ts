@@ -9,6 +9,7 @@ import {
   Object3D,
   PerspectiveCamera,
   Scene,
+  Texture,
   Vector2,
   Vector3,
   WebGLRenderer
@@ -112,6 +113,34 @@ describe(Overlay3DCollection.name, () => {
 
     const resultAfterResize = collection.intersectOverlays(new Vector2(0, 0.5), camera);
     expect(resultAfterResize).toBeUndefined();
+  });
+
+  test('initializing with non-CanvasTexture falls back to drawing default circles', () => {
+    // Create a regular Texture (not CanvasTexture) to trigger the else branch
+    // in createIconAtlasFromTexture which calls drawDefaultCircle
+    const regularTexture = new Texture();
+
+    const collection = new Overlay3DCollection<string>(OVERLAY_INFOS, {
+      overlayTexture: regularTexture
+    });
+
+    // Verify the collection was created successfully with the custom texture
+    expect(collection.getOverlays()).toHaveLength(2);
+    expect(collection.getOverlays().map(getOverlayInfo)).toEqual(OVERLAY_INFOS);
+  });
+
+  test('initializing with non-CanvasTexture and empty overlays creates working collection', () => {
+    const regularTexture = new Texture();
+
+    const collection = new Overlay3DCollection<string>([], {
+      overlayTexture: regularTexture
+    });
+
+    expect(collection.getOverlays()).toEqual([]);
+
+    // Verify overlays can still be added after initialization
+    collection.addOverlays(OVERLAY_INFOS);
+    expect(collection.getOverlays()).toHaveLength(2);
   });
 });
 
