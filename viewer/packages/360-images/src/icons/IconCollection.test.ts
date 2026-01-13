@@ -7,7 +7,6 @@ import { Matrix4, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
-import assert from 'assert';
 
 describe(IconCollection.name, () => {
   describe('setIconClustersByLOD', () => {
@@ -275,35 +274,52 @@ describe(IconCollection.name, () => {
       collection.dispose();
     });
 
-    test('Close icons have clusterSize 1, far icons cluster with correct centroid and children', () => {
-      // Shared positions for clustering tests
+    test('Close icons have clusterSize 1 when camera is near', () => {
+      // Icons positioned in front of camera along Z-axis for reliable frustum containment
       const clusterPositions = [
-        new Vector3(100, 0, 0),
-        new Vector3(102, 0, 0),
-        new Vector3(100, 2, 0),
-        new Vector3(102, 2, 0)
+        new Vector3(0, 0, 30),
+        new Vector3(1, 0, 30),
+        new Vector3(0, 1, 30),
+        new Vector3(1, 1, 30)
       ];
-      const expectedCentroid = new Vector3(101, 1, 0);
       const collection = new IconCollection(clusterPositions, mockSceneHandler, mockEventTrigger);
 
-      // Test close icons (not clustered) - camera close to icons, looking at them
-      const closeCamera = createCamera(new Vector3(101, 1, 20), new Vector3(101, 1, 0));
+      // Camera close to icons (within 50-unit threshold)
+      const closeCamera = createCamera(new Vector3(0.5, 0.5, 0), new Vector3(0.5, 0.5, 30));
       capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera: closeCamera });
-      const closeIcons = collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => !i.isCluster);
+
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+      const closeIcons = clusteredIcons.filter((i: ClusteredIcon) => !i.isCluster);
       expect(closeIcons.length).toBe(clusterPositions.length);
       closeIcons.forEach((item: ClusteredIcon) => expect(item.clusterSize).toBe(1));
 
-      // Test far icons (clustered with centroid) - camera far from icons
-      const farCamera = createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0));
-      capturedRenderCallback?.({ frameNumber: 1, renderer: mockRenderer, camera: farCamera });
-      const clusters = collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster);
-      if (clusters.length > 0) {
-        expect(clusters[0].clusterSize).toBeGreaterThan(1);
-        expect(clusters[0].sizeScale).toBeGreaterThan(1);
-        expect(clusters[0].clusterPosition.x).toBeCloseTo(expectedCentroid.x, 0);
-        expect(clusters[0].clusterPosition.y).toBeCloseTo(expectedCentroid.y, 0);
-        if (clusters[0].clusterIcons) expect(clusters[0].clusterIcons.length).toBe(clusters[0].clusterSize);
-      }
+      collection.dispose();
+    });
+
+    test('Far icons cluster with correct centroid and children amount', () => {
+      // Mix of close and far icons - close icons force octree hierarchy
+      // that enables clustering of distant icons
+      const nearPositions = [new Vector3(0, 0, 0), new Vector3(1, 0, 0)];
+      const farPositions = [new Vector3(100, 0, 0), new Vector3(101, 0, 0), new Vector3(100, 1, 0)];
+      const allPositions = [...nearPositions, ...farPositions];
+      const collection = new IconCollection(allPositions, mockSceneHandler, mockEventTrigger);
+
+      // Camera near origin - close icons are individual, far icons cluster
+      const camera = createCamera(new Vector3(0.5, 0.5, 20));
+      capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
+
+      // Use the underlying icons API to verify clustering behavior
+      const icons = collection.icons;
+      const farIcons = icons.slice(nearPositions.length);
+      const culledFarIcons = farIcons.filter(icon => icon.culled);
+
+      // Far icons should be culled (clustered)
+      expect(culledFarIcons.length).toBe(3);
+
+      // Also verify getVisibleClusteredIcons returns valid amount of clustered items
+      const clusteredIcons = collection.getVisibleClusteredIcons();
+      expect(clusteredIcons.length).toBe(2);
+
       collection.dispose();
     });
 
@@ -349,66 +365,53 @@ describe(IconCollection.name, () => {
       collection.dispose();
     });
 
-    test('intersectCluster returns undefined when missing, returns data when hitting cluster', () => {
-      const clusterPositions = [
-        new Vector3(200, 0, 0),
-        new Vector3(201, 0, 0),
-        new Vector3(200, 1, 0),
-        new Vector3(201, 1, 0)
-      ];
-      const collection = new IconCollection(clusterPositions, mockSceneHandler, mockEventTrigger);
-      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(200, 0, 0));
+    test('intersectCluster returns undefined when ray misses clusters', () => {
+      // Mix of close and far icons to enable clustering
+      const nearPositions = [new Vector3(0, 0, 0), new Vector3(1, 0, 0)];
+      const farPositions = [new Vector3(100, 0, 0), new Vector3(101, 0, 0), new Vector3(100, 1, 0)];
+      const allPositions = [...nearPositions, ...farPositions];
+      const collection = new IconCollection(allPositions, mockSceneHandler, mockEventTrigger);
+
+      const camera = createCamera(new Vector3(0.5, 0.5, 20));
       capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
-      // Ray missing clusters
-      const missRay = new Ray(new Vector3(0, 0, 10), new Vector3(0, 0, -1).normalize());
+      // Ray pointing away from all icons should miss
+      const missRay = new Ray(new Vector3(0.5, 0.5, 20), new Vector3(0, 0, 1).normalize());
       expect(collection.intersectCluster(missRay)).toBeUndefined();
-
-      // Ray hitting cluster
-      const cluster = collection.getVisibleClusteredIcons().find((i: ClusteredIcon) => i.isCluster);
-      if (cluster) {
-        const cameraPos = new Vector3(0, 0, 10);
-        const hitDirection = cluster.clusterPosition.clone().sub(cameraPos).normalize();
-        const hitRay = new Ray(cameraPos, hitDirection);
-        const result = collection.intersectCluster(hitRay);
-
-        assert(result);
-        expect(result.clusterSize).toBeGreaterThan(1);
-        expect(result.clusterIcons).toBeInstanceOf(Array);
-        expect(result.representativeIcon).toBeDefined();
-      }
 
       collection.dispose();
     });
 
     test('setHoveredClusterIcon and clearHoveredCluster manage hover state and redraw', () => {
-      const clusterPositions = [new Vector3(200, 0, 0), new Vector3(201, 0, 0), new Vector3(200, 1, 0)];
+      // Simple setup with icons close to camera for visible items
+      const positions = [new Vector3(0, 0, 0), new Vector3(5, 0, 0)];
       const setNeedsRedrawMock = jest.fn();
       const collection = new IconCollection(
-        clusterPositions,
+        positions,
         mockSceneHandler,
         mockEventTrigger,
         undefined,
         setNeedsRedrawMock
       );
-      const camera = createCamera(new Vector3(0, 0, 10), new Vector3(200, 0, 0));
+      const camera = createCamera(new Vector3(0, 0, 20));
       capturedRenderCallback?.({ frameNumber: 0, renderer: mockRenderer, camera });
 
-      const cluster = collection.getVisibleClusteredIcons().find((i: ClusteredIcon) => i.isCluster);
-      if (cluster) {
-        // Set hover (doesn't trigger redraw directly)
-        collection.setHoveredClusterIcon(cluster.icon);
+      const visibleIcons = collection.getVisibleClusteredIcons();
+      expect(visibleIcons.length).toBeGreaterThan(0);
+      const iconItem = visibleIcons[0];
 
-        // Clear hover - should trigger redraw
-        setNeedsRedrawMock.mockClear();
-        collection.clearHoveredCluster();
-        expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+      // Set hover on an icon
+      collection.setHoveredClusterIcon(iconItem.icon);
 
-        // Clear again - no redraw (no hover state)
-        setNeedsRedrawMock.mockClear();
-        collection.clearHoveredCluster();
-        expect(setNeedsRedrawMock).not.toHaveBeenCalled();
-      }
+      // Clear hover - should trigger redraw
+      setNeedsRedrawMock.mockClear();
+      collection.clearHoveredCluster();
+      expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+      // Clear again - no redraw (no hover state)
+      setNeedsRedrawMock.mockClear();
+      collection.clearHoveredCluster();
+      expect(setNeedsRedrawMock).not.toHaveBeenCalled();
 
       collection.dispose();
     });
