@@ -130,10 +130,12 @@ export class IconCollection {
 
     const sharedTexture = this.createOuterRingsTexture();
     const clusterTexture = this.createClusterTexture();
+    const iconAtlasTexture = this.createIconAtlasTexture(sharedTexture, clusterTexture);
     const numberTexture = this.createNumberTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
-      iconAtlasTexture: sharedTexture,
+      iconAtlasTexture: iconAtlasTexture,
+      numberTexture: numberTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,
@@ -533,6 +535,27 @@ export class IconCollection {
     sprite.visible = false;
     sprite.renderOrder = 5;
     return sprite;
+  }
+
+  private createIconAtlasTexture(regularTexture: CanvasTexture, clusterTexture: CanvasTexture): CanvasTexture {
+    const textureSize = this._maxPixelSize;
+    const canvas = document.createElement('canvas');
+    canvas.width = textureSize * 2; // Double width for side-by-side atlas: left = regular icon, right = cluster icon
+    canvas.height = textureSize;
+
+    const context = canvas.getContext('2d')!;
+
+    // Draw regular icon on left half (from regularTexture's canvas)
+    if (regularTexture.image instanceof HTMLCanvasElement) {
+      context.drawImage(regularTexture.image, 0, 0, textureSize, textureSize);
+    }
+
+    // Draw cluster icon on right half (from clusterTexture's canvas)
+    if (clusterTexture.image instanceof HTMLCanvasElement) {
+      context.drawImage(clusterTexture.image, textureSize, 0, textureSize, textureSize);
+    }
+
+    return new CanvasTexture(canvas);
   }
 
   private createOuterRingsTexture(): CanvasTexture {
