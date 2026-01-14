@@ -1,7 +1,7 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { dmInstanceRefToKey } from './fdm';
+import { dmInstanceRefToKey } from '@reveal/utilities';
 import { getInstanceKey } from './instanceIds';
 
 describe(getInstanceKey.name, () => {
