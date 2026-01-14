@@ -41,7 +41,7 @@ import {
   isImageAssetLinkAnnotation,
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
-import { getInstanceKey } from '@reveal/utilities/src/instanceIds';
+import { getInstanceKey } from '../utilities/instanceIds';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
