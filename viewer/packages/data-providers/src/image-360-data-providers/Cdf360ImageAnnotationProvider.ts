@@ -27,6 +27,7 @@ import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdenti
 import {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
+  createCollectionIdString,
   DefaultImage360Collection,
   Image360Annotation,
   Image360AnnotationAssetQueryResult,
@@ -40,9 +41,15 @@ import {
   isImageAssetLinkAnnotation,
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
+import { getInstanceKey } from '../utilities/instanceIds';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
+
+  private readonly _collectionToInstanceReferenceToAnnotationMap: Map<
+    string,
+    Map<string, Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]>>
+  > = new Map();
 
   constructor(client: CogniteClient) {
     this._client = client;
@@ -52,12 +59,33 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     asset: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
+    const cachedAnnotationsPromise = this._collectionToInstanceReferenceToAnnotationMap
+      .get(createCollectionIdString(collection.collectionId))
+      ?.get(getInstanceKey(asset));
+
+    if (cachedAnnotationsPromise !== undefined) {
+      return cachedAnnotationsPromise;
+    }
+
+    const resultPromise = this.fetchImageAnnotationsForInstance(asset, collection);
+
+    this.cacheResult(collection, asset, resultPromise);
+
+    return resultPromise;
+  }
+
+  private async fetchImageAnnotationsForInstance(
+    asset: InstanceReference<DataSourceType>,
+    collection: DefaultImage360Collection<ClassicDataSourceType>
+  ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
     const entities = collection.image360Entities;
+
     const imageIds = await this.getFilesByAssetRef(asset);
     const imageIdSet = new Set<CogniteInternalId>(imageIds);
 
     const entityAnnotationsPromises = entities.map(getEntityAnnotationsForAsset);
     const entityAnnotations = await Promise.all(entityAnnotationsPromises);
+
     return entityAnnotations.flat();
 
     async function getEntityAnnotationsForAsset(
@@ -98,6 +126,26 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
         return false;
       });
     }
+  }
+
+  private cacheResult(
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    assetReference: InstanceReference<DataSourceType>,
+    resultPromise: Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]>
+  ): void {
+    let collectionMap = this._collectionToInstanceReferenceToAnnotationMap.get(
+      createCollectionIdString(collection.collectionId)
+    );
+
+    if (collectionMap === undefined) {
+      collectionMap = new Map();
+      this._collectionToInstanceReferenceToAnnotationMap.set(
+        createCollectionIdString(collection.collectionId),
+        collectionMap
+      );
+    }
+
+    collectionMap.set(getInstanceKey(assetReference), resultPromise);
   }
 
   public async getRelevant360ImageAnnotations(
