@@ -1,9 +1,10 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { DataSourceType, InstanceReference } from '@reveal/data-providers';
 import { ExternalId, IdEither, InternalId } from '@cognite/sdk';
 import { assertNever, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
+import { DataSourceType } from '../DataSourceType';
+import { InstanceReference } from '../types';
 
 function isCogniteInternalId(id: IdEither): id is InternalId {
   return 'id' in id && id.id !== undefined;
