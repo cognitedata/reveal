@@ -131,7 +131,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   private cacheResult(
     collection: DefaultImage360Collection<ClassicDataSourceType>,
     assetReference: InstanceReference<DataSourceType>,
-    resultPromise: Promise<Image360AnnotationAssetQueryResult[]>
+    resultPromise: Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]>
   ): void {
     let collectionMap = this._collectionToInstanceReferenceToAnnotationMap.get(
       createCollectionIdString(collection.collectionId)
