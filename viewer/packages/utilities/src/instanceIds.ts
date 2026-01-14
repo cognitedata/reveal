@@ -3,10 +3,15 @@
  */
 import { DataSourceType, InstanceReference } from '@reveal/data-providers';
 import { dmInstanceRefToKey, isDmIdentifier } from './fdm';
-import { IdEither, InternalId } from '@cognite/sdk';
+import { ExternalId, IdEither, InternalId } from '@cognite/sdk';
+import { assertNever } from './assertNever';
 
-export function isCogniteInternalId(id: IdEither): id is InternalId {
+function isCogniteInternalId(id: IdEither): id is InternalId {
   return 'id' in id && id.id !== undefined;
+}
+
+function isCogniteExternalId(id: IdEither): id is ExternalId {
+  return 'externalId' in id && id.externalId !== undefined;
 }
 
 export function getInstanceKey(instanceReference: InstanceReference<DataSourceType>): string {
@@ -14,7 +19,9 @@ export function getInstanceKey(instanceReference: InstanceReference<DataSourceTy
     return dmInstanceRefToKey(instanceReference);
   } else if (isCogniteInternalId(instanceReference)) {
     return `${instanceReference.id}`;
-  } else {
+  } else if (isCogniteExternalId(instanceReference)) {
     return instanceReference.externalId;
   }
+
+  assertNever(instanceReference);
 }
