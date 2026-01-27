@@ -80,7 +80,7 @@ export class IconCollection {
     const sharedTexture = this.createOuterRingsTexture();
 
     const pointsObjects = new OverlayPointsObject(points.length, {
-      spriteTexture: sharedTexture,
+      iconAtlasTexture: sharedTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius,

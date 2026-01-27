@@ -27,7 +27,11 @@ export { Image360AnnotationIntersection } from './src/annotation/Image360Annotat
 export { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
 export { IconsOptions } from './src/icons/IconCollection';
-export { Image360CollectionSourceType, Image360IconIntersectionData } from './src/types';
+export {
+  Image360ClusterIntersectionData,
+  Image360CollectionSourceType,
+  Image360IconIntersectionData
+} from './src/types';
 export { Image360AnnotationFilter } from './src/annotation/Image360AnnotationFilter';
 export { DEFAULT_IMAGE_360_OPACITY } from './src/entity/Image360VisualizationBox';
 export { Image360Action } from './src/Image360Action';
