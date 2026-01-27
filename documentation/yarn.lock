@@ -1833,12 +1833,12 @@ __metadata:
   linkType: hard
 
 "@cognite/sdk-core@npm:^4.8.2":
-  version: 4.10.6
-  resolution: "@cognite/sdk-core@npm:4.10.6"
+  version: 4.10.7
+  resolution: "@cognite/sdk-core@npm:4.10.7"
   dependencies:
     cross-fetch: ^3.0.4
     lodash: ^4.17.11
-  checksum: a7de50898c9b22b26e69e05f4a919ba8b3cf0a3f9110b1265501aff2cc4f0038551b8d323f7c3a8df4102ef6daa4b8c3e77ad9d6e3f492aa02cce3041c21f3cd
+  checksum: 52e0d25fc18242cb6ad9dc9a0f03a08891841b1dc8f264fa9abcbe82e1b967987a27cabdf266762e449251f199619e69e25340b9c6a127042f7bc5e3123df2a3
   languageName: node
   linkType: hard
 
@@ -8129,8 +8129,8 @@ __metadata:
   linkType: hard
 
 "html-webpack-plugin@npm:^5.6.0":
-  version: 5.6.3
-  resolution: "html-webpack-plugin@npm:5.6.3"
+  version: 5.6.6
+  resolution: "html-webpack-plugin@npm:5.6.6"
   dependencies:
     "@types/html-minifier-terser": ^6.0.0
     html-minifier-terser: ^6.0.2
@@ -8145,7 +8145,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 59e7d971b0cfd9ba34c7acaa3c161e43c62596474dd8cd35d7b690498ff5891f21296de0aa1d2e7810348caa657e938461267155dda47913b5eeca7124406270
+  checksum: 6aab02f4be85ed2d939bd7dff296bf4af4b7288d6523670176c143d67f7cd4163daa1070c459d1c40e75b233f7fccefae714f58c3402a78aa83dbe9378ecf76f
   languageName: node
   linkType: hard
 
@@ -9096,10 +9096,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.21, lodash@npm:^4.17.11, lodash@npm:^4.17.20, lodash@npm:^4.17.21":
+"lodash@npm:4.17.21":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.11, lodash@npm:^4.17.20, lodash@npm:^4.17.21":
+  version: 4.17.23
+  resolution: "lodash@npm:4.17.23"
+  checksum: 7daad39758a72872e94651630fbb54ba76868f904211089721a64516ce865506a759d9ad3d8ff22a2a49a50a09db5d27c36f22762d21766e47e3ba918d6d7bab
   languageName: node
   linkType: hard
 
