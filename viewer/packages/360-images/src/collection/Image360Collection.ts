@@ -96,7 +96,7 @@ export type Image360AnnotationAssetQueryResult<T extends DataSourceType = Classi
 export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
   /**
    * The id of the collection.
-   * @returns The id of the collection.
+   * @returns The id of the collection
    */
   readonly id: string;
 
@@ -105,6 +105,11 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @returns The label of the collection.
    */
   readonly label: string | undefined;
+
+  /**
+   * The source identifier of the collection.
+   */
+  readonly sourceId: T['image360Identifier'];
 
   /**
    * A list containing all the 360 images in this set.
