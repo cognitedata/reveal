@@ -121,7 +121,7 @@ describe(IconOctree.name, () => {
 
     test('Small distance threshold with far camera clusters icons', () => {
       const octree = new IconOctree([iconMocks[0], iconMocks[1]], unitBounds, 1);
-      expect(octree.getLODByDistance(positions[2], 0, 0).size).toBeGreaterThan(0);
+      expect(octree.getLODByDistance(positions[2], 0).size).toBeGreaterThan(0);
       const result = octree.getLODByDistance(new Vector3(5, 5, 5), 0);
       expect(result.size).toBeGreaterThan(0);
       expect(result.size).toBeLessThanOrEqual(2);
