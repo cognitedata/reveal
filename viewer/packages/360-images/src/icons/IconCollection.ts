@@ -264,6 +264,7 @@ export class IconCollection {
    * - Uses camera distance to decide when to show clusters vs individual icons
    * - When camera is far (> clusterDistanceThreshold), show cluster icons at centroids
    * - When camera is close (< clusterDistanceThreshold), show individual icons
+   * - When camera is very far from all icons, all icons merge into a single global cluster
    * - Cluster icons are rendered with a different texture and show the count
    * @param octree - Octree containing the icons
    * @param iconSprites - OverlayPointsObject to update icon rendering
@@ -277,7 +278,6 @@ export class IconCollection {
 
     // Distance-based clustering parameters
     const clusterDistanceThreshold = 50; // Distance beyond which clustering is applied
-    const clusteringLevel = 3; // Octree depth for clustering (higher = finer clusters)
     const clusterIconSizeMultiplier = 5.5; // How much bigger clustered points appear
 
     const renderSize = new Vector2();
@@ -293,7 +293,7 @@ export class IconCollection {
       this._lastRenderHeight = renderSize.y;
       this._lastLODCameraPosition.copy(cameraModelSpacePosition);
 
-      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, clusterDistanceThreshold, clusteringLevel);
+      const nodesLOD = octree.getLODByDistance(cameraModelSpacePosition, clusterDistanceThreshold);
       const nodes = [...nodesLOD];
 
       this._cachedClusteredIcons = this.buildClusteredIconsFromNodes(octree, nodes, clusterIconSizeMultiplier);
