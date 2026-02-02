@@ -328,8 +328,8 @@ export class OverlayPointsObject extends Group {
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
       },
       defines: {
-        isMaskDefined: maskTexture !== undefined,
-        hasNumberTexture: numberTexture !== undefined
+        ...(maskTexture !== undefined && { isMaskDefined: true }),
+        ...(numberTexture !== undefined && { hasNumberTexture: true })
       },
       vertexShader: glsl(overlay3DIconVert),
       fragmentShader: glsl(overlay3DIconFrag),
