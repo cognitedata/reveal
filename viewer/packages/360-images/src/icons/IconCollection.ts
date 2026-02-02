@@ -57,6 +57,13 @@ export class IconCollection {
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconRadius = 0.3;
 
+  private readonly _renderPositions: Vector3[] = [];
+  private readonly _renderColors: Color[] = [];
+  private readonly _renderSizeScales: number[] = [];
+  private readonly _renderIsClusterFlags: boolean[] = [];
+  private readonly _renderClusterSizes: number[] = [];
+  private readonly _renderIsHoveredFlags: boolean[] = [];
+
   // Cache for LOD computation to prevent flickering during small camera movements
   private readonly _lastLODCameraPosition: Vector3 = new Vector3();
 
@@ -408,34 +415,34 @@ export class IconCollection {
    * Build render data arrays from visible icons and update the icon sprites.
    */
   private updateIconSpritesRenderData(visibleIcons: ClusteredIcon[], iconSprites: OverlayPointsObject): void {
-    const renderPositions: Vector3[] = [];
-    const renderColors: Color[] = [];
-    const renderSizeScales: number[] = [];
-    const renderIsClusterFlags: boolean[] = [];
-    const renderClusterSizes: number[] = [];
-    const renderIsHoveredFlags: boolean[] = [];
+    this._renderPositions.length = 0;
+    this._renderColors.length = 0;
+    this._renderSizeScales.length = 0;
+    this._renderIsClusterFlags.length = 0;
+    this._renderClusterSizes.length = 0;
+    this._renderIsHoveredFlags.length = 0;
 
     for (const item of visibleIcons) {
       // Use cluster position (centroid for clusters, original position for individuals)
-      renderPositions.push(item.clusterPosition);
+      this._renderPositions.push(item.clusterPosition);
 
       // Use icon color (clusters use gray texture, hover tinting is done in shader)
-      renderColors.push(item.icon.getColor());
+      this._renderColors.push(item.icon.getColor());
 
-      renderSizeScales.push(item.sizeScale);
-      renderIsClusterFlags.push(item.isCluster);
-      renderClusterSizes.push(item.clusterSize);
+      this._renderSizeScales.push(item.sizeScale);
+      this._renderIsClusterFlags.push(item.isCluster);
+      this._renderClusterSizes.push(item.clusterSize);
       // Compare by icon reference (not index) for stable hover across frame changes
-      renderIsHoveredFlags.push(item.isCluster && item.icon === this._hoveredClusterIcon);
+      this._renderIsHoveredFlags.push(item.isCluster && item.icon === this._hoveredClusterIcon);
     }
 
     iconSprites.setPoints(
-      renderPositions,
-      renderColors,
-      renderSizeScales,
-      renderIsClusterFlags,
-      renderClusterSizes,
-      renderIsHoveredFlags
+      this._renderPositions,
+      this._renderColors,
+      this._renderSizeScales,
+      this._renderIsClusterFlags,
+      this._renderClusterSizes,
+      this._renderIsHoveredFlags
     );
   }
 
