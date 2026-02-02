@@ -103,7 +103,7 @@ export class OverlayPointsObject extends Group {
 
     const frontMaterial = this.createIconsMaterial(
       iconAtlasTexture,
-      numberTexture || iconAtlasTexture,
+      numberTexture,
       maskTexture,
       collectionOpacity,
       depthMode,
@@ -116,7 +116,7 @@ export class OverlayPointsObject extends Group {
 
     const backMaterial = this.createIconsMaterial(
       iconAtlasTexture,
-      numberTexture || iconAtlasTexture,
+      numberTexture,
       maskTexture,
       DEFAULT_OVERLAY_BACK_OPACITY,
       GreaterDepth,
@@ -305,7 +305,7 @@ export class OverlayPointsObject extends Group {
 
   private createIconsMaterial(
     iconAtlasTexture: Texture,
-    numberTexture: Texture,
+    numberTexture: Texture | undefined,
     maskTexture: Texture | undefined,
     collectionOpacity: number,
     depthFunction: DepthModes,
@@ -328,7 +328,8 @@ export class OverlayPointsObject extends Group {
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
       },
       defines: {
-        isMaskDefined: maskTexture !== undefined
+        isMaskDefined: maskTexture !== undefined,
+        hasNumberTexture: numberTexture !== undefined
       },
       vertexShader: glsl(overlay3DIconVert),
       fragmentShader: glsl(overlay3DIconFrag),

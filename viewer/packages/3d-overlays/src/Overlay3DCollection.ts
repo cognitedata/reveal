@@ -269,8 +269,10 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     canvas2.width = textureSize;
     canvas2.height = textureSize;
 
-    const context = canvas.getContext('2d')!;
-    const context2 = canvas2.getContext('2d')!;
+    const context = canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Failed to get context for canvas');
+    }
 
     context.clearRect(0, 0, textureSize, textureSize);
     context.beginPath();
@@ -283,6 +285,11 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     const colorTexture = new CanvasTexture(canvas);
 
     const fillRGB = new Color(1.0, 0, 0);
+
+    const context2 = canvas2.getContext('2d');
+    if (!context2) {
+      throw new Error('Failed to get context for canvas2');
+    }
 
     context2.clearRect(0, 0, textureSize, textureSize);
     context2.beginPath();
