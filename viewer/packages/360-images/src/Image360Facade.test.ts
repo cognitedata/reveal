@@ -321,6 +321,15 @@ async function createFacadeWithCollection(
     mockCollectionBuilder = mockCollectionBuilder.setup(p => p.clearHoveredCluster()).returns(undefined);
   }
 
+  // Setup getEntitiesFromIcons to return entities matching the given icons
+  mockCollectionBuilder = mockCollectionBuilder
+    .setup(p => p.getEntitiesFromIcons(It.IsAny()))
+    .callback(({ args }) => {
+      const icons = args[0] as Overlay3DIcon[];
+      const iconSet = new Set(icons);
+      return mockEntities.filter(entity => iconSet.has(entity.icon));
+    });
+
   const mockCollection = mockCollectionBuilder.object();
 
   const facade = new Image360Facade(

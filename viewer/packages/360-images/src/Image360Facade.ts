@@ -229,9 +229,8 @@ export class Image360Facade<T extends DataSourceType> {
       if (clusterData) {
         const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
 
-        // Map Overlay3DIcon[] to Image360Entity[] by matching icons
-        const clusterIconSet = new Set(clusterData.clusterIcons);
-        const clusterEntities = collection.image360Entities.filter(entity => clusterIconSet.has(entity.icon));
+        // Get the image360Entities from the icons
+        const clusterEntities = collection.getEntitiesFromIcons(clusterData.clusterIcons);
 
         closestFinder.addLazy(worldPosition, () => {
           return {
