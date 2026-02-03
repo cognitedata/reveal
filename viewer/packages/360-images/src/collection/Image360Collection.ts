@@ -97,6 +97,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * The id of the collection.
    * @returns The id of the collection
+   * @deprecated Use `sourceId` instead
    */
   readonly id: string;
 
