@@ -41,6 +41,34 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   return DEFAULT_MIME_TYPE;
 }
 
+/**
+ * Extracts the internal file ID from a CDF download URL.
+ * The URL format is: .../files/storage/cognite/{projectId}%2F{fileId}%2F{filename}
+ * The fileId is the second segment after decoding the path.
+ *
+ * Example: .../files/storage/cognite/1664458101624642%2F6493465271521017%2Fimage.jpeg
+ * Returns: 6493465271521017
+ */
+function extractFileIdFromDownloadUrl(downloadUrl: string): number | undefined {
+  try {
+    const url = new URL(downloadUrl);
+    const pathMatch = url.pathname.match(/\/files\/storage\/cognite\/([^?]+)/);
+    if (pathMatch) {
+      const decodedPath = decodeURIComponent(pathMatch[1]);
+      const parts = decodedPath.split('/');
+      if (parts.length >= 2) {
+        const fileId = parseInt(parts[1], 10);
+        if (!isNaN(fileId)) {
+          return fileId;
+        }
+      }
+    }
+  } catch {
+    // URL parsing failed, return undefined
+  }
+  return undefined;
+}
+
 export class CdfImageFileProvider {
   private readonly _client;
 
@@ -80,15 +108,20 @@ export class CdfImageFileProvider {
 
   /**
    * Downloads low-resolution icon versions of files.
-   * Note: The /files/icon endpoint only supports internal numeric IDs.
-   * For files with only externalId or instanceId, we fall back to the regular download endpoint.
+   * The /files/icon endpoint only supports internal numeric IDs.
+   *
+   * For files with only externalId or instanceId:
+   * 1. First get download URLs via /files/downloadlink
+   * 2. Extract internal file IDs from the download URLs
+   * 3. Use those IDs with the /files/icon endpoint
+   *
+   * This avoids the need for a separate /files/byids call while still enabling fast icon loading.
    */
   public async getIconBuffersWithMimeType(
     fileIdentifiers: FileIdentifier[],
     abortSignal?: AbortSignal
   ): Promise<FileDownloadResult[]> {
-    // Separate identifiers into those with internal IDs (can use icon endpoint)
-    // and those without (must use regular download)
+    // Separate identifiers into those with internal IDs and those without
     const withInternalId: Array<{ index: number; id: number }> = [];
     const withoutInternalId: Array<{ index: number; identifier: FileIdentifier }> = [];
 
@@ -100,29 +133,34 @@ export class CdfImageFileProvider {
       }
     });
 
-    // Fetch icons for files with internal IDs using the icon endpoint
+    // For files without internal IDs, get download URLs first to extract the IDs
+    let resolvedIds: Array<{ index: number; id: number }> = [];
+    if (withoutInternalId.length > 0) {
+      const downloadLinks = await this.getDownloadUrls(
+        withoutInternalId.map(item => item.identifier),
+        abortSignal
+      );
+
+      // Extract internal file IDs from the download URLs
+      resolvedIds = withoutInternalId
+        .map((item, i) => {
+          const fileId = extractFileIdFromDownloadUrl(downloadLinks[i].downloadUrl);
+          return fileId !== undefined ? { index: item.index, id: fileId } : null;
+        })
+        .filter((item): item is { index: number; id: number } => item !== null);
+    }
+
+    // Combine all IDs and fetch icons
+    const allIds = [...withInternalId, ...resolvedIds];
     const iconResults = await this.fetchIconsById(
-      withInternalId.map(item => item.id),
+      allIds.map(item => item.id),
       abortSignal
     );
 
-    // Fetch full-resolution files for those without internal IDs
-    // (icon endpoint doesn't support externalId/instanceId)
-    const fullResResults =
-      withoutInternalId.length > 0
-        ? await this.getFileBuffersWithMimeType(
-          withoutInternalId.map(item => item.identifier),
-          abortSignal
-        )
-        : [];
-
     // Merge results back in original order
     const results: FileDownloadResult[] = new Array(fileIdentifiers.length);
-    withInternalId.forEach((item, i) => {
+    allIds.forEach((item, i) => {
       results[item.index] = iconResults[i];
-    });
-    withoutInternalId.forEach((item, i) => {
-      results[item.index] = fullResResults[i];
     });
 
     return results;
