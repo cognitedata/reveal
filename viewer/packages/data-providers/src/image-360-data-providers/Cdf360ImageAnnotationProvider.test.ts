@@ -140,7 +140,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       .object();
 
     const collection = new Mock<DefaultImage360Collection<ClassicDataSourceType>>()
-      .setup(c => c.collectionId)
+      .setup(c => c.sourceId)
       .returns({ site_id: 'collection-id' })
       .setup(c => c.image360Entities)
       .returns(entities)

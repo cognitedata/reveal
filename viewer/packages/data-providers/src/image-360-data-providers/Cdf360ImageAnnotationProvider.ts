@@ -60,7 +60,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
     const cachedAnnotationsPromise = this._collectionToInstanceReferenceToAnnotationMap
-      .get(createCollectionIdString(collection.collectionId))
+      .get(createCollectionIdString(collection.sourceId))
       ?.get(getInstanceKey(asset));
 
     if (cachedAnnotationsPromise !== undefined) {
@@ -134,13 +134,13 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     resultPromise: Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]>
   ): void {
     let collectionMap = this._collectionToInstanceReferenceToAnnotationMap.get(
-      createCollectionIdString(collection.collectionId)
+      createCollectionIdString(collection.sourceId)
     );
 
     if (collectionMap === undefined) {
       collectionMap = new Map();
       this._collectionToInstanceReferenceToAnnotationMap.set(
-        createCollectionIdString(collection.collectionId),
+        createCollectionIdString(collection.sourceId),
         collectionMap
       );
     }
