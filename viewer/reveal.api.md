@@ -1342,6 +1342,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     setImagesOpacity(opacity: number): void;
     setModelTransformation(matrix: Matrix4): void;
     setOccludedIconsVisible(visible: boolean): void;
+    readonly sourceId: T['image360Identifier'];
     targetRevisionDate: Date | undefined;
 }
 
