@@ -42,6 +42,25 @@ import {
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
 import { getInstanceKey } from '../utilities/instanceIds';
+import { Image360FileDescriptor } from '../types';
+
+/**
+ * Converts file descriptors to annotation resource IDs for CDF API.
+ * The CDF annotations API accepts both internal IDs and external IDs.
+ */
+function getAnnotationResourceIds(descriptors: Image360FileDescriptor[]): IdEither[] {
+  return descriptors.map(desc => {
+    if ('fileId' in desc && desc.fileId !== undefined) {
+      return { id: desc.fileId };
+    } else if ('externalId' in desc && desc.externalId !== undefined) {
+      return { externalId: desc.externalId };
+    } else if ('instanceId' in desc && desc.instanceId !== undefined) {
+      // For instance IDs, use the external ID from the instance reference
+      return { externalId: desc.instanceId.externalId };
+    }
+    throw new Error('Invalid file descriptor: must have fileId, externalId, or instanceId');
+  });
+}
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
@@ -104,7 +123,11 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     async function getRevisionAnnotationsForAsset(
       revision: Image360RevisionEntity<ClassicDataSourceType>
     ): Promise<Image360Annotation<ClassicDataSourceType>[]> {
-      const relevantDescriptors = revision.getDescriptors().faceDescriptors.filter(desc => imageIdSet.has(desc.fileId));
+      // Filter descriptors that match the file IDs from the asset lookup
+      // Only descriptors with fileId can be matched directly to internal IDs
+      const relevantDescriptors = revision
+        .getDescriptors()
+        .faceDescriptors.filter(desc => 'fileId' in desc && desc.fileId !== undefined && imageIdSet.has(desc.fileId));
 
       if (relevantDescriptors.length === 0) {
         return [];
@@ -151,11 +174,11 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   public async getRelevant360ImageAnnotations(
     annotationSpecifier: Image360AnnotationSpecifier<ClassicDataSourceType>
   ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
-    const fileIds = annotationSpecifier.fileDescriptors.map(o => ({ id: o.fileId }));
+    const resourceIds = getAnnotationResourceIds(annotationSpecifier.fileDescriptors);
 
     return this.listFileAnnotations({
       annotatedResourceType: 'file',
-      annotatedResourceIds: fileIds
+      annotatedResourceIds: resourceIds
     });
   }
 
@@ -262,7 +285,13 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     return collection.image360Entities.reduce((map, entity) => {
       entity.getRevisions().forEach(revision => {
         const descriptors = revision.getDescriptors().faceDescriptors;
-        descriptors.forEach(descriptor => map.set(descriptor.fileId, { entity, revision }));
+        descriptors.forEach(descriptor => {
+          // Only add to map if descriptor has internal fileId
+          // Descriptors with only externalId or instanceId can't be matched to annotation.annotatedResourceId
+          if ('fileId' in descriptor && descriptor.fileId !== undefined) {
+            map.set(descriptor.fileId, { entity, revision });
+          }
+        });
       });
       return map;
     }, new Map<number, { entity: Image360Entity<ClassicDataSourceType>; revision: Image360RevisionEntity<ClassicDataSourceType> }>());
@@ -273,10 +302,11 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
   ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
     const image360FileDescriptors = collection.getAllFileDescriptors();
-    const fileIds = image360FileDescriptors.map(desc => desc.fileId);
-    const assetListPromises = chunk(fileIds, 1000).map(async idList => {
+    const resourceIds = getAnnotationResourceIds(image360FileDescriptors);
+
+    const assetListPromises = chunk(resourceIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
-        annotatedResourceIds: idList.map(id => ({ id })),
+        annotatedResourceIds: idList,
         annotatedResourceType: 'file'
       });
 

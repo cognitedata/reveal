@@ -158,10 +158,26 @@ export type Image360Texture = {
   texture: THREE.Texture;
 };
 
+/**
+ * File identifier for 360 image faces. Supports multiple identifier types:
+ * - `fileId`: Internal CDF file ID (numeric) - legacy, requires /files/byids call
+ * - `externalId`: External file ID (string) - for system-space/FDM collections
+ * - `instanceId`: DM instance reference - for CDM collections
+ *
+ * When downloading, the identifier is used directly with /files/downloadlink endpoint,
+ * avoiding the need for a separate /files/byids call to resolve IDs.
+ *
+ * At least one of fileId, externalId, or instanceId must be provided.
+ */
 export type Image360FileDescriptor = {
-  fileId: number;
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
+  /** Internal CDF file ID (numeric) */
+  fileId?: number;
+  /** External file ID (string) - for system-space/FDM collections */
+  externalId?: string;
+  /** DM instance reference - for CDM collections */
+  instanceId?: DMInstanceRef;
 };
 
 export enum File3dFormat {

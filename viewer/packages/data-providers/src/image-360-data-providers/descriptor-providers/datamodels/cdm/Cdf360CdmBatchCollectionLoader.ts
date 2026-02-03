@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, DirectRelationReference, FileInfo, RawPropertyValueV3 } from '@cognite/sdk';
+import { CogniteClient, RawPropertyValueV3 } from '@cognite/sdk';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
 import { get360CdmCollectionsQuery, CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
 import type {
@@ -12,14 +12,20 @@ import type {
   Image360RevisionId
 } from '../../../../types';
 import type { DMDataSourceType } from '../../../../DataSourceType';
-import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
 import { MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
-import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
+import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
 import { BatchLoader } from '../../../../utilities/BatchLoader';
 import { getDmsPaginationCursor } from '../../../../utilities/dmsPaginationUtils';
+
+/**
+ * Default MIME type for 360 image faces.
+ * The vast majority of 360 images are JPEG format.
+ * Using a default eliminates the need to query file metadata just to get the MIME type.
+ */
+const DEFAULT_360_IMAGE_MIME_TYPE = 'image/jpeg' as const;
 
 // DMS query result type - using batch query structure
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfImage360CollectionDmQuery>>>;
@@ -37,6 +43,9 @@ type BatchQueryResult = {
   nextCursor?: Record<string, string>;
 };
 
+/** Face property names in the Cognite360Image schema */
+type FaceName = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+
 const BATCH_SIZE = 50;
 const BATCH_DELAY_MS = 50;
 
@@ -45,18 +54,22 @@ const BATCH_DELAY_MS = 50;
  * Instead of loading each collection individually (1000 queries for 1000 collections),
  * it batches them into groups and makes far fewer queries (e.g., 20 queries for 1000 collections).
  * This allows collections with any number of images, not just ~200 per collection (10,000 / 50 batch size).
+ *
+ * This loader uses instance IDs directly from DMS queries to identify files,
+ * eliminating the need for /files/byids API calls to resolve file metadata.
+ * This significantly improves loading performance for large collections (e.g., 16k+ images).
  */
 export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   DMInstanceRef,
   Historical360ImageSet<DMDataSourceType>[]
 > {
   private readonly _dmsSdk: DataModelsSdk;
-  private readonly _cogniteSdk: CogniteClient;
 
-  constructor(dmsSdk: DataModelsSdk, cogniteSdk: CogniteClient) {
+  constructor(dmsSdk: DataModelsSdk, _cogniteSdk: CogniteClient) {
     super(BATCH_SIZE, BATCH_DELAY_MS);
     this._dmsSdk = dmsSdk;
-    this._cogniteSdk = cogniteSdk;
+    // Note: cogniteSdk is no longer needed - we use instance IDs directly
+    // Kept in signature for backwards compatibility
   }
 
   public async getCollectionDescriptors(identifier: DMInstanceRef): Promise<Historical360ImageSet<DMDataSourceType>[]> {
@@ -137,8 +150,6 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       return grouped;
     }
 
-    const allFileDescriptors = await this.getFileDescriptorsForBatch(result.images);
-
     const imagesByCollection = new Map<DMInstanceKey, ImageInstanceResult[]>();
 
     result.images.forEach(image => {
@@ -167,7 +178,12 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
       const name = collection.properties?.cdf_cdm?.['Cognite360ImageCollection/v1']?.name;
       const collectionLabel = this.stringifyValue(name);
 
-      const imagesWithFiles = this.getFileDescriptorsForImages(collectionImages, allFileDescriptors);
+      // Create file descriptors directly from images using instance IDs
+      // This eliminates the need for /files/byids API calls (~100+ requests for large collections)
+      const imagesWithFiles = collectionImages.map(image => ({
+        image,
+        fileDescriptors: this.createFileDescriptorsFromImage(image)
+      }));
 
       const historicalSets = this.createHistoricalImageSets(
         collectionId,
@@ -181,73 +197,35 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     return grouped;
   }
 
-  private async getFileDescriptorsForBatch(images: ImageInstanceResult[]): Promise<Map<string, FileInfo>> {
-    const imageProps = images.map(image => image.properties.cdf_cdm['Cognite360Image/v1']);
-    const cubeMapFileIds = imageProps.flatMap(imageProp => {
-      const faces = [imageProp.front, imageProp.back, imageProp.left, imageProp.right, imageProp.top, imageProp.bottom];
-      return faces.filter(isDmIdentifier);
-    });
+  /**
+   * Creates file descriptors directly from the DMS image data using instance IDs.
+   * This avoids the need to call /files/byids to resolve file metadata.
+   * The instance IDs are used directly with the /files/downloadlink endpoint.
+   */
+  private createFileDescriptorsFromImage(image: ImageInstanceResult): Image360FileDescriptor[] {
+    const props = image.properties.cdf_cdm['Cognite360Image/v1'];
+    const faces: Array<{ prop: unknown; face: FaceName }> = [
+      { prop: props.front, face: 'front' },
+      { prop: props.back, face: 'back' },
+      { prop: props.left, face: 'left' },
+      { prop: props.right, face: 'right' },
+      { prop: props.top, face: 'top' },
+      { prop: props.bottom, face: 'bottom' }
+    ];
 
-    // Batch file requests - reduce to 100 per batch to avoid timeout
-    // The /files/byids endpoint seems to have performance issues with large batches
-    const batchSize = 100;
-    const batches = chunk(cubeMapFileIds, batchSize);
-
-    const fileInfos: FileInfo[] = [];
-
-    for (let i = 0; i < batches.length; i++) {
-      const batch = batches[i];
-
-      try {
-        const batchFileInfos = await this.getCdmFiles(batch);
-        fileInfos.push(...batchFileInfos);
-      } catch (error) {
-        console.error(`Failed to fetch file batch ${i + 1}/${batches.length}:`, error);
-        throw error;
-      }
-    }
-
-    const fileMap = new Map<DMInstanceKey, FileInfo>();
-
-    fileInfos.forEach(file => {
-      const instanceId = file.instanceId;
-
-      if (instanceId) {
-        const key = dmInstanceRefToKey(instanceId);
-        fileMap.set(key, file);
-      } else {
-        console.warn(`[${Cdf360CdmBatchCollectionLoader.name}] File ${file.id} missing instanceId in response`);
-      }
-    });
-
-    return fileMap;
-  }
-
-  private getFileDescriptorsForImages(
-    images: ImageInstanceResult[],
-    fileMap: Map<string, FileInfo>
-  ): Array<{ image: ImageInstanceResult; fileDescriptors: FileInfo[] }> {
-    return images.map(image => {
-      const props = image.properties.cdf_cdm['Cognite360Image/v1'];
-      const faces = [props.front, props.back, props.left, props.right, props.top, props.bottom];
-
-      const fileDescriptors = faces
-        .filter(isDmIdentifier)
-        .map(ref => {
-          // Create the same key format used in the file map
-          const key = dmInstanceRefToKey(ref);
-          return fileMap.get(key);
-        })
-        .filter(isDefined);
-
-      return { image, fileDescriptors };
-    });
+    return faces
+      .filter(({ prop }) => isDmIdentifier(prop))
+      .map(({ prop, face }) => ({
+        instanceId: prop as DMInstanceRef,
+        face,
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      }));
   }
 
   private createHistoricalImageSets(
     collectionId: string,
     collectionLabel: string,
-    imagesWithFiles: Array<{ image: ImageInstanceResult; fileDescriptors: FileInfo[] }>
+    imagesWithFiles: Array<{ image: ImageInstanceResult; fileDescriptors: Image360FileDescriptor[] }>
   ): Historical360ImageSet<DMDataSourceType>[] {
     // Filter out images that don't have all 6 face files
     const imagesGroupedWithFileDescriptors = imagesWithFiles.filter(
@@ -277,7 +255,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   private getHistorical360ImageSet(
     collectionId: string,
     collectionLabel: string,
-    imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
+    imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: Image360FileDescriptor[] }[]
   ): Historical360ImageSet<DMDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_cdm['Cognite360Image/v1']
@@ -303,25 +281,14 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   private getImageRevision(
     revisionId: Image360RevisionId<DMDataSourceType>,
     imageProps: ImageResultProperties,
-    fileInfos: FileInfo[]
+    fileDescriptors: Image360FileDescriptor[]
   ): Image360Descriptor<DMDataSourceType> {
     const timestamp = imageProps.takenAt;
     return {
       id: revisionId,
-      faceDescriptors: this.getFaceDescriptors(fileInfos),
+      faceDescriptors: fileDescriptors,
       timestamp: this.stringifyValue(timestamp)
     };
-  }
-
-  private getFaceDescriptors(fileInfos: FileInfo[]): Image360FileDescriptor[] {
-    return [
-      { fileId: fileInfos[0].id, face: 'front', mimeType: fileInfos[0].mimeType! },
-      { fileId: fileInfos[1].id, face: 'back', mimeType: fileInfos[1].mimeType! },
-      { fileId: fileInfos[2].id, face: 'left', mimeType: fileInfos[2].mimeType! },
-      { fileId: fileInfos[3].id, face: 'right', mimeType: fileInfos[3].mimeType! },
-      { fileId: fileInfos[4].id, face: 'top', mimeType: fileInfos[4].mimeType! },
-      { fileId: fileInfos[5].id, face: 'bottom', mimeType: fileInfos[5].mimeType! }
-    ] as Image360FileDescriptor[];
   }
 
   private getRevisionTransform(revision: ImageResultProperties): Matrix4 {
@@ -341,19 +308,6 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     const rotation = new Matrix4().makeRotationFromEuler(eulerRotation);
 
     return translation.multiply(rotation);
-  }
-
-  private async getCdmFiles(identifiers: DirectRelationReference[]): Promise<FileInfo[]> {
-    try {
-      const result = await this._cogniteSdk.files.retrieve(identifiers.map(id => ({ instanceId: id })));
-
-      return result;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to fetch CDM files: ${error.message}`);
-      }
-      throw new Error(`Failed to fetch CDM files: ${JSON.stringify(error)}`);
-    }
   }
 
   private stringifyValue(value: RawPropertyValueV3): string | undefined {

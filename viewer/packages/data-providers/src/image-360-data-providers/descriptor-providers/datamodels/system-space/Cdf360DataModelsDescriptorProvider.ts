@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient, ExternalId, FileInfo } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import {
   Historical360ImageSet,
   Image360Descriptor,
@@ -14,13 +14,18 @@ import { Cdf360FdmQuery, get360CollectionQuery } from './get360CollectionQuery';
 import assert from 'assert';
 import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
-import chunk from 'lodash/chunk';
-import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
 import { ClassicDataSourceType } from '../../../../DataSourceType';
+
+/**
+ * Default MIME type for 360 image faces.
+ * The vast majority of 360 images are JPEG format.
+ * Using a default eliminates the need to query file metadata just to get the MIME type.
+ */
+const DEFAULT_360_IMAGE_MIME_TYPE = 'image/jpeg' as const;
 
 /**
  * An identifier uniquely determining a datamodel-based instance of a Cognite 360 image collection
@@ -55,7 +60,6 @@ export type Image360BaseIdentifier = {
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
 
-type ImageResult = QueryResult['images'];
 type ImageInstanceResult = QueryResult['images'][number];
 type ImageResultProperties = ImageInstanceResult['properties']['cdf_360_image_schema']['Image360/v1'];
 
@@ -67,10 +71,8 @@ type ExhaustedQueryResult = {
 
 export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {
   readonly _dmsSdk: DataModelsSdk;
-  private readonly _cogniteSdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
-    this._cogniteSdk = sdk;
     this._dmsSdk = new DataModelsSdk(sdk);
   }
 
@@ -89,18 +91,15 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     const collection = image_collection[0];
     const collectionId = collection.externalId;
     const collectionLabel = collection.properties.cdf_360_image_schema['Image360Collection/v1'].label as string;
-    const fileDescriptors = await this.getFileDescriptors(images);
 
-    assert(images.length === fileDescriptors.length, 'Expected each 360 image to have 6 faces');
+    // Create file descriptors directly from DMS query results using external IDs
+    // This eliminates the need for /files/byids API calls (~100+ requests for large collections)
+    const imagesWithFileDescriptors = images.map(image => ({
+      image,
+      fileDescriptors: this.createFileDescriptorsFromImage(image)
+    }));
 
-    const imagesGroupedWithFileDescriptors = zip(images, fileDescriptors)
-      .filter(
-        (imageWithFileInfo): imageWithFileInfo is [ImageInstanceResult, FileInfo[]] =>
-          imageWithFileInfo[0] !== undefined && imageWithFileInfo[1] !== undefined
-      )
-      .map(([image, fileDescriptors]) => ({ image, fileDescriptors }));
-
-    const [imagesWithoutStation, imagesWithStation] = partition(imagesGroupedWithFileDescriptors, image => {
+    const [imagesWithoutStation, imagesWithStation] = partition(imagesWithFileDescriptors, image => {
       return image.image.properties.cdf_360_image_schema['Image360/v1'].station === undefined;
     });
 
@@ -114,6 +113,23 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       .map(imageWithFileDescriptors => {
         return this.getHistorical360ImageSet(collectionId, collectionLabel, imageWithFileDescriptors);
       });
+  }
+
+  /**
+   * Creates file descriptors directly from the DMS image data using external IDs.
+   * This avoids the need to call /files/byids to resolve file metadata.
+   * The external IDs are used directly with the /files/downloadlink endpoint.
+   */
+  private createFileDescriptorsFromImage(image: ImageInstanceResult): Image360FileDescriptor[] {
+    const imageProps = image.properties.cdf_360_image_schema['Image360/v1'];
+    return [
+      { externalId: imageProps.cubeMapFront as string, face: 'front', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
+      { externalId: imageProps.cubeMapBack as string, face: 'back', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
+      { externalId: imageProps.cubeMapLeft as string, face: 'left', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
+      { externalId: imageProps.cubeMapRight as string, face: 'right', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
+      { externalId: imageProps.cubeMapTop as string, face: 'top', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
+      { externalId: imageProps.cubeMapBottom as string, face: 'bottom', mimeType: DEFAULT_360_IMAGE_MIME_TYPE }
+    ];
   }
 
   private async queryCollection({
@@ -157,42 +173,10 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     return result;
   }
 
-  private async getFileDescriptors(images: ImageResult) {
-    const imageProps = images.map(image => image.properties.cdf_360_image_schema['Image360/v1']);
-    const cubeMapExternalIds = imageProps.flatMap(imageProp => [
-      { externalId: imageProp.cubeMapFront } as ExternalId,
-      { externalId: imageProp.cubeMapBack } as ExternalId,
-      { externalId: imageProp.cubeMapLeft } as ExternalId,
-      { externalId: imageProp.cubeMapRight } as ExternalId,
-      { externalId: imageProp.cubeMapTop } as ExternalId,
-      { externalId: imageProp.cubeMapBottom } as ExternalId
-    ]);
-
-    // Batch file retrieval - 1000 per batch as per CDF API limits
-    const batchSize = 1000;
-    const batches = chunk(cubeMapExternalIds, batchSize);
-
-    const fileInfos: FileInfo[] = [];
-
-    // Process batches sequentially to avoid overwhelming the API
-    for (const batch of batches) {
-      try {
-        const batchFileInfos = await this._cogniteSdk.files.retrieve(batch);
-        fileInfos.push(...batchFileInfos);
-      } catch (error: unknown) {
-        throw new Error(
-          `Failed to retrieve 360 image files: ${error instanceof Error ? error.message : String(error)}`
-        );
-      }
-    }
-
-    return chunk(fileInfos, 6);
-  }
-
   private getHistorical360ImageSet(
     collectionId: string,
     collectionLabel: string,
-    imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
+    imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: Image360FileDescriptor[] }[]
   ): Historical360ImageSet<ClassicDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_360_image_schema['Image360/v1']
@@ -215,48 +199,13 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private getImageRevision(
     revisionId: DMInstanceKey,
     imageProps: ImageResultProperties,
-    fileInfos: FileInfo[]
+    fileDescriptors: Image360FileDescriptor[]
   ): Image360Descriptor<ClassicDataSourceType> {
     return {
       id: revisionId,
-      faceDescriptors: getFaceDescriptors(),
+      faceDescriptors: fileDescriptors,
       timestamp: imageProps.timeTaken as string
     };
-
-    function getFaceDescriptors(): Image360FileDescriptor[] {
-      return [
-        {
-          fileId: fileInfos[0].id,
-          face: 'front',
-          mimeType: fileInfos[0].mimeType!
-        },
-        {
-          fileId: fileInfos[1].id,
-          face: 'back',
-          mimeType: fileInfos[1].mimeType!
-        },
-        {
-          fileId: fileInfos[2].id,
-          face: 'left',
-          mimeType: fileInfos[2].mimeType!
-        },
-        {
-          fileId: fileInfos[3].id,
-          face: 'right',
-          mimeType: fileInfos[3].mimeType!
-        },
-        {
-          fileId: fileInfos[4].id,
-          face: 'top',
-          mimeType: fileInfos[5].mimeType!
-        },
-        {
-          fileId: fileInfos[5].id,
-          face: 'bottom',
-          mimeType: fileInfos[5].mimeType!
-        }
-      ] as Image360FileDescriptor[];
-    }
   }
 
   private getRevisionTransform(revision: {
