@@ -1325,6 +1325,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     getIconsVisibility(): boolean;
     getImagesOpacity(): number;
     getModelTransformation(out?: Matrix4): Matrix4;
+    // @deprecated
     readonly id: string;
     readonly image360Entities: Image360<T>[];
     isOccludedIconsVisible(): boolean;
