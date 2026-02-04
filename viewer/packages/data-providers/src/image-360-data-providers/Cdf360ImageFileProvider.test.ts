@@ -5,79 +5,12 @@
 import { jest } from '@jest/globals';
 import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
-import {
-  Cdf360ImageFileProvider,
-  getFileIdentifiers,
-  createFacesFromDescriptorsAndDownloads
-} from './Cdf360ImageFileProvider';
+import { Cdf360ImageFileProvider, getFileIds, createFacesFromDescriptorsAndBuffers } from './Cdf360ImageFileProvider';
 import { Image360FileDescriptor } from '../types';
-import { FileDownloadResult } from './CdfImageFileProvider';
 
-// Mock fetch globally
-const mockFetch = jest.fn<typeof fetch>();
-global.fetch = mockFetch;
-
-/**
- * Creates a mock Response object for JSON responses
- */
-function createJsonResponse(data: unknown, ok = true, status = 200, statusText = 'OK'): Response {
-  return {
-    ok,
-    status,
-    statusText,
-    json: () => Promise.resolve(data),
-    headers: new Headers(),
-    redirected: false,
-    type: 'basic',
-    url: '',
-    clone: () => createJsonResponse(data, ok, status, statusText),
-    body: null,
-    bodyUsed: false,
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
-    blob: () => Promise.resolve(new Blob()),
-    formData: () => Promise.resolve(new FormData()),
-    text: () => Promise.resolve(JSON.stringify(data)),
-    bytes: () => Promise.resolve(new Uint8Array())
-  };
-}
-
-/**
- * Creates a mock Response object for binary responses
- */
-function createBinaryResponse(
-  data: ArrayBuffer,
-  contentType: string | null,
-  ok = true,
-  status = 200,
-  statusText = 'OK'
-): Response {
-  const headers = new Headers();
-  if (contentType) {
-    headers.set('Content-Type', contentType);
-  }
-  return {
-    ok,
-    status,
-    statusText,
-    headers,
-    arrayBuffer: () => Promise.resolve(data),
-    redirected: false,
-    type: 'basic',
-    url: '',
-    clone: () => createBinaryResponse(data, contentType, ok, status, statusText),
-    body: null,
-    bodyUsed: false,
-    json: () => Promise.reject(new Error('Not JSON')),
-    blob: () => Promise.resolve(new Blob([data])),
-    formData: () => Promise.resolve(new FormData()),
-    text: () => Promise.resolve(''),
-    bytes: () => Promise.resolve(new Uint8Array(data))
-  };
-}
-
-describe('Cdf360ImageFileProvider', () => {
-  describe('getFileIdentifiers', () => {
-    test('extracts internal id from descriptor with fileId', () => {
+describe(Cdf360ImageFileProvider.name, () => {
+  describe(getFileIds.name, () => {
+    test('extracts file IDs from descriptors', () => {
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
         { fileId: 456, face: 'back', mimeType: 'image/jpeg' }

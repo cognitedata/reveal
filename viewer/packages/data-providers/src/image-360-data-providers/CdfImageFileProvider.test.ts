@@ -5,100 +5,15 @@
 import { jest } from '@jest/globals';
 import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
-import { CdfImageFileProvider, FileIdentifier } from './CdfImageFileProvider';
+import { CdfImageFileProvider } from './CdfImageFileProvider';
 
-// Mock fetch globally
-const mockFetch = jest.fn<typeof fetch>();
-global.fetch = mockFetch;
-
-/**
- * Creates a mock Response object for JSON responses
- */
-function createJsonResponse(data: unknown, ok = true, status = 200, statusText = 'OK'): Response {
-  return {
-    ok,
-    status,
-    statusText,
-    json: () => Promise.resolve(data),
-    headers: new Headers(),
-    redirected: false,
-    type: 'basic',
-    url: '',
-    clone: () => createJsonResponse(data, ok, status, statusText),
-    body: null,
-    bodyUsed: false,
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
-    blob: () => Promise.resolve(new Blob()),
-    formData: () => Promise.resolve(new FormData()),
-    text: () => Promise.resolve(JSON.stringify(data)),
-    bytes: () => Promise.resolve(new Uint8Array())
-  };
-}
-
-/**
- * Creates a mock Response object for binary responses
- */
-function createBinaryResponse(
-  data: ArrayBuffer,
-  contentType: string | null,
-  ok = true,
-  status = 200,
-  statusText = 'OK'
-): Response {
-  const headers = new Headers();
-  if (contentType) {
-    headers.set('Content-Type', contentType);
-  }
-  return {
-    ok,
-    status,
-    statusText,
-    headers,
-    arrayBuffer: () => Promise.resolve(data),
-    redirected: false,
-    type: 'basic',
-    url: '',
-    clone: () => createBinaryResponse(data, contentType, ok, status, statusText),
-    body: null,
-    bodyUsed: false,
-    json: () => Promise.reject(new Error('Not JSON')),
-    blob: () => Promise.resolve(new Blob([data])),
-    formData: () => Promise.resolve(new FormData()),
-    text: () => Promise.resolve(''),
-    bytes: () => Promise.resolve(new Uint8Array(data))
-  };
-}
-
-/**
- * Creates an error Response object
- */
-function createErrorResponse(status: number, statusText: string): Response {
-  return {
-    ok: false,
-    status,
-    statusText,
-    headers: new Headers(),
-    redirected: false,
-    type: 'basic',
-    url: '',
-    clone: () => createErrorResponse(status, statusText),
-    body: null,
-    bodyUsed: false,
-    json: () => Promise.reject(new Error('Error response')),
-    arrayBuffer: () => Promise.reject(new Error('Error response')),
-    blob: () => Promise.reject(new Error('Error response')),
-    formData: () => Promise.reject(new Error('Error response')),
-    text: () => Promise.resolve(''),
-    bytes: () => Promise.resolve(new Uint8Array())
-  };
-}
-
-describe('CdfImageFileProvider', () => {
+describe(CdfImageFileProvider.name, () => {
   let mockClient: CogniteClient;
   let provider: CdfImageFileProvider;
+  let fetchSpy: jest.SpiedFunction<typeof fetch>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    fetchSpy = jest.spyOn(global, 'fetch');
 
     mockClient = new Mock<CogniteClient>()
       .setup(c => c.getBaseUrl())
