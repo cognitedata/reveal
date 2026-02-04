@@ -19,7 +19,7 @@ import partition from 'lodash/partition';
 import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
 import { ClassicDataSourceType } from '../../../../DataSourceType';
-import { DEFAULT_360_IMAGE_MIME_TYPE } from '@reveal/data-providers/src/utilities/constants';
+import { DEFAULT_360_IMAGE_MIME_TYPE } from '../../../../utilities/constants';
 
 /**
  * An identifier uniquely determining a datamodel-based instance of a Cognite 360 image collection
