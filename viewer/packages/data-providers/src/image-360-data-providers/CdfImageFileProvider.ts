@@ -129,9 +129,15 @@ export class CdfImageFileProvider {
       resolvedIds = withoutInternalId
         .map((item, i) => {
           const fileId = extractFileIdFromDownloadUrl(downloadLinks[i].downloadUrl);
-          return fileId !== undefined ? { index: item.index, id: fileId } : null;
+          if (fileId === undefined) {
+            console.error(
+              `Could not extract internal file ID from download URL for identifier: ${JSON.stringify(item.identifier)}`
+            );
+            return undefined;
+          }
+          return { index: item.index, id: fileId };
         })
-        .filter((item): item is { index: number; id: number } => item !== null);
+        .filter((item): item is { index: number; id: number } => item !== undefined);
     }
 
     // Combine all IDs and fetch icons
