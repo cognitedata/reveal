@@ -172,7 +172,7 @@ describe(Cdf360ImageFileProvider.name, () => {
     });
   });
 
-  describe('Cdf360ImageFileProvider class', () => {
+  describe(Cdf360ImageFileProvider.name + ' class', () => {
     let mockClient: CogniteClient;
     let provider: Cdf360ImageFileProvider;
     let fetchSpy: jest.SpiedFunction<typeof fetch>;

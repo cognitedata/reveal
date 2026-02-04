@@ -116,7 +116,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
 
     const annotations = (
       await fetchCoreDm360AnnotationsForCollection(
-        { externalId: collection.collectionId.image360CollectionExternalId, space: collection.collectionId.space },
+        { externalId: collection.sourceId.image360CollectionExternalId, space: collection.sourceId.space },
         this._client
       )
     ).filter(annotationFilter);
