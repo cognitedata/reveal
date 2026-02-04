@@ -5,12 +5,17 @@
 import { jest } from '@jest/globals';
 import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
-import { Cdf360ImageFileProvider, getFileIds, createFacesFromDescriptorsAndBuffers } from './Cdf360ImageFileProvider';
+import {
+  Cdf360ImageFileProvider,
+  getFileIdentifiers,
+  createFacesFromDescriptorsAndDownloads
+} from './Cdf360ImageFileProvider';
 import { Image360FileDescriptor } from '../types';
+import { FileDownloadResult } from './CdfImageFileProvider';
 
 describe(Cdf360ImageFileProvider.name, () => {
-  describe(getFileIds.name, () => {
-    test('extracts file IDs from descriptors', () => {
+  describe(getFileIdentifiers.name, () => {
+    test('extracts internal id from descriptor with fileId', () => {
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
         { fileId: 456, face: 'back', mimeType: 'image/jpeg' }
@@ -116,7 +121,7 @@ describe(Cdf360ImageFileProvider.name, () => {
     });
   });
 
-  describe('createFacesFromDescriptorsAndDownloads', () => {
+  describe(createFacesFromDescriptorsAndDownloads.name, () => {
     test('creates Image360Face objects with mimeType from download result', () => {
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 1, face: 'front', mimeType: 'image/jpeg' },
@@ -124,7 +129,7 @@ describe(Cdf360ImageFileProvider.name, () => {
       ];
 
       const downloads: FileDownloadResult[] = [
-        { data: new ArrayBuffer(100), mimeType: 'image/png' }, // Different from descriptor
+        { data: new ArrayBuffer(100), mimeType: 'image/png' },
         { data: new ArrayBuffer(200), mimeType: 'image/jpeg' }
       ];
 
@@ -132,7 +137,7 @@ describe(Cdf360ImageFileProvider.name, () => {
 
       expect(faces).toHaveLength(2);
       expect(faces[0].face).toBe('front');
-      expect(faces[0].mimeType).toBe('image/png'); // Uses download mimeType, not descriptor
+      expect(faces[0].mimeType).toBe('image/png');
       expect(faces[0].data.byteLength).toBe(100);
       expect(faces[1].face).toBe('back');
       expect(faces[1].mimeType).toBe('image/jpeg');
@@ -170,9 +175,10 @@ describe(Cdf360ImageFileProvider.name, () => {
   describe('Cdf360ImageFileProvider class', () => {
     let mockClient: CogniteClient;
     let provider: Cdf360ImageFileProvider;
+    let fetchSpy: jest.SpiedFunction<typeof fetch>;
 
     beforeEach(() => {
-      jest.clearAllMocks();
+      fetchSpy = jest.spyOn(global, 'fetch');
 
       mockClient = new Mock<CogniteClient>()
         .setup(c => c.getBaseUrl())
@@ -186,6 +192,10 @@ describe(Cdf360ImageFileProvider.name, () => {
       provider = new Cdf360ImageFileProvider(mockClient);
     });
 
+    afterEach(() => {
+      fetchSpy.mockRestore();
+    });
+
     describe('get360ImageFiles', () => {
       test('fetches full resolution images and returns Image360Face array', async () => {
         const descriptors: Image360FileDescriptor[] = [
@@ -193,19 +203,17 @@ describe(Cdf360ImageFileProvider.name, () => {
           { fileId: 456, face: 'back', mimeType: 'image/jpeg' }
         ];
 
-        // Mock downloadlink response
-        mockFetch.mockResolvedValueOnce(
-          createJsonResponse({
-            items: [
-              { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
-              { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
-            ]
-          })
-        );
-
-        // Mock file download responses
-        mockFetch.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(1000), 'image/jpeg'));
-        mockFetch.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(2000), 'image/png'));
+        fetchSpy
+          .mockResolvedValueOnce(
+            createJsonResponse({
+              items: [
+                { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+                { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
+              ]
+            })
+          )
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(1000), 'image/jpeg'))
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(2000), 'image/png'));
 
         const faces = await provider.get360ImageFiles(descriptors);
 
@@ -221,13 +229,13 @@ describe(Cdf360ImageFileProvider.name, () => {
           { externalId: 'file-ext-1', face: 'front', mimeType: 'image/jpeg' }
         ];
 
-        mockFetch.mockResolvedValueOnce(
-          createJsonResponse({
-            items: [{ externalId: 'file-ext-1', downloadUrl: 'https://storage.example.com/file1.jpg' }]
-          })
-        );
-
-        mockFetch.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(100), 'image/jpeg'));
+        fetchSpy
+          .mockResolvedValueOnce(
+            createJsonResponse({
+              items: [{ externalId: 'file-ext-1', downloadUrl: 'https://storage.example.com/file1.jpg' }]
+            })
+          )
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(100), 'image/jpeg'));
 
         const faces = await provider.get360ImageFiles(descriptors);
 
@@ -240,14 +248,13 @@ describe(Cdf360ImageFileProvider.name, () => {
       test('fetches icon images and returns Image360Face array', async () => {
         const descriptors: Image360FileDescriptor[] = [{ fileId: 123, face: 'front', mimeType: 'image/jpeg' }];
 
-        // Mock icon response
-        mockFetch.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+        fetchSpy.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
 
         const faces = await provider.getLowResolution360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(1);
         expect(faces[0].face).toBe('front');
-        expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=123'), expect.any(Object));
+        expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=123'), expect.any(Object));
       });
 
       test('resolves externalId via downloadlink before fetching icons', async () => {
@@ -255,26 +262,76 @@ describe(Cdf360ImageFileProvider.name, () => {
           { externalId: 'file-ext', face: 'front', mimeType: 'image/jpeg' }
         ];
 
-        // Mock downloadlink response
-        mockFetch.mockResolvedValueOnce(
-          createJsonResponse({
-            items: [
-              {
-                externalId: 'file-ext',
-                downloadUrl: 'https://example.com/api/v1/files/storage/cognite/99%2F789%2Fimage.jpeg'
-              }
-            ]
-          })
-        );
-
-        // Mock icon response
-        mockFetch.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+        fetchSpy
+          .mockResolvedValueOnce(
+            createJsonResponse({
+              items: [
+                {
+                  externalId: 'file-ext',
+                  downloadUrl: 'https://example.com/api/v1/files/storage/cognite/99%2F789%2Fimage.jpeg'
+                }
+              ]
+            })
+          )
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
 
         const faces = await provider.getLowResolution360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(1);
-        expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=789'), expect.any(Object));
+        expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=789'), expect.any(Object));
       });
     });
   });
+
+  function createJsonResponse(data: unknown, ok = true, status = 200, statusText = 'OK'): Response {
+    return {
+      ok,
+      status,
+      statusText,
+      json: () => Promise.resolve(data),
+      headers: new Headers(),
+      redirected: false,
+      type: 'basic',
+      url: '',
+      clone: () => createJsonResponse(data, ok, status, statusText),
+      body: null,
+      bodyUsed: false,
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+      blob: () => Promise.resolve(new Blob()),
+      formData: () => Promise.resolve(new FormData()),
+      text: () => Promise.resolve(JSON.stringify(data)),
+      bytes: () => Promise.resolve(new Uint8Array())
+    };
+  }
+
+  function createBinaryResponse(
+    data: ArrayBuffer,
+    contentType: string | null,
+    ok = true,
+    status = 200,
+    statusText = 'OK'
+  ): Response {
+    const headers = new Headers();
+    if (contentType) {
+      headers.set('Content-Type', contentType);
+    }
+    return {
+      ok,
+      status,
+      statusText,
+      headers,
+      arrayBuffer: () => Promise.resolve(data),
+      redirected: false,
+      type: 'basic',
+      url: '',
+      clone: () => createBinaryResponse(data, contentType, ok, status, statusText),
+      body: null,
+      bodyUsed: false,
+      json: () => Promise.reject(new Error('Not JSON')),
+      blob: () => Promise.resolve(new Blob([data])),
+      formData: () => Promise.resolve(new FormData()),
+      text: () => Promise.resolve(''),
+      bytes: () => Promise.resolve(new Uint8Array(data))
+    };
+  }
 });
