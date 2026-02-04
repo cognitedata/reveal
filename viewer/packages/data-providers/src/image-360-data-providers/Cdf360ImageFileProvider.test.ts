@@ -88,9 +88,7 @@ describe(Cdf360ImageFileProvider.name, () => {
     });
 
     test('throws error for descriptor without any identifier', () => {
-      const descriptors: Image360FileDescriptor[] = [
-        { face: 'front', mimeType: 'image/jpeg' } as unknown as Image360FileDescriptor
-      ];
+      const descriptors: Image360FileDescriptor[] = [{ face: 'front', mimeType: 'image/jpeg' }];
 
       expect(() => getFileIdentifiers(descriptors)).toThrow(
         'Invalid Image360FileDescriptor: must have fileId, externalId, or instanceId'
@@ -125,7 +123,7 @@ describe(Cdf360ImageFileProvider.name, () => {
     test('creates Image360Face objects with mimeType from download result', () => {
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 1, face: 'front', mimeType: 'image/jpeg' },
-        { fileId: 2, face: 'back', mimeType: 'image/jpeg' }
+        { fileId: 2, face: 'back', mimeType: 'image/png' }
       ];
 
       const downloads: FileDownloadResult[] = [
@@ -200,7 +198,7 @@ describe(Cdf360ImageFileProvider.name, () => {
       test('fetches full resolution images and returns Image360Face array', async () => {
         const descriptors: Image360FileDescriptor[] = [
           { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
-          { fileId: 456, face: 'back', mimeType: 'image/jpeg' }
+          { fileId: 456, face: 'back', mimeType: 'image/png' }
         ];
 
         fetchSpy
