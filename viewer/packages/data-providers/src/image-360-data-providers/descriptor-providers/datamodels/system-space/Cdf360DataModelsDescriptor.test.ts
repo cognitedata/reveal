@@ -158,8 +158,6 @@ const mock = {
 
 describe(Cdf360DataModelsDescriptorProvider.name, () => {
   test('returns descriptors with externalId for each image', async () => {
-    // Note: No longer mocking files.retrieve() since we don't call it anymore
-    // The optimization uses externalId directly from DMS response
     const sdkMock = new Mock<CogniteClient>()
       .setup(instance => instance.post(It.IsAny(), It.IsAny()))
       .returns(Promise.resolve(mock))
@@ -200,7 +198,6 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
 
     expect(descriptors.length).toBe(3);
 
-    // Verify that file descriptors have externalId, not fileId
     const firstDescriptor = descriptors[0];
     const faceDescriptors = firstDescriptor.imageRevisions[0].faceDescriptors;
 
@@ -211,7 +208,6 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
       expect(fd.mimeType).toBe('image/jpeg');
     });
 
-    // Verify the external IDs match the DMS data
     const frontFace = faceDescriptors.find(fd => fd.face === 'front');
     expect(frontFace?.externalId).toBe('test_image_1_Front');
   });
@@ -241,7 +237,6 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
       true
     );
 
-    // Verify files.retrieve was NOT called (optimization)
     expect(filesRetrieveMock).not.toHaveBeenCalled();
   });
 });

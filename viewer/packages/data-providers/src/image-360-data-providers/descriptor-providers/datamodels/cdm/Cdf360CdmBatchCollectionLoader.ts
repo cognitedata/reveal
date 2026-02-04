@@ -15,17 +15,10 @@ import type { DMDataSourceType } from '../../../../DataSourceType';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
-import { MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
+import { DEFAULT_360_IMAGE_MIME_TYPE, MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
 import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
 import { BatchLoader } from '../../../../utilities/BatchLoader';
 import { getDmsPaginationCursor } from '../../../../utilities/dmsPaginationUtils';
-
-/**
- * Default MIME type for 360 image faces.
- * The vast majority of 360 images are JPEG format.
- * Using a default eliminates the need to query file metadata just to get the MIME type.
- */
-const DEFAULT_360_IMAGE_MIME_TYPE = 'image/jpeg' as const;
 
 // DMS query result type - using batch query structure
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfImage360CollectionDmQuery>>>;

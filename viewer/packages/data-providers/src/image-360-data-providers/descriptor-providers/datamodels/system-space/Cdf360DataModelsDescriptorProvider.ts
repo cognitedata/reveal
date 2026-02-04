@@ -19,13 +19,7 @@ import partition from 'lodash/partition';
 import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
 import { ClassicDataSourceType } from '../../../../DataSourceType';
-
-/**
- * Default MIME type for 360 image faces.
- * The vast majority of 360 images are JPEG format.
- * Using a default eliminates the need to query file metadata just to get the MIME type.
- */
-const DEFAULT_360_IMAGE_MIME_TYPE = 'image/jpeg' as const;
+import { DEFAULT_360_IMAGE_MIME_TYPE } from '@reveal/data-providers/src/utilities/constants';
 
 /**
  * An identifier uniquely determining a datamodel-based instance of a Cognite 360 image collection
@@ -93,7 +87,6 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     const collectionLabel = collection.properties.cdf_360_image_schema['Image360Collection/v1'].label as string;
 
     // Create file descriptors directly from DMS query results using external IDs
-    // This eliminates the need for /files/byids API calls (~100+ requests for large collections)
     const imagesWithFileDescriptors = images.map(image => ({
       image,
       fileDescriptors: this.createFileDescriptorsFromImage(image)
@@ -117,8 +110,6 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
 
   /**
    * Creates file descriptors directly from the DMS image data using external IDs.
-   * This avoids the need to call /files/byids to resolve file metadata.
-   * The external IDs are used directly with the /files/downloadlink endpoint.
    */
   private createFileDescriptorsFromImage(image: ImageInstanceResult): Image360FileDescriptor[] {
     const imageProps = image.properties.cdf_360_image_schema['Image360/v1'];

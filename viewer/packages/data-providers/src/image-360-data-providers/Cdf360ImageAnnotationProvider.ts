@@ -46,7 +46,6 @@ import { Image360FileDescriptor } from '../types';
 
 /**
  * Converts file descriptors to annotation resource IDs for CDF API.
- * The CDF annotations API accepts both internal IDs and external IDs.
  */
 function getAnnotationResourceIds(descriptors: Image360FileDescriptor[]): IdEither[] {
   return descriptors.map(desc => {
@@ -287,7 +286,6 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
         const descriptors = revision.getDescriptors().faceDescriptors;
         descriptors.forEach(descriptor => {
           // Only add to map if descriptor has internal fileId
-          // Descriptors with only externalId or instanceId can't be matched to annotation.annotatedResourceId
           if ('fileId' in descriptor && descriptor.fileId !== undefined) {
             map.set(descriptor.fileId, { entity, revision });
           }

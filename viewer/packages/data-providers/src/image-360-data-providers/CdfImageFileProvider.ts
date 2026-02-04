@@ -4,11 +4,10 @@
 import { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 import { DMInstanceRef } from '@reveal/utilities';
 import chunk from 'lodash/chunk';
+import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 
 /**
  * File identifier types supported by CDF's /files/downloadlink endpoint.
- * Using externalId or instanceId directly avoids the need for a separate
- * /files/byids call to resolve internal IDs.
  */
 export type FileIdentifier = { id: number } | { externalId: string } | { instanceId: DMInstanceRef };
 
@@ -21,13 +20,6 @@ export type FileDownloadResult = {
   mimeType: 'image/jpeg' | 'image/png';
 };
 
-/** Default mimeType when Content-Type header is missing or unrecognized */
-const DEFAULT_MIME_TYPE = 'image/jpeg' as const;
-
-/**
- * Parses the Content-Type header and returns a valid mimeType.
- * Falls back to 'image/jpeg' if the header is missing or unrecognized.
- */
 function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   if (contentType) {
     const lowerContentType = contentType.toLowerCase();
@@ -38,7 +30,7 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
       return 'image/jpeg';
     }
   }
-  return DEFAULT_MIME_TYPE;
+  return DEFAULT_360_IMAGE_MIME_TYPE;
 }
 
 /**
@@ -78,7 +70,6 @@ export class CdfImageFileProvider {
 
   /**
    * Downloads files and returns both the data and mimeType (from Content-Type header).
-   * This eliminates the need for a separate /files/byids call to get mimeType.
    */
   public async getFileBuffersWithMimeType(
     fileIdentifiers: FileIdentifier[],
@@ -109,13 +100,6 @@ export class CdfImageFileProvider {
   /**
    * Downloads low-resolution icon versions of files.
    * The /files/icon endpoint only supports internal numeric IDs.
-   *
-   * For files with only externalId or instanceId:
-   * 1. First get download URLs via /files/downloadlink
-   * 2. Extract internal file IDs from the download URLs
-   * 3. Use those IDs with the /files/icon endpoint
-   *
-   * This avoids the need for a separate /files/byids call while still enabling fast icon loading.
    */
   public async getIconBuffersWithMimeType(
     fileIdentifiers: FileIdentifier[],
@@ -166,10 +150,6 @@ export class CdfImageFileProvider {
     return results;
   }
 
-  /**
-   * Fetches icon images using internal file IDs.
-   * The /files/icon endpoint only supports internal numeric IDs.
-   */
   private async fetchIconsById(fileIds: number[], abortSignal?: AbortSignal): Promise<FileDownloadResult[]> {
     if (fileIds.length === 0) {
       return [];

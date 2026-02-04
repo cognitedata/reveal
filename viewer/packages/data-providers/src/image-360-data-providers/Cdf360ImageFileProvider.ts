@@ -40,8 +40,6 @@ export class Cdf360ImageFileProvider implements Image360FileProvider {
 
 /**
  * Extracts file identifiers from face descriptors.
- * Supports internal IDs (fileId), external IDs, and instance IDs.
- * This allows direct use with /files/downloadlink without needing /files/byids.
  */
 export function getFileIdentifiers(image360FaceDescriptors: Image360FileDescriptor[]): FileIdentifier[] {
   return image360FaceDescriptors.map(descriptor => {
@@ -56,10 +54,6 @@ export function getFileIdentifiers(image360FaceDescriptors: Image360FileDescript
   });
 }
 
-/**
- * Creates Image360Face objects from descriptors and download results.
- * Uses the mimeType from the download response (Content-Type header) instead of the descriptor.
- */
 export function createFacesFromDescriptorsAndDownloads(
   image360FaceDescriptors: Image360FileDescriptor[],
   downloadResults: FileDownloadResult[]
@@ -67,7 +61,7 @@ export function createFacesFromDescriptorsAndDownloads(
   return zipWith(image360FaceDescriptors, downloadResults, (descriptor, download) => {
     return {
       face: descriptor.face,
-      mimeType: download.mimeType, // Use mimeType from Content-Type header
+      mimeType: download.mimeType,
       data: download.data
     } as Image360Face;
   });
