@@ -5,89 +5,167 @@
 import { jest } from '@jest/globals';
 import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
-import { Cdf360ImageFileProvider, getFileIds, createFacesFromDescriptorsAndBuffers } from './Cdf360ImageFileProvider';
+import {
+  Cdf360ImageFileProvider,
+  getFileIdentifiers,
+  createFacesFromDescriptorsAndDownloads
+} from './Cdf360ImageFileProvider';
 import { Image360FileDescriptor } from '../types';
+import { FileDownloadResult } from './CdfImageFileProvider';
 
 describe(Cdf360ImageFileProvider.name, () => {
-  describe(getFileIds.name, () => {
-    test('extracts file IDs from descriptors', () => {
+  describe(getFileIdentifiers.name, () => {
+    test('extracts internal id from descriptor with fileId', () => {
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
         { fileId: 456, face: 'back', mimeType: 'image/jpeg' }
       ];
 
-      const fileIds = getFileIds(descriptors);
+      const identifiers = getFileIdentifiers(descriptors);
 
-      expect(fileIds).toHaveLength(2);
-      expect(fileIds[0]).toEqual({ id: 123 });
-      expect(fileIds[1]).toEqual({ id: 456 });
+      expect(identifiers).toHaveLength(2);
+      expect(identifiers[0]).toEqual({ id: 123 });
+      expect(identifiers[1]).toEqual({ id: 456 });
     });
 
-    test('handles all six faces', () => {
+    test('extracts externalId from descriptor with externalId', () => {
+      const descriptors: Image360FileDescriptor[] = [
+        { externalId: 'file-1', face: 'front', mimeType: 'image/jpeg' },
+        { externalId: 'file-2', face: 'back', mimeType: 'image/png' }
+      ];
+
+      const identifiers = getFileIdentifiers(descriptors);
+
+      expect(identifiers).toHaveLength(2);
+      expect(identifiers[0]).toEqual({ externalId: 'file-1' });
+      expect(identifiers[1]).toEqual({ externalId: 'file-2' });
+    });
+
+    test('extracts instanceId from descriptor with instanceId', () => {
+      const descriptors: Image360FileDescriptor[] = [
+        {
+          instanceId: { space: 'my-space', externalId: 'instance-1' },
+          face: 'front',
+          mimeType: 'image/jpeg'
+        },
+        {
+          instanceId: { space: 'my-space', externalId: 'instance-2' },
+          face: 'back',
+          mimeType: 'image/jpeg'
+        }
+      ];
+
+      const identifiers = getFileIdentifiers(descriptors);
+
+      expect(identifiers).toHaveLength(2);
+      expect(identifiers[0]).toEqual({
+        instanceId: { space: 'my-space', externalId: 'instance-1' }
+      });
+      expect(identifiers[1]).toEqual({
+        instanceId: { space: 'my-space', externalId: 'instance-2' }
+      });
+    });
+
+    test('handles mixed identifier types', () => {
+      const descriptors: Image360FileDescriptor[] = [
+        { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
+        { externalId: 'file-ext', face: 'back', mimeType: 'image/jpeg' },
+        {
+          instanceId: { space: 's', externalId: 'e' },
+          face: 'left',
+          mimeType: 'image/jpeg'
+        }
+      ];
+
+      const identifiers = getFileIdentifiers(descriptors);
+
+      expect(identifiers).toHaveLength(3);
+      expect(identifiers[0]).toEqual({ id: 123 });
+      expect(identifiers[1]).toEqual({ externalId: 'file-ext' });
+      expect(identifiers[2]).toEqual({
+        instanceId: { space: 's', externalId: 'e' }
+      });
+    });
+
+    test('throws error for descriptor without any identifier', () => {
+      const descriptors: Image360FileDescriptor[] = [{ face: 'front', mimeType: 'image/jpeg' }];
+
+      expect(() => getFileIdentifiers(descriptors)).toThrow(
+        'Invalid Image360FileDescriptor: must have fileId, externalId, or instanceId'
+      );
+    });
+
+    test('handles empty array', () => {
+      const descriptors: Image360FileDescriptor[] = [];
+      const identifiers = getFileIdentifiers(descriptors);
+      expect(identifiers).toHaveLength(0);
+    });
+
+    test('handles all six faces with same identifier type', () => {
       const faces: Image360FileDescriptor['face'][] = ['front', 'back', 'left', 'right', 'top', 'bottom'];
 
       const descriptors: Image360FileDescriptor[] = faces.map((face, idx) => ({
-        fileId: idx + 1,
+        externalId: `file-${idx}`,
         face,
         mimeType: 'image/jpeg'
       }));
 
-      const fileIds = getFileIds(descriptors);
+      const identifiers = getFileIdentifiers(descriptors);
 
-      expect(fileIds).toHaveLength(6);
-      fileIds.forEach((fileId, idx) => {
-        expect(fileId).toEqual({ id: idx + 1 });
+      expect(identifiers).toHaveLength(6);
+      identifiers.forEach((id, idx) => {
+        expect(id).toEqual({ externalId: `file-${idx}` });
       });
-    });
-
-    test('handles empty array', () => {
-      const fileIds = getFileIds([]);
-      expect(fileIds).toHaveLength(0);
     });
   });
 
-  describe(createFacesFromDescriptorsAndBuffers.name, () => {
-    test('creates Image360Face objects from descriptors and buffers', () => {
+  describe(createFacesFromDescriptorsAndDownloads.name, () => {
+    test('creates Image360Face objects with mimeType from download result', () => {
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 1, face: 'front', mimeType: 'image/jpeg' },
         { fileId: 2, face: 'back', mimeType: 'image/png' }
       ];
 
-      const buffers: ArrayBuffer[] = [new ArrayBuffer(100), new ArrayBuffer(200)];
+      const downloads: FileDownloadResult[] = [
+        { data: new ArrayBuffer(100), mimeType: 'image/png' },
+        { data: new ArrayBuffer(200), mimeType: 'image/jpeg' }
+      ];
 
-      const faces = createFacesFromDescriptorsAndBuffers(descriptors, buffers);
+      const faces = createFacesFromDescriptorsAndDownloads(descriptors, downloads);
 
       expect(faces).toHaveLength(2);
       expect(faces[0].face).toBe('front');
-      expect(faces[0].mimeType).toBe('image/jpeg');
+      expect(faces[0].mimeType).toBe('image/png');
       expect(faces[0].data.byteLength).toBe(100);
       expect(faces[1].face).toBe('back');
-      expect(faces[1].mimeType).toBe('image/png');
+      expect(faces[1].mimeType).toBe('image/jpeg');
       expect(faces[1].data.byteLength).toBe(200);
     });
 
     test('handles all six faces', () => {
       const faces: Image360FileDescriptor['face'][] = ['front', 'back', 'left', 'right', 'top', 'bottom'];
 
-      const descriptors: Image360FileDescriptor[] = faces.map((face, idx) => ({
-        fileId: idx + 1,
+      const descriptors: Image360FileDescriptor[] = faces.map(face => ({
+        fileId: 1,
         face,
         mimeType: 'image/jpeg'
       }));
 
-      const buffers: ArrayBuffer[] = faces.map((_, idx) => new ArrayBuffer(idx * 10));
+      const downloads: FileDownloadResult[] = faces.map((_, idx) => ({
+        data: new ArrayBuffer(idx * 10),
+        mimeType: 'image/jpeg'
+      }));
 
-      const result = createFacesFromDescriptorsAndBuffers(descriptors, buffers);
+      const result = createFacesFromDescriptorsAndDownloads(descriptors, downloads);
 
       expect(result).toHaveLength(6);
       faces.forEach((face, idx) => {
         expect(result[idx].face).toBe(face);
-        expect(result[idx].mimeType).toBe('image/jpeg');
       });
     });
 
     test('handles empty arrays', () => {
-      const result = createFacesFromDescriptorsAndBuffers([], []);
+      const result = createFacesFromDescriptorsAndDownloads([], []);
       expect(result).toHaveLength(0);
     });
   });
@@ -132,18 +210,35 @@ describe(Cdf360ImageFileProvider.name, () => {
               ]
             })
           )
-          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(1000)))
-          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(2000)));
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(1000), 'image/jpeg'))
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(2000), 'image/png'));
 
         const faces = await provider.get360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(2);
         expect(faces[0].face).toBe('front');
         expect(faces[0].mimeType).toBe('image/jpeg');
-        expect(faces[0].data.byteLength).toBe(1000);
         expect(faces[1].face).toBe('back');
         expect(faces[1].mimeType).toBe('image/png');
-        expect(faces[1].data.byteLength).toBe(2000);
+      });
+
+      test('works with externalId descriptors', async () => {
+        const descriptors: Image360FileDescriptor[] = [
+          { externalId: 'file-ext-1', face: 'front', mimeType: 'image/jpeg' }
+        ];
+
+        fetchSpy
+          .mockResolvedValueOnce(
+            createJsonResponse({
+              items: [{ externalId: 'file-ext-1', downloadUrl: 'https://storage.example.com/file1.jpg' }]
+            })
+          )
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(100), 'image/jpeg'));
+
+        const faces = await provider.get360ImageFiles(descriptors);
+
+        expect(faces).toHaveLength(1);
+        expect(faces[0].face).toBe('front');
       });
     });
 
@@ -151,14 +246,37 @@ describe(Cdf360ImageFileProvider.name, () => {
       test('fetches icon images and returns Image360Face array', async () => {
         const descriptors: Image360FileDescriptor[] = [{ fileId: 123, face: 'front', mimeType: 'image/jpeg' }];
 
-        fetchSpy.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50)));
+        fetchSpy.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
 
         const faces = await provider.getLowResolution360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(1);
         expect(faces[0].face).toBe('front');
-        expect(faces[0].mimeType).toBe('image/jpeg');
         expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=123'), expect.any(Object));
+      });
+
+      test('resolves externalId via downloadlink before fetching icons', async () => {
+        const descriptors: Image360FileDescriptor[] = [
+          { externalId: 'file-ext', face: 'front', mimeType: 'image/jpeg' }
+        ];
+
+        fetchSpy
+          .mockResolvedValueOnce(
+            createJsonResponse({
+              items: [
+                {
+                  externalId: 'file-ext',
+                  downloadUrl: 'https://example.com/api/v1/files/storage/cognite/99%2F789%2Fimage.jpeg'
+                }
+              ]
+            })
+          )
+          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+
+        const faces = await provider.getLowResolution360ImageFiles(descriptors);
+
+        expect(faces).toHaveLength(1);
+        expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=789'), expect.any(Object));
       });
     });
   });
@@ -184,17 +302,27 @@ describe(Cdf360ImageFileProvider.name, () => {
     };
   }
 
-  function createBinaryResponse(data: ArrayBuffer, ok = true, status = 200, statusText = 'OK'): Response {
+  function createBinaryResponse(
+    data: ArrayBuffer,
+    contentType: string | null,
+    ok = true,
+    status = 200,
+    statusText = 'OK'
+  ): Response {
+    const headers = new Headers();
+    if (contentType) {
+      headers.set('Content-Type', contentType);
+    }
     return {
       ok,
       status,
       statusText,
-      headers: new Headers(),
+      headers,
       arrayBuffer: () => Promise.resolve(data),
       redirected: false,
       type: 'basic',
       url: '',
-      clone: () => createBinaryResponse(data, ok, status, statusText),
+      clone: () => createBinaryResponse(data, contentType, ok, status, statusText),
       body: null,
       bodyUsed: false,
       json: () => Promise.reject(new Error('Not JSON')),

@@ -3,8 +3,8 @@
  */
 import zipWith from 'lodash/zipWith';
 import { Image360Face, Image360FileDescriptor, Image360FileProvider } from '../types';
-import { CdfImageFileProvider } from './CdfImageFileProvider';
-import { CogniteClient, InternalId } from '@cognite/sdk';
+import { CdfImageFileProvider, FileIdentifier, FileDownloadResult } from './CdfImageFileProvider';
+import { CogniteClient } from '@cognite/sdk';
 
 export class Cdf360ImageFileProvider implements Image360FileProvider {
   private readonly _imageFileProvider: CdfImageFileProvider;
@@ -17,40 +17,52 @@ export class Cdf360ImageFileProvider implements Image360FileProvider {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    const fullResFileBuffers = await this._imageFileProvider.getFileBuffers(
-      getFileIds(image360FaceDescriptors),
+    // Use getFileBuffersWithMimeType to get the actual mimeType from Content-Type header
+    const downloadResults = await this._imageFileProvider.getFileBuffersWithMimeType(
+      getFileIdentifiers(image360FaceDescriptors),
       abortSignal
     );
-    return createFacesFromDescriptorsAndBuffers(image360FaceDescriptors, fullResFileBuffers);
+    return createFacesFromDescriptorsAndDownloads(image360FaceDescriptors, downloadResults);
   }
 
   public async getLowResolution360ImageFiles(
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    const lowResFileBuffers = await this._imageFileProvider.getIconBuffers(
-      getFileIds(image360FaceDescriptors),
+    // Use getIconBuffersWithMimeType to get the actual mimeType from Content-Type header
+    const downloadResults = await this._imageFileProvider.getIconBuffersWithMimeType(
+      getFileIdentifiers(image360FaceDescriptors),
       abortSignal
     );
-    return createFacesFromDescriptorsAndBuffers(image360FaceDescriptors, lowResFileBuffers);
+    return createFacesFromDescriptorsAndDownloads(image360FaceDescriptors, downloadResults);
   }
 }
 
-export function getFileIds(image360FaceDescriptors: Image360FileDescriptor[]): InternalId[] {
-  return image360FaceDescriptors.map(image360FaceDescriptor => {
-    return { id: image360FaceDescriptor.fileId };
+/**
+ * Extracts file identifiers from face descriptors.
+ */
+export function getFileIdentifiers(image360FaceDescriptors: Image360FileDescriptor[]): FileIdentifier[] {
+  return image360FaceDescriptors.map(descriptor => {
+    if (descriptor.fileId !== undefined) {
+      return { id: descriptor.fileId };
+    } else if (descriptor.externalId !== undefined) {
+      return { externalId: descriptor.externalId };
+    } else if (descriptor.instanceId !== undefined) {
+      return { instanceId: descriptor.instanceId };
+    }
+    throw new Error('Invalid Image360FileDescriptor: must have fileId, externalId, or instanceId');
   });
 }
 
-export function createFacesFromDescriptorsAndBuffers(
+export function createFacesFromDescriptorsAndDownloads(
   image360FaceDescriptors: Image360FileDescriptor[],
-  fileBuffer: ArrayBuffer[]
+  downloadResults: FileDownloadResult[]
 ): Image360Face[] {
-  return zipWith(image360FaceDescriptors, fileBuffer, (image360FaceDescriptor, fileBuffer) => {
+  return zipWith(image360FaceDescriptors, downloadResults, (descriptor, download) => {
     return {
-      face: image360FaceDescriptor.face,
-      mimeType: image360FaceDescriptor.mimeType,
-      data: fileBuffer
+      face: descriptor.face,
+      mimeType: download.mimeType,
+      data: download.data
     } as Image360Face;
   });
 }
