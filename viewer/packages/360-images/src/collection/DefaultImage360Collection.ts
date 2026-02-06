@@ -69,19 +69,22 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
   private readonly _image360EntitiesMap: Map<Overlay3DIcon, Image360Entity<T>>;
 
   private _isCollectionVisible: boolean;
-  private readonly _collectionId: T['image360Identifier'];
+  private readonly _sourceId: T['image360Identifier'];
   private readonly _collectionLabel: string | undefined;
   private readonly _setNeedsRedraw: () => void;
 
-  get collectionId(): T['image360Identifier'] {
-    return this._collectionId;
+  /**
+   * returns the source ID of the collection
+   */
+  get sourceId(): T['image360Identifier'] {
+    return this._sourceId;
   }
 
   /**
    * @deprecated
    */
   get id(): string {
-    return createCollectionIdString(this._collectionId);
+    return createCollectionIdString(this._sourceId);
   }
 
   get label(): string | undefined {
@@ -119,7 +122,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     image360DataProvider: Image360Provider<T>,
     setNeedsRedraw: () => void
   ) {
-    this._collectionId = identifier;
+    this._sourceId = identifier;
     this._collectionLabel = collectionLabel;
     this.image360Entities = entities;
     this._icons = icons;
