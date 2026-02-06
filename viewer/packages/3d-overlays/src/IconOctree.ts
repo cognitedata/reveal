@@ -133,16 +133,13 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
   /**
    * Get LOD nodes based purely on camera distance.
    * This provides consistent behavior regardless of view angle.
-   *
    * @param cameraPosition - Camera position in model space
-   * @param distanceThreshold - Distance from camera within which all icons are shown (no clustering)
-   * @param clusteringLevel - The octree level at which to cluster far icons (higher = finer clusters)
+   * @param distanceThreshold - Distance threshold for individual icon clustering
    * @returns Set of PointOctant nodes selected for LOD based on distance
    */
   public getLODByDistance(
     cameraPosition: Vector3 | undefined,
-    distanceThreshold: number,
-    clusteringLevel = 2
+    distanceThreshold: number
   ): Set<PointOctant<Overlay3DIcon>> {
     const root = this.findNodesByLevel(0)[0];
     const selectedNodes = new Set<PointOctant<Overlay3DIcon>>();
@@ -151,43 +148,52 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
       return selectedNodes;
     }
 
-    const nodesToProcess: Array<{ node: Node; depth: number }> = [{ node: root, depth: 0 }];
+    const nodesToProcess: Node[] = [root];
 
     for (let i = 0; i < nodesToProcess.length; i++) {
-      const { node: currentNode, depth } = nodesToProcess[i];
+      const currentNode = nodesToProcess[i];
 
       if (!this.isPointOctant(currentNode)) {
         continue;
       }
 
+      // Leaf node with data - always select it
       if (!this.hasChildren(currentNode) && this.hasData(currentNode)) {
         selectedNodes.add(currentNode);
         continue;
       }
 
+      // Calculate node-specific distance threshold based on node size.
+      // Larger nodes (higher in tree) require camera to be farther away to cluster.
+      // This creates progressive clustering as camera moves away.
+      const nodeSize = this.getNodeSize(currentNode);
+      const nodeDistanceThreshold = distanceThreshold + nodeSize;
+
       const hasIconsWithinDistance =
-        cameraPosition === undefined || this.isNodeWithinDistance(currentNode, cameraPosition, distanceThreshold);
+        cameraPosition === undefined || this.isNodeWithinDistance(currentNode, cameraPosition, nodeDistanceThreshold);
 
       if (hasIconsWithinDistance) {
         currentNode.children?.forEach(child => {
           if (this.isPointOctant(child)) {
-            nodesToProcess.push({ node: child, depth: depth + 1 });
+            nodesToProcess.push(child);
           }
         });
       } else {
-        if (depth < clusteringLevel && this.hasChildren(currentNode)) {
-          currentNode.children?.forEach(child => {
-            if (this.isPointOctant(child)) {
-              nodesToProcess.push({ node: child, depth: depth + 1 });
-            }
-          });
-        } else {
-          selectedNodes.add(currentNode);
-        }
+        // All icons in this node are far from camera - select as cluster
+        selectedNodes.add(currentNode);
       }
     }
 
     return selectedNodes;
+  }
+
+  /**
+   * Get the diagonal size of a node's bounding box
+   */
+  private getNodeSize(node: Node): number {
+    const size = new Vector3();
+    size.subVectors(node.max, node.min);
+    return size.length();
   }
 
   /**
