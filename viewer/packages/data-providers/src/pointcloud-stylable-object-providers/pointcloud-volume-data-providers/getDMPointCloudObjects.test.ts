@@ -4,66 +4,17 @@
 
 import { Mock, It } from 'moq.ts';
 import { DataModelsSdk } from '../../DataModelsSdk';
-import { getDMPointCloudObjects } from './getDMPointCloudObjects';
+import { ExhaustedQueryResult, getDMPointCloudObjects } from './getDMPointCloudObjects';
 import { CdfDMPointCloudVolumeQuery } from './getDMPointCloudVolumeCollectionQuery';
 import { QueryNextCursors } from '../../types';
 import { isVolumeDMReference } from '../types';
-import type { DMInstanceRef } from '@reveal/utilities';
 
 const VOLUME_LIMIT = 1000;
 const PAGE1_SIZE = 1000;
 const PAGE2_SIZE = 500;
 const TOTAL_VOLUMES = PAGE1_SIZE + PAGE2_SIZE;
 
-/** Mock DMS response shape used by getDMPointCloudObjects (allows volume: number[]). */
-type MockPointCloudVolume = {
-  instanceType: 'node';
-  version: number;
-  space: string;
-  externalId: string;
-  createdTime: number;
-  lastUpdatedTime: number;
-  properties: {
-    cdf_cdm: {
-      'CognitePointCloudVolume/v1': {
-        revisions: unknown[];
-        volumeReferences: unknown[];
-        volumeType: string;
-        volume: number[];
-        object3D: DMInstanceRef;
-      };
-    };
-  };
-};
-
-/** Mock DMS response shape for assets. */
-type MockAsset = {
-  instanceType: 'node';
-  version: number;
-  space: string;
-  externalId: string;
-  createdTime: number;
-  lastUpdatedTime: number;
-  properties: {
-    cdf_cdm: {
-      'CogniteAsset/v1': {
-        name: string;
-        description: string;
-        object3D: DMInstanceRef;
-      };
-    };
-  };
-};
-
-/** Mock page result shape compatible with QueryResult for this query. */
-type MockPageResult = {
-  pointCloudVolumes: MockPointCloudVolume[];
-  object3D: unknown[];
-  assets: MockAsset[];
-  nextCursor?: QueryNextCursors<CdfDMPointCloudVolumeQuery>;
-};
-
-function createVolume(index: number, page: number): MockPointCloudVolume {
+function createVolume(index: number, page: number): ExhaustedQueryResult['pointCloudVolumes'][number] {
   const id = page * VOLUME_LIMIT + index;
   const obj3dId = `obj3d_${id}`;
   return {
@@ -84,10 +35,10 @@ function createVolume(index: number, page: number): MockPointCloudVolume {
         }
       }
     }
-  };
+  } as unknown as ExhaustedQueryResult['pointCloudVolumes'][number];
 }
 
-function createAsset(index: number, page: number): MockAsset {
+function createAsset(index: number, page: number): ExhaustedQueryResult['assets'][number] {
   const id = page * VOLUME_LIMIT + index;
   const obj3dId = `obj3d_${id}`;
   return {
@@ -106,10 +57,10 @@ function createAsset(index: number, page: number): MockAsset {
         }
       }
     }
-  };
+  } satisfies ExhaustedQueryResult['assets'][number];
 }
 
-function createPage(pageNumber: number, size: number): MockPageResult {
+function createPage(pageNumber: number, size: number): ExhaustedQueryResult {
   const volumes = Array.from({ length: size }, (_, i) => createVolume(i, pageNumber));
   const assets = Array.from({ length: size }, (_, i) => createAsset(i, pageNumber));
   const hasMore = pageNumber === 0 && size === VOLUME_LIMIT;
@@ -118,18 +69,16 @@ function createPage(pageNumber: number, size: number): MockPageResult {
     : undefined;
   return {
     pointCloudVolumes: volumes,
-    object3D: [],
     assets,
     ...(nextCursor !== undefined && { nextCursor })
   };
 }
 
-function createMisalignedPage2(): MockPageResult {
+function createMisalignedPage2(): ExhaustedQueryResult {
   const volumes = Array.from({ length: VOLUME_LIMIT }, (_, i) => createVolume(i, 1));
   const assets = [createAsset(0, 1)]; // only first volume has a matching asset
   return {
     pointCloudVolumes: volumes,
-    object3D: [],
     assets
   };
 }
@@ -160,7 +109,7 @@ describe(getDMPointCloudObjects.name, () => {
           )
         )
       )
-      .returns(Promise.resolve(misalignedPage2) as unknown as ReturnType<DataModelsSdk['queryNodesAndEdges']>)
+      .returns(Promise.resolve(misalignedPage2))
       .setup(m =>
         m.queryNodesAndEdges(
           It.IsAny(),
@@ -170,14 +119,14 @@ describe(getDMPointCloudObjects.name, () => {
           )
         )
       )
-      .returns(Promise.resolve(page2) as unknown as ReturnType<DataModelsSdk['queryNodesAndEdges']>)
+      .returns(Promise.resolve(page2))
       .setup(m =>
         m.queryNodesAndEdges(
           It.IsAny(),
           It.Is<QueryNextCursors<CdfDMPointCloudVolumeQuery> | undefined>(c => c === undefined)
         )
       )
-      .returns(Promise.resolve(page1) as unknown as ReturnType<DataModelsSdk['queryNodesAndEdges']>);
+      .returns(Promise.resolve(page1));
 
     const result = await getDMPointCloudObjects(dmsSdkMock.object(), modelIdentifier);
 
@@ -204,7 +153,7 @@ describe(getDMPointCloudObjects.name, () => {
 
     const dmsSdkMock = new Mock<DataModelsSdk>()
       .setup(m => m.queryNodesAndEdges(It.IsAny(), It.IsAny()))
-      .returns(Promise.resolve(singlePage) as unknown as ReturnType<DataModelsSdk['queryNodesAndEdges']>);
+      .returns(Promise.resolve(singlePage));
 
     const result = await getDMPointCloudObjects(dmsSdkMock.object(), modelIdentifier);
 

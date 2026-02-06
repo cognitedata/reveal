@@ -16,7 +16,7 @@ import { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
 
-type ExhaustedQueryResult = {
+export type ExhaustedQueryResult = {
   pointCloudVolumes: QueryResult['pointCloudVolumes'];
   assets: QueryResult['assets'];
 };
