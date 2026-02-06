@@ -2,6 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
+import { jest } from '@jest/globals';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import { Cdf360DataModelsDescriptorProvider } from './Cdf360DataModelsDescriptorProvider';
 import { It, Mock } from 'moq.ts';
@@ -156,20 +157,12 @@ const mock = {
 };
 
 describe(Cdf360DataModelsDescriptorProvider.name, () => {
-  test('MyTest', async () => {
+  test('returns descriptors with externalId for each image', async () => {
     const sdkMock = new Mock<CogniteClient>()
       .setup(instance => instance.post(It.IsAny(), It.IsAny()))
       .returns(Promise.resolve(mock))
       .setup(instance => instance.getBaseUrl())
-      .returns('https://example.com')
-      .setup(instance => instance.files.retrieve(It.IsAny()))
-      .returns(
-        Promise.resolve(
-          mock.data.items.images
-            .map((_, n) => Array.from(Array(6).keys()).map(_ => ({ id: n, mimeType: 'image/jpeg' }) as FileInfo))
-            .flatMap(p => p)
-        )
-      );
+      .returns('https://example.com');
 
     const provider = new Cdf360DataModelsDescriptorProvider(sdkMock.object());
 
@@ -183,5 +176,67 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
     );
 
     expect(descriptors.length).toBe(3);
+  });
+
+  test('file descriptors use externalId instead of fileId', async () => {
+    const sdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.post(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(mock))
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com');
+
+    const provider = new Cdf360DataModelsDescriptorProvider(sdkMock.object());
+
+    const descriptors = await provider.get360ImageDescriptors(
+      {
+        source: 'dm',
+        space: 'test_space',
+        image360CollectionExternalId: 'test_collection'
+      },
+      true
+    );
+
+    expect(descriptors.length).toBe(3);
+
+    const firstDescriptor = descriptors[0];
+    const faceDescriptors = firstDescriptor.imageRevisions[0].faceDescriptors;
+
+    expect(faceDescriptors.length).toBe(6);
+    faceDescriptors.forEach(fd => {
+      expect(fd.externalId).toBeDefined();
+      expect(fd.fileId).toBeUndefined();
+      expect(fd.mimeType).toBe('image/jpeg');
+    });
+
+    const frontFace = faceDescriptors.find(fd => fd.face === 'front');
+    expect(frontFace?.externalId).toBe('test_image_1_Front');
+  });
+
+  test('does not call files.retrieve API', async () => {
+    const filesRetrieveMock = jest.fn<() => Promise<FileInfo[]>>();
+
+    const sdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.post(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(mock))
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com')
+      .setup(instance => instance.files.retrieve(It.IsAny()))
+      .callback(() => {
+        filesRetrieveMock();
+        return Promise.resolve([]);
+      });
+
+    const provider = new Cdf360DataModelsDescriptorProvider(sdkMock.object());
+
+    await provider.get360ImageDescriptors(
+      {
+        source: 'dm',
+        space: 'test_space',
+        image360CollectionExternalId: 'test_collection'
+      },
+      true
+    );
+
+    expect(filesRetrieveMock).not.toHaveBeenCalled();
   });
 });

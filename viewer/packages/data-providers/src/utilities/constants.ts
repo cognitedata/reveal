@@ -57,3 +57,5 @@ export const COGNITE_360_IMAGE_STATION_SOURCE = {
 } as const satisfies ViewReference;
 
 export const MAX_DMS_QUERY_LIMIT = 10000;
+
+export const DEFAULT_360_IMAGE_MIME_TYPE = 'image/jpeg' as const;

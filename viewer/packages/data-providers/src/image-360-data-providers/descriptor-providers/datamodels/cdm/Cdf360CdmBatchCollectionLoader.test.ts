@@ -2,25 +2,19 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, DirectRelationReference, FileInfo } from '@cognite/sdk';
+import { jest } from '@jest/globals';
+import { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
 
-// Extended FileInfo with instanceId for CDM files API response
-interface FileInfoWithInstanceId extends FileInfo {
-  instanceId: DirectRelationReference;
-}
-
 type DmsSdkQueryResult = Awaited<ReturnType<DataModelsSdk['queryNodesAndEdges']>>;
-type FilesRetrieveResponse = FileInfo[];
 
 describe(Cdf360CdmBatchCollectionLoader.name, () => {
   test('should batch multiple collection requests into a single DMS query', async () => {
     const collectionIds = ['collection_1', 'collection_2', 'collection_3'];
     const dmsResponse = createMockDmsResponse(collectionIds);
-    const filesResponse = createMockFilesResponse(collectionIds);
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse, filesResponse);
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse);
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
@@ -76,7 +70,6 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
         images: [],
         stations: []
       },
-      undefined,
       new Error('DMS query failed')
     );
 
@@ -85,22 +78,6 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     await expect(
       batchLoader.getCollectionDescriptors({ externalId: 'test_collection', space: 'test_space' })
     ).rejects.toThrow('DMS query failed');
-  });
-
-  test('should handle file fetching errors gracefully', async () => {
-    const dmsResponse = createMockDmsResponse(['collection_1']);
-    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(
-      dmsResponse,
-      undefined,
-      undefined,
-      new Error('Files API failed')
-    );
-
-    const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
-
-    await expect(
-      batchLoader.getCollectionDescriptors({ externalId: 'collection_1', space: 'test_space' })
-    ).rejects.toThrow();
   });
 
   test('should handle collection not found', async () => {
@@ -121,23 +98,45 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(result).toHaveLength(0);
   });
 
-  function createMockSdk(
-    dmsResponse: DmsSdkQueryResult,
-    filesResponse?: FilesRetrieveResponse,
-    dmsError?: Error,
-    filesError?: Error
-  ) {
-    const filesApiMock = new Mock<CogniteClient['files']>();
+  test('file descriptors use instanceId instead of fileId', async () => {
+    const collectionIds = ['collection_1'];
+    const dmsResponse = createMockDmsResponse(collectionIds);
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse);
 
-    if (filesError) {
-      filesApiMock
-        .setup(instance => instance.retrieve(It.IsAny()))
-        .callback(async () => {
-          throw filesError;
-        });
-    } else if (filesResponse) {
-      filesApiMock.setup(instance => instance.retrieve(It.IsAny())).returns(Promise.resolve(filesResponse));
-    }
+    const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
+
+    const results = await batchLoader.getCollectionDescriptors({
+      externalId: 'collection_1',
+      space: 'test_space'
+    });
+
+    expect(results.length).toBeGreaterThan(0);
+
+    // Verify that file descriptors have instanceId, not fileId
+    const firstDescriptor = results[0];
+    const faceDescriptors = firstDescriptor.imageRevisions[0].faceDescriptors;
+
+    expect(faceDescriptors.length).toBe(6);
+    faceDescriptors.forEach(fd => {
+      expect(fd.instanceId).toBeDefined();
+      expect(fd.instanceId?.space).toBe('test_space');
+      expect(fd.instanceId?.externalId).toBeDefined();
+      expect(fd.fileId).toBeUndefined();
+      expect(fd.mimeType).toBe('image/jpeg');
+    });
+  });
+
+  test('does not call files.retrieve API', async () => {
+    const filesRetrieveMock = jest.fn();
+    const collectionIds = ['collection_1'];
+    const dmsResponse = createMockDmsResponse(collectionIds);
+
+    const filesApiMock = new Mock<CogniteClient['files']>()
+      .setup(instance => instance.retrieve(It.IsAny()))
+      .callback(() => {
+        filesRetrieveMock();
+        return Promise.resolve([]);
+      });
 
     const cogniteSdkMock = new Mock<CogniteClient>()
       .setup(instance => instance.getBaseUrl())
@@ -146,6 +145,28 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       .returns('test-project')
       .setup(instance => instance.files)
       .returns(filesApiMock.object());
+
+    const dmsSdkMock = new Mock<DataModelsSdk>()
+      .setup(instance => instance.queryNodesAndEdges(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(dmsResponse));
+
+    const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
+
+    await batchLoader.getCollectionDescriptors({
+      externalId: 'collection_1',
+      space: 'test_space'
+    });
+
+    // Verify files.retrieve was NOT called (optimization)
+    expect(filesRetrieveMock).not.toHaveBeenCalled();
+  });
+
+  function createMockSdk(dmsResponse: DmsSdkQueryResult, dmsError?: Error) {
+    const cogniteSdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com')
+      .setup(instance => instance.project)
+      .returns('test-project');
 
     const dmsSdkMock = new Mock<DataModelsSdk>();
 
@@ -221,25 +242,5 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       images,
       stations: []
     };
-  }
-
-  function createMockFilesResponse(collectionIds: string[]): FilesRetrieveResponse {
-    const files: FileInfoWithInstanceId[] = collectionIds.flatMap((collectionId, idx) =>
-      Array.from({ length: 2 }, (_, imageIdx) =>
-        ['top', 'back', 'left', 'front', 'right', 'bottom'].map(face => {
-          const fileId = idx * 100 + imageIdx * 10 + face.length;
-          const externalId = `file_${collectionId}_${imageIdx}_${face}`;
-
-          return {
-            id: fileId,
-            name: `${face}.jpg`,
-            mimeType: 'image/jpeg',
-            instanceId: { externalId, space: 'test_space' }
-          } as FileInfoWithInstanceId;
-        })
-      ).flat()
-    );
-
-    return files;
   }
 });
