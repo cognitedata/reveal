@@ -13,7 +13,6 @@ import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import assert from 'assert';
 import { Box3, Vector3, type Raycaster } from 'three';
 import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
@@ -251,11 +250,17 @@ function getAssociatedFaceDescriptor<T extends DataSourceType>(
     return undefined;
   }
 
+  // Match descriptors by internal file ID
+  // Only descriptors with fileId can be matched to annotation.annotatedResourceId
   const fileDescriptors = imageDescriptors.faceDescriptors.filter(
-    desc => desc.fileId === annotation.annotatedResourceId
+    desc => 'fileId' in desc && desc.fileId !== undefined && desc.fileId === annotation.annotatedResourceId
   );
 
-  assert(fileDescriptors.length !== 0);
+  // For descriptors without fileId (using externalId or instanceId),
+  // we can't directly match them to annotations
+  if (fileDescriptors.length === 0) {
+    return undefined;
+  }
 
   return fileDescriptors[0];
 }

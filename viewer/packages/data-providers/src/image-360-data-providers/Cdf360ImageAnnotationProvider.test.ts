@@ -140,6 +140,8 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       .object();
 
     const collection = new Mock<DefaultImage360Collection<ClassicDataSourceType>>()
+      .setup(c => c.sourceId)
+      .returns({ site_id: 'collection-id' })
       .setup(c => c.image360Entities)
       .returns(entities)
       .setup(c => c.getAllFileDescriptors)
@@ -150,9 +152,12 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
   }
 
   describe('findImageAnnotationsForInstance', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     test('returns annotations matching asset ref and image fileIds', async () => {
-      const client = sdkMock;
-      const provider = new Cdf360ImageAnnotationProvider(client);
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
 
       const revision = createMockRevision(10, [matchingAnnotation, nonMatchingAnnotation]);
       const entity = createMockEntity([revision]);
@@ -165,8 +170,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('returns annotations matching instance ref and image fileIds', async () => {
-      const client = sdkMock;
-      const provider = new Cdf360ImageAnnotationProvider(client);
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
 
       const revision = createMockRevision(10, [matchingHybridAnnotation, nonMatchingAnnotation]);
       const entity = createMockEntity([revision]);
@@ -176,6 +180,21 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       assert(results.length === 1);
       expect(results[0].annotation.annotation).toEqual(matchingHybridAnnotation);
+    });
+
+    test('caches results', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+
+      const revision = createMockRevision(10, [matchingHybridAnnotation, nonMatchingAnnotation]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(instanceRef, collection);
+      const results2 = await provider.findImageAnnotationsForInstance(instanceRef, collection);
+
+      assert(results.length === 1);
+      expect(results2).toEqual(results);
+      expect(mockReverseLookup).toHaveBeenCalledTimes(1);
     });
   });
 
