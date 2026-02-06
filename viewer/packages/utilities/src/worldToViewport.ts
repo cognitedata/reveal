@@ -81,5 +81,8 @@ export function getNormalizedPixelCoordinatesBySize(
 
 export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): THREE.Vector2 {
   const { width, height } = domElement.getBoundingClientRect();
+  if (width === 0 || height === 0) {
+    return new THREE.Vector2();
+  }
   return getNormalizedPixelCoordinatesBySize(pixelX, pixelY, width, height);
 }
