@@ -46,7 +46,6 @@ export async function getDMPointCloudObjects(
   };
   const query = getDMPointCloudVolumeCollectionQuery(modelIdentifier.revisionExternalId, modelIdentifier.revisionSpace);
 
-  const assetLimit = query.with.assets.limit;
   const volumeLimit = query.with.pointCloudVolumes.limit;
   let nextCursor: QueryNextCursors<CdfDMPointCloudVolumeQuery> | undefined = undefined;
   let hasNext = true;
@@ -62,10 +61,8 @@ export async function getDMPointCloudObjects(
     result.pointCloudVolumes.push(...pointCloudVolumes);
     result.assets.push(...assets);
 
-    hasNext =
-      (assets.length === assetLimit && currentCursor?.assets !== undefined) ||
-      (pointCloudVolumes.length === volumeLimit && currentCursor?.pointCloudVolumes !== undefined);
-    nextCursor = currentCursor;
+    hasNext = pointCloudVolumes.length === volumeLimit && currentCursor?.pointCloudVolumes !== undefined;
+    nextCursor = currentCursor?.pointCloudVolumes ? { pointCloudVolumes: currentCursor.pointCloudVolumes } : undefined;
   }
 
   const object3DAndAssetPairs: [DMInstanceKey, AssetResult][] = result.assets.map(asset => [
