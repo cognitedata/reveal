@@ -3,7 +3,7 @@
  */
 
 import { jest } from '@jest/globals';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, FileInfo } from '@cognite/sdk';
 import { Cdf360DataModelsDescriptorProvider } from './Cdf360DataModelsDescriptorProvider';
 import { It, Mock } from 'moq.ts';
 
@@ -213,7 +213,7 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
   });
 
   test('does not call files.retrieve API', async () => {
-    const filesRetrieveMock = jest.fn();
+    const filesRetrieveMock = jest.fn<() => Promise<FileInfo[]>>();
 
     const sdkMock = new Mock<CogniteClient>()
       .setup(instance => instance.post(It.IsAny(), It.IsAny()))

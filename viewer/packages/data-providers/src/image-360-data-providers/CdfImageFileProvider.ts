@@ -105,7 +105,23 @@ export class CdfImageFileProvider {
     fileIdentifiers: FileIdentifier[],
     abortSignal?: AbortSignal
   ): Promise<FileDownloadResult[]> {
-    // Separate identifiers into those with internal IDs and those without
+    const { withInternalId, withoutInternalId } = this.partitionIdentifiersByInternalId(fileIdentifiers);
+
+    const resolvedIds = await this.resolveInternalIdsFromDownloadUrls(withoutInternalId, abortSignal);
+
+    const allIds = [...withInternalId, ...resolvedIds];
+    const iconResults = await this.fetchIconsById(
+      allIds.map(item => item.id),
+      abortSignal
+    );
+
+    return this.mergeResultsInOriginalOrder(allIds, iconResults, fileIdentifiers.length);
+  }
+
+  private partitionIdentifiersByInternalId(fileIdentifiers: FileIdentifier[]): {
+    withInternalId: Array<{ index: number; id: number }>;
+    withoutInternalId: Array<{ index: number; identifier: FileIdentifier }>;
+  } {
     const withInternalId: Array<{ index: number; id: number }> = [];
     const withoutInternalId: Array<{ index: number; identifier: FileIdentifier }> = [];
 
@@ -117,43 +133,46 @@ export class CdfImageFileProvider {
       }
     });
 
-    // For files without internal IDs, get download URLs first to extract the IDs
-    let resolvedIds: Array<{ index: number; id: number }> = [];
-    if (withoutInternalId.length > 0) {
-      const downloadLinks = await this.getDownloadUrls(
-        withoutInternalId.map(item => item.identifier),
-        abortSignal
-      );
+    return { withInternalId, withoutInternalId };
+  }
 
-      // Extract internal file IDs from the download URLs
-      resolvedIds = withoutInternalId
-        .map((item, i) => {
-          const fileId = extractFileIdFromDownloadUrl(downloadLinks[i].downloadUrl);
-          if (fileId === undefined) {
-            console.error(
-              `Could not extract internal file ID from download URL for identifier: ${JSON.stringify(item.identifier)}`
-            );
-            return undefined;
-          }
-          return { index: item.index, id: fileId };
-        })
-        .filter((item): item is { index: number; id: number } => item !== undefined);
+  private async resolveInternalIdsFromDownloadUrls(
+    identifiers: Array<{ index: number; identifier: FileIdentifier }>,
+    abortSignal?: AbortSignal
+  ): Promise<Array<{ index: number; id: number }>> {
+    if (identifiers.length === 0) {
+      return [];
     }
 
-    // Combine all IDs and fetch icons
-    const allIds = [...withInternalId, ...resolvedIds];
-    const iconResults = await this.fetchIconsById(
-      allIds.map(item => item.id),
+    const downloadLinks = await this.getDownloadUrls(
+      identifiers.map(item => item.identifier),
       abortSignal
     );
 
-    // Merge results back in original order
-    const results: FileDownloadResult[] = new Array(fileIdentifiers.length);
-    allIds.forEach((item, i) => {
-      results[item.index] = iconResults[i];
-    });
+    return identifiers
+      .map((item, i) => {
+        const fileId = extractFileIdFromDownloadUrl(downloadLinks[i].downloadUrl);
+        if (fileId === undefined) {
+          console.error(
+            `Could not extract internal file ID from download URL for identifier: ${JSON.stringify(item.identifier)}`
+          );
+          return undefined;
+        }
+        return { index: item.index, id: fileId };
+      })
+      .filter((item): item is { index: number; id: number } => item !== undefined);
+  }
 
-    return results;
+  private mergeResultsInOriginalOrder(
+    indexedIds: Array<{ index: number; id: number }>,
+    results: FileDownloadResult[],
+    totalLength: number
+  ): FileDownloadResult[] {
+    const merged: FileDownloadResult[] = new Array(totalLength);
+    indexedIds.forEach((item, i) => {
+      merged[item.index] = results[i];
+    });
+    return merged;
   }
 
   private async fetchIconsById(fileIds: number[], abortSignal?: AbortSignal): Promise<FileDownloadResult[]> {

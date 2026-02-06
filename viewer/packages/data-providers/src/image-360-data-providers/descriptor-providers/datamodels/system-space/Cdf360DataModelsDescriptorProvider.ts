@@ -114,12 +114,36 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private createFileDescriptorsFromImage(image: ImageInstanceResult): Image360FileDescriptor[] {
     const imageProps = image.properties.cdf_360_image_schema['Image360/v1'];
     return [
-      { externalId: imageProps.cubeMapFront as string, face: 'front', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
-      { externalId: imageProps.cubeMapBack as string, face: 'back', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
-      { externalId: imageProps.cubeMapLeft as string, face: 'left', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
-      { externalId: imageProps.cubeMapRight as string, face: 'right', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
-      { externalId: imageProps.cubeMapTop as string, face: 'top', mimeType: DEFAULT_360_IMAGE_MIME_TYPE },
-      { externalId: imageProps.cubeMapBottom as string, face: 'bottom', mimeType: DEFAULT_360_IMAGE_MIME_TYPE }
+      {
+        externalId: getString(imageProps.cubeMapFront),
+        face: 'front',
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      },
+      {
+        externalId: getString(imageProps.cubeMapBack),
+        face: 'back',
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      },
+      {
+        externalId: getString(imageProps.cubeMapLeft),
+        face: 'left',
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      },
+      {
+        externalId: getString(imageProps.cubeMapRight),
+        face: 'right',
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      },
+      {
+        externalId: getString(imageProps.cubeMapTop),
+        face: 'top',
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      },
+      {
+        externalId: getString(imageProps.cubeMapBottom),
+        face: 'bottom',
+        mimeType: DEFAULT_360_IMAGE_MIME_TYPE
+      }
     ];
   }
 
@@ -222,4 +246,14 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       return new Matrix4().makeTranslation(x, z, -y);
     }
   }
+}
+
+/**
+ * Type guard that validates and returns the value as a string, or throws an error.
+ */
+function getString(value: string | number | DMInstanceRef): string {
+  if (typeof value !== 'string') {
+    throw new Error(`${value} must be a string, got ${typeof value}`);
+  }
+  return value;
 }
