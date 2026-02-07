@@ -14,7 +14,8 @@ import {
 } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
+import { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationAppearance } from '../annotation/types';
 
 import {
@@ -25,7 +26,7 @@ import {
   Image360Provider
 } from '@reveal/data-providers';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Matrix4 } from 'three';
+import { Matrix4, Ray } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
 import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
 import { createCollectionIdString } from './createCollectionIdString';
@@ -61,6 +62,12 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
+
+  /**
+   * A map containing the image360Entities by their icon.
+   */
+  private readonly _image360EntitiesMap: Map<Overlay3DIcon, Image360Entity<T>>;
+
   private _isCollectionVisible: boolean;
   private readonly _sourceId: T['image360Identifier'];
   private readonly _collectionLabel: string | undefined;
@@ -123,6 +130,12 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
     this._setNeedsRedraw = setNeedsRedraw;
+
+    // Build icon-to-entity map for O(1) lookups during cluster intersection
+    this._image360EntitiesMap = new Map();
+    for (const entity of entities) {
+      this._image360EntitiesMap.set(entity.icon, entity);
+    }
   }
 
   public getModelTransformation(out?: Matrix4): Matrix4 {
@@ -252,6 +265,70 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
 
   public setCullingScheme(scheme: IconCullingScheme): void {
     this._icons.setCullingScheme(scheme);
+  }
+
+  /**
+   * Get the current cluster distance threshold.
+   * @returns The current distance threshold for clustering
+   */
+  public getClusterDistanceThreshold(): number {
+    return this._icons.getClusterDistanceThreshold();
+  }
+
+  /**
+   * Set the cluster distance threshold.
+   * @param threshold - The new distance threshold (default: 100)
+   */
+  public setClusterDistanceThreshold(threshold: number): void {
+    this._icons.setClusterDistanceThreshold(threshold);
+  }
+
+  /**
+   * Get the current maximum octree depth for clustering.
+   * @returns The current max depth, or undefined if no limit
+   */
+  public getMaxOctreeDepth(): number | undefined {
+    return this._icons.getMaxOctreeDepth();
+  }
+
+  /**
+   * Set the maximum octree depth for clustering.
+   * @param depth - The new max depth
+   */
+  public setMaxOctreeDepth(depth: number | undefined): void {
+    this._icons.setMaxOctreeDepth(depth);
+  }
+
+  /**
+   * Check if HTML cluster rendering is enabled.
+   * @returns true if HTML clusters are enabled
+   */
+  public isHtmlClustersEnabled(): boolean {
+    return this._icons.isHtmlClustersEnabled();
+  }
+
+  public intersectCluster(ray: Ray): ClusterIntersectionData | undefined {
+    return this._icons.intersectCluster(ray);
+  }
+
+  /**
+   * Get entities corresponding to the given icons using map lookups.
+   * @param icons - Array of Overlay3DIcon to look up
+   * @returns Array of Image360Entity corresponding to the icons
+   */
+  public getEntitiesFromIcons(icons: Overlay3DIcon[]): Image360Entity<T>[] {
+    const entities: Image360Entity<T>[] = [];
+    for (const icon of icons) {
+      const entity = this._image360EntitiesMap.get(icon);
+      if (entity !== undefined) {
+        entities.push(entity);
+      }
+    }
+    return entities;
+  }
+
+  public clearHoveredCluster(): void {
+    this._icons.clearHoveredCluster();
   }
 
   public remove(entity: Image360Entity<T>): void {

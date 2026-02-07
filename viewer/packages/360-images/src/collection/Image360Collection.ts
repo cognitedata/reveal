@@ -190,6 +190,36 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   setIconsOpacity(opacity: number): void;
 
   /**
+   * Get the current cluster distance threshold.
+   * @returns The current distance threshold for clustering
+   */
+  getClusterDistanceThreshold(): number;
+
+  /**
+   * Set the cluster distance threshold.
+   * @param threshold - The new distance threshold
+   */
+  setClusterDistanceThreshold(threshold: number): void;
+
+  /**
+   * Get the current maximum octree depth for clustering.
+   * @returns The current max depth, or undefined if no limit
+   */
+  getMaxOctreeDepth(): number | undefined;
+
+  /**
+   * Set the maximum octree depth for clustering.
+   * @param depth - The new max depth
+   */
+  setMaxOctreeDepth(depth: number | undefined): void;
+
+  /**
+   * Check if HTML cluster rendering is enabled.
+   * @returns true if HTML clusters are enabled
+   */
+  isHtmlClustersEnabled(): boolean;
+
+  /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.
