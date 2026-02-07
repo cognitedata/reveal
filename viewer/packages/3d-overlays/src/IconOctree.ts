@@ -133,7 +133,6 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
   /**
    * Get LOD nodes based purely on camera distance.
    * This provides consistent behavior regardless of view angle.
-   *
    * @param cameraPosition - Camera position in model space
    * @param distanceThreshold - Distance from camera within which all icons are shown (no clustering)
    * @param clusteringLevel - The octree level at which to cluster far icons (higher = finer clusters)
@@ -153,8 +152,8 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
 
     const nodesToProcess: Array<{ node: Node; depth: number }> = [{ node: root, depth: 0 }];
 
-    for (let i = 0; i < nodesToProcess.length; i++) {
-      const { node: currentNode, depth } = nodesToProcess[i];
+    for (const element of nodesToProcess) {
+      const { node: currentNode, depth } = element;
 
       if (!this.isPointOctant(currentNode)) {
         continue;
@@ -191,9 +190,89 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
   }
 
   /**
+   * Get LOD nodes based on camera distance with enhanced clustering for pure cluster visualization.
+   * Uses node size awareness and max depth control for better cluster granularity.
+   * @param cameraPosition - Camera position for distance calculation
+   * @param distanceThreshold - Distance threshold for "close" icons
+   * @param maxOctreeDepth - Maximum octree depth to expand to (controls cluster granularity)
+   * @returns Set of PointOctant nodes selected for LOD based on camera distance
+   */
+  public getLODByDistanceWithClustering(
+    cameraPosition: Vector3 | undefined,
+    distanceThreshold: number,
+    maxOctreeDepth?: number
+  ): Set<PointOctant<Overlay3DIcon>> {
+    const root = this.findNodesByLevel(0)[0];
+    const selectedNodes = new Set<PointOctant<Overlay3DIcon>>();
+
+    if (!this._nodeCenters.has(root)) {
+      return selectedNodes;
+    }
+
+    const nodesToProcess: Node[] = [root];
+
+    for (const element of nodesToProcess) {
+      const currentNode = element;
+
+      if (!this.isPointOctant(currentNode)) {
+        continue;
+      }
+
+      if (!this.hasChildren(currentNode) && this.hasData(currentNode)) {
+        selectedNodes.add(currentNode);
+        continue;
+      }
+
+      const nodeSize = this.getNodeSize(currentNode);
+      const nodeDistanceThreshold = distanceThreshold + nodeSize;
+      const hasIconsWithinDistance =
+        cameraPosition === undefined || this.isNodeWithinDistance(currentNode, cameraPosition, nodeDistanceThreshold);
+
+      const nodeMetadata = this._nodeCenters.get(currentNode);
+      const currentLevel = nodeMetadata?.level ?? 0;
+
+      // If the node is at the maximum depth, it will not be expanded further
+      const isAtMaxDepth = maxOctreeDepth !== undefined && currentLevel >= maxOctreeDepth;
+
+      const isCameraCloseToNode =
+        cameraPosition !== undefined && this.isNodeWithinDistance(currentNode, cameraPosition, distanceThreshold);
+
+      if (isCameraCloseToNode) {
+        if (currentNode.children) {
+          for (const child of currentNode.children) {
+            if (this.isPointOctant(child)) {
+              nodesToProcess.push(child);
+            }
+          }
+        } else {
+          selectedNodes.add(currentNode);
+        }
+      } else if (hasIconsWithinDistance && !isAtMaxDepth) {
+        currentNode.children?.forEach(child => {
+          if (this.isPointOctant(child)) {
+            nodesToProcess.push(child);
+          }
+        });
+      } else {
+        selectedNodes.add(currentNode);
+      }
+    }
+
+    return selectedNodes;
+  }
+
+  /**
+   * Get the diagonal size of a node's bounding box
+   */
+  private getNodeSize(node: Node): number {
+    const size = new Vector3();
+    size.subVectors(node.max, node.min);
+    return size.length();
+  }
+
+  /**
    * Get all icons from a node's subtree that are within the given distance from a point.
    * Also returns the representative icon if no close icons are found (for clustering).
-   *
    * @param node - The octree node to get icons from
    * @param cameraPosition - Camera position for distance calculation
    * @param distanceThreshold - Distance threshold for "close" icons
