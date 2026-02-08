@@ -58,7 +58,7 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotation
 }
 
 // @beta
-export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | Image360IconIntersection<T> | CustomObjectIntersection;
+export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | Image360IconIntersection<T> | Image360ClusterIntersection<T> | CustomObjectIntersection;
 
 // @public
 export interface AreaCollection {
@@ -1308,6 +1308,16 @@ export type Image360AnnotationIntersection<T extends DataSourceType = ClassicDat
 export type Image360BaseIdentifier = {
     space: string;
     image360CollectionExternalId: string;
+};
+
+// @public
+export type Image360ClusterIntersection<T extends DataSourceType = DataSourceType> = {
+    type: 'image360Cluster';
+    image360Collection: Image360Collection<T>;
+    clusterPosition: Vector3;
+    clusterSize: number;
+    clusterIcons: Image360<T>[];
+    distanceToCamera: number;
 };
 
 // @public
