@@ -1310,7 +1310,7 @@ export type Image360BaseIdentifier = {
     image360CollectionExternalId: string;
 };
 
-// @public
+// @beta
 export type Image360ClusterIntersection<T extends DataSourceType = DataSourceType> = {
     type: 'image360Cluster';
     image360Collection: Image360Collection<T>;
