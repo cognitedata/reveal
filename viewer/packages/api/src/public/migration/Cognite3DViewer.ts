@@ -48,8 +48,7 @@ import {
   RenderParameters,
   AnyIntersection,
   AddModelOptions,
-  Image360IconIntersection,
-  Image360ClusterIntersection
+  Image360IconIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -1663,12 +1662,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>> {
-    const pixelCoords = new THREE.Vector2(offsetX, offsetY);
-    // Check cluster intersection first (clusters have priority over geometry)
-    if (this.intersect360Clusters(pixelCoords) !== undefined) {
-      return null;
-    }
-    if (this.intersect360Icons(pixelCoords) !== undefined) {
+    if (this.intersect360Icons(new THREE.Vector2(offsetX, offsetY)) !== undefined) {
       return null;
     }
     return this.intersectModels(offsetX, offsetY) as Promise<Intersection<DataSourceT> | null>;
@@ -1691,12 +1685,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       predicate?: (customObject: ICustomObject) => boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
-    // Check cluster intersection first (clusters have priority)
-    const image360ClusterIntersection = this.intersect360Clusters(pixelCoords);
-    if (image360ClusterIntersection !== undefined) {
-      return image360ClusterIntersection;
-    }
-
     const image360IconIntersection = this.intersect360Icons(pixelCoords);
     if (image360IconIntersection !== undefined) {
       return image360IconIntersection;
@@ -1768,18 +1756,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return {
       type: 'image360Icon',
       ...iconIntersection
-    };
-  }
-
-  private intersect360Clusters(vector: THREE.Vector2): Image360ClusterIntersection<DataSourceT> | undefined {
-    const clusterIntersection = this._image360ApiHelper?.intersect360ImageClusters(vector.x, vector.y);
-    if (clusterIntersection === undefined) {
-      return undefined;
-    }
-
-    return {
-      type: 'image360Cluster',
-      ...clusterIntersection
     };
   }
 
@@ -2024,13 +2000,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return {
         intersection,
         pickedBoundingBox: pickBoundingBox ? await getBoundingBox(intersection) : undefined,
-        modelsBoundingBox: this.getSceneBoundingBox()
-      };
-    }
-    if (intersection.type === 'image360Cluster') {
-      return {
-        intersection: null,
-        pickedBoundingBox: undefined,
         modelsBoundingBox: this.getSceneBoundingBox()
       };
     }
