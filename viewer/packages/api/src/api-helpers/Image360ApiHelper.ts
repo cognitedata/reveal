@@ -18,6 +18,7 @@ import {
   Image360AnnotationFilterOptions,
   Image360CollectionSourceType,
   Image360IconIntersectionData,
+  Image360ClusterIntersectionData,
   Image360History,
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
@@ -56,6 +57,7 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
+import { moveCameraPositionAndTargetTo } from '@reveal/camera-manager/src/Flexible/moveCamera';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -606,6 +608,14 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (this._transitionInProgress) {
       return Promise.resolve(false);
     }
+
+    // First, check for cluster intersection
+    const clusterIntersection = this.intersect360ImageClusters(event.offsetX, event.offsetY);
+    if (clusterIntersection !== undefined) {
+      return this.zoomToCluster(clusterIntersection);
+    }
+
+    // Fall back to individual icon intersection
     const intersection = this.intersect360ImageIcons(event.offsetX, event.offsetY);
     if (intersection === undefined) {
       return Promise.resolve(false);
@@ -622,6 +632,64 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
+  }
+
+  /**
+   * Intersect with cluster icons at the given screen position.
+   * @param offsetX - X offset in pixels from the DOM element
+   * @param offsetY - Y offset in pixels from the DOM element
+   * @returns Cluster intersection data if a cluster is hit, undefined otherwise
+   */
+  public intersect360ImageClusters(
+    offsetX: number,
+    offsetY: number
+  ): Image360ClusterIntersectionData<DataSourceT> | undefined {
+    const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
+    return this._image360Facade.intersectCluster(
+      new Vector2(ndcCoordinates.x, ndcCoordinates.y),
+      this._activeCameraManager.getCamera()
+    );
+  }
+
+  /**
+   * Zoom the camera toward a cluster position.
+   * The camera moves to a position nearby the cluster centroid (not exactly at it)
+   * so that the cluster icons become visible and expand.
+   * @param clusterData - The cluster intersection data
+   * @returns Promise that resolves to true when the zoom is complete
+   */
+  public async zoomToCluster(clusterData: Image360ClusterIntersectionData<DataSourceT>): Promise<boolean> {
+    if (this._transitionInProgress) {
+      return false;
+    }
+
+    this._transitionInProgress = true;
+    const transitionDuration = 800;
+
+    const camera = this._activeCameraManager.getCamera();
+    const currentPosition = camera.position.clone();
+    const clusterPosition = clusterData.clusterPosition.clone();
+
+    // Calculate direction from camera to cluster
+    const directionToCluster = new Vector3().subVectors(clusterPosition, currentPosition).normalize();
+    const distanceToCluster = currentPosition.distanceTo(clusterPosition);
+
+    // Calculate target position: move toward the cluster but stop at a fraction of the distance
+    const targetDistance = Math.max(distanceToCluster * 0.3, 5);
+    const targetPosition = clusterPosition.clone().sub(directionToCluster.multiplyScalar(targetDistance));
+
+    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+    if (flexibleCameraManager) {
+      moveCameraPositionAndTargetTo(flexibleCameraManager, targetPosition, clusterPosition, transitionDuration);
+      await new Promise(resolve => setTimeout(resolve, transitionDuration));
+    } else if (this._stationaryCameraManager) {
+      await this._stationaryCameraManager.moveTo(targetPosition, transitionDuration);
+    }
+
+    this._transitionInProgress = false;
+    this._needsRedraw = true;
+
+    return true;
   }
 
   public intersect360ImageAnnotations(
