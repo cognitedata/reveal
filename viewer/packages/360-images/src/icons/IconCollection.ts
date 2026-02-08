@@ -443,6 +443,10 @@ export class IconCollection {
    * @param visibleClusters - The visible clustered icons
    * @param iconSprites - The icon sprites to use for rendering
    * @param params - The parameters for the rendering
+   * @param params.renderer - The WebGL renderer
+   * @param params.camera - The perspective camera
+   * @param params.modelTransform - The model transform matrix
+   * @param params.hoveredClusterIcon - The currently hovered cluster icon, if any
    */
   private updateClusterRendering(
     visibleClusters: ClusteredIcon[],
