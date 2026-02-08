@@ -1320,14 +1320,17 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     getAnnotationsInfo(source: 'assets' | 'hybrid' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[] | AssetHybridAnnotationImage360Info[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
+    getClusterDistanceThreshold(): number;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     getIconsOpacity(): number;
     getIconsVisibility(): boolean;
     getImagesOpacity(): number;
+    getMaxOctreeDepth(): number | undefined;
     getModelTransformation(out?: Matrix4): Matrix4;
     // @deprecated
     readonly id: string;
     readonly image360Entities: Image360<T>[];
+    isHtmlClustersEnabled(): boolean;
     isOccludedIconsVisible(): boolean;
     readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
@@ -1337,10 +1340,12 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setClusterDistanceThreshold(threshold: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
     setIconsOpacity(opacity: number): void;
     setIconsVisibility(visible: boolean): void;
     setImagesOpacity(opacity: number): void;
+    setMaxOctreeDepth(depth: number | undefined): void;
     setModelTransformation(matrix: Matrix4): void;
     setOccludedIconsVisible(visible: boolean): void;
     readonly sourceId: T['image360Identifier'];
