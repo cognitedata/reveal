@@ -58,6 +58,7 @@ const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
           }
         ]
       },
+      object3D: { sources: [] },
       assets: {
         sources: [
           {
