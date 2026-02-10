@@ -142,7 +142,7 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
   public getLODByDistance(
     cameraPosition: Vector3 | undefined,
     distanceThreshold: number,
-    clusteringLevel = 2
+    clusteringLevel: number = 2
   ): Set<PointOctant<Overlay3DIcon>> {
     const root = this.findNodesByLevel(0)[0];
     const selectedNodes = new Set<PointOctant<Overlay3DIcon>>();
