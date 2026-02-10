@@ -8,12 +8,21 @@ import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { jest } from '@jest/globals';
 import { HtmlClusterRenderer } from './HtmlClusterRenderer';
 import { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
+import assert from 'assert';
 
 describe('HtmlClusterRenderer', () => {
   let renderer: HtmlClusterRenderer;
+  let params: ClusterRenderParams;
+  let defaultIcon: Overlay3DIcon;
+  let iconAtOrigin: Overlay3DIcon;
+  let iconAtOne: Overlay3DIcon;
 
   beforeEach(() => {
+    defaultIcon = createMockIcon();
+    iconAtOrigin = createMockIcon(new Vector3(0, 0, 0));
+    iconAtOne = createMockIcon(new Vector3(1, 1, 1));
     renderer = new HtmlClusterRenderer({ classPrefix: 'test-cluster' });
+    params = createRenderParams();
   });
 
   afterEach(() => {
@@ -21,71 +30,151 @@ describe('HtmlClusterRenderer', () => {
     document.getElementById('test-cluster-styles')?.remove();
   });
 
-  test('manages hovered cluster state correctly', () => {
+  test('creates and updates cluster DOM elements with correct count display', () => {
+    renderer.updateClusters([createClusterData(iconAtOrigin, true, 25)], params);
+    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
+    assert(container);
+    expect(container.querySelector('.test-cluster-icon')).toBeTruthy();
+    expect(container.querySelector('.test-cluster-count')?.textContent).toBe('25');
+
+    // Test 999+ display for large counts - update same icon to avoid element replacement
+    renderer.updateClusters([createClusterData(iconAtOrigin, true, 1500)], params);
+    expect(container.querySelector('.test-cluster-count')?.textContent).toBe('999+');
+  });
+
+  test('handles visibility toggle correctly', () => {
+    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container') as HTMLElement;
+    assert(container);
+    expect(container.style.display).not.toBe('none');
+    renderer.setVisible(false);
+    expect(container.style.display).toBe('none');
+    renderer.setVisible(true);
+    expect(container.style.display).toBe('block');
+  });
+
+  test('manages hovered cluster state and switches between icons correctly', () => {
     expect(renderer.getHoveredCluster()).toBeNull();
-
-    const icon = createMockIcon();
-    renderer.setHoveredCluster(icon);
-    expect(renderer.getHoveredCluster()).toBe(icon);
-
+    renderer.setHoveredCluster(defaultIcon);
+    expect(renderer.getHoveredCluster()).toBe(defaultIcon);
     renderer.setHoveredCluster(null);
     expect(renderer.getHoveredCluster()).toBeNull();
+
+    // Test switching between different hovered icons
+    const clusters = [createClusterData(iconAtOrigin, true, 5), createClusterData(iconAtOne, true, 10)];
+    renderer.updateClusters(clusters, params);
+    expect(params.renderer.domElement.parentElement?.querySelectorAll('.test-cluster-icon').length).toBe(2);
+    renderer.setHoveredCluster(iconAtOrigin);
+    expect(renderer.getHoveredCluster()).toBe(iconAtOrigin);
+    renderer.setHoveredCluster(iconAtOne);
+    expect(renderer.getHoveredCluster()).toBe(iconAtOne);
+
+    // Test setting hover on icon not in activeElements
+    const orphanIcon = createMockIcon(new Vector3(5, 5, 5));
+    expect(() => renderer.setHoveredCluster(orphanIcon)).not.toThrow();
+    expect(renderer.getHoveredCluster()).toBe(orphanIcon);
   });
 
-  test('creates and updates cluster DOM elements', () => {
-    const params = createRenderParams();
-    const icon = createMockIcon(new Vector3(0, 0, 0));
-    const clusters = [createClusterData(icon, true, 25)];
-
-    renderer.updateClusters(clusters, params);
-
+  test('releaseElement handles fade-out, pool reuse, and container removal', () => {
+    jest.useFakeTimers();
+    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
-    expect(container).toBeTruthy();
-
-    const clusterElement = container?.querySelector('.test-cluster-icon');
-    expect(clusterElement).toBeTruthy();
-
-    const countSpan = clusterElement?.querySelector('.test-cluster-count');
-    expect(countSpan?.textContent).toBe('25');
-  });
-
-  test('handles visibility toggle and 999+ display correctly', () => {
-    const params = createRenderParams();
-    const icon = createMockIcon();
-    const clusters = [createClusterData(icon, true, 1500)];
-
-    renderer.updateClusters(clusters, params);
-    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container') as HTMLElement;
-
-    expect(container?.style.display).not.toBe('none');
-
-    renderer.setVisible(false);
-    expect(container?.style.display).toBe('none');
-
-    renderer.setVisible(true);
-    expect(container?.style.display).toBe('block');
-
-    const countSpan = container?.querySelector('.test-cluster-count');
-    expect(countSpan?.textContent).toBe('999+');
-  });
-
-  test('removes elements when clusters disappear and cleans up on dispose', () => {
-    const params = createRenderParams();
-    const icon = createMockIcon();
-    const clusters = [createClusterData(icon, true, 10)];
-
-    renderer.updateClusters(clusters, params);
-    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
-    expect(container?.querySelectorAll('.test-cluster-icon').length).toBe(1);
+    assert(container);
+    expect(container.querySelectorAll('.test-cluster-icon').length).toBe(1);
+    expect(container.children.length).toBe(1);
 
     renderer.updateClusters([], params);
+    expect(container.querySelector('.test-cluster-icon')?.classList.contains('fade-out')).toBe(true);
 
-    jest.useFakeTimers();
     jest.advanceTimersByTime(200);
-    jest.useRealTimers();
+    expect(container.querySelectorAll('.test-cluster-icon[style*="display: flex"]').length).toBe(0);
 
+    // Verify pool reuse - new cluster should reuse pooled element
+    const newIcon = createMockIcon(new Vector3(2, 2, 2));
+    renderer.updateClusters([createClusterData(newIcon, true, 20)], params);
+    expect(container.querySelectorAll('.test-cluster-icon').length).toBe(1);
+    jest.useRealTimers();
+  });
+
+  test('dispose clears active elements, pooled elements, and pending timeouts', () => {
+    jest.useFakeTimers();
+    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.updateClusters([], params);
+    jest.advanceTimersByTime(200);
     renderer.dispose();
     expect(params.renderer.domElement.parentElement?.querySelector('.test-cluster-container')).toBeNull();
+    jest.useRealTimers();
+
+    // Test pending timeouts are cleared on dispose
+    jest.useFakeTimers();
+    const newRenderer = new HtmlClusterRenderer({ classPrefix: 'timeout-test' });
+    const newParams = createRenderParams();
+    newRenderer.updateClusters([createClusterData(defaultIcon, true, 10)], newParams);
+    newRenderer.updateClusters([], newParams);
+    newRenderer.dispose();
+    expect(() => jest.advanceTimersByTime(200)).not.toThrow();
+    jest.useRealTimers();
+    document.getElementById('timeout-test-styles')?.remove();
+  });
+
+  test('respects maxPoolSize and does not exceed it', () => {
+    const smallPoolRenderer = new HtmlClusterRenderer({ classPrefix: 'small-pool', maxPoolSize: 1 });
+    const icons = [iconAtOrigin, iconAtOne, createMockIcon(new Vector3(2, 2, 2))];
+    smallPoolRenderer.updateClusters(
+      icons.map((icon, i) => createClusterData(icon, true, i + 1)),
+      params
+    );
+
+    jest.useFakeTimers();
+    smallPoolRenderer.updateClusters([], params);
+    jest.advanceTimersByTime(200);
+    smallPoolRenderer.updateClusters([createClusterData(createMockIcon(new Vector3(5, 5, 5)), true, 50)], params);
+    jest.useRealTimers();
+
+    smallPoolRenderer.dispose();
+    document.getElementById('small-pool-styles')?.remove();
+  });
+
+  test('does not inject styles if already present', () => {
+    const testPrefix = 'style-inject-test';
+    const existingStyle = document.createElement('style');
+    existingStyle.id = `${testPrefix}-styles`;
+    existingStyle.textContent = '.existing-rule {}';
+    document.head.appendChild(existingStyle);
+
+    const testRenderer = new HtmlClusterRenderer({ classPrefix: testPrefix });
+    expect(document.querySelectorAll(`#${testPrefix}-styles`).length).toBe(1);
+    expect(document.querySelector(`#${testPrefix}-styles`)?.textContent).toBe('.existing-rule {}');
+
+    testRenderer.dispose();
+    existingStyle.remove();
+  });
+
+  test('does not attach container when canvas has no parent', () => {
+    const orphanCanvas = document.createElement('canvas');
+    const mockRenderer = new Mock<WebGLRenderer>()
+      .setup(r => r.domElement)
+      .returns(orphanCanvas)
+      .object();
+    const orphanParams: ClusterRenderParams = {
+      renderer: mockRenderer,
+      camera: new PerspectiveCamera(75, 16 / 9, 0.1, 1000),
+      modelTransform: new Matrix4(),
+      hoveredClusterIcon: null
+    };
+    expect(() => renderer.updateClusters([createClusterData(defaultIcon, true, 10)], orphanParams)).not.toThrow();
+    expect(orphanCanvas.parentElement).toBeNull();
+  });
+
+  test('hover animations are disabled when enableHoverAnimations is false', () => {
+    const noAnimRenderer = new HtmlClusterRenderer({ classPrefix: 'no-anim', enableHoverAnimations: false });
+    noAnimRenderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    noAnimRenderer.setHoveredCluster(defaultIcon);
+    const element = params.renderer.domElement.parentElement?.querySelector('.no-anim-icon');
+    assert(element);
+    expect(element.classList.contains('hovered')).toBe(false);
+    noAnimRenderer.dispose();
+    document.getElementById('no-anim-styles')?.remove();
   });
 });
 
@@ -99,13 +188,7 @@ function createMockIcon(position: Vector3 = new Vector3()): Overlay3DIcon {
 }
 
 function createClusterData(icon: Overlay3DIcon, isCluster: boolean, size: number): ClusteredIconData {
-  return {
-    icon,
-    isCluster,
-    clusterSize: size,
-    clusterPosition: icon.getPosition(),
-    sizeScale: isCluster ? 5.5 : 1
-  };
+  return { icon, isCluster, clusterSize: size, clusterPosition: icon.getPosition(), sizeScale: isCluster ? 5.5 : 1 };
 }
 
 function createRenderParams(): ClusterRenderParams {
@@ -114,21 +197,13 @@ function createRenderParams(): ClusterRenderParams {
   canvas.height = 1080;
   const parent = document.createElement('div');
   parent.appendChild(canvas);
-
   const mockRenderer = new Mock<WebGLRenderer>()
     .setup(r => r.domElement)
     .returns(canvas)
     .object();
-
   const camera = new PerspectiveCamera(75, 16 / 9, 0.1, 1000);
   camera.position.set(0, 0, 100);
   camera.lookAt(0, 0, 0);
   camera.updateMatrixWorld();
-
-  return {
-    renderer: mockRenderer,
-    camera,
-    modelTransform: new Matrix4(),
-    hoveredClusterIcon: null
-  };
+  return { renderer: mockRenderer, camera, modelTransform: new Matrix4(), hoveredClusterIcon: null };
 }

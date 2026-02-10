@@ -111,6 +111,12 @@ describe(IconOctree.name, () => {
       // Camera close to icons at 0.1 position - those should not be clustered
       const closeResult = octree.getLODByDistance(positions[3], 2);
       expect(closeResult.size).toBe(testIcons.length);
+
+      // Test custom clusteringLevel: higher level = finer clusters (more nodes)
+      const farCameraPos = new Vector3(10, 10, 10);
+      const coarseClusterResult = octree.getLODByDistance(farCameraPos, 0.3, 1);
+      const fineClusterResult = octree.getLODByDistance(farCameraPos, 0.3, 3);
+      expect(coarseClusterResult.size).toBeLessThan(fineClusterResult.size);
     });
 
     test('Moving camera changes which icons are clustered', () => {
