@@ -15,6 +15,13 @@ import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
 import { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
 import { ClosestGeometryFinder } from '@reveal/utilities';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
+
+type ClusterHoverCandidate<T extends DataSourceType> = {
+  collection: DefaultImage360Collection<T>;
+  representativeIcon: Overlay3DIcon;
+  intersectionData?: Image360ClusterIntersectionData<T>;
+};
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
@@ -181,14 +188,14 @@ export class Image360Facade<T extends DataSourceType> {
   /**
    * Update cluster hover state based on mouse position.
    * This is called automatically by intersect() but can also be called directly.
+   * Finds the closest cluster across all collections and sets hover state only on that one.
    */
   private updateClusterHoverState(coords: Vector2, camera: Camera): void {
     const modelMatrix = new Matrix4();
     const invModelMatrix = new Matrix4();
+    const closestFinder = new ClosestGeometryFinder<ClusterHoverCandidate<T>>(camera.position);
 
-    // Clear all hover states first to ensure clean state
-    this.clearHoveredClusters();
-
+    // First pass: find all intersections and determine the closest one
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
@@ -199,15 +206,27 @@ export class Image360Facade<T extends DataSourceType> {
 
       const clusterData = collection.intersectCluster(modelRay);
       if (clusterData) {
-        // Hover state is set inside intersectCluster()
-        // Only one cluster can be hovered at a time, so break after finding one
-        break;
+        const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
+        closestFinder.addLazy(worldPosition, () => ({
+          collection,
+          representativeIcon: clusterData.representativeIcon
+        }));
       }
+    }
+
+    // Clear all hover states first to ensure clean state
+    this.clearHoveredClusters();
+
+    // Set hover only on the closest cluster's collection
+    const closestTarget = closestFinder.getClosestGeometry();
+    if (closestTarget) {
+      closestTarget.collection.setHoveredClusterIcon(closestTarget.representativeIcon);
     }
   }
 
   /**
    * Intersect with cluster icons. Returns cluster data if a cluster is hit.
+   * Also updates hover state to highlight only the closest cluster.
    * @param coords - Normalized screen coordinates (-1 to 1)
    * @param camera - The camera used for the intersection
    * @returns Cluster intersection data if a cluster is hit, undefined otherwise
@@ -215,7 +234,7 @@ export class Image360Facade<T extends DataSourceType> {
   public intersectCluster(coords: Vector2, camera: Camera): Image360ClusterIntersectionData<T> | undefined {
     const modelMatrix = new Matrix4();
     const invModelMatrix = new Matrix4();
-    const closestFinder = new ClosestGeometryFinder<Image360ClusterIntersectionData<T>>(camera.position);
+    const closestFinder = new ClosestGeometryFinder<ClusterHoverCandidate<T>>(camera.position);
 
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
@@ -232,19 +251,31 @@ export class Image360Facade<T extends DataSourceType> {
         // Get the image360Entities from the icons
         const clusterEntities = collection.getEntitiesFromIcons(clusterData.clusterIcons);
 
-        closestFinder.addLazy(worldPosition, () => {
-          return {
+        closestFinder.addLazy(worldPosition, () => ({
+          intersectionData: {
             image360Collection: collection,
             clusterPosition: worldPosition,
             clusterSize: clusterData.clusterSize,
             clusterIcons: clusterEntities,
             distanceToCamera: closestFinder.minDistance
-          };
-        });
+          },
+          collection,
+          representativeIcon: clusterData.representativeIcon
+        }));
       }
     }
 
-    return closestFinder.getClosestGeometry();
+    const closestCandidate = closestFinder.getClosestGeometry();
+
+    this.clearHoveredClusters();
+
+    // Set hover state only on the closest cluster
+    if (closestCandidate) {
+      closestCandidate.collection.setHoveredClusterIcon(closestCandidate.representativeIcon);
+      return closestCandidate.intersectionData;
+    }
+
+    return undefined;
   }
 
   /**
