@@ -87,9 +87,9 @@ export class IconCollection {
   // Feature flag: enable HTML cluster rendering with count display
   private readonly _enableHtmlClusters: boolean;
   // Clustering distance threshold - controls when to expand vs cluster based on distance
-  private _clusterDistanceThreshold: number = 15;
+  private _clusterDistanceThreshold: number = 25;
   // Maximum octree depth - limits how deep we expand, creating larger clusters
-  private _maxOctreeDepth: number | undefined = 5;
+  private _maxOctreeDepth: number | undefined = 3;
 
   get icons(): Overlay3DIcon[] {
     return this._icons;
@@ -227,8 +227,6 @@ export class IconCollection {
   /**
    * Intersect a ray with visible clusters. Returns cluster data if a cluster is hit.
    * Only works when HTML clusters are enabled.
-   * This is a pure function that does not modify hover state. Use setHoveredClusterIcon()
-   * to explicitly set hover state after determining which cluster should be hovered.
    * @param ray - Ray in model space (ray.origin is camera position in model space)
    * @returns ClusterIntersectionData if a cluster is hit, undefined otherwise
    */
@@ -241,6 +239,7 @@ export class IconCollection {
 
     let closestDistance = Infinity;
     let closestCluster: ClusterIntersectionData | undefined;
+    let newHoveredIcon: Overlay3DIcon | null = null;
 
     const cameraPosition = ray.origin;
 
@@ -278,8 +277,20 @@ export class IconCollection {
             clusterIcons: item.clusterIcons ?? [],
             representativeIcon: item.icon
           };
+          newHoveredIcon = item.icon;
         }
       }
+    }
+
+    // Check if hover state changed and trigger redraw if needed
+    const hoverStateChanged = this._hoveredClusterIcon !== newHoveredIcon;
+    this._hoveredClusterIcon = newHoveredIcon;
+    if (this._htmlRenderer) {
+      this._htmlRenderer.setHoveredCluster(newHoveredIcon);
+    }
+
+    if (hoverStateChanged && this._setNeedsRedraw) {
+      this._setNeedsRedraw();
     }
 
     return closestCluster;

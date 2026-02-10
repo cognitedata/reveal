@@ -277,7 +277,7 @@ describe(IconCollection.name, () => {
       collection.dispose();
     });
 
-    test('intersectCluster is a pure function that does not mutate hover state', () => {
+    test('hover state changes trigger redraw correctly', () => {
       const setNeedsRedrawMock = jest.fn();
       const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
       const cameraPosition = new Vector3(0, 25, 25);
@@ -287,42 +287,26 @@ describe(IconCollection.name, () => {
       const targetCluster = clusters[0];
       const rayDir = targetCluster.clusterPosition.clone().sub(cameraPosition).normalize();
       const hitRay = new Ray(cameraPosition, rayDir);
+      const missRay = new Ray(cameraPosition, new Vector3(0, 0, 1).normalize());
 
+      // First hit - triggers redraw
       setNeedsRedrawMock.mockClear();
-      const result = collection.intersectCluster(hitRay);
-      expect(result).toBeDefined();
-      expect(setNeedsRedrawMock).not.toHaveBeenCalled();
-
-      collection.dispose();
-    });
-
-    test('setHoveredClusterIcon and clearHoveredCluster manage hover state correctly', () => {
-      const setNeedsRedrawMock = jest.fn();
-      const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
-      const cameraPosition = new Vector3(0, 25, 25);
-      renderFrame(createCamera(cameraPosition, new Vector3(200, 0, 0)));
-
-      const clusters = collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster);
-      const targetCluster = clusters[0];
-      const rayDir = targetCluster.clusterPosition.clone().sub(cameraPosition).normalize();
-      const hitRay = new Ray(cameraPosition, rayDir);
-
-      // Get the representative icon from intersection
-      const result = collection.intersectCluster(hitRay);
-      assert(result);
-
-      // Set hover on the cluster - triggers redraw
-      setNeedsRedrawMock.mockClear();
-      collection.setHoveredClusterIcon(result.representativeIcon);
-
-      // Clear hover - triggers redraw
-      setNeedsRedrawMock.mockClear();
-      collection.clearHoveredCluster();
+      collection.intersectCluster(hitRay);
       expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
 
-      // Clear again - no redraw (already cleared)
+      // Same hit - no redraw
       setNeedsRedrawMock.mockClear();
-      collection.clearHoveredCluster();
+      collection.intersectCluster(hitRay);
+      expect(setNeedsRedrawMock).not.toHaveBeenCalled();
+
+      // Miss - clears hover, triggers redraw
+      setNeedsRedrawMock.mockClear();
+      collection.intersectCluster(missRay);
+      expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+      // Miss again - no redraw
+      setNeedsRedrawMock.mockClear();
+      collection.intersectCluster(missRay);
       expect(setNeedsRedrawMock).not.toHaveBeenCalled();
 
       collection.dispose();
