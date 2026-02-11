@@ -33,28 +33,6 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   return DEFAULT_360_IMAGE_MIME_TYPE;
 }
 
-/**
- * Extracts the internal file ID from a CDF download URL.
- * Uses a generic approach: looks for two consecutive large numbers in the path,
- * where the pattern is {projectId}/{fileId}/ - the second number is the file ID.
- */
-function extractFileIdFromDownloadUrl(downloadUrl: string): number | undefined {
-  try {
-    const decodedUrl = decodeURIComponent(downloadUrl);
-
-    const match = decodedUrl.match(/\/(\d{10,})\/(\d{10,})\//);
-    if (match) {
-      const fileId = parseInt(match[2], 10);
-      if (!isNaN(fileId)) {
-        return fileId;
-      }
-    }
-  } catch {
-    // URL parsing failed, return undefined
-  }
-  return undefined;
-}
-
 export class CdfImageFileProvider {
   private readonly _client;
 
@@ -101,7 +79,7 @@ export class CdfImageFileProvider {
   ): Promise<FileDownloadResult[]> {
     const { withInternalId, withoutInternalId } = this.partitionIdentifiersByInternalId(fileIdentifiers);
 
-    const resolvedIds = await this.resolveInternalIdsFromDownloadUrls(withoutInternalId, abortSignal);
+    const resolvedIds = await this.resolveInternalIds(withoutInternalId);
 
     const allIds = [...withInternalId, ...resolvedIds];
     const iconResults = await this.fetchIconsById(
@@ -131,37 +109,33 @@ export class CdfImageFileProvider {
   }
 
   /**
-   * Resolves internal file IDs for identifiers that don't have them by fetching download URLs.
-   * The /files/downloadlink response always includes the internal `id` for each file.
+   * Resolves internal file IDs for identifiers that don't have them using the files API.
    */
-  private async resolveInternalIdsFromDownloadUrls(
-    identifiers: Array<{ index: number; identifier: FileIdentifier }>,
-    abortSignal?: AbortSignal
+  private async resolveInternalIds(
+    identifiers: Array<{ index: number; identifier: FileIdentifier }>
   ): Promise<Array<{ index: number; id: number }>> {
     if (identifiers.length === 0) {
       return [];
     }
 
-    const downloadLinks = await this.getDownloadUrls(
-      identifiers.map(item => item.identifier),
-      abortSignal
-    );
-
-    return identifiers.map((item, i) => {
-      const link = downloadLinks[i];
-
-      // Try to get id from response first
-      if ('id' in link && typeof link.id === 'number') {
-        return { index: item.index, id: link.id };
+    // Convert FileIdentifier to IdEither format for the SDK
+    const fileRefs = identifiers.map(item => {
+      if ('externalId' in item.identifier) {
+        return { externalId: item.identifier.externalId };
       }
-
-      // Fallback: extract from download URL
-      const fileId = extractFileIdFromDownloadUrl(link.downloadUrl);
-      if (fileId === undefined) {
-        throw new Error(`Could not resolve internal file ID for: ${JSON.stringify(item.identifier)}`);
+      if ('instanceId' in item.identifier) {
+        return { instanceId: item.identifier.instanceId };
       }
-      return { index: item.index, id: fileId };
+      // This should never happen since we filtered out identifiers with 'id'
+      throw new Error(`Unexpected identifier type: ${JSON.stringify(item.identifier)}`);
     });
+
+    const fileInfos = await this._client.files.retrieve(fileRefs);
+
+    return identifiers.map((item, i) => ({
+      index: item.index,
+      id: fileInfos[i].id
+    }));
   }
 
   private mergeResultsInOriginalOrder(

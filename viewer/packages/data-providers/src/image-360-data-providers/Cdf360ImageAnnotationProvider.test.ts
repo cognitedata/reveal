@@ -4,7 +4,13 @@
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
-import { CogniteClient, AnnotationModel, InternalId, CursorAndAsyncIterator, AnnotationsInstanceRef } from '@cognite/sdk';
+import {
+  CogniteClient,
+  AnnotationModel,
+  InternalId,
+  CursorAndAsyncIterator,
+  AnnotationsInstanceRef
+} from '@cognite/sdk';
 import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
 import { ClassicDataSourceType } from '../DataSourceType';
 import { Image360Descriptor } from '../types';
