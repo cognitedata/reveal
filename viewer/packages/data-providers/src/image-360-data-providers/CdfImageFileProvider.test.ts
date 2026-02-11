@@ -122,7 +122,7 @@ describe(CdfImageFileProvider.name, () => {
       expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=123'), expect.any(Object));
     });
 
-    test('resolves external IDs via download URLs before fetching icons', async () => {
+    test('uses id from downloadlink response when available', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ externalId: 'file-ext-1' }];
 
       fetchSpy
@@ -130,8 +130,9 @@ describe(CdfImageFileProvider.name, () => {
           createJsonResponse({
             items: [
               {
+                id: 99999,
                 externalId: 'file-ext-1',
-                downloadUrl: 'https://example.com/api/v1/files/storage/cognite/12345%2F67890%2Fimage.jpeg'
+                downloadUrl: 'https://example.com/some/path/file.jpeg'
               }
             ]
           })
@@ -141,7 +142,51 @@ describe(CdfImageFileProvider.name, () => {
       const results = await provider.getIconBuffersWithMimeType(fileIdentifiers);
 
       expect(results).toHaveLength(1);
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=67890'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=99999'), expect.any(Object));
+    });
+
+    test('falls back to URL parsing when id not in response', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ externalId: 'file-ext-1' }];
+
+      fetchSpy
+        .mockResolvedValueOnce(
+          createJsonResponse({
+            items: [
+              {
+                externalId: 'file-ext-1',
+                downloadUrl: 'https://example.com/api/v1/files/gcs_proxy/bucket/1234567890123/9876543210987/image.jpeg'
+              }
+            ]
+          })
+        )
+        .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+
+      const results = await provider.getIconBuffersWithMimeType(fileIdentifiers);
+
+      expect(results).toHaveLength(1);
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/files/icon?id=9876543210987'),
+        expect.any(Object)
+      );
+    });
+
+    test('throws error when id cannot be resolved', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ externalId: 'file-ext-1' }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [
+            {
+              externalId: 'file-ext-1',
+              downloadUrl: 'https://example.com/some/path/file.jpeg'
+            }
+          ]
+        })
+      );
+
+      await expect(provider.getIconBuffersWithMimeType(fileIdentifiers)).rejects.toThrow(
+        'Could not resolve internal file ID for'
+      );
     });
 
     test('handles mixed identifier types', async () => {
@@ -152,8 +197,9 @@ describe(CdfImageFileProvider.name, () => {
           createJsonResponse({
             items: [
               {
+                id: 3333333333333,
                 externalId: 'file-ext',
-                downloadUrl: 'https://example.com/api/v1/files/storage/cognite/99%2F333%2Fimage.jpeg'
+                downloadUrl: 'https://example.com/storage/file.jpeg'
               }
             ]
           })

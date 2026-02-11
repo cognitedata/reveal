@@ -4,14 +4,7 @@
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
-import {
-  CogniteClient,
-  AnnotationModel,
-  InternalId,
-  CursorAndAsyncIterator,
-  AnnotationsAssetRef,
-  AnnotationsInstanceRef
-} from '@cognite/sdk';
+import { CogniteClient, AnnotationModel, InternalId, CursorAndAsyncIterator, AnnotationsInstanceRef } from '@cognite/sdk';
 import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
 import { ClassicDataSourceType } from '../DataSourceType';
 import { Image360Descriptor } from '../types';
@@ -65,16 +58,6 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     status: 'approved'
   });
 
-  const mockReverseLookup = jest.fn<CogniteClient['annotations']['reverseLookup']>().mockImplementation(
-    (): CursorAndAsyncIterator<AnnotationsAssetRef> =>
-      createCursorAndAsyncIterator({
-        items: [
-          {
-            id: ARBITRARY_FILE_ID
-          }
-        ]
-      })
-  );
   const mockAnnotationList = jest.fn<CogniteClient['annotations']['list']>().mockImplementation(
     (): CursorAndAsyncIterator<AnnotationModel> =>
       createCursorAndAsyncIterator({
@@ -83,8 +66,6 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
   );
 
   const sdkMock = new Mock<CogniteClient>()
-    .setup(p => p.annotations.reverseLookup)
-    .returns(mockReverseLookup)
     .setup(p => p.annotations.list)
     .returns(mockAnnotationList)
     .object();
@@ -115,6 +96,33 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       .returns(descriptor)
       .setup(r => r.getAnnotations())
       .returns(Promise.resolve([annotationObject1, annotationObject2]));
+
+    return revision.object();
+  }
+
+  function createMockRevisionWithExternalId(
+    externalId: string,
+    annotations: AnnotationModel[]
+  ): Image360RevisionEntity<ClassicDataSourceType> {
+    const descriptor = new Mock<Image360Descriptor<ClassicDataSourceType>>()
+      .setup(d => d.faceDescriptors)
+      .returns([{ externalId, face: 'front', mimeType: 'image/jpeg' }])
+      .object();
+
+    const annotationObjects = annotations.map(annotation => {
+      return new Mock<ImageAnnotationObject<ClassicDataSourceType>>()
+        .setup(a => a.annotation)
+        .returns(annotation)
+        .object();
+    });
+
+    const revision = new Mock<Image360RevisionEntity<ClassicDataSourceType>>()
+      .setup(r => r.identifier)
+      .returns('revision-' + externalId)
+      .setup(r => r.getDescriptors())
+      .returns(descriptor)
+      .setup(r => r.getAnnotations())
+      .returns(Promise.resolve(annotationObjects));
 
     return revision.object();
   }
@@ -194,7 +202,22 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       assert(results.length === 1);
       expect(results2).toEqual(results);
-      expect(mockReverseLookup).toHaveBeenCalledTimes(1);
+    });
+
+    test('returns annotations for descriptors with externalId', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+
+      const revision = createMockRevisionWithExternalId('file-external-id', [
+        matchingAnnotation,
+        nonMatchingAnnotation
+      ]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(assetRef, collection);
+
+      assert(results.length === 1);
+      expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
     });
   });
 

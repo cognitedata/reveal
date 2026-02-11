@@ -35,24 +35,18 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
 
 /**
  * Extracts the internal file ID from a CDF download URL.
- * The URL format is: .../files/storage/cognite/{projectId}%2F{fileId}%2F{filename}
- * The fileId is the second segment after decoding the path.
- *
- * Example: .../files/storage/cognite/1664458101624642%2F6493465271521017%2Fimage.jpeg
- * Returns: 6493465271521017
+ * Uses a generic approach: looks for two consecutive large numbers in the path,
+ * where the pattern is {projectId}/{fileId}/ - the second number is the file ID.
  */
 function extractFileIdFromDownloadUrl(downloadUrl: string): number | undefined {
   try {
-    const url = new URL(downloadUrl);
-    const pathMatch = url.pathname.match(/\/files\/storage\/cognite\/([^?]+)/);
-    if (pathMatch) {
-      const decodedPath = decodeURIComponent(pathMatch[1]);
-      const parts = decodedPath.split('/');
-      if (parts.length >= 2) {
-        const fileId = parseInt(parts[1], 10);
-        if (!isNaN(fileId)) {
-          return fileId;
-        }
+    const decodedUrl = decodeURIComponent(downloadUrl);
+
+    const match = decodedUrl.match(/\/(\d{10,})\/(\d{10,})\//);
+    if (match) {
+      const fileId = parseInt(match[2], 10);
+      if (!isNaN(fileId)) {
+        return fileId;
       }
     }
   } catch {
@@ -136,6 +130,10 @@ export class CdfImageFileProvider {
     return { withInternalId, withoutInternalId };
   }
 
+  /**
+   * Resolves internal file IDs for identifiers that don't have them by fetching download URLs.
+   * The /files/downloadlink response always includes the internal `id` for each file.
+   */
   private async resolveInternalIdsFromDownloadUrls(
     identifiers: Array<{ index: number; identifier: FileIdentifier }>,
     abortSignal?: AbortSignal
@@ -149,18 +147,21 @@ export class CdfImageFileProvider {
       abortSignal
     );
 
-    return identifiers
-      .map((item, i) => {
-        const fileId = extractFileIdFromDownloadUrl(downloadLinks[i].downloadUrl);
-        if (fileId === undefined) {
-          console.error(
-            `Could not extract internal file ID from download URL for identifier: ${JSON.stringify(item.identifier)}`
-          );
-          return undefined;
-        }
-        return { index: item.index, id: fileId };
-      })
-      .filter((item): item is { index: number; id: number } => item !== undefined);
+    return identifiers.map((item, i) => {
+      const link = downloadLinks[i];
+
+      // Try to get id from response first
+      if ('id' in link && typeof link.id === 'number') {
+        return { index: item.index, id: link.id };
+      }
+
+      // Fallback: extract from download URL
+      const fileId = extractFileIdFromDownloadUrl(link.downloadUrl);
+      if (fileId === undefined) {
+        throw new Error(`Could not resolve internal file ID for: ${JSON.stringify(item.identifier)}`);
+      }
+      return { index: item.index, id: fileId };
+    });
   }
 
   private mergeResultsInOriginalOrder(
@@ -193,16 +194,15 @@ export class CdfImageFileProvider {
     };
 
     return Promise.all(
-      fileIds.map(id => {
+      fileIds.map(async id => {
         const url = `${baseUrl}?id=${id}`;
-        return fetch(url, options).then(async response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
-          }
-          const mimeType = parseMimeType(response.headers.get('Content-Type'));
-          const data = await response.arrayBuffer();
-          return { data, mimeType };
-        });
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
+        }
+        const mimeType = parseMimeType(response.headers.get('Content-Type'));
+        const data = await response.arrayBuffer();
+        return { data, mimeType };
       })
     );
   }
