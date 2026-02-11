@@ -112,27 +112,16 @@ export class CdfImageFileProvider {
    * Resolves internal file IDs for identifiers that don't have them using the files API.
    */
   private async resolveInternalIds(
-    identifiers: Array<{ index: number; identifier: FileIdentifier }>
+    identifiersMap: Array<{ index: number; identifier: FileIdentifier }>
   ): Promise<Array<{ index: number; id: number }>> {
-    if (identifiers.length === 0) {
+    if (identifiersMap.length === 0) {
       return [];
     }
 
-    // Convert FileIdentifier to IdEither format for the SDK
-    const fileRefs = identifiers.map(item => {
-      if ('externalId' in item.identifier) {
-        return { externalId: item.identifier.externalId };
-      }
-      if ('instanceId' in item.identifier) {
-        return { instanceId: item.identifier.instanceId };
-      }
-      // This should never happen since we filtered out identifiers with 'id'
-      throw new Error(`Unexpected identifier type: ${JSON.stringify(item.identifier)}`);
-    });
+    const identifiers = identifiersMap.map(item => item.identifier);
+    const fileInfos = await this._client.files.retrieve(identifiers);
 
-    const fileInfos = await this._client.files.retrieve(fileRefs);
-
-    return identifiers.map((item, i) => ({
+    return identifiersMap.map((item, i) => ({
       index: item.index,
       id: fileInfos[i].id
     }));
