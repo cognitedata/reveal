@@ -252,7 +252,6 @@ export class IconCollection {
 
     let closestDistance = Infinity;
     let closestCluster: ClusterIntersectionData | undefined;
-    let newHoveredIcon: Overlay3DIcon | null = null;
 
     const cameraPosition = ray.origin;
 
@@ -290,20 +289,8 @@ export class IconCollection {
             clusterIcons: item.clusterIcons ?? [],
             representativeIcon: item.icon
           };
-          newHoveredIcon = item.icon;
         }
       }
-    }
-
-    // Check if hover state changed and trigger redraw if needed
-    const hoverStateChanged = this._hoveredClusterIcon !== newHoveredIcon;
-    this._hoveredClusterIcon = newHoveredIcon;
-    if (this._htmlRenderer) {
-      this._htmlRenderer.setHoveredCluster(newHoveredIcon);
-    }
-
-    if (hoverStateChanged && this._setNeedsRedraw) {
-      this._setNeedsRedraw();
     }
 
     return closestCluster;
