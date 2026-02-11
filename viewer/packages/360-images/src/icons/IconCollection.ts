@@ -52,6 +52,12 @@ export type ClusterIntersectionData = {
 export class IconCollection {
   private static readonly MinPixelSize = 16;
   private static readonly DefaultMaxPixelSize = 256;
+  private static readonly DefaultProjectionMatrixElement = 1.73; // ~1.73 for 60° FOV
+  private static readonly DefaultRenderHeight = 1080;
+  private static readonly DefaultProximityPointLimit = 50;
+  private static readonly DefaultProximityRadius = Infinity;
+  private static readonly DefaultClusterDistanceThreshold = 25;
+  private static readonly DefaultMaxOctreeDepth = 3;
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
@@ -65,31 +71,38 @@ export class IconCollection {
 
   private readonly _renderPositions: Vector3[] = [];
   private readonly _renderColors: Color[] = [];
+  private readonly _setNeedsRedraw: (() => void) | undefined;
+
   // Cache for LOD computation to prevent flickering during small camera movements
   private readonly _lastLODCameraPosition: Vector3 = new Vector3();
   // Cluster minimum pixel size (same as in the shader)
   private readonly _minClusterPixelSize = IconCollection.MinPixelSize * 2.5;
-  private readonly _setNeedsRedraw: (() => void) | undefined;
-  private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
-  private _iconCullingScheme: IconCullingScheme;
-  private _proximityRadius = Infinity;
-  private _proximityPointLimit = 50;
-  // Cluster hover state tracking
-  private _visibleClusteredIcons: ClusteredIcon[] = [];
-  // Store the hovered cluster's representative icon (not index) to handle array changes between frames
-  private _hoveredClusterIcon: Overlay3DIcon | null = null;
-  // Store camera projection info for accurate cluster intersection radius calculation
-  private _lastProjectionMatrixElement: number = 1.73; // ~1.73 for 60° FOV
-  private _lastRenderHeight: number = 1080;
-  private _cachedClusteredIcons: ClusteredIcon[] = [];
+
   // HTML cluster renderer for high-definition cluster display (only created when enabled)
   private readonly _htmlRenderer: HtmlClusterRenderer | null = null;
   // Feature flag: enable HTML cluster rendering with count display
   private readonly _enableHtmlClusters: boolean;
+
+  // Store camera projection info for accurate cluster intersection radius calculation
+  private _lastProjectionMatrixElement: number = IconCollection.DefaultProjectionMatrixElement;
+  private _lastRenderHeight: number = IconCollection.DefaultRenderHeight;
+  private _proximityRadius = IconCollection.DefaultProximityRadius;
+  private _proximityPointLimit = IconCollection.DefaultProximityPointLimit;
+
   // Clustering distance threshold - controls when to expand vs cluster based on distance
-  private _clusterDistanceThreshold: number = 25;
+  private _clusterDistanceThreshold: number = IconCollection.DefaultClusterDistanceThreshold;
   // Maximum octree depth - limits how deep we expand, creating larger clusters
-  private _maxOctreeDepth: number | undefined = 3;
+  private _maxOctreeDepth: number | undefined = IconCollection.DefaultMaxOctreeDepth;
+
+  private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
+  private _iconCullingScheme: IconCullingScheme;
+
+  // Cluster hover state tracking
+  private _visibleClusteredIcons: ClusteredIcon[] = [];
+  // Store the hovered cluster's representative icon (not index) to handle array changes between frames
+  private _hoveredClusterIcon: Overlay3DIcon | null = null;
+  private _cachedClusteredIcons: ClusteredIcon[] = [];
+
 
   get icons(): Overlay3DIcon[] {
     return this._icons;
