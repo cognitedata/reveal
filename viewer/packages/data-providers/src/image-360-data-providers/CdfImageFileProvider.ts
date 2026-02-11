@@ -33,34 +33,6 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   return DEFAULT_360_IMAGE_MIME_TYPE;
 }
 
-/**
- * Extracts the internal file ID from a CDF download URL.
- * The URL format is: .../files/storage/cognite/{projectId}%2F{fileId}%2F{filename}
- * The fileId is the second segment after decoding the path.
- *
- * Example: .../files/storage/cognite/1664458101624642%2F6493465271521017%2Fimage.jpeg
- * Returns: 6493465271521017
- */
-function extractFileIdFromDownloadUrl(downloadUrl: string): number | undefined {
-  try {
-    const url = new URL(downloadUrl);
-    const pathMatch = url.pathname.match(/\/files\/storage\/cognite\/([^?]+)/);
-    if (pathMatch) {
-      const decodedPath = decodeURIComponent(pathMatch[1]);
-      const parts = decodedPath.split('/');
-      if (parts.length >= 2) {
-        const fileId = parseInt(parts[1], 10);
-        if (!isNaN(fileId)) {
-          return fileId;
-        }
-      }
-    }
-  } catch {
-    // URL parsing failed, return undefined
-  }
-  return undefined;
-}
-
 export class CdfImageFileProvider {
   private readonly _client;
 
@@ -107,7 +79,7 @@ export class CdfImageFileProvider {
   ): Promise<FileDownloadResult[]> {
     const { withInternalId, withoutInternalId } = this.partitionIdentifiersByInternalId(fileIdentifiers);
 
-    const resolvedIds = await this.resolveInternalIdsFromDownloadUrls(withoutInternalId, abortSignal);
+    const resolvedIds = await this.resolveInternalIds(withoutInternalId);
 
     const allIds = [...withInternalId, ...resolvedIds];
     const iconResults = await this.fetchIconsById(
@@ -136,31 +108,23 @@ export class CdfImageFileProvider {
     return { withInternalId, withoutInternalId };
   }
 
-  private async resolveInternalIdsFromDownloadUrls(
-    identifiers: Array<{ index: number; identifier: FileIdentifier }>,
-    abortSignal?: AbortSignal
+  /**
+   * Resolves internal file IDs for identifiers that don't have them using the files API.
+   */
+  private async resolveInternalIds(
+    identifiersMap: Array<{ index: number; identifier: FileIdentifier }>
   ): Promise<Array<{ index: number; id: number }>> {
-    if (identifiers.length === 0) {
+    if (identifiersMap.length === 0) {
       return [];
     }
 
-    const downloadLinks = await this.getDownloadUrls(
-      identifiers.map(item => item.identifier),
-      abortSignal
-    );
+    const identifiers = identifiersMap.map(item => item.identifier);
+    const fileInfos = await this._client.files.retrieve(identifiers);
 
-    return identifiers
-      .map((item, i) => {
-        const fileId = extractFileIdFromDownloadUrl(downloadLinks[i].downloadUrl);
-        if (fileId === undefined) {
-          console.error(
-            `Could not extract internal file ID from download URL for identifier: ${JSON.stringify(item.identifier)}`
-          );
-          return undefined;
-        }
-        return { index: item.index, id: fileId };
-      })
-      .filter((item): item is { index: number; id: number } => item !== undefined);
+    return identifiersMap.map((item, i) => ({
+      index: item.index,
+      id: fileInfos[i].id
+    }));
   }
 
   private mergeResultsInOriginalOrder(
@@ -193,16 +157,15 @@ export class CdfImageFileProvider {
     };
 
     return Promise.all(
-      fileIds.map(id => {
+      fileIds.map(async id => {
         const url = `${baseUrl}?id=${id}`;
-        return fetch(url, options).then(async response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
-          }
-          const mimeType = parseMimeType(response.headers.get('Content-Type'));
-          const data = await response.arrayBuffer();
-          return { data, mimeType };
-        });
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
+        }
+        const mimeType = parseMimeType(response.headers.get('Content-Type'));
+        const data = await response.arrayBuffer();
+        return { data, mimeType };
       })
     );
   }

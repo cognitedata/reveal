@@ -8,9 +8,7 @@ import {
   AnnotationModel,
   CogniteClient,
   IdEither,
-  CogniteInternalId,
   AnnotationFilterProps,
-  AnnotationsAssetRef,
   InternalId,
   ExternalId,
   AnnotationsTypesImagesAssetLink
@@ -34,7 +32,7 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
+import { isDmIdentifier } from '@reveal/utilities';
 import {
   isAnnotationsTypesImagesInstanceLink,
   isAssetLinkAnnotationData,
@@ -98,9 +96,6 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
     const entities = collection.image360Entities;
 
-    const imageIds = await this.getFilesByAssetRef(asset);
-    const imageIdSet = new Set<CogniteInternalId>(imageIds);
-
     const entityAnnotationsPromises = entities.map(getEntityAnnotationsForAsset);
     const entityAnnotations = await Promise.all(entityAnnotationsPromises);
 
@@ -122,16 +117,6 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     async function getRevisionAnnotationsForAsset(
       revision: Image360RevisionEntity<ClassicDataSourceType>
     ): Promise<Image360Annotation<ClassicDataSourceType>[]> {
-      // Filter descriptors that match the file IDs from the asset lookup
-      // Only descriptors with fileId can be matched directly to internal IDs
-      const relevantDescriptors = revision
-        .getDescriptors()
-        .faceDescriptors.filter(desc => 'fileId' in desc && desc.fileId !== undefined && imageIdSet.has(desc.fileId));
-
-      if (relevantDescriptors.length === 0) {
-        return [];
-      }
-
       const annotations = await revision.getAnnotations();
 
       return annotations.filter(a => {
@@ -179,34 +164,6 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       annotatedResourceType: 'file',
       annotatedResourceIds: resourceIds
     });
-  }
-
-  private async getFilesByAssetRef(assetRef: IdEither | DMInstanceRef): Promise<CogniteInternalId[]> {
-    const annotationData = this.getAnnotationDataByAssetRefType(assetRef);
-
-    const response = await this._client.annotations
-      .reverseLookup({
-        limit: 1000,
-        filter: {
-          annotatedResourceType: 'file',
-          annotationType: annotationData.type,
-          data: annotationData.data
-        }
-      })
-      .autoPagingToArray({ limit: Infinity });
-
-    return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
-  }
-
-  private getAnnotationDataByAssetRefType(assetRef: IdEither | DMInstanceRef): {
-    type: 'images.InstanceLink' | 'images.AssetLink';
-    data: { instanceRef: DMInstanceRef } | { assetRef: IdEither };
-  } {
-    if (isDmIdentifier(assetRef)) {
-      return { type: 'images.InstanceLink', data: { instanceRef: assetRef } };
-    } else {
-      return { type: 'images.AssetLink', data: { assetRef } };
-    }
   }
 
   getAllImage360AnnotationInfos(
