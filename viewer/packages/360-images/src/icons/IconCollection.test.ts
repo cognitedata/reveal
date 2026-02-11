@@ -206,6 +206,7 @@ describe(IconCollection.name, () => {
     );
     const missRay = new Ray(clusterCameraPosition, new Vector3(0, 0, 1).normalize());
 
+    // intersectCluster is a pure function - does not modify hover state
     // Miss returns undefined, hit returns cluster data
     expect(collection.intersectCluster(missRay)).toBeUndefined();
     setNeedsRedrawMock.mockClear();
@@ -213,32 +214,24 @@ describe(IconCollection.name, () => {
     assert(result);
     expect(result.clusterPosition).toBeInstanceOf(Vector3);
     expect(result.clusterIcons.length).toBeGreaterThan(0);
-    expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1); // First hit triggers redraw
-
-    // Same hit - no redraw (state unchanged)
-    setNeedsRedrawMock.mockClear();
-    collection.intersectCluster(hitRay);
+    // intersectCluster is pure - does not trigger redraw
     expect(setNeedsRedrawMock).not.toHaveBeenCalled();
 
-    // Miss clears hover - triggers redraw
+    // Hover state is managed explicitly via setHoveredClusterIcon
     setNeedsRedrawMock.mockClear();
-    collection.intersectCluster(missRay);
-    expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
-
-    // Miss again - no redraw (state unchanged)
-    setNeedsRedrawMock.mockClear();
-    collection.intersectCluster(missRay);
+    collection.setHoveredClusterIcon(result.representativeIcon);
+    // setHoveredClusterIcon does not trigger redraw by itself
     expect(setNeedsRedrawMock).not.toHaveBeenCalled();
 
-    // setHoveredClusterIcon and clearHoveredCluster behavior
-    collection.setHoveredClusterIcon(targetCluster.icon);
+    // clearHoveredCluster triggers redraw when there was a hovered cluster
     setNeedsRedrawMock.mockClear();
     collection.clearHoveredCluster();
     expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
 
+    // clearHoveredCluster again - no redraw (already cleared)
     setNeedsRedrawMock.mockClear();
     collection.clearHoveredCluster();
-    expect(setNeedsRedrawMock).not.toHaveBeenCalled(); // Already cleared
+    expect(setNeedsRedrawMock).not.toHaveBeenCalled();
     collection.dispose();
 
     // clearHoveredCluster does nothing when HTML clusters disabled
