@@ -103,7 +103,6 @@ export class IconCollection {
   private _hoveredClusterIcon: Overlay3DIcon | null = null;
   private _cachedClusteredIcons: ClusteredIcon[] = [];
 
-
   get icons(): Overlay3DIcon[] {
     return this._icons;
   }
