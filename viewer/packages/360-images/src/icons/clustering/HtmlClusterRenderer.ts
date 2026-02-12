@@ -22,6 +22,7 @@ export class HtmlClusterRenderer {
   private readonly _activeElements: Map<Overlay3DIcon, HTMLDivElement> = new Map();
   private readonly _maxPoolSize: number;
   private readonly _classPrefix: string;
+  private readonly _styleId: string;
   private readonly _enableHoverAnimations: boolean;
   private readonly _zIndex: number | undefined;
 
@@ -38,6 +39,7 @@ export class HtmlClusterRenderer {
   constructor(options: HtmlClusterRendererOptions = {}) {
     this._maxPoolSize = options.maxPoolSize ?? 100;
     this._classPrefix = options.classPrefix ?? 'reveal-cluster';
+    this._styleId = `${this._classPrefix}-styles`;
     this._enableHoverAnimations = options.enableHoverAnimations ?? true;
     this._zIndex = options.zIndex;
     this._container = this.createContainer();
@@ -123,8 +125,7 @@ export class HtmlClusterRenderer {
     }
     this._elementPool.length = 0;
 
-    const styleId = `${this._classPrefix}-styles`;
-    const styleElement = document.getElementById(styleId);
+    const styleElement = document.getElementById(this._styleId);
     if (styleElement) {
       styleElement.remove();
     }
@@ -153,13 +154,12 @@ export class HtmlClusterRenderer {
   }
 
   private injectStyles(): void {
-    const styleId = `${this._classPrefix}-styles`;
-    if (document.getElementById(styleId)) {
+    if (document.getElementById(this._styleId)) {
       return;
     }
 
     const style = document.createElement('style');
-    style.id = styleId;
+    style.id = this._styleId;
     style.textContent = generateClusterStyles(this._classPrefix);
     document.head.appendChild(style);
   }
