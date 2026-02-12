@@ -232,6 +232,36 @@ describe(Image360Facade.name, () => {
     expect(clearHoveredClusterCalled).toBe(true);
     expect(intersectClusterCalled).toBe(true);
   });
+
+  test('intersect sets hovered cluster icon when cluster is hit', async () => {
+    const clusterPosition = new Vector3(5, 5, 0);
+    const mockIcon = createMockIcon(clusterPosition);
+    let setHoveredClusterIconCalled = false;
+    let hoveredIcon: Overlay3DIcon | undefined;
+
+    const facade = await createFacadeWithCollection({
+      clusterIntersectionResult: {
+        clusterPosition: clusterPosition.clone(),
+        clusterSize: 3,
+        clusterIcons: [mockIcon],
+        representativeIcon: mockIcon
+      },
+      onSetHoveredClusterIcon: icon => {
+        setHoveredClusterIconCalled = true;
+        hoveredIcon = icon;
+      }
+    });
+
+    const camera = new PerspectiveCamera();
+    camera.position.set(0, 0, 10);
+    camera.lookAt(clusterPosition);
+    camera.updateMatrixWorld();
+
+    facade.intersect(new Vector2(0, 0), camera);
+
+    expect(setHoveredClusterIconCalled).toBe(true);
+    expect(hoveredIcon).toBe(mockIcon);
+  });
 });
 
 function createPseudoRandomPositions(seed: string, count = 100): Array<Vector3> {
@@ -270,6 +300,7 @@ async function createFacadeWithCollection(
   params?: FacadeTestParams & {
     onIntersectCluster?: () => void;
     onClearHoveredCluster?: () => void;
+    onSetHoveredClusterIcon?: (icon: Overlay3DIcon) => void;
   }
 ): Promise<Image360Facade<DataSourceType>> {
   // Create entities from entityIcons or create a default entity at entityPosition
@@ -324,7 +355,9 @@ async function createFacadeWithCollection(
   // Setup getEntitiesFromIcons to return entities matching the given icons
   mockCollectionBuilder = mockCollectionBuilder
     .setup(p => p.setHoveredClusterIcon(It.IsAny()))
-    .returns()
+    .callback(({ args }) => {
+      params?.onSetHoveredClusterIcon?.(args[0] as Overlay3DIcon);
+    })
     .setup(p => p.getEntitiesFromIcons(It.IsAny()))
     .callback(({ args }) => {
       const icons = args[0] as Overlay3DIcon[];

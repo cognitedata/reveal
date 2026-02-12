@@ -25,6 +25,8 @@ export class HtmlClusterRenderer {
   private readonly _enableHoverAnimations: boolean;
   private readonly _zIndex: number | undefined;
 
+  private readonly _pendingReleaseTimeouts = new Set<NodeJS.Timeout>();
+
   private _hoveredClusterIcon: Overlay3DIcon | null = null;
   private _isVisible: boolean = true;
   private _isAttached: boolean = false;
@@ -106,8 +108,13 @@ export class HtmlClusterRenderer {
   }
 
   public dispose(): void {
+    for (const timeoutId of this._pendingReleaseTimeouts) {
+      globalThis.clearTimeout(timeoutId);
+    }
+    this._pendingReleaseTimeouts.clear();
+
     for (const element of this._activeElements.values()) {
-      this.releaseElement(element);
+      element.remove();
     }
     this._activeElements.clear();
 
@@ -116,6 +123,11 @@ export class HtmlClusterRenderer {
     }
     this._elementPool.length = 0;
 
+    const styleId = `${this._classPrefix}-styles`;
+    const styleElement = document.getElementById(styleId);
+    if (styleElement) {
+      styleElement.remove();
+    }
     this._container.remove();
     this._isAttached = false;
     this._domElement = null;
@@ -193,7 +205,8 @@ export class HtmlClusterRenderer {
 
   private releaseElement(element: HTMLDivElement): void {
     element.classList.add('fade-out');
-    setTimeout(() => {
+    const timeoutId = globalThis.setTimeout(() => {
+      this._pendingReleaseTimeouts.delete(timeoutId);
       element.style.display = 'none';
       if (element.parentNode === this._container) {
         element.remove();
@@ -202,6 +215,7 @@ export class HtmlClusterRenderer {
         this._elementPool.push(element);
       }
     }, 150);
+    this._pendingReleaseTimeouts.add(timeoutId);
   }
 
   private createClusterElement(): HTMLDivElement {
