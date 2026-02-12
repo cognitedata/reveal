@@ -51,6 +51,7 @@ import {
 import {
   CameraManager,
   FlexibleCameraManager,
+  isDefaultCameraManager,
   ProxyCameraManager,
   StationaryCameraManager
 } from '@reveal/camera-manager';
@@ -678,12 +679,14 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const targetDistance = Math.max(distanceToCluster * 0.3, 5);
     const targetPosition = clusterPosition.clone().sub(directionToCluster.multiplyScalar(targetDistance));
 
-    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+    const innerCameraManager = this._activeCameraManager.innerCameraManager;
+    const flexibleCameraManager = FlexibleCameraManager.as(innerCameraManager);
     if (flexibleCameraManager) {
       moveCameraPositionAndTargetTo(flexibleCameraManager, targetPosition, clusterPosition, transitionDuration);
       await new Promise(resolve => setTimeout(resolve, transitionDuration));
-    } else if (this._stationaryCameraManager) {
-      await this._stationaryCameraManager.moveTo(targetPosition, transitionDuration);
+    } else if (isDefaultCameraManager(innerCameraManager)) {
+      innerCameraManager.moveCameraTo(targetPosition, clusterPosition, transitionDuration);
+      await new Promise(resolve => setTimeout(resolve, transitionDuration));
     }
 
     this._transitionInProgress = false;
