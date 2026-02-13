@@ -160,7 +160,7 @@ describe('HtmlClusterRenderer', () => {
       renderer: mockRenderer,
       camera: new PerspectiveCamera(75, 16 / 9, 0.1, 1000),
       modelTransform: new Matrix4(),
-      hoveredClusterIcon: null
+      hoveredClusterIcon: undefined
     };
     expect(() => renderer.updateClusters([createClusterData(defaultIcon, true, 10)], orphanParams)).not.toThrow();
     expect(orphanCanvas.parentElement).toBeNull();
@@ -205,5 +205,5 @@ function createRenderParams(): ClusterRenderParams {
   camera.position.set(0, 0, 100);
   camera.lookAt(0, 0, 0);
   camera.updateMatrixWorld();
-  return { renderer: mockRenderer, camera, modelTransform: new Matrix4(), hoveredClusterIcon: null };
+  return { renderer: mockRenderer, camera, modelTransform: new Matrix4(), hoveredClusterIcon: undefined };
 }
