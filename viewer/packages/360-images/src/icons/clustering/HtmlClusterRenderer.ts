@@ -24,13 +24,14 @@ export class HtmlClusterRenderer {
   private readonly _classPrefix: string;
   private readonly _enableHoverAnimations: boolean;
   private readonly _zIndex: number | undefined;
+  private readonly _countSpanName: string;
 
-  private readonly _pendingReleaseTimeouts = new Set<NodeJS.Timeout>();
+  private readonly _pendingReleaseTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
-  private _hoveredClusterIcon: Overlay3DIcon | null = null;
+  private _hoveredClusterIcon: Overlay3DIcon | undefined = undefined;
   private _isVisible: boolean = true;
   private _isAttached: boolean = false;
-  private _domElement: HTMLElement | null = null;
+  private _domElement: HTMLElement | undefined = undefined;
 
   private readonly _tempPosition = new Vector3();
   private readonly _tempProjectedPosition = new Vector3();
@@ -38,6 +39,7 @@ export class HtmlClusterRenderer {
   constructor(options: HtmlClusterRendererOptions = {}) {
     this._maxPoolSize = options.maxPoolSize ?? 100;
     this._classPrefix = options.classPrefix ?? 'reveal-cluster';
+    this._countSpanName = `${this._classPrefix}-count`;
     this._enableHoverAnimations = options.enableHoverAnimations ?? true;
     this._zIndex = options.zIndex;
     this._container = this.createContainer();
@@ -79,18 +81,18 @@ export class HtmlClusterRenderer {
     }
   }
 
-  public setHoveredCluster(icon: Overlay3DIcon | null): void {
+  public setHoveredCluster(icon: Overlay3DIcon | undefined): void {
     const previousHovered = this._hoveredClusterIcon;
     this._hoveredClusterIcon = icon;
 
-    if (previousHovered !== null && previousHovered !== icon) {
+    if (previousHovered !== undefined && previousHovered !== icon) {
       const prevElement = this._activeElements.get(previousHovered);
       if (prevElement) {
         this.setElementHovered(prevElement, false);
       }
     }
 
-    if (icon !== null) {
+    if (icon !== undefined) {
       const element = this._activeElements.get(icon);
       if (element) {
         this.setElementHovered(element, true);
@@ -98,7 +100,7 @@ export class HtmlClusterRenderer {
     }
   }
 
-  public getHoveredCluster(): Overlay3DIcon | null {
+  public getHoveredCluster(): Overlay3DIcon | undefined {
     return this._hoveredClusterIcon;
   }
 
@@ -109,7 +111,7 @@ export class HtmlClusterRenderer {
 
   public dispose(): void {
     for (const timeoutId of this._pendingReleaseTimeouts) {
-      globalThis.clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
     }
     this._pendingReleaseTimeouts.clear();
 
@@ -123,14 +125,9 @@ export class HtmlClusterRenderer {
     }
     this._elementPool.length = 0;
 
-    const styleId = `${this._classPrefix}-styles`;
-    const styleElement = document.getElementById(styleId);
-    if (styleElement) {
-      styleElement.remove();
-    }
     this._container.remove();
     this._isAttached = false;
-    this._domElement = null;
+    this._domElement = undefined;
   }
 
   private createContainer(): HTMLDivElement {
@@ -153,15 +150,9 @@ export class HtmlClusterRenderer {
   }
 
   private injectStyles(): void {
-    const styleId = `${this._classPrefix}-styles`;
-    if (document.getElementById(styleId)) {
-      return;
-    }
-
     const style = document.createElement('style');
-    style.id = styleId;
     style.textContent = generateClusterStyles(this._classPrefix);
-    document.head.appendChild(style);
+    this._container.appendChild(style);
   }
 
   private ensureAttached(canvas: HTMLCanvasElement): void {
@@ -205,7 +196,7 @@ export class HtmlClusterRenderer {
 
   private releaseElement(element: HTMLDivElement): void {
     element.classList.add('fade-out');
-    const timeoutId = globalThis.setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       this._pendingReleaseTimeouts.delete(timeoutId);
       element.style.display = 'none';
       if (element.parentNode === this._container) {
@@ -223,7 +214,7 @@ export class HtmlClusterRenderer {
     element.className = `${this._classPrefix}-icon`;
 
     const countSpan = document.createElement('span');
-    countSpan.className = `${this._classPrefix}-count`;
+    countSpan.className = this._countSpanName;
     element.appendChild(countSpan);
 
     return element;
@@ -241,7 +232,16 @@ export class HtmlClusterRenderer {
 
     const screenPos = worldToViewportCoordinates(canvas, camera, this._tempPosition, this._tempProjectedPosition);
 
-    if (screenPos.z > 1) {
+    const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
+    const offScreenMargin = 100;
+
+    if (
+      screenPos.z > 1 ||
+      screenPos.x < -offScreenMargin ||
+      screenPos.x > canvasWidth + offScreenMargin ||
+      screenPos.y < -offScreenMargin ||
+      screenPos.y > canvasHeight + offScreenMargin
+    ) {
       element.style.display = 'none';
       return;
     }
@@ -252,7 +252,8 @@ export class HtmlClusterRenderer {
     const baseSize = 80;
     const minSize = 48;
     const maxSize = 120;
-    const projectedSize = Math.max(minSize, Math.min(maxSize, (baseSize * 50) / Math.max(distance, 1)));
+    const referenceDistance = 50;
+    const projectedSize = Math.max(minSize, Math.min(maxSize, (baseSize * referenceDistance) / Math.max(distance, 1)));
 
     element.style.left = `${screenPos.x}px`;
     element.style.top = `${screenPos.y}px`;
@@ -262,7 +263,7 @@ export class HtmlClusterRenderer {
     // Set --size CSS variable for proportional border scaling
     element.style.setProperty('--size', `${projectedSize}px`);
 
-    const countSpan = element.querySelector(`.${this._classPrefix}-count`) as HTMLSpanElement;
+    const countSpan = element.querySelector(`.${this._countSpanName}`) as HTMLSpanElement;
     if (countSpan) {
       const displayCount = clusterData.clusterSize > 999 ? '999+' : clusterData.clusterSize.toString();
       if (countSpan.textContent !== displayCount) {
