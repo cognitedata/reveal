@@ -920,6 +920,7 @@ export class DefaultCameraManager implements CameraManager {
     getComboControlsOptions(): Readonly<ComboControlsOptions>;
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
+    moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number, keyboardNavigationEnabled?: boolean): void;
     // (undocumented)
     off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     // (undocumented)
