@@ -18,5 +18,5 @@ export type ClusterRenderParams = {
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
   modelTransform: Matrix4;
-  hoveredClusterIcon: Overlay3DIcon | null;
+  hoveredClusterIcon: Overlay3DIcon | undefined;
 };

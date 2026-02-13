@@ -21,7 +21,6 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import { DefaultOverlay3DContentType, IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
 import { PointOctant } from 'sparse-octree';
-import { ClusteredIconData } from './clustering/ClusterRenderingStrategy';
 import { HtmlClusterRenderer, HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
@@ -79,7 +78,7 @@ export class IconCollection {
   private readonly _minClusterPixelSize = IconCollection.MinPixelSize * 2.5;
 
   // HTML cluster renderer for high-definition cluster display (only created when enabled)
-  private readonly _htmlRenderer: HtmlClusterRenderer | null = null;
+  private readonly _htmlRenderer: HtmlClusterRenderer | undefined = undefined;
   // Feature flag: enable HTML cluster rendering with count display
   private readonly _enableHtmlClusters: boolean;
 
@@ -100,7 +99,7 @@ export class IconCollection {
   // Cluster hover state tracking
   private _visibleClusteredIcons: ClusteredIcon[] = [];
   // Store the hovered cluster's representative icon (not index) to handle array changes between frames
-  private _hoveredClusterIcon: Overlay3DIcon | null = null;
+  private _hoveredClusterIcon: Overlay3DIcon | undefined = undefined;
   private _cachedClusteredIcons: ClusteredIcon[] = [];
 
   get icons(): Overlay3DIcon[] {
@@ -295,7 +294,7 @@ export class IconCollection {
     return closestCluster;
   }
 
-  public setHoveredClusterIcon(icon: Overlay3DIcon | null): void {
+  public setHoveredClusterIcon(icon: Overlay3DIcon | undefined): void {
     if (!this._enableHtmlClusters) return;
     this._hoveredClusterIcon = icon;
     if (this._htmlRenderer) {
@@ -306,9 +305,9 @@ export class IconCollection {
   public clearHoveredCluster(): void {
     if (!this._enableHtmlClusters) return;
     const hadHoveredCluster = this._hoveredClusterIcon !== null;
-    this._hoveredClusterIcon = null;
+    this._hoveredClusterIcon = undefined;
     if (this._htmlRenderer) {
-      this._htmlRenderer.setHoveredCluster(null);
+      this._htmlRenderer.setHoveredCluster(undefined);
     }
 
     // Trigger redraw if we cleared a hover state
@@ -454,14 +453,14 @@ export class IconCollection {
       renderer: WebGLRenderer;
       camera: PerspectiveCamera;
       modelTransform: Matrix4;
-      hoveredClusterIcon: Overlay3DIcon | null;
+      hoveredClusterIcon: Overlay3DIcon | undefined;
     }
   ): void {
     const clusters = visibleClusters.filter(item => item.isCluster);
     const individuals = visibleClusters.filter(item => !item.isCluster);
 
     if (this._htmlRenderer) {
-      this._htmlRenderer.updateClusters(clusters as ClusteredIconData[], {
+      this._htmlRenderer.updateClusters(clusters, {
         renderer: params.renderer,
         camera: params.camera,
         modelTransform: params.modelTransform,
