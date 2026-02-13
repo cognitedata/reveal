@@ -12,7 +12,9 @@ import {
   ProxyCameraManager,
   CameraManager,
   FlexibleCameraManager,
-  CameraManagerCallbackData
+  CameraManagerCallbackData,
+  DefaultCameraManager,
+  isDefaultCameraManager
 } from '@reveal/camera-manager';
 import { DataSourceType } from '@reveal/data-providers';
 import {
@@ -47,20 +49,6 @@ function createMockInputHandler(): InputHandler {
     .object();
 }
 
-function createMockCameraManager(camera: PerspectiveCamera): ProxyCameraManager {
-  const mockInnerCameraManager = new Mock<CameraManager>()
-    .setup(p => p.getCamera())
-    .returns(camera)
-    .object();
-
-  return new Mock<ProxyCameraManager>()
-    .setup(p => p.getCamera())
-    .returns(camera)
-    .setup(p => p.innerCameraManager)
-    .returns(mockInnerCameraManager)
-    .object();
-}
-
 function createMockClusterData(): Image360ClusterIntersectionData<DataSourceType> {
   const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>().object();
   const mockEntity = new Mock<Image360Entity<DataSourceType>>().object();
@@ -74,59 +62,49 @@ function createMockClusterData(): Image360ClusterIntersectionData<DataSourceType
   };
 }
 
-function createTestHelper(domElement: HTMLElement, sdk: CogniteClient): Image360ApiHelper<DataSourceType> {
-  const mockCamera = new PerspectiveCamera();
-  mockCamera.position.set(0, 0, 10);
-  mockCamera.lookAt(new Vector3(0, 0, 0));
-  mockCamera.updateMatrixWorld();
+type CameraManagerType = 'mock' | 'flexible' | 'default';
 
-  const mockCameraManager = createMockCameraManager(mockCamera);
-  const mockSceneHandler = createMockSceneHandler();
-  const mockInputHandler = createMockInputHandler();
-  const onBeforeSceneRendered = new EventTrigger<BeforeSceneRenderedDelegate>();
-
-  return new Image360ApiHelper(
-    sdk,
-    mockSceneHandler,
-    domElement,
-    mockCameraManager,
-    mockInputHandler,
-    onBeforeSceneRendered,
-    false // disable event listeners for testing
-  );
-}
-
-function createFlexibleCameraTestHelper(
+function createTestHelper(
   domElement: HTMLElement,
-  sdk: CogniteClient
-): Image360ApiHelper<DataSourceType> {
+  sdk: CogniteClient,
+  cameraManagerType: CameraManagerType = 'mock'
+): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
   const mockCamera = new PerspectiveCamera();
   mockCamera.position.set(0, 0, 10);
   mockCamera.lookAt(new Vector3(0, 0, 0));
   mockCamera.updateMatrixWorld();
 
-  // Create a real FlexibleCameraManager instance
+  const mockInputHandler = createMockInputHandler();
   const mockRaycastCallback = jest.fn<() => Promise<CameraManagerCallbackData>>();
-  const flexibleCameraManager = new FlexibleCameraManager(
-    domElement,
-    mockRaycastCallback,
-    mockCamera,
-    undefined,
-    false // disable keyboard
-  );
+
+  let innerCameraManager: CameraManager;
+  switch (cameraManagerType) {
+    case 'flexible':
+      innerCameraManager = new FlexibleCameraManager(domElement, mockRaycastCallback, mockCamera, undefined, false);
+      break;
+    case 'default':
+      innerCameraManager = new DefaultCameraManager(domElement, mockInputHandler, mockRaycastCallback, mockCamera);
+      break;
+    case 'mock':
+    default:
+      innerCameraManager = new Mock<CameraManager>()
+        .setup(p => p.getCamera())
+        .returns(mockCamera)
+        .object();
+      break;
+  }
 
   const proxyCameraManager = new Mock<ProxyCameraManager>()
     .setup(p => p.getCamera())
     .returns(mockCamera)
     .setup(p => p.innerCameraManager)
-    .returns(flexibleCameraManager)
+    .returns(innerCameraManager)
     .object();
 
   const mockSceneHandler = createMockSceneHandler();
-  const mockInputHandler = createMockInputHandler();
   const onBeforeSceneRendered = new EventTrigger<BeforeSceneRenderedDelegate>();
 
-  return new Image360ApiHelper(
+  const helper = new Image360ApiHelper(
     sdk,
     mockSceneHandler,
     domElement,
@@ -135,6 +113,8 @@ function createFlexibleCameraTestHelper(
     onBeforeSceneRendered,
     false
   );
+
+  return { helper, innerCameraManager };
 }
 
 describe(Image360ApiHelper.name, () => {
@@ -155,7 +135,7 @@ describe(Image360ApiHelper.name, () => {
     });
     mockClientAuthentication(sdk);
 
-    helper = createTestHelper(domElement, sdk);
+    ({ helper } = createTestHelper(domElement, sdk));
   });
 
   describe('enter360ImageOnIntersect (via onClick)', () => {
@@ -248,19 +228,73 @@ describe(Image360ApiHelper.name, () => {
   });
 
   describe('zoomToCluster', () => {
-    test('returns false when transition is already in progress', async () => {
+    test('returns false when transition is already in progress for DefaultCameraManager', async () => {
+      jest.useFakeTimers();
+
+      const { helper: defaultHelper } = createTestHelper(domElement, sdk, 'default');
       const mockClusterData = createMockClusterData();
 
-      helper.zoomToCluster(mockClusterData);
+      // Start first zoom without awaiting — transition is now in progress
+      defaultHelper.zoomToCluster(mockClusterData);
 
-      const secondResult = await helper.zoomToCluster(mockClusterData);
+      // Second call should detect transition in progress and return false
+      const secondResult = await defaultHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
+
+      // Advance timers to let the first transition complete
+      await jest.advanceTimersByTimeAsync(1000);
+
+      jest.useRealTimers();
+    });
+
+    test('uses DefaultCameraManager path and returns true', async () => {
+      jest.useFakeTimers();
+
+      const { helper: defaultHelper, innerCameraManager } = createTestHelper(domElement, sdk, 'default');
+      expect(isDefaultCameraManager(innerCameraManager)).toBe(true);
+
+      const defaultCameraManager = innerCameraManager as DefaultCameraManager;
+      const moveCameraToSpy = jest.spyOn(defaultCameraManager, 'moveCameraTo');
+      const mockClusterData = createMockClusterData();
+
+      const zoomPromise = defaultHelper.zoomToCluster(mockClusterData);
+      await jest.advanceTimersByTimeAsync(1000);
+      const result = await zoomPromise;
+
+      expect(result).toBe(true);
+      expect(moveCameraToSpy).toHaveBeenCalledTimes(1);
+
+      const [targetPosition, clusterTarget, duration] = moveCameraToSpy.mock.calls[0];
+      expect(targetPosition).toBeInstanceOf(Vector3);
+      expect(clusterTarget).toBeInstanceOf(Vector3);
+      expect(clusterTarget.x).toBe(5); // cluster position x from createMockClusterData
+      expect(clusterTarget.y).toBe(0);
+      expect(clusterTarget.z).toBe(0);
+      expect(duration).toBe(800);
+
+      jest.useRealTimers();
+    });
+
+    test('returns false when transition is already in progress for FlexibleCameraManager', async () => {
+      jest.useFakeTimers();
+
+      const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
+      const mockClusterData = createMockClusterData();
+
+      flexibleHelper.zoomToCluster(mockClusterData);
+
+      const secondResult = await flexibleHelper.zoomToCluster(mockClusterData);
+      expect(secondResult).toBe(false);
+
+      await jest.advanceTimersByTimeAsync(1000);
+
+      jest.useRealTimers();
     });
 
     test('uses FlexibleCameraManager path and returns true', async () => {
       jest.useFakeTimers();
 
-      const flexibleHelper = createFlexibleCameraTestHelper(domElement, sdk);
+      const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
       const mockClusterData = createMockClusterData();
 
       const zoomPromise = flexibleHelper.zoomToCluster(mockClusterData);
