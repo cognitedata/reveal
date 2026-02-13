@@ -22,9 +22,9 @@ export class HtmlClusterRenderer {
   private readonly _activeElements: Map<Overlay3DIcon, HTMLDivElement> = new Map();
   private readonly _maxPoolSize: number;
   private readonly _classPrefix: string;
-  private readonly _styleId: string;
   private readonly _enableHoverAnimations: boolean;
   private readonly _zIndex: number | undefined;
+  private readonly _countSpanName: string;
 
   private readonly _pendingReleaseTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
@@ -39,7 +39,7 @@ export class HtmlClusterRenderer {
   constructor(options: HtmlClusterRendererOptions = {}) {
     this._maxPoolSize = options.maxPoolSize ?? 100;
     this._classPrefix = options.classPrefix ?? 'reveal-cluster';
-    this._styleId = `${this._classPrefix}-styles`;
+    this._countSpanName = `${this._classPrefix}-count`;
     this._enableHoverAnimations = options.enableHoverAnimations ?? true;
     this._zIndex = options.zIndex;
     this._container = this.createContainer();
@@ -125,10 +125,6 @@ export class HtmlClusterRenderer {
     }
     this._elementPool.length = 0;
 
-    const styleElement = document.getElementById(this._styleId);
-    if (styleElement) {
-      styleElement.remove();
-    }
     this._container.remove();
     this._isAttached = false;
     this._domElement = undefined;
@@ -154,14 +150,9 @@ export class HtmlClusterRenderer {
   }
 
   private injectStyles(): void {
-    if (document.getElementById(this._styleId)) {
-      return;
-    }
-
     const style = document.createElement('style');
-    style.id = this._styleId;
     style.textContent = generateClusterStyles(this._classPrefix);
-    document.head.appendChild(style);
+    this._container.appendChild(style);
   }
 
   private ensureAttached(canvas: HTMLCanvasElement): void {
@@ -223,7 +214,7 @@ export class HtmlClusterRenderer {
     element.className = `${this._classPrefix}-icon`;
 
     const countSpan = document.createElement('span');
-    countSpan.className = `${this._classPrefix}-count`;
+    countSpan.className = this._countSpanName;
     element.appendChild(countSpan);
 
     return element;
@@ -241,7 +232,16 @@ export class HtmlClusterRenderer {
 
     const screenPos = worldToViewportCoordinates(canvas, camera, this._tempPosition, this._tempProjectedPosition);
 
-    if (screenPos.z > 1) {
+    const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
+    const offScreenMargin = 100;
+
+    if (
+      screenPos.z > 1 ||
+      screenPos.x < -offScreenMargin ||
+      screenPos.x > canvasWidth + offScreenMargin ||
+      screenPos.y < -offScreenMargin ||
+      screenPos.y > canvasHeight + offScreenMargin
+    ) {
       element.style.display = 'none';
       return;
     }
@@ -252,7 +252,8 @@ export class HtmlClusterRenderer {
     const baseSize = 80;
     const minSize = 48;
     const maxSize = 120;
-    const projectedSize = Math.max(minSize, Math.min(maxSize, (baseSize * 50) / Math.max(distance, 1)));
+    const referenceDistance = 50;
+    const projectedSize = Math.max(minSize, Math.min(maxSize, (baseSize * referenceDistance) / Math.max(distance, 1)));
 
     element.style.left = `${screenPos.x}px`;
     element.style.top = `${screenPos.y}px`;
@@ -262,7 +263,7 @@ export class HtmlClusterRenderer {
     // Set --size CSS variable for proportional border scaling
     element.style.setProperty('--size', `${projectedSize}px`);
 
-    const countSpan = element.querySelector(`.${this._classPrefix}-count`) as HTMLSpanElement;
+    const countSpan = element.querySelector(`.${this._countSpanName}`) as HTMLSpanElement;
     if (countSpan) {
       const displayCount = clusterData.clusterSize > 999 ? '999+' : clusterData.clusterSize.toString();
       if (countSpan.textContent !== displayCount) {

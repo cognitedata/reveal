@@ -27,7 +27,6 @@ describe('HtmlClusterRenderer', () => {
 
   afterEach(() => {
     renderer.dispose();
-    document.getElementById('test-cluster-styles')?.remove();
   });
 
   test('creates and updates cluster DOM elements with correct count display', () => {
@@ -54,11 +53,11 @@ describe('HtmlClusterRenderer', () => {
   });
 
   test('manages hovered cluster state and switches between icons correctly', () => {
-    expect(renderer.getHoveredCluster()).toBeNull();
+    expect(renderer.getHoveredCluster()).toBeUndefined();
     renderer.setHoveredCluster(defaultIcon);
     expect(renderer.getHoveredCluster()).toBe(defaultIcon);
-    renderer.setHoveredCluster(null);
-    expect(renderer.getHoveredCluster()).toBeNull();
+    renderer.setHoveredCluster(undefined);
+    expect(renderer.getHoveredCluster()).toBeUndefined();
 
     // Test switching between different hovered icons
     const clusters = [createClusterData(iconAtOrigin, true, 5), createClusterData(iconAtOne, true, 10)];
@@ -81,7 +80,8 @@ describe('HtmlClusterRenderer', () => {
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
     expect(container.querySelectorAll('.test-cluster-icon').length).toBe(1);
-    expect(container.children.length).toBe(1);
+    // children.length is 2: 1 injected <style> element + 1 cluster icon
+    expect(container.children.length).toBe(2);
 
     renderer.updateClusters([], params);
     expect(container.querySelector('.test-cluster-icon')?.classList.contains('fade-out')).toBe(true);
