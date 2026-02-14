@@ -331,7 +331,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._icons.clearHoveredCluster();
   }
 
-  public setHoveredClusterIcon(icon: Overlay3DIcon | null): void {
+  public setHoveredClusterIcon(icon: Overlay3DIcon | undefined): void {
     this._icons.setHoveredClusterIcon(icon);
   }
 
