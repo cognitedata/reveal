@@ -161,12 +161,12 @@ describe(DefaultImage360Collection.name, () => {
       expect(result).toBe(clusterData);
 
       collection.setHoveredClusterIcon(mockIcon);
-      collection.setHoveredClusterIcon(null);
+      collection.setHoveredClusterIcon(undefined);
       collection.clearHoveredCluster();
 
       mock.verify(i => i.intersectCluster(TEST_RAY), Times.Once());
       mock.verify(i => i.setHoveredClusterIcon(mockIcon), Times.Once());
-      mock.verify(i => i.setHoveredClusterIcon(null), Times.Once());
+      mock.verify(i => i.setHoveredClusterIcon(undefined), Times.Once());
       mock.verify(i => i.clearHoveredCluster(), Times.Once());
     });
 
