@@ -306,7 +306,7 @@ export class IconCollection {
 
   public clearHoveredCluster(): void {
     if (!this._enableHtmlClusters) return;
-    const hadHoveredCluster = this._hoveredClusterIcon !== null;
+    const hadHoveredCluster = this._hoveredClusterIcon !== undefined;
     this._hoveredClusterIcon = undefined;
     if (this._htmlRenderer) {
       this._htmlRenderer.setHoveredCluster(undefined);
