@@ -23,10 +23,12 @@ describe('HtmlClusterRenderer', () => {
     iconAtOne = createMockIcon(new Vector3(1, 1, 1));
     renderer = new HtmlClusterRenderer({ classPrefix: 'test-cluster' });
     params = createRenderParams();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
     renderer.dispose();
+    jest.useRealTimers();
   });
 
   test('creates and updates cluster DOM elements with correct count display', () => {
@@ -75,7 +77,6 @@ describe('HtmlClusterRenderer', () => {
   });
 
   test('releaseElement handles fade-out, pool reuse, and container removal', () => {
-    jest.useFakeTimers();
     renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
@@ -93,46 +94,57 @@ describe('HtmlClusterRenderer', () => {
     const newIcon = createMockIcon(new Vector3(2, 2, 2));
     renderer.updateClusters([createClusterData(newIcon, true, 20)], params);
     expect(container.querySelectorAll('.test-cluster-icon').length).toBe(1);
-    jest.useRealTimers();
+  });
+
+  test('respects maxPoolSize by only pooling up to the limit', () => {
+    const smallPoolRenderer = new HtmlClusterRenderer({ classPrefix: 'small-pool', maxPoolSize: 1 });
+    const icon1 = createMockIcon(new Vector3(0, 0, 0));
+    const icon2 = createMockIcon(new Vector3(1, 1, 1));
+
+    // Add 2 clusters
+    smallPoolRenderer.updateClusters([createClusterData(icon1, true, 5), createClusterData(icon2, true, 10)], params);
+    const container = params.renderer.domElement.parentElement?.querySelector('.small-pool-container');
+    assert(container);
+    const elements = container.querySelectorAll('.small-pool-icon');
+    expect(elements.length).toBe(2);
+
+    // Tag both elements so we can track which ones get reused
+    elements[0].setAttribute('data-pool-tag', 'a');
+    elements[1].setAttribute('data-pool-tag', 'b');
+
+    // Release all elements (only 1 should be pooled due to maxPoolSize=1)
+    smallPoolRenderer.updateClusters([], params);
+    jest.advanceTimersByTime(200);
+
+    // Add 2 new clusters — 1 should come from the pool (tagged), 1 should be freshly created (untagged)
+    const icon3 = createMockIcon(new Vector3(2, 2, 2));
+    const icon4 = createMockIcon(new Vector3(3, 3, 3));
+    smallPoolRenderer.updateClusters([createClusterData(icon3, true, 15), createClusterData(icon4, true, 20)], params);
+    const newElements = container.querySelectorAll('.small-pool-icon');
+    expect(newElements.length).toBe(2);
+
+    const taggedCount = Array.from(newElements).filter(el => el.hasAttribute('data-pool-tag')).length;
+    expect(taggedCount).toBe(1);
+
+    smallPoolRenderer.dispose();
   });
 
   test('dispose clears active elements, pooled elements, and pending timeouts', () => {
-    jest.useFakeTimers();
     renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
     renderer.updateClusters([], params);
     jest.advanceTimersByTime(200);
+
     renderer.dispose();
     expect(params.renderer.domElement.parentElement?.querySelector('.test-cluster-container')).toBeNull();
-    jest.useRealTimers();
 
-    // Test pending timeouts are cleared on dispose
-    jest.useFakeTimers();
     const newRenderer = new HtmlClusterRenderer({ classPrefix: 'timeout-test' });
     const newParams = createRenderParams();
     newRenderer.updateClusters([createClusterData(defaultIcon, true, 10)], newParams);
     newRenderer.updateClusters([], newParams);
+
     newRenderer.dispose();
     expect(() => jest.advanceTimersByTime(200)).not.toThrow();
-    jest.useRealTimers();
-    document.getElementById('timeout-test-styles')?.remove();
-  });
 
-  test('respects maxPoolSize and does not exceed it', () => {
-    const smallPoolRenderer = new HtmlClusterRenderer({ classPrefix: 'small-pool', maxPoolSize: 1 });
-    const icons = [iconAtOrigin, iconAtOne, createMockIcon(new Vector3(2, 2, 2))];
-    smallPoolRenderer.updateClusters(
-      icons.map((icon, i) => createClusterData(icon, true, i + 1)),
-      params
-    );
-
-    jest.useFakeTimers();
-    smallPoolRenderer.updateClusters([], params);
-    jest.advanceTimersByTime(200);
-    smallPoolRenderer.updateClusters([createClusterData(createMockIcon(new Vector3(5, 5, 5)), true, 50)], params);
-    jest.useRealTimers();
-
-    smallPoolRenderer.dispose();
-    document.getElementById('small-pool-styles')?.remove();
   });
 
   test('does not inject styles if already present', () => {
@@ -174,7 +186,6 @@ describe('HtmlClusterRenderer', () => {
     assert(element);
     expect(element.classList.contains('hovered')).toBe(false);
     noAnimRenderer.dispose();
-    document.getElementById('no-anim-styles')?.remove();
   });
 });
 
