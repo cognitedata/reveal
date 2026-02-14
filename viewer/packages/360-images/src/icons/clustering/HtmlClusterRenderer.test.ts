@@ -127,7 +127,6 @@ describe('HtmlClusterRenderer', () => {
     expect(taggedCount).toBe(1);
 
     smallPoolRenderer.dispose();
-    document.getElementById('small-pool-styles')?.remove();
   });
 
   test('dispose clears active elements, pooled elements, and pending timeouts', () => {
@@ -146,7 +145,6 @@ describe('HtmlClusterRenderer', () => {
     newRenderer.dispose();
     expect(() => jest.advanceTimersByTime(200)).not.toThrow();
 
-    document.getElementById('timeout-test-styles')?.remove();
   });
 
   test('does not inject styles if already present', () => {
@@ -188,7 +186,6 @@ describe('HtmlClusterRenderer', () => {
     assert(element);
     expect(element.classList.contains('hovered')).toBe(false);
     noAnimRenderer.dispose();
-    document.getElementById('no-anim-styles')?.remove();
   });
 });
 
