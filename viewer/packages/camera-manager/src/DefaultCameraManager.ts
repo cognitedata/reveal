@@ -297,7 +297,13 @@ export class DefaultCameraManager implements CameraManager {
     this._stopEventTrigger.dispose();
   }
 
-  private moveCameraTo(
+  /**
+   * Animates the camera to the given position and target.
+   * @param position Desired camera position in world space.
+   * @param target Desired look-at target in world space.
+   * @param duration Duration of the animation in milliseconds. If omitted, a default is derived from distance.
+   */
+  moveCameraTo(
     position: THREE.Vector3,
     target: THREE.Vector3,
     duration?: number,
