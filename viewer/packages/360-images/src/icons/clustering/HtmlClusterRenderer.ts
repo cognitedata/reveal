@@ -25,6 +25,9 @@ export class HtmlClusterRenderer {
   private readonly _enableHoverAnimations: boolean;
   private readonly _zIndex: number | undefined;
   private readonly _countSpanName: string;
+  private readonly _baseSize: number = 4000;
+  private readonly _minSize: number = 48;
+  private readonly _maxSize: number = 120;
 
   private readonly _pendingReleaseTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
@@ -232,8 +235,12 @@ export class HtmlClusterRenderer {
 
     const screenPos = worldToViewportCoordinates(canvas, camera, this._tempPosition, this._tempProjectedPosition);
 
+    const distance = camera.position.distanceTo(this._tempPosition);
+    const projectedSize = Math.max(this._minSize, Math.min(this._maxSize, this._baseSize / Math.max(distance, 1)));
+
     const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
-    const offScreenMargin = 100;
+    // Use half the projected size as margin so the icon is fully off-screen before being hidden
+    const offScreenMargin = projectedSize / 2;
 
     if (
       screenPos.z > 1 ||
@@ -247,13 +254,6 @@ export class HtmlClusterRenderer {
     }
 
     element.style.display = 'flex';
-
-    const distance = camera.position.distanceTo(this._tempPosition);
-    const baseSize = 80;
-    const minSize = 48;
-    const maxSize = 120;
-    const referenceDistance = 50;
-    const projectedSize = Math.max(minSize, Math.min(maxSize, (baseSize * referenceDistance) / Math.max(distance, 1)));
 
     element.style.left = `${screenPos.x}px`;
     element.style.top = `${screenPos.y}px`;
