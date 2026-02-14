@@ -144,7 +144,6 @@ describe('HtmlClusterRenderer', () => {
 
     newRenderer.dispose();
     expect(() => jest.advanceTimersByTime(200)).not.toThrow();
-
   });
 
   test('does not inject styles if already present', () => {
