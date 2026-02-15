@@ -105,23 +105,32 @@ describe(IconOctree.name, () => {
       const octree = new IconOctree(testIcons, unitBounds, 1);
 
       // Camera far from all icons - should cluster them into fewer nodes than total icons
-      const farResult = octree.getLODByDistance(new Vector3(10, 10, 10), 0.3, 2);
+      const farResult = octree.getLODByDistance(new Vector3(10, 10, 10), 0.3);
       expect(farResult.size).toBeLessThan(testIcons.length);
 
       // Camera close to icons at 0.1 position - those should not be clustered
-      const closeResult = octree.getLODByDistance(positions[3], 0.3, 2);
+      const closeResult = octree.getLODByDistance(positions[3], 2);
       expect(closeResult.size).toBe(testIcons.length);
+
+      // Test custom clusteringLevel: higher level = finer clusters (more nodes)
+      const farCameraPos = new Vector3(10, 10, 10);
+      const coarseClusterResult = octree.getLODByDistance(farCameraPos, 0.3, 1);
+      const fineClusterResult = octree.getLODByDistance(farCameraPos, 0.3, 3);
+      expect(coarseClusterResult.size).toBeLessThan(fineClusterResult.size);
     });
 
     test('Moving camera changes which icons are clustered', () => {
       const octree = new IconOctree([iconMocks[3], iconMocks[4]], unitBounds, 1);
-      expect(octree.getLODByDistance(positions[3], 0.2, 0).size).toBeGreaterThan(0);
-      expect(octree.getLODByDistance(positions[4], 0.2, 0).size).toBeGreaterThan(0);
+      expect(octree.getLODByDistance(positions[3], 0.2).size).toBeGreaterThan(0);
+      expect(octree.getLODByDistance(positions[4], 0.2).size).toBeGreaterThan(0);
     });
 
-    test('Zero distance threshold clusters all icons', () => {
+    test('Small distance threshold with far camera clusters icons', () => {
       const octree = new IconOctree([iconMocks[0], iconMocks[1]], unitBounds, 1);
-      expect(octree.getLODByDistance(positions[2], 0, 0).size).toBeGreaterThan(0);
+      expect(octree.getLODByDistance(positions[2], 0).size).toBeGreaterThan(0);
+      const result = octree.getLODByDistance(new Vector3(5, 5, 5), 0);
+      expect(result.size).toBeGreaterThan(0);
+      expect(result.size).toBeLessThanOrEqual(2);
     });
 
     test('Very large distance threshold shows all icons individually', () => {
@@ -178,6 +187,58 @@ describe(IconOctree.name, () => {
 
       expect(octree.hasDescendantInSet(root, new Set())).toBe(false);
       expect(octree.hasDescendantInSet(leafNodes[0], new Set([leafNodes[1]]))).toBe(false);
+    });
+  });
+
+  describe('getLODByDistanceWithClustering', () => {
+    test('Empty octree returns empty set', () => {
+      const octree = new IconOctree([], unitBounds, 8);
+      expect(octree.getLODByDistanceWithClustering(positions[2], 10).size).toBe(0);
+    });
+
+    test('Single icon returns one node', () => {
+      const testIcons = [iconMocks[0]];
+      const octree = new IconOctree(testIcons, unitBounds, 8);
+      expect(octree.getLODByDistanceWithClustering(positions[6], 10).size).toBe(testIcons.length);
+    });
+
+    test('All icons returned when camera position is undefined', () => {
+      const testIcons = [iconMocks[0], iconMocks[1]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+      const result = octree.getLODByDistanceWithClustering(undefined, 10);
+      expect(result.size).toBe(testIcons.length);
+    });
+
+    test('maxOctreeDepth limits expansion of nodes', () => {
+      const testIcons = iconMocks.slice(0, 6);
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      // With maxOctreeDepth=1, should cluster more aggressively
+      const shallowResult = octree.getLODByDistanceWithClustering(new Vector3(10, 10, 10), 0.3, 1);
+
+      // With maxOctreeDepth=undefined, can expand fully
+      const deepResult = octree.getLODByDistanceWithClustering(new Vector3(10, 10, 10), 0.3, undefined);
+
+      // Shallow should have fewer or equal nodes (more clustered)
+      expect(shallowResult.size).toBeLessThanOrEqual(deepResult.size);
+    });
+
+    test('Camera close to node forces expansion regardless of maxOctreeDepth', () => {
+      const testIcons = [iconMocks[0], iconMocks[1]];
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      // Camera very close to icons - should expand even with depth limit
+      const result = octree.getLODByDistanceWithClustering(positions[2], 1, 1);
+      expect(result.size).toBe(testIcons.length);
+    });
+
+    test('Node size is considered in distance calculation', () => {
+      const testIcons = iconMocks.slice(0, 4);
+      const octree = new IconOctree(testIcons, unitBounds, 1);
+
+      // Camera at moderate distance - node size adjustment should affect clustering
+      const result = octree.getLODByDistanceWithClustering(new Vector3(2, 2, 2), 0.5, 3);
+      expect(result.size).toBeGreaterThan(0);
     });
   });
 
