@@ -18,7 +18,6 @@ type NodeMetadata = {
 
 export class IconOctree<ContentType = DefaultOverlay3DContentType> extends PointOctree<Overlay3DIcon<ContentType>> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
-  private readonly _nodeSize = new Vector3();
 
   private readonly _distanceBoxChecker = {
     box: new Box3(),
@@ -224,7 +223,7 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
         continue;
       }
 
-      const nodeSize = this.getNodeSize(currentNode);
+      const nodeSize = currentNode.min.distanceTo(currentNode.max);
       const nodeDistanceThreshold = distanceThreshold + nodeSize;
       const hasIconsWithinDistance =
         cameraPosition === undefined || this.isNodeWithinDistance(currentNode, cameraPosition, nodeDistanceThreshold);
@@ -238,36 +237,18 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
       const isCameraCloseToNode =
         cameraPosition !== undefined && this.isNodeWithinDistance(currentNode, cameraPosition, distanceThreshold);
 
-      if (isCameraCloseToNode) {
-        if (currentNode.children) {
-          for (const child of currentNode.children) {
-            if (this.isPointOctant(child)) {
-              nodesToProcess.push(child);
-            }
-          }
-        } else {
-          selectedNodes.add(currentNode);
-        }
-      } else if (hasIconsWithinDistance && !isAtMaxDepth) {
-        currentNode.children?.forEach(child => {
+      if (currentNode.children && (isCameraCloseToNode || (hasIconsWithinDistance && !isAtMaxDepth))) {
+        for (const child of currentNode.children) {
           if (this.isPointOctant(child)) {
             nodesToProcess.push(child);
           }
-        });
+        }
       } else {
         selectedNodes.add(currentNode);
       }
     }
 
     return selectedNodes;
-  }
-
-  /**
-   * Get the diagonal size of a node's bounding box
-   */
-  private getNodeSize(node: Node): number {
-    this._nodeSize.subVectors(node.max, node.min);
-    return this._nodeSize.length();
   }
 
   /**
