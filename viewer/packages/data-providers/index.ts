@@ -70,6 +70,8 @@ export {
   isClassicPointCloudVolume
 } from './src/utilities/utils';
 
+export { getExternalIdFromDescriptor } from './src/utilities/getExternalIdFromDescriptor';
+
 export {
   DataSourceType,
   ClassicDataSourceType,
