@@ -7,7 +7,8 @@ import {
   Image360Descriptor,
   Image360Texture,
   DataSourceType,
-  Image360Provider
+  Image360Provider,
+  getExternalIdFromDescriptor
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
@@ -161,11 +162,19 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       fileDescriptors: this._image360Descriptor.faceDescriptors
     });
 
+    // Get fileId to externalId mapping from provider
+    const fileIdToExternalId = this._imageProvider.resolveFileIdToExternalIdMapping
+      ? await this._imageProvider.resolveFileIdToExternalIdMapping(
+          annotationData,
+          this._image360Descriptor.faceDescriptors
+        )
+      : new Map<number, string>();
+
     const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
 
     const annotationObjects = filteredAnnotationData
       .map(data => {
-        const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
+        const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor, fileIdToExternalId);
         return ImageAnnotationObject.createAnnotationObject(
           data,
           faceDescriptor?.face,
@@ -244,23 +253,28 @@ function isDefined<T extends DataSourceType>(
 
 function getAssociatedFaceDescriptor<T extends DataSourceType>(
   annotation: T['image360AnnotationType'],
-  imageDescriptors: Image360Descriptor<T>
+  imageDescriptors: Image360Descriptor<T>,
+  fileIdToExternalId: Map<number, string>
 ): Image360FileDescriptor | undefined {
   if (isCoreDmImage360Annotation(annotation)) {
     return undefined;
   }
 
-  // Match descriptors by internal file ID
-  // Only descriptors with fileId can be matched to annotation.annotatedResourceId
-  const fileDescriptors = imageDescriptors.faceDescriptors.filter(
-    desc => 'fileId' in desc && desc.fileId !== undefined && desc.fileId === annotation.annotatedResourceId
-  );
+  const annotatedResourceId = annotation.annotatedResourceId;
 
-  // For descriptors without fileId (using externalId or instanceId),
-  // we can't directly match them to annotations
-  if (fileDescriptors.length === 0) {
-    return undefined;
+  // First, try to match by fileId directly
+  const matchByFileId = imageDescriptors.faceDescriptors.find(
+    desc => 'fileId' in desc && desc.fileId === annotatedResourceId
+  );
+  if (matchByFileId !== undefined) {
+    return matchByFileId;
   }
 
-  return fileDescriptors[0];
+  // If no direct fileId match, try to match via externalId using the mapping
+  const externalId = fileIdToExternalId.get(annotatedResourceId);
+  if (externalId !== undefined) {
+    return imageDescriptors.faceDescriptors.find(desc => getExternalIdFromDescriptor(desc) === externalId);
+  }
+
+  return undefined;
 }
