@@ -136,24 +136,22 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
 
     const fileIdToEntityRevision = await this.getFileIdToEntityRevisionMap(collection, allAnnotations);
 
-    const revisionsWithMatches = new Set<Image360RevisionEntity<ClassicDataSourceType>>();
+    const revisionToEntityMap = new Map<
+      Image360RevisionEntity<ClassicDataSourceType>,
+      Image360Entity<ClassicDataSourceType>
+    >();
     for (const annotation of allAnnotations) {
       if (matchingAnnotationIds.has(annotation.id)) {
         const match = fileIdToEntityRevision.get(annotation.annotatedResourceId);
         if (match !== undefined) {
-          revisionsWithMatches.add(match.revision);
+          revisionToEntityMap.set(match.revision, match.entity);
         }
       }
     }
 
     const results: Image360AnnotationAssetQueryResult<ClassicDataSourceType>[] = [];
 
-    for (const revision of revisionsWithMatches) {
-      const entity = collection.image360Entities.find(e => e.getRevisions().includes(revision));
-      if (entity === undefined) {
-        continue;
-      }
-
+    for (const [revision, entity] of revisionToEntityMap) {
       const revisionAnnotations = await revision.getAnnotations();
 
       for (const annotationObj of revisionAnnotations) {
