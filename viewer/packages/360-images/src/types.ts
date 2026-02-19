@@ -33,3 +33,14 @@ export type Image360IconIntersectionData<T extends DataSourceType = DataSourceTy
   point: Vector3;
   distanceToCamera: number;
 };
+
+/**
+ * Data for a cluster intersection result
+ */
+export type Image360ClusterIntersectionData<T extends DataSourceType = DataSourceType> = {
+  image360Collection: DefaultImage360Collection<T>;
+  clusterPosition: Vector3;
+  clusterSize: number;
+  clusterIcons: Image360Entity<T>[];
+  distanceToCamera: number;
+};
