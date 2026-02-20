@@ -6,6 +6,7 @@ export type CadSceneRootMetadata = {
   readonly maxTreeIndex: number;
   readonly sectors: SceneSectorMetadata[];
   readonly unit: string | null;
+  readonly signedUrl?: string;
 
   // Available, but unused:
   // readonly projectId: number;
@@ -43,4 +44,5 @@ export type SceneSectorMetadata = {
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
+  readonly signedUrl?: string;
 };

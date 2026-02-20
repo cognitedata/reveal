@@ -4,7 +4,7 @@
 
 import { MemoryRequestCache } from '@reveal/utilities';
 import { ConsumedSector, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
-import { BinaryFileProvider, ModelIdentifier } from '@reveal/data-providers';
+import { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { SectorRepository } from './SectorRepository';
 import { GltfSectorLoader } from './GltfSectorLoader';
 
@@ -12,7 +12,7 @@ export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorLoader: GltfSectorLoader;
   private readonly _gltfCache: MemoryRequestCache<string, ConsumedSector>;
 
-  constructor(sectorFileProvider: BinaryFileProvider) {
+  constructor(sectorFileProvider: ModelDataProvider) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider);
 
     // Create cache with disposal callback that properly disposes GPU resources

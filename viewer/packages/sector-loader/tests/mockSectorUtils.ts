@@ -26,6 +26,8 @@ export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
   return new Mock<WantedSector>()
     .setup(p => p.modelBaseUrl)
     .returns(defaultBaseUrl)
+    .setup(p => p.signedFilesBaseUrl)
+    .returns(defaultBaseUrl)
     .setup(p => p.modelIdentifier)
     .returns(modelIdentifier)
     .setup(p => p.metadata)

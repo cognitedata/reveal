@@ -16,29 +16,43 @@ export class LocalModelDataProvider implements ModelDataProvider {
     return response.arrayBuffer();
   }
 
-  async getSignedBinaryFiles(
-    baseUrl: string,
-    fileNames: string[],
-    modelIdentifier?: DMModelIdentifier,
-    abortSignal?: AbortSignal
-  ): Promise<ArrayBuffer[]> {
+  async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     if (abortSignal) {
       Log.warn('Abort signal is not supported for local models');
     }
-    const arrayBuffers: ArrayBuffer[] = [];
-    for (const fileName of fileNames) {
-      const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
-      const arrayBuffer = await response.arrayBuffer();
-      arrayBuffers.push(arrayBuffer);
-    }
-    return arrayBuffers;
+    const response = await fetchWithStatusCheck(signedUrl);
+    return response.arrayBuffer();
   }
+
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
     return response.json();
   }
 
-  async getDMSJsonFile(baseUrl: string, fileName: string, modelIdentifier?: DMModelIdentifier): Promise<unknown> {
+  /**
+   * Download and parse a JSON file. For local models, this simply fetches from baseUrl/fileName.
+   * @param baseUrl         Base URL of the model.
+   * @param _modelIdentifier Model identifier (ignored for local models).
+   * @param fileName        Filename to fetch (required for local models).
+   */
+  async getDMSJsonFile<T>(baseUrl: string, _modelIdentifier: DMModelIdentifier, fileName?: string): Promise<T> {
+    if (!fileName) {
+      throw new Error('LocalModelDataProvider requires a fileName to fetch JSON files');
+    }
+    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
+    return response.json();
+  }
+  /**
+   * Download and parse a JSON file through signed URL endpoint for a given file name.
+   * @param baseUrl         Base URL of the signed files endpoint.
+   * @param _modelIdentifier DM model identifier containing revision info (ignored for local models).
+   * @param fileName        Filename to filter by specific file path.
+   */
+  async getDMSJsonFileFromFileName(
+    baseUrl: string,
+    _modelIdentifier: DMModelIdentifier,
+    fileName: string
+  ): Promise<unknown> {
     const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
     return response.json();
   }

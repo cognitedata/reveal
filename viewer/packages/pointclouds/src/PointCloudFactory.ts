@@ -20,6 +20,7 @@ import { PointCloudMaterialManager } from '@reveal/rendering';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
 import { isLocalIdentifier } from '@reveal/data-providers';
 import { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import { hasFileData } from './typeGuards';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -51,7 +52,7 @@ export class PointCloudFactory {
     modelIdentifier: ModelIdentifier,
     modelMetadata: PointCloudMetadata
   ): Promise<PointCloudNode<T>> {
-    const { modelBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
+    const { modelBaseUrl, signedFilesBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
 
     const annotationInfoPromise = isLocalIdentifier(identifier)
       ? this._pointCloudObjectProvider.getPointCloudObjects({ modelId: -1, revisionId: -1 })
@@ -59,9 +60,11 @@ export class PointCloudFactory {
         ? this._pointCloudDMProvider.getPointCloudObjects(identifier)
         : this._pointCloudObjectProvider.getPointCloudObjects(identifier);
 
-    const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata, modelIdentifier);
+    const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
-    const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
+    const [annotationInfo, classSchemaData] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
+
+    const classSchema = hasFileData(classSchemaData) ? classSchemaData.fileData : { classificationSets: [] };
 
     const stylableObject = annotationInfo.map(obj => obj.stylableObject);
 
@@ -72,6 +75,7 @@ export class PointCloudFactory {
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
+      signedFilesBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       stylableObject,
       modelIdentifier

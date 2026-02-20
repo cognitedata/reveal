@@ -4,14 +4,15 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata } from '../types';
+import { CadMetadataWithSignedFiles, SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
+import { BoundingBox, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
+import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
 
-export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScene {
-  if (!metadata.sectors || metadata.sectors.length === 0) {
+export function parseCadMetadataGltf(metadata: CadMetadataWithSignedFiles): SectorScene {
+  if (!metadata.fileData.sectors || metadata.fileData.sectors.length === 0) {
     throw new Error('No sectors found in scene JSON file');
   }
 
@@ -19,13 +20,13 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
   const sectorsById = new Map<number, SectorMetadata>();
   const parentIds: number[] = [];
 
-  const numTexturedSectors = metadata.sectors.filter(s => s.texturedFileName).length;
+  const numTexturedSectors = metadata.fileData.sectors.filter(s => s.texturedFileName).length;
   if (numTexturedSectors > 0) {
     MetricsLogger.trackEvent('texturedModelLoaded', {});
   }
 
-  metadata.sectors.forEach(s => {
-    const sector = createSectorMetadata(s);
+  metadata.fileData.sectors.forEach(s => {
+    const sector = createSectorMetadata(s, metadata.signedFiles.items);
     sectorsById.set(s.id, sector);
     parentIds[s.id] = s.parentId ?? -1;
   });
@@ -55,9 +56,9 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
     }
   }
 
-  const unit = metadata.unit !== null ? metadata.unit : 'Meters';
+  const unit = metadata.fileData.unit ?? 'Meters';
 
-  return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
+  return new SectorSceneImpl(metadata.fileData.version, metadata.fileData.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
 export function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
@@ -67,7 +68,7 @@ export function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
   );
 }
 
-function createSectorMetadata(metadata: SceneSectorMetadata): SectorMetadata {
+function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: DMSJsonFileItem[]): SectorMetadata {
   const metadataBoundingBox = toThreeBoundingBox(metadata.boundingBox);
 
   let geometryBoundingBox: THREE.Box3;
@@ -85,6 +86,11 @@ function createSectorMetadata(metadata: SceneSectorMetadata): SectorMetadata {
     subtreeBoundingBox = new THREE.Box3();
   }
 
+  let signedUrl: string | undefined = metadata.signedUrl;
+  if (signedFiles.length > 0) {
+    signedUrl = signedFiles.find(f => f.fileName === metadata.sectorFileName)?.signedUrl;
+  }
+
   return {
     id: metadata.id,
     path: metadata.path,
@@ -97,7 +103,7 @@ function createSectorMetadata(metadata: SceneSectorMetadata): SectorMetadata {
     maxDiagonalLength: metadata.maxDiagonalLength || 0,
     minDiagonalLength: metadata.minDiagonalLength || 0,
     sectorFileName: metadata.texturedFileName ?? metadata.sectorFileName,
-
+    signedUrl: signedUrl,
     // Populated later
     children: []
   };

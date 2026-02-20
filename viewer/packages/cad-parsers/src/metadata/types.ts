@@ -2,7 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
+import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
 import * as THREE from 'three';
+import { CadSceneRootMetadata } from './parsers/types';
 
 export type SectorMetadata = {
   readonly id: number;
@@ -18,4 +20,20 @@ export type SectorMetadata = {
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
   readonly geometryBoundingBox: THREE.Box3;
+  readonly signedUrl?: string;
+};
+
+export type CadMetadataWithSignedFiles = {
+  /**
+   * Type of the file data.
+   */
+  type: 'cadMetadata';
+  /**
+   * Signed files metadata.
+   */
+  readonly signedFiles: { items: DMSJsonFileItem[] };
+  /**
+   * CAD metadata.
+   */
+  readonly fileData: CadSceneRootMetadata;
 };

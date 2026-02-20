@@ -18,6 +18,7 @@ export function createCadModelMetadata(sceneVersion: number, root: SectorMetadat
     format: File3dFormat.GltfCadModel,
     formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,
+    signedFilesBaseUrl: `https://localhost/${modelId}`,
     modelMatrix: new THREE.Matrix4().identity(),
     inverseModelMatrix: new THREE.Matrix4().identity(),
     scene,

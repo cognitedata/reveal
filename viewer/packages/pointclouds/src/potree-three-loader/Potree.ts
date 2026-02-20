@@ -101,15 +101,22 @@ export class Potree implements IPotree {
 
   async loadPointCloud(
     baseUrl: string,
+    signedFilesBaseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
     modelIdentifier: ModelIdentifier
   ): Promise<PointCloudOctree> {
     let geometry: PointCloudEptGeometry;
     if (modelIdentifier instanceof DMModelIdentifier) {
-      geometry = await EptLoader.dmsLoad(baseUrl, fileName, this._modelDataProvider, stylableObject, modelIdentifier);
+      geometry = await EptLoader.dmsLoad(
+        signedFilesBaseUrl,
+        fileName,
+        this._modelDataProvider,
+        stylableObject,
+        modelIdentifier
+      );
     } else {
-      geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObject);
+      geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, modelIdentifier, stylableObject);
     }
     return new PointCloudOctree(
       this,

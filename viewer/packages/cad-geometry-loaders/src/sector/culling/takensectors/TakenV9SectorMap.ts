@@ -125,6 +125,7 @@ function toWantedSector(
   const prioritizedSector: PrioritizedWantedSector = {
     modelIdentifier,
     modelBaseUrl: model.modelBaseUrl,
+    signedFilesBaseUrl: model.signedFilesBaseUrl,
     geometryClipBox,
     levelOfDetail,
     metadata: sector,

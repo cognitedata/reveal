@@ -10,6 +10,7 @@ export interface IPotree {
 
   loadPointCloud(
     baseUrl: string,
+    signedFilesBaseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
     modelIdentifier: ModelIdentifier

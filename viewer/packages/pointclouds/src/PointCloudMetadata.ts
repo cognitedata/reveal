@@ -11,6 +11,7 @@ export interface PointCloudMetadata {
   readonly formatVersion: number;
 
   readonly modelBaseUrl: string;
+  readonly signedFilesBaseUrl: string;
   readonly modelIdentifier: ModelIdentifier;
   readonly modelMatrix: THREE.Matrix4;
   readonly cameraConfiguration?: CameraConfiguration;

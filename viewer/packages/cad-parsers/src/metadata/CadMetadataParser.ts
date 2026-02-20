@@ -4,15 +4,12 @@
 
 import { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
-
-interface VersionHeader {
-  readonly version: number;
-}
+import { CadMetadataWithSignedFiles } from './types';
 
 export class CadMetadataParser {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public parse(parsedJson: any): SectorScene {
-    const version = (parsedJson as VersionHeader).version;
+    const version = (parsedJson as CadMetadataWithSignedFiles).fileData.version;
     switch (version) {
       case 9:
         return parseCadMetadataGltf(parsedJson);

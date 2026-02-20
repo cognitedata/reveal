@@ -16,6 +16,7 @@ import {
   DMModelIdentifier,
   isDMIdentifier
 } from '@reveal/data-providers';
+import { PointCloudMetadataWithSignedFiles } from './types';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -35,32 +36,47 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
+    const signedFilesBaseUrlPromise = this._modelMetadataProvider.getModelUriForSignedFiles();
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
+    const signedFilesBaseUrl = await signedFilesBaseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
-    const scene = await this.getJsonFileBasedOnModelIdentifier(modelIdentifier, modelBaseUrl, this._blobFileName);
+    const jsonData = await this.getJsonFile(modelIdentifier, modelBaseUrl, signedFilesBaseUrl, this._blobFileName);
+    const scene = jsonData.fileData;
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       modelIdentifier: modelIdentifier,
       format: output.format as File3dFormat,
       formatVersion: output.version,
       modelBaseUrl,
+      signedFilesBaseUrl,
       modelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
   }
 
-  private async getJsonFileBasedOnModelIdentifier(
+  private async getJsonFile(
     modelIdentifier: ModelIdentifier,
     baseUrl: string,
+    signedFilesBaseUrl: string,
     fileName: string
-  ): Promise<unknown> {
+  ): Promise<PointCloudMetadataWithSignedFiles> {
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier)) {
-      return this._modelDataProvider.getDMSJsonFile(baseUrl, fileName, modelIdentifier);
+      const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
+      return {
+        type: 'pointCloudMetadata',
+        signedFiles: (jsonData as PointCloudMetadataWithSignedFiles).signedFiles,
+        fileData: (jsonData as PointCloudMetadataWithSignedFiles).fileData
+      };
     }
-    return this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    return {
+      type: 'pointCloudMetadata',
+      signedFiles: { items: [] },
+      fileData: jsonData.fileData
+    };
   }
 
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {

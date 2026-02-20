@@ -41,8 +41,25 @@ export interface DMSBinaryFileProvider {
 }
 
 export interface DMSJsonFileProvider {
-  getJsonFile(baseUrl: string, fileName: string, modelIdentifier?: DMModelIdentifier): Promise<unknown>;
+  /**
+   * Download and parse a JSON file through signed URL endpoint.
+   * @param baseUrl         Base URL of the signed files endpoint.
+   * @param modelIdentifier DM model identifier containing revision info (required).
+   * @param fileName        Optional filename to filter by specific file path.
+   */
+  getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName?: string): Promise<unknown>;
 }
+
+export type DMSJsonFileItem = {
+  signedUrl: string;
+  fileName: string;
+  subPath: string;
+};
+
+export type DMSJsonFileResponse = {
+  items: DMSJsonFileItem[];
+  nextCursor?: string;
+};
 
 /**
  * An ID identifiying a single Image360 entity within a collection

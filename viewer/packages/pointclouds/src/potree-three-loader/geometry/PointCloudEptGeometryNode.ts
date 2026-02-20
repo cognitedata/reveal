@@ -16,7 +16,8 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { DMModelIdentifier, ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { hasSignedFiles } from '../../typeGuards';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
@@ -24,11 +25,14 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _key: EptKey;
 
   private readonly _dataLoader: ModelDataProvider;
-
+  private readonly _modelIdentifier: ModelIdentifier;
   private readonly _boundingBox: THREE.Box3;
 
   private readonly _boundingSphere: THREE.Sphere;
   private readonly _spacing: number;
+
+  private _signedUrl: string | undefined;
+  private readonly _signedFilesBaseUrl: string | undefined;
   private _level: number;
   private _numPoints: number;
 
@@ -63,6 +67,18 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   get spacing(): number {
     return this._spacing;
+  }
+
+  get signedUrl(): string | undefined {
+    return this._signedUrl;
+  }
+
+  set signedUrl(signedUrl: string | undefined) {
+    this._signedUrl = signedUrl;
+  }
+
+  get signedFilesBaseUrl(): string | undefined {
+    return this._signedFilesBaseUrl;
   }
 
   get boundingBox(): THREE.Box3 {
@@ -125,6 +141,9 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   constructor(
     ept: PointCloudEptGeometry,
     modelDataProvider: ModelDataProvider,
+    modelIdentifier: ModelIdentifier,
+    signedFilesBaseUrl: string | undefined,
+    signedUrl: string | undefined,
     b?: THREE.Box3,
     d?: number,
     x?: number,
@@ -135,6 +154,9 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._key = new EptKey(this._ept, b || this._ept.boundingBox, d || 0, x, y, z);
 
     this._dataLoader = modelDataProvider;
+    this._modelIdentifier = modelIdentifier;
+    this._signedUrl = signedUrl;
+    this._signedFilesBaseUrl = signedFilesBaseUrl;
 
     this._isLeafNode = false;
 
@@ -241,14 +263,32 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._ept.loader.load(this);
   }
 
+  async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
+    if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
+      return this._dataLoader.getDMSJsonFileFromFileName(
+        this.signedFilesBaseUrl,
+        this._modelIdentifier,
+        fileName
+      ) as Promise<{ [key: string]: number }>;
+    } else {
+      const baseUrl = `${this.ept.url}ept-hierarchy`;
+      return this._dataLoader.getJsonFile(baseUrl, fileName) as Promise<{ [key: string]: number }>;
+    }
+  }
+
   async loadHierarchy(): Promise<void> {
     const nodes: { [key: string]: PointCloudEptGeometryNode } = {};
     nodes[this.fileName()] = this;
 
-    const baseUrl = `${this.ept.url}ept-hierarchy`;
     const fileName = `${this.fileName()}.json`;
 
-    const hier = await this._dataLoader.getJsonFile(baseUrl, fileName);
+    const hier = await this.getHierarchy(fileName);
+    if (hasSignedFiles(hier)) {
+      const signedFiles = hier.signedFiles.items;
+      if (signedFiles.length > 0) {
+        this.signedUrl = signedFiles.find((file: { fileName: string }) => file.fileName === fileName)?.signedUrl;
+      }
+    }
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.
@@ -278,7 +318,18 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
       const key = parentNode.key.step(a, b, c);
 
-      const node = new PointCloudEptGeometryNode(this.ept, this._dataLoader, key.b, key.d, key.x, key.y, key.z);
+      const node = new PointCloudEptGeometryNode(
+        this.ept,
+        this._dataLoader,
+        this._modelIdentifier,
+        this.signedFilesBaseUrl,
+        this.signedUrl,
+        key.b,
+        key.d,
+        key.x,
+        key.y,
+        key.z
+      );
 
       node._level = d;
       node._numPoints = hier[v];
