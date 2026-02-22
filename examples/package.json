@@ -28,12 +28,12 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "stats.js": "0.17.0",
-    "styled-components": "6.1.19"
+    "styled-components": "6.3.11"
   },
   "devDependencies": {
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
-    "@types/react": "18.3.24",
+    "@types/react": "18.3.28",
     "@types/react-dom": "18.3.7",
     "@types/stats.js": "^0.17.0",
     "@types/three": "^0.180.0",
@@ -64,5 +64,5 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "yarn@4.10.2"
+  "packageManager": "yarn@4.12.0"
 }
