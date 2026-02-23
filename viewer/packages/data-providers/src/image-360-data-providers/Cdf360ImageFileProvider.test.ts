@@ -255,25 +255,38 @@ describe(Cdf360ImageFileProvider.name, () => {
         expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=123'), expect.any(Object));
       });
 
-      test('resolves externalId via downloadlink before fetching icons', async () => {
+      test('resolves externalId via files.retrieve before fetching icons', async () => {
         const descriptors: Image360FileDescriptor[] = [
           { externalId: 'file-ext', face: 'front', mimeType: 'image/jpeg' }
         ];
 
-        fetchSpy
-          .mockResolvedValueOnce(
-            createJsonResponse({
-              items: [
-                {
-                  externalId: 'file-ext',
-                  downloadUrl: 'https://example.com/api/v1/files/storage/cognite/99%2F789%2Fimage.jpeg'
-                }
-              ]
-            })
+        // Create a new mock client with files.retrieve
+        const mockClientWithFiles = new Mock<CogniteClient>()
+          .setup(c => c.getBaseUrl())
+          .returns('https://example.com')
+          .setup(c => c.project)
+          .returns('test-project')
+          .setup(c => c.getDefaultRequestHeaders())
+          .returns({ Authorization: 'Bearer token' })
+          .setup(c => c.files.retrieve)
+          .returns(() =>
+            Promise.resolve([
+              {
+                id: 789,
+                uploaded: true,
+                name: 'test',
+                lastUpdatedTime: new Date('2025-01-01'),
+                createdTime: new Date('2025-01-01')
+              }
+            ])
           )
-          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+          .object();
 
-        const faces = await provider.getLowResolution360ImageFiles(descriptors);
+        const providerWithFiles = new Cdf360ImageFileProvider(mockClientWithFiles);
+
+        fetchSpy.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+
+        const faces = await providerWithFiles.getLowResolution360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(1);
         expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=789'), expect.any(Object));
