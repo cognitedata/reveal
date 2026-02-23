@@ -44,7 +44,7 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --workspace --locked
+        run: cargo update --locked
 
   build-viewer:
     needs: populate-caches
