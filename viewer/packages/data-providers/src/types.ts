@@ -53,6 +53,17 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
   getRelevant360ImageAnnotations(
     annotationSpecifier: Image360AnnotationSpecifier<T>
   ): Promise<T['image360AnnotationType'][]>;
+
+  /**
+   * Resolves the mapping from internal file IDs (annotatedResourceId) to external IDs.
+   * This is needed to match annotations to face descriptors when descriptors use externalId.
+   * Optional - if not implemented, the caller should build mapping from descriptors only.
+   */
+  resolveFileIdToExternalIdMapping?(
+    annotations: T['image360AnnotationType'][],
+    descriptors: Image360FileDescriptor[]
+  ): Promise<Map<number, string>>;
+
   findImageAnnotationsForInstance(
     instanceFilter: Image360AnnotationInstanceReference<T>,
     collection: DefaultImage360Collection<T>
