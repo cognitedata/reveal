@@ -122,47 +122,43 @@ describe(CdfImageFileProvider.name, () => {
       expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=123'), expect.any(Object));
     });
 
-    test('resolves external IDs via download URLs before fetching icons', async () => {
+    test('resolves internal ids via files.retrieve for externalId identifiers', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ externalId: 'file-ext-1' }];
 
-      fetchSpy
-        .mockResolvedValueOnce(
-          createJsonResponse({
-            items: [
-              {
-                externalId: 'file-ext-1',
-                downloadUrl: 'https://example.com/api/v1/files/storage/cognite/12345%2F67890%2Fimage.jpeg'
-              }
-            ]
-          })
-        )
-        .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+      const providerWithFiles = new CdfImageFileProvider(createMockClientWithFilesRetrieve([99999]));
 
-      const results = await provider.getIconBuffersWithMimeType(fileIdentifiers);
+      fetchSpy.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+
+      const results = await providerWithFiles.getIconBuffersWithMimeType(fileIdentifiers);
 
       expect(results).toHaveLength(1);
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=67890'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=99999'), expect.any(Object));
+    });
+
+    test('resolves internal ids via files.retrieve for instanceId identifiers', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ instanceId: { space: 'my-space', externalId: 'my-instance' } }];
+
+      const providerWithFiles = new CdfImageFileProvider(createMockClientWithFilesRetrieve([88888]));
+
+      fetchSpy.mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(50), 'image/jpeg'));
+
+      const results = await providerWithFiles.getIconBuffersWithMimeType(fileIdentifiers);
+
+      expect(results).toHaveLength(1);
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/files/icon?id=88888'), expect.any(Object));
     });
 
     test('handles mixed identifier types', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ id: 111 }, { externalId: 'file-ext' }, { id: 222 }];
 
+      const providerWithFiles = new CdfImageFileProvider(createMockClientWithFilesRetrieve([3333333333333]));
+
       fetchSpy
-        .mockResolvedValueOnce(
-          createJsonResponse({
-            items: [
-              {
-                externalId: 'file-ext',
-                downloadUrl: 'https://example.com/api/v1/files/storage/cognite/99%2F333%2Fimage.jpeg'
-              }
-            ]
-          })
-        )
         .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(10), 'image/jpeg'))
         .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(20), 'image/jpeg'))
         .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(30), 'image/jpeg'));
 
-      const results = await provider.getIconBuffersWithMimeType(fileIdentifiers);
+      const results = await providerWithFiles.getIconBuffersWithMimeType(fileIdentifiers);
 
       expect(results).toHaveLength(3);
     });
@@ -341,5 +337,28 @@ describe(CdfImageFileProvider.name, () => {
       text: () => Promise.resolve(''),
       bytes: () => Promise.resolve(new Uint8Array())
     };
+  }
+
+  function createMockClientWithFilesRetrieve(fileIds: number[]): CogniteClient {
+    return new Mock<CogniteClient>()
+      .setup(c => c.getBaseUrl())
+      .returns('https://example.com')
+      .setup(c => c.project)
+      .returns('test-project')
+      .setup(c => c.getDefaultRequestHeaders())
+      .returns({ Authorization: 'Bearer token' })
+      .setup(c => c.files.retrieve)
+      .returns(() =>
+        Promise.resolve(
+          fileIds.map(id => ({
+            id,
+            uploaded: true,
+            name: 'test',
+            lastUpdatedTime: new Date('2025-01-01'),
+            createdTime: new Date('2025-01-01')
+          }))
+        )
+      )
+      .object();
   }
 });
