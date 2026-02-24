@@ -10,7 +10,7 @@ import { HtmlClusterRenderer } from './HtmlClusterRenderer';
 import { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
 import assert from 'assert';
 
-describe('HtmlClusterRenderer', () => {
+describe(HtmlClusterRenderer.name, () => {
   let renderer: HtmlClusterRenderer;
   let params: ClusterRenderParams;
   let defaultIcon: Overlay3DIcon;

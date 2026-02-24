@@ -263,8 +263,8 @@ export class HtmlClusterRenderer {
     // Set --size CSS variable for proportional border scaling
     element.style.setProperty('--size', `${projectedSize}px`);
 
-    const countSpan = element.querySelector(`.${this._countSpanName}`) as HTMLSpanElement;
-    if (countSpan) {
+    const countSpan = element.querySelector(`.${this._countSpanName}`);
+    if (countSpan instanceof HTMLSpanElement) {
       const displayCount = clusterData.clusterSize > 999 ? '999+' : clusterData.clusterSize.toString();
       if (countSpan.textContent !== displayCount) {
         countSpan.textContent = displayCount;
