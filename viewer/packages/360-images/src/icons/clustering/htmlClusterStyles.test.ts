@@ -4,7 +4,7 @@
 
 import { generateClusterStyles } from './htmlClusterStyles';
 
-describe('generateClusterStyles', () => {
+describe(generateClusterStyles.name, () => {
   test('generates valid CSS with custom prefix and all required selectors', () => {
     const css = generateClusterStyles('my-prefix');
 

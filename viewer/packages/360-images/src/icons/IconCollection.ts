@@ -7,21 +7,20 @@ import {
   Color,
   Frustum,
   Matrix4,
-  PerspectiveCamera,
   Ray,
   Sphere,
   Sprite,
   SpriteMaterial,
   Texture,
   Vector2,
-  Vector3,
-  WebGLRenderer
+  Vector3
 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { DefaultOverlay3DContentType, IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
 import { PointOctant } from 'sparse-octree';
 import { HtmlClusterRenderer, HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
+import { ClusterRenderParams } from './clustering';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
@@ -377,8 +376,7 @@ export class IconCollection {
       this.updateClusterRendering(this._visibleClusteredIcons, iconSprites, {
         renderer,
         camera,
-        modelTransform,
-        hoveredClusterIcon: this._hoveredClusterIcon
+        modelTransform
       });
     };
   }
@@ -446,17 +444,11 @@ export class IconCollection {
    * @param params.renderer - The WebGL renderer
    * @param params.camera - The perspective camera
    * @param params.modelTransform - The model transform matrix
-   * @param params.hoveredClusterIcon - The currently hovered cluster icon, if any
    */
   private updateClusterRendering(
     visibleClusters: ClusteredIcon[],
     iconSprites: OverlayPointsObject,
-    params: {
-      renderer: WebGLRenderer;
-      camera: PerspectiveCamera;
-      modelTransform: Matrix4;
-      hoveredClusterIcon: Overlay3DIcon | undefined;
-    }
+    params: ClusterRenderParams
   ): void {
     const clusters = visibleClusters.filter(item => item.isCluster);
     const individuals = visibleClusters.filter(item => !item.isCluster);
@@ -465,8 +457,7 @@ export class IconCollection {
       this._htmlRenderer.updateClusters(clusters, {
         renderer: params.renderer,
         camera: params.camera,
-        modelTransform: params.modelTransform,
-        hoveredClusterIcon: params.hoveredClusterIcon
+        modelTransform: params.modelTransform
       });
     }
     this.updateIconSpritesRenderData(individuals, iconSprites);
