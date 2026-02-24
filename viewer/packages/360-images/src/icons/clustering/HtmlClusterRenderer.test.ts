@@ -87,7 +87,7 @@ describe(HtmlClusterRenderer.name, () => {
     renderer.updateClusters([], params);
     expect(container.querySelector('.test-cluster-icon')?.classList.contains('fade-out')).toBe(true);
 
-    jest.advanceTimersByTime(200);
+    jest.advanceTimersByTime(150);
     expect(container.querySelectorAll('.test-cluster-icon[style*="display: flex"]').length).toBe(0);
 
     // Verify pool reuse - new cluster should reuse pooled element
@@ -114,7 +114,7 @@ describe(HtmlClusterRenderer.name, () => {
 
     // Release all elements (only 1 should be pooled due to maxPoolSize=1)
     smallPoolRenderer.updateClusters([], params);
-    jest.advanceTimersByTime(200);
+    jest.advanceTimersByTime(150);
 
     // Add 2 new clusters — 1 should come from the pool (tagged), 1 should be freshly created (untagged)
     const icon3 = createMockIcon(new Vector3(2, 2, 2));
@@ -132,7 +132,7 @@ describe(HtmlClusterRenderer.name, () => {
   test('dispose clears active elements, pooled elements, and pending timeouts', () => {
     renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
     renderer.updateClusters([], params);
-    jest.advanceTimersByTime(200);
+    jest.advanceTimersByTime(150);
 
     renderer.dispose();
     expect(params.renderer.domElement.parentElement?.querySelector('.test-cluster-container')).toBeNull();
@@ -143,7 +143,7 @@ describe(HtmlClusterRenderer.name, () => {
     newRenderer.updateClusters([], newParams);
 
     newRenderer.dispose();
-    expect(() => jest.advanceTimersByTime(200)).not.toThrow();
+    expect(() => jest.advanceTimersByTime(150)).not.toThrow();
   });
 
   test('does not inject styles if already present', () => {
