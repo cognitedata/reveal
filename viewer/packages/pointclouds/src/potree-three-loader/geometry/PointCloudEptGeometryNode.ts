@@ -17,11 +17,13 @@ import {
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
 import { DMModelIdentifier, ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
-import { hasSignedFiles } from '../../typeGuards';
+import { PointCloudMetadataWithSignedFiles } from '../../types';
+import { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
   private readonly _ept: PointCloudEptGeometry;
+  private readonly _eptMetadata: PointCloudMetadataWithSignedFiles | { fileData: EptJson };
   private readonly _key: EptKey;
 
   private readonly _dataLoader: ModelDataProvider;
@@ -81,6 +83,10 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._signedFilesBaseUrl;
   }
 
+  get modelIdentifier(): ModelIdentifier {
+    return this._modelIdentifier;
+  }
+
   get boundingBox(): THREE.Box3 {
     return this._boundingBox;
   }
@@ -126,6 +132,10 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._ept;
   }
 
+  get eptMetadata(): PointCloudMetadataWithSignedFiles | { fileData: EptJson } {
+    return this._eptMetadata;
+  }
+
   get index(): number {
     return this._index;
   }
@@ -142,8 +152,8 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     ept: PointCloudEptGeometry,
     modelDataProvider: ModelDataProvider,
     modelIdentifier: ModelIdentifier,
+    eptMetadata: PointCloudMetadataWithSignedFiles | { fileData: EptJson },
     signedFilesBaseUrl: string | undefined,
-    signedUrl: string | undefined,
     b?: THREE.Box3,
     d?: number,
     x?: number,
@@ -151,11 +161,16 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     z?: number
   ) {
     this._ept = ept;
+    this._eptMetadata = eptMetadata;
     this._key = new EptKey(this._ept, b || this._ept.boundingBox, d || 0, x, y, z);
+
+    const nodeFileName = this._key.name() + this._ept.loader.extension();
+    if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
+      this._signedUrl = this._eptMetadata.signedFiles.items.find(file => file.fileName === nodeFileName)?.signedUrl;
+    }
 
     this._dataLoader = modelDataProvider;
     this._modelIdentifier = modelIdentifier;
-    this._signedUrl = signedUrl;
     this._signedFilesBaseUrl = signedFilesBaseUrl;
 
     this._isLeafNode = false;
@@ -265,10 +280,11 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
     if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
+      const filePath = `ept-hierarchy/${fileName}`;
       return this._dataLoader.getDMSJsonFileFromFileName(
         this.signedFilesBaseUrl,
         this._modelIdentifier,
-        fileName
+        filePath
       ) as Promise<{ [key: string]: number }>;
     } else {
       const baseUrl = `${this.ept.url}ept-hierarchy`;
@@ -283,12 +299,12 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     const fileName = `${this.fileName()}.json`;
 
     const hier = await this.getHierarchy(fileName);
-    if (hasSignedFiles(hier)) {
+    /*     if (hasSignedFiles(hier)) {
       const signedFiles = hier.signedFiles.items;
       if (signedFiles.length > 0) {
         this.signedUrl = signedFiles.find((file: { fileName: string }) => file.fileName === fileName)?.signedUrl;
       }
-    }
+    } */
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.
@@ -322,8 +338,8 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
         this.ept,
         this._dataLoader,
         this._modelIdentifier,
-        this.signedFilesBaseUrl,
-        this.signedUrl,
+        this._eptMetadata,
+        this._signedFilesBaseUrl,
         key.b,
         key.d,
         key.x,

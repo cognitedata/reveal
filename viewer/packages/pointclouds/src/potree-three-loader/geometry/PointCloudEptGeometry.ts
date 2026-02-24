@@ -26,7 +26,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
   private readonly _eptOffset: THREE.Vector3;
 
   private readonly _url: string;
-  private readonly _signedUrl: string | undefined;
 
   private readonly _boundingBox: THREE.Box3;
   private readonly _tightBoundingBox: THREE.Box3;
@@ -74,10 +73,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._url;
   }
 
-  get signedUrl(): string | undefined {
-    return this._signedUrl;
-  }
-
   get schema(): EptSchemaEntry[] {
     return this._schema;
   }
@@ -90,13 +85,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._eptOffset;
   }
 
-  constructor(
-    url: string,
-    info: EptJson,
-    dataLoader: ModelDataProvider,
-    stylableObjects: StylableObject[],
-    signedUrl: string | undefined
-  ) {
+  constructor(url: string, info: EptJson, dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
     if (info.dataType !== 'binary') {
       throw new Error('Could not read data type: ' + info.dataType);
     }
@@ -112,7 +101,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     this._eptOffset = toVector3(offset);
 
     this._url = url;
-    this._signedUrl = signedUrl;
 
     this._schema = schema;
     this._span = info.span || info.ticks;

@@ -8,7 +8,12 @@ import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
-import { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
+import {
+  DMModelIdentifier,
+  ModelDataProvider,
+  SerializableStylableObject,
+  StylableObject
+} from '@reveal/data-providers';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
@@ -40,15 +45,22 @@ export class EptBinaryLoader implements ILoader {
     });
   }
 
+  async getBinaryFile(node: PointCloudEptGeometryNode): Promise<ArrayBuffer> {
+    if (node.modelIdentifier instanceof DMModelIdentifier && node.signedUrl) {
+      return this._dataLoader.getSignedBinaryFile(node.signedUrl);
+    }
+    const fullFileName = node.fileName() + this.extension();
+    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+  }
+
   async load(node: PointCloudEptGeometryNode): Promise<void> {
     if (node.loaded) return;
 
     let data: ArrayBuffer = new ArrayBuffer(0);
     // Skip loading sectors if number of points is zero.
     if (node.getNumPoints() !== 0) {
-      const fullFileName = node.fileName() + this.extension();
       try {
-        data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+        data = await this.getBinaryFile(node);
       } catch (error) {
         MetricsLogger.trackError(error as Error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
         node.markAsNotLoading();

@@ -16,8 +16,8 @@ export class EptLoader {
 
     return eptJsonPromise.then(async (json: { fileData: EptJson }) => {
       const url = baseUrl + '/';
-      const geometry = new PointCloudEptGeometry(url, json.fileData, modelDataProvider, stylableObjects, undefined);
-      const root = new PointCloudEptGeometryNode(geometry, modelDataProvider, modelIdentifier, undefined, undefined);
+      const geometry = new PointCloudEptGeometry(url, json.fileData, modelDataProvider, stylableObjects);
+      const root = new PointCloudEptGeometryNode(geometry, modelDataProvider, modelIdentifier, json, undefined);
 
       geometry.root = root;
       await geometry.root.load();
@@ -41,19 +41,14 @@ export class EptLoader {
     return eptJsonPromise.then(async (json: PointCloudMetadataWithSignedFiles) => {
       const url = signedFilesBaseUrl + '/';
 
-      const signedFiles = json.signedFiles.items;
-      let signedUrl: string | undefined;
-      if (signedFiles.length > 0) {
-        signedUrl = signedFiles.find(file => file.fileName === fileName)?.signedUrl;
-      }
-      const geometry = new PointCloudEptGeometry(url, json.fileData, modelDataProvider, stylableObjects, signedUrl);
+      const geometry = new PointCloudEptGeometry(url, json.fileData, modelDataProvider, stylableObjects);
 
       const root = new PointCloudEptGeometryNode(
         geometry,
         modelDataProvider,
         modelIdentifier,
-        signedFilesBaseUrl,
-        signedUrl
+        json,
+        signedFilesBaseUrl
       );
 
       geometry.root = root;

@@ -3,7 +3,7 @@
  */
 
 import { ConsumedSector, WantedSector, filterGeometryOutsideClipBox, ParsedMeshGeometry } from '@reveal/cad-parsers';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { DMModelIdentifier, ModelDataProvider } from '@reveal/data-providers';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever } from '@reveal/utilities';
@@ -112,7 +112,7 @@ export class GltfSectorLoader {
   async getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const { metadata } = sector;
     let sectorByteBuffer: ArrayBuffer;
-    if (metadata.signedUrl) {
+    if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl) {
       sectorByteBuffer = await this._sectorFileProvider.getSignedBinaryFile(metadata.signedUrl, abortSignal);
     } else if (sector.modelBaseUrl && metadata.sectorFileName) {
       sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
