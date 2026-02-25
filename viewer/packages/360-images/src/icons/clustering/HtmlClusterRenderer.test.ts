@@ -146,19 +146,15 @@ describe(HtmlClusterRenderer.name, () => {
     expect(() => jest.advanceTimersByTime(150)).not.toThrow();
   });
 
-  test('does not inject styles if already present', () => {
-    const testPrefix = 'style-inject-test';
-    const existingStyle = document.createElement('style');
-    existingStyle.id = `${testPrefix}-styles`;
-    existingStyle.textContent = '.existing-rule {}';
-    document.head.appendChild(existingStyle);
+  test('container element has exactly one style child after initialization', () => {
+    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
+    assert(container);
 
-    const testRenderer = new HtmlClusterRenderer({ classPrefix: testPrefix });
-    expect(document.querySelectorAll(`#${testPrefix}-styles`).length).toBe(1);
-    expect(document.querySelector(`#${testPrefix}-styles`)?.textContent).toBe('.existing-rule {}');
+    const styleElements = container.querySelectorAll('style');
+    expect(styleElements.length).toBe(1);
 
-    testRenderer.dispose();
-    existingStyle.remove();
+    renderer.dispose();
   });
 
   test('does not attach container when canvas has no parent', () => {
