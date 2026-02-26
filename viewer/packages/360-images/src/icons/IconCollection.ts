@@ -483,7 +483,7 @@ export class IconCollection {
    * @param clusterIconSizeMultiplier - The size multiplier for the cluster icons
    * @returns The clustered icons
    */
-  private buildClusteredIconsFromNodes(
+  public buildClusteredIconsFromNodes(
     octree: IconOctree,
     nodes: PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>[],
     clusterIconSizeMultiplier: number
