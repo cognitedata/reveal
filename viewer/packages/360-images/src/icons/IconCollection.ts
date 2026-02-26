@@ -237,8 +237,6 @@ export class IconCollection {
   /**
    * Intersect a ray with visible clusters. Returns cluster data if a cluster is hit.
    * Only works when HTML clusters are enabled.
-   * This is a pure function that does not modify hover state. Use setHoveredClusterIcon()
-   * to explicitly set hover state after determining which cluster should be hovered.
    * @param ray - Ray in model space (ray.origin is camera position in model space)
    * @returns ClusterIntersectionData if a cluster is hit, undefined otherwise
    */
@@ -485,7 +483,7 @@ export class IconCollection {
    * @param clusterIconSizeMultiplier - The size multiplier for the cluster icons
    * @returns The clustered icons
    */
-  private buildClusteredIconsFromNodes(
+  public buildClusteredIconsFromNodes(
     octree: IconOctree,
     nodes: PointOctant<Overlay3DIcon<DefaultOverlay3DContentType>>[],
     clusterIconSizeMultiplier: number

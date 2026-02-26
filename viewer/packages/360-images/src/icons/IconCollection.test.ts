@@ -7,6 +7,8 @@ import { Matrix4, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
+import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
+import { PointOctant } from 'sparse-octree';
 import assert from 'assert';
 
 describe(IconCollection.name, () => {
@@ -241,6 +243,85 @@ describe(IconCollection.name, () => {
     disabledMock.mockClear();
     disabledCollection.clearHoveredCluster();
     expect(disabledMock).not.toHaveBeenCalled();
+    disabledCollection.dispose();
+  });
+
+  test('treats single-icon parent nodes as individuals', () => {
+    const collection = createCollection(clusterablePositions, true);
+    const icon = collection.icons[0];
+    const parentNode = new PointOctant<Overlay3DIcon>(origin, origin);
+
+    const singleIconOctree = new Mock<IconOctree>()
+      .setup(o => o.getNodeIcon(It.IsAny()))
+      .returns(icon)
+      .setup(o => o.getAllIconsFromNode(It.IsAny()))
+      .returns([icon])
+      .object();
+
+    const result = collection.buildClusteredIconsFromNodes(singleIconOctree, [parentNode], 5.5);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].icon).toBe(icon);
+    expect(result[0].isCluster).toBe(false);
+    expect(result[0].clusterSize).toBe(1);
+    expect(result[0].sizeScale).toBe(1);
+    expect(result[0].clusterPosition).toEqual(icon.getPosition());
+    expect(result[0].clusterIcons).toBeUndefined();
+
+    // Empty cluster produces no output
+    const emptyOctree = new Mock<IconOctree>()
+      .setup(o => o.getNodeIcon(It.IsAny()))
+      .returns(icon)
+      .setup(o => o.getAllIconsFromNode(It.IsAny()))
+      .returns([])
+      .object();
+
+    const emptyResult = collection.buildClusteredIconsFromNodes(emptyOctree, [parentNode], 5.5);
+    expect(emptyResult).toHaveLength(0);
+
+    collection.dispose();
+  });
+
+  test('configuration accessors: distance threshold, octree depth, culling restrictions, and HTML clusters', () => {
+    const setNeedsRedrawMock = jest.fn();
+    const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
+
+    expect(collection.isHtmlClustersEnabled()).toBe(true);
+    expect(collection.getClusterDistanceThreshold()).toBe(25);
+    expect(collection.getMaxOctreeDepth()).toBe(3);
+
+    setNeedsRedrawMock.mockClear();
+    collection.setClusterDistanceThreshold(50);
+    expect(collection.getClusterDistanceThreshold()).toBe(50);
+    expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+    collection.setClusterDistanceThreshold(-10);
+    expect(collection.getClusterDistanceThreshold()).toBe(0);
+
+    setNeedsRedrawMock.mockClear();
+    collection.setMaxOctreeDepth(5);
+    expect(collection.getMaxOctreeDepth()).toBe(5);
+    expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+    collection.setMaxOctreeDepth(1.7);
+    expect(collection.getMaxOctreeDepth()).toBe(1);
+
+    collection.setMaxOctreeDepth(0);
+    expect(collection.getMaxOctreeDepth()).toBe(1);
+
+    collection.setMaxOctreeDepth(undefined);
+    expect(collection.getMaxOctreeDepth()).toBeUndefined();
+
+    collection.set360IconCullingRestrictions(100, 4);
+    expect(() => renderFrame(createCamera(new Vector3(0, 0, 50)))).not.toThrow();
+
+    collection.set360IconCullingRestrictions(-5, 999);
+    expect(() => renderFrame(createCamera(new Vector3(0, 0, 50)), 1)).not.toThrow();
+
+    collection.dispose();
+
+    const disabledCollection = createCollection(clusterablePositions, false);
+    expect(disabledCollection.isHtmlClustersEnabled()).toBe(false);
     disabledCollection.dispose();
   });
 
