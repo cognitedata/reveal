@@ -73,12 +73,18 @@ export class PointCloudFactory {
       createObjectIdMaps<DataSourceType>(annotationInfo)
     );
 
+    const preloadedEptData =
+      modelMetadata.signedFiles && modelMetadata.scene
+        ? { type: 'pointCloudMetadata' as const, signedFiles: modelMetadata.signedFiles, fileData: modelMetadata.scene }
+        : undefined;
+
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       signedFilesBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       stylableObject,
-      modelIdentifier
+      modelIdentifier,
+      preloadedEptData
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;

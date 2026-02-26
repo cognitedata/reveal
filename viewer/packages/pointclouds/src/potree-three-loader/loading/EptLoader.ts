@@ -27,33 +27,25 @@ export class EptLoader {
 
   static async dmsLoad(
     signedFilesBaseUrl: string,
-    fileName: string,
     modelDataProvider: ModelDataProvider,
     stylableObjects: StylableObject[],
-    modelIdentifier: DMModelIdentifier
+    modelIdentifier: DMModelIdentifier,
+    preloadedData: PointCloudMetadataWithSignedFiles
   ): Promise<PointCloudEptGeometry> {
-    const eptJsonPromise = modelDataProvider.getDMSJsonFile(
-      signedFilesBaseUrl,
+    const url = signedFilesBaseUrl + '/';
+
+    const geometry = new PointCloudEptGeometry(url, preloadedData.fileData, modelDataProvider, stylableObjects);
+
+    const root = new PointCloudEptGeometryNode(
+      geometry,
+      modelDataProvider,
       modelIdentifier,
-      fileName
-    ) as Promise<PointCloudMetadataWithSignedFiles>;
+      preloadedData,
+      signedFilesBaseUrl
+    );
 
-    return eptJsonPromise.then(async (json: PointCloudMetadataWithSignedFiles) => {
-      const url = signedFilesBaseUrl + '/';
-
-      const geometry = new PointCloudEptGeometry(url, json.fileData, modelDataProvider, stylableObjects);
-
-      const root = new PointCloudEptGeometryNode(
-        geometry,
-        modelDataProvider,
-        modelIdentifier,
-        json,
-        signedFilesBaseUrl
-      );
-
-      geometry.root = root;
-      await geometry.root.load();
-      return geometry;
-    });
+    geometry.root = root;
+    await geometry.root.load();
+    return geometry;
   }
 }

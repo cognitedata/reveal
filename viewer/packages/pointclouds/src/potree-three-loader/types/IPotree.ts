@@ -2,6 +2,7 @@ import { Camera, WebGLRenderer } from 'three';
 import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
 import { ModelIdentifier, StylableObject } from '@reveal/data-providers';
+import { PointCloudMetadataWithSignedFiles } from '../../types';
 
 export interface IPotree {
   pointBudget: number;
@@ -13,7 +14,8 @@ export interface IPotree {
     signedFilesBaseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
-    modelIdentifier: ModelIdentifier
+    modelIdentifier: ModelIdentifier,
+    preloadedEptData?: PointCloudMetadataWithSignedFiles
   ): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;

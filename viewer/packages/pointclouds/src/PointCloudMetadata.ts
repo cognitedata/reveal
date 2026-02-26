@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
+import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
 
 export interface PointCloudMetadata {
   readonly format: File3dFormat;
@@ -16,4 +17,5 @@ export interface PointCloudMetadata {
   readonly modelMatrix: THREE.Matrix4;
   readonly cameraConfiguration?: CameraConfiguration;
   readonly scene: any;
+  readonly signedFiles?: { items: DMSJsonFileItem[] };
 }

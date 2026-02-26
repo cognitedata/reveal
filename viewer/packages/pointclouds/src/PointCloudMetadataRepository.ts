@@ -53,7 +53,8 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
       signedFilesBaseUrl,
       modelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
-      scene
+      scene,
+      signedFiles: jsonData.signedFiles
     };
   }
 

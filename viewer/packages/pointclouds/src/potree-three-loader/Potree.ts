@@ -29,6 +29,7 @@ import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryN
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
 import { DMModelIdentifier, ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
+import { PointCloudMetadataWithSignedFiles } from '../types';
 import throttle from 'lodash/throttle';
 import { createVisibilityTextureData } from './utils/utils';
 import { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
@@ -104,16 +105,17 @@ export class Potree implements IPotree {
     signedFilesBaseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
-    modelIdentifier: ModelIdentifier
+    modelIdentifier: ModelIdentifier,
+    preloadedEptData?: PointCloudMetadataWithSignedFiles
   ): Promise<PointCloudOctree> {
     let geometry: PointCloudEptGeometry;
-    if (modelIdentifier instanceof DMModelIdentifier) {
+    if (modelIdentifier instanceof DMModelIdentifier && preloadedEptData) {
       geometry = await EptLoader.dmsLoad(
         signedFilesBaseUrl,
-        fileName,
         this._modelDataProvider,
         stylableObject,
-        modelIdentifier
+        modelIdentifier,
+        preloadedEptData
       );
     } else {
       geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, modelIdentifier, stylableObject);
