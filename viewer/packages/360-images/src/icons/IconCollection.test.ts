@@ -282,6 +282,49 @@ describe(IconCollection.name, () => {
     collection.dispose();
   });
 
+  test('configuration accessors: distance threshold, octree depth, culling restrictions, and HTML clusters', () => {
+    const setNeedsRedrawMock = jest.fn();
+    const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
+
+    expect(collection.isHtmlClustersEnabled()).toBe(true);
+    expect(collection.getClusterDistanceThreshold()).toBe(25);
+    expect(collection.getMaxOctreeDepth()).toBe(3);
+
+    setNeedsRedrawMock.mockClear();
+    collection.setClusterDistanceThreshold(50);
+    expect(collection.getClusterDistanceThreshold()).toBe(50);
+    expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+    collection.setClusterDistanceThreshold(-10);
+    expect(collection.getClusterDistanceThreshold()).toBe(0);
+
+    setNeedsRedrawMock.mockClear();
+    collection.setMaxOctreeDepth(5);
+    expect(collection.getMaxOctreeDepth()).toBe(5);
+    expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+    collection.setMaxOctreeDepth(1.7);
+    expect(collection.getMaxOctreeDepth()).toBe(1);
+
+    collection.setMaxOctreeDepth(0);
+    expect(collection.getMaxOctreeDepth()).toBe(1);
+
+    collection.setMaxOctreeDepth(undefined);
+    expect(collection.getMaxOctreeDepth()).toBeUndefined();
+
+    collection.set360IconCullingRestrictions(100, 4);
+    expect(() => renderFrame(createCamera(new Vector3(0, 0, 50)))).not.toThrow();
+
+    collection.set360IconCullingRestrictions(-5, 999);
+    expect(() => renderFrame(createCamera(new Vector3(0, 0, 50)), 1)).not.toThrow();
+
+    collection.dispose();
+
+    const disabledCollection = createCollection(clusterablePositions, false);
+    expect(disabledCollection.isHtmlClustersEnabled()).toBe(false);
+    disabledCollection.dispose();
+  });
+
   test('setCullingScheme switching behavior and state preservation', () => {
     const setNeedsRedrawMock = jest.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
