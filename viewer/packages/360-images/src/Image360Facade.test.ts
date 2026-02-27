@@ -355,8 +355,8 @@ async function createFacadeWithCollection(
   // Setup getEntitiesFromIcons to return entities matching the given icons
   mockCollectionBuilder = mockCollectionBuilder
     .setup(p => p.setHoveredClusterIcon(It.IsAny()))
-    .callback(({ args }) => {
-      params?.onSetHoveredClusterIcon?.(args[0] as Overlay3DIcon);
+    .callback(({ args }: { args: [Overlay3DIcon | undefined] }) => {
+      params?.onSetHoveredClusterIcon?.(args[0]);
     })
     .setup(p => p.getEntitiesFromIcons(It.IsAny()))
     .callback(({ args }) => {
