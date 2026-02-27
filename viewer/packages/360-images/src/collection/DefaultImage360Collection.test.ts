@@ -32,8 +32,8 @@ describe(DefaultImage360Collection.name, () => {
     config?: MockIconConfig
   ): { mock: IMock<IconCollection>; state: MockIconConfig } => {
     const state: MockIconConfig = {
-      clusterDistanceThreshold: config?.clusterDistanceThreshold ?? DEFAULT_CLUSTER_DISTANCE_THRESHOLD,
-      maxOctreeDepth: config?.maxOctreeDepth ?? DEFAULT_MAX_OCTREE_DEPTH,
+      clusterDistanceThreshold: config?.clusterDistanceThreshold,
+      maxOctreeDepth: config?.maxOctreeDepth,
       htmlClustersEnabled: config?.htmlClustersEnabled ?? true,
       intersectClusterResult: config?.intersectClusterResult
     };
@@ -46,7 +46,7 @@ describe(DefaultImage360Collection.name, () => {
         state.clusterDistanceThreshold = args[0];
       })
       .setup(i => i.getMaxOctreeDepth())
-      .callback(() => state.maxOctreeDepth)
+      .callback(() => state.maxOctreeDepth ?? DEFAULT_MAX_OCTREE_DEPTH)
       .setup(i => i.setMaxOctreeDepth(It.IsAny()))
       .callback(({ args }) => {
         state.maxOctreeDepth = args[0];
