@@ -135,8 +135,7 @@ export class Image360Facade<T extends DataSourceType> {
     const intersection = new Vector3();
     const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
 
-    // Also check for cluster hover and update hover state automatically
-    this.updateClusterHoverState(coords, camera);
+    this.intersectCluster(coords, camera);
 
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
@@ -186,45 +185,6 @@ export class Image360Facade<T extends DataSourceType> {
   }
 
   /**
-   * Update cluster hover state based on mouse position.
-   * This is called automatically by intersect() but can also be called directly.
-   * Finds the closest cluster across all collections and sets hover state only on that one.
-   */
-  private updateClusterHoverState(coords: Vector2, camera: Camera): void {
-    const modelMatrix = new Matrix4();
-    const invModelMatrix = new Matrix4();
-    const closestFinder = new ClosestGeometryFinder<ClusterHoverCandidate<T>>(camera.position);
-
-    // First pass: find all intersections and determine the closest one
-    for (const collection of this._image360Collections) {
-      collection.getModelTransformation(modelMatrix);
-      invModelMatrix.copy(modelMatrix).invert();
-
-      // Create a ray in model coordinates
-      this._rayCaster.setFromCamera(coords, camera);
-      const modelRay = this._rayCaster.ray.clone().applyMatrix4(invModelMatrix);
-
-      const clusterData = collection.intersectCluster(modelRay);
-      if (clusterData) {
-        const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
-        closestFinder.addLazy(worldPosition, () => ({
-          collection,
-          representativeIcon: clusterData.representativeIcon
-        }));
-      }
-    }
-
-    // Clear all hover states first to ensure clean state
-    this.clearHoveredClusters();
-
-    // Set hover only on the closest cluster's collection
-    const closestTarget = closestFinder.getClosestGeometry();
-    if (closestTarget) {
-      closestTarget.collection.setHoveredClusterIcon(closestTarget.representativeIcon);
-    }
-  }
-
-  /**
    * Intersect with cluster icons. Returns cluster data if a cluster is hit.
    * Also updates hover state to highlight only the closest cluster.
    * @param coords - Normalized screen coordinates (-1 to 1)
@@ -232,31 +192,43 @@ export class Image360Facade<T extends DataSourceType> {
    * @returns Cluster intersection data if a cluster is hit, undefined otherwise
    */
   public intersectCluster(coords: Vector2, camera: Camera): Image360ClusterIntersectionData<T> | undefined {
+    const closest = this.findClosestCluster(coords, camera);
+    this.clearHoveredClusters();
+    if (closest) {
+      this.applyClusterHover(closest);
+    }
+    return closest?.intersectionData;
+  }
+
+  /**
+   * Finds the closest cluster candidate.
+   * @param coords - Normalized screen coordinates (-1 to 1)
+   * @param camera - The camera used for the intersection
+   * @returns The closest cluster candidate, undefined if no cluster is hit
+   */
+  private findClosestCluster(coords: Vector2, camera: Camera): ClusterHoverCandidate<T> | undefined {
     const modelMatrix = new Matrix4();
     const invModelMatrix = new Matrix4();
     const closestFinder = new ClosestGeometryFinder<ClusterHoverCandidate<T>>(camera.position);
+
+    this._rayCaster.setFromCamera(coords, camera);
 
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
 
-      // Create a ray in model coordinates
-      this._rayCaster.setFromCamera(coords, camera);
       const modelRay = this._rayCaster.ray.clone().applyMatrix4(invModelMatrix);
 
       const clusterData = collection.intersectCluster(modelRay);
       if (clusterData) {
         const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
 
-        // Get the image360Entities from the icons
-        const clusterEntities = collection.getEntitiesFromIcons(clusterData.clusterIcons);
-
         closestFinder.addLazy(worldPosition, () => ({
           intersectionData: {
             image360Collection: collection,
             clusterPosition: worldPosition,
             clusterSize: clusterData.clusterSize,
-            clusterIcons: clusterEntities,
+            clusterIcons: collection.getEntitiesFromIcons(clusterData.clusterIcons),
             distanceToCamera: closestFinder.minDistance
           },
           collection,
@@ -265,17 +237,15 @@ export class Image360Facade<T extends DataSourceType> {
       }
     }
 
-    const closestCandidate = closestFinder.getClosestGeometry();
+    return closestFinder.getClosestGeometry();
+  }
 
-    this.clearHoveredClusters();
-
-    // Set hover state only on the closest cluster
-    if (closestCandidate) {
-      closestCandidate.collection.setHoveredClusterIcon(closestCandidate.representativeIcon);
-      return closestCandidate.intersectionData;
-    }
-
-    return undefined;
+  /**
+   * Applies cluster hover on the given candidate's collection.
+   * @param candidate - The cluster candidate to apply hover to
+   */
+  private applyClusterHover(candidate: ClusterHoverCandidate<T>): void {
+    candidate.collection.setHoveredClusterIcon(candidate.representativeIcon);
   }
 
   /**
