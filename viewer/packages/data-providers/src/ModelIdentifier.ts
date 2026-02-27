@@ -35,14 +35,15 @@ export function createModelIdentifier(
   identifier:
     | ClassicModelIdentifierType
     | (DMModelIdentifierType & ClassicModelIdentifierType)
-    | LocalModelIdentifierType
+    | LocalModelIdentifierType,
+  outputFormat?: string
 ): ModelIdentifier {
   if (isLocalIdentifier(identifier)) {
     return new LocalModelIdentifier(identifier.localPath);
   } else if (isDMIdentifier(identifier)) {
     return new DMModelIdentifier(identifier);
   } else if (isClassicIdentifier(identifier)) {
-    return new CdfModelIdentifier(identifier.modelId, identifier.revisionId);
+    return new CdfModelIdentifier(identifier.modelId, identifier.revisionId, outputFormat);
   } else {
     assertNever(identifier);
   }

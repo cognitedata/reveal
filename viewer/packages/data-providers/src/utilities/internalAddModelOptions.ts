@@ -16,6 +16,12 @@ export type CommonModelOptions = {
    * An optional geometryFilter which will be applied to loading model.
    */
   geometryFilter?: GeometryFilter;
+  /**
+   * Override which output format to load for this model revision.
+   * Defaults to 'gltf-directory'. Set to 'gltf-prioritized-nodes-directory'
+   * to load high-detail geometry from a PrioritizedNodes job output.
+   */
+  outputFormat?: string;
 };
 
 export type LocalAddModelOptions = CommonModelOptions & LocalModelIdentifierType;

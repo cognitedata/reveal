@@ -103,7 +103,14 @@ export {
   isDMPointCloudVolume,
   isClassicPointCloudVolume,
   CommonModelOptions,
-  InstanceReference
+  InstanceReference,
+  PrioritizedNodesJobClient
+} from '../packages/data-providers';
+
+export type {
+  PrioritizedNodesJobRequest,
+  PrioritizedNodesJobResponse,
+  PrioritizedNodesJobStatus
 } from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';

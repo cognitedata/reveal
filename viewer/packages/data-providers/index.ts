@@ -93,3 +93,10 @@ export {
   InternalAddModelOptions,
   AddModelOptionsWithModelRevisionId
 } from './src/utilities/internalAddModelOptions';
+
+export {
+  PrioritizedNodesJobClient,
+  type PrioritizedNodesJobRequest,
+  type PrioritizedNodesJobResponse,
+  type PrioritizedNodesJobStatus
+} from './src/PrioritizedNodesJobClient';
