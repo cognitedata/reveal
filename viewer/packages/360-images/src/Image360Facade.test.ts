@@ -332,7 +332,7 @@ async function createFacadeWithCollection(
     mockCollectionBuilder = mockCollectionBuilder
       .setup(p => p.intersectCluster(It.IsAny()))
       .callback(() => {
-        params.onIntersectCluster!();
+        params.onIntersectCluster?.();
         return params?.clusterIntersectionResult;
       });
   } else {
