@@ -7,10 +7,11 @@ import { Image360Facade } from './Image360Facade';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DataSourceType } from 'api-entry-points/core';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
-import { Matrix4, PerspectiveCamera, Vector2, Vector3 } from 'three';
+import { Matrix4, PerspectiveCamera, Ray, Vector2, Vector3 } from 'three';
 import { Image360Entity } from './entity/Image360Entity';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { ClusterIntersectionData } from './icons/IconCollection';
+import { Image360AnnotationFilterOptions } from './annotation/types';
 
 import SeededRandom from 'random-seed';
 import assert from 'assert';
@@ -322,7 +323,7 @@ async function createFacadeWithCollection(
 
   // Build mock collection with cluster support
   let mockCollectionBuilder = new Mock<DefaultImage360Collection<DataSourceType>>()
-    .setup(p => p.getModelTransformation(It.IsAny()))
+    .setup(p => p.getModelTransformation(It.Is<Matrix4 | undefined>(() => true)))
     .callback(({ args }) => args[0].copy(params?.collectionTransformation ?? new Matrix4()))
     .setup(p => p.image360Entities)
     .returns(mockEntities);
@@ -330,14 +331,14 @@ async function createFacadeWithCollection(
   // Setup intersectCluster with optional callback
   if (params?.onIntersectCluster) {
     mockCollectionBuilder = mockCollectionBuilder
-      .setup(p => p.intersectCluster(It.IsAny()))
+      .setup(p => p.intersectCluster(It.Is<Ray>(() => true)))
       .callback(() => {
-        params.onIntersectCluster!();
+        params.onIntersectCluster?.();
         return params?.clusterIntersectionResult;
       });
   } else {
     mockCollectionBuilder = mockCollectionBuilder
-      .setup(p => p.intersectCluster(It.IsAny()))
+      .setup(p => p.intersectCluster(It.Is<Ray>(() => true)))
       .returns(params?.clusterIntersectionResult);
   }
 
@@ -354,14 +355,13 @@ async function createFacadeWithCollection(
 
   // Setup getEntitiesFromIcons to return entities matching the given icons
   mockCollectionBuilder = mockCollectionBuilder
-    .setup(p => p.setHoveredClusterIcon(It.IsAny()))
-    .callback(({ args }) => {
-      params?.onSetHoveredClusterIcon?.(args[0] as Overlay3DIcon);
+    .setup(p => p.setHoveredClusterIcon(It.Is<Overlay3DIcon | undefined>(() => true)))
+    .callback(expression => {
+      params?.onSetHoveredClusterIcon?.(expression.args[0]);
     })
-    .setup(p => p.getEntitiesFromIcons(It.IsAny()))
-    .callback(({ args }) => {
-      const icons = args[0] as Overlay3DIcon[];
-      const iconSet = new Set(icons);
+    .setup(p => p.getEntitiesFromIcons(It.Is<Overlay3DIcon[]>(() => true)))
+    .callback(expression => {
+      const iconSet = new Set(expression.args[0]);
       return mockEntities.filter(entity => iconSet.has(entity.icon));
     });
 
@@ -369,7 +369,14 @@ async function createFacadeWithCollection(
 
   const facade = new Image360Facade(
     new Mock<Image360CollectionFactory>()
-      .setup(p => p.create(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()))
+      .setup(p =>
+        p.create(
+          It.Is<DataSourceType['image360Identifier']>(() => true),
+          It.Is<Matrix4>(() => true),
+          It.Is<boolean>(() => true),
+          It.Is<Image360AnnotationFilterOptions>(() => true)
+        )
+      )
       .returnsAsync(mockCollection)
       .object()
   );
