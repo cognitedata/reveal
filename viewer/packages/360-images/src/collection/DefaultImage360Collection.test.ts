@@ -46,7 +46,7 @@ describe(DefaultImage360Collection.name, () => {
         state.clusterDistanceThreshold = args[0];
       })
       .setup(i => i.getMaxOctreeDepth())
-      .callback(() => state.maxOctreeDepth ?? DEFAULT_MAX_OCTREE_DEPTH)
+      .callback(() => state.maxOctreeDepth)
       .setup(i => i.setMaxOctreeDepth(It.IsAny()))
       .callback(({ args }) => {
         state.maxOctreeDepth = args[0];
