@@ -55,8 +55,33 @@ function createSnippet(codeNode) {
   return {
     type: 'mdxJsxFlowElement',
     name: 'LiveCodeSnippet',
-    attributes: [],
-    children: [{ type: 'text', value: codeNode.value }]
+    attributes: [
+      {
+        type: 'mdxJsxAttribute',
+        name: 'children',
+        value: {
+          type: 'mdxJsxAttributeValueExpression',
+          value: JSON.stringify(codeNode.value),
+          data: {
+            estree: {
+              type: 'Program',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'Literal',
+                    value: codeNode.value,
+                    raw: JSON.stringify(codeNode.value),
+                  },
+                },
+              ],
+              sourceType: 'module',
+            },
+          },
+        },
+      },
+    ],
+    children: [],
   };
 }
 
