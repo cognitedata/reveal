@@ -562,6 +562,7 @@ export interface Cognite3DViewerOptions {
     customDataSource?: DataSource;
     domElement?: HTMLElement;
     enableEdges?: boolean;
+    enableHtmlClusters?: boolean;
     // @beta
     hasEventListeners?: boolean;
     loadingIndicatorStyle?: {
