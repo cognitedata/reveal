@@ -203,6 +203,13 @@ export interface Cognite3DViewerOptions {
    * @beta
    */
   hasEventListeners?: boolean;
+
+  /**
+   * Enable HTML-based cluster rendering for 360 image icons.
+   * When enabled, nearby 360 icons are grouped into clusters with a count display.
+   * @default false
+   */
+  enableHtmlClusters?: boolean;
 }
 
 /**
