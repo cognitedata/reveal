@@ -170,14 +170,14 @@ describe(Image360Facade.name, () => {
       expect(result.clusterPosition.z).toBeCloseTo(expectedWorldPosition.z, 1);
     });
 
-    test('returns cluster entities matching the cluster icons', async () => {
+    test('facade correctly maps the cluster icon into the corresponding entity in Image360Entity', async () => {
       const icon1 = createMockIcon(new Vector3(0, 0, 0));
       const icon2 = createMockIcon(new Vector3(1, 0, 0));
 
       const facade = await createFacadeWithCollection({
         clusterIntersectionResult: {
           clusterPosition: new Vector3(0.5, 0, 0),
-          clusterSize: 2,
+          clusterSize: 4,
           clusterIcons: [icon1, icon2],
           representativeIcon: icon1
         },
@@ -193,6 +193,8 @@ describe(Image360Facade.name, () => {
 
       assert(result);
       expect(result.clusterIcons.length).toBe(2);
+      expect(result.clusterIcons[0].icon).toBe(icon1);
+      expect(result.clusterIcons[1].icon).toBe(icon2);
     });
   });
 
