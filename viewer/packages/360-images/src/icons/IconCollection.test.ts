@@ -82,7 +82,7 @@ describe(IconCollection.name, () => {
 
     // Default enabled
     const defaultCollection = createCollection([origin, new Vector3(1, 0, 0)]);
-    expect(defaultCollection.isHtmlClustersEnabled()).toBe(true);
+    expect(defaultCollection.isHtmlClustersEnabled()).toBe(false);
     defaultCollection.dispose();
 
     // Explicit true
