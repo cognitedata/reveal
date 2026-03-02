@@ -26,7 +26,8 @@ export function createDetermineSectorInput(
       highDetailProximityThreshold: 10,
       maximumRenderCost: Infinity
     },
-    prioritizedAreas: []
+    prioritizedAreas: [],
+    lockedModelIdentifiers: new Set()
   };
   return determineSectorsInput;
 }

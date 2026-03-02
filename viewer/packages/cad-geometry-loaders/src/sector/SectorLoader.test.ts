@@ -71,7 +71,8 @@ describe('SectorLoader', () => {
       models: [cadNodeMock.object()],
       clippingPlanes: [],
       prioritizedAreas: [],
-      loadingHints: {}
+      loadingHints: {},
+      lockedModelIdentifiers: new Set()
     };
     stateHandler.addModel(model.modelIdentifier.revealInternalId);
     loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);

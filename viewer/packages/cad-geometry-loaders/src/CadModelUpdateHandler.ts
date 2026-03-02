@@ -29,6 +29,7 @@ import { CadModelBudget, getDefaultCadModelBudget } from './CadModelBudget';
 import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 import { CadNode } from '@reveal/cad-model';
+import { File3dFormat } from '@reveal/data-providers';
 
 type CadModelUpdateHandlerEvents = {
   onNewConsumedSector: EventTrigger<(consumedSector: ConsumedSector) => void>;
@@ -252,12 +253,19 @@ function createDetermineSectorsInput([settings, _, camera, clipping, models]: [
   ClippingInput,
   CadNode[]
 ]): DetermineSectorsPayload {
-  const prioritizedAreas = models.filter(model => !model.isDisposed).flatMap(model => model.prioritizedAreas);
+  const activeModels = models.filter(model => !model.isDisposed);
+  const prioritizedAreas = activeModels.flatMap(model => model.prioritizedAreas);
+  const lockedModelIdentifiers = new Set<symbol>(
+    activeModels
+      .filter(model => model.cadModelMetadata.format === File3dFormat.GltfPrioritizedNodes)
+      .map(model => model.cadModelMetadata.modelIdentifier.revealInternalId)
+  );
   return {
     ...camera,
     ...settings,
     ...clipping,
     prioritizedAreas,
+    lockedModelIdentifiers,
     models
   };
 }

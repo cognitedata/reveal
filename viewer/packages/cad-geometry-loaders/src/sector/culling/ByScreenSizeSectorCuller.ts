@@ -51,6 +51,13 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     // Setup helpers we need
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
+    // Force-include all sectors from locked models (e.g. prioritized-nodes output)
+    const lockedSectorCount = forceIncludeLockedModelSectors(
+      takenSectors,
+      modelsAndCandidateSectors,
+      input.lockedModelIdentifiers
+    );
+
     // Determine priorities of each candidate sector
     const prioritizedSectors = sortSectorsByPriority(
       modelsAndCandidateSectors,
@@ -58,7 +65,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       input.prioritizedAreas
     );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
-    Log.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
+    Log.debug(
+      'Scheduled',
+      takenSectorCount,
+      'of',
+      prioritizedSectors.length,
+      'candidates',
+      `(${lockedSectorCount} forced from locked models)`
+    );
 
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
@@ -73,6 +87,31 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   }
 
   dispose(): void {}
+}
+
+/**
+ * Force-includes all candidate sectors belonging to locked models.
+ * These sectors bypass the budget and are always loaded.
+ */
+function forceIncludeLockedModelSectors(
+  takenSectors: TakenV9SectorMap,
+  modelsAndCandidateSectors: Map<CadModelMetadata, SectorMetadata[]>,
+  lockedModelIdentifiers: Set<symbol>
+): number {
+  if (lockedModelIdentifiers.size === 0) {
+    return 0;
+  }
+  let count = 0;
+  for (const [model, sectors] of modelsAndCandidateSectors) {
+    if (!lockedModelIdentifiers.has(model.modelIdentifier.revealInternalId)) {
+      continue;
+    }
+    for (const sector of sectors) {
+      takenSectors.markSectorForced(model, sector.id);
+      count++;
+    }
+  }
+  return count;
 }
 
 function takeSectorsWithinBudget(
