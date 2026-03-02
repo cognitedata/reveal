@@ -200,5 +200,6 @@ class ProgressReportHelper {
 
 function isGltfModelFormat(model: CadModelMetadata): boolean {
   // Add new versions here as support is added to Reveal
-  return model.format === File3dFormat.GltfCadModel && model.formatVersion === 9;
+  const isGltf = model.format === File3dFormat.GltfCadModel || model.format === File3dFormat.GltfPrioritizedNodes;
+  return isGltf && model.formatVersion === 9;
 }
