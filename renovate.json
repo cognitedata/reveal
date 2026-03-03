@@ -54,6 +54,12 @@
       "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
     }
   ],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "stabilityDays": 0,
+    "automerge": false
+  },
   "postUpdateOptions": ["yarnDedupeHighest"],
   "lockFileMaintenance": {
     "enabled": true,
