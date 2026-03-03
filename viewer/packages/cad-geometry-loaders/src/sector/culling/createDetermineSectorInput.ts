@@ -27,7 +27,8 @@ export function createDetermineSectorInput(
       maximumRenderCost: Infinity
     },
     prioritizedAreas: [],
-    lockedModelIdentifiers: new Set()
+    lockedModelIdentifiers: new Set(),
+    lockedSectorIdsByModel: new Map()
   };
   return determineSectorsInput;
 }

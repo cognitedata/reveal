@@ -260,12 +260,19 @@ function createDetermineSectorsInput([settings, _, camera, clipping, models]: [
       .filter(model => model.cadModelMetadata.format === File3dFormat.GltfPrioritizedNodes)
       .map(model => model.cadModelMetadata.modelIdentifier.revealInternalId)
   );
+  const lockedSectorIdsByModel = new Map<symbol, ReadonlySet<number>>();
+  for (const model of activeModels) {
+    if (model.lockedSectorIds.size > 0) {
+      lockedSectorIdsByModel.set(model.cadModelMetadata.modelIdentifier.revealInternalId, model.lockedSectorIds);
+    }
+  }
   return {
     ...camera,
     ...settings,
     ...clipping,
     prioritizedAreas,
     lockedModelIdentifiers,
+    lockedSectorIdsByModel,
     models
   };
 }

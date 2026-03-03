@@ -165,6 +165,7 @@ export class PrioritizedNodesUI {
 
     this.createReplaceUI(uiFolder.addFolder('Replace model'));
     this.createOverlayUI(uiFolder.addFolder('Overlay with node IDs'));
+    this.createLockTreeIndicesUI(uiFolder.addFolder('Lock tree indices'));
   }
 
   private createReplaceUI(folder: dat.GUI): void {
@@ -309,6 +310,84 @@ export class PrioritizedNodesUI {
 
     folder.add(actions, 'loadOverlay').name('Load overlay');
     folder.add(actions, 'revert').name('Remove overlay');
+  }
+
+  /**
+   * Mode 3: Lock specific nodes (by node ID) on the original model so their
+   * sectors are never evicted when the budget is reduced.
+   * Node IDs are resolved to tree indices via NodeIdNodeCollection, then locked.
+   */
+  private createLockTreeIndicesUI(folder: dat.GUI): void {
+    const state = { nodeIds: '', status: 'No locks' };
+
+    folder.add(state, 'nodeIds').name('Node IDs (comma-sep)');
+    const statusCtrl = folder.add(state, 'status').name('Status');
+    statusCtrl.domElement.style.pointerEvents = 'none';
+
+    const updateStatus = (msg: string): void => {
+      state.status = msg;
+      statusCtrl.updateDisplay();
+    };
+
+    const parseNodeIds = (): number[] =>
+      state.nodeIds
+        .split(',')
+        .map(s => parseInt(s.trim(), 10))
+        .filter(n => !isNaN(n));
+
+    const actions = {
+      lock: async () => {
+        const nodeIds = parseNodeIds();
+        if (nodeIds.length === 0) {
+          updateStatus('Error: enter node IDs first');
+          return;
+        }
+        try {
+          logAction('=== LOCK MODE: Locking nodes on original model ===');
+          logDetail('Node IDs to lock: [%s]', nodeIds.join(', '));
+          updateStatus('Resolving node IDs...');
+
+          const nodeCollection = new NodeIdNodeCollection(this._client, this._mainModel);
+          await nodeCollection.executeFilter(nodeIds);
+          const indexSet = nodeCollection.getIndexSet();
+          const treeIndices = indexSet.toIndexArray();
+
+          logDetail('Resolved %d node IDs → %d tree indices: [%s]', nodeIds.length, treeIndices.length, treeIndices.join(', '));
+
+          if (treeIndices.length === 0) {
+            updateStatus('No tree indices resolved');
+            logWarn('Could not resolve any node IDs to tree indices');
+            return;
+          }
+
+          this._mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
+          logDetail('Assigned styled collection to ensure sectors containing these nodes are loaded');
+
+          this._mainModel.lockTreeIndices(treeIndices);
+
+          const lockedSectorCount = (this._mainModel as any).cadNode?.lockedSectorIds?.size ?? '?';
+          logDetail('Locked sectors (discovered so far): %s', lockedSectorCount);
+          logDetail('These sectors will NOT be evicted when budget is reduced');
+          logDetail('Note: as more sectors load, additional sectors may be auto-locked');
+          updateStatus(`Locked ${treeIndices.length} tree indices (${lockedSectorCount} sectors)`);
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e);
+          updateStatus(`Error: ${msg}`);
+          logWarn('Failed to lock nodes: %s', msg);
+        }
+      },
+
+      unlock: () => {
+        logAction('=== LOCK MODE: Unlocking all tree indices ===');
+        this._mainModel.unlockAllTreeIndices();
+        this._mainModel.removeAllStyledNodeCollections();
+        logDetail('All tree-index locks and styled collections removed');
+        updateStatus('No locks');
+      }
+    };
+
+    folder.add(actions, 'lock').name('Lock nodes');
+    folder.add(actions, 'unlock').name('Unlock all');
   }
 
   private async loadOverlayView(nodeIds: number[]): Promise<void> {

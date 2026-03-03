@@ -51,11 +51,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     // Setup helpers we need
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
-    // Force-include all sectors from locked models (e.g. prioritized-nodes output)
-    const lockedSectorCount = forceIncludeLockedModelSectors(
+    // Force-include sectors from locked models and per-model locked sector IDs
+    const lockedSectorCount = forceIncludeLockedSectors(
       takenSectors,
       modelsAndCandidateSectors,
-      input.lockedModelIdentifiers
+      input.lockedModelIdentifiers,
+      input.lockedSectorIdsByModel
     );
 
     // Determine priorities of each candidate sector
@@ -90,25 +91,31 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 }
 
 /**
- * Force-includes all candidate sectors belonging to locked models.
- * These sectors bypass the budget and are always loaded.
+ * Force-includes sectors that must bypass the budget:
+ * 1. All sectors from fully locked models (e.g. gltf-prioritized-nodes-directory)
+ * 2. Specific sector IDs locked via tree index locking on standard models
  */
-function forceIncludeLockedModelSectors(
+function forceIncludeLockedSectors(
   takenSectors: TakenV9SectorMap,
   modelsAndCandidateSectors: Map<CadModelMetadata, SectorMetadata[]>,
-  lockedModelIdentifiers: Set<symbol>
+  lockedModelIdentifiers: Set<symbol>,
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>
 ): number {
-  if (lockedModelIdentifiers.size === 0) {
-    return 0;
-  }
   let count = 0;
   for (const [model, sectors] of modelsAndCandidateSectors) {
-    if (!lockedModelIdentifiers.has(model.modelIdentifier.revealInternalId)) {
+    const modelId = model.modelIdentifier.revealInternalId;
+    const isFullModelLocked = lockedModelIdentifiers.has(modelId);
+    const lockedSectorIds = lockedSectorIdsByModel.get(modelId);
+
+    if (!isFullModelLocked && !lockedSectorIds) {
       continue;
     }
+
     for (const sector of sectors) {
-      takenSectors.markSectorForced(model, sector.id);
-      count++;
+      if (isFullModelLocked || lockedSectorIds?.has(sector.id)) {
+        takenSectors.markSectorForced(model, sector.id);
+        count++;
+      }
     }
   }
   return count;

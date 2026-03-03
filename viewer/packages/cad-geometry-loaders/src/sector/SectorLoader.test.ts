@@ -72,7 +72,8 @@ describe('SectorLoader', () => {
       clippingPlanes: [],
       prioritizedAreas: [],
       loadingHints: {},
-      lockedModelIdentifiers: new Set()
+      lockedModelIdentifiers: new Set(),
+      lockedSectorIdsByModel: new Map()
     };
     stateHandler.addModel(model.modelIdentifier.revealInternalId);
     loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback, false);

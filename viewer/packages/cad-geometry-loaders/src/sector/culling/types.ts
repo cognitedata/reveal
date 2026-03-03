@@ -23,6 +23,11 @@ export interface DetermineSectorsInput {
    * Identified by their `revealInternalId` symbol.
    */
   lockedModelIdentifiers: Set<symbol>;
+  /**
+   * Per-model set of specific sector IDs that must always be loaded
+   * regardless of budget. Keyed by model `revealInternalId`.
+   */
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>;
 }
 
 export type DetermineSectorsPayload = {
@@ -34,6 +39,7 @@ export type DetermineSectorsPayload = {
   budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
   lockedModelIdentifiers: Set<symbol>;
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>;
 };
 
 /**
