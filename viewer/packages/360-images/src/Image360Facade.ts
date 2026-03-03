@@ -13,8 +13,15 @@ import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
-import { Image360IconIntersectionData } from './types';
+import { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
 import { ClosestGeometryFinder } from '@reveal/utilities';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
+
+type ClusterHoverCandidate<T extends DataSourceType> = {
+  collection: DefaultImage360Collection<T>;
+  representativeIcon: Overlay3DIcon;
+  intersectionData?: Image360ClusterIntersectionData<T>;
+};
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
@@ -128,6 +135,8 @@ export class Image360Facade<T extends DataSourceType> {
     const intersection = new Vector3();
     const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
 
+    this.intersectCluster(coords, camera);
+
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
@@ -173,6 +182,77 @@ export class Image360Facade<T extends DataSourceType> {
     function hasVisibleIcon(entity: Image360Entity<T>) {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
+  }
+
+  /**
+   * Intersect with cluster icons. Returns cluster data if a cluster is hit.
+   * Also updates hover state to highlight only the closest cluster.
+   * @param coords - Normalized screen coordinates (-1 to 1)
+   * @param camera - The camera used for the intersection
+   * @returns Cluster intersection data if a cluster is hit, undefined otherwise
+   */
+  public intersectCluster(coords: Vector2, camera: Camera): Image360ClusterIntersectionData<T> | undefined {
+    const closest = this.findClosestCluster(coords, camera);
+    this.clearHoveredClusters();
+    if (closest) {
+      this.applyClusterHover(closest);
+    }
+    return closest?.intersectionData;
+  }
+
+  /**
+   * Finds the closest cluster candidate.
+   * @param coords - Normalized screen coordinates (-1 to 1)
+   * @param camera - The camera used for the intersection
+   * @returns The closest cluster candidate, undefined if no cluster is hit
+   */
+  private findClosestCluster(coords: Vector2, camera: Camera): ClusterHoverCandidate<T> | undefined {
+    const modelMatrix = new Matrix4();
+    const invModelMatrix = new Matrix4();
+    const closestFinder = new ClosestGeometryFinder<ClusterHoverCandidate<T>>(camera.position);
+
+    this._rayCaster.setFromCamera(coords, camera);
+
+    for (const collection of this._image360Collections) {
+      collection.getModelTransformation(modelMatrix);
+      invModelMatrix.copy(modelMatrix).invert();
+
+      const modelRay = this._rayCaster.ray.clone().applyMatrix4(invModelMatrix);
+
+      const clusterData = collection.intersectCluster(modelRay);
+      if (clusterData) {
+        const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
+
+        closestFinder.addLazy(worldPosition, () => ({
+          intersectionData: {
+            image360Collection: collection,
+            clusterPosition: worldPosition,
+            clusterSize: clusterData.clusterSize,
+            clusterIcons: collection.getEntitiesFromIcons(clusterData.clusterIcons),
+            distanceToCamera: closestFinder.minDistance
+          },
+          collection,
+          representativeIcon: clusterData.representativeIcon
+        }));
+      }
+    }
+
+    return closestFinder.getClosestGeometry();
+  }
+
+  /**
+   * Applies cluster hover on the given candidate's collection.
+   * @param candidate - The cluster candidate to apply hover to
+   */
+  private applyClusterHover(candidate: ClusterHoverCandidate<T>): void {
+    candidate.collection.setHoveredClusterIcon(candidate.representativeIcon);
+  }
+
+  /**
+   * Clear hovered cluster state for all collections.
+   */
+  public clearHoveredClusters(): void {
+    this._image360Collections.forEach(collection => collection.clearHoveredCluster());
   }
 
   public dispose(): void {
