@@ -445,6 +445,8 @@ export class PrioritizedNodesUI {
     logDetail('  Overlay model (gltf-prioritized-nodes-directory, high-detail):');
     logDetail('    %d nodes → visible at HIGH DETAIL (prioritized geometry)', overlayTreeIndices.count);
     logDetail('    %d nodes → hidden (not prioritized)', overlayModel.nodeCount - overlayTreeIndices.count);
+
+    this._viewer.requestRedraw();
   }
 
   private removeOverlay(): void {
@@ -459,5 +461,6 @@ export class PrioritizedNodesUI {
     this._mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     this._mainModel.removeAllStyledNodeCollections();
     logDetail('Original model restored to standard appearance');
+    this._viewer.requestRedraw();
   }
 }
