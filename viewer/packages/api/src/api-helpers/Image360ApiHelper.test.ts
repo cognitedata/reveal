@@ -21,6 +21,7 @@ import {
   Image360ClusterIntersectionData,
   Image360IconIntersectionData,
   Image360Entity,
+  Image360Facade,
   DefaultImage360Collection
 } from '@reveal/360-images';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
@@ -223,18 +224,41 @@ describe(Image360ApiHelper.name, () => {
   });
 
   describe('intersect360ImageClusters', () => {
-    test('calls facade intersectCluster with correct NDC coordinates', () => {
+    test('returns undefined when no cluster is hit', () => {
       const result = helper.intersect360ImageClusters(320, 240);
 
       expect(result).toBeUndefined();
     });
+
+    test('returns cluster data when facade finds a cluster', () => {
+      const mockClusterData = createMockClusterData();
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
+
+      const result = helper.intersect360ImageClusters(320, 240);
+
+      expect(result).toEqual(mockClusterData);
+    });
   });
 
   describe('intersect360ImageIcons', () => {
-    test('calls facade intersect with correct NDC coordinates', () => {
+    test('returns undefined when no icon is hit', () => {
       const result = helper.intersect360ImageIcons(320, 240);
 
       expect(result).toBeUndefined();
+    });
+
+    test('returns icon data when facade finds an icon', () => {
+      const mockIconData: Image360IconIntersectionData<DataSourceType> = {
+        image360Collection: new Mock<DefaultImage360Collection<DataSourceType>>().object(),
+        image360: new Mock<Image360Entity<DataSourceType>>().object(),
+        point: new Vector3(1, 2, 3),
+        distanceToCamera: 10
+      };
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
+
+      const result = helper.intersect360ImageIcons(320, 240);
+
+      expect(result).toEqual(mockIconData);
     });
   });
 
