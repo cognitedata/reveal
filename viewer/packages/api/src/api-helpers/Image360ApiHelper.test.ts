@@ -136,6 +136,13 @@ describe(Image360ApiHelper.name, () => {
     mockClientAuthentication(sdk);
 
     ({ helper } = createTestHelper(domElement, sdk));
+
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    helper.dispose();
+    jest.useRealTimers();
   });
 
   describe('enter360ImageOnIntersect (via onClick)', () => {
@@ -229,7 +236,6 @@ describe(Image360ApiHelper.name, () => {
 
   describe('zoomToCluster', () => {
     test('returns false when transition is already in progress for DefaultCameraManager', async () => {
-      jest.useFakeTimers();
 
       const { helper: defaultHelper } = createTestHelper(domElement, sdk, 'default');
       const mockClusterData = createMockClusterData();
@@ -244,11 +250,9 @@ describe(Image360ApiHelper.name, () => {
       // Advance timers to let the first transition complete
       await jest.advanceTimersByTimeAsync(1000);
 
-      jest.useRealTimers();
     });
 
     test('uses DefaultCameraManager path and returns true', async () => {
-      jest.useFakeTimers();
 
       const { helper: defaultHelper, innerCameraManager } = createTestHelper(domElement, sdk, 'default');
       expect(isDefaultCameraManager(innerCameraManager)).toBe(true);
@@ -271,29 +275,9 @@ describe(Image360ApiHelper.name, () => {
       expect(clusterTarget.y).toBe(0);
       expect(clusterTarget.z).toBe(0);
       expect(duration).toBe(800);
-
-      jest.useRealTimers();
-    });
-
-    test('returns false when transition is already in progress for FlexibleCameraManager', async () => {
-      jest.useFakeTimers();
-
-      const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
-      const mockClusterData = createMockClusterData();
-
-      flexibleHelper.zoomToCluster(mockClusterData);
-
-      const secondResult = await flexibleHelper.zoomToCluster(mockClusterData);
-      expect(secondResult).toBe(false);
-
-      await jest.advanceTimersByTimeAsync(1000);
-
-      jest.useRealTimers();
     });
 
     test('uses FlexibleCameraManager path and returns true', async () => {
-      jest.useFakeTimers();
-
       const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
       const mockClusterData = createMockClusterData();
 
@@ -302,8 +286,17 @@ describe(Image360ApiHelper.name, () => {
       const result = await zoomPromise;
 
       expect(result).toBe(true);
+    });
 
-      jest.useRealTimers();
+    test('returns false when transition is already in progress for FlexibleCameraManager', async () => {
+      const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
+      const mockClusterData = createMockClusterData();
+
+      flexibleHelper.zoomToCluster(mockClusterData);
+
+      const secondResult = await flexibleHelper.zoomToCluster(mockClusterData);
+      expect(secondResult).toBe(false);
+
     });
   });
 });
