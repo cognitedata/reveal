@@ -178,7 +178,7 @@ export class IconCollection {
     setNeedsRedraw?: () => void
   ) {
     this._setNeedsRedraw = setNeedsRedraw;
-    this._enableHtmlClusters = iconOptions?.enableHtmlClusters ?? true;
+    this._enableHtmlClusters = iconOptions?.enableHtmlClusters ?? false;
     this._maxPixelSize = Math.min(
       IconCollection.DefaultMaxPixelSize,
       iconOptions?.platformMaxPointsSize ?? IconCollection.DefaultMaxPixelSize

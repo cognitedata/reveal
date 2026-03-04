@@ -8,11 +8,14 @@ import { CogniteClient } from '@cognite/sdk';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
+import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
 import nock from 'nock';
 import { Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
+import { DataSourceType } from '@reveal/data-providers';
+import { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
 import { jest } from '@jest/globals';
 import { ResolutionOptions } from './types';
@@ -289,5 +292,27 @@ describe('Cognite3DViewer', () => {
     viewer.setResolutionOptions(resolutionOptions);
 
     expect(viewer.getResolutionOptions()).toEqual(resolutionOptions);
+  });
+
+  test('getAnyIntersectionFromPixel returns cluster intersection when a cluster is hit', async () => {
+    const mockClusterData: Image360ClusterIntersectionData<DataSourceType> = {
+      image360Collection: new Mock<DefaultImage360Collection<DataSourceType>>().object(),
+      clusterPosition: new THREE.Vector3(5, 0, 0),
+      clusterSize: 3,
+      clusterIcons: [new Mock<Image360Entity<DataSourceType>>().object()],
+      distanceToCamera: 15
+    };
+
+    const spyIntersectClusters = jest
+      .spyOn(Image360ApiHelper.prototype, 'intersect360ImageClusters')
+      .mockReturnValue(mockClusterData);
+
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
+
+    const result = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(100, 200));
+
+    expect(result).toEqual({ type: 'image360Cluster', ...mockClusterData });
+
+    spyIntersectClusters.mockRestore();
   });
 });
