@@ -46,6 +46,8 @@ function createMockInputHandler(): InputHandler {
     .returns(undefined)
     .setup(p => p.off(It.IsAny(), It.IsAny()))
     .returns(undefined)
+    .setup(p => p.dispose())
+    .returns(undefined)
     .object();
 }
 
@@ -140,9 +142,11 @@ describe(Image360ApiHelper.name, () => {
     jest.useFakeTimers();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     helper.dispose();
+    await jest.runOnlyPendingTimersAsync();
     jest.useRealTimers();
+    jest.restoreAllMocks();
   });
 
   describe('enter360ImageOnIntersect (via onClick)', () => {
@@ -247,9 +251,7 @@ describe(Image360ApiHelper.name, () => {
       const secondResult = await defaultHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
 
-      // Advance timers to let the first transition complete
-      await jest.advanceTimersByTimeAsync(1000);
-
+      defaultHelper.dispose();
     });
 
     test('uses DefaultCameraManager path and returns true', async () => {
@@ -275,6 +277,9 @@ describe(Image360ApiHelper.name, () => {
       expect(clusterTarget.y).toBe(0);
       expect(clusterTarget.z).toBe(0);
       expect(duration).toBe(800);
+
+      innerCameraManager.dispose();
+      defaultHelper.dispose();
     });
 
     test('uses FlexibleCameraManager path and returns true', async () => {
@@ -286,17 +291,21 @@ describe(Image360ApiHelper.name, () => {
       const result = await zoomPromise;
 
       expect(result).toBe(true);
+
+      flexibleHelper.dispose();
     });
 
     test('returns false when transition is already in progress for FlexibleCameraManager', async () => {
       const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
       const mockClusterData = createMockClusterData();
 
+      // Start first zoom without awaiting — transition is now in progress
       flexibleHelper.zoomToCluster(mockClusterData);
 
       const secondResult = await flexibleHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
 
+      flexibleHelper.dispose();
     });
   });
 });
