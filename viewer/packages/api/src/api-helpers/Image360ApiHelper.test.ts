@@ -264,7 +264,6 @@ describe(Image360ApiHelper.name, () => {
 
   describe('zoomToCluster', () => {
     test('returns false when transition is already in progress for DefaultCameraManager', async () => {
-
       const { helper: defaultHelper } = createTestHelper(domElement, sdk, 'default');
       const mockClusterData = createMockClusterData();
 
@@ -279,7 +278,6 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('uses DefaultCameraManager path and returns true', async () => {
-
       const { helper: defaultHelper, innerCameraManager } = createTestHelper(domElement, sdk, 'default');
       expect(isDefaultCameraManager(innerCameraManager)).toBe(true);
 
