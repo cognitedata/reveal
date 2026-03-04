@@ -267,13 +267,14 @@ describe(Image360ApiHelper.name, () => {
       const { helper: defaultHelper } = createTestHelper(domElement, sdk, 'default');
       const mockClusterData = createMockClusterData();
 
-      // Start first zoom without awaiting — transition is now in progress
-      defaultHelper.zoomToCluster(mockClusterData);
+      const firstZoomPromise = defaultHelper.zoomToCluster(mockClusterData);
 
       // Second call should detect transition in progress and return false
       const secondResult = await defaultHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
 
+      await jest.advanceTimersByTimeAsync(1000);
+      await firstZoomPromise;
       defaultHelper.dispose();
     });
 
@@ -321,12 +322,13 @@ describe(Image360ApiHelper.name, () => {
       const { helper: flexibleHelper } = createTestHelper(domElement, sdk, 'flexible');
       const mockClusterData = createMockClusterData();
 
-      // Start first zoom without awaiting — transition is now in progress
-      flexibleHelper.zoomToCluster(mockClusterData);
+      const firstZoomPromise = flexibleHelper.zoomToCluster(mockClusterData);
 
       const secondResult = await flexibleHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
 
+      await jest.advanceTimersByTimeAsync(1000);
+      await firstZoomPromise;
       flexibleHelper.dispose();
     });
   });
