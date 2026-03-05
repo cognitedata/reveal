@@ -3,7 +3,7 @@
  */
 import { BINARY_FILES_CACHE_HEADER_DATE, BINARY_FILES_CACHE_HEADER_SIZE, BINARY_FILES_CACHE_NAME } from './constants';
 import { CacheConfig } from './types';
-import { safeParseInt } from './utils';
+import { getCacheDate, getCacheSize, safeParseInt } from './utils';
 
 /**
  * Data File Cache Manager using the Browser Cache API for storing various data files
@@ -124,6 +124,96 @@ export class DataFileCacheManager {
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(`[DataFileCacheManager] Failed to store in cache: ${message}`, { cause: error });
     }
+  }
+
+  /**
+   * Remove all expired entries from the cache, then evict oldest entries if over size limit
+   * Call periodically or on app startup to prevent stale data buildup
+   * Note: Default cacheConfig is set to never expire and no size limit, so pruning is opt-in by setting maxAge or maxCacheSize
+   * @returns Number of entries removed
+   */
+  async pruneCache(): Promise<number> {
+    const cache = await this._caches.open(this._config.cacheName);
+
+    let removed = 0;
+    if (this.cacheConfig.maxAge !== Infinity) {
+      removed += await this.pruneCacheByExpiration(cache, this.cacheConfig.maxAge);
+    }
+
+    if (this._config.maxCacheSize !== Infinity) {
+      removed += await this.pruneCacheBySize(cache, this._config.maxCacheSize);
+    }
+
+    return removed;
+  }
+
+  /**
+   * Remove entries that have exceeded maxAge
+   * @param cache Cache instance to prune
+   * @param maxAgeMs Maximum age in milliseconds before an entry is considered expired
+   * @returns Number of entries removed
+   */
+  private async pruneCacheByExpiration(cache: Cache, maxAgeMs: number): Promise<number> {
+    const keys = await cache.keys();
+    let removed = 0;
+
+    for (const request of keys) {
+      const response = await cache.match(request);
+      if (response && isExpired(response, maxAgeMs)) {
+        await cache.delete(request);
+        removed++;
+      }
+    }
+
+    return removed;
+  }
+
+  /**
+   * Remove oldest entries until cache size is under maxCacheSize
+   * Uses LRU-style eviction based on cache date
+   * @param cache Cache instance to prune
+   * @param maxSizeBytes Maximum allowed cache size in bytes
+   * @returns Number of entries removed
+   */
+  private async pruneCacheBySize(cache: Cache, maxSizeBytes: number): Promise<number> {
+    if (maxSizeBytes === Infinity) {
+      return 0; // No size limit, no pruning needed
+    }
+    const keys = await cache.keys();
+    const entries: Array<{ request: Request; date: number; size: number }> = [];
+    let totalSize = 0;
+
+    // Collect entry metadata
+    for (const request of keys) {
+      const response = await cache.match(request);
+      if (response) {
+        const date = getCacheDate(response) ?? 0;
+        const size = getCacheSize(response) ?? 0;
+        entries.push({ request, date, size });
+        totalSize += size;
+      }
+    }
+
+    // If under limit, nothing to prune
+    if (totalSize <= maxSizeBytes) {
+      return 0;
+    }
+
+    // Sort by date ascending (oldest first)
+    entries.sort((a, b) => a.date - b.date);
+
+    let removed = 0;
+    // Remove oldest entries until under the limit
+    for (const entry of entries) {
+      if (totalSize <= maxSizeBytes) {
+        break;
+      }
+      await cache.delete(entry.request);
+      totalSize -= entry.size;
+      removed++;
+    }
+
+    return removed;
   }
 }
 

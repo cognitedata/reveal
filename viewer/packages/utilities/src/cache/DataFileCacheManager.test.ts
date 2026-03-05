@@ -179,4 +179,126 @@ describe(DataFileCacheManager.name, () => {
     const hasCache = await cacheManager.has(INVALID_FILE_URL);
     expect(hasCache).toBe(false);
   });
+
+  describe('pruneCache', () => {
+    const storeWithDelay = async (
+      cache: DataFileCacheManager,
+      url: string,
+      size: number,
+      delayMs: number = 0
+    ): Promise<void> => {
+      if (delayMs > 0) jest.advanceTimersByTime(delayMs);
+      await cache.storeResponse(url, new ArrayBuffer(size), TEST_CONTENT_TYPE);
+    };
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    test('should remove expired entries by date', async () => {
+      const cache = new DataFileCacheManager(
+        { cacheName: 'prune-date-cache', maxCacheSize: Infinity, maxAge: 100 },
+        mockCacheStorage
+      );
+
+      const url1 = 'https://example.com/file1.bin';
+      const url2 = 'https://example.com/file2.bin';
+
+      await storeWithDelay(cache, url1, 100);
+      await storeWithDelay(cache, url2, 100, 50);
+      jest.advanceTimersByTime(60); // url1 now expired (110ms old), url2 still valid (60ms old)
+
+      const removed = await cache.pruneCache();
+
+      expect(removed).toBe(1);
+      expect(await cache.has(url1)).toBe(false);
+      expect(await cache.has(url2)).toBe(true);
+    });
+
+    test('should remove oldest entries when cache exceeds maxCacheSize', async () => {
+      const cache = new DataFileCacheManager(
+        { cacheName: 'prune-size-cache', maxCacheSize: 250, maxAge: Infinity },
+        mockCacheStorage
+      );
+
+      const url1 = 'https://example.com/old.bin';
+      const url2 = 'https://example.com/middle.bin';
+      const url3 = 'https://example.com/new.bin';
+
+      await storeWithDelay(cache, url1, 100);
+      await storeWithDelay(cache, url2, 100, 10);
+      await storeWithDelay(cache, url3, 100, 10);
+      // Total: 300 bytes, limit: 250 bytes
+
+      const removed = await cache.pruneCache();
+
+      expect(removed).toBe(1);
+      expect(await cache.has(url1)).toBe(false); // Oldest, removed
+      expect(await cache.has(url2)).toBe(true);
+      expect(await cache.has(url3)).toBe(true);
+    });
+
+    test('should not prune when cache size is under limit', async () => {
+      const cache = new DataFileCacheManager(
+        { cacheName: 'prune-under-limit-cache', maxCacheSize: 500, maxAge: Infinity },
+        mockCacheStorage
+      );
+
+      const url1 = 'https://example.com/file1.bin';
+      const url2 = 'https://example.com/file2.bin';
+
+      await storeWithDelay(cache, url1, 100);
+      await storeWithDelay(cache, url2, 100);
+      // Total: 200 bytes, limit: 500 bytes
+
+      const removed = await cache.pruneCache();
+
+      expect(removed).toBe(0);
+      expect(await cache.has(url1)).toBe(true);
+      expect(await cache.has(url2)).toBe(true);
+    });
+
+    test('should prune by both date and size', async () => {
+      const cache = new DataFileCacheManager(
+        { cacheName: 'prune-combined-cache', maxCacheSize: 150, maxAge: 100 },
+        mockCacheStorage
+      );
+
+      const expiredUrl = 'https://example.com/expired.bin';
+      const oldUrl = 'https://example.com/old.bin';
+      const newUrl = 'https://example.com/new.bin';
+
+      await storeWithDelay(cache, expiredUrl, 100);
+      jest.advanceTimersByTime(150); // expiredUrl now expired
+      await storeWithDelay(cache, oldUrl, 100);
+      await storeWithDelay(cache, newUrl, 100, 10);
+      // Non-expired total: 200 bytes, limit: 150 bytes
+
+      const removed = await cache.pruneCache();
+
+      expect(removed).toBe(2); // 1 expired + 1 oldest by size
+      expect(await cache.has(expiredUrl)).toBe(false);
+      expect(await cache.has(oldUrl)).toBe(false);
+      expect(await cache.has(newUrl)).toBe(true);
+    });
+
+    test('should not prune by size when maxCacheSize is Infinity', async () => {
+      const cache = new DataFileCacheManager(
+        { cacheName: 'prune-infinite-size-cache', maxCacheSize: Infinity, maxAge: Infinity },
+        mockCacheStorage
+      );
+
+      const url1 = 'https://example.com/file1.bin';
+      const url2 = 'https://example.com/file2.bin';
+
+      await storeWithDelay(cache, url1, 1000);
+      await storeWithDelay(cache, url2, 1000);
+
+      const removed = await cache.pruneCache();
+
+      expect(removed).toBe(0);
+      expect(await cache.has(url1)).toBe(true);
+      expect(await cache.has(url2)).toBe(true);
+    });
+  });
 });

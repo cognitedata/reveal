@@ -4,27 +4,39 @@
 import { jest } from '@jest/globals';
 
 export function createMockCache(storage: Map<string, Response>): Cache {
+  const getKey = (key: RequestInfo | URL): string => {
+    if (typeof key === 'string') return key;
+    if (key instanceof Request) return key.url;
+    return key.toString();
+  };
+
   return {
-    match: async (key: string) => {
-      const stored = storage.get(key);
+    match: async (key, _options) => {
+      const stored = storage.get(getKey(key));
       return stored ? stored.clone() : undefined;
     },
     matchAll: async () => {
       return Array.from(storage.values());
     },
-    put: async (key: string, response: Response) => {
+    put: async (key, response) => {
       const responseWithUrl = response.clone();
-      Object.defineProperty(responseWithUrl, 'url', { value: key, writable: false });
-      storage.set(key, responseWithUrl);
+      const keyStr = getKey(key);
+      Object.defineProperty(responseWithUrl, 'url', { value: keyStr, writable: false });
+      storage.set(keyStr, responseWithUrl);
     },
-    delete: async (key: string) => {
-      const had = storage.has(key);
-      storage.delete(key);
+    delete: async key => {
+      const keyStr = getKey(key);
+      const had = storage.has(keyStr);
+      storage.delete(keyStr);
       return had;
     },
     keys: async () => Array.from(storage.keys()).map(url => new Request(url)),
-    add: jest.fn(async () => undefined),
-    addAll: jest.fn(async () => undefined)
+    add: jest.fn(async () => {
+      throw new Error('add method not implemented in mock Cache');
+    }),
+    addAll: jest.fn(async () => {
+      throw new Error('addAll method not implemented in mock Cache');
+    })
   } satisfies Cache;
 }
 
