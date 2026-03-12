@@ -61,5 +61,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "serialize-javascript": "^7.0.3",
+    "minimatch": "^3.1.3"
   }
 }
