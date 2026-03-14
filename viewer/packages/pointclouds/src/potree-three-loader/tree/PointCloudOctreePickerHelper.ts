@@ -49,6 +49,11 @@ export interface PickParams {
    * @param renterTarget The render target used for picking.
    */
   onBeforePickRender: (material: PointCloudMaterial, renterTarget: WebGLRenderTarget) => void;
+  /**
+   * When true, estimates the surface normal at the intersection point using neighbor pixel samples
+   * within the same GPU pick buffer readback. This avoids the need for separate intersection calls.
+   */
+  estimateNormal: boolean;
 }
 
 /**
@@ -167,12 +172,128 @@ export class PointCloudOctreePickerHelper {
     return nodesOnRay;
   }
 
-  public readPixels(x: number, y: number, pickWndSize: number): Uint8Array {
-    // Read the pixel from the pick render target.
-    // TODO 2022-06-20 larsmoa: Replace with async picking
+  public readPixelsAsync(
+    x: number,
+    y: number,
+    pickWndSize: number,
+    renderTarget: WebGLRenderTarget
+  ): Promise<Uint8Array> {
     const pixels = new Uint8Array(4 * pickWndSize * pickWndSize);
-    this._renderer.readRenderTargetPixels(this._renderer.getRenderTarget()!, x, y, pickWndSize, pickWndSize, pixels);
-    return pixels;
+    return this._renderer
+      .readRenderTargetPixelsAsync(renderTarget, x, y, pickWndSize, pickWndSize, pixels)
+      .then(() => pixels);
+  }
+
+  /**
+   * Pixel offset (in screen space) used for the two neighbor samples when estimating surface normals.
+   * The pick window is widened by 2x this value to capture all three sample pixels in one GPU pass.
+   */
+  public static readonly NormalSampleOffset = 5;
+
+  /**
+   * Search radius (in pixels) around each neighbor target when decoding neighbor positions.
+   * Mirrors the ±2 pixel search window of the original point cloud picker (DEFAULT_PICK_WINDOW_SIZE/2),
+   * making normal estimation robust for sparse point clouds where the exact neighbor pixel may be empty.
+   * The pick window must be widened by an additional 2x this value to keep the search in-bounds.
+   */
+  public static readonly NeighborSearchRadius = 2;
+
+  /**
+   * Estimates the surface normal at the center hit point using two neighbor pixels from the same
+   * pick buffer readback. Computes the cross product of two edge vectors to the surface.
+   * Must be called with the ORIGINAL pixel buffer (before findHit zeroes the alpha channels).
+   */
+  public static estimateNormalFromPickBuffer(
+    pixels: Uint8Array,
+    centerHit: PointCloudHit,
+    pickWndSize: number,
+    nodes: RenderedNode[],
+    cameraPosition: Vector3
+  ): Vector3 | undefined {
+    const halfWnd = Math.floor(pickWndSize / 2);
+    const offset = PointCloudOctreePickerHelper.NormalSampleOffset;
+
+    const centerPos = PointCloudOctreePickerHelper.getPointPosition(nodes, centerHit.pcIndex, centerHit.pIndex).clone();
+    const searchRadius = PointCloudOctreePickerHelper.NeighborSearchRadius;
+    const rightPos = PointCloudOctreePickerHelper.decodePositionAt(
+      pixels,
+      halfWnd + offset,
+      halfWnd,
+      pickWndSize,
+      nodes,
+      searchRadius
+    );
+    const upPos = PointCloudOctreePickerHelper.decodePositionAt(
+      pixels,
+      halfWnd,
+      halfWnd + offset,
+      pickWndSize,
+      nodes,
+      searchRadius
+    );
+
+    if (!rightPos || !upPos) return undefined;
+
+    const maxNeighborDistance = 2.0;
+    if (rightPos.distanceTo(centerPos) > maxNeighborDistance || upPos.distanceTo(centerPos) > maxNeighborDistance) {
+      return undefined;
+    }
+
+    const v1 = new Vector3().subVectors(rightPos, centerPos);
+    const v2 = new Vector3().subVectors(upPos, centerPos);
+    const normal = new Vector3().crossVectors(v1, v2);
+
+    if (normal.lengthSq() < 1e-8) return undefined;
+    normal.normalize();
+
+    // Ensure normal faces the camera
+    if (normal.dot(new Vector3().subVectors(cameraPosition, centerPos)) < 0) {
+      normal.negate();
+    }
+
+    return normal;
+  }
+
+  /**
+   * Decodes the 3D world position of the closest valid point to pixel (u, v) in the pick buffer.
+   * Searches within `searchRadius` pixels of (u, v) to handle sparse point clouds where the exact
+   * neighbor pixel may be empty. Temporarily zeroes alpha to read the point index via Uint32Array.
+   */
+  private static decodePositionAt(
+    pixels: Uint8Array,
+    u: number,
+    v: number,
+    pickWndSize: number,
+    nodes: RenderedNode[],
+    searchRadius: number = 0
+  ): Vector3 | undefined {
+    let bestDistSq = Infinity;
+    let bestPos: Vector3 | undefined;
+
+    for (let dv = -searchRadius; dv <= searchRadius; dv++) {
+      for (let du = -searchRadius; du <= searchRadius; du++) {
+        const pu = u + du;
+        const pv = v + dv;
+        if (pu < 0 || pu >= pickWndSize || pv < 0 || pv >= pickWndSize) continue;
+
+        const bufferOffset = pu + pv * pickWndSize;
+        const pcIndex = pixels[4 * bufferOffset + 3];
+        if (pcIndex === 0 || pcIndex === 255) continue;
+
+        const distSq = du * du + dv * dv;
+        if (distSq >= bestDistSq) continue;
+
+        // Zero alpha temporarily so the Uint32Array view reads only the RGB pointIndex
+        pixels[4 * bufferOffset + 3] = 0;
+        const pIndex = new Uint32Array(pixels.buffer)[bufferOffset];
+        pixels[4 * bufferOffset + 3] = pcIndex; // Restore
+
+        bestDistSq = distSq;
+        bestPos = PointCloudOctreePickerHelper.getPointPosition(nodes, pcIndex - 1, pIndex).clone();
+      }
+    }
+
+    return bestPos;
   }
 
   private static createTempNodes(

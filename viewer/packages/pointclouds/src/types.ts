@@ -108,6 +108,10 @@ export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
    */
   object: Object3D;
   /**
+   * Estimated surface normal at the intersection point, if normal estimation was requested.
+   */
+  normal?: Vector3;
+  /**
    * Volume metadata, e.g. asset reference
    */
   volumeMetadata?: T['pointCloudVolumeMetadata'];

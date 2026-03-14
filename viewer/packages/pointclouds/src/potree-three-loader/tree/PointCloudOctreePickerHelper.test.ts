@@ -3,7 +3,8 @@
  */
 import * as THREE from 'three';
 import { PointCloudOctreePickerHelper, RenderedNode } from './PointCloudOctreePickerHelper';
-import { Mock } from 'moq.ts';
+import { PointCloudHit } from '../types/types';
+import { Mock, It, Times } from 'moq.ts';
 
 import { jest } from '@jest/globals';
 
@@ -60,5 +61,93 @@ describe('PointCloudOctreePickerHelper', () => {
       pIndex: 3,
       pcIndex: 21
     });
+  });
+
+  describe('estimateNormalFromPickBuffer', () => {
+    function makePixelBuffer(
+      pickWndSize: number,
+      hits: { u: number; v: number; pcIndex: number; pIndex: number }[]
+    ): Uint8Array {
+      const pixels = new Uint8Array(4 * pickWndSize * pickWndSize);
+      const ibuffer = new Uint32Array(pixels.buffer);
+      for (const { u, v, pcIndex, pIndex } of hits) {
+        const offset = u + v * pickWndSize;
+        ibuffer[offset] = pIndex;
+        pixels[4 * offset + 3] = pcIndex;
+      }
+      return pixels;
+    }
+
+    test('returns undefined when neighbor pixels are empty', () => {
+      const pickWndSize = 15;
+      const halfWnd = 7;
+      // Only center pixel populated, neighbors are empty
+      const pixels = makePixelBuffer(pickWndSize, [{ u: halfWnd, v: halfWnd, pcIndex: 1, pIndex: 0 }]);
+
+      const centerHit: PointCloudHit = { pcIndex: 0, pIndex: 0 };
+      const dummyNode = new Mock<RenderedNode>().object();
+      jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockReturnValue(new THREE.Vector3(0, 0, 0));
+
+      const result = PointCloudOctreePickerHelper.estimateNormalFromPickBuffer(
+        pixels,
+        centerHit,
+        pickWndSize,
+        [dummyNode],
+        new THREE.Vector3(0, 0, 10)
+      );
+      expect(result).toBeUndefined();
+    });
+
+    test('returns normal facing camera from flat XZ surface samples', () => {
+      const pickWndSize = 15;
+      const halfWnd = 7;
+      const offset = PointCloudOctreePickerHelper.NormalSampleOffset;
+
+      // Center at origin, right neighbor at (1,0,0), up neighbor at (0,0,-1) — flat XZ plane
+      const pixels = makePixelBuffer(pickWndSize, [
+        { u: halfWnd, v: halfWnd, pcIndex: 1, pIndex: 0 }, // center
+        { u: halfWnd + offset, v: halfWnd, pcIndex: 1, pIndex: 1 }, // right
+        { u: halfWnd, v: halfWnd + offset, pcIndex: 1, pIndex: 2 } // up
+      ]);
+
+      const centerHit: PointCloudHit = { pcIndex: 0, pIndex: 0 };
+      const dummyNode = new Mock<RenderedNode>().object();
+      jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, pIndex) => {
+        if (pIndex === 0) return new THREE.Vector3(0, 0, 0);
+        if (pIndex === 1) return new THREE.Vector3(1, 0, 0);
+        return new THREE.Vector3(0, 0, -1);
+      });
+
+      const cameraPos = new THREE.Vector3(0, 10, 0); // camera above
+      const result = PointCloudOctreePickerHelper.estimateNormalFromPickBuffer(
+        pixels,
+        centerHit,
+        pickWndSize,
+        [dummyNode],
+        cameraPos
+      );
+
+      expect(result).not.toBeUndefined();
+      // Normal should point upward (toward camera)
+      expect(result!.y).toBeGreaterThan(0.9);
+    });
+  });
+
+  test('readPixelsAsync uses readRenderTargetPixelsAsync (not sync readRenderTargetPixels)', async () => {
+    const rendererMock = new Mock<THREE.WebGLRenderer>();
+    const renderTargetMock = new Mock<THREE.WebGLRenderTarget>();
+
+    rendererMock
+      .setup(r => r.readRenderTargetPixelsAsync(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(new Uint8Array(4)));
+
+    const helper = new PointCloudOctreePickerHelper(rendererMock.object());
+    const result = await helper.readPixelsAsync(0, 0, 1, renderTargetMock.object());
+
+    expect(result).toBeInstanceOf(Uint8Array);
+    rendererMock.verify(
+      r => r.readRenderTargetPixelsAsync(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()),
+      Times.Once()
+    );
   });
 });

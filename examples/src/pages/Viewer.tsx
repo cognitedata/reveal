@@ -431,7 +431,7 @@ export function Viewer() {
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         const start = performance.now();
-        const intersection = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(offsetX, offsetY));
+        const intersection = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(offsetX, offsetY), { estimateNormal: true });
         if (intersection !== undefined) {
           switch (intersection.type) {
             case 'customObject': {
@@ -450,13 +450,15 @@ export function Viewer() {
               break;
             case 'pointcloud':
               {
-                const { point, model } = intersection;
+                const { point, model, normal } = intersection;
 
                 console.log(
                   `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and volume metadata`,
                   intersection.volumeMetadata,
                   'at',
-                  point
+                  point,
+                  'with normal',
+                  normal
                 );
                 if (intersection.volumeMetadata !== undefined && 'annotationId' in intersection.volumeMetadata) {
                   pointCloudObjectsUi.updateSelectedAnnotation(intersection.volumeMetadata.annotationId);

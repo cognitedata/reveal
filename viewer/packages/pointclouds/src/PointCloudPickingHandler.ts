@@ -6,6 +6,7 @@ import * as THREE from 'three';
 
 import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
+import { Mutex } from 'async-mutex';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
@@ -22,6 +23,7 @@ export class PointCloudPickingHandler {
   private readonly _normalized = new THREE.Vector2();
   private readonly _raycaster = new THREE.Raycaster();
   private readonly _picker: PointCloudOctreePicker;
+  private readonly _mutex = new Mutex();
 
   // To solve https://cognitedata.atlassian.net/browse/REV-523
   private static readonly PickingWindowSize = 5;
@@ -34,78 +36,86 @@ export class PointCloudPickingHandler {
     this._picker.dispose();
   }
 
-  intersectPointClouds(
+  async intersectPointClouds(
     nodes: PointCloudNode<DataSourceType>[],
-    input: IntersectInput
-  ): IntersectPointCloudNodeResult<DataSourceType>[] {
+    input: IntersectInput,
+    options?: { estimateNormal?: boolean }
+  ): Promise<IntersectPointCloudNodeResult<DataSourceType>[]> {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
     this._raycaster.setFromCamera(normalizedCoords, camera);
 
-    const intersections: PickPoint[] = [];
+    const release = await this._mutex.acquire();
+    try {
+      const intersections: PickPoint[] = [];
 
-    // Get PointCloudNodes which are visible.
-    const visibleNodes = nodes.filter(node => node.visible);
+      // Get PointCloudNodes which are visible.
+      const visibleNodes = nodes.filter(node => node.visible);
 
-    visibleNodes.forEach(node => {
-      const intersection = this._picker.pick(camera, this._raycaster.ray, [node.octree], {
-        pickWindowSize: PointCloudPickingHandler.PickingWindowSize
-      });
-      if (intersection !== null) {
-        intersections.push(intersection);
+      for (const node of visibleNodes) {
+        const intersection = await this._picker.pick(camera, this._raycaster.ray, [node.octree], {
+          pickWindowSize: PointCloudPickingHandler.PickingWindowSize,
+          estimateNormal: options?.estimateNormal ?? false
+        });
+        if (intersection !== null) {
+          intersections.push(intersection);
+        }
       }
-    });
 
-    return intersections
-      .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
-      .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
-      .map(x => {
-        const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
-        if (pointCloudNode === null) {
-          throw new Error(`Could not find PointCloudNode for intersected point`);
-        }
-
-        const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
-
-        const baseObject = {
-          distance: x.position.distanceTo(camera.position),
-          point: x.position,
-          pointIndex: x.pointIndex,
-          pointCloudNode,
-          object: x.object
-        };
-
-        if (pointCloudObject !== undefined) {
-          if (isClassicPointCloudVolume(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
-              ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
-              volumeMetadata: {
-                annotationId: pointCloudObject.annotationId,
-                assetRef: pointCloudObject.assetRef,
-                instanceRef: pointCloudObject.instanceRef
-              }
-            };
-
-            return result;
-          } else if (isDMPointCloudVolume(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
-              ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
-              volumeMetadata: {
-                volumeInstanceRef: pointCloudObject.volumeInstanceRef,
-                assetRef: pointCloudObject.assetRef
-              }
-            };
-
-            return result;
-          } else {
-            throw new Error('Unknown point cloud object type');
+      return intersections
+        .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
+        .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
+        .map(x => {
+          const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
+          if (pointCloudNode === null) {
+            throw new Error(`Could not find PointCloudNode for intersected point`);
           }
-        }
 
-        return baseObject;
-      });
+          const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
+
+          const baseObject = {
+            distance: x.position.distanceTo(camera.position),
+            point: x.position,
+            pointIndex: x.pointIndex,
+            pointCloudNode,
+            object: x.object,
+            normal: x.normal
+          };
+
+          if (pointCloudObject !== undefined) {
+            if (isClassicPointCloudVolume(pointCloudObject)) {
+              const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
+                ...baseObject,
+                pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
+                volumeMetadata: {
+                  annotationId: pointCloudObject.annotationId,
+                  assetRef: pointCloudObject.assetRef,
+                  instanceRef: pointCloudObject.instanceRef
+                }
+              };
+
+              return result;
+            } else if (isDMPointCloudVolume(pointCloudObject)) {
+              const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
+                ...baseObject,
+                pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
+                volumeMetadata: {
+                  volumeInstanceRef: pointCloudObject.volumeInstanceRef,
+                  assetRef: pointCloudObject.assetRef
+                }
+              };
+
+              return result;
+            } else {
+              throw new Error('Unknown point cloud object type');
+            }
+          }
+
+          return baseObject;
+        });
+    } finally {
+      release();
+    }
   }
 }
 

@@ -721,6 +721,22 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     };
   }
 
+  public get360ImageBoxIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number
+  ): { point: Vector3; normal: Vector3 } | undefined {
+    const currentEntity = this._interactionState.currentImage360Entered;
+
+    if (currentEntity === undefined) {
+      return undefined;
+    }
+
+    const point = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
+    this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
+
+    return currentEntity.get360ImageBoxIntersection(this._raycaster);
+  }
+
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allIconsSelected = false;

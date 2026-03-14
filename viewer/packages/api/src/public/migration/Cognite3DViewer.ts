@@ -1681,6 +1681,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param options
    * @param options.stopOnHitting360Icon
    * @param options.predicate Check whether a CustomObject should be intersected.
+   * @param options.estimateNormal When true, estimates the surface normal at point cloud intersections in the same GPU pass.
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
@@ -1690,6 +1691,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     options?: {
       stopOnHitting360Icon?: boolean;
       predicate?: (customObject: ICustomObject) => boolean;
+      /**
+       * When true, estimates the surface normal at point cloud intersections using neighbor pixel
+       * samples within the same GPU pick buffer — no extra intersection calls needed.
+       */
+      estimateNormal?: boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
     // Check cluster intersection first (clusters have priority)
@@ -1712,7 +1718,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return intersection;
     }
     const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
-      asyncCADIntersection: false
+      asyncCADIntersection: false,
+      estimateNormal: options?.estimateNormal
     });
     if (modelIntersection !== null) {
       intersection = modelIntersection;
@@ -1798,6 +1805,27 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
   }
 
+  /**
+   * When the viewer is currently inside a 360 image, raycasts against the
+   * visualization box (unit cube) and returns the intersection point and
+   * inward-pointing surface normal in world space.
+   *
+   * This is a cheap CPU-only raycast (12 triangles). The point lies on the
+   * cube face (~0.5 m from camera) at the exact angular direction of the pixel,
+   * and the normal indicates whether it is a floor, wall, or ceiling face.
+   *
+   * @param offsetX Pixel X offset in the canvas.
+   * @param offsetY Pixel Y offset in the canvas.
+   * @returns `{ point, normal }` in world space, or `null` when not inside a
+   * 360 image or when there is no intersection.
+   */
+  get360ImageBoxIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number
+  ): { point: THREE.Vector3; normal: THREE.Vector3 } | null {
+    return this._image360ApiHelper?.get360ImageBoxIntersectionFromPixel(offsetX, offsetY) ?? null;
+  }
+
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
@@ -1873,7 +1901,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean }
+    options?: { asyncCADIntersection?: boolean; estimateNormal?: boolean }
   ): Promise<null | Intersection<DataSourceT>> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
@@ -1888,7 +1916,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-      const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
+      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input, {
+        estimateNormal: options?.estimateNormal
+      });
 
       if (pointCloudResults.length > 0) {
         const result = pointCloudResults[0]; // Nearest intersection
@@ -1907,6 +1937,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
               distanceToCamera: result.distance,
               annotationId,
               assetRef: result.volumeMetadata?.assetRef,
+              normal: result.normal,
               volumeMetadata: result.volumeMetadata
             };
             intersections.push(intersection);
