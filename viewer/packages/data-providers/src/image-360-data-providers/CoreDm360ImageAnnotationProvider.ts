@@ -16,7 +16,7 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isSameImage360RevisionId } from './shared';
+import { isSameImage360RevisionId, waitForCollectionEntities } from './shared';
 import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
 import { CogniteClient } from '@cognite/sdk';
 import { fetchAnnotationsForInstance, Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
@@ -40,9 +40,21 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     instanceFilter: InstanceReference<DMDataSourceType>,
     collection: DefaultImage360Collection<DMDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
+    // Wait for entities to be available if collection is still initializing
+    const entities = await waitForCollectionEntities(collection);
+
+    if (entities.length === 0) {
+      return [];
+    }
+
     const relatedRevisionsAndAnnotations = await fetchAnnotationsForInstance(instanceFilter, this._client);
-    const entities = collection.image360Entities;
-    return (await Promise.all(entities.map(getRevisionAnnotationsForEntity))).flat();
+
+    if (relatedRevisionsAndAnnotations.imageRevisionIds.length === 0) {
+      return [];
+    }
+
+    const results = (await Promise.all(entities.map(getRevisionAnnotationsForEntity))).flat();
+    return results;
 
     async function getRevisionAnnotationsForEntity(
       entity: Image360Entity<DMDataSourceType>
@@ -54,6 +66,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
             isSameImage360RevisionId(revision.identifier, foundRevisionId)
           )
         );
+
       return (
         await Promise.all(
           revisions.map(revision => getAnnotationInfoForRevision(entity, revision, relatedRevisionsAndAnnotations))
@@ -72,6 +85,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
           isSameDMIdentifier(relatedRevisionAnnotationId, annotation.annotation.annotationIdentifier)
         )
       );
+
       return filteredAnnotations.map(annotation => ({
         image: entity,
         revision,
