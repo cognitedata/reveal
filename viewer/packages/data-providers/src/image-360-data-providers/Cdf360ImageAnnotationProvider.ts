@@ -41,6 +41,7 @@ import {
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
 import { getInstanceKey } from '../utilities/instanceIds';
+import { waitForCollectionEntities } from './shared';
 
 /**
  * Converts file descriptors to annotation resource IDs for CDF API.
@@ -110,6 +111,13 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     asset: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
+    // Wait for entities to be available if collection is still initializing
+    const entities = await waitForCollectionEntities(collection);
+
+    if (entities.length === 0) {
+      return [];
+    }
+
     const allAnnotations = await this.getAllAnnotationsForCollection(collection);
 
     const matchingAnnotationIds = new Set<number>();

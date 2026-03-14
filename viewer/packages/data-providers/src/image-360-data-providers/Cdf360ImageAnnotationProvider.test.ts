@@ -170,9 +170,35 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     return collection;
   }
 
+  function createMutableMockCollection(
+    entitiesArray: Image360Entity<ClassicDataSourceType>[]
+  ): DefaultImage360Collection<ClassicDataSourceType> {
+    return new Mock<DefaultImage360Collection<ClassicDataSourceType>>()
+      .setup(c => c.sourceId)
+      .returns({ site_id: 'mutable-collection-id' })
+      .setup(c => c.image360Entities)
+      .returns(entitiesArray)
+      .setup(c => c.getAllFileDescriptors)
+      .returns(() =>
+        entitiesArray.flatMap(entity =>
+          entity.getRevisions().flatMap(revision => revision.getDescriptors().faceDescriptors)
+        )
+      )
+      .object();
+  }
+
   describe('findImageAnnotationsForInstance', () => {
     beforeEach(() => {
       jest.clearAllMocks();
+    });
+
+    test('returns empty array when collection has no entities', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+      const collection = createMockCollection([]);
+
+      const results = await provider.findImageAnnotationsForInstance(assetRef, collection);
+
+      expect(results).toEqual([]);
     });
 
     test('returns annotations matching asset ref and image fileIds', async () => {
@@ -251,6 +277,62 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
       assert(results.length === 1);
       expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
+    });
+  });
+
+  describe('waitForEntities behavior', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('waits for entities to become available', async () => {
+      mockAnnotationList.mockImplementation(
+        (): CursorAndAsyncIterator<AnnotationModel> =>
+          createCursorAndAsyncIterator({
+            items: [matchingAnnotation]
+          })
+      );
+
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+
+      const revision = createMockRevision(10, [matchingAnnotation, nonMatchingAnnotation]);
+      const entity = createMockEntity([revision]);
+
+      const entitiesArray: Image360Entity<ClassicDataSourceType>[] = [];
+      const mutableCollection = createMutableMockCollection(entitiesArray);
+
+      const resultPromise = provider.findImageAnnotationsForInstance(assetRef, mutableCollection);
+
+      await jest.advanceTimersByTimeAsync(100);
+
+      entitiesArray.push(entity);
+
+      await jest.advanceTimersByTimeAsync(50);
+
+      const results = await resultPromise;
+
+      assert(results.length === 1);
+      expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
+    });
+
+    test('returns empty array when entities never become available (timeout)', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+
+      const entitiesArray: Image360Entity<ClassicDataSourceType>[] = [];
+      const mutableCollection = createMutableMockCollection(entitiesArray);
+
+      const resultPromise = provider.findImageAnnotationsForInstance(assetRef, mutableCollection);
+
+      await jest.advanceTimersByTimeAsync(3100);
+
+      const results = await resultPromise;
+
+      expect(results).toEqual([]);
     });
   });
 
