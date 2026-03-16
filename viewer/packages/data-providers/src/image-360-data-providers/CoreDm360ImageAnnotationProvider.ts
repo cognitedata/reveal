@@ -16,7 +16,7 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isSameImage360RevisionId, waitForCollectionEntities } from './shared';
+import { isSameImage360RevisionId } from './shared';
 import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
 import { CogniteClient } from '@cognite/sdk';
 import { fetchAnnotationsForInstance, Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
@@ -40,8 +40,9 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     instanceFilter: InstanceReference<DMDataSourceType>,
     collection: DefaultImage360Collection<DMDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
-    // Wait for entities to be available if collection is still initializing
-    const entities = await waitForCollectionEntities(collection);
+    // Await entity initialization — the factory ensures entities are loaded before
+    // the collection is constructed, so this resolves immediately in normal operation.
+    const entities = await collection.waitForEntities();
 
     if (entities.length === 0) {
       return [];
@@ -128,14 +129,13 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
       return [];
     }
 
-    const annotations = (
-      await fetchCoreDm360AnnotationsForCollection(
+    const [annotations, entities] = await Promise.all([
+      fetchCoreDm360AnnotationsForCollection(
         { externalId: collection.sourceId.image360CollectionExternalId, space: collection.sourceId.space },
         this._client
-      )
-    ).filter(annotationFilter);
-
-    const entities = collection.image360Entities;
+      ).then(result => result.filter(annotationFilter)),
+      collection.waitForEntities()
+    ]);
     const revisionIdToEntityAndRevisionMap = new Map<
       DMInstanceKey,
       [Image360Entity<DMDataSourceType>, Image360RevisionEntity<DMDataSourceType>]

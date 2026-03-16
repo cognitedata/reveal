@@ -115,6 +115,8 @@ describe(CoreDm360ImageAnnotationProvider.name, () => {
       .returns({ image360CollectionExternalId: 'collection-1', space: 'space-1' })
       .setup(c => c.image360Entities)
       .returns(entities)
+      .setup(c => c.waitForEntities())
+      .returns(Promise.resolve([...entities]))
       .setup(c => c.id)
       .returns('collection-1')
       .object();
@@ -132,6 +134,8 @@ describe(CoreDm360ImageAnnotationProvider.name, () => {
       .returns('collection-1')
       .setup(p => p.image360Entities)
       .returns(entitiesArray)
+      .setup(p => p.waitForEntities())
+      .callback(() => Promise.resolve([...entitiesArray]))
       .object();
   }
 
@@ -233,57 +237,30 @@ describe(CoreDm360ImageAnnotationProvider.name, () => {
   describe('waitForEntities behavior', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      jest.useFakeTimers();
       mockInstancesQuery.mockResolvedValue(createQueryResponse([annotationId], [revisionId]));
     });
 
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    test('waits for entities to become available', async () => {
+    test('returns annotations when waitForEntities resolves with entities', async () => {
       const provider = new CoreDm360ImageAnnotationProvider(sdkMock);
 
       const annotation = createMockAnnotationObject(annotationId);
       const revision = createMockRevision(revisionId, [annotation]);
       const entity = createMockEntity([revision]);
 
-      // Create a mutable entities array that starts empty
-      const entitiesArray: Image360Entity<DMDataSourceType>[] = [];
-      const mutableCollection = createMutableMockCollection(entitiesArray);
+      const collection = createMockCollection([entity]);
 
-      // Start the query with empty entities
-      const resultPromise = provider.findImageAnnotationsForInstance(instanceFilter, mutableCollection);
-
-      // Advance timers to trigger first few polls
-      await jest.advanceTimersByTimeAsync(100);
-
-      // Now add entities
-      entitiesArray.push(entity);
-
-      // Advance timers to trigger next poll which should find the entities
-      await jest.advanceTimersByTimeAsync(50);
-
-      const results = await resultPromise;
+      const results = await provider.findImageAnnotationsForInstance(instanceFilter, collection);
 
       assert(results.length === 1);
       expect(results[0].image).toBe(entity);
     });
 
-    test('returns empty array when entities never become available (timeout)', async () => {
+    test('returns empty array when waitForEntities resolves with empty array', async () => {
       const provider = new CoreDm360ImageAnnotationProvider(sdkMock);
 
-      // Create a mutable entities array that stays empty
-      const entitiesArray: Image360Entity<DMDataSourceType>[] = [];
-      const mutableCollection = createMutableMockCollection(entitiesArray);
+      const collection = createMockCollection([]);
 
-      // Start the query with empty entities
-      const resultPromise = provider.findImageAnnotationsForInstance(instanceFilter, mutableCollection);
-
-      // Advance past the timeout (3000ms)
-      await jest.advanceTimersByTimeAsync(3100);
-
-      const results = await resultPromise;
+      const results = await provider.findImageAnnotationsForInstance(instanceFilter, collection);
 
       expect(results).toEqual([]);
     });

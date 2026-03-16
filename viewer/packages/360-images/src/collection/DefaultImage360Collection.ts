@@ -44,6 +44,8 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
    */
   readonly image360Entities: Image360Entity<T>[];
 
+  private readonly _entitiesReady: Promise<Image360Entity<T>[]>;
+
   /**
    * If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
    * If undefined, the most recent revision will be loaded.
@@ -131,11 +133,24 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._image360DataProvider = image360DataProvider;
     this._setNeedsRedraw = setNeedsRedraw;
 
+    // Entities are fully populated by the factory before this constructor runs,
+    // so the promise resolves immediately with a snapshot of the entities array.
+    this._entitiesReady = Promise.resolve([...entities]);
+
     // Build icon-to-entity map for O(1) lookups during cluster intersection
     this._image360EntitiesMap = new Map();
     for (const entity of entities) {
       this._image360EntitiesMap.set(entity.icon, entity);
     }
+  }
+
+  /**
+   * Returns a Promise that resolves with a snapshot of the entities when they are ready.
+   * The Image360CollectionFactory ensures entities are fully loaded before constructing the
+   * collection, so this resolves immediately. Awaiting this is preferred over polling.
+   */
+  public waitForEntities(): Promise<Image360Entity<T>[]> {
+    return this._entitiesReady;
   }
 
   public getModelTransformation(out?: Matrix4): Matrix4 {

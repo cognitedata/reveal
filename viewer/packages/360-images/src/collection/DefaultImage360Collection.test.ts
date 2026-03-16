@@ -218,5 +218,29 @@ describe(DefaultImage360Collection.name, () => {
       expect(collection.image360Entities).toHaveLength(0);
       entityMock.verify(e => e.dispose(), Times.Once());
     });
+
+    test('waitForEntities resolves immediately with entities when collection is populated', async () => {
+      const icon1 = createMockIcon();
+      const icon2 = createMockIcon();
+      const entity1Mock = createMockEntity(icon1);
+      const entity2Mock = createMockEntity(icon2);
+
+      const { mock } = createMockIconCollection();
+      const collection = createTestCollection(mock.object(), [entity1Mock.object(), entity2Mock.object()]);
+
+      const entities = await collection.waitForEntities();
+
+      expect(entities).toHaveLength(2);
+      expect(entities).not.toBe(collection.image360Entities); // returns a snapshot, not the same reference
+    });
+
+    test('waitForEntities resolves with empty array when collection has no entities', async () => {
+      const { mock } = createMockIconCollection();
+      const collection = createTestCollection(mock.object(), []);
+
+      const entities = await collection.waitForEntities();
+
+      expect(entities).toHaveLength(0);
+    });
   });
 });
