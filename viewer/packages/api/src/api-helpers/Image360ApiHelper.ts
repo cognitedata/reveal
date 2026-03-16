@@ -364,11 +364,26 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     this.applyFullResolutionTextures(revisionToEnter);
 
+    this._alignCollectionIconsToFloor(imageCollection);
+
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
     if (updateHistory) {
       this._history.start(image360Entity);
     }
     return true;
+  }
+
+  private _alignCollectionIconsToFloor(collection: Image360Collection<DataSourceT>): void {
+    for (const entity of collection.image360Entities) {
+      const e = entity as Image360Entity<DataSourceT>;
+      e.adjustIconFloorHeight(e.getBoxBottomWorldY());
+    }
+  }
+
+  private _restoreCollectionIconFloorHeights(collection: Image360Collection<DataSourceT>): void {
+    for (const entity of collection.image360Entities) {
+      (entity as Image360Entity<DataSourceT>).restoreIconFloorHeight();
+    }
   }
 
   private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
@@ -512,6 +527,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
+    this._restoreCollectionIconFloorHeights(imageCollection);
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 

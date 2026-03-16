@@ -29,6 +29,7 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity<T>;
   private _iconColor: Color | 'default' = 'default';
+  private _originalIconY: number | undefined;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -147,6 +148,32 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
 
   public get360ImageBoxIntersection(raycaster: Raycaster): { point: Vector3; normal: Vector3 } | undefined {
     return this._image360VisualizationBox.get360ImageBoxIntersection(raycaster);
+  }
+
+  public getBoxBottomWorldY(): number {
+    return this._image360VisualizationBox.getBoxBottomWorldY();
+  }
+
+  /**
+   * Moves the icon to the given floor Y height (world space).
+   * Stores the original Y so it can be restored with `restoreIconFloorHeight()`.
+   * Calling this again before restoring overwrites the stored original.
+   */
+  public adjustIconFloorHeight(floorY: number): void {
+    if (this._originalIconY === undefined) {
+      this._originalIconY = this._image360Icon.getPosition().y;
+    }
+    this._image360Icon.getPosition().y = floorY;
+  }
+
+  /**
+   * Restores the icon to the Y position it had before `adjustIconFloorHeight()` was called.
+   * No-op if `adjustIconFloorHeight()` has not been called.
+   */
+  public restoreIconFloorHeight(): void {
+    if (this._originalIconY === undefined) return;
+    this._image360Icon.getPosition().y = this._originalIconY;
+    this._originalIconY = undefined;
   }
 
   /**

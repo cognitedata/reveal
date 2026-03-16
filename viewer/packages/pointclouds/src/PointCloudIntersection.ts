@@ -41,8 +41,7 @@ export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceT
    */
   assetRef?: AnnotationsAssetRef;
   /**
-   * Estimated surface normal at the intersection point. Only present when the
-   * `estimateNormal` option is passed to `getAnyIntersectionFromPixel`.
+   * Surface normal at the intersection point, if available in the point cloud data.
    */
   normal?: Vector3;
   /**
