@@ -49,6 +49,11 @@ export interface PickParams {
    * @param renterTarget The render target used for picking.
    */
   onBeforePickRender: (material: PointCloudMaterial, renterTarget: WebGLRenderTarget) => void;
+  /**
+   * When true, estimates the surface normal at the intersection point using neighbor pixel samples
+   * within the same GPU pick buffer readback. This avoids the need for separate intersection calls.
+   */
+  estimateNormal: boolean;
 }
 
 /**
@@ -177,6 +182,103 @@ export class PointCloudOctreePickerHelper {
     return this._renderer
       .readRenderTargetPixelsAsync(renderTarget, x, y, pickWndSize, pickWndSize, pixels)
       .then(() => pixels);
+  }
+
+  /** Pixel offset used for the two neighbor samples when estimating surface normals. */
+  public static readonly NormalSampleOffset = 5;
+
+  /** Search radius around each neighbor target when decoding neighbor positions. */
+  public static readonly NeighborSearchRadius = 2;
+
+  /**
+   * Estimates the surface normal at the center hit point using two neighbor pixels from the same
+   * pick buffer readback. Computes the cross product of two edge vectors to the surface.
+   * Must be called with the ORIGINAL pixel buffer (before findHit zeroes the alpha channels).
+   */
+  public static estimateNormalFromPickBuffer(
+    pixels: Uint8Array,
+    centerHit: PointCloudHit,
+    pickWndSize: number,
+    nodes: RenderedNode[],
+    cameraPosition: Vector3
+  ): Vector3 | undefined {
+    const halfWnd = Math.floor(pickWndSize / 2);
+    const offset = PointCloudOctreePickerHelper.NormalSampleOffset;
+    const searchRadius = PointCloudOctreePickerHelper.NeighborSearchRadius;
+
+    const centerPos = PointCloudOctreePickerHelper.getPointPosition(nodes, centerHit.pcIndex, centerHit.pIndex).clone();
+    const rightPos = PointCloudOctreePickerHelper.decodePositionAt(
+      pixels,
+      halfWnd + offset,
+      halfWnd,
+      pickWndSize,
+      nodes,
+      searchRadius
+    );
+    const upPos = PointCloudOctreePickerHelper.decodePositionAt(
+      pixels,
+      halfWnd,
+      halfWnd + offset,
+      pickWndSize,
+      nodes,
+      searchRadius
+    );
+
+    if (!rightPos || !upPos) return undefined;
+
+    const maxNeighborDistance = 2.0;
+    if (rightPos.distanceTo(centerPos) > maxNeighborDistance || upPos.distanceTo(centerPos) > maxNeighborDistance) {
+      return undefined;
+    }
+
+    const v1 = new Vector3().subVectors(rightPos, centerPos);
+    const v2 = new Vector3().subVectors(upPos, centerPos);
+    const normal = new Vector3().crossVectors(v1, v2);
+
+    if (normal.lengthSq() < 1e-8) return undefined;
+    normal.normalize();
+
+    if (normal.dot(new Vector3().subVectors(cameraPosition, centerPos)) < 0) {
+      normal.negate();
+    }
+
+    return normal;
+  }
+
+  private static decodePositionAt(
+    pixels: Uint8Array,
+    u: number,
+    v: number,
+    pickWndSize: number,
+    nodes: RenderedNode[],
+    searchRadius: number = 0
+  ): Vector3 | undefined {
+    let bestDistSq = Infinity;
+    let bestPos: Vector3 | undefined;
+
+    for (let dv = -searchRadius; dv <= searchRadius; dv++) {
+      for (let du = -searchRadius; du <= searchRadius; du++) {
+        const pu = u + du;
+        const pv = v + dv;
+        if (pu < 0 || pu >= pickWndSize || pv < 0 || pv >= pickWndSize) continue;
+
+        const bufferOffset = pu + pv * pickWndSize;
+        const pcIndex = pixels[4 * bufferOffset + 3];
+        if (pcIndex === 0 || pcIndex === 255) continue;
+
+        const distSq = du * du + dv * dv;
+        if (distSq >= bestDistSq) continue;
+
+        pixels[4 * bufferOffset + 3] = 0;
+        const pIndex = new Uint32Array(pixels.buffer)[bufferOffset];
+        pixels[4 * bufferOffset + 3] = pcIndex;
+
+        bestDistSq = distSq;
+        bestPos = PointCloudOctreePickerHelper.getPointPosition(nodes, pcIndex - 1, pIndex).clone();
+      }
+    }
+
+    return bestPos;
   }
 
   private static createTempNodes(

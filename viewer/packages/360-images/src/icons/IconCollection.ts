@@ -4,9 +4,14 @@
 
 import {
   CanvasTexture,
+  CircleGeometry,
   Color,
+  DoubleSide,
   Frustum,
+  InstancedMesh,
   Matrix4,
+  Mesh,
+  MeshBasicMaterial,
   Ray,
   Sphere,
   Sprite,
@@ -95,6 +100,10 @@ export class IconCollection {
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
 
+  private readonly _floorDiscMesh: InstancedMesh;
+  private readonly _floorHoverMesh: Mesh | undefined;
+  private _floorMode = false;
+
   // Cluster hover state tracking
   private _visibleClusteredIcons: ClusteredIcon[] = [];
   // Store the hovered cluster's representative icon (not index) to handle array changes between frames
@@ -106,7 +115,17 @@ export class IconCollection {
   }
 
   set hoverSpriteVisibility(value: boolean) {
-    this._hoverSprite.visible = value;
+    if (this._floorMode) {
+      if (this._floorHoverMesh) {
+        this._floorHoverMesh.visible = value;
+      }
+      this._hoverSprite.visible = false;
+    } else {
+      this._hoverSprite.visible = value;
+      if (this._floorHoverMesh) {
+        this._floorHoverMesh.visible = false;
+      }
+    }
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
@@ -137,6 +156,21 @@ export class IconCollection {
         break;
     }
     this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+  }
+
+  public setFloorMode(enabled: boolean): void {
+    if (this._floorMode === enabled) return;
+    this._floorMode = enabled;
+    this._pointsObject.visible = !enabled;
+    this._floorDiscMesh.visible = enabled;
+    // Reset both hover indicators on mode switch — neither should carry over
+    this._hoverSprite.visible = false;
+    if (this._floorHoverMesh) {
+      this._floorHoverMesh.visible = false;
+    }
+    if (this._setNeedsRedraw) {
+      this._setNeedsRedraw();
+    }
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
@@ -188,6 +222,24 @@ export class IconCollection {
 
     const sharedTexture = this.createOuterRingsTexture();
 
+    // Create floor disc InstancedMesh (used in 360 floor mode — lies flat, faces up)
+    const discGeometry = new CircleGeometry(this._iconRadius, 32);
+    discGeometry.rotateX(-Math.PI / 2); // rotate geometry so face points up (Y+)
+    const discMaterial = new MeshBasicMaterial({
+      map: sharedTexture,
+      color: 0xdddddd,
+      opacity: 0.75,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+      side: DoubleSide
+    });
+    this._floorDiscMesh = new InstancedMesh(discGeometry, discMaterial, points.length);
+    this._floorDiscMesh.count = 0;
+    this._floorDiscMesh.visible = false;
+    this._floorDiscMesh.frustumCulled = false;
+    this._floorDiscMesh.renderOrder = 4;
+
     // Create OverlayPointsObject with sprite texture (used for individual icons in both modes)
     const pointsObjects = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
@@ -204,6 +256,23 @@ export class IconCollection {
 
     const spriteTexture = this.createHoverIconTexture();
     this._hoverSprite = this.createHoverSprite(spriteTexture);
+
+    // Create floor hover mesh (flat disc, used instead of camera-facing sprite in floor mode)
+    const floorHoverGeo = new CircleGeometry(this._iconRadius, 32);
+    floorHoverGeo.rotateX(-Math.PI / 2);
+    this._floorHoverMesh = new Mesh(
+      floorHoverGeo,
+      new MeshBasicMaterial({
+        map: spriteTexture,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+        side: DoubleSide
+      })
+    );
+    this._floorHoverMesh.visible = false;
+    this._floorHoverMesh.renderOrder = 5;
+
     this._sharedTexture = sharedTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
@@ -223,6 +292,8 @@ export class IconCollection {
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
     sceneHandler.addObject3D(pointsObjects);
+    sceneHandler.addObject3D(this._floorDiscMesh);
+    sceneHandler.addObject3D(this._floorHoverMesh);
   }
 
   public setTransform(transform: Matrix4): void {
@@ -579,11 +650,14 @@ export class IconCollection {
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const cameraModelSpacePosition = new Vector3();
-    const worldTransform = new Matrix4();
+    const collectionTransform = new Matrix4();
+    const worldTransformInverse = new Matrix4();
+    const instanceMatrix = new Matrix4();
+    const worldPos = new Vector3();
     return ({ camera }) => {
-      this._pointsObject.getTransform(worldTransform);
-      worldTransform.invert();
-      cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransform);
+      this._pointsObject.getTransform(collectionTransform);
+      worldTransformInverse.copy(collectionTransform).invert();
+      cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransformInverse);
 
       const points =
         this._proximityRadius === Infinity
@@ -609,10 +683,21 @@ export class IconCollection {
 
       const closestVisibleReversedPoints = closestPoints.filter(icon => icon.getVisible()).reverse();
 
-      iconSprites.setPoints(
-        closestVisibleReversedPoints.map(p => p.getPosition()),
-        closestVisibleReversedPoints.map(p => p.getColor())
-      );
+      if (this._floorMode && this._floorDiscMesh) {
+        let count = 0;
+        for (const p of closestVisibleReversedPoints) {
+          worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
+          instanceMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
+          this._floorDiscMesh.setMatrixAt(count++, instanceMatrix);
+        }
+        this._floorDiscMesh.count = count;
+        this._floorDiscMesh.instanceMatrix.needsUpdate = true;
+      } else {
+        iconSprites.setPoints(
+          closestVisibleReversedPoints.map(p => p.getPosition()),
+          closestVisibleReversedPoints.map(p => p.getColor())
+        );
+      }
     };
   }
 
@@ -647,8 +732,12 @@ export class IconCollection {
 
     icons.forEach(icon =>
       icon.on('selected', () => {
-        this._hoverSprite.position.copy(icon.getPosition().clone().applyMatrix4(this.getTransform()));
+        const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
+        this._hoverSprite.position.copy(worldPos);
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
+        if (this._floorHoverMesh) {
+          this._floorHoverMesh.position.copy(worldPos);
+        }
       })
     );
 
@@ -662,6 +751,16 @@ export class IconCollection {
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
+
+    this._sceneHandler.removeObject3D(this._floorDiscMesh);
+    this._floorDiscMesh.geometry.dispose();
+    (this._floorDiscMesh.material as MeshBasicMaterial).dispose();
+
+    if (this._floorHoverMesh) {
+      this._sceneHandler.removeObject3D(this._floorHoverMesh);
+      this._floorHoverMesh.geometry.dispose();
+      (this._floorHoverMesh.material as MeshBasicMaterial).dispose();
+    }
 
     if (this._enableHtmlClusters && this._htmlRenderer) {
       this._htmlRenderer.dispose();

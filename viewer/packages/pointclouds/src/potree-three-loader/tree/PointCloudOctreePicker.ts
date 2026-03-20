@@ -51,25 +51,52 @@ export class PointCloudOctreePicker {
       pixelPosition.y = (pixelPosition.y + 1) * renderSize.y * 0.5;
     }
 
-    const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
+    // When estimating normals, expand the pick window to capture neighbor samples (right +5px, up +5px)
+    // plus a search radius around each neighbor to handle sparse point clouds.
+    const normalOffset = PointCloudOctreePickerHelper.NormalSampleOffset;
+    const neighborSearchRadius = PointCloudOctreePickerHelper.NeighborSearchRadius;
+    const pickWndSize = params.estimateNormal
+      ? DEFAULT_PICK_WINDOW_SIZE + 2 * normalOffset + 2 * neighborSearchRadius
+      : (params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE);
     const halfPickWndSize = (pickWndSize - 1) / 2;
-    const x = Math.floor(MathUtils.clamp(pixelPosition.x - halfPickWndSize, 0, renderSize.x));
-    const y = Math.floor(MathUtils.clamp(pixelPosition.y - halfPickWndSize, 0, renderSize.y));
+    // Clamp start so the window [x, x+pickWndSize) stays within the render target.
+    const x = Math.floor(
+      MathUtils.clamp(pixelPosition.x - halfPickWndSize, 0, Math.max(0, renderSize.x - pickWndSize))
+    );
+    const y = Math.floor(
+      MathUtils.clamp(pixelPosition.y - halfPickWndSize, 0, Math.max(0, renderSize.y - pickWndSize))
+    );
 
     this._pickerHelper.prepareRender(x, y, pickWndSize, pickMaterial, pickState);
     const renderedNodes = this._pickerHelper.render(camera, pickMaterial, octrees, ray, pickState, params);
 
     // Start async GPU readback before resetting GL state.
-    // The render is already submitted; the GPU transfers the pick buffer back to CPU asynchronously.
     const readPixelsPromise = this._pickerHelper.readPixelsAsync(x, y, pickWndSize, pickState.renderTarget);
 
     // Reset GL state immediately (before awaiting) so other rendering can proceed in parallel.
-    // This mirrors the pattern used in the CAD PickingHandler.
     this._pickerHelper.resetState();
 
     const pixels = await readPixelsPromise;
 
+    // Clone pixels before findHit zeroes all alpha channels, so neighbor positions can be decoded.
+    const pixelsForNormal = params.estimateNormal ? pixels.slice() : undefined;
+
     const hit = PointCloudOctreePickerHelper.findHit(pixels, pickWndSize, renderedNodes, camera);
-    return PointCloudOctreePickerHelper.getPickPoint(hit, renderedNodes);
+    const pickPoint = PointCloudOctreePickerHelper.getPickPoint(hit, renderedNodes);
+
+    if (pickPoint !== null && hit !== null && pixelsForNormal !== undefined) {
+      const estimatedNormal = PointCloudOctreePickerHelper.estimateNormalFromPickBuffer(
+        pixelsForNormal,
+        hit,
+        pickWndSize,
+        renderedNodes,
+        camera.position
+      );
+      if (estimatedNormal !== undefined) {
+        pickPoint.normal = estimatedNormal;
+      }
+    }
+
+    return pickPoint;
   }
 }

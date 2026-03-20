@@ -73,6 +73,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity<DataSourceT>;
     currentImage360Entered?: Image360Entity<DataSourceT>;
+    previousImage360Entered?: Image360Entity<DataSourceT>;
     revisionSelectedForEntry?: Image360RevisionEntity<DataSourceT>;
     enteredCollection?: DefaultImage360Collection<DataSourceT>;
     lastMousePosition?: { offsetX: number; offsetY: number };
@@ -376,14 +377,16 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private _alignCollectionIconsToFloor(collection: Image360Collection<DataSourceT>): void {
     for (const entity of collection.image360Entities) {
       const e = entity as Image360Entity<DataSourceT>;
-      e.adjustIconFloorHeight(e.getBoxBottomWorldY());
+      e.adjustIconFloorHeight(e.getEstimatedFloorWorldY());
     }
+    (collection as DefaultImage360Collection<DataSourceT>).setFloorMode(true);
   }
 
   private _restoreCollectionIconFloorHeights(collection: Image360Collection<DataSourceT>): void {
     for (const entity of collection.image360Entities) {
       (entity as Image360Entity<DataSourceT>).restoreIconFloorHeight();
     }
+    (collection as DefaultImage360Collection<DataSourceT>).setFloorMode(false);
   }
 
   private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
@@ -735,6 +738,41 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       annotation,
       direction: this._raycaster.ray.direction
     };
+  }
+
+  /**
+   * Finds the best next 360 image station to navigate to from the current station,
+   * given a target world position that the user clicked.
+   *
+   * Scores candidates by directional alignment and proximity: prefers stations that are
+   * close and roughly in the direction from the current station toward the clicked point.
+   *
+   * @param clickedWorldPosition  The world-space position the user clicked on.
+   * @returns The best next Image360 and its collection, or `undefined` if none qualify.
+   */
+  public findBestNext360Image(clickedWorldPosition: Vector3): Image360WithCollection<DataSourceT> | undefined {
+    const currentEntity = this._interactionState.currentImage360Entered;
+    if (currentEntity === undefined) return undefined;
+
+    let bestDistSq = Infinity;
+    let bestResult: Image360WithCollection<DataSourceT> | undefined;
+
+    const entityPos = new Vector3();
+
+    for (const collection of this._image360Facade.collections) {
+      for (const entity of collection.image360Entities) {
+        if (entity === currentEntity) continue;
+
+        entityPos.setFromMatrixPosition(entity.transform);
+        const distSq = clickedWorldPosition.distanceToSquared(entityPos);
+        if (distSq < bestDistSq) {
+          bestDistSq = distSq;
+          bestResult = { image360: entity, image360Collection: collection };
+        }
+      }
+    }
+
+    return bestResult;
   }
 
   public get360ImageBoxIntersectionFromPixel(

@@ -1681,6 +1681,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param options
    * @param options.stopOnHitting360Icon
    * @param options.predicate Check whether a CustomObject should be intersected.
+   * @param options.estimateNormal When true, estimates the surface normal at the point cloud intersection point.
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
@@ -1690,6 +1691,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     options?: {
       stopOnHitting360Icon?: boolean;
       predicate?: (customObject: ICustomObject) => boolean;
+      estimateNormal?: boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
     // Check cluster intersection first (clusters have priority)
@@ -1712,7 +1714,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return intersection;
     }
     const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
-      asyncCADIntersection: false
+      asyncCADIntersection: false,
+      estimateNormal: options?.estimateNormal
     });
     if (modelIntersection !== null) {
       intersection = modelIntersection;
@@ -1819,6 +1822,21 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return this._image360ApiHelper?.get360ImageBoxIntersectionFromPixel(offsetX, offsetY) ?? null;
   }
 
+  /**
+   * Finds the best next 360 image station to navigate to from the currently entered station,
+   * given the world-space position the user clicked.
+   *
+   * Scores candidates by directional alignment (direction from current station toward the
+   * clicked point) and proximity, returning the station that is most directly "on the way"
+   * to where the user clicked.
+   *
+   * @param clickedWorldPosition  World-space position of the user's click (e.g. from a point cloud intersection).
+   * @returns The best matching Image360 and its collection, or `undefined` if not inside a 360 image or no candidates qualify.
+   */
+  findBestNext360Image(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined {
+    return this._image360ApiHelper?.findBestNext360Image(clickedWorldPosition);
+  }
+
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
@@ -1894,7 +1912,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean }
+    options?: { asyncCADIntersection?: boolean; estimateNormal?: boolean }
   ): Promise<null | Intersection<DataSourceT>> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
@@ -1909,7 +1927,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
+      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input, {
+        estimateNormal: options?.estimateNormal ?? false
+      });
 
       if (pointCloudResults.length > 0) {
         const result = pointCloudResults[0]; // Nearest intersection

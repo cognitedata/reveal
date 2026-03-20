@@ -38,7 +38,8 @@ export class PointCloudPickingHandler {
 
   async intersectPointClouds(
     nodes: PointCloudNode<DataSourceType>[],
-    input: IntersectInput
+    input: IntersectInput,
+    options?: { estimateNormal?: boolean }
   ): Promise<IntersectPointCloudNodeResult<DataSourceType>[]> {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
@@ -53,7 +54,8 @@ export class PointCloudPickingHandler {
 
       for (const node of visibleNodes) {
         const intersection = await this._picker.pick(camera, this._raycaster.ray, [node.octree], {
-          pickWindowSize: PointCloudPickingHandler.PickingWindowSize
+          pickWindowSize: PointCloudPickingHandler.PickingWindowSize,
+          estimateNormal: options?.estimateNormal ?? false
         });
         if (intersection !== null) {
           intersections.push(intersection);

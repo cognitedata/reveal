@@ -153,13 +153,14 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   /**
-   * Returns the world-space Y of the bottom face of the visualization box.
-   * This is a simple geometric estimate of floor height: box center Y minus half the box height.
+   * Returns an estimated floor Y in world space.
+   * Uses a fixed camera-height offset (~1.5 m) below the station centre,
+   * which approximates the floor level for a typical 360-image capture height.
    */
-  public getBoxBottomWorldY(): number {
-    const centerY = this._worldTransform.elements[13]; // column-major: element [13] is translation.y
-    const halfHeight = 0.5 * this._visualizationState.scale.y;
-    return centerY - halfHeight;
+  public getEstimatedFloorWorldY(): number {
+    const centerY = this._worldTransform.elements[13]; // column-major element [13] = translation.y
+    const cameraHeightEstimate = 1.5 * this._visualizationState.scale.y;
+    return centerY - cameraHeightEstimate;
   }
 
   public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {

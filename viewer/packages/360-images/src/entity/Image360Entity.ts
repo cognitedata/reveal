@@ -150,8 +150,8 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
     return this._image360VisualizationBox.get360ImageBoxIntersection(raycaster);
   }
 
-  public getBoxBottomWorldY(): number {
-    return this._image360VisualizationBox.getBoxBottomWorldY();
+  public getEstimatedFloorWorldY(): number {
+    return this._image360VisualizationBox.getEstimatedFloorWorldY();
   }
 
   /**
