@@ -325,6 +325,47 @@ describe(IconCollection.name, () => {
     disabledCollection.dispose();
   });
 
+  describe('setFloorMode', () => {
+    const expectedYShift = 1.5 - 0.05; // CameraHeightEstimate - FloorDiscYOffset
+
+    it('shifts icon Y positions to floor level when entering floor mode', () => {
+      const positions = [new Vector3(0, 5, 0), new Vector3(1, 5, 0)];
+      const collection = createCollection(positions);
+      const originalY = collection.icons.map(icon => icon.getPosition().y);
+
+      collection.setFloorMode(true);
+
+      collection.icons.forEach((icon, i) => {
+        expect(icon.getPosition().y).toBeCloseTo(originalY[i] - expectedYShift);
+      });
+      collection.dispose();
+    });
+
+    it('restores icon Y positions when exiting floor mode', () => {
+      const positions = [new Vector3(0, 5, 0)];
+      const collection = createCollection(positions);
+      const originalY = collection.icons[0].getPosition().y;
+
+      collection.setFloorMode(true);
+      collection.setFloorMode(false);
+
+      expect(collection.icons[0].getPosition().y).toBeCloseTo(originalY);
+      collection.dispose();
+    });
+
+    it('calling setFloorMode(true) twice only shifts once', () => {
+      const positions = [new Vector3(0, 5, 0)];
+      const collection = createCollection(positions);
+      const originalY = collection.icons[0].getPosition().y;
+
+      collection.setFloorMode(true);
+      collection.setFloorMode(true); // second call should be no-op
+
+      expect(collection.icons[0].getPosition().y).toBeCloseTo(originalY - expectedYShift);
+      collection.dispose();
+    });
+  });
+
   test('setCullingScheme switching behavior and state preservation', () => {
     const setNeedsRedrawMock = jest.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);

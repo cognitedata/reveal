@@ -2,9 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import { Mock, It } from 'moq.ts';
-import { PerspectiveCamera, Scene, Vector3 } from 'three';
+import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { jest } from '@jest/globals';
+import * as TWEEN from '@tweenjs/tween.js';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
 import { SceneHandler, InputHandler, EventTrigger, BeforeSceneRenderedDelegate } from '@reveal/utilities';
@@ -22,10 +23,14 @@ import {
   Image360IconIntersectionData,
   Image360Entity,
   Image360Facade,
-  DefaultImage360Collection
+  DefaultImage360Collection,
+  Image360RevisionEntity,
+  Image360EnteredDelegate,
+  Image360ExitedDelegate
 } from '@reveal/360-images';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { mockClientAuthentication, fakeGetBoundingClientRect } from '../../../../test-utilities';
+import { Image360VisualizationBox } from '../../../360-images/src/entity/Image360VisualizationBox';
 
 function createMockSceneHandler(): SceneHandler {
   const mockScene = new Mock<Scene>()
@@ -102,6 +107,10 @@ function createTestHelper(
     .returns(mockCamera)
     .setup(p => p.innerCameraManager)
     .returns(innerCameraManager)
+    .setup(p => p.setActiveCameraManager(It.IsAny()))
+    .returns(undefined)
+    .setup(p => p.setCameraState(It.IsAny()))
+    .returns(undefined)
     .object();
 
   const mockSceneHandler = createMockSceneHandler();
@@ -330,6 +339,92 @@ describe(Image360ApiHelper.name, () => {
       await jest.advanceTimersByTimeAsync(1000);
       await firstZoomPromise;
       flexibleHelper.dispose();
+    });
+  });
+
+  describe('floor mode', () => {
+    function createFloorModeFixture() {
+      const setFloorModeMock = jest.fn<(enabled: boolean) => void>();
+
+      const mockRevision = new Mock<Image360RevisionEntity<DataSourceType>>()
+        .setup(r => r.applyFullResolutionTextures())
+        .returns(Promise.resolve())
+        .object();
+
+      const mockVisualization = new Mock<Image360VisualizationBox>()
+        .setup(v => v.visible)
+        .returns(false)
+        .object();
+      const mockIcon = new Mock<Overlay3DIcon>()
+        .setup(i => i.setVisible(It.IsAny()))
+        .returns(undefined)
+        .object();
+
+      const mockEntity = new Mock<Image360Entity<DataSourceType>>()
+        .setup(e => e.icon)
+        .returns(mockIcon)
+        .setup(e => e.image360Visualization)
+        .returns(mockVisualization)
+        .setup(e => e.getActiveRevision())
+        .returns(mockRevision)
+        .setup(e => e.getMostRecentRevision())
+        .returns(mockRevision)
+        .setup(e => e.setActiveRevision(It.IsAny()))
+        .returns(undefined)
+        .setup(e => e.activateAnnotations())
+        .returns(undefined)
+        .setup(e => e.deactivateAnnotations())
+        .returns(undefined)
+        .setup(e => e.transform)
+        .returns(new Matrix4())
+        .object();
+
+      const mockEnteredTrigger = new Mock<EventTrigger<Image360EnteredDelegate<DataSourceType>>>()
+        .setup(t => t.fire(It.IsAny(), It.IsAny()))
+        .returns(undefined)
+        .object();
+      const mockExitedTrigger = new Mock<EventTrigger<Image360ExitedDelegate>>()
+        .setup(t => t.fire())
+        .returns(undefined)
+        .object();
+
+      const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.setFloorMode(It.IsAny()))
+        .callback(({ args }) => setFloorModeMock(args[0]))
+        .setup(c => c.isCollectionVisible)
+        .returns(true)
+        .setup(c => c.events)
+        .returns({ image360Entered: mockEnteredTrigger, image360Exited: mockExitedTrigger })
+        .object();
+
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+
+      return { mockEntity, mockCollection, setFloorModeMock };
+    }
+
+    test('calls setFloorMode(true) on the collection when entering a 360 image', async () => {
+      const { mockEntity, setFloorModeMock } = createFloorModeFixture();
+
+      const enterPromise = helper.enter360ImageInternal(mockEntity);
+      await Promise.resolve(); // flush preload microtask so tweens are created
+      TWEEN.update(TWEEN.now() + 2000); // drive tween animations to completion
+      await enterPromise;
+
+      expect(setFloorModeMock).toHaveBeenCalledWith(true);
+      expect(setFloorModeMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('calls setFloorMode(false) on the collection when exiting a 360 image', () => {
+      const { mockEntity, mockCollection, setFloorModeMock } = createFloorModeFixture();
+
+      (helper as any)._interactionState.currentImage360Entered = mockEntity;
+
+      helper.exit360Image();
+
+      expect(setFloorModeMock).toHaveBeenCalledWith(false);
+      expect(setFloorModeMock).toHaveBeenCalledTimes(1);
+      void mockCollection; // referenced only to satisfy lint
     });
   });
 });

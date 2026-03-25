@@ -364,6 +364,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     this.applyFullResolutionTextures(revisionToEnter);
 
+    imageCollection.setFloorMode(true);
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
     if (updateHistory) {
       this._history.start(image360Entity);
@@ -512,6 +513,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
+    imageCollection.setFloorMode(false);
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 
