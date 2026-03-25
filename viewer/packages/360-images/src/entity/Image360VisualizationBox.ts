@@ -230,37 +230,4 @@ export class Image360VisualizationBox implements Image360Visualization {
   public setAnnotationsVisibility(visibility: boolean): void {
     this._annotationsGroup.visible = visibility;
   }
-
-  /**
-   * Intersect the 360 visualization box mesh with a raycaster and return
-   * the surface normal in world space at the intersection point.
-   *
-   * BoxGeometry face normals point outward; they are negated so the returned
-   * normal points inward (toward the camera inside the box), which is the
-   * conventional surface normal for placement of markers on the 360 surface.
-   *
-   * @returns The inward-pointing surface normal in world space, or `undefined`
-   * if the mesh is not loaded or there is no intersection.
-   */
-  public get360ImageBoxIntersection(
-    raycaster: THREE.Raycaster
-  ): { point: THREE.Vector3; normal: THREE.Vector3 } | undefined {
-    if (this._visualizationMesh === undefined) {
-      return undefined;
-    }
-
-    const intersections = raycaster.intersectObject(this._visualizationMesh, false);
-    if (intersections.length === 0 || intersections[0].face === null) {
-      return undefined;
-    }
-
-    const hit = intersections[0];
-
-    // face.normal is in local object space; transform to world space.
-    // Negate because BoxGeometry normals point outward, but we want the inward normal.
-    const normal = hit.face!.normal.clone().negate();
-    normal.transformDirection(this._visualizationMesh.matrixWorld);
-
-    return { point: hit.point.clone(), normal };
-  }
 }

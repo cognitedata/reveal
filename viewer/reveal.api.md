@@ -481,10 +481,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
     fitCameraToVisualSceneBoundingBox(duration?: number): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection<DataSourceT>>;
-    get360ImageBoxIntersectionFromPixel(offsetX: number, offsetY: number): {
-        point: THREE.Vector3;
-        normal: THREE.Vector3;
-    } | null;
     get360ImageCollections(): Image360Collection<DataSourceT>[];
     getActive360ImageInfo(): Image360WithCollection<DataSourceT> | undefined;
     // @beta

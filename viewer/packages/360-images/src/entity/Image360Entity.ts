@@ -16,7 +16,7 @@ import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Color, Matrix4, type Raycaster, type Vector3 } from 'three';
+import { Color, Matrix4, type Raycaster } from 'three';
 
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -143,10 +143,6 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
 
   public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject<T> | undefined {
     return this._activeRevision.intersectAnnotations(raycaster);
-  }
-
-  public get360ImageBoxIntersection(raycaster: Raycaster): { point: Vector3; normal: Vector3 } | undefined {
-    return this._image360VisualizationBox.get360ImageBoxIntersection(raycaster);
   }
 
   /**

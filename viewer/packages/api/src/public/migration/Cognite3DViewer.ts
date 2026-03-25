@@ -1799,27 +1799,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * When the viewer is currently inside a 360 image, raycasts against the
-   * visualization box (unit cube) and returns the intersection point and
-   * inward-pointing surface normal in world space.
-   *
-   * This is a cheap CPU-only raycast (12 triangles). The point lies on the
-   * cube face (~0.5 m from camera) at the exact angular direction of the pixel,
-   * and the normal indicates whether it is a floor, wall, or ceiling face.
-   *
-   * @param offsetX Pixel X offset in the canvas.
-   * @param offsetY Pixel Y offset in the canvas.
-   * @returns `{ point, normal }` in world space, or `null` when not inside a
-   * 360 image or when there is no intersection.
-   */
-  get360ImageBoxIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number
-  ): { point: THREE.Vector3; normal: THREE.Vector3 } | null {
-    return this._image360ApiHelper?.get360ImageBoxIntersectionFromPixel(offsetX, offsetY) ?? null;
-  }
-
-  /**
    * Finds the best next 360 image station to navigate to from the currently entered station,
    * given the world-space position the user clicked.
    *
