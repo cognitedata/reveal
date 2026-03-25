@@ -71,7 +71,5 @@ export function getFloorHeightAtWorldPosition(
 
   floorYValues.sort((a, b) => a - b);
   const mid = Math.floor(floorYValues.length / 2);
-  return floorYValues.length % 2 === 0
-    ? (floorYValues[mid - 1] + floorYValues[mid]) / 2
-    : floorYValues[mid];
+  return floorYValues.length % 2 === 0 ? (floorYValues[mid - 1] + floorYValues[mid]) / 2 : floorYValues[mid];
 }

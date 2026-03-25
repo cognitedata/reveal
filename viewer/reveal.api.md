@@ -475,11 +475,16 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
+    findBestNext360Image(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined;
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
     fitCameraToVisualSceneBoundingBox(duration?: number): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection<DataSourceT>>;
+    get360ImageBoxIntersectionFromPixel(offsetX: number, offsetY: number): {
+        point: THREE.Vector3;
+        normal: THREE.Vector3;
+    } | null;
     get360ImageCollections(): Image360Collection<DataSourceT>[];
     getActive360ImageInfo(): Image360WithCollection<DataSourceT> | undefined;
     // @beta
@@ -1904,6 +1909,7 @@ export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceT
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
+    normal?: Vector3;
     volumeMetadata?: T['pointCloudVolumeMetadata'];
 };
 

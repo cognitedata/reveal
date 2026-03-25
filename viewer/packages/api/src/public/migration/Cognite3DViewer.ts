@@ -1681,7 +1681,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param options
    * @param options.stopOnHitting360Icon
    * @param options.predicate Check whether a CustomObject should be intersected.
-   * @param options.estimateNormal When true, estimates the surface normal at the point cloud intersection point.
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
@@ -1691,7 +1690,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     options?: {
       stopOnHitting360Icon?: boolean;
       predicate?: (customObject: ICustomObject) => boolean;
-      estimateNormal?: boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
     // Check cluster intersection first (clusters have priority)
@@ -1714,8 +1712,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return intersection;
     }
     const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
-      asyncCADIntersection: false,
-      estimateNormal: options?.estimateNormal
+      asyncCADIntersection: false
     });
     if (modelIntersection !== null) {
       intersection = modelIntersection;
@@ -1912,7 +1909,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean; estimateNormal?: boolean }
+    options?: { asyncCADIntersection?: boolean }
   ): Promise<null | Intersection<DataSourceT>> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
@@ -1927,9 +1924,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input, {
-        estimateNormal: options?.estimateNormal ?? false
-      });
+      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
       if (pointCloudResults.length > 0) {
         const result = pointCloudResults[0]; // Nearest intersection

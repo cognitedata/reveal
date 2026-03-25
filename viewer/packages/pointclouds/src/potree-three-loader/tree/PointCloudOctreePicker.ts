@@ -51,13 +51,7 @@ export class PointCloudOctreePicker {
       pixelPosition.y = (pixelPosition.y + 1) * renderSize.y * 0.5;
     }
 
-    // When estimating normals, expand the pick window to capture neighbor samples (right +5px, up +5px)
-    // plus a search radius around each neighbor to handle sparse point clouds.
-    const normalOffset = PointCloudOctreePickerHelper.NormalSampleOffset;
-    const neighborSearchRadius = PointCloudOctreePickerHelper.NeighborSearchRadius;
-    const pickWndSize = params.estimateNormal
-      ? DEFAULT_PICK_WINDOW_SIZE + 2 * normalOffset + 2 * neighborSearchRadius
-      : (params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE);
+    const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
     const halfPickWndSize = (pickWndSize - 1) / 2;
     // Clamp start so the window [x, x+pickWndSize) stays within the render target.
     const x = Math.floor(
@@ -78,24 +72,8 @@ export class PointCloudOctreePicker {
 
     const pixels = await readPixelsPromise;
 
-    // Clone pixels before findHit zeroes all alpha channels, so neighbor positions can be decoded.
-    const pixelsForNormal = params.estimateNormal ? pixels.slice() : undefined;
-
     const hit = PointCloudOctreePickerHelper.findHit(pixels, pickWndSize, renderedNodes, camera);
     const pickPoint = PointCloudOctreePickerHelper.getPickPoint(hit, renderedNodes);
-
-    if (pickPoint !== null && hit !== null && pixelsForNormal !== undefined) {
-      const estimatedNormal = PointCloudOctreePickerHelper.estimateNormalFromPickBuffer(
-        pixelsForNormal,
-        hit,
-        pickWndSize,
-        renderedNodes,
-        camera.position
-      );
-      if (estimatedNormal !== undefined) {
-        pickPoint.normal = estimatedNormal;
-      }
-    }
 
     return pickPoint;
   }
