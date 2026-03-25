@@ -514,7 +514,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
-    (imageCollection as DefaultImage360Collection<DataSourceT>).setFloorMode(false);
+    imageCollection.setFloorMode(false);
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 
