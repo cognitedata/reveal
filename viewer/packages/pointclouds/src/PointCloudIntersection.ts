@@ -41,10 +41,6 @@ export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceT
    */
   assetRef?: AnnotationsAssetRef;
   /**
-   * Surface normal at the intersection point, if available in the point cloud data.
-   */
-  normal?: Vector3;
-  /**
    * Point cloud volume reference associated with the intersected point cloud volume, if any.
    */
   volumeMetadata?: T['pointCloudVolumeMetadata'];

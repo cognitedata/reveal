@@ -1909,7 +1909,6 @@ export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceT
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
-    normal?: Vector3;
     volumeMetadata?: T['pointCloudVolumeMetadata'];
 };
 

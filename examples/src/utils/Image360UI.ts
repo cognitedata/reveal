@@ -73,8 +73,6 @@ export class Image360UI {
     enabled: false
   };
 
-  private _navigate360HoverInProgress = false;
-
   private icons360Setting = {
     visible: true,
     opacity: 1,
@@ -250,11 +248,6 @@ export class Image360UI {
       this.onAnnotationClicked(event);
       void this.onClickNavigate360(event);
     });
-    this.viewer.on('hover', event => {
-      if (this.navigate360.enabled) {
-        void this.onHoverNavigate360(event);
-      }
-    });
     this.viewer.requestRedraw();
   }
 
@@ -301,27 +294,6 @@ export class Image360UI {
     this.viewer.get360ImageCollections().forEach(p => this.viewer.remove360ImageSet(p));
   }
 
-  private async onHoverNavigate360(event: { offsetX: number; offsetY: number }): Promise<void> {
-    if (this.viewer.getActive360ImageInfo() === undefined) return;
-    if (this._navigate360HoverInProgress) return;
-    this._navigate360HoverInProgress = true;
-
-    try {
-      const pixel = new THREE.Vector2(event.offsetX, event.offsetY);
-      const intersection = await this.viewer.getAnyIntersectionFromPixel(pixel, { estimateNormal: true });
-      if (intersection === null || intersection === undefined) return;
-      if (!('point' in intersection)) return; // skip cluster intersections (no world point)
-
-      console.log('hover normal:', 'normal' in intersection ? intersection.normal : 'n/a (not pointcloud)');
-
-      const best = this.viewer.findBestNext360Image(intersection.point);
-      // Preview only — log the candidate without navigating
-      console.log('findBestNext360Image preview:', best?.image360.label ?? '(none)');
-    } finally {
-      this._navigate360HoverInProgress = false;
-    }
-  }
-
   private async onClickNavigate360(event: { offsetX: number; offsetY: number }): Promise<void> {
     if (this.viewer.getActive360ImageInfo() === undefined) return;
 
@@ -336,7 +308,6 @@ export class Image360UI {
       return;
     }
 
-    console.log('findBestNext360Image: navigating to', best.image360.label ?? '(unlabeled)');
     await this.viewer.enter360Image(best.image360);
   }
 

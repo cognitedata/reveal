@@ -1943,7 +1943,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
               distanceToCamera: result.distance,
               annotationId,
               assetRef: result.volumeMetadata?.assetRef,
-              normal: result.normal,
               volumeMetadata: result.volumeMetadata
             };
             intersections.push(intersection);

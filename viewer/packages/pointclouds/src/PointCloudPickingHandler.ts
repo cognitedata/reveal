@@ -76,8 +76,7 @@ export class PointCloudPickingHandler {
             point: x.position,
             pointIndex: x.pointIndex,
             pointCloudNode,
-            object: x.object,
-            normal: x.normal
+            object: x.object
           };
 
           if (pointCloudObject !== undefined) {
