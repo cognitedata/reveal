@@ -168,8 +168,9 @@ export class IconCollection {
     // Shift icon positions so hover detection (icon.intersect) aligns with the floor disc.
     // Station Y is camera height; subtracting the estimate moves icons to floor level.
     const yShift = IconCollection.CameraHeightEstimate - IconCollection.FloorDiscYOffset;
+    const delta = enabled ? -yShift : yShift;
     for (const icon of this._icons) {
-      icon.getPosition().y += enabled ? -yShift : yShift;
+      icon.applyYShift(delta);
     }
 
     if (enabled) {
