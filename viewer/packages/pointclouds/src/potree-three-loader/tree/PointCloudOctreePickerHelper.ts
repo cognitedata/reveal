@@ -226,11 +226,6 @@ export class PointCloudOctreePickerHelper {
 
     if (!rightPos || !upPos) return undefined;
 
-    const maxNeighborDistance = 2.0;
-    if (rightPos.distanceTo(centerPos) > maxNeighborDistance || upPos.distanceTo(centerPos) > maxNeighborDistance) {
-      return undefined;
-    }
-
     const v1 = new Vector3().subVectors(rightPos, centerPos);
     const v2 = new Vector3().subVectors(upPos, centerPos);
     const normal = new Vector3().crossVectors(v1, v2);

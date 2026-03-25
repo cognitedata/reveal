@@ -123,6 +123,7 @@ export class Image360VisualizationBox implements Image360Visualization {
           side: THREE.BackSide,
           map: getFaceTexture(face),
           depthTest: false,
+          depthWrite: false,
           opacity: this._visualizationState.opacity,
           transparent: true
         })

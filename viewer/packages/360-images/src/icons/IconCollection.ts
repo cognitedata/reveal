@@ -6,6 +6,7 @@ import {
   CanvasTexture,
   CircleGeometry,
   Color,
+  CylinderGeometry,
   DoubleSide,
   Frustum,
   InstancedMesh,
@@ -14,6 +15,7 @@ import {
   MeshBasicMaterial,
   Ray,
   Sphere,
+  SphereGeometry,
   Sprite,
   SpriteMaterial,
   Texture,
@@ -54,6 +56,12 @@ export type ClusterIntersectionData = {
 };
 export class IconCollection {
   private static readonly MinPixelSize = 16;
+  /** World-space Y lift applied to floor disc icons so they clear point-cloud floor geometry. */
+  private static readonly FloorDiscYOffset = 0.05;
+  /** Estimated camera capture height above floor, used to compute floor-level disc position. */
+  private static readonly CameraHeightEstimate = 1.5;
+  /** Radius of the thin vertical stem connecting disc to ball. */
+  private static readonly StemRadius = 0.008;
   private static readonly DefaultMaxPixelSize = 256;
   private static readonly DefaultProjectionMatrixElement = 1.73; // ~1.73 for 60° FOV
   private static readonly DefaultRenderHeight = 1080;
@@ -101,8 +109,11 @@ export class IconCollection {
   private _iconCullingScheme: IconCullingScheme;
 
   private readonly _floorDiscMesh: InstancedMesh;
+  private readonly _floorStemMesh: InstancedMesh;
+  private readonly _floorBallMesh: InstancedMesh;
   private readonly _floorHoverMesh: Mesh | undefined;
   private _floorMode = false;
+  private _preFloorCullingScheme: IconCullingScheme | undefined = undefined;
 
   // Cluster hover state tracking
   private _visibleClusteredIcons: ClusteredIcon[] = [];
@@ -163,6 +174,17 @@ export class IconCollection {
     this._floorMode = enabled;
     this._pointsObject.visible = !enabled;
     this._floorDiscMesh.visible = enabled;
+    this._floorStemMesh.visible = enabled;
+    this._floorBallMesh.visible = enabled;
+    if (enabled) {
+      // Floor mode requires individual station positions — switch to proximity culling
+      // so the ball sprites and the non-floor ring icons come from the same source.
+      this._preFloorCullingScheme = this._iconCullingScheme;
+      this.setCullingScheme('proximity');
+    } else if (this._preFloorCullingScheme !== undefined) {
+      this.setCullingScheme(this._preFloorCullingScheme);
+      this._preFloorCullingScheme = undefined;
+    }
     // Reset both hover indicators on mode switch — neither should carry over
     this._hoverSprite.visible = false;
     if (this._floorHoverMesh) {
@@ -240,6 +262,22 @@ export class IconCollection {
     this._floorDiscMesh.frustumCulled = false;
     this._floorDiscMesh.renderOrder = 4;
 
+    // Create floor stem InstancedMesh (thin vertical cylinder connecting disc to ball).
+    // Geometry has unit height (1 m) so each instance scales it to the exact disc→ball distance.
+    const stemGeometry = new CylinderGeometry(IconCollection.StemRadius, IconCollection.StemRadius, 1, 8);
+    const stemMaterial = new MeshBasicMaterial({
+      color: 0xdddddd,
+      opacity: 0.75,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false
+    });
+    this._floorStemMesh = new InstancedMesh(stemGeometry, stemMaterial, points.length);
+    this._floorStemMesh.count = 0;
+    this._floorStemMesh.visible = false;
+    this._floorStemMesh.frustumCulled = false;
+    this._floorStemMesh.renderOrder = 4;
+
     // Create OverlayPointsObject with sprite texture (used for individual icons in both modes)
     const pointsObjects = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
@@ -273,6 +311,22 @@ export class IconCollection {
     this._floorHoverMesh.visible = false;
     this._floorHoverMesh.renderOrder = 5;
 
+    // Create floor ball InstancedMesh (small light-blue sphere at camera height above each disc).
+    // Using InstancedMesh (same as disc/stem) avoids any shader-transform complexity.
+    const ballGeometry = new SphereGeometry(0.1, 12, 12);
+    const ballMaterial = new MeshBasicMaterial({
+      color: 0x88bbff,
+      transparent: true,
+      opacity: 1,
+      depthTest: false,
+      depthWrite: false
+    });
+    this._floorBallMesh = new InstancedMesh(ballGeometry, ballMaterial, points.length);
+    this._floorBallMesh.count = 0;
+    this._floorBallMesh.visible = false;
+    this._floorBallMesh.frustumCulled = false;
+    this._floorBallMesh.renderOrder = 5;
+
     this._sharedTexture = sharedTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
@@ -293,6 +347,8 @@ export class IconCollection {
 
     sceneHandler.addObject3D(pointsObjects);
     sceneHandler.addObject3D(this._floorDiscMesh);
+    sceneHandler.addObject3D(this._floorStemMesh);
+    sceneHandler.addObject3D(this._floorBallMesh);
     sceneHandler.addObject3D(this._floorHoverMesh);
   }
 
@@ -687,11 +743,24 @@ export class IconCollection {
         let count = 0;
         for (const p of closestVisibleReversedPoints) {
           worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
-          instanceMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
-          this._floorDiscMesh.setMatrixAt(count++, instanceMatrix);
+          const floorY = worldPos.y + IconCollection.FloorDiscYOffset;
+          const ballY = worldPos.y + IconCollection.CameraHeightEstimate;
+          instanceMatrix.makeTranslation(worldPos.x, floorY, worldPos.z);
+          this._floorDiscMesh.setMatrixAt(count, instanceMatrix);
+
+          const stemHeight = ballY - floorY;
+          instanceMatrix.makeScale(1, stemHeight, 1);
+          instanceMatrix.setPosition(worldPos.x, floorY + stemHeight / 2, worldPos.z);
+          this._floorStemMesh.setMatrixAt(count, instanceMatrix);
+          instanceMatrix.makeTranslation(worldPos.x, ballY, worldPos.z);
+          this._floorBallMesh.setMatrixAt(count, instanceMatrix);
+          count++;
         }
-        this._floorDiscMesh.count = count;
-        this._floorDiscMesh.instanceMatrix.needsUpdate = true;
+        this._floorDiscMesh.count = this._floorStemMesh.count = this._floorBallMesh.count = count;
+        this._floorDiscMesh.instanceMatrix.needsUpdate =
+          this._floorStemMesh.instanceMatrix.needsUpdate =
+          this._floorBallMesh.instanceMatrix.needsUpdate =
+            true;
       } else {
         iconSprites.setPoints(
           closestVisibleReversedPoints.map(p => p.getPosition()),
@@ -733,6 +802,7 @@ export class IconCollection {
     icons.forEach(icon =>
       icon.on('selected', () => {
         const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
+        worldPos.y += IconCollection.FloorDiscYOffset;
         this._hoverSprite.position.copy(worldPos);
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
         if (this._floorHoverMesh) {
@@ -755,6 +825,14 @@ export class IconCollection {
     this._sceneHandler.removeObject3D(this._floorDiscMesh);
     this._floorDiscMesh.geometry.dispose();
     (this._floorDiscMesh.material as MeshBasicMaterial).dispose();
+
+    this._sceneHandler.removeObject3D(this._floorStemMesh);
+    this._floorStemMesh.geometry.dispose();
+    (this._floorStemMesh.material as MeshBasicMaterial).dispose();
+
+    this._sceneHandler.removeObject3D(this._floorBallMesh);
+    this._floorBallMesh.geometry.dispose();
+    (this._floorBallMesh.material as MeshBasicMaterial).dispose();
 
     if (this._floorHoverMesh) {
       this._sceneHandler.removeObject3D(this._floorHoverMesh);
@@ -855,5 +933,8 @@ export class IconCollection {
 
   public setOccludedVisible(value: boolean): void {
     this._pointsObject.setBackPointsVisible(value);
+    (this._floorBallMesh.material as MeshBasicMaterial).depthTest = value;
+    (this._floorDiscMesh.material as MeshBasicMaterial).depthTest = value;
+    (this._floorStemMesh.material as MeshBasicMaterial).depthTest = value;
   }
 }
