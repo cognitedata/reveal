@@ -176,6 +176,12 @@ export class IconCollection {
     this._floorDiscMesh.visible = enabled;
     this._floorStemMesh.visible = enabled;
     this._floorBallMesh.visible = enabled;
+
+    const yShift = IconCollection.CameraHeightEstimate - IconCollection.FloorDiscYOffset;
+    for (const icon of this._icons) {
+      icon.getPosition().y += enabled ? -yShift : yShift;
+    }
+
     if (enabled) {
       // Floor mode requires individual station positions — switch to proximity culling
       // so the ball sprites and the non-floor ring icons come from the same source.
@@ -802,11 +808,11 @@ export class IconCollection {
     icons.forEach(icon =>
       icon.on('selected', () => {
         const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
-        worldPos.y += IconCollection.FloorDiscYOffset;
-        this._hoverSprite.position.copy(worldPos);
+        const spriteY = this._floorMode ? worldPos.y + IconCollection.FloorDiscYOffset : worldPos.y;
+        this._hoverSprite.position.set(worldPos.x, spriteY, worldPos.z);
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
         if (this._floorHoverMesh) {
-          this._floorHoverMesh.position.copy(worldPos);
+          this._floorHoverMesh.position.set(worldPos.x, spriteY, worldPos.z);
         }
       })
     );
