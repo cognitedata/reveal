@@ -183,12 +183,7 @@ export class Image360UI {
     this.gui.add(this.params, 'saveToUrl').name('Save 360 site to URL');
     this.gui.add(this.params, 'removeAll').name('Remove all 360 images');
 
-    this.gui
-      .add(this.navigate360, 'enabled')
-      .name('Click-to-navigate (360)')
-      .onChange((enabled: boolean) => {
-        console.log(`Click-to-navigate ${enabled ? 'enabled' : 'disabled'}`);
-      });
+    this.gui.add(this.navigate360, 'enabled').name('Click-to-navigate (360)');
 
     gui
       .add(this.imageRevisions, 'targetDate')
@@ -246,7 +241,9 @@ export class Image360UI {
     });
     this.viewer.on('click', event => {
       this.onAnnotationClicked(event);
-      void this.onClickNavigate360(event);
+      if (this.navigate360.enabled) {
+        void this.onClickNavigate360(event);
+      }
     });
     this.viewer.requestRedraw();
   }

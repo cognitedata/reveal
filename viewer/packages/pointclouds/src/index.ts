@@ -5,4 +5,3 @@
 import { PointCloudMetadata } from './PointCloudMetadata';
 
 export { PointCloudMetadata };
-export { getFloorHeightAtWorldPosition } from './utils/getFloorHeightAtWorldPosition';

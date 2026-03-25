@@ -73,7 +73,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity<DataSourceT>;
     currentImage360Entered?: Image360Entity<DataSourceT>;
-    previousImage360Entered?: Image360Entity<DataSourceT>;
     revisionSelectedForEntry?: Image360RevisionEntity<DataSourceT>;
     enteredCollection?: DefaultImage360Collection<DataSourceT>;
     lastMousePosition?: { offsetX: number; offsetY: number };
@@ -365,28 +364,13 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     this.applyFullResolutionTextures(revisionToEnter);
 
-    this._alignCollectionIconsToFloor(imageCollection);
+    imageCollection.setFloorMode(true);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
     if (updateHistory) {
       this._history.start(image360Entity);
     }
     return true;
-  }
-
-  private _alignCollectionIconsToFloor(collection: Image360Collection<DataSourceT>): void {
-    for (const entity of collection.image360Entities) {
-      const e = entity as Image360Entity<DataSourceT>;
-      e.adjustIconFloorHeight(e.getEstimatedFloorWorldY());
-    }
-    (collection as DefaultImage360Collection<DataSourceT>).setFloorMode(true);
-  }
-
-  private _restoreCollectionIconFloorHeights(collection: Image360Collection<DataSourceT>): void {
-    for (const entity of collection.image360Entities) {
-      (entity as Image360Entity<DataSourceT>).restoreIconFloorHeight();
-    }
-    (collection as DefaultImage360Collection<DataSourceT>).setFloorMode(false);
   }
 
   private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
@@ -530,7 +514,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
-    this._restoreCollectionIconFloorHeights(imageCollection);
+    (imageCollection as DefaultImage360Collection<DataSourceT>).setFloorMode(false);
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 

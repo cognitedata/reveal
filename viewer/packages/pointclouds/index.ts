@@ -19,8 +19,6 @@ export { PointCloudLoadingStateHandler } from './src/PointCloudLoadingStateHandl
 
 export { PointCloudFactory } from './src/PointCloudFactory';
 
-export { getFloorHeightAtWorldPosition } from './src/utils/getFloorHeightAtWorldPosition';
-
 export { IPointClassificationsProvider } from './src/classificationsProviders/IPointClassificationsProvider';
 export { LocalPointClassificationsProvider } from './src/classificationsProviders/LocalPointClassificationsProvider';
 export { UrlPointClassificationsProvider } from './src/classificationsProviders/UrlPointClassificationsProvider';
