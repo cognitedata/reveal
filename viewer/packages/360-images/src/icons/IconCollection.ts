@@ -55,10 +55,8 @@ export type ClusterIntersectionData = {
 };
 export class IconCollection {
   private static readonly MinPixelSize = 16;
-  /** World-space Y lift applied to floor disc icons so they clear point-cloud floor geometry. */
-  private static readonly FloorDiscYOffset = 0.05;
-  /** Estimated camera capture height above floor, used to compute floor-level disc position. */
-  private static readonly CameraHeightEstimate = 1.5;
+  /** Total downward offset from icon/camera position to floor disc: camera height minus small floor clearance lift. */
+  private static readonly FloorDiscHeightOffset = 1.45;
   private static readonly DefaultMaxPixelSize = 256;
   private static readonly DefaultProjectionMatrixElement = 1.73; // ~1.73 for 60° FOV
   private static readonly DefaultRenderHeight = 1080;
@@ -109,6 +107,7 @@ export class IconCollection {
   private readonly _floorHoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   private _floorMode = false;
   private _preFloorPointsObjectVisible = true;
+  private _preFloorCullingScheme: IconCullingScheme = 'clustered';
 
   // Cluster hover state tracking
   private _visibleClusteredIcons: ClusteredIcon[] = [];
@@ -166,17 +165,18 @@ export class IconCollection {
 
     if (enabled) {
       this._preFloorPointsObjectVisible = this._pointsObject.visible;
+      this._preFloorCullingScheme = this._iconCullingScheme;
       this._pointsObject.visible = false;
       this._floorDiscMesh.visible = this._preFloorPointsObjectVisible;
       this.setCullingScheme('proximity');
     } else {
       this._pointsObject.visible = this._preFloorPointsObjectVisible;
       this._floorDiscMesh.visible = false;
-      this.setCullingScheme('clustered');
+      this.setCullingScheme(this._preFloorCullingScheme);
     }
 
     // Offset the bounding sphere for hover detection so it aligns with the rendered floor disc.
-    const offset = enabled ? -(IconCollection.CameraHeightEstimate - IconCollection.FloorDiscYOffset) : 0;
+    const offset = enabled ? -IconCollection.FloorDiscHeightOffset : 0;
     for (const icon of this._icons) {
       icon.setPositionYOffset(offset);
     }
@@ -668,8 +668,7 @@ export class IconCollection {
         let count = 0;
         for (const p of closestVisibleReversedPoints) {
           worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
-          const floorY = worldPos.y - IconCollection.CameraHeightEstimate + IconCollection.FloorDiscYOffset;
-          instanceMatrix.makeTranslation(worldPos.x, floorY, worldPos.z);
+          instanceMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
           this._floorDiscMesh.setMatrixAt(count, instanceMatrix);
           count++;
         }
@@ -718,11 +717,7 @@ export class IconCollection {
         const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
         this._hoverSprite.position.copy(worldPos);
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
-        this._floorHoverMesh.position.set(
-          worldPos.x,
-          worldPos.y - IconCollection.CameraHeightEstimate + IconCollection.FloorDiscYOffset,
-          worldPos.z
-        );
+        this._floorHoverMesh.position.set(worldPos.x, worldPos.y, worldPos.z);
       })
     );
 
@@ -753,6 +748,7 @@ export class IconCollection {
   private createFloorDiscMesh(capacity: number, texture: Texture): InstancedMesh<BufferGeometry, MeshBasicMaterial> {
     const geometry = new CircleGeometry(this._iconRadius, 32);
     geometry.rotateX(-Math.PI / 2);
+    geometry.translate(0, -IconCollection.FloorDiscHeightOffset, 0);
     const material = new MeshBasicMaterial({
       map: texture,
       color: 0xdddddd,
@@ -773,6 +769,7 @@ export class IconCollection {
   private createFloorHoverMesh(texture: CanvasTexture): Mesh<BufferGeometry, MeshBasicMaterial> {
     const geometry = new CircleGeometry(this._iconRadius, 32);
     geometry.rotateX(-Math.PI / 2);
+    geometry.translate(0, -IconCollection.FloorDiscHeightOffset, 0);
     const mesh = new Mesh(
       geometry,
       new MeshBasicMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false, side: DoubleSide })
