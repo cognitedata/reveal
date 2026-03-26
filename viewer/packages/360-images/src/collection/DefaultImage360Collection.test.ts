@@ -58,6 +58,8 @@ describe(DefaultImage360Collection.name, () => {
       .setup(i => i.clearHoveredCluster())
       .returns(undefined)
       .setup(i => i.setHoveredClusterIcon(It.IsAny()))
+      .returns(undefined)
+      .setup(i => i.setFloorMode(It.IsAny()))
       .returns(undefined);
 
     return { mock, state };
@@ -217,6 +219,26 @@ describe(DefaultImage360Collection.name, () => {
 
       expect(collection.image360Entities).toHaveLength(0);
       entityMock.verify(e => e.dispose(), Times.Once());
+    });
+  });
+
+  describe('setFloorMode', () => {
+    test('delegates setFloorMode(true) to IconCollection', () => {
+      const { mock } = createMockIconCollection();
+      const collection = createTestCollection(mock.object());
+
+      collection.setFloorMode(true);
+
+      mock.verify(i => i.setFloorMode(true), Times.Once());
+    });
+
+    test('delegates setFloorMode(false) to IconCollection', () => {
+      const { mock } = createMockIconCollection();
+      const collection = createTestCollection(mock.object());
+
+      collection.setFloorMode(false);
+
+      mock.verify(i => i.setFloorMode(false), Times.Once());
     });
   });
 });
