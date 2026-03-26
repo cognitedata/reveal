@@ -364,6 +364,86 @@ describe(IconCollection.name, () => {
       expect(collection.icons[0].getPosition().y).toBeCloseTo(originalY - expectedYShift);
       collection.dispose();
     });
+
+    it('calls setNeedsRedraw when toggling floor mode', () => {
+      const setNeedsRedrawMock = jest.fn();
+      const collection = createCollection([new Vector3(0, 5, 0)], undefined, setNeedsRedrawMock);
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(true);
+      expect(setNeedsRedrawMock).toHaveBeenCalled();
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(false);
+      expect(setNeedsRedrawMock).toHaveBeenCalled();
+
+      collection.dispose();
+    });
+
+    it('switches culling scheme to proximity on enter (triggers extra setNeedsRedraw) and restores on exit', () => {
+      // When entering floor mode from 'clustered', setCullingScheme('proximity') fires setNeedsRedraw once,
+      // then setFloorMode fires it again → 2 calls total.
+      // When entering from 'proximity' the setCullingScheme call is a no-op → only 1 call from setFloorMode.
+      const setNeedsRedrawMock = jest.fn();
+      const collection = createCollection([new Vector3(0, 5, 0)], true, setNeedsRedrawMock);
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(true); // clustered → proximity: 2 calls
+      expect(setNeedsRedrawMock).toHaveBeenCalledTimes(2);
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(false); // proximity → clustered (no redraw from setCullingScheme) + 1 from setFloorMode
+      expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+      collection.dispose();
+    });
+
+    it('does not fire extra setNeedsRedraw when entering floor mode while already in proximity culling', () => {
+      // If already in proximity, setCullingScheme('proximity') is a no-op, so only 1 call from setFloorMode itself.
+      const setNeedsRedrawMock = jest.fn();
+      const collection = createCollection([new Vector3(0, 5, 0)], true, setNeedsRedrawMock);
+      collection.setCullingScheme('proximity');
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(true);
+      expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+
+      collection.dispose();
+    });
+
+    it('rendering in floor mode uses proximity culling: closest icons are unculled', () => {
+      const nearPos = new Vector3(0, 1.5, 0);
+      const collection = createCollection([nearPos]);
+      const camera = createCamera(new Vector3(0, 0, 5));
+
+      collection.setFloorMode(true);
+      expect(() => renderFrame(camera)).not.toThrow();
+
+      collection.dispose();
+    });
+  });
+
+  describe('opacity and occlusion', () => {
+    it('getOpacity and setOpacity round-trip correctly', () => {
+      const collection = createCollection([origin]);
+
+      collection.setOpacity(0.75);
+      expect(collection.getOpacity()).toBeCloseTo(0.75);
+
+      collection.dispose();
+    });
+
+    it('isOccludedVisible reflects setOccludedVisible state', () => {
+      const collection = createCollection([origin]);
+
+      collection.setOccludedVisible(true);
+      expect(collection.isOccludedVisible()).toBe(true);
+
+      collection.setOccludedVisible(false);
+      expect(collection.isOccludedVisible()).toBe(false);
+
+      collection.dispose();
+    });
   });
 
   test('setCullingScheme switching behavior and state preservation', () => {

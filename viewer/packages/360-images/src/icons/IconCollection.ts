@@ -3,6 +3,7 @@
  */
 
 import {
+  BufferGeometry,
   CanvasTexture,
   CircleGeometry,
   Color,
@@ -104,10 +105,11 @@ export class IconCollection {
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
 
-  private readonly _floorDiscMesh: InstancedMesh;
-  private readonly _floorHoverMesh: Mesh;
+  private readonly _floorDiscMesh: InstancedMesh<BufferGeometry, MeshBasicMaterial>;
+  private readonly _floorHoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   private _floorMode = false;
   private _preFloorCullingScheme: IconCullingScheme | undefined = undefined;
+  private _preFloorPointsObjectVisible = true;
 
   // Cluster hover state tracking
   private _visibleClusteredIcons: ClusteredIcon[] = [];
@@ -122,10 +124,8 @@ export class IconCollection {
   set hoverSpriteVisibility(value: boolean) {
     if (this._floorMode) {
       this._floorHoverMesh.visible = value;
-      this._hoverSprite.visible = false;
     } else {
       this._hoverSprite.visible = value;
-      this._floorHoverMesh.visible = false;
     }
   }
 
@@ -162,15 +162,24 @@ export class IconCollection {
   public setFloorMode(enabled: boolean): void {
     if (this._floorMode === enabled) return;
     this._floorMode = enabled;
-    this._pointsObject.visible = !enabled;
-    this._floorDiscMesh.visible = enabled;
+    this._hoverSprite.visible = false;
+    this._floorHoverMesh.visible = false;
+
+    if (enabled) {
+      this._preFloorPointsObjectVisible = this._pointsObject.visible;
+      this._pointsObject.visible = false;
+      this._floorDiscMesh.visible = this._preFloorPointsObjectVisible;
+    } else {
+      this._pointsObject.visible = this._preFloorPointsObjectVisible;
+      this._floorDiscMesh.visible = false;
+    }
 
     // Shift icon positions so hover detection (icon.intersect) aligns with the floor disc.
     // Station Y is camera height; subtracting the estimate moves icons to floor level.
     const yShift = IconCollection.CameraHeightEstimate - IconCollection.FloorDiscYOffset;
     const delta = enabled ? -yShift : yShift;
     for (const icon of this._icons) {
-      icon.applyYShift(delta);
+      icon.getPosition().y += delta;
     }
 
     if (enabled) {
@@ -180,8 +189,6 @@ export class IconCollection {
       this.setCullingScheme(this._preFloorCullingScheme);
       this._preFloorCullingScheme = undefined;
     }
-    this._hoverSprite.visible = false;
-    this._floorHoverMesh.visible = false;
     if (this._setNeedsRedraw) {
       this._setNeedsRedraw();
     }
@@ -738,18 +745,18 @@ export class IconCollection {
 
     this._sceneHandler.removeObject3D(this._floorDiscMesh);
     this._floorDiscMesh.geometry.dispose();
-    (this._floorDiscMesh.material as MeshBasicMaterial).dispose();
+    this._floorDiscMesh.material.dispose();
 
     this._sceneHandler.removeObject3D(this._floorHoverMesh);
     this._floorHoverMesh.geometry.dispose();
-    (this._floorHoverMesh.material as MeshBasicMaterial).dispose();
+    this._floorHoverMesh.material.dispose();
 
     if (this._enableHtmlClusters && this._htmlRenderer) {
       this._htmlRenderer.dispose();
     }
   }
 
-  private createFloorDiscMesh(capacity: number, texture: Texture): InstancedMesh {
+  private createFloorDiscMesh(capacity: number, texture: Texture): InstancedMesh<BufferGeometry, MeshBasicMaterial> {
     const geometry = new CircleGeometry(this._iconRadius, 32);
     geometry.rotateX(-Math.PI / 2);
     const material = new MeshBasicMaterial({
@@ -769,7 +776,7 @@ export class IconCollection {
     return mesh;
   }
 
-  private createFloorHoverMesh(texture: CanvasTexture): Mesh {
+  private createFloorHoverMesh(texture: CanvasTexture): Mesh<BufferGeometry, MeshBasicMaterial> {
     const geometry = new CircleGeometry(this._iconRadius, 32);
     geometry.rotateX(-Math.PI / 2);
     const mesh = new Mesh(
@@ -869,6 +876,6 @@ export class IconCollection {
 
   public setOccludedVisible(value: boolean): void {
     this._pointsObject.setBackPointsVisible(value);
-    (this._floorDiscMesh.material as MeshBasicMaterial).depthTest = value;
+    this._floorDiscMesh.material.depthTest = value;
   }
 }

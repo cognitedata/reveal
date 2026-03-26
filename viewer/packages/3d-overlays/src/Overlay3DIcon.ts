@@ -182,10 +182,6 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     return this._position;
   }
 
-  public applyYShift(delta: number): void {
-    this._position.y += delta;
-  }
-
   public setWorldTransform(matrix: Matrix4): void {
     this._worldTransform.copy(matrix);
   }
