@@ -721,6 +721,49 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     };
   }
 
+  /**
+   * Finds the best next 360 image station to navigate to from the current station,
+   * given a target world position that the user clicked.
+   *
+   * Prefers stations that are close and roughly in the direction from the current station toward the clicked point.
+   *
+   * @param clickedWorldPosition  The world-space position the user clicked on.
+   * @returns The best next Image360 entity and its collection, or `undefined` if none qualify.
+   */
+  public findBestNext360ImageEntity(clickedWorldPosition: Vector3): Image360WithCollection<DataSourceT> | undefined {
+    const currentEntity = this._interactionState.currentImage360Entered;
+    if (currentEntity === undefined) return undefined;
+
+    const currentPos = new Vector3().setFromMatrixPosition(currentEntity.transform);
+    const clickDir = new Vector3().subVectors(clickedWorldPosition, currentPos);
+
+    let bestDistSq = Infinity;
+    let bestResult: Image360WithCollection<DataSourceT> | undefined;
+
+    const entityPos = new Vector3();
+    const toEntity = new Vector3();
+
+    for (const collection of this._image360Facade.collections) {
+      for (const entity of collection.image360Entities) {
+        if (entity === currentEntity) continue;
+
+        entityPos.setFromMatrixPosition(entity.transform);
+
+        // Only consider entities in the forward half-space of the click direction.
+        toEntity.subVectors(entityPos, currentPos);
+        if (toEntity.dot(clickDir) <= 0) continue;
+
+        const distSq = clickedWorldPosition.distanceToSquared(entityPos);
+        if (distSq < bestDistSq) {
+          bestDistSq = distSq;
+          bestResult = { image360: entity, image360Collection: collection };
+        }
+      }
+    }
+
+    return bestResult;
+  }
+
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allIconsSelected = false;

@@ -1798,6 +1798,19 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
   }
 
+  /**
+   * Finds the best next 360 image station to navigate to from the currently entered station,
+   * given the world-space position the user clicked.
+   *
+   * Returning the station that is most directly "on the way" to where the user clicked.
+   *
+   * @param clickedWorldPosition  World-space position of the user's click (e.g. from a point cloud intersection).
+   * @returns The best matching Image360 Entity and its collection, or `undefined` if not inside a 360 image or no candidates qualify.
+   */
+  findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined {
+    return this._image360ApiHelper?.findBestNext360ImageEntity(clickedWorldPosition);
+  }
+
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
