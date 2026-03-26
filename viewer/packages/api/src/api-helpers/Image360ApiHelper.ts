@@ -327,7 +327,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     const currentOpacity = this.getImageOpacity();
 
-    this._image360Facade.allIconCullingScheme = 'proximity';
+    // Hide floating icons during the camera transition.
+    const collectionVisibilities = this._image360Facade.collections.map(c => c.getIconsVisibility());
+    this._image360Facade.collections.forEach(c => c.setIconsVisibility(false));
 
     // Only do transition if we are switching between entities.
     // Revisions are updated instantly (for now).
@@ -359,6 +361,10 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       }
       this._transitionInProgress = false;
     }
+
+    // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
+    collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
+    this._image360Facade.collections.forEach(c => c.setFloorMode(true));
     if (this._hasEventListeners) {
       this._domElement.addEventListener('keydown', this.onKeyPressed);
     }
@@ -512,6 +518,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
+    this._image360Facade.collections.forEach(collection => collection.setFloorMode(false));
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 

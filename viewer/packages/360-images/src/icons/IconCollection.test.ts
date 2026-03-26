@@ -325,6 +325,109 @@ describe(IconCollection.name, () => {
     disabledCollection.dispose();
   });
 
+  describe('setFloorMode', () => {
+    // Camera height estimate is 1.5, floor disc offset is 0.05, so floor-level Y for an icon at Y=1.5 is 0.05.
+    const cameraHeight = 1.5;
+    const iconPos = new Vector3(0, cameraHeight, 0);
+
+    it('does not mutate icon positions when entering floor mode', () => {
+      const collection = createCollection([iconPos.clone(), new Vector3(1, cameraHeight, 0)]);
+      const originalYValues = collection.icons.map(icon => icon.getPosition().y);
+
+      collection.setFloorMode(true);
+
+      collection.icons.forEach((icon, i) => {
+        expect(icon.getPosition().y).toBe(originalYValues[i]);
+      });
+      collection.dispose();
+    });
+
+    it('icon bounding sphere is at floor level in floor mode and back at camera height after exit', () => {
+      const collection = createCollection([iconPos.clone()]);
+      const icon = collection.icons[0];
+
+      // Ray at camera height hits in normal mode
+      const cameraRay = new Ray(new Vector3(0, cameraHeight, 10), new Vector3(0, 0, -1));
+      expect(icon.intersect(cameraRay)).not.toBeNull();
+
+      collection.setFloorMode(true);
+
+      // Ray at camera height misses (sphere shifted to floor)
+      expect(icon.intersect(cameraRay)).toBeNull();
+      // Ray at floor level hits
+      const floorRay = new Ray(new Vector3(0, 0.05, 10), new Vector3(0, 0, -1));
+      expect(icon.intersect(floorRay)).not.toBeNull();
+
+      collection.setFloorMode(false);
+
+      // Ray at camera height hits again after exit
+      expect(icon.intersect(cameraRay)).not.toBeNull();
+      collection.dispose();
+    });
+
+    it('calling setFloorMode(true) twice only applies the offset once', () => {
+      const collection = createCollection([iconPos.clone()]);
+      const icon = collection.icons[0];
+
+      collection.setFloorMode(true);
+      collection.setFloorMode(true); // second call should be no-op
+
+      // Sphere should be at floor level, not double-shifted
+      const floorRay = new Ray(new Vector3(0, 0.05, 10), new Vector3(0, 0, -1));
+      expect(icon.intersect(floorRay)).not.toBeNull();
+      collection.dispose();
+    });
+
+    it('calls setNeedsRedraw when toggling floor mode', () => {
+      const setNeedsRedrawMock = jest.fn();
+      const collection = createCollection([new Vector3(0, 5, 0)], undefined, setNeedsRedrawMock);
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(true);
+      expect(setNeedsRedrawMock).toHaveBeenCalled();
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(false);
+      expect(setNeedsRedrawMock).toHaveBeenCalled();
+
+      collection.dispose();
+    });
+
+    it('rendering in floor mode uses proximity culling: closest icons are unculled', () => {
+      const nearPos = new Vector3(0, 1.5, 0);
+      const collection = createCollection([nearPos]);
+      const camera = createCamera(new Vector3(0, 0, 5));
+
+      collection.setFloorMode(true);
+      expect(() => renderFrame(camera)).not.toThrow();
+
+      collection.dispose();
+    });
+  });
+
+  describe('opacity and occlusion', () => {
+    it('getOpacity and setOpacity round-trip correctly', () => {
+      const collection = createCollection([origin]);
+
+      collection.setOpacity(0.75);
+      expect(collection.getOpacity()).toBeCloseTo(0.75);
+
+      collection.dispose();
+    });
+
+    it('isOccludedVisible reflects setOccludedVisible state', () => {
+      const collection = createCollection([origin]);
+
+      collection.setOccludedVisible(true);
+      expect(collection.isOccludedVisible()).toBe(true);
+
+      collection.setOccludedVisible(false);
+      expect(collection.isOccludedVisible()).toBe(false);
+
+      collection.dispose();
+    });
+  });
+
   test('setCullingScheme switching behavior and state preservation', () => {
     const setNeedsRedrawMock = jest.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);

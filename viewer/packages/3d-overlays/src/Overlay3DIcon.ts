@@ -53,6 +53,8 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   private _color = new Color('white');
   private readonly _worldTransform: Matrix4;
   private readonly _ndcPosition = new Vector4();
+  private readonly _intersectPosition = new Vector3();
+  private _positionYOffset = 0;
 
   private readonly _events = {
     selected: new EventTrigger<SelectedDelegate>(),
@@ -186,8 +188,14 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     this._worldTransform.copy(matrix);
   }
 
+  public setPositionYOffset(offset: number): void {
+    this._positionYOffset = offset;
+  }
+
   public intersect(ray: Ray): Vector3 | null {
-    this._raycastBoundingSphere.set(this._position, this._adaptiveScale);
+    this._intersectPosition.copy(this._position);
+    this._intersectPosition.y += this._positionYOffset;
+    this._raycastBoundingSphere.set(this._intersectPosition, this._adaptiveScale);
 
     return ray.intersectSphere(this._raycastBoundingSphere, new Vector3());
   }
