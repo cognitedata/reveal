@@ -108,7 +108,6 @@ export class IconCollection {
   private readonly _floorDiscMesh: InstancedMesh<BufferGeometry, MeshBasicMaterial>;
   private readonly _floorHoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   private _floorMode = false;
-  private _preFloorCullingScheme: IconCullingScheme | undefined = undefined;
   private _preFloorPointsObjectVisible = true;
 
   // Cluster hover state tracking
@@ -169,25 +168,17 @@ export class IconCollection {
       this._preFloorPointsObjectVisible = this._pointsObject.visible;
       this._pointsObject.visible = false;
       this._floorDiscMesh.visible = this._preFloorPointsObjectVisible;
+      this.setCullingScheme('proximity');
     } else {
       this._pointsObject.visible = this._preFloorPointsObjectVisible;
       this._floorDiscMesh.visible = false;
+      this.setCullingScheme('clustered');
     }
 
-    // Shift icon positions so hover detection (icon.intersect) aligns with the floor disc.
-    // Station Y is camera height; subtracting the estimate moves icons to floor level.
-    const yShift = IconCollection.CameraHeightEstimate - IconCollection.FloorDiscYOffset;
-    const delta = enabled ? -yShift : yShift;
+    // Offset the bounding sphere for hover detection so it aligns with the rendered floor disc.
+    const offset = enabled ? -(IconCollection.CameraHeightEstimate - IconCollection.FloorDiscYOffset) : 0;
     for (const icon of this._icons) {
-      icon.getPosition().y += delta;
-    }
-
-    if (enabled) {
-      this._preFloorCullingScheme = this._iconCullingScheme;
-      this.setCullingScheme('proximity');
-    } else if (this._preFloorCullingScheme !== undefined) {
-      this.setCullingScheme(this._preFloorCullingScheme);
-      this._preFloorCullingScheme = undefined;
+      icon.setPositionYOffset(offset);
     }
     if (this._setNeedsRedraw) {
       this._setNeedsRedraw();
@@ -677,7 +668,7 @@ export class IconCollection {
         let count = 0;
         for (const p of closestVisibleReversedPoints) {
           worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
-          const floorY = worldPos.y + IconCollection.FloorDiscYOffset;
+          const floorY = worldPos.y - IconCollection.CameraHeightEstimate + IconCollection.FloorDiscYOffset;
           instanceMatrix.makeTranslation(worldPos.x, floorY, worldPos.z);
           this._floorDiscMesh.setMatrixAt(count, instanceMatrix);
           count++;
@@ -727,7 +718,11 @@ export class IconCollection {
         const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
         this._hoverSprite.position.copy(worldPos);
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
-        this._floorHoverMesh.position.set(worldPos.x, worldPos.y + IconCollection.FloorDiscYOffset, worldPos.z);
+        this._floorHoverMesh.position.set(
+          worldPos.x,
+          worldPos.y - IconCollection.CameraHeightEstimate + IconCollection.FloorDiscYOffset,
+          worldPos.z
+        );
       })
     );
 

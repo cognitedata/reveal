@@ -368,9 +368,27 @@ describe(Image360ApiHelper.name, () => {
   });
 
   describe('floor mode', () => {
-    function createFloorModeFixture() {
-      const setFloorModeMock = jest.fn<(enabled: boolean) => void>();
+    function createMockCollection(): DefaultImage360Collection<DataSourceType> {
+      return new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.setFloorMode)
+        .returns(jest.fn())
+        .setup(c => c.getIconsVisibility())
+        .returns(true)
+        .setup(c => c.setIconsVisibility(It.IsAny()))
+        .returns(undefined)
+        .setup(c => c.isCollectionVisible)
+        .returns(true)
+        .setup(c => c.getImagesOpacity())
+        .returns(1)
+        .setup(c => c.events)
+        .returns({
+          image360Entered: new EventTrigger<Image360EnteredDelegate<DataSourceType>>(),
+          image360Exited: new EventTrigger<Image360ExitedDelegate>()
+        })
+        .object();
+    }
 
+    function createFloorModeFixture() {
       const mockRevision = new Mock<Image360RevisionEntity<DataSourceType>>()
         .setup(r => r.applyFullResolutionTextures())
         .returns(Promise.resolve())
@@ -386,26 +404,13 @@ describe(Image360ApiHelper.name, () => {
         .object();
 
       const mockEntity = createMockEntity(mockIcon, mockVisualization, mockRevision);
-
-      const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>()
-        .setup(c => c.setFloorMode(It.IsAny()))
-        .callback(({ args }) => setFloorModeMock(args[0]))
-        .setup(c => c.isCollectionVisible)
-        .returns(true)
-        .setup(c => c.getImagesOpacity())
-        .returns(1)
-        .setup(c => c.events)
-        .returns({
-          image360Entered: new EventTrigger<Image360EnteredDelegate<DataSourceType>>(),
-          image360Exited: new EventTrigger<Image360ExitedDelegate>()
-        })
-        .object();
+      const mockCollection = createMockCollection();
 
       jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
       jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
 
-      return { mockEntity, setFloorModeMock };
+      return { mockEntity, mockCollection };
     }
 
     async function enterImage(entity: Image360Entity<DataSourceType>): Promise<void> {
@@ -415,79 +420,34 @@ describe(Image360ApiHelper.name, () => {
       await enterPromise;
     }
 
-    test('calls setFloorMode(true) on the collection when entering a 360 image', async () => {
-      const { mockEntity, setFloorModeMock } = createFloorModeFixture();
-
-      await enterImage(mockEntity);
-
-      expect(setFloorModeMock).toHaveBeenCalledExactlyOnceWith(true);
-    });
-
-    test('calls setFloorMode(false) on the collection when exiting a 360 image', async () => {
-      const { mockEntity, setFloorModeMock } = createFloorModeFixture();
-
-      await enterImage(mockEntity);
-      setFloorModeMock.mockClear();
-
-      helper.exit360Image();
-
-      expect(setFloorModeMock).toHaveBeenCalledExactlyOnceWith(false);
-    });
-
     test('calls setFloorMode(true) on ALL collections when entering a 360 image', async () => {
       const { mockEntity } = createFloorModeFixture();
-
-      const setFloorModeMock1 = jest.fn<(enabled: boolean) => void>();
-      const setFloorModeMock2 = jest.fn<(enabled: boolean) => void>();
-
-      const mockCollection1 = new Mock<DefaultImage360Collection<DataSourceType>>()
-        .setup(c => c.setFloorMode(It.IsAny()))
-        .callback(({ args }) => setFloorModeMock1(args[0]))
-        .setup(c => c.getImagesOpacity())
-        .returns(1)
-        .object();
-
-      const mockCollection2 = new Mock<DefaultImage360Collection<DataSourceType>>()
-        .setup(c => c.setFloorMode(It.IsAny()))
-        .callback(({ args }) => setFloorModeMock2(args[0]))
-        .object();
+      const mockCollection1 = createMockCollection();
+      const mockCollection2 = createMockCollection();
 
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
 
       await enterImage(mockEntity);
 
-      expect(setFloorModeMock1).toHaveBeenCalledExactlyOnceWith(true);
-      expect(setFloorModeMock2).toHaveBeenCalledExactlyOnceWith(true);
+      expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
+      expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
     });
 
     test('calls setFloorMode(false) on ALL collections when exiting a 360 image', async () => {
       const { mockEntity } = createFloorModeFixture();
-
-      const setFloorModeMock1 = jest.fn<(enabled: boolean) => void>();
-      const setFloorModeMock2 = jest.fn<(enabled: boolean) => void>();
-
-      const mockCollection1 = new Mock<DefaultImage360Collection<DataSourceType>>()
-        .setup(c => c.setFloorMode(It.IsAny()))
-        .callback(({ args }) => setFloorModeMock1(args[0]))
-        .setup(c => c.getImagesOpacity())
-        .returns(1)
-        .object();
-
-      const mockCollection2 = new Mock<DefaultImage360Collection<DataSourceType>>()
-        .setup(c => c.setFloorMode(It.IsAny()))
-        .callback(({ args }) => setFloorModeMock2(args[0]))
-        .object();
+      const mockCollection1 = createMockCollection();
+      const mockCollection2 = createMockCollection();
 
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
 
       await enterImage(mockEntity);
-      setFloorModeMock1.mockClear();
-      setFloorModeMock2.mockClear();
+      jest.mocked(mockCollection1.setFloorMode).mockClear();
+      jest.mocked(mockCollection2.setFloorMode).mockClear();
 
       helper.exit360Image();
 
-      expect(setFloorModeMock1).toHaveBeenCalledExactlyOnceWith(false);
-      expect(setFloorModeMock2).toHaveBeenCalledExactlyOnceWith(false);
+      expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
+      expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
     });
   });
 });
