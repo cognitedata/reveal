@@ -475,6 +475,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
+    findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined;
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;

@@ -69,6 +69,10 @@ export class Image360UI {
     opacity: 1
   };
 
+  private navigate360 = {
+    enabled: false
+  };
+
   private icons360Setting = {
     visible: true,
     opacity: 1,
@@ -179,6 +183,8 @@ export class Image360UI {
     this.gui.add(this.params, 'saveToUrl').name('Save 360 site to URL');
     this.gui.add(this.params, 'removeAll').name('Remove all 360 images');
 
+    this.gui.add(this.navigate360, 'enabled').name('Click-to-navigate (360)');
+
     gui
       .add(this.imageRevisions, 'targetDate')
       .name('Revision date (Unix epoch time):')
@@ -233,7 +239,12 @@ export class Image360UI {
     collection.on('image360Entered', (entity, _) => {
       this.selectedEntity = entity;
     });
-    this.viewer.on('click', event => this.onAnnotationClicked(event));
+    this.viewer.on('click', event => {
+      this.onAnnotationClicked(event);
+      if (this.navigate360.enabled) {
+        void this.onClickNavigate360(event);
+      }
+    });
     this.viewer.requestRedraw();
   }
 
@@ -278,6 +289,23 @@ export class Image360UI {
 
   private async removeAll360Images() {
     this.viewer.get360ImageCollections().forEach(p => this.viewer.remove360ImageSet(p));
+  }
+
+  private async onClickNavigate360(event: { offsetX: number; offsetY: number }): Promise<void> {
+    if (this.viewer.getActive360ImageInfo() === undefined) return;
+
+    const pixel = new THREE.Vector2(event.offsetX, event.offsetY);
+    const intersection = await this.viewer.getAnyIntersectionFromPixel(pixel);
+    if (intersection === null || intersection === undefined) return;
+    if (!('point' in intersection)) return; // skip cluster intersections (no world point)
+
+    const best = this.viewer.findBestNext360ImageEntity(intersection.point);
+    if (best === undefined) {
+      console.log('findBestNext360Image: no suitable station found in that direction');
+      return;
+    }
+
+    await this.viewer.enter360Image(best.image360);
   }
 
   private onAnnotationClicked(event: { offsetX: number; offsetY: number; button?: number }): void {
