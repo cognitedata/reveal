@@ -361,7 +361,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         {
           platformMaxPointsSize: getMaxPointSize(this._renderer),
           enableHtmlClusters: options.enableHtmlClusters ?? false,
-          clusterDistanceThreshold: 20
+          clusterDistanceThreshold: 10
         }
       );
     }
