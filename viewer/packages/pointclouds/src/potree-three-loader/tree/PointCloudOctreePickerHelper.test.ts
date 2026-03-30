@@ -3,7 +3,8 @@
  */
 import * as THREE from 'three';
 import { PointCloudOctreePickerHelper, RenderedNode } from './PointCloudOctreePickerHelper';
-import { Mock } from 'moq.ts';
+
+import { Mock, It, Times } from 'moq.ts';
 
 import { jest } from '@jest/globals';
 
@@ -60,5 +61,23 @@ describe('PointCloudOctreePickerHelper', () => {
       pIndex: 3,
       pcIndex: 21
     });
+  });
+
+  test('readPixelsAsync uses readRenderTargetPixelsAsync', async () => {
+    const rendererMock = new Mock<THREE.WebGLRenderer>();
+    const renderTargetMock = new Mock<THREE.WebGLRenderTarget>();
+
+    rendererMock
+      .setup(r => r.readRenderTargetPixelsAsync(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(new Uint8Array(4)));
+
+    const helper = new PointCloudOctreePickerHelper(rendererMock.object());
+    const result = await helper.readPixelsAsync(0, 0, 1, renderTargetMock.object());
+
+    expect(result).toBeInstanceOf(Uint8Array);
+    rendererMock.verify(
+      r => r.readRenderTargetPixelsAsync(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()),
+      Times.Once()
+    );
   });
 });
