@@ -10,11 +10,26 @@ import { PointCloudOctree, PointCloudOctreeNode } from './potree-three-loader';
 import { Mock } from 'moq.ts';
 import { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
 import jest from 'jest-mock';
+import { jest as jestGlobals } from '@jest/globals';
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
 
 describe(PointCloudNode.name, () => {
+  afterEach(() => {
+    jestGlobals.restoreAllMocks();
+  });
+
+  test('picking returns a Promise', async () => {
+    const node = createPointCloudNode();
+    jestGlobals.spyOn(PointCloudOctree.prototype, 'pick').mockResolvedValue(null);
+
+    const result = node.pick(new Mock<THREE.WebGLRenderer>().object(), new THREE.PerspectiveCamera(), new THREE.Ray());
+
+    expect(result).toBeInstanceOf(Promise);
+    await result;
+  });
+
   test('getModelTransformation returns transformation set by setModelTransformation', () => {
     const node = createPointCloudNode();
     const transform = new THREE.Matrix4()
