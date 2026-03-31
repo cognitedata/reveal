@@ -36,6 +36,7 @@ export type IconsOptions = {
   clusterDistanceThreshold?: number;
   maxOctreeDepth?: number;
   enableHtmlClusters?: boolean;
+  enableFloorIcons?: boolean;
 };
 
 export type ClusteredIcon = {
