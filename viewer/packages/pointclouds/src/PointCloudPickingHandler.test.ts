@@ -132,6 +132,53 @@ describe(PointCloudPickingHandler.name, () => {
     expect(result[0].volumeMetadata).toEqual({ volumeInstanceRef, assetRef: undefined });
   });
 
+  test('intersectPointClouds returns intersections sorted by distance to camera (closest first)', async () => {
+    const node1 = createPointCloudNode();
+    const node2 = createPointCloudNode();
+    const input = createMockIntersectInput();
+    // Camera is at origin; node1 octree is at distance 5, node2 octree is at distance 1
+    jest
+      .spyOn(PointCloudOctreePicker.prototype, 'pick')
+      .mockResolvedValueOnce({ pointIndex: 0, object: node1.octree, position: new THREE.Vector3(5, 0, 0), objectId: 0 })
+      .mockResolvedValueOnce({
+        pointIndex: 0,
+        object: node2.octree,
+        position: new THREE.Vector3(1, 0, 0),
+        objectId: 0
+      });
+
+    const result = await handler.intersectPointClouds([node1, node2], input);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].point).toEqual(new THREE.Vector3(1, 0, 0));
+    expect(result[1].point).toEqual(new THREE.Vector3(5, 0, 0));
+  });
+
+  test('intersectPointClouds filters out intersections clipped by clipping planes', async () => {
+    const node1 = createPointCloudNode();
+    const node2 = createPointCloudNode();
+    // Clipping plane: normal (-1,0,0) + constant 5 → clips all points with x > 5
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 5);
+    const input: IntersectInput = {
+      ...createMockIntersectInput(),
+      clippingPlanes: [clippingPlane]
+    };
+    jest
+      .spyOn(PointCloudOctreePicker.prototype, 'pick')
+      .mockResolvedValueOnce({ pointIndex: 0, object: node1.octree, position: new THREE.Vector3(1, 0, 0), objectId: 0 })
+      .mockResolvedValueOnce({
+        pointIndex: 0,
+        object: node2.octree,
+        position: new THREE.Vector3(10, 0, 0),
+        objectId: 0
+      });
+
+    const result = await handler.intersectPointClouds([node1, node2], input);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].point).toEqual(new THREE.Vector3(1, 0, 0));
+  });
+
   test('intersectPointClouds serializes concurrent picks', async () => {
     const node = createPointCloudNode();
     const input = createMockIntersectInput();

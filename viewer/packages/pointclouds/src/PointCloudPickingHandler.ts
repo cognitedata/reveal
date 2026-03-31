@@ -61,8 +61,8 @@ export class PointCloudPickingHandler {
       }
 
       return intersections
-        .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
         .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
+        .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
         .map(x => {
           const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
           if (pointCloudNode === null) {

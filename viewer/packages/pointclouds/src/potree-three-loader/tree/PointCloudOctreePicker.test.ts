@@ -75,6 +75,7 @@ describe(PointCloudOctreePicker.name, () => {
     expect(resetStateCalledBeforeResolve).toBe(true);
 
     resolveReadPixels(new Uint8Array(MINIMAL_PIXEL_BUFFER_SIZE));
-    await pickPromise;
+    const result = await pickPromise;
+    expect(result).toBeNull();
   });
 });
