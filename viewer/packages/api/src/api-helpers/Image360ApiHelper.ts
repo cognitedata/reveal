@@ -92,6 +92,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _stationaryCameraManager: StationaryCameraManager | undefined;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _cachedCameraManager: CameraManager | undefined;
+  private readonly _enableFloorIcons: boolean;
 
   private readonly onKeyPressed = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -120,6 +121,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     iconsOptions?: IconsOptions
   ) {
     this._hasEventListeners = hasEventListeners ?? true;
+    this._enableFloorIcons = iconsOptions?.enableFloorIcons ?? false;
     const image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
     const image360DataModelsDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
     const image360CdmDescriptorProvider = new Cdf360CdmDescriptorProvider(cogniteClient);
@@ -364,7 +366,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
     collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
-    this._image360Facade.collections.forEach(c => c.setFloorMode(true));
+    if (this._enableFloorIcons) {
+      this._image360Facade.collections.forEach(c => c.setFloorMode(true));
+    }
     if (this._hasEventListeners) {
       this._domElement.addEventListener('keydown', this.onKeyPressed);
     }
