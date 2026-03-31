@@ -180,6 +180,20 @@ export class Image360UI {
         this.set360IconCullingRestrictions();
       });
 
+    const urlParams = new URLSearchParams(window.location.search);
+    this.gui
+      .add({ floorIcons: urlParams.get('floorIcons') === 'true' }, 'floorIcons')
+      .name('Floor icons (reload)')
+      .onChange((enabled: boolean) => {
+        const params = new URLSearchParams(window.location.search);
+        if (enabled) {
+          params.set('floorIcons', 'true');
+        } else {
+          params.delete('floorIcons');
+        }
+        window.location.search = params.toString();
+      });
+
     this.gui.add(this.params, 'saveToUrl').name('Save 360 site to URL');
     this.gui.add(this.params, 'removeAll').name('Remove all 360 images');
 
