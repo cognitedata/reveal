@@ -1901,7 +1901,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-      const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
+      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
       if (pointCloudResults.length > 0) {
         const result = pointCloudResults[0]; // Nearest intersection
