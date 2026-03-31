@@ -122,7 +122,8 @@ type CameraManagerType = 'mock' | 'flexible' | 'default';
 function createTestHelper(
   domElement: HTMLElement,
   sdk: CogniteClient,
-  cameraManagerType: CameraManagerType = 'mock'
+  cameraManagerType: CameraManagerType = 'mock',
+  iconsOptions?: { enableFloorIcons?: boolean }
 ): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
   const mockCamera = new PerspectiveCamera();
   mockCamera.position.set(0, 0, 10);
@@ -170,7 +171,8 @@ function createTestHelper(
     proxyCameraManager,
     mockInputHandler,
     onBeforeSceneRendered,
-    false
+    false,
+    iconsOptions
   );
 
   return { helper, innerCameraManager };
@@ -428,34 +430,52 @@ describe(Image360ApiHelper.name, () => {
       return { mockEntity, mockCollection };
     }
 
-    test('calls setFloorMode(true) on ALL collections when entering a 360 image', async () => {
+    test('does not call setFloorMode(true) on enter when enableFloorIcons is false (default)', async () => {
+      const { mockEntity } = createFloorModeFixture();
+      const mockCollection = createMockCollection();
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+
+      await enterImage(mockEntity);
+
+      expect(jest.mocked(mockCollection.setFloorMode)).not.toHaveBeenCalledWith(true);
+    });
+
+    test('calls setFloorMode(true) on ALL collections on enter when enableFloorIcons is true', async () => {
+      const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
       const { mockEntity } = createFloorModeFixture();
       const mockCollection1 = createMockCollection();
       const mockCollection2 = createMockCollection();
-
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
 
-      await enterImage(mockEntity);
+      const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
 
       expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
       expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
+      floorHelper.dispose();
     });
 
-    test('calls setFloorMode(false) on ALL collections when exiting a 360 image', async () => {
+    test('calls setFloorMode(false) on ALL collections when exiting regardless of enableFloorIcons', async () => {
+      const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
       const { mockEntity } = createFloorModeFixture();
       const mockCollection1 = createMockCollection();
       const mockCollection2 = createMockCollection();
-
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
 
-      await enterImage(mockEntity);
+      const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
       jest.mocked(mockCollection1.setFloorMode).mockClear();
       jest.mocked(mockCollection2.setFloorMode).mockClear();
 
-      helper.exit360Image();
+      floorHelper.exit360Image();
 
       expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
       expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
+      floorHelper.dispose();
     });
   });
 
