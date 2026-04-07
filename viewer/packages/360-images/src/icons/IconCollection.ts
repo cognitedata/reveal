@@ -9,7 +9,6 @@ import {
   Color,
   DoubleSide,
   Frustum,
-  InstancedMesh,
   Matrix4,
   Mesh,
   MeshBasicMaterial,
@@ -104,7 +103,8 @@ export class IconCollection {
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
 
-  private readonly _floorDiscMesh: InstancedMesh<BufferGeometry, MeshBasicMaterial>;
+  private readonly _floorDiscMesh: Mesh<BufferGeometry, MeshBasicMaterial>[];
+  private _activeFloorDiscCount = 0;
   private readonly _floorHoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   private _floorMode = false;
   private _preFloorPointsObjectVisible = true;
@@ -168,11 +168,13 @@ export class IconCollection {
       this._preFloorPointsObjectVisible = this._pointsObject.visible;
       this._preFloorCullingScheme = this._iconCullingScheme;
       this._pointsObject.visible = false;
-      this._floorDiscMesh.visible = this._preFloorPointsObjectVisible;
       this.setCullingScheme('proximity');
     } else {
       this._pointsObject.visible = this._preFloorPointsObjectVisible;
-      this._floorDiscMesh.visible = false;
+      for (let i = 0; i < this._activeFloorDiscCount; i++) {
+        this._floorDiscMesh[i].visible = false;
+      }
+      this._activeFloorDiscCount = 0;
       this.setCullingScheme(this._preFloorCullingScheme);
     }
 
@@ -275,7 +277,7 @@ export class IconCollection {
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
     sceneHandler.addObject3D(pointsObjects);
-    sceneHandler.addObject3D(this._floorDiscMesh);
+    this._floorDiscMesh.forEach(mesh => sceneHandler.addObject3D(mesh));
     sceneHandler.addObject3D(this._floorHoverMesh);
   }
 
@@ -664,17 +666,19 @@ export class IconCollection {
       const closestVisibleReversedPoints = closestPoints.filter(icon => icon.getVisible()).reverse();
 
       if (this._floorMode) {
-        const instanceMatrix = new Matrix4();
         const worldPos = new Vector3();
-        let count = 0;
-        for (const p of closestVisibleReversedPoints) {
+        const newCount = Math.min(closestVisibleReversedPoints.length, this._floorDiscMesh.length);
+        for (let i = 0; i < newCount; i++) {
+          const p = closestVisibleReversedPoints[i];
           worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
-          instanceMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
-          this._floorDiscMesh.setMatrixAt(count, instanceMatrix);
-          count++;
+          const mesh = this._floorDiscMesh[i];
+          mesh.position.set(worldPos.x, worldPos.y, worldPos.z);
+          mesh.visible = true;
         }
-        this._floorDiscMesh.count = count;
-        this._floorDiscMesh.instanceMatrix.needsUpdate = true;
+        for (let i = newCount; i < this._activeFloorDiscCount; i++) {
+          this._floorDiscMesh[i].visible = false;
+        }
+        this._activeFloorDiscCount = newCount;
       } else {
         iconSprites.setPoints(
           closestVisibleReversedPoints.map(p => p.getPosition()),
@@ -733,11 +737,17 @@ export class IconCollection {
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
 
-    this._sceneHandler.removeObject3D(this._floorDiscMesh);
-    this._floorDiscMesh.geometry.dispose();
-    this._floorDiscMesh.material.dispose();
+    if (this._floorDiscMesh.length > 0) {
+      this._floorDiscMesh[0].geometry.dispose();
+      this._floorDiscMesh[0].material.dispose();
+    }
+    this._floorDiscMesh.forEach(mesh => this._sceneHandler.removeObject3D(mesh));
+
+    this._sceneHandler.removeObject3D(this._hoverSprite);
+    this._hoverSprite.material.dispose();
 
     this._sceneHandler.removeObject3D(this._floorHoverMesh);
+    this._floorHoverMesh.material.map?.dispose();
     this._floorHoverMesh.geometry.dispose();
     this._floorHoverMesh.material.dispose();
 
@@ -746,7 +756,7 @@ export class IconCollection {
     }
   }
 
-  private createFloorDiscMesh(capacity: number, texture: Texture): InstancedMesh<BufferGeometry, MeshBasicMaterial> {
+  private createFloorDiscMesh(capacity: number, texture: Texture): Mesh<BufferGeometry, MeshBasicMaterial>[] {
     const geometry = new CircleGeometry(this._iconRadius, 32);
     geometry.rotateX(-Math.PI / 2);
     geometry.translate(0, -IconCollection.FloorDiscHeightOffset, 0);
@@ -759,12 +769,13 @@ export class IconCollection {
       depthWrite: false,
       side: DoubleSide
     });
-    const mesh = new InstancedMesh(geometry, material, capacity);
-    mesh.count = 0;
-    mesh.visible = false;
-    mesh.frustumCulled = false;
-    mesh.renderOrder = 4;
-    return mesh;
+    return Array.from({ length: capacity }, () => {
+      const mesh = new Mesh(geometry, material);
+      mesh.visible = false;
+      mesh.frustumCulled = false;
+      mesh.renderOrder = 4;
+      return mesh;
+    });
   }
 
   private createFloorHoverMesh(texture: CanvasTexture): Mesh<BufferGeometry, MeshBasicMaterial> {
@@ -860,6 +871,9 @@ export class IconCollection {
 
   public setOpacity(value: number): void {
     this._pointsObject.setOpacity(value);
+    if (this._floorDiscMesh.length > 0) {
+      this._floorDiscMesh[0].material.opacity = value;
+    }
   }
 
   public isOccludedVisible(): boolean {
@@ -868,6 +882,8 @@ export class IconCollection {
 
   public setOccludedVisible(value: boolean): void {
     this._pointsObject.setBackPointsVisible(value);
-    this._floorDiscMesh.material.depthTest = value;
+    if (this._floorDiscMesh.length > 0) {
+      this._floorDiscMesh[0].material.depthTest = value;
+    }
   }
 }

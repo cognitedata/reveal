@@ -3,7 +3,7 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import { Matrix4, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
+import { Matrix4, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
@@ -16,6 +16,7 @@ describe(IconCollection.name, () => {
   let mockEventTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
   let capturedRenderCallback: BeforeSceneRenderedDelegate | undefined;
   let mockRenderer: WebGLRenderer;
+  let addedObjects: Object3D[];
 
   // Shared test positions
   const origin = new Vector3(0, 0, 0);
@@ -54,10 +55,13 @@ describe(IconCollection.name, () => {
     capturedRenderCallback?.({ frameNumber, renderer: mockRenderer, camera });
 
   beforeEach(() => {
+    addedObjects = [];
     capturedRenderCallback = undefined;
     mockSceneHandler = new Mock<SceneHandler>()
       .setup(s => s.addObject3D(It.IsAny()))
-      .returns(undefined)
+      .callback(({ args }) => {
+        addedObjects.push(args[0] as Object3D);
+      })
       .setup(s => s.removeObject3D(It.IsAny()))
       .returns(undefined)
       .object();
@@ -403,6 +407,23 @@ describe(IconCollection.name, () => {
 
       collection.dispose();
     });
+
+    it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
+      const collection = createCollection([new Vector3(0, 1.5, 0)]);
+      const floorDiscMeshes = addedObjects.filter(o => o instanceof Mesh && o.renderOrder === 4) as Mesh[];
+
+      expect(floorDiscMeshes.every(m => !m.visible)).toBe(true);
+
+      collection.setFloorMode(true);
+      renderFrame(createCamera(new Vector3(0, 0, 5)));
+
+      expect(floorDiscMeshes.some(m => m.visible)).toBe(true);
+
+      collection.setFloorMode(false);
+
+      expect(floorDiscMeshes.every(m => !m.visible)).toBe(true);
+      collection.dispose();
+    });
   });
 
   describe('opacity and occlusion', () => {
@@ -423,6 +444,20 @@ describe(IconCollection.name, () => {
 
       collection.setOccludedVisible(false);
       expect(collection.isOccludedVisible()).toBe(false);
+
+      collection.dispose();
+    });
+
+    it('setOpacity applies to floor disc mesh material', () => {
+      const collection = createCollection([origin]);
+      const floorDiscMeshes = addedObjects.filter(o => o instanceof Mesh && o.renderOrder === 4) as Mesh<
+        any,
+        MeshBasicMaterial
+      >[];
+
+      expect(floorDiscMeshes.length).toBeGreaterThan(0);
+      collection.setOpacity(0.5);
+      expect(floorDiscMeshes[0].material.opacity).toBeCloseTo(0.5);
 
       collection.dispose();
     });
