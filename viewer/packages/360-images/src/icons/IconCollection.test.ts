@@ -4,6 +4,7 @@
 
 import { Mock, It } from 'moq.ts';
 import {
+  CircleGeometry,
   InstancedMesh,
   Matrix4,
   MeshBasicMaterial,
@@ -466,7 +467,7 @@ describe(IconCollection.name, () => {
     it('setOpacity applies to floor disc mesh material', () => {
       const collection = createCollection([origin]);
       const floorDiscMesh = addedObjects.find(o => o instanceof InstancedMesh && o.renderOrder === 4) as InstancedMesh<
-        any,
+        CircleGeometry,
         MeshBasicMaterial
       >;
 
