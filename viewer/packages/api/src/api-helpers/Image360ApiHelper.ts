@@ -18,6 +18,7 @@ import {
   Image360AnnotationFilterOptions,
   Image360CollectionSourceType,
   Image360IconIntersectionData,
+  Image360ClusterIntersectionData,
   Image360History,
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
@@ -50,12 +51,14 @@ import {
 import {
   CameraManager,
   FlexibleCameraManager,
+  isDefaultCameraManager,
   ProxyCameraManager,
   StationaryCameraManager
 } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
+import { moveCameraPositionAndTargetTo } from '@reveal/camera-manager/src/Flexible/moveCamera';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -89,6 +92,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _stationaryCameraManager: StationaryCameraManager | undefined;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _cachedCameraManager: CameraManager | undefined;
+  private readonly _enableFloorIcons: boolean;
 
   private readonly onKeyPressed = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -117,6 +121,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     iconsOptions?: IconsOptions
   ) {
     this._hasEventListeners = hasEventListeners ?? true;
+    this._enableFloorIcons = iconsOptions?.enableFloorIcons ?? false;
     const image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
     const image360DataModelsDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
     const image360CdmDescriptorProvider = new Cdf360CdmDescriptorProvider(cogniteClient);
@@ -324,7 +329,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     const currentOpacity = this.getImageOpacity();
 
-    this._image360Facade.allIconCullingScheme = 'proximity';
+    // Hide floating icons during the camera transition.
+    const collectionVisibilities = this._image360Facade.collections.map(c => c.getIconsVisibility());
+    this._image360Facade.collections.forEach(c => c.setIconsVisibility(false));
 
     // Only do transition if we are switching between entities.
     // Revisions are updated instantly (for now).
@@ -355,6 +362,12 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
         MetricsLogger.trackEvent('360ImageTransitioned', {});
       }
       this._transitionInProgress = false;
+    }
+
+    // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
+    collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
+    if (this._enableFloorIcons) {
+      this._image360Facade.collections.forEach(c => c.setFloorMode(true));
     }
     if (this._hasEventListeners) {
       this._domElement.addEventListener('keydown', this.onKeyPressed);
@@ -509,6 +522,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
+    this._image360Facade.collections.forEach(collection => collection.setFloorMode(false));
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 
@@ -606,6 +620,14 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (this._transitionInProgress) {
       return Promise.resolve(false);
     }
+
+    // First, check for cluster intersection
+    const clusterIntersection = this.intersect360ImageClusters(event.offsetX, event.offsetY);
+    if (clusterIntersection !== undefined) {
+      return this.zoomToCluster(clusterIntersection);
+    }
+
+    // Fall back to individual icon intersection
     const intersection = this.intersect360ImageIcons(event.offsetX, event.offsetY);
     if (intersection === undefined) {
       return Promise.resolve(false);
@@ -622,6 +644,66 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
+  }
+
+  /**
+   * Intersect with cluster icons at the given screen position.
+   * @param offsetX - X offset in pixels from the DOM element
+   * @param offsetY - Y offset in pixels from the DOM element
+   * @returns Cluster intersection data if a cluster is hit, undefined otherwise
+   */
+  public intersect360ImageClusters(
+    offsetX: number,
+    offsetY: number
+  ): Image360ClusterIntersectionData<DataSourceT> | undefined {
+    const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
+    return this._image360Facade.intersectCluster(
+      new Vector2(ndcCoordinates.x, ndcCoordinates.y),
+      this._activeCameraManager.getCamera()
+    );
+  }
+
+  /**
+   * Zoom the camera toward a cluster position.
+   * The camera moves to a position nearby the cluster centroid (not exactly at it)
+   * so that the cluster icons become visible and expand.
+   * @param clusterData - The cluster intersection data
+   * @returns Promise that resolves to true when the zoom is complete
+   */
+  public async zoomToCluster(clusterData: Image360ClusterIntersectionData<DataSourceT>): Promise<boolean> {
+    if (this._transitionInProgress) {
+      return false;
+    }
+
+    this._transitionInProgress = true;
+    const transitionDuration = 800;
+
+    const camera = this._activeCameraManager.getCamera();
+    const currentPosition = camera.position.clone();
+    const clusterPosition = clusterData.clusterPosition.clone();
+
+    // Calculate direction from camera to cluster
+    const directionToCluster = new Vector3().subVectors(clusterPosition, currentPosition).normalize();
+    const distanceToCluster = currentPosition.distanceTo(clusterPosition);
+
+    // Calculate target position: move toward the cluster but stop at a fraction of the distance
+    const targetDistance = Math.max(distanceToCluster * 0.3, 5);
+    const targetPosition = clusterPosition.clone().sub(directionToCluster.multiplyScalar(targetDistance));
+
+    const innerCameraManager = this._activeCameraManager.innerCameraManager;
+    const flexibleCameraManager = FlexibleCameraManager.as(innerCameraManager);
+    if (flexibleCameraManager) {
+      moveCameraPositionAndTargetTo(flexibleCameraManager, targetPosition, clusterPosition, transitionDuration);
+      await new Promise(resolve => setTimeout(resolve, transitionDuration));
+    } else if (isDefaultCameraManager(innerCameraManager)) {
+      innerCameraManager.moveCameraTo(targetPosition, clusterPosition, transitionDuration);
+      await new Promise(resolve => setTimeout(resolve, transitionDuration));
+    }
+
+    this._transitionInProgress = false;
+    this._needsRedraw = true;
+
+    return true;
   }
 
   public intersect360ImageAnnotations(
@@ -648,6 +730,49 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       annotation,
       direction: this._raycaster.ray.direction
     };
+  }
+
+  /**
+   * Finds the best next 360 image station to navigate to from the current station,
+   * given a target world position that the user clicked.
+   *
+   * Prefers stations that are close and roughly in the direction from the current station toward the clicked point.
+   *
+   * @param clickedWorldPosition  The world-space position the user clicked on.
+   * @returns The best next Image360 entity and its collection, or `undefined` if none qualify.
+   */
+  public findBestNext360ImageEntity(clickedWorldPosition: Vector3): Image360WithCollection<DataSourceT> | undefined {
+    const currentEntity = this._interactionState.currentImage360Entered;
+    if (currentEntity === undefined) return undefined;
+
+    const currentPos = new Vector3().setFromMatrixPosition(currentEntity.transform);
+    const clickDir = new Vector3().subVectors(clickedWorldPosition, currentPos);
+
+    let bestDistSq = Infinity;
+    let bestResult: Image360WithCollection<DataSourceT> | undefined;
+
+    const entityPos = new Vector3();
+    const toEntity = new Vector3();
+
+    for (const collection of this._image360Facade.collections) {
+      for (const entity of collection.image360Entities) {
+        if (entity === currentEntity) continue;
+
+        entityPos.setFromMatrixPosition(entity.transform);
+
+        // Only consider entities in the forward half-space of the click direction.
+        toEntity.subVectors(entityPos, currentPos);
+        if (toEntity.dot(clickDir) <= 0) continue;
+
+        const distSq = clickedWorldPosition.distanceToSquared(entityPos);
+        if (distSq < bestDistSq) {
+          bestDistSq = distSq;
+          bestResult = { image360: entity, image360Collection: collection };
+        }
+      }
+    }
+
+    return bestResult;
   }
 
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {

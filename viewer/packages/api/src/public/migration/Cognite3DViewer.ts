@@ -48,7 +48,8 @@ import {
   RenderParameters,
   AnyIntersection,
   AddModelOptions,
-  Image360IconIntersection
+  Image360IconIntersection,
+  Image360ClusterIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -358,7 +359,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         this._events.beforeSceneRendered,
         options.hasEventListeners,
         {
-          platformMaxPointsSize: getMaxPointSize(this._renderer)
+          platformMaxPointsSize: getMaxPointSize(this._renderer),
+          enableHtmlClusters: options.enableHtmlClusters ?? false,
+          enableFloorIcons: options.enableFloorIcons ?? false
         }
       );
     }
@@ -1662,7 +1665,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>> {
-    if (this.intersect360Icons(new THREE.Vector2(offsetX, offsetY)) !== undefined) {
+    const pixelCoords = new THREE.Vector2(offsetX, offsetY);
+    // Check cluster intersection first (clusters have priority over geometry)
+    if (this.intersect360Clusters(pixelCoords) !== undefined) {
+      return null;
+    }
+    if (this.intersect360Icons(pixelCoords) !== undefined) {
       return null;
     }
     return this.intersectModels(offsetX, offsetY) as Promise<Intersection<DataSourceT> | null>;
@@ -1685,6 +1693,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       predicate?: (customObject: ICustomObject) => boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
+    // Check cluster intersection first (clusters have priority)
+    const image360ClusterIntersection = this.intersect360Clusters(pixelCoords);
+    if (image360ClusterIntersection !== undefined) {
+      return image360ClusterIntersection;
+    }
+
     const image360IconIntersection = this.intersect360Icons(pixelCoords);
     if (image360IconIntersection !== undefined) {
       return image360IconIntersection;
@@ -1759,6 +1773,18 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     };
   }
 
+  private intersect360Clusters(vector: THREE.Vector2): Image360ClusterIntersection<DataSourceT> | undefined {
+    const clusterIntersection = this._image360ApiHelper?.intersect360ImageClusters(vector.x, vector.y);
+    if (clusterIntersection === undefined) {
+      return undefined;
+    }
+
+    return {
+      type: 'image360Cluster',
+      ...clusterIntersection
+    };
+  }
+
   /**
    * Check for intersections with 360 annotations through the given pixel.
    * Similar to {@link Cognite3DViewer.getIntersectionFromPixel}, but checks 360 image annotations
@@ -1771,6 +1797,19 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     offsetY: number
   ): Promise<null | Image360AnnotationIntersection<DataSourceT>> {
     return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
+  }
+
+  /**
+   * Finds the best next 360 image station to navigate to from the currently entered station,
+   * given the world-space position the user clicked.
+   *
+   * Returning the station that is most directly "on the way" to where the user clicked.
+   *
+   * @param clickedWorldPosition  World-space position of the user's click (e.g. from a point cloud intersection).
+   * @returns The best matching Image360 Entity and its collection, or `undefined` if not inside a 360 image or no candidates qualify.
+   */
+  findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined {
+    return this._image360ApiHelper?.findBestNext360ImageEntity(clickedWorldPosition);
   }
 
   /** @private */
@@ -1863,7 +1902,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-      const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
+      const pointCloudResults = await this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
       if (pointCloudResults.length > 0) {
         const result = pointCloudResults[0]; // Nearest intersection
@@ -2000,6 +2039,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return {
         intersection,
         pickedBoundingBox: pickBoundingBox ? await getBoundingBox(intersection) : undefined,
+        modelsBoundingBox: this.getSceneBoundingBox()
+      };
+    }
+    if (intersection.type === 'image360Cluster') {
+      return {
+        intersection: null,
+        pickedBoundingBox: undefined,
         modelsBoundingBox: this.getSceneBoundingBox()
       };
     }

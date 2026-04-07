@@ -167,12 +167,16 @@ export class PointCloudOctreePickerHelper {
     return nodesOnRay;
   }
 
-  public readPixels(x: number, y: number, pickWndSize: number): Uint8Array {
-    // Read the pixel from the pick render target.
-    // TODO 2022-06-20 larsmoa: Replace with async picking
+  public readPixelsAsync(
+    x: number,
+    y: number,
+    pickWndSize: number,
+    renderTarget: WebGLRenderTarget
+  ): Promise<Uint8Array> {
     const pixels = new Uint8Array(4 * pickWndSize * pickWndSize);
-    this._renderer.readRenderTargetPixels(this._renderer.getRenderTarget()!, x, y, pickWndSize, pickWndSize, pixels);
-    return pixels;
+    return this._renderer
+      .readRenderTargetPixelsAsync(renderTarget, x, y, pickWndSize, pickWndSize, pixels)
+      .then(() => pixels);
   }
 
   private static createTempNodes(

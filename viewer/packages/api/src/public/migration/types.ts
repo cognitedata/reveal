@@ -203,6 +203,19 @@ export interface Cognite3DViewerOptions {
    * @beta
    */
   hasEventListeners?: boolean;
+
+  /**
+   * Enable HTML-based cluster rendering for 360 image icons.
+   * When enabled, nearby 360 icons are grouped into clusters with a count display.
+   * @default false
+   */
+  enableHtmlClusters?: boolean;
+
+  /**
+   * Show floor disc icons for nearby 360 images when the user is inside a 360 image.
+   * @default false
+   */
+  enableFloorIcons?: boolean;
 }
 
 /**
@@ -323,6 +336,38 @@ export type Image360IconIntersection<T extends DataSourceType = DataSourceType> 
 };
 
 /**
+ * Represents the result from a 360 cluster intersection test.
+ * @module @cognite/reveal
+ * @beta
+ */
+export type Image360ClusterIntersection<T extends DataSourceType = DataSourceType> = {
+  /**
+   * The intersection type.
+   */
+  type: 'image360Cluster';
+  /**
+   * The image360 collection containing the cluster.
+   */
+  image360Collection: Image360Collection<T>;
+  /**
+   * The world position of the cluster centroid.
+   */
+  clusterPosition: Vector3;
+  /**
+   * The number of icons in the cluster.
+   */
+  clusterSize: number;
+  /**
+   * The image360 entities in the cluster.
+   */
+  clusterIcons: Image360<T>[];
+  /**
+   * Distance from the camera to the cluster.
+   */
+  distanceToCamera: number;
+};
+
+/**
  * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
  * @module @cognite/reveal
  * @beta
@@ -331,6 +376,7 @@ export type AnyIntersection<T extends DataSourceType = DataSourceType> =
   | CadIntersection
   | PointCloudIntersection<T>
   | Image360IconIntersection<T>
+  | Image360ClusterIntersection<T>
   | CustomObjectIntersection;
 
 /**

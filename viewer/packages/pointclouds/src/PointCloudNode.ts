@@ -143,7 +143,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
    * @param ray Ray representing the direction for picking.
    * @returns Picked point data.
    */
-  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray): PickPoint | null {
+  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray): Promise<PickPoint | null> {
     return this._octree.pick(renderer, camera, ray, { pickWindowSize: PointCloudNode.pickingWindowSize });
   }
   /**

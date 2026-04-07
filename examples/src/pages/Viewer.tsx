@@ -96,6 +96,7 @@ export function Viewer() {
         useFlexibleCameraManager: true,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
+        enableFloorIcons: urlParams.get('floorIcons') === 'true',
         pointCloudEffects: {
           pointBlending: urlParams.get('pointBlending') === 'true',
           edlOptions: edlEnabled
