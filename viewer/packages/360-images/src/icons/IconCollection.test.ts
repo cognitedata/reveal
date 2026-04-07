@@ -3,7 +3,16 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import { Matrix4, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
+import {
+  InstancedMesh,
+  Matrix4,
+  MeshBasicMaterial,
+  Object3D,
+  PerspectiveCamera,
+  Ray,
+  Vector3,
+  WebGLRenderer
+} from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
@@ -410,18 +419,24 @@ describe(IconCollection.name, () => {
 
     it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
       const collection = createCollection([new Vector3(0, 1.5, 0)]);
-      const floorDiscMeshes = addedObjects.filter(o => o instanceof Mesh && o.renderOrder === 4) as Mesh[];
+      const floorDiscMesh = addedObjects.find(o => o instanceof InstancedMesh && o.renderOrder === 4) as InstancedMesh;
 
-      expect(floorDiscMeshes.every(m => !m.visible)).toBe(true);
+      const instanceMatrix = new Matrix4();
+      const isHidden = (mesh: InstancedMesh, index: number) => {
+        mesh.getMatrixAt(index, instanceMatrix);
+        return instanceMatrix.elements[0] === 0; // scale x = 0 means hidden
+      };
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(true);
 
       collection.setFloorMode(true);
       renderFrame(createCamera(new Vector3(0, 0, 5)));
 
-      expect(floorDiscMeshes.some(m => m.visible)).toBe(true);
+      expect(isHidden(floorDiscMesh, 0)).toBe(false);
 
       collection.setFloorMode(false);
 
-      expect(floorDiscMeshes.every(m => !m.visible)).toBe(true);
+      expect(isHidden(floorDiscMesh, 0)).toBe(true);
       collection.dispose();
     });
   });
@@ -450,14 +465,14 @@ describe(IconCollection.name, () => {
 
     it('setOpacity applies to floor disc mesh material', () => {
       const collection = createCollection([origin]);
-      const floorDiscMeshes = addedObjects.filter(o => o instanceof Mesh && o.renderOrder === 4) as Mesh<
+      const floorDiscMesh = addedObjects.find(o => o instanceof InstancedMesh && o.renderOrder === 4) as InstancedMesh<
         any,
         MeshBasicMaterial
-      >[];
+      >;
 
-      expect(floorDiscMeshes.length).toBeGreaterThan(0);
+      expect(floorDiscMesh).toBeDefined();
       collection.setOpacity(0.5);
-      expect(floorDiscMeshes[0].material.opacity).toBeCloseTo(0.5);
+      expect(floorDiscMesh.material.opacity).toBeCloseTo(0.5);
 
       collection.dispose();
     });
