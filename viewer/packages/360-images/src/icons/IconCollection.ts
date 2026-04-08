@@ -685,8 +685,10 @@ export class IconCollection {
           this._floorDiscMesh.setMatrixAt(i, this._hiddenMatrix);
         }
         this._floorDiscMesh.instanceMatrix.needsUpdate = true;
-        this._floorDiscMesh.computeBoundingBox();
-        this._activeFloorDiscCount = newCount;
+        if (newCount !== this._activeFloorDiscCount) {
+          this._floorDiscMesh.computeBoundingBox();
+          this._activeFloorDiscCount = newCount;
+        }
       } else {
         iconSprites.setPoints(
           closestVisibleReversedPoints.map(p => p.getPosition()),
@@ -745,9 +747,9 @@ export class IconCollection {
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
 
+    this._sceneHandler.removeObject3D(this._floorDiscMesh);
     this._floorDiscMesh.geometry.dispose();
     this._floorDiscMesh.material.dispose();
-    this._sceneHandler.removeObject3D(this._floorDiscMesh);
 
     this._sceneHandler.removeObject3D(this._hoverSprite);
     this._hoverSprite.material.dispose();
@@ -780,9 +782,8 @@ export class IconCollection {
     const mesh = new InstancedMesh(geometry, material, capacity);
     mesh.frustumCulled = false;
     mesh.renderOrder = 4;
-    const hiddenMatrix = new Matrix4().makeScale(0, 0, 0);
     for (let i = 0; i < capacity; i++) {
-      mesh.setMatrixAt(i, hiddenMatrix);
+      mesh.setMatrixAt(i, this._hiddenMatrix);
     }
     mesh.instanceMatrix.needsUpdate = true;
     mesh.computeBoundingBox();

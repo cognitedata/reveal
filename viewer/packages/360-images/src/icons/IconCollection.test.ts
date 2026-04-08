@@ -64,13 +64,16 @@ describe(IconCollection.name, () => {
   const renderFrame = (camera: PerspectiveCamera, frameNumber = 0) =>
     capturedRenderCallback?.({ frameNumber, renderer: mockRenderer, camera });
 
+  const isFloorDiscMesh = (o: Object3D): o is InstancedMesh<CircleGeometry, MeshBasicMaterial> =>
+    o instanceof InstancedMesh && o.renderOrder === 4;
+
   beforeEach(() => {
     addedObjects = [];
     capturedRenderCallback = undefined;
     mockSceneHandler = new Mock<SceneHandler>()
       .setup(s => s.addObject3D(It.IsAny()))
       .callback(({ args }) => {
-        addedObjects.push(args[0] as Object3D);
+        addedObjects.push(args[0]);
       })
       .setup(s => s.removeObject3D(It.IsAny()))
       .returns(undefined)
@@ -420,7 +423,7 @@ describe(IconCollection.name, () => {
 
     it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
       const collection = createCollection([new Vector3(0, 1.5, 0)]);
-      const floorDiscMesh = addedObjects.find(o => o instanceof InstancedMesh && o.renderOrder === 4) as InstancedMesh;
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh)!;
 
       const instanceMatrix = new Matrix4();
       const isHidden = (mesh: InstancedMesh, index: number) => {
@@ -466,10 +469,7 @@ describe(IconCollection.name, () => {
 
     it('setOpacity applies to floor disc mesh material', () => {
       const collection = createCollection([origin]);
-      const floorDiscMesh = addedObjects.find(o => o instanceof InstancedMesh && o.renderOrder === 4) as InstancedMesh<
-        CircleGeometry,
-        MeshBasicMaterial
-      >;
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh)!;
 
       expect(floorDiscMesh).toBeDefined();
       collection.setOpacity(0.5);
