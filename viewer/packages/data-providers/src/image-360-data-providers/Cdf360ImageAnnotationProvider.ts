@@ -4,15 +4,7 @@
 
 import chunk from 'lodash/chunk';
 
-import {
-  AnnotationModel,
-  CogniteClient,
-  IdEither,
-  AnnotationFilterProps,
-  InternalId,
-  ExternalId,
-  AnnotationsAssetRef
-} from '@cognite/sdk';
+import { AnnotationModel, CogniteClient, IdEither, AnnotationFilterProps, AnnotationsAssetRef } from '@cognite/sdk';
 import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -155,9 +147,9 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const annotationType = isDmIdentifier(asset) ? 'images.InstanceLink' : 'images.AssetLink';
     const dataFilter: Record<string, unknown> = isDmIdentifier(asset)
       ? { instanceRef: { externalId: asset.externalId, space: asset.space } }
-      : (asset as InternalId).id !== undefined
-        ? { assetRef: { id: (asset as InternalId).id } }
-        : { assetRef: { externalId: (asset as ExternalId).externalId } };
+      : 'id' in asset
+        ? { assetRef: { id: asset.id } }
+        : { assetRef: { externalId: asset.externalId } };
 
     const fileRefs: AnnotationsAssetRef[] = await this._client.annotations
       .reverseLookup({
