@@ -3,7 +3,17 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import { Matrix4, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
+import {
+  CircleGeometry,
+  InstancedMesh,
+  Matrix4,
+  MeshBasicMaterial,
+  Object3D,
+  PerspectiveCamera,
+  Ray,
+  Vector3,
+  WebGLRenderer
+} from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
@@ -16,6 +26,7 @@ describe(IconCollection.name, () => {
   let mockEventTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
   let capturedRenderCallback: BeforeSceneRenderedDelegate | undefined;
   let mockRenderer: WebGLRenderer;
+  let addedObjects: Object3D[];
 
   // Shared test positions
   const origin = new Vector3(0, 0, 0);
@@ -53,11 +64,17 @@ describe(IconCollection.name, () => {
   const renderFrame = (camera: PerspectiveCamera, frameNumber = 0) =>
     capturedRenderCallback?.({ frameNumber, renderer: mockRenderer, camera });
 
+  const isFloorDiscMesh = (o: Object3D): o is InstancedMesh<CircleGeometry, MeshBasicMaterial> =>
+    o instanceof InstancedMesh && o.renderOrder === 4;
+
   beforeEach(() => {
+    addedObjects = [];
     capturedRenderCallback = undefined;
     mockSceneHandler = new Mock<SceneHandler>()
       .setup(s => s.addObject3D(It.IsAny()))
-      .returns(undefined)
+      .callback(({ args }) => {
+        addedObjects.push(args[0]);
+      })
       .setup(s => s.removeObject3D(It.IsAny()))
       .returns(undefined)
       .object();
@@ -403,6 +420,30 @@ describe(IconCollection.name, () => {
 
       collection.dispose();
     });
+
+    it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
+      const collection = createCollection([new Vector3(0, 1.5, 0)]);
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
+
+      const instanceMatrix = new Matrix4();
+      const isHidden = (mesh: InstancedMesh, index: number) => {
+        mesh.getMatrixAt(index, instanceMatrix);
+        return instanceMatrix.elements[0] === 0; // scale x = 0 means hidden
+      };
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(true);
+
+      collection.setFloorMode(true);
+      renderFrame(createCamera(new Vector3(0, 0, 5)));
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(false);
+
+      collection.setFloorMode(false);
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(true);
+      collection.dispose();
+    });
   });
 
   describe('opacity and occlusion', () => {
@@ -423,6 +464,18 @@ describe(IconCollection.name, () => {
 
       collection.setOccludedVisible(false);
       expect(collection.isOccludedVisible()).toBe(false);
+
+      collection.dispose();
+    });
+
+    it('setOpacity applies to floor disc mesh material', () => {
+      const collection = createCollection([origin]);
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
+
+      expect(floorDiscMesh).toBeDefined();
+      collection.setOpacity(0.5);
+      expect(floorDiscMesh.material.opacity).toBeCloseTo(0.5);
 
       collection.dispose();
     });
