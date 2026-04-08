@@ -6,7 +6,16 @@ import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelFactory } from '@reveal/cad-model';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { It, Mock, IMock } from 'moq.ts';
-import { PerspectiveCamera } from 'three';
+import { PerspectiveCamera, Box3 } from 'three';
+import { File3dFormat } from '@reveal/data-providers';
+import { CadModelMetadata } from '@reveal/cad-parsers';
+import { createCadModelMetadata, createV9SectorMetadata } from '../../../test-utilities';
+
+function createMinimalMetadata(format: File3dFormat, formatVersion: number): CadModelMetadata {
+  const root = createV9SectorMetadata([0, [], new Box3()]);
+  const base = createCadModelMetadata(formatVersion, root);
+  return { ...base, format, formatVersion };
+}
 
 describe(CadManager.name, () => {
   let cadManager: CadManager;
@@ -73,5 +82,39 @@ describe(CadManager.name, () => {
 
   test('should access material manager correctly', () => {
     expect(cadManager.materialManager).toBe(materialManagerMock.object());
+  });
+
+  describe('doesModelHaveCompatibleFormat', () => {
+    test('returns true when no compatible format has been set yet', () => {
+      const metadata = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      expect(cadManager.doesModelHaveCompatibleFormat(metadata)).toBe(true);
+    });
+
+    test('GltfCadModel and GltfPrioritizedNodes are compatible with each other', () => {
+      const gltfMetadata = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      const prioritizedMetadata = createMinimalMetadata(File3dFormat.GltfPrioritizedNodes, 9);
+
+      cadManager.updateModelCompatibilityFormat(gltfMetadata);
+
+      expect(cadManager.doesModelHaveCompatibleFormat(prioritizedMetadata)).toBe(true);
+    });
+
+    test('GltfPrioritizedNodes and GltfCadModel are compatible with each other', () => {
+      const gltfMetadata = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      const prioritizedMetadata = createMinimalMetadata(File3dFormat.GltfPrioritizedNodes, 9);
+
+      cadManager.updateModelCompatibilityFormat(prioritizedMetadata);
+
+      expect(cadManager.doesModelHaveCompatibleFormat(gltfMetadata)).toBe(true);
+    });
+
+    test('returns false when format version differs', () => {
+      const v9 = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      const v8 = createMinimalMetadata(File3dFormat.GltfCadModel, 8);
+
+      cadManager.updateModelCompatibilityFormat(v9);
+
+      expect(cadManager.doesModelHaveCompatibleFormat(v8)).toBe(false);
+    });
   });
 });
