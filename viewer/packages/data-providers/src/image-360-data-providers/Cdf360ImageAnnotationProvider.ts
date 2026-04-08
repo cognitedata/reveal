@@ -115,7 +115,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     }
 
     const matchingAnnotationIds = new Set(matchingAnnotations.map(annotation => annotation.id));
-    const fileIdToEntityRevision = await this.getFileIdToEntityRevisionMap(collection, matchingAnnotations);
+    const fileIdToEntityRevision = await this.buildFileIdToEntityRevisionMap(collection, matchingAnnotations);
 
     const revisionToEntityMap = new Map<
       Image360RevisionEntity<ClassicDataSourceType>,
@@ -182,10 +182,13 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       })
       .filter((id): id is IdEither => id !== undefined);
 
-    return this.listFileAnnotations({
-      annotatedResourceType: 'file',
-      annotatedResourceIds: resourceIds
-    });
+    const annotationPromises = chunk(resourceIds, 1000).map(idList =>
+      this.listFileAnnotations({
+        annotatedResourceType: 'file',
+        annotatedResourceIds: idList
+      })
+    );
+    return (await Promise.all(annotationPromises)).flat();
   }
 
   /**
