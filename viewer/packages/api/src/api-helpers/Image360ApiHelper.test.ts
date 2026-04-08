@@ -479,6 +479,69 @@ describe(Image360ApiHelper.name, () => {
     });
   });
 
+  describe('cursor pointer on hover', () => {
+    function makeHoverEvent(offsetX = 320, offsetY = 240): PointerEvent {
+      return { offsetX, offsetY } as PointerEvent;
+    }
+
+    test('sets cursor to pointer when hovering over an icon', () => {
+      const mockIconData: Image360IconIntersectionData<DataSourceType> = {
+        image360Collection: new Mock<DefaultImage360Collection<DataSourceType>>().object(),
+        image360: new Mock<Image360Entity<DataSourceType>>()
+          .setup(e => e.icon)
+          .returns(
+            new Mock<Overlay3DIcon>()
+              .setup(i => i.setVisible(It.IsAny()))
+              .returns(undefined)
+              .setup(i => (i.selected = It.IsAny()))
+              .returns(undefined)
+              .object()
+          )
+          .setup(e => e.getMostRecentRevision())
+          .returns(createMockRevision())
+          .object(),
+        point: new Vector3(0, 0, 0),
+        distanceToCamera: 10
+      };
+
+      const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>().object();
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
+      jest.spyOn(Image360Facade.prototype, 'setHoverIconVisibilityForEntity').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+
+      helper.onHover(makeHoverEvent());
+
+      expect(domElement.style.cursor).toBe('pointer');
+    });
+
+    test('sets cursor to pointer when hovering over a cluster', () => {
+      const mockClusterData = createMockClusterData();
+
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+
+      helper.onHover(makeHoverEvent());
+
+      expect(domElement.style.cursor).toBe('pointer');
+    });
+
+    test('resets cursor when not hovering over any icon or cluster', () => {
+      domElement.style.cursor = 'pointer';
+
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+
+      helper.onHover(makeHoverEvent());
+
+      expect(domElement.style.cursor).toBe('');
+    });
+  });
+
   describe('findBestNext360ImageEntity', () => {
     function makeCandidateEntityAt(position: Vector3): Image360Entity<DataSourceType> {
       return new Mock<Image360Entity<DataSourceType>>()

@@ -779,14 +779,18 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allIconsSelected = false;
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
-    const intersection = this._image360Facade.intersect(
-      new Vector2(ndcCoordinates.x, ndcCoordinates.y),
-      this._activeCameraManager.getCamera()
-    );
+    const ndcVector = new Vector2(ndcCoordinates.x, ndcCoordinates.y);
+    const camera = this._activeCameraManager.getCamera();
 
+    const clusterIntersection = this._image360Facade.intersectCluster(ndcVector, camera);
+
+    const intersection = this._image360Facade.intersect(ndcVector, camera);
     const entity = intersection?.image360;
 
-    if (entity === this._interactionState.currentImage360Hovered) {
+    const isHoveringInteractable = entity !== undefined || clusterIntersection !== undefined;
+    this._domElement.style.cursor = isHoveringInteractable ? 'pointer' : '';
+
+    if (entity === this._interactionState.currentImage360Hovered && clusterIntersection === undefined) {
       entity?.icon.updateHoverSpriteScale();
       return;
     }
@@ -796,7 +800,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       entity.icon.selected = true;
       this._debouncePreLoad(entity);
     } else {
-      if (!this._image360Facade.hideAllHoverIcons()) {
+      if (!this._image360Facade.hideAllHoverIcons() && clusterIntersection === undefined) {
         this._interactionState.currentImage360Hovered = undefined;
         return;
       }

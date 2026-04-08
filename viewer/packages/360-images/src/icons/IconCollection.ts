@@ -104,7 +104,9 @@ export class IconCollection {
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
 
-  private readonly _floorDiscMesh: InstancedMesh<BufferGeometry, MeshBasicMaterial>;
+  private readonly _floorDiscMesh: InstancedMesh<CircleGeometry, MeshBasicMaterial>;
+  private _activeFloorDiscCount = 0;
+  private readonly _hiddenMatrix = new Matrix4().makeScale(0, 0, 0);
   private readonly _floorHoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   private _floorMode = false;
   private _preFloorPointsObjectVisible = true;
@@ -168,11 +170,17 @@ export class IconCollection {
       this._preFloorPointsObjectVisible = this._pointsObject.visible;
       this._preFloorCullingScheme = this._iconCullingScheme;
       this._pointsObject.visible = false;
-      this._floorDiscMesh.visible = this._preFloorPointsObjectVisible;
       this.setCullingScheme('proximity');
     } else {
       this._pointsObject.visible = this._preFloorPointsObjectVisible;
-      this._floorDiscMesh.visible = false;
+      for (let i = 0; i < this._activeFloorDiscCount; i++) {
+        this._floorDiscMesh.setMatrixAt(i, this._hiddenMatrix);
+      }
+      if (this._activeFloorDiscCount > 0) {
+        this._floorDiscMesh.instanceMatrix.needsUpdate = true;
+        this._floorDiscMesh.computeBoundingBox();
+      }
+      this._activeFloorDiscCount = 0;
       this.setCullingScheme(this._preFloorCullingScheme);
     }
 
@@ -664,17 +672,23 @@ export class IconCollection {
       const closestVisibleReversedPoints = closestPoints.filter(icon => icon.getVisible()).reverse();
 
       if (this._floorMode) {
-        const instanceMatrix = new Matrix4();
         const worldPos = new Vector3();
-        let count = 0;
-        for (const p of closestVisibleReversedPoints) {
+        const tempMatrix = new Matrix4();
+        const newCount = Math.min(closestVisibleReversedPoints.length, this._floorDiscMesh.count);
+        for (let i = 0; i < newCount; i++) {
+          const p = closestVisibleReversedPoints[i];
           worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
-          instanceMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
-          this._floorDiscMesh.setMatrixAt(count, instanceMatrix);
-          count++;
+          tempMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
+          this._floorDiscMesh.setMatrixAt(i, tempMatrix);
         }
-        this._floorDiscMesh.count = count;
+        for (let i = newCount; i < this._activeFloorDiscCount; i++) {
+          this._floorDiscMesh.setMatrixAt(i, this._hiddenMatrix);
+        }
         this._floorDiscMesh.instanceMatrix.needsUpdate = true;
+        if (newCount !== this._activeFloorDiscCount) {
+          this._floorDiscMesh.computeBoundingBox();
+          this._activeFloorDiscCount = newCount;
+        }
       } else {
         iconSprites.setPoints(
           closestVisibleReversedPoints.map(p => p.getPosition()),
@@ -737,7 +751,11 @@ export class IconCollection {
     this._floorDiscMesh.geometry.dispose();
     this._floorDiscMesh.material.dispose();
 
+    this._sceneHandler.removeObject3D(this._hoverSprite);
+    this._hoverSprite.material.dispose();
+
     this._sceneHandler.removeObject3D(this._floorHoverMesh);
+    this._floorHoverMesh.material.map?.dispose();
     this._floorHoverMesh.geometry.dispose();
     this._floorHoverMesh.material.dispose();
 
@@ -746,7 +764,7 @@ export class IconCollection {
     }
   }
 
-  private createFloorDiscMesh(capacity: number, texture: Texture): InstancedMesh<BufferGeometry, MeshBasicMaterial> {
+  private createFloorDiscMesh(capacity: number, texture: Texture): InstancedMesh<CircleGeometry, MeshBasicMaterial> {
     const geometry = new CircleGeometry(this._iconRadius, 32);
     geometry.rotateX(-Math.PI / 2);
     geometry.translate(0, -IconCollection.FloorDiscHeightOffset, 0);
@@ -759,11 +777,16 @@ export class IconCollection {
       depthWrite: false,
       side: DoubleSide
     });
+    // Keep count = capacity (never 0) to avoid empty bounding box causing near/far plane issues.
+    // Inactive instances are hidden via a zero-scale matrix.
     const mesh = new InstancedMesh(geometry, material, capacity);
-    mesh.count = 0;
-    mesh.visible = false;
     mesh.frustumCulled = false;
     mesh.renderOrder = 4;
+    for (let i = 0; i < capacity; i++) {
+      mesh.setMatrixAt(i, this._hiddenMatrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingBox();
     return mesh;
   }
 
@@ -860,6 +883,7 @@ export class IconCollection {
 
   public setOpacity(value: number): void {
     this._pointsObject.setOpacity(value);
+    this._floorDiscMesh.material.opacity = value;
   }
 
   public isOccludedVisible(): boolean {
