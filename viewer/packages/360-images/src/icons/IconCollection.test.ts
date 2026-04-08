@@ -423,7 +423,8 @@ describe(IconCollection.name, () => {
 
     it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
       const collection = createCollection([new Vector3(0, 1.5, 0)]);
-      const floorDiscMesh = addedObjects.find(isFloorDiscMesh)!;
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
 
       const instanceMatrix = new Matrix4();
       const isHidden = (mesh: InstancedMesh, index: number) => {
@@ -469,7 +470,8 @@ describe(IconCollection.name, () => {
 
     it('setOpacity applies to floor disc mesh material', () => {
       const collection = createCollection([origin]);
-      const floorDiscMesh = addedObjects.find(isFloorDiscMesh)!;
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
 
       expect(floorDiscMesh).toBeDefined();
       collection.setOpacity(0.5);
