@@ -145,11 +145,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
    */
   private async fetchAnnotationsByReverseLookup(asset: InstanceReference<DataSourceType>): Promise<AnnotationModel[]> {
     const annotationType = isDmIdentifier(asset) ? 'images.InstanceLink' : 'images.AssetLink';
-    const dataFilter: Record<string, unknown> = isDmIdentifier(asset)
-      ? { instanceRef: { externalId: asset.externalId, space: asset.space } }
-      : 'id' in asset
-        ? { assetRef: { id: asset.id } }
-        : { assetRef: { externalId: asset.externalId } };
+    const dataFilter = getReverseLookupDataFilter(asset);
 
     const fileRefs: AnnotationsAssetRef[] = await this._client.annotations
       .reverseLookup({
@@ -174,13 +170,16 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       })
       .filter((id): id is IdEither => id !== undefined);
 
-    const annotationPromises = chunk(resourceIds, 1000).map(idList =>
-      this.listFileAnnotations({
+    // Process sequentially to avoid too many concurrent requests.
+    const results: AnnotationModel[] = [];
+    for (const idList of chunk(resourceIds, 1000)) {
+      const batchedResults = await this.listFileAnnotations({
         annotatedResourceType: 'file',
         annotatedResourceIds: idList
-      })
-    );
-    return (await Promise.all(annotationPromises)).flat();
+      });
+      results.push(...batchedResults);
+    }
+    return results;
   }
 
   /**
@@ -444,18 +443,16 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const image360FileDescriptors = collection.getAllFileDescriptors();
     const resourceIds = getAnnotationResourceIds(image360FileDescriptors);
 
-    const assetListPromises = chunk(resourceIds, 1000).map(async idList => {
+    // Process sequentially to avoid too many concurrent requests.
+    const results: ClassicDataSourceType['image360AnnotationType'][] = [];
+    for (const idList of chunk(resourceIds, 1000)) {
       const annotationArray = await this.listFileAnnotations({
         annotatedResourceIds: idList,
         annotatedResourceType: 'file'
       });
-
-      const assetAnnotations = annotationArray.filter(annotationFilter);
-
-      return assetAnnotations;
-    });
-
-    return (await Promise.all(assetListPromises)).flat();
+      results.push(...annotationArray.filter(annotationFilter));
+    }
+    return results;
   }
 
   private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
@@ -466,4 +463,14 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       })
       .autoPagingToArray({ limit: Infinity });
   }
+}
+
+function getReverseLookupDataFilter(asset: InstanceReference<DataSourceType>): Record<string, unknown> {
+  if (isDmIdentifier(asset)) {
+    return { instanceRef: { externalId: asset.externalId, space: asset.space } };
+  }
+  if ('id' in asset) {
+    return { assetRef: { id: asset.id } };
+  }
+  return { assetRef: { externalId: asset.externalId } };
 }
