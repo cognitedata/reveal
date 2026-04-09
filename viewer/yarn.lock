@@ -460,7 +460,6 @@ __metadata:
     "@types/jest-environment-puppeteer": "npm:^5.0.6"
     "@types/jest-image-snapshot": "npm:^6.4.0"
     "@types/jsdom": "npm:^21.1.6"
-    "@types/lodash": "npm:^4.17.0"
     "@types/mixpanel-browser": "npm:^2.49.0"
     "@types/node": "npm:^22.0.0"
     "@types/random-seed": "npm:^0.3.5"
@@ -495,7 +494,6 @@ __metadata:
     jest-image-snapshot: "npm:^6.4.0"
     jest-puppeteer: "npm:^11.0.0"
     jsdom: "npm:^26.0.0"
-    lodash: "npm:^4.18.1"
     loglevel: "npm:^1.9.1"
     mixpanel-browser: "npm:^2.49.0"
     moq.ts: "npm:10.0.8"
@@ -2035,13 +2033,6 @@ __metadata:
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: 10/1a3c3e06236e4c4aab89499c428d585527ce50c24fe8259e8b3926d3df4cfbbbcf306cfc73ddfb66cbafc973116efd15967020b0f738f63e09e64c7d260519e7
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.17.0":
-  version: 4.17.20
-  resolution: "@types/lodash@npm:4.17.20"
-  checksum: 10/8cd8ad3bd78d2e06a93ae8d6c9907981d5673655fec7cb274a4d9a59549aab5bb5b3017361280773b8990ddfccf363e14d1b37c97af8a9fe363de677f9a61524
   languageName: node
   linkType: hard
 
@@ -7494,7 +7485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.18.1":
+"lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
   version: 4.18.1
   resolution: "lodash@npm:4.18.1"
   checksum: 10/306fea53dfd39dad1f03d45ba654a2405aebd35797b673077f401edb7df2543623dc44b9effbb98f69b32152295fff725a4cec99c684098947430600c6af0c3f
