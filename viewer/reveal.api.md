@@ -352,11 +352,11 @@ export const CDF_TO_VIEWER_TRANSFORMATION: Matrix4;
 
 // @public
 export class CdfModelIdentifier implements ModelIdentifier {
-    constructor(modelId: number, revisionId: number, outputFormat?: string);
+    constructor(modelId: number, revisionId: number, outputFormat?: File3dFormat);
     // (undocumented)
     readonly modelId: number;
     // (undocumented)
-    readonly outputFormat: string | undefined;
+    readonly outputFormat: File3dFormat | undefined;
     // (undocumented)
     readonly revealInternalId: symbol;
     // (undocumented)
@@ -807,7 +807,7 @@ export type ComboControlsOptions = {
 export type CommonModelOptions = {
     localPath?: string;
     geometryFilter?: GeometryFilter;
-    outputFormat?: string;
+    outputFormat?: File3dFormat;
 };
 
 // @public (undocumented)
