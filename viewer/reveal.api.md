@@ -352,9 +352,11 @@ export const CDF_TO_VIEWER_TRANSFORMATION: Matrix4;
 
 // @public
 export class CdfModelIdentifier implements ModelIdentifier {
-    constructor(modelId: number, revisionId: number);
+    constructor(modelId: number, revisionId: number, outputFormat?: string);
     // (undocumented)
     readonly modelId: number;
+    // (undocumented)
+    readonly outputFormat: string | undefined;
     // (undocumented)
     readonly revealInternalId: symbol;
     // (undocumented)
@@ -805,6 +807,7 @@ export type ComboControlsOptions = {
 export type CommonModelOptions = {
     localPath?: string;
     geometryFilter?: GeometryFilter;
+    outputFormat?: string;
 };
 
 // @public (undocumented)
@@ -1006,7 +1009,8 @@ export enum File3dFormat {
     AnyFormat = "all-outputs",
     // (undocumented)
     EptPointCloud = "ept-pointcloud",
-    GltfCadModel = "gltf-directory"
+    GltfCadModel = "gltf-directory",
+    GltfPrioritizedNodes = "gltf-prioritized-nodes-directory"
 }
 
 // @beta (undocumented)
