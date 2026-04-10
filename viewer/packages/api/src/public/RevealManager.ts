@@ -28,6 +28,7 @@ import { CameraManager } from '@reveal/camera-manager';
 import {
   ClassicModelIdentifierType,
   DataSourceType,
+  File3dFormat,
   InternalDataSourceType,
   LocalModelIdentifierType
 } from '@reveal/data-providers';
@@ -39,7 +40,7 @@ import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/
 export type AddCadModelOptions = {
   nodeAppearanceProvider?: NodeAppearanceProvider;
   geometryFilter?: GeometryFilter;
-  outputFormat?: string;
+  outputFormat?: File3dFormat;
 };
 
 /**

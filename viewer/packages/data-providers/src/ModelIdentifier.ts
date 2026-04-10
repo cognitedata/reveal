@@ -14,6 +14,7 @@ import {
 import { CdfModelIdentifier } from './model-identifiers/CdfModelIdentifier';
 import { DMModelIdentifier } from './model-identifiers/DMModelIdentifier';
 import { LocalModelIdentifier } from './model-identifiers/LocalModelIdentifier';
+import { File3dFormat } from './types';
 
 /**
  * Identifies a 3D model. Typically, implementations will use {@link CdfModelIdentifier}.
@@ -36,7 +37,7 @@ export function createModelIdentifier(
     | ClassicModelIdentifierType
     | (DMModelIdentifierType & ClassicModelIdentifierType)
     | LocalModelIdentifierType,
-  outputFormat?: string
+  outputFormat?: File3dFormat
 ): ModelIdentifier {
   if (isLocalIdentifier(identifier)) {
     return new LocalModelIdentifier(identifier.localPath);

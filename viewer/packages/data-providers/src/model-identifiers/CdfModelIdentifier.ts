@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { ModelIdentifier } from '../ModelIdentifier';
+import { File3dFormat } from '../types';
 
 /**
  * Identifies a 3D model stored in CDF by the combination of a modelId, a revisionId
@@ -12,9 +13,9 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
   readonly modelId: number;
   readonly revisionId: number;
-  readonly outputFormat: string | undefined;
+  readonly outputFormat: File3dFormat | undefined;
 
-  constructor(modelId: number, revisionId: number, outputFormat?: string) {
+  constructor(modelId: number, revisionId: number, outputFormat?: File3dFormat) {
     const suffix = outputFormat ? `/${outputFormat}` : '';
     this.revealInternalId = Symbol(`${modelId}/${revisionId}${suffix}`);
     this.modelId = modelId;

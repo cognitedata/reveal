@@ -196,7 +196,7 @@ export class CadManager {
   async addModel(
     modelIdentifier: ModelIdentifier,
     geometryFilter?: GeometryFilter,
-    outputFormat?: string
+    outputFormat?: File3dFormat
   ): Promise<CadNode> {
     const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier, outputFormat);
 

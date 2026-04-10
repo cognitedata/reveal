@@ -3,6 +3,7 @@
  */
 import { GeometryFilter } from '@reveal/cad-model';
 import { ClassicModelIdentifierType, InternalDataSourceType, LocalModelIdentifierType } from '../DataSourceType';
+import { File3dFormat } from '../types';
 
 /**
  * Model options common to all model types.
@@ -21,7 +22,7 @@ export type CommonModelOptions = {
    * Defaults to 'gltf-directory'. Set to 'gltf-prioritized-nodes-directory'
    * to load high-detail geometry from a PrioritizedNodes job output.
    */
-  outputFormat?: string;
+  outputFormat?: File3dFormat;
 };
 
 export type LocalAddModelOptions = CommonModelOptions & LocalModelIdentifierType;

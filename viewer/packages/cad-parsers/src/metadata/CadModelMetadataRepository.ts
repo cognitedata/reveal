@@ -36,7 +36,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     this._blobFileName = blobFileName;
   }
 
-  async loadData(modelIdentifier: ModelIdentifier, outputFormat?: string): Promise<CadModelMetadata> {
+  async loadData(modelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
     const cadOutput = await this.getSupportedOutput(modelIdentifier, outputFormat);
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
@@ -65,7 +65,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 
   private async getSupportedOutput(
     modelIdentifier: ModelIdentifier,
-    outputFormat?: string
+    outputFormat?: File3dFormat
   ): Promise<BlobOutputMetadata> {
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
 

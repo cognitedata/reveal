@@ -2,6 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
+import { File3dFormat } from '../types';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 describe(CdfModelIdentifier.name, () => {
@@ -20,7 +21,7 @@ describe(CdfModelIdentifier.name, () => {
   });
 
   test('outputFormat is stored when provided', () => {
-    const id = new CdfModelIdentifier(100, 200, 'gltf-prioritized-nodes-directory');
+    const id = new CdfModelIdentifier(100, 200, File3dFormat.GltfPrioritizedNodes);
 
     expect(id.outputFormat).toBe('gltf-prioritized-nodes-directory');
   });
@@ -32,14 +33,14 @@ describe(CdfModelIdentifier.name, () => {
   });
 
   test('revealInternalId symbol includes outputFormat suffix when set', () => {
-    const id = new CdfModelIdentifier(100, 200, 'gltf-prioritized-nodes-directory');
+    const id = new CdfModelIdentifier(100, 200, File3dFormat.GltfPrioritizedNodes);
 
     expect(id.revealInternalId.toString()).toBe('Symbol(100/200/gltf-prioritized-nodes-directory)');
   });
 
   test('same modelId/revisionId with different outputFormats produce unique symbols', () => {
     const id1 = new CdfModelIdentifier(100, 200);
-    const id2 = new CdfModelIdentifier(100, 200, 'gltf-prioritized-nodes-directory');
+    const id2 = new CdfModelIdentifier(100, 200, File3dFormat.GltfPrioritizedNodes);
 
     expect(id1.revealInternalId).not.toBe(id2.revealInternalId);
   });
@@ -51,7 +52,7 @@ describe(CdfModelIdentifier.name, () => {
   });
 
   test('sourceModelIdentifier appends outputFormat when set', () => {
-    const id = new CdfModelIdentifier(100, 200, 'gltf-prioritized-nodes-directory');
+    const id = new CdfModelIdentifier(100, 200, File3dFormat.GltfPrioritizedNodes);
 
     expect(id.sourceModelIdentifier()).toBe('cdf-classic: 100/200/gltf-prioritized-nodes-directory');
   });
