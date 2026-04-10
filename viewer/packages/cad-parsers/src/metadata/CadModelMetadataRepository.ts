@@ -71,7 +71,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
 
     const targetFormat = outputFormat ?? File3dFormat.GltfCadModel;
 
-    const supportedOutput = outputs.find(output => output.format === targetFormat);
+    const supportedOutput = outputs.find(output => output.format === targetFormat && output.version === 9);
 
     if (supportedOutput === undefined) {
       const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');

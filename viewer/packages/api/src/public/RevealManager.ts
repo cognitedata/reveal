@@ -239,10 +239,10 @@ export class RevealManager {
         return this._cadManager.addModel(
           createModelIdentifier(
             modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType,
-            cadOptions.outputFormat
+            cadOptions?.outputFormat
           ),
-          cadOptions.geometryFilter,
-          cadOptions.outputFormat
+          cadOptions?.geometryFilter,
+          cadOptions?.outputFormat
         );
       }
 
