@@ -178,7 +178,7 @@ export class CadManager {
     if (this._compatibleFileFormat === undefined) {
       return true;
     }
-    const compatibleGltfFormats: string[] = [File3dFormat.GltfCadModel, File3dFormat.GltfPrioritizedNodes];
+    const compatibleGltfFormats: File3dFormat[] = [File3dFormat.GltfCadModel, File3dFormat.GltfPrioritizedNodes];
     const isFormatCompatible =
       this._compatibleFileFormat.format === modelMetadata.format ||
       (compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
