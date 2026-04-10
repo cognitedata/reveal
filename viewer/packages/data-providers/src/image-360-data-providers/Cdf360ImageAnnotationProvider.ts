@@ -4,15 +4,7 @@
 
 import chunk from 'lodash/chunk';
 
-import {
-  AnnotationModel,
-  CogniteClient,
-  IdEither,
-  AnnotationFilterProps,
-  InternalId,
-  ExternalId,
-  AnnotationsTypesImagesAssetLink
-} from '@cognite/sdk';
+import { AnnotationModel, CogniteClient, IdEither, AnnotationFilterProps, AnnotationsAssetRef } from '@cognite/sdk';
 import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -23,7 +15,7 @@ import {
   InstanceReference
 } from '../types';
 import { getExternalIdFromDescriptor } from '../utilities/getExternalIdFromDescriptor';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdentifier } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
 import {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
@@ -35,8 +27,6 @@ import {
 } from '@reveal/360-images';
 import { isDmIdentifier } from '@reveal/utilities';
 import {
-  isAnnotationsTypesImagesInstanceLink,
-  isAssetLinkAnnotationData,
   isImageAssetLinkAnnotation,
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
@@ -110,42 +100,23 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     asset: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
-    const allAnnotations = await this.getAllAnnotationsForCollection(collection);
+    const matchingAnnotations = await this.fetchAnnotationsByReverseLookup(asset);
 
-    const matchingAnnotationIds = new Set<number>();
-    for (const annotation of allAnnotations) {
-      const annotationData = annotation.data;
-      let matches = false;
-      if (isDmIdentifier(asset)) {
-        if (isAnnotationsTypesImagesInstanceLink(annotationData)) {
-          matches = isSameDMIdentifier(annotationData.instanceRef, asset);
-        }
-      } else {
-        if (isAssetLinkAnnotationData(annotationData)) {
-          matches = matchesAssetRef(annotationData, asset);
-        }
-      }
-      if (matches) {
-        matchingAnnotationIds.add(annotation.id);
-      }
-    }
-
-    if (matchingAnnotationIds.size === 0) {
+    if (matchingAnnotations.length === 0) {
       return [];
     }
 
-    const fileIdToEntityRevision = await this.getFileIdToEntityRevisionMap(collection, allAnnotations);
+    const matchingAnnotationIds = new Set(matchingAnnotations.map(annotation => annotation.id));
+    const fileIdToEntityRevision = await this.buildFileIdToEntityRevisionMap(collection, matchingAnnotations);
 
     const revisionToEntityMap = new Map<
       Image360RevisionEntity<ClassicDataSourceType>,
       Image360Entity<ClassicDataSourceType>
     >();
-    for (const annotation of allAnnotations) {
-      if (matchingAnnotationIds.has(annotation.id)) {
-        const match = fileIdToEntityRevision.get(annotation.annotatedResourceId);
-        if (match !== undefined) {
-          revisionToEntityMap.set(match.revision, match.entity);
-        }
+    for (const annotation of matchingAnnotations) {
+      const match = fileIdToEntityRevision.get(annotation.annotatedResourceId);
+      if (match !== undefined) {
+        revisionToEntityMap.set(match.revision, match.entity);
       }
     }
 
@@ -165,6 +136,49 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       }
     }
 
+    return results;
+  }
+
+  /**
+   * Uses annotations reverseLookup to find only the files annotated with the given asset/instance,
+   * then fetches full annotation models for those files only
+   */
+  private async fetchAnnotationsByReverseLookup(asset: InstanceReference<DataSourceType>): Promise<AnnotationModel[]> {
+    const annotationType = isDmIdentifier(asset) ? 'images.InstanceLink' : 'images.AssetLink';
+    const dataFilter = getReverseLookupDataFilter(asset);
+
+    const fileRefs: AnnotationsAssetRef[] = await this._client.annotations
+      .reverseLookup({
+        filter: {
+          annotatedResourceType: 'file',
+          annotationType,
+          data: dataFilter
+        },
+        limit: 1000
+      })
+      .autoPagingToArray({ limit: Infinity });
+
+    if (fileRefs.length === 0) {
+      return [];
+    }
+
+    const resourceIds: IdEither[] = fileRefs
+      .map(ref => {
+        if (ref.id !== undefined) return { id: ref.id };
+        if (ref.externalId !== undefined) return { externalId: ref.externalId };
+        return undefined;
+      })
+      .filter((id): id is IdEither => id !== undefined);
+
+    // Process sequentially to avoid too many concurrent requests.
+    const results: AnnotationModel[] = [];
+    for (const idList of chunk(resourceIds, 1000)) {
+      const batchedResults = await this.listFileAnnotations({
+        annotatedResourceType: 'file',
+        annotatedResourceIds: idList
+      });
+      results.push(...batchedResults);
+    }
     return results;
   }
 
@@ -429,18 +443,16 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     const image360FileDescriptors = collection.getAllFileDescriptors();
     const resourceIds = getAnnotationResourceIds(image360FileDescriptors);
 
-    const assetListPromises = chunk(resourceIds, 1000).map(async idList => {
+    // Process sequentially to avoid too many concurrent requests.
+    const results: ClassicDataSourceType['image360AnnotationType'][] = [];
+    for (const idList of chunk(resourceIds, 1000)) {
       const annotationArray = await this.listFileAnnotations({
         annotatedResourceIds: idList,
         annotatedResourceType: 'file'
       });
-
-      const assetAnnotations = annotationArray.filter(annotationFilter);
-
-      return assetAnnotations;
-    });
-
-    return (await Promise.all(assetListPromises)).flat();
+      results.push(...annotationArray.filter(annotationFilter));
+    }
+    return results;
   }
 
   private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
@@ -453,10 +465,12 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   }
 }
 
-function matchesAssetRef(assetLink: AnnotationsTypesImagesAssetLink, matchRef: IdEither): boolean {
-  return (
-    ((matchRef as InternalId).id !== undefined && assetLink.assetRef.id === (matchRef as InternalId).id) ||
-    ((matchRef as ExternalId).externalId !== undefined &&
-      assetLink.assetRef.externalId === (matchRef as ExternalId).externalId)
-  );
+function getReverseLookupDataFilter(asset: InstanceReference<DataSourceType>): Record<string, unknown> {
+  if (isDmIdentifier(asset)) {
+    return { instanceRef: { externalId: asset.externalId, space: asset.space } };
+  }
+  if ('id' in asset) {
+    return { assetRef: { id: asset.id } };
+  }
+  return { assetRef: { externalId: asset.externalId } };
 }
