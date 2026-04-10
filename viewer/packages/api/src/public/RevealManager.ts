@@ -39,6 +39,7 @@ import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/
 export type AddCadModelOptions = {
   nodeAppearanceProvider?: NodeAppearanceProvider;
   geometryFilter?: GeometryFilter;
+  outputFormat?: string;
 };
 
 /**
@@ -234,9 +235,14 @@ export class RevealManager {
   ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
       case 'cad': {
+        const cadOptions = options as AddCadModelOptions;
         return this._cadManager.addModel(
-          createModelIdentifier(modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType),
-          (options as AddCadModelOptions).geometryFilter
+          createModelIdentifier(
+            modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType,
+            cadOptions.outputFormat
+          ),
+          cadOptions.geometryFilter,
+          cadOptions.outputFormat
         );
       }
 

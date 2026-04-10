@@ -36,8 +36,8 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     this._blobFileName = blobFileName;
   }
 
-  async loadData(modelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    const cadOutput = await this.getSupportedOutput(modelIdentifier);
+  async loadData(modelIdentifier: ModelIdentifier, outputFormat?: string): Promise<CadModelMetadata> {
+    const cadOutput = await this.getSupportedOutput(modelIdentifier, outputFormat);
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
@@ -63,20 +63,20 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     };
   }
 
-  private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
+  private async getSupportedOutput(
+    modelIdentifier: ModelIdentifier,
+    outputFormat?: string
+  ): Promise<BlobOutputMetadata> {
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
-    // Supported output formats in order of preference (first format is most preferred)
-    const gltfOutput = { format: File3dFormat.GltfCadModel, version: 9 };
 
-    const supportedOutput = outputs.find(
-      supportedOutput => supportedOutput.format === gltfOutput.format && supportedOutput.version === gltfOutput.version
-    );
+    const targetFormat = outputFormat ?? File3dFormat.GltfCadModel;
+
+    const supportedOutput = outputs.find(output => output.format === targetFormat);
 
     if (supportedOutput === undefined) {
       const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
-      const supportedOutputsString = `${gltfOutput.format} v${gltfOutput.version}`;
       throw new Error(
-        `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
+        `Model does not contain output of format '${targetFormat}', available outputs: [${cadModelOutputsString}]`
       );
     }
 

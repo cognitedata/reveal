@@ -12,11 +12,14 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
   readonly modelId: number;
   readonly revisionId: number;
+  readonly outputFormat: string | undefined;
 
-  constructor(modelId: number, revisionId: number) {
-    this.revealInternalId = Symbol(`${modelId}/${revisionId}`);
+  constructor(modelId: number, revisionId: number, outputFormat?: string) {
+    const suffix = outputFormat ? `/${outputFormat}` : '';
+    this.revealInternalId = Symbol(`${modelId}/${revisionId}${suffix}`);
     this.modelId = modelId;
     this.revisionId = revisionId;
+    this.outputFormat = outputFormat;
   }
 
   public toString(): string {
@@ -28,6 +31,7 @@ export class CdfModelIdentifier implements ModelIdentifier {
    * the model in CDF
    */
   public sourceModelIdentifier(): string {
-    return `cdf-classic: ${this.modelId}/${this.revisionId}`;
+    const suffix = this.outputFormat ? `/${this.outputFormat}` : '';
+    return `cdf-classic: ${this.modelId}/${this.revisionId}${suffix}`;
   }
 }
