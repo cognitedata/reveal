@@ -11,7 +11,7 @@ import { PointCloudVolumeObject3DProperties } from './types';
 import { CdfPointCloudObjectAnnotation } from '../types';
 import { QueryNextCursors } from '../../types';
 
-import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
+import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
 import { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
