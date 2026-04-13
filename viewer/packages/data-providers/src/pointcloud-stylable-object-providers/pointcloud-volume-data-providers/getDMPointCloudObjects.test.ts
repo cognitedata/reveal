@@ -14,7 +14,11 @@ const PAGE1_SIZE = 1000;
 const PAGE2_SIZE = 500;
 const TOTAL_VOLUMES = PAGE1_SIZE + PAGE2_SIZE;
 
-function createVolume(index: number, page: number): ExhaustedQueryResult['pointCloudVolumes'][number] {
+function createVolume(
+  index: number,
+  page: number,
+  noObject3D: boolean = false
+): ExhaustedQueryResult['pointCloudVolumes'][number] {
   const id = page * VOLUME_LIMIT + index;
   const obj3dId = `obj3d_${id}`;
   return {
@@ -31,7 +35,7 @@ function createVolume(index: number, page: number): ExhaustedQueryResult['pointC
           volumeReferences: [],
           volumeType: 'Box',
           volume: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-          object3D: { externalId: obj3dId, space: 'objSpace' }
+          object3D: noObject3D ? undefined : { externalId: obj3dId, space: 'objSpace' }
         }
       }
     }
@@ -158,5 +162,22 @@ describe(getDMPointCloudObjects.name, () => {
     const result = await getDMPointCloudObjects(dmsSdkMock.object(), modelIdentifier);
 
     expect(result).toHaveLength(singlePageSize);
+  });
+
+  test('gracefully ignore annotations with  undefined object3Ds', async () => {
+    const volumes = [createVolume(0, 0), createVolume(1, 0, true)];
+    const assets = Array.from({ length: 2 }, (_, i) => createAsset(i, 0));
+    const page = {
+      pointCloudVolumes: volumes,
+      assets
+    };
+
+    const dmsSdkMock = new Mock<DataModelsSdk>()
+      .setup(m => m.queryNodesAndEdges(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(page));
+
+    const result = await getDMPointCloudObjects(dmsSdkMock.object(), modelIdentifier);
+
+    expect(result).toHaveLength(1);
   });
 });
