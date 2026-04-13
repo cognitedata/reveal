@@ -11,7 +11,7 @@ import { PointCloudVolumeObject3DProperties } from './types';
 import { CdfPointCloudObjectAnnotation } from '../types';
 import { QueryNextCursors } from '../../types';
 
-import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, DMInstanceRef } from '@reveal/utilities';
+import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, isDefined, isDmIdentifier } from '@reveal/utilities';
 import { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
@@ -65,10 +65,15 @@ export async function getDMPointCloudObjects(
     nextCursor = currentCursor?.pointCloudVolumes ? { pointCloudVolumes: currentCursor.pointCloudVolumes } : undefined;
   }
 
-  const object3DAndAssetPairs: [DMInstanceKey, AssetResult][] = result.assets.map(asset => [
-    dmInstanceRefToKey(asset.properties.cdf_cdm['CogniteAsset/v1'].object3D as DMInstanceRef),
-    asset
-  ]);
+  const object3DAndAssetPairs = result.assets
+    .map(asset => {
+      const object3D = asset.properties.cdf_cdm['CogniteAsset/v1'].object3D;
+      if (object3D === undefined || !isDmIdentifier(object3D)) {
+        return undefined;
+      }
+      return [dmInstanceRefToKey(object3D), asset] as const;
+    })
+    .filter(isDefined);
 
   const object3DToAssetMap = new Map<DMInstanceKey, AssetResult>(object3DAndAssetPairs);
 
@@ -82,9 +87,12 @@ export async function getDMPointCloudObjects(
         pointCloudVolumeProperties.volumeType
       );
 
-      const asset = object3DToAssetMap.get(
-        dmInstanceRefToKey(volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D as DMInstanceRef)
-      );
+      const object3D = volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D;
+      if (object3D === undefined || !isDmIdentifier(object3D)) {
+        return undefined;
+      }
+
+      const asset = object3DToAssetMap.get(dmInstanceRefToKey(object3D));
 
       if (asset === undefined) {
         return undefined;
