@@ -112,6 +112,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
       if (this.customSectorBounds.isRegistered(treeIndex)) {
         this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
       }
+      this.cadNode.onTreeIndexSectorDiscovered(treeIndex, newSectorId);
     };
     const cdfToWorldTransform = this.getModelTransformation()
       .clone()
@@ -209,6 +210,35 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   removeAllStyledNodeCollections(): void {
     this._styledNodeCollections.splice(0);
     this.cadNode.nodeAppearanceProvider.clear();
+  }
+
+  /**
+   * Locks the sectors containing the given tree indices so they are never
+   * evicted when the CAD budget is reduced. The lock is reactive: if a
+   * tree index's geometry is later discovered in a new sector (when that
+   * sector loads), the new sector is automatically locked as well.
+   *
+   * @param treeIndices Tree indices of nodes whose sectors should be locked.
+   */
+  lockTreeIndices(treeIndices: number[]): void {
+    this.cadNode.lockTreeIndices(treeIndices);
+  }
+
+  /**
+   * Removes the lock for the given tree indices. Sectors that were only
+   * locked because of these tree indices will become eligible for eviction.
+   *
+   * @param treeIndices Tree indices to unlock.
+   */
+  unlockTreeIndices(treeIndices: number[]): void {
+    this.cadNode.unlockTreeIndices(treeIndices);
+  }
+
+  /**
+   * Removes all tree-index-based sector locks on this model.
+   */
+  unlockAllTreeIndices(): void {
+    this.cadNode.unlockAllTreeIndices();
   }
 
   /**
