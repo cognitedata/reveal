@@ -3,7 +3,17 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import { Matrix4, PerspectiveCamera, Ray, Vector3, WebGLRenderer } from 'three';
+import {
+  CircleGeometry,
+  InstancedMesh,
+  Matrix4,
+  MeshBasicMaterial,
+  Object3D,
+  PerspectiveCamera,
+  Ray,
+  Vector3,
+  WebGLRenderer
+} from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
@@ -16,6 +26,7 @@ describe(IconCollection.name, () => {
   let mockEventTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
   let capturedRenderCallback: BeforeSceneRenderedDelegate | undefined;
   let mockRenderer: WebGLRenderer;
+  let addedObjects: Object3D[];
 
   // Shared test positions
   const origin = new Vector3(0, 0, 0);
@@ -53,11 +64,17 @@ describe(IconCollection.name, () => {
   const renderFrame = (camera: PerspectiveCamera, frameNumber = 0) =>
     capturedRenderCallback?.({ frameNumber, renderer: mockRenderer, camera });
 
+  const isFloorDiscMesh = (o: Object3D): o is InstancedMesh<CircleGeometry, MeshBasicMaterial> =>
+    o instanceof InstancedMesh && o.renderOrder === 4;
+
   beforeEach(() => {
+    addedObjects = [];
     capturedRenderCallback = undefined;
     mockSceneHandler = new Mock<SceneHandler>()
       .setup(s => s.addObject3D(It.IsAny()))
-      .returns(undefined)
+      .callback(({ args }) => {
+        addedObjects.push(args[0]);
+      })
       .setup(s => s.removeObject3D(It.IsAny()))
       .returns(undefined)
       .object();
@@ -323,6 +340,145 @@ describe(IconCollection.name, () => {
     const disabledCollection = createCollection(clusterablePositions, false);
     expect(disabledCollection.isHtmlClustersEnabled()).toBe(false);
     disabledCollection.dispose();
+  });
+
+  describe('setFloorMode', () => {
+    // Camera height estimate is 1.5, floor disc offset is 0.05, so floor-level Y for an icon at Y=1.5 is 0.05.
+    const cameraHeight = 1.5;
+    const iconPos = new Vector3(0, cameraHeight, 0);
+
+    it('does not mutate icon positions when entering floor mode', () => {
+      const collection = createCollection([iconPos.clone(), new Vector3(1, cameraHeight, 0)]);
+      const originalYValues = collection.icons.map(icon => icon.getPosition().y);
+
+      collection.setFloorMode(true);
+
+      collection.icons.forEach((icon, i) => {
+        expect(icon.getPosition().y).toBe(originalYValues[i]);
+      });
+      collection.dispose();
+    });
+
+    it('icon bounding sphere is at floor level in floor mode and back at camera height after exit', () => {
+      const collection = createCollection([iconPos.clone()]);
+      const icon = collection.icons[0];
+
+      // Ray at camera height hits in normal mode
+      const cameraRay = new Ray(new Vector3(0, cameraHeight, 10), new Vector3(0, 0, -1));
+      expect(icon.intersect(cameraRay)).not.toBeNull();
+
+      collection.setFloorMode(true);
+
+      // Ray at camera height misses (sphere shifted to floor)
+      expect(icon.intersect(cameraRay)).toBeNull();
+      // Ray at floor level hits
+      const floorRay = new Ray(new Vector3(0, 0.05, 10), new Vector3(0, 0, -1));
+      expect(icon.intersect(floorRay)).not.toBeNull();
+
+      collection.setFloorMode(false);
+
+      // Ray at camera height hits again after exit
+      expect(icon.intersect(cameraRay)).not.toBeNull();
+      collection.dispose();
+    });
+
+    it('calling setFloorMode(true) twice only applies the offset once', () => {
+      const collection = createCollection([iconPos.clone()]);
+      const icon = collection.icons[0];
+
+      collection.setFloorMode(true);
+      collection.setFloorMode(true); // second call should be no-op
+
+      // Sphere should be at floor level, not double-shifted
+      const floorRay = new Ray(new Vector3(0, 0.05, 10), new Vector3(0, 0, -1));
+      expect(icon.intersect(floorRay)).not.toBeNull();
+      collection.dispose();
+    });
+
+    it('calls setNeedsRedraw when toggling floor mode', () => {
+      const setNeedsRedrawMock = jest.fn();
+      const collection = createCollection([new Vector3(0, 5, 0)], undefined, setNeedsRedrawMock);
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(true);
+      expect(setNeedsRedrawMock).toHaveBeenCalled();
+
+      setNeedsRedrawMock.mockClear();
+      collection.setFloorMode(false);
+      expect(setNeedsRedrawMock).toHaveBeenCalled();
+
+      collection.dispose();
+    });
+
+    it('rendering in floor mode uses proximity culling: closest icons are unculled', () => {
+      const nearPos = new Vector3(0, 1.5, 0);
+      const collection = createCollection([nearPos]);
+      const camera = createCamera(new Vector3(0, 0, 5));
+
+      collection.setFloorMode(true);
+      expect(() => renderFrame(camera)).not.toThrow();
+
+      collection.dispose();
+    });
+
+    it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
+      const collection = createCollection([new Vector3(0, 1.5, 0)]);
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
+
+      const instanceMatrix = new Matrix4();
+      const isHidden = (mesh: InstancedMesh, index: number) => {
+        mesh.getMatrixAt(index, instanceMatrix);
+        return instanceMatrix.elements[0] === 0; // scale x = 0 means hidden
+      };
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(true);
+
+      collection.setFloorMode(true);
+      renderFrame(createCamera(new Vector3(0, 0, 5)));
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(false);
+
+      collection.setFloorMode(false);
+
+      expect(isHidden(floorDiscMesh, 0)).toBe(true);
+      collection.dispose();
+    });
+  });
+
+  describe('opacity and occlusion', () => {
+    it('getOpacity and setOpacity round-trip correctly', () => {
+      const collection = createCollection([origin]);
+
+      collection.setOpacity(0.75);
+      expect(collection.getOpacity()).toBeCloseTo(0.75);
+
+      collection.dispose();
+    });
+
+    it('isOccludedVisible reflects setOccludedVisible state', () => {
+      const collection = createCollection([origin]);
+
+      collection.setOccludedVisible(true);
+      expect(collection.isOccludedVisible()).toBe(true);
+
+      collection.setOccludedVisible(false);
+      expect(collection.isOccludedVisible()).toBe(false);
+
+      collection.dispose();
+    });
+
+    it('setOpacity applies to floor disc mesh material', () => {
+      const collection = createCollection([origin]);
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
+
+      expect(floorDiscMesh).toBeDefined();
+      collection.setOpacity(0.5);
+      expect(floorDiscMesh.material.opacity).toBeCloseTo(0.5);
+
+      collection.dispose();
+    });
   });
 
   test('setCullingScheme switching behavior and state preservation', () => {

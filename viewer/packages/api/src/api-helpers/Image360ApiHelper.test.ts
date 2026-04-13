@@ -2,7 +2,8 @@
  * Copyright 2025 Cognite AS
  */
 import { Mock, It } from 'moq.ts';
-import { PerspectiveCamera, Scene, Vector3 } from 'three';
+import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
+import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 import { jest } from '@jest/globals';
 
@@ -22,10 +23,61 @@ import {
   Image360IconIntersectionData,
   Image360Entity,
   Image360Facade,
-  DefaultImage360Collection
+  DefaultImage360Collection,
+  Image360RevisionEntity,
+  Image360EnteredDelegate,
+  Image360ExitedDelegate
 } from '@reveal/360-images';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { mockClientAuthentication, fakeGetBoundingClientRect } from '../../../../test-utilities';
+import { Image360VisualizationBox } from '../../../360-images/src/entity/Image360VisualizationBox';
+
+function createMockRevision(): Image360RevisionEntity<DataSourceType> {
+  return new Mock<Image360RevisionEntity<DataSourceType>>()
+    .setup(r => r.applyFullResolutionTextures())
+    .returns(Promise.resolve())
+    .object();
+}
+
+function createMockVisualization(): Image360VisualizationBox {
+  return new Mock<Image360VisualizationBox>()
+    .setup(v => v.visible)
+    .returns(false)
+    .object();
+}
+
+function createMockIcon(): Overlay3DIcon {
+  return new Mock<Overlay3DIcon>()
+    .setup(i => i.setVisible(It.IsAny()))
+    .returns(undefined)
+    .object();
+}
+
+function createMockEntity(
+  mockIcon: Overlay3DIcon,
+  mockVisualization: Image360VisualizationBox,
+  mockRevision: Image360RevisionEntity<DataSourceType>,
+  position?: Vector3
+): Image360Entity<DataSourceType> {
+  return new Mock<Image360Entity<DataSourceType>>()
+    .setup(e => e.icon)
+    .returns(mockIcon)
+    .setup(e => e.image360Visualization)
+    .returns(mockVisualization)
+    .setup(e => e.getActiveRevision())
+    .returns(mockRevision)
+    .setup(e => e.getMostRecentRevision())
+    .returns(mockRevision)
+    .setup(e => e.setActiveRevision(It.IsAny()))
+    .returns(undefined)
+    .setup(e => e.activateAnnotations())
+    .returns(undefined)
+    .setup(e => e.deactivateAnnotations())
+    .returns(undefined)
+    .setup(e => e.transform)
+    .returns(position ? new Matrix4().makeTranslation(position.x, position.y, position.z) : new Matrix4())
+    .object();
+}
 
 function createMockSceneHandler(): SceneHandler {
   const mockScene = new Mock<Scene>()
@@ -70,7 +122,8 @@ type CameraManagerType = 'mock' | 'flexible' | 'default';
 function createTestHelper(
   domElement: HTMLElement,
   sdk: CogniteClient,
-  cameraManagerType: CameraManagerType = 'mock'
+  cameraManagerType: CameraManagerType = 'mock',
+  iconsOptions?: { enableFloorIcons?: boolean }
 ): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
   const mockCamera = new PerspectiveCamera();
   mockCamera.position.set(0, 0, 10);
@@ -102,6 +155,10 @@ function createTestHelper(
     .returns(mockCamera)
     .setup(p => p.innerCameraManager)
     .returns(innerCameraManager)
+    .setup(p => p.setActiveCameraManager(It.IsAny()))
+    .returns(undefined)
+    .setup(p => p.setCameraState(It.IsAny()))
+    .returns(undefined)
     .object();
 
   const mockSceneHandler = createMockSceneHandler();
@@ -114,7 +171,8 @@ function createTestHelper(
     proxyCameraManager,
     mockInputHandler,
     onBeforeSceneRendered,
-    false
+    false,
+    iconsOptions
   );
 
   return { helper, innerCameraManager };
@@ -149,6 +207,13 @@ describe(Image360ApiHelper.name, () => {
     jest.useRealTimers();
     jest.restoreAllMocks();
   });
+
+  async function enterImage(entity: Image360Entity<DataSourceType>): Promise<void> {
+    const enterPromise = helper.enter360ImageInternal(entity);
+    await Promise.resolve(); // flush preload microtask so tweens are created
+    TWEEN.update(TWEEN.now() + 2000); // drive tween animations to completion
+    await enterPromise;
+  }
 
   describe('enter360ImageOnIntersect (via onClick)', () => {
     test('returns false when no cluster or icon intersection found', async () => {
@@ -330,6 +395,227 @@ describe(Image360ApiHelper.name, () => {
       await jest.advanceTimersByTimeAsync(1000);
       await firstZoomPromise;
       flexibleHelper.dispose();
+    });
+  });
+
+  describe('floor mode', () => {
+    function createMockCollection(): DefaultImage360Collection<DataSourceType> {
+      return new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.setFloorMode)
+        .returns(jest.fn())
+        .setup(c => c.getIconsVisibility())
+        .returns(true)
+        .setup(c => c.setIconsVisibility(It.IsAny()))
+        .returns(undefined)
+        .setup(c => c.isCollectionVisible)
+        .returns(true)
+        .setup(c => c.getImagesOpacity())
+        .returns(1)
+        .setup(c => c.events)
+        .returns({
+          image360Entered: new EventTrigger<Image360EnteredDelegate<DataSourceType>>(),
+          image360Exited: new EventTrigger<Image360ExitedDelegate>()
+        })
+        .object();
+    }
+
+    function createFloorModeFixture() {
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const mockCollection = createMockCollection();
+
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+
+      return { mockEntity, mockCollection };
+    }
+
+    test('does not call setFloorMode(true) on enter when enableFloorIcons is false (default)', async () => {
+      const { mockEntity } = createFloorModeFixture();
+      const mockCollection = createMockCollection();
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+
+      await enterImage(mockEntity);
+
+      expect(jest.mocked(mockCollection.setFloorMode)).not.toHaveBeenCalledWith(true);
+    });
+
+    test('calls setFloorMode(true) on ALL collections on enter when enableFloorIcons is true', async () => {
+      const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
+      const { mockEntity } = createFloorModeFixture();
+      const mockCollection1 = createMockCollection();
+      const mockCollection2 = createMockCollection();
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
+
+      const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
+
+      expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
+      expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
+      floorHelper.dispose();
+    });
+
+    test('calls setFloorMode(false) on ALL collections when exiting regardless of enableFloorIcons', async () => {
+      const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
+      const { mockEntity } = createFloorModeFixture();
+      const mockCollection1 = createMockCollection();
+      const mockCollection2 = createMockCollection();
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
+
+      const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
+      jest.mocked(mockCollection1.setFloorMode).mockClear();
+      jest.mocked(mockCollection2.setFloorMode).mockClear();
+
+      floorHelper.exit360Image();
+
+      expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
+      expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
+      floorHelper.dispose();
+    });
+  });
+
+  describe('cursor pointer on hover', () => {
+    function makeHoverEvent(offsetX = 320, offsetY = 240): PointerEvent {
+      return { offsetX, offsetY } as PointerEvent;
+    }
+
+    test('sets cursor to pointer when hovering over an icon', () => {
+      const mockIconData: Image360IconIntersectionData<DataSourceType> = {
+        image360Collection: new Mock<DefaultImage360Collection<DataSourceType>>().object(),
+        image360: new Mock<Image360Entity<DataSourceType>>()
+          .setup(e => e.icon)
+          .returns(
+            new Mock<Overlay3DIcon>()
+              .setup(i => i.setVisible(It.IsAny()))
+              .returns(undefined)
+              .setup(i => (i.selected = It.IsAny()))
+              .returns(undefined)
+              .object()
+          )
+          .setup(e => e.getMostRecentRevision())
+          .returns(createMockRevision())
+          .object(),
+        point: new Vector3(0, 0, 0),
+        distanceToCamera: 10
+      };
+
+      const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>().object();
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
+      jest.spyOn(Image360Facade.prototype, 'setHoverIconVisibilityForEntity').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+
+      helper.onHover(makeHoverEvent());
+
+      expect(domElement.style.cursor).toBe('pointer');
+    });
+
+    test('sets cursor to pointer when hovering over a cluster', () => {
+      const mockClusterData = createMockClusterData();
+
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+
+      helper.onHover(makeHoverEvent());
+
+      expect(domElement.style.cursor).toBe('pointer');
+    });
+
+    test('resets cursor when not hovering over any icon or cluster', () => {
+      domElement.style.cursor = 'pointer';
+
+      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+
+      helper.onHover(makeHoverEvent());
+
+      expect(domElement.style.cursor).toBe('');
+    });
+  });
+
+  describe('findBestNext360ImageEntity', () => {
+    function makeCandidateEntityAt(position: Vector3): Image360Entity<DataSourceType> {
+      return new Mock<Image360Entity<DataSourceType>>()
+        .setup(e => e.transform)
+        .returns(new Matrix4().makeTranslation(position.x, position.y, position.z))
+        .object();
+    }
+
+    function makeCandidateCollection(
+      entities: Image360Entity<DataSourceType>[]
+    ): DefaultImage360Collection<DataSourceType> {
+      return new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.image360Entities)
+        .returns(entities)
+        .object();
+    }
+
+    async function enterAt(position: Vector3): Promise<Image360Entity<DataSourceType>> {
+      const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision(), position);
+      const enterCollection = new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.isCollectionVisible)
+        .returns(true)
+        .setup(c => c.events)
+        .returns({
+          image360Entered: new EventTrigger<Image360EnteredDelegate<DataSourceType>>(),
+          image360Exited: new EventTrigger<Image360ExitedDelegate>()
+        })
+        .object();
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(enterCollection);
+      await enterImage(entity);
+      return entity;
+    }
+
+    test('returns undefined when not inside a 360 image', () => {
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([]);
+
+      expect(helper.findBestNext360ImageEntity(new Vector3(10, 0, 0))).toBeUndefined();
+    });
+
+    test('returns undefined when no entity lies in the click direction', async () => {
+      const current = await enterAt(new Vector3(0, 0, 0));
+      const behind = makeCandidateEntityAt(new Vector3(-5, 0, 0));
+      jest
+        .spyOn(Image360Facade.prototype, 'collections', 'get')
+        .mockReturnValue([makeCandidateCollection([current, behind])]);
+
+      // Click toward +X; behind entity is at -X
+      expect(helper.findBestNext360ImageEntity(new Vector3(10, 0, 0))).toBeUndefined();
+    });
+
+    test('returns the nearest entity in the click direction', async () => {
+      const current = await enterAt(new Vector3(0, 0, 0));
+      const near = makeCandidateEntityAt(new Vector3(3, 0, 0));
+      const far = makeCandidateEntityAt(new Vector3(8, 0, 0));
+      jest
+        .spyOn(Image360Facade.prototype, 'collections', 'get')
+        .mockReturnValue([makeCandidateCollection([current, near, far])]);
+
+      // Click at (5, 0, 0): near is closer to the click point than far
+      const result = helper.findBestNext360ImageEntity(new Vector3(5, 0, 0));
+      expect(result?.image360).toBe(near);
+    });
+
+    test('ignores entities behind the current position', async () => {
+      const current = await enterAt(new Vector3(0, 0, 0));
+      const forward = makeCandidateEntityAt(new Vector3(5, 0, 0));
+      const backward = makeCandidateEntityAt(new Vector3(-5, 0, 0));
+      jest
+        .spyOn(Image360Facade.prototype, 'collections', 'get')
+        .mockReturnValue([makeCandidateCollection([current, forward, backward])]);
+
+      const result = helper.findBestNext360ImageEntity(new Vector3(10, 0, 0));
+      expect(result?.image360).toBe(forward);
     });
   });
 });
