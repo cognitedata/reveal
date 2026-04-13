@@ -102,4 +102,40 @@ describe(ByScreenSizeSectorCuller.name, () => {
       return prioritizedAreaBounds.intersectsBox(bounds);
     });
   });
+
+  test('determineSectors force-includes all sectors of a locked model even when budget is zero', () => {
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    input.lockedModelIdentifiers = new Set([model.modelIdentifier.revealInternalId]);
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.length).toBe(model.scene.sectorCount);
+  });
+
+  test('determineSectors force-includes specific locked sector IDs even when budget is zero', () => {
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    const lockedSectorId = model.scene.root.id;
+    input.lockedModelIdentifiers = new Set<symbol>();
+    input.lockedSectorIdsByModel = new Map([[model.modelIdentifier.revealInternalId, new Set([lockedSectorId])]]);
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.some(s => s.metadata.id === lockedSectorId)).toBe(true);
+  });
+
+  test('determineSectors does not force sectors for models not in lockedModelIdentifiers', () => {
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    input.lockedModelIdentifiers = new Set<symbol>();
+    input.lockedSectorIdsByModel = new Map();
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.length).toBe(0);
+  });
 });

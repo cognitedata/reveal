@@ -157,4 +157,26 @@ describe(CogniteCadModel.name, () => {
     expect(model.cadNode.visible).toBe(visible);
     expect(model.visible).toBe(visible);
   });
+
+  describe('tree index locking', () => {
+    test('lockTreeIndices does not throw', () => {
+      expect(() => model.lockTreeIndices([1, 2, 3])).not.toThrow();
+    });
+
+    test('unlockTreeIndices does not throw', () => {
+      expect(() => model.unlockTreeIndices([1, 2, 3])).not.toThrow();
+    });
+
+    test('unlockAllTreeIndices does not throw', () => {
+      expect(() => model.unlockAllTreeIndices()).not.toThrow();
+    });
+
+    test('lockTreeIndices and unlockAllTreeIndices are symmetric', () => {
+      model.lockTreeIndices([1, 2]);
+      expect(model.cadNode.lockedSectorIds.size).toBe(0); // no sectors mapped yet
+
+      model.unlockAllTreeIndices();
+      expect(model.cadNode.lockedSectorIds.size).toBe(0);
+    });
+  });
 });
