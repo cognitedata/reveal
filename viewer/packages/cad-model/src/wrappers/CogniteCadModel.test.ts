@@ -159,23 +159,34 @@ describe(CogniteCadModel.name, () => {
   });
 
   describe('tree index locking', () => {
-    test('lockTreeIndices does not throw', () => {
-      expect(() => model.lockTreeIndices([1, 2, 3])).not.toThrow();
-    });
+    test('lockTreeIndices populates lockedSectorIds for mapped tree indices', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
 
-    test('unlockTreeIndices does not throw', () => {
-      expect(() => model.unlockTreeIndices([1, 2, 3])).not.toThrow();
-    });
-
-    test('unlockAllTreeIndices does not throw', () => {
-      expect(() => model.unlockAllTreeIndices()).not.toThrow();
-    });
-
-    test('lockTreeIndices and unlockAllTreeIndices are symmetric', () => {
       model.lockTreeIndices([1, 2]);
-      expect(model.cadNode.lockedSectorIds.size).toBe(0); // no sectors mapped yet
+
+      expect(model.cadNode.lockedSectorIds.has(10)).toBe(true);
+      expect(model.cadNode.lockedSectorIds.has(20)).toBe(true);
+    });
+
+    test('unlockTreeIndices removes only the unlocked indices sectors', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+      model.lockTreeIndices([1, 2]);
+
+      model.unlockTreeIndices([1]);
+
+      expect(model.cadNode.lockedSectorIds.has(10)).toBe(false);
+      expect(model.cadNode.lockedSectorIds.has(20)).toBe(true);
+    });
+
+    test('unlockAllTreeIndices clears all locked sectors', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+      model.lockTreeIndices([1, 2]);
 
       model.unlockAllTreeIndices();
+
       expect(model.cadNode.lockedSectorIds.size).toBe(0);
     });
   });
