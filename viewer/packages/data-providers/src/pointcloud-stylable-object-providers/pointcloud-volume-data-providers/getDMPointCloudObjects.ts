@@ -68,7 +68,7 @@ export async function getDMPointCloudObjects(
   const object3DAndAssetPairs = result.assets
     .map(asset => {
       const object3D = asset.properties.cdf_cdm['CogniteAsset/v1'].object3D;
-      if (object3D === undefined || !isDmIdentifier(object3D)) {
+      if (!isDmIdentifier(object3D)) {
         return undefined;
       }
       return [dmInstanceRefToKey(object3D), asset] as const;
@@ -88,7 +88,7 @@ export async function getDMPointCloudObjects(
       );
 
       const object3D = volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D;
-      if (object3D === undefined || !isDmIdentifier(object3D)) {
+      if (!isDmIdentifier(object3D)) {
         return undefined;
       }
 
