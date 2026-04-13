@@ -140,7 +140,10 @@ export class RevealManagerHelper {
     model: AddModelOptionsWithModelRevisionId<LocalDataSourceType>,
     revealManager: RevealManager
   ): Promise<CadNode> {
-    return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
+    return revealManager.addModel('cad', model, {
+      geometryFilter: model.geometryFilter,
+      outputFormat: model.outputFormat
+    });
   }
 
   /**
@@ -152,7 +155,10 @@ export class RevealManagerHelper {
     model: AddModelOptionsWithModelRevisionId<T>,
     revealManager: RevealManager
   ): Promise<CadNode> {
-    return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
+    return revealManager.addModel('cad', model, {
+      geometryFilter: model.geometryFilter,
+      outputFormat: model.outputFormat
+    });
   }
 
   private static addLocalPointCloudModel<T extends DataSourceType>(
