@@ -67,7 +67,9 @@ export class SectorLoader {
     const sectorCullerInput: DetermineSectorsInput = {
       ...input,
       cadModelsMetadata: visibleCadModels.map(x => x.cadModelMetadata),
-      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes])
+      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes]),
+      lockedModelIdentifiers: input.lockedModelIdentifiers,
+      lockedSectorIdsByModel: input.lockedSectorIdsByModel
     };
 
     if (sectorCullerInput.cadModelsMetadata.length <= 0) {
@@ -200,5 +202,6 @@ class ProgressReportHelper {
 
 function isGltfModelFormat(model: CadModelMetadata): boolean {
   // Add new versions here as support is added to Reveal
-  return model.format === File3dFormat.GltfCadModel && model.formatVersion === 9;
+  const isGltf = model.format === File3dFormat.GltfCadModel || model.format === File3dFormat.GltfPrioritizedNodes;
+  return isGltf && model.formatVersion === 9;
 }

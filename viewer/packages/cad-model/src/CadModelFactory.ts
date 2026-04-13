@@ -30,8 +30,8 @@ export class CadModelFactory {
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
   }
 
-  loadModelMetadata(externalModelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    return this._cadModelMetadataRepository.loadData(externalModelIdentifier);
+  loadModelMetadata(externalModelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
+    return this._cadModelMetadataRepository.loadData(externalModelIdentifier, outputFormat);
   }
 
   createModel(metadata: CadModelMetadata, geometryFilter?: GeometryFilter): CadNode {
@@ -62,7 +62,8 @@ export class CadModelFactory {
   }
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
-    if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
+    const isGltfFormat = format === File3dFormat.GltfCadModel || format === File3dFormat.GltfPrioritizedNodes;
+    if (isGltfFormat && formatVersion === 9) {
       this._gltfSectorRepository = this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider);
 
       return this._gltfSectorRepository;

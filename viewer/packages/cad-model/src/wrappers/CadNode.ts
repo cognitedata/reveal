@@ -58,6 +58,9 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public readonly treeIndexToSectorsMap;
 
+  private readonly _lockedTreeIndices = new Set<number>();
+  private readonly _lockedSectorIds = new Set<number>();
+
   public readonly type = 'CadNode';
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
@@ -227,6 +230,50 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   get prioritizedAreas(): PrioritizedArea[] {
     return this.nodeAppearanceProvider.getPrioritizedAreas();
+  }
+
+  get lockedSectorIds(): ReadonlySet<number> {
+    return this._lockedSectorIds;
+  }
+
+  lockTreeIndices(treeIndices: number[]): void {
+    for (const treeIndex of treeIndices) {
+      this._lockedTreeIndices.add(treeIndex);
+      for (const sectorId of this.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex)) {
+        this._lockedSectorIds.add(sectorId);
+      }
+    }
+  }
+
+  unlockTreeIndices(treeIndices: number[]): void {
+    for (const treeIndex of treeIndices) {
+      this._lockedTreeIndices.delete(treeIndex);
+    }
+    this.recomputeLockedSectorIds();
+  }
+
+  unlockAllTreeIndices(): void {
+    this._lockedTreeIndices.clear();
+    this._lockedSectorIds.clear();
+  }
+
+  /**
+   * Called when a new sector is discovered for a tree index.
+   * If that tree index is locked, the sector is added to the locked set.
+   */
+  onTreeIndexSectorDiscovered(treeIndex: number, sectorId: number): void {
+    if (this._lockedTreeIndices.has(treeIndex)) {
+      this._lockedSectorIds.add(sectorId);
+    }
+  }
+
+  private recomputeLockedSectorIds(): void {
+    this._lockedSectorIds.clear();
+    for (const treeIndex of this._lockedTreeIndices) {
+      for (const sectorId of this.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex)) {
+        this._lockedSectorIds.add(sectorId);
+      }
+    }
   }
 
   public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
