@@ -183,18 +183,10 @@ export class CadManager {
     if (this._compatibleFileFormat === undefined) {
       return true;
     }
-<<<<<<< pramodcog/prioritized-nodes-sector-loading
-    const compatibleGltfFormats: File3dFormat[] = [File3dFormat.GltfCadModel, File3dFormat.GltfPrioritizedNodes];
-    const isFormatCompatible =
-      this._compatibleFileFormat.format === modelMetadata.format ||
-      (compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
-        compatibleGltfFormats.includes(modelMetadata.format));
-=======
     const isFormatCompatible =
       this._compatibleFileFormat.format === modelMetadata.format ||
       (this._compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
         this._compatibleGltfFormats.includes(modelMetadata.format));
->>>>>>> master
     return isFormatCompatible && this._compatibleFileFormat.version === modelMetadata.formatVersion;
   }
 
