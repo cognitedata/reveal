@@ -65,48 +65,46 @@ export async function getDMPointCloudObjects(
     nextCursor = currentCursor?.pointCloudVolumes ? { pointCloudVolumes: currentCursor.pointCloudVolumes } : undefined;
   }
 
-  const object3DAndAssetPairs = result.assets
-    .map(asset => {
-      const object3D = asset.properties.cdf_cdm['CogniteAsset/v1'].object3D;
-      if (!isDmIdentifier(object3D)) {
-        return undefined;
-      }
-      return [dmInstanceRefToKey(object3D), asset] as const;
-    })
-    .filter(isDefined);
+  const object3DAndAssetPairs = result.assets.flatMap(asset => {
+    const object3D = asset.properties.cdf_cdm['CogniteAsset/v1'].object3D;
+    if (!isDmIdentifier(object3D)) {
+      return [];
+    }
+    return [[dmInstanceRefToKey(object3D), asset] as const];
+  });
 
   const object3DToAssetMap = new Map<DMInstanceKey, AssetResult>(object3DAndAssetPairs);
 
-  const annotations: CdfPointCloudObjectAnnotation[] = result.pointCloudVolumes
-    .map(volume => {
-      const pointCloudVolumeProperties = volume.properties.cdf_cdm[
-        'CognitePointCloudVolume/v1'
-      ] as unknown as PointCloudVolumeObject3DProperties;
-      const region = pointCloudVolumeToRevealShapes(
-        pointCloudVolumeProperties.volume,
-        pointCloudVolumeProperties.volumeType
-      );
+  const annotations: CdfPointCloudObjectAnnotation[] = result.pointCloudVolumes.flatMap(volume => {
+    const pointCloudVolumeProperties = volume.properties.cdf_cdm[
+      'CognitePointCloudVolume/v1'
+    ] as unknown as PointCloudVolumeObject3DProperties;
+    const region = pointCloudVolumeToRevealShapes(
+      pointCloudVolumeProperties.volume,
+      pointCloudVolumeProperties.volumeType
+    );
 
-      const object3D = volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D;
-      if (!isDmIdentifier(object3D)) {
-        return undefined;
-      }
+    const object3D = volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D;
+    if (!isDmIdentifier(object3D)) {
+      return [];
+    }
 
-      const asset = object3DToAssetMap.get(dmInstanceRefToKey(object3D));
+    const asset = object3DToAssetMap.get(dmInstanceRefToKey(object3D));
 
-      if (asset === undefined) {
-        return undefined;
-      }
+    if (asset === undefined) {
+      return [];
+    }
 
-      return {
+    return [
+      {
         volumeMetadata: {
           instanceRef: { externalId: volume.externalId, space: volume.space },
           asset: { externalId: asset.externalId, space: asset.space }
         },
         region: [region]
-      };
-    })
-    .filter(result => result !== undefined);
+      }
+    ];
+  });
 
   return annotations;
 }
