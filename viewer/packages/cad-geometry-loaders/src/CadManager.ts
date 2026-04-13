@@ -39,6 +39,11 @@ export class CadManager {
 
   private readonly _sectorBufferTime = 350;
 
+  private readonly _compatibleGltfFormats: File3dFormat[] = [
+    File3dFormat.GltfCadModel,
+    File3dFormat.GltfPrioritizedNodes
+  ];
+
   get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
@@ -178,11 +183,10 @@ export class CadManager {
     if (this._compatibleFileFormat === undefined) {
       return true;
     }
-    const compatibleGltfFormats: File3dFormat[] = [File3dFormat.GltfCadModel, File3dFormat.GltfPrioritizedNodes];
     const isFormatCompatible =
       this._compatibleFileFormat.format === modelMetadata.format ||
-      (compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
-        compatibleGltfFormats.includes(modelMetadata.format));
+      (this._compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
+        this._compatibleGltfFormats.includes(modelMetadata.format));
     return isFormatCompatible && this._compatibleFileFormat.version === modelMetadata.formatVersion;
   }
 
