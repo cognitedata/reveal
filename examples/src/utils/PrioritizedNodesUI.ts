@@ -32,6 +32,7 @@ export class PrioritizedNodesUI {
   private _mainModel: CogniteCadModel;
   private _overlayModel: CogniteCadModel | undefined;
   private _isReplaced: boolean = false;
+  private _overlayLoadGeneration: number = 0;
 
   constructor(
     uiFolder: dat.GUI,
@@ -218,11 +219,20 @@ export class PrioritizedNodesUI {
   private async loadOverlayView(nodeIds: number[]): Promise<void> {
     this.removeOverlay();
 
+    const generation = ++this._overlayLoadGeneration;
+
     const overlayModel = await this._viewer.addCadModel({
       modelId: this._modelId,
       revisionId: this._revisionId,
       outputFormat: File3dFormat.GltfPrioritizedNodes
     });
+
+    if (generation !== this._overlayLoadGeneration) {
+      // A newer loadOverlayView call started while we were awaiting — discard this model.
+      this._viewer.removeModel(overlayModel);
+      return;
+    }
+
     this._overlayModel = overlayModel;
 
     this._mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
