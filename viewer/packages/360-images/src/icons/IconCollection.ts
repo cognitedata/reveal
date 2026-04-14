@@ -146,6 +146,7 @@ export class IconCollection {
       }
       case 'proximity': {
         this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
+        this._visibleClusteredIcons = [];
         if (this._htmlRenderer) {
           this._htmlRenderer.setVisible(false);
         }
