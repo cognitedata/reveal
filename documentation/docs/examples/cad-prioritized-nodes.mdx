@@ -43,3 +43,141 @@ nodeSet.executeFilter('Item', 'Name', names);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.assignStyledNodeCollection(nodeSet, { ...DefaultNodeAppearance.Highlighted, prioritizedForLoadingHint: 5 });
 ```
+
+---
+
+## High-detail output for a pre-computed node subset
+
+:::note Prerequisite
+This feature requires a `gltf-prioritized-nodes-directory` output to exist for the model revision. This output is produced by a separate backend job — Reveal does not trigger that job. If the output does not exist, `addCadModel` will throw an error.
+:::
+
+In addition to the hint-based prioritization above, Reveal supports loading a **pre-computed high-detail geometry output** for a specific subset of nodes. This output (`File3dFormat.GltfPrioritizedNodes`) contains full-resolution geometry only for the nodes that were included in the backend job, making it suited for inspection-style use cases where selected objects must always be rendered at maximum detail.
+
+Three usage patterns are supported, and they can be combined depending on the use case.
+
+### Option 1 — Replace the model
+
+Swap the entire model to the prioritized output. The original model is removed and the prioritized version is loaded in its place. This is the simplest approach when the use case is a dedicated high-detail view.
+
+```js
+// import { File3dFormat } from '@cognite/reveal'
+
+// Remove the standard model first
+viewer.removeModel(mainModel);
+
+// Load the prioritized output in its place
+const prioritizedModel = await viewer.addCadModel({
+  modelId,
+  revisionId,
+  outputFormat: File3dFormat.GltfPrioritizedNodes
+});
+
+viewer.loadCameraFromModel(prioritizedModel);
+```
+
+To revert, remove `prioritizedModel` and reload without `outputFormat`:
+
+```js
+viewer.removeModel(prioritizedModel);
+const standardModel = await viewer.addCadModel({ modelId, revisionId });
+```
+
+---
+
+### Option 2 — Overlay specific nodes
+
+Load the prioritized output as a second model on top of the original, then use styling to ghost the background and show only the selected nodes at full detail. This keeps the surrounding model visible as context.
+
+```js
+// import { File3dFormat, NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
+
+const nodeIds = [/* ... */];
+
+// Load prioritized output as overlay
+const overlayModel = await viewer.addCadModel({
+  modelId,
+  revisionId,
+  outputFormat: File3dFormat.GltfPrioritizedNodes
+});
+
+// Ghost the original model and hide the selected nodes within it
+// (they will be shown at full detail by the overlay instead)
+mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+const mainNodeSet = new NodeIdNodeCollection(client, mainModel);
+await mainNodeSet.executeFilter(nodeIds);
+mainModel.assignStyledNodeCollection(mainNodeSet, { visible: false });
+
+// In the overlay, hide everything except the selected nodes
+overlayModel.setDefaultNodeAppearance({ visible: false });
+const overlayNodeSet = new NodeIdNodeCollection(client, overlayModel);
+await overlayNodeSet.executeFilter(nodeIds);
+overlayModel.assignStyledNodeCollection(overlayNodeSet, DefaultNodeAppearance.Default);
+```
+
+To remove the overlay and restore the original appearance:
+
+```js
+viewer.removeModel(overlayModel);
+mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+mainModel.removeAllStyledNodeCollections();
+```
+
+:::note
+If any of the supplied `nodeIds` do not exist in the model/revision, `NodeIdNodeCollection.executeFilter` will silently return an empty set for those IDs. Check that the resolved `IndexSet` is non-empty before proceeding.
+:::
+
+---
+
+### Option 3 — Lock sectors on the main model
+
+Prevent specific nodes' sectors from being evicted when the CAD render budget is reduced. Locked sectors remain loaded regardless of camera position or budget pressure.
+
+Node locking uses **tree indices**, not node IDs. Use `NodeIdNodeCollection` to resolve node IDs to tree indices first:
+
+```js
+// import { NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
+
+const nodeIds = [/* ... */];
+
+const nodeCollection = new NodeIdNodeCollection(client, mainModel);
+await nodeCollection.executeFilter(nodeIds);
+
+const treeIndices = nodeCollection.getIndexSet().toIndexArray();
+
+if (treeIndices.length === 0) {
+  // None of the node IDs exist in this model/revision
+  return;
+}
+
+// Style and lock
+mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
+mainModel.lockTreeIndices(treeIndices);
+```
+
+Locking is **reactive**: if a locked tree index's geometry is discovered in a new sector during loading, that sector is automatically locked as well.
+
+To unlock individual tree indices:
+
+```js
+mainModel.unlockTreeIndices(treeIndices);
+```
+
+To remove all locks at once:
+
+```js
+mainModel.unlockAllTreeIndices();
+mainModel.removeAllStyledNodeCollections();
+```
+
+---
+
+## Limitations
+
+| Limitation | Detail |
+|---|---|
+| Backend prerequisite | A `gltf-prioritized-nodes-directory` output must already exist for the revision. Reveal does not trigger backend jobs. |
+| Locked sectors count toward render budget | Locked sectors are never evicted, but they still contribute to the total render cost. Locking many sectors may degrade performance on lower-end devices. |
+| `lockTreeIndices` requires tree indices | Node IDs must be resolved to tree indices first (e.g. via `NodeIdNodeCollection`). |
+| Lock mode does not increase geometry detail | Locking sectors on the standard model prevents eviction but does not load higher-detail geometry. For higher detail, use the prioritized output (Option 1 or 2). |
+| `GltfPrioritizedNodes` contains only a subset | The prioritized output only contains geometry for the nodes included in the backend job. It cannot be used as a full model replacement if coverage of all nodes is required. |
