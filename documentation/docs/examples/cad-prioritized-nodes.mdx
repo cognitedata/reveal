@@ -56,7 +56,7 @@ In addition to the hint-based prioritization above, Reveal supports loading a **
 
 Three usage patterns are supported, and they can be combined depending on the use case.
 
-### Pattern 1 — Replace the model
+### Option 1 — Replace the model
 
 Swap the entire model to the prioritized output. The original model is removed and the prioritized version is loaded in its place. This is the simplest approach when the use case is a dedicated high-detail view.
 
@@ -85,7 +85,7 @@ const standardModel = await viewer.addCadModel({ modelId, revisionId });
 
 ---
 
-### Pattern 2 — Overlay specific nodes
+### Option 2 — Overlay specific nodes
 
 Load the prioritized output as a second model on top of the original, then use styling to ghost the background and show only the selected nodes at full detail. This keeps the surrounding model visible as context.
 
@@ -129,7 +129,7 @@ If any of the supplied `nodeIds` do not exist in the model/revision, `NodeIdNode
 
 ---
 
-### Pattern 3 — Lock sectors on the main model
+### Option 3 — Lock sectors on the main model
 
 Prevent specific nodes' sectors from being evicted when the CAD render budget is reduced. Locked sectors remain loaded regardless of camera position or budget pressure.
 
