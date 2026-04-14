@@ -179,5 +179,5 @@ mainModel.removeAllStyledNodeCollections();
 | Backend prerequisite | A `gltf-prioritized-nodes-directory` output must already exist for the revision. Reveal does not trigger backend jobs. |
 | Locked sectors count toward render budget | Locked sectors are never evicted, but they still contribute to the total render cost. Locking many sectors may degrade performance on lower-end devices. |
 | `lockTreeIndices` requires tree indices | Node IDs must be resolved to tree indices first (e.g. via `NodeIdNodeCollection`). |
-| Lock mode does not increase geometry detail | Locking sectors on the standard model prevents eviction but does not load higher-detail geometry. For higher detail, use the prioritized output (Pattern 1 or 2). |
+| Lock mode does not increase geometry detail | Locking sectors on the standard model prevents eviction but does not load higher-detail geometry. For higher detail, use the prioritized output (Option 1 or 2). |
 | `GltfPrioritizedNodes` contains only a subset | The prioritized output only contains geometry for the nodes included in the backend job. It cannot be used as a full model replacement if coverage of all nodes is required. |
