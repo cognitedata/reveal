@@ -8,6 +8,7 @@ export { createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
 
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';
+export { createCadNode } from './src/createCadNode';
 export { createPointCloudModel, createPointCloudNode } from './src/createPointCloudModel';
 export { createAnnotationModel } from './src/createAnnotationModel';
 export { createCursorAndAsyncIterator } from './src/createCursorAndAsyncIterator';
