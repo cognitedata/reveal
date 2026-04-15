@@ -171,9 +171,11 @@ export class IconCollection {
       this._preFloorPointsObjectVisible = this._pointsObject.visible;
       this._preFloorCullingScheme = this._iconCullingScheme;
       this._pointsObject.visible = false;
+      this._floorDiscMesh.visible = true;
       this.setCullingScheme('proximity');
     } else {
       this._pointsObject.visible = this._preFloorPointsObjectVisible;
+      this._floorDiscMesh.visible = false;
       for (let i = 0; i < this._activeFloorDiscCount; i++) {
         this._floorDiscMesh.setMatrixAt(i, this._hiddenMatrix);
       }
@@ -778,9 +780,8 @@ export class IconCollection {
       depthWrite: false,
       side: DoubleSide
     });
-    // Keep count = capacity (never 0) to avoid empty bounding box causing near/far plane issues.
-    // Inactive instances are hidden via a zero-scale matrix.
     const mesh = new InstancedMesh(geometry, material, capacity);
+    mesh.visible = false; // Hidden until floor mode is activated; prevents origin from poisoning sceneBoundingBox
     mesh.frustumCulled = false;
     mesh.renderOrder = 4;
     for (let i = 0; i < capacity; i++) {

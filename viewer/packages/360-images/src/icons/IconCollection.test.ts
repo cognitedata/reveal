@@ -421,6 +421,23 @@ describe(IconCollection.name, () => {
       collection.dispose();
     });
 
+    it('floor disc mesh visible property starts false and is toggled by setFloorMode', () => {
+      const collection = createCollection([new Vector3(0, 1.5, 0)]);
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
+
+      // Mesh starts invisible so origin-positioned instances do not corrupt sceneBoundingBox
+      expect(floorDiscMesh.visible).toBe(false);
+
+      collection.setFloorMode(true);
+      expect(floorDiscMesh.visible).toBe(true);
+
+      collection.setFloorMode(false);
+      expect(floorDiscMesh.visible).toBe(false);
+
+      collection.dispose();
+    });
+
     it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
       const collection = createCollection([new Vector3(0, 1.5, 0)]);
       const floorDiscMesh = addedObjects.find(isFloorDiscMesh);

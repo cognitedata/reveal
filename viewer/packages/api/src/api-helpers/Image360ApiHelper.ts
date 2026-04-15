@@ -368,6 +368,10 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
     if (this._enableFloorIcons) {
       this._image360Facade.collections.forEach(c => c.setFloorMode(true));
+    } else {
+      // Switch to proximity culling when inside a 360 image so nearby icons
+      // are shown without clustering (mirrors the behaviour when floor mode is on).
+      this._image360Facade.allIconCullingScheme = 'proximity';
     }
     if (this._hasEventListeners) {
       this._domElement.addEventListener('keydown', this.onKeyPressed);
