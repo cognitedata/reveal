@@ -457,6 +457,20 @@ describe(Image360ApiHelper.name, () => {
       floorHelper.dispose();
     });
 
+    test('switches to proximity culling on enter and restores clustered on exit when enableFloorIcons is false', async () => {
+      const { mockEntity } = createFloorModeFixture();
+      const cullingSetSpy = jest.spyOn(Image360Facade.prototype, 'allIconCullingScheme', 'set');
+
+      await enterImage(mockEntity);
+
+      expect(cullingSetSpy).toHaveBeenCalledWith('proximity');
+
+      cullingSetSpy.mockClear();
+      helper.exit360Image();
+
+      expect(cullingSetSpy).toHaveBeenCalledWith('clustered');
+    });
+
     test('calls setFloorMode(false) on ALL collections when exiting regardless of enableFloorIcons', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
       const { mockEntity } = createFloorModeFixture();
