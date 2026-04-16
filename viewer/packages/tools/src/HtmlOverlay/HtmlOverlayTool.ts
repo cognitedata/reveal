@@ -144,6 +144,14 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private _visible: boolean;
   private readonly TIMER_ADVANCE_MS = 50;
 
+  // Stable identity for overlay elements — used to build cluster cache keys
+  private readonly _elementIds = new WeakMap<HTMLElement, number>();
+  private _nextElementId = 0;
+
+  // Cluster cache: reuse composite DOM elements when cluster composition hasn't changed
+  private readonly _clusterCache = new Map<string, HTMLElement>();
+  private _aliveClusterKeys = new Set<string>();
+
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
   // Allocate variables needed for processing once to avoid allocations
@@ -204,6 +212,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer.off('sceneRendered', this._onSceneRenderedHandler);
     this._viewer.off('disposed', this._onViewerDisposedHandler);
     this.clear();
+    this._clusterCache.clear();
+    this._aliveClusterKeys.clear();
     super.dispose();
   }
 
@@ -243,6 +253,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         }
       };
       this._htmlOverlays.set(htmlElement, element);
+      this._elementIds.set(htmlElement, this._nextElementId++);
 
       this.scheduleUpdate();
     }, this.TIMER_ADVANCE_MS);
@@ -269,6 +280,15 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     for (const element of overlays) {
       this.remove(element);
     }
+    // Remove all cached cluster composites from DOM
+    for (const compositeElement of this._clusterCache.values()) {
+      if (compositeElement.parentNode) {
+        compositeElement.parentNode.removeChild(compositeElement);
+      }
+    }
+    this._clusterCache.clear();
+    this._aliveClusterKeys.clear();
+    this._compositeOverlays.splice(0);
     this.forceUpdate();
   }
 
@@ -389,7 +409,9 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     });
 
     this._compositeOverlays.forEach(htmlElement => {
-      this.viewerDomElement.appendChild(htmlElement);
+      if (!htmlElement.parentNode) {
+        this.viewerDomElement.appendChild(htmlElement);
+      }
     });
   }
 
@@ -410,10 +432,31 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private cleanupClusterElements(): void {
-    this._compositeOverlays.forEach(element => {
-      this.viewerDomElement.removeChild(element);
-    });
+    // Mark all cached clusters as stale. Clustering will mark alive ones.
+    this._aliveClusterKeys.clear();
+  }
+
+  /**
+   * Remove cluster cache entries that were not reused during the current frame
+   * and detach their composite elements from the DOM.
+   */
+  private removeStaleClusters(): void {
+    for (const [key, compositeElement] of this._clusterCache.entries()) {
+      if (!this._aliveClusterKeys.has(key)) {
+        if (compositeElement.parentNode) {
+          compositeElement.parentNode.removeChild(compositeElement);
+        }
+        this._clusterCache.delete(key);
+      }
+    }
+    // Rebuild _compositeOverlays from only the alive entries
     this._compositeOverlays.splice(0);
+    for (const key of this._aliveClusterKeys) {
+      const el = this._clusterCache.get(key);
+      if (el) {
+        this._compositeOverlays.push(el);
+      }
+    }
   }
 
   private clusterByOverlapInScreenSpace(createClusterElementCallback: HtmlOverlayCreateClusterDelegate) {
@@ -450,15 +493,32 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         const midpoint = cluster
           .reduce((position, element) => position.add(element.state.position2D), clusterMidpoint.set(0, 0))
           .divideScalar(cluster.length);
-        const compositeElement = createClusterElementCallback(
-          cluster.map(element => ({ htmlElement: element.htmlElement, userData: element.options.userData }))
-        );
+
+        // Build a stable key from sorted element IDs
+        const clusterKey = cluster
+          .map(el => this._elementIds.get(el.htmlElement) ?? -1)
+          .sort((a, b) => a - b)
+          .join(',');
+
+        let compositeElement = this._clusterCache.get(clusterKey);
+        if (!compositeElement) {
+          // Composition changed — create a new composite element
+          compositeElement = createClusterElementCallback(
+            cluster.map(element => ({ htmlElement: element.htmlElement, userData: element.options.userData }))
+          );
+          this._clusterCache.set(clusterKey, compositeElement);
+        }
+
         // Hide all elements in cluster
         cluster.forEach(element => (element.state.visible = false));
-        // ... and replace with a composite
+        // Update position (may have shifted) and mark as alive
+        this._aliveClusterKeys.add(clusterKey);
         this.addComposite(compositeElement, midpoint);
       }
     }
+
+    // Remove stale clusters that no longer exist this frame
+    this.removeStaleClusters();
   }
 
   private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
