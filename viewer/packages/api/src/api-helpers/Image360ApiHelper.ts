@@ -341,11 +341,15 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     } else {
       this._transitionInProgress = true;
       if (lastEntered360ImageEntity !== undefined) {
-        await this.transition(lastEntered360ImageEntity, image360Entity);
+        await this.transition(lastEntered360ImageEntity, image360Entity, currentOpacity);
+        // Apply full-res textures after the transition so texture quality swaps don't
+        // happen mid-fade and create a perceived "instant" transition.
+        this.applyFullResolutionTextures(revisionToEnter);
         MetricsLogger.trackEvent('360ImageEntered', {});
       } else {
         const transitionDuration = 1000;
         const position = new Vector3().setFromMatrixPosition(image360Entity.transform);
+        image360Entity.image360Visualization.opacity = 0;
         const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
         if (flexibleCameraManager) {
           await Promise.all([
@@ -376,7 +380,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (this._hasEventListeners) {
       this._domElement.addEventListener('keydown', this.onKeyPressed);
     }
-    this.applyFullResolutionTextures(revisionToEnter);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
     if (updateHistory) {
@@ -390,9 +393,13 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._needsRedraw = true;
   }
 
-  private async transition(from360Entity: Image360Entity<DataSourceT>, to360Entity: Image360Entity<DataSourceT>) {
+  private async transition(
+    from360Entity: Image360Entity<DataSourceT>,
+    to360Entity: Image360Entity<DataSourceT>,
+    expectedOpacity: number
+  ) {
     const cameraTransitionDuration = 1000;
-    const alphaTweenDuration = 800;
+    const fovTweenDuration = 800;
     const default360ImageRenderOrder = 3;
 
     const toVisualizationCube = to360Entity.image360Visualization;
@@ -404,7 +411,16 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     setPreTransitionState();
 
-    const currentFromOpacity = fromVisualizationCube.opacity;
+    // Use the authoritative collection opacity as the starting value for FROM.
+    // Reading fromVisualizationCube.opacity directly is unreliable — a concurrent
+    // exit tween or other code may have already reduced it, making the transition
+    // appear instant. Reset FROM to the expected value before the fade starts.
+    fromVisualizationCube.opacity = expectedOpacity;
+    // Keep TO at full opacity throughout so FROM + TO combined always equals 1,
+    // preventing any underlying geometry (e.g. point clouds) from bleeding through.
+    // FROM fades out on top (renderOrder+1), revealing TO underneath — this is
+    // visually identical to a crossfade.
+    toVisualizationCube.opacity = expectedOpacity;
 
     from360Entity.deactivateAnnotations();
     const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
@@ -412,21 +428,21 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       flexibleCameraManager.controls.isStationary = true;
       await Promise.all([
         moveCameraPositionTo(flexibleCameraManager, toPosition, cameraTransitionDuration),
-        tweenCameraToDefaultFov(flexibleCameraManager, alphaTweenDuration),
-        this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
+        tweenCameraToDefaultFov(flexibleCameraManager, fovTweenDuration),
+        this.tweenVisualizationAlpha(from360Entity, expectedOpacity, 0, cameraTransitionDuration)
       ]);
     } else if (this._stationaryCameraManager) {
       const fromZoom = this._stationaryCameraManager.getCamera().fov;
       const toZoom = this._stationaryCameraManager.defaultFOV;
       await Promise.all([
         this._stationaryCameraManager.moveTo(toPosition, cameraTransitionDuration),
-        this.tweenVisualizationZoom(this._stationaryCameraManager, fromZoom, toZoom, alphaTweenDuration),
-        this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
+        this.tweenVisualizationZoom(this._stationaryCameraManager, fromZoom, toZoom, cameraTransitionDuration),
+        this.tweenVisualizationAlpha(from360Entity, expectedOpacity, 0, cameraTransitionDuration)
       ]);
     }
     to360Entity.activateAnnotations();
 
-    restorePostTransitionState(currentFromOpacity);
+    restorePostTransitionState(expectedOpacity);
 
     function setPreTransitionState() {
       const fillingScaleMagnitude = length * 2;
