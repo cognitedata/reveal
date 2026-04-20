@@ -64,6 +64,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
+  private _waitCursorOverlay: HTMLDivElement | undefined;
   private readonly _raycaster = new Raycaster();
   private _needsRedraw: boolean = false;
   private readonly _hasEventListeners: boolean;
@@ -286,7 +287,12 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     image360Entity: Image360Entity<DataSourceT>,
     revision?: Image360RevisionEntity<DataSourceT>
   ): Promise<void> {
-    await this.enter360ImageInternal(image360Entity, revision);
+    this.showWaitCursor();
+    try {
+      await this.enter360ImageInternal(image360Entity, revision);
+    } finally {
+      this.hideWaitCursor();
+    }
   }
 
   public async enter360ImageInternal(
@@ -386,6 +392,18 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._history.start(image360Entity);
     }
     return true;
+  }
+
+  private showWaitCursor(): void {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:wait;';
+    document.body.appendChild(overlay);
+    this._waitCursorOverlay = overlay;
+  }
+
+  private hideWaitCursor(): void {
+    this._waitCursorOverlay?.remove();
+    this._waitCursorOverlay = undefined;
   }
 
   private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
@@ -636,9 +654,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     return targetDate ? image360Entity.getRevisionClosestToDate(targetDate) : image360Entity.getMostRecentRevision();
   }
 
-  private enter360ImageOnIntersect(event: PointerEventData): Promise<boolean> {
+  private async enter360ImageOnIntersect(event: PointerEventData): Promise<boolean> {
     if (this._transitionInProgress) {
-      return Promise.resolve(false);
+      return false;
     }
 
     // First, check for cluster intersection
@@ -650,9 +668,15 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     // Fall back to individual icon intersection
     const intersection = this.intersect360ImageIcons(event.offsetX, event.offsetY);
     if (intersection === undefined) {
-      return Promise.resolve(false);
+      return false;
     }
-    return this.enter360ImageInternal(intersection.image360);
+
+    this.showWaitCursor();
+    try {
+      return await this.enter360ImageInternal(intersection.image360);
+    } finally {
+      this.hideWaitCursor();
+    }
   }
 
   public intersect360ImageIcons(
