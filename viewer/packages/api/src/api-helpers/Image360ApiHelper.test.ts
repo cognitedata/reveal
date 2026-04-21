@@ -493,7 +493,7 @@ describe(Image360ApiHelper.name, () => {
       floorHelper.dispose();
     });
 
-    test('calls setReferenceIcon with entity icon on enter when enableFloorIcons is true', async () => {
+    test('calls setReferenceIcon with world Y on enter when enableFloorIcons is true', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
       const { mockEntity } = createFloorModeFixture();
       const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
@@ -503,7 +503,8 @@ describe(Image360ApiHelper.name, () => {
       TWEEN.update(TWEEN.now() + 2000);
       await enterPromise;
 
-      expect(setReferenceIconSpy).toHaveBeenCalledWith(mockEntity.icon);
+      // mockEntity.transform is identity → world Y = 0
+      expect(setReferenceIconSpy).toHaveBeenCalledWith(0);
       floorHelper.dispose();
     });
 

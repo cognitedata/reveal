@@ -41,7 +41,7 @@ export class FlooredIconManager {
 
   private _activeFloorDiscCountSameLevel = 0;
   private _activeFloorDiscCountElevated = 0;
-  private _referenceIcon: Overlay3DIcon | undefined;
+  private _referenceWorldY: number | undefined;
 
   constructor(
     capacity: number,
@@ -92,10 +92,7 @@ export class FlooredIconManager {
   }
 
   public update(icons: Overlay3DIcon[], collectionTransform: Matrix4): void {
-    let referenceWorldY: number | undefined;
-    if (this._referenceIcon !== undefined) {
-      referenceWorldY = this._worldPos.copy(this._referenceIcon.getPosition()).applyMatrix4(collectionTransform).y;
-    }
+    const referenceWorldY = this._referenceWorldY;
 
     let sameLevelIdx = 0;
     let elevatedIdx = 0;
@@ -138,8 +135,8 @@ export class FlooredIconManager {
     this._hoverMesh.position.set(worldPos.x, worldPos.y, worldPos.z);
   }
 
-  public setReferenceIcon(icon: Overlay3DIcon | undefined): void {
-    this._referenceIcon = icon;
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._referenceWorldY = worldY;
   }
 
   public setOpacity(value: number): void {
@@ -148,8 +145,8 @@ export class FlooredIconManager {
   }
 
   public setOccludedVisible(value: boolean): void {
-    this._floorDiscMeshSameLevel.material.depthTest = value;
-    this._floorDiscMeshElevated.material.depthTest = value;
+    this._floorDiscMeshSameLevel.material.depthTest = !value;
+    this._floorDiscMeshElevated.material.depthTest = !value;
   }
 
   public dispose(): void {

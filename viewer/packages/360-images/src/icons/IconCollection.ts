@@ -61,6 +61,7 @@ export class IconCollection {
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
+  private readonly _hoverIconTexture: CanvasTexture;
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
   private readonly _pointsObject: OverlayPointsObject;
@@ -242,15 +243,15 @@ export class IconCollection {
       this._htmlRenderer = new HtmlClusterRenderer(iconOptions?.htmlClusterOptions);
     }
 
-    const spriteTexture = this.createHoverIconTexture();
-    this._hoverSprite = this.createHoverSprite(spriteTexture);
+    this._hoverIconTexture = this.createHoverIconTexture();
+    this._hoverSprite = this.createHoverSprite(this._hoverIconTexture);
 
     this._floorDiscs = new FlooredIconManager(
       points.length,
       this._iconRadius,
       this._maxPixelSize,
       sharedTexture,
-      spriteTexture,
+      this._hoverIconTexture,
       sceneHandler
     );
 
@@ -723,6 +724,7 @@ export class IconCollection {
 
     this._sceneHandler.removeObject3D(this._hoverSprite);
     this._hoverSprite.material.dispose();
+    this._hoverIconTexture.dispose();
 
     if (this._enableHtmlClusters && this._htmlRenderer) {
       this._htmlRenderer.dispose();
@@ -821,7 +823,7 @@ export class IconCollection {
     this._floorDiscs.setOccludedVisible(value);
   }
 
-  public setReferenceIcon(icon: Overlay3DIcon | undefined): void {
-    this._floorDiscs.setReferenceIcon(icon);
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._floorDiscs.setReferenceIcon(worldY);
   }
 }

@@ -255,8 +255,8 @@ export class Image360Facade<T extends DataSourceType> {
     this._image360Collections.forEach(collection => collection.clearHoveredCluster());
   }
 
-  public setReferenceIcon(icon: Overlay3DIcon | undefined): void {
-    this._image360Collections.forEach(collection => collection.setReferenceIcon(icon));
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._image360Collections.forEach(collection => collection.setReferenceIcon(worldY));
   }
 
   public dispose(): void {
