@@ -46,7 +46,8 @@ import {
   InputHandler,
   getNormalizedPixelCoordinates,
   PointerEventData,
-  SceneHandler
+  SceneHandler,
+  WaitCursor
 } from '@reveal/utilities';
 import {
   CameraManager,
@@ -64,8 +65,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
-  private _waitCursorOverlay: HTMLDivElement | undefined;
-  private _waitCursorCount = 0;
+  private readonly _waitCursor: WaitCursor;
   private readonly _raycaster = new Raycaster();
   private _needsRedraw: boolean = false;
   private readonly _hasEventListeners: boolean;
@@ -174,6 +174,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._image360Facade = new Image360Facade<DataSourceT>(image360EntityFactory);
 
     this._domElement = domElement;
+    this._waitCursor = new WaitCursor(domElement);
     this._interactionState = {};
 
     this._activeCameraManager = activeCameraManager;
@@ -288,11 +289,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     image360Entity: Image360Entity<DataSourceT>,
     revision?: Image360RevisionEntity<DataSourceT>
   ): Promise<void> {
-    this.showWaitCursor();
+    this._waitCursor.show();
     try {
       await this.enter360ImageInternal(image360Entity, revision);
     } finally {
-      this.hideWaitCursor();
+      this._waitCursor.hide();
     }
   }
 
@@ -352,7 +353,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
           await this.transition(lastEntered360ImageEntity, image360Entity, currentOpacity);
           // Apply full-res textures after the transition so texture quality swaps don't
           // happen mid-fade and create a perceived "instant" transition.
-          this.applyFullResolutionTextures(revisionToEnter);
+          await this.applyFullResolutionTextures(revisionToEnter);
           MetricsLogger.trackEvent('360ImageEntered', {});
         } else {
           const transitionDuration = 1000;
@@ -370,7 +371,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
               this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
             ]);
           }
-          this.applyFullResolutionTextures(revisionToEnter);
+          await this.applyFullResolutionTextures(revisionToEnter);
           image360Entity.activateAnnotations();
           MetricsLogger.trackEvent('360ImageTransitioned', {});
         }
@@ -397,25 +398,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._history.start(image360Entity);
     }
     return true;
-  }
-
-  private showWaitCursor(): void {
-    this._waitCursorCount++;
-    if (this._waitCursorOverlay) {
-      return;
-    }
-    const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:absolute;inset:0;z-index:99999;cursor:wait;';
-    this._domElement.appendChild(overlay);
-    this._waitCursorOverlay = overlay;
-  }
-
-  private hideWaitCursor(): void {
-    this._waitCursorCount = Math.max(0, this._waitCursorCount - 1);
-    if (this._waitCursorCount === 0 && this._waitCursorOverlay) {
-      this._waitCursorOverlay.remove();
-      this._waitCursorOverlay = undefined;
-    }
   }
 
   private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
@@ -651,6 +633,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._stationaryCameraManager.dispose();
     }
     this._image360Facade.dispose();
+    this._waitCursor.dispose();
   }
 
   private findRevisionIdToEnter(image360Entity: Image360Entity<DataSourceT>): Image360RevisionEntity<DataSourceT> {
@@ -675,11 +658,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       return false;
     }
 
-    this.showWaitCursor();
+    this._waitCursor.show();
     try {
       return await this.enter360ImageInternal(intersection.image360);
     } finally {
-      this.hideWaitCursor();
+      this._waitCursor.hide();
     }
   }
 

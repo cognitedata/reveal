@@ -6,6 +6,7 @@ import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 import { jest } from '@jest/globals';
+import assert from 'assert';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
 import { SceneHandler, InputHandler, EventTrigger, BeforeSceneRenderedDelegate } from '@reveal/utilities';
@@ -420,7 +421,8 @@ describe(Image360ApiHelper.name, () => {
         .object();
     }
 
-    function createFloorModeFixture() {
+    // Sets up the three facade spies (preload, getCollectionContainingEntity, collections)
+    function mockFacadeForEntry() {
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
       const mockCollection = createMockCollection();
 
@@ -432,7 +434,7 @@ describe(Image360ApiHelper.name, () => {
     }
 
     test('does not call setFloorMode(true) on enter when enableFloorIcons is false (default)', async () => {
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const mockCollection = createMockCollection();
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
 
@@ -443,7 +445,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('calls setFloorMode(true) on ALL collections on enter when enableFloorIcons is true', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const mockCollection1 = createMockCollection();
       const mockCollection2 = createMockCollection();
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
@@ -459,7 +461,7 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('switches to proximity culling on enter and restores clustered on exit when enableFloorIcons is false', async () => {
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const cullingSetSpy = jest.spyOn(Image360Facade.prototype, 'allIconCullingScheme', 'set');
 
       await enterImage(mockEntity);
@@ -474,7 +476,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('calls setFloorMode(false) on ALL collections when exiting regardless of enableFloorIcons', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const mockCollection1 = createMockCollection();
       const mockCollection2 = createMockCollection();
       jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
@@ -500,7 +502,7 @@ describe(Image360ApiHelper.name, () => {
         .callback(() => applyFullResolutionMock());
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), mockRevision.object());
 
-      createFloorModeFixture(); // sets up facade preload, getCollectionContainingEntity, collections spies
+      mockFacadeForEntry();
 
       await enterImage(mockEntity);
 
@@ -516,7 +518,7 @@ describe(Image360ApiHelper.name, () => {
       const entity1 = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
       const entity2 = createMockEntity(createMockIcon(), createMockVisualization(), revision2.object());
 
-      createFloorModeFixture();
+      mockFacadeForEntry();
 
       // Enter entity1 first (first-entry path — no transition)
       await enterImage(entity1);
@@ -536,10 +538,16 @@ describe(Image360ApiHelper.name, () => {
       const revision2 = createMockRevision();
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), revision1);
 
-      createFloorModeFixture();
+      mockFacadeForEntry();
+
+      // transition() calls applyFullResolutionTextures on the revision — if skipped, this stays at 0
+      const applyFullResSpy = jest.spyOn(revision2, 'applyFullResolutionTextures');
 
       // First entry — uses revision1 via getMostRecentRevision
       await enterImage(mockEntity);
+
+      // Spy after first entry so we only count calls from the same-entity branch
+      const activateAnnotationsSpy = jest.spyOn(mockEntity, 'activateAnnotations');
 
       // Second entry with explicit revision2 — lastEntered === mockEntity, so takes the same-entity branch
       const secondPromise = helper.enter360ImageInternal(mockEntity, revision2);
@@ -548,16 +556,13 @@ describe(Image360ApiHelper.name, () => {
       const result = await secondPromise;
 
       expect(result).toBe(true);
+      expect(activateAnnotationsSpy).toHaveBeenCalledTimes(1);
+      expect(applyFullResSpy).not.toHaveBeenCalled();
     });
 
     test('first-entry with FlexibleCameraManager uses camera position tween', async () => {
       const { helper: flexHelper } = createTestHelper(domElement, sdk, 'flexible');
-      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
-      const mockCollection = createMockCollection();
-
-      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+      const { mockEntity } = mockFacadeForEntry();
 
       const enterPromise = flexHelper.enter360ImageInternal(mockEntity);
       await Promise.resolve();
@@ -573,7 +578,7 @@ describe(Image360ApiHelper.name, () => {
       const addEventSpy = jest.spyOn(domElement, 'addEventListener');
 
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
-      createFloorModeFixture();
+      mockFacadeForEntry();
 
       const enterPromise = listenerHelper.enter360ImageInternal(mockEntity);
       await Promise.resolve();
@@ -589,11 +594,7 @@ describe(Image360ApiHelper.name, () => {
       const { helper: flexHelper } = createTestHelper(domElement, sdk, 'flexible');
       const entity1 = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
       const entity2 = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
-      const mockCollection = createMockCollection();
-
-      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+      mockFacadeForEntry();
 
       // First entry (no transition)
       const enter1 = flexHelper.enter360ImageInternal(entity1);
@@ -753,12 +754,12 @@ describe(Image360ApiHelper.name, () => {
   });
 
   describe('wait cursor', () => {
-    function hasWaitCursorOverlay(): boolean {
-      return Array.from(domElement.children).some(el => (el as HTMLElement).style?.cursor === 'wait');
-    }
-
     function waitCursorOverlayCount(): number {
       return Array.from(domElement.children).filter(el => (el as HTMLElement).style?.cursor === 'wait').length;
+    }
+
+    function hasWaitCursorOverlay(): boolean {
+      return waitCursorOverlayCount() > 0;
     }
 
     test('enter360Image adds wait cursor overlay synchronously and removes it on completion', async () => {
@@ -777,18 +778,12 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('concurrent enter360Image calls share one overlay and remove it only when all complete', async () => {
-      let resolve1!: (v: boolean) => void;
-      let resolve2!: (v: boolean) => void;
-      let callCount = 0;
-      jest.spyOn(helper, 'enter360ImageInternal').mockImplementation(() => {
-        if (callCount++ === 0)
-          return new Promise<boolean>(r => {
-            resolve1 = r;
-          });
-        return new Promise<boolean>(r => {
-          resolve2 = r;
-        });
-      });
+      let resolve1: ((v: boolean) => void) | undefined;
+      let resolve2: ((v: boolean) => void) | undefined;
+      jest
+        .spyOn(helper, 'enter360ImageInternal')
+        .mockImplementationOnce(() => new Promise<boolean>(r => (resolve1 = r)))
+        .mockImplementationOnce(() => new Promise<boolean>(r => (resolve2 = r)));
 
       const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
       const p1 = helper.enter360Image(entity);
@@ -797,11 +792,13 @@ describe(Image360ApiHelper.name, () => {
       // Only one overlay is created even for two concurrent calls
       expect(waitCursorOverlayCount()).toBe(1);
 
+      assert(resolve1 !== undefined);
       resolve1(true);
       await p1;
       // Second call still in progress — overlay must remain
       expect(hasWaitCursorOverlay()).toBe(true);
 
+      assert(resolve2 !== undefined);
       resolve2(true);
       await p2;
       // Both complete — overlay removed
@@ -820,7 +817,7 @@ describe(Image360ApiHelper.name, () => {
       jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
       jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
 
-      let resolveEnter!: (v: boolean) => void;
+      let resolveEnter: ((v: boolean) => void) | undefined;
       jest.spyOn(helper, 'enter360ImageInternal').mockImplementation(
         () =>
           new Promise<boolean>(r => {
@@ -833,6 +830,7 @@ describe(Image360ApiHelper.name, () => {
       // showWaitCursor runs synchronously before the first await in enter360ImageOnIntersect
       expect(hasWaitCursorOverlay()).toBe(true);
 
+      assert(resolveEnter !== undefined);
       resolveEnter(true);
       await clickPromise;
 
