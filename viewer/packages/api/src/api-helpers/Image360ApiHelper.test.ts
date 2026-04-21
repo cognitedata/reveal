@@ -754,11 +754,11 @@ describe(Image360ApiHelper.name, () => {
 
   describe('wait cursor', () => {
     function hasWaitCursorOverlay(): boolean {
-      return Array.from(document.body.children).some(el => (el as HTMLElement).style?.cursor === 'wait');
+      return Array.from(domElement.children).some(el => (el as HTMLElement).style?.cursor === 'wait');
     }
 
     function waitCursorOverlayCount(): number {
-      return Array.from(document.body.children).filter(el => (el as HTMLElement).style?.cursor === 'wait').length;
+      return Array.from(domElement.children).filter(el => (el as HTMLElement).style?.cursor === 'wait').length;
     }
 
     test('enter360Image adds wait cursor overlay synchronously and removes it on completion', async () => {
