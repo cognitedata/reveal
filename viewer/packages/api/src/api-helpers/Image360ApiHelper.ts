@@ -368,6 +368,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
             this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
           ]);
         }
+        this.applyFullResolutionTextures(revisionToEnter);
         image360Entity.activateAnnotations();
         MetricsLogger.trackEvent('360ImageTransitioned', {});
       }
@@ -377,6 +378,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
     collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
     if (this._enableFloorIcons) {
+      this._image360Facade.setReferenceIcon(image360Entity.icon);
       this._image360Facade.collections.forEach(c => c.setFloorMode(true));
     } else {
       // Switch to proximity culling when inside a 360 image so nearby icons
@@ -560,6 +562,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
+    this._image360Facade.setReferenceIcon(undefined);
     this._image360Facade.collections.forEach(collection => collection.setFloorMode(false));
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();

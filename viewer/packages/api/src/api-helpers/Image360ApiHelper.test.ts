@@ -491,6 +491,15 @@ describe(Image360ApiHelper.name, () => {
       expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
       floorHelper.dispose();
     });
+
+    test('calls applyFullResolutionTextures on first entry', async () => {
+      const { mockEntity } = createFloorModeFixture();
+      const applyFullResSpy = jest.spyOn(helper as any, 'applyFullResolutionTextures').mockResolvedValue(undefined);
+
+      await enterImage(mockEntity);
+
+      expect(applyFullResSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('cursor pointer on hover', () => {
