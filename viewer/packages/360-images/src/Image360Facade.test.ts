@@ -213,7 +213,7 @@ describe(Image360Facade.name, () => {
   });
 
   test('setReferenceIcon broadcasts to all collections', async () => {
-    let receivedIcon: Overlay3DIcon | undefined = null as unknown as Overlay3DIcon;
+    let receivedIcon: Overlay3DIcon | undefined = undefined;
     const mockIcon = createMockIcon(new Vector3(0, 0, 0));
 
     const facade = await createFacadeWithCollection({

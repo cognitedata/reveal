@@ -33,6 +33,8 @@ export class FlooredIconManager {
   private readonly _floorDiscMeshElevated: InstancedMesh<CircleGeometry, MeshBasicMaterial>;
   private readonly _hoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
   private readonly _hiddenMatrix = new Matrix4().makeScale(0, 0, 0);
+  private readonly _worldPos = new Vector3();
+  private readonly _tempMatrix = new Matrix4();
   private readonly _sceneHandler: SceneHandler;
   private readonly _elevationTexture: CanvasTexture;
   private readonly _floorDiscMeshColor = 0xdddddd;
@@ -90,29 +92,26 @@ export class FlooredIconManager {
   }
 
   public update(icons: Overlay3DIcon[], collectionTransform: Matrix4): void {
-    const worldPos = new Vector3();
-    const tempMatrix = new Matrix4();
-
     let referenceWorldY: number | undefined;
     if (this._referenceIcon !== undefined) {
-      referenceWorldY = this._referenceIcon.getPosition().clone().applyMatrix4(collectionTransform).y;
+      referenceWorldY = this._worldPos.copy(this._referenceIcon.getPosition()).applyMatrix4(collectionTransform).y;
     }
 
     let sameLevelIdx = 0;
     let elevatedIdx = 0;
     for (const p of icons) {
-      worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
-      tempMatrix.makeTranslation(worldPos.x, worldPos.y, worldPos.z);
+      this._worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
+      this._tempMatrix.makeTranslation(this._worldPos.x, this._worldPos.y, this._worldPos.z);
       if (
         referenceWorldY === undefined ||
-        Math.abs(worldPos.y - referenceWorldY) <= FlooredIconManager.FloorLevelThreshold
+        Math.abs(this._worldPos.y - referenceWorldY) <= FlooredIconManager.FloorLevelThreshold
       ) {
         if (sameLevelIdx < this._floorDiscMeshSameLevel.count) {
-          this._floorDiscMeshSameLevel.setMatrixAt(sameLevelIdx++, tempMatrix);
+          this._floorDiscMeshSameLevel.setMatrixAt(sameLevelIdx++, this._tempMatrix);
         }
       } else {
         if (elevatedIdx < FlooredIconManager.ElevatedIconLimit) {
-          this._floorDiscMeshElevated.setMatrixAt(elevatedIdx++, tempMatrix);
+          this._floorDiscMeshElevated.setMatrixAt(elevatedIdx++, this._tempMatrix);
         }
       }
     }
@@ -133,7 +132,6 @@ export class FlooredIconManager {
       mesh.setMatrixAt(i, this._hiddenMatrix);
     }
     mesh.instanceMatrix.needsUpdate = true;
-    if (newCount !== prevCount) mesh.computeBoundingBox();
   }
 
   public setHoverPosition(worldPos: Vector3): void {
@@ -180,7 +178,6 @@ export class FlooredIconManager {
     }
     if (count > 0) {
       mesh.instanceMatrix.needsUpdate = true;
-      mesh.computeBoundingBox();
     }
   }
 
