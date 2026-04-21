@@ -347,33 +347,36 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._needsRedraw = true;
     } else {
       this._transitionInProgress = true;
-      if (lastEntered360ImageEntity !== undefined) {
-        await this.transition(lastEntered360ImageEntity, image360Entity, currentOpacity);
-        // Apply full-res textures after the transition so texture quality swaps don't
-        // happen mid-fade and create a perceived "instant" transition.
-        this.applyFullResolutionTextures(revisionToEnter);
-        MetricsLogger.trackEvent('360ImageEntered', {});
-      } else {
-        const transitionDuration = 1000;
-        const position = new Vector3().setFromMatrixPosition(image360Entity.transform);
-        image360Entity.image360Visualization.opacity = 0;
-        const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
-        if (flexibleCameraManager) {
-          await Promise.all([
-            moveCameraPositionTo(flexibleCameraManager, position, transitionDuration),
-            this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
-          ]);
-        } else if (this._stationaryCameraManager) {
-          await Promise.all([
-            this._stationaryCameraManager.moveTo(position, transitionDuration),
-            this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
-          ]);
+      try {
+        if (lastEntered360ImageEntity !== undefined) {
+          await this.transition(lastEntered360ImageEntity, image360Entity, currentOpacity);
+          // Apply full-res textures after the transition so texture quality swaps don't
+          // happen mid-fade and create a perceived "instant" transition.
+          this.applyFullResolutionTextures(revisionToEnter);
+          MetricsLogger.trackEvent('360ImageEntered', {});
+        } else {
+          const transitionDuration = 1000;
+          const position = new Vector3().setFromMatrixPosition(image360Entity.transform);
+          image360Entity.image360Visualization.opacity = 0;
+          const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+          if (flexibleCameraManager) {
+            await Promise.all([
+              moveCameraPositionTo(flexibleCameraManager, position, transitionDuration),
+              this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
+            ]);
+          } else if (this._stationaryCameraManager) {
+            await Promise.all([
+              this._stationaryCameraManager.moveTo(position, transitionDuration),
+              this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
+            ]);
+          }
+          this.applyFullResolutionTextures(revisionToEnter);
+          image360Entity.activateAnnotations();
+          MetricsLogger.trackEvent('360ImageTransitioned', {});
         }
-        this.applyFullResolutionTextures(revisionToEnter);
-        image360Entity.activateAnnotations();
-        MetricsLogger.trackEvent('360ImageTransitioned', {});
+      } finally {
+        this._transitionInProgress = false;
       }
-      this._transitionInProgress = false;
     }
 
     // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
@@ -403,8 +406,8 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       return;
     }
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:wait;';
-    document.body.appendChild(overlay);
+    overlay.style.cssText = 'position:absolute;inset:0;z-index:99999;cursor:wait;';
+    this._domElement.appendChild(overlay);
     this._waitCursorOverlay = overlay;
   }
 
