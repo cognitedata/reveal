@@ -60,6 +60,8 @@ describe(DefaultImage360Collection.name, () => {
       .setup(i => i.setHoveredClusterIcon(It.IsAny()))
       .returns(undefined)
       .setup(i => i.setFloorMode(It.IsAny()))
+      .returns(undefined)
+      .setup(i => i.setReferenceIcon(It.IsAny()))
       .returns(undefined);
 
     return { mock, state };
@@ -239,6 +241,18 @@ describe(DefaultImage360Collection.name, () => {
       collection.setFloorMode(false);
 
       mock.verify(i => i.setFloorMode(false), Times.Once());
+    });
+  });
+
+  describe('setReferenceIcon', () => {
+    test('delegates setReferenceIcon to IconCollection', () => {
+      const { mock } = createMockIconCollection();
+      const mockIcon = createMockIcon();
+      const collection = createTestCollection(mock.object());
+
+      collection.setReferenceIcon(mockIcon);
+
+      mock.verify(i => i.setReferenceIcon(mockIcon), Times.Once());
     });
   });
 });

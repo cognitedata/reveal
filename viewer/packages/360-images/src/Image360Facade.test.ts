@@ -212,6 +212,24 @@ describe(Image360Facade.name, () => {
     expect(clearHoveredClusterCalled).toBe(true);
   });
 
+  test('setReferenceIcon broadcasts to all collections', async () => {
+    let receivedIcon: Overlay3DIcon | undefined = null as unknown as Overlay3DIcon;
+    const mockIcon = createMockIcon(new Vector3(0, 0, 0));
+
+    const facade = await createFacadeWithCollection({
+      entityIcons: [],
+      onSetReferenceIcon: icon => {
+        receivedIcon = icon;
+      }
+    });
+
+    facade.setReferenceIcon(mockIcon);
+    expect(receivedIcon).toBe(mockIcon);
+
+    facade.setReferenceIcon(undefined);
+    expect(receivedIcon).toBeUndefined();
+  });
+
   test('intersect updates cluster hover state', async () => {
     let intersectClusterCalled = false;
     let clearHoveredClusterCalled = false;
@@ -304,6 +322,7 @@ async function createFacadeWithCollection(
     onIntersectCluster?: () => void;
     onClearHoveredCluster?: () => void;
     onSetHoveredClusterIcon?: (icon: Overlay3DIcon) => void;
+    onSetReferenceIcon?: (icon: Overlay3DIcon | undefined) => void;
   }
 ): Promise<Image360Facade<DataSourceType>> {
   // Create entities from entityIcons or create a default entity at entityPosition
@@ -365,6 +384,10 @@ async function createFacadeWithCollection(
     .callback(expression => {
       const iconSet = new Set(expression.args[0]);
       return mockEntities.filter(entity => iconSet.has(entity.icon));
+    })
+    .setup(p => p.setReferenceIcon(It.IsAny()))
+    .callback(expression => {
+      params?.onSetReferenceIcon?.(expression.args[0]);
     });
 
   const mockCollection = mockCollectionBuilder.object();
