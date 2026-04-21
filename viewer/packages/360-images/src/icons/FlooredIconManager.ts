@@ -32,15 +32,13 @@ export class FlooredIconManager {
   private readonly _floorDiscMeshSameLevel: InstancedMesh<CircleGeometry, MeshBasicMaterial>;
   private readonly _floorDiscMeshElevated: InstancedMesh<CircleGeometry, MeshBasicMaterial>;
   private readonly _hoverMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
-  private readonly _hiddenMatrix = new Matrix4().makeScale(0, 0, 0);
   private readonly _worldPos = new Vector3();
   private readonly _tempMatrix = new Matrix4();
   private readonly _sceneHandler: SceneHandler;
   private readonly _elevationTexture: CanvasTexture;
   private readonly _floorDiscMeshColor = 0xdddddd;
+  private readonly _sameLevelCapacity: number;
 
-  private _activeFloorDiscCountSameLevel = 0;
-  private _activeFloorDiscCountElevated = 0;
   private _referenceWorldY: number | undefined;
 
   constructor(
@@ -52,6 +50,7 @@ export class FlooredIconManager {
     sceneHandler: SceneHandler
   ) {
     this._sceneHandler = sceneHandler;
+    this._sameLevelCapacity = capacity;
     this._elevationTexture = FlooredIconManager.createElevationDiscTexture(maxPixelSize);
 
     this._floorDiscMeshSameLevel = this.createFloorDiscMesh(
@@ -85,17 +84,39 @@ export class FlooredIconManager {
   public hideMeshesAndClearInstances(): void {
     this._floorDiscMeshSameLevel.visible = false;
     this._floorDiscMeshElevated.visible = false;
-    this.clearMeshInstances(this._floorDiscMeshSameLevel, this._activeFloorDiscCountSameLevel);
-    this.clearMeshInstances(this._floorDiscMeshElevated, this._activeFloorDiscCountElevated);
-    this._activeFloorDiscCountSameLevel = 0;
-    this._activeFloorDiscCountElevated = 0;
+    this._floorDiscMeshSameLevel.count = 0;
+    this._floorDiscMeshElevated.count = 0;
   }
 
+  /**
+   * Update the floor disc instances.
+   * Icons must be sorted closest-first. The method selects up to capacity icons,
+   * then writes them in reverse order for correct back-to-front transparency rendering.
+   */
   public update(icons: Overlay3DIcon[], collectionTransform: Matrix4): void {
     const referenceWorldY = this._referenceWorldY;
 
-    let sameLevelIdx = 0;
-    let elevatedIdx = 0;
+    // First pass: count how many icons belong to each bucket (respects capacity limits).
+    // Icons are closest-first, so early entries have priority.
+    let sameLevelCount = 0;
+    let elevatedCount = 0;
+    for (const p of icons) {
+      this._worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
+      if (
+        referenceWorldY === undefined ||
+        Math.abs(this._worldPos.y - referenceWorldY) <= FlooredIconManager.FloorLevelThreshold
+      ) {
+        if (sameLevelCount < this._sameLevelCapacity) sameLevelCount++;
+      } else {
+        if (elevatedCount < FlooredIconManager.ElevatedIconLimit) elevatedCount++;
+      }
+    }
+
+    // Second pass: write instances in reverse order (farthest first) for back-to-front rendering.
+    let sameLevelWriteIdx = sameLevelCount - 1;
+    let elevatedWriteIdx = elevatedCount - 1;
+    let sl = 0;
+    let el = 0;
     for (const p of icons) {
       this._worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
       this._tempMatrix.makeTranslation(this._worldPos.x, this._worldPos.y, this._worldPos.z);
@@ -103,32 +124,23 @@ export class FlooredIconManager {
         referenceWorldY === undefined ||
         Math.abs(this._worldPos.y - referenceWorldY) <= FlooredIconManager.FloorLevelThreshold
       ) {
-        if (sameLevelIdx < this._floorDiscMeshSameLevel.count) {
-          this._floorDiscMeshSameLevel.setMatrixAt(sameLevelIdx++, this._tempMatrix);
+        if (sl < sameLevelCount) {
+          this._floorDiscMeshSameLevel.setMatrixAt(sameLevelWriteIdx--, this._tempMatrix);
+          sl++;
         }
       } else {
-        if (elevatedIdx < FlooredIconManager.ElevatedIconLimit) {
-          this._floorDiscMeshElevated.setMatrixAt(elevatedIdx++, this._tempMatrix);
+        if (el < elevatedCount) {
+          this._floorDiscMeshElevated.setMatrixAt(elevatedWriteIdx--, this._tempMatrix);
+          el++;
         }
       }
     }
 
-    this.finalizeMesh(this._floorDiscMeshSameLevel, sameLevelIdx, this._activeFloorDiscCountSameLevel);
-    this.finalizeMesh(this._floorDiscMeshElevated, elevatedIdx, this._activeFloorDiscCountElevated);
+    this._floorDiscMeshSameLevel.count = sameLevelCount;
+    if (sameLevelCount > 0) this._floorDiscMeshSameLevel.instanceMatrix.needsUpdate = true;
 
-    this._activeFloorDiscCountSameLevel = sameLevelIdx;
-    this._activeFloorDiscCountElevated = elevatedIdx;
-  }
-
-  private finalizeMesh(
-    mesh: InstancedMesh<CircleGeometry, MeshBasicMaterial>,
-    newCount: number,
-    prevCount: number
-  ): void {
-    for (let i = newCount; i < prevCount; i++) {
-      mesh.setMatrixAt(i, this._hiddenMatrix);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
+    this._floorDiscMeshElevated.count = elevatedCount;
+    if (elevatedCount > 0) this._floorDiscMeshElevated.instanceMatrix.needsUpdate = true;
   }
 
   public setHoverPosition(worldPos: Vector3): void {
@@ -169,15 +181,6 @@ export class FlooredIconManager {
   // PRIVATE METHODS
   // ==================================================
 
-  private clearMeshInstances(mesh: InstancedMesh<CircleGeometry, MeshBasicMaterial>, count: number): void {
-    for (let i = 0; i < count; i++) {
-      mesh.setMatrixAt(i, this._hiddenMatrix);
-    }
-    if (count > 0) {
-      mesh.instanceMatrix.needsUpdate = true;
-    }
-  }
-
   private createFloorDiscMesh(
     capacity: number,
     iconRadius: number,
@@ -197,14 +200,10 @@ export class FlooredIconManager {
       side: DoubleSide
     });
     const mesh = new InstancedMesh(geometry, material, capacity);
+    mesh.count = 0;
     mesh.visible = false;
     mesh.frustumCulled = false;
     mesh.renderOrder = 4;
-    for (let i = 0; i < capacity; i++) {
-      mesh.setMatrixAt(i, this._hiddenMatrix);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
-    mesh.computeBoundingBox();
     return mesh;
   }
 

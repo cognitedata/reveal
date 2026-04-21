@@ -247,12 +247,11 @@ describe(DefaultImage360Collection.name, () => {
   describe('setReferenceIcon', () => {
     test('delegates setReferenceIcon to IconCollection', () => {
       const { mock } = createMockIconCollection();
-      const mockIcon = createMockIcon();
       const collection = createTestCollection(mock.object());
 
-      collection.setReferenceIcon(mockIcon);
+      collection.setReferenceIcon(3.5);
 
-      mock.verify(i => i.setReferenceIcon(mockIcon), Times.Once());
+      mock.verify(i => i.setReferenceIcon(3.5), Times.Once());
     });
   });
 });

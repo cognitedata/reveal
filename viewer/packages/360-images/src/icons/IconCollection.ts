@@ -658,14 +658,15 @@ export class IconCollection {
       this._icons.forEach(icon => (icon.culled = true));
       closestPoints.forEach(icon => (icon.culled = false));
 
-      const closestVisibleReversedPoints = closestPoints.filter(icon => icon.getVisible()).reverse();
+      const closestVisiblePoints = closestPoints.filter(icon => icon.getVisible());
 
       if (this._floorMode) {
-        this._floorDiscs.update(closestVisibleReversedPoints, collectionTransform);
+        this._floorDiscs.update(closestVisiblePoints, collectionTransform);
       } else {
+        const reversed = closestVisiblePoints.slice().reverse();
         iconSprites.setPoints(
-          closestVisibleReversedPoints.map(p => p.getPosition()),
-          closestVisibleReversedPoints.map(p => p.getColor())
+          reversed.map(p => p.getPosition()),
+          reversed.map(p => p.getColor())
         );
       }
     };

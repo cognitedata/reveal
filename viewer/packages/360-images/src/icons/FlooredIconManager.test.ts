@@ -26,9 +26,7 @@ describe(FlooredIconManager.name, () => {
     o instanceof InstancedMesh && o.renderOrder === 4;
 
   const isInstanceHidden = (mesh: InstancedMesh, index: number): boolean => {
-    const m = new Matrix4();
-    mesh.getMatrixAt(index, m);
-    return m.elements[0] === 0;
+    return index >= mesh.count;
   };
 
   const makeIcon = (pos: Vector3): Overlay3DIcon =>
@@ -108,7 +106,7 @@ describe(FlooredIconManager.name, () => {
     test('with reference icon non-same-level icons go to elevated mesh', () => {
       const { manager, sameLevelMesh, elevatedMesh } = createManager(10);
 
-      manager.setReferenceIcon(makeIcon(new Vector3(0, 5, 0)));
+      manager.setReferenceIcon(5);
       manager.update(
         [
           makeIcon(new Vector3(0, 5.5, 0)), // same level: 0.5m diff
@@ -130,7 +128,7 @@ describe(FlooredIconManager.name, () => {
       const { manager, sameLevelMesh, elevatedMesh } = createManager(10);
       const refY = 5;
 
-      manager.setReferenceIcon(makeIcon(new Vector3(0, refY, 0)));
+      manager.setReferenceIcon(refY);
       manager.update(
         [
           makeIcon(new Vector3(0, refY + 1.0, 0)), // exactly at threshold: same-level
@@ -147,7 +145,7 @@ describe(FlooredIconManager.name, () => {
     test('elevated bucket is capped at 6 icons total', () => {
       const { manager, elevatedMesh } = createManager(20);
 
-      manager.setReferenceIcon(makeIcon(new Vector3(0, 5, 0)));
+      manager.setReferenceIcon(5);
       const elevatedIcons = Array.from({ length: 8 }, (_, i) => makeIcon(new Vector3(i, 10, 0)));
       manager.update(elevatedIcons, identity);
 
@@ -202,11 +200,11 @@ describe(FlooredIconManager.name, () => {
   test('setOccludedVisible applies depthTest to both disc meshes', () => {
     const { manager, sameLevelMesh, elevatedMesh } = createManager();
     manager.setOccludedVisible(true);
-    expect(sameLevelMesh.material.depthTest).toBe(true);
-    expect(elevatedMesh.material.depthTest).toBe(true);
-    manager.setOccludedVisible(false);
     expect(sameLevelMesh.material.depthTest).toBe(false);
     expect(elevatedMesh.material.depthTest).toBe(false);
+    manager.setOccludedVisible(false);
+    expect(sameLevelMesh.material.depthTest).toBe(true);
+    expect(elevatedMesh.material.depthTest).toBe(true);
     manager.dispose();
   });
 
