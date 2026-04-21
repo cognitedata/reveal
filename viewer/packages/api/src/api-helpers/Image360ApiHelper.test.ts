@@ -497,7 +497,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('calls setReferenceIcon with world Y on enter when enableFloorIcons is true', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
 
       const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
@@ -511,7 +511,7 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('does not call setReferenceIcon on enter when enableFloorIcons is false', async () => {
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
 
       await enterImage(mockEntity);
@@ -521,7 +521,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('calls setReferenceIcon(undefined) on exit', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
-      const { mockEntity } = createFloorModeFixture();
+      const { mockEntity } = mockFacadeForEntry();
       const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
 
       const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
