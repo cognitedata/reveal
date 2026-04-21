@@ -378,7 +378,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
     collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
     if (this._enableFloorIcons) {
-      this._image360Facade.setReferenceIcon(image360Entity.icon);
       this._image360Facade.collections.forEach(c => c.setFloorMode(true));
     } else {
       // Switch to proximity culling when inside a 360 image so nearby icons
@@ -431,15 +430,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     setPreTransitionState();
 
-    // Use the authoritative collection opacity as the starting value for FROM.
-    // Reading fromVisualizationCube.opacity directly is unreliable — a concurrent
-    // exit tween or other code may have already reduced it, making the transition
-    // appear instant. Reset FROM to the expected value before the fade starts.
     fromVisualizationCube.opacity = expectedOpacity;
-    // Keep TO at full opacity throughout so FROM + TO combined always equals 1,
-    // preventing any underlying geometry (e.g. point clouds) from bleeding through.
-    // FROM fades out on top (renderOrder+1), revealing TO underneath — this is
-    // visually identical to a crossfade.
     toVisualizationCube.opacity = expectedOpacity;
 
     from360Entity.deactivateAnnotations();
@@ -562,7 +553,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(
       this._interactionState.currentImage360Entered
     );
-    this._image360Facade.setReferenceIcon(undefined);
     this._image360Facade.collections.forEach(collection => collection.setFloorMode(false));
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
