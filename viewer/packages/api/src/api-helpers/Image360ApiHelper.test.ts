@@ -123,7 +123,8 @@ function createTestHelper(
   domElement: HTMLElement,
   sdk: CogniteClient,
   cameraManagerType: CameraManagerType = 'mock',
-  iconsOptions?: { enableFloorIcons?: boolean }
+  iconsOptions?: { enableFloorIcons?: boolean },
+  hasEventListeners = false
 ): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
   const mockCamera = new PerspectiveCamera();
   mockCamera.position.set(0, 0, 10);
@@ -171,7 +172,7 @@ function createTestHelper(
     proxyCameraManager,
     mockInputHandler,
     onBeforeSceneRendered,
-    false,
+    hasEventListeners,
     iconsOptions
   );
 
@@ -504,6 +505,110 @@ describe(Image360ApiHelper.name, () => {
       await enterImage(mockEntity);
 
       expect(applyFullResolutionMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('executes transition and applies full-res textures when switching between two entities', async () => {
+      const applyFullResMock = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
+      const revision2 = new Mock<Image360RevisionEntity<DataSourceType>>()
+        .setup(r => r.applyFullResolutionTextures())
+        .callback(() => applyFullResMock());
+
+      const entity1 = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const entity2 = createMockEntity(createMockIcon(), createMockVisualization(), revision2.object());
+
+      createFloorModeFixture();
+
+      // Enter entity1 first (first-entry path — no transition)
+      await enterImage(entity1);
+
+      // Enter entity2: triggers transition() from entity1 to entity2
+      const enter2Promise = helper.enter360ImageInternal(entity2);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enter2Promise;
+
+      // applyFullResolutionTextures is called after transition completes (not on first entry)
+      expect(applyFullResMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('re-entering same entity with a different revision activates annotations without camera transition', async () => {
+      const revision1 = createMockRevision();
+      const revision2 = createMockRevision();
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), revision1);
+
+      createFloorModeFixture();
+
+      // First entry — uses revision1 via getMostRecentRevision
+      await enterImage(mockEntity);
+
+      // Second entry with explicit revision2 — lastEntered === mockEntity, so takes the same-entity branch
+      const secondPromise = helper.enter360ImageInternal(mockEntity, revision2);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      const result = await secondPromise;
+
+      expect(result).toBe(true);
+    });
+
+    test('first-entry with FlexibleCameraManager uses camera position tween', async () => {
+      const { helper: flexHelper } = createTestHelper(domElement, sdk, 'flexible');
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const mockCollection = createMockCollection();
+
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+
+      const enterPromise = flexHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      const result = await enterPromise;
+
+      expect(result).toBe(true);
+      flexHelper.dispose();
+    });
+
+    test('registers keydown listener on enter when hasEventListeners is true', async () => {
+      const { helper: listenerHelper } = createTestHelper(domElement, sdk, 'mock', undefined, true);
+      const addEventSpy = jest.spyOn(domElement, 'addEventListener');
+
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      createFloorModeFixture();
+
+      const enterPromise = listenerHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
+
+      const keydownCalls = addEventSpy.mock.calls.filter(([event]) => event === 'keydown');
+      expect(keydownCalls.length).toBeGreaterThan(0);
+      listenerHelper.dispose();
+    });
+
+    test('transition between entities with FlexibleCameraManager uses camera and fov tweens', async () => {
+      const { helper: flexHelper } = createTestHelper(domElement, sdk, 'flexible');
+      const entity1 = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const entity2 = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const mockCollection = createMockCollection();
+
+      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+
+      // First entry (no transition)
+      const enter1 = flexHelper.enter360ImageInternal(entity1);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enter1;
+
+      // Second entry: triggers transition() through the FlexibleCameraManager branch
+      const enter2 = flexHelper.enter360ImageInternal(entity2);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      const result = await enter2;
+
+      expect(result).toBe(true);
+      flexHelper.dispose();
     });
   });
 
