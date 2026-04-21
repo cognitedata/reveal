@@ -493,12 +493,17 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('calls applyFullResolutionTextures on first entry', async () => {
-      const { mockEntity } = createFloorModeFixture();
-      const applyFullResSpy = jest.spyOn(helper as any, 'applyFullResolutionTextures').mockResolvedValue(undefined);
+      const applyFullResolutionMock = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
+      const mockRevision = new Mock<Image360RevisionEntity<DataSourceType>>()
+        .setup(r => r.applyFullResolutionTextures())
+        .callback(() => applyFullResolutionMock());
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), mockRevision.object());
+
+      createFloorModeFixture(); // sets up facade preload, getCollectionContainingEntity, collections spies
 
       await enterImage(mockEntity);
 
-      expect(applyFullResSpy).toHaveBeenCalledTimes(1);
+      expect(applyFullResolutionMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -639,6 +644,95 @@ describe(Image360ApiHelper.name, () => {
 
       const result = helper.findBestNext360ImageEntity(new Vector3(10, 0, 0));
       expect(result?.image360).toBe(forward);
+    });
+  });
+
+  describe('wait cursor', () => {
+    function hasWaitCursorOverlay(): boolean {
+      return Array.from(document.body.children).some(el => (el as HTMLElement).style?.cursor === 'wait');
+    }
+
+    function waitCursorOverlayCount(): number {
+      return Array.from(document.body.children).filter(el => (el as HTMLElement).style?.cursor === 'wait').length;
+    }
+
+    test('enter360Image adds wait cursor overlay synchronously and removes it on completion', async () => {
+      jest.spyOn(helper, 'enter360ImageInternal').mockResolvedValue(true);
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+
+      const enterPromise = helper.enter360Image(mockEntity);
+
+      // showWaitCursor runs synchronously before the first await inside enter360Image
+      expect(hasWaitCursorOverlay()).toBe(true);
+
+      await enterPromise;
+
+      // hideWaitCursor called in finally block after enter360ImageInternal resolves
+      expect(hasWaitCursorOverlay()).toBe(false);
+    });
+
+    test('concurrent enter360Image calls share one overlay and remove it only when all complete', async () => {
+      let resolve1!: (v: boolean) => void;
+      let resolve2!: (v: boolean) => void;
+      let callCount = 0;
+      jest.spyOn(helper, 'enter360ImageInternal').mockImplementation(() => {
+        if (callCount++ === 0)
+          return new Promise<boolean>(r => {
+            resolve1 = r;
+          });
+        return new Promise<boolean>(r => {
+          resolve2 = r;
+        });
+      });
+
+      const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const p1 = helper.enter360Image(entity);
+      const p2 = helper.enter360Image(entity);
+
+      // Only one overlay is created even for two concurrent calls
+      expect(waitCursorOverlayCount()).toBe(1);
+
+      resolve1(true);
+      await p1;
+      // Second call still in progress — overlay must remain
+      expect(hasWaitCursorOverlay()).toBe(true);
+
+      resolve2(true);
+      await p2;
+      // Both complete — overlay removed
+      expect(hasWaitCursorOverlay()).toBe(false);
+    });
+
+    test('onClick shows wait cursor when an icon is hit and removes it on completion', async () => {
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
+      const mockIconIntersection: Image360IconIntersectionData<DataSourceType> = {
+        image360Collection: new Mock<DefaultImage360Collection<DataSourceType>>().object(),
+        image360: mockEntity,
+        point: new Vector3(0, 0, 0),
+        distanceToCamera: 10
+      };
+
+      jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
+      jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
+
+      let resolveEnter!: (v: boolean) => void;
+      jest.spyOn(helper, 'enter360ImageInternal').mockImplementation(
+        () =>
+          new Promise<boolean>(r => {
+            resolveEnter = r;
+          })
+      );
+
+      const clickPromise = helper.onClick({ offsetX: 320, offsetY: 240 });
+
+      // showWaitCursor runs synchronously before the first await in enter360ImageOnIntersect
+      expect(hasWaitCursorOverlay()).toBe(true);
+
+      resolveEnter(true);
+      await clickPromise;
+
+      // hideWaitCursor called in finally block after enter360ImageInternal resolves
+      expect(hasWaitCursorOverlay()).toBe(false);
     });
   });
 });

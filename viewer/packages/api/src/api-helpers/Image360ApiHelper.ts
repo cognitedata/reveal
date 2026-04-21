@@ -65,6 +65,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private _waitCursorOverlay: HTMLDivElement | undefined;
+  private _waitCursorCount = 0;
   private readonly _raycaster = new Raycaster();
   private _needsRedraw: boolean = false;
   private readonly _hasEventListeners: boolean;
@@ -396,6 +397,10 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   }
 
   private showWaitCursor(): void {
+    this._waitCursorCount++;
+    if (this._waitCursorOverlay) {
+      return;
+    }
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:wait;';
     document.body.appendChild(overlay);
@@ -403,8 +408,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   }
 
   private hideWaitCursor(): void {
-    this._waitCursorOverlay?.remove();
-    this._waitCursorOverlay = undefined;
+    this._waitCursorCount = Math.max(0, this._waitCursorCount - 1);
+    if (this._waitCursorCount === 0 && this._waitCursorOverlay) {
+      this._waitCursorOverlay.remove();
+      this._waitCursorOverlay = undefined;
+    }
   }
 
   private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
