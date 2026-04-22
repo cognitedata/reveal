@@ -495,6 +495,47 @@ describe(Image360ApiHelper.name, () => {
       floorHelper.dispose();
     });
 
+    test('calls setReferenceIcon with world Y on enter when enableFloorIcons is true', async () => {
+      const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
+      const { mockEntity } = mockFacadeForEntry();
+      const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
+
+      const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
+
+      // mockEntity.transform is identity → world Y = 0
+      expect(setReferenceIconSpy).toHaveBeenCalledWith(0);
+      floorHelper.dispose();
+    });
+
+    test('does not call setReferenceIcon on enter when enableFloorIcons is false', async () => {
+      const { mockEntity } = mockFacadeForEntry();
+      const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
+
+      await enterImage(mockEntity);
+
+      expect(setReferenceIconSpy).not.toHaveBeenCalled();
+    });
+
+    test('calls setReferenceIcon(undefined) on exit', async () => {
+      const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
+      const { mockEntity } = mockFacadeForEntry();
+      const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
+
+      const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
+      await Promise.resolve();
+      TWEEN.update(TWEEN.now() + 2000);
+      await enterPromise;
+      setReferenceIconSpy.mockClear();
+
+      floorHelper.exit360Image();
+
+      expect(setReferenceIconSpy).toHaveBeenCalledWith(undefined);
+      floorHelper.dispose();
+    });
+
     test('calls applyFullResolutionTextures on first entry', async () => {
       const applyFullResolutionMock = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
       const mockRevision = new Mock<Image360RevisionEntity<DataSourceType>>()

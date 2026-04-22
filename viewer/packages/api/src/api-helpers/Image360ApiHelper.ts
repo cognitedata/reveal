@@ -384,6 +384,8 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
     if (this._enableFloorIcons) {
       this._image360Facade.collections.forEach(c => c.setFloorMode(true));
+      const referenceWorldY = new Vector3().setFromMatrixPosition(image360Entity.transform).y;
+      this._image360Facade.setReferenceIcon(referenceWorldY);
     } else {
       // Switch to proximity culling when inside a 360 image so nearby icons
       // are shown without clustering (mirrors the behaviour when floor mode is on).
@@ -547,6 +549,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._interactionState.currentImage360Entered
     );
     this._image360Facade.collections.forEach(collection => collection.setFloorMode(false));
+    this._image360Facade.setReferenceIcon(undefined);
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 

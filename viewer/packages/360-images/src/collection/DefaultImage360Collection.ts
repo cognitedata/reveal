@@ -271,6 +271,10 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._icons.setFloorMode(enabled);
   }
 
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._icons.setReferenceIcon(worldY);
+  }
+
   /**
    * Get the current cluster distance threshold.
    * @returns The current distance threshold for clustering
