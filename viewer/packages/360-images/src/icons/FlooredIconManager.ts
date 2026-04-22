@@ -115,8 +115,8 @@ export class FlooredIconManager {
     // Second pass: write instances in reverse order (farthest first) for back-to-front rendering.
     let sameLevelWriteIdx = sameLevelCount - 1;
     let elevatedWriteIdx = elevatedCount - 1;
-    let sl = 0;
-    let el = 0;
+    let sameLevelPlaced = 0;
+    let elevatedPlaced = 0;
     for (const p of icons) {
       this._worldPos.copy(p.getPosition()).applyMatrix4(collectionTransform);
       this._tempMatrix.makeTranslation(this._worldPos.x, this._worldPos.y, this._worldPos.z);
@@ -124,14 +124,14 @@ export class FlooredIconManager {
         referenceWorldY === undefined ||
         Math.abs(this._worldPos.y - referenceWorldY) <= FlooredIconManager.FloorLevelThreshold
       ) {
-        if (sl < sameLevelCount) {
+        if (sameLevelPlaced < sameLevelCount) {
           this._floorDiscMeshSameLevel.setMatrixAt(sameLevelWriteIdx--, this._tempMatrix);
-          sl++;
+          sameLevelPlaced++;
         }
       } else {
-        if (el < elevatedCount) {
+        if (elevatedPlaced < elevatedCount) {
           this._floorDiscMeshElevated.setMatrixAt(elevatedWriteIdx--, this._tempMatrix);
-          el++;
+          elevatedPlaced++;
         }
       }
     }
@@ -188,6 +188,7 @@ export class FlooredIconManager {
     color: number
   ): InstancedMesh<CircleGeometry, MeshBasicMaterial> {
     const geometry = new CircleGeometry(iconRadius, 32);
+    // Bake orientation and floor offset into the geometry so instance matrices only carry position.
     geometry.rotateX(-Math.PI / 2);
     geometry.translate(0, -FlooredIconManager.FloorDiscHeightOffset, 0);
     const material = new MeshBasicMaterial({

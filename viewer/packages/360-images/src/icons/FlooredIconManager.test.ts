@@ -187,6 +187,24 @@ describe(FlooredIconManager.name, () => {
       expect(m.elements[14]).toBeCloseTo(10); // tz
       manager.dispose();
     });
+
+    test('instances are written farthest-first so closest icon renders on top (back-to-front)', () => {
+      const { manager, sameLevelMesh } = createManager(5);
+      // Icons passed closest-first: near at index 0, far at index 1
+      const nearIcon = makeIcon(new Vector3(1, 0, 0));
+      const farIcon = makeIcon(new Vector3(9, 0, 0));
+
+      manager.update([nearIcon, farIcon], identity);
+
+      // count=2: farthest is written at index 0, closest at index 1
+      const m0 = new Matrix4();
+      const m1 = new Matrix4();
+      sameLevelMesh.getMatrixAt(0, m0);
+      sameLevelMesh.getMatrixAt(1, m1);
+      expect(m0.elements[12]).toBeCloseTo(9); // far icon at slot 0
+      expect(m1.elements[12]).toBeCloseTo(1); // near icon at slot 1
+      manager.dispose();
+    });
   });
 
   test('setOpacity applies to both disc meshes', () => {
