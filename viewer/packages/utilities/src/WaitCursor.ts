@@ -3,13 +3,13 @@
  */
 
 export class WaitCursor {
-  private _count = 0;
+  private _refCount = 0;
   private _overlay: HTMLDivElement | undefined;
 
   constructor(private readonly _container: HTMLElement) {}
 
-  public show(): void {
-    this._count++;
+  public refAndUpdate(): void {
+    this._refCount++;
     if (this._overlay) {
       return;
     }
@@ -19,9 +19,9 @@ export class WaitCursor {
     this._overlay = overlay;
   }
 
-  public hide(): void {
-    this._count = Math.max(0, this._count - 1);
-    if (this._count === 0 && this._overlay) {
+  public derefAndUpdate(): void {
+    this._refCount = Math.max(0, this._refCount - 1);
+    if (this._refCount === 0 && this._overlay) {
       this._overlay.remove();
       this._overlay = undefined;
     }
@@ -32,6 +32,6 @@ export class WaitCursor {
       this._overlay.remove();
       this._overlay = undefined;
     }
-    this._count = 0;
+    this._refCount = 0;
   }
 }

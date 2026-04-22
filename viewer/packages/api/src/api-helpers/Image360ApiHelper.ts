@@ -289,11 +289,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     image360Entity: Image360Entity<DataSourceT>,
     revision?: Image360RevisionEntity<DataSourceT>
   ): Promise<void> {
-    this._waitCursor.show();
+    this._waitCursor.refAndUpdate();
     try {
       await this.enter360ImageInternal(image360Entity, revision);
     } finally {
-      this._waitCursor.hide();
+      this._waitCursor.derefAndUpdate();
     }
   }
 
@@ -658,11 +658,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       return false;
     }
 
-    this._waitCursor.show();
+    this._waitCursor.refAndUpdate();
     try {
       return await this.enter360ImageInternal(intersection.image360);
     } finally {
-      this._waitCursor.hide();
+      this._waitCursor.derefAndUpdate();
     }
   }
 
