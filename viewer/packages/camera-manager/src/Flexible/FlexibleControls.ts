@@ -443,6 +443,9 @@ export class FlexibleControls {
         translator = new FlexibleControlsTranslator(this);
         await translator.initialize(position);
       }
+      if (!this._mouseDragInfo) {
+        return;
+      }
       if (!translator.translate(position)) {
         // If not, translate in a simpler way
         deltaPosition.multiplyScalar(this._options.mousePanSpeed);
