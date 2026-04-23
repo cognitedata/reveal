@@ -31,6 +31,16 @@ class StubWorker {
 (window as any).TextDecoder = TextDecoder;
 (window as any).TextEncoder = TextEncoder;
 
+// jsdom does not implement PointerEvent; polyfill so instanceof checks work in tests.
+class PointerEventPolyfill extends MouseEvent {
+  readonly pointerType: string;
+  constructor(type: string, init: PointerEventInit = {}) {
+    super(type, init);
+    this.pointerType = init.pointerType ?? '';
+  }
+}
+(window as any).PointerEvent = PointerEventPolyfill;
+
 import packageObject from '../../package.json' with { type: 'json' };
 
 Object.assign(process.env, {

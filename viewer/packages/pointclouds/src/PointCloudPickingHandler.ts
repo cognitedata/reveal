@@ -8,7 +8,7 @@ import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
 import { Mutex } from 'async-mutex';
 
-import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
+import { PickPoint, PointCloudOctreePicker } from './potree-three-loader';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
 import {
   ClassicDataSourceType,
@@ -46,29 +46,24 @@ export class PointCloudPickingHandler {
 
     const release = await this._mutex.acquire();
     try {
-      const intersections: PickPoint[] = [];
+      const intersections: { node: PointCloudNode<DataSourceType>; pick: PickPoint }[] = [];
 
       // Get PointCloudNodes which are visible.
       const visibleNodes = nodes.filter(node => node.visible);
 
       for (const node of visibleNodes) {
-        const intersection = await this._picker.pick(camera, this._raycaster.ray, [node.octree], {
+        const pick = await this._picker.pick(camera, this._raycaster.ray, [node.octree], {
           pickWindowSize: PointCloudPickingHandler.PickingWindowSize
         });
-        if (intersection !== null) {
-          intersections.push(intersection);
+        if (pick !== null) {
+          intersections.push({ node, pick });
         }
       }
 
       return intersections
-        .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
-        .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
-        .map(x => {
-          const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
-          if (pointCloudNode === null) {
-            throw new Error(`Could not find PointCloudNode for intersected point`);
-          }
-
+        .filter(({ pick }) => isPointVisibleByPlanes(input.clippingPlanes, pick.position))
+        .sort((a, b) => a.pick.position.distanceTo(camera.position) - b.pick.position.distanceTo(camera.position))
+        .map(({ node: pointCloudNode, pick: x }) => {
           const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
 
           const baseObject = {
@@ -114,17 +109,4 @@ export class PointCloudPickingHandler {
       release();
     }
   }
-}
-
-function determinePointCloudNode(
-  node: THREE.Object3D,
-  candidates: PointCloudNode<DataSourceType>[]
-): PointCloudNode<DataSourceType> | null {
-  while (node.type === 'Points' && node.parent !== null) {
-    node = node.parent;
-  }
-  if (node instanceof PointCloudOctree) {
-    return candidates.find(x => node === x.octree) || null;
-  }
-  return null;
 }
