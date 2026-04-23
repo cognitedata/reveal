@@ -273,5 +273,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 });
 
 function texelsOf(texture: THREE.DataTexture): number[] | undefined {
-  return Array.from(createUint8View(texture.image.data));
+  const data = texture.image.data;
+  if (!data) return undefined;
+  return Array.from(createUint8View(data));
 }
