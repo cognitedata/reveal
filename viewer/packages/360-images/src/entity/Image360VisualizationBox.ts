@@ -158,14 +158,17 @@ export class Image360VisualizationBox implements Image360Visualization {
       faces.map(async image360Face => {
         const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
         const url = window.URL.createObjectURL(blob);
-        let faceTexture = await this._textureLoader.loadAsync(url);
+        let faceTexture: THREE.Texture = await this._textureLoader.loadAsync(url);
 
+        const faceImage = faceTexture.image as HTMLImageElement;
         if (
           this._device.deviceType === 'mobile' &&
-          (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE ||
-            faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
+          (faceImage.width > this.MAX_MOBILE_IMAGE_SIZE || faceImage.height > this.MAX_MOBILE_IMAGE_SIZE)
         ) {
-          faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
+          faceTexture = await this.getScaledImageTexture(
+            faceTexture as THREE.Texture<HTMLImageElement>,
+            this.MAX_MOBILE_IMAGE_SIZE
+          );
         }
 
         // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
@@ -200,7 +203,10 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._faceMaterials = [];
   }
 
-  private async getScaledImageTexture(texture: THREE.Texture, imageSize: number): Promise<THREE.Texture> {
+  private async getScaledImageTexture(
+    texture: THREE.Texture<HTMLImageElement>,
+    imageSize: number
+  ): Promise<THREE.Texture> {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     //Scale down the width and height
