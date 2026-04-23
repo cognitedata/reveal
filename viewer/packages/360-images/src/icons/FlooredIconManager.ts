@@ -40,6 +40,8 @@ export class FlooredIconManager {
   private readonly _sameLevelCapacity: number;
 
   private _referenceWorldY: number | undefined;
+  private _prevSameLevelCount = -1;
+  private _prevElevatedCount = -1;
 
   constructor(
     capacity: number,
@@ -137,10 +139,22 @@ export class FlooredIconManager {
     }
 
     this._floorDiscMeshSameLevel.count = sameLevelCount;
-    if (sameLevelCount > 0) this._floorDiscMeshSameLevel.instanceMatrix.needsUpdate = true;
+    if (sameLevelCount > 0) {
+      this._floorDiscMeshSameLevel.instanceMatrix.needsUpdate = true;
+      if (sameLevelCount !== this._prevSameLevelCount) {
+        this._floorDiscMeshSameLevel.computeBoundingBox();
+      }
+    }
+    this._prevSameLevelCount = sameLevelCount;
 
     this._floorDiscMeshElevated.count = elevatedCount;
-    if (elevatedCount > 0) this._floorDiscMeshElevated.instanceMatrix.needsUpdate = true;
+    if (elevatedCount > 0) {
+      this._floorDiscMeshElevated.instanceMatrix.needsUpdate = true;
+      if (elevatedCount !== this._prevElevatedCount) {
+        this._floorDiscMeshElevated.computeBoundingBox();
+      }
+    }
+    this._prevElevatedCount = elevatedCount;
   }
 
   public setHoverPosition(worldPos: Vector3): void {
