@@ -13,6 +13,7 @@ import {
   Vector3
 } from 'three';
 import { Mock, It } from 'moq.ts';
+import { jest } from '@jest/globals';
 import { SceneHandler } from '@reveal/utilities';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { FlooredIconManager } from './FlooredIconManager';
@@ -203,6 +204,27 @@ describe(FlooredIconManager.name, () => {
       sameLevelMesh.getMatrixAt(1, m1);
       expect(m0.elements[12]).toBeCloseTo(9); // far icon at slot 0
       expect(m1.elements[12]).toBeCloseTo(1); // near icon at slot 1
+      manager.dispose();
+    });
+
+    test('computeBoundingBox is called only when count changes, not on every update', () => {
+      const { manager, sameLevelMesh } = createManager(5);
+      const bbSpy = jest.spyOn(sameLevelMesh, 'computeBoundingBox');
+
+      const icons = [makeIcon(new Vector3(0, 0, 0)), makeIcon(new Vector3(1, 0, 0))];
+
+      // First update: count changes from -1 to 2 — should compute
+      manager.update(icons, identity);
+      expect(bbSpy).toHaveBeenCalledTimes(1);
+
+      // Second update: same count — should skip
+      manager.update(icons, identity);
+      expect(bbSpy).toHaveBeenCalledTimes(1);
+
+      // Third update: count changes to 1 — should recompute
+      manager.update([icons[0]], identity);
+      expect(bbSpy).toHaveBeenCalledTimes(2);
+
       manager.dispose();
     });
   });
