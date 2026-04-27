@@ -159,7 +159,9 @@ function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
 function createOutlineColorTexture(): THREE.DataTexture {
   const outlineColorBuffer = new Uint8Array(8 * 4);
   const outlineColorTexture = new THREE.DataTexture(outlineColorBuffer, 8, 1);
-  const colorTextureView = createUint8View(outlineColorTexture.image.data);
+  const rawData = outlineColorTexture.image.data;
+  if (!rawData) return outlineColorTexture;
+  const colorTextureView = createUint8View(rawData);
   setOutlineColor(colorTextureView, NodeOutlineColor.Black, CogniteColors.Black);
   setOutlineColor(colorTextureView, NodeOutlineColor.White, CogniteColors.White);
   setOutlineColor(colorTextureView, NodeOutlineColor.Cyan, CogniteColors.Cyan);

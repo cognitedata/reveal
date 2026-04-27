@@ -48,7 +48,11 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   private setObjectStyle(objectId: number, appearance: CompletePointCloudAppearance): void {
-    const data = createUint8View(this._objectStyleTexture.image.data);
+    const rawData = this._objectStyleTexture.image.data;
+    if (!rawData) {
+      throw new Error('Point cloud object style texture data is not initialized');
+    }
+    const data = createUint8View(rawData);
 
     const styleData = this.appearanceToRgba(appearance);
     data.set(styleData, 4 * objectId);
@@ -81,10 +85,14 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   private resetTexture(): void {
+    const rawData = this._objectStyleTexture.image.data;
+    if (!rawData) {
+      throw new Error('Point cloud object style texture data is not initialized');
+    }
     const styleData = this.appearanceToRgba(this._defaultAppearance);
 
     for (let i = 0; i < this._width * this._height; i++) {
-      createUint8View(this._objectStyleTexture.image.data).set(styleData, 4 * i);
+      createUint8View(rawData).set(styleData, 4 * i);
     }
   }
 

@@ -10,6 +10,7 @@ import {
   NoBlending,
   PerspectiveCamera,
   RawShaderMaterial,
+  DataTexture,
   Texture,
   Vector2,
   Vector3,
@@ -96,7 +97,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   useDrawingBufferSize = false;
   lights = false;
   fog = false;
-  visibleNodesTexture: Texture | undefined;
+  visibleNodesTexture: DataTexture | undefined;
   visibleNodeTextureOffsets = new Map<string, number>();
 
   private readonly _gradient = SpectralGradient;
@@ -354,7 +355,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     const texture = this.visibleNodesTexture;
 
     if (texture) {
-      texture.image.data.set(textureData);
+      texture.image.data?.set(textureData);
       texture.needsUpdate = true;
     }
   }
