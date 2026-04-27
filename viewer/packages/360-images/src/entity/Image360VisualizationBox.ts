@@ -200,15 +200,12 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   private async getScaledImageTexture(
-    texture: THREE.Texture,
+    texture: THREE.Texture<HTMLImageElement | HTMLCanvasElement>,
     imageSize: number
   ): Promise<THREE.Texture<HTMLCanvasElement>> {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     const { image } = texture;
-    if (!(image instanceof HTMLCanvasElement)) {
-      throw new Error('Expected texture image to be an HTMLCanvasElement');
-    }
     //Scale down the width and height
     let width = image.width;
     let height = image.height;
