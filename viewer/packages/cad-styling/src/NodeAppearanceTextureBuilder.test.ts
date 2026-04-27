@@ -15,6 +15,7 @@ import { Color } from 'three';
 
 import { jest } from '@jest/globals';
 import { NodeOutlineColor, type NodeAppearance } from './NodeAppearance';
+import assert from 'assert';
 
 function toByteTuple(color: Color): [number, number, number] {
   return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];
@@ -274,6 +275,6 @@ describe('NodeAppearanceTextureBuilder', () => {
 
 function texelsOf(texture: THREE.DataTexture): number[] | undefined {
   const data = texture.image.data;
-  if (!data) return undefined;
+  assert(data !== null);
   return Array.from(createUint8View(data));
 }
