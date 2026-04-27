@@ -3,6 +3,7 @@
  */
 import { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 import { DMInstanceRef } from '@reveal/utilities';
+import { Log } from '@reveal/logger';
 import chunk from 'lodash/chunk';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 
@@ -17,10 +18,10 @@ export type FileIdentifier = { id: number } | { externalId: string } | { instanc
  */
 export type FileDownloadResult = {
   data: ArrayBuffer;
-  mimeType: 'image/jpeg' | 'image/png';
+  mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
 };
 
-function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
+function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' | 'image/webp' {
   if (contentType) {
     const lowerContentType = contentType.toLowerCase();
     if (lowerContentType.includes('image/png')) {
@@ -28,6 +29,9 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
     }
     if (lowerContentType.includes('image/jpeg') || lowerContentType.includes('image/jpg')) {
       return 'image/jpeg';
+    }
+    if (lowerContentType.includes('image/webp')) {
+      return 'image/webp';
     }
   }
   return DEFAULT_360_IMAGE_MIME_TYPE;
@@ -48,20 +52,39 @@ export class CdfImageFileProvider {
     abortSignal?: AbortSignal
   ): Promise<FileDownloadResult[]> {
     const fileLinks = await this.getDownloadUrls(fileIdentifiers, abortSignal);
+    const perfEnabled = localStorage.getItem('reveal_360_perf') === 'true';
+    console.log('[360 perf] getFileBuffersWithMimeType called, perfEnabled=', perfEnabled);
 
     // Direct parallel downloads - browser handles connection pooling naturally
-    return Promise.all(
-      fileLinks.map(fileLink =>
-        fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }).then(async response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
-          }
-          const mimeType = parseMimeType(response.headers.get('Content-Type'));
-          const data = await response.arrayBuffer();
-          return { data, mimeType };
-        })
-      )
+    const results = await Promise.all(
+      fileLinks.map(async (fileLink, index) => {
+        const downloadStart = perfEnabled ? performance.now() : 0;
+        const response = await fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
+        }
+        const mimeType = parseMimeType(response.headers.get('Content-Type'));
+        const data = await response.arrayBuffer();
+
+        if (perfEnabled) {
+          const downloadMs = performance.now() - downloadStart;
+          const sizeKb = (data.byteLength / 1024).toFixed(1);
+          console.log(
+            `[360 download] face ${index} | format=${mimeType} | size=${sizeKb} KB | time=${downloadMs.toFixed(0)} ms`
+          );
+        }
+
+        return { data, mimeType };
+      })
     );
+
+    if (perfEnabled) {
+      const totalBytes = results.reduce((sum, r) => sum + r.data.byteLength, 0);
+      const totalMb = (totalBytes / 1024 / 1024).toFixed(2);
+      console.log(`[360 download] total for ${results.length} faces: ${totalMb} MB | format=${results[0]?.mimeType}`);
+    }
+
+    return results;
   }
 
   public async getFileBuffers(fileIdentifiers: FileIdentifier[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {

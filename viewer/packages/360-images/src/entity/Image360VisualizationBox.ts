@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import { Log } from '@reveal/logger';
 import assert from 'assert';
 import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
@@ -154,8 +155,12 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
+    const perfEnabled = localStorage.getItem('reveal_360_perf') === 'true';
+
     return Promise.all(
       faces.map(async image360Face => {
+        const decodeStart = perfEnabled ? performance.now() : 0;
+
         const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
         const url = window.URL.createObjectURL(blob);
         let faceTexture = await this._textureLoader.loadAsync(url);
@@ -170,6 +175,14 @@ export class Image360VisualizationBox implements Image360Visualization {
 
         // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
         window.URL.revokeObjectURL(url);
+
+        if (perfEnabled) {
+          const decodeMs = (performance.now() - decodeStart).toFixed(0);
+          const { width, height } = faceTexture.image;
+          console.log(
+            `[360 decode] face=${image360Face.face} | format=${image360Face.mimeType} | ${width}x${height} | decode=${decodeMs} ms`
+          );
+        }
 
         // Need to horizontally flip the texture since it is being rendered inside a cube
         faceTexture.center.set(0.5, 0.5);

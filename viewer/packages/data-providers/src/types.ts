@@ -160,7 +160,7 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
 
 export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  mimeType: 'image/jpeg' | 'image/png';
+  mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
   data: ArrayBuffer;
 };
 
@@ -171,7 +171,7 @@ export type Image360Texture = {
 
 export type Image360FileDescriptor = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  mimeType: 'image/jpeg' | 'image/png';
+  mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
   /** Internal CDF file ID (numeric) */
   fileId?: number;
   /** External file ID (string) - for system-space/FDM collections */
