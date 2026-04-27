@@ -269,4 +269,40 @@ describe(HtmlOverlayTool.name, () => {
     expect(div2.parentElement).toBeNull();
     expect(compositeElement.parentElement).toBeNull();
   });
+
+  test('screenspace clustering reuses composite element when composition unchanged', () => {
+    // Arrange
+    const compositeElement = document.createElement('div');
+    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
+    div1.style.position = 'absolute';
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
+
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
+    // Act — first update creates the composite
+    helper.forceUpdate();
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
+    expect(compositeElement.parentElement).not.toBeNull();
+
+    // Act — second update should reuse the same composite, not call callback again
+    helper.forceUpdate();
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
+    expect(compositeElement.parentElement).not.toBeNull();
+
+    // Act — third update, same result
+    helper.forceUpdate();
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
+  });
 });
