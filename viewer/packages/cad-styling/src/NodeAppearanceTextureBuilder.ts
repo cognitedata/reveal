@@ -109,7 +109,9 @@ export class NodeAppearanceTextureBuilder {
     }
 
     const rawData = this._overrideColorPerTreeIndexTexture.image.data;
-    if (!rawData) return;
+    if (!rawData) {
+      throw new Error('Node appearance override color texture data is not initialized');
+    }
     const rgba = createUint8View(rawData);
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
@@ -199,7 +201,9 @@ export class NodeAppearanceTextureBuilder {
     }
 
     const textureData = this._overrideColorPerTreeIndexTexture.image.data;
-    if (!textureData) return;
+    if (!textureData) {
+      throw new Error('Node appearance override color texture data is not initialized');
+    }
     combineRGBA(createUint8View(textureData), treeIndices, style);
   }
 

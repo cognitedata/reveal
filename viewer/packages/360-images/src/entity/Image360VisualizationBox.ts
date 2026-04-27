@@ -158,9 +158,8 @@ export class Image360VisualizationBox implements Image360Visualization {
       faces.map(async image360Face => {
         const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
         const url = window.URL.createObjectURL(blob);
-        let faceTexture: THREE.Texture = await this._textureLoader.loadAsync(url);
-
-        const faceImage = faceTexture.image as HTMLImageElement;
+        let faceTexture: THREE.Texture<HTMLImageElement | HTMLCanvasElement> = await this._textureLoader.loadAsync(url);
+        const faceImage = faceTexture.image;
         if (
           this._device.deviceType === 'mobile' &&
           (faceImage.width > this.MAX_MOBILE_IMAGE_SIZE || faceImage.height > this.MAX_MOBILE_IMAGE_SIZE)
@@ -200,10 +199,16 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._faceMaterials = [];
   }
 
-  private async getScaledImageTexture(texture: THREE.Texture, imageSize: number): Promise<THREE.Texture> {
+  private async getScaledImageTexture(
+    texture: THREE.Texture,
+    imageSize: number
+  ): Promise<THREE.Texture<HTMLCanvasElement>> {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    const image = texture.image as HTMLImageElement;
+    const { image } = texture;
+    if (!(image instanceof HTMLCanvasElement)) {
+      throw new Error('Expected texture image to be an HTMLCanvasElement');
+    }
     //Scale down the width and height
     let width = image.width;
     let height = image.height;

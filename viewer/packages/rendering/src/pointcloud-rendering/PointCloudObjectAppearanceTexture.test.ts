@@ -12,6 +12,7 @@ import {
 
 import { Color } from 'three';
 import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import assert from 'assert';
 
 const textureWidth = 10;
 const textureHeight = 10;
@@ -52,7 +53,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     const rawTexture = appearanceTexture.objectStyleTexture;
     const textureData = rawTexture.image.data;
-    if (!textureData) return;
+    assert(textureData !== null);
     const resultRgb = createUint8View(textureData).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([...colorBytes, 1]);
@@ -91,7 +92,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     const rawTexture = appearanceTexture.objectStyleTexture;
     const textureData = rawTexture.image.data;
-    if (!textureData) return;
+    assert(textureData !== null);
     const resultRgb = createUint8View(textureData).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([...colorBytes, 1]);
@@ -130,7 +131,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     const rawTexture = appearanceTexture.objectStyleTexture;
     const textureData = rawTexture.image.data;
-    if (!textureData) return;
+    assert(textureData !== null);
     const resultRgb = createUint8View(textureData).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([0, 0, 0, 0]);
@@ -168,7 +169,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     const rawTexture = appearanceTexture.objectStyleTexture;
     const textureData = rawTexture.image.data;
-    if (!textureData) return;
+    assert(textureData !== null);
     const resultRgb = createUint8View(textureData).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([0, 0, 0, 0]);
