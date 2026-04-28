@@ -162,6 +162,8 @@ export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
   data: ArrayBuffer;
+  /** Direct CDF proxy URL for progressive loading via <img> element. When present, data is empty. */
+  downloadUrl?: string;
 };
 
 export type Image360Texture = {

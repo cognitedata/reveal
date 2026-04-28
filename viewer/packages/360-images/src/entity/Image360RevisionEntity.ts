@@ -109,12 +109,29 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     lowResolutionCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
   } {
-    const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
-    const fullResolutionCompleted = this.loadFullTextures(abortSignal);
+    // get360ImageFiles only fetches download URLs for progressive collections (fast API call)
+    const fullImageFilesPromise = this._imageProvider.get360ImageFiles(
+      this._image360Descriptor.faceDescriptors,
+      abortSignal
+    );
+
+    // Resolves when the first face's scan 1 is decoded and applied — gates the camera transition
+    // so it doesn't start against a blank cube.
+    let resolveFirstFace!: () => void;
+    const firstFaceReady = new Promise<void>(resolve => {
+      resolveFirstFace = resolve;
+    });
+
+    const fullResolutionCompleted = (async () => {
+      const fullImageFiles = await fullImageFilesPromise;
+      const textures = await this._image360VisualizationBox.loadFaceTextures(fullImageFiles, resolveFirstFace);
+      this._fullResolutionTextures = textures;
+      this._image360VisualizationBox.loadImages(textures);
+    })();
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
-    return { lowResolutionCompleted, fullResolutionCompleted };
+    return { lowResolutionCompleted: firstFaceReady, fullResolutionCompleted };
   }
 
   public async getPreviewThumbnailUrl(
@@ -144,16 +161,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     }
     const previewTextures = await this._image360VisualizationBox.loadFaceTextures(previewImageFiles);
     this._previewTextures = previewTextures;
-  }
-
-  private async loadFullTextures(abortSignal?: AbortSignal): Promise<void> {
-    const fullImageFiles = await this._imageProvider.get360ImageFiles(
-      this._image360Descriptor.faceDescriptors,
-      abortSignal
-    );
-
-    const textures = await this._image360VisualizationBox.loadFaceTextures(fullImageFiles);
-    this._fullResolutionTextures = textures;
   }
 
   private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {

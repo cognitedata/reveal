@@ -9,6 +9,7 @@ import assert from 'assert';
 import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import { findProgressiveScanCutpoints, makePartialJpegBlob } from '../jpegStreamParser';
 
 type VisualizationState = {
   opacity: number;
@@ -31,6 +32,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
   private readonly _annotationsGroup: THREE.Group = new THREE.Group();
   private readonly _localTransform: THREE.Matrix4;
+  private readonly _activeProgressiveLoads: Set<number> = new Set();
 
   get visible(): boolean {
     return this._visualizationState.visible;
@@ -87,7 +89,12 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._annotationsGroup.add(...annotations.map(a => a.getObject()));
   }
 
-  constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler, device: DeviceDescriptor) {
+  constructor(
+    worldTransform: THREE.Matrix4,
+    sceneHandler: SceneHandler,
+    device: DeviceDescriptor,
+    private readonly _requestRedraw: () => void = () => {}
+  ) {
     this._localTransform = worldTransform.clone();
     this._worldTransform = worldTransform.clone();
     this._sceneHandler = sceneHandler;
@@ -114,7 +121,9 @@ export class Image360VisualizationBox implements Image360Visualization {
     if (this._visualizationMesh) {
       this._faceMaterialOrder.forEach((face, index) => {
         this._faceMaterials[index].map = getFaceTexture(face);
+        this._faceMaterials[index].needsUpdate = true;
       });
+      this._requestRedraw();
       return;
     }
 
@@ -154,45 +163,211 @@ export class Image360VisualizationBox implements Image360Visualization {
     return this._worldTransform;
   }
 
-  public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
-    const perfEnabled = localStorage.getItem('reveal_360_perf') === 'true';
-
+  public loadFaceTextures(faces: Image360Face[], onFirstFaceReady?: () => void): Promise<Image360Texture[]> {
+    if (faces.some(f => f.downloadUrl)) {
+      this.createPlaceholderMesh();
+    }
+    let firstFaceNotified = false;
+    const notifyFirstFace = (): void => {
+      if (!firstFaceNotified) {
+        firstFaceNotified = true;
+        onFirstFaceReady?.();
+      }
+    };
     return Promise.all(
-      faces.map(async image360Face => {
-        const decodeStart = perfEnabled ? performance.now() : 0;
-
-        const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
-        const url = window.URL.createObjectURL(blob);
-        let faceTexture = await this._textureLoader.loadAsync(url);
-
-        if (
-          this._device.deviceType === 'mobile' &&
-          (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE ||
-            faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
-        ) {
-          faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
-        }
-
-        // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
-        window.URL.revokeObjectURL(url);
-
-        if (perfEnabled) {
-          const decodeMs = (performance.now() - decodeStart).toFixed(0);
-          const { width, height } = faceTexture.image;
-          console.log(
-            `[360 decode] face=${image360Face.face} | format=${image360Face.mimeType} | ${width}x${height} | decode=${decodeMs} ms`
-          );
-        }
-
-        // Need to horizontally flip the texture since it is being rendered inside a cube
-        faceTexture.center.set(0.5, 0.5);
-        faceTexture.repeat.set(-1, 1);
-        return { face: image360Face.face, texture: faceTexture };
-      })
+      faces.map(face =>
+        face.downloadUrl
+          ? this.loadFaceTextureStream(face, notifyFirstFace)
+          : this.loadFaceTextureFromBuffer(face).then(t => {
+              notifyFirstFace();
+              return t;
+            })
+      )
     );
   }
 
+  public createPlaceholderMesh(): void {
+    if (this._visualizationMesh !== undefined) return;
+
+    this._faceMaterials = this._faceMaterialOrder.map(
+      () =>
+        new THREE.MeshBasicMaterial({
+          side: THREE.BackSide,
+          color: 0x000000,
+          depthTest: false,
+          depthWrite: false,
+          opacity: this._visualizationState.opacity,
+          transparent: true
+        })
+    );
+
+    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
+    visualizationMesh.renderOrder = this._visualizationState.renderOrder;
+    visualizationMesh.position.setFromMatrixPosition(this._worldTransform);
+    visualizationMesh.rotation.setFromRotationMatrix(this._worldTransform);
+    visualizationMesh.scale.copy(this._visualizationState.scale);
+    visualizationMesh.visible = this._visualizationState.visible;
+    visualizationMesh.add(this._annotationsGroup);
+    this.setAnnotationsVisibility(false);
+    this._visualizationMesh = visualizationMesh;
+
+    this._sceneHandler.addObject3D(this._visualizationMesh);
+  }
+
+  public updateFaceTexture(face: Image360Face['face'], texture: THREE.Texture): void {
+    if (this._visualizationMesh === undefined) return;
+    const index = this._faceMaterialOrder.indexOf(face);
+    if (index === -1) return;
+    const material = this._faceMaterials[index];
+    material.color.set(0xffffff);
+    material.map = texture;
+    material.needsUpdate = true;
+  }
+
+  private async loadFaceTextureStream(
+    image360Face: Image360Face,
+    onFirstFaceReady?: () => void
+  ): Promise<Image360Texture> {
+    const perfEnabled = localStorage.getItem('reveal_360_perf') === 'true';
+    const imgStart = perfEnabled ? performance.now() : 0;
+
+    const response = await fetch(image360Face.downloadUrl!, { mode: 'cors', credentials: 'omit' });
+    if (!response.ok || !response.body) {
+      throw new Error(`Failed to fetch 360 image for face: ${image360Face.face} (status ${response.status})`);
+    }
+
+    const contentLength = parseInt(response.headers.get('content-length') ?? '0', 10);
+    let buffer = new Uint8Array(contentLength > 0 ? contentLength : 2 * 1024 * 1024);
+    let bytesReceived = 0;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    let texture: THREE.CanvasTexture | undefined;
+    let lastCutpoint = 0;
+    let scanCount = 0;
+
+    let resolveTexture!: (t: Image360Texture) => void;
+    let rejectTexture!: (e: unknown) => void;
+    const texturePromise = new Promise<Image360Texture>((resolve, reject) => {
+      resolveTexture = resolve;
+      rejectTexture = reject;
+    });
+
+    const decodeAndApplyScan = async (cutpoint: number): Promise<void> => {
+      const blob = makePartialJpegBlob(buffer, cutpoint);
+      let bitmap: ImageBitmap;
+      try {
+        bitmap = await createImageBitmap(blob);
+      } catch {
+        return; // partial data not yet decodable — skip this cutpoint
+      }
+
+      scanCount++;
+
+      if (!texture) {
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        ctx.drawImage(bitmap, 0, 0);
+        texture = new THREE.CanvasTexture(canvas);
+        texture.center.set(0.5, 0.5);
+        texture.repeat.set(-1, 1);
+        this.updateFaceTexture(image360Face.face, texture);
+        onFirstFaceReady?.();
+        resolveTexture({ face: image360Face.face, texture });
+      } else {
+        ctx.drawImage(bitmap, 0, 0);
+        texture.needsUpdate = true;
+      }
+
+      bitmap.close();
+      this._requestRedraw();
+
+      // if (perfEnabled) {
+      //   console.log(
+      //     `[360 stream] face=${image360Face.face} | scan=${scanCount} | cutpoint=${cutpoint} | elapsed=${(performance.now() - imgStart).toFixed(0)} ms`
+      //   );
+      // }
+    };
+
+    const reader = response.body.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        // Grow buffer if needed (happens when content-length was absent or wrong)
+        if (bytesReceived + value.length > buffer.length) {
+          const grown = new Uint8Array(Math.max(buffer.length * 2, bytesReceived + value.length));
+          grown.set(buffer.subarray(0, bytesReceived));
+          buffer = grown;
+        }
+
+        buffer.set(value, bytesReceived);
+        bytesReceived += value.length;
+
+        const cutpoints = findProgressiveScanCutpoints(buffer.subarray(0, bytesReceived));
+        const newCutpoints = cutpoints.filter(cp => cp > lastCutpoint);
+        if (newCutpoints.length > 0) {
+          lastCutpoint = newCutpoints[newCutpoints.length - 1];
+          await decodeAndApplyScan(lastCutpoint);
+        }
+      }
+    } catch (e) {
+      rejectTexture(e);
+      return texturePromise;
+    }
+
+    // if (perfEnabled) {
+    //   console.log(
+    //     `[360 stream] face=${image360Face.face} | COMPLETE | total-scans=${scanCount} | bytes=${bytesReceived} | elapsed=${(performance.now() - imgStart).toFixed(0)} ms`
+    //   );
+    // }
+
+    // Ensure the promise is resolved even if no scan cutpoints were found (shouldn't happen)
+    if (!texture) {
+      rejectTexture(new Error(`No decodable scan found for face: ${image360Face.face}`));
+    }
+
+    return texturePromise;
+  }
+
+  private async loadFaceTextureFromBuffer(image360Face: Image360Face): Promise<Image360Texture> {
+    const perfEnabled = localStorage.getItem('reveal_360_perf') === 'true';
+    const decodeStart = perfEnabled ? performance.now() : 0;
+
+    const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
+    const url = window.URL.createObjectURL(blob);
+    let faceTexture = await this._textureLoader.loadAsync(url);
+
+    if (
+      this._device.deviceType === 'mobile' &&
+      (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE || faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
+    ) {
+      faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
+    }
+
+    // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
+    window.URL.revokeObjectURL(url);
+
+    // if (perfEnabled) {
+    //   const decodeMs = (performance.now() - decodeStart).toFixed(0);
+    //   const { width, height } = faceTexture.image;
+    //   console.log(
+    //     `[360 decode] face=${image360Face.face} | format=${image360Face.mimeType} | ${width}x${height} | decode=${decodeMs} ms`
+    //   );
+    // }
+
+    // Need to horizontally flip the texture since it is being rendered inside a cube
+    faceTexture.center.set(0.5, 0.5);
+    faceTexture.repeat.set(-1, 1);
+    return { face: image360Face.face, texture: faceTexture };
+  }
+
   public unloadImages(): void {
+    this._activeProgressiveLoads.forEach(id => cancelAnimationFrame(id));
+    this._activeProgressiveLoads.clear();
+
     if (this._visualizationMesh === undefined) {
       return;
     }

@@ -79,14 +79,20 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
     annotationFilterer: Image360AnnotationFilter,
     transform: Matrix4,
     icon: Overlay3DIcon,
-    device: DeviceDescriptor
+    device: DeviceDescriptor,
+    requestRedraw: () => void = () => {}
   ) {
     this._modelTransform = transform;
     this._worldTransform = transform.clone();
     this._image360Icon = icon;
     this._imageMetadata = image360Metadata;
 
-    this._image360VisualizationBox = new Image360VisualizationBox(this._modelTransform, sceneHandler, device);
+    this._image360VisualizationBox = new Image360VisualizationBox(
+      this._modelTransform,
+      sceneHandler,
+      device,
+      requestRedraw
+    );
     this._image360VisualizationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
