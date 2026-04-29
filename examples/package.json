@@ -28,12 +28,12 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "stats.js": "0.17.0",
-    "styled-components": "6.1.19"
+    "styled-components": "6.4.1"
   },
   "devDependencies": {
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
-    "@types/react": "18.3.24",
+    "@types/react": "18.3.28",
     "@types/react-dom": "18.3.7",
     "@types/stats.js": "^0.17.0",
     "@types/three": "^0.184.0",
@@ -42,7 +42,7 @@
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^3.0.0",
     "three": "0.184.0",
-    "ts-loader": "9.5.4",
+    "ts-loader": "9.5.7",
     "typescript": "^5.0.4",
     "webpack": "^5.76.0",
     "webpack-cli": "^5.0.0",
@@ -64,7 +64,7 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "yarn@4.10.2",
+  "packageManager": "yarn@4.14.1",
   "resolutions": {
     "tar": "^7.5.11",
     "serialize-javascript": "^7.0.3"
