@@ -149,26 +149,27 @@ export class DataFileCacheManager {
     const keys = await cache.keys();
     if (keys.length === 0) return;
 
-    const entries: Array<{ url: string; lastAccessed: number }> = await Promise.all(
-      keys.map(async request => {
-        const inMemory = this._lastAccessed.get(request.url);
-        if (inMemory !== undefined) {
-          return { url: request.url, lastAccessed: inMemory };
-        }
-        // Fall back to stored date for entries not seen in this session
-        const response = await cache.match(request);
-        const storedAt = response ? (safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_DATE)) ?? 0) : 0;
-        return { url: request.url, lastAccessed: storedAt };
-      })
-    );
+    const evictCount = Math.max(1, Math.floor(keys.length * 0.2));
+    const notInMemory: string[] = [];
+    const inMemory: Array<{ url: string; lastAccessed: number }> = [];
 
-    entries.sort((a, b) => a.lastAccessed - b.lastAccessed);
+    for (const request of keys) {
+      const lastAccessed = this._lastAccessed.get(request.url);
+      if (lastAccessed !== undefined) {
+        inMemory.push({ url: request.url, lastAccessed });
+      } else {
+        // Not seen this session — treat as older than anything in _lastAccessed
+        notInMemory.push(request.url);
+      }
+    }
 
-    const evictCount = Math.max(1, Math.floor(entries.length * 0.2));
+    inMemory.sort((a, b) => a.lastAccessed - b.lastAccessed);
+    const toEvict = [...notInMemory, ...inMemory.map(e => e.url)].slice(0, evictCount);
+
     await Promise.all(
-      entries.slice(0, evictCount).map(async entry => {
-        await cache.delete(entry.url);
-        this._lastAccessed.delete(entry.url);
+      toEvict.map(async url => {
+        await cache.delete(url);
+        this._lastAccessed.delete(url);
       })
     );
   }
