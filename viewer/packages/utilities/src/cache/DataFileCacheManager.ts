@@ -32,12 +32,14 @@ import { safeParseInt } from './utils';
 export class DataFileCacheManager {
   private readonly DEFAULT_CONFIG: CacheConfig = {
     cacheName: BINARY_FILES_CACHE_NAME,
-    maxAge: Infinity, // Cache forever until browser evicts
-    maxCacheSize: Infinity // No limit - browser manages storage quota
+    maxAge: Infinity,
+    maxCacheSize: Infinity
   };
 
   private readonly _config: CacheConfig = { ...this.DEFAULT_CONFIG };
   private readonly _caches: CacheStorage;
+  // In-memory LRU tracker: url → last accessed timestamp (not persisted, used for eviction ordering)
+  private readonly _lastAccessed = new Map<string, number>();
 
   get cacheConfig(): CacheConfig {
     return this._config;
@@ -89,41 +91,86 @@ export class DataFileCacheManager {
 
     if (isExpired(response, this._config.maxAge)) {
       await cache.delete(url);
+      this._lastAccessed.delete(url);
       return undefined;
     }
 
+    this._lastAccessed.set(url, Date.now());
     return response.clone();
   }
 
   /**
-   * Store data in cache
-   * Browser will automatically evict old entries when quota is reached
+   * Store data in cache. On quota exceeded, evicts LRU entries and retries once.
    */
   async storeResponse(url: string, data: ArrayBuffer, contentType: string = 'application/octet-stream'): Promise<void> {
     try {
-      const cache = await this._caches.open(this._config.cacheName);
-
-      const size = data.byteLength;
-      const now = Date.now();
-
-      const headers = new Headers({
-        'Content-Type': contentType,
-        'Content-Length': size.toString(),
-        [BINARY_FILES_CACHE_HEADER_DATE]: now.toString(),
-        [BINARY_FILES_CACHE_HEADER_SIZE]: size.toString()
-      });
-
-      const cachedResponse = new Response(data, {
-        status: 200,
-        statusText: 'OK',
-        headers
-      });
-
-      await cache.put(url, cachedResponse);
+      await this.putInCache(url, data, contentType);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`[DataFileCacheManager] Failed to store in cache: ${message}`, { cause: error });
+      if (isQuotaError(error)) {
+        await this.evictLeastRecentlyUsedEntries();
+        try {
+          await this.putInCache(url, data, contentType);
+        } catch (retryError) {
+          const message = retryError instanceof Error ? retryError.message : String(retryError);
+          console.warn(`[DataFileCacheManager] Failed to store in cache after LRU eviction: ${message}`);
+        }
+      } else {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn(`[DataFileCacheManager] Failed to store in cache: ${message}`);
+      }
     }
+  }
+
+  private async putInCache(url: string, data: ArrayBuffer, contentType: string): Promise<void> {
+    const cache = await this._caches.open(this._config.cacheName);
+    const now = Date.now();
+    const size = data.byteLength;
+
+    const headers = new Headers({
+      'Content-Type': contentType,
+      'Content-Length': size.toString(),
+      [BINARY_FILES_CACHE_HEADER_DATE]: now.toString(),
+      [BINARY_FILES_CACHE_HEADER_SIZE]: size.toString()
+    });
+
+    const cachedResponse = new Response(data, {
+      status: 200,
+      statusText: 'OK',
+      headers
+    });
+
+    await cache.put(url, cachedResponse);
+
+    this._lastAccessed.set(url, now);
+  }
+
+  private async evictLeastRecentlyUsedEntries(): Promise<void> {
+    const cache = await this._caches.open(this._config.cacheName);
+    const keys = await cache.keys();
+    if (keys.length === 0) return;
+
+    const entries: Array<{ url: string; lastAccessed: number }> = await Promise.all(
+      keys.map(async request => {
+        const inMemory = this._lastAccessed.get(request.url);
+        if (inMemory !== undefined) {
+          return { url: request.url, lastAccessed: inMemory };
+        }
+        // Fall back to stored date for entries not seen in this session
+        const response = await cache.match(request);
+        const storedAt = response ? (safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_DATE)) ?? 0) : 0;
+        return { url: request.url, lastAccessed: storedAt };
+      })
+    );
+
+    entries.sort((a, b) => a.lastAccessed - b.lastAccessed);
+
+    const evictCount = Math.max(1, Math.floor(entries.length * 0.2));
+    await Promise.all(
+      entries.slice(0, evictCount).map(async entry => {
+        await cache.delete(entry.url);
+        this._lastAccessed.delete(entry.url);
+      })
+    );
   }
 }
 
@@ -131,4 +178,11 @@ function isExpired(response: Response, maxAge: number): boolean {
   const cachedAt = safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_DATE));
   if (cachedAt === undefined) return true;
   return Date.now() - cachedAt > maxAge;
+}
+
+function isQuotaError(error: unknown): boolean {
+  if (error instanceof DOMException && error.name === 'QuotaExceededError') return true;
+  // Firefox throws NS_ERROR_FILE_NO_DEVICE_SPACE instead of a standard QuotaExceededError
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes('QuotaExceededError') || message.includes('No device space');
 }
