@@ -273,7 +273,7 @@ describe(DataFileCacheManager.name, () => {
 
       const cache = storageMap.get('lru-cache')!;
       expect(cache.has(urlB)).toBe(false); // B evicted (LRU)
-      expect(cache.has(urlA)).toBe(true);  // A kept (recently accessed)
+      expect(cache.has(urlA)).toBe(true); // A kept (recently accessed)
       expect(warnSpy).not.toHaveBeenCalled();
     });
 
