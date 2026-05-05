@@ -1,5 +1,5 @@
 /*!
- * Copyright 2025 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 
 /**
@@ -10,7 +10,7 @@
  * shows the image quality as of that scan pass.
  *
  * Progressive JPEG structure:
- *   SOI -> APP... -> DQT -> SOF2 -> (DHT -> SOS -> <entropy data>)* -> EOI
+ * SOI -> APP... -> DQT -> SOF2 -> (DHT -> SOS -> <entropy data>)* -> EOI
  *
  * Inside entropy-coded scan data, FF bytes are escaped as FF 00 (byte stuffing).
  * FF D0-D7 are restart markers (RST) and are also valid inside scan data.

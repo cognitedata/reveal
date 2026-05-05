@@ -51,13 +51,10 @@ export class CdfImageFileProvider {
     abortSignal?: AbortSignal
   ): Promise<FileDownloadResult[]> {
     const fileLinks = await this.getDownloadUrls(fileIdentifiers, abortSignal);
-    // const perfEnabled = localStorage.getItem('reveal_360_perf') === 'true';
-    // console.log('[360 perf] getFileBuffersWithMimeType called, perfEnabled=', perfEnabled);
 
     // Direct parallel downloads - browser handles connection pooling naturally
     const results = await Promise.all(
-      fileLinks.map(async (fileLink, index) => {
-        // const downloadStart = perfEnabled ? performance.now() : 0;
+      fileLinks.map(async fileLink => {
         const response = await fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal });
         if (!response.ok) {
           throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
@@ -65,23 +62,9 @@ export class CdfImageFileProvider {
         const mimeType = parseMimeType(response.headers.get('Content-Type'));
         const data = await response.arrayBuffer();
 
-        // if (perfEnabled) {
-        //   const downloadMs = performance.now() - downloadStart;
-        //   const sizeKb = (data.byteLength / 1024).toFixed(1);
-        //   console.log(
-        //     `[360 download] face ${index} | format=${mimeType} | size=${sizeKb} KB | time=${downloadMs.toFixed(0)} ms`
-        //   );
-        // }
-
         return { data, mimeType };
       })
     );
-
-    // if (perfEnabled) {
-    //   const totalBytes = results.reduce((sum, r) => sum + r.data.byteLength, 0);
-    //   const totalMb = (totalBytes / 1024 / 1024).toFixed(2);
-    //   console.log(`[360 download] total for ${results.length} faces: ${totalMb} MB | format=${results[0]?.mimeType}`);
-    // }
 
     return results;
   }
