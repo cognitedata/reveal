@@ -163,7 +163,9 @@ export class DataFileCacheManager {
       }
     }
 
-    inMemory.sort((a, b) => a.lastAccessed - b.lastAccessed);
+    if (notInMemory.length < evictCount) {
+      inMemory.sort((a, b) => a.lastAccessed - b.lastAccessed);
+    }
     const toEvict = [...notInMemory, ...inMemory.map(e => e.url)].slice(0, evictCount);
 
     await Promise.all(
@@ -183,7 +185,13 @@ function isExpired(response: Response, maxAge: number): boolean {
 
 function isQuotaError(error: unknown): boolean {
   if (error instanceof DOMException && error.name === 'QuotaExceededError') return true;
-  // Firefox throws NS_ERROR_FILE_NO_DEVICE_SPACE instead of a standard QuotaExceededError
   const message = error instanceof Error ? error.message : String(error);
-  return message.includes('QuotaExceededError') || message.includes('No device space');
+  // Firefox: NS_ERROR_FILE_NO_DEVICE_SPACE
+  // Safari iOS (pre-spec): "The quota has been exceeded."
+  // Older WebKit/Blink: message may contain 'QuotaExceededError'
+  return (
+    message.includes('QuotaExceededError') ||
+    message.includes('No device space') ||
+    message.includes('quota has been exceeded')
+  );
 }

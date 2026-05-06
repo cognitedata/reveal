@@ -301,6 +301,29 @@ describe(DataFileCacheManager.name, () => {
       expect(warnSpy).not.toHaveBeenCalled();
     });
 
+    test('should treat Safari iOS quota error as quota error and evict', async () => {
+      jest.useFakeTimers();
+
+      const storageMap: Map<string, Map<string, Response>> = new Map();
+      const manager = new DataFileCacheManager(
+        { cacheName: 'safari-cache' },
+        createFailingPutCacheStorage(storageMap, n => n === 6, new Error('The quota has been exceeded.'))
+      );
+
+      const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
+      for (const url of urls) {
+        await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+        jest.advanceTimersByTime(1000);
+      }
+
+      await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);
+
+      const cache = storageMap.get('safari-cache')!;
+      expect(cache.has(urls[0])).toBe(false);
+      expect(cache.has('https://example.com/new.bin')).toBe(true);
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
     test('should warn without throwing when retry still fails after eviction', async () => {
       const storageMap: Map<string, Map<string, Response>> = new Map();
       // All puts fail — eviction has nothing to clear, retry also fails
