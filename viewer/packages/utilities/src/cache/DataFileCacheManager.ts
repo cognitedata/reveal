@@ -163,17 +163,16 @@ export class DataFileCacheManager {
       }
     }
 
-    if (notInMemory.length < evictCount) {
+    let toEvict: string[];
+    if (notInMemory.length >= evictCount) {
+      toEvict = notInMemory.slice(0, evictCount);
+    } else {
       inMemory.sort((a, b) => a.lastAccessed - b.lastAccessed);
+      toEvict = [...notInMemory, ...inMemory.map(e => e.url)].slice(0, evictCount);
     }
-    const toEvict = [...notInMemory, ...inMemory.map(e => e.url)].slice(0, evictCount);
 
-    await Promise.all(
-      toEvict.map(async url => {
-        await cache.delete(url);
-        this._lastAccessed.delete(url);
-      })
-    );
+    await Promise.all(toEvict.map(url => cache.delete(url)));
+    toEvict.forEach(url => this._lastAccessed.delete(url));
   }
 }
 
