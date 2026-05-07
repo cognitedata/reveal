@@ -271,6 +271,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     }
     this.viewerDomElement.removeChild(htmlElement);
     this._htmlOverlays.delete(htmlElement);
+    this.invalidateClustersForElement(htmlElement);
   }
 
   /**
@@ -433,6 +434,27 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private cleanupClusterElements(): void {
     // Mark all cached clusters as stale. Clustering will mark alive ones.
     this._aliveClusterKeys.clear();
+  }
+
+  /**
+   * Invalidate any cached cluster composites that referenced the given overlay
+   * element. Used when an overlay is removed so its cluster composite is
+   * detached from the DOM immediately rather than lingering until the next
+   * frame's stale-cluster sweep.
+   */
+  private invalidateClustersForElement(htmlElement: HTMLElement): void {
+    const removedId = this._elementIds.get(htmlElement);
+    if (removedId === undefined) {
+      return;
+    }
+    for (const [key, compositeElement] of this._clusterCache.entries()) {
+      if (!key.split(',').includes(`${removedId}`)) {
+        continue;
+      }
+      compositeElement.parentNode?.removeChild(compositeElement);
+      this._clusterCache.delete(key);
+      this._aliveClusterKeys.delete(key);
+    }
   }
 
   /**
