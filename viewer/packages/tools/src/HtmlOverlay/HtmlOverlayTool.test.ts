@@ -305,4 +305,108 @@ describe(HtmlOverlayTool.name, () => {
     helper.forceUpdate();
     expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
   });
+
+  test('screenspace clustering creates a new composite when composition changes', () => {
+    // Arrange
+    const createClusterElementCallback = jest
+      .fn<HtmlOverlayCreateClusterDelegate>()
+      .mockImplementation(() => document.createElement('div'));
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    div1.style.position = 'absolute';
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
+    const div3 = document.createElement('div');
+    div3.style.position = 'absolute';
+    fakeGetBoundingClientRect(div3, 0, 0, 64, 18);
+
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
+    // Act — first cluster composition is {div1, div2}
+    helper.forceUpdate();
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
+
+    // Adding a third overlapping element changes the cluster composition
+    helper.add(div3, new THREE.Vector3(0, 0, 0.6));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    helper.forceUpdate();
+
+    // Assert — callback invoked again to build a new composite
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(2);
+  });
+
+  test('removing an overlay detaches the composite that referenced it', () => {
+    // Arrange
+    const compositeElement = document.createElement('div');
+    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    div1.style.position = 'absolute';
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
+
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
+    helper.forceUpdate();
+    expect(compositeElement.parentElement).not.toBeNull();
+
+    // Act — remove one of the clustered overlays
+    helper.remove(div1);
+
+    // Assert — composite is detached immediately, without waiting for next frame
+    expect(compositeElement.parentElement).toBeNull();
+  });
+
+  test('forceUpdate cleans up composites even when all overlays are removed', () => {
+    // Arrange
+    const compositeElement = document.createElement('div');
+    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    div1.style.position = 'absolute';
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
+
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
+    helper.forceUpdate();
+    expect(compositeElement.parentElement).not.toBeNull();
+
+    // Act — remove the overlays directly so cluster invalidation happens via remove()
+    helper.remove(div1);
+    helper.remove(div2);
+    // Even with zero overlays remaining, forceUpdate should not throw and should
+    // leave no orphaned composite elements behind.
+    expect(() => helper.forceUpdate()).not.toThrow();
+
+    // Assert
+    expect(compositeElement.parentElement).toBeNull();
+  });
 });
