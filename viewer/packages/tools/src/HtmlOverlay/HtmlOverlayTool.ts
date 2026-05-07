@@ -71,8 +71,9 @@ export type HtmlOverlayToolClusteringOptions = {
   /**
    * Callback that is triggered when a set of overlays are clustered together
    * to create a "composite" element as a placeholder for the clustered elements.
-   * Note that this callback will be triggered every frame for each cluster so it
-   * must be performant.
+   * Composite elements are cached and reused across frames, so this callback is
+   * only invoked when the cluster composition changes (i.e. when the set of
+   * clustered overlays differs from any previously seen cluster).
    */
   createClusterElementCallback: HtmlOverlayCreateClusterDelegate;
 };
