@@ -521,7 +521,13 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
         // Build a stable key from sorted element IDs
         const clusterKey = cluster
-          .map(el => this._elementIds.get(el.htmlElement) ?? -1)
+          .map(el => {
+            const id = this._elementIds.get(el.htmlElement);
+            if (id === undefined) {
+              throw new Error('Clustered overlay is missing a stable element ID');
+            }
+            return id;
+          })
           .sort((a, b) => a - b)
           .join(',');
 
