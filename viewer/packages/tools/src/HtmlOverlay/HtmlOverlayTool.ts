@@ -276,18 +276,13 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Removes all attached HTML overlay elements.
    */
   clear(): void {
+    // Each remove() call invalidates cluster cache entries referencing the
+    // removed overlay, so by the end of this loop the cluster cache and any
+    // associated composite DOM elements are already cleaned up.
     const overlays = Array.from(this._htmlOverlays.keys());
     for (const element of overlays) {
       this.remove(element);
     }
-    // Remove all cached cluster composites from DOM
-    for (const compositeElement of this._clusterCache.values()) {
-      if (compositeElement.parentNode) {
-        compositeElement.parentNode.removeChild(compositeElement);
-      }
-    }
-    this._clusterCache.clear();
-    this._aliveClusterKeys.clear();
     this._compositeOverlays.splice(0);
     this.forceUpdate();
   }
