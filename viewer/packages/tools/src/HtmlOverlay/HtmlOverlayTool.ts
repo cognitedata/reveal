@@ -326,9 +326,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     }
     this.ensureNotDisposed();
     this.cleanupClusterElements();
-    if (this._htmlOverlays.size === 0) {
-      return;
-    }
     this.updateNewElementSizes();
 
     const camera = customCamera ?? this.viewerCamera;
@@ -408,6 +405,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       }
     });
 
+    this.removeStaleClusters();
     this._compositeOverlays.forEach(htmlElement => {
       if (!htmlElement.parentNode) {
         this.viewerDomElement.appendChild(htmlElement);
@@ -516,9 +514,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         this.addComposite(compositeElement, midpoint);
       }
     }
-
-    // Remove stale clusters that no longer exist this frame
-    this.removeStaleClusters();
   }
 
   private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
