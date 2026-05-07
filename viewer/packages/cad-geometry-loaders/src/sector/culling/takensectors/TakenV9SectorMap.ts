@@ -61,6 +61,14 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
     }
   }
 
+  /**
+   * Marks a sector as forced-detailed with infinite priority.
+   * These sectors are always loaded regardless of budget constraints.
+   */
+  markSectorForced(model: CadModelMetadata, sectorId: number): void {
+    this.markSectorDetailed(model, sectorId, Infinity);
+  }
+
   isWithinBudget(budget: CadModelBudget): boolean {
     return this._totalCost.renderCost < budget.maximumRenderCost;
   }

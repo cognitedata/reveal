@@ -46,7 +46,8 @@ import {
   InputHandler,
   getNormalizedPixelCoordinates,
   PointerEventData,
-  SceneHandler
+  SceneHandler,
+  WaitCursor
 } from '@reveal/utilities';
 import {
   CameraManager,
@@ -64,6 +65,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
+  private readonly _waitCursor: WaitCursor;
   private readonly _raycaster = new Raycaster();
   private _needsRedraw: boolean = false;
   private readonly _hasEventListeners: boolean;
@@ -172,6 +174,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._image360Facade = new Image360Facade<DataSourceT>(image360EntityFactory);
 
     this._domElement = domElement;
+    this._waitCursor = new WaitCursor(domElement);
     this._interactionState = {};
 
     this._activeCameraManager = activeCameraManager;
@@ -286,7 +289,12 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     image360Entity: Image360Entity<DataSourceT>,
     revision?: Image360RevisionEntity<DataSourceT>
   ): Promise<void> {
-    await this.enter360ImageInternal(image360Entity, revision);
+    this._waitCursor.refAndUpdate();
+    try {
+      await this.enter360ImageInternal(image360Entity, revision);
+    } finally {
+      this._waitCursor.derefAndUpdate();
+    }
   }
 
   public async enter360ImageInternal(
@@ -340,39 +348,52 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._needsRedraw = true;
     } else {
       this._transitionInProgress = true;
-      if (lastEntered360ImageEntity !== undefined) {
-        await this.transition(lastEntered360ImageEntity, image360Entity);
-        MetricsLogger.trackEvent('360ImageEntered', {});
-      } else {
-        const transitionDuration = 1000;
-        const position = new Vector3().setFromMatrixPosition(image360Entity.transform);
-        const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
-        if (flexibleCameraManager) {
-          await Promise.all([
-            moveCameraPositionTo(flexibleCameraManager, position, transitionDuration),
-            this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
-          ]);
-        } else if (this._stationaryCameraManager) {
-          await Promise.all([
-            this._stationaryCameraManager.moveTo(position, transitionDuration),
-            this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
-          ]);
+      try {
+        if (lastEntered360ImageEntity !== undefined) {
+          await this.transition(lastEntered360ImageEntity, image360Entity, currentOpacity);
+          // Apply full-res textures after the transition so texture quality swaps don't
+          // happen mid-fade and create a perceived "instant" transition.
+          await this.applyFullResolutionTextures(revisionToEnter);
+          MetricsLogger.trackEvent('360ImageEntered', {});
+        } else {
+          const transitionDuration = 1000;
+          const position = new Vector3().setFromMatrixPosition(image360Entity.transform);
+          image360Entity.image360Visualization.opacity = 0;
+          const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+          if (flexibleCameraManager) {
+            await Promise.all([
+              moveCameraPositionTo(flexibleCameraManager, position, transitionDuration),
+              this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
+            ]);
+          } else if (this._stationaryCameraManager) {
+            await Promise.all([
+              this._stationaryCameraManager.moveTo(position, transitionDuration),
+              this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
+            ]);
+          }
+          await this.applyFullResolutionTextures(revisionToEnter);
+          image360Entity.activateAnnotations();
+          MetricsLogger.trackEvent('360ImageTransitioned', {});
         }
-        image360Entity.activateAnnotations();
-        MetricsLogger.trackEvent('360ImageTransitioned', {});
+      } finally {
+        this._transitionInProgress = false;
       }
-      this._transitionInProgress = false;
     }
 
     // Restore icon visibility before entering floor mode so setFloorMode saves the correct state.
     collectionVisibilities.forEach((v, i) => this._image360Facade.collections[i].setIconsVisibility(v));
     if (this._enableFloorIcons) {
       this._image360Facade.collections.forEach(c => c.setFloorMode(true));
+      const referenceWorldY = new Vector3().setFromMatrixPosition(image360Entity.transform).y;
+      this._image360Facade.setReferenceIcon(referenceWorldY);
+    } else {
+      // Switch to proximity culling when inside a 360 image so nearby icons
+      // are shown without clustering (mirrors the behaviour when floor mode is on).
+      this._image360Facade.allIconCullingScheme = 'proximity';
     }
     if (this._hasEventListeners) {
       this._domElement.addEventListener('keydown', this.onKeyPressed);
     }
-    this.applyFullResolutionTextures(revisionToEnter);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
     if (updateHistory) {
@@ -386,9 +407,13 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._needsRedraw = true;
   }
 
-  private async transition(from360Entity: Image360Entity<DataSourceT>, to360Entity: Image360Entity<DataSourceT>) {
+  private async transition(
+    from360Entity: Image360Entity<DataSourceT>,
+    to360Entity: Image360Entity<DataSourceT>,
+    expectedOpacity: number
+  ) {
     const cameraTransitionDuration = 1000;
-    const alphaTweenDuration = 800;
+    const fovTweenDuration = 800;
     const default360ImageRenderOrder = 3;
 
     const toVisualizationCube = to360Entity.image360Visualization;
@@ -400,7 +425,8 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     setPreTransitionState();
 
-    const currentFromOpacity = fromVisualizationCube.opacity;
+    fromVisualizationCube.opacity = expectedOpacity;
+    toVisualizationCube.opacity = expectedOpacity;
 
     from360Entity.deactivateAnnotations();
     const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
@@ -408,21 +434,21 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       flexibleCameraManager.controls.isStationary = true;
       await Promise.all([
         moveCameraPositionTo(flexibleCameraManager, toPosition, cameraTransitionDuration),
-        tweenCameraToDefaultFov(flexibleCameraManager, alphaTweenDuration),
-        this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
+        tweenCameraToDefaultFov(flexibleCameraManager, fovTweenDuration),
+        this.tweenVisualizationAlpha(from360Entity, expectedOpacity, 0, cameraTransitionDuration)
       ]);
     } else if (this._stationaryCameraManager) {
       const fromZoom = this._stationaryCameraManager.getCamera().fov;
       const toZoom = this._stationaryCameraManager.defaultFOV;
       await Promise.all([
         this._stationaryCameraManager.moveTo(toPosition, cameraTransitionDuration),
-        this.tweenVisualizationZoom(this._stationaryCameraManager, fromZoom, toZoom, alphaTweenDuration),
-        this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
+        this.tweenVisualizationZoom(this._stationaryCameraManager, fromZoom, toZoom, cameraTransitionDuration),
+        this.tweenVisualizationAlpha(from360Entity, expectedOpacity, 0, cameraTransitionDuration)
       ]);
     }
     to360Entity.activateAnnotations();
 
-    restorePostTransitionState(currentFromOpacity);
+    restorePostTransitionState(expectedOpacity);
 
     function setPreTransitionState() {
       const fillingScaleMagnitude = length * 2;
@@ -523,6 +549,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._interactionState.currentImage360Entered
     );
     this._image360Facade.collections.forEach(collection => collection.setFloorMode(false));
+    this._image360Facade.setReferenceIcon(undefined);
     this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
     imageCollection.events.image360Exited.fire();
 
@@ -609,6 +636,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._stationaryCameraManager.dispose();
     }
     this._image360Facade.dispose();
+    this._waitCursor.dispose();
   }
 
   private findRevisionIdToEnter(image360Entity: Image360Entity<DataSourceT>): Image360RevisionEntity<DataSourceT> {
@@ -616,9 +644,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     return targetDate ? image360Entity.getRevisionClosestToDate(targetDate) : image360Entity.getMostRecentRevision();
   }
 
-  private enter360ImageOnIntersect(event: PointerEventData): Promise<boolean> {
+  private async enter360ImageOnIntersect(event: PointerEventData): Promise<boolean> {
     if (this._transitionInProgress) {
-      return Promise.resolve(false);
+      return false;
     }
 
     // First, check for cluster intersection
@@ -630,9 +658,15 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     // Fall back to individual icon intersection
     const intersection = this.intersect360ImageIcons(event.offsetX, event.offsetY);
     if (intersection === undefined) {
-      return Promise.resolve(false);
+      return false;
     }
-    return this.enter360ImageInternal(intersection.image360);
+
+    this._waitCursor.refAndUpdate();
+    try {
+      return await this.enter360ImageInternal(intersection.image360);
+    } finally {
+      this._waitCursor.derefAndUpdate();
+    }
   }
 
   public intersect360ImageIcons(

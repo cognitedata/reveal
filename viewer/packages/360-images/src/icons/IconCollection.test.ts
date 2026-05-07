@@ -421,16 +421,29 @@ describe(IconCollection.name, () => {
       collection.dispose();
     });
 
+    it('floor disc mesh visible property starts false and is toggled by setFloorMode', () => {
+      const collection = createCollection([new Vector3(0, 1.5, 0)]);
+      const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
+      assert(floorDiscMesh, 'Floor disc mesh not found');
+
+      // Mesh starts invisible so origin-positioned instances do not corrupt sceneBoundingBox
+      expect(floorDiscMesh.visible).toBe(false);
+
+      collection.setFloorMode(true);
+      expect(floorDiscMesh.visible).toBe(true);
+
+      collection.setFloorMode(false);
+      expect(floorDiscMesh.visible).toBe(false);
+
+      collection.dispose();
+    });
+
     it('floor disc meshes are shown after render in floor mode and hidden after exit', () => {
       const collection = createCollection([new Vector3(0, 1.5, 0)]);
       const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
       assert(floorDiscMesh, 'Floor disc mesh not found');
 
-      const instanceMatrix = new Matrix4();
-      const isHidden = (mesh: InstancedMesh, index: number) => {
-        mesh.getMatrixAt(index, instanceMatrix);
-        return instanceMatrix.elements[0] === 0; // scale x = 0 means hidden
-      };
+      const isHidden = (mesh: InstancedMesh, index: number) => index >= mesh.count;
 
       expect(isHidden(floorDiscMesh, 0)).toBe(true);
 
@@ -495,10 +508,11 @@ describe(IconCollection.name, () => {
     collection.setCullingScheme('clustered');
     expect(setNeedsRedrawMock).not.toHaveBeenCalled();
 
-    // Switch to proximity triggers redraw
+    // Switch to proximity: triggers redraw and immediately clears visible clusters
     setNeedsRedrawMock.mockClear();
     collection.setCullingScheme('proximity');
     expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
+    expect(collection.getVisibleClusteredIcons()).toHaveLength(0);
     renderFrame(camera, 1);
 
     // Switch back to clustered restores clustering
@@ -507,6 +521,30 @@ describe(IconCollection.name, () => {
     expect(collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster).length).toBe(
       initialClusters.length
     );
+
+    collection.dispose();
+  });
+
+  test('intersectCluster returns undefined after switching to proximity mode', () => {
+    const collection = createCollection(clusterablePositions, true);
+    const camera = createCamera(clusterCameraPosition, clusterLookAt);
+    renderFrame(camera);
+
+    // Confirm there is a hittable cluster in clustered mode
+    const clusters = collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster);
+    expect(clusters.length).toBeGreaterThan(0);
+
+    const targetCluster = clusters[0];
+    const hitRay = new Ray(
+      clusterCameraPosition,
+      targetCluster.clusterPosition.clone().sub(clusterCameraPosition).normalize()
+    );
+    expect(collection.intersectCluster(hitRay)).toBeDefined();
+
+    // After switching to proximity mode the stale cluster data is cleared —
+    // the same ray must no longer register a hit.
+    collection.setCullingScheme('proximity');
+    expect(collection.intersectCluster(hitRay)).toBeUndefined();
 
     collection.dispose();
   });

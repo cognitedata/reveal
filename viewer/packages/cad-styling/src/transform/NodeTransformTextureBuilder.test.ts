@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { NumericRange, createUint8View } from '@reveal/utilities';
 import { NodeTransformProvider } from './NodeTransformProvider';
 import { NodeTransformTextureBuilder } from './NodeTransformTextureBuilder';
+import assert from 'assert';
 
 describe('NodeTransformTextureBuilder', () => {
   let transformProvider: NodeTransformProvider;
@@ -46,5 +47,7 @@ describe('NodeTransformTextureBuilder', () => {
 });
 
 function texelsOf(texture: THREE.DataTexture): number[] {
-  return Array.from(createUint8View(texture.image.data));
+  const data = texture.image.data;
+  assert(data !== null);
+  return Array.from(createUint8View(data));
 }
