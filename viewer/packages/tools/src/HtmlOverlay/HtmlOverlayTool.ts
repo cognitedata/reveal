@@ -544,7 +544,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     htmlElement.style.visibility = 'visible';
     htmlElement.style.left = `${position.x + canvas.offsetLeft}px`;
     htmlElement.style.top = `${position.y + canvas.offsetTop}px`;
-    this._compositeOverlays.push(htmlElement);
   }
 
   private onSceneRendered(event: {
