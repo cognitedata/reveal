@@ -20,7 +20,7 @@ import { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Ent
 import { jest } from '@jest/globals';
 import { ResolutionOptions } from './types';
 
-const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { assert: { type: 'json' } })).default;
+const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { with: { type: 'json' } })).default;
 
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest', project: 'dummy', getToken: async () => 'dummy' });

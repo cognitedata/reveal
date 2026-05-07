@@ -16,6 +16,11 @@ declare module '*.svg' {
   export default src;
 }
 
+declare module '!!raw-loader!*.svg' {
+  const src: string;
+  export default src;
+}
+
 declare module '*.jpeg' {
   const value: any;
   export default value;
