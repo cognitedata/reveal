@@ -213,8 +213,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer.off('sceneRendered', this._onSceneRenderedHandler);
     this._viewer.off('disposed', this._onViewerDisposedHandler);
     this.clear();
-    this._clusterCache.clear();
-    this._aliveClusterKeys.clear();
     super.dispose();
   }
 
