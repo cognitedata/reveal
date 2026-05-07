@@ -162,7 +162,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
   // Cluster cache: reuse composite DOM elements when cluster composition hasn't changed
   private readonly _clusterCache = new Map<string, HTMLElement>();
-  private _aliveClusterKeys = new Set<string>();
+  private readonly _aliveClusterKeys = new Set<string>();
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
