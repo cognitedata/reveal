@@ -74,6 +74,17 @@ export type HtmlOverlayToolClusteringOptions = {
    * Composite elements are cached and reused across frames, so this callback is
    * only invoked when the cluster composition changes (i.e. when the set of
    * clustered overlays differs from any previously seen cluster).
+   *
+   * Note: because the callback is not re-invoked while a cluster persists,
+   * the produced composite element will not reflect later mutations to the
+   * `userData` of any clustered overlay. Treat `userData` as immutable for
+   * overlays that may be clustered, or rebuild the affected overlays
+   * (remove + add) to force a fresh composite to be created.
+   *
+   * The composite's screen position is updated each frame by the tool, but
+   * the callback itself should not depend on viewport state (camera position,
+   * cluster midpoint, screen coordinates, etc.) since the returned element
+   * is reused across frames as the camera moves.
    */
   createClusterElementCallback: HtmlOverlayCreateClusterDelegate;
 };
