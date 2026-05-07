@@ -443,11 +443,7 @@ describe(IconCollection.name, () => {
       const floorDiscMesh = addedObjects.find(isFloorDiscMesh);
       assert(floorDiscMesh, 'Floor disc mesh not found');
 
-      const instanceMatrix = new Matrix4();
-      const isHidden = (mesh: InstancedMesh, index: number) => {
-        mesh.getMatrixAt(index, instanceMatrix);
-        return instanceMatrix.elements[0] === 0; // scale x = 0 means hidden
-      };
+      const isHidden = (mesh: InstancedMesh, index: number) => index >= mesh.count;
 
       expect(isHidden(floorDiscMesh, 0)).toBe(true);
 

@@ -1714,7 +1714,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return intersection;
     }
     const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
-      asyncCADIntersection: false
+      asyncCADIntersection: true
     });
     if (modelIntersection !== null) {
       intersection = modelIntersection;
