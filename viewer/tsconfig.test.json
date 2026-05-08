@@ -7,7 +7,9 @@
     "types": [
       "node",
       "modules",
-      "jest"
+      "jest",
+      "jest-environment-puppeteer",
+      "jest-image-snapshot"
     ]
   },
   // https://github.com/jest-community/jest-extended/tree/main/examples/typescript/all
