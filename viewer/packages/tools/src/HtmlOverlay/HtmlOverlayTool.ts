@@ -287,13 +287,16 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Removes all attached HTML overlay elements.
    */
   clear(): void {
-    // Each remove() call invalidates cluster cache entries referencing the
-    // removed overlay, so by the end of this loop the cluster cache and any
-    // associated composite DOM elements are already cleaned up.
-    const overlays = Array.from(this._htmlOverlays.keys());
-    for (const element of overlays) {
-      this.remove(element);
-    }
+    this.ensureNotDisposed();
+    this._htmlOverlays.forEach((_, htmlElement) => {
+      this.viewerDomElement.removeChild(htmlElement);
+    });
+    this._htmlOverlays.clear();
+    this._clusterCache.forEach(compositeElement => {
+      compositeElement.parentNode?.removeChild(compositeElement);
+    });
+    this._clusterCache.clear();
+    this._aliveClusterKeys.clear();
     this._compositeOverlays.splice(0);
     this.forceUpdate();
   }
@@ -458,6 +461,10 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       compositeElement.parentNode?.removeChild(compositeElement);
       this._clusterCache.delete(key);
       this._aliveClusterKeys.delete(key);
+      // An overlay can belong to at most one cluster per frame (the grid
+      // removes elements once clustered) and stale clusters are swept each
+      // frame, so the cache contains at most one match.
+      break;
     }
   }
 
