@@ -3,7 +3,14 @@
   "compilerOptions": {
     "noUnusedLocals": false,
     "module": "esnext",
-    "target": "es2019"
+    "target": "es2019",
+    "types": [
+      "node",
+      "modules",
+      "jest",
+      "jest-environment-puppeteer",
+      "jest-image-snapshot"
+    ]
   },
   // https://github.com/jest-community/jest-extended/tree/main/examples/typescript/all
   "files": [

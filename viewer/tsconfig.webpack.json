@@ -4,11 +4,14 @@
     "declaration": true,
     "rootDir": ".",
     "outDir": "dist",
-    "downlevelIteration": true,
     "sourceMap": true,
     "typeRoots": [
       "node_modules/@types",
       "packages/api/src/@types"
+    ],
+    "types": [
+      "node",
+      "modules"
     ]
   },
   // include is also used for eslint to understand which files should be linted
