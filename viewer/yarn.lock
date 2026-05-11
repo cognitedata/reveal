@@ -452,7 +452,7 @@ __metadata:
   dependencies:
     "@azure/msal-browser": "npm:^3.13.0"
     "@cognite/sdk": "npm:^10.1.3"
-    "@microsoft/api-extractor": "npm:^7.43.1"
+    "@microsoft/api-extractor": "npm:^7.58.7"
     "@tweenjs/tween.js": "npm:^25.0.0"
     "@types/dat.gui": "npm:^0.7.13"
     "@types/gl": "npm:^6.0.5"
@@ -460,7 +460,7 @@ __metadata:
     "@types/jest-environment-puppeteer": "npm:^5.0.6"
     "@types/jest-image-snapshot": "npm:^6.4.0"
     "@types/jsdom": "npm:^21.1.6"
-    "@types/lodash": "npm:^4.17.0"
+    "@types/lodash": "npm:^4.17.24"
     "@types/mixpanel-browser": "npm:^2.49.0"
     "@types/node": "npm:^22.0.0"
     "@types/random-seed": "npm:^0.3.5"
@@ -1142,38 +1142,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor-model@npm:7.33.6":
-  version: 7.33.6
-  resolution: "@microsoft/api-extractor-model@npm:7.33.6"
+"@microsoft/api-extractor-model@npm:7.33.8":
+  version: 7.33.8
+  resolution: "@microsoft/api-extractor-model@npm:7.33.8"
   dependencies:
     "@microsoft/tsdoc": "npm:~0.16.0"
     "@microsoft/tsdoc-config": "npm:~0.18.1"
-    "@rushstack/node-core-library": "npm:5.22.0"
-  checksum: 10/2e1b29228c9fb77179f645dc8ef0c065bc7f977d748578284a24f3e05795932f619daf3e676f01f88bd162366844753ee84bc69ce4595eccbe469a26a71d72df
+    "@rushstack/node-core-library": "npm:5.23.1"
+  checksum: 10/0f054bfa82507fe055754c087eb090922a4fb02a6dd7d5bd7c7e2c212a4723fd942cae90e62a3a8db2e64ec4f217b88676b082e0635615d40da4ccbb2fac5e4a
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor@npm:^7.43.1":
-  version: 7.58.2
-  resolution: "@microsoft/api-extractor@npm:7.58.2"
+"@microsoft/api-extractor@npm:^7.58.7":
+  version: 7.58.7
+  resolution: "@microsoft/api-extractor@npm:7.58.7"
   dependencies:
-    "@microsoft/api-extractor-model": "npm:7.33.6"
+    "@microsoft/api-extractor-model": "npm:7.33.8"
     "@microsoft/tsdoc": "npm:~0.16.0"
     "@microsoft/tsdoc-config": "npm:~0.18.1"
-    "@rushstack/node-core-library": "npm:5.22.0"
-    "@rushstack/rig-package": "npm:0.7.2"
-    "@rushstack/terminal": "npm:0.22.5"
-    "@rushstack/ts-command-line": "npm:5.3.5"
+    "@rushstack/node-core-library": "npm:5.23.1"
+    "@rushstack/rig-package": "npm:0.7.3"
+    "@rushstack/terminal": "npm:0.24.0"
+    "@rushstack/ts-command-line": "npm:5.3.9"
     diff: "npm:~8.0.2"
-    lodash: "npm:~4.18.1"
     minimatch: "npm:10.2.3"
     resolve: "npm:~1.22.1"
-    semver: "npm:~7.5.4"
+    semver: "npm:~7.7.4"
     source-map: "npm:~0.6.1"
     typescript: "npm:5.9.3"
   bin:
     api-extractor: bin/api-extractor
-  checksum: 10/8f4dc7a5b8ac7d5d6649a8b4568c836f4100a79b510bb7be3221b5fa0f752afb1197eea23db1f449b76c6b2317cecf0fbbed4922edacd61421dd310eb2b729e0
+  checksum: 10/a9eaa48119aee851a921b85cdb3acb200ef010d6e3a0fb924fc8c99537a15af059ef126db4883718879d7e3d31d40f990517d7d163ca6f0938524dcc181f0e4a
   languageName: node
   linkType: hard
 
@@ -1559,9 +1558,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rushstack/node-core-library@npm:5.22.0":
-  version: 5.22.0
-  resolution: "@rushstack/node-core-library@npm:5.22.0"
+"@rushstack/node-core-library@npm:5.23.1":
+  version: 5.23.1
+  resolution: "@rushstack/node-core-library@npm:5.23.1"
   dependencies:
     ajv: "npm:~8.18.0"
     ajv-draft-04: "npm:~1.0.0"
@@ -1570,13 +1569,13 @@ __metadata:
     import-lazy: "npm:~4.0.0"
     jju: "npm:~1.4.0"
     resolve: "npm:~1.22.1"
-    semver: "npm:~7.5.4"
+    semver: "npm:~7.7.4"
   peerDependencies:
     "@types/node": "*"
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/bdcb2f717dbd68f128b34047a284a7f610ae910543f6a836a80b11d4ccd330a4474db0ac54ef765b4ea9fb8d25f5e422ff12d2a135a055bf911c9189a467abe0
+  checksum: 10/77e30e2848e33ff56d07ca9c93488ff7afffc3fdccbc754f27a205809d91a71950fd39c1dc9f6a86e6ecba83e36f470a920b8b4f3a6b319cfd4fadc48891ca8d
   languageName: node
   linkType: hard
 
@@ -1592,21 +1591,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/rig-package@npm:0.7.2":
-  version: 0.7.2
-  resolution: "@rushstack/rig-package@npm:0.7.2"
+"@rushstack/rig-package@npm:0.7.3":
+  version: 0.7.3
+  resolution: "@rushstack/rig-package@npm:0.7.3"
   dependencies:
+    jju: "npm:~1.4.0"
     resolve: "npm:~1.22.1"
-    strip-json-comments: "npm:~3.1.1"
-  checksum: 10/d500714d77792797aaf98afaa7c6133b6886626096f738e1cfd9c18a15ac05fbb3ac6b2cc0798a21e9e9836ebae7f4542c951e4541cfdbee3a280f3f072cf93e
+  checksum: 10/46cbdf1b4538640a6c93825ddaa7693b45cd7f640b34106ab554319b5d3fae18f65a3c91576c6cce005a1250722159c329ce5f4b1729bead594d9f634cd18616
   languageName: node
   linkType: hard
 
-"@rushstack/terminal@npm:0.22.5":
-  version: 0.22.5
-  resolution: "@rushstack/terminal@npm:0.22.5"
+"@rushstack/terminal@npm:0.24.0":
+  version: 0.24.0
+  resolution: "@rushstack/terminal@npm:0.24.0"
   dependencies:
-    "@rushstack/node-core-library": "npm:5.22.0"
+    "@rushstack/node-core-library": "npm:5.23.1"
     "@rushstack/problem-matcher": "npm:0.2.1"
     supports-color: "npm:~8.1.1"
   peerDependencies:
@@ -1614,19 +1613,19 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/3d1dbdad81fd3a5274b24ce9169a92149f4bf62a864909d4eede4520d3c22b61dd538cf6cf28a92c45d6b6dbae2e84ca4ea61f7fa0d4ba774ba1ce1c02373099
+  checksum: 10/796fc5c031df2035d10b764257e2c58cd330b04241eb28a67505a726df41e895d3bb91de76c6b1db76ebbf0098396188b02aaeaa35dd2cb14ed25112e3335b2e
   languageName: node
   linkType: hard
 
-"@rushstack/ts-command-line@npm:5.3.5":
-  version: 5.3.5
-  resolution: "@rushstack/ts-command-line@npm:5.3.5"
+"@rushstack/ts-command-line@npm:5.3.9":
+  version: 5.3.9
+  resolution: "@rushstack/ts-command-line@npm:5.3.9"
   dependencies:
-    "@rushstack/terminal": "npm:0.22.5"
+    "@rushstack/terminal": "npm:0.24.0"
     "@types/argparse": "npm:1.0.38"
     argparse: "npm:~1.0.9"
     string-argv: "npm:~0.3.1"
-  checksum: 10/5522c036c62e42367acc9a10009886576c93b833f5a004c44b94f00614c44dbb82e972c7f51fea5baa3176660a1250a2375a9564cddd130926dae849f8bc95de
+  checksum: 10/54c9bef6db8a06de0b10ea12148d94425458828833b5f46a43b9a78fb28a533abe1d636afe5355d4081b717869021b04f74f90f5a3837dee4c20c0af9eb0ef58
   languageName: node
   linkType: hard
 
@@ -2038,7 +2037,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.0":
+"@types/lodash@npm:^4.17.24":
   version: 4.17.24
   resolution: "@types/lodash@npm:4.17.24"
   checksum: 10/0f2082565f60f9787eefc046edc38458054512be5a8b3584ef0bad5fd9e85d0ab55ec5a1fbfae1ed6ba015cf1f9e837d5fb4da1f99fc60b8f74b2a46146fb00f
@@ -7474,7 +7473,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.18.1, lodash@npm:~4.18.1":
+"lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.18.1":
   version: 4.18.1
   resolution: "lodash@npm:4.18.1"
   checksum: 10/306fea53dfd39dad1f03d45ba654a2405aebd35797b673077f401edb7df2543623dc44b9effbb98f69b32152295fff725a4cec99c684098947430600c6af0c3f
@@ -7517,15 +7516,6 @@ __metadata:
   dependencies:
     yallist: "npm:^3.0.2"
   checksum: 10/951d2673dcc64a7fb888bf3d13bc2fdf923faca97d89cdb405ba3dfff77e2b26e5798d405e78fcd7094c9e7b8b4dab2ddc5a4f8a11928af24a207b7c738ca3f8
-  languageName: node
-  linkType: hard
-
-"lru-cache@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "lru-cache@npm:6.0.0"
-  dependencies:
-    yallist: "npm:^4.0.0"
-  checksum: 10/fc1fe2ee205f7c8855fa0f34c1ab0bcf14b6229e35579ec1fd1079f31d6fc8ef8eb6fd17f2f4d99788d7e339f50e047555551ebd5e434dda503696e7c6591825
   languageName: node
   linkType: hard
 
@@ -9273,14 +9263,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:~7.5.4":
-  version: 7.5.4
-  resolution: "semver@npm:7.5.4"
-  dependencies:
-    lru-cache: "npm:^6.0.0"
+"semver@npm:~7.7.4":
+  version: 7.7.4
+  resolution: "semver@npm:7.7.4"
   bin:
     semver: bin/semver.js
-  checksum: 10/985dec0d372370229a262c737063860fabd4a1c730662c1ea3200a2f649117761a42184c96df62a0e885e76fbd5dace41087d6c1ac0351b13c0df5d6bcb1b5ac
+  checksum: 10/26bdc6d58b29528f4142d29afb8526bc335f4fc04c4a10f2b98b217f277a031c66736bf82d3d3bb354a2f6a3ae50f18fd62b053c4ac3f294a3d10a61f5075b75
   languageName: node
   linkType: hard
 
@@ -9888,7 +9876,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-json-comments@npm:^3.1.1, strip-json-comments@npm:~3.1.1":
+"strip-json-comments@npm:^3.1.1":
   version: 3.1.1
   resolution: "strip-json-comments@npm:3.1.1"
   checksum: 10/492f73e27268f9b1c122733f28ecb0e7e8d8a531a6662efbd08e22cccb3f9475e90a1b82cab06a392f6afae6d2de636f977e231296400d0ec5304ba70f166443
