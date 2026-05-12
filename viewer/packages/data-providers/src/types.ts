@@ -186,6 +186,12 @@ export enum File3dFormat {
    * Reveal v9 and above (GLTF based output)
    */
   GltfCadModel = 'gltf-directory',
+  /**
+   * High-detail geometry for a prioritized subset of nodes.
+   * Same GLTF structure as GltfCadModel but only contains
+   * geometry for nodes specified in a PrioritizedNodes job.
+   */
+  GltfPrioritizedNodes = 'gltf-prioritized-nodes-directory',
   AnyFormat = 'all-outputs'
 }
 

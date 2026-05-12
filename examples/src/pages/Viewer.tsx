@@ -38,6 +38,7 @@ import { MeasurementUi } from '../utils/MeasurementUi';
 import { Image360UI } from '../utils/Image360UI';
 import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
+import { PrioritizedNodesUI } from '../utils/PrioritizedNodesUI';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
 
@@ -95,6 +96,7 @@ export function Viewer() {
         useFlexibleCameraManager: true,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
+        enableFloorIcons: urlParams.get('floorIcons') === 'true',
         pointCloudEffects: {
           pointBlending: urlParams.get('pointBlending') === 'true',
           edlOptions: edlEnabled
@@ -222,6 +224,12 @@ export function Viewer() {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new NodeTransformUI(viewer, gui.addFolder(`Node transform #${modelUi.cadModels.length}`), model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
+          new PrioritizedNodesUI(
+            gui.addFolder(`Prioritized nodes #${modelUi.cadModels.length}`),
+            client,
+            viewer,
+            model
+          );
         } else if (model instanceof CognitePointCloudModel) {
           const modelIndex = modelUi.pointCloudModels.length;
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelIndex}`), model);

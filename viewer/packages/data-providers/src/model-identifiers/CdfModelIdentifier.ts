@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { ModelIdentifier } from '../ModelIdentifier';
+import { File3dFormat } from '../types';
 
 /**
  * Identifies a 3D model stored in CDF by the combination of a modelId, a revisionId
@@ -12,11 +13,14 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
   readonly modelId: number;
   readonly revisionId: number;
+  readonly outputFormat: File3dFormat | undefined;
 
-  constructor(modelId: number, revisionId: number) {
-    this.revealInternalId = Symbol(`${modelId}/${revisionId}`);
+  constructor(modelId: number, revisionId: number, outputFormat?: File3dFormat) {
+    const suffix = outputFormat ? `/${outputFormat}` : '';
+    this.revealInternalId = Symbol(`${modelId}/${revisionId}${suffix}`);
     this.modelId = modelId;
     this.revisionId = revisionId;
+    this.outputFormat = outputFormat;
   }
 
   public toString(): string {
@@ -28,6 +32,7 @@ export class CdfModelIdentifier implements ModelIdentifier {
    * the model in CDF
    */
   public sourceModelIdentifier(): string {
-    return `cdf-classic: ${this.modelId}/${this.revisionId}`;
+    const suffix = this.outputFormat ? `/${this.outputFormat}` : '';
+    return `cdf-classic: ${this.modelId}/${this.revisionId}${suffix}`;
   }
 }

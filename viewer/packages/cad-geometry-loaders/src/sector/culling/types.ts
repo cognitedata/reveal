@@ -18,6 +18,16 @@ export interface DetermineSectorsInput {
   cameraInMotion: boolean;
   budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
+  /**
+   * Models whose sectors must always be loaded regardless of budget.
+   * Identified by their `revealInternalId` symbol.
+   */
+  lockedModelIdentifiers: Set<symbol>;
+  /**
+   * Per-model set of specific sector IDs that must always be loaded
+   * regardless of budget. Keyed by model `revealInternalId`.
+   */
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>;
 }
 
 export type DetermineSectorsPayload = {
@@ -28,6 +38,8 @@ export type DetermineSectorsPayload = {
   cameraInMotion: boolean;
   budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
+  lockedModelIdentifiers: Set<symbol>;
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>;
 };
 
 /**

@@ -97,3 +97,4 @@ export * from './src/assetMappings';
 
 export * from './src/shapes';
 export * from './src/linalg';
+export { WaitCursor } from './src/WaitCursor';

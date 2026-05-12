@@ -10,7 +10,10 @@ import {
   InternalId,
   CursorAndAsyncIterator,
   AnnotationsInstanceRef,
-  FileInfo
+  AnnotationsAssetRef,
+  FileInfo,
+  ListResponse,
+  CogniteAsyncIterator
 } from '@cognite/sdk';
 import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
 import { ClassicDataSourceType } from '../DataSourceType';
@@ -75,11 +78,21 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       })
   );
 
+  const mockReverseLookup = jest
+    .fn<CogniteClient['annotations']['reverseLookup']>()
+    .mockImplementation((): Promise<ListResponse<AnnotationsAssetRef[]>> & CogniteAsyncIterator<AnnotationsAssetRef> =>
+      createCursorAndAsyncIterator<AnnotationsAssetRef>({
+        items: [{ id: matchingAnnotation.annotatedResourceId }]
+      })
+    );
+
   const mockFilesRetrieve = jest.fn<CogniteClient['files']['retrieve']>().mockResolvedValue([]);
 
   const sdkMock = new Mock<CogniteClient>()
     .setup(p => p.annotations.list)
     .returns(mockAnnotationList)
+    .setup(p => p.annotations.reverseLookup)
+    .returns(mockReverseLookup)
     .setup(p => p.files.retrieve)
     .returns(mockFilesRetrieve)
     .object();
@@ -195,6 +208,11 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
             items: [matchingHybridAnnotation]
           })
       );
+      mockReverseLookup.mockImplementation(() =>
+        createCursorAndAsyncIterator<AnnotationsAssetRef>({
+          items: [{ id: matchingHybridAnnotation.annotatedResourceId }]
+        })
+      );
 
       const provider = new Cdf360ImageAnnotationProvider(sdkMock);
 
@@ -214,6 +232,11 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
           createCursorAndAsyncIterator({
             items: [matchingHybridAnnotation]
           })
+      );
+      mockReverseLookup.mockImplementation(() =>
+        createCursorAndAsyncIterator<AnnotationsAssetRef>({
+          items: [{ id: matchingHybridAnnotation.annotatedResourceId }]
+        })
       );
 
       const provider = new Cdf360ImageAnnotationProvider(sdkMock);
@@ -235,6 +258,11 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
           createCursorAndAsyncIterator({
             items: [matchingAnnotation]
           })
+      );
+      mockReverseLookup.mockImplementation(() =>
+        createCursorAndAsyncIterator<AnnotationsAssetRef>({
+          items: [{ id: matchingAnnotation.annotatedResourceId }]
+        })
       );
       mockFilesRetrieve.mockResolvedValue([{ id: 10, externalId: 'file-external-id', name: 'file1' } as FileInfo]);
 
