@@ -39,6 +39,11 @@ export class CadManager {
 
   private readonly _sectorBufferTime = 350;
 
+  private readonly _compatibleGltfFormats: File3dFormat[] = [
+    File3dFormat.GltfCadModel,
+    File3dFormat.GltfPrioritizedNodes
+  ];
+
   get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
@@ -175,11 +180,14 @@ export class CadManager {
   }
 
   doesModelHaveCompatibleFormat(modelMetadata: CadModelMetadata): boolean {
-    return (
-      this._compatibleFileFormat === undefined ||
-      (this._compatibleFileFormat.format === modelMetadata.format &&
-        this._compatibleFileFormat.version === modelMetadata.formatVersion)
-    );
+    if (this._compatibleFileFormat === undefined) {
+      return true;
+    }
+    const isFormatCompatible =
+      this._compatibleFileFormat.format === modelMetadata.format ||
+      (this._compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
+        this._compatibleGltfFormats.includes(modelMetadata.format));
+    return isFormatCompatible && this._compatibleFileFormat.version === modelMetadata.formatVersion;
   }
 
   updateModelCompatibilityFormat(modelMetadata: CadModelMetadata): void {
@@ -189,8 +197,12 @@ export class CadManager {
     };
   }
 
-  async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier);
+  async addModel(
+    modelIdentifier: ModelIdentifier,
+    geometryFilter?: GeometryFilter,
+    outputFormat?: File3dFormat
+  ): Promise<CadNode> {
+    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier, outputFormat);
 
     if (!this.doesModelHaveCompatibleFormat(modelMetadata)) {
       throw Error(

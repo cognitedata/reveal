@@ -60,7 +60,8 @@ export class Image360CollectionFactory {
       points,
       this._sceneHandler,
       this._onBeforeSceneRendered,
-      this._iconsOptions
+      this._iconsOptions,
+      this._setNeedsRedraw
     );
     const icons = collectionIcons.icons;
 

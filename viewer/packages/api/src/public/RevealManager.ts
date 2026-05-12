@@ -28,6 +28,7 @@ import { CameraManager } from '@reveal/camera-manager';
 import {
   ClassicModelIdentifierType,
   DataSourceType,
+  File3dFormat,
   InternalDataSourceType,
   LocalModelIdentifierType
 } from '@reveal/data-providers';
@@ -39,6 +40,7 @@ import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/
 export type AddCadModelOptions = {
   nodeAppearanceProvider?: NodeAppearanceProvider;
   geometryFilter?: GeometryFilter;
+  outputFormat?: File3dFormat;
 };
 
 /**
@@ -235,8 +237,12 @@ export class RevealManager {
     switch (type) {
       case 'cad': {
         return this._cadManager.addModel(
-          createModelIdentifier(modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType),
-          (options as AddCadModelOptions).geometryFilter
+          createModelIdentifier(
+            modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType,
+            options?.outputFormat
+          ),
+          options?.geometryFilter,
+          options?.outputFormat
         );
       }
 

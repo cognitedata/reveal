@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteClient, QueryRequest } from '@cognite/sdk/dist/src';
+import { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { isCoreDmImage360CollectionFilter } from './queryFilters';
 import { queryNodesAndEdges } from './queryNodesAndEdges';

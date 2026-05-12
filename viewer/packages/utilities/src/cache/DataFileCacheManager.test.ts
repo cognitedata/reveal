@@ -158,11 +158,15 @@ describe(DataFileCacheManager.name, () => {
       failingMock
     );
 
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
     await expect(errorManager.getCachedResponse(TEST_FILE_URL)).rejects.toThrow('Cache error');
-    await expect(errorManager.storeResponse(TEST_FILE_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE)).rejects.toThrow(
-      'Failed to store in cache'
-    );
+    // storeResponse no longer throws — it warns on non-quota errors
+    await errorManager.storeResponse(TEST_FILE_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('[DataFileCacheManager] Failed to store in cache'));
     await expect(errorManager.clear()).rejects.toThrow('Delete error');
+
+    warnSpy.mockRestore();
   });
 
   test('should handle invalid header values gracefully', async () => {
@@ -178,5 +182,163 @@ describe(DataFileCacheManager.name, () => {
 
     const hasCache = await cacheManager.has(INVALID_FILE_URL);
     expect(hasCache).toBe(false);
+  });
+
+  describe('LRU eviction on quota exceeded', () => {
+    // Wraps createMockCacheStorage and intercepts put() to throw on calls matching failPredicate.
+    function createFailingPutCacheStorage(
+      storageMap: Map<string, Map<string, Response>>,
+      failPredicate: (callNumber: number) => boolean,
+      error: unknown
+    ): CacheStorage {
+      let putCallCount = 0;
+      const storage = createMockCacheStorage(storageMap);
+      const originalOpen = storage.open.bind(storage);
+      storage.open = async (cacheName: string) => {
+        const cache = await originalOpen(cacheName);
+        const originalPut = cache.put.bind(cache);
+        cache.put = async (key: RequestInfo | URL, response: Response) => {
+          putCallCount++;
+          if (failPredicate(putCallCount)) throw error;
+          return originalPut(key, response);
+        };
+        return cache;
+      };
+      return storage;
+    }
+
+    let warnSpy: ReturnType<typeof jest.spyOn>;
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      warnSpy.mockRestore();
+      jest.useRealTimers();
+    });
+
+    test('should evict oldest 20% of entries on QuotaExceededError and retry', async () => {
+      jest.useFakeTimers();
+
+      const storageMap: Map<string, Map<string, Response>> = new Map();
+      // Puts 1-5 succeed (storing the 5 initial entries), put 6 triggers quota
+      const manager = new DataFileCacheManager(
+        { cacheName: 'evict-cache' },
+        createFailingPutCacheStorage(storageMap, n => n === 6, new DOMException('quota exceeded', 'QuotaExceededError'))
+      );
+
+      const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
+      for (const url of urls) {
+        await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+        jest.advanceTimersByTime(1000);
+      }
+
+      const NEW_URL = 'https://example.com/new.bin';
+      await manager.storeResponse(NEW_URL, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+
+      const cache = storageMap.get('evict-cache')!;
+      // 20% of 5 = 1 entry evicted — the oldest (file0)
+      expect(cache.has(urls[0])).toBe(false);
+      // Remaining entries untouched
+      expect(cache.has(urls[1])).toBe(true);
+      // New entry stored after retry
+      expect(cache.has(NEW_URL)).toBe(true);
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    test('should use in-memory last-accessed time for LRU ordering', async () => {
+      jest.useFakeTimers();
+
+      const storageMap: Map<string, Map<string, Response>> = new Map();
+      // Puts 1-5 succeed, put 6 triggers quota
+      const manager = new DataFileCacheManager(
+        { cacheName: 'lru-cache' },
+        createFailingPutCacheStorage(storageMap, n => n === 6, new DOMException('quota exceeded', 'QuotaExceededError'))
+      );
+
+      const [urlA, urlB, urlC, urlD, urlE] = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
+      // Store A–E at t=0,1000,2000,3000,4000 ms — _lastAccessed mirrors store time
+      for (const url of [urlA, urlB, urlC, urlD, urlE]) {
+        await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+        jest.advanceTimersByTime(1000);
+      }
+
+      // Access A at t=5000 — promotes it above B in LRU order
+      await manager.getCachedResponse(urlA);
+      jest.advanceTimersByTime(1000);
+
+      // 6th put triggers quota → evicts least recently accessed (B, lastAccessed=1000)
+      await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);
+
+      const cache = storageMap.get('lru-cache')!;
+      expect(cache.has(urlB)).toBe(false); // B evicted (LRU)
+      expect(cache.has(urlA)).toBe(true); // A kept (recently accessed)
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    test('should treat Firefox No device space error as quota error and evict', async () => {
+      jest.useFakeTimers();
+
+      const storageMap: Map<string, Map<string, Response>> = new Map();
+      const manager = new DataFileCacheManager(
+        { cacheName: 'ff-cache' },
+        createFailingPutCacheStorage(storageMap, n => n === 6, new Error('File error: No device space'))
+      );
+
+      const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
+      for (const url of urls) {
+        await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+        jest.advanceTimersByTime(1000);
+      }
+
+      await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);
+
+      const cache = storageMap.get('ff-cache')!;
+      // Firefox error treated as quota → eviction + retry succeeded
+      expect(cache.has(urls[0])).toBe(false);
+      expect(cache.has('https://example.com/new.bin')).toBe(true);
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    test('should treat Safari iOS quota error as quota error and evict', async () => {
+      jest.useFakeTimers();
+
+      const storageMap: Map<string, Map<string, Response>> = new Map();
+      const manager = new DataFileCacheManager(
+        { cacheName: 'safari-cache' },
+        createFailingPutCacheStorage(storageMap, n => n === 6, new Error('The quota has been exceeded.'))
+      );
+
+      const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
+      for (const url of urls) {
+        await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
+        jest.advanceTimersByTime(1000);
+      }
+
+      await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);
+
+      const cache = storageMap.get('safari-cache')!;
+      expect(cache.has(urls[0])).toBe(false);
+      expect(cache.has('https://example.com/new.bin')).toBe(true);
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    test('should warn without throwing when retry still fails after eviction', async () => {
+      const storageMap: Map<string, Map<string, Response>> = new Map();
+      // All puts fail — eviction has nothing to clear, retry also fails
+      const manager = new DataFileCacheManager(
+        { cacheName: 'always-fail-cache' },
+        createFailingPutCacheStorage(storageMap, () => true, new DOMException('quota exceeded', 'QuotaExceededError'))
+      );
+
+      await expect(
+        manager.storeResponse('https://example.com/file.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE)
+      ).resolves.toBeUndefined();
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[DataFileCacheManager] Failed to store in cache after LRU eviction')
+      );
+    });
   });
 });
