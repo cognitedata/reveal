@@ -28,6 +28,8 @@ WORKSPACE_TOML=$(cargo locate-project --workspace --message-format plain --manif
 WORKSPACE_DIR=$(dirname "$WORKSPACE_TOML")
 TARGET_DIR="$WORKSPACE_DIR/target"
 
+rustup target add wasm32-unknown-unknown 2>/dev/null || true
+
 WASM_BINDGEN_VERSION=$(grep -A2 '^name = "wasm-bindgen"$' "$WORKSPACE_DIR/Cargo.lock" | grep '^version' | head -1 | sed 's/version = "\(.*\)"/\1/')
 if ! command -v wasm-bindgen &>/dev/null || [[ "$(wasm-bindgen --version 2>/dev/null | awk '{print $2}')" != "$WASM_BINDGEN_VERSION" ]]; then
   echo "Installing wasm-bindgen-cli $WASM_BINDGEN_VERSION..."
