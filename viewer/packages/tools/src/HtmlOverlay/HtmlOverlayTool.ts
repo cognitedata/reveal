@@ -455,7 +455,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       return;
     }
     for (const [key, compositeElement] of this._clusterCache.entries()) {
-      if (!key.split(',').includes(`${removedId}`)) {
+      if (!clusterKeyContainsId(key, removedId)) {
         continue;
       }
       compositeElement.parentNode?.removeChild(compositeElement);
@@ -526,21 +526,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
           .reduce((position, element) => position.add(element.state.position2D), clusterMidpoint.set(0, 0))
           .divideScalar(cluster.length);
 
-        // Build a stable key from sorted element IDs
-        const clusterKey = cluster
-          .map(el => {
-            let id = this._elementIds.get(el.htmlElement);
-            if (id === undefined) {
-              // Overlay reached clustering before add()'s deferred ID
-              // assignment ran (or via a path that bypassed it). Assign
-              // lazily so a stable key can still be produced.
-              id = this._nextElementId++;
-              this._elementIds.set(el.htmlElement, id);
-            }
-            return id;
-          })
-          .sort((a, b) => a - b)
-          .join(',');
+        const clusterKey = this.createClusterKey(cluster);
 
         let compositeElement = this._clusterCache.get(clusterKey);
         if (!compositeElement) {
@@ -558,6 +544,23 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         this.addComposite(compositeElement, midpoint);
       }
     }
+  }
+
+  private createClusterKey(cluster: { htmlElement: HTMLElement }[]): string {
+    return cluster
+      .map(el => {
+        let id = this._elementIds.get(el.htmlElement);
+        if (id === undefined) {
+          // Overlay reached clustering before add()'s deferred ID
+          // assignment ran (or via a path that bypassed it). Assign
+          // lazily so a stable key can still be produced.
+          id = this._nextElementId++;
+          this._elementIds.set(el.htmlElement, id);
+        }
+        return id;
+      })
+      .sort((a, b) => a - b)
+      .join(',');
   }
 
   private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
@@ -606,6 +609,10 @@ function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
   out.min.set(rect.left, rect.top);
   out.max.set(rect.right, rect.bottom);
   return out;
+}
+
+function clusterKeyContainsId(key: string, id: number): boolean {
+  return key.split(',').includes(`${id}`);
 }
 
 function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {
