@@ -17,18 +17,17 @@
     // Module Resolution Options
     "allowJs": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "declaration": true,
-    "baseUrl": ".",
     "outDir": "./build",
     "paths": {
       "@reveal/*": [
-        "packages/*"
+        "./packages/*"
       ],
       "*": [
-        "*",
-        "packages/api/src/@types/*"
+        "./*",
+        "./packages/api/src/@types/*"
       ]
     },
   },
