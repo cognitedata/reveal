@@ -67,6 +67,12 @@ jobs:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Check that yarn.lock is up to date
         working-directory: viewer
         continue-on-error: false
@@ -126,6 +132,12 @@ jobs:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Setup tools for coverage tests
         working-directory: viewer
         run: |
@@ -163,6 +175,12 @@ jobs:
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
+
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Execute visual tests
         id: viewerVisualTests
@@ -263,6 +281,12 @@ jobs:
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
+
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build production version
         working-directory: viewer
