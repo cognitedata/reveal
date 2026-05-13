@@ -50,7 +50,7 @@ jobs:
         uses: actions/cache@v5
         id: wasm_bindgen_cache
         with:
-          path: ~/.cargo/bin/wasm-bindgen
+          path: ~/.cargo/bin/wasm-bindgen**
           key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install wasm-bindgen-cli
@@ -58,8 +58,7 @@ jobs:
         working-directory: viewer
         run: |
           rustup target add wasm32-unknown-unknown
-          VERSION=$(cargo metadata --manifest-path Cargo.toml --format-version 1 \
-            | python3 -c "import sys,json; print(next(p['version'] for p in json.load(sys.stdin)['packages'] if p['name']=='wasm-bindgen'))")
+          VERSION=$(awk '/^name = "wasm-bindgen"$/{found=1} found && /^version =/{match($0,/"([^"]+)"/,a); print a[1]; exit}' Cargo.lock)
           cargo install wasm-bindgen-cli --version "$VERSION" --locked
 
   build-viewer:
@@ -86,7 +85,7 @@ jobs:
       - name: Cache wasm-bindgen-cli
         uses: actions/cache@v5
         with:
-          path: ~/.cargo/bin/wasm-bindgen
+          path: ~/.cargo/bin/wasm-bindgen*
           key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Check that yarn.lock is up to date
@@ -151,7 +150,7 @@ jobs:
       - name: Cache wasm-bindgen-cli
         uses: actions/cache@v5
         with:
-          path: ~/.cargo/bin/wasm-bindgen
+          path: ~/.cargo/bin/wasm-bindgen*
           key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Setup tools for coverage tests
@@ -195,7 +194,7 @@ jobs:
       - name: Cache wasm-bindgen-cli
         uses: actions/cache@v5
         with:
-          path: ~/.cargo/bin/wasm-bindgen
+          path: ~/.cargo/bin/wasm-bindgen*
           key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Execute visual tests
@@ -301,7 +300,7 @@ jobs:
       - name: Cache wasm-bindgen-cli
         uses: actions/cache@v5
         with:
-          path: ~/.cargo/bin/wasm-bindgen
+          path: ~/.cargo/bin/wasm-bindgen*
           key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build production version

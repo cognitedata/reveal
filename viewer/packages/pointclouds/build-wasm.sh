@@ -30,8 +30,7 @@ TARGET_DIR="$WORKSPACE_DIR/target"
 
 rustup target add wasm32-unknown-unknown 2>/dev/null || true
 
-WASM_BINDGEN_VERSION=$(cargo metadata --manifest-path "$WASM_DIR/Cargo.toml" --format-version 1 2>/dev/null \
-  | python3 -c "import sys,json; print(next(p['version'] for p in json.load(sys.stdin)['packages'] if p['name']=='wasm-bindgen'))")
+WASM_BINDGEN_VERSION=$(awk '/^name = "wasm-bindgen"$/{found=1} found && /^version =/{match($0,/"([^"]+)"/,a); print a[1]; exit}' "$WORKSPACE_DIR/Cargo.lock")
 if ! command -v wasm-bindgen &>/dev/null || [[ "$(wasm-bindgen --version 2>/dev/null | awk '{print $2}')" != "$WASM_BINDGEN_VERSION" ]]; then
   echo "Installing wasm-bindgen-cli $WASM_BINDGEN_VERSION..."
   cargo install wasm-bindgen-cli --version "$WASM_BINDGEN_VERSION" --locked
