@@ -57,9 +57,9 @@ jobs:
         if: steps.wasm_bindgen_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         run: |
-          rustup target add wasm32-unknown-unknown
           VERSION=$(awk '/^name = "wasm-bindgen"$/{found=1} found && /^version =/{match($0,/"([^"]+)"/,a); print a[1]; exit}' Cargo.lock)
-          cargo install wasm-bindgen-cli --version "$VERSION" --locked
+          curl -sSfL "https://github.com/rustwasm/wasm-bindgen/releases/download/${VERSION}/wasm-bindgen-${VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+            | tar xz --strip-components=1 -C ~/.cargo/bin
 
   build-viewer:
     needs: populate-caches
