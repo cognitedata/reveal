@@ -46,6 +46,22 @@ jobs:
         continue-on-error: false
         run: cargo update --locked
 
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        id: wasm_bindgen_cache
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install wasm-bindgen-cli
+        if: steps.wasm_bindgen_cache.outputs.cache-hit != 'true'
+        working-directory: viewer
+        run: |
+          rustup target add wasm32-unknown-unknown
+          VERSION=$(cargo metadata --manifest-path Cargo.toml --format-version 1 \
+            | python3 -c "import sys,json; print(next(p['version'] for p in json.load(sys.stdin)['packages'] if p['name']=='wasm-bindgen'))")
+          cargo install wasm-bindgen-cli --version "$VERSION" --locked
+
   build-viewer:
     needs: populate-caches
     name: Build Reveal
