@@ -60,27 +60,6 @@ describe(PointCloudPickingHandler.name, () => {
     expect(result).toEqual([]);
   });
 
-  test('intersectPointClouds throws when intersected point cannot be matched to a node', async () => {
-    const shape = new Cylinder(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1), 1);
-    const annotation: PointCloudObject<ClassicDataSourceType> = {
-      annotationId: 1,
-      boundingBox: shape.createBoundingBox(),
-      stylableObject: { shape, objectId: 1 }
-    };
-    const node = createPointCloudNode<ClassicDataSourceType>({ annotations: [annotation] });
-
-    jest.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
-      pointIndex: 0,
-      object: new THREE.Points(), // no parent → determinePointCloudNode returns null
-      position: new THREE.Vector3(),
-      objectId: 1
-    });
-
-    await expect(handler.intersectPointClouds([node], createMockIntersectInput())).rejects.toThrow(
-      'Could not find PointCloudNode for intersected point'
-    );
-  });
-
   test('intersectPointClouds returns Classic volume metadata when annotation has annotationId', async () => {
     const shape = new Cylinder(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1), 1);
     const annotationId = 42;

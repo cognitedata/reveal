@@ -54,6 +54,32 @@ describe(HtmlClusterRenderer.name, () => {
     expect(container.style.display).toBe('block');
   });
 
+  test('setVisible(false) removes all cluster DOM elements and clears hover state', () => {
+    const cluster1 = createClusterData(iconAtOrigin, true, 5);
+    const cluster2 = createClusterData(iconAtOne, true, 10);
+    renderer.updateClusters([cluster1, cluster2], params);
+    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
+    assert(container);
+    expect(container.querySelectorAll('.test-cluster-icon').length).toBe(2);
+
+    renderer.setHoveredCluster(iconAtOrigin);
+    expect(renderer.getHoveredCluster()).toBe(iconAtOrigin);
+
+    renderer.setVisible(false);
+
+    // All cluster icon elements removed from DOM
+    expect(container.querySelectorAll('.test-cluster-icon').length).toBe(0);
+    // Hovered state cleared
+    expect(renderer.getHoveredCluster()).toBeUndefined();
+
+    // Elements are pooled and reused after re-enabling
+    renderer.setVisible(true);
+    const newIcon = createMockIcon(new Vector3(2, 2, 2));
+    renderer.updateClusters([createClusterData(newIcon, true, 3)], params);
+    const icons = container.querySelectorAll('.test-cluster-icon');
+    expect(icons.length).toBe(1);
+  });
+
   test('manages hovered cluster state and switches between icons correctly', () => {
     expect(renderer.getHoveredCluster()).toBeUndefined();
     renderer.setHoveredCluster(defaultIcon);
