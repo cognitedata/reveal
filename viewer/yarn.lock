@@ -518,7 +518,6 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
     typescript: "npm:^6.0.3"
-    wasm-pack: "npm:^0.14.0"
     webpack: "npm:^5.91.0"
     webpack-cli: "npm:^5.1.4"
     webpack-dev-server: "npm:^5.0.4"
@@ -2994,7 +2993,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.0.0, axios@npm:^1.12.1":
+"axios@npm:^1.12.1":
   version: 1.16.0
   resolution: "axios@npm:1.16.0"
   dependencies:
@@ -3202,17 +3201,6 @@ __metadata:
   version: 2.3.0
   resolution: "binary-extensions@npm:2.3.0"
   checksum: 10/bcad01494e8a9283abf18c1b967af65ee79b0c6a9e6fcfafebfe91dbe6e0fc7272bafb73389e198b310516ae04f7ad17d79aacf6cb4c0d5d5202a7e2e52c7d98
-  languageName: node
-  linkType: hard
-
-"binary-install@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "binary-install@npm:1.1.2"
-  dependencies:
-    axios: "npm:^0.26.1"
-    rimraf: "npm:^3.0.2"
-    tar: "npm:^6.1.11"
-  checksum: 10/cf181e4cfea967f382a5358bc55aa1356e429106f93f1eeeb55074d78df648d149d899a2cdc57b65f378805b5cafd049d9e9d025c80aa27a5a60920beee53ba5
   languageName: node
   linkType: hard
 
@@ -10672,17 +10660,6 @@ __metadata:
   dependencies:
     makeerror: "npm:1.0.12"
   checksum: 10/ad7a257ea1e662e57ef2e018f97b3c02a7240ad5093c392186ce0bcf1f1a60bbadd520d073b9beb921ed99f64f065efb63dfc8eec689a80e569f93c1c5d5e16c
-  languageName: node
-  linkType: hard
-
-"wasm-pack@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "wasm-pack@npm:0.14.0"
-  dependencies:
-    binary-install: "npm:^1.1.2"
-  bin:
-    wasm-pack: run.js
-  checksum: 10/914c7750c8cdefdef61cb9a727a70e8685c5eb164c1261627e9e6dc0d693ce7a3f95456eb535270b309d3c0d587c53fc33af5f513af7666103da4f88282f6eff
   languageName: node
   linkType: hard
 

@@ -58,7 +58,7 @@
     "update-api": "api-extractor run --local && shx rm -rf api-extractor-temp/",
     "ws:serve": "yarn run build:wasm && webpack-dev-server --config packages/webpack.config.js",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
-    "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
+    "ws:test:wasm": "cd $INIT_CWD && bash ./build-wasm.sh test --headless --chrome ./wasm",
     "ws:update-cargo-index": "cargo update --dry-run",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
@@ -134,7 +134,6 @@
     "ts-loader": "^9.5.1",
     "tsc-alias": "^1.8.8",
     "typescript": "^6.0.3",
-    "wasm-pack": "^0.14.0",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4",

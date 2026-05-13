@@ -67,6 +67,17 @@ jobs:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        id: wasm_bindgen_cache
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-0.2.111
+
+      - name: Install wasm-bindgen-cli
+        if: steps.wasm_bindgen_cache.outputs.cache-hit != 'true'
+        run: cargo install wasm-bindgen-cli --version 0.2.111 --locked
+
       - name: Check that yarn.lock is up to date
         working-directory: viewer
         continue-on-error: false
@@ -126,6 +137,17 @@ jobs:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        id: wasm_bindgen_cache
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-0.2.111
+
+      - name: Install wasm-bindgen-cli
+        if: steps.wasm_bindgen_cache.outputs.cache-hit != 'true'
+        run: cargo install wasm-bindgen-cli --version 0.2.111 --locked
+
       - name: Setup tools for coverage tests
         working-directory: viewer
         run: |
@@ -163,6 +185,17 @@ jobs:
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
+
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        id: wasm_bindgen_cache
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-0.2.111
+
+      - name: Install wasm-bindgen-cli
+        if: steps.wasm_bindgen_cache.outputs.cache-hit != 'true'
+        run: cargo install wasm-bindgen-cli --version 0.2.111 --locked
 
       - name: Execute visual tests
         id: viewerVisualTests
@@ -263,6 +296,17 @@ jobs:
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
+
+      - name: Cache wasm-bindgen-cli
+        uses: actions/cache@v5
+        id: wasm_bindgen_cache
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: ${{ runner.os }}-wasm-bindgen-0.2.111
+
+      - name: Install wasm-bindgen-cli
+        if: steps.wasm_bindgen_cache.outputs.cache-hit != 'true'
+        run: cargo install wasm-bindgen-cli --version 0.2.111 --locked
 
       - name: Build production version
         working-directory: viewer
