@@ -40,6 +40,11 @@ module.exports = () => {
         tsconfig: 'tsconfig.test.json'
       }
     },
+    testEnvironmentOptions: {
+      // nock v14 uses @mswjs/interceptors which only exports under 'node'/'default' conditions;
+      // jsdom's default 'browser' condition fails to resolve it
+      customExportConditions: ['node', 'require', 'default']
+    },
     automock: false,
     setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock'],
     setupFilesAfterEnv: ['jest-extended/all'],

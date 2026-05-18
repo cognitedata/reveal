@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 /*!
  * Copyright 2021 Cognite AS
  */

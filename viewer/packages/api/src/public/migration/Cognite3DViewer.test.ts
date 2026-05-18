@@ -10,11 +10,10 @@ import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
-import nock from 'nock';
 import { Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
-import { DataSourceType } from '@reveal/data-providers';
+import { CdfModelDataProvider, CdfModelMetadataProvider, DataSourceType } from '@reveal/data-providers';
 import { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
 import { jest } from '@jest/globals';
@@ -34,20 +33,6 @@ describe('Cognite3DViewer', () => {
     .object();
 
   beforeAll(() => {
-    nock.disableNetConnect();
-
-    nock('https://api-js.mixpanel.com')
-      .persist(true)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*/)
-      .reply(200);
-
-    nock('https://api-js.mixpanel.com')
-      .persist(true)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .post(/.*/)
-      .reply(200);
-
     // Mock function for retriving model metadata, such as transformation
     jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
       id: revisionId,
@@ -57,10 +42,6 @@ describe('Cognite3DViewer', () => {
       createdTime: new Date(),
       assetMappingCount: 0
     }));
-  });
-
-  afterAll(() => {
-    nock.enableNetConnect();
   });
 
   beforeEach(() => {
@@ -92,24 +73,9 @@ describe('Cognite3DViewer', () => {
 
   test('dispose removes and disposes all models', async () => {
     // Arrange
-    const outputs = {
-      items: [
-        {
-          format: 'gltf-directory',
-          version: 9,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/outputs/)
-      .twice() // the first one goes to determine model type
-      .reply(200, outputs);
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/scene.json/)
-      .reply(200, sceneJson);
+    const mockOutputs = [{ format: 'gltf-directory', version: 9, blobId: 1 }];
+    jest.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue(mockOutputs as any);
+    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
@@ -137,24 +103,9 @@ describe('Cognite3DViewer', () => {
 
   test('addModel with remote model and fit viewer, updates camera', async () => {
     // Arrange
-    const outputs = {
-      items: [
-        {
-          format: 'gltf-directory',
-          version: 9,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/outputs/)
-      .twice() // the first one goes to determine model type
-      .reply(200, outputs);
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/scene.json/)
-      .reply(200, sceneJson);
+    const mockOutputs = [{ format: 'gltf-directory', version: 9, blobId: 1 }];
+    jest.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue(mockOutputs as any);
+    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
