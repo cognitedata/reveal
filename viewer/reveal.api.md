@@ -352,9 +352,11 @@ export const CDF_TO_VIEWER_TRANSFORMATION: Matrix4;
 
 // @public
 export class CdfModelIdentifier implements ModelIdentifier {
-    constructor(modelId: number, revisionId: number);
+    constructor(modelId: number, revisionId: number, outputFormat?: File3dFormat);
     // (undocumented)
     readonly modelId: number;
+    // (undocumented)
+    readonly outputFormat: File3dFormat | undefined;
     // (undocumented)
     readonly revealInternalId: symbol;
     // (undocumented)
@@ -475,6 +477,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
+    findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined;
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
@@ -562,6 +565,7 @@ export interface Cognite3DViewerOptions {
     customDataSource?: DataSource;
     domElement?: HTMLElement;
     enableEdges?: boolean;
+    enableFloorIcons?: boolean;
     enableHtmlClusters?: boolean;
     // @beta
     hasEventListeners?: boolean;
@@ -612,6 +616,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
+    lockTreeIndices(treeIndices: number[]): void;
     mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
@@ -638,6 +643,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     // (undocumented)
     readonly type: SupportedModelTypes;
     unassignStyledNodeCollection(nodeCollection: NodeCollection): void;
+    unlockAllTreeIndices(): void;
+    unlockTreeIndices(treeIndices: number[]): void;
     set visible(value: boolean);
     get visible(): boolean;
 }
@@ -803,6 +810,7 @@ export type ComboControlsOptions = {
 export type CommonModelOptions = {
     localPath?: string;
     geometryFilter?: GeometryFilter;
+    outputFormat?: File3dFormat;
 };
 
 // @public (undocumented)
@@ -1004,7 +1012,8 @@ export enum File3dFormat {
     AnyFormat = "all-outputs",
     // (undocumented)
     EptPointCloud = "ept-pointcloud",
-    GltfCadModel = "gltf-directory"
+    GltfCadModel = "gltf-directory",
+    GltfPrioritizedNodes = "gltf-prioritized-nodes-directory"
 }
 
 // @beta (undocumented)

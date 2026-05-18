@@ -205,7 +205,7 @@ export class PointCloudOctree extends PointCloudTree {
     return this.visibleBounds.applyMatrix4(this.matrixWorld);
   }
 
-  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray, params: Partial<PickParams> = {}): PickPoint | null {
+  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray, params: Partial<PickParams> = {}): Promise<PickPoint | null> {
     this.picker = this.picker || new PointCloudOctreePicker(renderer);
     return this.picker.pick(camera, ray, [this], params);
   }

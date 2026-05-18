@@ -103,7 +103,8 @@ export {
   isDMPointCloudVolume,
   isClassicPointCloudVolume,
   CommonModelOptions,
-  InstanceReference
+  InstanceReference,
+  File3dFormat
 } from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';

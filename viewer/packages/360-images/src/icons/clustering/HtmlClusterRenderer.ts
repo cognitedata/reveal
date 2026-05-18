@@ -109,7 +109,29 @@ export class HtmlClusterRenderer {
 
   public setVisible(visible: boolean): void {
     this._isVisible = visible;
-    this._container.style.display = visible ? 'block' : 'none';
+    if (visible) {
+      this._container.style.display = 'block';
+    } else {
+      this.clearAllElements();
+      this._container.style.display = 'none';
+    }
+  }
+
+  private clearAllElements(): void {
+    for (const timeoutId of this._pendingReleaseTimeouts) {
+      clearTimeout(timeoutId);
+    }
+    this._pendingReleaseTimeouts.clear();
+
+    for (const element of this._activeElements.values()) {
+      element.style.display = 'none';
+      element.remove();
+      if (this._elementPool.length < this._maxPoolSize) {
+        this._elementPool.push(element);
+      }
+    }
+    this._activeElements.clear();
+    this._hoveredClusterIcon = undefined;
   }
 
   public dispose(): void {

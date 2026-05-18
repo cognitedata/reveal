@@ -210,6 +210,12 @@ export interface Cognite3DViewerOptions {
    * @default false
    */
   enableHtmlClusters?: boolean;
+
+  /**
+   * Show floor disc icons for nearby 360 images when the user is inside a 360 image.
+   * @default false
+   */
+  enableFloorIcons?: boolean;
 }
 
 /**

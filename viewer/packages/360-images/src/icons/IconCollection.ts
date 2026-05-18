@@ -21,6 +21,7 @@ import clamp from 'lodash/clamp';
 import { PointOctant } from 'sparse-octree';
 import { HtmlClusterRenderer, HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
 import { ClusterRenderParams } from './clustering';
+import { FlooredIconManager } from './FlooredIconManager';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
@@ -30,6 +31,7 @@ export type IconsOptions = {
   clusterDistanceThreshold?: number;
   maxOctreeDepth?: number;
   enableHtmlClusters?: boolean;
+  enableFloorIcons?: boolean;
 };
 
 export type ClusteredIcon = {
@@ -59,6 +61,7 @@ export class IconCollection {
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
+  private readonly _hoverIconTexture: CanvasTexture;
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
   private readonly _pointsObject: OverlayPointsObject;
@@ -95,6 +98,11 @@ export class IconCollection {
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
 
+  private readonly _floorDiscs: FlooredIconManager;
+  private _floorMode = false;
+  private _preFloorPointsObjectVisible = true;
+  private _preFloorCullingScheme: IconCullingScheme = 'clustered';
+
   // Cluster hover state tracking
   private _visibleClusteredIcons: ClusteredIcon[] = [];
   // Store the hovered cluster's representative icon (not index) to handle array changes between frames
@@ -106,7 +114,11 @@ export class IconCollection {
   }
 
   set hoverSpriteVisibility(value: boolean) {
-    this._hoverSprite.visible = value;
+    if (this._floorMode) {
+      this._floorDiscs.hoverVisible = value;
+    } else {
+      this._hoverSprite.visible = value;
+    }
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
@@ -125,6 +137,7 @@ export class IconCollection {
       }
       case 'proximity': {
         this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
+        this._visibleClusteredIcons = [];
         if (this._htmlRenderer) {
           this._htmlRenderer.setVisible(false);
         }
@@ -137,6 +150,34 @@ export class IconCollection {
         break;
     }
     this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+  }
+
+  public setFloorMode(enabled: boolean): void {
+    if (this._floorMode === enabled) return;
+    this._floorMode = enabled;
+    this._hoverSprite.visible = false;
+    this._floorDiscs.hoverVisible = false;
+
+    if (enabled) {
+      this._preFloorPointsObjectVisible = this._pointsObject.visible;
+      this._preFloorCullingScheme = this._iconCullingScheme;
+      this._pointsObject.visible = false;
+      this._floorDiscs.showMeshes();
+      this.setCullingScheme('proximity');
+    } else {
+      this._pointsObject.visible = this._preFloorPointsObjectVisible;
+      this._floorDiscs.hideMeshesAndClearInstances();
+      this.setCullingScheme(this._preFloorCullingScheme);
+    }
+
+    // Offset the bounding sphere for hover detection so it aligns with the rendered floor disc.
+    const offset = enabled ? -FlooredIconManager.FloorDiscHeightOffset : 0;
+    for (const icon of this._icons) {
+      icon.setPositionYOffset(offset);
+    }
+    if (this._setNeedsRedraw) {
+      this._setNeedsRedraw();
+    }
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
@@ -202,8 +243,18 @@ export class IconCollection {
       this._htmlRenderer = new HtmlClusterRenderer(iconOptions?.htmlClusterOptions);
     }
 
-    const spriteTexture = this.createHoverIconTexture();
-    this._hoverSprite = this.createHoverSprite(spriteTexture);
+    this._hoverIconTexture = this.createHoverIconTexture();
+    this._hoverSprite = this.createHoverSprite(this._hoverIconTexture);
+
+    this._floorDiscs = new FlooredIconManager(
+      points.length,
+      this._iconRadius,
+      this._maxPixelSize,
+      sharedTexture,
+      this._hoverIconTexture,
+      sceneHandler
+    );
+
     this._sharedTexture = sharedTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
@@ -579,11 +630,11 @@ export class IconCollection {
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const cameraModelSpacePosition = new Vector3();
-    const worldTransform = new Matrix4();
+    const collectionTransform = new Matrix4();
     return ({ camera }) => {
-      this._pointsObject.getTransform(worldTransform);
-      worldTransform.invert();
-      cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransform);
+      this._pointsObject.getTransform(collectionTransform);
+      const collectionTransformInverse = collectionTransform.clone().invert();
+      cameraModelSpacePosition.copy(camera.position).applyMatrix4(collectionTransformInverse);
 
       const points =
         this._proximityRadius === Infinity
@@ -607,12 +658,17 @@ export class IconCollection {
       this._icons.forEach(icon => (icon.culled = true));
       closestPoints.forEach(icon => (icon.culled = false));
 
-      const closestVisibleReversedPoints = closestPoints.filter(icon => icon.getVisible()).reverse();
+      const closestVisiblePoints = closestPoints.filter(icon => icon.getVisible());
 
-      iconSprites.setPoints(
-        closestVisibleReversedPoints.map(p => p.getPosition()),
-        closestVisibleReversedPoints.map(p => p.getColor())
-      );
+      if (this._floorMode) {
+        this._floorDiscs.update(closestVisiblePoints, collectionTransform);
+      } else {
+        const reversed = closestVisiblePoints.slice().reverse();
+        iconSprites.setPoints(
+          reversed.map(p => p.getPosition()),
+          reversed.map(p => p.getColor())
+        );
+      }
     };
   }
 
@@ -647,8 +703,10 @@ export class IconCollection {
 
     icons.forEach(icon =>
       icon.on('selected', () => {
-        this._hoverSprite.position.copy(icon.getPosition().clone().applyMatrix4(this.getTransform()));
+        const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
+        this._hoverSprite.position.copy(worldPos);
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
+        this._floorDiscs.setHoverPosition(worldPos);
       })
     );
 
@@ -662,6 +720,12 @@ export class IconCollection {
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
+
+    this._floorDiscs.dispose();
+
+    this._sceneHandler.removeObject3D(this._hoverSprite);
+    this._hoverSprite.material.dispose();
+    this._hoverIconTexture.dispose();
 
     if (this._enableHtmlClusters && this._htmlRenderer) {
       this._htmlRenderer.dispose();
@@ -748,6 +812,7 @@ export class IconCollection {
 
   public setOpacity(value: number): void {
     this._pointsObject.setOpacity(value);
+    this._floorDiscs.setOpacity(value);
   }
 
   public isOccludedVisible(): boolean {
@@ -756,5 +821,10 @@ export class IconCollection {
 
   public setOccludedVisible(value: boolean): void {
     this._pointsObject.setBackPointsVisible(value);
+    this._floorDiscs.setOccludedVisible(value);
+  }
+
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._floorDiscs.setReferenceIcon(worldY);
   }
 }
