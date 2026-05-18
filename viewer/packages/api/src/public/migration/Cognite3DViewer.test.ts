@@ -74,7 +74,7 @@ describe('Cognite3DViewer', () => {
   test('dispose removes and disposes all models', async () => {
     // Arrange
     const mockOutputs = [{ format: 'gltf-directory', version: 9, blobId: 1 }];
-    jest.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue(mockOutputs as any);
+    jest.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue(mockOutputs);
     jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
