@@ -1,6 +1,8 @@
+/**
+ * @jest-environment node
+ */
 /*!
  * Copyright 2021 Cognite AS
- * @jest-environment node
  */
 
 import * as THREE from 'three';

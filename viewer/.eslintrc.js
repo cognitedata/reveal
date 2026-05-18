@@ -30,7 +30,7 @@ module.exports = {
     'jsdoc/check-indentation': 1,
     'jsdoc/check-param-names': 1,
     'jsdoc/check-syntax': 1,
-    'jsdoc/check-tag-names': ['warn', { definedTags: ['internal', 'noInheritDoc', 'obvious', 'beta'] }],
+    'jsdoc/check-tag-names': ['warn', { definedTags: ['internal', 'noInheritDoc', 'obvious', 'beta', 'jest-environment'] }],
     'jsdoc/implements-on-classes': 1,
     'jsdoc/no-types': 1,
     'jsdoc/no-undefined-types': 1,
@@ -40,7 +40,7 @@ module.exports = {
       'block',
       [
         {
-          pattern: `(Copyright 20\\d{2}|istanbul ignore|Adapted from pnext/three-loader|Adapted from threejs)`,
+          pattern: `(Copyright 20\\d{2}|istanbul ignore|Adapted from pnext/three-loader|Adapted from threejs|@jest-environment)`,
           template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
         }
       ]
