@@ -518,7 +518,7 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
     typescript: "npm:^6.0.3"
-    wasm-pack: "npm:^0.14.0"
+    wasm-pack: "npm:^0.13.1"
     webpack: "npm:^5.91.0"
     webpack-cli: "npm:^5.1.4"
     webpack-dev-server: "npm:^5.0.4"
@@ -3205,7 +3205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binary-install@npm:^1.1.2":
+"binary-install@npm:^1.0.1":
   version: 1.1.2
   resolution: "binary-install@npm:1.1.2"
   dependencies:
@@ -9312,9 +9312,9 @@ __metadata:
   linkType: hard
 
 "serialize-javascript@npm:^7.0.3":
-  version: 7.0.4
-  resolution: "serialize-javascript@npm:7.0.4"
-  checksum: 10/f96d59d6053739785822750e6ffbe06ec5a2651b836b3e6c76742c613e1b2fcb846b5df92294857ecfe69730fe36a1968c0eb8f258b02fd9173a1d5e73f0a32f
+  version: 7.0.5
+  resolution: "serialize-javascript@npm:7.0.5"
+  checksum: 10/6237c76ef6df3d1ad61dd4a393b71ca758c7654f4d1cf77529e513134c0f0660302e03b7ec88a8f3a3daa79e1f93d6de8218ecbc45e073d7cc6b66284a1d3e83
   languageName: node
   linkType: hard
 
@@ -10675,14 +10675,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wasm-pack@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "wasm-pack@npm:0.14.0"
+"wasm-pack@npm:^0.13.1":
+  version: 0.13.1
+  resolution: "wasm-pack@npm:0.13.1"
   dependencies:
-    binary-install: "npm:^1.1.2"
+    binary-install: "npm:^1.0.1"
   bin:
     wasm-pack: run.js
-  checksum: 10/914c7750c8cdefdef61cb9a727a70e8685c5eb164c1261627e9e6dc0d693ce7a3f95456eb535270b309d3c0d587c53fc33af5f513af7666103da4f88282f6eff
+  checksum: 10/5031151cc085487707e7f5e3a4057fb27b1dbc5ac5663a1a46725488ff3d4672f49a8a11ebdff8247857c03adce1cdf7615ce0790f19c622400e926a6e24796d
   languageName: node
   linkType: hard
 
