@@ -104,7 +104,7 @@ describe('Cognite3DViewer', () => {
   test('addModel with remote model and fit viewer, updates camera', async () => {
     // Arrange
     const mockOutputs = [{ format: 'gltf-directory', version: 9, blobId: 1 }];
-    jest.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue(mockOutputs as any);
+    jest.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue(mockOutputs);
     jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
