@@ -90,7 +90,7 @@
     "@types/jsdom": "^28.0.0",
     "@types/lodash": "^4.17.24",
     "@types/mixpanel-browser": "^2.49.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.0",
     "@types/random-seed": "^0.3.5",
     "@types/skmeans": "^0.11.7",
     "@types/stats": "^0.16.30",
