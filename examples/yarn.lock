@@ -5,19 +5,19 @@ __metadata:
   version: 8
   cacheKey: 10
 
-"@azure/msal-browser@npm:^3.0.0":
-  version: 3.30.0
-  resolution: "@azure/msal-browser@npm:3.30.0"
+"@azure/msal-browser@npm:^5.0.0":
+  version: 5.10.1
+  resolution: "@azure/msal-browser@npm:5.10.1"
   dependencies:
-    "@azure/msal-common": "npm:14.16.1"
-  checksum: 10/667a4d8cfbedb0561b2b4b069792302fee3412b9c7736972545a2b74134bd7e65d4e5a55314518919ead374ded3e73e1234c3391b203005c43a1feb405c6e1a8
+    "@azure/msal-common": "npm:16.6.1"
+  checksum: 10/0baed58ebdfe51b7c5a759015caa09bdfdcfdd9d3ba6114a5ea6cbd42e6ea98b441ab9bf6a99a4fd59ecc3a339bf700955ff74d099f9c9171bf0c9a6849fe663
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:14.16.1":
-  version: 14.16.1
-  resolution: "@azure/msal-common@npm:14.16.1"
-  checksum: 10/2bc14bdc4356c7c95581815816060c5e702a5bb2336afd9dade4da1a0e2e475868965e344bb0fa4a5ec601468f4e8a58530e8e7bd1defc27990eea12572c5831
+"@azure/msal-common@npm:16.6.1":
+  version: 16.6.1
+  resolution: "@azure/msal-common@npm:16.6.1"
+  checksum: 10/afe05f48970902ad038874e6ab23de0aea3c4c79d26826545d651032329d300229931edb38642c08da25ac4cd772dc686a0b5b28d7597b2d1627434f9b7fcea8
   languageName: node
   linkType: hard
 
@@ -25,7 +25,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-examples@workspace:."
   dependencies:
-    "@azure/msal-browser": "npm:^3.0.0"
+    "@azure/msal-browser": "npm:^5.0.0"
     "@cognite/reveal": "link:../viewer"
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk"
     "@types/dat.gui": "npm:^0.7.5"
