@@ -60,7 +60,7 @@ describe(CdfPointCloudStylableObjectProvider.name, () => {
     );
 
     expect(gottenIds.length).toEqual(expectedIds.length);
-    expect(gottenIds).toContainAllValues(expectedIds);
+    expect(gottenIds).toIncludeSameMembers(expectedIds);
   });
 
   test('contains right geometry types for annotations provided by SDK', async () => {
