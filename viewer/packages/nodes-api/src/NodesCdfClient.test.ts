@@ -40,7 +40,7 @@ describe('NodesCdfClient', () => {
     jest
       .spyOn(client, 'post')
       .mockImplementation(async (url: string, options?: HttpRequestOptions): Promise<HttpResponse<unknown>> => {
-        const requestItems = (options?.data as ByTreeIndicesRequestBody | ByNodeIdsRequestBody).items;
+        const requestItems = (options?.data as ByTreeIndicesRequestBody | ByNodeIdsRequestBody | undefined)?.items ?? [];
         if (/\/internalids\/bytreeindices/.test(url)) {
           bytreeindicesRequestCount++;
           const response: HttpResponse<ByTreeIndicesResponse> = {
