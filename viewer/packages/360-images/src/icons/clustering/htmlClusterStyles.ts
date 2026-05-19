@@ -21,15 +21,15 @@ export function generateClusterStyles(classPrefix: string): string {
   box-sizing: border-box;
   border: var(--outer-border) solid #FFFFFF;
   border-radius: 50%;
-  filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.15));
   background: transparent;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  transition: transform 0.15s ease-out;
+  transition: filter 0.2s ease-out, transform 0.15s ease-out;
   opacity: 0;
   animation: ${classPrefix}-fade-in 0.2s ease-out forwards;
+  filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.15)) opacity(var(--cluster-fade-opacity, 1));
 }
 
 .${classPrefix}-icon::before {

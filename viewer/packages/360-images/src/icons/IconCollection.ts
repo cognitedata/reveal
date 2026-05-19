@@ -20,7 +20,7 @@ import { DefaultOverlay3DContentType, IconOctree, Overlay3DIcon, OverlayPointsOb
 import clamp from 'lodash/clamp';
 import { PointOctant } from 'sparse-octree';
 import { HtmlClusterRenderer, HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
-import { ClusterRenderParams } from './clustering';
+import { ClusterRenderParams, ClusterScreenInfo } from './clustering';
 import { FlooredIconManager } from './FlooredIconManager';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
@@ -364,6 +364,14 @@ export class IconCollection {
     if (hadHoveredCluster && this._setNeedsRedraw) {
       this._setNeedsRedraw();
     }
+  }
+
+  public getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[] {
+    return this._htmlRenderer?.getStagedScreenInfos() ?? [];
+  }
+
+  public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
+    this._htmlRenderer?.applyWithOcclusion(occludedIcons);
   }
 
   /**

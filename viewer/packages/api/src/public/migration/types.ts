@@ -212,6 +212,29 @@ export interface Cognite3DViewerOptions {
   enableHtmlClusters?: boolean;
 
   /**
+   * Camera distance (world units) at which an occluded cluster icon begins to fade out.
+   * A cluster is considered occluded when a closer cluster overlaps it on screen.
+   * Clusters in empty screen areas are never faded regardless of distance.
+   * Only applies when enableHtmlClusters is true.
+   * @default 20
+   */
+  htmlClusterFadeStartDistance?: number;
+
+  /**
+   * Camera distance (world units) at which an occluded cluster icon becomes fully invisible.
+   * Must be greater than htmlClusterFadeStartDistance.
+   * Only applies when enableHtmlClusters is true.
+   * @default 50
+   */
+  htmlClusterFadeEndDistance?: number;
+
+  /** Maximum distance (world units) between camera and 360 image icons for them to be clustered together.
+   * Only applies when enableHtmlClusters is true.
+   * @default 10
+   */
+  clusterDistanceThreshold?: number;
+
+  /**
    * Show floor disc icons for nearby 360 images when the user is inside a 360 image.
    * @default false
    */

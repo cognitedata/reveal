@@ -29,6 +29,8 @@ export { DefaultImage360Collection } from './src/collection/DefaultImage360Colle
 export { IconsOptions } from './src/icons/IconCollection';
 export { ClusteredIconData } from './src/icons/clustering/ClusterRenderingStrategy';
 export { HtmlClusterRendererOptions } from './src/icons/clustering/HtmlClusterRenderer';
+export { HtmlClusterCoordinator } from './src/icons/clustering/HtmlClusterCoordinator';
+export type { HtmlClusterCollection } from './src/icons/clustering/HtmlClusterCoordinator';
 export {
   Image360ClusterIntersectionData,
   Image360CollectionSourceType,

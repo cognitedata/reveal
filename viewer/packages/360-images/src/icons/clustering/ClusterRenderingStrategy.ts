@@ -19,3 +19,11 @@ export type ClusterRenderParams = {
   camera: PerspectiveCamera;
   modelTransform: Matrix4;
 };
+
+export type ClusterScreenInfo = {
+  data: ClusteredIconData;
+  screenPos: Vector3;
+  worldPos: Vector3;
+  distance: number;
+  projectedSize: number;
+};

@@ -17,6 +17,7 @@ import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { ClusterScreenInfo } from '../icons/clustering';
 
 import {
   ClassicDataSourceType,
@@ -341,6 +342,14 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
 
   public setHoveredClusterIcon(icon: Overlay3DIcon | undefined): void {
     this._icons.setHoveredClusterIcon(icon);
+  }
+
+  public getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[] {
+    return this._icons.getStagedHtmlClusterScreenInfos();
+  }
+
+  public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
+    this._icons.applyHtmlClusterOcclusion(occludedIcons);
   }
 
   public remove(entity: Image360Entity<T>): void {

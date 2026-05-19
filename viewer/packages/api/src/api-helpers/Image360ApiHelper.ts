@@ -22,7 +22,8 @@ import {
   Image360History,
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
-  Image360Action
+  Image360Action,
+  HtmlClusterCoordinator
 } from '@reveal/360-images';
 import {
   Cdf360CdmDescriptorProvider,
@@ -95,6 +96,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _cachedCameraManager: CameraManager | undefined;
   private readonly _enableFloorIcons: boolean;
+  private readonly _htmlClusterCoordinator: HtmlClusterCoordinator | undefined;
 
   private readonly onKeyPressed = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -179,6 +181,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     this._activeCameraManager = activeCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
+    if (iconsOptions?.enableHtmlClusters) {
+      this._htmlClusterCoordinator = new HtmlClusterCoordinator(onBeforeSceneRendered);
+    }
     if (!FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
       this._stationaryCameraManager = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
@@ -215,6 +220,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       preMultipliedRotation
     );
 
+    this._htmlClusterCoordinator?.onCollectionAdded(imageCollection as DefaultImage360Collection<DataSourceT>);
     this._needsRedraw = true;
     return imageCollection;
 
@@ -266,6 +272,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
 
     this._history.clear();
+    this._htmlClusterCoordinator?.onCollectionRemoved(collection as DefaultImage360Collection<DataSourceT>);
     this._image360Facade.removeSet(collection as DefaultImage360Collection<DataSourceT>);
     this._needsRedraw = true;
   }
@@ -635,6 +642,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       }
       this._stationaryCameraManager.dispose();
     }
+    this._htmlClusterCoordinator?.dispose();
     this._image360Facade.dispose();
     this._waitCursor.dispose();
   }
