@@ -348,7 +348,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@v6
         with:
           name: |
             viewer
