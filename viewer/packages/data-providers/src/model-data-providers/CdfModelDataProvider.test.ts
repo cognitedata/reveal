@@ -58,7 +58,8 @@ describe(CdfModelDataProvider.name, () => {
 
   test('getBinaryFile() re-authenticates on 401', async () => {
     // Make first API call fail, second succeed
-    jest.spyOn(global, 'fetch')
+    jest
+      .spyOn(global, 'fetch')
       .mockResolvedValueOnce(new Response('', { status: 401 }))
       .mockResolvedValueOnce(new Response('', { status: 200 }));
 
