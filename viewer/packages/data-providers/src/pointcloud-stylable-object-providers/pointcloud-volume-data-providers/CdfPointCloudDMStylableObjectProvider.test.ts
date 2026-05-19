@@ -149,7 +149,7 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
     ).map((obj: any) => obj.volumeInstanceRef);
 
     expect(gottenRefs.length).toEqual(dummyDMAnnotationsResponse.items.length);
-    expect(gottenRefs).toContainAllValues(expectedRefs);
+    expect(gottenRefs).toIncludeSameMembers(expectedRefs);
   });
 
   test('contains right geometry types for point cloud volumes provided by SDK', async () => {
@@ -168,7 +168,7 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
     ).map((obj: any) => obj.assetRef);
 
     expect(gottenAssets.length).toEqual(expectedAssets.length);
-    expect(gottenAssets).toContainAllValues(expectedAssets);
+    expect(gottenAssets).toIncludeSameMembers(expectedAssets);
   });
 
   test('handles empty point cloud volumes gracefully', async () => {
