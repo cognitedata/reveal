@@ -44,8 +44,8 @@ describe('isTheSameDomain fn tests', () => {
   });
 
   it('throws when second arg is a relative url', () => {
-    expect(() => isTheSameDomain(baseOrigin, '/foo/bar/')).toThrowError();
-    expect(() => isTheSameDomain(baseOrigin, 'foo')).toThrowError();
-    expect(() => isTheSameDomain(baseOrigin, '')).toThrowError();
+    expect(() => isTheSameDomain(baseOrigin, '/foo/bar/')).toThrow();
+    expect(() => isTheSameDomain(baseOrigin, 'foo')).toThrow();
+    expect(() => isTheSameDomain(baseOrigin, '')).toThrow();
   });
 });

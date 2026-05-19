@@ -21,7 +21,7 @@ describe('TransformOverrideBuffer', () => {
 
     buffer.dispose();
 
-    expect(listener).toBeCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 
   test('addOverrideTransform called many times, triggers reallocation', () => {
@@ -29,7 +29,7 @@ describe('TransformOverrideBuffer', () => {
     for (let i = 0; i < 1000; i++) {
       buffer.addOverrideTransform(i, new THREE.Matrix4());
     }
-    expect(onGenerateNewTextureCb).toBeCalled();
+    expect(onGenerateNewTextureCb).toHaveBeenCalled();
   });
 
   test('consecutive add/removeOverrideTransform doesnt allocate new texture', () => {
@@ -38,6 +38,6 @@ describe('TransformOverrideBuffer', () => {
       buffer.addOverrideTransform(i, new THREE.Matrix4());
       buffer.removeOverrideTransform(i);
     }
-    expect(onGenerateNewTextureCb).not.toBeCalled();
+    expect(onGenerateNewTextureCb).not.toHaveBeenCalled();
   });
 });

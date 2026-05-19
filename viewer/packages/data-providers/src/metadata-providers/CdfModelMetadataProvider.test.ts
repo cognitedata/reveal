@@ -37,6 +37,6 @@ describe(CdfModelMetadataProvider.name, () => {
     nock(/.*/).post(apiPath).reply(200, response);
 
     // Act & Assert
-    expect(provider.getModelUri(modelIdentifier, response.items[0])).rejects.toThrowError();
+    expect(provider.getModelUri(modelIdentifier, response.items[0])).rejects.toThrow();
   });
 });

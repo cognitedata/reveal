@@ -71,13 +71,13 @@ describe('Cognite3DViewer', () => {
     const disposeSpy = jest.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
-    expect(disposeSpy).not.toBeCalled();
+    expect(disposeSpy).not.toHaveBeenCalled();
   });
 
   test('dispose disposes of sector culler', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
-    expect(_sectorCuller.dispose).toBeCalledTimes(1);
+    expect(_sectorCuller.dispose).toHaveBeenCalledTimes(1);
   });
 
   test('dispose raises disposed-event', () => {
@@ -87,7 +87,7 @@ describe('Cognite3DViewer', () => {
 
     viewer.dispose();
 
-    expect(disposedListener).toBeCalledTimes(1);
+    expect(disposedListener).toHaveBeenCalledTimes(1);
   });
 
   test('dispose removes and disposes all models', async () => {
@@ -118,7 +118,7 @@ describe('Cognite3DViewer', () => {
     viewer.dispose();
 
     expect(viewer.models).toBeEmpty();
-    expect(disposeSpy).toBeCalledTimes(1);
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
   });
 
   test('on cameraChange triggers when position and target is changed', () => {
@@ -132,7 +132,7 @@ describe('Cognite3DViewer', () => {
     viewer.cameraManager.setCameraState({ target: new THREE.Vector3(1, 2, 3) });
 
     // Assert
-    expect(onCameraChange).toBeCalledTimes(2);
+    expect(onCameraChange).toHaveBeenCalledTimes(2);
   });
 
   test('addModel with remote model and fit viewer, updates camera', async () => {
@@ -166,7 +166,7 @@ describe('Cognite3DViewer', () => {
     TWEEN.update(TWEEN.now());
 
     // Assert
-    expect(onCameraChange).toBeCalled();
+    expect(onCameraChange).toHaveBeenCalled();
   });
 
   test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {
@@ -214,8 +214,8 @@ describe('Cognite3DViewer', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const obj = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
 
-    expect(() => viewer.addObject3D(obj)).not.toThrowError();
-    expect(() => viewer.removeObject3D(obj)).not.toThrowError();
+    expect(() => viewer.addObject3D(obj)).not.toThrow();
+    expect(() => viewer.removeObject3D(obj)).not.toThrow();
   });
 
   test('viewer can add/remove CustomObject on scene', () => {
@@ -229,11 +229,11 @@ describe('Cognite3DViewer', () => {
     }
     // Add them to the viewer
     for (const customObject of customObjects) {
-      expect(() => viewer.addCustomObject(customObject)).not.toThrowError();
+      expect(() => viewer.addCustomObject(customObject)).not.toThrow();
     }
     // Remove them from the viewer
     for (const customObject of customObjects) {
-      expect(() => viewer.removeCustomObject(customObject)).not.toThrowError();
+      expect(() => viewer.removeCustomObject(customObject)).not.toThrow();
     }
   });
 
@@ -254,16 +254,16 @@ describe('Cognite3DViewer', () => {
       viewer.on('sceneRendered', onRendered);
       viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
-      expect(onBeforeRendered).toBeCalledTimes(1);
-      expect(onRendered).toBeCalledTimes(1);
+      expect(onBeforeRendered).toHaveBeenCalledTimes(1);
+      expect(onRendered).toHaveBeenCalledTimes(1);
 
       jest.clearAllMocks();
       viewer.off('sceneRendered', onRendered);
       viewer.off('beforeSceneRendered', onBeforeRendered);
       viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
-      expect(onBeforeRendered).not.toBeCalled();
-      expect(onRendered).not.toBeCalled();
+      expect(onBeforeRendered).not.toHaveBeenCalled();
+      expect(onRendered).not.toHaveBeenCalled();
     } finally {
       requestAnimationFrameSpy.mockRestore();
     }

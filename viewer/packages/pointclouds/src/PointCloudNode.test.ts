@@ -9,7 +9,6 @@ import * as THREE from 'three';
 import { PointCloudOctree, PointCloudOctreeNode } from './potree-three-loader';
 import { Mock } from 'moq.ts';
 import { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
-import jest from 'jest-mock';
 import { jest as jestGlobals } from '@jest/globals';
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
@@ -84,7 +83,7 @@ describe(PointCloudNode.name, () => {
       const node = createPointCloudNode();
 
       Object.defineProperty(node.octree, 'root', {
-        get: jest.fn().mockReturnValue(undefined)
+        get: jestGlobals.fn().mockReturnValue(undefined)
       });
 
       const box = new THREE.Box3(new THREE.Vector3(-10, -10, -10), new THREE.Vector3(10, 10, 10));

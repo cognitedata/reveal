@@ -54,7 +54,7 @@ describe(CadModelUpdateHandler.name, () => {
   test('dipose() disposes culler', () => {
     const updateHandler = new CadModelUpdateHandler(mockCuller);
     updateHandler.dispose();
-    expect(mockCuller.dispose).toBeCalledTimes(1);
+    expect(mockCuller.dispose).toHaveBeenCalledTimes(1);
   });
 
   describe('createDetermineSectorsInput', () => {

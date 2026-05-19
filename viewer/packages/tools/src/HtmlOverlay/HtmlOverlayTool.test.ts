@@ -43,7 +43,7 @@ describe(HtmlOverlayTool.name, () => {
     expect(() => {
       helper.add(htmlElement, position);
       jest.advanceTimersByTime(TIMER_ADVANCE_MS);
-    }).toThrowError();
+    }).toThrow();
   });
 
   test('add() accepts position set to absolute through cssText', () => {
