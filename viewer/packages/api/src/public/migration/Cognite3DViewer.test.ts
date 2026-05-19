@@ -5,12 +5,12 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
+import { CdfModelMetadataProvider, CdfModelDataProvider, File3dFormat } from '@reveal/data-providers';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
-import nock from 'nock';
 import { Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
@@ -34,19 +34,7 @@ describe('Cognite3DViewer', () => {
     .object();
 
   beforeAll(() => {
-    nock.disableNetConnect();
-
-    nock('https://api-js.mixpanel.com')
-      .persist(true)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*/)
-      .reply(200);
-
-    nock('https://api-js.mixpanel.com')
-      .persist(true)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .post(/.*/)
-      .reply(200);
+    jest.spyOn(global, 'fetch').mockResolvedValue(new Response('', { status: 200 }));
 
     // Mock function for retriving model metadata, such as transformation
     jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
@@ -60,7 +48,7 @@ describe('Cognite3DViewer', () => {
   });
 
   afterAll(() => {
-    nock.enableNetConnect();
+    jest.restoreAllMocks();
   });
 
   beforeEach(() => {
@@ -92,24 +80,10 @@ describe('Cognite3DViewer', () => {
 
   test('dispose removes and disposes all models', async () => {
     // Arrange
-    const outputs = {
-      items: [
-        {
-          format: 'gltf-directory',
-          version: 9,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/outputs/)
-      .twice() // the first one goes to determine model type
-      .reply(200, outputs);
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/scene.json/)
-      .reply(200, sceneJson);
+    jest
+      .spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs')
+      .mockResolvedValue([{ format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }]);
+    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
@@ -137,24 +111,10 @@ describe('Cognite3DViewer', () => {
 
   test('addModel with remote model and fit viewer, updates camera', async () => {
     // Arrange
-    const outputs = {
-      items: [
-        {
-          format: 'gltf-directory',
-          version: 9,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/outputs/)
-      .twice() // the first one goes to determine model type
-      .reply(200, outputs);
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/scene.json/)
-      .reply(200, sceneJson);
+    jest
+      .spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs')
+      .mockResolvedValue([{ format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }]);
+    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
