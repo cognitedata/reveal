@@ -25,6 +25,4 @@ export function getImage360ProviderFromMap<T extends DataSourceType>(
 }
 
 export interface Image360Provider<T extends DataSourceType>
-  extends Image360DescriptorProvider<T>,
-    Image360FileProvider,
-    Image360AnnotationProvider<T> {}
+  extends Image360DescriptorProvider<T>, Image360FileProvider, Image360AnnotationProvider<T> {}

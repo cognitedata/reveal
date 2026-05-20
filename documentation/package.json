@@ -63,6 +63,7 @@
     ]
   },
   "resolutions": {
+    "webpack": "5.105.4",
     "serialize-javascript": "^7.0.3",
     "replace/minimatch": "^10.0.0"
   }
