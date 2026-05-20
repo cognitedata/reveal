@@ -32,9 +32,6 @@ export class HtmlClusterRenderer {
   private readonly _maxSize: number = 120;
   private readonly _clusterFadeStartDistance: number;
   private readonly _clusterFadeEndDistance: number;
-  // Screen-space overlap radius multiplier: two clusters are considered occluding
-  // when the distance between their screen centers is less than max(sizeA, sizeB) * factor.
-  private readonly _occlusionFactor: number = 0.7;
 
   private readonly _pendingReleaseTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
@@ -43,7 +40,6 @@ export class HtmlClusterRenderer {
   private _isAttached: boolean = false;
   private _domElement: HTMLElement | undefined = undefined;
 
-  // Staging state for cross-collection coordinator support
   private _stagedScreenInfos: ClusterScreenInfo[] = [];
   private _stagedCanvas: HTMLCanvasElement | undefined = undefined;
 
@@ -59,10 +55,17 @@ export class HtmlClusterRenderer {
     this.injectStyles();
   }
 
-  public updateClusters(visibleClusters: ClusteredIconData[], params: ClusterRenderParams): void {
+  /**
+   * Computes screen-space data and manages element lifecycle without applying DOM positions.
+   * Must be followed by applyWithOcclusion() to complete the DOM update.
+   * Called per-collection by IconCollection; HtmlClusterCoordinator calls applyWithOcclusion() last.
+   */
+  public prepareClusters(visibleClusters: ClusteredIconData[], params: ClusterRenderParams): void {
     const { renderer, camera, modelTransform } = params;
 
     if (!this._isVisible) {
+      this._stagedScreenInfos = [];
+      this._stagedCanvas = undefined;
       return;
     }
 
@@ -73,20 +76,13 @@ export class HtmlClusterRenderer {
     this._stagedScreenInfos = this.computeClusterScreenInfos(visibleClusters, camera, modelTransform, canvas);
     this._stagedCanvas = canvas;
 
-    const occludedIcons = this.computeOccludedClusters(this._stagedScreenInfos);
-
     const visibleIcons = new Set<Overlay3DIcon>();
-
     for (const info of this._stagedScreenInfos) {
       visibleIcons.add(info.data.icon);
-
-      let element = this._activeElements.get(info.data.icon);
-      if (!element) {
-        element = this.acquireElement();
+      if (!this._activeElements.has(info.data.icon)) {
+        const element = this.acquireElement();
         this._activeElements.set(info.data.icon, element);
       }
-
-      this.applyClusterElementUpdate(element, info, occludedIcons.has(info.data.icon), canvas);
     }
 
     for (const [icon, element] of this._activeElements.entries()) {
@@ -98,15 +94,15 @@ export class HtmlClusterRenderer {
   }
 
   /**
-   * Returns the screen-space info computed during the last updateClusters call.
-   * Used by HtmlClusterCoordinator for cross-collection occlusion detection.
+   * Returns the screen-space info computed during the last stageForCoordinator call.
+   * Used by HtmlClusterCoordinator to build a cross-collection occlusion set.
    */
   public getStagedScreenInfos(): ClusterScreenInfo[] {
     return this._stagedScreenInfos;
   }
 
   /**
-   * Re-applies DOM updates using a globally-computed occlusion set.
+   * Applies DOM positions and fade opacity using a globally-computed occlusion set.
    * Called by HtmlClusterCoordinator after gathering screen infos from all collections.
    */
   public applyWithOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
@@ -204,7 +200,6 @@ export class HtmlClusterRenderer {
       pointer-events: none;
       overflow: hidden;
     `;
-    // Only set z-index if explicitly specified (undefined = natural DOM stacking)
     if (this._zIndex !== undefined) {
       container.style.zIndex = String(this._zIndex);
     }
@@ -233,8 +228,6 @@ export class HtmlClusterRenderer {
     }
 
     if (this._container.parentNode !== parent) {
-      // Insert as first child, then the natural stacking with z-index: 0 will place it behind
-      // canvas content but the absolute positioning keeps it visible
       parent.insertBefore(this._container, parent.firstChild);
     }
 
@@ -283,10 +276,6 @@ export class HtmlClusterRenderer {
     return element;
   }
 
-  /**
-   * Pre-computes screen-space data for all visible clusters in a single pass.
-   * Avoids redundant projection work when occlusion detection also needs screen positions.
-   */
   private computeClusterScreenInfos(
     visibleClusters: ClusteredIconData[],
     camera: PerspectiveCamera,
@@ -317,38 +306,6 @@ export class HtmlClusterRenderer {
     return result;
   }
 
-  /**
-   * Detects which clusters are visually occluded by closer clusters on screen.
-   * A cluster is occluded when a nearer cluster's screen position overlaps it within
-   * max(sizeA, sizeB) * occlusionFactor pixels.
-   * Only runs when fade distances are configured.
-   */
-  private computeOccludedClusters(screenInfos: ClusterScreenInfo[]): Set<Overlay3DIcon> {
-    if (this._clusterFadeStartDistance === Infinity) {
-      return new Set();
-    }
-
-    const occluded = new Set<Overlay3DIcon>();
-    const sorted = [...screenInfos].sort((a, b) => a.distance - b.distance);
-
-    for (let i = 1; i < sorted.length; i++) {
-      const far = sorted[i];
-      for (let j = 0; j < i; j++) {
-        const close = sorted[j];
-        const dx = far.screenPos.x - close.screenPos.x;
-        const dy = far.screenPos.y - close.screenPos.y;
-        const screenDist = Math.sqrt(dx * dx + dy * dy);
-        const overlapRadius = Math.max(far.projectedSize, close.projectedSize) * this._occlusionFactor;
-        if (screenDist < overlapRadius) {
-          occluded.add(far.data.icon);
-          break;
-        }
-      }
-    }
-
-    return occluded;
-  }
-
   private computeFadeOpacity(distance: number): number {
     if (distance <= this._clusterFadeStartDistance) return 1;
     if (distance >= this._clusterFadeEndDistance) return 0;
@@ -366,7 +323,6 @@ export class HtmlClusterRenderer {
     const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
     const offScreenMargin = projectedSize / 2;
 
-    // Only fade if this cluster is being occluded by a closer one on screen
     const fadeOpacity = isOccluded ? this.computeFadeOpacity(distance) : 1;
 
     if (
@@ -389,7 +345,6 @@ export class HtmlClusterRenderer {
     element.style.width = `${projectedSize}px`;
     element.style.height = `${projectedSize}px`;
     element.style.fontSize = `${projectedSize * 0.25}px`;
-    // Set --size CSS variable for proportional border scaling
     element.style.setProperty('--size', `${projectedSize}px`);
 
     const countSpan = element.querySelector(`.${this._countSpanName}`);

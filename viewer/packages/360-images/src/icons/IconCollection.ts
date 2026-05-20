@@ -511,7 +511,7 @@ export class IconCollection {
     const individuals = visibleClusters.filter(item => !item.isCluster);
 
     if (this._htmlRenderer) {
-      this._htmlRenderer.updateClusters(clusters, {
+      this._htmlRenderer.prepareClusters(clusters, {
         renderer: params.renderer,
         camera: params.camera,
         modelTransform: params.modelTransform
