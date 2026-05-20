@@ -64,7 +64,7 @@ describe(PropertyFilterNodeCollection.name, () => {
 
     // Assert
     expect(set.getIndexSet()).toEqual(new IndexSet());
-    expect(listener).toBeCalled();
+    expect(listener).toHaveBeenCalled();
   });
 
   test('executeFilter() with single batch result, creates correct IndexSet', async () => {

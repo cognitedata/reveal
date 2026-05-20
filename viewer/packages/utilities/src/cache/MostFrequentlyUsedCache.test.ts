@@ -70,7 +70,7 @@ describe('MostFrequentlyUsedCache', () => {
     const cache = new MostFrequentlyUsedCache<string, string>(10, disposeCb);
     cache.set('key', 'value');
     cache.remove('key');
-    expect(disposeCb).toBeCalledWith('value');
+    expect(disposeCb).toHaveBeenCalledWith('value');
   });
 
   test('clear() triggers dispose callback for all elements', () => {
@@ -79,8 +79,8 @@ describe('MostFrequentlyUsedCache', () => {
     cache.set('key1', 'value1');
     cache.set('key2', 'value2');
     cache.clear();
-    expect(disposeCb).toBeCalledTimes(2);
-    expect(disposeCb).toBeCalledWith('value1');
-    expect(disposeCb).toBeCalledWith('value2');
+    expect(disposeCb).toHaveBeenCalledTimes(2);
+    expect(disposeCb).toHaveBeenCalledWith('value1');
+    expect(disposeCb).toHaveBeenCalledWith('value2');
   });
 });

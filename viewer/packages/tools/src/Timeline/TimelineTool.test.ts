@@ -56,16 +56,16 @@ describe('TimelineTool', () => {
     const current = TWEEN.now();
     TWEEN.update(current + 10000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection, kf1Appearance);
+    expect(assignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf1Collection, kf1Appearance);
     TWEEN.update(current + 20000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection, kf2Appearance);
+    expect(assignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf2Collection, kf2Appearance);
     TWEEN.update(current + 30000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf3Collection, kf3Appearance);
+    expect(assignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf3Collection, kf3Appearance);
     TWEEN.update();
 
-    expect(unassignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection);
+    expect(unassignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf2Collection);
   });
 
   test('stop() stops the Timeline playback', () => {
@@ -76,14 +76,14 @@ describe('TimelineTool', () => {
     const current = TWEEN.now();
     TWEEN.update(current + 10000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection, kf1Appearance);
+    expect(assignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf1Collection, kf1Appearance);
     TWEEN.update(current + 20000);
 
     timelineTool.stop();
 
     TWEEN.update();
 
-    expect(unassignStyledNodeCollectionSpy).toBeCalledTimes(1);
+    expect(unassignStyledNodeCollectionSpy).toHaveBeenCalledTimes(1);
   });
 
   test('pause() & resume() pauses & resumes the Timeline', () => {
@@ -101,11 +101,11 @@ describe('TimelineTool', () => {
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
 
-    expect(stopSpy).toBeCalledTimes(2);
+    expect(stopSpy).toHaveBeenCalledTimes(2);
 
     TWEEN.update(current + 20000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection, kf1Appearance);
+    expect(assignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf1Collection, kf1Appearance);
   });
 
   test('stop() while in stopped', () => {
@@ -116,13 +116,13 @@ describe('TimelineTool', () => {
     const current = TWEEN.now();
     TWEEN.update(current + 10000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection, kf1Appearance);
+    expect(assignStyledNodeCollectionSpy).toHaveBeenCalledWith(kf1Collection, kf1Appearance);
     TWEEN.update(current + 20000);
 
     timelineTool.stop();
 
     timelineTool.stop();
 
-    expect(unassignStyledNodeCollectionSpy).toBeCalledTimes(1);
+    expect(unassignStyledNodeCollectionSpy).toHaveBeenCalledTimes(1);
   });
 });

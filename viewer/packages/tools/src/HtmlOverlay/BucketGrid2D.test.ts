@@ -34,7 +34,7 @@ describe('BucketGrid2D', () => {
 
   test('overlappingElements() partially outside bounds does not throw', () => {
     const bounds = createBounds([1.6, 2.6], [2.1, 4.7]);
-    expect(() => Array.from(grid.overlappingElements(bounds))).not.toThrowError();
+    expect(() => Array.from(grid.overlappingElements(bounds))).not.toThrow();
   });
 
   test('insert element that only overlaps one cell, is only in correct cell', () => {
@@ -80,7 +80,7 @@ describe('BucketGrid2D', () => {
 
     Array.from(grid.removeOverlappingElements(createBounds([1.1, 2.1], [1.2, 2.2])));
 
-    expect(() => grid.insert(elementBounds, element)).toThrowError();
+    expect(() => grid.insert(elementBounds, element)).toThrow();
   });
 });
 

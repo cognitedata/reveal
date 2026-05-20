@@ -68,7 +68,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
 
   test('determineSectors throws if model is not v9', () => {
     const mockDetermineSectorInput = new Mock<DetermineSectorsInput>();
-    expect(() => culler.determineSectors(mockDetermineSectorInput.object())).toThrowError();
+    expect(() => culler.determineSectors(mockDetermineSectorInput.object())).toThrow();
   });
 
   test('determineSectors doesnt return fully culled sectors', () => {
