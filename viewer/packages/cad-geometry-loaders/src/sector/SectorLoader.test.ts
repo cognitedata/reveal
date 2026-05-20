@@ -108,7 +108,7 @@ describe('SectorLoader', () => {
     for await (const _ of loader.loadSectors(input)) {
     }
 
-    expect(updateStateFn).toBeCalledTimes(model.scene.sectorCount);
+    expect(updateStateFn).toHaveBeenCalledTimes(model.scene.sectorCount);
   });
 
   test('loadSectors only updates changed sectors', async () => {
@@ -126,7 +126,7 @@ describe('SectorLoader', () => {
     }
 
     // Assert
-    expect(updateStateFn).toBeCalledTimes(model.scene.sectorCount - 1);
+    expect(updateStateFn).toHaveBeenCalledTimes(model.scene.sectorCount - 1);
   });
 
   test('loadSectors marks sectors with errors as discarded', async () => {

@@ -8,7 +8,7 @@ describe('CadMetadataParser', () => {
   const parser = new CadMetadataParser();
 
   test('No version field, throws', () => {
-    expect(() => parser.parse({})).toThrowError();
+    expect(() => parser.parse({})).toThrow();
   });
 
   test('Version 7 is not supported', () => {

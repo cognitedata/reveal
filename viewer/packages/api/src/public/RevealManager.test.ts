@@ -127,7 +127,7 @@ describe('RevealManager', () => {
 
   test('dispose() disposes culler', () => {
     manager.dispose();
-    expect(sectorCuller.dispose).toBeCalled();
+    expect(sectorCuller.dispose).toHaveBeenCalled();
   });
 
   test('loadingStateChanged is not triggered if loading state doesnt change', () => {
@@ -138,6 +138,6 @@ describe('RevealManager', () => {
     manager.update(camera);
     jest.advanceTimersByTime(10000);
 
-    expect(loadingStateChangedCb).toBeCalledTimes(0);
+    expect(loadingStateChangedCb).toHaveBeenCalledTimes(0);
   });
 });

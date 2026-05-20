@@ -70,7 +70,7 @@ describe(CadModelFactory.name, () => {
     const node = factory.createModel(modelMetadata);
 
     expect(node).toBeTruthy();
-    expect(addModelMaterialsSpy).toBeCalledTimes(1);
+    expect(addModelMaterialsSpy).toHaveBeenCalledTimes(1);
   });
 
   test('createModel() sets model clipping planes when a clip box is set', async () => {
@@ -84,7 +84,7 @@ describe(CadModelFactory.name, () => {
     const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
     factory.createModel(modelMetadata, geometryFilter);
 
-    expect(setModelClippingPlanesSpy).toBeCalledTimes(1);
-    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeSymbol(), expect.toBeArrayOfSize(6));
+    expect(setModelClippingPlanesSpy).toHaveBeenCalledTimes(1);
+    expect(setModelClippingPlanesSpy).toHaveBeenCalledWith(expect.toBeSymbol(), expect.toBeArrayOfSize(6));
   });
 });
