@@ -4,6 +4,7 @@
 
 import styled from 'styled-components';
 import { Viewer } from './pages/Viewer';
+import { JSX } from 'react';
 
 const PageContainer = styled.div`
   min-height: 100vh;

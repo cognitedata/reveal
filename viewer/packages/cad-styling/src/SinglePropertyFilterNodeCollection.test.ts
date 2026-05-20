@@ -9,7 +9,6 @@ import { CogniteClient } from '@cognite/sdk';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import nock from 'nock';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { It, Mock } from 'moq.ts';
 
@@ -29,13 +28,6 @@ describe('SinglePropertyFilterNodeCollection', () => {
     mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
 
     set = new SinglePropertyFilterNodeCollection(mockClient.object(), mockModel.object());
-  });
-
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll();
-      fail(new Error('Not all nock interceptors were used!'));
-    }
   });
 
   test('isLoading is initially false', () => {
