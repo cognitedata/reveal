@@ -61,10 +61,6 @@ export class HtmlClusterCoordinator {
       }
     }
 
-    if (allScreenInfos.length === 0) {
-      return;
-    }
-
     const occluded = this._computeGlobalOcclusion(allScreenInfos);
 
     for (const collection of this._collections) {

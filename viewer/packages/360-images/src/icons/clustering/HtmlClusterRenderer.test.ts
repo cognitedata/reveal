@@ -32,19 +32,22 @@ describe(HtmlClusterRenderer.name, () => {
   });
 
   test('creates and updates cluster DOM elements with correct count display', () => {
-    renderer.updateClusters([createClusterData(iconAtOrigin, true, 25)], params);
+    renderer.prepareClusters([createClusterData(iconAtOrigin, true, 25)], params);
+    renderer.applyWithOcclusion(new Set());
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
     expect(container.querySelector('.test-cluster-icon')).toBeTruthy();
     expect(container.querySelector('.test-cluster-count')?.textContent).toBe('25');
 
     // Test 999+ display for large counts - update same icon to avoid element replacement
-    renderer.updateClusters([createClusterData(iconAtOrigin, true, 1500)], params);
+    renderer.prepareClusters([createClusterData(iconAtOrigin, true, 1500)], params);
+    renderer.applyWithOcclusion(new Set());
     expect(container.querySelector('.test-cluster-count')?.textContent).toBe('999+');
   });
 
   test('handles visibility toggle correctly', () => {
-    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.prepareClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.applyWithOcclusion(new Set());
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container') as HTMLElement;
     assert(container);
     expect(container.style.display).not.toBe('none');
@@ -57,7 +60,8 @@ describe(HtmlClusterRenderer.name, () => {
   test('setVisible(false) removes all cluster DOM elements and clears hover state', () => {
     const cluster1 = createClusterData(iconAtOrigin, true, 5);
     const cluster2 = createClusterData(iconAtOne, true, 10);
-    renderer.updateClusters([cluster1, cluster2], params);
+    renderer.prepareClusters([cluster1, cluster2], params);
+    renderer.applyWithOcclusion(new Set());
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
     expect(container.querySelectorAll('.test-cluster-icon').length).toBe(2);
@@ -75,7 +79,8 @@ describe(HtmlClusterRenderer.name, () => {
     // Elements are pooled and reused after re-enabling
     renderer.setVisible(true);
     const newIcon = createMockIcon(new Vector3(2, 2, 2));
-    renderer.updateClusters([createClusterData(newIcon, true, 3)], params);
+    renderer.prepareClusters([createClusterData(newIcon, true, 3)], params);
+    renderer.applyWithOcclusion(new Set());
     const icons = container.querySelectorAll('.test-cluster-icon');
     expect(icons.length).toBe(1);
   });
@@ -89,7 +94,8 @@ describe(HtmlClusterRenderer.name, () => {
 
     // Test switching between different hovered icons
     const clusters = [createClusterData(iconAtOrigin, true, 5), createClusterData(iconAtOne, true, 10)];
-    renderer.updateClusters(clusters, params);
+    renderer.prepareClusters(clusters, params);
+    renderer.applyWithOcclusion(new Set());
     expect(params.renderer.domElement.parentElement?.querySelectorAll('.test-cluster-icon').length).toBe(2);
     renderer.setHoveredCluster(iconAtOrigin);
     expect(renderer.getHoveredCluster()).toBe(iconAtOrigin);
@@ -103,14 +109,16 @@ describe(HtmlClusterRenderer.name, () => {
   });
 
   test('releaseElement handles fade-out, pool reuse, and container removal', () => {
-    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.prepareClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.applyWithOcclusion(new Set());
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
     expect(container.querySelectorAll('.test-cluster-icon').length).toBe(1);
     // children.length is 2: 1 injected <style> element + 1 cluster icon
     expect(container.children.length).toBe(2);
 
-    renderer.updateClusters([], params);
+    renderer.prepareClusters([], params);
+    renderer.applyWithOcclusion(new Set());
     expect(container.querySelector('.test-cluster-icon')?.classList.contains('fade-out')).toBe(true);
 
     jest.advanceTimersByTime(150);
@@ -118,7 +126,8 @@ describe(HtmlClusterRenderer.name, () => {
 
     // Verify pool reuse - new cluster should reuse pooled element
     const newIcon = createMockIcon(new Vector3(2, 2, 2));
-    renderer.updateClusters([createClusterData(newIcon, true, 20)], params);
+    renderer.prepareClusters([createClusterData(newIcon, true, 20)], params);
+    renderer.applyWithOcclusion(new Set());
     expect(container.querySelectorAll('.test-cluster-icon').length).toBe(1);
   });
 
@@ -128,7 +137,8 @@ describe(HtmlClusterRenderer.name, () => {
     const icon2 = createMockIcon(new Vector3(1, 1, 1));
 
     // Add 2 clusters
-    smallPoolRenderer.updateClusters([createClusterData(icon1, true, 5), createClusterData(icon2, true, 10)], params);
+    smallPoolRenderer.prepareClusters([createClusterData(icon1, true, 5), createClusterData(icon2, true, 10)], params);
+    smallPoolRenderer.applyWithOcclusion(new Set());
     const container = params.renderer.domElement.parentElement?.querySelector('.small-pool-container');
     assert(container);
     const elements = container.querySelectorAll('.small-pool-icon');
@@ -139,13 +149,15 @@ describe(HtmlClusterRenderer.name, () => {
     elements[1].setAttribute('data-pool-tag', 'b');
 
     // Release all elements (only 1 should be pooled due to maxPoolSize=1)
-    smallPoolRenderer.updateClusters([], params);
+    smallPoolRenderer.prepareClusters([], params);
+    smallPoolRenderer.applyWithOcclusion(new Set());
     jest.advanceTimersByTime(150);
 
     // Add 2 new clusters — 1 should come from the pool (tagged), 1 should be freshly created (untagged)
     const icon3 = createMockIcon(new Vector3(2, 2, 2));
     const icon4 = createMockIcon(new Vector3(3, 3, 3));
-    smallPoolRenderer.updateClusters([createClusterData(icon3, true, 15), createClusterData(icon4, true, 20)], params);
+    smallPoolRenderer.prepareClusters([createClusterData(icon3, true, 15), createClusterData(icon4, true, 20)], params);
+    smallPoolRenderer.applyWithOcclusion(new Set());
     const newElements = container.querySelectorAll('.small-pool-icon');
     expect(newElements.length).toBe(2);
 
@@ -156,8 +168,10 @@ describe(HtmlClusterRenderer.name, () => {
   });
 
   test('dispose clears active elements, pooled elements, and pending timeouts', () => {
-    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
-    renderer.updateClusters([], params);
+    renderer.prepareClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.applyWithOcclusion(new Set());
+    renderer.prepareClusters([], params);
+    renderer.applyWithOcclusion(new Set());
     jest.advanceTimersByTime(150);
 
     renderer.dispose();
@@ -165,15 +179,18 @@ describe(HtmlClusterRenderer.name, () => {
 
     const newRenderer = new HtmlClusterRenderer({ classPrefix: 'timeout-test' });
     const newParams = createRenderParams();
-    newRenderer.updateClusters([createClusterData(defaultIcon, true, 10)], newParams);
-    newRenderer.updateClusters([], newParams);
+    newRenderer.prepareClusters([createClusterData(defaultIcon, true, 10)], newParams);
+    newRenderer.applyWithOcclusion(new Set());
+    newRenderer.prepareClusters([], newParams);
+    newRenderer.applyWithOcclusion(new Set());
 
     newRenderer.dispose();
     expect(() => jest.advanceTimersByTime(150)).not.toThrow();
   });
 
   test('container element has exactly one style child after initialization', () => {
-    renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.prepareClusters([createClusterData(defaultIcon, true, 10)], params);
+    renderer.applyWithOcclusion(new Set());
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
 
@@ -194,18 +211,76 @@ describe(HtmlClusterRenderer.name, () => {
       camera: new PerspectiveCamera(75, 16 / 9, 0.1, 1000),
       modelTransform: new Matrix4()
     };
-    expect(() => renderer.updateClusters([createClusterData(defaultIcon, true, 10)], orphanParams)).not.toThrow();
+    expect(() => {
+      renderer.prepareClusters([createClusterData(defaultIcon, true, 10)], orphanParams);
+      renderer.applyWithOcclusion(new Set());
+    }).not.toThrow();
     expect(orphanCanvas.parentElement).toBeNull();
   });
 
   test('hover animations are disabled when enableHoverAnimations is false', () => {
     const noAnimRenderer = new HtmlClusterRenderer({ classPrefix: 'no-anim', enableHoverAnimations: false });
-    noAnimRenderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
+    noAnimRenderer.prepareClusters([createClusterData(defaultIcon, true, 10)], params);
+    noAnimRenderer.applyWithOcclusion(new Set());
     noAnimRenderer.setHoveredCluster(defaultIcon);
     const element = params.renderer.domElement.parentElement?.querySelector('.no-anim-icon');
     assert(element);
     expect(element.classList.contains('hovered')).toBe(false);
     noAnimRenderer.dispose();
+  });
+
+  test('prepareClusters populates getStagedScreenInfos with one entry per cluster', () => {
+    renderer.prepareClusters(
+      [createClusterData(iconAtOrigin, true, 5), createClusterData(iconAtOne, true, 10)],
+      params
+    );
+    const staged = renderer.getStagedScreenInfos();
+    expect(staged.length).toBe(2);
+    expect(staged[0].data.icon).toBe(iconAtOrigin);
+    expect(staged[1].data.icon).toBe(iconAtOne);
+
+    // Individual icons (isCluster=false) are excluded from staged infos
+    renderer.prepareClusters([createClusterData(defaultIcon, false, 1)], params);
+    expect(renderer.getStagedScreenInfos().length).toBe(0);
+  });
+
+  test('prepareClusters without applyWithOcclusion does not set cluster count text', () => {
+    renderer.prepareClusters([createClusterData(iconAtOrigin, true, 42)], params);
+    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
+    assert(container);
+    // Element is acquired and present, but count text is not set yet
+    const countSpan = container.querySelector('.test-cluster-count');
+    expect(countSpan).toBeTruthy();
+    expect(countSpan?.textContent).toBe('');
+
+    // After applyWithOcclusion the count is set
+    renderer.applyWithOcclusion(new Set());
+    expect(countSpan?.textContent).toBe('42');
+  });
+
+  test('applyWithOcclusion fades an occluded cluster according to configured distance', () => {
+    // Camera is at z=100; cluster at origin --> distance = 100. Fade range [50, 150] --> opacity = 0.5.
+    const fadeRenderer = new HtmlClusterRenderer({
+      classPrefix: 'fade-test',
+      clusterFadeStartDistance: 50,
+      clusterFadeEndDistance: 150
+    });
+
+    fadeRenderer.prepareClusters([createClusterData(iconAtOrigin, true, 5)], params);
+    fadeRenderer.applyWithOcclusion(new Set());
+    const container = params.renderer.domElement.parentElement?.querySelector('.fade-test-container');
+    assert(container);
+    const element = container.querySelector('.fade-test-icon') as HTMLElement;
+    assert(element);
+
+    // Not occluded --> full opacity
+    expect(element.style.getPropertyValue('--cluster-fade-opacity')).toBe('1');
+
+    // Occluded at distance 100 with range [50, 150] --> opacity 0.5
+    fadeRenderer.applyWithOcclusion(new Set([iconAtOrigin]));
+    expect(element.style.getPropertyValue('--cluster-fade-opacity')).toBe('0.5');
+
+    fadeRenderer.dispose();
   });
 });
 
