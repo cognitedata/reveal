@@ -315,4 +315,18 @@ describe('Cognite3DViewer', () => {
 
     spyIntersectClusters.mockRestore();
   });
+
+  describe('htmlClusterOptions', () => {
+    test('accepts htmlClusterOptions without error', () => {
+      const viewer = new Cognite3DViewer({
+        sdk,
+        renderer,
+        _sectorCuller,
+        logMetrics: false,
+        enableHtmlClusters: true,
+        htmlClusterOptions: { fadeStartDistance: 10, fadeEndDistance: 100, clusterDistanceThreshold: 5 }
+      });
+      expect(() => viewer.dispose()).not.toThrow();
+    });
+  });
 });

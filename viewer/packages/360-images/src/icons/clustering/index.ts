@@ -3,6 +3,6 @@
  */
 
 export { ClusteredIconData, ClusterRenderParams, ClusterScreenInfo } from './ClusterRenderingStrategy';
-export { HtmlClusterRenderer, HtmlClusterRendererOptions } from './HtmlClusterRenderer';
+export { HtmlClusterRenderer } from './HtmlClusterRenderer';
 export { HtmlClusterCoordinator } from './HtmlClusterCoordinator';
 export type { HtmlClusterCollection } from './HtmlClusterCoordinator';

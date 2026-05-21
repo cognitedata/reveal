@@ -19,16 +19,16 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import { DefaultOverlay3DContentType, IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
 import { PointOctant } from 'sparse-octree';
-import { HtmlClusterRenderer, HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
+import { HtmlClusterRenderer } from './clustering/HtmlClusterRenderer';
 import { ClusterRenderParams, ClusterScreenInfo } from './clustering';
 import { FlooredIconManager } from './FlooredIconManager';
+import { HtmlClusterRendererOptions } from '../types';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
 export type IconsOptions = {
   platformMaxPointsSize?: number;
   htmlClusterOptions?: HtmlClusterRendererOptions;
-  clusterDistanceThreshold?: number;
   maxOctreeDepth?: number;
   enableHtmlClusters?: boolean;
   enableFloorIcons?: boolean;
@@ -56,7 +56,7 @@ export class IconCollection {
   private static readonly DefaultRenderHeight = 1080;
   private static readonly DefaultProximityPointLimit = 50;
   private static readonly DefaultProximityRadius = Infinity;
-  private static readonly DefaultClusterDistanceThreshold = 25;
+  private static readonly DefaultClusterDistanceThreshold = 10;
   private static readonly DefaultMaxOctreeDepth = 3;
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
@@ -224,7 +224,8 @@ export class IconCollection {
       IconCollection.DefaultMaxPixelSize,
       iconOptions?.platformMaxPointsSize ?? IconCollection.DefaultMaxPixelSize
     );
-    this._clusterDistanceThreshold = iconOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
+    this._clusterDistanceThreshold =
+      iconOptions?.htmlClusterOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
     this._maxOctreeDepth = iconOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
 
     const sharedTexture = this.createOuterRingsTexture();

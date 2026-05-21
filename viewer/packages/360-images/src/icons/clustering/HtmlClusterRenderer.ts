@@ -7,15 +7,7 @@ import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { ClusteredIconData, ClusterRenderParams, ClusterScreenInfo } from './ClusterRenderingStrategy';
 import { worldToViewportCoordinates } from '@reveal/utilities';
 import { generateClusterStyles } from './htmlClusterStyles';
-
-export type HtmlClusterRendererOptions = {
-  maxPoolSize?: number;
-  classPrefix?: string;
-  enableHoverAnimations?: boolean;
-  zIndex?: number;
-  clusterFadeStartDistance?: number;
-  clusterFadeEndDistance?: number;
-};
+import { HtmlClusterRendererOptions } from '../../types';
 
 /** HTML-based cluster rendering for high-definition text display */
 export class HtmlClusterRenderer {
@@ -49,8 +41,8 @@ export class HtmlClusterRenderer {
     this._countSpanName = `${this._classPrefix}-count`;
     this._enableHoverAnimations = options.enableHoverAnimations ?? true;
     this._zIndex = options.zIndex;
-    this._clusterFadeStartDistance = options.clusterFadeStartDistance ?? Infinity;
-    this._clusterFadeEndDistance = options.clusterFadeEndDistance ?? Infinity;
+    this._clusterFadeStartDistance = options.clusterFadeStartDistance ?? 20;
+    this._clusterFadeEndDistance = options.clusterFadeEndDistance ?? 150;
     this._container = this.createContainer();
     this.injectStyles();
   }

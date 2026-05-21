@@ -41,6 +41,31 @@ export type RenderParameters = {
 };
 
 /**
+ * Options for HTML-based cluster rendering of 360 image icons.
+ * Only applies when enableHtmlClusters is true.
+ * @module @cognite/reveal
+ */
+export type HtmlClusterOptions = {
+  /**
+   * Camera distance (world units) at which an occluded cluster icon begins to fade out.
+   * A cluster is considered occluded when a closer cluster overlaps it on screen.
+   * @default 20
+   */
+  fadeStartDistance?: number;
+  /**
+   * Camera distance (world units) at which an occluded cluster icon becomes fully invisible.
+   * Must be greater than fadeStartDistance.
+   * @default 150
+   */
+  fadeEndDistance?: number;
+  /**
+   * Maximum distance (world units) between camera and 360 image icons for them to be clustered together.
+   * @default 25
+   */
+  clusterDistanceThreshold?: number;
+};
+
+/**
  * @module @cognite/reveal
  */
 export interface Cognite3DViewerOptions {
@@ -212,27 +237,9 @@ export interface Cognite3DViewerOptions {
   enableHtmlClusters?: boolean;
 
   /**
-   * Camera distance (world units) at which an occluded cluster icon begins to fade out.
-   * A cluster is considered occluded when a closer cluster overlaps it on screen.
-   * Clusters in empty screen areas are never faded regardless of distance.
-   * Only applies when enableHtmlClusters is true.
-   * @default 20
+   * Options for HTML cluster rendering. Only applies when enableHtmlClusters is true.
    */
-  htmlClusterFadeStartDistance?: number;
-
-  /**
-   * Camera distance (world units) at which an occluded cluster icon becomes fully invisible.
-   * Must be greater than htmlClusterFadeStartDistance.
-   * Only applies when enableHtmlClusters is true.
-   * @default 50
-   */
-  htmlClusterFadeEndDistance?: number;
-
-  /** Maximum distance (world units) between camera and 360 image icons for them to be clustered together.
-   * Only applies when enableHtmlClusters is true.
-   * @default 10
-   */
-  clusterDistanceThreshold?: number;
+  htmlClusterOptions?: HtmlClusterOptions;
 
   /**
    * Show floor disc icons for nearby 360 images when the user is inside a 360 image.
