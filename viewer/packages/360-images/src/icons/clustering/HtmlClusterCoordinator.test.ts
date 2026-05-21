@@ -39,9 +39,17 @@ describe(HtmlClusterCoordinator.name, () => {
       .object();
   });
 
-  test('subscribes to onBeforeSceneRendered exactly once on construction', () => {
-    new HtmlClusterCoordinator(mockEventTrigger);
+  test('subscribes exactly once and re-subscribes on collection added to remain last', () => {
+    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
     expect(capturedCallbacks.length).toBe(1);
+
+    coordinator.onCollectionAdded(createMockCollection([]));
+    expect(capturedCallbacks.length).toBe(1);
+
+    coordinator.onCollectionAdded(createMockCollection([]));
+    expect(capturedCallbacks.length).toBe(1);
+
+    expect(() => fireCoordinatorEvent()).not.toThrow();
   });
 
   test('dispose unsubscribes the handler and subsequent events are no-ops', () => {
@@ -56,88 +64,52 @@ describe(HtmlClusterCoordinator.name, () => {
     expect(applyMock).not.toHaveBeenCalled();
   });
 
-  test('onCollectionAdded re-subscribes to remain last — exactly one active subscription', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
-    expect(capturedCallbacks.length).toBe(1);
-
-    coordinator.onCollectionAdded(createMockCollection([]));
-    expect(capturedCallbacks.length).toBe(1);
-
-    coordinator.onCollectionAdded(createMockCollection([]));
-    expect(capturedCallbacks.length).toBe(1);
-  });
-
-  test('onCollectionRemoved prevents the removed collection from receiving occlusion updates', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
-    const applyMock = jest.fn<ApplyOcclusionFn>();
-    const collection = createMockCollection([], applyMock);
-
-    coordinator.onCollectionAdded(collection);
-    fireCoordinatorEvent();
-    expect(applyMock).toHaveBeenCalledTimes(1);
-
-    coordinator.onCollectionRemoved(collection);
-    applyMock.mockClear();
-    fireCoordinatorEvent();
-    expect(applyMock).not.toHaveBeenCalled();
-  });
-
-  test('does not throw when no collections are registered', () => {
-    new HtmlClusterCoordinator(mockEventTrigger);
-    expect(() => fireCoordinatorEvent()).not.toThrow();
-  });
-
-  test('calls applyHtmlClusterOcclusion on every registered collection after each event', () => {
+  test('calls applyHtmlClusterOcclusion on registered collections and stops after removal', () => {
     const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
+    const collectionA = createMockCollection([], applyMockA);
 
-    coordinator.onCollectionAdded(createMockCollection([], applyMockA));
+    coordinator.onCollectionAdded(collectionA);
     coordinator.onCollectionAdded(createMockCollection([], applyMockB));
 
     fireCoordinatorEvent();
-
     expect(applyMockA).toHaveBeenCalledTimes(1);
     expect(applyMockB).toHaveBeenCalledTimes(1);
+
+    coordinator.onCollectionRemoved(collectionA);
+    applyMockA.mockClear();
+    fireCoordinatorEvent();
+    expect(applyMockA).not.toHaveBeenCalled();
+    expect(applyMockB).toHaveBeenCalledTimes(2);
   });
 
-  test('cross-collection: farther overlapping cluster is occluded, closer is not', () => {
+  test('cross-collection occlusion: overlapping farther cluster is occluded, non-overlapping is not', () => {
     const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
     const closeIcon = createMockIcon();
-    const farIcon = createMockIcon();
+    const farOverlappingIcon = createMockIcon();
+    const farDistantIcon = createMockIcon();
 
-    // Both clusters at the same screen position; occlusionFactor=0.7, projectedSize=80 --> overlapRadius=56
-    // screenDist=0 < 56, so the farther one (distance=50) is occluded by the closer one (distance=10)
+    // overlapRadius = 80 * 0.7 = 56
+    // farOverlappingIcon at same pos as closeIcon --> screenDist=0 < 56 --> occluded
+    // farDistantIcon at dx=700 from closeIcon --> screenDist=700 > 56 --> not occluded
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
     coordinator.onCollectionAdded(createMockCollection([createScreenInfo(closeIcon, 500, 300, 10)], applyMockA));
-    coordinator.onCollectionAdded(createMockCollection([createScreenInfo(farIcon, 500, 300, 50)], applyMockB));
+    coordinator.onCollectionAdded(
+      createMockCollection(
+        [createScreenInfo(farOverlappingIcon, 500, 300, 50), createScreenInfo(farDistantIcon, 800, 300, 50)],
+        applyMockB
+      )
+    );
 
     fireCoordinatorEvent();
 
     const appliedToA = applyMockA.mock.calls[0][0];
     const appliedToB = applyMockB.mock.calls[0][0];
     expect(appliedToA.has(closeIcon)).toBe(false);
-    expect(appliedToB.has(farIcon)).toBe(true);
-  });
-
-  test('non-overlapping clusters across collections: neither is occluded', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
-    const iconA = createMockIcon();
-    const iconB = createMockIcon();
-
-    // screenDist=700 >> overlapRadius=56 --> no overlap
-    const applyMockA = jest.fn<ApplyOcclusionFn>();
-    const applyMockB = jest.fn<ApplyOcclusionFn>();
-    coordinator.onCollectionAdded(createMockCollection([createScreenInfo(iconA, 100, 300, 10)], applyMockA));
-    coordinator.onCollectionAdded(createMockCollection([createScreenInfo(iconB, 800, 300, 50)], applyMockB));
-
-    fireCoordinatorEvent();
-
-    const appliedToA = applyMockA.mock.calls[0][0];
-    const appliedToB = applyMockB.mock.calls[0][0];
-    expect(appliedToA.has(iconA)).toBe(false);
-    expect(appliedToB.has(iconB)).toBe(false);
+    expect(appliedToB.has(farOverlappingIcon)).toBe(true);
+    expect(appliedToB.has(farDistantIcon)).toBe(false);
   });
 
   test('partially overlapping clusters: only the cluster within overlapRadius is occluded', () => {

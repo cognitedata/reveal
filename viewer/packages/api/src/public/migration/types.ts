@@ -41,14 +41,16 @@ export type RenderParameters = {
 };
 
 /**
- * Options for HTML-based cluster rendering of 360 image icons.
- * Only applies when enableHtmlClusters is true.
+ * Configuration for HTML-based cluster rendering of 360 image icons.
+ * Passed via {@link Cognite3DViewerOptions.htmlClusterOptions}.
+ * Only takes effect when {@link Cognite3DViewerOptions.enableHtmlClusters} is true.
  * @module @cognite/reveal
  */
 export type HtmlClusterOptions = {
   /**
    * Camera distance (world units) at which an occluded cluster icon begins to fade out.
    * A cluster is considered occluded when a closer cluster overlaps it on screen.
+   * Clusters in empty screen areas are never faded regardless of distance.
    * @default 20
    */
   fadeStartDistance?: number;
@@ -59,10 +61,16 @@ export type HtmlClusterOptions = {
    */
   fadeEndDistance?: number;
   /**
-   * Maximum distance (world units) between camera and 360 image icons for them to be clustered together.
+   * Maximum distance (world units) between 360 image icons for them to be grouped into a cluster.
    * @default 25
    */
   clusterDistanceThreshold?: number;
+  /**
+   * Maximum octree depth used for clustering. Lower values produce fewer, larger clusters
+   * (more 360 icons aggregated per cluster). Higher values produce more, smaller clusters.
+   * @default 3
+   */
+  maxOctreeDepth?: number;
 };
 
 /**
@@ -231,13 +239,18 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Enable HTML-based cluster rendering for 360 image icons.
-   * When enabled, nearby 360 icons are grouped into clusters with a count display.
+   * When enabled, nearby icons are grouped into cluster badges that show a count.
+   * Configure appearance and thresholds via htmlClusterOptions.
    * @default false
    */
   enableHtmlClusters?: boolean;
 
   /**
-   * Options for HTML cluster rendering. Only applies when enableHtmlClusters is true.
+   * Fine-grained options for HTML cluster rendering.
+   * Only applies when enableHtmlClusters is true.
+   * Controls the 3D clustering distance, occlusion fade range,
+   * and advanced DOM rendering settings.
+   * See {@link HtmlClusterOptions}.
    */
   htmlClusterOptions?: HtmlClusterOptions;
 

@@ -364,7 +364,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
           htmlClusterOptions: {
             clusterFadeStartDistance: options.htmlClusterOptions?.fadeStartDistance,
             clusterFadeEndDistance: options.htmlClusterOptions?.fadeEndDistance,
-            clusterDistanceThreshold: options.htmlClusterOptions?.clusterDistanceThreshold
+            clusterDistanceThreshold: options.htmlClusterOptions?.clusterDistanceThreshold,
+            maxOctreeDepth: options.htmlClusterOptions?.maxOctreeDepth
           },
           enableFloorIcons: options.enableFloorIcons ?? false
         }

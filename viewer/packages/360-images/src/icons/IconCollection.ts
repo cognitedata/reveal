@@ -29,7 +29,6 @@ export type IconCullingScheme = 'clustered' | 'proximity';
 export type IconsOptions = {
   platformMaxPointsSize?: number;
   htmlClusterOptions?: HtmlClusterRendererOptions;
-  maxOctreeDepth?: number;
   enableHtmlClusters?: boolean;
   enableFloorIcons?: boolean;
 };
@@ -56,8 +55,8 @@ export class IconCollection {
   private static readonly DefaultRenderHeight = 1080;
   private static readonly DefaultProximityPointLimit = 50;
   private static readonly DefaultProximityRadius = Infinity;
-  private static readonly DefaultClusterDistanceThreshold = 10;
-  private static readonly DefaultMaxOctreeDepth = 3;
+  private static readonly DefaultClusterDistanceThreshold = 11;
+  private static readonly DefaultMaxOctreeDepth = 2;
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
@@ -226,7 +225,7 @@ export class IconCollection {
     );
     this._clusterDistanceThreshold =
       iconOptions?.htmlClusterOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
-    this._maxOctreeDepth = iconOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
+    this._maxOctreeDepth = iconOptions?.htmlClusterOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
 
     const sharedTexture = this.createOuterRingsTexture();
 
@@ -551,7 +550,6 @@ export class IconCollection {
     const clusteredIcons: ClusteredIcon[] = [];
 
     for (const node of nodes) {
-      // If node has data (leaf), show the individual icon(s)
       if (node.data !== null) {
         const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
         for (const icon of icons) {
@@ -564,29 +562,24 @@ export class IconCollection {
           });
         }
       } else {
-        // Node is a parent (cluster) - the octree has already decided
-        // this node should be clustered, so show the cluster.
         const representativeIcon = octree.getNodeIcon(node);
         if (!representativeIcon) continue;
 
-        // Get all leaf icons under this cluster node
         const clusterIcons = octree.getAllIconsFromNode(node);
-        const clusterSize = clusterIcons.length;
 
-        // Show as cluster if we have multiple icons, otherwise show as individual
-        if (clusterSize > 1) {
+        const clusterIconsLength = clusterIcons.length;
+
+        if (clusterIconsLength > 1) {
           const centroid = this.calculateCentroid(clusterIcons);
-
           clusteredIcons.push({
             icon: representativeIcon,
             isCluster: true,
-            clusterSize,
+            clusterSize: clusterIconsLength,
             clusterPosition: centroid,
             sizeScale: clusterIconSizeMultiplier,
-            clusterIcons: clusterIcons // Store all icons for click expansion
+            clusterIcons: clusterIcons
           });
         } else {
-          // Only one icon in this "cluster" - show as individual
           for (const icon of clusterIcons) {
             clusteredIcons.push({
               icon,

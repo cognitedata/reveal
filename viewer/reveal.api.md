@@ -1186,6 +1186,7 @@ export type HtmlClusterOptions = {
     fadeStartDistance?: number;
     fadeEndDistance?: number;
     clusterDistanceThreshold?: number;
+    maxOctreeDepth?: number;
 };
 
 // @public
