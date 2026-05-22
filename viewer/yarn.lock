@@ -539,7 +539,7 @@ __metadata:
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
     three: "npm:0.184.0"
-    ts-jest: "npm:29.4.10"
+    ts-jest: "npm:29.4.11"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
     typescript: "npm:^6.0.3"
@@ -10711,9 +10711,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.4.10":
-  version: 29.4.10
-  resolution: "ts-jest@npm:29.4.10"
+"ts-jest@npm:29.4.11":
+  version: 29.4.11
+  resolution: "ts-jest@npm:29.4.11"
   dependencies:
     bs-logger: "npm:^0.2.6"
     fast-json-stable-stringify: "npm:^2.1.0"
@@ -10747,7 +10747,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10/babc9836b9e33bc00cb4e7e0800fe44e1fbe0c54739384aa0a112516f38a6991afa5d545d2a43eff1643fd3641134921d4391a2144195cb7167fa204d21c804f
+  checksum: 10/8a76800cac1c102c789429a82655adde1d540d7ff025fc888006f4f458afe07ca4d3f73622a10a604edea06aa12c298605cd1a208a6380c0e3d591a3daed8af6
   languageName: node
   linkType: hard
 
