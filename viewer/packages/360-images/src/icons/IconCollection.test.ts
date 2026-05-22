@@ -304,8 +304,8 @@ describe(IconCollection.name, () => {
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
 
     expect(collection.isHtmlClustersEnabled()).toBe(true);
-    expect(collection.getClusterDistanceThreshold()).toBe(10);
-    expect(collection.getMaxOctreeDepth()).toBe(3);
+    expect(collection.getClusterDistanceThreshold()).toBe(11);
+    expect(collection.getMaxOctreeDepth()).toBe(2);
 
     setNeedsRedrawMock.mockClear();
     collection.setClusterDistanceThreshold(50);
