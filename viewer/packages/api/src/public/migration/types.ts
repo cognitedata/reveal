@@ -62,13 +62,13 @@ export type HtmlClusterOptions = {
   fadeEndDistance?: number;
   /**
    * Maximum distance (world units) between 360 image icons for them to be grouped into a cluster.
-   * @default 25
+   * @default 11
    */
   clusterDistanceThreshold?: number;
   /**
    * Maximum octree depth used for clustering. Lower values produce fewer, larger clusters
    * (more 360 icons aggregated per cluster). Higher values produce more, smaller clusters.
-   * @default 3
+   * @default 2
    */
   maxOctreeDepth?: number;
 };
