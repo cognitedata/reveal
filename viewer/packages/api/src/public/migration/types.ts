@@ -47,13 +47,13 @@ export type RenderParameters = {
  * @module @cognite/reveal
  */
 export type HtmlClusterOptions = {
-  /** Camera distance (world units) at which an occluded cluster begins to fade out. @default 20 */
+  /** Camera distance (world units) at which an occluded cluster begins to fade out. */
   fadeStartDistance?: number;
-  /** Camera distance (world units) at which an occluded cluster becomes fully invisible. @default 150 */
+  /** Camera distance (world units) at which an occluded cluster becomes fully invisible. */
   fadeEndDistance?: number;
-  /** Maximum distance (world units) between icons for them to be grouped into a cluster. @default 11 */
+  /** Maximum distance (world units) between icons for them to be grouped into a cluster. */
   clusterDistanceThreshold?: number;
-  /** Maximum octree depth for clustering. Lower values produce fewer, larger clusters. @default 2 */
+  /** Maximum octree depth for clustering. Lower values produce fewer, larger clusters. */
   maxOctreeDepth?: number;
 };
 
