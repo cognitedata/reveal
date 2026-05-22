@@ -47,29 +47,13 @@ export type RenderParameters = {
  * @module @cognite/reveal
  */
 export type HtmlClusterOptions = {
-  /**
-   * Camera distance (world units) at which an occluded cluster icon begins to fade out.
-   * A cluster is considered occluded when a closer cluster overlaps it on screen.
-   * Clusters in empty screen areas are never faded regardless of distance.
-   * @default 20
-   */
+  /** Camera distance (world units) at which an occluded cluster begins to fade out. @default 20 */
   fadeStartDistance?: number;
-  /**
-   * Camera distance (world units) at which an occluded cluster icon becomes fully invisible.
-   * Must be greater than fadeStartDistance.
-   * @default 150
-   */
+  /** Camera distance (world units) at which an occluded cluster becomes fully invisible. @default 150 */
   fadeEndDistance?: number;
-  /**
-   * Maximum distance (world units) between 360 image icons for them to be grouped into a cluster.
-   * @default 11
-   */
+  /** Maximum distance (world units) between icons for them to be grouped into a cluster. @default 11 */
   clusterDistanceThreshold?: number;
-  /**
-   * Maximum octree depth used for clustering. Lower values produce fewer, larger clusters
-   * (more 360 icons aggregated per cluster). Higher values produce more, smaller clusters.
-   * @default 2
-   */
+  /** Maximum octree depth for clustering. Lower values produce fewer, larger clusters. @default 2 */
   maxOctreeDepth?: number;
 };
 

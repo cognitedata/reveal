@@ -47,11 +47,7 @@ export class HtmlClusterRenderer {
     this.injectStyles();
   }
 
-  /**
-   * Computes screen-space data and manages element lifecycle without applying DOM positions.
-   * Must be followed by applyWithOcclusion() to complete the DOM update.
-   * Called per-collection by IconCollection; HtmlClusterCoordinator calls applyWithOcclusion() last.
-   */
+  // Computes screen-space data and manages element lifecycle. Must be followed by applyWithOcclusion() to complete the DOM update.
   public prepareClusters(visibleClusters: ClusteredIconData[], params: ClusterRenderParams): void {
     const { renderer, camera, modelTransform } = params;
 
@@ -85,18 +81,12 @@ export class HtmlClusterRenderer {
     }
   }
 
-  /**
-   * Returns the screen-space info computed during the last stageForCoordinator call.
-   * Used by HtmlClusterCoordinator to build a cross-collection occlusion set.
-   */
+  // Returns the screen-space info computed during the last prepareClusters call.
   public getStagedScreenInfos(): ClusterScreenInfo[] {
     return this._stagedScreenInfos;
   }
 
-  /**
-   * Applies DOM positions and fade opacity using a globally-computed occlusion set.
-   * Called by HtmlClusterCoordinator after gathering screen infos from all collections.
-   */
+  // Applies DOM positions and fade opacity using a globally-computed occlusion set.
   public applyWithOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
     if (!this._isVisible || !this._stagedCanvas) {
       return;

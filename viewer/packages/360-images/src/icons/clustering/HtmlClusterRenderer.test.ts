@@ -224,6 +224,7 @@ describe(HtmlClusterRenderer.name, () => {
     noAnimRenderer.applyWithOcclusion(new Set());
     noAnimRenderer.setHoveredCluster(defaultIcon);
     const element = params.renderer.domElement.parentElement?.querySelector('.no-anim-icon');
+
     assert(element);
     expect(element.classList.contains('hovered')).toBe(false);
     noAnimRenderer.dispose();
@@ -239,7 +240,6 @@ describe(HtmlClusterRenderer.name, () => {
     expect(staged[0].data.icon).toBe(iconAtOrigin);
     expect(staged[1].data.icon).toBe(iconAtOne);
 
-    // Individual icons (isCluster=false) are excluded from staged infos
     renderer.prepareClusters([createClusterData(defaultIcon, false, 1)], params);
     expect(renderer.getStagedScreenInfos().length).toBe(0);
   });
@@ -248,18 +248,15 @@ describe(HtmlClusterRenderer.name, () => {
     renderer.prepareClusters([createClusterData(iconAtOrigin, true, 42)], params);
     const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
     assert(container);
-    // Element is acquired and present, but count text is not set yet
     const countSpan = container.querySelector('.test-cluster-count');
     expect(countSpan).toBeTruthy();
     expect(countSpan?.textContent).toBe('');
 
-    // After applyWithOcclusion the count is set
     renderer.applyWithOcclusion(new Set());
     expect(countSpan?.textContent).toBe('42');
   });
 
   test('applyWithOcclusion fades an occluded cluster according to configured distance', () => {
-    // Camera is at z=100; cluster at origin --> distance = 100. Fade range [50, 150] --> opacity = 0.5.
     const fadeRenderer = new HtmlClusterRenderer({
       classPrefix: 'fade-test',
       clusterFadeStartDistance: 50,
@@ -273,10 +270,8 @@ describe(HtmlClusterRenderer.name, () => {
     const element = container.querySelector('.fade-test-icon') as HTMLElement;
     assert(element);
 
-    // Not occluded --> full opacity
     expect(element.style.getPropertyValue('--cluster-fade-opacity')).toBe('1');
 
-    // Occluded at distance 100 with range [50, 150] --> opacity 0.5
     fadeRenderer.applyWithOcclusion(new Set([iconAtOrigin]));
     expect(element.style.getPropertyValue('--cluster-fade-opacity')).toBe('0.5');
 

@@ -90,9 +90,6 @@ describe(HtmlClusterCoordinator.name, () => {
     const farOverlappingIcon = createMockIcon();
     const farDistantIcon = createMockIcon();
 
-    // overlapRadius = 80 * 0.7 = 56
-    // farOverlappingIcon at same pos as closeIcon --> screenDist=0 < 56 --> occluded
-    // farDistantIcon at dx=700 from closeIcon --> screenDist=700 > 56 --> not occluded
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
     coordinator.onCollectionAdded(createMockCollection([createScreenInfo(closeIcon, 500, 300, 10)], applyMockA));
@@ -118,9 +115,6 @@ describe(HtmlClusterCoordinator.name, () => {
     const nearFarIcon = createMockIcon();
     const distantFarIcon = createMockIcon();
 
-    // overlapRadius = 80 * 0.7 = 56
-    // nearFarIcon at dx=30 from closeIcon --> screenDist=30 < 56 --> occluded
-    // distantFarIcon at dx=100 from closeIcon --> screenDist=100 > 56 --> not occluded
     const applyMock = jest.fn<ApplyOcclusionFn>();
     coordinator.onCollectionAdded(
       createMockCollection(
