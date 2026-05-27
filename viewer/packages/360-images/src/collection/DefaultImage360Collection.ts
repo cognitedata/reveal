@@ -18,6 +18,7 @@ import { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../i
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { ClusterScreenInfo } from '../icons/clustering';
+import { HtmlClusterCollection } from '../icons/clustering/HtmlClusterCoordinator';
 
 import {
   ClassicDataSourceType,
@@ -39,7 +40,9 @@ type Image360Events = 'image360Entered' | 'image360Exited';
  * Default implementation of {@link Image360Collection}. Used for events when entering
  * and exiting 360 image mode
  */
-export class DefaultImage360Collection<T extends DataSourceType> implements Image360Collection<T> {
+export class DefaultImage360Collection<T extends DataSourceType>
+  implements Image360Collection<T>, HtmlClusterCollection
+{
   /**
    * A list containing all the 360 images in this set.
    */
