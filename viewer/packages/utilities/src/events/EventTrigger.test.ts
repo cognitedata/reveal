@@ -14,7 +14,7 @@ describe('EventTrigger', () => {
     source.subscribe(listener);
     source.fire('hei', 1);
 
-    expect(listener).toBeCalledWith('hei', 1);
+    expect(listener).toHaveBeenCalledWith('hei', 1);
   });
 
   test('fire() doesnt trigger unsubscribed listener', () => {
@@ -25,7 +25,7 @@ describe('EventTrigger', () => {
     source.unsubscribe(listener);
     source.fire();
 
-    expect(listener).not.toBeCalled();
+    expect(listener).not.toHaveBeenCalled();
   });
 
   test('fire() doesnt trigger after unsubscribeAll()', () => {
@@ -36,6 +36,6 @@ describe('EventTrigger', () => {
     source.unsubscribeAll();
     source.fire();
 
-    expect(listener).not.toBeCalled();
+    expect(listener).not.toHaveBeenCalled();
   });
 });

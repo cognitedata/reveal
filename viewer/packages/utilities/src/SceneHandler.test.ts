@@ -28,8 +28,8 @@ describe(SceneHandler.name, () => {
 
     sceneHandler.dispose();
 
-    expect(disposeCustomObjectMeshGeometry).toBeCalled();
-    expect(disposeCustomObjectMeshMaterial).toBeCalled();
+    expect(disposeCustomObjectMeshGeometry).toHaveBeenCalled();
+    expect(disposeCustomObjectMeshMaterial).toHaveBeenCalled();
 
     expect(sceneHandler.scene.children.length).toBe(0);
   });

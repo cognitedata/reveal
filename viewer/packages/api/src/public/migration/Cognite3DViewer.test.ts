@@ -5,12 +5,12 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
+import { CdfModelMetadataProvider, CdfModelDataProvider, File3dFormat } from '@reveal/data-providers';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
-import nock from 'nock';
 import { Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
@@ -34,19 +34,7 @@ describe('Cognite3DViewer', () => {
     .object();
 
   beforeAll(() => {
-    nock.disableNetConnect();
-
-    nock('https://api-js.mixpanel.com')
-      .persist(true)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*/)
-      .reply(200);
-
-    nock('https://api-js.mixpanel.com')
-      .persist(true)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .post(/.*/)
-      .reply(200);
+    jest.spyOn(global, 'fetch').mockResolvedValue(new Response('', { status: 200 }));
 
     // Mock function for retriving model metadata, such as transformation
     jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
@@ -60,7 +48,7 @@ describe('Cognite3DViewer', () => {
   });
 
   afterAll(() => {
-    nock.enableNetConnect();
+    jest.restoreAllMocks();
   });
 
   beforeEach(() => {
@@ -71,13 +59,13 @@ describe('Cognite3DViewer', () => {
     const disposeSpy = jest.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
-    expect(disposeSpy).not.toBeCalled();
+    expect(disposeSpy).not.toHaveBeenCalled();
   });
 
   test('dispose disposes of sector culler', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
-    expect(_sectorCuller.dispose).toBeCalledTimes(1);
+    expect(_sectorCuller.dispose).toHaveBeenCalledTimes(1);
   });
 
   test('dispose raises disposed-event', () => {
@@ -87,29 +75,15 @@ describe('Cognite3DViewer', () => {
 
     viewer.dispose();
 
-    expect(disposedListener).toBeCalledTimes(1);
+    expect(disposedListener).toHaveBeenCalledTimes(1);
   });
 
   test('dispose removes and disposes all models', async () => {
     // Arrange
-    const outputs = {
-      items: [
-        {
-          format: 'gltf-directory',
-          version: 9,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/outputs/)
-      .twice() // the first one goes to determine model type
-      .reply(200, outputs);
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/scene.json/)
-      .reply(200, sceneJson);
+    jest
+      .spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs')
+      .mockResolvedValue([{ format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }]);
+    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
@@ -118,7 +92,7 @@ describe('Cognite3DViewer', () => {
     viewer.dispose();
 
     expect(viewer.models).toBeEmpty();
-    expect(disposeSpy).toBeCalledTimes(1);
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
   });
 
   test('on cameraChange triggers when position and target is changed', () => {
@@ -132,29 +106,15 @@ describe('Cognite3DViewer', () => {
     viewer.cameraManager.setCameraState({ target: new THREE.Vector3(1, 2, 3) });
 
     // Assert
-    expect(onCameraChange).toBeCalledTimes(2);
+    expect(onCameraChange).toHaveBeenCalledTimes(2);
   });
 
   test('addModel with remote model and fit viewer, updates camera', async () => {
     // Arrange
-    const outputs = {
-      items: [
-        {
-          format: 'gltf-directory',
-          version: 9,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/outputs/)
-      .twice() // the first one goes to determine model type
-      .reply(200, outputs);
-    nock(/.*/)
-      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
-      .get(/.*\/scene.json/)
-      .reply(200, sceneJson);
+    jest
+      .spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs')
+      .mockResolvedValue([{ format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }]);
+    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
@@ -166,7 +126,7 @@ describe('Cognite3DViewer', () => {
     TWEEN.update(TWEEN.now());
 
     // Assert
-    expect(onCameraChange).toBeCalled();
+    expect(onCameraChange).toHaveBeenCalled();
   });
 
   test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {
@@ -214,8 +174,8 @@ describe('Cognite3DViewer', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const obj = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
 
-    expect(() => viewer.addObject3D(obj)).not.toThrowError();
-    expect(() => viewer.removeObject3D(obj)).not.toThrowError();
+    expect(() => viewer.addObject3D(obj)).not.toThrow();
+    expect(() => viewer.removeObject3D(obj)).not.toThrow();
   });
 
   test('viewer can add/remove CustomObject on scene', () => {
@@ -229,11 +189,11 @@ describe('Cognite3DViewer', () => {
     }
     // Add them to the viewer
     for (const customObject of customObjects) {
-      expect(() => viewer.addCustomObject(customObject)).not.toThrowError();
+      expect(() => viewer.addCustomObject(customObject)).not.toThrow();
     }
     // Remove them from the viewer
     for (const customObject of customObjects) {
-      expect(() => viewer.removeCustomObject(customObject)).not.toThrowError();
+      expect(() => viewer.removeCustomObject(customObject)).not.toThrow();
     }
   });
 
@@ -254,16 +214,16 @@ describe('Cognite3DViewer', () => {
       viewer.on('sceneRendered', onRendered);
       viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
-      expect(onBeforeRendered).toBeCalledTimes(1);
-      expect(onRendered).toBeCalledTimes(1);
+      expect(onBeforeRendered).toHaveBeenCalledTimes(1);
+      expect(onRendered).toHaveBeenCalledTimes(1);
 
       jest.clearAllMocks();
       viewer.off('sceneRendered', onRendered);
       viewer.off('beforeSceneRendered', onBeforeRendered);
       viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
-      expect(onBeforeRendered).not.toBeCalled();
-      expect(onRendered).not.toBeCalled();
+      expect(onBeforeRendered).not.toHaveBeenCalled();
+      expect(onRendered).not.toHaveBeenCalled();
     } finally {
       requestAnimationFrameSpy.mockRestore();
     }

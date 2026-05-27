@@ -6,7 +6,7 @@ import { NumericRange } from './NumericRange';
 
 describe('NumericRange', () => {
   test('constructor does not accept negative count', () => {
-    expect(() => new NumericRange(0, -1)).toThrowError();
+    expect(() => new NumericRange(0, -1)).toThrow();
   });
 
   test('toInclusive is less than from when range is empty', () => {

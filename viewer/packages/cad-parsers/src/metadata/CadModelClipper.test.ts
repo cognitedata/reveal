@@ -32,7 +32,7 @@ describe('CadModelClipper', () => {
     const box = new THREE.Box3(new THREE.Vector3(9, 9, 9), new THREE.Vector3(10, 10, 10));
     const clipper = new CadModelClipper(box);
 
-    expect(() => clipper.createClippedModel(modelDepth2)).toThrowError();
+    expect(() => clipper.createClippedModel(modelDepth2)).toThrow();
   });
 
   test('createClippedModel() only keeps sectors intersecting with clip box', () => {
