@@ -124,31 +124,39 @@ export class IconCollection {
     if (this._iconCullingScheme === scheme) return;
 
     this._iconCullingScheme = scheme;
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
+
+    if (!this._enableHtmlClusters) {
+      this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
+    }
 
     switch (this._iconCullingScheme) {
-      case 'clustered': {
-        this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
-        if (this._htmlRenderer) {
-          this._htmlRenderer.setVisible(true);
+      case 'clustered':
+        if (this._enableHtmlClusters) {
+          this._onBeforeSceneRenderedEvent.unsubscribe(this._computeProximityPointsEventHandler);
+          this._htmlRenderer?.setVisible(true);
+        } else {
+          this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
         }
         break;
-      }
-      case 'proximity': {
-        this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
+      case 'proximity':
         this._visibleClusteredIcons = [];
-        if (this._htmlRenderer) {
-          this._htmlRenderer.setVisible(false);
-        }
         if (this._setNeedsRedraw) {
           this._setNeedsRedraw();
         }
+        if (this._enableHtmlClusters) {
+          this._htmlRenderer?.setVisible(false);
+          this._onBeforeSceneRenderedEvent.subscribe(this._computeProximityPointsEventHandler);
+        } else {
+          this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
+        }
         break;
-      }
       default:
         break;
     }
-    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+
+    if (!this._enableHtmlClusters) {
+      this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+    }
   }
 
   public setFloorMode(enabled: boolean): void {
@@ -267,7 +275,9 @@ export class IconCollection {
       : this.setIconsByLOD(octree, pointsObjects);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, pointsObjects);
     this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
-    onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
+    if (!this._enableHtmlClusters) {
+      onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
+    }
 
     this._sceneHandler = sceneHandler;
     this._pointsObject = pointsObjects;
@@ -715,8 +725,17 @@ export class IconCollection {
     return icons;
   }
 
+  public prepareHtmlClusters(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    if (!this._enableHtmlClusters || this._iconCullingScheme !== 'clustered') return;
+    this._computeClustersEventHandler(params);
+  }
+
   public dispose(): void {
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
+    if (this._enableHtmlClusters) {
+      this._onBeforeSceneRenderedEvent.unsubscribe(this._computeProximityPointsEventHandler);
+    } else {
+      this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
+    }
     this._sceneHandler.removeObject3D(this._pointsObject);
     this._icons.forEach(icon => icon.dispose());
     this._icons.splice(0, this._icons.length);

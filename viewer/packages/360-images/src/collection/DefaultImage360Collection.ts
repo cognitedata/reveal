@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, BeforeSceneRenderedDelegate, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import {
@@ -350,6 +350,10 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
 
   public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
     this._icons.applyHtmlClusterOcclusion(occludedIcons);
+  }
+
+  public prepareHtmlClusters(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    this._icons.prepareHtmlClusters(params);
   }
 
   public remove(entity: Image360Entity<T>): void {

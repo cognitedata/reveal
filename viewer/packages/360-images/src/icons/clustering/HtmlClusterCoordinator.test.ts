@@ -2,11 +2,9 @@
  * Copyright 2026 Cognite AS
  */
 
-import { Mock, It } from 'moq.ts';
-import { Color, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { jest } from '@jest/globals';
-import { BeforeSceneRenderedDelegate, EventTrigger } from '@reveal/utilities';
 import { HtmlClusterCoordinator } from './HtmlClusterCoordinator';
 import type { HtmlClusterCollection } from './HtmlClusterCoordinator';
 import type { ClusterScreenInfo } from './ClusterRenderingStrategy';
@@ -15,57 +13,34 @@ type ApplyOcclusionFn = HtmlClusterCollection['applyHtmlClusterOcclusion'];
 type ApplyOcclusionMock = jest.MockedFunction<ApplyOcclusionFn>;
 
 describe(HtmlClusterCoordinator.name, () => {
-  let mockEventTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
-  let capturedCallbacks: BeforeSceneRenderedDelegate[];
+  test('calls applyHtmlClusterOcclusion exactly once per runCoordinator call', () => {
+    const coordinator = new HtmlClusterCoordinator();
+    const applyMock = jest.fn<ApplyOcclusionFn>();
+    coordinator.onCollectionAdded(createMockCollection([], applyMock));
 
-  const fireCoordinatorEvent = () => {
-    const last = capturedCallbacks[capturedCallbacks.length - 1];
-    last?.({} as Parameters<BeforeSceneRenderedDelegate>[0]);
-  };
+    coordinator.runCoordinator();
+    expect(applyMock).toHaveBeenCalledTimes(1);
 
-  beforeEach(() => {
-    capturedCallbacks = [];
-    mockEventTrigger = new Mock<EventTrigger<BeforeSceneRenderedDelegate>>()
-      .setup(e => e.subscribe(It.IsAny()))
-      .callback(({ args }) => {
-        capturedCallbacks.push(args[0]);
-      })
-      .setup(e => e.unsubscribe(It.IsAny()))
-      .callback(({ args }) => {
-        const cb = args[0];
-        const idx = capturedCallbacks.indexOf(cb);
-        if (idx !== -1) capturedCallbacks.splice(idx, 1);
-      })
-      .object();
+    applyMock.mockClear();
+    coordinator.onCollectionAdded(createMockCollection([]));
+    coordinator.runCoordinator();
+    expect(applyMock).toHaveBeenCalledTimes(1);
+
+    expect(() => coordinator.runCoordinator()).not.toThrow();
   });
 
-  test('subscribes exactly once and re-subscribes on collection added to remain last', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
-    expect(capturedCallbacks.length).toBe(1);
-
-    coordinator.onCollectionAdded(createMockCollection([]));
-    expect(capturedCallbacks.length).toBe(1);
-
-    coordinator.onCollectionAdded(createMockCollection([]));
-    expect(capturedCallbacks.length).toBe(1);
-
-    expect(() => fireCoordinatorEvent()).not.toThrow();
-  });
-
-  test('dispose unsubscribes the handler and subsequent events are no-ops', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
+  test('dispose clears collections and subsequent runCoordinator calls are no-ops', () => {
+    const coordinator = new HtmlClusterCoordinator();
     const applyMock = jest.fn<ApplyOcclusionFn>();
     coordinator.onCollectionAdded(createMockCollection([], applyMock));
 
     coordinator.dispose();
-    expect(capturedCallbacks.length).toBe(0);
-
-    fireCoordinatorEvent();
+    coordinator.runCoordinator();
     expect(applyMock).not.toHaveBeenCalled();
   });
 
   test('calls applyHtmlClusterOcclusion on registered collections and stops after removal', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
+    const coordinator = new HtmlClusterCoordinator();
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
     const collectionA = createMockCollection([], applyMockA);
@@ -73,19 +48,19 @@ describe(HtmlClusterCoordinator.name, () => {
     coordinator.onCollectionAdded(collectionA);
     coordinator.onCollectionAdded(createMockCollection([], applyMockB));
 
-    fireCoordinatorEvent();
+    coordinator.runCoordinator();
     expect(applyMockA).toHaveBeenCalledTimes(1);
     expect(applyMockB).toHaveBeenCalledTimes(1);
 
     coordinator.onCollectionRemoved(collectionA);
     applyMockA.mockClear();
-    fireCoordinatorEvent();
+    coordinator.runCoordinator();
     expect(applyMockA).not.toHaveBeenCalled();
     expect(applyMockB).toHaveBeenCalledTimes(2);
   });
 
   test('cross-collection occlusion: overlapping farther cluster is occluded, non-overlapping is not', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
+    const coordinator = new HtmlClusterCoordinator();
     const closeIcon = createMockIcon();
     const farOverlappingIcon = createMockIcon();
     const farDistantIcon = createMockIcon();
@@ -100,7 +75,7 @@ describe(HtmlClusterCoordinator.name, () => {
       )
     );
 
-    fireCoordinatorEvent();
+    coordinator.runCoordinator();
 
     const appliedToA = applyMockA.mock.calls[0][0];
     const appliedToB = applyMockB.mock.calls[0][0];
@@ -110,7 +85,7 @@ describe(HtmlClusterCoordinator.name, () => {
   });
 
   test('partially overlapping clusters: only the cluster within overlapRadius is occluded', () => {
-    const coordinator = new HtmlClusterCoordinator(mockEventTrigger);
+    const coordinator = new HtmlClusterCoordinator();
     const closeIcon = createMockIcon();
     const nearFarIcon = createMockIcon();
     const distantFarIcon = createMockIcon();
@@ -127,7 +102,7 @@ describe(HtmlClusterCoordinator.name, () => {
       )
     );
 
-    fireCoordinatorEvent();
+    coordinator.runCoordinator();
 
     const applied = applyMock.mock.calls[0][0];
     expect(applied.has(closeIcon)).toBe(false);
@@ -137,12 +112,7 @@ describe(HtmlClusterCoordinator.name, () => {
 });
 
 function createMockIcon(): Overlay3DIcon {
-  return new Mock<Overlay3DIcon>()
-    .setup(i => i.getPosition())
-    .returns(new Vector3())
-    .setup(i => i.getColor())
-    .returns(new Color(1, 1, 1))
-    .object();
+  return new Overlay3DIcon({ position: new Vector3(), minPixelSize: 1, maxPixelSize: 100, iconRadius: 1 }, {});
 }
 
 function createMockCollection(screenInfos: ClusterScreenInfo[], applyFn?: ApplyOcclusionMock): HtmlClusterCollection {

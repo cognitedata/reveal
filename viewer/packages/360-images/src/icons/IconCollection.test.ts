@@ -64,6 +64,12 @@ describe(IconCollection.name, () => {
   const renderFrame = (camera: PerspectiveCamera, frameNumber = 0) =>
     capturedRenderCallback?.({ frameNumber, renderer: mockRenderer, camera });
 
+  const renderFrameWithClusters = (collection: IconCollection, camera: PerspectiveCamera, frameNumber = 0) => {
+    const params = { frameNumber, renderer: mockRenderer, camera };
+    capturedRenderCallback?.(params);
+    collection.prepareHtmlClusters(params);
+  };
+
   const isFloorDiscMesh = (o: Object3D): o is InstancedMesh<CircleGeometry, MeshBasicMaterial> =>
     o instanceof InstancedMesh && o.renderOrder === 4;
 
@@ -155,7 +161,7 @@ describe(IconCollection.name, () => {
     // Valid structure with correct properties
     const structureCollection = createCollection([origin, new Vector3(5, 0, 0)], true);
     expect(structureCollection.getVisibleClusteredIcons()).toHaveLength(0);
-    renderFrame(createCamera(new Vector3(0, 0, 20)));
+    renderFrameWithClusters(structureCollection, createCamera(new Vector3(0, 0, 20)));
 
     const clusteredIcons = structureCollection.getVisibleClusteredIcons();
     expect(clusteredIcons.length).toBeGreaterThan(0);
@@ -169,7 +175,7 @@ describe(IconCollection.name, () => {
 
     // Centroid calculation for clusters
     const centroidCollection = createCollection(farPositions, true);
-    renderFrame(createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0)));
+    renderFrameWithClusters(centroidCollection, createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0)));
     const clusters = centroidCollection
       .getVisibleClusteredIcons()
       .filter((item: ClusteredIcon) => item.isCluster && item.clusterIcons && item.clusterIcons.length > 1);
@@ -187,7 +193,7 @@ describe(IconCollection.name, () => {
 
     // Single icons show as individual with correct properties (not marked as clusters)
     const widelySpacedCollection = createCollection([origin, new Vector3(500, 0, 0)], true);
-    renderFrame(createCamera(new Vector3(0, 0, 10), new Vector3(250, 0, 0)));
+    renderFrameWithClusters(widelySpacedCollection, createCamera(new Vector3(0, 0, 10), new Vector3(250, 0, 0)));
     const wideIcons = widelySpacedCollection.getVisibleClusteredIcons();
     const singleIconClusters = wideIcons.filter((item: ClusteredIcon) => item.clusterSize === 1 && item.isCluster);
     expect(singleIconClusters.length).toBe(0);
@@ -202,8 +208,8 @@ describe(IconCollection.name, () => {
 
     // Declustering when camera moves close
     const declusterCollection = createCollection(farPositions, true);
-    renderFrame(createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0)), 0);
-    renderFrame(createCamera(new Vector3(100, 0, 5), new Vector3(100, 0, 0)), 1);
+    renderFrameWithClusters(declusterCollection, createCamera(new Vector3(0, 0, 10), new Vector3(100, 0, 0)), 0);
+    renderFrameWithClusters(declusterCollection, createCamera(new Vector3(100, 0, 5), new Vector3(100, 0, 0)), 1);
     expect(
       declusterCollection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => !i.isCluster).length
     ).toBeGreaterThanOrEqual(1);
@@ -213,7 +219,7 @@ describe(IconCollection.name, () => {
   test('cluster intersection, hover state management, and clearHoveredCluster behavior', () => {
     const setNeedsRedrawMock = jest.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
-    renderFrame(createCamera(clusterCameraPosition, clusterLookAt));
+    renderFrameWithClusters(collection, createCamera(clusterCameraPosition, clusterLookAt));
 
     const clusters = collection.getVisibleClusteredIcons().filter((item: ClusteredIcon) => item.isCluster);
     expect(clusters.length).toBeGreaterThan(0);
@@ -499,7 +505,7 @@ describe(IconCollection.name, () => {
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
     const camera = createCamera(new Vector3(0, 0, 50));
 
-    renderFrame(camera);
+    renderFrameWithClusters(collection, camera);
     const initialClusters = collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster);
     expect(collection.getVisibleClusteredIcons().length).toBeGreaterThan(0);
 
@@ -517,7 +523,7 @@ describe(IconCollection.name, () => {
 
     // Switch back to clustered restores clustering
     collection.setCullingScheme('clustered');
-    renderFrame(camera, 2);
+    renderFrameWithClusters(collection, camera, 2);
     expect(collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster).length).toBe(
       initialClusters.length
     );
@@ -528,7 +534,7 @@ describe(IconCollection.name, () => {
   test('intersectCluster returns undefined after switching to proximity mode', () => {
     const collection = createCollection(clusterablePositions, true);
     const camera = createCamera(clusterCameraPosition, clusterLookAt);
-    renderFrame(camera);
+    renderFrameWithClusters(collection, camera);
 
     // Confirm there is a hittable cluster in clustered mode
     const clusters = collection.getVisibleClusteredIcons().filter((i: ClusteredIcon) => i.isCluster);

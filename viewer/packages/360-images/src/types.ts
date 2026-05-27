@@ -47,7 +47,6 @@ export type Image360ClusterIntersectionData<T extends DataSourceType = DataSourc
 
 /**
  * Options for HTML-based cluster rendering of 360 image icons.
- * @module @cognite/reveal
  */
 export type HtmlClusterRendererOptions = {
   maxPoolSize?: number;

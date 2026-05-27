@@ -34,6 +34,8 @@ export class HtmlClusterRenderer {
 
   private _stagedScreenInfos: ClusterScreenInfo[] = [];
   private _stagedCanvas: HTMLCanvasElement | undefined = undefined;
+  private _stagedCanvasRect: DOMRect | undefined = undefined;
+  private readonly _countSpanCache = new WeakMap<HTMLDivElement, HTMLSpanElement>();
 
   constructor(options: HtmlClusterRendererOptions = {}) {
     this._maxPoolSize = options.maxPoolSize ?? 100;
@@ -54,13 +56,17 @@ export class HtmlClusterRenderer {
     if (!this._isVisible) {
       this._stagedScreenInfos = [];
       this._stagedCanvas = undefined;
+      this._stagedCanvasRect = undefined;
       return;
     }
 
-    this.ensureAttached(renderer.domElement);
-    this.updateContainerSize(renderer.domElement);
-
     const canvas = renderer.domElement;
+    this.ensureAttached(canvas);
+
+    const canvasRect = canvas.getBoundingClientRect();
+    this._stagedCanvasRect = canvasRect;
+    this.updateContainerSize(canvasRect);
+
     this._stagedScreenInfos = this.computeClusterScreenInfos(visibleClusters, camera, modelTransform, canvas);
     this._stagedCanvas = canvas;
 
@@ -88,13 +94,14 @@ export class HtmlClusterRenderer {
 
   // Applies DOM positions and fade opacity using a globally-computed occlusion set.
   public applyWithOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
-    if (!this._isVisible || !this._stagedCanvas) {
+    if (!this._isVisible || !this._stagedCanvas || !this._stagedCanvasRect) {
       return;
     }
+    const canvasRect = this._stagedCanvasRect;
     for (const info of this._stagedScreenInfos) {
       const element = this._activeElements.get(info.data.icon);
       if (element) {
-        this.applyClusterElementUpdate(element, info, occludedIcons.has(info.data.icon), this._stagedCanvas);
+        this.applyClusterElementUpdate(element, info, occludedIcons.has(info.data.icon), canvasRect);
       }
     }
   }
@@ -217,8 +224,7 @@ export class HtmlClusterRenderer {
     this._domElement = parent;
   }
 
-  private updateContainerSize(canvas: HTMLCanvasElement): void {
-    const rect = canvas.getBoundingClientRect();
+  private updateContainerSize(rect: DOMRect): void {
     this._container.style.width = `${rect.width}px`;
     this._container.style.height = `${rect.height}px`;
   }
@@ -226,7 +232,7 @@ export class HtmlClusterRenderer {
   private acquireElement(): HTMLDivElement {
     const element = this._elementPool.pop() ?? this.createClusterElement();
     element.classList.remove('fade-out', 'hovered');
-    element.style.display = 'flex';
+    element.style.display = 'none';
     element.style.setProperty('--cluster-fade-opacity', '1');
     this._container.appendChild(element);
     return element;
@@ -255,6 +261,7 @@ export class HtmlClusterRenderer {
     countSpan.className = this._countSpanName;
     element.appendChild(countSpan);
 
+    this._countSpanCache.set(element, countSpan);
     return element;
   }
 
@@ -299,10 +306,10 @@ export class HtmlClusterRenderer {
     element: HTMLDivElement,
     info: ClusterScreenInfo,
     isOccluded: boolean,
-    canvas: HTMLCanvasElement
+    canvasRect: DOMRect
   ): void {
     const { screenPos, distance, projectedSize, data } = info;
-    const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
+    const { width: canvasWidth, height: canvasHeight } = canvasRect;
     const offScreenMargin = projectedSize / 2;
 
     const fadeOpacity = isOccluded ? this.computeFadeOpacity(distance) : 1;
@@ -319,18 +326,14 @@ export class HtmlClusterRenderer {
       return;
     }
 
-    element.style.display = 'flex';
     element.style.setProperty('--cluster-fade-opacity', String(fadeOpacity));
-
     element.style.left = `${screenPos.x}px`;
     element.style.top = `${screenPos.y}px`;
-    element.style.width = `${projectedSize}px`;
-    element.style.height = `${projectedSize}px`;
-    element.style.fontSize = `${projectedSize * 0.25}px`;
     element.style.setProperty('--size', `${projectedSize}px`);
+    element.style.display = 'flex';
 
-    const countSpan = element.querySelector(`.${this._countSpanName}`);
-    if (countSpan instanceof HTMLSpanElement) {
+    const countSpan = this._countSpanCache.get(element);
+    if (countSpan !== undefined) {
       const displayCount = data.clusterSize > 999 ? '999+' : data.clusterSize.toString();
       if (countSpan.textContent !== displayCount) {
         countSpan.textContent = displayCount;
