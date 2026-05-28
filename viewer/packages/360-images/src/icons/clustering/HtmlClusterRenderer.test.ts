@@ -230,30 +230,25 @@ describe(HtmlClusterRenderer.name, () => {
     noAnimRenderer.dispose();
   });
 
-  test('prepareClusters populates getStagedScreenInfos with one entry per cluster', () => {
+  test('prepareClusters stages clusters and defers count update until applyWithOcclusion', () => {
     renderer.prepareClusters(
-      [createClusterData(iconAtOrigin, true, 5), createClusterData(iconAtOne, true, 10)],
+      [createClusterData(iconAtOrigin, true, 42), createClusterData(iconAtOne, true, 10)],
       params
     );
+
     const staged = renderer.getStagedScreenInfos();
     expect(staged.length).toBe(2);
     expect(staged[0].data.icon).toBe(iconAtOrigin);
     expect(staged[1].data.icon).toBe(iconAtOne);
 
-    renderer.prepareClusters([createClusterData(defaultIcon, false, 1)], params);
-    expect(renderer.getStagedScreenInfos().length).toBe(0);
-  });
-
-  test('prepareClusters without applyWithOcclusion does not set cluster count text', () => {
-    renderer.prepareClusters([createClusterData(iconAtOrigin, true, 42)], params);
-    const container = params.renderer.domElement.parentElement?.querySelector('.test-cluster-container');
-    assert(container);
-    const countSpan = container.querySelector('.test-cluster-count');
-    expect(countSpan).toBeTruthy();
+    const countSpan = params.renderer.domElement.parentElement?.querySelector('.test-cluster-count');
     expect(countSpan?.textContent).toBe('');
 
     renderer.applyWithOcclusion(new Set());
     expect(countSpan?.textContent).toBe('42');
+
+    renderer.prepareClusters([createClusterData(defaultIcon, false, 1)], params);
+    expect(renderer.getStagedScreenInfos().length).toBe(0);
   });
 
   test('applyWithOcclusion fades an occluded cluster according to configured distance', () => {
