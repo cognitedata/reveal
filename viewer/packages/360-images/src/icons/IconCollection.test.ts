@@ -14,7 +14,7 @@ import {
   Vector3,
   WebGLRenderer
 } from 'three';
-import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
+import { SceneHandler } from '@reveal/utilities';
 import { jest } from '@jest/globals';
 import { ClusteredIcon, IconCollection } from './IconCollection';
 import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
@@ -23,8 +23,6 @@ import assert from 'assert';
 
 describe(IconCollection.name, () => {
   let mockSceneHandler: SceneHandler;
-  let mockEventTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
-  let capturedRenderCallback: BeforeSceneRenderedDelegate | undefined;
   let mockRenderer: WebGLRenderer;
   let addedObjects: Object3D[];
 
@@ -56,40 +54,29 @@ describe(IconCollection.name, () => {
     new IconCollection(
       positions,
       mockSceneHandler,
-      mockEventTrigger,
       enableHtmlClusters !== undefined ? { enableHtmlClusters } : undefined,
       setNeedsRedraw
     );
 
-  const renderFrame = (camera: PerspectiveCamera, frameNumber = 0) =>
-    capturedRenderCallback?.({ frameNumber, renderer: mockRenderer, camera });
-
-  const renderFrameWithClusters = (collection: IconCollection, camera: PerspectiveCamera, frameNumber = 0) => {
+  const renderFrame = (collection: IconCollection, camera: PerspectiveCamera, frameNumber = 0) => {
     const params = { frameNumber, renderer: mockRenderer, camera };
-    capturedRenderCallback?.(params);
-    collection.prepareHtmlClusters(params);
+    collection.updateIcons(params);
+    collection.updateCulling(params);
   };
+
+  const renderFrameWithClusters = renderFrame;
 
   const isFloorDiscMesh = (o: Object3D): o is InstancedMesh<CircleGeometry, MeshBasicMaterial> =>
     o instanceof InstancedMesh && o.renderOrder === 4;
 
   beforeEach(() => {
     addedObjects = [];
-    capturedRenderCallback = undefined;
     mockSceneHandler = new Mock<SceneHandler>()
       .setup(s => s.addObject3D(It.IsAny()))
       .callback(({ args }) => {
         addedObjects.push(args[0]);
       })
       .setup(s => s.removeObject3D(It.IsAny()))
-      .returns(undefined)
-      .object();
-    mockEventTrigger = new Mock<EventTrigger<BeforeSceneRenderedDelegate>>()
-      .setup(e => e.subscribe(It.IsAny()))
-      .callback(({ args }) => {
-        capturedRenderCallback = args[0];
-      })
-      .setup(e => e.unsubscribe(It.IsAny()))
       .returns(undefined)
       .object();
     mockRenderer = new Mock<WebGLRenderer>()
@@ -110,14 +97,14 @@ describe(IconCollection.name, () => {
 
     // Explicit true
     const enabledCollection = createCollection([origin], true);
-    renderFrame(camera);
+    renderFrame(enabledCollection, camera);
     expect(enabledCollection.isHtmlClustersEnabled()).toBe(true);
     expect(enabledCollection.icons[0].culled).toBe(false);
     enabledCollection.dispose();
 
     // Explicit false
     const disabledCollection = createCollection([origin], false);
-    renderFrame(camera);
+    renderFrame(disabledCollection, camera);
     expect(disabledCollection.isHtmlClustersEnabled()).toBe(false);
     expect(disabledCollection.icons[0].culled).toBe(false);
     disabledCollection.dispose();
@@ -126,33 +113,32 @@ describe(IconCollection.name, () => {
   test('LOD behavior: empty collection, visibility, frustum culling, camera movement, and transforms', () => {
     // Empty collection doesn't throw
     const emptyCollection = createCollection([]);
-    expect(capturedRenderCallback).toBeDefined();
-    expect(() => renderFrame(createCamera(new Vector3(0, 0, 10)))).not.toThrow();
+    expect(() => renderFrame(emptyCollection, createCamera(new Vector3(0, 0, 10)))).not.toThrow();
     emptyCollection.dispose();
 
     // Single icon visible
     const singleCollection = createCollection([origin]);
-    renderFrame(createCamera(new Vector3(0, 0, 30)));
+    renderFrame(singleCollection, createCamera(new Vector3(0, 0, 30)));
     expect(singleCollection.icons[0].culled).toBe(false);
     singleCollection.dispose();
 
     // Icon outside frustum is culled
     const outsideCollection = createCollection([new Vector3(1000, 1000, 0)]);
-    renderFrame(createCamera(new Vector3(0, 0, 10), new Vector3(0, 0, -100)));
+    renderFrame(outsideCollection, createCamera(new Vector3(0, 0, 10), new Vector3(0, 0, -100)));
     expect(outsideCollection.icons[0].culled).toBe(true);
     outsideCollection.dispose();
 
     // Camera movement makes icons visible
     const movementCollection = createCollection(farPositions);
-    renderFrame(createCamera(new Vector3(0, 0, 10)));
-    renderFrame(createCamera(new Vector3(100, 0, 10), new Vector3(100, 0, 0)));
+    renderFrame(movementCollection, createCamera(new Vector3(0, 0, 10)));
+    renderFrame(movementCollection, createCamera(new Vector3(100, 0, 10), new Vector3(100, 0, 0)));
     expect(movementCollection.icons.filter(icon => !icon.culled).length).toBe(3);
     movementCollection.dispose();
 
     // Transform applied correctly
     const transformCollection = createCollection([origin]);
     transformCollection.setTransform(new Matrix4().makeTranslation(10, 0, 0));
-    renderFrame(createCamera(new Vector3(10, 0, 30)));
+    renderFrame(transformCollection, createCamera(new Vector3(10, 0, 30)));
     expect(transformCollection.icons[0].culled).toBe(false);
     transformCollection.dispose();
   });
@@ -262,7 +248,7 @@ describe(IconCollection.name, () => {
     // clearHoveredCluster does nothing when HTML clusters disabled
     const disabledMock = jest.fn();
     const disabledCollection = createCollection(clusterablePositions, false, disabledMock);
-    renderFrame(createCamera(clusterCameraPosition, clusterLookAt));
+    renderFrame(disabledCollection, createCamera(clusterCameraPosition, clusterLookAt));
     disabledMock.mockClear();
     disabledCollection.clearHoveredCluster();
     expect(disabledMock).not.toHaveBeenCalled();
@@ -336,10 +322,10 @@ describe(IconCollection.name, () => {
     expect(collection.getMaxOctreeDepth()).toBeUndefined();
 
     collection.set360IconCullingRestrictions(100, 4);
-    expect(() => renderFrame(createCamera(new Vector3(0, 0, 50)))).not.toThrow();
+    expect(() => renderFrame(collection, createCamera(new Vector3(0, 0, 50)))).not.toThrow();
 
     collection.set360IconCullingRestrictions(-5, 999);
-    expect(() => renderFrame(createCamera(new Vector3(0, 0, 50)), 1)).not.toThrow();
+    expect(() => renderFrame(collection, createCamera(new Vector3(0, 0, 50)), 1)).not.toThrow();
 
     collection.dispose();
 
@@ -422,7 +408,7 @@ describe(IconCollection.name, () => {
       const camera = createCamera(new Vector3(0, 0, 5));
 
       collection.setFloorMode(true);
-      expect(() => renderFrame(camera)).not.toThrow();
+      expect(() => renderFrame(collection, camera)).not.toThrow();
 
       collection.dispose();
     });
@@ -454,7 +440,7 @@ describe(IconCollection.name, () => {
       expect(isHidden(floorDiscMesh, 0)).toBe(true);
 
       collection.setFloorMode(true);
-      renderFrame(createCamera(new Vector3(0, 0, 5)));
+      renderFrame(collection, createCamera(new Vector3(0, 0, 5)));
 
       expect(isHidden(floorDiscMesh, 0)).toBe(false);
 
@@ -519,7 +505,7 @@ describe(IconCollection.name, () => {
     collection.setCullingScheme('proximity');
     expect(setNeedsRedrawMock).toHaveBeenCalledTimes(1);
     expect(collection.getVisibleClusteredIcons()).toHaveLength(0);
-    renderFrame(camera, 1);
+    renderFrame(collection, camera, 1);
 
     // Switch back to clustered restores clustering
     collection.setCullingScheme('clustered');

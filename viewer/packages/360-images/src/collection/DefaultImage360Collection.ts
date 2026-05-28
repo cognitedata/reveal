@@ -355,8 +355,9 @@ export class DefaultImage360Collection<T extends DataSourceType>
     this._icons.applyHtmlClusterOcclusion(occludedIcons);
   }
 
-  public prepareHtmlClusters(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
-    this._icons.prepareHtmlClusters(params);
+  public updateIcons(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    this._icons.updateIcons(params);
+    this._icons.updateCulling(params);
   }
 
   public remove(entity: Image360Entity<T>): void {

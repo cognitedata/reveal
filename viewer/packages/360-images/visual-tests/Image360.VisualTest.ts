@@ -274,7 +274,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       const image360Factory = new Image360CollectionFactory(
         providerMap,
         sceneHandler,
-        onBeforeRender,
         () => {},
         device
       );
@@ -291,7 +290,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       const image360Factory = new Image360CollectionFactory(
         providerMap,
         sceneHandler,
-        onBeforeRender,
         () => {},
         device
       );
@@ -317,7 +315,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const providerMap = new Map<Image360CollectionSourceType, Image360Provider<ClassicDataSourceType>>([
       ['event', dataProvider]
     ]);
-    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, onBeforeRender, () => {}, device);
+    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
     const image360Facade = new Image360Facade(image360Factory);
     const collection = await image360Facade.create({});
 

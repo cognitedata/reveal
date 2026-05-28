@@ -98,9 +98,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _enableFloorIcons: boolean;
   private readonly _htmlClusterCoordinator: HtmlClusterCoordinator | undefined;
 
-  private readonly onClusterBeforeRender: BeforeSceneRenderedDelegate = params => {
+  private readonly onBeforeRender: BeforeSceneRenderedDelegate = params => {
     for (const collection of this._image360Facade.collections) {
-      collection.prepareHtmlClusters(params);
+      collection.updateIcons(params);
     }
     this._htmlClusterCoordinator?.runCoordinator();
   };
@@ -175,7 +175,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const image360EntityFactory = new Image360CollectionFactory(
       image360ProviderMap,
       sceneHandler,
-      onBeforeSceneRendered,
       setNeedsRedraw,
       device,
       iconsOptions
@@ -190,8 +189,8 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
     if (iconsOptions?.enableHtmlClusters) {
       this._htmlClusterCoordinator = new HtmlClusterCoordinator();
-      onBeforeSceneRendered.subscribe(this.onClusterBeforeRender);
     }
+    onBeforeSceneRendered.subscribe(this.onBeforeRender);
     if (!FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
       this._stationaryCameraManager = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
@@ -636,7 +635,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this.updateHoverStateOnRenderHandler);
-    this._onBeforeSceneRenderedEvent.unsubscribe(this.onClusterBeforeRender);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this.onBeforeRender);
     if (this._hasEventListeners) {
       this._domElement.removeEventListener('pointermove', this.onHover);
       this._domElement.removeEventListener('keydown', this.onKeyPressed);
