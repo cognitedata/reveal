@@ -12,7 +12,7 @@ describe('test callActionWithIndicesAsync', () => {
     const timesToCall = end - start + 1;
     const action = jest.fn();
     await callActionWithIndicesAsync(start, end, action);
-    expect(action).toBeCalledTimes(timesToCall);
+    expect(action).toHaveBeenCalledTimes(timesToCall);
     expect(action).toHaveBeenNthCalledWith(1, start);
     expect(action).toHaveBeenNthCalledWith(1 + 1234, start + 1234);
     expect(action).toHaveBeenNthCalledWith(timesToCall, end);

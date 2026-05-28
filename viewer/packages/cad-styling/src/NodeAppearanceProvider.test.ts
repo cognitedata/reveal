@@ -31,7 +31,7 @@ describe('NodeAppearanceProvider', () => {
 
     provider.applyStyles(applyCb);
 
-    expect(applyCb).not.toBeCalled();
+    expect(applyCb).not.toHaveBeenCalled();
   });
 
   test('applyStyles() applies styles in the order they were added', () => {
@@ -45,7 +45,7 @@ describe('NodeAppearanceProvider', () => {
 
     provider.applyStyles(applyCb);
 
-    expect(applyCb).toBeCalledTimes(2);
+    expect(applyCb).toHaveBeenCalledTimes(2);
     expect(applyCb.mock.calls[0]).toEqual([nodeCollection1.getIndexSet(), style1]);
     expect(applyCb.mock.calls[1]).toEqual([nodeCollection2.getIndexSet(), style2]);
   });
@@ -62,8 +62,8 @@ describe('NodeAppearanceProvider', () => {
     provider.unassignStyledNodeCollection(nodeCollection2);
     provider.applyStyles(applyCb);
 
-    expect(applyCb).toBeCalledTimes(1);
-    expect(applyCb).toBeCalledWith(nodeCollection1.getIndexSet(), style1);
+    expect(applyCb).toHaveBeenCalledTimes(1);
+    expect(applyCb).toHaveBeenCalledWith(nodeCollection1.getIndexSet(), style1);
   });
 
   test('add/change/remove style triggers changed-listener', () => {
@@ -73,15 +73,15 @@ describe('NodeAppearanceProvider', () => {
 
     provider.assignStyledNodeCollection(nodeCollection, {});
     jest.runAllTimers();
-    expect(listener).toBeCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(1);
 
     provider.assignStyledNodeCollection(nodeCollection, { visible: false });
     jest.runAllTimers();
-    expect(listener).toBeCalledTimes(2);
+    expect(listener).toHaveBeenCalledTimes(2);
 
     provider.unassignStyledNodeCollection(nodeCollection);
     jest.runAllTimers();
-    expect(listener).toBeCalledTimes(3);
+    expect(listener).toHaveBeenCalledTimes(3);
   });
 
   test('triggers changed when underlying set is changed', () => {
@@ -94,7 +94,7 @@ describe('NodeAppearanceProvider', () => {
     set.updateSet(new IndexSet([3, 4, 5, 6]));
     jest.runAllTimers();
 
-    expect(listener).toBeCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 
   test('does not trigger changed when removed set is changed', () => {
@@ -109,7 +109,7 @@ describe('NodeAppearanceProvider', () => {
     nodeCollection.updateSet(new IndexSet([3, 4, 5, 6]));
     jest.runAllTimers();
 
-    expect(listener).not.toBeCalled();
+    expect(listener).not.toHaveBeenCalled();
   });
 
   test('loadingStateChanged is triggered while NodeCollection is loading', () => {
@@ -121,13 +121,13 @@ describe('NodeAppearanceProvider', () => {
     nodeCollection.isLoading = true;
     nodeCollection.triggerChanged();
     jest.runAllTimers();
-    expect(isLoadingChangedListener).toBeCalledWith(true);
+    expect(isLoadingChangedListener).toHaveBeenCalledWith(true);
     isLoadingChangedListener.mockReset();
 
     nodeCollection.isLoading = false;
     nodeCollection.triggerChanged();
     jest.runAllTimers();
-    expect(isLoadingChangedListener).toBeCalledWith(false);
+    expect(isLoadingChangedListener).toHaveBeenCalledWith(false);
   });
 
   test('getPrioritizedAreas returns areas that contain all boxes for all collections', () => {

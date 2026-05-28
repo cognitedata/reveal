@@ -2,41 +2,41 @@
  * Copyright 2021 Cognite AS
  */
 
-import nock from 'nock';
-
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
+import { File3dFormat } from '../types';
 import { Mock } from 'moq.ts';
 
 describe(CdfModelMetadataProvider.name, () => {
+  const baseUrl = 'https://api.cognitedata.com';
+  const project = 'my-project';
+
   let modelIdentifier: CdfModelIdentifier;
   let provider: CdfModelMetadataProvider;
-  let apiPath: RegExp;
 
   beforeEach(async () => {
     modelIdentifier = new CdfModelIdentifier(1337, 42);
-    apiPath = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
-    const mockedClient = new Mock<CogniteClient>();
+    const mockedClient = new Mock<CogniteClient>()
+      .setup(c => c.getBaseUrl())
+      .returns(baseUrl)
+      .setup(c => c.project)
+      .returns(project)
+      .object();
 
-    provider = new CdfModelMetadataProvider(mockedClient.object());
+    provider = new CdfModelMetadataProvider(mockedClient);
   });
 
-  test('getModelUri throw error if no compatible output is found', async () => {
+  test('getModelUri returns correct URL for a valid output', async () => {
     // Arrange
-    const response = {
-      items: [
-        {
-          format: 'unsupported-format',
-          version: 1,
-          blobId: 1
-        }
-      ]
-    };
-    nock(/.*/).post(apiPath).reply(200, response);
+    const formatMetadata = { format: File3dFormat.GltfCadModel, version: 9, blobId: 1 };
+    const expectedUrl = `${baseUrl}/api/v1/projects/${project}/3d/files/${formatMetadata.blobId}`;
 
-    // Act & Assert
-    expect(provider.getModelUri(modelIdentifier, response.items[0])).rejects.toThrowError();
+    // Act
+    const uri = await provider.getModelUri(modelIdentifier, formatMetadata);
+
+    // Assert
+    expect(uri).toEqual(expectedUrl);
   });
 });

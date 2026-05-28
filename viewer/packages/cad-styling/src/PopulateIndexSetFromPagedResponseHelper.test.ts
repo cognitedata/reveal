@@ -60,7 +60,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
     expect(helper.areas.isEmpty).toBeFalse();
     expect(helper.isLoading).toBeFalse();
-    expect(notifyChangedCallback).toBeCalledTimes(1);
+    expect(notifyChangedCallback).toHaveBeenCalledTimes(1);
   });
 
   test('isLoading returns true while processing pages', async () => {
@@ -92,7 +92,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     expect(helper.areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
 
-    expect(notifyChangedCallback).toBeCalledTimes(4);
+    expect(notifyChangedCallback).toHaveBeenCalledTimes(4);
   });
 });
 

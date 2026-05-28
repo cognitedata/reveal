@@ -24,11 +24,11 @@ describe('Cognite3DViewerToolBase', () => {
 
     tool.dispose();
 
-    expect(handler).toBeCalledTimes(1);
+    expect(handler).toHaveBeenCalledTimes(1);
   });
 
   test('dispose() twice, throws error', () => {
     tool.dispose();
-    expect(tool.dispose).toThrowError();
+    expect(tool.dispose).toThrow();
   });
 });

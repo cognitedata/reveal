@@ -409,12 +409,16 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._faceMaterials = [];
   }
 
-  private async getScaledImageTexture(texture: THREE.Texture, imageSize: number): Promise<THREE.Texture> {
+  private async getScaledImageTexture(
+    texture: THREE.Texture<HTMLImageElement | HTMLCanvasElement>,
+    imageSize: number
+  ): Promise<THREE.Texture<HTMLCanvasElement>> {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
+    const { image } = texture;
     //Scale down the width and height
-    let width = texture.image.width;
-    let height = texture.image.height;
+    let width = image.width;
+    let height = image.height;
 
     // Calculate new dimensions while maintaining aspect ratio
     if (width > imageSize) {
@@ -428,7 +432,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     canvas.width = width;
     canvas.height = height;
 
-    context!.drawImage(texture.image, 0, 0, canvas.width, canvas.height);
+    context?.drawImage(image, 0, 0, canvas.width, canvas.height);
 
     const scaledImageTexture = new THREE.CanvasTexture(canvas);
     texture.dispose();

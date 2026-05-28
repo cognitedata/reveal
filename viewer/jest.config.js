@@ -35,10 +35,18 @@ module.exports = () => {
       '!**/dist/**/*.*',
       '!**/app/**'
     ],
+    globals: {
+      'ts-jest': {
+        tsconfig: 'tsconfig.test.json'
+      }
+    },
     automock: false,
     setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock'],
     setupFilesAfterEnv: ['jest-extended/all'],
     testEnvironment: 'jsdom',
+    testEnvironmentOptions: {
+      url: 'http://localhost'
+    },
     workerIdleMemoryLimit: '512MB'
   };
 };

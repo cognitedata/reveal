@@ -42,7 +42,7 @@ describe(ClassificationHandler.name, () => {
       .map(k => WellKnownAsprsPointClassCodes[k]);
 
     expect(classNames).toHaveLength(defaultClasses.length);
-    expect(classNames).toContainValues(defaultClasses);
+    expect(classNames).toIncludeAllMembers(defaultClasses);
   });
 
   test('holds provided classification set if any', () => {
@@ -51,8 +51,8 @@ describe(ClassificationHandler.name, () => {
     const resultClasses = handler.classes;
 
     expect(resultClasses).toHaveLength(classificationSet.length);
-    expect(resultClasses.map(c => c.name)).toContainValues(classificationSet.map(c => c.name));
-    expect(resultClasses.map(c => c.code)).toContainValues(classificationSet.map(c => c.code));
+    expect(resultClasses.map(c => c.name)).toIncludeAllMembers(classificationSet.map(c => c.name));
+    expect(resultClasses.map(c => c.code)).toIncludeAllMembers(classificationSet.map(c => c.code));
   });
 
   test('has classes in custom classification set', () => {
