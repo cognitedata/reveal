@@ -13,40 +13,15 @@ type ApplyOcclusionFn = HtmlClusterCollection['applyHtmlClusterOcclusion'];
 type ApplyOcclusionMock = jest.MockedFunction<ApplyOcclusionFn>;
 
 describe(HtmlClusterCoordinator.name, () => {
-  test('calls applyHtmlClusterOcclusion exactly once per collection per runCoordinator call', () => {
-    const coordinator = new HtmlClusterCoordinator();
-    const applyMockA = jest.fn<ApplyOcclusionFn>();
-    const collectionA = createMockCollection([], applyMockA);
-
-    coordinator.runCoordinator([collectionA]);
-    expect(applyMockA).toHaveBeenCalledTimes(1);
-
-    applyMockA.mockClear();
-    const collectionB = createMockCollection([]);
-    coordinator.runCoordinator([collectionA, collectionB]);
-    expect(applyMockA).toHaveBeenCalledTimes(1);
-
-    expect(() => coordinator.runCoordinator([])).not.toThrow();
-  });
-
-  test('runCoordinator with empty list is a no-op', () => {
-    const coordinator = new HtmlClusterCoordinator();
-    const applyMock = jest.fn<ApplyOcclusionFn>();
-    const collection = createMockCollection([], applyMock);
-
-    coordinator.runCoordinator([]);
-    expect(applyMock).not.toHaveBeenCalled();
-
-    coordinator.runCoordinator([collection]);
-    expect(applyMock).toHaveBeenCalledTimes(1);
-  });
-
-  test('only collections passed to runCoordinator receive applyHtmlClusterOcclusion', () => {
+  test('dispatches applyHtmlClusterOcclusion to exactly the passed collections, once per call', () => {
     const coordinator = new HtmlClusterCoordinator();
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
     const collectionA = createMockCollection([], applyMockA);
     const collectionB = createMockCollection([], applyMockB);
+
+    coordinator.runCoordinator([]);
+    expect(applyMockA).not.toHaveBeenCalled();
 
     coordinator.runCoordinator([collectionA, collectionB]);
     expect(applyMockA).toHaveBeenCalledTimes(1);
