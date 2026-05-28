@@ -49,19 +49,19 @@ export type RenderParameters = {
 export type HtmlClusterOptions = {
   /** Camera distance (world units) at which an occluded cluster begins to fade out.
    * @default 20
-  */
+   */
   fadeStartDistance?: number;
   /** Camera distance (world units) at which an occluded cluster becomes fully invisible.
    * @default 150
-  */
+   */
   fadeEndDistance?: number;
   /** Maximum distance (world units) between icons for them to be grouped into a cluster.
    * @default 11
-  */
+   */
   clusterDistanceThreshold?: number;
   /** Maximum octree depth for clustering. Lower values produce fewer, larger clusters.
    * @default 2
-  */
+   */
   maxOctreeDepth?: number;
 };
 
