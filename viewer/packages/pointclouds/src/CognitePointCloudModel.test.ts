@@ -137,7 +137,7 @@ describe(CognitePointCloudModel.name, () => {
 
   test('visible property hides or unhides model', () => {
     const visible = true;
-    expect(classicModel.visible).toBeTrue();
+    expect(classicModel.visible).toBeTruthy();
 
     classicModel.visible = false;
 

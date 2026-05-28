@@ -9,19 +9,19 @@ import * as THREE from 'three';
 import { PointCloudOctree, PointCloudOctreeNode } from './potree-three-loader';
 import { Mock } from 'moq.ts';
 import { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
-import { jest as jestGlobals } from '@jest/globals';
+import { vi } from 'vitest';
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
 
 describe(PointCloudNode.name, () => {
   afterEach(() => {
-    jestGlobals.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('picking returns a Promise', async () => {
     const node = createPointCloudNode();
-    jestGlobals.spyOn(PointCloudOctree.prototype, 'pick').mockResolvedValue(null);
+    vi.spyOn(PointCloudOctree.prototype, 'pick').mockResolvedValue(null);
 
     const result = node.pick(new Mock<THREE.WebGLRenderer>().object(), new THREE.PerspectiveCamera(), new THREE.Ray());
 
@@ -83,7 +83,7 @@ describe(PointCloudNode.name, () => {
       const node = createPointCloudNode();
 
       Object.defineProperty(node.octree, 'root', {
-        get: jestGlobals.fn().mockReturnValue(undefined)
+        get: vi.fn().mockReturnValue(undefined)
       });
 
       const box = new THREE.Box3(new THREE.Vector3(-10, -10, -10), new THREE.Vector3(10, 10, 10));

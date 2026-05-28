@@ -19,7 +19,7 @@ import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 import { CadNode } from '@reveal/cad-model';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
@@ -48,8 +48,8 @@ describe('SectorLoader', () => {
     culler = new StubSectorCuller();
     repository = new StubRepository();
     stateHandler = new ModelStateHandler();
-    collectStatisticsCallback = jest.fn();
-    progressCallback = jest.fn();
+    collectStatisticsCallback = vi.fn();
+    progressCallback = vi.fn();
 
     cadNodeMock = new Mock<CadNode>()
       .setup(p => p.cadModelMetadata)
@@ -82,28 +82,28 @@ describe('SectorLoader', () => {
   test('loadSectors with no models, completes with no sectors', async () => {
     input.models = [];
     const result = await asyncIteratorToArray(loader.loadSectors(input));
-    expect(result).toBeEmpty();
+    expect(result).toHaveLength(0);
   });
 
   test('loadSectors when cameraInMotion is true, completes with no sectors', async () => {
     input.cameraInMotion = true;
     const result = await asyncIteratorToArray(loader.loadSectors(input));
-    expect(result).toBeEmpty();
+    expect(result).toHaveLength(0);
   });
 
   test('loadSectors when cameraInMotion is true, completes with no sectors', async () => {
     input.cameraInMotion = true;
     const result = await asyncIteratorToArray(loader.loadSectors(input));
-    expect(result).toBeEmpty();
+    expect(result).toHaveLength(0);
   });
 
   test('loadSectors with single model returns sectors', async () => {
     const result = await asyncIteratorToArray(loader.loadSectors(input));
-    expect(result).not.toBeEmpty();
+    expect(result).not.toHaveLength(0);
   });
 
   test('loadSectors updates sector state', async () => {
-    const updateStateFn = jest.spyOn(stateHandler, 'updateState');
+    const updateStateFn = vi.spyOn(stateHandler, 'updateState');
 
     for await (const _ of loader.loadSectors(input)) {
     }
@@ -119,7 +119,7 @@ describe('SectorLoader', () => {
       alreadyLoadedSector.metadata.id,
       alreadyLoadedSector.levelOfDetail
     );
-    const updateStateFn = jest.spyOn(stateHandler, 'updateState');
+    const updateStateFn = vi.spyOn(stateHandler, 'updateState');
 
     // Act
     for await (const _ of loader.loadSectors(input)) {

@@ -4,7 +4,7 @@
 
 import { MostFrequentlyUsedCache } from './MostFrequentlyUsedCache';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('MostFrequentlyUsedCache', () => {
   test('set within capacity, returns true', () => {
@@ -15,9 +15,9 @@ describe('MostFrequentlyUsedCache', () => {
   test('set overfilling capacity, returns true for kept item, false for rejected', () => {
     const cache = new MostFrequentlyUsedCache<string, number>(1);
     cache.get('key2'); // Ask for key1 to give it priority
-    expect(cache.set('key1', 1)).toBeTrue();
-    expect(cache.set('key2', 2)).toBeTrue();
-    expect(cache.set('key3', 1)).toBeFalse(); // Not added
+    expect(cache.set('key1', 1)).toBeTruthy();
+    expect(cache.set('key2', 2)).toBeTruthy();
+    expect(cache.set('key3', 1)).toBeFalsy(); // Not added
   });
 
   test('get return undefined for non-existant key', () => {
@@ -44,14 +44,14 @@ describe('MostFrequentlyUsedCache', () => {
 
     const wasRemoved = cache.remove('key');
 
-    expect(wasRemoved).toBeTrue();
+    expect(wasRemoved).toBeTruthy();
     expect(cache.get('key')).toBeUndefined();
   });
 
   test('remove returns false if element is not added', () => {
     const cache = new MostFrequentlyUsedCache<string, number>(1);
     const wasRemoved = cache.remove('key');
-    expect(wasRemoved).toBeFalse();
+    expect(wasRemoved).toBeFalsy();
   });
 
   test('clear() removes all elements', () => {
@@ -66,7 +66,7 @@ describe('MostFrequentlyUsedCache', () => {
   });
 
   test('remove() triggers dispose callback', () => {
-    const disposeCb = jest.fn();
+    const disposeCb = vi.fn();
     const cache = new MostFrequentlyUsedCache<string, string>(10, disposeCb);
     cache.set('key', 'value');
     cache.remove('key');
@@ -74,7 +74,7 @@ describe('MostFrequentlyUsedCache', () => {
   });
 
   test('clear() triggers dispose callback for all elements', () => {
-    const disposeCb = jest.fn();
+    const disposeCb = vi.fn();
     const cache = new MostFrequentlyUsedCache<string, string>(10, disposeCb);
     cache.set('key1', 'value1');
     cache.set('key2', 'value2');

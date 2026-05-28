@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 import { getUserFingerprint } from '../src/Fingerprint/getUserFingerprint';
 import { createMockDocument, createMockOfflineAudioContext } from '../../../test-utilities/mocks/fingerprintMocks';
@@ -25,7 +25,7 @@ describe('Browser Fingerprint', () => {
   it('returns "unknown" if the Error has occured', async () => {
     const mockDocument = createMockDocument();
     const MockOfflineAudioContext = createMockOfflineAudioContext(false);
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const result = await getUserFingerprint({
       document: mockDocument,
@@ -39,7 +39,7 @@ describe('Browser Fingerprint', () => {
   });
 
   it('returns "unknown" if OfflineAudioContext is not supported', async () => {
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const result = await getUserFingerprint({
       OfflineAudioContext: undefined

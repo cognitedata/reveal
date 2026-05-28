@@ -11,7 +11,7 @@ import { BinaryFileProvider, LocalModelIdentifier, ModelIdentifier } from '@reve
 import { WantedSector, SectorMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(GltfSectorRepository.name, () => {
   let binaryFileProvider: IMock<BinaryFileProvider>;
@@ -34,7 +34,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('previously fetched sector is cached by GltfSectorRepository', async () => {
-    const mockGetBinaryFile: jest.MockedFunction<BinaryFileProvider['getBinaryFile']> = jest.fn();
+    const mockGetBinaryFile: vi.MockedFunction<BinaryFileProvider['getBinaryFile']> = vi.fn();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
@@ -46,7 +46,7 @@ describe(GltfSectorRepository.name, () => {
     await testRepository.loadSector(sector);
     await testRepository.loadSector(sector);
 
-    expect(jest.mocked(mockBinaryProvider.getBinaryFile)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(mockBinaryProvider.getBinaryFile)).toHaveBeenCalledTimes(2);
   });
 
   test('loadSector should gracefully handle errors from sectorLoader', async () => {
@@ -77,7 +77,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('clearCache should clear the cache', async () => {
-    const mockGetBinaryFile: jest.MockedFunction<BinaryFileProvider['getBinaryFile']> = jest.fn();
+    const mockGetBinaryFile: vi.MockedFunction<BinaryFileProvider['getBinaryFile']> = vi.fn();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
@@ -88,7 +88,7 @@ describe(GltfSectorRepository.name, () => {
     testRepository.clearCache();
     await testRepository.loadSector(wantedSectorMock.object());
 
-    expect(jest.mocked(mockBinaryProvider.getBinaryFile)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(mockBinaryProvider.getBinaryFile)).toHaveBeenCalledTimes(2);
   });
 
   test('cache should work with different model identifiers', async () => {
@@ -99,7 +99,7 @@ describe(GltfSectorRepository.name, () => {
       createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
     );
 
-    const mockGetBinaryFile: jest.MockedFunction<BinaryFileProvider['getBinaryFile']> = jest.fn();
+    const mockGetBinaryFile: vi.MockedFunction<BinaryFileProvider['getBinaryFile']> = vi.fn();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
@@ -108,7 +108,7 @@ describe(GltfSectorRepository.name, () => {
 
     await Promise.all([sector1, sector2].map(sector => testRepository.loadSector(sector.object())));
 
-    expect(jest.mocked(mockBinaryProvider.getBinaryFile)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(mockBinaryProvider.getBinaryFile)).toHaveBeenCalledTimes(2);
   });
 
   test('should pass abort signal to sector loader', async () => {

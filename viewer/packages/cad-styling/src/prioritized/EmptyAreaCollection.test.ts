@@ -15,6 +15,6 @@ describe('EmptyAreaCollection', () => {
     expect(() => areaCollection.addAreas([new THREE.Box3()])).toThrow();
     expect(() => areaCollection.intersectWith([new THREE.Box3()])).not.toThrow();
 
-    expect(areaCollection.isEmpty).toBeTrue();
+    expect(areaCollection.isEmpty).toBeTruthy();
   });
 });

@@ -13,7 +13,7 @@ import {
   Vector3
 } from 'three';
 import { Mock, It } from 'moq.ts';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { SceneHandler } from '@reveal/utilities';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { FlooredIconManager } from './FlooredIconManager';
@@ -209,7 +209,7 @@ describe(FlooredIconManager.name, () => {
 
     test('computeBoundingBox is called only when count changes, not on every update', () => {
       const { manager, sameLevelMesh } = createManager(5);
-      const bbSpy = jest.spyOn(sameLevelMesh, 'computeBoundingBox');
+      const bbSpy = vi.spyOn(sameLevelMesh, 'computeBoundingBox');
 
       const icons = [makeIcon(new Vector3(0, 0, 0)), makeIcon(new Vector3(1, 0, 0))];
 

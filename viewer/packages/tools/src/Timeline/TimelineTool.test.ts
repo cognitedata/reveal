@@ -11,7 +11,7 @@ import { IndexSet } from '@reveal/utilities';
 import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { CogniteCadModel } from '@reveal/api';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('TimelineTool', () => {
   let model: CogniteCadModel;
@@ -49,8 +49,8 @@ describe('TimelineTool', () => {
   });
 
   test('play() playback the Timeline', () => {
-    const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
-    const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
+    const assignStyledNodeCollectionSpy = vi.spyOn(model, 'assignStyledNodeCollection');
+    const unassignStyledNodeCollectionSpy = vi.spyOn(model, 'unassignStyledNodeCollection');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
     const current = TWEEN.now();
@@ -69,8 +69,8 @@ describe('TimelineTool', () => {
   });
 
   test('stop() stops the Timeline playback', () => {
-    const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
-    const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
+    const assignStyledNodeCollectionSpy = vi.spyOn(model, 'assignStyledNodeCollection');
+    const unassignStyledNodeCollectionSpy = vi.spyOn(model, 'unassignStyledNodeCollection');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
     const current = TWEEN.now();
@@ -92,8 +92,8 @@ describe('TimelineTool', () => {
   });
 
   test('play() while play is active', () => {
-    const stopSpy = jest.spyOn(timelineTool, 'stop');
-    const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
+    const stopSpy = vi.spyOn(timelineTool, 'stop');
+    const assignStyledNodeCollectionSpy = vi.spyOn(model, 'assignStyledNodeCollection');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
     const current = TWEEN.now();
@@ -109,8 +109,8 @@ describe('TimelineTool', () => {
   });
 
   test('stop() while in stopped', () => {
-    const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
-    const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
+    const assignStyledNodeCollectionSpy = vi.spyOn(model, 'assignStyledNodeCollection');
+    const unassignStyledNodeCollectionSpy = vi.spyOn(model, 'unassignStyledNodeCollection');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
     const current = TWEEN.now();

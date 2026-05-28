@@ -4,7 +4,7 @@
 import { Box3, Vector3, Group, Mesh, BufferGeometry, Material } from 'three';
 import { SectorNode } from './SectorNode';
 import { LevelOfDetail } from '../cad/LevelOfDetail';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(SectorNode.name, () => {
   let sectorNode: SectorNode;
@@ -78,13 +78,13 @@ describe(SectorNode.name, () => {
 
     // Force a small delay to ensure timestamp difference
     const now = Date.now();
-    jest.spyOn(Date, 'now').mockReturnValue(now + 100);
+    vi.spyOn(Date, 'now').mockReturnValue(now + 100);
 
     sectorNode.updateGeometry(testGroup, LevelOfDetail.Detailed);
     expect(sectorNode.updatedTimestamp).toBeGreaterThan(initialTimestamp);
-    expect(jest.spyOn(Date, 'now')).toHaveBeenCalled();
+    expect(vi.spyOn(Date, 'now')).toHaveBeenCalled();
 
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('should handle LOD changes correctly', () => {

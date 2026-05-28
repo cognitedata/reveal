@@ -2,24 +2,24 @@
  * Copyright 2025 Cognite AS
  */
 import { batchedDebounce } from './batchedDebounce';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(batchedDebounce.name, () => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 
   afterEach(() => {
-    jest.clearAllTimers();
+    vi.clearAllTimers();
   });
 
   it('should batch multiple calls and resolve with correct results', async () => {
-    const callback = jest.fn((items: number[]) => items.map(x => x * 2));
+    const callback = vi.fn((items: number[]) => items.map(x => x * 2));
     const batched = batchedDebounce(callback, 100);
 
     const promise1 = batched(1);
     const promise2 = batched(2);
     const promise3 = batched(3);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     const [result1, result2, result3] = await Promise.all([promise1, promise2, promise3]);
 
@@ -32,19 +32,19 @@ describe(batchedDebounce.name, () => {
   });
 
   it('should create separate batches after wait period', async () => {
-    const callback = jest.fn((items: number[]) => items.map(x => x + 1));
+    const callback = vi.fn((items: number[]) => items.map(x => x + 1));
     const batched = batchedDebounce(callback, 100);
 
     const promise1 = batched(1);
     const promise2 = batched(2);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     await Promise.resolve();
 
     const promise3 = batched(3);
     const promise4 = batched(4);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     await Promise.resolve();
 
     expect(callback).toHaveBeenCalledTimes(2);
@@ -56,7 +56,7 @@ describe(batchedDebounce.name, () => {
   });
 
   it('should reject all promises if callback throws', async () => {
-    const callback = jest.fn(() => {
+    const callback = vi.fn(() => {
       throw new Error('Batch processing failed');
     });
     const batched = batchedDebounce(callback, 100);
@@ -64,7 +64,7 @@ describe(batchedDebounce.name, () => {
     const promise1 = batched(1);
     const promise2 = batched(2);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     await Promise.resolve();
 
     await expect(promise1).rejects.toThrow('Batch processing failed');
@@ -72,13 +72,13 @@ describe(batchedDebounce.name, () => {
   });
 
   it('should reject if callback returns mismatched result length', async () => {
-    const callback = jest.fn((items: number[]) => items.slice(0, items.length - 1));
+    const callback = vi.fn((items: number[]) => items.slice(0, items.length - 1));
     const batched = batchedDebounce(callback, 100);
 
     const promise1 = batched(1);
     const promise2 = batched(2);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     await Promise.resolve();
 
     await expect(promise1).rejects.toThrow('Batch result length mismatch');
@@ -86,7 +86,7 @@ describe(batchedDebounce.name, () => {
   });
 
   it('should cancel pending batches', async () => {
-    const callback = jest.fn((items: number[]) => items.map(x => x * 2));
+    const callback = vi.fn((items: number[]) => items.map(x => x * 2));
     const batched = batchedDebounce(callback, 100);
 
     const promise1 = batched(1);
@@ -100,14 +100,14 @@ describe(batchedDebounce.name, () => {
   });
 
   it('should handle void callbacks', async () => {
-    const callback = jest.fn<(_: number[]) => void>();
+    const callback = vi.fn<(_: number[]) => void>();
     const batched = batchedDebounce(callback, 100);
 
     const promise1 = batched(1);
     const promise2 = batched(2);
     const promise3 = batched(3);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     const [result1, result2, result3] = await Promise.all([promise1, promise2, promise3]);
 

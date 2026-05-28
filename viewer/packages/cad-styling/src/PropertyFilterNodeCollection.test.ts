@@ -9,7 +9,7 @@ import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionData
 
 import { Matrix4 } from 'three';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(PropertyFilterNodeCollection.name, () => {
   let client: CogniteClient;
@@ -33,11 +33,11 @@ describe(PropertyFilterNodeCollection.name, () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('isLoading is initially false', () => {
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('isLoading is true while executing request and false after', async () => {
@@ -48,15 +48,15 @@ describe(PropertyFilterNodeCollection.name, () => {
     const promise = set.executeFilter({ PDMS: { ':capStatus': 'S9' } });
 
     // Assert
-    expect(set.isLoading).toBeTrue();
+    expect(set.isLoading).toBeTruthy();
     await promise;
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('executeFilter() with empty result triggers change', async () => {
     // Arrange
     mockList3DNodes(client, [[]]);
-    const listener = jest.fn();
+    const listener = vi.fn();
     set.on('changed', listener);
 
     // Act
@@ -102,8 +102,7 @@ describe(PropertyFilterNodeCollection.name, () => {
 
   test('executeFilter() twice discards results from first request', async () => {
     // Arrange
-    jest
-      .spyOn(client.revisions3D, 'list3DNodes')
+    vi.spyOn(client.revisions3D, 'list3DNodes')
       .mockReturnValueOnce(buildListResponse([[createNodeJson(1, 10), createNodeJson(20, 10)]]))
       .mockReturnValueOnce(buildListResponse([[createNodeJson(30, 10), createNodeJson(50, 10)]]));
 
@@ -118,14 +117,14 @@ describe(PropertyFilterNodeCollection.name, () => {
     expectedSet.addRange(new NumericRange(30, 10));
     expectedSet.addRange(new NumericRange(50, 10));
     expect(set.getIndexSet()).toEqual(expectedSet);
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('executeFilter() with two partitions, finishes and merges both', async () => {
     // Arrange
     set = new PropertyFilterNodeCollection(client, model, { requestPartitions: 2 });
 
-    jest.spyOn(client.revisions3D, 'list3DNodes').mockImplementation((_modelId, _revisionId, params) => {
+    vi.spyOn(client.revisions3D, 'list3DNodes').mockImplementation((_modelId, _revisionId, params) => {
       if (params?.partition === '1/2') {
         return buildListResponse([[createNodeJson(1, 10)]]);
       }
@@ -140,7 +139,7 @@ describe(PropertyFilterNodeCollection.name, () => {
     expectedSet.addRange(new NumericRange(1, 10));
     expectedSet.addRange(new NumericRange(30, 10));
     expect(set.getIndexSet()).toEqual(expectedSet);
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('clear() interrupts ongoing operation and resets set', async () => {
@@ -153,7 +152,7 @@ describe(PropertyFilterNodeCollection.name, () => {
     await executeFilterOperation;
 
     // Assert
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
     expect(set.getIndexSet()).toEqual(new IndexSet());
   });
 });
@@ -187,5 +186,5 @@ function buildListResponse(pages: Node3D[][]): CursorAndAsyncIterator<Node3D> {
 }
 
 function mockList3DNodes(client: CogniteClient, pages: Node3D[][]): void {
-  jest.spyOn(client.revisions3D, 'list3DNodes').mockReturnValueOnce(buildListResponse(pages));
+  vi.spyOn(client.revisions3D, 'list3DNodes').mockReturnValueOnce(buildListResponse(pages));
 }
