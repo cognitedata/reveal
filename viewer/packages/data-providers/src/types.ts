@@ -160,7 +160,7 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
 
 export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
+  mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
   /** Direct CDF proxy URL for progressive loading via <img> element. When present, data is empty. */
   downloadUrl?: string;
@@ -173,7 +173,7 @@ export type Image360Texture = {
 
 export type Image360FileDescriptor = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
+  mimeType: 'image/jpeg' | 'image/png';
   /** Internal CDF file ID (numeric) */
   fileId?: number;
   /** External file ID (string) - for system-space/FDM collections */

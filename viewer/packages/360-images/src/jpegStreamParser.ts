@@ -92,6 +92,27 @@ export function findProgressiveScanCutpoints(buffer: Uint8Array): number[] {
 }
 
 /**
+ * Scans a JPEG byte buffer and returns whether it is progressive (SOF2) or
+ * baseline (SOF0/SOF1) by walking segment headers until the SOF marker is found.
+ * Returns 'unknown' if the buffer does not yet contain the SOF marker.
+ */
+export function detectJpegType(buffer: Uint8Array): 'progressive' | 'baseline' | 'unknown' {
+  if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) return 'unknown';
+  let i = 2;
+  while (i < buffer.length - 1) {
+    if (buffer[i] !== 0xff) return 'unknown';
+    const marker = buffer[i + 1];
+    if (marker === 0xc0 || marker === 0xc1) return 'baseline'; // SOF0 / SOF1
+    if (marker === 0xc2) return 'progressive'; // SOF2
+    if (marker === 0xd9) return 'unknown'; // EOI before SOF — malformed
+    if (i + 3 >= buffer.length) return 'unknown'; // need more data
+    const segLen = (buffer[i + 2] << 8) | buffer[i + 3];
+    i += 2 + segLen;
+  }
+  return 'unknown';
+}
+
+/**
  * Creates a Blob containing a valid JPEG by taking the first `cutpoint` bytes
  * of `buffer` and appending an EOI (FF D9) marker.
  */

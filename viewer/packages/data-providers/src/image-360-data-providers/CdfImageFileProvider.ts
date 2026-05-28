@@ -17,10 +17,10 @@ export type FileIdentifier = { id: number } | { externalId: string } | { instanc
  */
 export type FileDownloadResult = {
   data: ArrayBuffer;
-  mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
+  mimeType: 'image/jpeg' | 'image/png';
 };
 
-function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' | 'image/webp' {
+function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   if (contentType) {
     const lowerContentType = contentType.toLowerCase();
     if (lowerContentType.includes('image/png')) {
@@ -28,9 +28,6 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' |
     }
     if (lowerContentType.includes('image/jpeg') || lowerContentType.includes('image/jpg')) {
       return 'image/jpeg';
-    }
-    if (lowerContentType.includes('image/webp')) {
-      return 'image/webp';
     }
   }
   return DEFAULT_360_IMAGE_MIME_TYPE;

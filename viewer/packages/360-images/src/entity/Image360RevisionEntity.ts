@@ -151,18 +151,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     return window.URL.createObjectURL(blob);
   }
 
-  private async loadPreviewTextures(abortSignal?: AbortSignal): Promise<void> {
-    const previewImageFiles = await this._imageProvider.getLowResolution360ImageFiles(
-      this._image360Descriptor.faceDescriptors,
-      abortSignal
-    );
-    if (this._fullResolutionTextures.length === 6) {
-      return;
-    }
-    const previewTextures = await this._image360VisualizationBox.loadFaceTextures(previewImageFiles);
-    this._previewTextures = previewTextures;
-  }
-
   private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {
     const annotationData = await this._imageProvider.getRelevant360ImageAnnotations({
       revisionId: this._image360Descriptor.id,

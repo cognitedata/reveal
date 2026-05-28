@@ -9,7 +9,7 @@ import assert from 'assert';
 import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { findProgressiveScanCutpoints, makePartialJpegBlob } from '../jpegStreamParser';
+import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from '../jpegStreamParser';
 
 type VisualizationState = {
   opacity: number;
@@ -164,7 +164,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   public loadFaceTextures(faces: Image360Face[], onFirstFaceReady?: () => void): Promise<Image360Texture[]> {
-    if (faces.some(f => f.downloadUrl && f.mimeType === 'image/jpeg')) {
+    if (faces.some(f => f.downloadUrl)) {
       this.createPlaceholderMesh();
     }
     let firstFaceNotified = false;
@@ -176,12 +176,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     };
     return Promise.all(
       faces.map(async face => {
-        if (face.downloadUrl && face.mimeType === 'image/jpeg') {
+        if (face.downloadUrl) {
           return this.loadFaceTextureStream(face, notifyFirstFace);
-        } else if (face.downloadUrl) {
-          const t = await this.loadFaceTextureFromUrl(face);
-          notifyFirstFace();
-          return t;
         } else {
           const t = await this.loadFaceTextureFromBuffer(face);
           notifyFirstFace();
@@ -239,36 +235,15 @@ export class Image360VisualizationBox implements Image360Visualization {
       throw new Error(`Failed to fetch 360 image for face: ${image360Face.face} (status ${response.status})`);
     }
 
-    const contentType = response.headers.get('content-type') ?? '';
-    if (!contentType.includes('image/jpeg')) {
-      // Non-JPEG format (e.g. WebP): descriptor mimeType may be wrong, trust Content-Type instead
-      const buffer = await response.arrayBuffer();
-      const blob = new Blob([buffer], { type: contentType || image360Face.mimeType });
-      const url = window.URL.createObjectURL(blob);
-      let faceTexture = await this._textureLoader.loadAsync(url);
-      window.URL.revokeObjectURL(url);
-      if (
-        this._device.deviceType === 'mobile' &&
-        (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE || faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
-      ) {
-        faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
-      }
-      faceTexture.center.set(0.5, 0.5);
-      faceTexture.repeat.set(-1, 1);
-      this.updateFaceTexture(image360Face.face, faceTexture);
-      onFirstFaceReady?.();
-      return { face: image360Face.face, texture: faceTexture };
-    }
-
     const contentLength = parseInt(response.headers.get('content-length') ?? '0', 10);
     let buffer = new Uint8Array(contentLength > 0 ? contentLength : 2 * 1024 * 1024);
     let bytesReceived = 0;
+    let jpegType: 'progressive' | 'baseline' | 'unknown' = 'unknown';
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
     let texture: THREE.CanvasTexture | undefined;
     let lastCutpoint = 0;
-    let scanCount = 0;
 
     let resolveTexture!: (t: Image360Texture) => void;
     let rejectTexture!: (e: unknown) => void;
@@ -277,17 +252,7 @@ export class Image360VisualizationBox implements Image360Visualization {
       rejectTexture = reject;
     });
 
-    const decodeAndApplyScan = async (cutpoint: number): Promise<void> => {
-      const blob = makePartialJpegBlob(buffer, cutpoint);
-      let bitmap: ImageBitmap;
-      try {
-        bitmap = await createImageBitmap(blob);
-      } catch {
-        return; // partial data not yet decodable — skip this cutpoint
-      }
-
-      scanCount++;
-
+    const applyBitmapToTexture = (bitmap: ImageBitmap): void => {
       if (!texture) {
         canvas.width = bitmap.width;
         canvas.height = bitmap.height;
@@ -302,15 +267,19 @@ export class Image360VisualizationBox implements Image360Visualization {
         ctx.drawImage(bitmap, 0, 0);
         texture.needsUpdate = true;
       }
-
       bitmap.close();
       this._requestRedraw();
+    };
 
-      // if (perfEnabled) {
-      //   console.log(
-      //     `[360 stream] face=${image360Face.face} | scan=${scanCount} | cutpoint=${cutpoint} | elapsed=${(performance.now() - imgStart).toFixed(0)} ms`
-      //   );
-      // }
+    const decodeAndApplyScan = async (cutpoint: number): Promise<void> => {
+      const blob = makePartialJpegBlob(buffer, cutpoint);
+      let bitmap: ImageBitmap;
+      try {
+        bitmap = await createImageBitmap(blob);
+      } catch {
+        return; // partial data not yet decodable — skip this cutpoint
+      }
+      applyBitmapToTexture(bitmap);
     };
 
     const reader = response.body.getReader();
@@ -329,45 +298,49 @@ export class Image360VisualizationBox implements Image360Visualization {
         buffer.set(value, bytesReceived);
         bytesReceived += value.length;
 
-        const cutpoints = findProgressiveScanCutpoints(buffer.subarray(0, bytesReceived));
-        const newCutpoints = cutpoints.filter(cp => cp > lastCutpoint);
-        if (newCutpoints.length > 0) {
-          lastCutpoint = newCutpoints[newCutpoints.length - 1];
-          await decodeAndApplyScan(lastCutpoint);
+        // Detect JPEG type from header markers — resolved within the first few KB
+        if (jpegType === 'unknown') {
+          jpegType = detectJpegType(buffer.subarray(0, bytesReceived));
         }
+
+        // Progressive JPEG: decode each scan as it arrives
+        if (jpegType === 'progressive') {
+          const cutpoints = findProgressiveScanCutpoints(buffer.subarray(0, bytesReceived));
+          const newCutpoints = cutpoints.filter(cp => cp > lastCutpoint);
+          if (newCutpoints.length > 0) {
+            lastCutpoint = newCutpoints[newCutpoints.length - 1];
+            await decodeAndApplyScan(lastCutpoint);
+          }
+        }
+        // Baseline JPEG: just buffer — decode full image after download completes
       }
     } catch (e) {
       rejectTexture(e);
       return texturePromise;
     }
 
-    // Ensure the promise is resolved even if no scan cutpoints were found (shouldn't happen)
-    if (!texture) {
-      rejectTexture(new Error(`No decodable scan found for face: ${image360Face.face}`));
+    if (jpegType === 'progressive') {
+      if (!texture) {
+        rejectTexture(new Error(`No decodable scan found for face: ${image360Face.face}`));
+      }
+    } else {
+      // Baseline JPEG (or undetected type): decode full downloaded buffer
+      const blob = new Blob([buffer.subarray(0, bytesReceived)], { type: 'image/jpeg' });
+      try {
+        const bitmap = await createImageBitmap(blob);
+        applyBitmapToTexture(bitmap);
+      } catch (e) {
+        rejectTexture(e);
+      }
     }
 
     return texturePromise;
   }
 
-  private async loadFaceTextureFromUrl(image360Face: Image360Face): Promise<Image360Texture> {
-    let faceTexture = await this._textureLoader.loadAsync(image360Face.downloadUrl!);
-
-    if (
-      this._device.deviceType === 'mobile' &&
-      (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE || faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
-    ) {
-      faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
-    }
-
-    faceTexture.center.set(0.5, 0.5);
-    faceTexture.repeat.set(-1, 1);
-    return { face: image360Face.face, texture: faceTexture };
-  }
-
   private async loadFaceTextureFromBuffer(image360Face: Image360Face): Promise<Image360Texture> {
     const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
     const url = window.URL.createObjectURL(blob);
-    let faceTexture = await this._textureLoader.loadAsync(url);
+    let faceTexture: THREE.Texture<HTMLImageElement | HTMLCanvasElement> = await this._textureLoader.loadAsync(url);
 
     if (
       this._device.deviceType === 'mobile' &&
