@@ -279,7 +279,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }
   }
 
-  private async setupLocal(sceneHandler: SceneHandler, device: DeviceDescriptor): Promise<{
+  private async setupLocal(
+    sceneHandler: SceneHandler,
+    device: DeviceDescriptor
+  ): Promise<{
     facade: Image360Facade<any>;
     collection: DefaultImage360Collection<DataSourceType>;
   }> {
