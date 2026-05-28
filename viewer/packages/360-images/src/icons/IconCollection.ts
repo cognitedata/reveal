@@ -193,12 +193,7 @@ export class IconCollection {
     }
   }
 
-  constructor(
-    points: Vector3[],
-    sceneHandler: SceneHandler,
-    iconOptions?: IconsOptions,
-    setNeedsRedraw?: () => void
-  ) {
+  constructor(points: Vector3[], sceneHandler: SceneHandler, iconOptions?: IconsOptions, setNeedsRedraw?: () => void) {
     this._setNeedsRedraw = setNeedsRedraw;
     this._enableHtmlClusters = iconOptions?.enableHtmlClusters ?? false;
     this._maxPixelSize = Math.min(

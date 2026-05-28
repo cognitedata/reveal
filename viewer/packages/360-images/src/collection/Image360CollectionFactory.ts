@@ -53,12 +53,7 @@ export class Image360CollectionFactory {
     historicalDescriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = historicalDescriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new IconCollection(
-      points,
-      this._sceneHandler,
-      this._iconsOptions,
-      this._setNeedsRedraw
-    );
+    const collectionIcons = new IconCollection(points, this._sceneHandler, this._iconsOptions, this._setNeedsRedraw);
     const icons = collectionIcons.icons;
 
     const annotationFilterer = new Image360AnnotationFilter(annotationFilter);
