@@ -13,50 +13,50 @@ type ApplyOcclusionFn = HtmlClusterCollection['applyHtmlClusterOcclusion'];
 type ApplyOcclusionMock = jest.MockedFunction<ApplyOcclusionFn>;
 
 describe(HtmlClusterCoordinator.name, () => {
-  test('calls applyHtmlClusterOcclusion exactly once per runCoordinator call', () => {
+  test('calls applyHtmlClusterOcclusion exactly once per collection per runCoordinator call', () => {
     const coordinator = new HtmlClusterCoordinator();
-    const applyMock = jest.fn<ApplyOcclusionFn>();
-    coordinator.onCollectionAdded(createMockCollection([], applyMock));
+    const applyMockA = jest.fn<ApplyOcclusionFn>();
+    const collectionA = createMockCollection([], applyMockA);
 
-    coordinator.runCoordinator();
-    expect(applyMock).toHaveBeenCalledTimes(1);
+    coordinator.runCoordinator([collectionA]);
+    expect(applyMockA).toHaveBeenCalledTimes(1);
 
-    applyMock.mockClear();
-    coordinator.onCollectionAdded(createMockCollection([]));
-    coordinator.runCoordinator();
-    expect(applyMock).toHaveBeenCalledTimes(1);
+    applyMockA.mockClear();
+    const collectionB = createMockCollection([]);
+    coordinator.runCoordinator([collectionA, collectionB]);
+    expect(applyMockA).toHaveBeenCalledTimes(1);
 
-    expect(() => coordinator.runCoordinator()).not.toThrow();
+    expect(() => coordinator.runCoordinator([])).not.toThrow();
   });
 
-  test('dispose clears collections and subsequent runCoordinator calls are no-ops', () => {
+  test('runCoordinator with empty list is a no-op', () => {
     const coordinator = new HtmlClusterCoordinator();
     const applyMock = jest.fn<ApplyOcclusionFn>();
-    coordinator.onCollectionAdded(createMockCollection([], applyMock));
+    const collection = createMockCollection([], applyMock);
 
-    coordinator.dispose();
-    coordinator.runCoordinator();
+    coordinator.runCoordinator([]);
     expect(applyMock).not.toHaveBeenCalled();
+
+    coordinator.runCoordinator([collection]);
+    expect(applyMock).toHaveBeenCalledTimes(1);
   });
 
-  test('calls applyHtmlClusterOcclusion on registered collections and stops after removal', () => {
+  test('only collections passed to runCoordinator receive applyHtmlClusterOcclusion', () => {
     const coordinator = new HtmlClusterCoordinator();
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
     const collectionA = createMockCollection([], applyMockA);
+    const collectionB = createMockCollection([], applyMockB);
 
-    coordinator.onCollectionAdded(collectionA);
-    coordinator.onCollectionAdded(createMockCollection([], applyMockB));
-
-    coordinator.runCoordinator();
+    coordinator.runCoordinator([collectionA, collectionB]);
     expect(applyMockA).toHaveBeenCalledTimes(1);
     expect(applyMockB).toHaveBeenCalledTimes(1);
 
-    coordinator.onCollectionRemoved(collectionA);
     applyMockA.mockClear();
-    coordinator.runCoordinator();
+    applyMockB.mockClear();
+    coordinator.runCoordinator([collectionB]);
     expect(applyMockA).not.toHaveBeenCalled();
-    expect(applyMockB).toHaveBeenCalledTimes(2);
+    expect(applyMockB).toHaveBeenCalledTimes(1);
   });
 
   test('cross-collection occlusion: overlapping farther cluster is occluded, non-overlapping is not', () => {
@@ -67,15 +67,13 @@ describe(HtmlClusterCoordinator.name, () => {
 
     const applyMockA = jest.fn<ApplyOcclusionFn>();
     const applyMockB = jest.fn<ApplyOcclusionFn>();
-    coordinator.onCollectionAdded(createMockCollection([createScreenInfo(closeIcon, 500, 300, 10)], applyMockA));
-    coordinator.onCollectionAdded(
-      createMockCollection(
-        [createScreenInfo(farOverlappingIcon, 500, 300, 50), createScreenInfo(farDistantIcon, 800, 300, 50)],
-        applyMockB
-      )
+    const collectionA = createMockCollection([createScreenInfo(closeIcon, 500, 300, 10)], applyMockA);
+    const collectionB = createMockCollection(
+      [createScreenInfo(farOverlappingIcon, 500, 300, 50), createScreenInfo(farDistantIcon, 800, 300, 50)],
+      applyMockB
     );
 
-    coordinator.runCoordinator();
+    coordinator.runCoordinator([collectionA, collectionB]);
 
     const appliedToA = applyMockA.mock.calls[0][0];
     const appliedToB = applyMockB.mock.calls[0][0];
@@ -91,18 +89,16 @@ describe(HtmlClusterCoordinator.name, () => {
     const distantFarIcon = createMockIcon();
 
     const applyMock = jest.fn<ApplyOcclusionFn>();
-    coordinator.onCollectionAdded(
-      createMockCollection(
-        [
-          createScreenInfo(closeIcon, 500, 300, 10),
-          createScreenInfo(nearFarIcon, 530, 300, 50),
-          createScreenInfo(distantFarIcon, 600, 300, 50)
-        ],
-        applyMock
-      )
+    const collection = createMockCollection(
+      [
+        createScreenInfo(closeIcon, 500, 300, 10),
+        createScreenInfo(nearFarIcon, 530, 300, 50),
+        createScreenInfo(distantFarIcon, 600, 300, 50)
+      ],
+      applyMock
     );
 
-    coordinator.runCoordinator();
+    coordinator.runCoordinator([collection]);
 
     const applied = applyMock.mock.calls[0][0];
     expect(applied.has(closeIcon)).toBe(false);

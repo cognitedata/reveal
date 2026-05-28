@@ -102,7 +102,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     for (const collection of this._image360Facade.collections) {
       collection.updateIcons(params);
     }
-    this._htmlClusterCoordinator?.runCoordinator();
+    this._htmlClusterCoordinator?.runCoordinator(this._image360Facade.collections);
   };
 
   private readonly onKeyPressed = (event: KeyboardEvent) => {
@@ -227,7 +227,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       preMultipliedRotation
     );
 
-    this._htmlClusterCoordinator?.onCollectionAdded(imageCollection);
     this._needsRedraw = true;
     return imageCollection;
 
@@ -279,7 +278,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
 
     this._history.clear();
-    this._htmlClusterCoordinator?.onCollectionRemoved(collection as DefaultImage360Collection<DataSourceT>);
     this._image360Facade.removeSet(collection as DefaultImage360Collection<DataSourceT>);
     this._needsRedraw = true;
   }
@@ -650,7 +648,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       }
       this._stationaryCameraManager.dispose();
     }
-    this._htmlClusterCoordinator?.dispose();
     this._image360Facade.dispose();
     this._waitCursor.dispose();
   }

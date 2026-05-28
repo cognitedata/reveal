@@ -16,32 +16,16 @@ export interface HtmlClusterCollection {
  * global occlusion set, then feeds it back to each collection for DOM updates.
  */
 export class HtmlClusterCoordinator {
-  private readonly _collections: HtmlClusterCollection[] = [];
   // Screen-space overlap radius multiplier — matches HtmlClusterRenderer._occlusionFactor
   private readonly _occlusionFactor: number = 0.7;
 
-  public onCollectionAdded(collection: HtmlClusterCollection): void {
-    this._collections.push(collection);
-  }
-
-  public onCollectionRemoved(collection: HtmlClusterCollection): void {
-    const idx = this._collections.indexOf(collection);
-    if (idx !== -1) {
-      this._collections.splice(idx, 1);
-    }
-  }
-
-  public dispose(): void {
-    this._collections.length = 0;
-  }
-
-  public runCoordinator(): void {
-    if (this._collections.length === 0) {
+  public runCoordinator(collections: HtmlClusterCollection[]): void {
+    if (collections.length === 0) {
       return;
     }
 
     const allScreenInfos: ClusterScreenInfo[] = [];
-    for (const collection of this._collections) {
+    for (const collection of collections) {
       const infos = collection.getStagedHtmlClusterScreenInfos();
       for (const info of infos) {
         allScreenInfos.push(info);
@@ -50,7 +34,7 @@ export class HtmlClusterCoordinator {
 
     const occluded = this.computeGlobalOcclusion(allScreenInfos);
 
-    for (const collection of this._collections) {
+    for (const collection of collections) {
       collection.applyHtmlClusterOcclusion(occluded);
     }
   }
