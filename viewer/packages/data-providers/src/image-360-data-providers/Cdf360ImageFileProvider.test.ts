@@ -195,30 +195,64 @@ describe(Cdf360ImageFileProvider.name, () => {
     });
 
     describe('get360ImageFiles', () => {
-      test('fetches full resolution images and returns Image360Face array', async () => {
+      test('fetches download URLs and returns Image360Face array with downloadUrl set', async () => {
         const descriptors: Image360FileDescriptor[] = [
           { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
           { fileId: 456, face: 'back', mimeType: 'image/png' }
         ];
 
-        fetchSpy
-          .mockResolvedValueOnce(
-            createJsonResponse({
-              items: [
-                { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
-                { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
-              ]
-            })
-          )
-          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(1000), 'image/jpeg'))
-          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(2000), 'image/png'));
+        // Only ONE fetch needed — for the downloadlink API (no individual file downloads)
+        fetchSpy.mockResolvedValueOnce(
+          createJsonResponse({
+            items: [
+              { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+              { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
+            ]
+          })
+        );
 
         const faces = await provider.get360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(2);
         expect(faces[0].face).toBe('front');
-        expect(faces[0].mimeType).toBe('image/jpeg');
+        expect(faces[0].downloadUrl).toBe('https://storage.example.com/file1.jpg');
         expect(faces[1].face).toBe('back');
+        expect(faces[1].downloadUrl).toBe('https://storage.example.com/file2.png');
+      });
+
+      test('returns faces with empty data buffer (byteLength=0)', async () => {
+        const descriptors: Image360FileDescriptor[] = [{ fileId: 123, face: 'front', mimeType: 'image/jpeg' }];
+
+        fetchSpy.mockResolvedValueOnce(
+          createJsonResponse({
+            items: [{ id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' }]
+          })
+        );
+
+        const faces = await provider.get360ImageFiles(descriptors);
+
+        expect(faces[0].data.byteLength).toBe(0);
+      });
+
+      test('mimeType comes from the descriptor, not the Content-Type header', async () => {
+        const descriptors: Image360FileDescriptor[] = [
+          { fileId: 123, face: 'front', mimeType: 'image/jpeg' },
+          { fileId: 456, face: 'back', mimeType: 'image/png' }
+        ];
+
+        fetchSpy.mockResolvedValueOnce(
+          createJsonResponse({
+            items: [
+              { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+              { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
+            ]
+          })
+        );
+
+        const faces = await provider.get360ImageFiles(descriptors);
+
+        // mimeType must come from the descriptor, not from any HTTP response header
+        expect(faces[0].mimeType).toBe('image/jpeg');
         expect(faces[1].mimeType).toBe('image/png');
       });
 
@@ -227,18 +261,17 @@ describe(Cdf360ImageFileProvider.name, () => {
           { externalId: 'file-ext-1', face: 'front', mimeType: 'image/jpeg' }
         ];
 
-        fetchSpy
-          .mockResolvedValueOnce(
-            createJsonResponse({
-              items: [{ externalId: 'file-ext-1', downloadUrl: 'https://storage.example.com/file1.jpg' }]
-            })
-          )
-          .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(100), 'image/jpeg'));
+        fetchSpy.mockResolvedValueOnce(
+          createJsonResponse({
+            items: [{ externalId: 'file-ext-1', downloadUrl: 'https://storage.example.com/file1.jpg' }]
+          })
+        );
 
         const faces = await provider.get360ImageFiles(descriptors);
 
         expect(faces).toHaveLength(1);
         expect(faces[0].face).toBe('front');
+        expect(faces[0].downloadUrl).toBe('https://storage.example.com/file1.jpg');
       });
     });
 

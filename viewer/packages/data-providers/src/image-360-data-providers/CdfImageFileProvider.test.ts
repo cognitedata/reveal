@@ -248,6 +248,59 @@ describe(CdfImageFileProvider.name, () => {
     });
   });
 
+  describe('getFileDownloadUrls', () => {
+    test('returns array of download URL strings (not buffers)', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [{ id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' }]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls).toHaveLength(1);
+      expect(typeof urls[0]).toBe('string');
+    });
+
+    test('returns correct number of URLs matching identifiers', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }, { id: 456 }, { id: 789 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [
+            { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+            { id: 456, downloadUrl: 'https://storage.example.com/file2.jpg' },
+            { id: 789, downloadUrl: 'https://storage.example.com/file3.jpg' }
+          ]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls).toHaveLength(3);
+    });
+
+    test('each URL is the downloadUrl from the API response', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }, { id: 456 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [
+            { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+            { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
+          ]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls[0]).toBe('https://storage.example.com/file1.jpg');
+      expect(urls[1]).toBe('https://storage.example.com/file2.png');
+    });
+  });
+
   describe('parseMimeType', () => {
     test('recognizes image/jpg as jpeg', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ id: 123 }];

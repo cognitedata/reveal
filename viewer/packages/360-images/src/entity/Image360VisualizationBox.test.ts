@@ -1,0 +1,194 @@
+/*!
+ * Copyright 2026 Cognite AS
+ */
+
+import { jest } from '@jest/globals';
+import * as THREE from 'three';
+import { Mock, IMock, It, Times } from 'moq.ts';
+import { SceneHandler } from '@reveal/utilities';
+import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { Image360Face, Image360Texture } from '@reveal/data-providers';
+
+// Minimal JPEG bytes that carry the SOF marker in the header: SOI + APP0(len=4) + SOF marker + abbreviated end
+const PROGRESSIVE_JPEG_BYTES: Uint8Array<ArrayBuffer> = new Uint8Array([
+  0xff, 0xd8, 0xff, 0xe0, 0x00, 0x04, 0x00, 0x00, 0xff, 0xc2, 0x00, 0x01, 0xff, 0xd9
+]);
+
+const BASELINE_JPEG_BYTES: Uint8Array<ArrayBuffer> = new Uint8Array([
+  0xff, 0xd8, 0xff, 0xe0, 0x00, 0x04, 0x00, 0x00, 0xff, 0xc0, 0x00, 0x01, 0xff, 0xd9
+]);
+
+function createStreamingResponse(bytes: Uint8Array<ArrayBuffer>, contentType = 'image/jpeg'): Response {
+  // jsdom does not implement ReadableStream — build a minimal mock reader
+  // and patch response.body so the streaming code can call getReader()
+  let consumed = false;
+  const mockReader = {
+    read: async (): Promise<ReadableStreamReadResult<Uint8Array>> => {
+      if (!consumed) {
+        consumed = true;
+        return { done: false, value: bytes };
+      }
+      return { done: true, value: undefined };
+    },
+    releaseLock: () => {},
+    cancel: async (_reason?: unknown) => {},
+    closed: Promise.resolve(undefined)
+  };
+
+  const headers = new Headers({
+    'Content-Type': contentType,
+    'Content-Length': bytes.length.toString()
+  });
+  const response = new Response(null, { status: 200, headers });
+  Object.defineProperty(response, 'body', { value: { getReader: () => mockReader }, configurable: true });
+  return response;
+}
+
+function makeStreamingFace(face: Image360Face['face'] = 'front'): Image360Face {
+  return { face, mimeType: 'image/jpeg', data: new ArrayBuffer(0), downloadUrl: `https://example.com/${face}.jpg` };
+}
+
+function makeBufferFace(face: Image360Face['face'] = 'front'): Image360Face {
+  return { face, mimeType: 'image/jpeg', data: new ArrayBuffer(100) };
+}
+
+describe(Image360VisualizationBox.name, () => {
+  let sceneHandlerMock: IMock<SceneHandler>;
+  let box: Image360VisualizationBox;
+  let fetchSpy: jest.SpiedFunction<typeof fetch>;
+  let requestRedraw: jest.Mock;
+
+  const device = { deviceType: 'desktop' as const };
+
+  beforeEach(() => {
+    sceneHandlerMock = new Mock<SceneHandler>()
+      .setup(s => s.addObject3D(It.IsAny()))
+      .callback(() => {})
+      .setup(s => s.removeObject3D(It.IsAny()))
+      .callback(() => {});
+
+    requestRedraw = jest.fn();
+    box = new Image360VisualizationBox(new THREE.Matrix4(), sceneHandlerMock.object(), device, requestRedraw);
+    fetchSpy = jest.spyOn(global, 'fetch');
+
+    jest.spyOn(globalThis, 'createImageBitmap').mockResolvedValue({ width: 100, height: 100, close: () => {} });
+
+    // jsdom does not implement URL blob methods — define and mock them
+    Object.defineProperty(URL, 'createObjectURL', {
+      value: jest.fn(() => 'blob:mock-url'),
+      writable: true,
+      configurable: true
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      value: jest.fn(),
+      writable: true,
+      configurable: true
+    });
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+    jest.restoreAllMocks();
+  });
+
+  describe('createPlaceholderMesh', () => {
+    test('adds mesh to sceneHandler via addObject3D', () => {
+      box.createPlaceholderMesh();
+
+      sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
+    });
+
+    test('is idempotent — addObject3D called only once even when called twice', () => {
+      box.createPlaceholderMesh();
+      box.createPlaceholderMesh();
+
+      sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
+    });
+  });
+
+  describe('updateFaceTexture', () => {
+    test('does not throw when mesh does not exist', () => {
+      expect(() => box.updateFaceTexture('front', new THREE.Texture())).not.toThrow();
+    });
+  });
+
+  describe('loadFaceTextures', () => {
+    test('creates placeholder mesh when any face has downloadUrl', async () => {
+      fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(BASELINE_JPEG_BYTES)));
+
+      await box.loadFaceTextures([makeStreamingFace()]).catch(() => {});
+
+      sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
+    });
+
+    test('does not create placeholder mesh when all faces have only data buffers', async () => {
+      // Mock TextureLoader so we do not need a real image URL in jsdom
+      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+
+      await box.loadFaceTextures([makeBufferFace()]);
+
+      sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Never());
+    });
+
+    test('calls onFirstFaceReady after the first face resolves via buffer path', async () => {
+      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+
+      const onFirstFaceReady = jest.fn();
+      await box.loadFaceTextures([makeBufferFace()], onFirstFaceReady);
+
+      expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
+    });
+
+    test('calls onFirstFaceReady only once when multiple faces resolve', async () => {
+      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+
+      const faces = (['front', 'back', 'left'] as Image360Face['face'][]).map(makeBufferFace);
+      const onFirstFaceReady = jest.fn();
+      await box.loadFaceTextures(faces, onFirstFaceReady);
+
+      expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('loadImages', () => {
+    test('calls requestRedraw when updating an existing mesh', () => {
+      const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+      const textures: Image360Texture[] = faceNames.map(face => ({ face, texture: new THREE.Texture() }));
+
+      // Create mesh first via loadImages (no existing mesh)
+      box.loadImages(textures);
+      requestRedraw.mockClear();
+
+      // Call loadImages again — mesh exists, should update materials and call requestRedraw
+      box.loadImages(textures);
+
+      expect(requestRedraw).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('loadFaceTextureStream (via loadFaceTextures)', () => {
+    test('calls onJpegTypeDetected with progressive for progressive JPEG bytes', async () => {
+      fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(PROGRESSIVE_JPEG_BYTES)));
+
+      const onJpegTypeDetected = jest.fn();
+      await box.loadFaceTextures([makeStreamingFace()], undefined, onJpegTypeDetected).catch(() => {});
+
+      expect(onJpegTypeDetected).toHaveBeenCalledWith('progressive');
+    });
+
+    test('calls onJpegTypeDetected with baseline for baseline JPEG bytes', async () => {
+      fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(BASELINE_JPEG_BYTES)));
+
+      const onJpegTypeDetected = jest.fn();
+      await box.loadFaceTextures([makeStreamingFace()], undefined, onJpegTypeDetected).catch(() => {});
+
+      expect(onJpegTypeDetected).toHaveBeenCalledWith('baseline');
+    });
+
+    test('rejects when fetch response is not ok', async () => {
+      fetchSpy.mockReturnValueOnce(Promise.resolve(new Response(null, { status: 404, statusText: 'Not Found' })));
+
+      await expect(box.loadFaceTextures([makeStreamingFace()])).rejects.toThrow('404');
+    });
+  });
+});

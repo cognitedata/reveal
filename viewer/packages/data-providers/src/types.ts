@@ -162,6 +162,8 @@ export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
+  /** Signed download URL for streaming. When present, data is empty. */
+  downloadUrl?: string;
 };
 
 export type Image360Texture = {
