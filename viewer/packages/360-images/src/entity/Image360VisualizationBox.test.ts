@@ -19,8 +19,6 @@ const BASELINE_JPEG_BYTES: Uint8Array<ArrayBuffer> = new Uint8Array([
 ]);
 
 function createStreamingResponse(bytes: Uint8Array<ArrayBuffer>, contentType = 'image/jpeg'): Response {
-  // jsdom does not implement ReadableStream — build a minimal mock reader
-  // and patch response.body so the streaming code can call getReader()
   let consumed = false;
   const mockReader = {
     read: async (): Promise<ReadableStreamReadResult<Uint8Array>> => {
@@ -34,14 +32,15 @@ function createStreamingResponse(bytes: Uint8Array<ArrayBuffer>, contentType = '
     cancel: async (_reason?: unknown) => {},
     closed: Promise.resolve(undefined)
   };
-
-  const headers = new Headers({
-    'Content-Type': contentType,
-    'Content-Length': bytes.length.toString()
-  });
+  const headers = new Headers({ 'Content-Type': contentType, 'Content-Length': bytes.length.toString() });
   const response = new Response(null, { status: 200, headers });
   Object.defineProperty(response, 'body', { value: { getReader: () => mockReader }, configurable: true });
   return response;
+}
+
+function makeSixTextures(): Image360Texture[] {
+  const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+  return faceNames.map(face => ({ face, texture: new THREE.Texture() }));
 }
 
 function makeStreamingFace(face: Image360Face['face'] = 'front'): Image360Face {
@@ -73,22 +72,92 @@ describe(Image360VisualizationBox.name, () => {
 
     jest.spyOn(globalThis, 'createImageBitmap').mockResolvedValue({ width: 100, height: 100, close: () => {} });
 
-    // jsdom does not implement URL blob methods — define and mock them
     Object.defineProperty(URL, 'createObjectURL', {
       value: jest.fn(() => 'blob:mock-url'),
       writable: true,
       configurable: true
     });
-    Object.defineProperty(URL, 'revokeObjectURL', {
-      value: jest.fn(),
-      writable: true,
-      configurable: true
-    });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: jest.fn(), writable: true, configurable: true });
   });
 
   afterEach(() => {
     fetchSpy.mockRestore();
     jest.restoreAllMocks();
+  });
+
+  describe('loadImages', () => {
+    test('creates mesh and adds it to sceneHandler on first call', () => {
+      box.loadImages(makeSixTextures());
+
+      sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
+    });
+
+    test('does not add a second mesh when called again — updates materials instead', () => {
+      const textures1 = makeSixTextures();
+      const textures2 = makeSixTextures();
+      box.loadImages(textures1);
+      box.loadImages(textures2);
+
+      sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
+      box['_faceMaterials'].forEach((material, index) => {
+        expect(material.map).toBe(textures2[index].texture);
+      });
+    });
+
+    test('calls requestRedraw when updating an existing mesh', () => {
+      const textures = makeSixTextures();
+      box.loadImages(textures);
+      requestRedraw.mockClear();
+      box.loadImages(textures);
+
+      expect(requestRedraw).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('unloadImages', () => {
+    test('removes mesh from sceneHandler after loadImages', () => {
+      box.loadImages(makeSixTextures());
+      box.unloadImages();
+
+      sceneHandlerMock.verify(s => s.removeObject3D(It.IsAny()), Times.Once());
+    });
+
+    test('is a no-op when no mesh exists', () => {
+      box.unloadImages();
+
+      sceneHandlerMock.verify(s => s.removeObject3D(It.IsAny()), Times.Never());
+    });
+  });
+
+  describe('getTransform', () => {
+    test('returns a Matrix4', () => {
+      expect(box.getTransform()).toBeInstanceOf(THREE.Matrix4);
+    });
+  });
+
+  describe('visible', () => {
+    test('setter does not throw when no mesh exists', () => {
+      expect(() => {
+        box.visible = false;
+      }).not.toThrow();
+    });
+
+    test('getter reflects the value set and updates material opacities', () => {
+      box.loadImages(makeSixTextures());
+      box.opacity = 0.5;
+      expect(box.opacity).toBe(0.5);
+      box['_faceMaterials'].forEach(material => {
+        expect(material.opacity).toBe(0.5);
+      });
+    });
+  });
+
+  describe('opacity', () => {
+    test('getter reflects the value set', () => {
+      box.loadImages(makeSixTextures());
+      box.opacity = 0.5;
+      expect(box.opacity).toBe(0.5);
+    });
   });
 
   describe('createPlaceholderMesh', () => {
@@ -122,7 +191,6 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('does not create placeholder mesh when all faces have only data buffers', async () => {
-      // Mock TextureLoader so we do not need a real image URL in jsdom
       jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
 
       await box.loadFaceTextures([makeBufferFace()]);
@@ -147,22 +215,6 @@ describe(Image360VisualizationBox.name, () => {
       await box.loadFaceTextures(faces, onFirstFaceReady);
 
       expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('loadImages', () => {
-    test('calls requestRedraw when updating an existing mesh', () => {
-      const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-      const textures: Image360Texture[] = faceNames.map(face => ({ face, texture: new THREE.Texture() }));
-
-      // Create mesh first via loadImages (no existing mesh)
-      box.loadImages(textures);
-      requestRedraw.mockClear();
-
-      // Call loadImages again — mesh exists, should update materials and call requestRedraw
-      box.loadImages(textures);
-
-      expect(requestRedraw).toHaveBeenCalledTimes(1);
     });
   });
 
