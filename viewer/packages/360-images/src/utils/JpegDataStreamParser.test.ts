@@ -4,7 +4,7 @@
 
 import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from './JpegDataStreamParser';
 
-describe('detectJpegType', () => {
+describe(detectJpegType.name, () => {
   test('returns unknown for buffer shorter than 4 bytes', () => {
     expect(detectJpegType(new Uint8Array([0xff, 0xd8, 0xff]))).toBe('unknown');
     expect(detectJpegType(new Uint8Array([]))).toBe('unknown');
@@ -47,7 +47,7 @@ describe('detectJpegType', () => {
   });
 });
 
-describe('findProgressiveScanCutpoints', () => {
+describe(findProgressiveScanCutpoints.name, () => {
   test('returns empty array for non-JPEG buffer', () => {
     expect(findProgressiveScanCutpoints(new Uint8Array([0x00, 0x01, 0x02, 0x03]))).toEqual([]);
     expect(findProgressiveScanCutpoints(new Uint8Array([]))).toEqual([]);
@@ -90,7 +90,7 @@ function readBlobBytes(blob: Blob): Promise<Uint8Array<ArrayBuffer>> {
   });
 }
 
-describe('makePartialJpegBlob', () => {
+describe(makePartialJpegBlob.name, () => {
   test('creates blob of size cutpoint+2', () => {
     const buffer = new Uint8Array([0xff, 0xd8, 0xab, 0xcd, 0xef]);
     const cutpoint = 3;
