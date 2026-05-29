@@ -8,7 +8,7 @@ import assert from 'assert';
 import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from '../jpegStreamParser';
+import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from '../utils/JpegDataStreamParser';
 
 type VisualizationState = {
   opacity: number;

@@ -15,6 +15,10 @@ export function detectJpegType(buffer: Uint8Array): 'progressive' | 'baseline' |
   while (i < buffer.length - 1) {
     if (buffer[i] !== 0xff) return 'unknown';
     const marker = buffer[i + 1];
+    if (marker === 0xff) {
+      i++;
+      continue;
+    }
     if (marker === 0xc0 || marker === 0xc1) return 'baseline'; // SOF0 / SOF1
     if (marker === 0xc2) return 'progressive'; // SOF2
     if (marker === 0xd9) return 'unknown'; // EOI before SOF — malformed
@@ -59,6 +63,10 @@ export function findProgressiveScanCutpoints(buffer: Uint8Array): number[] {
     }
 
     const marker = buffer[i + 1];
+    if (marker === 0xff) {
+      i++;
+      continue;
+    }
 
     if (marker === 0xd9) {
       // EOI — full image complete; treat current position as a cutpoint
@@ -97,7 +105,7 @@ export function findProgressiveScanCutpoints(buffer: Uint8Array): number[] {
         i++;
       }
 
-      if (foundEndOfScan) {
+      if (foundEndOfScan && buffer[i + 1] !== 0xd9) {
         cutpoints.push(i); // buffer[0..i] + EOI = decodable JPEG
       }
       continue;
@@ -116,10 +124,6 @@ export function findProgressiveScanCutpoints(buffer: Uint8Array): number[] {
  * Creates a Blob containing a valid JPEG by taking the first `cutpoint` bytes
  * of `buffer` and appending an EOI (FF D9) marker.
  */
-export function makePartialJpegBlob(buffer: Uint8Array, cutpoint: number): Blob {
-  const partial = new Uint8Array(cutpoint + 2);
-  partial.set(buffer.subarray(0, cutpoint));
-  partial[cutpoint] = 0xff;
-  partial[cutpoint + 1] = 0xd9;
-  return new Blob([partial], { type: 'image/jpeg' });
+export function makePartialJpegBlob(buffer: Uint8Array<ArrayBuffer>, cutpoint: number): Blob {
+  return new Blob([buffer.subarray(0, cutpoint), new Uint8Array([0xff, 0xd9])], { type: 'image/jpeg' });
 }

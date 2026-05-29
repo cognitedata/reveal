@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from './jpegStreamParser';
+import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from './JpegDataStreamParser';
 
 describe('detectJpegType', () => {
   test('returns unknown for buffer shorter than 4 bytes', () => {
