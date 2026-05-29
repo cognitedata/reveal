@@ -111,12 +111,19 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   } {
     // For progressive JPEG: resolves when first face scan 1 is decoded.
     // For baseline JPEG: resolves after the first face fully downloads.
-    const { promise: firstFaceReady, resolve: resolveFirstFace } = Promise.withResolvers<void>();
+    // The no-op initializers are immediately replaced by the Promise executor (which runs synchronously).
+    let resolveFirstFace: () => void = () => {};
+    const firstFaceReady = new Promise<void>(resolve => {
+      resolveFirstFace = resolve;
+    });
 
     // Resolves when icon previews load (baseline JPEG) or when firstFaceReady fires (progressive).
     // The icon request is only made when the stream confirms baseline JPEG from the file header —
     // so it is never triggered for progressive JPEG files.
-    const { promise: iconPreviewCompleted, resolve: resolveIconPreview } = Promise.withResolvers<void>();
+    let resolveIconPreview: () => void = () => {};
+    const iconPreviewCompleted = new Promise<void>(resolve => {
+      resolveIconPreview = resolve;
+    });
 
     const onFirstFaceTypeDetected = (type: 'progressive' | 'baseline'): void => {
       if (type === 'baseline') {
