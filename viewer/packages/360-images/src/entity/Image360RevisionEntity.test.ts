@@ -148,11 +148,13 @@ describe(Image360RevisionEntity.name, () => {
     });
 
     test('returns a blob URL when face descriptor is found', async () => {
-      providerMock.setup(p => p.getLowResolution360ImageFiles(It.IsAny())).returns(Promise.resolve(makeFaces(1)));
+      const faces = makeFaces(1);
+      providerMock.setup(p => p.getLowResolution360ImageFiles(It.IsAny())).returns(Promise.resolve(faces));
 
       const url = await createEntity().getPreviewThumbnailUrl('front');
 
       expect(url).toBe('blob:mock-url');
+      expect(URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob));
     });
 
     test('returns undefined when provider returns no files for the face', async () => {

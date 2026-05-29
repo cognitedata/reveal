@@ -42,11 +42,15 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('does not add a second mesh when called again — updates materials instead', () => {
-      const textures = makeSixTextures();
-      box.loadImages(textures);
-      box.loadImages(textures);
+      const textures1 = makeSixTextures();
+      const textures2 = makeSixTextures();
+      box.loadImages(textures1);
+      box.loadImages(textures2);
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
+      box['_faceMaterials'].forEach((material, index) => {
+        expect(material.map).toBe(textures2[index].texture);
+      });
     });
   });
 
@@ -78,9 +82,13 @@ describe(Image360VisualizationBox.name, () => {
       }).not.toThrow();
     });
 
-    test('getter reflects the value set', () => {
-      box.visible = false;
-      expect(box.visible).toBe(false);
+    test('getter reflects the value set and updates material opacities', () => {
+      box.loadImages(makeSixTextures());
+      box.opacity = 0.5;
+      expect(box.opacity).toBe(0.5);
+      box['_faceMaterials'].forEach(material => {
+        expect(material.opacity).toBe(0.5);
+      });
     });
   });
 
