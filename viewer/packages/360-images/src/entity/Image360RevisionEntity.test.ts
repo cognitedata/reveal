@@ -34,6 +34,8 @@ describe(Image360RevisionEntity.name, () => {
   let descriptor: Image360Descriptor<ClassicDataSourceType>;
 
   const device = { deviceType: 'desktop' as const };
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
 
   beforeEach(() => {
     providerMock = new Mock<Image360Provider<ClassicDataSourceType>>();
@@ -63,6 +65,8 @@ describe(Image360RevisionEntity.name, () => {
   });
 
   afterEach(() => {
+    Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
     jest.restoreAllMocks();
   });
 

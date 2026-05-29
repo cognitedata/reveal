@@ -93,6 +93,9 @@ describe(Image360VisualizationBox.name, () => {
   });
 
   describe('loadFaceTextures', () => {
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+
     beforeEach(() => {
       Object.defineProperty(URL, 'createObjectURL', {
         value: jest.fn(() => 'blob:mock-url'),
@@ -105,6 +108,11 @@ describe(Image360VisualizationBox.name, () => {
         configurable: true
       });
       jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+    });
+
+    afterEach(() => {
+      Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
+      Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
     });
 
     test('returns one Image360Texture per input face', async () => {
