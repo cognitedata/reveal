@@ -58,6 +58,8 @@ describe(Image360VisualizationBox.name, () => {
   let requestRedraw: jest.Mock;
 
   const device = { deviceType: 'desktop' as const };
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
 
   beforeEach(() => {
     sceneHandlerMock = new Mock<SceneHandler>()
@@ -81,6 +83,8 @@ describe(Image360VisualizationBox.name, () => {
   });
 
   afterEach(() => {
+    Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
     fetchSpy.mockRestore();
     jest.restoreAllMocks();
   });

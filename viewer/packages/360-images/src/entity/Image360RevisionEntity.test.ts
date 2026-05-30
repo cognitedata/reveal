@@ -36,6 +36,8 @@ describe(Image360RevisionEntity.name, () => {
   let descriptor: Image360Descriptor<ClassicDataSourceType>;
 
   const device = { deviceType: 'desktop' as const };
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
 
   beforeEach(() => {
     providerMock = new Mock<Image360Provider<ClassicDataSourceType>>();
@@ -66,6 +68,8 @@ describe(Image360RevisionEntity.name, () => {
   });
 
   afterEach(() => {
+    Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
     jest.restoreAllMocks();
   });
 
@@ -162,7 +166,7 @@ describe(Image360RevisionEntity.name, () => {
       providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Never());
     });
 
-    test('getLowResolution360ImageFiles IS called for baseline JPEG', async () => {
+    test('getLowResolution360ImageFiles is called for baseline JPEG', async () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
       providerMock
         .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
