@@ -123,7 +123,7 @@ Add the following script to your package's `package.json`:
 ```json
 {
   "scripts": {
-    "test": "yarn ws:test --config ./../../jest.config.js"
+    "test": "yarn ws:test --config ./../../vitest.config.ts",
   }
 }
 ```

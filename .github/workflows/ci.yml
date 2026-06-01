@@ -168,10 +168,10 @@ jobs:
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
-      
-      - name: Install Puppeteer Chrome
+
+      - name: Install Playwright Browsers
         working-directory: viewer
-        run: npx puppeteer browsers install chrome
+        run: yarn playwright install
 
       - name: Execute visual tests
         id: viewerVisualTests
