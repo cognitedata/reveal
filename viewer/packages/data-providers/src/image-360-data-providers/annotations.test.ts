@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2026 Cognite AS
+ */
 import { dmInstanceRefToKey } from '@reveal/utilities';
 import { getAnnotationIdKey } from './annotations';
 import { CoreDmImage360Annotation } from 'api-entry-points/core';

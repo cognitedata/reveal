@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2026 Cognite AS
+ */
 import { Mock } from 'moq.ts';
 import { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
 import { AnnotationsAPI, CogniteClient, FilesAPI } from '@cognite/sdk';

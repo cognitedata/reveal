@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2026 Cognite AS
+ */
 import type { FileInfo } from '@cognite/sdk';
 
 export function createFileInfo(overrides?: Partial<FileInfo>): FileInfo {

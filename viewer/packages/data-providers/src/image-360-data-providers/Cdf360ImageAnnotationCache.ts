@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2026 Cognite AS
+ */
 import { AnnotationModel, CogniteClient, FileInfo, IdEither, InternalId } from '@cognite/sdk';
 import { InstanceReference } from '../types';
 import { DataSourceType } from '../DataSourceType';
@@ -6,11 +9,11 @@ import { isDefined, isDmIdentifier } from '@reveal/utilities';
 import { chunk, groupBy, partition } from 'lodash';
 
 export class Cdf360ImageAnnotationCache {
-  private _instanceKeyToAnnotations: Map<string, Promise<AnnotationModel[]>> = new Map();
-  private _fileIdToAnnotation: Map<number, Promise<AnnotationModel[]>> = new Map();
-  private _fileIdToFileInfo: Map<string, Promise<FileInfo>> = new Map();
+  private readonly _instanceKeyToAnnotations: Map<string, Promise<AnnotationModel[]>> = new Map();
+  private readonly _fileIdToAnnotation: Map<number, Promise<AnnotationModel[]>> = new Map();
+  private readonly _fileIdToFileInfo: Map<string, Promise<FileInfo>> = new Map();
 
-  constructor(private _sdk: CogniteClient) {}
+  constructor(private readonly _sdk: CogniteClient) {}
 
   public async reverseLookup(assetId: InstanceReference<DataSourceType>): Promise<AnnotationModel[]> {
     const key = getInstanceKey(assetId);

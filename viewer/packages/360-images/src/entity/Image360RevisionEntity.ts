@@ -33,7 +33,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
   private readonly _identifier: Image360RevisionId<T>;
 
-  private _annotationKeyToAnnotationObject: Map<string, Promise<ImageAnnotationObject<T>>> = new Map();
+  private readonly _annotationKeyToAnnotationObject: Map<string, Promise<ImageAnnotationObject<T>>> = new Map();
   private _allAnnotations: ImageAnnotationObject<T>[] | undefined;
 
   private readonly _annotationFilterer: Image360AnnotationFilter;
