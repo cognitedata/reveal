@@ -35,6 +35,7 @@ export {
   Image360IconIntersectionData
 } from './src/types';
 export { Image360AnnotationFilter } from './src/annotation/Image360AnnotationFilter';
+export { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from './src/annotation/typeGuards';
 export { DEFAULT_IMAGE_360_OPACITY } from './src/entity/Image360VisualizationBox';
 export { Image360Action } from './src/Image360Action';
 export { Image360History } from './src/Image360History';

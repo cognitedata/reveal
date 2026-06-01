@@ -5,6 +5,7 @@
 import {
   Image360FileDescriptor,
   Image360Descriptor,
+  Image360RevisionId,
   Image360Texture,
   DataSourceType,
   Image360Provider,
@@ -19,7 +20,6 @@ import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
-import { Image360RevisionId, InstanceReference } from '@reveal/data-providers/src/types';
 import { getAnnotationIdKey } from '@reveal/data-providers';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
@@ -33,7 +33,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
   private readonly _identifier: Image360RevisionId<T>;
 
-  // private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
   private _annotationKeyToAnnotationObject: Map<string, Promise<ImageAnnotationObject<T>>> = new Map();
   private _allAnnotations: ImageAnnotationObject<T>[] | undefined;
 
@@ -173,7 +172,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   public async createAndAddAnnotationObjects(
     annotations: T['image360AnnotationType'][]
   ): Promise<ImageAnnotationObject<T>[]> {
-    console.log('Annotations: ', annotations);
     const filteredAnnotationData = annotations.filter(
       a => this._annotationFilterer.filter(a) && !this._annotationKeyToAnnotationObject.has(getAnnotationIdKey(a))
     );

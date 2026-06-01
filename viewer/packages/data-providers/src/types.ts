@@ -13,10 +13,10 @@ import {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult
+  Image360AnnotationAssetQueryResult,
+  Image360AnnotationInstanceReference
 } from '@reveal/360-images';
 import { DMInstanceRef } from '@reveal/utilities';
-import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']

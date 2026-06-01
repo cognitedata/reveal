@@ -4,7 +4,7 @@
 
 import chunk from 'lodash/chunk';
 
-import { AnnotationModel, CogniteClient, IdEither, AnnotationFilterProps, AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationModel, IdEither } from '@cognite/sdk';
 import {
   FaceName,
   Image360AnnotationFilterDelegate,
@@ -26,10 +26,7 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import {
-  isImageAssetLinkAnnotation,
-  isImageInstanceLinkAnnotation
-} from '@reveal/360-images/src/annotation/typeGuards';
+import { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from '@reveal/360-images';
 import { getInstanceKey } from '../utilities/instanceIds';
 import { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
 import { isDefined } from '@reveal/utilities';
@@ -57,7 +54,6 @@ export type RevisionFaceRelation = {
 };
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
-  // private readonly _client: CogniteClient;
   private readonly _cache: Cdf360ImageAnnotationCache;
 
   private readonly _collectionToInstanceReferenceToAnnotationMap: Map<
@@ -107,30 +103,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       return [];
     }
 
-    // const matchingAnnotationIds = new Set(matchingAnnotations.map(annotation => annotation.id));
     const fileIdToEntityRevision = await this.buildFileIdToEntityRevisionMap(collection, matchingAnnotations);
-
-    /* const revisionToEntityMap = new Map<
-      Image360RevisionEntity<ClassicDataSourceType>,
-      Image360Entity<ClassicDataSourceType>
-    >();
-
-    for (const annotation of matchingAnnotations) {
-      const match = fileIdToEntityRevision.get(annotation.annotatedResourceId);
-      if (match !== undefined) {
-        revisionToEntityMap.set(match.revision, match.entity);
-      }
-    } */
-
-    // const results: Image360AnnotationAssetQueryResult<ClassicDataSourceType>[] = [];
-
-    /* const annotationsPerRevision = groupBy(matchingAnnotations, annotation =>
-      fileIdToEntityRevision.get(annotation.annotatedResourceId)
-    );
-
-    Object.entries(annotationsPerRevision).map(([entityRevision, annotations]) => {
-      entityRevision
-    }); */
 
     return (
       await Promise.all(
@@ -155,29 +128,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
         })
       )
     ).filter(isDefined);
-
-    /* for (const [revision, entity] of revisionToEntityMap) {
-      // const revisionAnnotations = await revision.getAnnotationObjectsForInstance(asset);
-
-      for (const annotationObj of revisionAnnotations) {
-        if (matchingAnnotationIds.has(annotationObj.annotation.id)) {
-          results.push({
-            image: entity,
-            revision: revision,
-            annotation: annotationObj
-          });
-        }
-      }
-    }
-
-    return results; */
   }
-
-  /* private async fetchAnnotationsForRevisions(
-    revisions: Image360RevisionEntity<ClassicDataSourceType>[]
-  ): Promise<Map<string, ImageAnnotationObject<ClassicDataSourceType>>> {
-    return new Map();
-  } */
 
   /**
    * Gets all annotations for a collection

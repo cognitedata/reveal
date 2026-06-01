@@ -50,16 +50,12 @@ export class Cdf360ImageAnnotationCache {
     const [cachedFileIds, uncachedFileIds] = partition(fileIds, id => this._fileIdToAnnotation.has(id.id));
     const cachedResultPromises = cachedFileIds.map(id => this._fileIdToAnnotation.get(id.id)).filter(isDefined);
 
-    console.log('Found cached result promises: ', cachedResultPromises);
-    console.log('File ID to annotation cache = ', this._fileIdToAnnotation, 'doing lookup with IDs ', fileIds);
-
     const fetchedAnnotationsResult = this.fetchAnnotationsForFiles(uncachedFileIds);
 
     this.cacheAnnotationsForFiles(uncachedFileIds, fetchedAnnotationsResult);
 
     const cachedResults = (await Promise.all(cachedResultPromises)).flat();
     const uncachedResults = await fetchedAnnotationsResult;
-    console.log('Cached results: ', cachedResults, 'uncachedResults: ', uncachedResults);
 
     return [...cachedResults, ...uncachedResults];
   }
@@ -72,10 +68,7 @@ export class Cdf360ImageAnnotationCache {
     fileIds.forEach(id => {
       this._fileIdToAnnotation.set(
         id.id,
-        filesToAnnotationsMapPromise.then(annotationsMap => {
-          console.log('Looking up in map ', annotationsMap, 'with ID', id.id);
-          return annotationsMap[id.id] ?? [];
-        })
+        filesToAnnotationsMapPromise.then(annotationsMap => annotationsMap[id.id] ?? [])
       );
     });
   }
