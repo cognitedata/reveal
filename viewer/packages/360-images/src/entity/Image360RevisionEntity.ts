@@ -113,16 +113,20 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     // For baseline JPEG: resolves after the first face fully downloads.
     // The no-op initializers are immediately replaced by the Promise executor (which runs synchronously).
     let resolveFirstFace: () => void = () => {};
-    const firstFaceReady = new Promise<void>(resolve => {
+    let rejectFirstFace: (reason: unknown) => void = () => {};
+    const firstFaceReady = new Promise<void>((resolve, reject) => {
       resolveFirstFace = resolve;
+      rejectFirstFace = reject;
     });
 
     // Resolves when icon previews load (baseline JPEG) or when firstFaceReady fires (progressive).
     // The icon request is only made when the stream confirms baseline JPEG from the file header —
     // so it is never triggered for progressive JPEG files.
     let resolveIconPreview: () => void = () => {};
-    const iconPreviewCompleted = new Promise<void>(resolve => {
+    let rejectIconPreview: (reason: unknown) => void = () => {};
+    const iconPreviewCompleted = new Promise<void>((resolve, reject) => {
       resolveIconPreview = resolve;
+      rejectIconPreview = reject;
     });
 
     const onFirstFaceTypeDetected = (type: 'progressive' | 'baseline'): void => {
@@ -132,16 +136,23 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
           .catch(() => resolveIconPreview());
       } else {
         // Progressive: no icon loading needed — complete when first scan is ready
-        firstFaceReady.then(resolveIconPreview);
+        firstFaceReady.then(resolveIconPreview).catch(() => {});
       }
     };
 
     const fullResolutionCompleted = this.loadFullTextures(abortSignal, resolveFirstFace, onFirstFaceTypeDetected);
 
+    // If full resolution fails, propagate the rejection to both gate promises so that
+    // lowResolutionCompleted does not hang forever waiting for promises that will never resolve.
+    fullResolutionCompleted.catch(err => {
+      rejectFirstFace(err);
+      rejectIconPreview(err);
+    });
+
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
     return {
-      lowResolutionCompleted: Promise.any([iconPreviewCompleted, firstFaceReady]),
+      lowResolutionCompleted: Promise.race([iconPreviewCompleted, firstFaceReady]),
       fullResolutionCompleted
     };
   }
@@ -188,7 +199,8 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     const textures = await this._image360VisualizationBox.loadFaceTextures(
       fullImageFiles,
       onFirstFaceReady,
-      onFirstFaceTypeDetected
+      onFirstFaceTypeDetected,
+      abortSignal
     );
     this._fullResolutionTextures = textures;
     this._image360VisualizationBox.loadImages(textures);

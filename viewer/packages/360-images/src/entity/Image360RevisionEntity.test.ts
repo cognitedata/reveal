@@ -114,7 +114,7 @@ describe(Image360RevisionEntity.name, () => {
       providerMock.verify(p => p.get360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
     });
 
-    test('fullResolutionCompleted rejects when provider throws', async () => {
+    test('both fullResolutionCompleted and lowResolutionCompleted reject when provider throws', async () => {
       providerMock
         .setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny()))
         .returns(Promise.reject(new Error('fetch failed')));
@@ -128,9 +128,10 @@ describe(Image360RevisionEntity.name, () => {
         annotationFilterer
       );
 
-      const { fullResolutionCompleted } = entity.loadTextures();
+      const { fullResolutionCompleted, lowResolutionCompleted } = entity.loadTextures();
 
       await expect(fullResolutionCompleted).rejects.toThrow('fetch failed');
+      await expect(lowResolutionCompleted).rejects.toThrow('fetch failed');
     });
 
     test('getLowResolution360ImageFiles is NOT called for progressive JPEG', async () => {

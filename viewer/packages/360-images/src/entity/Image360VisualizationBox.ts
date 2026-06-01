@@ -165,7 +165,8 @@ export class Image360VisualizationBox implements Image360Visualization {
   public loadFaceTextures(
     faces: Image360Face[],
     onFirstFaceReady?: () => void,
-    onFirstFaceTypeDetected?: (type: 'progressive' | 'baseline') => void
+    onFirstFaceTypeDetected?: (type: 'progressive' | 'baseline') => void,
+    abortSignal?: AbortSignal
   ): Promise<Image360Texture[]> {
     if (faces.some(f => f.downloadUrl)) {
       this.createPlaceholderMesh();
@@ -187,7 +188,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     return Promise.all(
       faces.map(async face => {
         if (face.downloadUrl) {
-          return this.loadFaceTextureStream(face, notifyFirstFace, notifyType);
+          return this.loadFaceTextureStream(face, notifyFirstFace, notifyType, abortSignal);
         }
         const t = await this.loadFaceTextureFromBuffer(face);
         notifyFirstFace();
@@ -238,11 +239,12 @@ export class Image360VisualizationBox implements Image360Visualization {
   private async loadFaceTextureStream(
     image360Face: Image360Face,
     onFirstFaceReady?: () => void,
-    onJpegTypeDetected?: (type: 'progressive' | 'baseline') => void
+    onJpegTypeDetected?: (type: 'progressive' | 'baseline') => void,
+    abortSignal?: AbortSignal
   ): Promise<Image360Texture> {
-    const response = await fetch(image360Face.downloadUrl!, { mode: 'cors', credentials: 'omit' });
+    const response = await fetch(image360Face.downloadUrl!, { mode: 'cors', credentials: 'omit', signal: abortSignal });
     if (!response.ok || !response.body) {
-      throw new Error(`Failed to fetch 360 image for face: ${image360Face.face} (status ${response.status})`);
+      throw new Error('Failed to fetch 360 image for face: ' + image360Face.face + ' (status ' + response.status + ')');
     }
 
     const contentLength = parseInt(response.headers.get('content-length') ?? '0', 10);
