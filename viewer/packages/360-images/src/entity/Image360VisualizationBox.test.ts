@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import * as THREE from 'three';
 import { Mock, IMock, It, Times } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
@@ -54,8 +54,8 @@ function makeBufferFace(face: Image360Face['face'] = 'front'): Image360Face {
 describe(Image360VisualizationBox.name, () => {
   let sceneHandlerMock: IMock<SceneHandler>;
   let box: Image360VisualizationBox;
-  let fetchSpy: jest.SpiedFunction<typeof fetch>;
-  let requestRedraw: jest.Mock;
+  let fetchSpy: vi.SpiedFunction<typeof fetch>;
+  let requestRedraw: vi.Mock;
 
   const device = { deviceType: 'desktop' as const };
   const originalCreateObjectURL = URL.createObjectURL;
@@ -68,25 +68,25 @@ describe(Image360VisualizationBox.name, () => {
       .setup(s => s.removeObject3D(It.IsAny()))
       .callback(() => {});
 
-    requestRedraw = jest.fn();
+    requestRedraw = vi.fn();
     box = new Image360VisualizationBox(new THREE.Matrix4(), sceneHandlerMock.object(), device, requestRedraw);
-    fetchSpy = jest.spyOn(global, 'fetch');
+    fetchSpy = vi.spyOn(global, 'fetch');
 
-    jest.spyOn(globalThis, 'createImageBitmap').mockResolvedValue({ width: 100, height: 100, close: () => {} });
+    vi.spyOn(globalThis, 'createImageBitmap').mockResolvedValue({ width: 100, height: 100, close: () => {} });
 
     Object.defineProperty(URL, 'createObjectURL', {
-      value: jest.fn(() => 'blob:mock-url'),
+      value: vi.fn(() => 'blob:mock-url'),
       writable: true,
       configurable: true
     });
-    Object.defineProperty(URL, 'revokeObjectURL', { value: jest.fn(), writable: true, configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), writable: true, configurable: true });
   });
 
   afterEach(() => {
     Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
     Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
     fetchSpy.mockRestore();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('loadImages', () => {
@@ -195,7 +195,7 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('does not create placeholder mesh when all faces have only data buffers', async () => {
-      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+      vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
 
       await box.loadFaceTextures([makeBufferFace()]);
 
@@ -203,19 +203,19 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('calls onFirstFaceReady after the first face resolves via buffer path', async () => {
-      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+      vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
 
-      const onFirstFaceReady = jest.fn();
+      const onFirstFaceReady = vi.fn();
       await box.loadFaceTextures([makeBufferFace()], onFirstFaceReady);
 
       expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
     });
 
     test('calls onFirstFaceReady only once when multiple faces resolve', async () => {
-      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+      vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
 
       const faces = (['front', 'back', 'left'] as Image360Face['face'][]).map(makeBufferFace);
-      const onFirstFaceReady = jest.fn();
+      const onFirstFaceReady = vi.fn();
       await box.loadFaceTextures(faces, onFirstFaceReady);
 
       expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
@@ -226,7 +226,7 @@ describe(Image360VisualizationBox.name, () => {
     test('calls onJpegTypeDetected with progressive for progressive JPEG bytes', async () => {
       fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(PROGRESSIVE_JPEG_BYTES)));
 
-      const onJpegTypeDetected = jest.fn();
+      const onJpegTypeDetected = vi.fn();
       await box.loadFaceTextures([makeStreamingFace()], undefined, onJpegTypeDetected).catch(() => {});
 
       expect(onJpegTypeDetected).toHaveBeenCalledWith('progressive');
@@ -235,7 +235,7 @@ describe(Image360VisualizationBox.name, () => {
     test('calls onJpegTypeDetected with baseline for baseline JPEG bytes', async () => {
       fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(BASELINE_JPEG_BYTES)));
 
-      const onJpegTypeDetected = jest.fn();
+      const onJpegTypeDetected = vi.fn();
       await box.loadFaceTextures([makeStreamingFace()], undefined, onJpegTypeDetected).catch(() => {});
 
       expect(onJpegTypeDetected).toHaveBeenCalledWith('baseline');

@@ -80,20 +80,20 @@ describe(DataModelsSdk.name, () => {
       | DMInstanceRef
       ? true
       : false;
-    expect<QueryResultProp>(true).toBeTrue();
+    expect<QueryResultProp>(true).toBeTruthy();
 
     // Test that the select keys are correct
     type SelectParams = Exclude<keyof QueryResult, 'a' | 'b' | 'c' | 'nextCursor'> extends never ? true : false;
-    expect<SelectParams>(true).toBeTrue();
+    expect<SelectParams>(true).toBeTruthy();
 
     // Test that spaces from different select sources are not mixed
     // @ts-expect-error
     type QueryResultPropFromInvalidSpace = QueryResult['b'][number]['properties']['TestSpaceA'];
-    expect<QueryResultPropFromInvalidSpace>(true).toBeTrue();
+    expect<QueryResultPropFromInvalidSpace>(true).toBeTruthy();
 
     // Test that properties from a different source does not spill over in the result type
     // @ts-expect-error
     type QueryResultPropFromWrongSource = QueryResult['b'][number]['properties']['TestSpaceB']['bExternalIdTwo/v1'];
-    expect<QueryResultPropFromWrongSource>(true).toBeTrue();
+    expect<QueryResultPropFromWrongSource>(true).toBeTruthy();
   }, 10000);
 });

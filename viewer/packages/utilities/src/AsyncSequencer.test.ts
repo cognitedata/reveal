@@ -4,13 +4,13 @@
 
 import { AsyncSequencer } from './AsyncSequencer';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(AsyncSequencer.name, () => {
   test("doesn't mix up calls in the right order", async () => {
     const asyncSequencer = new AsyncSequencer();
 
-    const fn = jest.fn<(n: number) => void>();
+    const fn = vi.fn<(n: number) => void>();
 
     const sequencer1 = asyncSequencer.getNextSequencer();
     const sequencer2 = asyncSequencer.getNextSequencer();
@@ -26,7 +26,7 @@ describe(AsyncSequencer.name, () => {
   test('reverses calls in the wrong order', async () => {
     const asyncSequencer = new AsyncSequencer();
 
-    const fn = jest.fn<(n: number) => void>();
+    const fn = vi.fn<(n: number) => void>();
 
     const sequencer1 = asyncSequencer.getNextSequencer();
     const sequencer2 = asyncSequencer.getNextSequencer();

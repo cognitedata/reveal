@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { CachedModelDataProvider } from './CachedModelDataProvider';
 import { ModelDataProvider } from '../ModelDataProvider';
 import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
@@ -21,8 +21,8 @@ describe(CachedModelDataProvider.name, () => {
     mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
 
     mockBaseProvider = {
-      getBinaryFile: jest.fn(async () => new ArrayBuffer(100)),
-      getJsonFile: jest.fn(async () => ({ test: 'data' }))
+      getBinaryFile: vi.fn(async () => new ArrayBuffer(100)),
+      getJsonFile: vi.fn(async () => ({ test: 'data' }))
     };
 
     cachedProvider = new CachedModelDataProvider(
@@ -133,7 +133,7 @@ describe(CachedModelDataProvider.name, () => {
   });
 
   test('should handle base provider errors', async () => {
-    mockBaseProvider.getBinaryFile = jest.fn(async () => {
+    mockBaseProvider.getBinaryFile = vi.fn(async () => {
       throw new Error('Network error');
     });
 
@@ -141,27 +141,27 @@ describe(CachedModelDataProvider.name, () => {
   });
 
   test('should warn on cache storage failures', async () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const failingMock: CacheStorage = {
-      open: jest.fn(
+      open: vi.fn(
         async () =>
           ({
-            match: jest.fn(async () => undefined),
-            matchAll: jest.fn(async () => []),
-            put: jest.fn(async () => {
+            match: vi.fn(async () => undefined),
+            matchAll: vi.fn(async () => []),
+            put: vi.fn(async () => {
               throw new Error('Storage full');
             }),
-            delete: jest.fn(async () => true),
-            keys: jest.fn(async () => []),
-            add: jest.fn(async () => undefined),
-            addAll: jest.fn(async () => undefined)
+            delete: vi.fn(async () => true),
+            keys: vi.fn(async () => []),
+            add: vi.fn(async () => undefined),
+            addAll: vi.fn(async () => undefined)
           }) satisfies Cache
       ),
-      delete: jest.fn(async () => true),
-      has: jest.fn(async () => false),
-      keys: jest.fn(async () => []),
-      match: jest.fn(async () => undefined)
+      delete: vi.fn(async () => true),
+      has: vi.fn(async () => false),
+      keys: vi.fn(async () => []),
+      match: vi.fn(async () => undefined)
     } satisfies CacheStorage;
 
     const failingProvider = new CachedModelDataProvider(

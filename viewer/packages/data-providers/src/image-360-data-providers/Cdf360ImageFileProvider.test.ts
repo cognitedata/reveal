@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 import {
@@ -173,10 +173,10 @@ describe(Cdf360ImageFileProvider.name, () => {
   describe(Cdf360ImageFileProvider.name + ' class', () => {
     let mockClient: CogniteClient;
     let provider: Cdf360ImageFileProvider;
-    let fetchSpy: jest.SpiedFunction<typeof fetch>;
+    let fetchSpy: vi.SpiedFunction<typeof fetch>;
 
     beforeEach(() => {
-      fetchSpy = jest.spyOn(global, 'fetch');
+      fetchSpy = vi.spyOn(global, 'fetch');
 
       mockClient = new Mock<CogniteClient>()
         .setup(c => c.getBaseUrl())

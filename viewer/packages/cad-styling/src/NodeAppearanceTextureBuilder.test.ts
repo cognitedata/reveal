@@ -13,7 +13,7 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 import { Color } from 'three';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { NodeOutlineColor, type NodeAppearance } from './NodeAppearance';
 import assert from 'assert';
 
@@ -27,35 +27,35 @@ describe('NodeAppearanceTextureBuilder', () => {
   let nodeCollection: TreeIndexNodeCollection;
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     styleProvider = new NodeAppearanceProvider();
     builder = new NodeAppearanceTextureBuilder(1, styleProvider);
     nodeCollection = new TreeIndexNodeCollection([0]);
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('needsUpdate is initially true', () => {
-    expect(builder.needsUpdate).toBeTrue();
+    expect(builder.needsUpdate).toBeTruthy();
   });
 
   test('needsUpdate() reset to false after build()', () => {
     builder.build();
-    expect(builder.needsUpdate).toBeFalse();
+    expect(builder.needsUpdate).toBeFalsy();
   });
 
   test('needsUpdate() is true after style provider is changed', () => {
     builder.build(); // Reset needsUpdate
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
-    jest.runAllTimers();
-    expect(builder.needsUpdate).toBeTrue();
+    vi.runAllTimers();
+    expect(builder.needsUpdate).toBeTruthy();
   });
 
   test('build() applies color override', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { color: new Color(0.5, 1.0, 0.25) });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([128, 255, 64, 1]);
@@ -63,7 +63,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('build() applies hidden', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { visible: false });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 0]);
@@ -71,7 +71,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('build() applies in front', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderInFront: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 3]);
@@ -79,7 +79,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('build() applies ghost mode', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 5]);
@@ -87,7 +87,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('build() applies outline', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Orange });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 5)]);
@@ -99,7 +99,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([]));
 
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
@@ -112,7 +112,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([]));
 
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderInFront: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
@@ -122,13 +122,13 @@ describe('NodeAppearanceTextureBuilder', () => {
   test('build() resets styles of removed node collections', () => {
     // Arrange
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 5]); // Alpha = 5 -> visible, ghosted
 
     // Act
     styleProvider.unassignStyledNodeCollection(nodeCollection);
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     // Assert
@@ -140,13 +140,13 @@ describe('NodeAppearanceTextureBuilder', () => {
     builder.build();
     const originalTexels = texelsOf(builder.overrideColorPerTreeIndexTexture);
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).not.toEqual(originalTexels);
 
     // Act
     styleProvider.unassignStyledNodeCollection(nodeCollection);
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     // Assert
@@ -157,13 +157,13 @@ describe('NodeAppearanceTextureBuilder', () => {
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
     const style: NodeAppearance = { color: new Color(0.497, 0.5, 0.752), visible: false };
     styleProvider.assignStyledNodeCollection(set, style);
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     builder.build();
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([127, 128, 192, 0]);
 
     set.updateSet(new IndexSet([]));
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1]);
@@ -180,14 +180,14 @@ describe('NodeAppearanceTextureBuilder', () => {
     const style0: NodeAppearance = { color: customColor, visible: true };
     styleProvider.assignStyledNodeCollection(set, style0);
 
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     const superSet = new TreeIndexNodeCollection(new IndexSet([0, 1]));
     const style1: NodeAppearance = { visible: true };
     styleProvider.assignStyledNodeCollection(superSet, style1);
 
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...expectedBytes, 1]);
@@ -204,13 +204,13 @@ describe('NodeAppearanceTextureBuilder', () => {
     const style0: NodeAppearance = { color: black, visible: true };
     styleProvider.assignStyledNodeCollection(set, style0);
 
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     const style1: NodeAppearance = { color: new Color(0.1, 0.2, 0.3) };
     builder.setDefaultAppearance(style1);
 
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...expectedBytes, 1]);
@@ -218,10 +218,10 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('setDefaultStyle() triggers needs update', () => {
     builder.build(); // Clear needsUpdate
-    expect(builder.needsUpdate).toBeFalse();
+    expect(builder.needsUpdate).toBeFalsy();
 
     builder.setDefaultAppearance({ renderGhosted: true, outlineColor: NodeOutlineColor.Blue });
-    expect(builder.needsUpdate).toBeTrue();
+    expect(builder.needsUpdate).toBeTruthy();
   });
 
   test('setDefaultStyle() causes computer recompute the next time build() is called', () => {
@@ -234,7 +234,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   test('setDefaultStyle() has effect for unset fields in styled sets', () => {
     builder.setDefaultAppearance({ color: new Color(0.004, 0.008, 0.011), renderGhosted: true });
     styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([0]), { renderGhosted: false });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([1, 2, 3, 1]); // Color is from default style, but 'renderGhosted' from styled set
@@ -251,7 +251,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     // Override settings for node 1+2, moving these into ghosted and infront sets
     styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([1]), { renderGhosted: true });
     styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([2]), { renderInFront: true });
-    jest.runAllTimers();
+    vi.runAllTimers();
     builder.build();
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([1]));

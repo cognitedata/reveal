@@ -3,7 +3,7 @@
  */
 
 import { Mock, It, Times, IMock } from 'moq.ts';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Ray, Vector3 } from 'three';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { ClusterIntersectionData, IconCollection } from '../icons/IconCollection';
@@ -69,7 +69,7 @@ describe(DefaultImage360Collection.name, () => {
 
   const createMockAnnotationFilter = () => new Mock<Image360AnnotationFilter>().object();
   const createMockProvider = () => new Mock<Image360Provider<ClassicDataSourceType>>().object();
-  const createSetNeedsRedraw = () => jest.fn();
+  const createSetNeedsRedraw = () => vi.fn();
 
   const createMockIcon = () => new Mock<Overlay3DIcon>().object();
 

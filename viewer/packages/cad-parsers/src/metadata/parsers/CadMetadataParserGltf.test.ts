@@ -138,10 +138,10 @@ describe('CadMetadataParserGltf', () => {
     expect(sector1!.children.map(x => x.id)).toEqual([3]);
 
     expect(sector2).toBeDefined();
-    expect(sector2!.children).toBeEmpty();
+    expect(sector2!.children).toHaveLength(0);
 
     expect(sector3).toBeDefined();
-    expect(sector3!.children).toBeEmpty();
+    expect(sector3!.children).toHaveLength(0);
   });
 
   test('Unit is passed through', () => {

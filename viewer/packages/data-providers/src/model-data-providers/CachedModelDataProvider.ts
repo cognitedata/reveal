@@ -71,7 +71,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
     const data = await fetchFromProvider();
 
     const arrayBuffer = convertToArrayBuffer(data);
-    this.cacheManager
+    await this.cacheManager
       .storeResponse(url, arrayBuffer, contentType)
       .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
 

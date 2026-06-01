@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { DataFileCacheManager } from './DataFileCacheManager';
 import { BINARY_FILES_CACHE_NAME } from './constants';
 import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
@@ -30,7 +30,7 @@ describe(DataFileCacheManager.name, () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('should use provided config or defaults', () => {
@@ -91,7 +91,7 @@ describe(DataFileCacheManager.name, () => {
   });
 
   test('should remove expired entries when maxAge is set', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const shortLivedCache = new DataFileCacheManager(
       {
@@ -106,7 +106,7 @@ describe(DataFileCacheManager.name, () => {
 
     expect(await shortLivedCache.has(TEST_FILE_URL)).toBe(true);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(await shortLivedCache.has(TEST_FILE_URL)).toBe(false);
     const cached = await shortLivedCache.getCachedResponse(TEST_FILE_URL);
@@ -114,7 +114,7 @@ describe(DataFileCacheManager.name, () => {
   });
 
   test('should never expire entries when maxAge is Infinity', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const foreverCache = new DataFileCacheManager(
       {
@@ -129,7 +129,7 @@ describe(DataFileCacheManager.name, () => {
 
     expect(await foreverCache.has(TEST_FILE_URL)).toBe(true);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(await foreverCache.has(TEST_FILE_URL)).toBe(true);
     const cached = await foreverCache.getCachedResponse(TEST_FILE_URL);
@@ -138,15 +138,15 @@ describe(DataFileCacheManager.name, () => {
 
   test('should handle errors gracefully', async () => {
     const failingMock: CacheStorage = {
-      open: jest.fn(async () => {
+      open: vi.fn(async () => {
         throw new Error('Cache error');
       }),
-      delete: jest.fn(async () => {
+      delete: vi.fn(async () => {
         throw new Error('Delete error');
       }),
-      has: jest.fn(async () => false),
-      keys: jest.fn(async () => []),
-      match: jest.fn(async () => undefined)
+      has: vi.fn(async () => false),
+      keys: vi.fn(async () => []),
+      match: vi.fn(async () => undefined)
     } satisfies CacheStorage;
 
     const errorManager = new DataFileCacheManager(
@@ -158,7 +158,7 @@ describe(DataFileCacheManager.name, () => {
       failingMock
     );
 
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     await expect(errorManager.getCachedResponse(TEST_FILE_URL)).rejects.toThrow('Cache error');
     // storeResponse no longer throws — it warns on non-quota errors
@@ -207,19 +207,19 @@ describe(DataFileCacheManager.name, () => {
       return storage;
     }
 
-    let warnSpy: ReturnType<typeof jest.spyOn>;
+    let warnSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
-      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     });
 
     afterEach(() => {
       warnSpy.mockRestore();
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     test('should evict oldest 20% of entries on QuotaExceededError and retry', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const storageMap: Map<string, Map<string, Response>> = new Map();
       // Puts 1-5 succeed (storing the 5 initial entries), put 6 triggers quota
@@ -231,7 +231,7 @@ describe(DataFileCacheManager.name, () => {
       const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
       for (const url of urls) {
         await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       }
 
       const NEW_URL = 'https://example.com/new.bin';
@@ -248,7 +248,7 @@ describe(DataFileCacheManager.name, () => {
     });
 
     test('should use in-memory last-accessed time for LRU ordering', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const storageMap: Map<string, Map<string, Response>> = new Map();
       // Puts 1-5 succeed, put 6 triggers quota
@@ -261,12 +261,12 @@ describe(DataFileCacheManager.name, () => {
       // Store A–E at t=0,1000,2000,3000,4000 ms — _lastAccessed mirrors store time
       for (const url of [urlA, urlB, urlC, urlD, urlE]) {
         await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       }
 
       // Access A at t=5000 — promotes it above B in LRU order
       await manager.getCachedResponse(urlA);
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
 
       // 6th put triggers quota → evicts least recently accessed (B, lastAccessed=1000)
       await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);
@@ -278,7 +278,7 @@ describe(DataFileCacheManager.name, () => {
     });
 
     test('should treat Firefox No device space error as quota error and evict', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const storageMap: Map<string, Map<string, Response>> = new Map();
       const manager = new DataFileCacheManager(
@@ -289,7 +289,7 @@ describe(DataFileCacheManager.name, () => {
       const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
       for (const url of urls) {
         await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       }
 
       await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);
@@ -302,7 +302,7 @@ describe(DataFileCacheManager.name, () => {
     });
 
     test('should treat Safari iOS quota error as quota error and evict', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const storageMap: Map<string, Map<string, Response>> = new Map();
       const manager = new DataFileCacheManager(
@@ -313,7 +313,7 @@ describe(DataFileCacheManager.name, () => {
       const urls = Array.from({ length: 5 }, (_, i) => `https://example.com/file${i}.bin`);
       for (const url of urls) {
         await manager.storeResponse(url, new ArrayBuffer(100), TEST_CONTENT_TYPE);
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       }
 
       await manager.storeResponse('https://example.com/new.bin', new ArrayBuffer(100), TEST_CONTENT_TYPE);

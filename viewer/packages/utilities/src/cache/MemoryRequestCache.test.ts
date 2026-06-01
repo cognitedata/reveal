@@ -4,11 +4,11 @@
 
 import { MemoryRequestCache } from './MemoryRequestCache';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('MemoryRequestCache', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test('insert data', () => {
@@ -30,7 +30,7 @@ describe('MemoryRequestCache', () => {
     expect(() => cache.insert(2, 'overflow')).toThrow();
     cache.cleanCache(1);
     expect(() => cache.insert(2, 'overflow retry')).not.toThrow();
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test('cache is correctly cleaned up on forceInsert after resize with small size', () => {
@@ -60,7 +60,7 @@ describe('MemoryRequestCache', () => {
   });
 
   test('dispose callback is called on remove', () => {
-    const disposeCallback = jest.fn();
+    const disposeCallback = vi.fn();
     const cache = new MemoryRequestCache<number, string>(10, 5, disposeCallback);
 
     cache.insert(1, 'test1');
@@ -73,7 +73,7 @@ describe('MemoryRequestCache', () => {
   });
 
   test('dispose callback is called on clear', () => {
-    const disposeCallback = jest.fn();
+    const disposeCallback = vi.fn();
     const cache = new MemoryRequestCache<number, string>(10, 5, disposeCallback);
 
     cache.insert(1, 'test1');
@@ -89,7 +89,7 @@ describe('MemoryRequestCache', () => {
   });
 
   test('dispose callback is called on forceInsert when cache is full', () => {
-    const disposeCallback = jest.fn();
+    const disposeCallback = vi.fn();
     const cache = new MemoryRequestCache<number, string>(2, 1, disposeCallback);
 
     cache.insert(1, 'test1');
@@ -104,7 +104,7 @@ describe('MemoryRequestCache', () => {
   });
 
   test('dispose callback is called on resize when cache shrinks', () => {
-    const disposeCallback = jest.fn();
+    const disposeCallback = vi.fn();
     const cache = new MemoryRequestCache<number, string>(5, 2, disposeCallback);
 
     cache.insert(1, 'test1');
@@ -130,7 +130,7 @@ describe('MemoryRequestCache', () => {
   });
 
   test('dispose callback is not called on successful get', () => {
-    const disposeCallback = jest.fn();
+    const disposeCallback = vi.fn();
     const cache = new MemoryRequestCache<number, string>(10, 5, disposeCallback);
 
     cache.insert(1, 'test1');
@@ -165,7 +165,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('removeReference should keep item in cache when count reaches zero', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<number, string>(10, 5, disposeCallback);
 
       cache.insert(1, 'test1');
@@ -183,7 +183,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('unreferenced items should only be disposed during cache cleanup', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<number, string>(2, 1, disposeCallback);
 
       // Add items with references
@@ -208,7 +208,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('cleanCache should not remove items with active references', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<number, string>(3, 2, disposeCallback);
 
       cache.insert(1, 'test1');
@@ -227,7 +227,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('forceInsert should respect references during cleanup', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<number, string>(2, 1, disposeCallback);
 
       cache.insert(1, 'test1');
@@ -275,7 +275,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('items can be re-referenced after count drops to zero', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<number, string>(10, 5, disposeCallback);
 
       cache.insert(1, 'test1');
@@ -296,7 +296,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('multiple reference counting scenario with cache reuse', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<string, { data: string }>(10, 5, disposeCallback);
 
       const sector1 = { data: 'sector1' };
@@ -342,7 +342,7 @@ describe('MemoryRequestCache', () => {
     });
 
     test('forceInsert should succeed even when all cached items are referenced (deadlock scenario)', () => {
-      const disposeCallback = jest.fn();
+      const disposeCallback = vi.fn();
       const cache = new MemoryRequestCache<number, string>(2, 1, disposeCallback);
 
       // Fill cache and reference all items
