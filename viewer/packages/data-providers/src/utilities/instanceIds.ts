@@ -6,11 +6,11 @@ import { assertNever, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utiliti
 import { DataSourceType } from '../DataSourceType';
 import { InstanceReference } from '../types';
 
-function isCogniteInternalId(id: IdEither): id is InternalId {
+export function isCogniteInternalId(id: IdEither): id is InternalId {
   return 'id' in id && id.id !== undefined;
 }
 
-function isCogniteExternalId(id: IdEither): id is ExternalId {
+export function isCogniteExternalId(id: IdEither): id is ExternalId {
   return 'externalId' in id && id.externalId !== undefined;
 }
 

@@ -158,19 +158,21 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
   transform: THREE.Matrix4;
 };
 
+export type FaceName = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+
 export type Image360Face = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
 };
 
 export type Image360Texture = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   texture: THREE.Texture;
 };
 
 export type Image360FileDescriptor = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
   /** Internal CDF file ID (numeric) */
   fileId?: number;

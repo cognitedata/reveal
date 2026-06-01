@@ -5,6 +5,7 @@ export { CdfModelDataProvider } from './src/model-data-providers/CdfModelDataPro
 export { CachedModelDataProvider } from './src/model-data-providers/CachedModelDataProvider';
 export { CdfModelIdentifier } from './src/model-identifiers/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/metadata-providers/CdfModelMetadataProvider';
+export { getAnnotationIdKey } from './src/image-360-data-providers/annotations';
 export { Cdf360ImageAnnotationProvider } from './src/image-360-data-providers/Cdf360ImageAnnotationProvider';
 export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/events/Cdf360EventDescriptorProvider';
 export { CoreDm360ImageAnnotationProvider } from './src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
