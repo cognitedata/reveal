@@ -6,11 +6,12 @@ import * as THREE from 'three';
 
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { SectorLoadingSpent } from './sector/culling/types';
+import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
 import { File3dFormat } from '@reveal/data-providers';
 import { createCadNode } from '../../../test-utilities';
 
-import { jest } from '@jest/globals';
+import { Mock, vi } from 'vitest';
+import { WantedSector } from '@reveal/cad-parsers';
 
 const emptyBudgetSpent: SectorLoadingSpent = {
   downloadSize: 0,
@@ -25,30 +26,41 @@ const emptyBudgetSpent: SectorLoadingSpent = {
 };
 
 async function flushPipeline(): Promise<void> {
-  jest.advanceTimersByTime(300);
-  jest.runAllTimers();
+  vi.advanceTimersByTime(300);
+  vi.runAllTimers();
   for (let i = 0; i < 6; i++) {
     await Promise.resolve();
   }
 }
 
 describe(CadModelUpdateHandler.name, () => {
-  let mockCuller: jest.Mocked<SectorCuller>;
+  let mockCuller: {
+    determineSectors: Mock<
+      (input: DetermineSectorsInput) => {
+        wantedSectors: WantedSector[];
+        spentBudget: SectorLoadingSpent;
+      }
+    >;
+    filterSectorsToLoad: Mock<
+      (input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]) => Promise<WantedSector[]>
+    >;
+    dispose: Mock<() => void>;
+  };
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     mockCuller = {
-      determineSectors: jest
+      determineSectors: vi
         .fn<SectorCuller['determineSectors']>()
         .mockReturnValue({ wantedSectors: [], spentBudget: emptyBudgetSpent }),
-      filterSectorsToLoad: jest.fn<SectorCuller['filterSectorsToLoad']>().mockResolvedValue([]),
-      dispose: jest.fn<SectorCuller['dispose']>()
+      filterSectorsToLoad: vi.fn<SectorCuller['filterSectorsToLoad']>().mockResolvedValue([]),
+      dispose: vi.fn<SectorCuller['dispose']>()
     };
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('dipose() disposes culler', () => {

@@ -14,8 +14,8 @@ import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { jest } from '@jest/globals';
-import { createCadNode } from '../../../test-utilities/src/createCadNode';
+import { vi } from 'vitest';
+import { createCadNode } from '../../../test-utilities';
 
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
@@ -24,17 +24,17 @@ describe('CadMaterialManager', () => {
   const modelIdentifier2 = Symbol('model2');
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     manager = new CadMaterialManager();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('addModelMaterials creates material and initializes collections for model', () => {
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
-    expect(manager.getModelMaterials(modelIdentifier1)).not.toBeEmpty();
+    expect(manager.getModelMaterials(modelIdentifier1)).not.to.be.empty;
     expect(manager.getModelBackTreeIndices(modelIdentifier1)).toEqual(new IndexSet(range(0, 17)));
     expect(manager.getModelGhostedTreeIndices(modelIdentifier1)).toEqual(new IndexSet());
     expect(manager.getModelInFrontTreeIndices(modelIdentifier1)).toEqual(new IndexSet());
@@ -74,7 +74,7 @@ describe('CadMaterialManager', () => {
 
     provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
     provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([5])), { visible: false });
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(manager.getModelBackTreeIndices(modelIdentifier1).toPlainSet()).toEqual(new IndexSet([0, 4]).toPlainSet());
     expect(manager.getModelGhostedTreeIndices(modelIdentifier1)).toEqual(new IndexSet([1, 2, 3]));
@@ -84,7 +84,7 @@ describe('CadMaterialManager', () => {
   test('transform provider triggers update, triggers materialChanged', () => {
     const modelIdentifier = Symbol('model');
     manager.addModelMaterials(modelIdentifier, createCadMaterial(4));
-    const listener = jest.fn();
+    const listener = vi.fn();
     const provider = manager.getModelNodeTransformProvider(modelIdentifier);
     provider.on('changed', listener);
 
@@ -107,13 +107,13 @@ describe('CadMaterialManager', () => {
 
     // Assert
     for (const material of iterateMaterials(manager.getModelMaterials(modelIdentifier1))) {
-      expect(material.clipIntersection).toBeFalse();
-      expect(material.clipping).toBeTrue();
+      expect(material.clipIntersection).toBeFalsy();
+      expect(material.clipping).toBeTruthy();
       expect(material.clippingPlanes?.length).toBe(4);
     }
     for (const material of iterateMaterials(manager.getModelMaterials(modelIdentifier2))) {
-      expect(material.clipIntersection).toBeFalse();
-      expect(material.clipping).toBeTrue();
+      expect(material.clipIntersection).toBeFalsy();
+      expect(material.clipping).toBeTruthy();
       expect(material.clippingPlanes?.length).toBe(3);
     }
   });
@@ -154,7 +154,7 @@ describe('CadMaterialManager', () => {
     const sectorId = 123;
     // Create first textured material
     const firstMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture1);
-    const disposeSpy = jest.spyOn(firstMaterial, 'dispose');
+    const disposeSpy = vi.spyOn(firstMaterial, 'dispose');
     // Act - create second textured material with same sectorId
     const secondMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture2);
     // Assert

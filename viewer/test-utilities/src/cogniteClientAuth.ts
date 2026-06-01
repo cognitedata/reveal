@@ -4,9 +4,9 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
-export function mockClientAuthentication(client: CogniteClient): jest.SpiedFunction<() => Promise<string | undefined>> {
-  const spy = jest.spyOn(client, 'authenticate').mockImplementation(() => Promise.resolve('dummy'));
+export function mockClientAuthentication(client: CogniteClient): vi.SpiedFunction<() => Promise<string | undefined>> {
+  const spy = vi.spyOn(client, 'authenticate').mockImplementation(() => Promise.resolve('dummy'));
   return spy;
 }

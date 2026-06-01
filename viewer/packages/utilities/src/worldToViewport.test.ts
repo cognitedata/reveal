@@ -10,16 +10,13 @@ import {
   getNormalizedPixelCoordinates
 } from './worldToViewport';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from '../../../test-utilities';
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R> {
-      toBeInRange(min: number, max: number): R;
-    }
+declare module 'vitest' {
+  interface Matchers<R = void> {
+    toBeInRange(min: number, max: number): R;
   }
 }
 
@@ -59,7 +56,7 @@ describe('worldToViewport', () => {
     camera.updateProjectionMatrix();
 
     const canvas = document.createElement('canvas');
-    jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
+    vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
 
     renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>(), { canvas }).object();
     renderer.setSize(64, 64);

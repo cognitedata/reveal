@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { Mock, It } from 'moq.ts';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 import { PointCloudOctreePicker } from './PointCloudOctreePicker';
 import { PointCloudOctree } from './PointCloudOctree';
@@ -31,7 +31,7 @@ function createMockRenderer(): THREE.WebGLRenderer {
 
 describe(PointCloudOctreePicker.name, () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('picking returns null immediately for empty octrees array', async () => {
@@ -45,21 +45,21 @@ describe(PointCloudOctreePicker.name, () => {
   });
 
   test('picking resets GL state synchronously before awaiting GPU readback', async () => {
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPickState').mockReturnValue(createMockPickState());
-    jest.spyOn(PointCloudOctreePickerHelper, 'updatePickRenderTarget').mockImplementation(() => {});
-    jest.spyOn(PointCloudOctreePickerHelper, 'findHit').mockReturnValue(null);
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPickPoint').mockReturnValue(null);
-    jest.spyOn(PointCloudOctreePickerHelper.prototype, 'prepareRender').mockImplementation(() => {});
-    jest.spyOn(PointCloudOctreePickerHelper.prototype, 'render').mockReturnValue([]);
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPickState').mockReturnValue(createMockPickState());
+    vi.spyOn(PointCloudOctreePickerHelper, 'updatePickRenderTarget').mockImplementation(() => {});
+    vi.spyOn(PointCloudOctreePickerHelper, 'findHit').mockReturnValue(null);
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPickPoint').mockReturnValue(null);
+    vi.spyOn(PointCloudOctreePickerHelper.prototype, 'prepareRender').mockImplementation(() => {});
+    vi.spyOn(PointCloudOctreePickerHelper.prototype, 'render').mockReturnValue([]);
 
     let resolveReadPixels!: (pixels: Uint8Array) => void;
     const readPixelsPromise = new Promise<Uint8Array>(resolve => {
       resolveReadPixels = resolve;
     });
-    jest.spyOn(PointCloudOctreePickerHelper.prototype, 'readPixelsAsync').mockReturnValue(readPixelsPromise);
+    vi.spyOn(PointCloudOctreePickerHelper.prototype, 'readPixelsAsync').mockReturnValue(readPixelsPromise);
 
     let resetStateCalledBeforeResolve = false;
-    jest.spyOn(PointCloudOctreePickerHelper.prototype, 'resetState').mockImplementation(() => {
+    vi.spyOn(PointCloudOctreePickerHelper.prototype, 'resetState').mockImplementation(() => {
       resetStateCalledBeforeResolve = true;
     });
 

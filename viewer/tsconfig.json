@@ -21,6 +21,7 @@
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "./build",
+    "types": ["vitest/globals"],
     "paths": {
       "@reveal/*": [
         "./packages/*"

@@ -4,7 +4,7 @@
 
 import { CogniteInternalId, CogniteClient, HttpRequestOptions, HttpResponse } from '@cognite/sdk';
 import { NodesCdfClient } from './NodesCdfClient';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
   return treeIndex + 1337;
@@ -37,9 +37,8 @@ describe('NodesCdfClient', () => {
 
     client = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
 
-    jest
-      .spyOn(client, 'post')
-      .mockImplementation(async (url: string, options?: HttpRequestOptions): Promise<HttpResponse<unknown>> => {
+    vi.spyOn(client, 'post').mockImplementation(
+      async (url: string, options?: HttpRequestOptions): Promise<HttpResponse<unknown>> => {
         const requestItems =
           (options?.data as ByTreeIndicesRequestBody | ByNodeIdsRequestBody | undefined)?.items ?? [];
         if (/\/internalids\/bytreeindices/.test(url)) {
@@ -61,13 +60,14 @@ describe('NodesCdfClient', () => {
           return response;
         }
         throw new Error(`Unexpected URL: ${url}`);
-      });
+      }
+    );
 
     nodesClient = new NodesCdfClient(client);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('mapTreeIndicesToNodeIds with a single item', async () => {

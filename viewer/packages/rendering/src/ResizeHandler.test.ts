@@ -6,7 +6,7 @@ import { CameraChangeDelegate, CameraManager, StationaryCameraManager } from '@r
 
 import { PerspectiveCamera, WebGLRenderer, Vector2, Vector3 } from 'three';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 import { Mock, It } from 'moq.ts';
 
@@ -46,7 +46,7 @@ describe(ResizeHandler.name, () => {
     dimensions.width = initialWidth;
     dimensions.height = initialHeight;
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('set resolution threshold is persisted as stoppedCameraResolutionThreshold', () => {
@@ -78,22 +78,22 @@ describe(ResizeHandler.name, () => {
   test('signals redraw on resolution update', () => {
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
 
-    expect(resizeHandler.needsRedraw).toBeFalse();
+    expect(resizeHandler.needsRedraw).toBeFalsy();
 
     resizeHandler.setResolutionThreshold(1000);
 
-    expect(resizeHandler.needsRedraw).toBeTrue();
+    expect(resizeHandler.needsRedraw).toBeTruthy();
   });
 
   test('resetRedraw turns off needsRedraw signal', () => {
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
     resizeHandler.setResolutionThreshold(1000);
 
-    expect(resizeHandler.needsRedraw).toBeTrue();
+    expect(resizeHandler.needsRedraw).toBeTruthy();
 
     resizeHandler.resetRedraw();
 
-    expect(resizeHandler.needsRedraw).toBeFalse();
+    expect(resizeHandler.needsRedraw).toBeFalsy();
   });
 
   test('handleResize resizes render target within threshold', () => {
@@ -124,7 +124,7 @@ describe(ResizeHandler.name, () => {
 
   test('callback registers both events only once on several non-one move factor updates', () => {
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
-    const onSpy = jest.spyOn(cameraManager, 'on');
+    const onSpy = vi.spyOn(cameraManager, 'on');
 
     resizeHandler.setMovingCameraResolutionFactor(0.5);
     resizeHandler.setMovingCameraResolutionFactor(0.8);
@@ -136,7 +136,7 @@ describe(ResizeHandler.name, () => {
 
   test('callback unregisters when move factor is 1', () => {
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
-    const offSpy = jest.spyOn(cameraManager, 'off');
+    const offSpy = vi.spyOn(cameraManager, 'off');
 
     resizeHandler.setMovingCameraResolutionFactor(0.5);
     expect(offSpy.mock.calls).toHaveLength(0);
@@ -147,8 +147,8 @@ describe(ResizeHandler.name, () => {
 
   test('callback registers and registers correctly multiple times', () => {
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
-    const onSpy = jest.spyOn(cameraManager, 'on');
-    const offSpy = jest.spyOn(cameraManager, 'off');
+    const onSpy = vi.spyOn(cameraManager, 'on');
+    const offSpy = vi.spyOn(cameraManager, 'off');
 
     resizeHandler.setMovingCameraResolutionFactor(0.5);
     resizeHandler.setMovingCameraResolutionFactor(1);

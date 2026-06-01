@@ -15,10 +15,9 @@ export { createCursorAndAsyncIterator } from './src/createCursorAndAsyncIterator
 
 export { mockClientAuthentication } from './src/cogniteClientAuth';
 
-export { sleep } from './src/wait';
+export { sleep, waitUntill, yieldProcessing } from './src/wait';
 export { asyncIteratorToArray } from './src/asyncIteratorToArray';
 export { expectContainsSectorsWithLevelOfDetail } from './src/expects';
-export { yieldProcessing } from './src/wait';
 
 export { createRandomBox } from './src/createBoxes';
 

@@ -30,7 +30,7 @@ describe('computeSceneBoundingBox', () => {
     expect(boxes.length).toBeGreaterThan(0);
 
     for (const box of boxes) {
-      expect(fullBoundingBox.containsBox(box)).toBeTrue();
+      expect(fullBoundingBox.containsBox(box)).toBeTruthy();
     }
   });
 
@@ -45,6 +45,6 @@ describe('computeSceneBoundingBox', () => {
 
     const boxOutside = new THREE.Box3(new THREE.Vector3(maxX, 0, 0), new THREE.Vector3(maxX + 1, 1, 1));
 
-    expect(fullBoundingBox.containsBox(boxOutside)).toBeFalse();
+    expect(fullBoundingBox.containsBox(boxOutside)).toBeFalsy();
   });
 });

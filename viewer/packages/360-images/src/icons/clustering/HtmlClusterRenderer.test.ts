@@ -5,7 +5,7 @@
 import { Mock } from 'moq.ts';
 import { Color, Matrix4, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { HtmlClusterRenderer } from './HtmlClusterRenderer';
 import { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
 import assert from 'assert';
@@ -23,12 +23,12 @@ describe(HtmlClusterRenderer.name, () => {
     iconAtOne = createMockIcon(new Vector3(1, 1, 1));
     renderer = new HtmlClusterRenderer({ classPrefix: 'test-cluster' });
     params = createRenderParams();
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     renderer.dispose();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('creates and updates cluster DOM elements with correct count display', () => {
@@ -113,7 +113,7 @@ describe(HtmlClusterRenderer.name, () => {
     renderer.updateClusters([], params);
     expect(container.querySelector('.test-cluster-icon')?.classList.contains('fade-out')).toBe(true);
 
-    jest.advanceTimersByTime(150);
+    vi.advanceTimersByTime(150);
     expect(container.querySelectorAll('.test-cluster-icon[style*="display: flex"]').length).toBe(0);
 
     // Verify pool reuse - new cluster should reuse pooled element
@@ -140,7 +140,7 @@ describe(HtmlClusterRenderer.name, () => {
 
     // Release all elements (only 1 should be pooled due to maxPoolSize=1)
     smallPoolRenderer.updateClusters([], params);
-    jest.advanceTimersByTime(150);
+    vi.advanceTimersByTime(150);
 
     // Add 2 new clusters — 1 should come from the pool (tagged), 1 should be freshly created (untagged)
     const icon3 = createMockIcon(new Vector3(2, 2, 2));
@@ -158,7 +158,7 @@ describe(HtmlClusterRenderer.name, () => {
   test('dispose clears active elements, pooled elements, and pending timeouts', () => {
     renderer.updateClusters([createClusterData(defaultIcon, true, 10)], params);
     renderer.updateClusters([], params);
-    jest.advanceTimersByTime(150);
+    vi.advanceTimersByTime(150);
 
     renderer.dispose();
     expect(params.renderer.domElement.parentElement?.querySelector('.test-cluster-container')).toBeNull();
@@ -169,7 +169,7 @@ describe(HtmlClusterRenderer.name, () => {
     newRenderer.updateClusters([], newParams);
 
     newRenderer.dispose();
-    expect(() => jest.advanceTimersByTime(150)).not.toThrow();
+    expect(() => vi.advanceTimersByTime(150)).not.toThrow();
   });
 
   test('container element has exactly one style child after initialization', () => {

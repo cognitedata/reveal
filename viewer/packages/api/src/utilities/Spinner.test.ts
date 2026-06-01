@@ -13,18 +13,18 @@ describe('Spinner test cases', () => {
   test('stylesheet is injected when spinner created and removed on disposal', () => {
     const parent = document.createElement('div');
 
-    expect(document.querySelectorAll('style')).toBeEmpty();
-    expect(parent.children).toBeEmpty();
+    expect(document.querySelectorAll('style')).toHaveLength(0);
+    expect(parent.children).toHaveLength(0);
 
     const spinner = new Spinner(parent);
 
-    expect(document.querySelectorAll('style')).not.toBeEmpty();
-    expect(parent.children).not.toBeEmpty();
+    expect(document.querySelectorAll('style')).not.toHaveLength(0);
+    expect(parent.children).not.toHaveLength(0);
 
     spinner.dispose();
 
-    expect(document.querySelectorAll('style')).toBeEmpty();
-    expect(parent.children).toBeEmpty();
+    expect(document.querySelectorAll('style')).toHaveLength(0);
+    expect(parent.children).toHaveLength(0);
   });
 
   test('.updateBackgroundColor() updates spinner color', () => {
@@ -35,15 +35,15 @@ describe('Spinner test cases', () => {
     const spinner = new Spinner(parent);
     const spinnerDomElement = parent.firstElementChild!;
 
-    expect(spinnerDomElement.classList.contains(styles.dark)).toBeFalse(); // default is light
+    expect(spinnerDomElement.classList.contains(styles.dark)).toBeFalsy(); // default is light
 
     spinner.updateBackgroundColor(lightBackground);
 
-    expect(spinnerDomElement.classList.contains(styles.dark)).toBeTrue();
+    expect(spinnerDomElement.classList.contains(styles.dark)).toBeTruthy();
 
     spinner.updateBackgroundColor(darkBackground);
 
-    expect(spinnerDomElement.classList.contains(styles.dark)).toBeFalse();
+    expect(spinnerDomElement.classList.contains(styles.dark)).toBeFalsy();
   });
 
   test('setting loading state updates CSS and title', () => {
@@ -51,18 +51,18 @@ describe('Spinner test cases', () => {
     const spinner = new Spinner(parent);
     const spinnerDomElement = parent.firstElementChild!;
 
-    expect(spinnerDomElement.classList.contains(styles.loading)).toBeFalse();
+    expect(spinnerDomElement.classList.contains(styles.loading)).toBeFalsy();
 
     const idleTitle = spinnerDomElement.getAttribute('title');
     spinner.loading = true;
 
     expect(spinnerDomElement.getAttribute('title')).not.toBe(idleTitle);
-    expect(spinnerDomElement.classList.contains(styles.loading)).toBeTrue();
+    expect(spinnerDomElement.classList.contains(styles.loading)).toBeTruthy();
 
     spinner.loading = false;
 
     expect(spinnerDomElement.getAttribute('title')).toBe(idleTitle);
-    expect(spinnerDomElement.classList.contains(styles.loading)).toBeFalse();
+    expect(spinnerDomElement.classList.contains(styles.loading)).toBeFalsy();
   });
 
   test('set placement, changes styles', () => {

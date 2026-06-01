@@ -13,6 +13,6 @@ describe(AnnotationIdPointCloudObjectCollection.name, () => {
     const returnedIds = [...collection.getAnnotationIds()];
 
     expect(returnedIds).toHaveLength(annotationIds.length);
-    expect(returnedIds).toIncludeSameMembers(annotationIds);
+    expect(returnedIds.sort()).toEqual(annotationIds.sort());
   });
 });

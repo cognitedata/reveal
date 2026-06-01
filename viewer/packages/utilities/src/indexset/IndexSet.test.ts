@@ -12,12 +12,12 @@ describe('IndexSet', () => {
 
     expect(set.count).toEqual(5);
     for (let i = 0; i < 11; i++) {
-      expect(set.contains(i)).toBeFalse();
+      expect(set.contains(i)).toBeFalsy();
     }
     for (let i = 11; i < 16; ++i) {
-      expect(set.contains(i)).toBeTrue();
+      expect(set.contains(i)).toBeTruthy();
     }
-    expect(set.contains(16)).toBeFalse();
+    expect(set.contains(16)).toBeFalsy();
   });
 
   test('contains correct elements after adding then removing elements', () => {
@@ -25,9 +25,9 @@ describe('IndexSet', () => {
     set.addRange(new NumericRange(1, 3));
     set.remove(2);
     expect(set.count).toEqual(2);
-    expect(set.contains(1)).toBeTrue();
-    expect(set.contains(2)).toBeFalse();
-    expect(set.contains(3)).toBeTrue();
+    expect(set.contains(1)).toBeTruthy();
+    expect(set.contains(2)).toBeFalsy();
+    expect(set.contains(3)).toBeTruthy();
   });
 
   test('two overlapping set then removing some elements', () => {
@@ -63,7 +63,7 @@ describe('IndexSet', () => {
     const set = new IndexSet();
     set.addRange(new NumericRange(0, 10));
     set.intersectWith(new IndexSet());
-    expect(Array.from(set.toIndexArray())).toBeEmpty();
+    expect(Array.from(set.toIndexArray())).toHaveLength(0);
   });
 
   test('intersectsWith with partial overlap, result is overlap items', () => {
@@ -110,7 +110,7 @@ describe('IndexSet', () => {
     const cloned = set.clone();
     cloned.add(11);
 
-    expect(set.contains(11)).toBeFalse();
+    expect(set.contains(11)).toBeFalsy();
   });
 
   test('manipulate original set doesnt modify clone', () => {
@@ -120,7 +120,7 @@ describe('IndexSet', () => {
     const cloned = set.clone();
     set.add(11);
 
-    expect(cloned.contains(11)).toBeFalse();
+    expect(cloned.contains(11)).toBeFalsy();
   });
 
   test('hasIntersectionWith returns true if there is any overlap', () => {
@@ -129,7 +129,7 @@ describe('IndexSet', () => {
     const set2 = new IndexSet();
     set2.addRange(new NumericRange(3, 4));
 
-    expect(set1.hasIntersectionWith(set2)).toBeTrue();
+    expect(set1.hasIntersectionWith(set2)).toBeTruthy();
   });
 
   test('hasIntersectionWith returns false if there is no overlap', () => {
@@ -138,7 +138,7 @@ describe('IndexSet', () => {
     const set2 = new IndexSet();
     set2.addRange(new NumericRange(10, 4));
 
-    expect(set1.hasIntersectionWith(set2)).toBeFalse();
+    expect(set1.hasIntersectionWith(set2)).toBeFalsy();
   });
 
   test('hasIntersectionWithMap returns true if there is any overlap', () => {
@@ -146,7 +146,7 @@ describe('IndexSet', () => {
     set.addRange(new NumericRange(1, 5));
     const map = new Map<number, number>();
     map.set(3, 0);
-    expect(set.hasIntersectionWithMap(map)).toBeTrue();
+    expect(set.hasIntersectionWithMap(map)).toBeTruthy();
   });
 
   test('hasIntersectionWithMap returns false if there is no overlap', () => {
@@ -154,7 +154,7 @@ describe('IndexSet', () => {
     set.addRange(new NumericRange(1, 5));
     const map = new Map<number, number>();
     map.set(6, 0);
-    expect(set.hasIntersectionWithMap(map)).toBeFalse();
+    expect(set.hasIntersectionWithMap(map)).toBeFalsy();
   });
 
   test('differenceWith removes overlapping elements', () => {
@@ -178,7 +178,7 @@ describe('IndexSet', () => {
 
     const expectedInvertedRanges = [new NumericRange(4, 1), new NumericRange(7, 3)];
 
-    expect(invertedRanges).toBeArrayOfSize(expectedInvertedRanges.length);
+    expect(invertedRanges).toHaveLength(expectedInvertedRanges.length);
     for (const expectedRange of expectedInvertedRanges) {
       expect(invertedRanges).toSatisfy(ranges =>
         ranges.some(

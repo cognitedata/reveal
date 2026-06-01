@@ -19,14 +19,14 @@ describe('PointCloudMaterialManager', () => {
     const modelIdentifier = Symbol('model');
     materialManager.addModelMaterial(modelIdentifier, objectData);
 
-    expect(materialManager.getModelMaterial(modelIdentifier)).not.toBeEmpty();
+    expect(materialManager.getModelMaterial(modelIdentifier)).not.to.be.empty;
   });
 
   test('removeModelMaterial removes material from the map', () => {
     const modelIdentifier = Symbol('model');
     materialManager.addModelMaterial(modelIdentifier, objectData);
 
-    expect(materialManager.getModelMaterial(modelIdentifier)).not.toBeEmpty();
+    expect(materialManager.getModelMaterial(modelIdentifier)).not.to.be.empty;
 
     materialManager.removeModelMaterial(modelIdentifier);
 

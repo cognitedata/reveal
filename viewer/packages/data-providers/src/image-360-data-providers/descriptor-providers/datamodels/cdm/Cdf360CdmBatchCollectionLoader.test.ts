@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
@@ -127,7 +127,7 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
   });
 
   test('does not call files.retrieve API', async () => {
-    const filesRetrieveMock = jest.fn();
+    const filesRetrieveMock = vi.fn();
     const collectionIds = ['collection_1'];
     const dmsResponse = createMockDmsResponse(collectionIds);
 
