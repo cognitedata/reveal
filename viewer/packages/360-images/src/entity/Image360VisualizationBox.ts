@@ -265,6 +265,10 @@ export class Image360VisualizationBox implements Image360Visualization {
     });
 
     const applyBitmapToTexture = (bitmap: ImageBitmap): void => {
+      if (this._visualizationMesh === undefined) {
+        bitmap.close();
+        return;
+      }
       if (!texture) {
         canvas.width = bitmap.width;
         canvas.height = bitmap.height;

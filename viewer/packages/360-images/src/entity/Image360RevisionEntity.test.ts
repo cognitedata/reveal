@@ -30,7 +30,6 @@ function makeTextures(count: number): Image360Texture[] {
 describe(Image360RevisionEntity.name, () => {
   let providerMock: Mock<Image360Provider<ClassicDataSourceType>>;
   let sceneHandlerMock: IMock<SceneHandler>;
-  let vizBoxMock: Mock<Image360VisualizationBox>;
   let vizBox: Image360VisualizationBox;
   let annotationFilterer: Image360AnnotationFilter;
   let descriptor: Image360Descriptor<ClassicDataSourceType>;
@@ -41,7 +40,6 @@ describe(Image360RevisionEntity.name, () => {
 
   beforeEach(() => {
     providerMock = new Mock<Image360Provider<ClassicDataSourceType>>();
-    vizBoxMock = new Mock<Image360VisualizationBox>();
 
     sceneHandlerMock = new Mock<SceneHandler>()
       .setup(s => s.addObject3D(It.IsAny()))
@@ -76,19 +74,15 @@ describe(Image360RevisionEntity.name, () => {
   describe('loadTextures', () => {
     test('returns lowResolutionCompleted and fullResolutionCompleted promises', () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
+      jest.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
+      jest.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
 
-      const textures = makeTextures(1);
-      vizBoxMock.setup(v => v.loadFaceTextures(It.IsAny(), It.IsAny(), It.IsAny())).returns(Promise.resolve(textures));
-      vizBoxMock.setup(v => v.loadImages(It.IsAny())).returns(undefined);
-
-      const entity = new Image360RevisionEntity(
+      const result = new Image360RevisionEntity(
         providerMock.object(),
         descriptor,
-        vizBoxMock.object(),
+        vizBox,
         annotationFilterer
-      );
-
-      const result = entity.loadTextures();
+      ).loadTextures();
 
       expect(result.lowResolutionCompleted).toBeInstanceOf(Promise);
       expect(result.fullResolutionCompleted).toBeInstanceOf(Promise);
@@ -96,19 +90,15 @@ describe(Image360RevisionEntity.name, () => {
 
     test('calls get360ImageFiles on the provider', async () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
+      jest.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
+      jest.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
 
-      const textures = makeTextures(1);
-      vizBoxMock.setup(v => v.loadFaceTextures(It.IsAny(), It.IsAny(), It.IsAny())).returns(Promise.resolve(textures));
-      vizBoxMock.setup(v => v.loadImages(It.IsAny())).returns(undefined);
-
-      const entity = new Image360RevisionEntity(
+      const { fullResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
         descriptor,
-        vizBoxMock.object(),
+        vizBox,
         annotationFilterer
-      );
-
-      const { fullResolutionCompleted } = entity.loadTextures();
+      ).loadTextures();
       await fullResolutionCompleted.catch(() => {});
 
       providerMock.verify(p => p.get360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
@@ -118,17 +108,14 @@ describe(Image360RevisionEntity.name, () => {
       providerMock
         .setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny()))
         .returns(Promise.reject(new Error('fetch failed')));
+      jest.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
 
-      vizBoxMock.setup(v => v.loadImages(It.IsAny())).returns(undefined);
-
-      const entity = new Image360RevisionEntity(
+      const { fullResolutionCompleted, lowResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
         descriptor,
-        vizBoxMock.object(),
+        vizBox,
         annotationFilterer
-      );
-
-      const { fullResolutionCompleted, lowResolutionCompleted } = entity.loadTextures();
+      ).loadTextures();
 
       await expect(fullResolutionCompleted).rejects.toThrow('fetch failed');
       await expect(lowResolutionCompleted).rejects.toThrow('fetch failed');
@@ -141,27 +128,21 @@ describe(Image360RevisionEntity.name, () => {
         .returns(Promise.resolve(makeFaces(1)));
 
       const textures = makeTextures(6);
-
-      vizBoxMock
-        .setup(v => v.loadFaceTextures(It.IsAny(), It.IsAny(), It.IsAny()))
-        .callback(({ args }) => {
-          const onFirstFaceReady = args[1] as (() => void) | undefined;
-          const onFirstFaceTypeDetected = args[2] as ((type: 'progressive' | 'baseline') => void) | undefined;
+      jest
+        .spyOn(vizBox, 'loadFaceTextures')
+        .mockImplementation(async (_faces, onFirstFaceReady, onFirstFaceTypeDetected) => {
           onFirstFaceTypeDetected?.('progressive');
           onFirstFaceReady?.();
-          return Promise.resolve(textures);
+          return textures;
         });
+      jest.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
 
-      vizBoxMock.setup(v => v.loadImages(It.IsAny())).returns(undefined);
-
-      const entity = new Image360RevisionEntity(
+      const { fullResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
         descriptor,
-        vizBoxMock.object(),
+        vizBox,
         annotationFilterer
-      );
-
-      const { fullResolutionCompleted } = entity.loadTextures();
+      ).loadTextures();
       await fullResolutionCompleted;
 
       providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Never());
@@ -174,25 +155,20 @@ describe(Image360RevisionEntity.name, () => {
         .returns(Promise.resolve(makeFaces(6)));
 
       const textures = makeTextures(6);
-
-      vizBoxMock
-        .setup(v => v.loadFaceTextures(It.IsAny(), It.IsAny(), It.IsAny()))
-        .callback(({ args }) => {
-          const onFirstFaceTypeDetected = args[2] as ((type: 'progressive' | 'baseline') => void) | undefined;
+      jest
+        .spyOn(vizBox, 'loadFaceTextures')
+        .mockImplementation(async (_faces, _onFirstFaceReady, onFirstFaceTypeDetected) => {
           onFirstFaceTypeDetected?.('baseline');
-          return Promise.resolve(textures);
+          return textures;
         });
+      jest.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
 
-      vizBoxMock.setup(v => v.loadImages(It.IsAny())).returns(undefined);
-
-      const entity = new Image360RevisionEntity(
+      const { fullResolutionCompleted, lowResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
         descriptor,
-        vizBoxMock.object(),
+        vizBox,
         annotationFilterer
-      );
-
-      const { fullResolutionCompleted, lowResolutionCompleted } = entity.loadTextures();
+      ).loadTextures();
       await Promise.all([fullResolutionCompleted, lowResolutionCompleted]);
 
       providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());

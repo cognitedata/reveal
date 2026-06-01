@@ -133,7 +133,13 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       if (type === 'baseline') {
         this.loadPreviewTextures(abortSignal)
           .then(resolveIconPreview)
-          .catch(() => resolveIconPreview());
+          .catch(err => {
+            if (abortSignal?.aborted) {
+              rejectIconPreview(err);
+            } else {
+              resolveIconPreview();
+            }
+          });
       } else {
         // Progressive: no icon loading needed — complete when first scan is ready
         firstFaceReady.then(resolveIconPreview).catch(() => {});

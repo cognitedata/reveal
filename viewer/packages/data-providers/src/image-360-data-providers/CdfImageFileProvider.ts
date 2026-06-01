@@ -71,7 +71,26 @@ export class CdfImageFileProvider {
 
   public async getFileDownloadUrls(fileIdentifiers: FileIdentifier[], abortSignal?: AbortSignal): Promise<string[]> {
     const fileLinks = await this.getDownloadUrls(fileIdentifiers, abortSignal);
-    return fileLinks.map(link => link.downloadUrl);
+    const linkMap = new Map<string | number, string>();
+    fileLinks.forEach(link => {
+      if ('id' in link) {
+        linkMap.set(link.id, link.downloadUrl);
+      } else if ('externalId' in link) {
+        linkMap.set(link.externalId, link.downloadUrl);
+      }
+    });
+    return fileIdentifiers.map(identifier => {
+      let url: string | undefined;
+      if ('id' in identifier) {
+        url = linkMap.get(identifier.id);
+      } else if ('externalId' in identifier) {
+        url = linkMap.get(identifier.externalId);
+      }
+      if (!url) {
+        throw new Error(`Missing download URL for identifier: ${JSON.stringify(identifier)}`);
+      }
+      return url;
+    });
   }
 
   /**
