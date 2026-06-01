@@ -70,7 +70,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
   async getAnnotations(): Promise<ImageAnnotationObject<T>[]> {
     if (this._allAnnotations === undefined) {
-      return await this.loadAndSetAllAnnotations();
+      return this.loadAndSetAllAnnotations();
     }
     return this._allAnnotations;
   }
