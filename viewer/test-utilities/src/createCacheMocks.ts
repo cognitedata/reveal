@@ -1,7 +1,71 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
+
+// Response.arrayBuffer() returns an ArrayBuffer from the native Node.js (undici) realm,
+// which fails instanceof checks in vitest's vmForks VM context. To avoid this, we store
+// body bytes as VM-context Uint8Arrays and return them directly from a custom Response-like
+// object, bypassing the cross-realm issue.
+
+type CacheEntry = {
+  bytes: Uint8Array;
+  headers: [string, string][];
+  status: number;
+  statusText: string;
+};
+
+function createMockResponse(entry: CacheEntry, url: string): Response {
+  const headers = new Headers(entry.headers);
+  let bodyUsed = false;
+
+  const response = {
+    headers,
+    status: entry.status,
+    statusText: entry.statusText,
+    ok: entry.status >= 200 && entry.status < 300,
+    url,
+    type: 'default' as ResponseType,
+    redirected: false,
+    get bodyUsed() {
+      return bodyUsed;
+    },
+    body: null,
+    arrayBuffer: async () => {
+      if (bodyUsed) throw new TypeError('Body already used');
+      bodyUsed = true;
+      const buf = new ArrayBuffer(entry.bytes.byteLength);
+      new Uint8Array(buf).set(entry.bytes);
+      return buf;
+    },
+    text: async () => {
+      if (bodyUsed) throw new TypeError('Body already used');
+      bodyUsed = true;
+      return new TextDecoder().decode(entry.bytes);
+    },
+    json: async () => {
+      if (bodyUsed) throw new TypeError('Body already used');
+      bodyUsed = true;
+      return JSON.parse(new TextDecoder().decode(entry.bytes));
+    },
+    blob: async () => {
+      if (bodyUsed) throw new TypeError('Body already used');
+      bodyUsed = true;
+      return new Blob([entry.bytes as BlobPart]);
+    },
+    formData: async () => {
+      throw new Error('formData not implemented in mock');
+    },
+    bytes: async () => {
+      if (bodyUsed) throw new TypeError('Body already used');
+      bodyUsed = true;
+      return entry.bytes.slice();
+    },
+    clone: () => createMockResponse(entry, url)
+  };
+
+  return response;
+}
 
 export function createMockCache(storage: Map<string, Response>): Cache {
   return {
@@ -10,12 +74,24 @@ export function createMockCache(storage: Map<string, Response>): Cache {
       return stored ? stored.clone() : undefined;
     },
     matchAll: async () => {
-      return Array.from(storage.values());
+      return Array.from(storage.values()).map(r => r.clone());
     },
     put: async (key: string, response: Response) => {
-      const responseWithUrl = response.clone();
-      Object.defineProperty(responseWithUrl, 'url', { value: key, writable: false });
-      storage.set(key, responseWithUrl);
+      // Read body as native ArrayBuffer, then copy into VM-context Uint8Array to avoid
+      // cross-realm instanceof issues when the data is later returned via arrayBuffer().
+      const nativeBuf = await response.arrayBuffer();
+      const bytes = new Uint8Array(nativeBuf);
+
+      const headersList: [string, string][] = [];
+      response.headers.forEach((value, name) => headersList.push([name, value]));
+
+      const entry: CacheEntry = {
+        bytes,
+        headers: headersList,
+        status: response.status,
+        statusText: response.statusText
+      };
+      storage.set(key, createMockResponse(entry, key));
     },
     delete: async (key: string) => {
       const had = storage.has(key);
@@ -23,8 +99,8 @@ export function createMockCache(storage: Map<string, Response>): Cache {
       return had;
     },
     keys: async () => Array.from(storage.keys()).map(url => new Request(url)),
-    add: jest.fn(async () => undefined),
-    addAll: jest.fn(async () => undefined)
+    add: vi.fn(async () => undefined),
+    addAll: vi.fn(async () => undefined)
   } satisfies Cache;
 }
 
@@ -43,6 +119,6 @@ export function createMockCacheStorage(cacheStorageMap: Map<string, Map<string, 
     },
     has: async (cacheName: string) => cacheStorageMap.has(cacheName),
     keys: async () => Array.from(cacheStorageMap.keys()),
-    match: jest.fn(async () => undefined)
+    match: vi.fn(async () => undefined)
   } satisfies CacheStorage;
 }

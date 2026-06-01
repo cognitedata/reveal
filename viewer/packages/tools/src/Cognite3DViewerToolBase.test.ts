@@ -5,7 +5,7 @@
 import { DisposedDelegate } from '@reveal/utilities';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('Cognite3DViewerToolBase', () => {
   class MockedCognite3DViewerToolBase extends Cognite3DViewerToolBase {
@@ -19,7 +19,7 @@ describe('Cognite3DViewerToolBase', () => {
     tool = new MockedCognite3DViewerToolBase();
   });
   test('dispose() triggers disposed event', () => {
-    const handler: DisposedDelegate = jest.fn();
+    const handler: DisposedDelegate = vi.fn();
     tool.on('disposed', handler);
 
     tool.dispose();

@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { Mock } from 'moq.ts';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 import { PointCloudPickingHandler } from './PointCloudPickingHandler';
 import { PointCloudOctreePicker } from './potree-three-loader';
@@ -30,11 +30,11 @@ describe(PointCloudPickingHandler.name, () => {
   beforeEach(() => {
     const renderer = new Mock<THREE.WebGLRenderer>().object();
     handler = new PointCloudPickingHandler(renderer);
-    jest.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('intersectPointClouds returns empty array when no nodes are provided', async () => {
@@ -72,7 +72,7 @@ describe(PointCloudPickingHandler.name, () => {
     };
     const node = createPointCloudNode<ClassicDataSourceType>({ annotations: [annotation] });
 
-    jest.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
       pointIndex: 0,
       object: node.octree,
       position: new THREE.Vector3(1, 2, 3),
@@ -97,7 +97,7 @@ describe(PointCloudPickingHandler.name, () => {
     };
     const node = createPointCloudNode<DMDataSourceType>({ annotations: [annotation] });
 
-    jest.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
       pointIndex: 0,
       object: node.octree,
       position: new THREE.Vector3(1, 2, 3),
@@ -116,8 +116,7 @@ describe(PointCloudPickingHandler.name, () => {
     const node2 = createPointCloudNode();
     const input = createMockIntersectInput();
     // Camera is at origin; node1 octree is at distance 5, node2 octree is at distance 1
-    jest
-      .spyOn(PointCloudOctreePicker.prototype, 'pick')
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick')
       .mockResolvedValueOnce({ pointIndex: 0, object: node1.octree, position: new THREE.Vector3(5, 0, 0), objectId: 0 })
       .mockResolvedValueOnce({
         pointIndex: 0,
@@ -142,8 +141,7 @@ describe(PointCloudPickingHandler.name, () => {
       ...createMockIntersectInput(),
       clippingPlanes: [clippingPlane]
     };
-    jest
-      .spyOn(PointCloudOctreePicker.prototype, 'pick')
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick')
       .mockResolvedValueOnce({ pointIndex: 0, object: node1.octree, position: new THREE.Vector3(1, 0, 0), objectId: 0 })
       .mockResolvedValueOnce({
         pointIndex: 0,
@@ -169,7 +167,7 @@ describe(PointCloudPickingHandler.name, () => {
     });
 
     let callIndex = 0;
-    jest.spyOn(PointCloudOctreePicker.prototype, 'pick').mockImplementation(async () => {
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockImplementation(async () => {
       const thisCall = ++callIndex;
       executionOrder.push(`pick_start_${thisCall}`);
       if (thisCall === 1) {

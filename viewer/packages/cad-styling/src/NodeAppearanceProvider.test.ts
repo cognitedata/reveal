@@ -12,22 +12,22 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { createRandomBoxes } from '../../../test-utilities/src/createBoxes';
 import SeededRandom from 'random-seed';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('NodeAppearanceProvider', () => {
   let provider: NodeAppearanceProvider;
 
   beforeEach(() => {
     provider = new NodeAppearanceProvider();
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('applyStyles() when there are no added sets does nothing', () => {
-    const applyCb = jest.fn();
+    const applyCb = vi.fn();
 
     provider.applyStyles(applyCb);
 
@@ -35,7 +35,7 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('applyStyles() applies styles in the order they were added', () => {
-    const applyCb = jest.fn();
+    const applyCb = vi.fn();
     const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style1: NodeAppearance = { visible: false };
     const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
@@ -51,7 +51,7 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('applyStyles() is not invoced for removed style set', () => {
-    const applyCb = jest.fn();
+    const applyCb = vi.fn();
     const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style1: NodeAppearance = { visible: false };
     const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
@@ -67,32 +67,32 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('add/change/remove style triggers changed-listener', () => {
-    const listener = jest.fn();
+    const listener = vi.fn();
     const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     provider.on('changed', listener);
 
     provider.assignStyledNodeCollection(nodeCollection, {});
-    jest.runAllTimers();
-    expect(listener).toHaveBeenCalledTimes(1);
+    vi.runAllTimers();
+    expect(listener).toBeCalledTimes(1);
 
     provider.assignStyledNodeCollection(nodeCollection, { visible: false });
-    jest.runAllTimers();
-    expect(listener).toHaveBeenCalledTimes(2);
+    vi.runAllTimers();
+    expect(listener).toBeCalledTimes(2);
 
     provider.unassignStyledNodeCollection(nodeCollection);
-    jest.runAllTimers();
-    expect(listener).toHaveBeenCalledTimes(3);
+    vi.runAllTimers();
+    expect(listener).toBeCalledTimes(3);
   });
 
   test('triggers changed when underlying set is changed', () => {
     const set = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.assignStyledNodeCollection(set, style);
-    const listener = jest.fn();
+    const listener = vi.fn();
     provider.on('changed', listener);
 
     set.updateSet(new IndexSet([3, 4, 5, 6]));
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(listener).toHaveBeenCalledTimes(1);
   });
@@ -102,32 +102,32 @@ describe('NodeAppearanceProvider', () => {
     const style: NodeAppearance = { visible: false };
     provider.assignStyledNodeCollection(nodeCollection, style);
     provider.unassignStyledNodeCollection(nodeCollection);
-    jest.runAllTimers();
-    const listener = jest.fn();
+    vi.runAllTimers();
+    const listener = vi.fn();
     provider.on('changed', listener);
 
     nodeCollection.updateSet(new IndexSet([3, 4, 5, 6]));
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(listener).not.toHaveBeenCalled();
   });
 
   test('loadingStateChanged is triggered while NodeCollection is loading', () => {
-    const isLoadingChangedListener = jest.fn();
+    const isLoadingChangedListener = vi.fn();
     provider.on('loadingStateChanged', isLoadingChangedListener);
     const nodeCollection = new StubNodeCollection();
     provider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Blue });
 
     nodeCollection.isLoading = true;
     nodeCollection.triggerChanged();
-    jest.runAllTimers();
-    expect(isLoadingChangedListener).toHaveBeenCalledWith(true);
+    vi.runAllTimers();
+    expect(isLoadingChangedListener).toBeCalledWith(true);
     isLoadingChangedListener.mockReset();
 
     nodeCollection.isLoading = false;
     nodeCollection.triggerChanged();
-    jest.runAllTimers();
-    expect(isLoadingChangedListener).toHaveBeenCalledWith(false);
+    vi.runAllTimers();
+    expect(isLoadingChangedListener).toBeCalledWith(false);
   });
 
   test('getPrioritizedAreas returns areas that contain all boxes for all collections', () => {
@@ -164,11 +164,11 @@ describe('NodeAppearanceProvider', () => {
     }
 
     for (const isContained of containedInSomeArea0) {
-      expect(isContained).toBeTrue();
+      expect(isContained).toBeTruthy();
     }
 
     for (const isContained of containedInSomeArea1) {
-      expect(isContained).toBeTrue();
+      expect(isContained).toBeTruthy();
     }
   });
 

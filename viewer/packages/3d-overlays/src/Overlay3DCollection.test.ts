@@ -36,16 +36,16 @@ describe(Overlay3DCollection.name, () => {
 
     expect(collection.getOverlays().map(getOverlayInfo)).toEqual(OVERLAY_INFOS);
 
-    expect(collection.getOverlays().every(overlay => overlay.getVisible())).toBeTrue();
+    expect(collection.getOverlays().every(overlay => overlay.getVisible())).toBeTruthy();
   });
 
   test('calling setVisible sets point visibility', () => {
     const collection = new Overlay3DCollection(OVERLAY_INFOS);
 
-    expect(collection.children[0].visible).toBeTrue();
+    expect(collection.children[0].visible).toBeTruthy();
     collection.setVisibility(false);
 
-    expect(collection.children[0].visible).toBeFalse();
+    expect(collection.children[0].visible).toBeFalsy();
   });
 
   test('adding overlays on the fly appends to overlay list', () => {

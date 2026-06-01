@@ -54,7 +54,7 @@ describe(Image360Entity.name, () => {
     const testTranslation = new THREE.Matrix4().makeTranslation(4, 5, 6);
     const entity = createMockImage360({ customTranslation: testTranslation });
 
-    expect(entity.transform.equals(testTranslation)).toBeTrue();
+    expect(entity.transform.equals(testTranslation)).toBeTruthy();
   });
 
   test('set icon color is returned in getter', () => {

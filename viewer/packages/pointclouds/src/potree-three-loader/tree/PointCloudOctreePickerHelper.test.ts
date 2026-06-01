@@ -6,7 +6,7 @@ import { PointCloudOctreePickerHelper, RenderedNode } from './PointCloudOctreePi
 
 import { Mock, It, Times } from 'moq.ts';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('PointCloudOctreePickerHelper', () => {
   test('findHit() returns point data from pixel buffer with 1 non-zero value', () => {
@@ -18,7 +18,7 @@ describe('PointCloudOctreePickerHelper', () => {
     const dummyCamera = new THREE.PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => {
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => {
       return new THREE.Vector3();
     });
 
@@ -39,7 +39,7 @@ describe('PointCloudOctreePickerHelper', () => {
     const dummyCamera = new THREE.PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, pIndex) => {
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, pIndex) => {
       const result = new THREE.Vector3();
       switch (pIndex) {
         case 1:

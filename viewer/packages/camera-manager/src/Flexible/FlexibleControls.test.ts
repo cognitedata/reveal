@@ -1,7 +1,7 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { PerspectiveCamera, Vector3 } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
@@ -24,13 +24,13 @@ describe(FlexibleControls.name, () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('onPointerDrag', () => {
     it('does not throw when onPointerUp fires while async pan pick is in flight', async () => {
       let resolveInitialize!: () => void;
-      jest.spyOn(FlexibleControlsTranslator.prototype, 'initialize').mockImplementation(async () => {
+      vi.spyOn(FlexibleControlsTranslator.prototype, 'initialize').mockImplementation(async () => {
         await new Promise<void>(resolve => {
           resolveInitialize = resolve;
         });

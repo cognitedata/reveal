@@ -4,24 +4,25 @@
 
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { TreeIndexToSectorsMap } from './TreeIndexToSectorsMap';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('TreeIndexToSectorsMap', () => {
   let map: TreeIndexToSectorsMap;
 
   beforeEach(() => {
     map = new TreeIndexToSectorsMap(100);
-    map.onChange = jest.fn();
+    map.onChange = vi.fn();
   });
 
   test('maps from tree index to set of sectors', () => {
-    expect(Array.from(map.getSectorIdsForTreeIndex(100))).toIncludeSameMembers([]);
+    expect(Array.from(map.getSectorIdsForTreeIndex(100))).toHaveLength(0);
 
     map.set(100, 1);
     map.set(100, 2);
     map.set(100, 3);
 
-    expect(Array.from(map.getSectorIdsForTreeIndex(100))).toIncludeSameMembers([1, 2, 3]);
+    expect(Array.from(map.getSectorIdsForTreeIndex(100))).toHaveLength(3);
+    expect(Array.from(map.getSectorIdsForTreeIndex(100)).sort()).toEqual([1, 2, 3]);
   });
 
   test('fires callback when tree index is found in a new sector', () => {
@@ -35,13 +36,13 @@ describe('TreeIndexToSectorsMap', () => {
 
   test('should keep track of which geometry types that are completed for each sector', () => {
     const sectorId = 1337;
-    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.BoxCollection)).toBeFalse();
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.BoxCollection)).toBeFalsy();
     map.markCompleted(sectorId, RevealGeometryCollectionType.BoxCollection);
-    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.BoxCollection)).toBeTrue();
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.BoxCollection)).toBeTruthy();
 
-    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.ConeCollection)).toBeFalse();
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.ConeCollection)).toBeFalsy();
     // Covers the alternative branch when a Sector already has a map
     map.markCompleted(sectorId, RevealGeometryCollectionType.ConeCollection);
-    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.ConeCollection)).toBeTrue();
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.ConeCollection)).toBeTruthy();
   });
 });

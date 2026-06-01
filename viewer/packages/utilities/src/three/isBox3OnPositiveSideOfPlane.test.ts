@@ -11,7 +11,7 @@ describe('isBox3OnPositiveSideOfPlane', () => {
       new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(0, -5, 0)
     );
-    expect(isBox3OnPositiveSideOfPlane(box, plane)).toBeTrue();
+    expect(isBox3OnPositiveSideOfPlane(box, plane)).toBeTruthy();
   });
 
   test('All box-corners are on the negative side of plane', () => {
@@ -20,7 +20,7 @@ describe('isBox3OnPositiveSideOfPlane', () => {
       new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(0, 5, 0)
     );
-    expect(isBox3OnPositiveSideOfPlane(box, plane)).toBeFalse();
+    expect(isBox3OnPositiveSideOfPlane(box, plane)).toBeFalsy();
   });
 
   test('Plane slices box', () => {
@@ -29,7 +29,7 @@ describe('isBox3OnPositiveSideOfPlane', () => {
       new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(0, 0.5, 0)
     );
-    expect(isBox3OnPositiveSideOfPlane(box, plane)).toBeTrue();
+    expect(isBox3OnPositiveSideOfPlane(box, plane)).toBeTruthy();
   });
 });
 

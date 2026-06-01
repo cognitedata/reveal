@@ -11,13 +11,13 @@ import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
 import { DataSourceType } from '@reveal/data-providers';
 import { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { ResolutionOptions } from './types';
 
 const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { with: { type: 'json' } })).default;
@@ -27,17 +27,19 @@ describe('Cognite3DViewer', () => {
   mockClientAuthentication(sdk);
 
   const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
-  renderer.render = jest.fn();
+  renderer.render = vi.fn();
   const _sectorCuller = new Mock<SectorCuller>()
+    .setup(p => p.determineSectors(It.IsAny()))
+    .returns({ wantedSectors: [], spentBudget: {} as any })
     .setup(p => p.dispose)
-    .returns(jest.fn())
+    .returns(vi.fn())
     .object();
 
   beforeAll(() => {
-    jest.spyOn(global, 'fetch').mockResolvedValue(new Response('', { status: 200 }));
+    vi.spyOn(global, 'fetch').mockResolvedValue(new Response('', { status: 200 }));
 
     // Mock function for retriving model metadata, such as transformation
-    jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
+    vi.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
       id: revisionId,
       fileId: 42,
       published: false,
@@ -48,15 +50,15 @@ describe('Cognite3DViewer', () => {
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('dispose does not dispose of externally supplied renderer', () => {
-    const disposeSpy = jest.spyOn(renderer, 'dispose');
+    const disposeSpy = vi.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.dispose();
     expect(disposeSpy).not.toHaveBeenCalled();
@@ -69,7 +71,7 @@ describe('Cognite3DViewer', () => {
   });
 
   test('dispose raises disposed-event', () => {
-    const disposedListener: DisposedDelegate = jest.fn();
+    const disposedListener: DisposedDelegate = vi.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('disposed', disposedListener);
 
@@ -80,24 +82,24 @@ describe('Cognite3DViewer', () => {
 
   test('dispose removes and disposes all models', async () => {
     // Arrange
-    jest
-      .spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs')
-      .mockResolvedValue([{ format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }]);
-    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
+    vi.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue([
+      { format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }
+    ]);
+    vi.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
-    const disposeSpy = jest.spyOn(model, 'dispose');
+    const disposeSpy = vi.spyOn(model, 'dispose');
 
     viewer.dispose();
 
-    expect(viewer.models).toBeEmpty();
+    expect(viewer.models).toHaveLength(0);
     expect(disposeSpy).toHaveBeenCalledTimes(1);
   });
 
   test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
-    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
+    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = vi.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('cameraChange', onCameraChange);
 
@@ -111,12 +113,12 @@ describe('Cognite3DViewer', () => {
 
   test('addModel with remote model and fit viewer, updates camera', async () => {
     // Arrange
-    jest
-      .spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs')
-      .mockResolvedValue([{ format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }]);
-    jest.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
+    vi.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue([
+      { format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }
+    ]);
+    vi.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
-    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
+    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = vi.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('cameraChange', onCameraChange);
 
@@ -143,7 +145,7 @@ describe('Cognite3DViewer', () => {
     // Assert
     const cameraState = viewer.cameraManager.getCameraState();
     expect(cameraState.target).toEqual(bbox.getCenter(new THREE.Vector3()));
-    expect(bSphere.containsPoint(cameraState.position)).toBeTrue();
+    expect(bSphere.containsPoint(cameraState.position)).toBeTruthy();
   });
 
   test('fitCameraToBoundingBox with 1000 duration, moves camera over time', () => {
@@ -161,13 +163,13 @@ describe('Cognite3DViewer', () => {
     TWEEN.update(now + 500);
     const cameraState1 = viewer.cameraManager.getCameraState();
     expect(cameraState1.target).not.toEqual(bbox.getCenter(new THREE.Vector3()));
-    expect(bSphere.containsPoint(cameraState1.position)).toBeFalse();
+    expect(bSphere.containsPoint(cameraState1.position)).toBeFalsy();
     TWEEN.update(now + 1000);
 
     // Assert
     const cameraState2 = viewer.cameraManager.getCameraState();
     expect(cameraState2.target).toEqual(bbox.getCenter(new THREE.Vector3()));
-    expect(bSphere.containsPoint(cameraState2.position)).toBeTrue();
+    expect(bSphere.containsPoint(cameraState2.position)).toBeTruthy();
   });
 
   test('viewer can add/remove Object3d on scene', () => {
@@ -199,14 +201,14 @@ describe('Cognite3DViewer', () => {
 
   test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
     // Setup a fake rendering loop
-    const requestAnimationFrameSpy = jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
+    const requestAnimationFrameSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
       requestAnimationFrameCallback = cb;
       return 1;
     });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
-    const onBeforeRendered: BeforeSceneRenderedDelegate = jest.fn();
-    const onRendered: SceneRenderedDelegate = jest.fn();
+    const onBeforeRendered: BeforeSceneRenderedDelegate = vi.fn();
+    const onRendered: SceneRenderedDelegate = vi.fn();
     if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
 
     try {
@@ -217,7 +219,7 @@ describe('Cognite3DViewer', () => {
       expect(onBeforeRendered).toHaveBeenCalledTimes(1);
       expect(onRendered).toHaveBeenCalledTimes(1);
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       viewer.off('sceneRendered', onRendered);
       viewer.off('beforeSceneRendered', onBeforeRendered);
       viewer.requestRedraw();
@@ -263,7 +265,7 @@ describe('Cognite3DViewer', () => {
       distanceToCamera: 15
     };
 
-    const spyIntersectClusters = jest
+    const spyIntersectClusters = vi
       .spyOn(Image360ApiHelper.prototype, 'intersect360ImageClusters')
       .mockReturnValue(mockClusterData);
 

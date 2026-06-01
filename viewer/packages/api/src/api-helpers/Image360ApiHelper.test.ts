@@ -5,7 +5,7 @@ import { Mock, It } from 'moq.ts';
 import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import assert from 'assert';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
@@ -33,10 +33,12 @@ import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { mockClientAuthentication, fakeGetBoundingClientRect } from '../../../../test-utilities';
 import { Image360VisualizationBox } from '../../../360-images/src/entity/Image360VisualizationBox';
 
-function createMockRevision(): Image360RevisionEntity<DataSourceType> {
+function createMockRevision(params?: {
+  applyFullResolutionTextures: Image360RevisionEntity<DataSourceType>['applyFullResolutionTextures'];
+}): Image360RevisionEntity<DataSourceType> {
   return new Mock<Image360RevisionEntity<DataSourceType>>()
-    .setup(r => r.applyFullResolutionTextures())
-    .returns(Promise.resolve())
+    .setup(r => r.applyFullResolutionTextures)
+    .returns(params?.applyFullResolutionTextures ?? (() => Promise.resolve()))
     .object();
 }
 
@@ -58,7 +60,7 @@ function createMockEntity(
   mockIcon: Overlay3DIcon,
   mockVisualization: Image360VisualizationBox,
   mockRevision: Image360RevisionEntity<DataSourceType>,
-  position?: Vector3
+  params?: { position?: Vector3; activateAnnotations?: Image360Entity<DataSourceType>['activateAnnotations'] }
 ): Image360Entity<DataSourceType> {
   return new Mock<Image360Entity<DataSourceType>>()
     .setup(e => e.icon)
@@ -71,12 +73,16 @@ function createMockEntity(
     .returns(mockRevision)
     .setup(e => e.setActiveRevision(It.IsAny()))
     .returns(undefined)
-    .setup(e => e.activateAnnotations())
-    .returns(undefined)
+    .setup(e => e.activateAnnotations)
+    .returns(params?.activateAnnotations ?? vi.fn())
     .setup(e => e.deactivateAnnotations())
     .returns(undefined)
     .setup(e => e.transform)
-    .returns(position ? new Matrix4().makeTranslation(position.x, position.y, position.z) : new Matrix4())
+    .returns(
+      params?.position
+        ? new Matrix4().makeTranslation(params.position.x, params.position.y, params.position.z)
+        : new Matrix4()
+    )
     .object();
 }
 
@@ -133,7 +139,7 @@ function createTestHelper(
   mockCamera.updateMatrixWorld();
 
   const mockInputHandler = createMockInputHandler();
-  const mockRaycastCallback = jest.fn<() => Promise<CameraManagerCallbackData>>();
+  const mockRaycastCallback = vi.fn<() => Promise<CameraManagerCallbackData>>();
 
   let innerCameraManager: CameraManager;
   switch (cameraManagerType) {
@@ -200,14 +206,14 @@ describe(Image360ApiHelper.name, () => {
 
     ({ helper } = createTestHelper(domElement, sdk));
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(async () => {
     helper.dispose();
-    await jest.runOnlyPendingTimersAsync();
-    jest.useRealTimers();
-    jest.restoreAllMocks();
+    await vi.runOnlyPendingTimersAsync();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   async function enterImage(entity: Image360Entity<DataSourceType>): Promise<void> {
@@ -219,8 +225,8 @@ describe(Image360ApiHelper.name, () => {
 
   describe('enter360ImageOnIntersect (via onClick)', () => {
     test('returns false when no cluster or icon intersection found', async () => {
-      const clusterSpy = jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
-      const iconSpy = jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(undefined);
+      const clusterSpy = vi.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
+      const iconSpy = vi.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(undefined);
 
       const event = { offsetX: 320, offsetY: 240 };
       const result = await helper.onClick(event);
@@ -233,10 +239,10 @@ describe(Image360ApiHelper.name, () => {
     test('prioritizes cluster intersection over icon intersection', async () => {
       const mockClusterData = createMockClusterData();
 
-      jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(mockClusterData);
-      const iconIntersectSpy = jest.spyOn(helper, 'intersect360ImageIcons');
+      vi.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(mockClusterData);
+      const iconIntersectSpy = vi.spyOn(helper, 'intersect360ImageIcons');
 
-      const zoomSpy = jest.spyOn(helper, 'zoomToCluster').mockResolvedValue(true);
+      const zoomSpy = vi.spyOn(helper, 'zoomToCluster').mockResolvedValue(true);
 
       const event = { offsetX: 320, offsetY: 240 };
       const result = await helper.onClick(event);
@@ -273,10 +279,10 @@ describe(Image360ApiHelper.name, () => {
         distanceToCamera: 10
       };
 
-      jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
-      jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
+      vi.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
+      vi.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
 
-      const enterInternalSpy = jest
+      const enterInternalSpy = vi
         .spyOn(helper, 'enter360ImageInternal')
         .mockImplementation(() => Promise.resolve(true));
 
@@ -299,7 +305,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('returns cluster data when facade finds a cluster', () => {
       const mockClusterData = createMockClusterData();
-      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
+      vi.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
 
       const result = helper.intersect360ImageClusters(320, 240);
 
@@ -321,7 +327,7 @@ describe(Image360ApiHelper.name, () => {
         point: new Vector3(1, 2, 3),
         distanceToCamera: 10
       };
-      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
+      vi.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
 
       const result = helper.intersect360ImageIcons(320, 240);
 
@@ -340,7 +346,7 @@ describe(Image360ApiHelper.name, () => {
       const secondResult = await defaultHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
 
-      await jest.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
       await firstZoomPromise;
       defaultHelper.dispose();
     });
@@ -350,11 +356,11 @@ describe(Image360ApiHelper.name, () => {
       expect(isDefaultCameraManager(innerCameraManager)).toBe(true);
 
       const defaultCameraManager = innerCameraManager as DefaultCameraManager;
-      const moveCameraToSpy = jest.spyOn(defaultCameraManager, 'moveCameraTo');
+      const moveCameraToSpy = vi.spyOn(defaultCameraManager, 'moveCameraTo');
       const mockClusterData = createMockClusterData();
 
       const zoomPromise = defaultHelper.zoomToCluster(mockClusterData);
-      await jest.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
       const result = await zoomPromise;
 
       expect(result).toBe(true);
@@ -377,7 +383,7 @@ describe(Image360ApiHelper.name, () => {
       const mockClusterData = createMockClusterData();
 
       const zoomPromise = flexibleHelper.zoomToCluster(mockClusterData);
-      await jest.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
       const result = await zoomPromise;
 
       expect(result).toBe(true);
@@ -394,7 +400,7 @@ describe(Image360ApiHelper.name, () => {
       const secondResult = await flexibleHelper.zoomToCluster(mockClusterData);
       expect(secondResult).toBe(false);
 
-      await jest.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
       await firstZoomPromise;
       flexibleHelper.dispose();
     });
@@ -404,7 +410,7 @@ describe(Image360ApiHelper.name, () => {
     function createMockCollection(): DefaultImage360Collection<DataSourceType> {
       return new Mock<DefaultImage360Collection<DataSourceType>>()
         .setup(c => c.setFloorMode)
-        .returns(jest.fn())
+        .returns(vi.fn())
         .setup(c => c.getIconsVisibility())
         .returns(true)
         .setup(c => c.setIconsVisibility(It.IsAny()))
@@ -426,9 +432,9 @@ describe(Image360ApiHelper.name, () => {
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
       const mockCollection = createMockCollection();
 
-      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+      vi.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
 
       return { mockEntity, mockCollection };
     }
@@ -436,11 +442,11 @@ describe(Image360ApiHelper.name, () => {
     test('does not call setFloorMode(true) on enter when enableFloorIcons is false (default)', async () => {
       const { mockEntity } = mockFacadeForEntry();
       const mockCollection = createMockCollection();
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection]);
 
       await enterImage(mockEntity);
 
-      expect(jest.mocked(mockCollection.setFloorMode)).not.toHaveBeenCalledWith(true);
+      expect(vi.mocked(mockCollection.setFloorMode)).not.toHaveBeenCalledWith(true);
     });
 
     test('calls setFloorMode(true) on ALL collections on enter when enableFloorIcons is true', async () => {
@@ -448,21 +454,21 @@ describe(Image360ApiHelper.name, () => {
       const { mockEntity } = mockFacadeForEntry();
       const mockCollection1 = createMockCollection();
       const mockCollection2 = createMockCollection();
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
 
       const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
       await Promise.resolve();
       TWEEN.update(TWEEN.now() + 2000);
       await enterPromise;
 
-      expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
-      expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
+      expect(vi.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
+      expect(vi.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(true);
       floorHelper.dispose();
     });
 
     test('switches to proximity culling on enter and restores clustered on exit when enableFloorIcons is false', async () => {
       const { mockEntity } = mockFacadeForEntry();
-      const cullingSetSpy = jest.spyOn(Image360Facade.prototype, 'allIconCullingScheme', 'set');
+      const cullingSetSpy = vi.spyOn(Image360Facade.prototype, 'allIconCullingScheme', 'set');
 
       await enterImage(mockEntity);
 
@@ -479,26 +485,26 @@ describe(Image360ApiHelper.name, () => {
       const { mockEntity } = mockFacadeForEntry();
       const mockCollection1 = createMockCollection();
       const mockCollection2 = createMockCollection();
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([mockCollection1, mockCollection2]);
 
       const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
       await Promise.resolve();
       TWEEN.update(TWEEN.now() + 2000);
       await enterPromise;
-      jest.mocked(mockCollection1.setFloorMode).mockClear();
-      jest.mocked(mockCollection2.setFloorMode).mockClear();
+      vi.mocked(mockCollection1.setFloorMode).mockClear();
+      vi.mocked(mockCollection2.setFloorMode).mockClear();
 
       floorHelper.exit360Image();
 
-      expect(jest.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
-      expect(jest.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
+      expect(vi.mocked(mockCollection1.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
+      expect(vi.mocked(mockCollection2.setFloorMode)).toHaveBeenCalledExactlyOnceWith(false);
       floorHelper.dispose();
     });
 
     test('calls setReferenceIcon with world Y on enter when enableFloorIcons is true', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
       const { mockEntity } = mockFacadeForEntry();
-      const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
+      const setReferenceIconSpy = vi.spyOn(Image360Facade.prototype, 'setReferenceIcon');
 
       const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
       await Promise.resolve();
@@ -512,7 +518,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('does not call setReferenceIcon on enter when enableFloorIcons is false', async () => {
       const { mockEntity } = mockFacadeForEntry();
-      const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
+      const setReferenceIconSpy = vi.spyOn(Image360Facade.prototype, 'setReferenceIcon');
 
       await enterImage(mockEntity);
 
@@ -522,7 +528,7 @@ describe(Image360ApiHelper.name, () => {
     test('calls setReferenceIcon(undefined) on exit', async () => {
       const { helper: floorHelper } = createTestHelper(domElement, sdk, 'mock', { enableFloorIcons: true });
       const { mockEntity } = mockFacadeForEntry();
-      const setReferenceIconSpy = jest.spyOn(Image360Facade.prototype, 'setReferenceIcon');
+      const setReferenceIconSpy = vi.spyOn(Image360Facade.prototype, 'setReferenceIcon');
 
       const enterPromise = floorHelper.enter360ImageInternal(mockEntity);
       await Promise.resolve();
@@ -537,7 +543,7 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('calls applyFullResolutionTextures on first entry', async () => {
-      const applyFullResolutionMock = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
+      const applyFullResolutionMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
       const mockRevision = new Mock<Image360RevisionEntity<DataSourceType>>()
         .setup(r => r.applyFullResolutionTextures())
         .callback(() => applyFullResolutionMock());
@@ -551,7 +557,7 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('executes transition and applies full-res textures when switching between two entities', async () => {
-      const applyFullResMock = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
+      const applyFullResMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
       const revision2 = new Mock<Image360RevisionEntity<DataSourceType>>()
         .setup(r => r.applyFullResolutionTextures())
         .callback(() => applyFullResMock());
@@ -575,20 +581,22 @@ describe(Image360ApiHelper.name, () => {
     });
 
     test('re-entering same entity with a different revision activates annotations without camera transition', async () => {
+      // transition() calls applyFullResolutionTextures on the revision — if skipped, this stays at 0
+      const applyFullResSpy = vi.fn();
+      const activateAnnotationsSpy = vi.fn();
       const revision1 = createMockRevision();
-      const revision2 = createMockRevision();
-      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), revision1);
+      const revision2 = createMockRevision({ applyFullResolutionTextures: applyFullResSpy });
+      const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), revision1, {
+        activateAnnotations: activateAnnotationsSpy
+      });
 
       mockFacadeForEntry();
-
-      // transition() calls applyFullResolutionTextures on the revision — if skipped, this stays at 0
-      const applyFullResSpy = jest.spyOn(revision2, 'applyFullResolutionTextures');
 
       // First entry — uses revision1 via getMostRecentRevision
       await enterImage(mockEntity);
 
       // Spy after first entry so we only count calls from the same-entity branch
-      const activateAnnotationsSpy = jest.spyOn(mockEntity, 'activateAnnotations');
+      activateAnnotationsSpy.mockReset();
 
       // Second entry with explicit revision2 — lastEntered === mockEntity, so takes the same-entity branch
       const secondPromise = helper.enter360ImageInternal(mockEntity, revision2);
@@ -616,7 +624,7 @@ describe(Image360ApiHelper.name, () => {
 
     test('registers keydown listener on enter when hasEventListeners is true', async () => {
       const { helper: listenerHelper } = createTestHelper(domElement, sdk, 'mock', undefined, true);
-      const addEventSpy = jest.spyOn(domElement, 'addEventListener');
+      const addEventSpy = vi.spyOn(domElement, 'addEventListener');
 
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
       mockFacadeForEntry();
@@ -680,12 +688,12 @@ describe(Image360ApiHelper.name, () => {
       };
 
       const mockCollection = new Mock<DefaultImage360Collection<DataSourceType>>().object();
-      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
-      jest.spyOn(Image360Facade.prototype, 'setHoverIconVisibilityForEntity').mockReturnValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
-      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
-      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(mockIconData);
+      vi.spyOn(Image360Facade.prototype, 'setHoverIconVisibilityForEntity').mockReturnValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+      vi.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(mockCollection);
+      vi.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
 
       helper.onHover(makeHoverEvent());
 
@@ -695,9 +703,9 @@ describe(Image360ApiHelper.name, () => {
     test('sets cursor to pointer when hovering over a cluster', () => {
       const mockClusterData = createMockClusterData();
 
-      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
-      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+      vi.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(mockClusterData);
+      vi.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
 
       helper.onHover(makeHoverEvent());
 
@@ -707,9 +715,9 @@ describe(Image360ApiHelper.name, () => {
     test('resets cursor when not hovering over any icon or cluster', () => {
       domElement.style.cursor = 'pointer';
 
-      jest.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
+      vi.spyOn(Image360Facade.prototype, 'intersectCluster').mockReturnValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'intersect').mockReturnValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'hideAllHoverIcons').mockReturnValue(false);
 
       helper.onHover(makeHoverEvent());
 
@@ -745,14 +753,14 @@ describe(Image360ApiHelper.name, () => {
           image360Exited: new EventTrigger<Image360ExitedDelegate>()
         })
         .object();
-      jest.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
-      jest.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(enterCollection);
+      vi.spyOn(Image360Facade.prototype, 'preload').mockResolvedValue(undefined);
+      vi.spyOn(Image360Facade.prototype, 'getCollectionContainingEntity').mockReturnValue(enterCollection);
       await enterImage(entity);
       return entity;
     }
 
     test('returns undefined when not inside a 360 image', () => {
-      jest.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([]);
 
       expect(helper.findBestNext360ImageEntity(new Vector3(10, 0, 0))).toBeUndefined();
     });
@@ -760,9 +768,9 @@ describe(Image360ApiHelper.name, () => {
     test('returns undefined when no entity lies in the click direction', async () => {
       const current = await enterAt(new Vector3(0, 0, 0));
       const behind = makeCandidateEntityAt(new Vector3(-5, 0, 0));
-      jest
-        .spyOn(Image360Facade.prototype, 'collections', 'get')
-        .mockReturnValue([makeCandidateCollection([current, behind])]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([
+        makeCandidateCollection([current, behind])
+      ]);
 
       // Click toward +X; behind entity is at -X
       expect(helper.findBestNext360ImageEntity(new Vector3(10, 0, 0))).toBeUndefined();
@@ -772,9 +780,9 @@ describe(Image360ApiHelper.name, () => {
       const current = await enterAt(new Vector3(0, 0, 0));
       const near = makeCandidateEntityAt(new Vector3(3, 0, 0));
       const far = makeCandidateEntityAt(new Vector3(8, 0, 0));
-      jest
-        .spyOn(Image360Facade.prototype, 'collections', 'get')
-        .mockReturnValue([makeCandidateCollection([current, near, far])]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([
+        makeCandidateCollection([current, near, far])
+      ]);
 
       // Click at (5, 0, 0): near is closer to the click point than far
       const result = helper.findBestNext360ImageEntity(new Vector3(5, 0, 0));
@@ -785,9 +793,9 @@ describe(Image360ApiHelper.name, () => {
       const current = await enterAt(new Vector3(0, 0, 0));
       const forward = makeCandidateEntityAt(new Vector3(5, 0, 0));
       const backward = makeCandidateEntityAt(new Vector3(-5, 0, 0));
-      jest
-        .spyOn(Image360Facade.prototype, 'collections', 'get')
-        .mockReturnValue([makeCandidateCollection([current, forward, backward])]);
+      vi.spyOn(Image360Facade.prototype, 'collections', 'get').mockReturnValue([
+        makeCandidateCollection([current, forward, backward])
+      ]);
 
       const result = helper.findBestNext360ImageEntity(new Vector3(10, 0, 0));
       expect(result?.image360).toBe(forward);
@@ -804,7 +812,7 @@ describe(Image360ApiHelper.name, () => {
     }
 
     test('enter360Image adds wait cursor overlay synchronously and removes it on completion', async () => {
-      jest.spyOn(helper, 'enter360ImageInternal').mockResolvedValue(true);
+      vi.spyOn(helper, 'enter360ImageInternal').mockResolvedValue(true);
       const mockEntity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision());
 
       const enterPromise = helper.enter360Image(mockEntity);
@@ -821,8 +829,7 @@ describe(Image360ApiHelper.name, () => {
     test('concurrent enter360Image calls share one overlay and remove it only when all complete', async () => {
       let resolve1: ((v: boolean) => void) | undefined;
       let resolve2: ((v: boolean) => void) | undefined;
-      jest
-        .spyOn(helper, 'enter360ImageInternal')
+      vi.spyOn(helper, 'enter360ImageInternal')
         .mockImplementationOnce(() => new Promise<boolean>(r => (resolve1 = r)))
         .mockImplementationOnce(() => new Promise<boolean>(r => (resolve2 = r)));
 
@@ -855,11 +862,11 @@ describe(Image360ApiHelper.name, () => {
         distanceToCamera: 10
       };
 
-      jest.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
-      jest.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
+      vi.spyOn(helper, 'intersect360ImageClusters').mockReturnValue(undefined);
+      vi.spyOn(helper, 'intersect360ImageIcons').mockReturnValue(mockIconIntersection);
 
       let resolveEnter: ((v: boolean) => void) | undefined;
-      jest.spyOn(helper, 'enter360ImageInternal').mockImplementation(
+      vi.spyOn(helper, 'enter360ImageInternal').mockImplementation(
         () =>
           new Promise<boolean>(r => {
             resolveEnter = r;

@@ -12,8 +12,5 @@
       "jest-image-snapshot"
     ]
   },
-  // https://github.com/jest-community/jest-extended/tree/main/examples/typescript/all
-  "files": [
-    "node_modules/jest-extended/types/index.d.ts"
-  ]
+  "files": []
 }

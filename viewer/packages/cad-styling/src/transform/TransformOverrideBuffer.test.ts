@@ -4,19 +4,19 @@
 import * as THREE from 'three';
 import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('TransformOverrideBuffer', () => {
-  const onGenerateNewTextureCb: (texture: THREE.DataTexture) => void = jest.fn();
+  const onGenerateNewTextureCb: (texture: THREE.DataTexture) => void = vi.fn();
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test('dispose() disposes texture', () => {
     const buffer = new TransformOverrideBuffer(onGenerateNewTextureCb);
     const texture = buffer.dataTexture;
-    const listener = jest.fn();
+    const listener = vi.fn();
     texture.addEventListener('dispose', listener);
 
     buffer.dispose();
