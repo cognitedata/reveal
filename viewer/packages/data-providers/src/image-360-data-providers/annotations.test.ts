@@ -1,0 +1,26 @@
+import { dmInstanceRefToKey } from '@reveal/utilities';
+import { getAnnotationIdKey } from './annotations';
+import { CoreDmImage360Annotation } from 'api-entry-points/core';
+import { createAnnotationModel } from '../../../../test-utilities';
+import { AnnotationModel } from '@cognite/sdk';
+
+describe(getAnnotationIdKey, () => {
+  test('returns DM annotation key', () => {
+    const annotationId = { externalId: 'annotation-external-id', space: 'annotation-space' };
+    const annotation: CoreDmImage360Annotation = {
+      sourceType: 'dm',
+      status: 'approved',
+      connectedImageId: { externalId: 'image-external-id', space: 'image-space' },
+      annotationIdentifier: annotationId,
+      polygon: []
+    };
+
+    expect(getAnnotationIdKey(annotation)).toBe(dmInstanceRefToKey(annotationId));
+  });
+
+  test('returns classic annotation key', () => {
+    const annotation: AnnotationModel = createAnnotationModel({ id: 123 });
+
+    expect(getAnnotationIdKey(annotation)).toBe('123');
+  });
+});
