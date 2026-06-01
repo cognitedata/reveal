@@ -32,7 +32,17 @@ describe(Cdf360ImageAnnotationCache, () => {
 
     expect(result0).toEqual(resultAnnotations.items);
     expect(result0).toEqual(result1);
-    expect(mockReverseLookup).toHaveBeenCalledTimes(1);
-    expect(mockAnnotationList).toHaveBeenCalledTimes(1);
+    expect(mockReverseLookup).toHaveBeenCalledExactlyOnceWith({
+      filter: {
+        annotatedResourceType: 'file',
+        annotationType: 'images.AssetLink',
+        data: { assetRef: CLASSIC_ID }
+      },
+      limit: 1000
+    });
+    expect(mockAnnotationList).toHaveBeenCalledExactlyOnceWith({
+      filter: { annotatedResourceIds: fileResult.items, annotatedResourceType: 'file' },
+      limit: 1000
+    });
   });
 });
