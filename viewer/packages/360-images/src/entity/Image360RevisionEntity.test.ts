@@ -178,10 +178,8 @@ describe(Image360RevisionEntity.name, () => {
       vizBoxMock
         .setup(v => v.loadFaceTextures(It.IsAny(), It.IsAny(), It.IsAny()))
         .callback(({ args }) => {
-          const onFirstFaceReady = args[1] as (() => void) | undefined;
           const onFirstFaceTypeDetected = args[2] as ((type: 'progressive' | 'baseline') => void) | undefined;
           onFirstFaceTypeDetected?.('baseline');
-          onFirstFaceReady?.();
           return Promise.resolve(textures);
         });
 
@@ -194,8 +192,8 @@ describe(Image360RevisionEntity.name, () => {
         annotationFilterer
       );
 
-      const { fullResolutionCompleted } = entity.loadTextures();
-      await fullResolutionCompleted;
+      const { fullResolutionCompleted, lowResolutionCompleted } = entity.loadTextures();
+      await Promise.all([fullResolutionCompleted, lowResolutionCompleted]);
 
       providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
     });
