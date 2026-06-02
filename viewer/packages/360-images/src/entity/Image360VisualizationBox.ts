@@ -8,7 +8,8 @@ import assert from 'assert';
 import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import type { Image360Visualization } from './Image360Visualization';
 import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { detectJpegType, findProgressiveScanCutpoints, makePartialJpegBlob } from '../utils/JpegDataStreamParser';
+import type { JpegType } from '../utils/JpegDataStreamParser';
+import { Image360FaceTextureLoader, hasDownloadUrl } from './Image360FaceTextureLoader';
 
 type VisualizationState = {
   opacity: number;
@@ -20,17 +21,16 @@ type VisualizationState = {
 export const DEFAULT_IMAGE_360_OPACITY = 1;
 
 export class Image360VisualizationBox implements Image360Visualization {
-  private readonly MAX_MOBILE_IMAGE_SIZE = 1024;
   private readonly _worldTransform: THREE.Matrix4;
   private _visualizationMesh: THREE.Mesh | undefined;
   private _faceMaterials: THREE.MeshBasicMaterial[] = [];
   private readonly _sceneHandler: SceneHandler;
-  private readonly _device: DeviceDescriptor;
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
   private readonly _annotationsGroup: THREE.Group = new THREE.Group();
   private readonly _localTransform: THREE.Matrix4;
+  private readonly _loader: Image360FaceTextureLoader;
 
   get visible(): boolean {
     return this._visualizationState.visible;
@@ -96,7 +96,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._localTransform = worldTransform.clone();
     this._worldTransform = worldTransform.clone();
     this._sceneHandler = sceneHandler;
-    this._device = device;
     this._textureLoader = new THREE.TextureLoader();
     this._visualizationState = {
       opacity: DEFAULT_IMAGE_360_OPACITY,
@@ -104,6 +103,13 @@ export class Image360VisualizationBox implements Image360Visualization {
       scale: new THREE.Vector3(1, 1, 1),
       visible: true
     };
+    this._loader = new Image360FaceTextureLoader(
+      device,
+      this._textureLoader,
+      this._requestRedraw,
+      this.updateFaceTexture.bind(this),
+      () => this._visualizationMesh !== undefined
+    );
   }
 
   public setWorldTransform(matrix: THREE.Matrix4): void {
@@ -165,10 +171,10 @@ export class Image360VisualizationBox implements Image360Visualization {
   public loadFaceTextures(
     faces: Image360Face[],
     onFirstFaceReady?: () => void,
-    onFirstFaceTypeDetected?: (type: 'progressive' | 'baseline') => void,
+    onFirstFaceTypeDetected?: (type: JpegType) => void,
     abortSignal?: AbortSignal
   ): Promise<Image360Texture[]> {
-    if (faces.some(f => f.downloadUrl)) {
+    if (faces.some(hasDownloadUrl)) {
       this.createPlaceholderMesh();
     }
     let firstFaceNotified = false;
@@ -179,7 +185,7 @@ export class Image360VisualizationBox implements Image360Visualization {
       }
     };
     let typeNotified = false;
-    const notifyType = (type: 'progressive' | 'baseline'): void => {
+    const notifyType = (type: JpegType): void => {
       if (!typeNotified) {
         typeNotified = true;
         onFirstFaceTypeDetected?.(type);
@@ -187,10 +193,10 @@ export class Image360VisualizationBox implements Image360Visualization {
     };
     return Promise.all(
       faces.map(async face => {
-        if (face.downloadUrl) {
-          return this.loadFaceTextureStream(face, notifyFirstFace, notifyType, abortSignal);
+        if (hasDownloadUrl(face)) {
+          return this._loader.loadFromUrl(face, notifyFirstFace, notifyType, abortSignal);
         }
-        const t = await this.loadFaceTextureFromBuffer(face);
+        const t = await this._loader.loadFromBuffer(face);
         notifyFirstFace();
         return t;
       })
@@ -236,146 +242,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     material.needsUpdate = true;
   }
 
-  private async loadFaceTextureStream(
-    image360Face: Image360Face,
-    onFirstFaceReady?: () => void,
-    onJpegTypeDetected?: (type: 'progressive' | 'baseline') => void,
-    abortSignal?: AbortSignal
-  ): Promise<Image360Texture> {
-    const response = await fetch(image360Face.downloadUrl!, { mode: 'cors', credentials: 'omit', signal: abortSignal });
-    if (!response.ok || !response.body) {
-      throw new Error('Failed to fetch 360 image for face: ' + image360Face.face + ' (status ' + response.status + ')');
-    }
-
-    const contentLength = parseInt(response.headers.get('content-length') ?? '0', 10);
-    let buffer = new Uint8Array(contentLength > 0 ? contentLength : 2 * 1024 * 1024);
-    let bytesReceived = 0;
-    let jpegType: 'progressive' | 'baseline' | 'unknown' = 'unknown';
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')!;
-    let texture: THREE.CanvasTexture | undefined;
-    let lastCutpoint = 0;
-
-    let resolveTexture!: (t: Image360Texture) => void;
-    let rejectTexture!: (e: unknown) => void;
-    const texturePromise = new Promise<Image360Texture>((resolve, reject) => {
-      resolveTexture = resolve;
-      rejectTexture = reject;
-    });
-
-    const applyBitmapToTexture = (bitmap: ImageBitmap): void => {
-      if (this._visualizationMesh === undefined) {
-        bitmap.close();
-        return;
-      }
-      if (!texture) {
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
-        ctx.drawImage(bitmap, 0, 0);
-        texture = new THREE.CanvasTexture(canvas);
-        texture.center.set(0.5, 0.5);
-        texture.repeat.set(-1, 1);
-        this.updateFaceTexture(image360Face.face, texture);
-        onFirstFaceReady?.();
-        resolveTexture({ face: image360Face.face, texture });
-      } else {
-        ctx.drawImage(bitmap, 0, 0);
-        texture.needsUpdate = true;
-      }
-      bitmap.close();
-      this._requestRedraw();
-    };
-
-    const decodeAndApplyScan = async (cutpoint: number): Promise<void> => {
-      const blob = makePartialJpegBlob(buffer, cutpoint);
-      let bitmap: ImageBitmap;
-      try {
-        bitmap = await createImageBitmap(blob);
-      } catch {
-        return; // partial data not yet decodable — skip this cutpoint
-      }
-      applyBitmapToTexture(bitmap);
-    };
-
-    const reader = response.body.getReader();
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        if (bytesReceived + value.length > buffer.length) {
-          const grown = new Uint8Array(Math.max(buffer.length * 2, bytesReceived + value.length));
-          grown.set(buffer.subarray(0, bytesReceived));
-          buffer = grown;
-        }
-
-        buffer.set(value, bytesReceived);
-        bytesReceived += value.length;
-
-        // Detect JPEG type from header markers — resolved within the first few KB
-        if (jpegType === 'unknown') {
-          jpegType = detectJpegType(buffer.subarray(0, bytesReceived));
-          if (jpegType !== 'unknown') {
-            onJpegTypeDetected?.(jpegType);
-          }
-        }
-
-        // Progressive JPEG: decode each scan as it arrives
-        if (jpegType === 'progressive') {
-          const cutpoints = findProgressiveScanCutpoints(buffer.subarray(0, bytesReceived));
-          const newCutpoints = cutpoints.filter(cp => cp > lastCutpoint);
-          if (newCutpoints.length > 0) {
-            lastCutpoint = newCutpoints[newCutpoints.length - 1];
-            await decodeAndApplyScan(lastCutpoint);
-          }
-        }
-        // Baseline JPEG: just buffer — decode full image after download completes
-      }
-    } catch (e) {
-      rejectTexture(e);
-      return texturePromise;
-    }
-
-    if (jpegType === 'progressive') {
-      if (!texture) {
-        rejectTexture(new Error(`No decodable scan found for face: ${image360Face.face}`));
-      }
-    } else {
-      // Baseline JPEG (or undetected): decode full downloaded buffer
-      const blob = new Blob([buffer.subarray(0, bytesReceived)], { type: 'image/jpeg' });
-      try {
-        const bitmap = await createImageBitmap(blob);
-        applyBitmapToTexture(bitmap);
-      } catch (e) {
-        rejectTexture(e);
-      }
-    }
-
-    return texturePromise;
-  }
-
-  private async loadFaceTextureFromBuffer(image360Face: Image360Face): Promise<Image360Texture> {
-    const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
-    const url = window.URL.createObjectURL(blob);
-    let faceTexture: THREE.Texture<HTMLImageElement | HTMLCanvasElement> = await this._textureLoader.loadAsync(url);
-
-    if (
-      this._device.deviceType === 'mobile' &&
-      (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE || faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
-    ) {
-      faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
-    }
-
-    // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
-    window.URL.revokeObjectURL(url);
-
-    // Need to horizontally flip the texture since it is being rendered inside a cube
-    faceTexture.center.set(0.5, 0.5);
-    faceTexture.repeat.set(-1, 1);
-    return { face: image360Face.face, texture: faceTexture };
-  }
-
   public unloadImages(): void {
     if (this._visualizationMesh === undefined) {
       return;
@@ -395,37 +261,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.geometry.dispose();
     this._visualizationMesh = undefined;
     this._faceMaterials = [];
-  }
-
-  private async getScaledImageTexture(
-    texture: THREE.Texture<HTMLImageElement | HTMLCanvasElement>,
-    imageSize: number
-  ): Promise<THREE.Texture<HTMLCanvasElement>> {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const { image } = texture;
-    //Scale down the width and height
-    let width = image.width;
-    let height = image.height;
-
-    // Calculate new dimensions while maintaining aspect ratio
-    if (width > imageSize) {
-      height *= imageSize / width;
-      width = imageSize;
-    }
-    if (height > imageSize) {
-      width *= imageSize / height;
-      height = imageSize;
-    }
-    canvas.width = width;
-    canvas.height = height;
-
-    context?.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-    const scaledImageTexture = new THREE.CanvasTexture(canvas);
-    texture.dispose();
-
-    return scaledImageTexture;
   }
 
   public setAnnotationsVisibility(visibility: boolean): void {

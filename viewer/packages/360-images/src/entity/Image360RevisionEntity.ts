@@ -12,6 +12,7 @@ import type {
 import { getExternalIdFromDescriptor } from '@reveal/data-providers';
 import type { Image360Revision } from './Image360Revision';
 import type { Image360VisualizationBox } from './Image360VisualizationBox';
+import type { JpegType } from '../utils/JpegDataStreamParser';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Box3, Vector3, type Raycaster } from 'three';
@@ -129,17 +130,9 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       rejectIconPreview = reject;
     });
 
-    const onFirstFaceTypeDetected = (type: 'progressive' | 'baseline'): void => {
+    const onFirstFaceTypeDetected = (type: JpegType): void => {
       if (type === 'baseline') {
-        this.loadPreviewTextures(abortSignal)
-          .then(resolveIconPreview)
-          .catch(err => {
-            if (abortSignal?.aborted) {
-              rejectIconPreview(err);
-            } else {
-              resolveIconPreview();
-            }
-          });
+        this.loadPreviewTextures(abortSignal).then(resolveIconPreview).catch(rejectIconPreview);
       } else {
         // Progressive: no icon loading needed — complete when first scan is ready
         firstFaceReady.then(resolveIconPreview).catch(() => {});
