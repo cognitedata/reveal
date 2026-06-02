@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import * as THREE from 'three';
 import { Mock, IMock, It, Times } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
@@ -31,7 +31,7 @@ describe(Image360VisualizationBox.name, () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('loadImages', () => {
@@ -106,16 +106,16 @@ describe(Image360VisualizationBox.name, () => {
 
     beforeEach(() => {
       Object.defineProperty(URL, 'createObjectURL', {
-        value: jest.fn(() => 'blob:mock-url'),
+        value: vi.fn(() => 'blob:mock-url'),
         writable: true,
         configurable: true
       });
       Object.defineProperty(URL, 'revokeObjectURL', {
-        value: jest.fn(),
+        value: vi.fn(),
         writable: true,
         configurable: true
       });
-      jest.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+      vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
     });
 
     afterEach(() => {

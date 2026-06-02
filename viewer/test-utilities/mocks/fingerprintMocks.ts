@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 import {
   GetContextReturnType,
@@ -21,10 +21,10 @@ export function createMockOfflineAudioContext(shouldSucceed: boolean): PartialOf
 
     constructor(_numberOfChannels: number, _length: number, _sampleRate: number) {
       this.currentTime = 0;
-      this.createOscillator = jest.fn<() => OscillatorNode>(createMockOscillatorNode);
-      this.createDynamicsCompressor = jest.fn<() => DynamicsCompressorNode>(createMockDynamicCompressorNode);
+      this.createOscillator = vi.fn<() => OscillatorNode>(createMockOscillatorNode);
+      this.createDynamicsCompressor = vi.fn<() => DynamicsCompressorNode>(createMockDynamicCompressorNode);
       this.destination = createMockAudioDestinationNode();
-      this.startRendering = jest.fn(() => {
+      this.startRendering = vi.fn(() => {
         if (shouldSucceed) {
           const mockData = Array.from({ length: 5000 }, (_, i) => (i > 4499 && i < 5000 ? 0.001 : 0));
           return Promise.resolve(createMockAudioBuffer(mockData));
@@ -45,11 +45,11 @@ function createMockAudioDestinationNode(): AudioDestinationNode {
     numberOfInputs: 1,
     numberOfOutputs: 1,
     context: {} as AudioContext,
-    connect: jest.fn() as AudioDestinationNode['connect'],
-    disconnect: jest.fn() as AudioDestinationNode['disconnect'],
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn() as AudioDestinationNode['dispatchEvent']
+    connect: vi.fn() as AudioDestinationNode['connect'],
+    disconnect: vi.fn() as AudioDestinationNode['disconnect'],
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn() as AudioDestinationNode['dispatchEvent']
   };
 }
 
@@ -58,17 +58,17 @@ export function createMockDocument(): PartialDocument {
     textBaseline: 'middle',
     font: '',
     fillStyle: '',
-    fillRect: jest.fn(),
-    fillText: jest.fn()
+    fillRect: vi.fn(),
+    fillText: vi.fn()
   };
 
   const mockCanvas: ReturnType<PartialDocument['createElement']> = {
-    getContext: jest.fn((_: '2d') => mockContext),
-    toDataURL: jest.fn(() => 'data:image/png;base64,mock-data')
+    getContext: vi.fn((_: '2d') => mockContext),
+    toDataURL: vi.fn(() => 'data:image/png;base64,mock-data')
   };
 
   return {
-    createElement: jest.fn((_: 'canvas') => mockCanvas)
+    createElement: vi.fn((_: 'canvas') => mockCanvas)
   };
 }
 
@@ -80,13 +80,13 @@ function createMockAudioParam(): AudioParam {
     minValue: 0,
     value: 0,
 
-    setValueAtTime: jest.fn<AudioParam['setValueAtTime']>(),
-    linearRampToValueAtTime: jest.fn<AudioParam['linearRampToValueAtTime']>(),
-    exponentialRampToValueAtTime: jest.fn<AudioParam['exponentialRampToValueAtTime']>(),
-    setTargetAtTime: jest.fn<AudioParam['setTargetAtTime']>(),
-    setValueCurveAtTime: jest.fn<AudioParam['setValueCurveAtTime']>(),
-    cancelScheduledValues: jest.fn<AudioParam['cancelScheduledValues']>(),
-    cancelAndHoldAtTime: jest.fn<AudioParam['cancelAndHoldAtTime']>()
+    setValueAtTime: vi.fn<AudioParam['setValueAtTime']>(),
+    linearRampToValueAtTime: vi.fn<AudioParam['linearRampToValueAtTime']>(),
+    exponentialRampToValueAtTime: vi.fn<AudioParam['exponentialRampToValueAtTime']>(),
+    setTargetAtTime: vi.fn<AudioParam['setTargetAtTime']>(),
+    setValueCurveAtTime: vi.fn<AudioParam['setValueCurveAtTime']>(),
+    cancelScheduledValues: vi.fn<AudioParam['cancelScheduledValues']>(),
+    cancelAndHoldAtTime: vi.fn<AudioParam['cancelAndHoldAtTime']>()
   };
 }
 
@@ -102,14 +102,14 @@ function createMockOscillatorNode(): OscillatorNode {
     channelCount: 2,
     channelCountMode: 'max',
     channelInterpretation: 'speakers',
-    connect: jest.fn() as OscillatorNode['connect'],
-    disconnect: jest.fn() as OscillatorNode['disconnect'],
-    setPeriodicWave: jest.fn(),
-    start: jest.fn(),
-    stop: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn((_: Event) => true)
+    connect: vi.fn() as OscillatorNode['connect'],
+    disconnect: vi.fn() as OscillatorNode['disconnect'],
+    setPeriodicWave: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn((_: Event) => true)
   };
 }
 
@@ -127,11 +127,11 @@ function createMockDynamicCompressorNode(): DynamicsCompressorNode {
     channelCount: 2,
     channelCountMode: 'max',
     channelInterpretation: 'speakers',
-    connect: jest.fn() as DynamicsCompressorNode['connect'],
-    disconnect: jest.fn() as DynamicsCompressorNode['disconnect'],
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn((_: Event) => true)
+    connect: vi.fn() as DynamicsCompressorNode['connect'],
+    disconnect: vi.fn() as DynamicsCompressorNode['disconnect'],
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn((_: Event) => true)
   };
 }
 
@@ -144,8 +144,8 @@ function createMockAudioBuffer(data: number[]): AudioBuffer {
     length: bufferLength,
     numberOfChannels: 1,
     sampleRate: mockSampleRate,
-    getChannelData: jest.fn(() => new Float32Array(data)),
-    copyFromChannel: jest.fn() as AudioBuffer['copyFromChannel'],
-    copyToChannel: jest.fn() as AudioBuffer['copyToChannel']
+    getChannelData: vi.fn(() => new Float32Array(data)),
+    copyFromChannel: vi.fn() as AudioBuffer['copyFromChannel'],
+    copyToChannel: vi.fn() as AudioBuffer['copyToChannel']
   };
 }

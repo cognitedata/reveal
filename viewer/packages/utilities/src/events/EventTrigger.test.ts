@@ -4,11 +4,11 @@
 
 import { EventTrigger } from './EventTrigger';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('EventTrigger', () => {
   test('fire() triggers subscribed listeners', () => {
-    const listener: (arg1: string, arg2: number) => void = jest.fn();
+    const listener: (arg1: string, arg2: number) => void = vi.fn();
 
     const source = new EventTrigger<(arg1: string, arg2: number) => void>();
     source.subscribe(listener);
@@ -18,7 +18,7 @@ describe('EventTrigger', () => {
   });
 
   test('fire() doesnt trigger unsubscribed listener', () => {
-    const listener: () => void = jest.fn();
+    const listener: () => void = vi.fn();
 
     const source = new EventTrigger<() => void>();
     source.subscribe(listener);
@@ -29,7 +29,7 @@ describe('EventTrigger', () => {
   });
 
   test('fire() doesnt trigger after unsubscribeAll()', () => {
-    const listener: () => void = jest.fn();
+    const listener: () => void = vi.fn();
 
     const source = new EventTrigger<() => void>();
     source.subscribe(listener);

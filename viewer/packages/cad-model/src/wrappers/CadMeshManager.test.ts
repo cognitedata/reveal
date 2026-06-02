@@ -22,7 +22,7 @@ import {
   Group
 } from 'three';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 
 describe(CadMeshManager.name, () => {
@@ -212,7 +212,7 @@ describe(CadMeshManager.name, () => {
 
   test('should remove mesh group from scene without disposing shared geometries', () => {
     const geometry = createBasicGeometry();
-    const mockDispose = jest.fn();
+    const mockDispose = vi.fn();
     geometry.dispose = mockDispose;
     const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
 
@@ -228,7 +228,7 @@ describe(CadMeshManager.name, () => {
   test('should remove textured mesh group without disposing shared textures', () => {
     const geometry = createBasicGeometry();
     const texture = createTexture();
-    const mockTextureDispose = jest.fn();
+    const mockTextureDispose = vi.fn();
     texture.dispose = mockTextureDispose;
     const parsedGeometries = [
       createParsedGeometry(RevealGeometryCollectionType.TexturedTriangleMesh, geometry, texture)

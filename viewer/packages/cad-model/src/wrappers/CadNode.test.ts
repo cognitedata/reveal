@@ -6,7 +6,7 @@ import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture,
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
 import { SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
@@ -226,7 +226,7 @@ describe(CadNode.name, () => {
 
   test('defaultNodeAppearance setter updates appearance and triggers render layer update', () => {
     const cadNode = createCadNode();
-    const setModelRenderLayersSpy = jest.spyOn(cadNode, 'setModelRenderLayers');
+    const setModelRenderLayersSpy = vi.spyOn(cadNode, 'setModelRenderLayers');
 
     const newAppearance = { renderGhosted: true, visible: true };
     cadNode.defaultNodeAppearance = newAppearance;
@@ -272,7 +272,7 @@ describe(CadNode.name, () => {
 
   test('loadSector method delegates to sector repository', async () => {
     const mockedConsumedSector = createMockedConsumedSector();
-    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    const mockLoadSectorFn = vi.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
     mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
 
     const sectorRepositoryMock = new Mock<SectorRepository>()
@@ -291,7 +291,7 @@ describe(CadNode.name, () => {
 
   test('loadSector method works without abort signal', async () => {
     const mockedConsumedSector = createMockedConsumedSector();
-    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    const mockLoadSectorFn = vi.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
     mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
 
     const sectorRepositoryMock = new Mock<SectorRepository>()

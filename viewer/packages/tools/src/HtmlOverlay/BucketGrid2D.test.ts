@@ -29,7 +29,7 @@ describe('BucketGrid2D', () => {
 
   test('overlappingElements() fully outside bounds returns empty', () => {
     const outsideBounds = createBounds([5, 5], [6, 6]);
-    expect(Array.from(grid.overlappingElements(outsideBounds))).toBeEmpty();
+    expect(Array.from(grid.overlappingElements(outsideBounds))).toHaveLength(0);
   });
 
   test('overlappingElements() partially outside bounds does not throw', () => {
@@ -42,9 +42,9 @@ describe('BucketGrid2D', () => {
     grid.insert(bounds, 0);
 
     expect(Array.from(grid.overlappingElements(cellBounds(0, 0)))).toEqual([0]);
-    expect(Array.from(grid.overlappingElements(cellBounds(1, 0)))).toBeEmpty();
-    expect(Array.from(grid.overlappingElements(cellBounds(1, 1)))).toBeEmpty();
-    expect(Array.from(grid.overlappingElements(cellBounds(0, 1)))).toBeEmpty();
+    expect(Array.from(grid.overlappingElements(cellBounds(1, 0)))).toHaveLength(0);
+    expect(Array.from(grid.overlappingElements(cellBounds(1, 1)))).toHaveLength(0);
+    expect(Array.from(grid.overlappingElements(cellBounds(0, 1)))).toHaveLength(0);
   });
 
   test('insert element that overlaps two cells, is in both cells', () => {
@@ -53,8 +53,8 @@ describe('BucketGrid2D', () => {
 
     expect(Array.from(grid.overlappingElements(cellBounds(0, 0)))).toEqual([0]);
     expect(Array.from(grid.overlappingElements(cellBounds(1, 0)))).toEqual([0]);
-    expect(Array.from(grid.overlappingElements(cellBounds(1, 1)))).toBeEmpty();
-    expect(Array.from(grid.overlappingElements(cellBounds(0, 1)))).toBeEmpty();
+    expect(Array.from(grid.overlappingElements(cellBounds(1, 1)))).toHaveLength(0);
+    expect(Array.from(grid.overlappingElements(cellBounds(0, 1)))).toHaveLength(0);
     // Ensure element only is returned once when we query for elements for  the entire grid
     expect(Array.from(grid.overlappingElements(bounds))).toEqual([0]);
   });
@@ -70,7 +70,7 @@ describe('BucketGrid2D', () => {
     const taken = Array.from(grid.removeOverlappingElements(createBounds([1.1, 2.1], [1.2, 2.2])));
     const remaining = Array.from(grid.overlappingElements(bounds));
     expect(taken).toEqual([0]);
-    expect(remaining).toBeEmpty();
+    expect(remaining).toHaveLength(0);
   });
 
   test('add element after removeOverlappingElements() is not supported', () => {

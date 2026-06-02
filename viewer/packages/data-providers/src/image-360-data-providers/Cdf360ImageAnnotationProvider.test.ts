@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 import {
   CogniteClient,
@@ -71,14 +71,14 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     status: 'approved'
   });
 
-  const mockAnnotationList = jest.fn<CogniteClient['annotations']['list']>().mockImplementation(
+  const mockAnnotationList = vi.fn<CogniteClient['annotations']['list']>().mockImplementation(
     (): CursorAndAsyncIterator<AnnotationModel> =>
       createCursorAndAsyncIterator({
         items: [matchingAnnotation]
       })
   );
 
-  const mockReverseLookup = jest
+  const mockReverseLookup = vi
     .fn<CogniteClient['annotations']['reverseLookup']>()
     .mockImplementation((): Promise<ListResponse<AnnotationsAssetRef[]>> & CogniteAsyncIterator<AnnotationsAssetRef> =>
       createCursorAndAsyncIterator<AnnotationsAssetRef>({
@@ -86,7 +86,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       })
     );
 
-  const mockFilesRetrieve = jest.fn<CogniteClient['files']['retrieve']>().mockResolvedValue([]);
+  const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>().mockResolvedValue([]);
 
   const sdkMock = new Mock<CogniteClient>()
     .setup(p => p.annotations.list)
@@ -185,7 +185,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
   describe('findImageAnnotationsForInstance', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     test('returns annotations matching asset ref and image fileIds', async () => {
@@ -284,7 +284,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
   describe('resolveFileIdToExternalIdMapping', () => {
     test('returns mapping from descriptors without API call when descriptors have fileId', async () => {
-      const mockFilesRetrieve = jest.fn<CogniteClient['files']['retrieve']>();
+      const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>();
       const clientWithFiles = new Mock<CogniteClient>()
         .setup(p => p.annotations.list)
         .returns(mockAnnotationList)
@@ -322,7 +322,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('fetches file info via API when descriptors only have externalId', async () => {
-      const mockFilesRetrieve = jest
+      const mockFilesRetrieve = vi
         .fn<CogniteClient['files']['retrieve']>()
         .mockResolvedValue([
           { id: 100, externalId: 'file-100-ext', name: 'file1' } as FileInfo,
@@ -366,7 +366,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('uses instanceId.externalId when descriptor has instanceId', async () => {
-      const mockFilesRetrieve = jest.fn<CogniteClient['files']['retrieve']>();
+      const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>();
       const clientWithFiles = new Mock<CogniteClient>()
         .setup(p => p.annotations.list)
         .returns(mockAnnotationList)

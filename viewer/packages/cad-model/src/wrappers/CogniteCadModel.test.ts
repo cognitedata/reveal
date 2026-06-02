@@ -53,15 +53,15 @@ describe(CogniteCadModel.name, () => {
     model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
     model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(model.styledNodeCollections).not.toHaveLength(0);
 
     model.unassignStyledNodeCollection(collection2);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(model.styledNodeCollections).not.toHaveLength(0);
 
     model.unassignStyledNodeCollection(collection);
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(model.styledNodeCollections).toHaveLength(0);
   });
 
   test('assignStyledNodeCollection updates style if called twice with same collection', () => {
@@ -84,7 +84,7 @@ describe(CogniteCadModel.name, () => {
 
     model.removeAllStyledNodeCollections();
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(model.styledNodeCollections).toHaveLength(0);
   });
 
   test('styled node collections are kept in order of importance', () => {
@@ -145,7 +145,7 @@ describe(CogniteCadModel.name, () => {
 
   test('visible property hides or unhides model', () => {
     const visible = true;
-    expect(model.visible).toBeTrue();
+    expect(model.visible).toBeTruthy();
 
     model.visible = false;
 

@@ -13,7 +13,7 @@ import {
 
 import { Cognite3DViewer } from '@reveal/api';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { fakeGetBoundingClientRect, mockViewerComponents } from '../../../../test-utilities';
 import { DataSourceType } from '@reveal/data-providers';
 
@@ -24,7 +24,7 @@ describe(HtmlOverlayTool.name, () => {
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const components = mockViewerComponents();
     viewer = components.viewer;
     renderer = components.renderer;
@@ -42,8 +42,8 @@ describe(HtmlOverlayTool.name, () => {
     // Act & Assert
     expect(() => {
       helper.add(htmlElement, position);
-      jest.advanceTimersByTime(TIMER_ADVANCE_MS);
-    }).toThrow();
+      vi.advanceTimersByTime(TIMER_ADVANCE_MS);
+    }).toThrowError();
   });
 
   test('add() accepts position set to absolute through cssText', () => {
@@ -62,13 +62,13 @@ describe(HtmlOverlayTool.name, () => {
     const helper = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');
     htmlElement.style.position = 'absolute';
-    expect(htmlElement.style.top).toBeEmpty();
-    expect(htmlElement.style.left).toBeEmpty();
+    expect(htmlElement.style.top).toHaveLength(0);
+    expect(htmlElement.style.left).toHaveLength(0);
     const position = new THREE.Vector3(0, 0, 0.5);
 
     // Act
     helper.add(htmlElement, position);
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.forceUpdate();
 
     // Assert
@@ -102,7 +102,7 @@ describe(HtmlOverlayTool.name, () => {
     const position = new THREE.Vector3(0, 0, 0.5);
 
     helper.add(htmlElement, position);
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
 
@@ -126,18 +126,18 @@ describe(HtmlOverlayTool.name, () => {
     behindFarPlaneElement.style.position = 'absolute';
     const withinNearAndFarPlaneElement = document.createElement('div');
     withinNearAndFarPlaneElement.style.position = 'absolute';
-    const options: HtmlOverlayOptions = { positionUpdatedCallback: jest.fn() };
+    const options: HtmlOverlayOptions = { positionUpdatedCallback: vi.fn() };
 
     // Act
     helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), { ...options, userData: 'behindCameraElement' });
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), { ...options, userData: 'behindFarPlaneElement' });
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), {
       ...options,
       userData: 'withinNearAndFarPlaneElement'
     });
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
 
@@ -173,7 +173,7 @@ describe(HtmlOverlayTool.name, () => {
       const element = document.createElement('div');
       element.style.position = 'absolute';
       helper.add(element, new THREE.Vector3(0, 0, 0));
-      jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+      vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     }
     expect(canvasContainer.children.length).toBe(initialNumberOfElements + 10);
 
@@ -192,7 +192,7 @@ describe(HtmlOverlayTool.name, () => {
       const element = document.createElement('div');
       element.style.position = 'absolute';
       helper.add(element, new THREE.Vector3(0, 0, 0));
-      jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+      vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     }
 
     // Act
@@ -204,7 +204,7 @@ describe(HtmlOverlayTool.name, () => {
 
   test('screenspace clustering combines overlapping elements', () => {
     // Arrange
-    const createClusterElementCallback = jest
+    const createClusterElementCallback = vi
       .fn<HtmlOverlayCreateClusterDelegate>()
       .mockReturnValue(document.createElement('div'));
     const options: HtmlOverlayToolOptions = {
@@ -221,10 +221,10 @@ describe(HtmlOverlayTool.name, () => {
 
     // Act
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
 
@@ -237,7 +237,7 @@ describe(HtmlOverlayTool.name, () => {
   test('clear() removes composite elements', () => {
     // Arrange
     const compositeElement = document.createElement('div');
-    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const createClusterElementCallback = vi.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
     const options: HtmlOverlayToolOptions = {
       clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
     };
@@ -252,10 +252,10 @@ describe(HtmlOverlayTool.name, () => {
 
     // Act
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
 
@@ -273,7 +273,7 @@ describe(HtmlOverlayTool.name, () => {
   test('screenspace clustering reuses composite element when composition unchanged', () => {
     // Arrange
     const compositeElement = document.createElement('div');
-    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const createClusterElementCallback = vi.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
     const options: HtmlOverlayToolOptions = {
       clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
     };
@@ -287,9 +287,9 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     // Act — first update creates the composite
     helper.forceUpdate();
@@ -308,7 +308,7 @@ describe(HtmlOverlayTool.name, () => {
 
   test('screenspace clustering creates a new composite when composition changes', () => {
     // Arrange
-    const createClusterElementCallback = jest
+    const createClusterElementCallback = vi
       .fn<HtmlOverlayCreateClusterDelegate>()
       .mockImplementation(() => document.createElement('div'));
     const options: HtmlOverlayToolOptions = {
@@ -327,9 +327,9 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(div3, 0, 0, 64, 18);
 
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     // Act — first cluster composition is {div1, div2}
     helper.forceUpdate();
@@ -337,7 +337,7 @@ describe(HtmlOverlayTool.name, () => {
 
     // Adding a third overlapping element changes the cluster composition
     helper.add(div3, new THREE.Vector3(0, 0, 0.6));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.forceUpdate();
 
     // Assert — callback invoked again to build a new composite
@@ -347,7 +347,7 @@ describe(HtmlOverlayTool.name, () => {
   test('removing an overlay detaches the composite that referenced it', () => {
     // Arrange
     const compositeElement = document.createElement('div');
-    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const createClusterElementCallback = vi.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
     const options: HtmlOverlayToolOptions = {
       clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
     };
@@ -361,9 +361,9 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
     expect(compositeElement.parentElement).not.toBeNull();
@@ -378,7 +378,7 @@ describe(HtmlOverlayTool.name, () => {
   test('forceUpdate cleans up composites even when all overlays are removed', () => {
     // Arrange
     const compositeElement = document.createElement('div');
-    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
+    const createClusterElementCallback = vi.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
     const options: HtmlOverlayToolOptions = {
       clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
     };
@@ -392,9 +392,9 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
-    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
     expect(compositeElement.parentElement).not.toBeNull();

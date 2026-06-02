@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import 'jest-extended';
 import { DynamicDefragmentedBuffer } from './DynamicDefragmentedBuffer';
 
 describe('DynamicDefragmentedBuffer', () => {
@@ -57,10 +56,10 @@ describe('DynamicDefragmentedBuffer', () => {
     }
 
     expect(addResultOne.batchId).toBe(0);
-    expect(addResultOne.bufferIsReallocated).toBeFalse();
+    expect(addResultOne.bufferIsReallocated).toBeFalsy();
 
     expect(addResultTwo.batchId).toBe(1);
-    expect(addResultTwo.bufferIsReallocated).toBeTrue();
+    expect(addResultTwo.bufferIsReallocated).toBeTruthy();
 
     expect(addResultOne.updateRange.byteOffset).toBe(0);
     expect(addResultOne.updateRange.byteCount).toBe(2);

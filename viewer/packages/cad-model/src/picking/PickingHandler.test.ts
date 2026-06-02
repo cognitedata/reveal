@@ -39,11 +39,11 @@ describe(PickingHandler.name, () => {
 
   test('no nodes, returns empty array', async () => {
     const intersections = await pickingHandler.intersectCadNodes([], input);
-    expect(intersections).toBeEmpty();
+    expect(intersections).toHaveLength(0);
   });
 
   test('single node that does not intersect, returns empty array', async () => {
     const intersections = await pickingHandler.intersectCadNodes([cadNode], input);
-    expect(intersections).toBeEmpty();
+    expect(intersections).toHaveLength(0);
   });
 });

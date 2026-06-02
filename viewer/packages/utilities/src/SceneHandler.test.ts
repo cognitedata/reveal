@@ -6,7 +6,7 @@ import { SceneHandler } from '..';
 
 import { createCadModel } from '../../../test-utilities';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(SceneHandler.name, () => {
   test('Calling dispose correctly disposes all objects within the scene', () => {
@@ -14,8 +14,8 @@ describe(SceneHandler.name, () => {
     const material = new THREE.MeshBasicMaterial();
     const customObjectMesh = new THREE.Mesh(box, material);
 
-    const disposeCustomObjectMeshGeometry = jest.spyOn(customObjectMesh.geometry, 'dispose');
-    const disposeCustomObjectMeshMaterial = jest.spyOn(customObjectMesh.material, 'dispose');
+    const disposeCustomObjectMeshGeometry = vi.spyOn(customObjectMesh.geometry, 'dispose');
+    const disposeCustomObjectMeshMaterial = vi.spyOn(customObjectMesh.material, 'dispose');
 
     const cadModel = createCadModel(1, 1);
     const cadNodeMock = cadModel.cadNode;

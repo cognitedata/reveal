@@ -44,7 +44,7 @@ describe('CadModelClipper', () => {
 
     expect(result.scene.sectorCount).toBe(2);
     sectors.forEach(s => {
-      expect(box.intersectsBox(s.subtreeBoundingBox)).toBeTrue();
+      expect(box.intersectsBox(s.subtreeBoundingBox)).toBeTruthy();
     });
   });
 

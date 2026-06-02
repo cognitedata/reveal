@@ -116,8 +116,8 @@ describe('SectorSceneImpl', () => {
 
     // Assert - sector 3 is excluded because it's so far way from the other geometry
     expect(bounds).not.toEqual(scene.root.subtreeBoundingBox);
-    expect(scene.root.subtreeBoundingBox.containsPoint(bounds.min)).toBeTrue();
-    expect(scene.root.subtreeBoundingBox.containsPoint(bounds.max)).toBeTrue();
+    expect(scene.root.subtreeBoundingBox.containsPoint(bounds.min)).toBeTruthy();
+    expect(scene.root.subtreeBoundingBox.containsPoint(bounds.max)).toBeTruthy();
   });
 
   test('getBoundsOfMostGeometry with root with only one child, result is child bounds', () => {

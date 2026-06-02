@@ -3,7 +3,7 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "test": "yarn ws:test --config ./../../jest.config.js",
+    "test": "yarn ws:test --config ./../../vitest.config.ts",
     "lint": "yarn ws:lint"
   },
   "dependencies": {

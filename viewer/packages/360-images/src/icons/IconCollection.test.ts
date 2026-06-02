@@ -15,7 +15,7 @@ import {
   WebGLRenderer
 } from 'three';
 import { SceneHandler } from '@reveal/utilities';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { ClusteredIcon, IconCollection } from './IconCollection';
 import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import { PointOctant } from 'sparse-octree';
@@ -203,7 +203,7 @@ describe(IconCollection.name, () => {
   });
 
   test('cluster intersection, hover state management, and clearHoveredCluster behavior', () => {
-    const setNeedsRedrawMock = jest.fn();
+    const setNeedsRedrawMock = vi.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
     renderFrameWithClusters(collection, createCamera(clusterCameraPosition, clusterLookAt));
 
@@ -246,7 +246,7 @@ describe(IconCollection.name, () => {
     collection.dispose();
 
     // clearHoveredCluster does nothing when HTML clusters disabled
-    const disabledMock = jest.fn();
+    const disabledMock = vi.fn();
     const disabledCollection = createCollection(clusterablePositions, false, disabledMock);
     renderFrame(disabledCollection, createCamera(clusterCameraPosition, clusterLookAt));
     disabledMock.mockClear();
@@ -292,7 +292,7 @@ describe(IconCollection.name, () => {
   });
 
   test('configuration accessors: distance threshold, octree depth, culling restrictions, and HTML clusters', () => {
-    const setNeedsRedrawMock = jest.fn();
+    const setNeedsRedrawMock = vi.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
 
     expect(collection.isHtmlClustersEnabled()).toBe(true);
@@ -388,7 +388,7 @@ describe(IconCollection.name, () => {
     });
 
     it('calls setNeedsRedraw when toggling floor mode', () => {
-      const setNeedsRedrawMock = jest.fn();
+      const setNeedsRedrawMock = vi.fn();
       const collection = createCollection([new Vector3(0, 5, 0)], undefined, setNeedsRedrawMock);
 
       setNeedsRedrawMock.mockClear();
@@ -487,7 +487,7 @@ describe(IconCollection.name, () => {
   });
 
   test('setCullingScheme switching behavior and state preservation', () => {
-    const setNeedsRedrawMock = jest.fn();
+    const setNeedsRedrawMock = vi.fn();
     const collection = createCollection(clusterablePositions, true, setNeedsRedrawMock);
     const camera = createCamera(new Vector3(0, 0, 50));
 

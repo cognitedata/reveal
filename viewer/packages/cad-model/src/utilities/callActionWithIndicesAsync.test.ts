@@ -3,14 +3,14 @@
  */
 import { callActionWithIndicesAsync } from './callActionWithIndicesAsync';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('test callActionWithIndicesAsync', () => {
   it('calls an action with specified indices range', async () => {
     const start = 10;
     const end = 100000;
     const timesToCall = end - start + 1;
-    const action = jest.fn();
+    const action = vi.fn();
     await callActionWithIndicesAsync(start, end, action);
     expect(action).toHaveBeenCalledTimes(timesToCall);
     expect(action).toHaveBeenNthCalledWith(1, start);

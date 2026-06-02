@@ -31,16 +31,16 @@ describe('IntersectionNodeCollection', () => {
     const setB = new StubNodeCollection();
 
     const combinedSet = new IntersectionNodeCollection([setA, setB]);
-    expect(combinedSet.isLoading).toBeFalse();
+    expect(combinedSet.isLoading).toBeFalsy();
 
     setA.isLoading = true;
-    expect(combinedSet.isLoading).toBeTrue();
+    expect(combinedSet.isLoading).toBeTruthy();
 
     setB.isLoading = true;
-    expect(combinedSet.isLoading).toBeTrue();
+    expect(combinedSet.isLoading).toBeTruthy();
 
     setA.isLoading = false;
     setB.isLoading = false;
-    expect(combinedSet.isLoading).toBeFalse();
+    expect(combinedSet.isLoading).toBeFalsy();
   });
 });

@@ -71,8 +71,8 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
     );
 
     // Assert
-    expect(result.containsBox(sphere1.getBoundingBox(new THREE.Box3()))).toBeTrue();
-    expect(result.containsBox(sphere2.getBoundingBox(new THREE.Box3()))).toBeTrue();
+    expect(result.containsBox(sphere1.getBoundingBox(new THREE.Box3()))).toBeTruthy();
+    expect(result.containsBox(sphere2.getBoundingBox(new THREE.Box3()))).toBeTruthy();
   });
 
   test('second element returns correct bounding box', () => {
@@ -95,8 +95,8 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
     );
 
     // Assert
-    expect(result.containsBox(sphere1.getBoundingBox(new THREE.Box3()))).toBeTrue();
-    expect(result.containsBox(sphere2.getBoundingBox(new THREE.Box3()))).toBeTrue();
+    expect(result.containsBox(sphere1.getBoundingBox(new THREE.Box3()))).toBeTruthy();
+    expect(result.containsBox(sphere2.getBoundingBox(new THREE.Box3()))).toBeTruthy();
   });
 
   function populateValues(
@@ -160,8 +160,8 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
     /* eslint-disable prettier/prettier */
     const values = [
       // Element 1
-      0,0,0, 0,0,0, 0,0,0, 0,0,0, 
-      // Element 2 
+      0,0,0, 0,0,0, 0,0,0, 0,0,0,
+      // Element 2
       1,2,3, 4,5,6, 7,8,9, 10,11,12
     ];
     /* eslint-enable prettier/prettier */

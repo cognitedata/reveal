@@ -4,10 +4,6 @@
     "noUnusedLocals": false,
     "module": "esnext",
     "target": "es2019",
-    "types": [
-      "node",
-      "modules"
-    ]
-  },
-  "files": []
+    "types": ["vitest/globals", "node"]
+  }
 }
