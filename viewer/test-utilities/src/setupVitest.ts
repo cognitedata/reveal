@@ -2,16 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-// fetch() polyfill
-import 'whatwg-fetch';
+import 'vitest-canvas-mock';
 import { vi } from 'vitest';
 import { TextDecoder, TextEncoder } from 'node:util';
 import packageObject from '../../package.json' with { type: 'json' };
-
-// Make jest available globally for jest-canvas-mock compatibility
-(globalThis as any).jest = vi;
-
-// window.location is pre-configured to HTTPS via vitest.config.ts environmentOptions.jsdom.url
 
 window.URL.createObjectURL = vi.fn<() => string>();
 
