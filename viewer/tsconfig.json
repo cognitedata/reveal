@@ -1,45 +1,35 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    // Basic Options
-    "target": "ES2019",
-    "module": "esnext",
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "lib": [
+      "ES2018",
       "dom",
-      "esnext",
-      "webworker"
+      "dom.iterable",
+      "esnext"
     ],
-    "stripInternal": true,
-    "noUnusedLocals": true,
+    "module": "esnext",
+    "noFallthroughCasesInSwitch": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "sourceMap": true,
-    "noUnusedParameters": true,
-    // Strict Type-Checking Options
-    "strict": true,
-    // Module Resolution Options
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "declaration": true,
-    "outDir": "./build",
-    "types": ["vitest/globals"],
-    "paths": {
-      "@reveal/*": [
-        "./packages/*"
-      ],
-      "*": [
-        "./*",
-        "./packages/api/src/@types/*"
-      ]
-    },
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "resolveJsonModule": true,
+    "rootDir": "${configDir}",
+    "strict": true,
+    "jsx": "react-jsx"
   },
-  "include": [
-    "./**/*"
-  ],
   "exclude": [
-    "coverage",
     "node_modules",
-    "target",
-    "dist",
-    "./**/wasm/**/*"
+    "tmp",
+    "proxy"
   ]
 }
