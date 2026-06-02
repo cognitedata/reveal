@@ -32,6 +32,7 @@ export function setupTransferableMethodsOnWorker(methods: { [x: string]: WorkerM
       p.then(result => {
         globals.postMessage(
           { type: MESSAGE_TYPE_RPC_TRANSFERABLE, id, result },
+          '',
           opts.pickTransferablesFromResult ? opts.pickTransferablesFromResult(result) : []
         );
       }).catch(e => {

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import css from './spinnerStyles.module.css';
+import css from './spinnerStyles.module.css?inline';
 import svg from './spinnerCogniteLogo.svg';
 import type * as THREE from 'three';
 

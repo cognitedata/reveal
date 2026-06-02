@@ -6,12 +6,12 @@ import { defineConfig } from 'vite';
 import glsl from 'vite-plugin-glsl';
 import wasm from 'vite-plugin-wasm';
 import pkg from './package.json' with { type: 'json' };
-// import { dts } from 'rolldown-plugin-dts';
+import { dts } from 'rolldown-plugin-dts';
 
 export default defineConfig(({ command }) => {
   return {
-    plugins: [glsl(), wasm()],
-    // plugins: [dts({ oxc: false, tsconfig: './tsconfig.webpack.json' }), glsl(), wasm()],
+    root: '.',
+    plugins: [dts({ oxc: false, tsconfig: './tsconfig.webpack.json' }), glsl(), wasm()],
 
     build: {
       outDir: 'dist',

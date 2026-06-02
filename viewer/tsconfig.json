@@ -2,8 +2,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "lib": [
@@ -27,9 +25,7 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "exclude": [
-    "node_modules",
-    "tmp",
-    "proxy"
-  ]
+  "include": [],
+  "exclude": [],
+  "files": [],
 }
