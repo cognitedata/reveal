@@ -26,6 +26,8 @@
     "./packages/**/__stories__/**/*.ts",
     "./packages/**/__stories__/**/*.tsx",
     "**/visual-tests/**/*.ts",
+    "**/node_modules/**",
+
   ],
   "files": ["./index.ts"],
 }
