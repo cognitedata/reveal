@@ -4,28 +4,28 @@
 
 ```ts
 
-import { AnnotationModel } from '@cognite/sdk';
-import { AnnotationsAssetRef } from '@cognite/sdk';
-import { AnnotationStatus } from '@cognite/sdk';
-import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
-import { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
+import type { AnnotationModel } from '@cognite/sdk';
+import type { AnnotationsAssetRef } from '@cognite/sdk';
+import type { AnnotationStatus } from '@cognite/sdk';
+import type { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import type { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 import { Box3 } from 'three';
-import { Camera } from 'three';
-import { CogniteClient } from '@cognite/sdk';
-import { CogniteInternalId } from '@cognite/sdk';
+import type { Camera } from 'three';
+import type { CogniteClient } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
 import { EventDispatcher } from 'three';
-import { IdEither } from '@cognite/sdk';
-import { ListResponse } from '@cognite/sdk';
+import type { IdEither } from '@cognite/sdk';
+import type { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
-import { Node3D } from '@cognite/sdk';
+import type { Node3D } from '@cognite/sdk';
 import { Object3D } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
-import { Plane } from 'three';
+import type { Plane } from 'three';
 import { Quaternion } from 'three';
 import { Raycaster } from 'three';
-import { Texture } from 'three';
+import type { Texture } from 'three';
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
