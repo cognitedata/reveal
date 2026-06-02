@@ -6,19 +6,20 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelMetadataProvider, CdfModelDataProvider, File3dFormat } from '@reveal/data-providers';
-import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
 import { It, Mock } from 'moq.ts';
-import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import { CustomObject } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
-import { DataSourceType } from '@reveal/data-providers';
-import { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
 import { vi } from 'vitest';
-import { ResolutionOptions } from './types';
+import type { ResolutionOptions } from './types';
 
 const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { with: { type: 'json' } })).default;
 

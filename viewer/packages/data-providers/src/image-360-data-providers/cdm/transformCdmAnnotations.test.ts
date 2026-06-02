@@ -4,7 +4,7 @@
 import { Vector3 } from 'three';
 import { transformAnnotations } from './transformCdmAnnotations';
 import { mockGetImage360WithAnnotationsFromRevisionResponse } from '../../../../../test-utilities/src/fixtures/dmsResponses/mockGetImage360WithAnnotationsFromRevisionResponse';
-import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
+import type { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
 
 describe(transformAnnotations.name, () => {
   const annotationDataV1 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];

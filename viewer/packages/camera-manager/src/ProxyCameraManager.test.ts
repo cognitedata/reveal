@@ -5,8 +5,8 @@ import * as THREE from 'three';
 
 import { It, Mock } from 'moq.ts';
 import { ProxyCameraManager } from './ProxyCameraManager';
-import { CameraManager } from './CameraManager';
-import { CameraChangeDelegate } from './types';
+import type { CameraManager } from './CameraManager';
+import type { CameraChangeDelegate } from './types';
 
 describe(ProxyCameraManager.name, () => {
   test('Switching camera manager should also switch event handling', () => {

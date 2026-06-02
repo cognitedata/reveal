@@ -2,10 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient, Node3D, CursorAndAsyncIterator, CogniteAsyncIterator, ListResponse } from '@cognite/sdk';
+import type { Node3D, CursorAndAsyncIterator, CogniteAsyncIterator, ListResponse } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
 import { Matrix4 } from 'three';
 

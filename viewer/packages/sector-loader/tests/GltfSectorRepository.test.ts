@@ -5,10 +5,13 @@
 import { GltfSectorRepository } from '../src/GltfSectorRepository';
 import { createBinaryFileProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
-import { IMock, Mock, It } from 'moq.ts';
+import type { IMock } from 'moq.ts';
+import { Mock, It } from 'moq.ts';
 
-import { BinaryFileProvider, LocalModelIdentifier, ModelIdentifier } from '@reveal/data-providers';
-import { WantedSector, SectorMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
+import type { BinaryFileProvider, ModelIdentifier } from '@reveal/data-providers';
+import { LocalModelIdentifier } from '@reveal/data-providers';
+import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 
 import { vi } from 'vitest';

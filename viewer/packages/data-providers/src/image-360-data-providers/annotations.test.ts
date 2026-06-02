@@ -3,9 +3,9 @@
  */
 import { dmInstanceRefToKey } from '@reveal/utilities';
 import { getAnnotationIdKey } from './annotations';
-import { CoreDmImage360Annotation } from 'api-entry-points/core';
+import type { CoreDmImage360Annotation } from 'api-entry-points/core';
 import { createAnnotationModel } from '../../../../test-utilities';
-import { AnnotationModel } from '@cognite/sdk';
+import type { AnnotationModel } from '@cognite/sdk';
 
 describe(getAnnotationIdKey, () => {
   test('returns DM annotation key', () => {

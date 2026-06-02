@@ -1,8 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { DataSourceType } from '@reveal/data-providers';
-import { InstanceReference } from '@reveal/data-providers/src/types';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { InstanceReference } from '@reveal/data-providers/src/types';
 import { isCoreDmImage360Annotation, isImageAssetLinkAnnotation } from './typeGuards';
 
 export function getClassicInstanceRef<T extends DataSourceType>(

@@ -2,15 +2,16 @@
  * Copyright 2026 Cognite AS
  */
 
-import { Mock, It, Times, IMock } from 'moq.ts';
+import type { IMock } from 'moq.ts';
+import { Mock, It, Times } from 'moq.ts';
 import { vi } from 'vitest';
 import { Ray, Vector3 } from 'three';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
-import { ClusterIntersectionData, IconCollection } from '../icons/IconCollection';
-import { Image360Entity } from '../entity/Image360Entity';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { ClusterIntersectionData, IconCollection } from '../icons/IconCollection';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 
 describe(DefaultImage360Collection.name, () => {
   const DEFAULT_CLUSTER_DISTANCE_THRESHOLD = 25;

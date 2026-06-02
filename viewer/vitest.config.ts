@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { defineConfig, Plugin } from 'vitest/config';
+import type { Plugin } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import typescript from 'typescript';
@@ -75,7 +76,7 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/visual-tests/**', '**/*.VisualTest.ts'],
-    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupVitest.ts'), 'jest-canvas-mock'],
+    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupVitest.ts')],
     env: {
       MIXPANEL_TOKEN: 'test'
     },

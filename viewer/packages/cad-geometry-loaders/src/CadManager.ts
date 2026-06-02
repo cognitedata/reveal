@@ -2,15 +2,18 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { LoadingState } from '@reveal/model-base';
-import { CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
-import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
-import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
+import type { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import type { LoadingState } from '@reveal/model-base';
+import type { CadMaterialManager, RenderMode } from '@reveal/rendering';
+import type { ModelIdentifier } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
+import type { CadModelBudget } from './CadModelBudget';
+import { defaultDesktopCadModelBudget } from './CadModelBudget';
+import type { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { batchedDebounce, EventTrigger } from '@reveal/utilities';
 import assert from 'assert';

@@ -1,22 +1,22 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import {
+import type {
   AnnotationModel,
   AnnotationsTypesImagesAssetLink,
   AnnotationsTypesImagesInstanceLink,
   IdEither
 } from '@cognite/sdk';
-import * as THREE from 'three';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import {
+import type * as THREE from 'three';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult,
   Image360AnnotationInstanceReference
 } from '@reveal/360-images';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']

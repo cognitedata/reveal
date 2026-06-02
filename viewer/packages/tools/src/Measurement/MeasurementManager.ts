@@ -3,10 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
+import type { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
-import { Measurement, MeasurementOptions } from './types';
+import type { Measurement, MeasurementOptions } from './types';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 export class MeasurementManager {

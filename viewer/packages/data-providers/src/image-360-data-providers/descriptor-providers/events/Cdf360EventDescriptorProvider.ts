@@ -1,9 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { CogniteClient, Metadata } from '@cognite/sdk';
-import { Historical360ImageSet, Image360DescriptorProvider } from '../../../types';
-import { ClassicDataSourceType } from '../../../DataSourceType';
+import type { CogniteClient, Metadata } from '@cognite/sdk';
+import type { Historical360ImageSet, Image360DescriptorProvider } from '../../../types';
+import type { ClassicDataSourceType } from '../../../DataSourceType';
 
 import { Cdf360BatchEventCollectionLoader } from './Cdf360BatchEventCollectionLoader';
 

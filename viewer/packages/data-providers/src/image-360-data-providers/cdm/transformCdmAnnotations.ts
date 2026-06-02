@@ -2,10 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import { getImage360Map } from './getImage360Map';
-import { CoreDmImage360Annotation } from './types';
+import type { CoreDmImage360Annotation } from './types';
 import { getObject3dAssetMap } from './getObject3dAssetMap';
-import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
-import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
+import type { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
+import type { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
 import assert from 'assert';
 import { readAnnotations } from './readAnnotations';
 import { isSemanticVersion } from './semanticVersioningUtils';

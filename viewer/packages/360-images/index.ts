@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-export { Image360, Image360IconStyle } from './src/entity/Image360';
-export { Image360Revision } from './src/entity/Image360Revision';
-export {
+export type { Image360, Image360IconStyle } from './src/entity/Image360';
+export type { Image360Revision } from './src/entity/Image360Revision';
+export type {
   Image360Collection,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
@@ -16,20 +16,20 @@ export { Image360Facade } from './src/Image360Facade';
 export { Image360CollectionFactory } from './src/collection/Image360CollectionFactory';
 export { Image360Entity } from './src/entity/Image360Entity';
 export { Image360RevisionEntity } from './src/entity/Image360RevisionEntity';
-export { Image360Visualization } from './src/entity/Image360Visualization';
-export { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
-export {
+export type { Image360Visualization } from './src/entity/Image360Visualization';
+export type { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
+export type {
   Image360AnnotationAppearance,
   Image360AnnotationFilterOptions,
   Image360AnnotationInstanceReference
 } from './src/annotation/types';
-export { Image360AnnotationIntersection } from './src/annotation/Image360AnnotationIntersection';
-export { Image360Annotation } from './src/annotation/Image360Annotation';
+export type { Image360AnnotationIntersection } from './src/annotation/Image360AnnotationIntersection';
+export type { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
-export { IconsOptions } from './src/icons/IconCollection';
-export { ClusteredIconData } from './src/icons/clustering/ClusterRenderingStrategy';
-export { HtmlClusterRendererOptions } from './src/icons/clustering/HtmlClusterRenderer';
-export {
+export type { IconsOptions } from './src/icons/IconCollection';
+export type { ClusteredIconData } from './src/icons/clustering/ClusterRenderingStrategy';
+export type { HtmlClusterRendererOptions } from './src/icons/clustering/HtmlClusterRenderer';
+export type {
   Image360ClusterIntersectionData,
   Image360CollectionSourceType,
   Image360IconIntersectionData

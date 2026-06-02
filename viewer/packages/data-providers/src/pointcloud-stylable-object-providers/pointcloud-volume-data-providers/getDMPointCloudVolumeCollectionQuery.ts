@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { QueryRequest } from '@cognite/sdk';
+import type { QueryRequest } from '@cognite/sdk';
 import {
   pointCloudVolumeFilter,
   POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
@@ -14,7 +14,7 @@ import {
   COGNITE_VISUALIZABLE_SOURCE,
   COGNITE_ASSET_SOURCE
 } from '../../utilities/constants';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
   return {

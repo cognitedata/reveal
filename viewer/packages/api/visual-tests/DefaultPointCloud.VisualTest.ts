@@ -4,10 +4,8 @@
 
 import { CognitePointCloudModel } from '@reveal/pointclouds';
 import { PointColorType } from '@reveal/rendering';
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 // Sanity test for loading point cloud model
 export default class DefaultPointCloudVisualTest extends ViewerVisualTestFixture {

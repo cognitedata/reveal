@@ -1,9 +1,9 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { AnnotationModel, CogniteClient, FileInfo, IdEither, InternalId } from '@cognite/sdk';
-import { InstanceReference } from '../types';
-import { DataSourceType } from '../DataSourceType';
+import type { AnnotationModel, CogniteClient, FileInfo, IdEither, InternalId } from '@cognite/sdk';
+import type { InstanceReference } from '../types';
+import type { DataSourceType } from '../DataSourceType';
 import { getInstanceKey } from '../utilities/instanceIds';
 import { isDefined, isDmIdentifier } from '@reveal/utilities';
 import chunk from 'lodash/chunk';

@@ -1,9 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { SectorCost } from './types';
+import type { SectorCost } from './types';
 
-import { LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import type { SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 export function computeV9SectorCost(sectorMetadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
   const metadata = sectorMetadata;

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
 import { File3dFormat } from '../types';

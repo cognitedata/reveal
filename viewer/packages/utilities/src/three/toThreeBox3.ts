@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { BoundingBox3D } from '@cognite/sdk';
+import type { BoundingBox3D } from '@cognite/sdk';
 
 export function toThreeBox3(boundingBox: BoundingBox3D, out?: THREE.Box3): THREE.Box3 {
   out = out ?? new THREE.Box3();

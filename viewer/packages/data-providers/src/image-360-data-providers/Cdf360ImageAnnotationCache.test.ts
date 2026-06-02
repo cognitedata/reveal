@@ -3,9 +3,9 @@
  */
 import { Mock } from 'moq.ts';
 import { createCdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
-import { AnnotationsAPI, CogniteClient, FilesAPI } from '@cognite/sdk';
-import { InstanceReference } from '../types';
-import { ClassicDataSourceType } from '../DataSourceType';
+import type { AnnotationsAPI, CogniteClient, FilesAPI } from '@cognite/sdk';
+import type { InstanceReference } from '../types';
+import type { ClassicDataSourceType } from '../DataSourceType';
 import { createAnnotationModel, createCursorAndAsyncIterator } from '../../../../test-utilities';
 import { createFileInfo } from '../../../../test-utilities/src/createFileInfo';
 

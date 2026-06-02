@@ -7,12 +7,12 @@
 import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
-import { ILoader } from './ILoader';
-import { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
-import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
+import type { ILoader } from './ILoader';
+import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
+import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
-import { ParsedEptData, EptInputData } from '../workers/types';
+import type { ParsedEptData, EptInputData } from '../workers/types';
 
 import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 

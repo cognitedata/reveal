@@ -3,8 +3,8 @@
  */
 import { GltfSectorLoader } from '../src/GltfSectorLoader';
 
-import { IMock } from 'moq.ts';
-import { WantedSector } from '@reveal/cad-parsers';
+import type { IMock } from 'moq.ts';
+import type { WantedSector } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { createBinaryFileProviderMock, createWantedSectorMock } from './mockSectorUtils';
 

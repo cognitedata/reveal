@@ -5,30 +5,30 @@
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
-import {
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
 } from './Image360Collection';
-import { Image360Entity } from '../entity/Image360Entity';
-import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { Image360AnnotationAppearance } from '../annotation/types';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
+import type { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Image360AnnotationAppearance } from '../annotation/types';
 
-import {
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
   Image360FileDescriptor,
   Image360Provider
 } from '@reveal/data-providers';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Matrix4, Ray } from 'three';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { Matrix4, Ray } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
-import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
+import type { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
 import { createCollectionIdString } from './createCollectionIdString';
 import { getClassicInstanceRef } from '../annotation/getInstanceId';
 

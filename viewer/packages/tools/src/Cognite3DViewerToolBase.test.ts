@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DisposedDelegate } from '@reveal/utilities';
+import type { DisposedDelegate } from '@reveal/utilities';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 import { vi } from 'vitest';

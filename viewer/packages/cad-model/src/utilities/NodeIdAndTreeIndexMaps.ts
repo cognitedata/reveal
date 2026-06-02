@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteInternalId } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 
-import { NodesApiClient } from '@reveal/nodes-api';
+import type { NodesApiClient } from '@reveal/nodes-api';
 import { batchedDebounce, type BatchedDebounce } from '@reveal/utilities';
 
 type NodeIdRequest = CogniteInternalId;

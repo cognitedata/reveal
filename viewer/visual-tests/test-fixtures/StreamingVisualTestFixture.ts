@@ -7,6 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 
 import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
+import type { RenderPipelineExecutor, RenderPipelineProvider } from '../../packages/rendering';
 import {
   BasicPipelineExecutor,
   CadGeometryRenderModePipelineProvider,
@@ -14,30 +15,25 @@ import {
   defaultRenderOptions,
   DefaultRenderPipelineProvider,
   RenderMode,
-  RenderPipelineExecutor,
-  RenderPipelineProvider,
   PointCloudMaterialManager
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
-import { VisualTestFixture } from './VisualTestFixture';
-import {
-  BeforeSceneRenderedDelegate,
-  DeferredPromise,
-  EventTrigger,
-  fitCameraToBoundingBox,
-  SceneHandler
-} from '../../packages/utilities';
+import type { VisualTestFixture } from './VisualTestFixture';
+import type { BeforeSceneRenderedDelegate } from '../../packages/utilities';
+import { DeferredPromise, EventTrigger, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 
-import {
+import type {
   ModelIdentifier,
   ModelMetadataProvider,
-  DummyPointCloudStylableObjectProvider,
   ModelDataProvider,
-  DummyPointCloudDMStylableObjectProvider,
   AddModelOptionsWithModelRevisionId,
   DataSourceType
 } from '../../packages/data-providers';
-import { LoadingState } from '../../packages/model-base';
+import {
+  DummyPointCloudStylableObjectProvider,
+  DummyPointCloudDMStylableObjectProvider
+} from '../../packages/data-providers';
+import type { LoadingState } from '../../packages/model-base';
 
 import { LocalPointClassificationsProvider, PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
 
@@ -48,7 +44,7 @@ import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFact
 import dat from 'dat.gui';
 import Stats from 'stats.js';
 import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { getDistanceToMeterConversionFactor } from '../../packages/cad-parsers';
 
 export type StreamingTestFixtureComponents = {

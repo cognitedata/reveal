@@ -2,13 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import {
-  createPrimitiveInterleavedGeometry,
-  getCollectionType,
-  Primitive,
-  PrimitiveName
-} from '../../../test-utilities/src/primitives';
-import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
+import type { Primitive, PrimitiveName } from '../../../test-utilities/src/primitives';
+import { createPrimitiveInterleavedGeometry, getCollectionType } from '../../../test-utilities/src/primitives';
+import type { SimpleTestFixtureComponents } from '../../../visual-tests';
+import { SimpleVisualTestFixture } from '../../../visual-tests';
 import { setConeGeometry } from '../src/reveal-glb-parser/primitiveGeometries';
 import { getMaterialsMap } from './testMaterials';
 

@@ -6,10 +6,7 @@
     "target": "es2019",
     "types": [
       "node",
-      "modules",
-      "jest",
-      "jest-environment-puppeteer",
-      "jest-image-snapshot"
+      "modules"
     ]
   },
   "files": []

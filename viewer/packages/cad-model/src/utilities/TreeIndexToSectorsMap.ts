@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 /**
  * Map between a tree index and the set of sectors it has geometry in. Also contains helper functions to keep track of whether or not

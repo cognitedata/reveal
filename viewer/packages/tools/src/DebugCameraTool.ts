@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { DisposedDelegate } from '@reveal/utilities';
+import type { DisposedDelegate } from '@reveal/utilities';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
-import { Cognite3DViewer } from '@reveal/api';
-import { DataSourceType } from '@reveal/data-providers';
+import type { Cognite3DViewer } from '@reveal/api';
+import type { DataSourceType } from '@reveal/data-providers';
 
 export class DebugCameraTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;

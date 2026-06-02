@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Vec3 } from '@reveal/utilities';
+import type { Vec3 } from '@reveal/utilities';
 
 export type ParsedEptData = {
   numPoints: number;

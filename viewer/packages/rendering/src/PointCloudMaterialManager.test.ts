@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
+import type { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterialManager } from './PointCloudMaterialManager';
 
 describe('PointCloudMaterialManager', () => {

@@ -3,9 +3,9 @@
  */
 import * as THREE from 'three';
 
-import { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
+import type { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
 import { NodeIdNodeCollection } from './NodeIdNodeCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
 import range from 'lodash/range';

@@ -4,9 +4,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/data-providers';
+import type { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/data-providers';
 import { createDataProviders } from './utilities/createDataProviders';
-import { VisualTestFixture } from './VisualTestFixture';
+import type { VisualTestFixture } from './VisualTestFixture';
 
 export type SimpleTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;

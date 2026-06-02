@@ -3,16 +3,8 @@
  */
 
 import remove from 'lodash/remove';
-import {
-  MathUtils,
-  OrthographicCamera,
-  PerspectiveCamera,
-  Quaternion,
-  Raycaster,
-  Spherical,
-  Vector2,
-  Vector3
-} from 'three';
+import type { Spherical } from 'three';
+import { MathUtils, OrthographicCamera, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import Keyboard from '../Keyboard';
 import {
   Vector3Pool,
@@ -21,11 +13,11 @@ import {
   getWheelEventDelta
 } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+import type { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
-import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
+import type { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
 import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';

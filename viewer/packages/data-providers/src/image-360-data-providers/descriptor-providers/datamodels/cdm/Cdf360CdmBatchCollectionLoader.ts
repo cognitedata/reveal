@@ -2,9 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, RawPropertyValueV3 } from '@cognite/sdk';
-import { DataModelsSdk } from '../../../../DataModelsSdk';
-import { get360CdmCollectionsQuery, CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
+import type { CogniteClient, RawPropertyValueV3 } from '@cognite/sdk';
+import type { DataModelsSdk } from '../../../../DataModelsSdk';
+import type { CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
+import { get360CdmCollectionsQuery } from './get360CdmCollectionsQuery';
 import type {
   Historical360ImageSet,
   Image360Descriptor,
@@ -16,7 +17,8 @@ import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Euler, Matrix4 } from 'three';
 import { DEFAULT_360_IMAGE_MIME_TYPE, MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
-import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
+import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
+import { dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
 import { BatchLoader } from '../../../../utilities/BatchLoader';
 import { getDmsPaginationCursor } from '../../../../utilities/dmsPaginationUtils';
 

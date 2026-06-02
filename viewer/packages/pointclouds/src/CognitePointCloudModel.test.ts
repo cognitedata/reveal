@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ClassicDataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import type { ClassicDataSourceType, DMDataSourceType } from '@reveal/data-providers';
 import { createPointCloudModel } from '../../../test-utilities/src/createPointCloudModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { AnnotationIdPointCloudObjectCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';

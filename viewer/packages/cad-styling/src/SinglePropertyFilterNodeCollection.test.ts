@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { It, Mock } from 'moq.ts';
 
 import { vi } from 'vitest';

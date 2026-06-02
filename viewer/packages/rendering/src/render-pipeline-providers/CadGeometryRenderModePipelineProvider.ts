@@ -3,14 +3,14 @@
  */
 
 import * as THREE from 'three';
-import { CadMaterialManager } from '../CadMaterialManager';
+import type { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
-import { RenderPass } from '../RenderPass';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { RenderPass } from '../RenderPass';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { getLayerMask, RenderLayer } from '../utilities/renderUtilities';
-import { RenderMode } from '../rendering/RenderMode';
-import { SceneHandler } from '@reveal/utilities';
-import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
+import type { RenderMode } from '../rendering/RenderMode';
+import type { SceneHandler } from '@reveal/utilities';
+import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };

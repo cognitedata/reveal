@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
 import { vi } from 'vitest';
 

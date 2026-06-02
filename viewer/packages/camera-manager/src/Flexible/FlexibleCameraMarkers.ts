@@ -2,10 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Scene, Object3D, Vector3, Sprite, SpriteMaterial, CanvasTexture } from 'three';
-import { FlexibleCameraManager } from './FlexibleCameraManager';
+import type { Scene, Object3D, Vector3 } from 'three';
+import { Sprite, SpriteMaterial, CanvasTexture } from 'three';
+import type { FlexibleCameraManager } from './FlexibleCameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+import type { FlexibleControlsOptions } from './FlexibleControlsOptions';
 
 const TEXTURE_SIZE = 25;
 const LINE_WIDTH = 3;

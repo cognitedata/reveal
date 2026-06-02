@@ -4,7 +4,7 @@
 import { Vector3 } from 'three';
 
 import { readAnnotations } from './readAnnotations';
-import { CoreDmImage360Properties } from './properties';
+import type { CoreDmImage360Properties } from './properties';
 
 describe(readAnnotations.name, () => {
   const MOCK_SPACE = 'test-space';

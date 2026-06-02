@@ -1,7 +1,7 @@
-import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
+import type { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import { EptJson } from './EptJson';
+import type { EptJson } from './EptJson';
 
 export class EptLoader {
   static async load(

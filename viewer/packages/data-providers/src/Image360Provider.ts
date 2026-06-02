@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360CollectionSourceType } from '@reveal/360-images';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import { Image360DescriptorProvider, Image360FileProvider, Image360AnnotationProvider } from './types';
+import type { Image360CollectionSourceType } from '@reveal/360-images';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import type { Image360DescriptorProvider, Image360FileProvider, Image360AnnotationProvider } from './types';
 import { isFdm360ImageCollectionIdentifier } from './image-360-data-providers/shared';
 
 export type Image360ProviderMap = Map<

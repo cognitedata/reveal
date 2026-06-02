@@ -6,18 +6,19 @@ import * as THREE from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
 
-import { getDistanceToMeterConversionFactor, SectorScene } from '../utilities/types';
-import { CadModelMetadata } from './CadModelMetadata';
-import { MetadataRepository } from '@reveal/model-base';
+import type { SectorScene } from '../utilities/types';
+import { getDistanceToMeterConversionFactor } from '../utilities/types';
+import type { CadModelMetadata } from './CadModelMetadata';
+import type { MetadataRepository } from '@reveal/model-base';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import {
+import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  File3dFormat,
   BlobOutputMetadata
 } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;

@@ -2,19 +2,20 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 import isEqual from 'lodash/isEqual';
 
-import { Subscription, combineLatest, fromEventPattern } from 'rxjs';
-import { PointCloudBudget } from './types';
+import type { Subscription } from 'rxjs';
+import { combineLatest, fromEventPattern } from 'rxjs';
+import type { PointCloudBudget } from './types';
 
-import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
-import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
-import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
-import { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
-import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import {
+import type { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
+import type { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
+import type { SupportedModelTypes, LoadingState } from '@reveal/model-base';
+import type { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
+import type { NodeAppearanceProvider } from '@reveal/cad-styling';
+import type {
   RenderMode,
   RenderPipelineExecutor,
   CadMaterialManager,
@@ -23,9 +24,9 @@ import {
   SettableRenderTarget
 } from '@reveal/rendering';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import { CameraManager } from '@reveal/camera-manager';
+import type { CameraManager } from '@reveal/camera-manager';
 
-import {
+import type {
   ClassicModelIdentifierType,
   DataSourceType,
   File3dFormat,
@@ -33,7 +34,7 @@ import {
   LocalModelIdentifierType
 } from '@reveal/data-providers';
 import { createModelIdentifier } from '@reveal/data-providers';
-import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
+import type { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 /* eslint-disable jsdoc/require-jsdoc */
 

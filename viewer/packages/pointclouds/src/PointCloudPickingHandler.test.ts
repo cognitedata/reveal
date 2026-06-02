@@ -7,10 +7,10 @@ import { vi } from 'vitest';
 
 import { PointCloudPickingHandler } from './PointCloudPickingHandler';
 import { PointCloudOctreePicker } from './potree-three-loader';
-import { IntersectInput } from '@reveal/model-base';
+import type { IntersectInput } from '@reveal/model-base';
 import { createPointCloudNode } from '../../../test-utilities';
-import { ClassicDataSourceType, DMDataSourceType } from '@reveal/data-providers';
-import { PointCloudObject } from '@reveal/data-providers';
+import type { ClassicDataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import type { PointCloudObject } from '@reveal/data-providers';
 import { Cylinder } from '@reveal/utilities';
 import assert from 'assert';
 

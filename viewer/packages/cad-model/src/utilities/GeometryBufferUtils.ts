@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import type { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
 import assert from 'assert';
 import {
   BufferAttribute,

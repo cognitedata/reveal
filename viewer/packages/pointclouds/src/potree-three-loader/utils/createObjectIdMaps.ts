@@ -2,14 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
-  isClassicPointCloudVolumeObject,
-  isDMPointCloudVolumeObject,
-  PointCloudObject,
-  DataSourceType
-} from '@reveal/data-providers';
-import { PointCloudObjectIdMaps } from '@reveal/rendering';
-import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
+import type { PointCloudObject, DataSourceType } from '@reveal/data-providers';
+import { isClassicPointCloudVolumeObject, isDMPointCloudVolumeObject } from '@reveal/data-providers';
+import type { PointCloudObjectIdMaps } from '@reveal/rendering';
+import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
+import { dmInstanceRefToKey } from '@reveal/utilities';
 
 export function createObjectIdMaps<T extends DataSourceType>(objects: PointCloudObject<T>[]): PointCloudObjectIdMaps {
   const annotationToObjectIds = new Map<number | DMInstanceKey, number>();

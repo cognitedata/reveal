@@ -4,10 +4,11 @@
 
 import { vi } from 'vitest';
 import * as THREE from 'three';
-import { Mock, IMock, It, Times } from 'moq.ts';
-import { SceneHandler } from '@reveal/utilities';
+import type { IMock } from 'moq.ts';
+import { Mock, It, Times } from 'moq.ts';
+import type { SceneHandler } from '@reveal/utilities';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { Image360Face, Image360Texture } from '@reveal/data-providers';
+import type { Image360Face, Image360Texture } from '@reveal/data-providers';
 
 function makeSixTextures(): Image360Texture[] {
   const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];

@@ -2,13 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360Entity } from '../entity/Image360Entity';
-import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
 import find from 'lodash/find';
 import remove from 'lodash/remove';
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 
 export type DownloadRequest<T extends DataSourceType> = {
   entity: Image360Entity<T>;

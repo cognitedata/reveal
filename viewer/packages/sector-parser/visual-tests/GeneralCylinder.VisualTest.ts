@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { GeneralCylinder, PrimitiveName } from '../../../test-utilities/src/primitives';
+import type { GeneralCylinder } from '../../../test-utilities/src/primitives';
+import { PrimitiveName } from '../../../test-utilities/src/primitives';
 import { PrimitivesVisualTestFixture } from './PrimitivesVisualTestFixture';
 
 type GeneralCylinderAttributes = {

@@ -4,8 +4,8 @@
 
 import chunk from 'lodash/chunk';
 
-import { AnnotationModel, IdEither } from '@cognite/sdk';
-import {
+import type { AnnotationModel, IdEither } from '@cognite/sdk';
+import type {
   FaceName,
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -16,19 +16,22 @@ import {
   InstanceReference
 } from '../types';
 import { getExternalIdFromDescriptor } from '../utilities/getExternalIdFromDescriptor';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
-import {
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
-  createCollectionIdString,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult,
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from '@reveal/360-images';
+import { createCollectionIdString } from '@reveal/360-images';
+import {
+  isImageAssetLinkAnnotation,
+  isImageInstanceLinkAnnotation
+} from '@reveal/360-images/src/annotation/typeGuards';
 import { getInstanceKey } from '../utilities/instanceIds';
-import { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
+import type { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
 import { isDefined } from '@reveal/utilities';
 
 /**

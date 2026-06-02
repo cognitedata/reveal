@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { PointCloudOctreePickerHelper, RenderedNode } from './PointCloudOctreePickerHelper';
+import type { RenderedNode } from './PointCloudOctreePickerHelper';
+import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 
 import { Mock, It, Times } from 'moq.ts';
 

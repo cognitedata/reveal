@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { LevelOfDetail } from '@reveal/cad-parsers';
 
-import { DetermineSectorsPayload } from './culling/types';
+import type { DetermineSectorsPayload } from './culling/types';
 
 export function loadingEnabled({ models, loadingHints }: DetermineSectorsPayload): boolean {
   return models.length > 0 && loadingHints.suspendLoading !== true;

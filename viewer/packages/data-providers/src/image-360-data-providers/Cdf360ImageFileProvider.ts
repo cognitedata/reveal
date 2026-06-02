@@ -2,9 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import zipWith from 'lodash/zipWith';
-import { Image360Face, Image360FileDescriptor, Image360FileProvider } from '../types';
-import { CdfImageFileProvider, FileIdentifier, FileDownloadResult } from './CdfImageFileProvider';
-import { CogniteClient } from '@cognite/sdk';
+import type { Image360Face, Image360FileDescriptor, Image360FileProvider } from '../types';
+import type { FileIdentifier, FileDownloadResult } from './CdfImageFileProvider';
+import { CdfImageFileProvider } from './CdfImageFileProvider';
+import type { CogniteClient } from '@cognite/sdk';
 
 export class Cdf360ImageFileProvider implements Image360FileProvider {
   private readonly _imageFileProvider: CdfImageFileProvider;

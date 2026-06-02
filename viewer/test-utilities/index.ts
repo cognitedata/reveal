@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-export { generateV9SectorTree, createV9SectorMetadata, SectorTree } from './src/createSectorMetadata';
+export type { SectorTree } from './src/createSectorMetadata';
+export { generateV9SectorTree, createV9SectorMetadata } from './src/createSectorMetadata';
 
 export { createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
 
@@ -22,6 +23,6 @@ export { expectContainsSectorsWithLevelOfDetail } from './src/expects';
 
 export { createRandomBox } from './src/createBoxes';
 
-export { Mutable } from './src/reflection';
+export type { Mutable } from './src/reflection';
 export { mockViewer, mockViewerComponents, fakeGetBoundingClientRect } from './src/viewerMock';
 export { autoMockWebGLRenderer } from './src/autoMockWebGLRenderer';

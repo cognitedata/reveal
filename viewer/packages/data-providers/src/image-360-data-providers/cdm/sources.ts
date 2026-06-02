@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { ViewReference } from '@cognite/sdk';
+import type { ViewReference } from '@cognite/sdk';
 import { CORE_DM_SPACE } from '../../utilities/constants';
 
 export const COGNITE_ASSET_VIEW_REFERENCE = {

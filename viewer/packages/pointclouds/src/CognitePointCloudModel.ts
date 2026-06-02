@@ -3,21 +3,17 @@
  */
 
 import * as THREE from 'three';
-import { CameraConfiguration } from '@reveal/utilities';
-import { WellKnownAsprsPointClassCodes } from './types';
-import { PointCloudNode } from './PointCloudNode';
+import type { CameraConfiguration } from '@reveal/utilities';
+import type { WellKnownAsprsPointClassCodes } from './types';
+import type { PointCloudNode } from './PointCloudNode';
 
-import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+import type { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
 
-import {
-  applyDefaultsToPointCloudAppearance,
-  PointCloudAppearance,
-  CompletePointCloudAppearance,
-  StyledPointCloudVolumeCollection
-} from '@reveal/pointcloud-styling';
+import type { PointCloudAppearance, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+import { applyDefaultsToPointCloudAppearance, StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 import { isClassicIdentifier } from '@reveal/data-providers';
 
 /**

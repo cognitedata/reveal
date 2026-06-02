@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { TypedArrayConstructor } from '@reveal/utilities';
+import type { TypedArrayConstructor } from '@reveal/utilities';
 
 export const COLLECTION_TYPE_SIZES = new Map<string, number>([
   ['SCALAR', 1],
