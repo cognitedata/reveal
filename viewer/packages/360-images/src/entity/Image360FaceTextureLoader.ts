@@ -96,7 +96,8 @@ export class Image360FaceTextureLoader {
       onJpegTypeDetected,
       async (partialBlob: Blob) => {
         const bitmap = await createImageBitmap(partialBlob).catch(() => null);
-        if (bitmap) this.applyBitmapToTexture(bitmap, face, textureState, onFirstFaceReady, deferred.resolve);
+        if (bitmap)
+          this.applyBitmapToTexture(bitmap, face, textureState, onFirstFaceReady, deferred.resolve, deferred.reject);
       },
       deferred.reject
     );
@@ -201,7 +202,7 @@ export class Image360FaceTextureLoader {
     const blob = new Blob([fullBuffer.subarray(0, bytesReceived)], { type: 'image/jpeg' });
     try {
       const bitmap = await createImageBitmap(blob);
-      this.applyBitmapToTexture(bitmap, face, state, onFirstFaceReady, deferred.resolve);
+      this.applyBitmapToTexture(bitmap, face, state, onFirstFaceReady, deferred.resolve, deferred.reject);
     } catch (e) {
       deferred.reject(e);
     }
@@ -212,10 +213,12 @@ export class Image360FaceTextureLoader {
     face: Image360FaceWithUrl,
     state: CanvasTextureState,
     onFirstFaceReady: (() => void) | undefined,
-    resolveTexture: (t: Image360Texture) => void
+    resolveTexture: (t: Image360Texture) => void,
+    rejectTexture: (reason: unknown) => void
   ): void {
     if (!this._isMeshAlive()) {
       bitmap.close();
+      rejectTexture(new Error(`Mesh unloaded before texture could be applied for face: ${face.face}`));
       return;
     }
     if (!state.texture) {
