@@ -4,22 +4,12 @@
 
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
-import {
-  CogniteClient,
-  AnnotationModel,
-  InternalId,
-  CursorAndAsyncIterator,
-  AnnotationsInstanceRef,
-  AnnotationsAssetRef,
-  FileInfo,
-  ListResponse,
-  CogniteAsyncIterator
-} from '@cognite/sdk';
+import { CogniteClient, AnnotationModel, InternalId, AnnotationsInstanceRef, FileInfo } from '@cognite/sdk';
 import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
 import { ClassicDataSourceType } from '../DataSourceType';
 import { Image360Descriptor, Image360FileDescriptor } from '../types';
 import { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
-import { createCursorAndAsyncIterator, createAnnotationModel } from '../../../../test-utilities';
+import { createAnnotationModel, createFileInfo } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
 import assert from 'assert';
 import { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
@@ -72,39 +62,13 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     status: 'approved'
   });
 
-  const mockAnnotationList = vi.fn<CogniteClient['annotations']['list']>().mockImplementation(
-    (): CursorAndAsyncIterator<AnnotationModel> =>
-      createCursorAndAsyncIterator({
-        items: [matchingAnnotation]
-      })
-  );
-
-  const mockReverseLookup = vi
-    .fn<CogniteClient['annotations']['reverseLookup']>()
-    .mockImplementation((): Promise<ListResponse<AnnotationsAssetRef[]>> & CogniteAsyncIterator<AnnotationsAssetRef> =>
-      createCursorAndAsyncIterator<AnnotationsAssetRef>({
-        items: [{ id: matchingAnnotation.annotatedResourceId }]
-      })
-    );
-
-  const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>().mockResolvedValue([]);
-
-  /* const sdkMock = new Mock<CogniteClient>()
-    .setup(p => p.annotations.list)
-    .returns(mockAnnotationList)
-    .setup(p => p.annotations.reverseLookup)
-    .returns(mockReverseLookup)
-    .setup(p => p.files.retrieve)
-    .returns(mockFilesRetrieve)
-    .object(); */
-
-  const annotationCache: Cdf360ImageAnnotationCache = {
+  const annotationCache = {
     reverseLookup: vi.fn<Cdf360ImageAnnotationCache['reverseLookup']>(() => Promise.resolve([matchingAnnotation])),
     getFileInfosForFileIds: vi.fn<Cdf360ImageAnnotationCache['getFileInfosForFileIds']>(() => Promise.resolve([])),
     getAnnotationsForFiles: vi.fn<Cdf360ImageAnnotationCache['getAnnotationsForFiles']>(() =>
       Promise.resolve([matchingAnnotation])
     )
-  };
+  } as const satisfies Cdf360ImageAnnotationCache;
 
   function createMockRevision(
     fileId: number,
@@ -131,7 +95,9 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       .setup(r => r.getDescriptors())
       .returns(descriptor)
       .setup(r => r.getAnnotations())
-      .returns(Promise.resolve([annotationObject1, annotationObject2]));
+      .returns(Promise.resolve([annotationObject1, annotationObject2]))
+      .setup(r => r.createAndAddAnnotationObjects)
+      .returns(() => Promise.resolve([annotationObject1, annotationObject2]));
 
     return revision.object();
   }
@@ -211,17 +177,8 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('returns annotations matching instance ref and image fileIds', async () => {
-      mockAnnotationList.mockImplementation(
-        (): CursorAndAsyncIterator<AnnotationModel> =>
-          createCursorAndAsyncIterator({
-            items: [matchingHybridAnnotation]
-          })
-      );
-      mockReverseLookup.mockImplementation(() =>
-        createCursorAndAsyncIterator<AnnotationsAssetRef>({
-          items: [{ id: matchingHybridAnnotation.annotatedResourceId }]
-        })
-      );
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingHybridAnnotation, nonMatchingAnnotation]);
+      annotationCache.reverseLookup.mockResolvedValue([matchingHybridAnnotation, nonMatchingAnnotation]);
 
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
@@ -236,17 +193,8 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('caches results', async () => {
-      mockAnnotationList.mockImplementation(
-        (): CursorAndAsyncIterator<AnnotationModel> =>
-          createCursorAndAsyncIterator({
-            items: [matchingHybridAnnotation]
-          })
-      );
-      mockReverseLookup.mockImplementation(() =>
-        createCursorAndAsyncIterator<AnnotationsAssetRef>({
-          items: [{ id: matchingHybridAnnotation.annotatedResourceId }]
-        })
-      );
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingHybridAnnotation]);
+      annotationCache.reverseLookup.mockResolvedValue([matchingHybridAnnotation]);
 
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
@@ -262,18 +210,11 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('returns annotations for descriptors with externalId', async () => {
-      mockAnnotationList.mockImplementation(
-        (): CursorAndAsyncIterator<AnnotationModel> =>
-          createCursorAndAsyncIterator({
-            items: [matchingAnnotation]
-          })
-      );
-      mockReverseLookup.mockImplementation(() =>
-        createCursorAndAsyncIterator<AnnotationsAssetRef>({
-          items: [{ id: matchingAnnotation.annotatedResourceId }]
-        })
-      );
-      mockFilesRetrieve.mockResolvedValue([{ id: 10, externalId: 'file-external-id', name: 'file1' } as FileInfo]);
+      annotationCache.reverseLookup.mockResolvedValue([matchingAnnotation]);
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingAnnotation]);
+      annotationCache.getFileInfosForFileIds.mockResolvedValue([
+        createFileInfo({ id: 10, externalId: 'file-external-id', name: 'file1' })
+      ]);
 
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
@@ -294,12 +235,6 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
   describe('resolveFileIdToExternalIdMapping', () => {
     test('returns mapping from descriptors without API call when descriptors have fileId', async () => {
       const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>();
-      /* const clientWithFiles = new Mock<CogniteClient>()
-        .setup(p => p.annotations.list)
-        .returns(mockAnnotationList)
-        .setup(p => p.files.retrieve)
-        .returns(mockFilesRetrieve)
-        .object(); */
 
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
@@ -338,13 +273,6 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
           { id: 200, externalId: 'file-200-ext', name: 'file2' } as FileInfo
         ]);
 
-      /* const clientWithFiles = new Mock<CogniteClient>()
-        .setup(p => p.annotations.list)
-        .returns(mockAnnotationList)
-        .setup(p => p.files.retrieve)
-        .returns(mockFilesRetrieve)
-        .object(); */
-
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const descriptors: Image360FileDescriptor[] = [
@@ -376,12 +304,6 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
     test('uses instanceId.externalId when descriptor has instanceId', async () => {
       const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>();
-      /* const clientWithFiles = new Mock<CogniteClient>()
-        .setup(p => p.annotations.list)
-        .returns(mockAnnotationList)
-        .setup(p => p.files.retrieve)
-        .returns(mockFilesRetrieve)
-        .object(); */
 
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
@@ -412,15 +334,9 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
   describe('getAllImage360AnnotationInfos', () => {
     test('maps instance link annotations to entity + revision for hybrid', async () => {
-      mockAnnotationList.mockImplementation(
-        (): CursorAndAsyncIterator<AnnotationModel> =>
-          createCursorAndAsyncIterator({
-            items: [matchingHybridAnnotation]
-          })
-      );
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingHybridAnnotation]);
 
-      const client = sdkMock;
-      const provider = new Cdf360ImageAnnotationProvider(client);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision1 = createMockRevision(30, [matchingHybridAnnotation]);
       const entity = createMockEntity([revision1]);
@@ -437,14 +353,8 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('maps asset link annotations to entity + revision for classic', async () => {
-      mockAnnotationList.mockImplementation(
-        (): CursorAndAsyncIterator<AnnotationModel> =>
-          createCursorAndAsyncIterator({
-            items: [matchingAnnotation]
-          })
-      );
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingAnnotation]);
 
-      // const client = sdkMock;
       const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision1 = createMockRevision(10, [matchingHybridAnnotation]);
