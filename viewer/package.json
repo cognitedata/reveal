@@ -40,6 +40,7 @@
   ],
   "scripts": {
     "build": "yarn run clean && yarn run build:wasm && webpack --env development",
+    "build:vite": "yarn run clean && yarn run build:wasm && vite build",
     "build:wasm": "yarn workspaces foreach -A run run-wasm-pack build --target web ./wasm",
     "build:wasm-test": "yarn workspaces foreach -A run run-wasm-pack build --target nodejs ./wasm",
     "build:watch": "yarn run clean && yarn run build:wasm && webpack --env development --watch",
@@ -124,6 +125,10 @@
     "ts-loader": "^9.5.1",
     "tsc-alias": "^1.8.8",
     "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vite-plugin-glsl": "^1.6.0",
+    "vite-plugin-top-level-await": "^1.6.0",
+    "vite-plugin-wasm": "^3.6.0",
     "vitest": "^4.1.7",
     "vitest-canvas-mock": "^1.1.4",
     "wasm-pack": "^0.15.0",
