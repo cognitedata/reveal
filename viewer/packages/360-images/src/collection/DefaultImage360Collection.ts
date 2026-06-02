@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import type { BeforeSceneRenderedDelegate} from '@reveal/utilities';
+import type { BeforeSceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';

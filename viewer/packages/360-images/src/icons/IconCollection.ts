@@ -2,22 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 
-import type {
-  Color,
-  Ray,
-  Texture} from 'three';
-import {
-  CanvasTexture,
-  Frustum,
-  Matrix4,
-  Sphere,
-  Sprite,
-  SpriteMaterial,
-  Vector2,
-  Vector3
-} from 'three';
+import type { Color, Ray, Texture } from 'three';
+import { CanvasTexture, Frustum, Matrix4, Sphere, Sprite, SpriteMaterial, Vector2, Vector3 } from 'three';
 import type { BeforeSceneRenderedDelegate, SceneHandler } from '@reveal/utilities';
-import type { DefaultOverlay3DContentType} from '@reveal/3d-overlays';
+import type { DefaultOverlay3DContentType } from '@reveal/3d-overlays';
 import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
 import type { PointOctant } from 'sparse-octree';

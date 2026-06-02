@@ -3,18 +3,9 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import {
-  CircleGeometry,
-  InstancedMesh,
-  Matrix4,
-  MeshBasicMaterial,
-  Object3D,
-  PerspectiveCamera,
-  Ray,
-  Vector3,
-  WebGLRenderer
-} from 'three';
-import { SceneHandler } from '@reveal/utilities';
+import type { CircleGeometry, MeshBasicMaterial, Object3D, WebGLRenderer } from 'three';
+import { InstancedMesh, Matrix4, PerspectiveCamera, Ray, Vector3 } from 'three';
+import type { SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
 import type { ClusteredIcon } from './IconCollection';
 import { IconCollection } from './IconCollection';

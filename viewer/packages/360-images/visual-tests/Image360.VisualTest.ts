@@ -19,9 +19,10 @@ import {
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
-import { DeviceDescriptor, getNormalizedPixelCoordinates, SceneHandler } from '@reveal/utilities';
-import { CogniteClient } from '@cognite/sdk';
-import { Image360Entity } from '../src/entity/Image360Entity';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import type { CogniteClient } from '@cognite/sdk';
+import type { Image360Entity } from '../src/entity/Image360Entity';
 import TWEEN from '@tweenjs/tween.js';
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
