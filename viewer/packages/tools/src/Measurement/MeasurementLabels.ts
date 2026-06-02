@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import labelCSS from './styles/Label.css';
+import labelCSS from './styles/Label.module.css';
 
 export class MeasurementLabels {
   static readonly stylesId = 'reveal-measurement-label';

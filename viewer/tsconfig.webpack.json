@@ -6,7 +6,6 @@
     "outDir": "dist",
     "sourceMap": true,
     "typeRoots": [
-      "node_modules/@types",
       "packages/api/src/@types"
     ],
     "types": [

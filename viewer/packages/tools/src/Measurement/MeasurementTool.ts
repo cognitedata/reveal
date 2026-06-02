@@ -18,7 +18,7 @@ import { MeasurementManager } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
 import type { HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
-import rulerSvg from '!!raw-loader!./styles/ruler.svg';
+import rulerSvg from './styles/ruler.svg';
 import { MetricsLogger } from '@reveal/metrics';
 import { FlexibleCameraManager } from '@reveal/camera-manager';
 import type { DataSourceType } from '@reveal/data-providers';

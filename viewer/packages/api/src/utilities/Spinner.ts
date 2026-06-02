@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import css from './spinnerStyles.css';
-import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
+import css from './spinnerStyles.module.css';
+import svg from './spinnerCogniteLogo.svg';
 import type * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
