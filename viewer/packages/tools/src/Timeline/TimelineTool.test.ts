@@ -8,8 +8,9 @@ import { TimelineTool } from './TimelineTool';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { IndexSet } from '@reveal/utilities';
-import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { CogniteCadModel } from '@reveal/api';
+import type { NodeAppearance } from '@reveal/cad-styling';
+import { TreeIndexNodeCollection } from '@reveal/cad-styling';
+import type { CogniteCadModel } from '@reveal/api';
 
 import { vi } from 'vitest';
 

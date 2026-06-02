@@ -1,18 +1,9 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
-import {
-  Color,
-  DataTexture,
-  NearestFilter,
-  LinearFilter,
-  CanvasTexture,
-  RGBAFormat,
-  Texture,
-  Vector4,
-  SRGBColorSpace
-} from 'three';
-import { PointClassification, IGradient } from './types';
+import type { Color, Texture, Vector4 } from 'three';
+import { DataTexture, NearestFilter, LinearFilter, CanvasTexture, RGBAFormat, SRGBColorSpace } from 'three';
+import type { PointClassification, IGradient } from './types';
 
 export function generateDataTexture(width: number, height: number, color: Color, alpha: number): DataTexture {
   const size = width * height;

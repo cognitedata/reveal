@@ -3,31 +3,33 @@
  */
 import * as THREE from 'three';
 
-import {
-  Cdf360DataModelsDescriptorProvider,
-  Cdf360EventDescriptorProvider,
-  Cdf360ImageAnnotationProvider,
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
   Image360Provider,
-  Image360ProviderMap,
+  Image360ProviderMap
+} from '@reveal/data-providers';
+import {
+  Cdf360DataModelsDescriptorProvider,
+  Cdf360EventDescriptorProvider,
+  Cdf360ImageAnnotationProvider,
   Local360ImageProvider
 } from '@reveal/data-providers';
-import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
 import { DeviceDescriptor, getNormalizedPixelCoordinates, SceneHandler } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import TWEEN from '@tweenjs/tween.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
-import { Image360CollectionSourceType } from '../src/types';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
+import type { Image360CollectionSourceType } from '../src/types';
 import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
 import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/Cdf360ImageFileProvider';
 

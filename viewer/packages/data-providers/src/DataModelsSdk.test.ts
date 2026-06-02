@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef } from '@reveal/utilities';
 import { DataModelsSdk } from './DataModelsSdk';
 
 describe(DataModelsSdk.name, () => {

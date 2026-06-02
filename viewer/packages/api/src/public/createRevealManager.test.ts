@@ -4,19 +4,20 @@
 
 import { createRevealManager } from './createRevealManager';
 
-import {
+import type {
   DMDataSourceType,
   ModelDataProvider,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
 } from '@reveal/data-providers';
 
-import { It, Mock, SetPropertyExpression } from 'moq.ts';
+import type { SetPropertyExpression } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
-import { IPointClassificationsProvider } from '@reveal/pointclouds';
-import { CameraManager } from '@reveal/camera-manager';
+import type { IPointClassificationsProvider } from '@reveal/pointclouds';
+import type { CameraManager } from '@reveal/camera-manager';
 
 describe('createRevealManager', () => {
   test('createRevealManager does not throw on empty internal options', () => {

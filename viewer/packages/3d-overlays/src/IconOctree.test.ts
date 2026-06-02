@@ -4,7 +4,7 @@
 
 import { Mock } from 'moq.ts';
 import { Box3, Matrix4, Vector3 } from 'three';
-import { Overlay3DIcon } from './Overlay3DIcon';
+import type { Overlay3DIcon } from './Overlay3DIcon';
 import { IconOctree } from './IconOctree';
 
 describe(IconOctree.name, () => {

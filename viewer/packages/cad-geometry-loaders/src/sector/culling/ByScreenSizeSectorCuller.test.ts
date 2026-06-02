@@ -6,14 +6,15 @@ import * as THREE from 'three';
 
 import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
-import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import type { CadModelMetadata, WantedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 import { createCadModelMetadata, createV9SectorMetadata } from '../../../../../test-utilities';
-import { CadModelBudget } from '../../CadModelBudget';
+import type { CadModelBudget } from '../../CadModelBudget';
 
 import { createDetermineSectorInput } from './createDetermineSectorInput';
 import { Mock } from 'moq.ts';
-import { DetermineSectorsInput } from './types';
+import type { DetermineSectorsInput } from './types';
 
 describe(ByScreenSizeSectorCuller.name, () => {
   let camera: THREE.PerspectiveCamera;

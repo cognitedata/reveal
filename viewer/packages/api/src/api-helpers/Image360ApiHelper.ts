@@ -1,15 +1,13 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Quaternion, Raycaster, Vector2, Vector3, type Matrix4 } from 'three';
+import type { Quaternion } from 'three';
+import { Raycaster, Vector2, Vector3, type Matrix4 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-import { CogniteClient, Metadata } from '@cognite/sdk';
-import {
+import type { CogniteClient, Metadata } from '@cognite/sdk';
+import type {
   Image360Collection,
-  Image360Entity,
-  Image360CollectionFactory,
-  Image360Facade,
   Image360,
   IconsOptions,
   Image360RevisionEntity,
@@ -18,48 +16,48 @@ import {
   Image360AnnotationFilterOptions,
   Image360CollectionSourceType,
   Image360IconIntersectionData,
-  Image360ClusterIntersectionData,
+  Image360ClusterIntersectionData
+} from '@reveal/360-images';
+import {
+  Image360Entity,
+  Image360CollectionFactory,
+  Image360Facade,
   Image360History,
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
   Image360Action,
   HtmlClusterCoordinator
 } from '@reveal/360-images';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  Image360DataModelIdentifier,
+  Image360Provider
+} from '@reveal/data-providers';
 import {
   Cdf360CdmDescriptorProvider,
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageAnnotationProvider,
   Cdf360ImageFileProvider,
-  ClassicDataSourceType,
   CoreDm360ImageAnnotationProvider,
-  DataSourceType,
-  DMDataSourceType,
-  Image360DataModelIdentifier,
-  Image360Provider,
   Image360ProviderCombiner,
   isFdm360ImageCollectionIdentifier
 } from '@reveal/data-providers';
-import {
+import type {
   BeforeSceneRenderedDelegate,
-  determineCurrentDevice,
   EventTrigger,
   InputHandler,
-  getNormalizedPixelCoordinates,
   PointerEventData,
-  SceneHandler,
-  WaitCursor
+  SceneHandler
 } from '@reveal/utilities';
-import {
-  CameraManager,
-  FlexibleCameraManager,
-  isDefaultCameraManager,
-  ProxyCameraManager,
-  StationaryCameraManager
-} from '@reveal/camera-manager';
+import { determineCurrentDevice, getNormalizedPixelCoordinates, WaitCursor } from '@reveal/utilities';
+import type { CameraManager, ProxyCameraManager } from '@reveal/camera-manager';
+import { FlexibleCameraManager, isDefaultCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { Image360WithCollection } from '../public/types';
+import type { Image360WithCollection } from '../public/types';
 import { moveCameraPositionAndTargetTo } from '@reveal/camera-manager/src/Flexible/moveCamera';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {

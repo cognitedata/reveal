@@ -1,6 +1,6 @@
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 export interface IPointCloudTreeGeometry {
   root: IPointCloudTreeNodeBase | undefined;

@@ -2,9 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import { Euler, Quaternion, Spherical, Vector3 } from 'three';
-import { CoreDmImage360Properties } from './properties';
+import type { CoreDmImage360Properties } from './properties';
 import assert from 'assert';
-import { isSemanticVersionGreaterThanOrEqual, SemanticVersion } from './semanticVersioningUtils';
+import type { SemanticVersion } from './semanticVersioningUtils';
+import { isSemanticVersionGreaterThanOrEqual } from './semanticVersioningUtils';
 
 export function transformSphericalCoordinatesToVectors(
   phiThetaPairs: number[],

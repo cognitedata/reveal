@@ -1,7 +1,7 @@
-import { Camera, WebGLRenderer } from 'three';
-import { LRU } from '../utils/lru';
-import { PointCloudOctree } from '../tree/PointCloudOctree';
-import { StylableObject } from '@reveal/data-providers';
+import type { Camera, WebGLRenderer } from 'three';
+import type { LRU } from '../utils/lru';
+import type { PointCloudOctree } from '../tree/PointCloudOctree';
+import type { StylableObject } from '@reveal/data-providers';
 
 export interface IPotree {
   pointBudget: number;

@@ -3,11 +3,12 @@
  */
 
 import { Mock } from 'moq.ts';
-import { Color, Matrix4, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { WebGLRenderer } from 'three';
+import { Color, Matrix4, PerspectiveCamera, Vector3 } from 'three';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import { vi } from 'vitest';
 import { HtmlClusterRenderer } from './HtmlClusterRenderer';
-import { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
+import type { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
 import assert from 'assert';
 
 describe(HtmlClusterRenderer.name, () => {

@@ -2,22 +2,24 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
-import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
-import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
-import { CameraManager } from '@reveal/camera-manager';
+import type { SectorCuller } from '@reveal/cad-geometry-loaders';
+import type { CadModelBudget } from '@reveal/cad-geometry-loaders';
+import type { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
+import type { CameraManager } from '@reveal/camera-manager';
 
-import { CogniteCadModel } from '@reveal/cad-model';
-import { DataSource } from '@reveal/data-source';
-import { EdlOptions } from '@reveal/rendering';
+import type { CogniteCadModel } from '@reveal/cad-model';
+import type { DataSource } from '@reveal/data-source';
+import type { EdlOptions } from '@reveal/rendering';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { DefaultCameraManager } from '@reveal/camera-manager';
-import { CdfModelIdentifier, CommonModelOptions } from '@reveal/data-providers';
-import { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
+import type { CommonModelOptions } from '@reveal/data-providers';
+import { CdfModelIdentifier } from '@reveal/data-providers';
+import type { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
-import { CustomObjectIntersection } from '@reveal/utilities';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import type { CustomObjectIntersection } from '@reveal/utilities';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -417,6 +419,6 @@ export type AnyIntersection<T extends DataSourceType = DataSourceType> =
 /**
  * @module @cognite/reveal
  */
-export { CameraConfiguration } from '@reveal/utilities';
+export type { CameraConfiguration } from '@reveal/utilities';
 
-export { CadModelBudget, PointCloudBudget, EdlOptions, PointCloudIntersection };
+export type { CadModelBudget, PointCloudBudget, EdlOptions, PointCloudIntersection };

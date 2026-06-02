@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { CadMaterialManager, createCadMaterial } from './CadMaterialManager';
-import { Materials } from './rendering/materials';
+import type { Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';

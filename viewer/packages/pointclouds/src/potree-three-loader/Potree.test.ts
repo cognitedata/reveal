@@ -3,8 +3,9 @@
  */
 
 import { Potree } from './Potree';
-import { ModelDataProvider } from '@reveal/data-providers';
-import { MAX_NUM_NODES_LOADING, PointCloudMaterialManager } from '@reveal/rendering';
+import type { ModelDataProvider } from '@reveal/data-providers';
+import type { PointCloudMaterialManager } from '@reveal/rendering';
+import { MAX_NUM_NODES_LOADING } from '@reveal/rendering';
 
 import { Mock } from 'moq.ts';
 

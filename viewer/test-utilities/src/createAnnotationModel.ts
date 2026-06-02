@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { AnnotationModel, AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
+import type { AnnotationModel, AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 
 export function createAnnotationModel(overrides: Partial<AnnotationModel>): AnnotationModel {
   const defaultData: AnnotationsTypesImagesInstanceLink = {

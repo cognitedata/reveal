@@ -6,9 +6,9 @@ import TWEEN, { type Tween } from '@tweenjs/tween.js';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
-import { TimelineDateUpdateDelegate } from './types';
+import type { TimelineDateUpdateDelegate } from './types';
 import { EventTrigger, assertNever } from '@reveal/utilities';
-import { CogniteCadModel } from '@reveal/api';
+import type { CogniteCadModel } from '@reveal/api';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline

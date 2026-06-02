@@ -2,10 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import { CadNode } from '../../packages/cad-model';
-import { SectorRepository } from '../../packages/sector-loader';
+import type { SectorRepository } from '../../packages/sector-loader';
 import { Mock } from 'moq.ts';
 import { createCadModelMetadata } from './createCadModelMetadata';
-import { File3dFormat } from '../../packages/data-providers';
+import type { File3dFormat } from '../../packages/data-providers';
 import { generateV9SectorTree } from './createSectorMetadata';
 import { CadMaterialManager } from '../../packages/rendering';
 

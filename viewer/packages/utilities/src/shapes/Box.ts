@@ -2,11 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Matrix4, Box3, Vector3 } from 'three';
+import type { Matrix4 } from 'three';
+import { Box3, Vector3 } from 'three';
 
 import { ShapeType } from './ISerializableShape';
-import { IShape } from './IShape';
-import { SerializableBox } from './SerializableBox';
+import type { IShape } from './IShape';
+import type { SerializableBox } from './SerializableBox';
 
 export class Box implements IShape {
   private readonly _invInstanceMatrix: Matrix4;

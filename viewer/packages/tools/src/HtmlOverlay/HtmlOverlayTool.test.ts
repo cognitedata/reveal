@@ -4,18 +4,14 @@
 
 import * as THREE from 'three';
 
-import {
-  HtmlOverlayOptions,
-  HtmlOverlayTool,
-  HtmlOverlayToolOptions,
-  HtmlOverlayCreateClusterDelegate
-} from './HtmlOverlayTool';
+import type { HtmlOverlayOptions, HtmlOverlayToolOptions, HtmlOverlayCreateClusterDelegate } from './HtmlOverlayTool';
+import { HtmlOverlayTool } from './HtmlOverlayTool';
 
-import { Cognite3DViewer } from '@reveal/api';
+import type { Cognite3DViewer } from '@reveal/api';
 
 import { vi } from 'vitest';
 import { fakeGetBoundingClientRect, mockViewerComponents } from '../../../../test-utilities';
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 
 const TIMER_ADVANCE_MS = 50;
 describe(HtmlOverlayTool.name, () => {

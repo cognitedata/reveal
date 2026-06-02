@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { PartialDocument } from './types';
+import type { PartialDocument } from './types';
 
 export function generateCanvasFingerprint(doc: PartialDocument): string {
   const canvas = doc.createElement('canvas');

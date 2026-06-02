@@ -5,7 +5,8 @@
 import clamp from 'lodash/clamp';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
-import { Box2, Box3, Matrix4, Vector2 } from 'three';
+import type { Box3, Matrix4 } from 'three';
+import { Box2, Vector2 } from 'three';
 import { getBox3CornerPoints } from './three/visitBox3CornerPoints';
 
 export function getApproximateProjectedBounds(box: Box3, viewProjectionMatrix: Matrix4): Box2 {

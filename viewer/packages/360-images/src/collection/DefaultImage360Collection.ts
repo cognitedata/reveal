@@ -5,7 +5,7 @@
 import { assertNever, BeforeSceneRenderedDelegate, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
-import {
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   Image360AnnotationAssetFilter,
@@ -20,17 +20,17 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { ClusterScreenInfo } from '../icons/clustering';
 import { HtmlClusterCollection } from '../icons/clustering/HtmlClusterCoordinator';
 
-import {
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
   Image360FileDescriptor,
   Image360Provider
 } from '@reveal/data-providers';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Matrix4, Ray } from 'three';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { Matrix4, Ray } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
-import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
+import type { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
 import { createCollectionIdString } from './createCollectionIdString';
 import { getClassicInstanceRef } from '../annotation/getInstanceId';
 

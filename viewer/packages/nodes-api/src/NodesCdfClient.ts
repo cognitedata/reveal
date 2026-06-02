@@ -2,15 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
+import type { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { HttpError } from '@cognite/sdk';
 import { toThreeBox3 } from '@reveal/utilities';
 
 import assert from 'assert';
 
-import { NodesApiClient } from './NodesApiClient';
-import { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';
+import type { NodesApiClient } from './NodesApiClient';
+import type { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';
 
 export class NodesCdfClient implements NodesApiClient {
   private static readonly MaxItemsPerRequest = 1000;

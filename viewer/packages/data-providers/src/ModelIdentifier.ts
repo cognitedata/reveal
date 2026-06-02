@@ -3,18 +3,12 @@
  */
 
 import { assertNever } from '@reveal/utilities';
-import {
-  ClassicModelIdentifierType,
-  DMModelIdentifierType,
-  isClassicIdentifier,
-  isDMIdentifier,
-  isLocalIdentifier,
-  LocalModelIdentifierType
-} from './DataSourceType';
+import type { ClassicModelIdentifierType, DMModelIdentifierType, LocalModelIdentifierType } from './DataSourceType';
+import { isClassicIdentifier, isDMIdentifier, isLocalIdentifier } from './DataSourceType';
 import { CdfModelIdentifier } from './model-identifiers/CdfModelIdentifier';
 import { DMModelIdentifier } from './model-identifiers/DMModelIdentifier';
 import { LocalModelIdentifier } from './model-identifiers/LocalModelIdentifier';
-import { File3dFormat } from './types';
+import type { File3dFormat } from './types';
 
 /**
  * Identifies a 3D model. Typically, implementations will use {@link CdfModelIdentifier}.

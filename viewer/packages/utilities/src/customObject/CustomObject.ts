@@ -2,10 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Object3D, Box3, PerspectiveCamera } from 'three';
-import { CustomObjectIntersection } from './CustomObjectIntersection';
-import { CustomObjectIntersectInput } from './CustomObjectIntersectInput';
-import { ICustomObject } from './ICustomObject';
+import type { Object3D, PerspectiveCamera } from 'three';
+import { Box3 } from 'three';
+import type { CustomObjectIntersection } from './CustomObjectIntersection';
+import type { CustomObjectIntersectInput } from './CustomObjectIntersectInput';
+import type { ICustomObject } from './ICustomObject';
 
 /**
  * This class encasulate a Object3D, and made it possible to add flags to it.

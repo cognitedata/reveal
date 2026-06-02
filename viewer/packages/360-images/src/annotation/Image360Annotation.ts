@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Color, Vector3 } from 'three';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import type { Color, Vector3 } from 'three';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
 /**
  * An annotation associated with a 360 image revision

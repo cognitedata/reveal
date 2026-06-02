@@ -2,21 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360 } from './../entity/Image360';
-import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
+import type { Image360 } from './../entity/Image360';
+import type { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
-import { Image360AnnotationAppearance, Image360AnnotationInstanceReference } from '../annotation/types';
-import { Image360Revision } from '../entity/Image360Revision';
-import { IdEither } from '@cognite/sdk';
-import { Image360Annotation } from '../annotation/Image360Annotation';
-import {
+import type { Image360AnnotationAppearance, Image360AnnotationInstanceReference } from '../annotation/types';
+import type { Image360Revision } from '../entity/Image360Revision';
+import type { IdEither } from '@cognite/sdk';
+import type { Image360Annotation } from '../annotation/Image360Annotation';
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
   ImageInstanceLinkAnnotationInfo
 } from '@reveal/data-providers';
-import { Matrix4 } from 'three';
-import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import type { Matrix4 } from 'three';
+import type { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 
 /**
  * Annotation type that may be linked to assets. Only relevant for classic annotations, where some

@@ -2,10 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Materials } from '@reveal/rendering';
+import type { Materials } from '@reveal/rendering';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { assertNever } from '@reveal/utilities';
-import { RawShaderMaterial } from 'three';
+import type { RawShaderMaterial } from 'three';
 
 import assert from 'assert';
 

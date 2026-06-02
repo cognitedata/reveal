@@ -9,13 +9,15 @@ import { DataSourceType } from '@reveal/data-providers';
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { IconCollection, IconsOptions } from '../icons/IconCollection';
+import type { IconsOptions } from '../icons/IconCollection';
+import { IconCollection } from '../icons/IconCollection';
 import { Vector3, type Matrix4 } from 'three';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { Historical360ImageSet } from '@reveal/data-providers/src/types';
-import { Image360AnnotationFilterOptions } from '../annotation/types';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import type { Image360AnnotationFilterOptions } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { getImage360ProviderFromMap, Image360ProviderMap } from '@reveal/data-providers/src/Image360Provider';
+import type { Image360ProviderMap } from '@reveal/data-providers/src/Image360Provider';
+import { getImage360ProviderFromMap } from '@reveal/data-providers/src/Image360Provider';
 
 export class Image360CollectionFactory {
   private readonly _image360ProviderMap: Image360ProviderMap;

@@ -3,10 +3,10 @@
  */
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
-import { AreaCollection } from './prioritized/AreaCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { AreaCollection } from './prioritized/AreaCollection';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollection } from './NodeCollection';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 
 /**
  * Node collection that inverts the result from another node collection.

@@ -2,8 +2,8 @@
  * Copyright 2026 Cognite AS
  */
 
-import { Matrix4, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Matrix4, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 
 export type ClusteredIconData = {
   icon: Overlay3DIcon;

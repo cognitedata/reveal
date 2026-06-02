@@ -1,16 +1,18 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { addSectorCost, DetermineSectorCostDelegate, PrioritizedWantedSector, SectorCost } from '../types';
-import { CadModelBudget } from '../../../CadModelBudget';
+import type { DetermineSectorCostDelegate, PrioritizedWantedSector, SectorCost } from '../types';
+import { addSectorCost } from '../types';
+import type { CadModelBudget } from '../../../CadModelBudget';
 import { TakenSectorMapBase } from './TakenSectorMapBase';
 
-import { CadModelMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import type { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
 import type { Box3 } from 'three';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
 export class TakenV9SectorMap extends TakenSectorMapBase {
   private readonly determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>;

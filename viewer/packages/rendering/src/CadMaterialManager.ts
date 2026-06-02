@@ -4,17 +4,18 @@
 
 import * as THREE from 'three';
 
-import { createMaterials, Materials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
+import type { Materials } from './rendering/materials';
+import { createMaterials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
+import type { NodeAppearance } from '@reveal/cad-styling';
 import {
-  NodeAppearance,
   NodeAppearanceProvider,
   NodeAppearanceTextureBuilder,
   NodeTransformProvider,
   NodeTransformTextureBuilder
 } from '@reveal/cad-styling';
-import { IndexSet } from '@reveal/utilities';
+import type { IndexSet } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
 

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import {
+import type {
   AnnotationData,
   AnnotationModel,
   AnnotationsObjectDetection,
@@ -9,7 +9,7 @@ import {
   AnnotationsTypesImagesInstanceLink,
   AnnotationType
 } from '@cognite/sdk';
-import {
+import type {
   DataSourceType,
   DMDataSourceType,
   ImageAssetLinkAnnotationInfo,

@@ -2,26 +2,24 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CameraConfiguration } from '@reveal/utilities';
+import type { CameraConfiguration } from '@reveal/utilities';
 
-import { ClassificationInfo, PointCloudOctree, PickPoint, PointCloudOctreeNode } from './potree-three-loader';
-import { WellKnownAsprsPointClassCodes } from './types';
+import type { ClassificationInfo, PointCloudOctree, PickPoint } from './potree-three-loader';
+import { PointCloudOctreeNode } from './potree-three-loader';
+import type { WellKnownAsprsPointClassCodes } from './types';
 
-import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+import type { PointSizeType } from '@reveal/rendering';
+import { PointColorType, PointShape } from '@reveal/rendering';
 
-import {
-  DataSourceType,
-  isClassicPointCloudVolumeObject,
-  isDMPointCloudVolumeObject,
-  PointCloudObject,
-  PointCloudObjectMetadata
-} from '@reveal/data-providers';
+import type { DataSourceType, PointCloudObject, PointCloudObjectMetadata } from '@reveal/data-providers';
+import { isClassicPointCloudVolumeObject, isDMPointCloudVolumeObject } from '@reveal/data-providers';
 import { ClassificationHandler } from './ClassificationHandler';
 
-import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+import type { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
-import { Matrix4, Group, Box3, Color, Vector3, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
-import { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
+import type { Color } from 'three';
+import { Matrix4, Group, Box3, Vector3, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
+import type { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 
 export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;

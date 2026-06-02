@@ -16,8 +16,9 @@ import {
 } from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
-import { ClusteredIcon, IconCollection } from './IconCollection';
-import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
+import type { ClusteredIcon } from './IconCollection';
+import { IconCollection } from './IconCollection';
+import type { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import { PointOctant } from 'sparse-octree';
 import assert from 'assert';
 

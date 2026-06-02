@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SceneModelState } from './rxSectorUtilities';
+import type { SceneModelState } from './rxSectorUtilities';
 import { LevelOfDetail } from '@reveal/cad-parsers';
 
 import assert from 'assert';

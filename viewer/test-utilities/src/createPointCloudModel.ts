@@ -5,15 +5,17 @@
 import { Mock } from 'moq.ts';
 import { CognitePointCloudModel, PointCloudNode } from '../../packages/pointclouds';
 
-import { Potree, PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
+import type { Potree } from '../../packages/pointclouds/src/potree-three-loader';
+import { PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
 
 import * as THREE from 'three';
 
-import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
+import type { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
+import type { PointCloudMaterial } from '../../packages/rendering';
+import { DEFAULT_CLASSIFICATION } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
-import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
-import { PointCloudObject } from '../../packages/data-providers';
+import type { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
+import type { PointCloudObject } from '../../packages/data-providers';
 
 export function createPointCloudModel<T extends DataSourceType>(
   modelId: number,

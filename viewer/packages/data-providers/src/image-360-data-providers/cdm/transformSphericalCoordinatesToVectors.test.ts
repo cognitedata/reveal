@@ -5,7 +5,7 @@ import { Mock } from 'moq.ts';
 import { Vector3 } from 'three';
 
 import { transformSphericalCoordinatesToVectors } from './transformSphericalCoordinatesToVectors';
-import { CoreDmImage360Properties } from './properties';
+import type { CoreDmImage360Properties } from './properties';
 
 describe(transformSphericalCoordinatesToVectors.name, () => {
   const phiThetaPairs = [0, 1, Math.PI / 4, Math.PI / 4];

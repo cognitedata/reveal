@@ -2,10 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { CadMaterialManager } from '../CadMaterialManager';
+import type * as THREE from 'three';
+import type { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
-import { RenderPass } from '../RenderPass';
+import type { RenderPass } from '../RenderPass';
 import { getLayerMask } from '../utilities/renderUtilities';
 
 export class GeometryPass implements RenderPass {

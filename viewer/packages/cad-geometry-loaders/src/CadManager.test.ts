@@ -2,13 +2,14 @@
  * Copyright 2025 Cognite AS
  */
 import { CadManager } from './CadManager';
-import { CadMaterialManager } from '@reveal/rendering';
-import { CadModelFactory } from '@reveal/cad-model';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { It, Mock, IMock } from 'moq.ts';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { CadModelFactory } from '@reveal/cad-model';
+import type { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import type { IMock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { PerspectiveCamera, Box3 } from 'three';
 import { File3dFormat } from '@reveal/data-providers';
-import { CadModelMetadata } from '@reveal/cad-parsers';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
 import { createCadModelMetadata, createV9SectorMetadata } from '../../../test-utilities';
 
 function createMinimalMetadata(format: File3dFormat, formatVersion: number): CadModelMetadata {

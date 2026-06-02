@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeAppearance } from './NodeAppearance';
-import { NodeCollection } from './NodeCollection';
-import { PrioritizedArea } from './prioritized/types';
+import type { NodeAppearance } from './NodeAppearance';
+import type { NodeCollection } from './NodeCollection';
+import type { PrioritizedArea } from './prioritized/types';
 
-import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+import type { IndexSet } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 
 import debounce from 'lodash/debounce';
 import sortBy from 'lodash/sortBy';

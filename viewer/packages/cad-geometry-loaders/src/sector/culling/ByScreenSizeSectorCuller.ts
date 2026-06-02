@@ -4,16 +4,16 @@
 
 import * as THREE from 'three';
 
-import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
+import type { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
-import { SectorCuller } from './SectorCuller';
+import type { SectorCuller } from './SectorCuller';
 import { computeV9SectorCost } from './computeSectorCost';
 import { TakenV9SectorMap } from './takensectors';
 
 import { Log } from '@reveal/logger';
-import { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import type { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
-import { PrioritizedArea } from '@reveal/cad-styling';
+import type { PrioritizedArea } from '@reveal/cad-styling';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**

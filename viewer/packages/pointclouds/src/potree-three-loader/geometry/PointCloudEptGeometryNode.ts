@@ -4,10 +4,11 @@
  * License in LICENSE.potree
  */
 
-import { IPointCloudTreeGeometryNode } from './IPointCloudTreeGeometryNode';
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import * as THREE from 'three';
-import { PointCloudEptGeometry, EptKey } from './PointCloudEptGeometry';
+import type { IPointCloudTreeGeometryNode } from './IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import type * as THREE from 'three';
+import type { PointCloudEptGeometry } from './PointCloudEptGeometry';
+import { EptKey } from './PointCloudEptGeometry';
 import { sphereFrom } from './translationUtils';
 
 import {
@@ -16,7 +17,7 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import { ModelDataProvider } from '@reveal/data-providers';
+import type { ModelDataProvider } from '@reveal/data-providers';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;

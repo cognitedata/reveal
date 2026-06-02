@@ -3,9 +3,10 @@
  */
 
 import { TakenV9SectorMap } from './TakenV9SectorMap';
-import { LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import type { SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { createCadModelMetadata, createV9SectorMetadata } from '../../../../../../test-utilities';
-import { DetermineSectorCostDelegate, SectorCost } from '../types';
+import type { DetermineSectorCostDelegate, SectorCost } from '../types';
 import { Box3 } from 'three';
 
 const stubSectorCost: DetermineSectorCostDelegate<SectorMetadata> = () =>

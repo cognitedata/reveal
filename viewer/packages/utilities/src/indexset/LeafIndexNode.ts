@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS../NumericRange
  */
 import { IntermediateIndexNode } from './IntermediateIndexNode';
-import { IndexNode } from './IndexSet';
+import type { IndexNode } from './IndexSet';
 import { NumericRange } from '../NumericRange';
 
 export class LeafIndexNode {

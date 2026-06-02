@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 
-import { WantedSector, ConsumedSector, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import type { WantedSector, ConsumedSector, SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { ModelStateHandler } from './ModelStateHandler';
 import { LocalModelIdentifier } from '@reveal/data-providers';
 

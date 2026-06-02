@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
 
 export type PointCloudObjectIdMaps = {
   annotationToObjectIds: Map<number | DMInstanceKey, number>;

@@ -2,12 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadModelBudget, defaultDesktopCadModelBudget } from './src/CadModelBudget';
+export type { CadModelBudget } from './src/CadModelBudget';
+export { defaultDesktopCadModelBudget } from './src/CadModelBudget';
 
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 
-export { SectorCuller } from './src/sector/culling/SectorCuller';
+export type { SectorCuller } from './src/sector/culling/SectorCuller';
 
 export { CadManager } from './src/CadManager';
 export { createCadManager } from './src/createCadManager';
-export { InternalRevealCadOptions } from './src/InternalRevealCadOptions';
+export type { InternalRevealCadOptions } from './src/InternalRevealCadOptions';

@@ -2,11 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer } from '@reveal/api';
+import type { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { assertNever, DisposedDelegate, EventTrigger } from '@reveal/utilities';
+import type { DisposedDelegate } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 import * as THREE from 'three';
-import {
+import type {
   MeasurementAddedDelegate,
   MeasurementStartedDelegate,
   MeasurementEndedDelegate,
@@ -15,11 +16,12 @@ import {
 } from './types';
 import { MeasurementManager } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
-import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
+import type { HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
+import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
 import { MetricsLogger } from '@reveal/metrics';
 import { FlexibleCameraManager } from '@reveal/camera-manager';
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 
 type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 

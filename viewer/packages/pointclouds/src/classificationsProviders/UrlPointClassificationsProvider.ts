@@ -2,11 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ModelDataProvider } from '@reveal/data-providers';
+import type { ModelDataProvider } from '@reveal/data-providers';
 import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../constants';
-import { IPointClassificationsProvider } from './IPointClassificationsProvider';
-import { PointCloudMetadata } from '../PointCloudMetadata';
-import { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
+import type { IPointClassificationsProvider } from './IPointClassificationsProvider';
+import type { PointCloudMetadata } from '../PointCloudMetadata';
+import type { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
 
 export class UrlPointClassificationsProvider implements IPointClassificationsProvider {
   _dataProvider: ModelDataProvider;

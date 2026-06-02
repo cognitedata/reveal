@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteInternalId, CogniteClient, HttpRequestOptions, HttpResponse } from '@cognite/sdk';
+import type { CogniteInternalId, HttpRequestOptions, HttpResponse } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { NodesCdfClient } from './NodesCdfClient';
 import { vi } from 'vitest';
 

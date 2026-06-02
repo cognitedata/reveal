@@ -2,8 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { OrthographicCamera, PerspectiveCamera, Plane, Raycaster, Vector2, Vector3 } from 'three';
-import { FlexibleControls } from './FlexibleControls';
+import type { OrthographicCamera, PerspectiveCamera, Vector2 } from 'three';
+import { Plane, Raycaster, Vector3 } from 'three';
+import type { FlexibleControls } from './FlexibleControls';
 
 /**
  * @beta

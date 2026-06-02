@@ -2,7 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Raycaster, Vector3, Vector2, PerspectiveCamera, Plane } from 'three';
+import type { Vector3, Vector2, PerspectiveCamera, Plane } from 'three';
+import { Raycaster } from 'three';
 import { isPointVisibleByPlanes } from '../three/isPointVisibleByPlanes';
 
 /**

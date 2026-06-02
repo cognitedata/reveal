@@ -2,10 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
+import type { PerspectiveCamera } from 'three';
+import { Raycaster, Vector2, Vector3 } from 'three';
 import TWEEN, { type Tween } from '@tweenjs/tween.js';
 
-import { FlexibleCameraManager } from './FlexibleCameraManager';
+import type { FlexibleCameraManager } from './FlexibleCameraManager';
 import clamp from 'lodash/clamp';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
