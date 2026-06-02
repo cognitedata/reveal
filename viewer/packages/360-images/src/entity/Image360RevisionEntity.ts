@@ -188,10 +188,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor, fileIdToExternalId);
 
-        if (faceDescriptor === undefined) {
-          return undefined;
-        }
-
         return ImageAnnotationObject.createAnnotationObject(
           data,
           faceDescriptor?.face,
