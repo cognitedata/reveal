@@ -56,6 +56,12 @@ describe('Cognite3DViewer', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   test('dispose does not dispose of externally supplied renderer', () => {
