@@ -75,7 +75,7 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/visual-tests/**', '**/*.VisualTest.ts'],
-    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupVitest.ts'), 'jest-canvas-mock'],
+    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupVitest.ts')],
     env: {
       MIXPANEL_TOKEN: 'test'
     },
