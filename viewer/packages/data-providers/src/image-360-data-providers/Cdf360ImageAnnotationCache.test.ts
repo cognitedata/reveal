@@ -82,7 +82,11 @@ describe(Cdf360ImageAnnotationCache, () => {
     const cache = new Cdf360ImageAnnotationCache(mockSdk);
 
     const result0 = await cache.getFileInfosForFileIds([FILE_ID]);
+    const result1 = await cache.getFileInfosForFileIds([FILE_ID]);
 
     expect(result0).toEqual(resultFiles);
+    expect(result1).toEqual(result1);
+
+    expect(mockFileRetrieve).toHaveBeenCalledExactlyOnceWith([FILE_ID]);
   });
 });

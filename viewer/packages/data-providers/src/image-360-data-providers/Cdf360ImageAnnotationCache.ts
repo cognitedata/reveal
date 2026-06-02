@@ -6,9 +6,9 @@ import { InstanceReference } from '../types';
 import { DataSourceType } from '../DataSourceType';
 import { getInstanceKey } from '../utilities/instanceIds';
 import { isDefined, isDmIdentifier } from '@reveal/utilities';
-import { chunk } from 'lodash/chunk';
-import { groupBy } from 'lodash/groupBy';
-import { partition } from 'lodash/partition';
+import chunk from 'lodash/chunk';
+import groupBy from 'lodash/groupBy';
+import partition from 'lodash/partition';
 
 export class Cdf360ImageAnnotationCache {
   private readonly _instanceKeyToAnnotations: Map<string, Promise<AnnotationModel[]>> = new Map();
