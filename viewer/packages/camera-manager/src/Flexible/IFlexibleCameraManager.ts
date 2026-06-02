@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CameraManager } from '../CameraManager';
-import { FlexibleControlsOptions } from './FlexibleControlsOptions';
-import { FlexibleControlsType } from './FlexibleControlsType';
-import { Vector3 } from 'three';
+import type { CameraManager } from '../CameraManager';
+import type { FlexibleControlsOptions } from './FlexibleControlsOptions';
+import type { FlexibleControlsType } from './FlexibleControlsType';
+import type { Vector3 } from 'three';
 
 /**
  * @beta

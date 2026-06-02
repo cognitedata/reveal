@@ -3,7 +3,7 @@
  */
 
 import assert from 'assert';
-import { GlbHeaderData, GltfJson } from '../types';
+import type { GlbHeaderData, GltfJson } from '../types';
 
 export class GlbMetadataParser {
   private readonly _textDecoder: TextDecoder;

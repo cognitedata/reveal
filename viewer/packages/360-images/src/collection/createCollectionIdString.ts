@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 import { isClassicMetadata360Identifier } from '@reveal/data-providers';
 
 export function createCollectionIdString(id: DataSourceType['image360Identifier']): string {

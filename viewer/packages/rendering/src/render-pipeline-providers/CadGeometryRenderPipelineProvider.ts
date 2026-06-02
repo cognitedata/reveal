@@ -2,16 +2,17 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
+import type { SceneHandler } from '@reveal/utilities';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
-import { CadMaterialManager } from '../CadMaterialManager';
+import type { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderMode } from '../rendering/RenderMode';
-import { RenderOptions } from '../rendering/types';
-import { RenderPass } from '../RenderPass';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { RenderOptions } from '../rendering/types';
+import type { RenderPass } from '../RenderPass';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
-import { CadGeometryRenderTargets } from './types';
+import type { CadGeometryRenderTargets } from './types';
 
 type CadGeometryRenderPasses = {
   back: GeometryPass;

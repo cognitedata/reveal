@@ -1,11 +1,11 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
-import { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
-import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
-import { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
+import type { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
+import type { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
+import type { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Model identifier for classic CDF models, referenced by modelId and revisionId

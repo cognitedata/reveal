@@ -5,15 +5,8 @@ import * as THREE from 'three';
 import assert from 'assert';
 
 import { setPrimitiveTopology } from './reveal-glb-parser/primitiveGeometries';
-import {
-  RevealGeometryCollectionType,
-  Node,
-  GlbHeaderData,
-  GeometryProcessingPayload,
-  Primitive,
-  GltfJson,
-  ParsedGeometry
-} from './types';
+import type { Node, GlbHeaderData, GeometryProcessingPayload, Primitive, GltfJson, ParsedGeometry } from './types';
+import { RevealGeometryCollectionType } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 import { COLLECTION_TYPE_SIZES, DATA_TYPE_BYTE_SIZES } from './constants';
 

@@ -2,32 +2,25 @@
  * Copyright 2021 Cognite AS
  */
 
-import {
-  NodeAppearanceProvider,
-  NodeAppearance,
-  PrioritizedArea,
-  type NodeTransformProvider
-} from '@reveal/cad-styling';
+import type { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
+import { type NodeTransformProvider } from '@reveal/cad-styling';
 import throttle from 'lodash/throttle';
-import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
-import { SectorRepository } from '@reveal/sector-loader';
-import { ParsedGeometry } from '@reveal/sector-parser';
-import {
-  CadMaterialManager,
-  setModelRenderLayers,
-  StyledTreeIndexSets,
-  createCadMaterial,
-  type CadMaterial
-} from '@reveal/rendering';
+import type { SectorScene, CadModelMetadata, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
+import { RootSectorNode } from '@reveal/cad-parsers';
+import type { SectorRepository } from '@reveal/sector-loader';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import type { CadMaterialManager, StyledTreeIndexSets } from '@reveal/rendering';
+import { setModelRenderLayers, createCadMaterial, type CadMaterial } from '@reveal/rendering';
 
-import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+import type { Plane, Object3DEventMap } from 'three';
+import { Group, Object3D, Matrix4 } from 'three';
 
-import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
+import type { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { CadMeshManager } from './CadMeshManager';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;

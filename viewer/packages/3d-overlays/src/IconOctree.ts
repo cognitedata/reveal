@@ -6,10 +6,12 @@ import { getApproximateProjectedBounds, getScreenArea } from '@reveal/utilities'
 import assert from 'assert';
 import minBy from 'lodash/minBy';
 import pullAll from 'lodash/pullAll';
-import { Node, PointOctant, PointOctree } from 'sparse-octree';
-import { Box3, Matrix4, Vector3 } from 'three';
-import { Overlay3DIcon } from './Overlay3DIcon';
-import { DefaultOverlay3DContentType } from './OverlayCollection';
+import type { Node } from 'sparse-octree';
+import { PointOctant, PointOctree } from 'sparse-octree';
+import type { Matrix4 } from 'three';
+import { Box3, Vector3 } from 'three';
+import type { Overlay3DIcon } from './Overlay3DIcon';
+import type { DefaultOverlay3DContentType } from './OverlayCollection';
 
 type NodeMetadata = {
   icon: Overlay3DIcon;

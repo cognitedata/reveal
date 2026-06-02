@@ -3,7 +3,7 @@
  */
 
 import { Color, Vector3 } from 'three';
-import { AxisGizmoOptions } from './AxisGizmoOptions';
+import type { AxisGizmoOptions } from './AxisGizmoOptions';
 
 /**
  * This class is used internally in AxisGizmoTool

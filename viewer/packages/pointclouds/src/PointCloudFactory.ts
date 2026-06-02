@@ -3,23 +3,23 @@
  */
 
 import { PointCloudNode } from './PointCloudNode';
-import { PointCloudMetadata } from './PointCloudMetadata';
+import type { PointCloudMetadata } from './PointCloudMetadata';
 
-import { Potree } from './potree-three-loader';
+import type { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
-import {
+import type {
   ClassicDataSourceType,
   DMDataSourceType,
   DataSourceType,
-  PointCloudStylableObjectProvider,
-  isDMIdentifier
+  PointCloudStylableObjectProvider
 } from '@reveal/data-providers';
-import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
+import { isDMIdentifier } from '@reveal/data-providers';
+import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
-import { PointCloudMaterialManager } from '@reveal/rendering';
+import type { PointCloudMaterialManager } from '@reveal/rendering';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
 import { isLocalIdentifier } from '@reveal/data-providers';
-import { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import type { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;

@@ -1,10 +1,12 @@
-import { Camera, Ray, Vector2, Vector3, WebGLRenderer, MathUtils } from 'three';
+import type { Camera, Ray, WebGLRenderer } from 'three';
+import { Vector2, Vector3, MathUtils } from 'three';
 import { DEFAULT_PICK_WINDOW_SIZE } from '@reveal/rendering';
-import { PointCloudOctree } from './PointCloudOctree';
-import { PickPoint } from '../types/types';
-import { IPickState, PickParams, PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
+import type { PointCloudOctree } from './PointCloudOctree';
+import type { PickPoint } from '../types/types';
+import type { IPickState, PickParams } from './PointCloudOctreePickerHelper';
+import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 
-export { PickParams };
+export type { PickParams };
 
 export class PointCloudOctreePicker {
   private static readonly helperVec3 = new Vector3();

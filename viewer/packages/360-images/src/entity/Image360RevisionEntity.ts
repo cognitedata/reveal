@@ -2,24 +2,24 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
+import type {
   Image360FileDescriptor,
   Image360Descriptor,
   Image360Texture,
   DataSourceType,
-  Image360Provider,
-  getExternalIdFromDescriptor
+  Image360Provider
 } from '@reveal/data-providers';
-import { Image360Revision } from './Image360Revision';
-import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { getExternalIdFromDescriptor } from '@reveal/data-providers';
+import type { Image360Revision } from './Image360Revision';
+import type { Image360VisualizationBox } from './Image360VisualizationBox';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Box3, Vector3, type Raycaster } from 'three';
 import minBy from 'lodash/minBy';
-import { Image360AnnotationAppearance } from '../annotation/types';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { Image360AnnotationAppearance } from '../annotation/types';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
-import { Image360RevisionId } from '@reveal/data-providers/src/types';
+import type { Image360RevisionId } from '@reveal/data-providers/src/types';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
   private readonly _imageProvider: Image360Provider<T>;

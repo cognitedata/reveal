@@ -5,7 +5,7 @@
 import init, { assign_points } from './pkg/pointclouds_wasm';
 import wasm from './pkg/pointclouds_wasm_bg.wasm';
 
-import { AABB, Vec3 } from '@reveal/utilities';
+import type { AABB, Vec3 } from '@reveal/utilities';
 
 function getWasmInitPromise(): Promise<void> {
   return typeof init === 'function'

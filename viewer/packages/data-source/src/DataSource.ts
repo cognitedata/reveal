@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodesApiClient } from '@reveal/nodes-api';
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import type { NodesApiClient } from '@reveal/nodes-api';
+import type { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 
 /**
  * Describes how Reveal data is stored, and provides means to create custom storage providers

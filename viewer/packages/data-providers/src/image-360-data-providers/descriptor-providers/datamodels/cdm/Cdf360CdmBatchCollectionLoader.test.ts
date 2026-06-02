@@ -3,10 +3,10 @@
  */
 
 import { vi } from 'vitest';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
-import { DataModelsSdk } from '../../../../DataModelsSdk';
+import type { DataModelsSdk } from '../../../../DataModelsSdk';
 
 type DmsSdkQueryResult = Awaited<ReturnType<DataModelsSdk['queryNodesAndEdges']>>;
 

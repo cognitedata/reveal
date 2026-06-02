@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, CogniteEvent, FileInfo } from '@cognite/sdk';
+import type { CogniteClient, CogniteEvent, FileInfo } from '@cognite/sdk';
 import { Cdf360BatchEventCollectionLoader } from './Cdf360BatchEventCollectionLoader';
 import { Mock } from 'moq.ts';
 

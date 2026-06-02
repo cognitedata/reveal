@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
-import { SectorMetadata } from '../types';
+import type { SectorMetadata } from '../types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
-import { CadSceneRootMetadata } from './types';
+import type { CadSceneRootMetadata } from './types';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 

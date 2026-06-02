@@ -3,9 +3,10 @@
  */
 
 import { parseEpt } from './parseEpt';
-import { EptInputData, ParsedEptData } from './types';
-import { SerializableStylableObject } from '@reveal/data-providers';
-import { setupTransferableMethodsOnWorker, AABB, Vec3 } from '@reveal/utilities';
+import type { EptInputData, ParsedEptData } from './types';
+import type { SerializableStylableObject } from '@reveal/data-providers';
+import type { AABB, Vec3 } from '@reveal/utilities';
+import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
 
 setupTransferableMethodsOnWorker({
   parse: {

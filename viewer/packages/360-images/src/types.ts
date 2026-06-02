@@ -2,12 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Vector3 } from 'three';
-import { Image360 } from './entity/Image360';
-import { Image360Revision } from './entity/Image360Revision';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
-import { Image360Entity } from './entity/Image360Entity';
-import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
+import type { Vector3 } from 'three';
+import type { Image360 } from './entity/Image360';
+import type { Image360Revision } from './entity/Image360Revision';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import type { Image360Entity } from './entity/Image360Entity';
+import type { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 
 /**
  * The SourceType of a 360 image collection

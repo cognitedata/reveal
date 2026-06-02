@@ -6,16 +6,16 @@ import * as THREE from 'three';
 
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NodeCollection } from './NodeCollection';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
-import { AreaCollection } from './prioritized/AreaCollection';
+import type { AreaCollection } from './prioritized/AreaCollection';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
+import type { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import cloneDeep from 'lodash/cloneDeep';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { isCdfAssetMapping } from '@reveal/utilities';
 
 /**

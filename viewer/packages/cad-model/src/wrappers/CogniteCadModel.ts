@@ -2,21 +2,23 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteInternalId } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 import sortBy from 'lodash/sortBy';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { NodesApiClient } from '@reveal/nodes-api';
-import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
-import { NumericRange, CameraConfiguration } from '@reveal/utilities';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { NodesApiClient } from '@reveal/nodes-api';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
+import type { CameraConfiguration } from '@reveal/utilities';
+import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { NodeTransformProvider } from '@reveal/cad-styling';
-import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
+import type { NodeTransformProvider } from '@reveal/cad-styling';
+import type { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
 import { NodeIdAndTreeIndexMaps } from '../utilities/NodeIdAndTreeIndexMaps';
-import { CadNode } from './CadNode';
-import { WellKnownUnit } from '../types';
+import type { CadNode } from './CadNode';
+import type { WellKnownUnit } from '../types';
 import { CustomSectorBounds } from '../utilities/CustomSectorBounds';
 
 /**

@@ -2,20 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
+import type {
   CogniteClient,
   AnnotationData,
   AnnotationsBoundingVolume,
   AnnotationsTypesPrimitivesGeometry3DGeometry as AnnotationsGeometry
 } from '@cognite/sdk';
-import { IShape, Box, Cylinder, DMInstanceRef } from '@reveal/utilities';
+import type { IShape, DMInstanceRef } from '@reveal/utilities';
+import { Box, Cylinder } from '@reveal/utilities';
 import assert from 'assert';
-import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
-import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
+import type { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
+import type { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 
 import * as THREE from 'three';
 import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
-import { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
+import type { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
 
 // The SDK type is out of date with the API. This type more accurately reflects the type of annotation
 // the API provides

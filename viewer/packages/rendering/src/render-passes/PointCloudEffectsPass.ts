@@ -2,11 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 import { WebGLRendererStateHelper } from '@reveal/utilities';
-import * as THREE from 'three';
-import { RenderPass } from '../RenderPass';
+import type * as THREE from 'three';
+import type { RenderPass } from '../RenderPass';
 import { getLayerMask, RenderLayer, setRendererParameters } from '../utilities/renderUtilities';
-import { PointCloudPassParameters } from './types';
-import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import type { PointCloudPassParameters } from './types';
+import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 export class PointCloudEffectsPass implements RenderPass {
   private readonly _viewerScene: THREE.Object3D;

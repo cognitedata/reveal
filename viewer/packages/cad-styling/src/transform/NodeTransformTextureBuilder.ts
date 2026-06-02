@@ -5,8 +5,9 @@ import * as THREE from 'three';
 
 import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
-import { determinePowerOfTwoDimensions, assertNever, NumericRange } from '@reveal/utilities';
-import { NodeTransformProvider } from './NodeTransformProvider';
+import type { NumericRange } from '@reveal/utilities';
+import { determinePowerOfTwoDimensions, assertNever } from '@reveal/utilities';
+import type { NodeTransformProvider } from './NodeTransformProvider';
 
 export class NodeTransformTextureBuilder {
   private readonly _transformProvider: NodeTransformProvider;

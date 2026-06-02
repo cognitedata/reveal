@@ -4,14 +4,15 @@
 import { Mock, It } from 'moq.ts';
 import { Image360Facade } from './Image360Facade';
 
-import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
-import { DataSourceType } from 'api-entry-points/core';
-import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
-import { Matrix4, PerspectiveCamera, Ray, Vector2, Vector3 } from 'three';
-import { Image360Entity } from './entity/Image360Entity';
+import type { Image360CollectionFactory } from './collection/Image360CollectionFactory';
+import type { DataSourceType } from 'api-entry-points/core';
+import type { DefaultImage360Collection } from './collection/DefaultImage360Collection';
+import type { Ray } from 'three';
+import { Matrix4, PerspectiveCamera, Vector2, Vector3 } from 'three';
+import type { Image360Entity } from './entity/Image360Entity';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { ClusterIntersectionData } from './icons/IconCollection';
-import { Image360AnnotationFilterOptions } from './annotation/types';
+import type { ClusterIntersectionData } from './icons/IconCollection';
+import type { Image360AnnotationFilterOptions } from './annotation/types';
 
 import SeededRandom from 'random-seed';
 import assert from 'assert';

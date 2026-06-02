@@ -20,7 +20,8 @@ import {
 } from 'three';
 import Keyboard from './Keyboard';
 import clamp from 'lodash/clamp';
-import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
+import type { ComboControlsOptions } from './ComboControlsOptions';
+import { CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 const TARGET_FPS = 30;

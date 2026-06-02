@@ -4,9 +4,10 @@
 
 import * as THREE from 'three';
 
-import { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
-import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
+import type { BeforeSceneRenderedDelegate, DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import { EventTrigger } from '@reveal/utilities';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 
 describe(Image360CollectionFactory.name, () => {

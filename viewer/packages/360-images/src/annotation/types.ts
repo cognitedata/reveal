@@ -2,9 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationStatus } from '@cognite/sdk';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType, InstanceReference } from '@reveal/data-providers';
-import { Color } from 'three';
+import type { AnnotationStatus } from '@cognite/sdk';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  InstanceReference
+} from '@reveal/data-providers';
+import type { Color } from 'three';
 
 /**
  * The appearance of a 360 image annotation

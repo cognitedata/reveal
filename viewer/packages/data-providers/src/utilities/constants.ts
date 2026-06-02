@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ViewReference } from '@cognite/sdk';
+import type { ViewReference } from '@cognite/sdk';
 
 export const CORE_DM_SPACE = 'cdf_cdm';
 export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d';

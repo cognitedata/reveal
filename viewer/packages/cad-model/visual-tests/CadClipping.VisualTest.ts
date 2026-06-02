@@ -5,10 +5,8 @@
 import * as THREE from 'three';
 
 import { BoundingBoxClipper, CadNode } from '..';
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 
 export default class CadClippingVisualTest extends StreamingVisualTestFixture {
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {

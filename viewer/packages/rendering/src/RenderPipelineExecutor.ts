@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { RenderPipelineProvider } from './RenderPipelineProvider';
+import type * as THREE from 'three';
+import type { RenderPipelineProvider } from './RenderPipelineProvider';
 
 /**
  * The job of the implementor of this interface is to exectute some subset of

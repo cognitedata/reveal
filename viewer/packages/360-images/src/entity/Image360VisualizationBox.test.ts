@@ -4,10 +4,11 @@
 
 import { vi } from 'vitest';
 import * as THREE from 'three';
-import { Mock, IMock, It, Times } from 'moq.ts';
-import { SceneHandler } from '@reveal/utilities';
+import type { IMock } from 'moq.ts';
+import { Mock, It, Times } from 'moq.ts';
+import type { SceneHandler } from '@reveal/utilities';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { Image360Face, Image360Texture } from '@reveal/data-providers';
+import type { Image360Face, Image360Texture } from '@reveal/data-providers';
 
 // Minimal JPEG bytes that carry the SOF marker in the header: SOI + APP0(len=4) + SOF marker + abbreviated end
 const PROGRESSIVE_JPEG_BYTES: Uint8Array<ArrayBuffer> = new Uint8Array([

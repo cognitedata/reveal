@@ -2,10 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { DataSourceType, Image360Provider } from '@reveal/data-providers';
-import { Image360 } from './Image360';
-import {
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import type { DataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { Image360 } from './Image360';
+import type {
   Historical360ImageSet,
   Image360RevisionDescriptor,
   Image360RevisionId
@@ -13,10 +13,11 @@ import {
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Color, Matrix4, type Raycaster } from 'three';
+import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { Color, Matrix4 } from 'three';
+import { type Raycaster } from 'three';
 
 import cloneDeep from 'lodash/cloneDeep';
 

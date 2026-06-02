@@ -6,8 +6,7 @@ import { filterGeometryOutsideClipBox } from './filterPrimitivesV9';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
 
-import {
-  PrimitiveName,
+import type {
   Box,
   Circle,
   Cone,
@@ -19,7 +18,10 @@ import {
   Torus,
   Trapezium,
   Nut,
-  Primitive,
+  Primitive
+} from '../../../../test-utilities/src/primitives';
+import {
+  PrimitiveName,
   getCollectionType,
   createPrimitiveInterleavedGeometriesSharingBuffer,
   createPrimitiveInterleavedGeometry,

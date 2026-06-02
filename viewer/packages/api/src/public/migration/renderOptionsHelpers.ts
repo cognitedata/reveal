@@ -3,10 +3,12 @@
  */
 
 import { Log } from '@reveal/logger';
-import { AntiAliasingMode, defaultRenderOptions, SsaoParameters, SsaoSampleQuality } from '@reveal/rendering';
-import { assertNever, DeviceDescriptor } from '@reveal/utilities';
-import { PropType } from '../../utilities/reflection';
-import { Cognite3DViewerOptions } from './types';
+import type { SsaoParameters } from '@reveal/rendering';
+import { AntiAliasingMode, defaultRenderOptions, SsaoSampleQuality } from '@reveal/rendering';
+import type { DeviceDescriptor } from '@reveal/utilities';
+import { assertNever } from '@reveal/utilities';
+import type { PropType } from '../../utilities/reflection';
+import type { Cognite3DViewerOptions } from './types';
 
 type AntiAliasingHintOption = NonNullable<PropType<Cognite3DViewerOptions, 'antiAliasingHint'>>;
 type SsaoQualityHintOption = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;

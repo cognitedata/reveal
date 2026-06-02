@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { FlexibleControls } from './FlexibleControls';
+import type { FlexibleControls } from './FlexibleControls';
 import { EventTrigger, assertNever } from '@reveal/utilities';
-import { CameraChangeDelegate, CameraEventDelegate, CameraManagerEventType, CameraStopDelegate } from '../types';
-import { FlexibleControlsTypeChangeDelegate } from './IFlexibleCameraManager';
+import type { CameraChangeDelegate, CameraEventDelegate, CameraManagerEventType, CameraStopDelegate } from '../types';
+import type { FlexibleControlsTypeChangeDelegate } from './IFlexibleCameraManager';
 import debounce from 'lodash/debounce';
 
 const DEBOUNCE_TIME_MS = 100;

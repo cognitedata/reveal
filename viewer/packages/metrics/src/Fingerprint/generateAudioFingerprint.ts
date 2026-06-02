@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { PartialOfflineAudioContext, RequiredDynamicsCompressorNode, RequiredOfflineAudioContext } from './types';
+import type { PartialOfflineAudioContext, RequiredDynamicsCompressorNode, RequiredOfflineAudioContext } from './types';
 
 export async function generateAudioFingerprint(OfflineAudioContextCtor: PartialOfflineAudioContext): Promise<string> {
   try {

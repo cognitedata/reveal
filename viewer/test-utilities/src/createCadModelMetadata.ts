@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 
 import { File3dFormat, LocalModelIdentifier } from '../../packages/data-providers';
-import { SectorMetadata, CadModelMetadata, SectorSceneFactory } from '../../packages/cad-parsers';
+import type { SectorMetadata, CadModelMetadata } from '../../packages/cad-parsers';
+import { SectorSceneFactory } from '../../packages/cad-parsers';
 
 let modelIdRunningNumber = 0;
 

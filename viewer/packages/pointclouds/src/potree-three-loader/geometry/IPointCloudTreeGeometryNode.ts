@@ -1,5 +1,5 @@
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import * as THREE from 'three';
+import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import type * as THREE from 'three';
 
 export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
   geometry: THREE.BufferGeometry | undefined;

@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Vector3, Box3 } from 'three';
-import { ICustomObject } from './ICustomObject';
+import type { Vector3, Box3 } from 'three';
+import type { ICustomObject } from './ICustomObject';
 
 /**
  * This class is used as output intersecting custom objects

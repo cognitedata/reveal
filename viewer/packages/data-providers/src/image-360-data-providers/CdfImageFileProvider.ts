@@ -1,8 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
+import type { DMInstanceRef } from '@reveal/utilities';
 import chunk from 'lodash/chunk';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 

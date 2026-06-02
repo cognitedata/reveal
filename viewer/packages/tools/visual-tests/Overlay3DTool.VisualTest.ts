@@ -2,14 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DefaultCameraManager } from '../../camera-manager';
+import type { DefaultCameraManager } from '../../camera-manager';
 import * as THREE from 'three';
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 import { Overlay3DTool } from '../src/Overlay3D/Overlay3DTool';
-import { OverlayInfo } from '../../3d-overlays/src/OverlayCollection';
+import type { OverlayInfo } from '../../3d-overlays/src/OverlayCollection';
 
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
   public async setup(components: ViewerTestFixtureComponents): Promise<void> {

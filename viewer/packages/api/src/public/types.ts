@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Image360, Image360Collection } from '@reveal/360-images';
-import { CogniteCadModel } from '@reveal/cad-model';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers/src/DataSourceType';
-import { CognitePointCloudModel } from '@reveal/pointclouds';
+import type { Image360, Image360Collection } from '@reveal/360-images';
+import type { CogniteCadModel } from '@reveal/cad-model';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers/src/DataSourceType';
+import type { CognitePointCloudModel } from '@reveal/pointclouds';
 
 /**
  * Type abstraction for CogniteCadModel or CognitePointCloudModel;.

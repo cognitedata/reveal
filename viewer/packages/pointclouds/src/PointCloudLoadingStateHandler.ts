@@ -2,15 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import { LoadingState } from '@reveal/model-base';
+import type { LoadingState } from '@reveal/model-base';
 
-import { combineLatest, interval, Observable, of, pipe, Subject } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { combineLatest, interval, of, pipe, Subject } from 'rxjs';
 import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'rxjs/operators';
 import * as THREE from 'three';
 
-import { PointCloudNode } from './PointCloudNode';
+import type { PointCloudNode } from './PointCloudNode';
 import { numPointCloudNodesLoading } from './potree-three-loader';
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 
 /**
  * Wrapper around Potree.Group with type information and

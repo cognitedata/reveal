@@ -6,8 +6,8 @@ import * as THREE from 'three';
 
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
-import { PrioritizedArea } from '@reveal/cad-styling';
+import type { SectorMetadata } from '@reveal/cad-parsers';
+import type { PrioritizedArea } from '@reveal/cad-styling';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()

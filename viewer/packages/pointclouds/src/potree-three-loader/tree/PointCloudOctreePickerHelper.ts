@@ -1,23 +1,21 @@
+import type { BufferAttribute, Camera, Ray, WebGLRenderer } from 'three';
 import {
-  BufferAttribute,
-  Camera,
   LinearFilter,
   NearestFilter,
   NoBlending,
   Points,
-  Ray,
   RGBAFormat,
   Scene,
   Sphere,
   Vector3,
   Vector4,
-  WebGLRenderer,
   WebGLRenderTarget
 } from 'three';
-import { OctreeMaterialParams, PointCloudMaterial, PointColorType, COLOR_BLACK } from '@reveal/rendering';
-import { PointCloudOctree } from './PointCloudOctree';
-import { IPointCloudTreeNode } from './IPointCloudTreeNode';
-import { PickPoint, PointCloudHit } from '../types/types';
+import type { OctreeMaterialParams } from '@reveal/rendering';
+import { PointCloudMaterial, PointColorType, COLOR_BLACK } from '@reveal/rendering';
+import type { PointCloudOctree } from './PointCloudOctree';
+import type { IPointCloudTreeNode } from './IPointCloudTreeNode';
+import type { PickPoint, PointCloudHit } from '../types/types';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { createVisibilityTextureData, makeOnBeforeRender } from '../utils/utils';
 

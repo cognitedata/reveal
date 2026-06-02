@@ -2,8 +2,8 @@
  * Copyright 2026 Cognite AS
  */
 
+import type { BufferGeometry, Texture } from 'three';
 import {
-  BufferGeometry,
   CanvasTexture,
   CircleGeometry,
   DoubleSide,
@@ -11,11 +11,10 @@ import {
   Matrix4,
   Mesh,
   MeshBasicMaterial,
-  Texture,
   Vector3
 } from 'three';
-import { SceneHandler } from '@reveal/utilities';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { SceneHandler } from '@reveal/utilities';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 
 /**
  * Manages two floor disc meshes (same level, elevated) and the floor hover mesh.

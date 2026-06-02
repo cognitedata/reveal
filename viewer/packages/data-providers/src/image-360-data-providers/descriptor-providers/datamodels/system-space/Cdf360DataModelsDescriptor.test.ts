@@ -3,7 +3,7 @@
  */
 
 import { vi } from 'vitest';
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import type { CogniteClient, FileInfo } from '@cognite/sdk';
 import { Cdf360DataModelsDescriptorProvider } from './Cdf360DataModelsDescriptorProvider';
 import { It, Mock } from 'moq.ts';
 

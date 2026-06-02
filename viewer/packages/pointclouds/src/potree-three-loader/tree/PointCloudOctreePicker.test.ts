@@ -6,9 +6,10 @@ import { Mock, It } from 'moq.ts';
 import { vi } from 'vitest';
 
 import { PointCloudOctreePicker } from './PointCloudOctreePicker';
-import { PointCloudOctree } from './PointCloudOctree';
-import { PointCloudOctreePickerHelper, IPickState } from './PointCloudOctreePickerHelper';
-import { PointCloudMaterial } from '@reveal/rendering';
+import type { PointCloudOctree } from './PointCloudOctree';
+import type { IPickState } from './PointCloudOctreePickerHelper';
+import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
+import type { PointCloudMaterial } from '@reveal/rendering';
 
 const RENDER_TARGET_WIDTH = 128;
 const RENDER_TARGET_HEIGHT = 64;

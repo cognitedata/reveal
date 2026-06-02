@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { EdlOptions } from '../rendering/types';
+import type * as THREE from 'three';
+import type { EdlOptions } from '../rendering/types';
 
 export type RenderTargetData = {
   currentRenderSize: THREE.Vector2;

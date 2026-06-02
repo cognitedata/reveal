@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { ListResponse } from '@cognite/sdk';
-import { IndexSet, NumericRange } from '@reveal/utilities';
-import { AreaCollection } from './prioritized/AreaCollection';
+import type { ListResponse } from '@cognite/sdk';
+import type { NumericRange } from '@reveal/utilities';
+import { IndexSet } from '@reveal/utilities';
+import type { AreaCollection } from './prioritized/AreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 /**

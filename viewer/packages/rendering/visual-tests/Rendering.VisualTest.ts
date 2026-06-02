@@ -3,16 +3,16 @@
  */
 
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { DeferredPromise, NumericRange, SceneHandler } from '@reveal/utilities';
+import type { SceneHandler } from '@reveal/utilities';
+import { DeferredPromise, NumericRange } from '@reveal/utilities';
 import * as THREE from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider, PointCloudMaterialManager } from '..';
+import type { PointCloudMaterialManager } from '..';
+import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 
-import {
-  StreamingVisualTestFixture,
-  StreamingTestFixtureComponents
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
-import { CadMaterialManager } from '../src/CadMaterialManager';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { CadMaterialManager } from '../src/CadMaterialManager';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 import { CadNode } from '@reveal/cad-model';
 

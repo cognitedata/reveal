@@ -3,13 +3,13 @@
  */
 
 import { Matrix4 } from 'three';
-import {
+import type {
   AnnotationsBoundingBox,
   AnnotationsInstanceRef,
   AnnotationsTypesImagesInstanceLink,
   AnnotationsTypesPrimitivesGeometry2DGeometry
 } from '@cognite/sdk';
-import { ClassicDataSourceType } from '@reveal/data-providers';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
 import { createAnnotationModel } from '../../../../test-utilities';
 import { ImageAnnotationObject } from './ImageAnnotationObject';
 

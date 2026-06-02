@@ -4,7 +4,7 @@
 
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
-import {
+import type {
   CogniteClient,
   AnnotationModel,
   InternalId,
@@ -15,10 +15,10 @@ import {
   ListResponse,
   CogniteAsyncIterator
 } from '@cognite/sdk';
-import { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
-import { ClassicDataSourceType } from '../DataSourceType';
-import { Image360Descriptor, Image360FileDescriptor } from '../types';
-import { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
+import type { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
+import type { ClassicDataSourceType } from '../DataSourceType';
+import type { Image360Descriptor, Image360FileDescriptor } from '../types';
+import type { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
 import { createCursorAndAsyncIterator, createAnnotationModel } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
 import assert from 'assert';

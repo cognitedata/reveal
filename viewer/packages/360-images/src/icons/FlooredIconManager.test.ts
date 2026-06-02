@@ -2,20 +2,12 @@
  * Copyright 2026 Cognite AS
  */
 
-import {
-  CanvasTexture,
-  InstancedMesh,
-  CircleGeometry,
-  MeshBasicMaterial,
-  Matrix4,
-  Object3D,
-  Texture,
-  Vector3
-} from 'three';
+import type { CircleGeometry, MeshBasicMaterial, Object3D } from 'three';
+import { CanvasTexture, InstancedMesh, Matrix4, Texture, Vector3 } from 'three';
 import { Mock, It } from 'moq.ts';
 import { vi } from 'vitest';
-import { SceneHandler } from '@reveal/utilities';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { SceneHandler } from '@reveal/utilities';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import { FlooredIconManager } from './FlooredIconManager';
 
 describe(FlooredIconManager.name, () => {

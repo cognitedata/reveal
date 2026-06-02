@@ -3,9 +3,10 @@
  */
 
 import { vi } from 'vitest';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
-import { CdfImageFileProvider, FileIdentifier } from './CdfImageFileProvider';
+import type { FileIdentifier } from './CdfImageFileProvider';
+import { CdfImageFileProvider } from './CdfImageFileProvider';
 
 describe(CdfImageFileProvider.name, () => {
   let mockClient: CogniteClient;

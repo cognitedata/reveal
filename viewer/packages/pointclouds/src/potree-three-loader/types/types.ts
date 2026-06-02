@@ -1,5 +1,5 @@
 import type { Vector3, Object3D } from 'three';
-import { PointCloudOctree } from '../tree/PointCloudOctree';
+import type { PointCloudOctree } from '../tree/PointCloudOctree';
 
 export interface PickPoint {
   pointIndex: number;

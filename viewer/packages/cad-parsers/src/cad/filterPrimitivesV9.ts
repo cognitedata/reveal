@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import type { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import { assertNever } from '@reveal/utilities';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
   computeBoundingBoxFromCenterAndRadiusAttributes,

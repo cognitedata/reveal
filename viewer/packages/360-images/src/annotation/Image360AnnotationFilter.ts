@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Image360AnnotationFilterOptions } from './types';
+import type { Image360AnnotationFilterOptions } from './types';
 import isArray from 'lodash/isArray';
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 
 export class Image360AnnotationFilter {
   private readonly _annotationFilter: Required<Image360AnnotationFilterOptions>;

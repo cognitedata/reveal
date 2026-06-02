@@ -2,14 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { NodeOutlineColor, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import type { NodeOutlineColor } from '@reveal/cad-styling';
+import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 import { CogniteCadModel } from '..';
 
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 export default class OutlineVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {

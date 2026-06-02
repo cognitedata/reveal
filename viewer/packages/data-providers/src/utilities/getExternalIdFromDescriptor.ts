@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { Image360FileDescriptor } from '../types';
+import type { Image360FileDescriptor } from '../types';
 
 /**
  * Gets the externalId from a file descriptor, if available.

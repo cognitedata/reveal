@@ -2,11 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
+import type { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
 
-import { BufferGeometry, Matrix4, PlaneGeometry, Vector2, Vector3 } from 'three';
+import type { BufferGeometry, Vector3 } from 'three';
+import { Matrix4, PlaneGeometry, Vector2 } from 'three';
 
-import { AnnotationsBoundingBox } from '@cognite/sdk';
+import type { AnnotationsBoundingBox } from '@cognite/sdk';
 import { convertPointsTo3d } from './utils';
 
 export class BoxAnnotationGeometryData implements ImageAnnotationObjectGeometryData {

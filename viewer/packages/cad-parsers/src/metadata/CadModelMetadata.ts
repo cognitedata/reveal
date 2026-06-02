@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-import { SectorScene } from '../utilities/types';
-import { CameraConfiguration } from '@reveal/utilities';
-import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
+import type * as THREE from 'three';
+import type { SectorScene } from '../utilities/types';
+import type { CameraConfiguration } from '@reveal/utilities';
+import type { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 
 export interface CadModelMetadata {
   /**

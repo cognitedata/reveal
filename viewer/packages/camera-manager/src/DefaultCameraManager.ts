@@ -7,9 +7,9 @@ import TWEEN, { type Tween } from '@tweenjs/tween.js';
 import clamp from 'lodash/clamp';
 
 import { ComboControls } from './ComboControls';
-import { ComboControlsOptions } from './ComboControlsOptions';
+import type { ComboControlsOptions } from './ComboControlsOptions';
 
-import {
+import type {
   CameraManagerCallbackData,
   CameraState,
   CameraChangeDelegate,
@@ -18,22 +18,20 @@ import {
   CameraEventDelegate
 } from './types';
 
-import { CameraManager } from './CameraManager';
+import type { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
+import type { InputHandler, PointerEventDelegate, PointerEventData } from '@reveal/utilities';
 import {
   assertNever,
   EventTrigger,
-  InputHandler,
   disposeOfAllEventListeners,
-  PointerEventDelegate,
-  PointerEventData,
   fitCameraToBoundingBox,
   getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { CameraControlsOptions } from './CameraControlsOptions';
+import type { CameraControlsOptions } from './CameraControlsOptions';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 /**

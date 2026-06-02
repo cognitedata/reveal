@@ -2,17 +2,13 @@
  * Adapted from threejs examples
  */
 
+import type { BufferGeometry, BufferAttribute, LineSegments, Matrix4, Mesh } from 'three';
 import {
   Box3,
-  BufferGeometry,
-  BufferAttribute,
   Float32BufferAttribute,
   InstancedBufferGeometry,
   InstancedInterleavedBuffer,
   InterleavedBufferAttribute,
-  LineSegments,
-  Matrix4,
-  Mesh,
   Sphere,
   Vector3,
   WireframeGeometry
