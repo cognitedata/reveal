@@ -5,9 +5,9 @@
 import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import {
+import type {
   DMDataSourceType,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider,
@@ -15,9 +15,9 @@ import {
 } from '@reveal/data-providers';
 import { Potree } from './potree-three-loader';
 import { PointCloudFactory } from './PointCloudFactory';
-import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
+import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
-import { PointCloudMaterialManager } from '@reveal/rendering';
+import type { PointCloudMaterialManager } from '@reveal/rendering';
 
 export function createPointCloudManager(
   modelMetadataProvider: ModelMetadataProvider,

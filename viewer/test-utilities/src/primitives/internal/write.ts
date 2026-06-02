@@ -3,8 +3,9 @@
  */
 
 import { assertNever } from '../../../../packages/utilities';
-import { AttributeDesc, computeTotalAttributeByteSize, createAttributeDescriptionsMap } from './attributes';
-import { PrimitiveName } from './types';
+import type { AttributeDesc } from './attributes';
+import { computeTotalAttributeByteSize, createAttributeDescriptionsMap } from './attributes';
+import type { PrimitiveName } from './types';
 
 function writeFloatsToBuffer(array: Float32Array, values: number[]) {
   array.set(values);

@@ -4,7 +4,8 @@
 
 import { IndexSet } from '@reveal/utilities';
 
-import { NodeAppearance, NodeOutlineColor } from './NodeAppearance';
+import type { NodeAppearance } from './NodeAppearance';
+import { NodeOutlineColor } from './NodeAppearance';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { StubNodeCollection } from './stubs/StubNodeCollection';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';

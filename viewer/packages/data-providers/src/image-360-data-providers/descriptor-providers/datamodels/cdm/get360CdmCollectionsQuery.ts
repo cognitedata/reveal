@@ -8,7 +8,7 @@ import {
   COGNITE_360_IMAGE_STATION_SOURCE,
   MAX_DMS_QUERY_LIMIT
 } from '../../../../utilities/constants';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef } from '@reveal/utilities';
 import { CORE_DM_IMAGE_360_PROPERTIES_LIST } from '../../../cdm/queryProperties';
 
 function createCollectionsQuery(instanceReferences: DMInstanceRef[]) {

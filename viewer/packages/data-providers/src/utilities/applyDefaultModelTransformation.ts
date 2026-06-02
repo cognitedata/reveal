@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 import { File3dFormat } from '../types';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';

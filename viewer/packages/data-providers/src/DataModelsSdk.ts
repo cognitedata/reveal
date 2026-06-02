@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
-import { Query, QueryNextCursors, QueryResult } from './types';
+import type { CogniteClient } from '@cognite/sdk';
+import type { Query, QueryNextCursors, QueryResult } from './types';
 
 export class DataModelsSdk {
   private readonly _sdk: CogniteClient;

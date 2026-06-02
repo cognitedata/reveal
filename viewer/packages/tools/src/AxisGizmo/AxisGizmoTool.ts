@@ -2,16 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
+import type { PerspectiveCamera } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
-import { Cognite3DViewer } from '@reveal/api';
+import type { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
 import { moveCameraTo } from '../utilities/moveCameraTo';
 import { Corner } from '../utilities/Corner';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { isFlexibleCameraManager } from '@reveal/camera-manager/src/Flexible/IFlexibleCameraManager';
-import { DataSourceType } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
 
 /**
  * Class for axis gizmo like the one in Blender

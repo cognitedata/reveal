@@ -4,10 +4,10 @@
 
 import * as THREE from 'three';
 import { CustomSectorBounds } from './CustomSectorBounds';
-import { CadNode } from '../wrappers/CadNode';
+import type { CadNode } from '../wrappers/CadNode';
 import { Mock } from 'moq.ts';
 import { createV9SectorMetadata } from '../../../../test-utilities';
-import { SectorMetadata } from '@reveal/cad-parsers';
+import type { SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 /*

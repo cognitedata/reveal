@@ -3,7 +3,7 @@
  */
 
 import { Log } from '@reveal/logger';
-import { ModelDataProvider } from '../ModelDataProvider';
+import type { ModelDataProvider } from '../ModelDataProvider';
 import { fetchWithStatusCheck } from '../utilities/fetchWithStatusCheck';
 
 export class LocalModelDataProvider implements ModelDataProvider {

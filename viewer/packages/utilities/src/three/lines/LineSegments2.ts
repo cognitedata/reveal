@@ -2,6 +2,7 @@
  * Adapted from threejs examples
  */
 
+import type { PerspectiveCamera, Raycaster, BufferAttribute, Intersection } from 'three';
 import {
   InstancedInterleavedBuffer,
   InterleavedBufferAttribute,
@@ -9,12 +10,8 @@ import {
   MathUtils,
   Matrix4,
   Mesh,
-  PerspectiveCamera,
-  Raycaster,
   Vector3,
-  Vector4,
-  BufferAttribute,
-  Intersection
+  Vector4
 } from 'three';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
 import { LineMaterial } from './LineMaterial';

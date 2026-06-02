@@ -1,21 +1,22 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Camera, Matrix4, Ray, Raycaster, Vector2, Vector3 } from 'three';
+import type { Camera, Ray, Vector2 } from 'three';
+import { Matrix4, Raycaster, Vector3 } from 'three';
 import pull from 'lodash/pull';
 
-import { Image360Entity } from './entity/Image360Entity';
+import type { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';
-import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
-import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
-import { IconCullingScheme } from './icons/IconCollection';
-import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
-import { Image360AnnotationFilterOptions } from './annotation/types';
+import type { Image360CollectionFactory } from './collection/Image360CollectionFactory';
+import type { DefaultImage360Collection } from './collection/DefaultImage360Collection';
+import type { IconCullingScheme } from './icons/IconCollection';
+import type { Image360RevisionEntity } from './entity/Image360RevisionEntity';
+import type { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
-import { DataSourceType } from '@reveal/data-providers';
-import { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
 import { ClosestGeometryFinder } from '@reveal/utilities';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 
 type ClusterHoverCandidate<T extends DataSourceType> = {
   collection: DefaultImage360Collection<T>;

@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import remove from 'lodash/remove';
-import { ICustomObject } from './customObject/ICustomObject';
+import type { ICustomObject } from './customObject/ICustomObject';
 import { CustomObject } from './customObject/CustomObject';
 
 export class SceneHandler {

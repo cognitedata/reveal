@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
+import type { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
 
 export type SectorTree = [id: number, subtree: SectorTree[], bounds?: THREE.Box3];
 

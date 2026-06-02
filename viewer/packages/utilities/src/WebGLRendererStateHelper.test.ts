@@ -4,7 +4,8 @@
 import * as THREE from 'three';
 import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
-import { Mock as ViMock, vi } from 'vitest';
+import type { Mock as ViMock } from 'vitest';
+import { vi } from 'vitest';
 import { It, Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from '../../../test-utilities';
 

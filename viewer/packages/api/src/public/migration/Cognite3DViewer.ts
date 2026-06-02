@@ -7,8 +7,17 @@ import viewerPackageJson from '../../../../../package.json' with { type: 'json' 
 import TWEEN from '@tweenjs/tween.js';
 import pick from 'lodash/pick';
 
-import { defaultRenderOptions, EdlOptions } from '@reveal/rendering';
+import type { EdlOptions } from '@reveal/rendering';
+import { defaultRenderOptions } from '@reveal/rendering';
 
+import type {
+  PointerEventDelegate,
+  SceneRenderedDelegate,
+  DisposedDelegate,
+  BeforeSceneRenderedDelegate,
+  CustomObjectIntersection,
+  ICustomObject
+} from '@reveal/utilities';
 import {
   assertNever,
   EventTrigger,
@@ -16,29 +25,20 @@ import {
   disposeOfAllEventListeners,
   worldToNormalizedViewportCoordinates,
   worldToViewportCoordinates,
-  PointerEventDelegate,
-  SceneRenderedDelegate,
-  DisposedDelegate,
   determineCurrentDevice,
   SceneHandler,
-  BeforeSceneRenderedDelegate,
-  CustomObjectIntersection,
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
-  CustomObjectIntersectInput,
-  ICustomObject
+  CustomObjectIntersectInput
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
-import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
-import {
-  PointCloudIntersection,
-  PointCloudBudget,
-  CognitePointCloudModel,
-  PointCloudPickingHandler
-} from '@reveal/pointclouds';
+import type { CadModelSectorLoadStatistics } from '@reveal/cad-model';
+import { PickingHandler, CogniteCadModel } from '@reveal/cad-model';
+import type { PointCloudIntersection, PointCloudBudget } from '@reveal/pointclouds';
+import { CognitePointCloudModel, PointCloudPickingHandler } from '@reveal/pointclouds';
 
-import {
+import type {
   AddImage360Options,
   Cognite3DViewerOptions,
   Intersection,
@@ -51,43 +51,42 @@ import {
   Image360IconIntersection,
   Image360ClusterIntersection
 } from './types';
-import { RevealManager } from '../RevealManager';
-import { CogniteModel, Image360WithCollection } from '../types';
-import { RevealOptions } from '../RevealOptions';
+import type { RevealManager } from '../RevealManager';
+import type { CogniteModel, Image360WithCollection } from '../types';
+import type { RevealOptions } from '../RevealOptions';
 
 import { Spinner } from '../../utilities/Spinner';
 
-import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
+import type { ViewerState } from '../../utilities/ViewStateHelper';
+import { ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import {
-  DefaultCameraManager,
+import type {
   CameraManager,
   CameraChangeDelegate,
-  ProxyCameraManager,
   CameraStopDelegate,
-  CameraManagerCallbackData,
-  FlexibleCameraManager
+  CameraManagerCallbackData
 } from '@reveal/camera-manager';
+import { DefaultCameraManager, ProxyCameraManager, FlexibleCameraManager } from '@reveal/camera-manager';
+import type { AddModelOptionsWithModelRevisionId, Image360DataModelIdentifier } from '@reveal/data-providers';
 import {
-  AddModelOptionsWithModelRevisionId,
   CdfModelIdentifier,
   File3dFormat,
-  Image360DataModelIdentifier,
   isClassicPointCloudVolume,
   LocalModelIdentifier
 } from '@reveal/data-providers';
-import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
-import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
+import type { DataSource } from '@reveal/data-source';
+import { CdfDataSource, LocalDataSource } from '@reveal/data-source';
+import type { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { Log } from '@reveal/logger';
 import {
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import {
+import type {
   Image360Collection,
   Image360Entity,
   Image360,
@@ -97,11 +96,13 @@ import {
 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
-import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
+import type { SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
+import { AsyncSequencer } from '../../../../utilities/src/AsyncSequencer';
 import { getModelAndRevisionId } from '../../utilities/utils';
-import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import { isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
-import { Image360Action } from '@reveal/360-images/src/Image360Action';
+import type { Image360Action } from '@reveal/360-images/src/Image360Action';
 
 type Cognite3DViewerEvents =
   | 'click'

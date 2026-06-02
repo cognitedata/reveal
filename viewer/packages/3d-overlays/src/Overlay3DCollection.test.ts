@@ -1,21 +1,11 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import {
-  BufferGeometry,
-  Color,
-  Group,
-  Material,
-  Object3D,
-  PerspectiveCamera,
-  Scene,
-  Vector2,
-  Vector3,
-  WebGLRenderer
-} from 'three';
+import type { BufferGeometry, Group, Material, Object3D, Scene, WebGLRenderer } from 'three';
+import { Color, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { Overlay3DCollection } from './Overlay3DCollection';
-import { OverlayInfo } from './OverlayCollection';
-import { Overlay3D } from './Overlay3D';
+import type { OverlayInfo } from './OverlayCollection';
+import type { Overlay3D } from './Overlay3D';
 import assert from 'assert';
 import { Mock, It } from 'moq.ts';
 

@@ -8,11 +8,12 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { BucketGrid2D } from './BucketGrid2D';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { DisposedDelegate, SceneRenderedDelegate, isPointVisibleByPlanes } from '@reveal/utilities';
+import type { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import { isPointVisibleByPlanes } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
 import debounce from 'lodash/debounce';
-import { Cognite3DViewer } from '@reveal/api';
-import { DataSourceType } from '@reveal/data-providers';
+import type { Cognite3DViewer } from '@reveal/api';
+import type { DataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback that is triggered whenever the 2D position of an overlay is updated

@@ -5,14 +5,17 @@
 import * as THREE from 'three';
 import assert from 'assert';
 
-import { ModelIdentifier } from '@reveal/data-providers';
-import { CadMaterialManager, createCadMaterial, Materials } from '@reveal/rendering';
-import { GltfSectorRepository, SectorRepository } from '..';
+import type { ModelIdentifier } from '@reveal/data-providers';
+import type { Materials } from '@reveal/rendering';
+import { CadMaterialManager, createCadMaterial } from '@reveal/rendering';
+import type { SectorRepository } from '..';
+import { GltfSectorRepository } from '..';
 import { assertNever } from '../../utilities';
-import { ConsumedSector } from '@reveal/cad-parsers';
+import type { ConsumedSector } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
-import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
+import type { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
+import type { SimpleTestFixtureComponents } from '../../../visual-tests';
+import { SimpleVisualTestFixture } from '../../../visual-tests';
 
 export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixture {
   async setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void> {

@@ -3,10 +3,11 @@
  */
 import * as THREE from 'three';
 
-import { LevelOfDetail, SectorNode } from '../../cad-parsers/';
+import type { SectorNode } from '../../cad-parsers/';
+import { LevelOfDetail } from '../../cad-parsers/';
 
 import { assertNever } from '@reveal/utilities';
-import { CadNode } from '../src/wrappers/CadNode';
+import type { CadNode } from '../src/wrappers/CadNode';
 
 export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;

@@ -3,7 +3,7 @@
  */
 import { vi } from 'vitest';
 
-import {
+import type {
   GetContextReturnType,
   PartialDocument,
   PartialOfflineAudioContext,

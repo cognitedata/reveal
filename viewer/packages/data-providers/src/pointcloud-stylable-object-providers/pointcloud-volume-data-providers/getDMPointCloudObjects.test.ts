@@ -3,10 +3,11 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import { DataModelsSdk } from '../../DataModelsSdk';
-import { ExhaustedQueryResult, getDMPointCloudObjects } from './getDMPointCloudObjects';
-import { CdfDMPointCloudVolumeQuery } from './getDMPointCloudVolumeCollectionQuery';
-import { QueryNextCursors } from '../../types';
+import type { DataModelsSdk } from '../../DataModelsSdk';
+import type { ExhaustedQueryResult } from './getDMPointCloudObjects';
+import { getDMPointCloudObjects } from './getDMPointCloudObjects';
+import type { CdfDMPointCloudVolumeQuery } from './getDMPointCloudVolumeCollectionQuery';
+import type { QueryNextCursors } from '../../types';
 import { isVolumeDMReference } from '../types';
 
 const VOLUME_LIMIT = 1000;

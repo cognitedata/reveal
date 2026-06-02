@@ -4,8 +4,9 @@
 
 import * as THREE from 'three';
 
-import { CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { IntersectInput } from '@reveal/model-base';
+import type { CadMaterialManager } from '@reveal/rendering';
+import { RenderMode } from '@reveal/rendering';
+import type { IntersectInput } from '@reveal/model-base';
 
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { RequestCache } from './RequestCache';
+import type { RequestCache } from './RequestCache';
 
 class TimestampedContainer<T> {
   private _lastAccessTime: number;

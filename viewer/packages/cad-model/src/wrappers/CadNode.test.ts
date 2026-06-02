@@ -2,13 +2,14 @@
  * Copyright 2025 Cognite AS
  */
 import { CadNode } from './CadNode';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane, Group } from 'three';
+import type { Group } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
+import type { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 
 import { vi } from 'vitest';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
-import { SectorRepository } from '@reveal/sector-loader';
+import type { SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
 import { createMockedConsumedSector, createWantedSectorMock } from '@reveal/sector-loader/tests/mockSectorUtils';
 

@@ -3,24 +3,19 @@
  */
 
 import glsl from 'glslify';
+import type { DepthModes, Object3D, ShaderMaterial, Texture, Vector3, WebGLRenderer } from 'three';
 import {
   BufferAttribute,
   BufferGeometry,
   Color,
-  DepthModes,
   GLSL3,
   GreaterDepth,
   Group,
   LessEqualDepth,
   Matrix4,
-  Object3D,
   Points,
   RawShaderMaterial,
-  ShaderMaterial,
-  Texture,
-  Vector2,
-  Vector3,
-  WebGLRenderer
+  Vector2
 } from 'three';
 import overlay3DIconVert from './overlay3DIcon.vert';
 import overlay3DIconFrag from './overlay3DIcon.frag';

@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DataSourceType } from '@reveal/data-providers';
-import { Image360 } from './entity/Image360';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { Image360 } from './entity/Image360';
 import { Image360Action } from './Image360Action';
 
 export class Image360History {

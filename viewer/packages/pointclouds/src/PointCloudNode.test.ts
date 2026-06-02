@@ -8,9 +8,10 @@ import { createPointCloudNode } from '../../../test-utilities';
 import * as THREE from 'three';
 import { PointCloudOctree, PointCloudOctreeNode } from './potree-three-loader';
 import { Mock } from 'moq.ts';
-import { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
 import { vi } from 'vitest';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../rendering';
+import type { PointCloudMaterial } from '../../rendering';
+import { DEFAULT_CLASSIFICATION } from '../../rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
 

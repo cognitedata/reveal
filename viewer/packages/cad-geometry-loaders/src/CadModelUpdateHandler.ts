@@ -2,10 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 import { assertNever, EventTrigger, type EventListener } from '@reveal/utilities';
-import { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import type { ConsumedSector } from '@reveal/cad-parsers';
+import { CadModelMetadata } from '@reveal/cad-parsers';
 
 import { Subject, combineLatest, asyncScheduler, type Subscription } from 'rxjs';
 import {
@@ -19,16 +20,17 @@ import {
   distinctUntilKeyChanged,
   mergeWith
 } from 'rxjs/operators';
-import { SectorCuller } from './sector/culling/SectorCuller';
-import { CadLoadingHints } from './CadLoadingHints';
+import type { SectorCuller } from './sector/culling/SectorCuller';
+import type { CadLoadingHints } from './CadLoadingHints';
 
-import { LoadingState } from '@reveal/model-base';
+import type { LoadingState } from '@reveal/model-base';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
-import { CadModelBudget, getDefaultCadModelBudget } from './CadModelBudget';
-import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
+import type { CadModelBudget } from './CadModelBudget';
+import { getDefaultCadModelBudget } from './CadModelBudget';
+import type { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
-import { CadNode } from '@reveal/cad-model';
+import type { CadNode } from '@reveal/cad-model';
 import { File3dFormat } from '@reveal/data-providers';
 
 type CadModelUpdateHandlerEvents = {

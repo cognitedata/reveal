@@ -3,17 +3,12 @@
  */
 
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
-import {
-  BlobOutputMetadata,
-  File3dFormat,
-  LocalModelIdentifier,
-  ModelDataProvider,
-  ModelMetadataProvider
-} from '@reveal/data-providers';
+import type { BlobOutputMetadata, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import { File3dFormat, LocalModelIdentifier } from '@reveal/data-providers';
 
 import * as THREE from 'three';
 import { createV9SceneSectorMetadata } from '../../../../test-utilities';
-import { CadSceneRootMetadata } from './parsers/types';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export interface ModelId {
   readonly revealInternalId: symbol;

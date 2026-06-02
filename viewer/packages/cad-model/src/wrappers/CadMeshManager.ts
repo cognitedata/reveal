@@ -2,15 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CadMaterialManager } from '@reveal/rendering';
-import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { incrementOrInsertIndex } from '@reveal/utilities';
-import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { SectorRepository } from '@reveal/sector-loader';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import type { SectorRepository } from '@reveal/sector-loader';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
-import { BufferGeometry, RawShaderMaterial, Sphere, BufferAttribute, Box3, Matrix4, Mesh, Group } from 'three';
+import type { BufferGeometry, RawShaderMaterial, BufferAttribute, Box3, Matrix4 } from 'three';
+import { Sphere, Mesh, Group } from 'three';
 
 /**
  * Manages mesh data for CAD sectors.

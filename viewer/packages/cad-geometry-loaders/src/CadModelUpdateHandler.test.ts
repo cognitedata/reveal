@@ -4,14 +4,15 @@
 
 import * as THREE from 'three';
 
-import { SectorCuller } from './sector/culling/SectorCuller';
+import type { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
+import type { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
 import { File3dFormat } from '@reveal/data-providers';
 import { createCadNode } from '../../../test-utilities';
 
-import { Mock, vi } from 'vitest';
-import { WantedSector } from '@reveal/cad-parsers';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
+import type { WantedSector } from '@reveal/cad-parsers';
 
 const emptyBudgetSpent: SectorLoadingSpent = {
   downloadSize: 0,

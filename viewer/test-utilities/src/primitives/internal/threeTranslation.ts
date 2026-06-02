@@ -10,10 +10,10 @@ import {
 } from './attributes';
 import { writePrimitiveToBuffer } from './write';
 import { readPrimitiveFromBuffer } from './read';
-import { PrimitiveName, Primitive } from './types';
+import type { PrimitiveName, Primitive } from './types';
 
 import * as THREE from 'three';
-import { TypedArray } from '../../../../packages/utilities';
+import type { TypedArray } from '../../../../packages/utilities';
 import assert from 'assert';
 
 function createCommonBuffer(elementSizes: number[], primitiveDescs: Primitive[][]) {

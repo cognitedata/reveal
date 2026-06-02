@@ -8,9 +8,10 @@ import merge from 'lodash/merge';
 import glsl from 'glslify';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { AxisBoxConfig, defaultAxisBoxConfig, AxisBoxFaceConfig, AbsolutePosition, RelativePosition } from './types';
+import type { AxisBoxConfig, AxisBoxFaceConfig, AbsolutePosition, RelativePosition } from './types';
+import { defaultAxisBoxConfig } from './types';
 import { MetricsLogger } from '@reveal/metrics';
-import { Cognite3DViewer } from '@reveal/api';
+import type { Cognite3DViewer } from '@reveal/api';
 
 import vertexShader from './shaders/axisTool.vert';
 import fragmentShader from './shaders/axisTool.frag';

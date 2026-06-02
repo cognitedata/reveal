@@ -2,11 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 import { It, Mock, Times } from 'moq.ts';
-import { RenderPass } from '../RenderPass';
+import type { RenderPass } from '../RenderPass';
 import { StepPipelineExecutor } from './StepPipelineExecutor';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 
 describe(StepPipelineExecutor.name, () => {
   let stepPipelineExecutor: StepPipelineExecutor;

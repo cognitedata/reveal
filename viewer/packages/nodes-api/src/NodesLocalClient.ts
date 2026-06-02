@@ -2,11 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { NodesApiClient } from './NodesApiClient';
+import type { NodesApiClient } from './NodesApiClient';
 
-import { CogniteInternalId } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 
 export class NodesLocalClient implements NodesApiClient {
   constructor() {}

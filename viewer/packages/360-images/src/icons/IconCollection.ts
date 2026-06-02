@@ -2,25 +2,16 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  CanvasTexture,
-  Color,
-  Frustum,
-  Matrix4,
-  Ray,
-  Sphere,
-  Sprite,
-  SpriteMaterial,
-  Texture,
-  Vector2,
-  Vector3
-} from 'three';
-import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
-import { DefaultOverlay3DContentType, IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
+import type { Color, Ray, Texture } from 'three';
+import { CanvasTexture, Frustum, Matrix4, Sphere, Sprite, SpriteMaterial, Vector2, Vector3 } from 'three';
+import type { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
+import type { DefaultOverlay3DContentType } from '@reveal/3d-overlays';
+import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
-import { PointOctant } from 'sparse-octree';
-import { HtmlClusterRenderer, HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
-import { ClusterRenderParams } from './clustering';
+import type { PointOctant } from 'sparse-octree';
+import type { HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
+import { HtmlClusterRenderer } from './clustering/HtmlClusterRenderer';
+import type { ClusterRenderParams } from './clustering';
 import { FlooredIconManager } from './FlooredIconManager';
 
 export type IconCullingScheme = 'clustered' | 'proximity';

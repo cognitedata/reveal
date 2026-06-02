@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CompletePointCloudAppearance } from './PointCloudAppearance';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import type { CompletePointCloudAppearance } from './PointCloudAppearance';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
 /**
  * Represents either an PointCloudAnnotationVolumeCollection or PointCloudDMVolumeCollection

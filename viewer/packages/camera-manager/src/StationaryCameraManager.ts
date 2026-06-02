@@ -1,16 +1,17 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Box3, Euler, MathUtils, PerspectiveCamera, Quaternion, Vector3 } from 'three';
+import type { Box3, PerspectiveCamera } from 'three';
+import { Euler, MathUtils, Quaternion, Vector3 } from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
 
 import pull from 'lodash/pull';
 import remove from 'lodash/remove';
 
-import { CameraManager } from './CameraManager';
+import type { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
-import {
+import type {
   CameraChangeDelegate,
   CameraEventDelegate,
   CameraManagerEventType,

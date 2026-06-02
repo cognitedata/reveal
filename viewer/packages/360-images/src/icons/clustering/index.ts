@@ -2,5 +2,6 @@
  * Copyright 2026 Cognite AS
  */
 
-export { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
-export { HtmlClusterRenderer, HtmlClusterRendererOptions } from './HtmlClusterRenderer';
+export type { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
+export type { HtmlClusterRendererOptions } from './HtmlClusterRenderer';
+export { HtmlClusterRenderer } from './HtmlClusterRenderer';

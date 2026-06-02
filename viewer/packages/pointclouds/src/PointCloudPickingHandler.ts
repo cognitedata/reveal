@@ -4,20 +4,16 @@
 
 import * as THREE from 'three';
 
-import { IntersectInput } from '@reveal/model-base';
-import { PointCloudNode } from './PointCloudNode';
+import type { IntersectInput } from '@reveal/model-base';
+import type { PointCloudNode } from './PointCloudNode';
 import { Mutex } from 'async-mutex';
 
-import { PickPoint, PointCloudOctreePicker } from './potree-three-loader';
+import type { PickPoint } from './potree-three-loader';
+import { PointCloudOctreePicker } from './potree-three-loader';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
-import {
-  ClassicDataSourceType,
-  DMDataSourceType,
-  isClassicPointCloudVolume,
-  isDMPointCloudVolume,
-  DataSourceType
-} from '@reveal/data-providers';
-import { IntersectPointCloudNodeResult } from './types';
+import type { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '@reveal/data-providers';
+import { isClassicPointCloudVolume, isDMPointCloudVolume } from '@reveal/data-providers';
+import type { IntersectPointCloudNodeResult } from './types';
 
 export class PointCloudPickingHandler {
   private readonly _normalized = new THREE.Vector2();

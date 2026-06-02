@@ -2,8 +2,9 @@
  * Copyright 2025 Cognite AS
  */
 
-import { ModelDataProvider } from '../ModelDataProvider';
-import { DataFileCacheManager, CacheConfig } from '@reveal/utilities';
+import type { ModelDataProvider } from '../ModelDataProvider';
+import type { CacheConfig } from '@reveal/utilities';
+import { DataFileCacheManager } from '@reveal/utilities';
 
 /**
  * Wraps a ModelDataProvider with caching capabilities using the Cache API.

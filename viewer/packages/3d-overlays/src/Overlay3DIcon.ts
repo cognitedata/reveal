@@ -3,21 +3,10 @@
  */
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import {
-  PerspectiveCamera,
-  Ray,
-  Sphere,
-  Vector3,
-  Vector4,
-  MathUtils,
-  Color,
-  Matrix4,
-  Sprite,
-  Camera,
-  Vector2
-} from 'three';
-import { Overlay3D } from './Overlay3D';
-import { DefaultOverlay3DContentType } from './OverlayCollection';
+import type { PerspectiveCamera, Ray, Sprite, Camera, Vector2 } from 'three';
+import { Sphere, Vector3, Vector4, MathUtils, Color, Matrix4 } from 'three';
+import type { Overlay3D } from './Overlay3D';
+import type { DefaultOverlay3DContentType } from './OverlayCollection';
 
 export type IconParameters = {
   position: Vector3;

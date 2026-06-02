@@ -3,15 +3,15 @@
  */
 
 import { vi } from 'vitest';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 import {
   Cdf360ImageFileProvider,
   getFileIdentifiers,
   createFacesFromDescriptorsAndDownloads
 } from './Cdf360ImageFileProvider';
-import { Image360FileDescriptor } from '../types';
-import { FileDownloadResult } from './CdfImageFileProvider';
+import type { Image360FileDescriptor } from '../types';
+import type { FileDownloadResult } from './CdfImageFileProvider';
 
 describe(Cdf360ImageFileProvider.name, () => {
   describe(getFileIdentifiers.name, () => {

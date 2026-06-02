@@ -2,11 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
-import { Historical360ImageSet, Image360DescriptorProvider } from '../../../../types';
+import type { CogniteClient } from '@cognite/sdk';
+import type { Historical360ImageSet, Image360DescriptorProvider } from '../../../../types';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
-import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
-import { DMDataSourceType } from '../../../../DataSourceType';
+import type { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
+import type { DMDataSourceType } from '../../../../DataSourceType';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
 
 export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<DMDataSourceType> {

@@ -3,7 +3,8 @@
  */
 
 import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
-import { AddModelOptions, CogniteModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
+import type { AddModelOptions, CogniteModel, OnLoadingCallback } from '../../../packages/api';
+import { Cognite3DViewer } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
 import type { WebGLRenderer } from 'three';
 

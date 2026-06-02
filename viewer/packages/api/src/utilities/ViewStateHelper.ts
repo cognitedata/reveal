@@ -4,18 +4,18 @@
 import * as THREE from 'three';
 
 import { CogniteCadModel } from '@reveal/cad-model';
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+import type { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import {
   fromSerializableNodeAppearance,
   NodeCollectionDeserializer,
   toSerializableNodeAppearance
 } from '@reveal/cad-styling';
 
-import { CameraManager } from '@reveal/camera-manager';
+import type { CameraManager } from '@reveal/camera-manager';
 
-import { CogniteClient } from '@cognite/sdk';
-import { SerializableNodeAppearance } from '@reveal/cad-styling/src/NodeAppearance';
-import { DataSourceType } from '@reveal/data-providers';
+import type { CogniteClient } from '@cognite/sdk';
+import type { SerializableNodeAppearance } from '@reveal/cad-styling/src/NodeAppearance';
+import type { DataSourceType } from '@reveal/data-providers';
 
 export type ViewerState = {
   camera?: {

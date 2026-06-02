@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/api';
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../test-utilities';
 

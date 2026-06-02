@@ -6,16 +6,16 @@ import * as THREE from 'three';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import {
+import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata,
-  LocalModelIdentifier
+  BlobOutputMetadata
 } from '@reveal/data-providers';
+import { LocalModelIdentifier } from '@reveal/data-providers';
 
 import { It, Mock } from 'moq.ts';
-import { GeometryFilter } from './types';
+import type { GeometryFilter } from './types';
 
 import { vi } from 'vitest';
 

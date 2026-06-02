@@ -4,7 +4,7 @@
 import { generateCanvasFingerprint } from './generateCanvasFingerprint';
 import { generateAudioFingerprint } from './generateAudioFingerprint';
 import { hashFingerprint } from './hashFingerprint';
-import { GlobalDependencies } from './types';
+import type { GlobalDependencies } from './types';
 
 export async function getUserFingerprint(dependencies: Partial<GlobalDependencies> = {}): Promise<string> {
   const { document = window.document, OfflineAudioContext = window.OfflineAudioContext } = dependencies;

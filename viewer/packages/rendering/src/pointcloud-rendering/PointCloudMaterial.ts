@@ -1,20 +1,17 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
+import type { Camera, PerspectiveCamera, DataTexture, WebGLRenderer } from 'three';
 import {
   AdditiveBlending,
-  Camera,
   GLSL3,
   LessEqualDepth,
   NearestFilter,
   NoBlending,
-  PerspectiveCamera,
   RawShaderMaterial,
-  DataTexture,
   Texture,
   Vector2,
-  Vector3,
-  WebGLRenderer
+  Vector3
 } from 'three';
 import {
   COLOR_WHITE,
@@ -27,10 +24,10 @@ import {
 import { DEFAULT_CLASSIFICATION } from './classification';
 import { PointColorType, PointShape, PointSizeType } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
-import { PointClassification, IUniform, OctreeMaterialParams } from './types';
+import type { PointClassification, IUniform, OctreeMaterialParams } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
+import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { pointCloudShaders } from '../rendering/shaders';
 
 export interface IPointCloudMaterialParameters {

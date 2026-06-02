@@ -5,16 +5,16 @@
 import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
-import {
+import type {
   PointCloudAnnotationVolumeCollection,
-  DefaultPointCloudAppearance,
   CompletePointCloudAppearance,
-  isPointCloudObjectCollection,
   StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
-import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
-import { DataSourceType } from '@reveal/data-providers';
-import { DMInstanceKey, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import { DefaultPointCloudAppearance, isPointCloudObjectCollection } from '@reveal/pointcloud-styling';
+import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { DMInstanceKey } from '@reveal/utilities';
+import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;

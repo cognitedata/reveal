@@ -4,10 +4,8 @@
 
 import * as THREE from 'three';
 
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
 import { defaultRenderOptions } from '../src/rendering/types';
 

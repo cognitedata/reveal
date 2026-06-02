@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 
-import { CadModelMetadata } from './CadModelMetadata';
-import { SectorMetadata } from './types';
+import type { CadModelMetadata } from './CadModelMetadata';
+import type { SectorMetadata } from './types';
 import { SectorSceneFactory } from '../utilities/SectorSceneFactory';
 
 import { traverseDepthFirst } from '@reveal/utilities';

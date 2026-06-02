@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CameraManager } from '../CameraManager';
-import { CameraStopDelegate } from '../types';
+import type { CameraManager } from '../CameraManager';
+import type { CameraStopDelegate } from '../types';
 
 import debounce from 'lodash/debounce';
 import { EventTrigger } from '@reveal/utilities';

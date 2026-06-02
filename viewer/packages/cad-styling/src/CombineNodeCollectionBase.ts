@@ -1,10 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { IndexSet } from '@reveal/utilities';
-import { AreaCollection } from './prioritized/AreaCollection';
+import type { IndexSet } from '@reveal/utilities';
+import type { AreaCollection } from './prioritized/AreaCollection';
 import { NodeCollection } from './NodeCollection';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 
 /**
  * Node collection that combines the result from multiple underlying node collections.

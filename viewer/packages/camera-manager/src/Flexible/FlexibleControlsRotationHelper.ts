@@ -3,7 +3,7 @@
  */
 
 import { Quaternion, Spherical, Vector3 } from 'three';
-import { FlexibleControls } from './FlexibleControls';
+import type { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsType } from './FlexibleControlsType';
 
 const UP_VECTOR = new Vector3(0, 1, 0);

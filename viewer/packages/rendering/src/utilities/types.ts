@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { IndexSet } from '@reveal/utilities';
+import type { IndexSet } from '@reveal/utilities';
 import * as THREE from 'three';
 
 /**

@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
-import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
-import { Image360Visualization } from './Image360Visualization';
-import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
+import type { Image360Visualization } from './Image360Visualization';
+import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
 type VisualizationState = {
   opacity: number;

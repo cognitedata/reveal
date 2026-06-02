@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StylableObject } from '@reveal/data-providers';
+import type { StylableObject } from '@reveal/data-providers';
 import { CompositeShape } from '@reveal/utilities';
 
 export function decomposeStylableObjects(stylableObjects: StylableObject[]): StylableObject[] {

@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities';
 import assert from 'assert';

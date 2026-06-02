@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { defineConfig, Plugin } from 'vitest/config';
+import type { Plugin } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import typescript from 'typescript';

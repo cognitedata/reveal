@@ -4,11 +4,9 @@
 
 import { NumericRange } from '@reveal/utilities';
 import * as THREE from 'three';
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
-import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
 import { defaultRenderOptions, SsaoSampleQuality } from '../src/rendering/types';
 
 export default class SsaoVisualTest extends StreamingVisualTestFixture {
