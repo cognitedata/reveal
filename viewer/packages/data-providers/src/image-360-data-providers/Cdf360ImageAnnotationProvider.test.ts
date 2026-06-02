@@ -4,7 +4,7 @@
 
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
-import type { CogniteClient, AnnotationModel, InternalId, AnnotationsInstanceRef, FileInfo } from '@cognite/sdk';
+import type { AnnotationModel, InternalId, AnnotationsInstanceRef, FileInfo } from '@cognite/sdk';
 import type { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
 import type { ClassicDataSourceType } from '../DataSourceType';
 import type { Image360Descriptor, Image360FileDescriptor } from '../types';
