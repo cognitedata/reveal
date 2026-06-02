@@ -2,12 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-export {
-  CompletePointCloudAppearance,
-  PointCloudAppearance,
-  DefaultPointCloudAppearance,
-  applyDefaultsToPointCloudAppearance
-} from './src/PointCloudAppearance';
+export type { CompletePointCloudAppearance, PointCloudAppearance } from './src/PointCloudAppearance';
+export { DefaultPointCloudAppearance, applyDefaultsToPointCloudAppearance } from './src/PointCloudAppearance';
 export {
   StyledPointCloudObjectCollection,
   StyledPointCloudVolumeCollection

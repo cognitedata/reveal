@@ -4,10 +4,10 @@
 import * as THREE from 'three';
 
 import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
-import { AreaCollection } from './prioritized/AreaCollection';
+import type { AreaCollection } from './prioritized/AreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 import { NodeCollection } from './NodeCollection';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 
 import { NumericRange, IndexSet } from '@reveal/utilities';
 

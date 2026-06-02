@@ -4,20 +4,22 @@
 
 import * as THREE from 'three';
 import cloneDeep from 'lodash/cloneDeep';
-import { CadMaterialManager } from '../CadMaterialManager';
-import { RenderPass } from '../RenderPass';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { CadMaterialManager } from '../CadMaterialManager';
+import type { RenderPass } from '../RenderPass';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
-import { RenderTargetData } from './types';
-import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
+import type { RenderTargetData } from './types';
+import type { RenderOptions } from '../rendering/types';
+import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
-import { SceneHandler, WebGLRendererStateHelper, ICustomObject } from '@reveal/utilities';
+import type { SceneHandler, ICustomObject } from '@reveal/utilities';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
-import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
-import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
+import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _viewerScene: THREE.Scene;

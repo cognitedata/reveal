@@ -1,10 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
 import { Mock } from 'moq.ts';
-import { Materials, StyledTreeIndexSets } from '@reveal/rendering';
+import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import sum from 'lodash/sum';

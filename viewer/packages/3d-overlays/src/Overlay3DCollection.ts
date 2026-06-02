@@ -2,23 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  CanvasTexture,
-  Color,
-  Texture,
-  Object3D,
-  Camera,
-  Vector2,
-  Raycaster,
-  WebGLRenderer,
-  Scene,
-  PerspectiveCamera
-} from 'three';
+import type { Texture, Camera, WebGLRenderer, Scene } from 'three';
+import { CanvasTexture, Color, Object3D, Vector2, Raycaster, PerspectiveCamera } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
-import { Overlay3D } from './Overlay3D';
+import type { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
-import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
+import type { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 import minBy from 'lodash/minBy';
 import { CameraChangeThrottler } from './CameraChangeThrottler';
 

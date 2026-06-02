@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { RenderPipelineExecutor } from '../RenderPipelineExecutor';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type * as THREE from 'three';
+import type { RenderPipelineExecutor } from '../RenderPipelineExecutor';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { GpuTimer } from '../utilities/GpuTimer';
 
 export class StepPipelineExecutor implements RenderPipelineExecutor {

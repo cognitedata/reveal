@@ -1,9 +1,12 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { WantedSector, SectorMetadata, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
-import { BinaryFileProvider, LocalModelIdentifier } from '@reveal/data-providers';
-import { IMock, Mock, It } from 'moq.ts';
+import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { BinaryFileProvider } from '@reveal/data-providers';
+import { LocalModelIdentifier } from '@reveal/data-providers';
+import type { IMock } from 'moq.ts';
+import { Mock, It } from 'moq.ts';
 
 import * as fs from 'fs';
 

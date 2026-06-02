@@ -6,12 +6,13 @@ import { mockClientAuthentication } from './cogniteClientAuth';
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '../../packages/api';
-import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
+import type { Camera, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Vector3 } from 'three';
 
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from './autoMockWebGLRenderer';
-import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
+import type { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
 
 export function mockViewer(): Cognite3DViewer<DataSourceType> {
   return mockViewerComponents().viewer;

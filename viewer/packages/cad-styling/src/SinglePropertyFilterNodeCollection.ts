@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
+import type { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
-import { SerializedNodeCollection } from './SerializedNodeCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
-import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
+import type { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
 import range from 'lodash/range';
 import chunk from 'lodash/chunk';

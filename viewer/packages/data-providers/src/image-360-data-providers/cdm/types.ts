@@ -1,14 +1,14 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Vector3 } from 'three';
-import { AssetSimpleProperties, CoreDmImage360AnnotationProperties, CoreDmImage360Properties } from './properties';
-import {
+import type { Vector3 } from 'three';
+import type { AssetSimpleProperties, CoreDmImage360AnnotationProperties, CoreDmImage360Properties } from './properties';
+import type {
   COGNITE_ASSET_VIEW_REFERENCE,
   CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE,
   CORE_DM_IMAGE_360_VIEW_REFERENCE
 } from './sources';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Data contained in a single CoreDM-based annotation

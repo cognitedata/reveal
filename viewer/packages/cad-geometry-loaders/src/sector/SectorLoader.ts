@@ -2,17 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
 
-import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
-import { SectorCuller } from './culling/SectorCuller';
-import { ModelStateHandler } from './ModelStateHandler';
+import type { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
+import type { SectorCuller } from './culling/SectorCuller';
+import type { ModelStateHandler } from './ModelStateHandler';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import { File3dFormat } from '@reveal/data-providers';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
-import { CadNode } from '@reveal/cad-model';
+import type { CadNode } from '@reveal/cad-model';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine

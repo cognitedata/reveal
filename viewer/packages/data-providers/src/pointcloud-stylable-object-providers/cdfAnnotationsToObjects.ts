@@ -4,9 +4,10 @@
 
 import { CompositeShape } from '@reveal/utilities';
 
-import { PointCloudObject, CdfPointCloudObjectAnnotation, isVolumeDMReference } from './types';
-import { StylableObject } from './StylableObject';
-import { DataSourceType } from '../DataSourceType';
+import type { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
+import { isVolumeDMReference } from './types';
+import type { StylableObject } from './StylableObject';
+import type { DataSourceType } from '../DataSourceType';
 
 export function cdfAnnotationsToObjects<T extends DataSourceType>(
   cdfAnnotations: CdfPointCloudObjectAnnotation[]

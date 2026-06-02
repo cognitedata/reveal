@@ -2,17 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 import { Matrix4, Vector3 } from 'three';
-import { DataModelsSdk } from '../../DataModelsSdk';
-import {
-  CdfDMPointCloudVolumeQuery,
-  getDMPointCloudVolumeCollectionQuery
-} from './getDMPointCloudVolumeCollectionQuery';
-import { PointCloudVolumeObject3DProperties } from './types';
-import { CdfPointCloudObjectAnnotation } from '../types';
-import { QueryNextCursors } from '../../types';
+import type { DataModelsSdk } from '../../DataModelsSdk';
+import type { CdfDMPointCloudVolumeQuery } from './getDMPointCloudVolumeCollectionQuery';
+import { getDMPointCloudVolumeCollectionQuery } from './getDMPointCloudVolumeCollectionQuery';
+import type { PointCloudVolumeObject3DProperties } from './types';
+import type { CdfPointCloudObjectAnnotation } from '../types';
+import type { QueryNextCursors } from '../../types';
 
-import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
-import { DMModelIdentifierType } from '../../DataSourceType';
+import type { IShape, DMInstanceKey } from '@reveal/utilities';
+import { Box, Cylinder, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
+import type { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
 

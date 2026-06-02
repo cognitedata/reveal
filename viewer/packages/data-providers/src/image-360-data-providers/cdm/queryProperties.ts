@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import {
+import type {
   AssetSimpleProperties,
   CoreDmImage360AnnotationProperties,
   CoreDmImage360CollectionProperties,

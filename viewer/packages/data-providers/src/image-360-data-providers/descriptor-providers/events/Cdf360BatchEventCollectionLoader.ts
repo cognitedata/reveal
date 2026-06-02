@@ -2,14 +2,14 @@
  * Copyright 2025 Cognite AS
  */
 
-import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
+import type { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
 import type { Historical360ImageSet, Image360RevisionDescriptor, Image360FileDescriptor } from '../../../types';
 import uniqBy from 'lodash/uniqBy';
 import range from 'lodash/range';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import { MathUtils, Matrix4, Vector3 } from 'three';
-import { ClassicDataSourceType } from '../../../DataSourceType';
+import type { ClassicDataSourceType } from '../../../DataSourceType';
 import { BatchLoader } from '../../../utilities/BatchLoader';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;

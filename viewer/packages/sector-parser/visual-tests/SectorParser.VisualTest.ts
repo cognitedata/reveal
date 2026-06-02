@@ -4,9 +4,10 @@
 
 import * as THREE from 'three';
 
-import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
+import type { SimpleTestFixtureComponents } from '../../../visual-tests';
+import { SimpleVisualTestFixture } from '../../../visual-tests';
 import { GltfSectorParser } from '../src/GltfSectorParser';
-import { RevealGeometryCollectionType } from '../src/types';
+import type { RevealGeometryCollectionType } from '../src/types';
 import * as TestMaterials from './testMaterials';
 
 export default class SectorParserVisualTestFixture extends SimpleVisualTestFixture {

@@ -3,8 +3,9 @@
  */
 import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
 import debounce from 'lodash/debounce';
-import { Vector2, MOUSE } from 'three';
-import { PointerEvents } from './PointerEvents';
+import type { Vector2 } from 'three';
+import { MOUSE } from 'three';
+import type { PointerEvents } from './PointerEvents';
 
 const MAX_MOVE_DISTANCE_DURING_CLICK = 8;
 const MAX_CLICK_DURATION = 250;

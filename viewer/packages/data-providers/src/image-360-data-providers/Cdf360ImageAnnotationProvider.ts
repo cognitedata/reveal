@@ -4,8 +4,14 @@
 
 import chunk from 'lodash/chunk';
 
-import { AnnotationModel, CogniteClient, IdEither, AnnotationFilterProps, AnnotationsAssetRef } from '@cognite/sdk';
-import {
+import type {
+  AnnotationModel,
+  CogniteClient,
+  IdEither,
+  AnnotationFilterProps,
+  AnnotationsAssetRef
+} from '@cognite/sdk';
+import type {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
@@ -15,16 +21,16 @@ import {
   InstanceReference
 } from '../types';
 import { getExternalIdFromDescriptor } from '../utilities/getExternalIdFromDescriptor';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
-import {
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
-  createCollectionIdString,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult,
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
+import { createCollectionIdString } from '@reveal/360-images';
 import { isDmIdentifier } from '@reveal/utilities';
 import {
   isImageAssetLinkAnnotation,

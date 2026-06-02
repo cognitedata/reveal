@@ -9,29 +9,24 @@ import { vi } from 'vitest';
 import assert from 'assert';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
-import { SceneHandler, InputHandler, EventTrigger, BeforeSceneRenderedDelegate } from '@reveal/utilities';
-import {
-  ProxyCameraManager,
-  CameraManager,
-  FlexibleCameraManager,
-  CameraManagerCallbackData,
-  DefaultCameraManager,
-  isDefaultCameraManager
-} from '@reveal/camera-manager';
-import { DataSourceType } from '@reveal/data-providers';
-import {
+import type { SceneHandler, InputHandler, BeforeSceneRenderedDelegate } from '@reveal/utilities';
+import { EventTrigger } from '@reveal/utilities';
+import type { ProxyCameraManager, CameraManager, CameraManagerCallbackData } from '@reveal/camera-manager';
+import { FlexibleCameraManager, DefaultCameraManager, isDefaultCameraManager } from '@reveal/camera-manager';
+import type { DataSourceType } from '@reveal/data-providers';
+import type {
   Image360ClusterIntersectionData,
   Image360IconIntersectionData,
   Image360Entity,
-  Image360Facade,
   DefaultImage360Collection,
   Image360RevisionEntity,
   Image360EnteredDelegate,
   Image360ExitedDelegate
 } from '@reveal/360-images';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
+import { Image360Facade } from '@reveal/360-images';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import { mockClientAuthentication, fakeGetBoundingClientRect } from '../../../../test-utilities';
-import { Image360VisualizationBox } from '../../../360-images/src/entity/Image360VisualizationBox';
+import type { Image360VisualizationBox } from '../../../360-images/src/entity/Image360VisualizationBox';
 
 function createMockRevision(params?: {
   applyFullResolutionTextures: Image360RevisionEntity<DataSourceType>['applyFullResolutionTextures'];

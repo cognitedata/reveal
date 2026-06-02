@@ -4,10 +4,8 @@
 
 import { CogniteCadModel } from '@reveal/cad-model';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 export default class StyledTexturedVisualTest extends ViewerVisualTestFixture {
   constructor() {

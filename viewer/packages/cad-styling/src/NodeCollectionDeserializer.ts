@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import assert from 'assert';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
 import { AssetNodeCollection } from './AssetNodeCollection';
@@ -12,12 +12,12 @@ import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 import { InvertedNodeCollection } from './InvertedNodeCollection';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { IntersectionNodeCollection } from './IntersectionNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
-import { NodeCollection } from './NodeCollection';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { NodeCollection } from './NodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
 

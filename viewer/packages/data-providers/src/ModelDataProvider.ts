@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { BinaryFileProvider, JsonFileProvider } from './types';
+import type { BinaryFileProvider, JsonFileProvider } from './types';
 
 /**
  * Provides data for 3D models.

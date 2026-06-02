@@ -3,16 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { IntersectInput } from '@reveal/model-base';
-import {
-  BasicPipelineExecutor,
-  CadMaterialManager,
-  CadGeometryRenderModePipelineProvider,
-  RenderMode,
-  RenderPipelineProvider
-} from '@reveal/rendering';
-import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
-import { CadNode } from '../wrappers/CadNode';
+import type { IntersectInput } from '@reveal/model-base';
+import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
+import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
+import type { SceneHandler } from '@reveal/utilities';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
+import type { CadNode } from '../wrappers/CadNode';
 import { Mutex } from 'async-mutex';
 
 type PickingInput = {

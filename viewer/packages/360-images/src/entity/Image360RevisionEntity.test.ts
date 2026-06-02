@@ -4,13 +4,14 @@
 
 import { vi } from 'vitest';
 import * as THREE from 'three';
-import { Mock, IMock, It, Times } from 'moq.ts';
-import { SceneHandler } from '@reveal/utilities';
+import type { IMock } from 'moq.ts';
+import { Mock, It, Times } from 'moq.ts';
+import type { SceneHandler } from '@reveal/utilities';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
-import { Image360Descriptor, Image360Face, Image360Texture } from '@reveal/data-providers';
+import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { Image360Descriptor, Image360Face, Image360Texture } from '@reveal/data-providers';
 
 function makeFaces(count: number): Image360Face[] {
   const faceNames: Image360Face['face'][] = ['front', 'back', 'left', 'right', 'top', 'bottom'];

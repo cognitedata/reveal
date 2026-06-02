@@ -4,10 +4,10 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata } from '../types';
-import { SectorScene } from '../../utilities/types';
+import type { SectorMetadata } from '../types';
+import type { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
+import type { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
 
 export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScene {

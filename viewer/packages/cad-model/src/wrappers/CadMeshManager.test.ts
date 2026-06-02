@@ -3,24 +3,15 @@
  */
 
 import { CadMeshManager } from './CadMeshManager';
-import { CadMaterialManager } from '@reveal/rendering';
+import type { CadMaterialManager } from '@reveal/rendering';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { SectorRepository } from '@reveal/sector-loader';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { SectorRepository } from '@reveal/sector-loader';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
-import {
-  BufferGeometry,
-  BufferAttribute,
-  Box3,
-  Vector3,
-  CanvasTexture,
-  Mesh,
-  RawShaderMaterial,
-  Matrix4,
-  Group
-} from 'three';
+import type { Group } from 'three';
+import { BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, RawShaderMaterial, Matrix4 } from 'three';
 
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';

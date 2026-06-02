@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
 // TODO move
 export type SectorId = number;

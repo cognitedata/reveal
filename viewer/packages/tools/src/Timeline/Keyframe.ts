@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteCadModel } from '@reveal/api';
-import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
+import type { CogniteCadModel } from '@reveal/api';
+import type { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
 import { MetricsLogger } from '@reveal/metrics';
 
 /**

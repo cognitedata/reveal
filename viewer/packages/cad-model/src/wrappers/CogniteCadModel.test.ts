@@ -5,8 +5,9 @@
 import * as THREE from 'three';
 import { CogniteCadModel } from './CogniteCadModel';
 
-import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { NodesApiClient } from '@reveal/nodes-api';
+import type { NodeAppearance } from '@reveal/cad-styling';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import type { NodesApiClient } from '@reveal/nodes-api';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';

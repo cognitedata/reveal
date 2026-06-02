@@ -4,10 +4,10 @@
 
 // Note! For tests only
 
-import { CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelBudget } from '../../CadModelBudget';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import type { CadModelBudget } from '../../CadModelBudget';
 
-import { DetermineSectorsInput } from './types';
+import type { DetermineSectorsInput } from './types';
 import type { PerspectiveCamera } from 'three';
 
 export function createDetermineSectorInput(

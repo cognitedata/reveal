@@ -3,7 +3,7 @@
  */
 
 import { Box3, Vector3 } from 'three';
-import * as SeededRandom from 'random-seed';
+import type * as SeededRandom from 'random-seed';
 
 export function scrambleBoxes(boxes: Box3[], rand: SeededRandom.RandomSeed): void {
   for (let i = 0; i < boxes.length; i++) {

@@ -5,7 +5,8 @@
 import { ClassificationHandler } from './ClassificationHandler';
 
 import { Mock } from 'moq.ts';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '@reveal/rendering';
+import type { PointCloudMaterial } from '@reveal/rendering';
+import { DEFAULT_CLASSIFICATION } from '@reveal/rendering';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 describe(ClassificationHandler.name, () => {

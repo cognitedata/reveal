@@ -5,19 +5,21 @@
 import * as THREE from 'three';
 
 import { asyncIteratorToArray, createCadModelMetadata, generateV9SectorTree } from '../../../../test-utilities';
-import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { CadModelMetadata, SectorMetadata, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
-import { SectorCuller } from './culling/SectorCuller';
-import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
+import type { SectorCuller } from './culling/SectorCuller';
+import type { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 
 import { ModelStateHandler } from './ModelStateHandler';
-import { SectorRepository } from '@reveal/sector-loader';
+import type { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
-import { IMock, Mock } from 'moq.ts';
+import type { IMock } from 'moq.ts';
+import { Mock } from 'moq.ts';
 import { Log } from '@reveal/logger';
-import { LogLevelNumbers } from 'loglevel';
-import { CadNode } from '@reveal/cad-model';
+import type { LogLevelNumbers } from 'loglevel';
+import type { CadNode } from '@reveal/cad-model';
 
 import { vi } from 'vitest';
 

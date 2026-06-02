@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ClassicDataSourceType } from '@reveal/data-providers';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import {
   AnnotationIdPointCloudObjectCollection,
@@ -11,7 +11,8 @@ import {
 } from '@reveal/pointcloud-styling';
 
 import { Color } from 'three';
-import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
+import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 import assert from 'assert';
 
 const textureWidth = 10;

@@ -2,13 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
 import { cdfAnnotationsToObjects } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
-import {
+import type {
   ClassicDataSourceType,
   ClassicModelIdentifierType,
   DMDataSourceType,

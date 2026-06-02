@@ -1,7 +1,8 @@
-import { Box3, BufferGeometry, EventDispatcher, Points, Sphere } from 'three';
-import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
-import { IPointCloudTreeNode } from './IPointCloudTreeNode';
-import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
+import type { Box3, Points, Sphere } from 'three';
+import { BufferGeometry, EventDispatcher } from 'three';
+import type { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeNode } from './IPointCloudTreeNode';
+import type { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 
 export class PointCloudOctreeNode extends EventDispatcher implements IPointCloudTreeNode {
   geometryNode: IPointCloudTreeGeometryNode;

@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { HttpResponse } from '@cognite/sdk';
+import type { HttpResponse } from '@cognite/sdk';
 
 type ImageCollectionNode = {
   instanceType: 'node';

@@ -4,13 +4,16 @@
 import * as THREE from 'three';
 
 import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
-import { GeometryFilter } from './types';
+import type { GeometryFilter } from './types';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { GltfSectorRepository, SectorRepository } from '@reveal/sector-loader';
-import { CadMaterialManager } from '@reveal/rendering';
-import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { SectorRepository } from '@reveal/sector-loader';
+import { GltfSectorRepository } from '@reveal/sector-loader';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
+import type { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode } from './wrappers/CadNode';
 

@@ -1,10 +1,11 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { CogniteCadModel, Cognite3DViewer, CogniteModel } from '..';
+import type { Cognite3DViewer, CogniteModel } from '..';
+import { CogniteCadModel } from '..';
 import * as THREE from 'three';
 
-import { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
+import type { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
 import { createCognite3DViewer } from '../../../visual-tests/test-fixtures/utilities/cognite3DViewerHelpers';
 import { AxisViewTool } from '../../../packages/tools';

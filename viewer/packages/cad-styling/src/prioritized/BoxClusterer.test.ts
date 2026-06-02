@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { BoxClusterer } from './BoxClusterer';
-import { Box3 } from 'three';
+import type { Box3 } from 'three';
 import {
   createNonTouchingBoxesInRegularGrid,
   createOverlappingBoxes,

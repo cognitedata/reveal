@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointShape } from '../pointcloud-rendering';
+import type { PointShape } from '../pointcloud-rendering';
 import * as THREE from 'three';
-import { EdlOptions } from '../rendering/types';
+import type { EdlOptions } from '../rendering/types';
 
 export type BlendOptions = {
   blendDestination: THREE.BlendingDstFactor;

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteClient, QueryRequest } from '@cognite/sdk';
+import type { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { isCoreDmImage360CollectionFilter } from './queryFilters';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
@@ -16,8 +16,8 @@ import {
   CORE_DM_IMAGE_360_VIEW_REFERENCE
 } from './sources';
 import { transformAnnotations } from './transformCdmAnnotations';
-import { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 export async function fetchCoreDm360AnnotationsForCollection(
   collectionIdentifier: DMInstanceRef,

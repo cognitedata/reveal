@@ -4,7 +4,7 @@
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import { Vector3, Quaternion, PerspectiveCamera } from 'three';
 import { vi } from 'vitest';
-import { CameraManagerCallbackData } from '../types';
+import type { CameraManagerCallbackData } from '../types';
 
 describe(FlexibleCameraManager.name, () => {
   let cameraManager: FlexibleCameraManager;

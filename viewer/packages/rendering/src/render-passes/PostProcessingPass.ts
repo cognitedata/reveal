@@ -2,9 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { PostProcessingObjectsVisibilityParameters, transparentBlendOptions } from './types';
-import { RenderPass } from '../RenderPass';
+import type * as THREE from 'three';
+import type { PostProcessingObjectsVisibilityParameters } from './types';
+import { transparentBlendOptions } from './types';
+import type { RenderPass } from '../RenderPass';
 import {
   createFullScreenTriangleMesh,
   getBlitMaterial,
@@ -13,7 +14,7 @@ import {
   getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
-import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 /**

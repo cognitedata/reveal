@@ -2,10 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SerializableStylableObject } from '@reveal/data-providers';
-import { assertNever, SerializableCylinder, SerializableBox, ShapeType } from '@reveal/utilities';
+import type { SerializableStylableObject } from '@reveal/data-providers';
+import type { SerializableCylinder, SerializableBox } from '@reveal/utilities';
+import { assertNever, ShapeType } from '@reveal/utilities';
 
-import { WasmSerializedPointCloudObject, assignPoints } from '../../../wasm';
+import type { WasmSerializedPointCloudObject } from '../../../wasm';
+import { assignPoints } from '../../../wasm';
 import type { Vector3, Box3 } from 'three';
 
 function createWasmSerializedObject(obj: SerializableStylableObject): WasmSerializedPointCloudObject {

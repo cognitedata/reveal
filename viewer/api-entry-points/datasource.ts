@@ -4,15 +4,14 @@
 /**
  * @module @cognite/reveal/extensions/datasource
  */
-export { DataSource } from '../packages/data-source';
-export { NodesApiClient } from '../packages/nodes-api';
-export {
+export type { DataSource } from '../packages/data-source';
+export type { NodesApiClient } from '../packages/nodes-api';
+export type {
   ModelIdentifier,
-  CdfModelIdentifier,
   ModelMetadataProvider,
   ModelDataProvider,
   BlobOutputMetadata,
-  File3dFormat,
   JsonFileProvider,
   BinaryFileProvider
 } from '../packages/data-providers';
+export { CdfModelIdentifier, File3dFormat } from '../packages/data-providers';

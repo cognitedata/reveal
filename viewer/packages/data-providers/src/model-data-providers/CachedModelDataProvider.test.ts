@@ -4,7 +4,7 @@
 
 import { vi } from 'vitest';
 import { CachedModelDataProvider } from './CachedModelDataProvider';
-import { ModelDataProvider } from '../ModelDataProvider';
+import type { ModelDataProvider } from '../ModelDataProvider';
 import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
 
 describe(CachedModelDataProvider.name, () => {

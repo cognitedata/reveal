@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 import { BINARY_FILES_CACHE_HEADER_DATE, BINARY_FILES_CACHE_HEADER_SIZE, BINARY_FILES_CACHE_NAME } from './constants';
-import { CacheConfig } from './types';
+import type { CacheConfig } from './types';
 import { safeParseInt } from './utils';
 
 /**

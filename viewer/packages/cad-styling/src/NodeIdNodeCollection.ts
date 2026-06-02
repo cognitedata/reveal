@@ -1,12 +1,13 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { CogniteClient, ListResponse, Node3D } from '@cognite/sdk';
+import type { CogniteClient, ListResponse, Node3D } from '@cognite/sdk';
 import chunk from 'lodash/chunk';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
-import { NodeCollectionSerializationContext, registerNodeCollectionType } from './NodeCollectionDeserializer';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { NodeCollectionSerializationContext } from './NodeCollectionDeserializer';
+import { registerNodeCollectionType } from './NodeCollectionDeserializer';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 
 /**
  * Collection that holds a set of nodes including children identified by nodeIds. Note that

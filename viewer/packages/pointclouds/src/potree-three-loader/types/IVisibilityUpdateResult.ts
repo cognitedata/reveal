@@ -1,4 +1,4 @@
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export interface IVisibilityUpdateResult {
   visibleNodes: IPointCloudTreeNodeBase[];

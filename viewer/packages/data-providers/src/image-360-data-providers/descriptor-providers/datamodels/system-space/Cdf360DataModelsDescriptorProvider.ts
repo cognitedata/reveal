@@ -2,23 +2,25 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
-import {
+import type { CogniteClient } from '@cognite/sdk';
+import type {
   Historical360ImageSet,
   Image360Descriptor,
   Image360DescriptorProvider,
   Image360FileDescriptor,
   QueryNextCursors
 } from '../../../../types';
-import { Cdf360FdmQuery, get360CollectionQuery } from './get360CollectionQuery';
+import type { Cdf360FdmQuery } from './get360CollectionQuery';
+import { get360CollectionQuery } from './get360CollectionQuery';
 import assert from 'assert';
 import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
-import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
-import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
-import { ClassicDataSourceType } from '../../../../DataSourceType';
+import type { DMInstanceRef } from '@reveal/utilities';
+import { dmInstanceRefToKey } from '@reveal/utilities';
+import type { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
+import type { ClassicDataSourceType } from '../../../../DataSourceType';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../../../../utilities/constants';
 
 /**

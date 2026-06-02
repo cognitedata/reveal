@@ -2,9 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 import { ResizeHandler } from './ResizeHandler';
-import { CameraChangeDelegate, CameraManager, StationaryCameraManager } from '@reveal/camera-manager';
+import type { CameraChangeDelegate, CameraManager } from '@reveal/camera-manager';
+import { StationaryCameraManager } from '@reveal/camera-manager';
 
-import { PerspectiveCamera, WebGLRenderer, Vector2, Vector3 } from 'three';
+import type { WebGLRenderer } from 'three';
+import { PerspectiveCamera, Vector2, Vector3 } from 'three';
 
 import { vi } from 'vitest';
 

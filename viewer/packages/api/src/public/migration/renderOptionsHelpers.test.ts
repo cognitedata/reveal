@@ -1,17 +1,17 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Cognite3DViewerOptions } from './types';
+import type { Cognite3DViewerOptions } from './types';
 import {
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { PropType } from '../../utilities/reflection';
-import { DeviceDescriptor } from '@reveal/utilities';
+import type { PropType } from '../../utilities/reflection';
+import type { DeviceDescriptor } from '@reveal/utilities';
 import { AntiAliasingMode } from '@reveal/rendering';
 import { Log } from '@reveal/logger';
-import { LogLevelNumbers } from 'loglevel';
+import type { LogLevelNumbers } from 'loglevel';
 
 describe(determineAntiAliasingMode.name, () => {
   let currentLogLevel: LogLevelNumbers;

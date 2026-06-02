@@ -2,7 +2,7 @@
  * Adapted from threejs examples
  */
 
-import { Line } from 'three';
+import type { Line } from 'three';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
 
 class LineGeometry extends LineSegmentsGeometry {

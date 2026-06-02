@@ -1,8 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { ModelIdentifier } from '../ModelIdentifier';
-import { File3dFormat } from '../types';
+import type { ModelIdentifier } from '../ModelIdentifier';
+import type { File3dFormat } from '../types';
 
 /**
  * Identifies a 3D model stored in CDF by the combination of a modelId, a revisionId

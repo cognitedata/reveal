@@ -6,16 +6,17 @@ export { traverseDepthFirst } from './src/objectTraversal';
 export { transformCameraConfiguration } from './src/transformCameraConfiguration';
 
 export { RandomColors } from './src/RandomColors';
-export { CameraConfiguration } from './src/CameraConfiguration';
+export type { CameraConfiguration } from './src/CameraConfiguration';
 
-export { EventTrigger, EventListener } from './src/events/EventTrigger';
+export type { EventListener } from './src/events/EventTrigger';
+export { EventTrigger } from './src/events/EventTrigger';
 export { InputHandler } from './src/events/InputHandler';
 export { PointerEvents } from './src/events/PointerEvents';
 export { PointerEventsTarget } from './src/events/PointerEventsTarget';
 export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
 export { getPixelCoordinatesFromEvent } from './src/events/getPixelCoordinatesFromEvent';
 export { getWheelEventDelta } from './src/events/getWheelEventDelta';
-export {
+export type {
   DisposedDelegate,
   BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
@@ -32,11 +33,13 @@ export { AttributeDataAccessor } from './src/three/AttributeDataAccessor';
 export { toThreeBox3 } from './src/three/toThreeBox3';
 export { fromThreeVector3 } from './src/three/fromThreeVector3';
 export { unionBoxes } from './src/three/unionBoxes';
-export { determineCurrentDevice, DeviceDescriptor } from './src/device';
+export type { DeviceDescriptor } from './src/device';
+export { determineCurrentDevice } from './src/device';
 export { createRenderTriangle } from './src/three/createFullScreenTriangleGeometry';
 export { VariableWidthLine } from './src/three/VariableWidthLine';
 
-export { batchedDebounce, BatchedDebounce } from './src/batchedDebounce';
+export type { BatchedDebounce } from './src/batchedDebounce';
+export { batchedDebounce } from './src/batchedDebounce';
 export { fitCameraToBoundingBox } from './src/three/fitCameraToBoundingBox';
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
@@ -44,7 +47,7 @@ export { createDistinctColors } from './src/three/createDistinctColors';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
 
-export { TypedArray, TypedArrayConstructor } from './src/types';
+export type { TypedArray, TypedArrayConstructor } from './src/types';
 
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
@@ -76,9 +79,9 @@ export { DeferredPromise } from './src/DeferredPromise';
 export { SceneHandler } from './src/SceneHandler';
 
 export { CustomObject } from './src/customObject/CustomObject';
-export { ICustomObject } from './src/customObject/ICustomObject';
+export type { ICustomObject } from './src/customObject/ICustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
-export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
+export type { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
 export { Vector3Pool } from './src/three/Vector3Pool';
 export { ClosestGeometryFinder } from './src/ClosestGeometryFinder';
 

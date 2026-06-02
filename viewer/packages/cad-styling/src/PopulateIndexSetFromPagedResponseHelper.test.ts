@@ -9,7 +9,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { sleep } from '../../../test-utilities';
 
 import { NumericRange } from '@reveal/utilities';
-import { ListResponse } from '@cognite/sdk';
+import type { ListResponse } from '@cognite/sdk';
 
 import { vi } from 'vitest';
 

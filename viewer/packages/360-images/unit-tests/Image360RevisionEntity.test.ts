@@ -2,12 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+import type { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 
 import { Mock, It } from 'moq.ts';
 import { ImageAnnotationObject } from '../src/annotation/ImageAnnotationObject';
 import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
-import {
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,

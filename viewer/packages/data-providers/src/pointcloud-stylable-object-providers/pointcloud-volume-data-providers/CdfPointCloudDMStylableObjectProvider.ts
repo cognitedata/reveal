@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { DataModelsSdk } from '../../DataModelsSdk';
-import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
+import type { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
 import { getDMPointCloudObjects } from './getDMPointCloudObjects';
 import { cdfAnnotationsToObjects } from '../cdfAnnotationsToObjects';
-import { PointCloudObject } from '../types';
-import { DMDataSourceType, DMModelIdentifierType } from '../../DataSourceType';
+import type { PointCloudObject } from '../types';
+import type { DMDataSourceType, DMModelIdentifierType } from '../../DataSourceType';
 
 export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
   private readonly _dmsSdk: DataModelsSdk;

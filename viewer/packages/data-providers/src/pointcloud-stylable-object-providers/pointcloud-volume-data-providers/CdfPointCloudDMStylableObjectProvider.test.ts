@@ -2,9 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
-import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
+import type { CompositeShape } from '@reveal/utilities';
+import { Cylinder, Box } from '@reveal/utilities';
 import { CdfPointCloudDMStylableObjectProvider } from './CdfPointCloudDMStylableObjectProvider';
 import { DMModelIdentifier } from '../../model-identifiers/DMModelIdentifier';
 

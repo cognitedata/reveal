@@ -3,21 +3,13 @@
  */
 
 import { Mock, It } from 'moq.ts';
-import {
-  CircleGeometry,
-  InstancedMesh,
-  Matrix4,
-  MeshBasicMaterial,
-  Object3D,
-  PerspectiveCamera,
-  Ray,
-  Vector3,
-  WebGLRenderer
-} from 'three';
-import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
+import type { CircleGeometry, MeshBasicMaterial, Object3D, WebGLRenderer } from 'three';
+import { InstancedMesh, Matrix4, PerspectiveCamera, Ray, Vector3 } from 'three';
+import type { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
-import { ClusteredIcon, IconCollection } from './IconCollection';
-import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
+import type { ClusteredIcon } from './IconCollection';
+import { IconCollection } from './IconCollection';
+import type { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import { PointOctant } from 'sparse-octree';
 import assert from 'assert';
 

@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
-import { Image360Annotation } from './Image360Annotation';
-import { Vector3 } from 'three';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import type { Image360Annotation } from './Image360Annotation';
+import type { Vector3 } from 'three';
 
 /**
  * Describes an intersection with a 360 image annotation

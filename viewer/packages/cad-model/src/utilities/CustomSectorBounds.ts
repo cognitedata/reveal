@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata } from '@reveal/cad-parsers';
-import { CadNode } from '../wrappers/CadNode';
+import type { SectorMetadata } from '@reveal/cad-parsers';
+import type { CadNode } from '../wrappers/CadNode';
 
 type TransformedNode = {
   currentTransform: THREE.Matrix4;
