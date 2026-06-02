@@ -3,7 +3,7 @@
 Reveal uses visual tests as a form of regression testing and smoke tests.
 The underlying stack leverages [playwright](https://playwright.dev/). 
 
-The way it works is that we use [webpack-dev-server](https://www.npmjs.com/package/webpack-dev-server) to serve the contents of the visual tests (visual tests server) and have an instance of playwright (visual tests automation) play through the different visual tests using puppeteer.
+The way it works is that we use [webpack-dev-server](https://www.npmjs.com/package/webpack-dev-server) to serve the contents of the visual tests (visual tests server) and have an instance of playwright (visual tests automation) play through the different visual tests.
 
 To run the visual tests on your local environment, simply run `yarn run test:visual` from the `/viewer` directory.
 

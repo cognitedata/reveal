@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 
 import { defineConfig } from '@playwright/test';
