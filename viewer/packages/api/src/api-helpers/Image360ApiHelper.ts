@@ -37,7 +37,8 @@ import {
   Image360DataModelIdentifier,
   Image360Provider,
   Image360ProviderCombiner,
-  isFdm360ImageCollectionIdentifier
+  isFdm360ImageCollectionIdentifier,
+  createCdf360ImageAnnotationCache
 } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
@@ -60,7 +61,6 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
 import { moveCameraPositionAndTargetTo } from '@reveal/camera-manager/src/Flexible/moveCamera';
-import { Cdf360ImageAnnotationCache } from '@reveal/data-providers/src/image-360-data-providers/Cdf360ImageAnnotationCache';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -131,7 +131,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     const cdm360ImageAnnotationProvider = new CoreDm360ImageAnnotationProvider(cogniteClient);
     const cdf360ImageAnnotationProvider = new Cdf360ImageAnnotationProvider(
-      new Cdf360ImageAnnotationCache(cogniteClient)
+      createCdf360ImageAnnotationCache(cogniteClient)
     );
 
     const cdfFileProvider = new Cdf360ImageFileProvider(cogniteClient);

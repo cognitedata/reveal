@@ -2,14 +2,14 @@
  * Copyright 2026 Cognite AS
  */
 import { Mock } from 'moq.ts';
-import { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
+import { createCdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
 import { AnnotationsAPI, CogniteClient, FilesAPI } from '@cognite/sdk';
 import { InstanceReference } from '../types';
 import { ClassicDataSourceType } from '../DataSourceType';
 import { createAnnotationModel, createCursorAndAsyncIterator } from '../../../../test-utilities';
 import { createFileInfo } from '../../../../test-utilities/src/createFileInfo';
 
-describe(Cdf360ImageAnnotationCache, () => {
+describe(createCdf360ImageAnnotationCache, () => {
   const CLASSIC_ID: InstanceReference<ClassicDataSourceType> = { id: 123 };
 
   const FILE_ID = { id: 987 };
@@ -37,7 +37,7 @@ describe(Cdf360ImageAnnotationCache, () => {
     mockReverseLookup.mockReturnValue(createCursorAndAsyncIterator(fileResult));
     mockAnnotationList.mockReturnValue(createCursorAndAsyncIterator(resultAnnotations));
 
-    const cache = new Cdf360ImageAnnotationCache(mockSdk);
+    const cache = createCdf360ImageAnnotationCache(mockSdk);
 
     const result0 = await cache.reverseLookup(CLASSIC_ID);
     const result1 = await cache.reverseLookup(CLASSIC_ID);
@@ -62,7 +62,7 @@ describe(Cdf360ImageAnnotationCache, () => {
     const resultAnnotations = { items: [createAnnotationModel({ annotatedResourceId: FILE_ID.id })] };
     mockAnnotationList.mockReturnValue(createCursorAndAsyncIterator(resultAnnotations));
 
-    const cache = new Cdf360ImageAnnotationCache(mockSdk);
+    const cache = createCdf360ImageAnnotationCache(mockSdk);
 
     const result0 = await cache.getAnnotationsForFiles([FILE_ID]);
     const result1 = await cache.getAnnotationsForFiles([FILE_ID]);
@@ -79,7 +79,7 @@ describe(Cdf360ImageAnnotationCache, () => {
     const resultFiles = [createFileInfo(FILE_ID)];
     mockFileRetrieve.mockResolvedValue(resultFiles);
 
-    const cache = new Cdf360ImageAnnotationCache(mockSdk);
+    const cache = createCdf360ImageAnnotationCache(mockSdk);
 
     const result0 = await cache.getFileInfosForFileIds([FILE_ID]);
     const result1 = await cache.getFileInfosForFileIds([FILE_ID]);

@@ -22,6 +22,7 @@ import { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAn
 import { createCursorAndAsyncIterator, createAnnotationModel } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
 import assert from 'assert';
+import { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
 
 describe(Cdf360ImageAnnotationProvider.name, () => {
   const ARBITRARY_FILE_ID = 10;
@@ -88,14 +89,22 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
   const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>().mockResolvedValue([]);
 
-  const sdkMock = new Mock<CogniteClient>()
+  /* const sdkMock = new Mock<CogniteClient>()
     .setup(p => p.annotations.list)
     .returns(mockAnnotationList)
     .setup(p => p.annotations.reverseLookup)
     .returns(mockReverseLookup)
     .setup(p => p.files.retrieve)
     .returns(mockFilesRetrieve)
-    .object();
+    .object(); */
+
+  const annotationCache: Cdf360ImageAnnotationCache = {
+    reverseLookup: vi.fn<Cdf360ImageAnnotationCache['reverseLookup']>(() => Promise.resolve([matchingAnnotation])),
+    getFileInfosForFileIds: vi.fn<Cdf360ImageAnnotationCache['getFileInfosForFileIds']>(() => Promise.resolve([])),
+    getAnnotationsForFiles: vi.fn<Cdf360ImageAnnotationCache['getAnnotationsForFiles']>(() =>
+      Promise.resolve([matchingAnnotation])
+    )
+  };
 
   function createMockRevision(
     fileId: number,
@@ -189,7 +198,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
     });
 
     test('returns annotations matching asset ref and image fileIds', async () => {
-      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision = createMockRevision(10, [matchingAnnotation, nonMatchingAnnotation]);
       const entity = createMockEntity([revision]);
@@ -214,7 +223,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
         })
       );
 
-      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision = createMockRevision(30, [matchingHybridAnnotation, nonMatchingAnnotation]);
       const entity = createMockEntity([revision]);
@@ -239,7 +248,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
         })
       );
 
-      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision = createMockRevision(30, [matchingHybridAnnotation, nonMatchingAnnotation]);
       const entity = createMockEntity([revision]);
@@ -266,7 +275,7 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
       );
       mockFilesRetrieve.mockResolvedValue([{ id: 10, externalId: 'file-external-id', name: 'file1' } as FileInfo]);
 
-      const provider = new Cdf360ImageAnnotationProvider(sdkMock);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision = createMockRevisionWithExternalId('file-external-id', [
         matchingAnnotation,
@@ -285,14 +294,14 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
   describe('resolveFileIdToExternalIdMapping', () => {
     test('returns mapping from descriptors without API call when descriptors have fileId', async () => {
       const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>();
-      const clientWithFiles = new Mock<CogniteClient>()
+      /* const clientWithFiles = new Mock<CogniteClient>()
         .setup(p => p.annotations.list)
         .returns(mockAnnotationList)
         .setup(p => p.files.retrieve)
         .returns(mockFilesRetrieve)
-        .object();
+        .object(); */
 
-      const provider = new Cdf360ImageAnnotationProvider(clientWithFiles);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const descriptors: Image360FileDescriptor[] = [
         { fileId: 100, externalId: 'file-100-ext', face: 'front', mimeType: 'image/jpeg' },
@@ -329,14 +338,14 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
           { id: 200, externalId: 'file-200-ext', name: 'file2' } as FileInfo
         ]);
 
-      const clientWithFiles = new Mock<CogniteClient>()
+      /* const clientWithFiles = new Mock<CogniteClient>()
         .setup(p => p.annotations.list)
         .returns(mockAnnotationList)
         .setup(p => p.files.retrieve)
         .returns(mockFilesRetrieve)
-        .object();
+        .object(); */
 
-      const provider = new Cdf360ImageAnnotationProvider(clientWithFiles);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const descriptors: Image360FileDescriptor[] = [
         { externalId: 'file-100-ext', face: 'front', mimeType: 'image/jpeg' },
@@ -367,14 +376,14 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
 
     test('uses instanceId.externalId when descriptor has instanceId', async () => {
       const mockFilesRetrieve = vi.fn<CogniteClient['files']['retrieve']>();
-      const clientWithFiles = new Mock<CogniteClient>()
+      /* const clientWithFiles = new Mock<CogniteClient>()
         .setup(p => p.annotations.list)
         .returns(mockAnnotationList)
         .setup(p => p.files.retrieve)
         .returns(mockFilesRetrieve)
-        .object();
+        .object(); */
 
-      const provider = new Cdf360ImageAnnotationProvider(clientWithFiles);
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const descriptors: Image360FileDescriptor[] = [
         {
@@ -435,8 +444,8 @@ describe(Cdf360ImageAnnotationProvider.name, () => {
           })
       );
 
-      const client = sdkMock;
-      const provider = new Cdf360ImageAnnotationProvider(client);
+      // const client = sdkMock;
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
 
       const revision1 = createMockRevision(10, [matchingHybridAnnotation]);
       const entity = createMockEntity([revision1]);

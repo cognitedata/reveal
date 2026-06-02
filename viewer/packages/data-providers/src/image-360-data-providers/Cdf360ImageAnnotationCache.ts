@@ -10,7 +10,17 @@ import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 
-export class Cdf360ImageAnnotationCache {
+export interface Cdf360ImageAnnotationCache {
+  reverseLookup(assetId: InstanceReference<DataSourceType>): Promise<AnnotationModel[]>;
+  getAnnotationsForFiles(fileIds: InternalId[]): Promise<AnnotationModel[]>;
+  getFileInfosForFileIds(fileIds: IdEither[]): Promise<FileInfo[]>;
+}
+
+export function createCdf360ImageAnnotationCache(client: CogniteClient): Cdf360ImageAnnotationCache {
+  return new Cdf360ImageAnnotationCacheImpl(client);
+}
+
+class Cdf360ImageAnnotationCacheImpl implements Cdf360ImageAnnotationCache {
   private readonly _instanceKeyToAnnotations: Map<string, Promise<AnnotationModel[]>> = new Map();
   private readonly _fileIdToAnnotation: Map<number, Promise<AnnotationModel[]>> = new Map();
   private readonly _fileIdToFileInfo: Map<string, Promise<FileInfo>> = new Map();
