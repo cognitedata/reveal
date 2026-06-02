@@ -2,12 +2,13 @@
  * Copyright 2026 Cognite AS
  */
 
-import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { ClusteredIconData, ClusterRenderParams, ClusterScreenInfo } from './ClusterRenderingStrategy';
+import type { Matrix4, PerspectiveCamera} from 'three';
+import { Vector3 } from 'three';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { ClusteredIconData, ClusterRenderParams, ClusterScreenInfo } from './ClusterRenderingStrategy';
 import { worldToViewportCoordinates } from '@reveal/utilities';
 import { generateClusterStyles } from './htmlClusterStyles';
-import { HtmlClusterRendererOptions } from '../../types';
+import type { HtmlClusterRendererOptions } from '../../types';
 
 /** HTML-based cluster rendering for high-definition text display */
 export class HtmlClusterRenderer {

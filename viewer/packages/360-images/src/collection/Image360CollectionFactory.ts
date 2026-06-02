@@ -5,8 +5,8 @@
 import assert from 'assert';
 import zip from 'lodash/zip';
 import uniqBy from 'lodash/uniqBy';
-import { DataSourceType } from '@reveal/data-providers';
-import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import type { IconsOptions } from '../icons/IconCollection';

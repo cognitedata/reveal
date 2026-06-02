@@ -4,19 +4,20 @@
 
 import { Vector3 } from 'three';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { HtmlClusterCoordinator } from './HtmlClusterCoordinator';
 import type { HtmlClusterCollection } from './HtmlClusterCoordinator';
 import type { ClusterScreenInfo } from './ClusterRenderingStrategy';
 
 type ApplyOcclusionFn = HtmlClusterCollection['applyHtmlClusterOcclusion'];
-type ApplyOcclusionMock = jest.MockedFunction<ApplyOcclusionFn>;
+type ApplyOcclusionMock = Mock<ApplyOcclusionFn>;
 
 describe(HtmlClusterCoordinator.name, () => {
   test('dispatches applyHtmlClusterOcclusion to exactly the passed collections, once per call', () => {
     const coordinator = new HtmlClusterCoordinator();
-    const applyMockA = jest.fn<ApplyOcclusionFn>();
-    const applyMockB = jest.fn<ApplyOcclusionFn>();
+    const applyMockA = vi.fn<ApplyOcclusionFn>();
+    const applyMockB = vi.fn<ApplyOcclusionFn>();
     const collectionA = createMockCollection([], applyMockA);
     const collectionB = createMockCollection([], applyMockB);
 
@@ -40,8 +41,8 @@ describe(HtmlClusterCoordinator.name, () => {
     const farOverlappingIcon = createMockIcon();
     const farDistantIcon = createMockIcon();
 
-    const applyMockA = jest.fn<ApplyOcclusionFn>();
-    const applyMockB = jest.fn<ApplyOcclusionFn>();
+    const applyMockA = vi.fn<ApplyOcclusionFn>();
+    const applyMockB = vi.fn<ApplyOcclusionFn>();
     const collectionA = createMockCollection([createScreenInfo(closeIcon, 500, 300, 10)], applyMockA);
     const collectionB = createMockCollection(
       [createScreenInfo(farOverlappingIcon, 500, 300, 50), createScreenInfo(farDistantIcon, 800, 300, 50)],
@@ -63,7 +64,7 @@ describe(HtmlClusterCoordinator.name, () => {
     const nearFarIcon = createMockIcon();
     const distantFarIcon = createMockIcon();
 
-    const applyMock = jest.fn<ApplyOcclusionFn>();
+    const applyMock = vi.fn<ApplyOcclusionFn>();
     const collection = createMockCollection(
       [
         createScreenInfo(closeIcon, 500, 300, 10),
@@ -89,7 +90,7 @@ function createMockIcon(): Overlay3DIcon {
 function createMockCollection(screenInfos: ClusterScreenInfo[], applyFn?: ApplyOcclusionMock): HtmlClusterCollection {
   return {
     getStagedHtmlClusterScreenInfos: () => screenInfos,
-    applyHtmlClusterOcclusion: applyFn ?? jest.fn<ApplyOcclusionFn>()
+    applyHtmlClusterOcclusion: applyFn ?? vi.fn<ApplyOcclusionFn>()
   };
 }
 

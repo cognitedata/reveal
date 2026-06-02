@@ -2,8 +2,8 @@
  * Copyright 2026 Cognite AS
  */
 
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { ClusterScreenInfo } from './ClusterRenderingStrategy';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { ClusterScreenInfo } from './ClusterRenderingStrategy';
 
 export interface HtmlClusterCollection {
   getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[];
