@@ -4,7 +4,7 @@
     "rootDir": "${configDir}",
     "outDir": "${configDir}/dist",
     "declaration": true,
-    "types": ["vite/client", "node", "./custom.d.ts", "./packages/api/src/@types/modules/index.d.ts"]
+    "types": ["vite/client", "node", "vite-plugin-glsl/ext"]
   },
   "include": ["${configDir}/packages/**/*.ts", "${configDir}/api-entry-points/**/*.ts", "vite.config.ts"],
   "exclude": [

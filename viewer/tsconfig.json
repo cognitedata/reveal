@@ -23,14 +23,12 @@
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
     "strict": true,
-    "jsx": "react-jsx",
     "paths": {
       "@reveal/*": [
         "./packages/*"
       ],
       "*": [
-        "./*",
-        "./packages/api/src/@types/*"
+        "./*"
       ]
     },
   },
