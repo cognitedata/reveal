@@ -111,7 +111,6 @@ export function Viewer() {
       if (modelUrl !== null) {
         viewerOptions = {
           ...viewerOptions,
-          // @ts-expect-error
           _localModels: true
         };
       } else if (!project) {

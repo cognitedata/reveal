@@ -19,7 +19,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "moduleResolution": "bundler",
-    "target": "esnext",
+    "target": "ES2019",
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
     "strict": true,

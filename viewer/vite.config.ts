@@ -15,11 +15,12 @@ export default defineConfig(({ command }) => {
 
     worker: {
       format: 'es',
-      plugins: [wasm()]
+      plugins: () => [wasm()]
     },
 
     build: {
       outDir: 'dist',
+      target: 'es2019',
       rolldownOptions: {
         external: [...getDependencyMatchers(pkg.dependencies), ...getDependencyMatchers(pkg.peerDependencies)],
         output: {
