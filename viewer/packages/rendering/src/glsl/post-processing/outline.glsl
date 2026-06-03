@@ -1,4 +1,4 @@
-#pragma glslify: import('../math/floatBitsSubset.glsl')
+#include ../math/floatBitsSubset.glsl;
 
 const int texelOffset = 2;
 

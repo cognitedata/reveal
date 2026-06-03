@@ -13,7 +13,7 @@ import typescript from 'typescript';
 export default defineConfig(({ command }) => {
   return {
     root: '.',
-    plugins: [glsl(), dts({ tsconfigPath: './tsconfig.webpack.json' }), tsAccessorDecoratorPlugin()],
+    plugins: [glsl({ minify: true }), dts({ tsconfigPath: './tsconfig.webpack.json' }), tsAccessorDecoratorPlugin()],
 
     worker: {
       format: 'es',
