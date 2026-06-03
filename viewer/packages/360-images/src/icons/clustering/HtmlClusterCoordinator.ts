@@ -16,7 +16,6 @@ export interface HtmlClusterCollection {
  * global occlusion set, then feeds it back to each collection for DOM updates.
  */
 export class HtmlClusterCoordinator {
-  // Screen-space overlap radius multiplier — matches HtmlClusterRenderer._occlusionFactor
   private readonly _occlusionFactor: number = 0.7;
 
   public runCoordinator(collections: HtmlClusterCollection[]): void {
