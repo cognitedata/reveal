@@ -1,13 +1,23 @@
 {
-  "extends": "./tsconfig.webpack.json",
   "compilerOptions": {
-    "noUnusedLocals": false,
-    "module": "esnext",
-    "target": "es2019",
+    "noEmit": true,
     "types": [
+      "vitest/globals",
+      "vite/client",
+      "vite-plugin-glsl/ext",
+      "vitest",
       "node",
-      "modules"
     ]
   },
-  "files": []
+  "include": [
+    "./src/**/*.spec.ts",
+    "./src/**/*.test.ts",
+    "./src/**/__fixtures__/**/*.ts",
+    "./src/**/__mocks__/**/*.ts",
+    "./src/**/__tests__/**/*.ts",
+    "./test-utilities/**/*.ts"
+  ],
+  "exclude": ["**/node_modules/**", "**VisualTest.ts",],
+  "files": ["vite.config.ts"],
+  "extends": ["./tsconfig.json"]
 }

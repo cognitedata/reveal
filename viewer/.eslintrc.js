@@ -9,7 +9,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
-    project: './tsconfig.webpack.json',
+    projects: ['./tsconfig.webpack.json', './tsconfig.test.json'],
     tsconfigRootDir: __dirname,
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports

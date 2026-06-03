@@ -4,9 +4,9 @@
 
 import type { CogniteClient } from '@cognite/sdk';
 
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
 
-export function mockClientAuthentication(client: CogniteClient): vi.SpiedFunction<() => Promise<string | undefined>> {
+export function mockClientAuthentication(client: CogniteClient): Mock<() => Promise<string | undefined>> {
   const spy = vi.spyOn(client, 'authenticate').mockImplementation(() => Promise.resolve('dummy'));
   return spy;
 }

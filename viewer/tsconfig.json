@@ -5,7 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "lib": [
-      "ES2018",
+      "ES2019",
       "dom",
       "dom.iterable",
       "esnext"
@@ -21,7 +21,7 @@
     "moduleResolution": "bundler",
     "target": "ES2019",
     "resolveJsonModule": true,
-    "rootDir": "${configDir}",
+    "rootDir": ".",
     "strict": true,
     "paths": {
       "@reveal/*": [
@@ -31,13 +31,5 @@
         "./*"
       ]
     },
-  },
-  "include": [],
-  "exclude": [],
-  "files": [],
-  "references": [
-    {
-      "path": "tsconfig.webpack.json"
-    }
-  ]
+  }
 }

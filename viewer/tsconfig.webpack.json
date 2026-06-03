@@ -1,12 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "${configDir}",
-    "outDir": "${configDir}/dist",
     "declaration": true,
-    "types": ["vite/client", "node", "vite-plugin-glsl/ext", "vitest"]
+    "types": ["vite/client", "node", "vite-plugin-glsl/ext"]
   },
-  "include": ["${configDir}/packages/**/*.ts", "${configDir}/api-entry-points/**/*.ts", "vite.config.ts"],
+  "include": ["./packages/**/*.ts", "./api-entry-points/**/*.ts"],
   "exclude": [
     "./packages/**/*.d.ts",
     "./packages/**/*.spec.ts",
@@ -15,7 +13,7 @@
     "./packages/**/__fixtures__/**/*.ts",
     "./packages/**/__mocks__/**/*.ts",
     "./packages/**/__tests__/**/*.ts",
-    "**/visual-tests/**/*.ts",
+    "./visual-tests/**/*.ts",
     "**/node_modules/**",
 
   ],
