@@ -13,7 +13,7 @@ import type { Vector3, Box3 } from 'three';
 function assertNever(x: never, message?: string): never {
   throw new Error(message || 'Unexpected object: ' + x);
 }
-//TODO: revert
+// //TODO: revert
 enum ShapeType {
   Box,
   Cylinder,

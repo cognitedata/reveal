@@ -67,6 +67,7 @@
     "@tweenjs/tween.js": "^25.0.0",
     "assert": "^2.1.0",
     "async-mutex": "^0.5.0",
+    "comlink": "^4.4.2",
     "glslify": "^7.1.1",
     "glslify-import": "^3.1.0",
     "html2canvas": "^1.4.1",

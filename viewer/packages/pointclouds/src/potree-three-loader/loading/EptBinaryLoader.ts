@@ -12,12 +12,15 @@ import type { ModelDataProvider, SerializableStylableObject, StylableObject } fr
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker?worker&inline';
 
+import * as Comlink from 'comlink';
+
 import type { ParsedEptData, EptInputData } from '../workers/types';
 
 import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 
 import { fromThreeVector3 } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
+import type { EptBinaryDecoderWorker } from '../workers/eptBinaryDecoder.worker';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
@@ -82,7 +85,7 @@ export class EptBinaryLoader implements ILoader {
 
   async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData | Error> {
     const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
-    const eptDecoderWorker = autoTerminatingWorker.worker as unknown as typeof EptDecoderWorker;
+    const eptDecoderWorker = Comlink.wrap<EptBinaryDecoderWorker>(autoTerminatingWorker.worker);
     const eptData: EptInputData = {
       buffer: data,
       schema: node.ept.schema,
@@ -103,10 +106,15 @@ export class EptBinaryLoader implements ILoader {
       .filter(objAndBox => objAndBox[1].intersectsBox(node.boundingBox))
       .map(objAndBox => objAndBox[0]);
 
-    const result = await eptDecoderWorker.parse(eptData, relevantObjects, node.boundingBox.min.toArray(), {
-      min: node.boundingBox.min.toArray(),
-      max: node.boundingBox.max.toArray()
-    });
+    const result = await eptDecoderWorker(
+      Comlink.transfer(eptData, [eptData.buffer]),
+      relevantObjects,
+      node.boundingBox.min.toArray(),
+      {
+        min: node.boundingBox.min.toArray(),
+        max: node.boundingBox.max.toArray()
+      }
+    );
 
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;

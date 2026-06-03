@@ -149,6 +149,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^4.1.7"
     assert: "npm:^2.1.0"
     async-mutex: "npm:^0.5.0"
+    comlink: "npm:^4.4.2"
     concurrently: "npm:^9.0.0"
     cross-env: "npm:^10.0.0"
     dat.gui: "npm:^0.7.9"
@@ -3351,6 +3352,13 @@ __metadata:
   version: 2.0.20
   resolution: "colorette@npm:2.0.20"
   checksum: 10/0b8de48bfa5d10afc160b8eaa2b9938f34a892530b2f7d7897e0458d9535a066e3998b49da9d21161c78225b272df19ae3a64d6df28b4c9734c0e55bbd02406f
+  languageName: node
+  linkType: hard
+
+"comlink@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "comlink@npm:4.4.2"
+  checksum: 10/ecee53b5b4536b3aa3f7636c383f831e68fbc013def77665cc7fad873d72cfa23b994e1ec4b49e83e4e909c1089a03acae03a523e33a5e5ed938cdb613456434
   languageName: node
   linkType: hard
 

@@ -11,7 +11,7 @@ import dts from 'unplugin-dts/vite';
 export default defineConfig(({ command }) => {
   return {
     root: '.',
-    plugins: [dts({ tsconfigPath: './tsconfig.webpack.json' }), glsl(), wasm()],
+    plugins: [dts({ tsconfigPath: './tsconfig.webpack.json' }), glsl()],
 
     worker: {
       format: 'es',
@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => {
       rolldownOptions: {
         external: [...getDependencyMatchers(pkg.dependencies), ...getDependencyMatchers(pkg.peerDependencies)],
         output: {
-          preserveModules: true,
+          preserveModules: false,
           entryFileNames: '[name].js'
         }
       },
