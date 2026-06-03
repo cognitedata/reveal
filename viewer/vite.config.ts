@@ -9,6 +9,7 @@ import pkg from './package.json' with { type: 'json' };
 import dts from 'unplugin-dts/vite';
 import type { Plugin } from 'vite';
 import typescript from 'typescript';
+import path from 'path';
 
 export default defineConfig(({ command }) => {
   return {
@@ -34,6 +35,36 @@ export default defineConfig(({ command }) => {
       lib: {
         entry: 'index.ts',
         formats: ['es']
+      }
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      include: ['**/*.{test,spec}.{ts,tsx}'],
+      exclude: ['**/node_modules/**', '**/dist/**', '**/visual-tests/**', '**/*.VisualTest.ts'],
+      setupFiles: [path.resolve(__dirname, './test-utilities/src/setupVitest.ts')],
+      env: {
+        MIXPANEL_TOKEN: 'test'
+      },
+      coverage: {
+        provider: 'v8',
+        reportsDirectory: './coverage',
+        exclude: [
+          '**/*.test.ts',
+          '**/*.VisualTest.ts',
+          'packages/*/visual-tests/**',
+          'visual-tests/**',
+          'test-utilities/**',
+          '**/*.d.ts',
+          '**/*.json',
+          '**/dist/**',
+          '**/app/**'
+        ]
+      },
+      environmentOptions: {
+        jsdom: {
+          url: 'https://api.cognitedata.com'
+        }
       }
     }
   };
