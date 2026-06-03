@@ -13,6 +13,11 @@ export default defineConfig(({ command }) => {
     root: '.',
     plugins: [dts({ tsconfigPath: './tsconfig.webpack.json' }), glsl(), wasm()],
 
+    worker: {
+      format: 'es',
+      plugins: [wasm()]
+    },
+
     build: {
       outDir: 'dist',
       rolldownOptions: {

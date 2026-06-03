@@ -4,11 +4,21 @@
 
 import type { SerializableStylableObject } from '@reveal/data-providers';
 import type { SerializableCylinder, SerializableBox } from '@reveal/utilities';
-import { assertNever, ShapeType } from '@reveal/utilities';
 
 import type { WasmSerializedPointCloudObject } from '../../../wasm';
 import { assignPoints } from '../../../wasm';
 import type { Vector3, Box3 } from 'three';
+
+//TODO: revert
+function assertNever(x: never, message?: string): never {
+  throw new Error(message || 'Unexpected object: ' + x);
+}
+//TODO: revert
+enum ShapeType {
+  Box,
+  Cylinder,
+  Composite
+}
 
 function createWasmSerializedObject(obj: SerializableStylableObject): WasmSerializedPointCloudObject {
   switch (obj.shape.shapeType) {

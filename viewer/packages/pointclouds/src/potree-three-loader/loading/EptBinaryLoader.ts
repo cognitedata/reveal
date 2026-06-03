@@ -10,20 +10,20 @@ import { WorkerPool } from '../utils/WorkerPool';
 import type { ILoader } from './ILoader';
 import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
+import EptDecoderWorker from '../workers/eptBinaryDecoder.worker?worker&inline';
 
 import type { ParsedEptData, EptInputData } from '../workers/types';
 
 import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 
-import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
+import { fromThreeVector3 } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
   private readonly _stylableObjectsWithBox: [SerializableStylableObject, THREE.Box3][];
 
-  static readonly WORKER_POOL = new WorkerPool(8, EptDecoderWorker as unknown as new () => Worker);
+  static readonly WORKER_POOL = new WorkerPool(8, EptDecoderWorker);
 
   extension(): string {
     return '.bin';
@@ -91,13 +91,13 @@ export class EptBinaryLoader implements ILoader {
       mins: fromThreeVector3(node.key.b.min)
     };
 
-    setupTransferableMethodsOnMain(autoTerminatingWorker.worker, {
-      parse: {
-        pickTransferablesFromParams: (params: any) => {
-          return params.buffer;
-        }
-      }
-    });
+    // setupTransferableMethodsOnMain(autoTerminatingWorker.worker, {
+    //   parse: {
+    //     pickTransferablesFromParams: (params: any) => {
+    //       return params.buffer;
+    //     }
+    //   }
+    // });
 
     const relevantObjects = this._stylableObjectsWithBox
       .filter(objAndBox => objAndBox[1].intersectsBox(node.boundingBox))

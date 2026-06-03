@@ -6,26 +6,26 @@ import { parseEpt } from './parseEpt';
 import type { EptInputData, ParsedEptData } from './types';
 import type { SerializableStylableObject } from '@reveal/data-providers';
 import type { AABB, Vec3 } from '@reveal/utilities';
-import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
+// import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
 
-setupTransferableMethodsOnWorker({
-  parse: {
-    fn: parse,
-    pickTransferablesFromResult: (result: ParsedEptData) => {
-      return [
-        result.position,
-        result.color,
-        result.intensity,
-        result.classification,
-        result.returnNumber,
-        result.numberOfReturns,
-        result.pointSourceId,
-        result.indices,
-        result.objectId
-      ].filter(assertDefined);
-    }
-  }
-});
+// setupTransferableMethodsOnWorker({
+//   parse: {
+//     fn: parse,
+//     pickTransferablesFromResult: (result: ParsedEptData) => {
+//       return [
+//         result.position,
+//         result.color,
+//         result.intensity,
+//         result.classification,
+//         result.returnNumber,
+//         result.numberOfReturns,
+//         result.pointSourceId,
+//         result.indices,
+//         result.objectId
+//       ].filter(assertDefined);
+//     }
+//   }
+// });
 
 export async function parse(
   data: EptInputData,
