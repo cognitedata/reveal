@@ -23,6 +23,7 @@ export default defineConfig(({ command }) => {
     build: {
       outDir: 'dist',
       target: 'es2019',
+      sourcemap: command === 'build',
       rolldownOptions: {
         external: [...getDependencyMatchers(pkg.dependencies), ...getDependencyMatchers(pkg.peerDependencies)],
         output: {
