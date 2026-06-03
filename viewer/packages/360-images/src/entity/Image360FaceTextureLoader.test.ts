@@ -36,7 +36,7 @@ function createStreamingResponse(bytes: Uint8Array<ArrayBuffer>, contentType = '
   return response;
 }
 
-function makeStreamingFace(face: Image360Face['face'] = 'front'): Image360Face & { downloadUrl: string } {
+function makeStreamingFace(face: Image360Face['face'] = 'front'): Image360Face {
   return { face, mimeType: 'image/jpeg', data: new ArrayBuffer(0), downloadUrl: `https://example.com/${face}.jpg` };
 }
 
@@ -89,11 +89,11 @@ describe(Image360FaceTextureLoader.name, () => {
     });
   });
 
-  describe('loadFromBuffer', () => {
+  describe('load — buffer path (no downloadUrl)', () => {
     test('returns Image360Texture with correct face label', async () => {
       vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
 
-      const result = await loader.loadFromBuffer(makeBufferFace('back'));
+      const result = await loader.load(makeBufferFace('back'));
 
       expect(result.face).toBe('back');
     });
@@ -101,18 +101,27 @@ describe(Image360FaceTextureLoader.name, () => {
     test('revokes blob URL after loading', async () => {
       vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
 
-      await loader.loadFromBuffer(makeBufferFace());
+      await loader.load(makeBufferFace());
 
       expect(URL.revokeObjectURL).toHaveBeenCalled();
     });
+
+    test('calls onFirstFaceReady after buffer is decoded', async () => {
+      vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
+
+      const onFirstFaceReady = vi.fn();
+      await loader.load(makeBufferFace(), onFirstFaceReady);
+
+      expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
+    });
   });
 
-  describe('loadFromUrl', () => {
+  describe('load — streaming path (with downloadUrl)', () => {
     test('calls onJpegTypeDetected with progressive for progressive JPEG bytes', async () => {
       fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(PROGRESSIVE_JPEG_BYTES)));
 
       const onJpegTypeDetected = vi.fn();
-      await loader.loadFromUrl(makeStreamingFace(), undefined, onJpegTypeDetected).catch(() => {});
+      await loader.load(makeStreamingFace(), undefined, onJpegTypeDetected).catch(() => {});
 
       expect(onJpegTypeDetected).toHaveBeenCalledWith('progressive');
     });
@@ -121,7 +130,7 @@ describe(Image360FaceTextureLoader.name, () => {
       fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(BASELINE_JPEG_BYTES)));
 
       const onJpegTypeDetected = vi.fn();
-      await loader.loadFromUrl(makeStreamingFace(), undefined, onJpegTypeDetected).catch(() => {});
+      await loader.load(makeStreamingFace(), undefined, onJpegTypeDetected).catch(() => {});
 
       expect(onJpegTypeDetected).toHaveBeenCalledWith('baseline');
     });
@@ -129,7 +138,7 @@ describe(Image360FaceTextureLoader.name, () => {
     test('rejects when fetch response is not ok', async () => {
       fetchSpy.mockReturnValueOnce(Promise.resolve(new Response(null, { status: 404, statusText: 'Not Found' })));
 
-      await expect(loader.loadFromUrl(makeStreamingFace())).rejects.toThrow('404');
+      await expect(loader.load(makeStreamingFace())).rejects.toThrow('404');
     });
   });
 });
