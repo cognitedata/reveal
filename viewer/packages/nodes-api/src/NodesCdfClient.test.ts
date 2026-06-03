@@ -2,9 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import nock from 'nock';
-import { CogniteInternalId, CogniteClient } from '@cognite/sdk';
+import type { CogniteInternalId, HttpRequestOptions, HttpResponse } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { NodesCdfClient } from './NodesCdfClient';
+import { vi } from 'vitest';
 
 function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
   return treeIndex + 1337;
@@ -22,39 +23,52 @@ type ByNodeIdsRequestBody = {
   items: number[];
 };
 
+type ByTreeIndicesResponse = { items: CogniteInternalId[] };
+type ByNodeIdsResponse = { items: number[] };
+
 describe('NodesCdfClient', () => {
   let bytreeindicesRequestCount: number;
   let byinternalidsRequestCount: number;
   let nodesClient: NodesCdfClient;
+  let client: CogniteClient;
 
   beforeEach(() => {
     bytreeindicesRequestCount = 0;
     byinternalidsRequestCount = 0;
-    nock.disableNetConnect();
-    nock(/.*/)
-      .persist()
-      .post(/.*\/internalids\/bytreeindices/)
-      .reply(200, (_uri, requestBody: ByTreeIndicesRequestBody) => {
-        bytreeindicesRequestCount++;
-        return { items: requestBody.items.map(stubTreeIndexToNodeId) };
-      });
-    nock(/.*/)
-      .persist()
-      .post(/.*\/treeindices\/byinternalids/)
-      .reply(200, (_uri, requestBody: ByNodeIdsRequestBody) => {
-        byinternalidsRequestCount++;
-        return { items: requestBody.items.map(stubNodeIdToTreeIndex) };
-      });
 
-    const client = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
+    client = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
+
+    vi.spyOn(client, 'post').mockImplementation(
+      async (url: string, options?: HttpRequestOptions): Promise<HttpResponse<unknown>> => {
+        const requestItems =
+          (options?.data as ByTreeIndicesRequestBody | ByNodeIdsRequestBody | undefined)?.items ?? [];
+        if (/\/internalids\/bytreeindices/.test(url)) {
+          bytreeindicesRequestCount++;
+          const response: HttpResponse<ByTreeIndicesResponse> = {
+            status: 200,
+            data: { items: (requestItems as number[]).map(stubTreeIndexToNodeId) },
+            headers: {}
+          };
+          return response;
+        }
+        if (/\/treeindices\/byinternalids/.test(url)) {
+          byinternalidsRequestCount++;
+          const response: HttpResponse<ByNodeIdsResponse> = {
+            status: 200,
+            data: { items: (requestItems as number[]).map(stubNodeIdToTreeIndex) },
+            headers: {}
+          };
+          return response;
+        }
+        throw new Error(`Unexpected URL: ${url}`);
+      }
+    );
 
     nodesClient = new NodesCdfClient(client);
   });
 
   afterEach(() => {
-    nock.recorder.clear();
-    nock.cleanAll();
-    nock.enableNetConnect();
+    vi.restoreAllMocks();
   });
 
   test('mapTreeIndicesToNodeIds with a single item', async () => {

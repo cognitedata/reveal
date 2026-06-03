@@ -3,15 +3,16 @@
  */
 
 import * as THREE from 'three';
-import { IMock, It, Mock } from 'moq.ts';
+import type { IMock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
-import { CadMaterialManager } from '../CadMaterialManager';
+import type { CadMaterialManager } from '../CadMaterialManager';
 import { IndexSet, SceneHandler } from '@reveal/utilities';
 import { defaultRenderOptions } from '../rendering/types';
-import { CadNode } from '@reveal/cad-model';
-import { PointCloudNode } from '@reveal/pointclouds';
+import type { CadNode } from '@reveal/cad-model';
+import type { PointCloudNode } from '@reveal/pointclouds';
 import { createCadModel, createPointCloudModel } from '../../../../test-utilities';
-import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 describe(DefaultRenderPipelineProvider.name, () => {
   let rendererMock: IMock<THREE.WebGLRenderer>;

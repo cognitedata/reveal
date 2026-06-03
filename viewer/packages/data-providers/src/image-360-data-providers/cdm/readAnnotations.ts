@@ -1,12 +1,13 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Vector3 } from 'three';
+import type { Vector3 } from 'three';
 
-import { CoreDmImage360Properties } from './properties';
+import type { CoreDmImage360Properties } from './properties';
 import { transformSphericalCoordinatesToVectors } from './transformSphericalCoordinatesToVectors';
 import assert from 'assert';
-import { isSemanticVersion, isSemanticVersionGreaterThanOrEqual, SemanticVersion } from './semanticVersioningUtils';
+import type { SemanticVersion } from './semanticVersioningUtils';
+import { isSemanticVersion, isSemanticVersionGreaterThanOrEqual } from './semanticVersioningUtils';
 
 export function readAnnotations(
   formatVersion: SemanticVersion,

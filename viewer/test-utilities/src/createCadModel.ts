@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import { CogniteCadModel } from '../../packages/cad-model';
-import { NodesApiClient, NodesLocalClient } from '../../packages/nodes-api';
+import type { NodesApiClient } from '../../packages/nodes-api';
+import { NodesLocalClient } from '../../packages/nodes-api';
 
 import { createCadNode } from './createCadNode';
 

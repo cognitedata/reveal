@@ -1,8 +1,8 @@
-import { AABB, Vec3 } from '@reveal/utilities';
-import { SerializableStylableObject } from '@reveal/data-providers';
+import type { AABB, Vec3 } from '@reveal/utilities';
+import type { SerializableStylableObject } from '@reveal/data-providers';
 import { assignPointsToObjectsWithWasm } from './assignPointsToObjectsWithWasm';
 
-import { EptInputData, ParsedEptData, AttributeSchema } from './types';
+import type { EptInputData, ParsedEptData, AttributeSchema } from './types';
 
 import * as THREE from 'three';
 

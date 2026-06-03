@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 
-import { WantedSector, ConsumedSector, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import type { WantedSector, ConsumedSector, SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { ModelStateHandler } from './ModelStateHandler';
 import { LocalModelIdentifier } from '@reveal/data-providers';
 
@@ -16,15 +17,15 @@ describe('ModelStateHandler', () => {
   test('addModel for already added model throws', () => {});
   const modelStateHandler = new ModelStateHandler();
   modelStateHandler.addModel(modelSymbol0);
-  expect(() => modelStateHandler.addModel(modelSymbol0)).toThrowError();
+  expect(() => modelStateHandler.addModel(modelSymbol0)).toThrow();
 
   test('removeModel for model that isnt added throws', () => {
     const modelStateHandler = new ModelStateHandler();
-    expect(() => modelStateHandler.removeModel(modelSymbol0)).toThrowError();
+    expect(() => modelStateHandler.removeModel(modelSymbol0)).toThrow();
   });
   test('hasStateChanged triggered for model that has not been added, throws', () => {
     const modelStateHandler = new ModelStateHandler();
-    expect(() => modelStateHandler.removeModel(modelSymbol0)).toThrowError();
+    expect(() => modelStateHandler.removeModel(modelSymbol0)).toThrow();
   });
 
   test('hasStateChanged for added model, updates sectors', () => {

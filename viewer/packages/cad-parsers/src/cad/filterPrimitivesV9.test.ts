@@ -6,8 +6,7 @@ import { filterGeometryOutsideClipBox } from './filterPrimitivesV9';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
 
-import {
-  PrimitiveName,
+import type {
   Box,
   Circle,
   Cone,
@@ -19,7 +18,10 @@ import {
   Torus,
   Trapezium,
   Nut,
-  Primitive,
+  Primitive
+} from '../../../../test-utilities/src/primitives';
+import {
+  PrimitiveName,
   getCollectionType,
   createPrimitiveInterleavedGeometriesSharingBuffer,
   createPrimitiveInterleavedGeometry,
@@ -57,7 +59,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: Primitive[], pri
   const newPrimitives = parseInterleavedGeometry(primitiveType, filteredGeometry!);
 
   expect(newPrimitives).toHaveLength(1);
-  expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[0]));
+  expect(Object.keys(newPrimitives[0])).toEqual(expect.arrayContaining(Object.keys(primitives[0])));
   assertApproximateObjectEquality(primitives[0], newPrimitives[0]);
 }
 
@@ -420,7 +422,7 @@ describe(filterGeometryOutsideClipBox.name, () => {
       const newPrimitives = parseInterleavedGeometry(primitiveTypes[i], filtered!);
 
       expect(newPrimitives).toHaveLength(1);
-      expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[i][0]));
+      expect(Object.keys(newPrimitives[0])).toEqual(expect.arrayContaining(Object.keys(primitives[i][0])));
 
       assertApproximateObjectEquality(primitives[i][0], newPrimitives[0]);
     }

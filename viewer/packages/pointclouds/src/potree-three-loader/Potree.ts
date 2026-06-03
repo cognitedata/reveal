@@ -1,31 +1,23 @@
-import {
-  Camera,
-  Frustum,
-  Matrix4,
-  OrthographicCamera,
-  PerspectiveCamera,
-  Vector2,
-  Vector3,
-  WebGLRenderer
-} from 'three';
+import type { Camera, OrthographicCamera, PerspectiveCamera, WebGLRenderer } from 'three';
+import { Frustum, Matrix4, Vector2, Vector3 } from 'three';
+import type { PointCloudMaterialManager } from '@reveal/rendering';
 import {
   DEFAULT_POINT_BUDGET,
   MAX_LOADS_TO_GPU,
   MAX_NUM_NODES_LOADING,
   PERSPECTIVE_CAMERA,
-  PointCloudMaterialManager,
   UPDATE_THROTTLE_TIME_MS
 } from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { OctreeMaterialParams } from '@reveal/rendering';
+import type { OctreeMaterialParams } from '@reveal/rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
-import { IPotree } from './types/IPotree';
-import { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
-import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
-import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
-import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
+import type { IPotree } from './types/IPotree';
+import type { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
+import type { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
+import type { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
+import type { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
 import { DMModelIdentifier, ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';

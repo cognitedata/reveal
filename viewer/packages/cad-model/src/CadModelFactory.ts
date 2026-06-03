@@ -4,13 +4,16 @@
 import * as THREE from 'three';
 
 import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
-import { GeometryFilter } from './types';
+import type { GeometryFilter } from './types';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { GltfSectorRepository, SectorRepository } from '@reveal/sector-loader';
-import { CadMaterialManager } from '@reveal/rendering';
-import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { SectorRepository } from '@reveal/sector-loader';
+import { GltfSectorRepository } from '@reveal/sector-loader';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
+import type { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode } from './wrappers/CadNode';
 
@@ -30,15 +33,15 @@ export class CadModelFactory {
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
   }
 
-  loadModelMetadata(externalModelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    return this._cadModelMetadataRepository.loadData(externalModelIdentifier);
+  loadModelMetadata(externalModelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
+    return this._cadModelMetadataRepository.loadData(externalModelIdentifier, outputFormat);
   }
 
   createModel(metadata: CadModelMetadata, geometryFilter?: GeometryFilter): CadNode {
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const { modelIdentifier, scene, format, formatVersion } = modelMetadata;
+    const { modelIdentifier, format, formatVersion } = modelMetadata;
     const modelType: SupportedModelTypes = 'cad';
     MetricsLogger.trackLoadModel(
       {
@@ -49,8 +52,8 @@ export class CadModelFactory {
     );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
-    this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, scene.maxTreeIndex);
     const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
+    this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, cadModel.cadMaterial);
 
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
@@ -62,7 +65,8 @@ export class CadModelFactory {
   }
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
-    if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
+    const isGltfFormat = format === File3dFormat.GltfCadModel || format === File3dFormat.GltfPrioritizedNodes;
+    if (isGltfFormat && formatVersion === 9) {
       this._gltfSectorRepository = this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider);
 
       return this._gltfSectorRepository;

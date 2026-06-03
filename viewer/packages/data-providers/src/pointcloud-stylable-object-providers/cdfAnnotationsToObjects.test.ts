@@ -3,7 +3,8 @@
  */
 import { CompositeShape, Cylinder } from '@reveal/utilities';
 import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
-import { CdfPointCloudObjectAnnotation, isVolumeAnnotation } from './types';
+import type { CdfPointCloudObjectAnnotation } from './types';
+import { isVolumeAnnotation } from './types';
 import { Vector3 } from 'three';
 import assert from 'assert';
 

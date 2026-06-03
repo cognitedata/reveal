@@ -2,10 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
+import type { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterial } from './pointcloud-rendering';
-import { PointCloudMaterialParameters } from './render-passes/types';
-import { Plane } from 'three';
+import type { PointCloudMaterialParameters } from './render-passes/types';
+import type { Plane } from 'three';
 
 export class PointCloudMaterialManager {
   private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();

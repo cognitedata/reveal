@@ -1,8 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Cognite3DViewer, CogniteModel } from '../../packages/api';
-import { VisualTestFixture } from './VisualTestFixture';
+import type { Cognite3DViewer, CogniteModel } from '../../packages/api';
+import type { VisualTestFixture } from './VisualTestFixture';
 import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
 import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
@@ -34,7 +34,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
     const models = await addModels(this._viewer, this._localModelUrls);
     new AxisViewTool(this._viewer);
 
-    this._viewer.fitCameraToModel(models[0]);
+    this._viewer.fitCameraToModel(models[0], 0);
 
     await Promise.all(models.map(model => this.modelLoaded(model, modelLoadedPromise)));
 

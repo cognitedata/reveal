@@ -1,10 +1,11 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { CogniteCadModel, Cognite3DViewer, CogniteModel } from '..';
+import type { Cognite3DViewer, CogniteModel } from '..';
+import { CogniteCadModel } from '..';
 import * as THREE from 'three';
 
-import { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
+import type { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
 import { createCognite3DViewer } from '../../../visual-tests/test-fixtures/utilities/cognite3DViewerHelpers';
 import { AxisViewTool } from '../../../packages/tools';
@@ -37,6 +38,7 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
     });
     await this.waitForModelToLoad();
 
+    this._viewer.fitCameraToModel(firstModel, 0);
     // Load second model and wait for it
     const secondModel = await this._viewer.addCadModel({
       modelId: -2,
@@ -45,12 +47,9 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
     });
     await this.waitForModelToLoad();
 
-    const models = [firstModel, secondModel];
-
     new AxisViewTool(this._viewer);
-    this._viewer.fitCameraToModel(models[0]);
 
-    await this.setup({ viewer: this._viewer, models });
+    await this.setup({ viewer: this._viewer, models: [firstModel, secondModel] });
   }
 
   private onModelLoading(itemsLoaded: number, itemsRequested: number, _: number) {
@@ -65,18 +64,18 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
   }
 
   private async waitForModelToLoad(): Promise<void> {
+    if (this._itemsRequested > 0 && this._itemsLoaded === this._itemsRequested) {
+      this._itemsLoaded = 0;
+      this._itemsRequested = 0;
+      return;
+    }
+
     // Reset counters for the new model load
     this._itemsLoaded = 0;
     this._itemsRequested = 0;
 
     return new Promise(resolve => {
-      // The callback might have already fired before we even started waiting.
-      if (this._itemsLoaded === this._itemsRequested && this._itemsRequested > 0) {
-        resolve();
-      } else {
-        // Otherwise, store the 'resolve' function so the callback can call it
-        this._modelLoadingResolve = resolve;
-      }
+      this._modelLoadingResolve = resolve;
     });
   }
 

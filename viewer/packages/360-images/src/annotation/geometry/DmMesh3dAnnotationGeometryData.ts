@@ -2,9 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferGeometry, Float32BufferAttribute, Matrix4, Uint32BufferAttribute, Vector3 } from 'three';
+import type { Vector3 } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Matrix4, Uint32BufferAttribute } from 'three';
 
-import { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
+import type { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 

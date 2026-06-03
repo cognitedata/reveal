@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 import { ssaoShaders } from '../rendering/shaders';
-import { SsaoParameters } from '../rendering/types';
-import { RenderPass } from '../RenderPass';
+import type { SsaoParameters } from '../rendering/types';
+import type { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
 
 import SeededRandom from 'random-seed';

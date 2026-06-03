@@ -1,8 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { AssetMapping3D } from '@cognite/sdk';
-import { CdfAssetMapping } from './types';
+import type { AssetMapping3D } from '@cognite/sdk';
+import type { CdfAssetMapping } from './types';
 
 /**
  * Type guard checking whether the asset mapping contains treeIndex and subtreeSize

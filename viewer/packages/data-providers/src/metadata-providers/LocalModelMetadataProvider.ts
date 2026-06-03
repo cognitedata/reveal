@@ -4,9 +4,10 @@
 import * as THREE from 'three';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
-import { ModelIdentifier } from '../ModelIdentifier';
-import { ModelMetadataProvider } from '../ModelMetadataProvider';
-import { BlobOutputMetadata, File3dFormat } from '../types';
+import type { ModelIdentifier } from '../ModelIdentifier';
+import type { ModelMetadataProvider } from '../ModelMetadataProvider';
+import type { BlobOutputMetadata } from '../types';
+import { File3dFormat } from '../types';
 import { LocalModelIdentifier } from '../model-identifiers/LocalModelIdentifier';
 import { fetchWithStatusCheck } from '../utilities/fetchWithStatusCheck';
 

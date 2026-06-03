@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 
-import { PrioritizedArea } from '@reveal/cad-styling';
+import type { PrioritizedArea } from '@reveal/cad-styling';
 import { traverseDepthFirst } from '@reveal/utilities';
-import { SectorMetadata } from '@reveal/cad-parsers';
+import type { SectorMetadata } from '@reveal/cad-parsers';
 
 import { Mock } from 'moq.ts';
 import { createV9SectorMetadata } from '../../../../../test-utilities';

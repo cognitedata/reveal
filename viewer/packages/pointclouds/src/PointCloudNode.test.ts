@@ -8,13 +8,28 @@ import { createPointCloudNode } from '../../../test-utilities';
 import * as THREE from 'three';
 import { PointCloudOctree, PointCloudOctreeNode } from './potree-three-loader';
 import { Mock } from 'moq.ts';
-import { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
-import jest from 'jest-mock';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../rendering';
+import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
+import { vi } from 'vitest';
+import type { PointCloudMaterial } from '../../rendering';
+import { DEFAULT_CLASSIFICATION } from '../../rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
 
 describe(PointCloudNode.name, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test('picking returns a Promise', async () => {
+    const node = createPointCloudNode();
+    vi.spyOn(PointCloudOctree.prototype, 'pick').mockResolvedValue(null);
+
+    const result = node.pick(new Mock<THREE.WebGLRenderer>().object(), new THREE.PerspectiveCamera(), new THREE.Ray());
+
+    expect(result).toBeInstanceOf(Promise);
+    await result;
+  });
+
   test('getModelTransformation returns transformation set by setModelTransformation', () => {
     const node = createPointCloudNode();
     const transform = new THREE.Matrix4()
@@ -69,7 +84,7 @@ describe(PointCloudNode.name, () => {
       const node = createPointCloudNode();
 
       Object.defineProperty(node.octree, 'root', {
-        get: jest.fn().mockReturnValue(undefined)
+        get: vi.fn().mockReturnValue(undefined)
       });
 
       const box = new THREE.Box3(new THREE.Vector3(-10, -10, -10), new THREE.Vector3(10, 10, 10));

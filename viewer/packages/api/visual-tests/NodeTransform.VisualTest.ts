@@ -4,10 +4,8 @@
 import * as THREE from 'three';
 
 import { CogniteCadModel } from '..';
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 import { NumericRange } from '@reveal/utilities';
 
 export default class NodeTransformVisualTest extends ViewerVisualTestFixture {

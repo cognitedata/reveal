@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { SectorMetadata } from '../metadata/types';
+import type { SectorMetadata } from '../metadata/types';
 
 /**
  * Conversion factors from a given unit to meters.

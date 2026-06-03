@@ -4,10 +4,11 @@
 
 import * as THREE from 'three';
 import { CadModelClipper } from './CadModelClipper';
-import { Mutable, generateV9SectorTree, createCadModelMetadata } from '../../../../test-utilities';
+import type { Mutable } from '../../../../test-utilities';
+import { generateV9SectorTree, createCadModelMetadata } from '../../../../test-utilities';
 
-import { SectorMetadata } from './types';
-import { CadModelMetadata } from './CadModelMetadata';
+import type { SectorMetadata } from './types';
+import type { CadModelMetadata } from './CadModelMetadata';
 
 describe('CadModelClipper', () => {
   // Model with depth 2 where root has 8 children. Bounds is <[0,0,0], [2,2,2]>
@@ -32,7 +33,7 @@ describe('CadModelClipper', () => {
     const box = new THREE.Box3(new THREE.Vector3(9, 9, 9), new THREE.Vector3(10, 10, 10));
     const clipper = new CadModelClipper(box);
 
-    expect(() => clipper.createClippedModel(modelDepth2)).toThrowError();
+    expect(() => clipper.createClippedModel(modelDepth2)).toThrow();
   });
 
   test('createClippedModel() only keeps sectors intersecting with clip box', () => {
@@ -44,7 +45,7 @@ describe('CadModelClipper', () => {
 
     expect(result.scene.sectorCount).toBe(2);
     sectors.forEach(s => {
-      expect(box.intersectsBox(s.subtreeBoundingBox)).toBeTrue();
+      expect(box.intersectsBox(s.subtreeBoundingBox)).toBeTruthy();
     });
   });
 

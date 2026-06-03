@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { CadMetadataWithSignedFiles, SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import { BoundingBox, SceneSectorMetadata } from './types';
+import type { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
 import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
 

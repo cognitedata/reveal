@@ -1,14 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { PrioritizedArea } from '@reveal/cad-styling';
-import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import type { PrioritizedArea } from '@reveal/cad-styling';
+import type { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
-import { CadLoadingHints } from '../../CadLoadingHints';
-import { CadModelBudget } from '../../CadModelBudget';
-import { CadNode } from '@reveal/cad-model';
+import type { CadLoadingHints } from '../../CadLoadingHints';
+import type { CadModelBudget } from '../../CadModelBudget';
+import type { CadNode } from '@reveal/cad-model';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
@@ -18,6 +18,16 @@ export interface DetermineSectorsInput {
   cameraInMotion: boolean;
   budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
+  /**
+   * Models whose sectors must always be loaded regardless of budget.
+   * Identified by their `revealInternalId` symbol.
+   */
+  lockedModelIdentifiers: Set<symbol>;
+  /**
+   * Per-model set of specific sector IDs that must always be loaded
+   * regardless of budget. Keyed by model `revealInternalId`.
+   */
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>;
 }
 
 export type DetermineSectorsPayload = {
@@ -28,6 +38,8 @@ export type DetermineSectorsPayload = {
   cameraInMotion: boolean;
   budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
+  lockedModelIdentifiers: Set<symbol>;
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>;
 };
 
 /**

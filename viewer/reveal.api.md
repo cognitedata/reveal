@@ -4,28 +4,28 @@
 
 ```ts
 
-import { AnnotationModel } from '@cognite/sdk';
-import { AnnotationsAssetRef } from '@cognite/sdk';
-import { AnnotationStatus } from '@cognite/sdk';
-import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
-import { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
+import type { AnnotationModel } from '@cognite/sdk';
+import type { AnnotationsAssetRef } from '@cognite/sdk';
+import type { AnnotationStatus } from '@cognite/sdk';
+import type { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import type { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 import { Box3 } from 'three';
-import { Camera } from 'three';
-import { CogniteClient } from '@cognite/sdk';
-import { CogniteInternalId } from '@cognite/sdk';
+import type { Camera } from 'three';
+import type { CogniteClient } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
 import { EventDispatcher } from 'three';
-import { IdEither } from '@cognite/sdk';
-import { ListResponse } from '@cognite/sdk';
+import type { IdEither } from '@cognite/sdk';
+import type { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
-import { Node3D } from '@cognite/sdk';
+import type { Node3D } from '@cognite/sdk';
 import { Object3D } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
-import { Plane } from 'three';
+import type { Plane } from 'three';
 import { Quaternion } from 'three';
 import { Raycaster } from 'three';
-import { Texture } from 'three';
+import type { Texture } from 'three';
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
@@ -58,7 +58,7 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotation
 }
 
 // @beta
-export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | Image360IconIntersection<T> | CustomObjectIntersection;
+export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | Image360IconIntersection<T> | Image360ClusterIntersection<T> | CustomObjectIntersection;
 
 // @public
 export interface AreaCollection {
@@ -352,9 +352,11 @@ export const CDF_TO_VIEWER_TRANSFORMATION: Matrix4;
 
 // @public
 export class CdfModelIdentifier implements ModelIdentifier {
-    constructor(modelId: number, revisionId: number);
+    constructor(modelId: number, revisionId: number, outputFormat?: File3dFormat);
     // (undocumented)
     readonly modelId: number;
+    // (undocumented)
+    readonly outputFormat: File3dFormat | undefined;
     // (undocumented)
     readonly revealInternalId: symbol;
     // (undocumented)
@@ -475,6 +477,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
+    findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined;
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
@@ -562,6 +565,8 @@ export interface Cognite3DViewerOptions {
     customDataSource?: DataSource;
     domElement?: HTMLElement;
     enableEdges?: boolean;
+    enableFloorIcons?: boolean;
+    enableHtmlClusters?: boolean;
     // @beta
     hasEventListeners?: boolean;
     loadingIndicatorStyle?: {
@@ -611,6 +616,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
+    lockTreeIndices(treeIndices: number[]): void;
     mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
@@ -637,6 +643,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     // (undocumented)
     readonly type: SupportedModelTypes;
     unassignStyledNodeCollection(nodeCollection: NodeCollection): void;
+    unlockAllTreeIndices(): void;
+    unlockTreeIndices(treeIndices: number[]): void;
     set visible(value: boolean);
     get visible(): boolean;
 }
@@ -802,6 +810,7 @@ export type ComboControlsOptions = {
 export type CommonModelOptions = {
     localPath?: string;
     geometryFilter?: GeometryFilter;
+    outputFormat?: File3dFormat;
 };
 
 // @public (undocumented)
@@ -920,6 +929,7 @@ export class DefaultCameraManager implements CameraManager {
     getComboControlsOptions(): Readonly<ComboControlsOptions>;
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
+    moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number, keyboardNavigationEnabled?: boolean): void;
     // (undocumented)
     off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     // (undocumented)
@@ -1002,7 +1012,8 @@ export enum File3dFormat {
     AnyFormat = "all-outputs",
     // (undocumented)
     EptPointCloud = "ept-pointcloud",
-    GltfCadModel = "gltf-directory"
+    GltfCadModel = "gltf-directory",
+    GltfPrioritizedNodes = "gltf-prioritized-nodes-directory"
 }
 
 // @beta (undocumented)
@@ -1310,6 +1321,16 @@ export type Image360BaseIdentifier = {
     image360CollectionExternalId: string;
 };
 
+// @beta
+export type Image360ClusterIntersection<T extends DataSourceType = DataSourceType> = {
+    type: 'image360Cluster';
+    image360Collection: Image360Collection<T>;
+    clusterPosition: Vector3;
+    clusterSize: number;
+    clusterIcons: Image360<T>[];
+    distanceToCamera: number;
+};
+
 // @public
 export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
     findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
@@ -1320,13 +1341,17 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     getAnnotationsInfo(source: 'assets' | 'hybrid' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[] | AssetHybridAnnotationImage360Info[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
+    getClusterDistanceThreshold(): number;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     getIconsOpacity(): number;
     getIconsVisibility(): boolean;
     getImagesOpacity(): number;
+    getMaxOctreeDepth(): number | undefined;
     getModelTransformation(out?: Matrix4): Matrix4;
+    // @deprecated
     readonly id: string;
     readonly image360Entities: Image360<T>[];
+    isHtmlClustersEnabled(): boolean;
     isOccludedIconsVisible(): boolean;
     readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
@@ -1336,12 +1361,15 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setClusterDistanceThreshold(threshold: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
     setIconsOpacity(opacity: number): void;
     setIconsVisibility(visible: boolean): void;
     setImagesOpacity(opacity: number): void;
+    setMaxOctreeDepth(depth: number | undefined): void;
     setModelTransformation(matrix: Matrix4): void;
     setOccludedIconsVisible(visible: boolean): void;
+    readonly sourceId: T['image360Identifier'];
     targetRevisionDate: Date | undefined;
 }
 

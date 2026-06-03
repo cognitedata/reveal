@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { PointCloudMetadata } from './PointCloudMetadata';
-import { MetadataRepository } from '@reveal/model-base';
+import type { PointCloudMetadata } from './PointCloudMetadata';
+import type { MetadataRepository } from '@reveal/model-base';
 
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import {
+import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,

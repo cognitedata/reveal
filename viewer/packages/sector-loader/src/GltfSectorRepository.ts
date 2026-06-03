@@ -3,9 +3,10 @@
  */
 
 import { MemoryRequestCache } from '@reveal/utilities';
-import { ConsumedSector, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
-import { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
-import { SectorRepository } from './SectorRepository';
+import type { ConsumedSector, SectorMetadata, WantedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { BinaryFileProvider, ModelIdentifier } from '@reveal/data-providers';
+import type { SectorRepository } from './SectorRepository';
 import { GltfSectorLoader } from './GltfSectorLoader';
 
 export class GltfSectorRepository implements SectorRepository {

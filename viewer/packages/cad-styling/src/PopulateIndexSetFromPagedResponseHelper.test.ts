@@ -9,16 +9,16 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { sleep } from '../../../test-utilities';
 
 import { NumericRange } from '@reveal/utilities';
-import { ListResponse } from '@cognite/sdk';
+import type { ListResponse } from '@cognite/sdk';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
   let notifyChangedCallback: () => void;
 
   beforeEach(() => {
-    notifyChangedCallback = jest.fn();
+    notifyChangedCallback = vi.fn();
     helper = new PopulateIndexSetFromPagedResponseHelper<number>(
       xs => xs.map(x => new NumericRange(x, 1)),
       async xs => xs.map(x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1])),
@@ -31,20 +31,20 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
 
     helper.interrupt();
     const completed = await helper.pageResults(Promise.resolve(response));
-    expect(completed).toBeFalse();
+    expect(completed).toBeFalsy();
     expect(helper.indexSet.count).toBe(0);
-    expect(helper.areas.isEmpty).toBeTrue();
-    expect(helper.isLoading).toBeFalse();
+    expect(helper.areas.isEmpty).toBeTruthy();
+    expect(helper.isLoading).toBeFalsy();
   });
 
   test('is not interrupted, fetches all pages and populates set', async () => {
     const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
     const completed = await helper.pageResults(Promise.resolve(response));
-    expect(completed).toBeTrue();
+    expect(completed).toBeTruthy();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(helper.areas.isEmpty).toBeFalse();
-    expect(helper.isLoading).toBeFalse();
+    expect(helper.areas.isEmpty).toBeFalsy();
+    expect(helper.isLoading).toBeFalsy();
   });
 
   test('is interrupted after first page is fetched, partially populates the set', async () => {
@@ -56,21 +56,21 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     };
 
     const completed = await helper.pageResults(Promise.resolve(response));
-    expect(completed).toBeFalse();
+    expect(completed).toBeFalsy();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
-    expect(helper.areas.isEmpty).toBeFalse();
-    expect(helper.isLoading).toBeFalse();
-    expect(notifyChangedCallback).toBeCalledTimes(1);
+    expect(helper.areas.isEmpty).toBeFalsy();
+    expect(helper.isLoading).toBeFalsy();
+    expect(notifyChangedCallback).toHaveBeenCalledTimes(1);
   });
 
   test('isLoading returns true while processing pages', async () => {
     const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
     const operation = helper.pageResults(Promise.resolve(response));
-    expect(helper.isLoading).toBeTrue();
+    expect(helper.isLoading).toBeTruthy();
     const completed = await operation;
-    expect(completed).toBeTrue();
-    expect(helper.isLoading).toBeFalse();
+    expect(completed).toBeTruthy();
+    expect(helper.isLoading).toBeFalsy();
   });
 
   test('two concurrent load operations, both populate collections', async () => {
@@ -79,20 +79,20 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
 
     const operation1 = helper.pageResults(Promise.resolve(response1));
     const operation2 = helper.pageResults(Promise.resolve(response2));
-    expect(helper.isLoading).toBeTrue();
+    expect(helper.isLoading).toBeTruthy();
     const completed1 = await operation1;
-    expect(completed1).toBeTrue();
+    expect(completed1).toBeTruthy();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(helper.areas.isEmpty).toBeFalse();
-    expect(helper.isLoading).toBeTrue();
+    expect(helper.areas.isEmpty).toBeFalsy();
+    expect(helper.isLoading).toBeTruthy();
     const completed2 = await operation2;
-    expect(completed2).toBeTrue();
+    expect(completed2).toBeTruthy();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
-    expect(helper.areas.isEmpty).toBeFalse();
-    expect(helper.areas).not.toBeEmpty();
-    expect(helper.isLoading).toBeFalse();
+    expect(helper.areas.isEmpty).toBeFalsy();
+    expect(helper.areas).to.not.be.empty;
+    expect(helper.isLoading).toBeFalsy();
 
-    expect(notifyChangedCallback).toBeCalledTimes(4);
+    expect(notifyChangedCallback).toHaveBeenCalledTimes(4);
   });
 });
 

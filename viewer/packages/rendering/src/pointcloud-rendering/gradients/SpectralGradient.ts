@@ -2,7 +2,7 @@
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
 import { Color } from 'three';
-import { IGradient } from '../types';
+import type { IGradient } from '../types';
 
 // From chroma spectral http://gka.github.io/chroma.js/
 export const SpectralGradient: IGradient = [

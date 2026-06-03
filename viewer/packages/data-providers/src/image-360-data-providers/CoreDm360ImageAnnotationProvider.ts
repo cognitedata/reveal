@@ -1,14 +1,15 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdentifier } from '../DataSourceType';
-import {
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import { isSameDMIdentifier } from '../DataSourceType';
+import type {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
   InstanceReference
 } from '../types';
-import {
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
@@ -18,10 +19,12 @@ import {
 } from '@reveal/360-images';
 import { isSameImage360RevisionId } from './shared';
 import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
-import { CogniteClient } from '@cognite/sdk';
-import { fetchAnnotationsForInstance, Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
+import type { CogniteClient } from '@cognite/sdk';
+import type { Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
+import { fetchAnnotationsForInstance } from './cdm/fetchAnnotationsForInstance';
 import { fetchCoreDm360AnnotationsForCollection } from './cdm/fetchCoreDm360AnnotationsForCollection';
-import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities';
+import type { DMInstanceKey } from '@reveal/utilities';
+import { dmInstanceRefToKey } from '@reveal/utilities';
 
 export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvider<DMDataSourceType> {
   private readonly _client: CogniteClient;
@@ -116,7 +119,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
 
     const annotations = (
       await fetchCoreDm360AnnotationsForCollection(
-        { externalId: collection.collectionId.image360CollectionExternalId, space: collection.collectionId.space },
+        { externalId: collection.sourceId.image360CollectionExternalId, space: collection.sourceId.space },
         this._client
       )
     ).filter(annotationFilter);

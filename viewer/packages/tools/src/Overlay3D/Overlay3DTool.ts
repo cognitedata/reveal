@@ -1,23 +1,18 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { Cognite3DViewer } from '@reveal/api';
-import {
-  assertNever,
-  EventTrigger,
-  DisposedDelegate,
-  PointerEventData,
-  getNormalizedPixelCoordinates
-} from '@reveal/utilities';
+import type { Cognite3DViewer } from '@reveal/api';
+import type { DisposedDelegate, PointerEventData } from '@reveal/utilities';
+import { assertNever, EventTrigger, getNormalizedPixelCoordinates } from '@reveal/utilities';
 import * as THREE from 'three';
-import {
-  Overlay3DCollection,
+import type {
   Overlay3DIcon,
   OverlayInfo,
   DefaultOverlay3DContentType,
   OverlayCollection,
   Overlay3D
 } from '@reveal/3d-overlays';
+import { Overlay3DCollection } from '@reveal/3d-overlays';
 import { TextOverlay } from './TextOverlay';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 

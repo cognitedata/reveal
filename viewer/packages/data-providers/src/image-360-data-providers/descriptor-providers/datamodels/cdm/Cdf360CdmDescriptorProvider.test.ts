@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient, FileInfo, HttpResponse } from '@cognite/sdk';
+import type { CogniteClient, FileInfo, HttpResponse } from '@cognite/sdk';
 import { Cdf360CdmDescriptorProvider } from './Cdf360CdmDescriptorProvider';
 import { It, Mock } from 'moq.ts';
 import { mockCdf360CdmDescriptorProviderResponse } from '../../../../../../../test-utilities/src/fixtures/dmsResponses/mockCdf360CdmDescriptorProviderResponse';

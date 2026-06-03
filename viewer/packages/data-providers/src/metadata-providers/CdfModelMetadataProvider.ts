@@ -2,13 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { BlobOutputMetadata, File3dFormat } from '../types';
-import { ModelMetadataProvider } from '../ModelMetadataProvider';
+import type { BlobOutputMetadata } from '../types';
+import { File3dFormat } from '../types';
+import type { ModelMetadataProvider } from '../ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 
-import { CogniteClient, ItemsResponse } from '@cognite/sdk';
-import { ModelIdentifier } from '../ModelIdentifier';
+import type { CogniteClient, ItemsResponse } from '@cognite/sdk';
+import type { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of

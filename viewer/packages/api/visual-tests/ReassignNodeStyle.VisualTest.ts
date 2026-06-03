@@ -6,10 +6,8 @@ import * as THREE from 'three';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet } from '@reveal/utilities';
 import { CogniteCadModel } from '..';
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 function createAlternatingIndexSet(nodeCount: number): IndexSet {
   const indexSet = new IndexSet();

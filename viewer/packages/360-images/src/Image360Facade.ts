@@ -1,20 +1,28 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Camera, Matrix4, Ray, Raycaster, Vector2, Vector3 } from 'three';
+import type { Camera, Ray, Vector2 } from 'three';
+import { Matrix4, Raycaster, Vector3 } from 'three';
 import pull from 'lodash/pull';
 
-import { Image360Entity } from './entity/Image360Entity';
+import type { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';
-import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
-import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
-import { IconCullingScheme } from './icons/IconCollection';
-import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
-import { Image360AnnotationFilterOptions } from './annotation/types';
+import type { Image360CollectionFactory } from './collection/Image360CollectionFactory';
+import type { DefaultImage360Collection } from './collection/DefaultImage360Collection';
+import type { IconCullingScheme } from './icons/IconCollection';
+import type { Image360RevisionEntity } from './entity/Image360RevisionEntity';
+import type { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
-import { DataSourceType } from '@reveal/data-providers';
-import { Image360IconIntersectionData } from './types';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
 import { ClosestGeometryFinder } from '@reveal/utilities';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+
+type ClusterHoverCandidate<T extends DataSourceType> = {
+  collection: DefaultImage360Collection<T>;
+  representativeIcon: Overlay3DIcon;
+  intersectionData?: Image360ClusterIntersectionData<T>;
+};
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
@@ -128,6 +136,8 @@ export class Image360Facade<T extends DataSourceType> {
     const intersection = new Vector3();
     const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
 
+    this.intersectCluster(coords, camera);
+
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
@@ -173,6 +183,81 @@ export class Image360Facade<T extends DataSourceType> {
     function hasVisibleIcon(entity: Image360Entity<T>) {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
+  }
+
+  /**
+   * Intersect with cluster icons. Returns cluster data if a cluster is hit.
+   * Also updates hover state to highlight only the closest cluster.
+   * @param coords - Normalized screen coordinates (-1 to 1)
+   * @param camera - The camera used for the intersection
+   * @returns Cluster intersection data if a cluster is hit, undefined otherwise
+   */
+  public intersectCluster(coords: Vector2, camera: Camera): Image360ClusterIntersectionData<T> | undefined {
+    const closest = this.findClosestCluster(coords, camera);
+    this.clearHoveredClusters();
+    if (closest) {
+      this.applyClusterHover(closest);
+    }
+    return closest?.intersectionData;
+  }
+
+  /**
+   * Finds the closest cluster candidate.
+   * @param coords - Normalized screen coordinates (-1 to 1)
+   * @param camera - The camera used for the intersection
+   * @returns The closest cluster candidate, undefined if no cluster is hit
+   */
+  private findClosestCluster(coords: Vector2, camera: Camera): ClusterHoverCandidate<T> | undefined {
+    const modelMatrix = new Matrix4();
+    const invModelMatrix = new Matrix4();
+    const closestFinder = new ClosestGeometryFinder<ClusterHoverCandidate<T>>(camera.position);
+
+    this._rayCaster.setFromCamera(coords, camera);
+
+    for (const collection of this._image360Collections) {
+      collection.getModelTransformation(modelMatrix);
+      invModelMatrix.copy(modelMatrix).invert();
+
+      const modelRay = this._rayCaster.ray.clone().applyMatrix4(invModelMatrix);
+
+      const clusterData = collection.intersectCluster(modelRay);
+      if (clusterData) {
+        const worldPosition = clusterData.clusterPosition.clone().applyMatrix4(modelMatrix);
+
+        closestFinder.addLazy(worldPosition, () => ({
+          intersectionData: {
+            image360Collection: collection,
+            clusterPosition: worldPosition,
+            clusterSize: clusterData.clusterSize,
+            clusterIcons: collection.getEntitiesFromIcons(clusterData.clusterIcons),
+            distanceToCamera: closestFinder.minDistance
+          },
+          collection,
+          representativeIcon: clusterData.representativeIcon
+        }));
+      }
+    }
+
+    return closestFinder.getClosestGeometry();
+  }
+
+  /**
+   * Applies cluster hover on the given candidate's collection.
+   * @param candidate - The cluster candidate to apply hover to
+   */
+  private applyClusterHover(candidate: ClusterHoverCandidate<T>): void {
+    candidate.collection.setHoveredClusterIcon(candidate.representativeIcon);
+  }
+
+  /**
+   * Clear hovered cluster state for all collections.
+   */
+  public clearHoveredClusters(): void {
+    this._image360Collections.forEach(collection => collection.clearHoveredCluster());
+  }
+
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._image360Collections.forEach(collection => collection.setReferenceIcon(worldY));
   }
 
   public dispose(): void {

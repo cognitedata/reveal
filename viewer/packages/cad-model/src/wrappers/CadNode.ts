@@ -2,25 +2,25 @@
  * Copyright 2021 Cognite AS
  */
 
-import {
-  NodeAppearanceProvider,
-  NodeAppearance,
-  PrioritizedArea,
-  type NodeTransformProvider
-} from '@reveal/cad-styling';
-import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
-import { SectorRepository } from '@reveal/sector-loader';
-import { ParsedGeometry } from '@reveal/sector-parser';
-import { CadMaterialManager, RenderMode, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
+import type { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
+import { type NodeTransformProvider } from '@reveal/cad-styling';
+import throttle from 'lodash/throttle';
+import type { SectorScene, CadModelMetadata, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
+import { RootSectorNode } from '@reveal/cad-parsers';
+import type { SectorRepository } from '@reveal/sector-loader';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import type { CadMaterialManager, StyledTreeIndexSets } from '@reveal/rendering';
+import { setModelRenderLayers, createCadMaterial, type CadMaterial } from '@reveal/rendering';
 
-import { Group, Object3D, Plane, Matrix4, Object3DEventMap } from 'three';
+import type { Plane, Object3DEventMap } from 'three';
+import { Group, Object3D, Matrix4 } from 'three';
 
-import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
+import type { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { CadMeshManager } from './CadMeshManager';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -37,9 +37,10 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   private readonly _sourceTransform: Matrix4;
   private readonly _customTransform: Matrix4;
-  private readonly _setModelRenderLayers = () => this.setModelRenderLayers();
   private readonly _batchedGeometryMeshGroup: Group;
   private readonly _styledTreeIndexSets: StyledTreeIndexSets;
+  //cleaup type
+  private readonly _cadMaterial: CadMaterial;
 
   private _isDisposed: boolean = false;
 
@@ -50,6 +51,9 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public readonly treeIndexToSectorsMap;
 
+  private readonly _lockedTreeIndices = new Set<number>();
+  private readonly _lockedSectorIds = new Set<number>();
+
   public readonly type = 'CadNode';
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
@@ -59,22 +63,37 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._sectorRepository = sectorRepository;
     this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
-    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier.revealInternalId);
-    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier.revealInternalId);
-    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier.revealInternalId);
-    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier.revealInternalId);
+    this._cadMaterial = createCadMaterial(model.scene.maxTreeIndex);
 
     this._styledTreeIndexSets = {
-      back,
-      ghost,
-      inFront,
-      visible
+      back: this._cadMaterial.nodeAppearanceTextureBuilder.regularNodeTreeIndices,
+      ghost: this._cadMaterial.nodeAppearanceTextureBuilder.ghostedNodeTreeIndices,
+      inFront: this._cadMaterial.nodeAppearanceTextureBuilder.infrontNodeTreeIndices,
+      visible: this._cadMaterial.nodeAppearanceTextureBuilder.visibleNodeTreeIndices
     };
+
+    const materialUpdateThrottleDelay = 75;
+    const updateMaterialsCallback: () => void = throttle(
+      () => {
+        if (this._cadMaterial.nodeAppearanceTextureBuilder.needsUpdate) {
+          this._cadMaterial.nodeAppearanceTextureBuilder.build();
+        }
+        this._needsRedraw = true;
+        this.setModelRenderLayers();
+      },
+      materialUpdateThrottleDelay,
+      {
+        leading: true,
+        trailing: true
+      }
+    );
+
+    this._cadMaterial.nodeAppearanceProvider.on('changed', updateMaterialsCallback);
 
     this._batchedGeometryMeshGroup = new Group();
     this._batchedGeometryMeshGroup.name = 'Batched Geometry';
 
-    const materials = materialManager.getModelMaterials(model.modelIdentifier.revealInternalId);
+    const materials = this._cadMaterial.materials;
     this._geometryBatchingManager = new MultiBufferBatchingManager(
       this._batchedGeometryMeshGroup,
       materials,
@@ -105,8 +124,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
     this._sourceTransform = new Matrix4().copy(model.modelMatrix);
     this._customTransform = new Matrix4();
-
-    this.materialManager.on('materialsChanged', this._setModelRenderLayers);
   }
 
   get needsRedraw(): boolean {
@@ -117,26 +134,30 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._needsRedraw = false;
   }
 
+  // TODO: cleanup type
+  get cadMaterial(): CadMaterial {
+    return this._cadMaterial;
+  }
+
   get nodeTransformProvider(): NodeTransformProvider {
-    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    return this._cadMaterial.nodeTransformProvider;
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {
-    return this._materialManager.getModelNodeAppearanceProvider(
-      this._cadModelMetadata.modelIdentifier.revealInternalId
-    );
+    return this._cadMaterial.nodeAppearanceProvider;
   }
 
   get defaultNodeAppearance(): NodeAppearance {
-    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    return this._cadMaterial.nodeAppearanceTextureBuilder.getDefaultAppearance();
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
-    this._materialManager.setModelDefaultNodeAppearance(
-      this._cadModelMetadata.modelIdentifier.revealInternalId,
-      appearance
-    );
+    this._cadMaterial.nodeAppearanceTextureBuilder.setDefaultAppearance(appearance);
+    if (this._cadMaterial.nodeAppearanceTextureBuilder.needsUpdate) {
+      this._cadMaterial.nodeAppearanceTextureBuilder.build();
+    }
     this.setModelRenderLayers();
+    this._needsRedraw = true;
   }
 
   get clippingPlanes(): Plane[] {
@@ -161,18 +182,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   get rootSector(): RootSectorNode {
     return this._rootSector;
-  }
-
-  get materialManager(): CadMaterialManager {
-    return this._materialManager;
-  }
-
-  set renderMode(mode: RenderMode) {
-    this._materialManager.setRenderMode(mode);
-  }
-
-  get renderMode(): RenderMode {
-    return this._materialManager.getRenderMode();
   }
 
   get isDisposed(): boolean {
@@ -216,6 +225,50 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     return this.nodeAppearanceProvider.getPrioritizedAreas();
   }
 
+  get lockedSectorIds(): ReadonlySet<number> {
+    return this._lockedSectorIds;
+  }
+
+  lockTreeIndices(treeIndices: number[]): void {
+    for (const treeIndex of treeIndices) {
+      this._lockedTreeIndices.add(treeIndex);
+      for (const sectorId of this.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex)) {
+        this._lockedSectorIds.add(sectorId);
+      }
+    }
+  }
+
+  unlockTreeIndices(treeIndices: number[]): void {
+    for (const treeIndex of treeIndices) {
+      this._lockedTreeIndices.delete(treeIndex);
+    }
+    this.recomputeLockedSectorIds();
+  }
+
+  unlockAllTreeIndices(): void {
+    this._lockedTreeIndices.clear();
+    this._lockedSectorIds.clear();
+  }
+
+  /**
+   * Called when a new sector is discovered for a tree index.
+   * If that tree index is locked, the sector is added to the locked set.
+   */
+  onTreeIndexSectorDiscovered(treeIndex: number, sectorId: number): void {
+    if (this._lockedTreeIndices.has(treeIndex)) {
+      this._lockedSectorIds.add(sectorId);
+    }
+  }
+
+  private recomputeLockedSectorIds(): void {
+    this._lockedSectorIds.clear();
+    for (const treeIndex of this._lockedTreeIndices) {
+      for (const sectorId of this.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex)) {
+        this._lockedSectorIds.add(sectorId);
+      }
+    }
+  }
+
   public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
     this._geometryBatchingManager?.batchGeometries(geometryBatchingQueue, sectorId);
   }
@@ -246,7 +299,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
-    this.materialManager.off('materialsChanged', this._setModelRenderLayers);
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
     this._geometryBatchingManager?.dispose();
 

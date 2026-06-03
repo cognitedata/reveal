@@ -37,8 +37,6 @@ export function forEachMaterial(materials: Materials, callback: (material: THREE
 }
 
 export function createMaterials(
-  renderMode: RenderMode,
-  clippingPlanes: THREE.Plane[],
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
   transformOverrideLookupTexture: THREE.DataTexture,
@@ -47,7 +45,7 @@ export function createMaterials(
   const boxMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Box)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -62,7 +60,7 @@ export function createMaterials(
   const circleMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     vertexShader: sectorShaders.circlePrimitive.vertex,
     fragmentShader: sectorShaders.circlePrimitive.fragment,
     // TODO double side is not necessary for all,
@@ -79,7 +77,7 @@ export function createMaterials(
   const nutMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Nuts)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -89,7 +87,7 @@ export function createMaterials(
   const quadMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Quads)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -99,7 +97,7 @@ export function createMaterials(
   const generalRingMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -116,7 +114,7 @@ export function createMaterials(
   const coneMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -131,7 +129,7 @@ export function createMaterials(
   const eccentricConeMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Eccentric cone)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -146,7 +144,7 @@ export function createMaterials(
   const ellipsoidSegmentMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -162,7 +160,7 @@ export function createMaterials(
   const generalCylinderMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -180,7 +178,7 @@ export function createMaterials(
   const trapeziumMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Trapezium)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -195,7 +193,7 @@ export function createMaterials(
   const torusSegmentMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Torus segment)',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -210,7 +208,7 @@ export function createMaterials(
   const triangleMeshMaterial = new THREE.RawShaderMaterial({
     name: 'Triangle meshes',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
     vertexShader: sectorShaders.detailedMesh.vertex,
@@ -220,7 +218,7 @@ export function createMaterials(
   const instancedMeshMaterial = new THREE.RawShaderMaterial({
     name: 'Instanced meshes',
     clipping: true,
-    clippingPlanes,
+    clippingPlanes: [],
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
     vertexShader: sectorShaders.instancedMesh.vertex,
@@ -251,7 +249,7 @@ export function createMaterials(
       transformOverrideIndexTexture,
       transformOverrideLookupTexture,
       matCapTexture,
-      renderMode
+      RenderMode.Color
     )
   );
 

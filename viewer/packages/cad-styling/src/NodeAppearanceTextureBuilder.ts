@@ -30,7 +30,7 @@ export class NodeAppearanceTextureBuilder {
 
     this._overrideColorPerTreeIndexTexture = allocateOverrideColorPerTreeIndexTexture(treeIndexCount);
     this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(
-      this._overrideColorPerTreeIndexTexture.image.data.buffer.byteLength
+      this._overrideColorPerTreeIndexTexture.image.data?.buffer.byteLength ?? 0
     );
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
@@ -108,7 +108,11 @@ export class NodeAppearanceTextureBuilder {
       return;
     }
 
-    const rgba = createUint8View(this._overrideColorPerTreeIndexTexture.image.data);
+    const rawData = this._overrideColorPerTreeIndexTexture.image.data;
+    if (!rawData) {
+      throw new Error('Node appearance override color texture data is not initialized');
+    }
+    const rgba = createUint8View(rawData);
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
 
@@ -196,7 +200,11 @@ export class NodeAppearanceTextureBuilder {
       return;
     }
 
-    combineRGBA(createUint8View(this._overrideColorPerTreeIndexTexture.image.data), treeIndices, style);
+    const textureData = this._overrideColorPerTreeIndexTexture.image.data;
+    if (!textureData) {
+      throw new Error('Node appearance override color texture data is not initialized');
+    }
+    combineRGBA(createUint8View(textureData), treeIndices, style);
   }
 
   private handleStylesChanged() {

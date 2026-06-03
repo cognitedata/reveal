@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 /**
  * The RenderPass interface describes some render pass

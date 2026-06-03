@@ -1,15 +1,15 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import {
+import type {
   AnnotationModel,
   AnnotationsTypesImagesAssetLink,
   AnnotationsTypesImagesInstanceLink,
   IdEither
 } from '@cognite/sdk';
-import * as THREE from 'three';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import {
+import type * as THREE from 'three';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
@@ -84,6 +84,17 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
   getRelevant360ImageAnnotations(
     annotationSpecifier: Image360AnnotationSpecifier<T>
   ): Promise<T['image360AnnotationType'][]>;
+
+  /**
+   * Resolves the mapping from internal file IDs (annotatedResourceId) to external IDs.
+   * This is needed to match annotations to face descriptors when descriptors use externalId.
+   * Optional - if not implemented, the caller should build mapping from descriptors only.
+   */
+  resolveFileIdToExternalIdMapping?(
+    annotations: T['image360AnnotationType'][],
+    descriptors: Image360FileDescriptor[]
+  ): Promise<Map<number, string>>;
+
   findImageAnnotationsForInstance(
     instanceFilter: Image360AnnotationInstanceReference<T>,
     collection: DefaultImage360Collection<T>
@@ -190,9 +201,14 @@ export type Image360Texture = {
 };
 
 export type Image360FileDescriptor = {
-  fileId: number;
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
+  /** Internal CDF file ID (numeric) */
+  fileId?: number;
+  /** External file ID (string) - for system-space/FDM collections */
+  externalId?: string;
+  /** DM instance reference - for CDM collections */
+  instanceId?: DMInstanceRef;
 };
 
 export enum File3dFormat {
@@ -201,6 +217,12 @@ export enum File3dFormat {
    * Reveal v9 and above (GLTF based output)
    */
   GltfCadModel = 'gltf-directory',
+  /**
+   * High-detail geometry for a prioritized subset of nodes.
+   * Same GLTF structure as GltfCadModel but only contains
+   * geometry for nodes specified in a PrioritizedNodes job.
+   */
+  GltfPrioritizedNodes = 'gltf-prioritized-nodes-directory',
   AnyFormat = 'all-outputs'
 }
 

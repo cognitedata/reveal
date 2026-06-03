@@ -3,26 +3,17 @@
  */
 
 import { CadMeshManager } from './CadMeshManager';
-import { CadMaterialManager } from '@reveal/rendering';
+import type { CadMaterialManager } from '@reveal/rendering';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { ParsedMeshGeometry } from '@reveal/cad-parsers';
+import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { SectorRepository } from '@reveal/sector-loader';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { SectorRepository } from '@reveal/sector-loader';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
-import {
-  BufferGeometry,
-  BufferAttribute,
-  Box3,
-  Vector3,
-  CanvasTexture,
-  Mesh,
-  RawShaderMaterial,
-  Matrix4,
-  Group
-} from 'three';
+import type { Group } from 'three';
+import { BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, RawShaderMaterial, Matrix4 } from 'three';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 
 describe(CadMeshManager.name, () => {
@@ -212,7 +203,7 @@ describe(CadMeshManager.name, () => {
 
   test('should remove mesh group from scene without disposing shared geometries', () => {
     const geometry = createBasicGeometry();
-    const mockDispose = jest.fn();
+    const mockDispose = vi.fn();
     geometry.dispose = mockDispose;
     const parsedGeometries = [createParsedGeometry(RevealGeometryCollectionType.TriangleMesh, geometry)];
 
@@ -228,7 +219,7 @@ describe(CadMeshManager.name, () => {
   test('should remove textured mesh group without disposing shared textures', () => {
     const geometry = createBasicGeometry();
     const texture = createTexture();
-    const mockTextureDispose = jest.fn();
+    const mockTextureDispose = vi.fn();
     texture.dispose = mockTextureDispose;
     const parsedGeometries = [
       createParsedGeometry(RevealGeometryCollectionType.TexturedTriangleMesh, geometry, texture)

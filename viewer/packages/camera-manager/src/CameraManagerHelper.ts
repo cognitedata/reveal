@@ -4,7 +4,8 @@
 
 import { fitCameraToBoundingBox } from '@reveal/utilities';
 import range from 'lodash/range';
-import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
+import type { Box3, PerspectiveCamera } from 'three';
+import { Plane, Quaternion, Vector3 } from 'three';
 
 type NearAndFarPlaneBuffers = {
   corners: Vector3[];

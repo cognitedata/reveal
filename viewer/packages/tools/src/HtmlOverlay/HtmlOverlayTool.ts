@@ -8,11 +8,12 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { BucketGrid2D } from './BucketGrid2D';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { DisposedDelegate, SceneRenderedDelegate, isPointVisibleByPlanes } from '@reveal/utilities';
+import type { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import { isPointVisibleByPlanes } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
 import debounce from 'lodash/debounce';
-import { Cognite3DViewer } from '@reveal/api';
-import { DataSourceType } from '@reveal/data-providers';
+import type { Cognite3DViewer } from '@reveal/api';
+import type { DataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback that is triggered whenever the 2D position of an overlay is updated
@@ -71,8 +72,20 @@ export type HtmlOverlayToolClusteringOptions = {
   /**
    * Callback that is triggered when a set of overlays are clustered together
    * to create a "composite" element as a placeholder for the clustered elements.
-   * Note that this callback will be triggered every frame for each cluster so it
-   * must be performant.
+   * Composite elements are cached and reused across frames, so this callback is
+   * only invoked when the cluster composition changes (i.e. when the set of
+   * clustered overlays differs from any previously seen cluster).
+   *
+   * Note: because the callback is not re-invoked while a cluster persists,
+   * the produced composite element will not reflect later mutations to the
+   * `userData` of any clustered overlay. Treat `userData` as immutable for
+   * overlays that may be clustered, or rebuild the affected overlays
+   * (remove + add) to force a fresh composite to be created.
+   *
+   * The composite's screen position is updated each frame by the tool, but
+   * the callback itself should not depend on viewport state (camera position,
+   * cluster midpoint, screen coordinates, etc.) since the returned element
+   * is reused across frames as the camera moves.
    */
   createClusterElementCallback: HtmlOverlayCreateClusterDelegate;
 };
@@ -143,6 +156,14 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _compositeOverlays: HTMLElement[] = [];
   private _visible: boolean;
   private readonly TIMER_ADVANCE_MS = 50;
+
+  // Stable identity for overlay elements — used to build cluster cache keys
+  private readonly _elementIds = new WeakMap<HTMLElement, number>();
+  private _nextElementId = 0;
+
+  // Cluster cache: reuse composite DOM elements when cluster composition hasn't changed
+  private readonly _clusterCache = new Map<string, HTMLElement>();
+  private readonly _aliveClusterKeys = new Set<string>();
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
@@ -243,6 +264,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         }
       };
       this._htmlOverlays.set(htmlElement, element);
+      this._elementIds.set(htmlElement, this._nextElementId++);
 
       this.scheduleUpdate();
     }, this.TIMER_ADVANCE_MS);
@@ -259,16 +281,24 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     }
     this.viewerDomElement.removeChild(htmlElement);
     this._htmlOverlays.delete(htmlElement);
+    this.invalidateClustersForElement(htmlElement);
   }
 
   /**
    * Removes all attached HTML overlay elements.
    */
   clear(): void {
-    const overlays = Array.from(this._htmlOverlays.keys());
-    for (const element of overlays) {
-      this.remove(element);
-    }
+    this.ensureNotDisposed();
+    this._htmlOverlays.forEach((_, htmlElement) => {
+      this.viewerDomElement.removeChild(htmlElement);
+    });
+    this._htmlOverlays.clear();
+    this._clusterCache.forEach(compositeElement => {
+      compositeElement.parentNode?.removeChild(compositeElement);
+    });
+    this._clusterCache.clear();
+    this._aliveClusterKeys.clear();
+    this._compositeOverlays.splice(0);
     this.forceUpdate();
   }
 
@@ -306,9 +336,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     }
     this.ensureNotDisposed();
     this.cleanupClusterElements();
-    if (this._htmlOverlays.size === 0) {
-      return;
-    }
     this.updateNewElementSizes();
 
     const camera = customCamera ?? this.viewerCamera;
@@ -388,8 +415,11 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       }
     });
 
+    this.removeStaleClusters();
     this._compositeOverlays.forEach(htmlElement => {
-      this.viewerDomElement.appendChild(htmlElement);
+      if (!htmlElement.parentNode) {
+        this.viewerDomElement.appendChild(htmlElement);
+      }
     });
   }
 
@@ -410,10 +440,56 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private cleanupClusterElements(): void {
-    this._compositeOverlays.forEach(element => {
-      this.viewerDomElement.removeChild(element);
-    });
+    // Mark all cached clusters as stale. Clustering will mark alive ones.
+    this._aliveClusterKeys.clear();
+  }
+
+  /**
+   * Invalidate any cached cluster composites that referenced the given overlay
+   * element. Used when an overlay is removed so its cluster composite is
+   * detached from the DOM immediately rather than lingering until the next
+   * frame's stale-cluster sweep.
+   */
+  private invalidateClustersForElement(htmlElement: HTMLElement): void {
+    const removedId = this._elementIds.get(htmlElement);
+    if (removedId === undefined) {
+      return;
+    }
+    for (const [key, compositeElement] of this._clusterCache.entries()) {
+      if (!clusterKeyContainsId(key, removedId)) {
+        continue;
+      }
+      compositeElement.parentNode?.removeChild(compositeElement);
+      this._clusterCache.delete(key);
+      this._aliveClusterKeys.delete(key);
+      // An overlay can belong to at most one cluster per frame (the grid
+      // removes elements once clustered) and stale clusters are swept each
+      // frame, so the cache contains at most one match.
+      break;
+    }
+  }
+
+  /**
+   * Remove cluster cache entries that were not reused during the current frame
+   * and detach their composite elements from the DOM.
+   */
+  private removeStaleClusters(): void {
+    for (const [key, compositeElement] of this._clusterCache.entries()) {
+      if (!this._aliveClusterKeys.has(key)) {
+        if (compositeElement.parentNode) {
+          compositeElement.parentNode.removeChild(compositeElement);
+        }
+        this._clusterCache.delete(key);
+      }
+    }
+    // Rebuild _compositeOverlays from only the alive entries
     this._compositeOverlays.splice(0);
+    for (const key of this._aliveClusterKeys) {
+      const el = this._clusterCache.get(key);
+      if (el) {
+        this._compositeOverlays.push(el);
+      }
+    }
   }
 
   private clusterByOverlapInScreenSpace(createClusterElementCallback: HtmlOverlayCreateClusterDelegate) {
@@ -450,15 +526,42 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         const midpoint = cluster
           .reduce((position, element) => position.add(element.state.position2D), clusterMidpoint.set(0, 0))
           .divideScalar(cluster.length);
-        const compositeElement = createClusterElementCallback(
-          cluster.map(element => ({ htmlElement: element.htmlElement, userData: element.options.userData }))
-        );
+
+        const clusterKey = this.createClusterKey(cluster);
+
+        let compositeElement = this._clusterCache.get(clusterKey);
+        if (!compositeElement) {
+          // Composition changed — create a new composite element
+          compositeElement = createClusterElementCallback(
+            cluster.map(element => ({ htmlElement: element.htmlElement, userData: element.options.userData }))
+          );
+          this._clusterCache.set(clusterKey, compositeElement);
+        }
+
         // Hide all elements in cluster
         cluster.forEach(element => (element.state.visible = false));
-        // ... and replace with a composite
+        // Update position (may have shifted) and mark as alive
+        this._aliveClusterKeys.add(clusterKey);
         this.addComposite(compositeElement, midpoint);
       }
     }
+  }
+
+  private createClusterKey(cluster: { htmlElement: HTMLElement }[]): string {
+    return cluster
+      .map(el => {
+        let id = this._elementIds.get(el.htmlElement);
+        if (id === undefined) {
+          // Overlay reached clustering before add()'s deferred ID
+          // assignment ran (or via a path that bypassed it). Assign
+          // lazily so a stable key can still be produced.
+          id = this._nextElementId++;
+          this._elementIds.set(el.htmlElement, id);
+        }
+        return id;
+      })
+      .sort((a, b) => a - b)
+      .join(',');
   }
 
   private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
@@ -466,7 +569,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     htmlElement.style.visibility = 'visible';
     htmlElement.style.left = `${position.x + canvas.offsetLeft}px`;
     htmlElement.style.top = `${position.y + canvas.offsetTop}px`;
-    this._compositeOverlays.push(htmlElement);
   }
 
   private onSceneRendered(event: {
@@ -508,6 +610,10 @@ function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
   out.min.set(rect.left, rect.top);
   out.max.set(rect.right, rect.bottom);
   return out;
+}
+
+function clusterKeyContainsId(key: string, id: number): boolean {
+  return key.split(',').includes(`${id}`);
 }
 
 function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {

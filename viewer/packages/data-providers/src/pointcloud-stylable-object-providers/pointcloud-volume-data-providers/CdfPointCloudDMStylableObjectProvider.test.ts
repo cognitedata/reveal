@@ -2,9 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
-import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
+import type { CompositeShape } from '@reveal/utilities';
+import { Cylinder, Box } from '@reveal/utilities';
 import { CdfPointCloudDMStylableObjectProvider } from './CdfPointCloudDMStylableObjectProvider';
 import { DMModelIdentifier } from '../../model-identifiers/DMModelIdentifier';
 
@@ -149,7 +150,7 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
     ).map((obj: any) => obj.volumeInstanceRef);
 
     expect(gottenRefs.length).toEqual(dummyDMAnnotationsResponse.items.length);
-    expect(gottenRefs).toContainAllValues(expectedRefs);
+    expect(gottenRefs.sort()).toEqual(expectedRefs.sort());
   });
 
   test('contains right geometry types for point cloud volumes provided by SDK', async () => {
@@ -168,7 +169,7 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
     ).map((obj: any) => obj.assetRef);
 
     expect(gottenAssets.length).toEqual(expectedAssets.length);
-    expect(gottenAssets).toContainAllValues(expectedAssets);
+    expect(gottenAssets.sort()).toEqual(expectedAssets.sort());
   });
 
   test('handles empty point cloud volumes gracefully', async () => {

@@ -4,29 +4,24 @@
 import * as THREE from 'three';
 import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
-import { jest } from '@jest/globals';
+import type { Mock as ViMock } from 'vitest';
+import { vi } from 'vitest';
 import { It, Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from '../../../test-utilities';
 
 describe('WebGLRendererStateHelper', () => {
-  let renderer: THREE.WebGLRenderer;
-
-  beforeEach(() => {
-    renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
-  });
-
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test('setClearColor()', () => {
-    const renderer = mockedWebGLRenderer().object();
+    const setClearColorSpy = vi.fn();
+    const renderer = mockedWebGLRenderer(setClearColorSpy).object();
     renderer.setClearColor('#AABBCC', 0.5);
     const originalColor = renderer.getClearColor(new THREE.Color());
     const originalAlpha = renderer.getClearAlpha();
 
     const helper = new WebGLRendererStateHelper(renderer);
-    const setClearColorSpy = jest.spyOn(renderer, 'setClearColor');
     const color = new THREE.Color('#112233');
 
     helper.setClearColor(color, 0.8);
@@ -35,7 +30,7 @@ describe('WebGLRendererStateHelper', () => {
     helper.resetState();
     expect(setClearColorSpy).toHaveBeenCalledWith(originalColor, originalAlpha);
 
-    function mockedWebGLRenderer(): Mock<THREE.WebGLRenderer> {
+    function mockedWebGLRenderer(setClearColorSpy: THREE.WebGLRenderer['setClearColor']): Mock<THREE.WebGLRenderer> {
       const rendererMock = new Mock<THREE.WebGLRenderer>();
       const state = {
         clearColor: new THREE.Color(),
@@ -58,18 +53,20 @@ describe('WebGLRendererStateHelper', () => {
         .setup(instance => instance.getClearColor(It.IsAny()))
         .returns(state.clearColor.clone())
         .setup(instance => instance.getClearAlpha())
-        .returns(state.clearAlpha);
+        .returns(state.clearAlpha)
+        .setup(instance => instance.setClearColor)
+        .returns(setClearColorSpy);
 
       return rendererMock;
     }
   });
 
   test('setSize()', () => {
-    const renderer = mockedWebGLRenderer().object();
+    const setSizeSpy = vi.fn();
+    const renderer = mockedWebGLRenderer(setSizeSpy).object();
     renderer.setSize(128, 256);
 
     const helper = new WebGLRendererStateHelper(renderer);
-    const setSizeSpy = jest.spyOn(renderer, 'setSize');
 
     helper.setSize(640, 480);
     expect(setSizeSpy).toHaveBeenCalledWith(640, 480);
@@ -77,7 +74,7 @@ describe('WebGLRendererStateHelper', () => {
     helper.resetState();
     expect(setSizeSpy).toHaveBeenCalledWith(128, 256);
 
-    function mockedWebGLRenderer(): Mock<THREE.WebGLRenderer> {
+    function mockedWebGLRenderer(setSizeSpy: THREE.WebGLRenderer['setSize']): Mock<THREE.WebGLRenderer> {
       const rendererMock = new Mock<THREE.WebGLRenderer>();
       const state = {
         width: 0,
@@ -98,20 +95,22 @@ describe('WebGLRendererStateHelper', () => {
         )
         .returns()
         .setup(instance => instance.getSize(It.IsAny()))
-        .callback(() => new THREE.Vector2(state.width, state.height));
+        .callback(() => new THREE.Vector2(state.width, state.height))
+        .setup(instance => instance.setSize)
+        .returns(setSizeSpy);
 
       return rendererMock;
     }
   });
 
   test('setRenderTarget()', () => {
-    const renderer = mockedWebGLRenderer().object();
+    const setRenderTargetSpy = vi.fn();
+    const renderer = mockedWebGLRenderer(setRenderTargetSpy).object();
     const originalTarget = new THREE.WebGLRenderTarget(64, 64);
     const newTarget = new THREE.WebGLRenderTarget(64, 64);
     renderer.setRenderTarget(originalTarget);
 
     const helper = new WebGLRendererStateHelper(renderer);
-    const setRenderTargetSpy = jest.spyOn(renderer, 'setRenderTarget');
 
     helper.setRenderTarget(newTarget);
     expect(setRenderTargetSpy).toHaveBeenCalledWith(newTarget);
@@ -119,7 +118,9 @@ describe('WebGLRendererStateHelper', () => {
     helper.resetState();
     expect(setRenderTargetSpy).toHaveBeenCalledWith(originalTarget);
 
-    function mockedWebGLRenderer(): Mock<THREE.WebGLRenderer> {
+    function mockedWebGLRenderer(
+      setRenderTargetSpy: THREE.WebGLRenderer['setRenderTarget']
+    ): Mock<THREE.WebGLRenderer> {
       const rendererMock = new Mock<THREE.WebGLRenderer>();
       const state: { renderTarget: THREE.WebGLRenderTarget | null } = {
         renderTarget: null
@@ -135,7 +136,9 @@ describe('WebGLRendererStateHelper', () => {
         )
         .returns()
         .setup(instance => instance.getRenderTarget())
-        .callback(() => state.renderTarget);
+        .callback(() => state.renderTarget)
+        .setup(instance => instance.setRenderTarget)
+        .returns(setRenderTargetSpy);
 
       return rendererMock;
     }
@@ -148,10 +151,10 @@ describe('WebGLRendererStateHelper', () => {
     const helper = new WebGLRendererStateHelper(renderer);
 
     helper.localClippingEnabled = false;
-    expect(renderer.localClippingEnabled).toBeFalse();
+    expect(renderer.localClippingEnabled).toBeFalsy();
 
     helper.resetState();
-    expect(renderer.localClippingEnabled).toBeTrue();
+    expect(renderer.localClippingEnabled).toBeTruthy();
 
     function mockedWebGLRenderer(): Mock<THREE.WebGLRenderer> {
       const rendererMock = new Mock<THREE.WebGLRenderer>();
@@ -180,10 +183,10 @@ describe('WebGLRendererStateHelper', () => {
     const helper = new WebGLRendererStateHelper(renderer);
 
     helper.autoClear = false;
-    expect(renderer.autoClear).toBeFalse();
+    expect(renderer.autoClear).toBeFalsy();
 
     helper.resetState();
-    expect(renderer.autoClear).toBeTrue();
+    expect(renderer.autoClear).toBeTruthy();
 
     function mockedWebGLRenderer(): Mock<THREE.WebGLRenderer> {
       const rendererMock = new Mock<THREE.WebGLRenderer>();
@@ -207,9 +210,13 @@ describe('WebGLRendererStateHelper', () => {
   });
 
   test('setScissorTest()', () => {
+    const setScissorTestSpy = vi.fn();
+    const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>())
+      .setup(p => p.setScissorTest)
+      .returns(setScissorTestSpy)
+      .object();
     renderer.setScissorTest(true);
     const helper = new WebGLRendererStateHelper(renderer);
-    const setScissorTestSpy = jest.spyOn(renderer, 'setScissorTest');
 
     helper.setScissorTest(false);
     expect(setScissorTestSpy).toHaveBeenCalledWith(false);
@@ -219,11 +226,11 @@ describe('WebGLRendererStateHelper', () => {
   });
 
   test('setScissor()', () => {
-    const renderer = mockedWebGLRenderer().object();
+    const setScissorSpy = vi.fn();
+    const renderer = mockedWebGLRenderer(setScissorSpy).object();
 
     renderer.setScissor(0, 0, 64, 64);
     const helper = new WebGLRendererStateHelper(renderer);
-    const setScissorSpy = jest.spyOn(renderer, 'setScissor');
 
     helper.setScissor(0, 0, 128, 128);
     expect(setScissorSpy).toHaveBeenCalledWith(0, 0, 128, 128);
@@ -231,7 +238,7 @@ describe('WebGLRendererStateHelper', () => {
     helper.resetState();
     expect(setScissorSpy).toHaveBeenCalledWith(new THREE.Vector4(0, 0, 64, 64));
 
-    function mockedWebGLRenderer(): Mock<THREE.WebGLRenderer> {
+    function mockedWebGLRenderer(setScissorSpy: ViMock<THREE.WebGLRenderer['setScissor']>): Mock<THREE.WebGLRenderer> {
       const rendererMock = new Mock<THREE.WebGLRenderer>();
       const state = {
         x: 0,
@@ -240,27 +247,23 @@ describe('WebGLRendererStateHelper', () => {
         height: 0
       };
       rendererMock
-        .setup(instance =>
-          instance.setScissor(
-            It.Is<number>(x => {
+        .setup(instance => instance.setScissor)
+        .returns(
+          setScissorSpy.mockImplementation((x, y, width, height) => {
+            if (typeof x === 'number') {
               state.x = x;
-              return true;
-            }),
-            It.Is<number>(y => {
+            }
+            if (typeof y === 'number') {
               state.y = y;
-              return true;
-            }),
-            It.Is<number>(width => {
+            }
+            if (typeof width === 'number') {
               state.width = width;
-              return true;
-            }),
-            It.Is<number>(height => {
+            }
+            if (typeof height === 'number') {
               state.height = height;
-              return true;
-            })
-          )
+            }
+          })
         )
-        .returns()
         .setup(instance => instance.getScissor(It.IsAny()))
         .callback(() => new THREE.Vector4(state.x, state.y, state.width, state.height));
 
@@ -269,9 +272,17 @@ describe('WebGLRendererStateHelper', () => {
   });
 
   test('setWebGLState', () => {
+    const depthSetTestSpy = vi.fn();
+    const depthSetMaskSpy = vi.fn();
+    const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>())
+      .setup(instance => instance.state.buffers.depth.setTest)
+      .returns(depthSetTestSpy)
+      .setup(instance => instance.state.buffers.depth.setMask)
+      .returns(depthSetMaskSpy)
+      .setup(instance => instance.state.reset)
+      .returns(vi.fn())
+      .object();
     const helper = new WebGLRendererStateHelper(renderer);
-    const depthSetTestSpy = jest.spyOn(renderer.state.buffers.depth, 'setTest');
-    const depthSetMaskSpy = jest.spyOn(renderer.state.buffers.depth, 'setMask');
 
     helper.setWebGLState(
       { buffers: { depth: { test: false, mask: false } } },

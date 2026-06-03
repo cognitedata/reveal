@@ -2,13 +2,14 @@
  * Copyright 2025 Cognite AS
  */
 import { CadNode } from './CadNode';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane, Group } from 'three';
+import type { Group } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
+import type { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
-import { SectorRepository } from '@reveal/sector-loader';
+import type { SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
 import { createMockedConsumedSector, createWantedSectorMock } from '@reveal/sector-loader/tests/mockSectorUtils';
 
@@ -226,7 +227,7 @@ describe(CadNode.name, () => {
 
   test('defaultNodeAppearance setter updates appearance and triggers render layer update', () => {
     const cadNode = createCadNode();
-    const setModelRenderLayersSpy = jest.spyOn(cadNode, 'setModelRenderLayers');
+    const setModelRenderLayersSpy = vi.spyOn(cadNode, 'setModelRenderLayers');
 
     const newAppearance = { renderGhosted: true, visible: true };
     cadNode.defaultNodeAppearance = newAppearance;
@@ -272,7 +273,7 @@ describe(CadNode.name, () => {
 
   test('loadSector method delegates to sector repository', async () => {
     const mockedConsumedSector = createMockedConsumedSector();
-    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    const mockLoadSectorFn = vi.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
     mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
 
     const sectorRepositoryMock = new Mock<SectorRepository>()
@@ -291,7 +292,7 @@ describe(CadNode.name, () => {
 
   test('loadSector method works without abort signal', async () => {
     const mockedConsumedSector = createMockedConsumedSector();
-    const mockLoadSectorFn = jest.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
+    const mockLoadSectorFn = vi.fn<(sector: WantedSector, abortSignal?: AbortSignal) => Promise<ConsumedSector>>();
     mockLoadSectorFn.mockResolvedValue(mockedConsumedSector.object());
 
     const sectorRepositoryMock = new Mock<SectorRepository>()
@@ -305,6 +306,78 @@ describe(CadNode.name, () => {
     await cadNode.loadSector(wantedSector.object());
 
     expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), undefined);
+  });
+});
+
+describe('tree index locking', () => {
+  test('lockedSectorIds is initially empty', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+
+    expect(cadNode.lockedSectorIds.size).toBe(0);
+  });
+
+  test('lockTreeIndices populates lockedSectorIds via treeIndexToSectorsMap', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+    cadNode.treeIndexToSectorsMap.set(1, 10);
+    cadNode.treeIndexToSectorsMap.set(1, 11);
+    cadNode.treeIndexToSectorsMap.set(2, 12);
+
+    cadNode.lockTreeIndices([1, 2]);
+
+    expect(cadNode.lockedSectorIds.has(10)).toBe(true);
+    expect(cadNode.lockedSectorIds.has(11)).toBe(true);
+    expect(cadNode.lockedSectorIds.has(12)).toBe(true);
+  });
+
+  test('unlockTreeIndices removes sectors no longer covered by any locked tree index', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+    cadNode.treeIndexToSectorsMap.set(1, 10);
+    cadNode.treeIndexToSectorsMap.set(2, 20);
+
+    cadNode.lockTreeIndices([1, 2]);
+    cadNode.unlockTreeIndices([1]);
+
+    expect(cadNode.lockedSectorIds.has(10)).toBe(false);
+    expect(cadNode.lockedSectorIds.has(20)).toBe(true);
+  });
+
+  test('unlockTreeIndices keeps shared sectors locked when other tree indices still reference them', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+    cadNode.treeIndexToSectorsMap.set(1, 10);
+    cadNode.treeIndexToSectorsMap.set(2, 10); // same sector as treeIndex 1
+
+    cadNode.lockTreeIndices([1, 2]);
+    cadNode.unlockTreeIndices([1]);
+
+    expect(cadNode.lockedSectorIds.has(10)).toBe(true);
+  });
+
+  test('unlockAllTreeIndices clears all locked sectors', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+    cadNode.treeIndexToSectorsMap.set(1, 10);
+    cadNode.lockTreeIndices([1]);
+
+    cadNode.unlockAllTreeIndices();
+
+    expect(cadNode.lockedSectorIds.size).toBe(0);
+  });
+
+  test('onTreeIndexSectorDiscovered adds sector when tree index is locked', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+    cadNode.treeIndexToSectorsMap.set(1, 10);
+    cadNode.lockTreeIndices([1]);
+
+    cadNode.onTreeIndexSectorDiscovered(1, 99);
+
+    expect(cadNode.lockedSectorIds.has(99)).toBe(true);
+  });
+
+  test('onTreeIndexSectorDiscovered does nothing for unlocked tree indices', () => {
+    const cadNode = createCadNode(3, 3, undefined, 100);
+
+    cadNode.onTreeIndexSectorDiscovered(5, 99);
+
+    expect(cadNode.lockedSectorIds.has(99)).toBe(false);
   });
 });
 

@@ -2,9 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, WantedSector, filterGeometryOutsideClipBox, ParsedMeshGeometry } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector, ParsedMeshGeometry } from '@reveal/cad-parsers';
+import { filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
 import { DMModelIdentifier, ModelDataProvider } from '@reveal/data-providers';
-import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { BinaryFileProvider } from '@reveal/data-providers';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever } from '@reveal/utilities';
 

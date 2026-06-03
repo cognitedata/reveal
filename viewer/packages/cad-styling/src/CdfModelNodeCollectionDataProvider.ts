@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 /**
  * Provides metadata needed to get asset mappings for a CDF 3D model

@@ -2,10 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { CadMaterialManager } from '../CadMaterialManager';
+import type * as THREE from 'three';
+import type { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
-import { RenderPass } from '../RenderPass';
+import type { RenderPass } from '../RenderPass';
 import { getLayerMask } from '../utilities/renderUtilities';
 
 export class GeometryPass implements RenderPass {
@@ -30,12 +30,15 @@ export class GeometryPass implements RenderPass {
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     const currentCameraMask = camera.layers.mask;
+    let renderMode: RenderMode = this._renderMode;
     try {
       camera.layers.mask = this._renderLayer;
+      renderMode = this._materialManager.getRenderMode();
       this._materialManager.setRenderMode(this._renderMode);
       renderer.render(this._geometryScene, camera);
     } finally {
       camera.layers.mask = currentCameraMask;
+      this._materialManager.setRenderMode(renderMode);
     }
   }
 }

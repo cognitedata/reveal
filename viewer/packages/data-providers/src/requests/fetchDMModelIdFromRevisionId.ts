@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { DataModelsSdk } from '../DataModelsSdk';
 import { COGNITE_3D_REVISION_SOURCE } from '../utilities/constants';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../utilities/utils';

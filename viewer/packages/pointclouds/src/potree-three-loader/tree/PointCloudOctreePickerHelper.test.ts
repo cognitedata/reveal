@@ -2,10 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { PointCloudOctreePickerHelper, RenderedNode } from './PointCloudOctreePickerHelper';
-import { Mock } from 'moq.ts';
+import type { RenderedNode } from './PointCloudOctreePickerHelper';
+import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 
-import { jest } from '@jest/globals';
+import { Mock, It, Times } from 'moq.ts';
+
+import { vi } from 'vitest';
 
 describe('PointCloudOctreePickerHelper', () => {
   test('findHit() returns point data from pixel buffer with 1 non-zero value', () => {
@@ -17,7 +19,7 @@ describe('PointCloudOctreePickerHelper', () => {
     const dummyCamera = new THREE.PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => {
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => {
       return new THREE.Vector3();
     });
 
@@ -38,7 +40,7 @@ describe('PointCloudOctreePickerHelper', () => {
     const dummyCamera = new THREE.PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, pIndex) => {
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, pIndex) => {
       const result = new THREE.Vector3();
       switch (pIndex) {
         case 1:
@@ -60,5 +62,45 @@ describe('PointCloudOctreePickerHelper', () => {
       pIndex: 3,
       pcIndex: 21
     });
+  });
+
+  test('readPixelsAsync passes correct x, y, size and renderTarget to readRenderTargetPixelsAsync', async () => {
+    const pickX = 5;
+    const pickY = 10;
+    const pickWndSize = 3;
+    const rendererMock = new Mock<THREE.WebGLRenderer>();
+    const renderTargetMock = new Mock<THREE.WebGLRenderTarget>();
+    const expectedPixelCount = 4 * pickWndSize * pickWndSize;
+
+    rendererMock
+      .setup(r =>
+        r.readRenderTargetPixelsAsync(
+          It.Is(v => v === renderTargetMock.object()),
+          It.Is(v => v === pickX),
+          It.Is(v => v === pickY),
+          It.Is(v => v === pickWndSize),
+          It.Is(v => v === pickWndSize),
+          It.Is(v => v instanceof Uint8Array && v.length === expectedPixelCount)
+        )
+      )
+      .returns(Promise.resolve(new Uint8Array(expectedPixelCount)));
+
+    const helper = new PointCloudOctreePickerHelper(rendererMock.object());
+    const result = await helper.readPixelsAsync(pickX, pickY, pickWndSize, renderTargetMock.object());
+
+    expect(result).toBeInstanceOf(Uint8Array);
+    expect(result.length).toBe(expectedPixelCount);
+    rendererMock.verify(
+      r =>
+        r.readRenderTargetPixelsAsync(
+          It.Is(v => v === renderTargetMock.object()),
+          It.Is(v => v === pickX),
+          It.Is(v => v === pickY),
+          It.Is(v => v === pickWndSize),
+          It.Is(v => v === pickWndSize),
+          It.IsAny()
+        ),
+      Times.Once()
+    );
   });
 });

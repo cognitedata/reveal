@@ -2,21 +2,23 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteInternalId } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 import sortBy from 'lodash/sortBy';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { NodesApiClient } from '@reveal/nodes-api';
-import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
-import { NumericRange, CameraConfiguration } from '@reveal/utilities';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { NodesApiClient } from '@reveal/nodes-api';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
+import type { CameraConfiguration } from '@reveal/utilities';
+import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { NodeTransformProvider } from '@reveal/cad-styling';
-import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
+import type { NodeTransformProvider } from '@reveal/cad-styling';
+import type { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
 import { NodeIdAndTreeIndexMaps } from '../utilities/NodeIdAndTreeIndexMaps';
-import { CadNode } from './CadNode';
-import { WellKnownUnit } from '../types';
+import type { CadNode } from './CadNode';
+import type { WellKnownUnit } from '../types';
 import { CustomSectorBounds } from '../utilities/CustomSectorBounds';
 
 /**
@@ -112,6 +114,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
       if (this.customSectorBounds.isRegistered(treeIndex)) {
         this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
       }
+      this.cadNode.onTreeIndexSectorDiscovered(treeIndex, newSectorId);
     };
     const cdfToWorldTransform = this.getModelTransformation()
       .clone()
@@ -209,6 +212,35 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   removeAllStyledNodeCollections(): void {
     this._styledNodeCollections.splice(0);
     this.cadNode.nodeAppearanceProvider.clear();
+  }
+
+  /**
+   * Locks the sectors containing the given tree indices so they are never
+   * evicted when the CAD budget is reduced. The lock is reactive: if a
+   * tree index's geometry is later discovered in a new sector (when that
+   * sector loads), the new sector is automatically locked as well.
+   *
+   * @param treeIndices Tree indices of nodes whose sectors should be locked.
+   */
+  lockTreeIndices(treeIndices: number[]): void {
+    this.cadNode.lockTreeIndices(treeIndices);
+  }
+
+  /**
+   * Removes the lock for the given tree indices. Sectors that were only
+   * locked because of these tree indices will become eligible for eviction.
+   *
+   * @param treeIndices Tree indices to unlock.
+   */
+  unlockTreeIndices(treeIndices: number[]): void {
+    this.cadNode.unlockTreeIndices(treeIndices);
+  }
+
+  /**
+   * Removes all tree-index-based sector locks on this model.
+   */
+  unlockAllTreeIndices(): void {
+    this.cadNode.unlockAllTreeIndices();
   }
 
   /**

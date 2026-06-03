@@ -1,21 +1,11 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import {
-  BufferGeometry,
-  Color,
-  Group,
-  Material,
-  Object3D,
-  PerspectiveCamera,
-  Scene,
-  Vector2,
-  Vector3,
-  WebGLRenderer
-} from 'three';
+import type { BufferGeometry, Group, Material, Object3D, Scene, WebGLRenderer } from 'three';
+import { Color, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { Overlay3DCollection } from './Overlay3DCollection';
-import { OverlayInfo } from './OverlayCollection';
-import { Overlay3D } from './Overlay3D';
+import type { OverlayInfo } from './OverlayCollection';
+import type { Overlay3D } from './Overlay3D';
 import assert from 'assert';
 import { Mock, It } from 'moq.ts';
 
@@ -36,16 +26,16 @@ describe(Overlay3DCollection.name, () => {
 
     expect(collection.getOverlays().map(getOverlayInfo)).toEqual(OVERLAY_INFOS);
 
-    expect(collection.getOverlays().every(overlay => overlay.getVisible())).toBeTrue();
+    expect(collection.getOverlays().every(overlay => overlay.getVisible())).toBeTruthy();
   });
 
   test('calling setVisible sets point visibility', () => {
     const collection = new Overlay3DCollection(OVERLAY_INFOS);
 
-    expect(collection.children[0].visible).toBeTrue();
+    expect(collection.children[0].visible).toBeTruthy();
     collection.setVisibility(false);
 
-    expect(collection.children[0].visible).toBeFalse();
+    expect(collection.children[0].visible).toBeFalsy();
   });
 
   test('adding overlays on the fly appends to overlay list', () => {

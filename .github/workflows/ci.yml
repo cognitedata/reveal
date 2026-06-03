@@ -15,35 +15,14 @@ on:
       - "**"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
-    steps:
-      # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v3
-        id: filter
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          filters: |
-            should-run:
-              - '.github/**'
-              - 'viewer/**'
-              - 'documentation/**'
-              - 'examples/**'
-
   populate-caches:
-    needs: changes
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Update NPM and Cargo caches
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Cache NPM packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: npm_cache
         with:
           path: "**/node_modules"
@@ -55,7 +34,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -65,25 +44,24 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --workspace --locked
+        run: cargo update --locked
 
   build-viewer:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Build Reveal
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Cache NPM packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -123,27 +101,26 @@ jobs:
           npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
       - name: Upload dist/ artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: viewer
           path: viewer/dist/
 
   run-coverage-tests:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -162,31 +139,34 @@ jobs:
           xvfb-run yarn run coverage
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: viewer
 
   run-visual-tests:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Visual Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cargo_cache
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
+
+      - name: Install Playwright Browsers
+        working-directory: viewer
+        run: yarn playwright install
 
       - name: Execute visual tests
         id: viewerVisualTests
@@ -206,7 +186,7 @@ jobs:
 
       - name: Upload image diffs for failed visual tests
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: image-diffs-${{ github.sha }}
           path: viewer/visual-tests/__diff_output__/*
@@ -218,27 +198,26 @@ jobs:
           exit 1
 
   ci-examples:
-    needs: [changes, build-viewer]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: build-viewer
     name: Examples
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download viewer build artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: viewer
           path: viewer/dist/
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -260,13 +239,12 @@ jobs:
         run: yarn build
 
   build-preview-documentation:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Build preview documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v5 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        uses: actions/checkout@v6 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
       - name: Initialize variables
         run: |
@@ -277,14 +255,14 @@ jobs:
           echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -320,14 +298,14 @@ jobs:
 
       - name: Upload documentation artifact
         if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: preview-docs
           path: documentation/build/
 
   deploy-preview-documentation:
-    needs: [changes, build-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' && contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
+    needs: build-preview-documentation
+    if: "${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}"
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
     # across all ongoing Github Action executions
@@ -339,7 +317,7 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Download documentation artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         if:
         with:
           name: preview-docs
@@ -369,12 +347,12 @@ jobs:
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
   cleanup:
-    needs: [changes, ci-examples, build-viewer, deploy-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' && always() }}
+    needs: [ci-examples, build-viewer, deploy-preview-documentation]
+    if: always()
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@v6
         with:
           name: |
             viewer

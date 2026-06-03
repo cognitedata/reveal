@@ -6,12 +6,13 @@ import { mockClientAuthentication } from './cogniteClientAuth';
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '../../packages/api';
-import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
+import type { Camera, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Vector3 } from 'three';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from './autoMockWebGLRenderer';
-import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
+import type { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
 
 export function mockViewer(): Cognite3DViewer<DataSourceType> {
   return mockViewerComponents().viewer;
@@ -35,7 +36,7 @@ export function mockViewerComponents(): {
   fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
   const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>(), { canvas }).object();
-  renderer.render = jest.fn();
+  renderer.render = vi.fn();
 
   const canvasContainer = document.createElement('div');
   canvasContainer.style.width = '640px';
@@ -50,7 +51,7 @@ export function mockViewerComponents(): {
   camera.updateMatrix();
 
   const viewer = new Cognite3DViewer<DataSourceType>({ domElement: canvasContainer, sdk, renderer, logMetrics: false });
-  jest.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
+  vi.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
 
   renderer.setSize(128, 128);
 
@@ -80,5 +81,5 @@ export function fakeGetBoundingClientRect(
     y,
     toJSON: () => {}
   };
-  element.getBoundingClientRect = jest.fn(() => rect);
+  element.getBoundingClientRect = vi.fn(() => rect);
 }

@@ -3,11 +3,11 @@
  */
 
 import { CadManager } from './CadManager';
-import { InternalRevealCadOptions } from './InternalRevealCadOptions';
+import type { InternalRevealCadOptions } from './InternalRevealCadOptions';
 
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { CadMaterialManager } from '@reveal/rendering';
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { CadModelFactory } from '@reveal/cad-model';
 import { ByScreenSizeSectorCuller } from './sector/culling/ByScreenSizeSectorCuller';
 

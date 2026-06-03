@@ -4,8 +4,9 @@
 
 import * as THREE from 'three';
 
-import { CadMaterialManager } from '@reveal/rendering';
-import { IntersectInput } from '@reveal/model-base';
+import type { CadMaterialManager } from '@reveal/rendering';
+import { RenderMode } from '@reveal/rendering';
+import type { IntersectInput } from '@reveal/model-base';
 
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';
@@ -29,17 +30,21 @@ describe(PickingHandler.name, () => {
   const cadNode = createCadModel(1, 2).cadNode;
 
   beforeEach(() => {
-    const materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.setRenderMode(It.IsAny())).returns();
+    const materialManagerMock = new Mock<CadMaterialManager>()
+      .setup(p => p.getRenderMode())
+      .returns(RenderMode.Color)
+      .setup(p => p.setRenderMode(It.IsAny()))
+      .returns();
     pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new SceneHandler());
   });
 
   test('no nodes, returns empty array', async () => {
     const intersections = await pickingHandler.intersectCadNodes([], input);
-    expect(intersections).toBeEmpty();
+    expect(intersections).toHaveLength(0);
   });
 
   test('single node that does not intersect, returns empty array', async () => {
     const intersections = await pickingHandler.intersectCadNodes([cadNode], input);
-    expect(intersections).toBeEmpty();
+    expect(intersections).toHaveLength(0);
   });
 });

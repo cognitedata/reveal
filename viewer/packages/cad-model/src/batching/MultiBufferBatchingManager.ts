@@ -3,30 +3,25 @@
  */
 import assert from 'assert';
 import minBy from 'lodash/minBy';
+import type { BufferGeometry, Group, RawShaderMaterial } from 'three';
 import {
-  BufferGeometry,
-  Group,
   InstancedMesh,
   InterleavedBufferAttribute,
-  RawShaderMaterial,
   Sphere,
   type Camera,
   type Matrix4,
   type Mesh,
   type Vector3
 } from 'three';
-import { Materials, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
-import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
-import {
-  decrementOrDeleteIndex,
-  DynamicDefragmentedBuffer,
-  incrementOrInsertIndex,
-  TypedArray
-} from '@reveal/utilities';
+import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
+import { setModelRenderLayers } from '@reveal/rendering';
+import type { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { TypedArray } from '@reveal/utilities';
+import { decrementOrDeleteIndex, DynamicDefragmentedBuffer, incrementOrInsertIndex } from '@reveal/utilities';
 import { GeometryBufferUtils } from '../utilities/GeometryBufferUtils';
 import { getShaderMaterial } from '../utilities/getShaderMaterial';
-import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import { DrawCallBatchingManager } from './DrawCallBatchingManager';
+import type { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import type { DrawCallBatchingManager } from './DrawCallBatchingManager';
 
 /**
  * Maps all the instances(by and id: string) that a sector has to a SectorInstanceData that point to underlying batches

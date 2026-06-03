@@ -4,16 +4,16 @@
 
 import * as THREE from 'three';
 
-import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
+import type { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
-import { SectorCuller } from './SectorCuller';
+import type { SectorCuller } from './SectorCuller';
 import { computeV9SectorCost } from './computeSectorCost';
 import { TakenV9SectorMap } from './takensectors';
 
 import { Log } from '@reveal/logger';
-import { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import type { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
-import { PrioritizedArea } from '@reveal/cad-styling';
+import type { PrioritizedArea } from '@reveal/cad-styling';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -51,6 +51,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     // Setup helpers we need
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
+    // Force-include sectors from locked models and per-model locked sector IDs
+    const lockedSectorCount = forceIncludeLockedSectors(
+      takenSectors,
+      modelsAndCandidateSectors,
+      input.lockedModelIdentifiers,
+      input.lockedSectorIdsByModel
+    );
+
     // Determine priorities of each candidate sector
     const prioritizedSectors = sortSectorsByPriority(
       modelsAndCandidateSectors,
@@ -58,7 +66,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       input.prioritizedAreas
     );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
-    Log.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
+    Log.debug(
+      'Scheduled',
+      takenSectorCount,
+      'of',
+      prioritizedSectors.length,
+      'candidates',
+      `(${lockedSectorCount} forced from locked models)`
+    );
 
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
@@ -73,6 +88,37 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   }
 
   dispose(): void {}
+}
+
+/**
+ * Force-includes sectors that must bypass the budget:
+ * 1. All sectors from fully locked models (e.g. gltf-prioritized-nodes-directory)
+ * 2. Specific sector IDs locked via tree index locking on standard models
+ */
+function forceIncludeLockedSectors(
+  takenSectors: TakenV9SectorMap,
+  modelsAndCandidateSectors: Map<CadModelMetadata, SectorMetadata[]>,
+  lockedModelIdentifiers: Set<symbol>,
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>
+): number {
+  let count = 0;
+  for (const [model, sectors] of modelsAndCandidateSectors) {
+    const modelId = model.modelIdentifier.revealInternalId;
+    const isFullModelLocked = lockedModelIdentifiers.has(modelId);
+    const lockedSectorIds = lockedSectorIdsByModel.get(modelId);
+
+    if (!isFullModelLocked && !lockedSectorIds) {
+      continue;
+    }
+
+    for (const sector of sectors) {
+      if (isFullModelLocked || lockedSectorIds?.has(sector.id)) {
+        takenSectors.markSectorForced(model, sector.id);
+        count++;
+      }
+    }
+  }
+  return count;
 }
 
 function takeSectorsWithinBudget(

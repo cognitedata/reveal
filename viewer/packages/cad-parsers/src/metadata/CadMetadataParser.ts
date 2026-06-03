@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorScene } from '../utilities/types';
+import type { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
 import { CadMetadataWithSignedFiles } from './types';
 

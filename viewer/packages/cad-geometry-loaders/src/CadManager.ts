@@ -2,15 +2,18 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { LoadingState } from '@reveal/model-base';
-import { CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
-import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
-import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
+import type { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import type { LoadingState } from '@reveal/model-base';
+import type { CadMaterialManager, RenderMode } from '@reveal/rendering';
+import type { ModelIdentifier } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
+import type { CadModelBudget } from './CadModelBudget';
+import { defaultDesktopCadModelBudget } from './CadModelBudget';
+import type { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { batchedDebounce, EventTrigger } from '@reveal/utilities';
 import assert from 'assert';
@@ -36,9 +39,13 @@ export class CadManager {
   private readonly _loadingStateChangedTrigger = new EventTrigger<(loadingState: LoadingState) => void>();
 
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
-  private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
   private readonly _sectorBufferTime = 350;
+
+  private readonly _compatibleGltfFormats: File3dFormat[] = [
+    File3dFormat.GltfCadModel,
+    File3dFormat.GltfPrioritizedNodes
+  ];
 
   get materialManager(): CadMaterialManager {
     return this._materialManager;
@@ -68,7 +75,6 @@ export class CadManager {
     this._materialManager = materialManger;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
-    this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
       const modelSymbol = sector.modelIdentifier.revealInternalId;
@@ -136,7 +142,6 @@ export class CadManager {
     this._unsubscribeConsumedSectors();
     this._unsubscribeLoadingState();
     this._loadingStateChangedTrigger.unsubscribeAll();
-    this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
 
   requestRedraw(): void {
@@ -145,11 +150,14 @@ export class CadManager {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+    this._materialManager.resetRedraw();
     [...this._cadModelMap.values()].some(m => m.resetRedraw());
   }
 
   get needsRedraw(): boolean {
-    return this._needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw);
+    return (
+      this._needsRedraw || this._materialManager.needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw)
+    );
   }
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
@@ -175,11 +183,14 @@ export class CadManager {
   }
 
   doesModelHaveCompatibleFormat(modelMetadata: CadModelMetadata): boolean {
-    return (
-      this._compatibleFileFormat === undefined ||
-      (this._compatibleFileFormat.format === modelMetadata.format &&
-        this._compatibleFileFormat.version === modelMetadata.formatVersion)
-    );
+    if (this._compatibleFileFormat === undefined) {
+      return true;
+    }
+    const isFormatCompatible =
+      this._compatibleFileFormat.format === modelMetadata.format ||
+      (this._compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
+        this._compatibleGltfFormats.includes(modelMetadata.format));
+    return isFormatCompatible && this._compatibleFileFormat.version === modelMetadata.formatVersion;
   }
 
   updateModelCompatibilityFormat(modelMetadata: CadModelMetadata): void {
@@ -189,8 +200,12 @@ export class CadManager {
     };
   }
 
-  async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier);
+  async addModel(
+    modelIdentifier: ModelIdentifier,
+    geometryFilter?: GeometryFilter,
+    outputFormat?: File3dFormat
+  ): Promise<CadNode> {
+    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier, outputFormat);
 
     if (!this.doesModelHaveCompatibleFormat(modelMetadata)) {
       throw Error(
@@ -255,10 +270,6 @@ export class CadManager {
 
   private markNeedsRedraw(): void {
     this._needsRedraw = true;
-  }
-
-  private handleMaterialsChanged() {
-    this.requestRedraw();
   }
 
   private updateTreeIndexToSectorsMap(cadModel: CadNode, sector: ConsumedSector): void {

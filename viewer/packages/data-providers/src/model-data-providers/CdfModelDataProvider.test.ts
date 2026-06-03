@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import nock from 'nock';
+import { vi } from 'vitest';
 import { CdfModelDataProvider } from './CdfModelDataProvider';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -28,12 +28,17 @@ describe(CdfModelDataProvider.name, () => {
 
   afterEach(() => {
     authenticationSpy.mockRestore();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   test('getBinaryFile() with binary data returns valid ArrayBuffer', async () => {
     // Arrange
     const response = '0123456789';
-    nock(/.*/).get(/.*/).reply(200, response, { 'content-type': 'binary' });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValueOnce(new Response(response, { status: 200, headers: { 'content-type': 'binary' } }))
+    );
 
     // Act
     const result = await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
@@ -48,7 +53,7 @@ describe(CdfModelDataProvider.name, () => {
   });
 
   test('getBinaryFile() does not authenticate on 200', async () => {
-    nock(/.*/).get(/.*/).reply(200, '');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(new Response('', { status: 200 })));
 
     await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
     expect(authenticationSpy).not.toHaveBeenCalled();
@@ -56,8 +61,13 @@ describe(CdfModelDataProvider.name, () => {
 
   test('getBinaryFile() re-authenticates on 401', async () => {
     // Make first API call fail, second succeed
-    nock(/.*/).get(/.*/).reply(401, '');
-    nock(/.*/).get(/.*/).reply(200, '');
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(new Response('', { status: 401 }))
+        .mockResolvedValueOnce(new Response('', { status: 200 }))
+    );
 
     expect(authenticationSpy).not.toHaveBeenCalled();
     await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');

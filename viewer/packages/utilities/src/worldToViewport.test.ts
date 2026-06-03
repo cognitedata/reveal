@@ -4,18 +4,19 @@
 
 import * as THREE from 'three';
 
-import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './worldToViewport';
+import {
+  worldToNormalizedViewportCoordinates,
+  worldToViewportCoordinates,
+  getNormalizedPixelCoordinates
+} from './worldToViewport';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from '../../../test-utilities';
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R> {
-      toBeInRange(min: number, max: number): R;
-    }
+declare module 'vitest' {
+  interface Matchers<R = void> {
+    toBeInRange(min: number, max: number): R;
   }
 }
 
@@ -55,7 +56,7 @@ describe('worldToViewport', () => {
     camera.updateProjectionMatrix();
 
     const canvas = document.createElement('canvas');
-    jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
+    vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
 
     renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>(), { canvas }).object();
     renderer.setSize(64, 64);
@@ -185,3 +186,27 @@ function ndcToWorld(ndcPoint: THREE.Vector3, camera: THREE.Camera): THREE.Vector
   p.applyMatrix4(camera.matrixWorldInverse);
   return new THREE.Vector3(p.x, p.y, p.z);
 }
+
+describe(getNormalizedPixelCoordinates.name, () => {
+  test('uses getBoundingClientRect() not clientWidth/clientHeight for CSS transforms', () => {
+    const element = document.createElement('div');
+    element.style.width = '200px';
+    element.style.height = '400px';
+    document.body.appendChild(element);
+
+    const coords = getNormalizedPixelCoordinates(element, 100, 200);
+
+    expect(coords.x).toBeCloseTo(0.0);
+    expect(coords.y).toBeCloseTo(0.0);
+
+    document.body.removeChild(element);
+  });
+
+  test('returns zero vector when element has zero width or height', () => {
+    const element = document.createElement('div');
+    const coords = getNormalizedPixelCoordinates(element, 50, 50);
+
+    expect(coords.x).toBe(0);
+    expect(coords.y).toBe(0);
+  });
+});

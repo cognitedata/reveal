@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { Image360Provider } from '../Image360Provider';
-import {
+import type { Image360Provider } from '../Image360Provider';
+import type {
   Historical360ImageSet,
   Image360AnnotationFilterDelegate,
   Image360AnnotationSpecifier,
@@ -11,9 +11,9 @@ import {
   Image360FileDescriptor,
   InstanceReference
 } from '../types';
-import { CogniteInternalId, IdEither } from '@cognite/sdk';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
-import {
+import type { CogniteInternalId, IdEither } from '@cognite/sdk';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
@@ -103,6 +103,10 @@ export class Local360ImageProvider implements Image360Provider<ClassicDataSource
   ): Promise<Image360Face[]> {
     return Promise.all(
       image360FaceDescriptors.map(async image360FaceDescriptor => {
+        // Local provider uses fileId as part of the filename
+        if (!('fileId' in image360FaceDescriptor) || image360FaceDescriptor.fileId === undefined) {
+          throw new Error('Local360ImageProvider requires fileId in file descriptors');
+        }
         const binaryData = await (
           await fetch(`${this._modelUrl}/${image360FaceDescriptor.fileId}.png`, { signal: abortSignal })
         ).arrayBuffer();

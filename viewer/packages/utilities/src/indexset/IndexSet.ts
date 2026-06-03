@@ -1,7 +1,7 @@
 /*
  * Copyright 2021 Cognite AS
  */
-import { IntermediateIndexNode } from './IntermediateIndexNode';
+import type { IntermediateIndexNode } from './IntermediateIndexNode';
 import { LeafIndexNode } from './LeafIndexNode';
 import { NumericRange } from '../NumericRange';
 

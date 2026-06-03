@@ -6,18 +6,18 @@ import * as THREE from 'three';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import {
+import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata,
-  LocalModelIdentifier
+  BlobOutputMetadata
 } from '@reveal/data-providers';
+import { LocalModelIdentifier } from '@reveal/data-providers';
 
 import { It, Mock } from 'moq.ts';
-import { GeometryFilter } from './types';
+import type { GeometryFilter } from './types';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(CadModelFactory.name, () => {
   let materialManager: CadMaterialManager;
@@ -65,16 +65,16 @@ describe(CadModelFactory.name, () => {
   });
 
   test('createModel() initializes model materials', async () => {
-    const addModelMaterialsSpy = jest.spyOn(materialManager, 'addModelMaterials');
+    const addModelMaterialsSpy = vi.spyOn(materialManager, 'addModelMaterials');
     const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
     const node = factory.createModel(modelMetadata);
 
     expect(node).toBeTruthy();
-    expect(addModelMaterialsSpy).toBeCalledTimes(1);
+    expect(addModelMaterialsSpy).toHaveBeenCalledTimes(1);
   });
 
   test('createModel() sets model clipping planes when a clip box is set', async () => {
-    const setModelClippingPlanesSpy = jest.spyOn(materialManager, 'setModelClippingPlanes');
+    const setModelClippingPlanesSpy = vi.spyOn(materialManager, 'setModelClippingPlanes');
 
     const geometryFilter: GeometryFilter = {
       boundingBox: new THREE.Box3(new THREE.Vector3(-1, -2, -3), new THREE.Vector3(4, 5, 6)),
@@ -84,7 +84,7 @@ describe(CadModelFactory.name, () => {
     const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
     factory.createModel(modelMetadata, geometryFilter);
 
-    expect(setModelClippingPlanesSpy).toBeCalledTimes(1);
-    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeSymbol(), expect.toBeArrayOfSize(6));
+    expect(setModelClippingPlanesSpy).toHaveBeenCalledTimes(1);
+    expect(setModelClippingPlanesSpy).toHaveBeenCalledWith(expect.any(Symbol), expect.objectContaining({ length: 6 }));
   });
 });

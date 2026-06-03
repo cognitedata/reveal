@@ -7,12 +7,12 @@
 import * as THREE from 'three';
 
 import { EptBinaryLoader } from '../loading/EptBinaryLoader';
-import { EptJson, EptSchemaEntry } from '../loading/EptJson';
+import type { EptJson, EptSchemaEntry } from '../loading/EptJson';
 
-import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
-import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
+import type { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
+import type { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
-import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
+import type { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import { toVector3, toBox3 } from './translationUtils';
 
 function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {

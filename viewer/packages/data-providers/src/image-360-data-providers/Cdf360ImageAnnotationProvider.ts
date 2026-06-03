@@ -4,45 +4,80 @@
 
 import chunk from 'lodash/chunk';
 
-import {
+import type {
   AnnotationModel,
   CogniteClient,
   IdEither,
-  CogniteInternalId,
   AnnotationFilterProps,
-  AnnotationsAssetRef,
-  InternalId,
-  ExternalId,
-  AnnotationsTypesImagesAssetLink
+  AnnotationsAssetRef
 } from '@cognite/sdk';
-import {
+import type {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
+  Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo,
   ImageInstanceLinkAnnotationInfo,
   InstanceReference
 } from '../types';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdentifier } from '../DataSourceType';
-import {
+import { getExternalIdFromDescriptor } from '../utilities/getExternalIdFromDescriptor';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
-  Image360Annotation,
   Image360AnnotationAssetQueryResult,
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { DMInstanceRef, isDmIdentifier } from '@reveal/utilities';
+import { createCollectionIdString } from '@reveal/360-images';
+import { isDmIdentifier } from '@reveal/utilities';
 import {
-  isAnnotationsTypesImagesInstanceLink,
-  isAssetLinkAnnotationData,
   isImageAssetLinkAnnotation,
   isImageInstanceLinkAnnotation
 } from '@reveal/360-images/src/annotation/typeGuards';
+import { getInstanceKey } from '../utilities/instanceIds';
+
+/**
+ * Converts file descriptors to annotation resource IDs for CDF API.
+ */
+function getAnnotationResourceIds(descriptors: Image360FileDescriptor[]): IdEither[] {
+  return descriptors.map(desc => {
+    if ('fileId' in desc && desc.fileId !== undefined) {
+      return { id: desc.fileId };
+    }
+    const externalId = getExternalIdFromDescriptor(desc);
+    if (externalId !== undefined) {
+      return { externalId };
+    }
+    throw new Error('Invalid file descriptor: must have fileId, externalId, or instanceId');
+  });
+}
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
+
+  private readonly _collectionToInstanceReferenceToAnnotationMap: Map<
+    string,
+    Map<string, Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]>>
+  > = new Map();
+
+  // Cache for all annotations at collection level
+  private readonly _collectionAnnotationsCache: Map<
+    string,
+    Promise<ClassicDataSourceType['image360AnnotationType'][]>
+  > = new Map();
+
+  // Cache for fileId to entity/revision mapping at collection level
+  private readonly _collectionFileIdMapCache: Map<
+    string,
+    Promise<
+      Map<
+        number,
+        { entity: Image360Entity<ClassicDataSourceType>; revision: Image360RevisionEntity<ClassicDataSourceType> }
+      >
+    >
+  > = new Map();
 
   constructor(client: CogniteClient) {
     this._client = client;
@@ -52,91 +87,237 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     asset: InstanceReference<DataSourceType>,
     collection: DefaultImage360Collection<ClassicDataSourceType>
   ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
-    const entities = collection.image360Entities;
-    const imageIds = await this.getFilesByAssetRef(asset);
-    const imageIdSet = new Set<CogniteInternalId>(imageIds);
+    const cachedAnnotationsPromise = this._collectionToInstanceReferenceToAnnotationMap
+      .get(createCollectionIdString(collection.sourceId))
+      ?.get(getInstanceKey(asset));
 
-    const entityAnnotationsPromises = entities.map(getEntityAnnotationsForAsset);
-    const entityAnnotations = await Promise.all(entityAnnotationsPromises);
-    return entityAnnotations.flat();
-
-    async function getEntityAnnotationsForAsset(
-      entity: Image360Entity<ClassicDataSourceType>
-    ): Promise<Image360AnnotationAssetQueryResult[]> {
-      const revisionPromises = entity.getRevisions().map(async revision => {
-        const annotations = await getRevisionAnnotationsForAsset(revision);
-
-        return annotations.map(annotation => ({ image: entity, revision, annotation }));
-      });
-
-      const revisionMatches = await Promise.all(revisionPromises);
-      return revisionMatches.flat();
+    if (cachedAnnotationsPromise !== undefined) {
+      return cachedAnnotationsPromise;
     }
 
-    async function getRevisionAnnotationsForAsset(
-      revision: Image360RevisionEntity<ClassicDataSourceType>
-    ): Promise<Image360Annotation<ClassicDataSourceType>[]> {
-      const relevantDescriptors = revision.getDescriptors().faceDescriptors.filter(desc => imageIdSet.has(desc.fileId));
+    const resultPromise = this.fetchImageAnnotationsForInstance(asset, collection);
 
-      if (relevantDescriptors.length === 0) {
-        return [];
+    this.cacheResult(collection, asset, resultPromise);
+
+    return resultPromise;
+  }
+
+  private async fetchImageAnnotationsForInstance(
+    asset: InstanceReference<DataSourceType>,
+    collection: DefaultImage360Collection<ClassicDataSourceType>
+  ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
+    const matchingAnnotations = await this.fetchAnnotationsByReverseLookup(asset);
+
+    if (matchingAnnotations.length === 0) {
+      return [];
+    }
+
+    const matchingAnnotationIds = new Set(matchingAnnotations.map(annotation => annotation.id));
+    const fileIdToEntityRevision = await this.buildFileIdToEntityRevisionMap(collection, matchingAnnotations);
+
+    const revisionToEntityMap = new Map<
+      Image360RevisionEntity<ClassicDataSourceType>,
+      Image360Entity<ClassicDataSourceType>
+    >();
+    for (const annotation of matchingAnnotations) {
+      const match = fileIdToEntityRevision.get(annotation.annotatedResourceId);
+      if (match !== undefined) {
+        revisionToEntityMap.set(match.revision, match.entity);
       }
-
-      const annotations = await revision.getAnnotations();
-
-      return annotations.filter(a => {
-        const annotationData = a.annotation.data;
-        if (isDmIdentifier(asset)) {
-          if (isAnnotationsTypesImagesInstanceLink(annotationData)) {
-            return isSameDMIdentifier(annotationData.instanceRef, asset);
-          }
-        } else {
-          if (isAssetLinkAnnotationData(annotationData)) {
-            return matchesAssetRef(annotationData, asset);
-          }
-        }
-        return false;
-      });
     }
+
+    const results: Image360AnnotationAssetQueryResult<ClassicDataSourceType>[] = [];
+
+    for (const [revision, entity] of revisionToEntityMap) {
+      const revisionAnnotations = await revision.getAnnotations();
+
+      for (const annotationObj of revisionAnnotations) {
+        if (matchingAnnotationIds.has(annotationObj.annotation.id)) {
+          results.push({
+            image: entity,
+            revision: revision,
+            annotation: annotationObj
+          });
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Uses annotations reverseLookup to find only the files annotated with the given asset/instance,
+   * then fetches full annotation models for those files only
+   */
+  private async fetchAnnotationsByReverseLookup(asset: InstanceReference<DataSourceType>): Promise<AnnotationModel[]> {
+    const annotationType = isDmIdentifier(asset) ? 'images.InstanceLink' : 'images.AssetLink';
+    const dataFilter = getReverseLookupDataFilter(asset);
+
+    const fileRefs: AnnotationsAssetRef[] = await this._client.annotations
+      .reverseLookup({
+        filter: {
+          annotatedResourceType: 'file',
+          annotationType,
+          data: dataFilter
+        },
+        limit: 1000
+      })
+      .autoPagingToArray({ limit: Infinity });
+
+    if (fileRefs.length === 0) {
+      return [];
+    }
+
+    const resourceIds: IdEither[] = fileRefs
+      .map(ref => {
+        if (ref.id !== undefined) return { id: ref.id };
+        if (ref.externalId !== undefined) return { externalId: ref.externalId };
+        return undefined;
+      })
+      .filter((id): id is IdEither => id !== undefined);
+
+    // Process sequentially to avoid too many concurrent requests.
+    const results: AnnotationModel[] = [];
+    for (const idList of chunk(resourceIds, 1000)) {
+      const batchedResults = await this.listFileAnnotations({
+        annotatedResourceType: 'file',
+        annotatedResourceIds: idList
+      });
+      results.push(...batchedResults);
+    }
+    return results;
+  }
+
+  /**
+   * Gets all annotations for a collection
+   */
+  private getAllAnnotationsForCollection(
+    collection: DefaultImage360Collection<ClassicDataSourceType>
+  ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
+    const cacheKey = createCollectionIdString(collection.sourceId);
+
+    const cached = this._collectionAnnotationsCache.get(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    // Fetch all annotations and cache the promise
+    const fetchPromise = this.fetchAllAnnotations(collection, () => true);
+    this._collectionAnnotationsCache.set(cacheKey, fetchPromise);
+    return fetchPromise;
+  }
+
+  /**
+   * Gets the fileId to entity/revision mapping
+   */
+  private getFileIdToEntityRevisionMap(
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    allAnnotations: ClassicDataSourceType['image360AnnotationType'][]
+  ): Promise<
+    Map<
+      number,
+      { entity: Image360Entity<ClassicDataSourceType>; revision: Image360RevisionEntity<ClassicDataSourceType> }
+    >
+  > {
+    const cacheKey = createCollectionIdString(collection.sourceId);
+
+    const cached = this._collectionFileIdMapCache.get(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    // Build mapping and cache the promise
+    const buildPromise = this.buildFileIdToEntityRevisionMap(collection, allAnnotations);
+    this._collectionFileIdMapCache.set(cacheKey, buildPromise);
+    return buildPromise;
+  }
+
+  private cacheResult(
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    assetReference: InstanceReference<DataSourceType>,
+    resultPromise: Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]>
+  ): void {
+    let collectionMap = this._collectionToInstanceReferenceToAnnotationMap.get(
+      createCollectionIdString(collection.sourceId)
+    );
+
+    if (collectionMap === undefined) {
+      collectionMap = new Map();
+      this._collectionToInstanceReferenceToAnnotationMap.set(
+        createCollectionIdString(collection.sourceId),
+        collectionMap
+      );
+    }
+
+    collectionMap.set(getInstanceKey(assetReference), resultPromise);
   }
 
   public async getRelevant360ImageAnnotations(
     annotationSpecifier: Image360AnnotationSpecifier<ClassicDataSourceType>
   ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
-    const fileIds = annotationSpecifier.fileDescriptors.map(o => ({ id: o.fileId }));
+    const resourceIds = getAnnotationResourceIds(annotationSpecifier.fileDescriptors);
 
     return this.listFileAnnotations({
       annotatedResourceType: 'file',
-      annotatedResourceIds: fileIds
+      annotatedResourceIds: resourceIds
     });
   }
 
-  private async getFilesByAssetRef(assetRef: IdEither | DMInstanceRef): Promise<CogniteInternalId[]> {
-    const annotationData = this.getAnnotationDataByAssetRefType(assetRef);
+  /**
+   * Fetches file info for the given IDs and returns a map of fileId -> externalId.
+   */
+  private async fetchFileIdToExternalIdMapping(
+    fileIds: number[],
+    allowedExternalIds: Set<string>
+  ): Promise<Map<number, string>> {
+    const result = new Map<number, string>();
 
-    const response = await this._client.annotations
-      .reverseLookup({
-        limit: 1000,
-        filter: {
-          annotatedResourceType: 'file',
-          annotationType: annotationData.type,
-          data: annotationData.data
-        }
-      })
-      .autoPagingToArray({ limit: Infinity });
+    if (fileIds.length === 0 || allowedExternalIds.size === 0) {
+      return result;
+    }
 
-    return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
+    const fileInfos = await this._client.files.retrieve(fileIds.map(id => ({ id })));
+
+    for (const fileInfo of fileInfos) {
+      if (fileInfo.externalId !== undefined && allowedExternalIds.has(fileInfo.externalId)) {
+        result.set(fileInfo.id, fileInfo.externalId);
+      }
+    }
+
+    return result;
   }
 
-  private getAnnotationDataByAssetRefType(assetRef: IdEither | DMInstanceRef): {
-    type: 'images.InstanceLink' | 'images.AssetLink';
-    data: { instanceRef: DMInstanceRef } | { assetRef: IdEither };
-  } {
-    if (isDmIdentifier(assetRef)) {
-      return { type: 'images.InstanceLink', data: { instanceRef: assetRef } };
-    } else {
-      return { type: 'images.AssetLink', data: { assetRef } };
+  /**
+   * Resolves the mapping from internal file IDs to external IDs.
+   * This is needed to match annotations (which have annotatedResourceId) to descriptors (which may have externalId).
+   */
+  public async resolveFileIdToExternalIdMapping(
+    annotations: AnnotationModel[],
+    descriptors: Image360FileDescriptor[]
+  ): Promise<Map<number, string>> {
+    const fileIdToExternalId = new Map<number, string>();
+    const descriptorExternalIds = new Set<string>();
+
+    for (const desc of descriptors) {
+      const externalId = getExternalIdFromDescriptor(desc);
+      if (externalId !== undefined) {
+        descriptorExternalIds.add(externalId);
+        if ('fileId' in desc && desc.fileId !== undefined) {
+          fileIdToExternalId.set(desc.fileId, externalId);
+        }
+      }
     }
+
+    const unmappedIds = [...new Set(annotations.map(a => a.annotatedResourceId))].filter(
+      id => !fileIdToExternalId.has(id)
+    );
+
+    const fetchedMappings = await this.fetchFileIdToExternalIdMapping(unmappedIds, descriptorExternalIds);
+    for (const [fileId, externalId] of fetchedMappings) {
+      fileIdToExternalId.set(fileId, externalId);
+    }
+
+    return fileIdToExternalId;
   }
 
   getAllImage360AnnotationInfos(
@@ -172,8 +353,9 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     if (source === 'cdm') {
       return [];
     }
-    const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap(collection);
-    const annotations = await this.fetchAllAnnotations(collection, annotationFilter);
+    const allAnnotations = await this.getAllAnnotationsForCollection(collection);
+    const annotations = allAnnotations.filter(annotationFilter);
+    const fileIdToEntityRevision = await this.getFileIdToEntityRevisionMap(collection, allAnnotations);
 
     if (source === 'hybrid') {
       return pairAnnotationsWithEntityAndRevision(
@@ -205,19 +387,59 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     }
   }
 
-  private createFileIdToEntityRevisionMap(
-    collection: DefaultImage360Collection<ClassicDataSourceType>
-  ): Map<
-    number,
-    { entity: Image360Entity<ClassicDataSourceType>; revision: Image360RevisionEntity<ClassicDataSourceType> }
+  /**
+   * Builds a mapping from annotatedResourceId (internal file ID) to entity/revision.
+   * For legacy descriptors with fileId, uses the fileId directly.
+   * For new descriptors with externalId, resolves the mapping via one batched API call.
+   */
+  private async buildFileIdToEntityRevisionMap(
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotations: AnnotationModel[]
+  ): Promise<
+    Map<
+      number,
+      { entity: Image360Entity<ClassicDataSourceType>; revision: Image360RevisionEntity<ClassicDataSourceType> }
+    >
   > {
-    return collection.image360Entities.reduce((map, entity) => {
-      entity.getRevisions().forEach(revision => {
-        const descriptors = revision.getDescriptors().faceDescriptors;
-        descriptors.forEach(descriptor => map.set(descriptor.fileId, { entity, revision }));
-      });
-      return map;
-    }, new Map<number, { entity: Image360Entity<ClassicDataSourceType>; revision: Image360RevisionEntity<ClassicDataSourceType> }>());
+    type EntityRevision = {
+      entity: Image360Entity<ClassicDataSourceType>;
+      revision: Image360RevisionEntity<ClassicDataSourceType>;
+    };
+    const fileIdToEntityRevision = new Map<number, EntityRevision>();
+    const externalIdToEntityRevision = new Map<string, EntityRevision>();
+
+    for (const entity of collection.image360Entities) {
+      for (const revision of entity.getRevisions()) {
+        for (const descriptor of revision.getDescriptors().faceDescriptors) {
+          const entityRevision = { entity, revision };
+
+          if ('fileId' in descriptor && descriptor.fileId !== undefined) {
+            fileIdToEntityRevision.set(descriptor.fileId, entityRevision);
+          }
+
+          const externalId = getExternalIdFromDescriptor(descriptor);
+          if (externalId !== undefined) {
+            externalIdToEntityRevision.set(externalId, entityRevision);
+          }
+        }
+      }
+    }
+
+    const unmappedIds = [...new Set(annotations.map(a => a.annotatedResourceId))].filter(
+      id => !fileIdToEntityRevision.has(id)
+    );
+
+    const allowedExternalIds = new Set(externalIdToEntityRevision.keys());
+    const fileIdToExternalId = await this.fetchFileIdToExternalIdMapping(unmappedIds, allowedExternalIds);
+
+    for (const [fileId, externalId] of fileIdToExternalId) {
+      const match = externalIdToEntityRevision.get(externalId);
+      if (match !== undefined) {
+        fileIdToEntityRevision.set(fileId, match);
+      }
+    }
+
+    return fileIdToEntityRevision;
   }
 
   private async fetchAllAnnotations(
@@ -225,19 +447,18 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
   ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
     const image360FileDescriptors = collection.getAllFileDescriptors();
-    const fileIds = image360FileDescriptors.map(desc => desc.fileId);
-    const assetListPromises = chunk(fileIds, 1000).map(async idList => {
+    const resourceIds = getAnnotationResourceIds(image360FileDescriptors);
+
+    // Process sequentially to avoid too many concurrent requests.
+    const results: ClassicDataSourceType['image360AnnotationType'][] = [];
+    for (const idList of chunk(resourceIds, 1000)) {
       const annotationArray = await this.listFileAnnotations({
-        annotatedResourceIds: idList.map(id => ({ id })),
+        annotatedResourceIds: idList,
         annotatedResourceType: 'file'
       });
-
-      const assetAnnotations = annotationArray.filter(annotationFilter);
-
-      return assetAnnotations;
-    });
-
-    return (await Promise.all(assetListPromises)).flat();
+      results.push(...annotationArray.filter(annotationFilter));
+    }
+    return results;
   }
 
   private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
@@ -250,10 +471,12 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   }
 }
 
-function matchesAssetRef(assetLink: AnnotationsTypesImagesAssetLink, matchRef: IdEither): boolean {
-  return (
-    ((matchRef as InternalId).id !== undefined && assetLink.assetRef.id === (matchRef as InternalId).id) ||
-    ((matchRef as ExternalId).externalId !== undefined &&
-      assetLink.assetRef.externalId === (matchRef as ExternalId).externalId)
-  );
+function getReverseLookupDataFilter(asset: InstanceReference<DataSourceType>): Record<string, unknown> {
+  if (isDmIdentifier(asset)) {
+    return { instanceRef: { externalId: asset.externalId, space: asset.space } };
+  }
+  if ('id' in asset) {
+    return { assetRef: { id: asset.id } };
+  }
+  return { assetRef: { externalId: asset.externalId } };
 }

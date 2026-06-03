@@ -1,10 +1,10 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteClient, QueryRequest } from '@cognite/sdk';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { CogniteClient, QueryRequest } from '@cognite/sdk';
+import type { DMInstanceRef } from '@reveal/utilities';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
-import { Image360AnnotationViewReferenceAndProperties } from './types';
+import type { Image360AnnotationViewReferenceAndProperties } from './types';
 import { CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE, CORE_DM_IMAGE_360_VIEW_REFERENCE } from './sources';
 import { COGNITE_VISUALIZABLE_SOURCE } from '../../utilities/constants';
 import { CORE_DM_IMAGE_360_ANNOTATIONS_PROPERTIES_LIST, CORE_DM_IMAGE_360_PROPERTIES_LIST } from './queryProperties';

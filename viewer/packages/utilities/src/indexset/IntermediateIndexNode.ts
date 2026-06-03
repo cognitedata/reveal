@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { IndexNode } from './IndexSet';
+import type { IndexNode } from './IndexSet';
 import { LeafIndexNode } from './LeafIndexNode';
 import { NumericRange } from '../NumericRange';
 import assert from 'assert';

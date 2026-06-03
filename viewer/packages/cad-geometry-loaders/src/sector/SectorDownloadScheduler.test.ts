@@ -2,12 +2,15 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
-import { IMock, Mock } from 'moq.ts';
-import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
+import type { IMock } from 'moq.ts';
+import { Mock } from 'moq.ts';
+import type { SectorDownloadData } from './SectorDownloadScheduler';
+import { SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { Log } from '@reveal/logger';
-import { LogLevelNumbers } from 'loglevel';
+import type { LogLevelNumbers } from 'loglevel';
 import { LocalModelIdentifier } from '@reveal/data-providers';
 
 describe(SectorDownloadScheduler.name, () => {

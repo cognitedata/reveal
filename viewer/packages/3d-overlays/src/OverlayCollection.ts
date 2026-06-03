@@ -3,7 +3,7 @@
  */
 
 import type { Vector3, Color } from 'three';
-import { Overlay3D } from './Overlay3D';
+import type { Overlay3D } from './Overlay3D';
 
 /**
  * The default metadata type contained in Overlays

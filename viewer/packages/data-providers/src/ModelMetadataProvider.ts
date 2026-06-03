@@ -1,9 +1,9 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
-import { ModelIdentifier } from './ModelIdentifier';
-import { BlobOutputMetadata, File3dFormat } from './types';
+import type * as THREE from 'three';
+import type { ModelIdentifier } from './ModelIdentifier';
+import type { BlobOutputMetadata, File3dFormat } from './types';
 
 /**
  * Provides metadata for 3D models.

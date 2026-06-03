@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Color, Object3D, Vector3 } from 'three';
+import type { Color, Object3D, Vector3 } from 'three';
 import { LineMaterial } from './lines/LineMaterial';
 import { LineGeometry } from './lines/LineGeometry';
 import { Line2 } from './lines/Line2';

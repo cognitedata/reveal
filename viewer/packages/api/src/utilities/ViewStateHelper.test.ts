@@ -10,7 +10,7 @@ import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../tes
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 
 describe(ViewStateHelper.name, () => {
@@ -20,7 +20,7 @@ describe(ViewStateHelper.name, () => {
     const sdk = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
     mockClientAuthentication(sdk);
     const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
-    renderer.render = jest.fn();
+    renderer.render = vi.fn();
 
     viewer = new Cognite3DViewer({ sdk, renderer, logMetrics: false });
   });

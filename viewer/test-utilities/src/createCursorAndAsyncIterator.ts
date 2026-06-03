@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { ListResponse, CursorAndAsyncIterator, CogniteAsyncIterator } from '@cognite/sdk';
+import type { ListResponse, CursorAndAsyncIterator, CogniteAsyncIterator } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 
 export function createCursorAndAsyncIterator<T>(response: ListResponse<T[]>): CursorAndAsyncIterator<T> {

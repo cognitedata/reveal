@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "ES2019",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": [
       "ES2022",
       "dom",
       "webworker"
     ],
-    "target": "ES2019",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
@@ -17,5 +16,8 @@
   },
   "exclude": [
     "./**/*.test.ts",
+    "./test-utilities/**",
+    "./visual-tests/**",
+    "./**/visual-tests/**",
   ]
 }

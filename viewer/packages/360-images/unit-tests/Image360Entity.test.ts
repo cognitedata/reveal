@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 
-import { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { It, Mock } from 'moq.ts';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import type { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 function createMockImage360(options?: { customTranslation?: THREE.Matrix4 }) {
@@ -54,7 +54,7 @@ describe(Image360Entity.name, () => {
     const testTranslation = new THREE.Matrix4().makeTranslation(4, 5, 6);
     const entity = createMockImage360({ customTranslation: testTranslation });
 
-    expect(entity.transform.equals(testTranslation)).toBeTrue();
+    expect(entity.transform.equals(testTranslation)).toBeTruthy();
   });
 
   test('set icon color is returned in getter', () => {

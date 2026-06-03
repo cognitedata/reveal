@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { DefaultCameraManager } from '../src/DefaultCameraManager';
 import { InputHandler } from '@reveal/utilities';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(DefaultCameraManager.name, () => {
   const domElement = document.createElement('canvas');
@@ -23,22 +23,22 @@ describe(DefaultCameraManager.name, () => {
       new THREE.PerspectiveCamera()
     );
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('onCameraStop triggers within 200ms after camera finished moving', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     cameraManager.on('cameraStop', callback);
 
     cameraManager.setCameraState({ position: new THREE.Vector3(1, 0, 0), target: new THREE.Vector3(0, 0, 0) });
 
     expect(callback).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
 
     expect(callback).toHaveBeenCalled();
   });

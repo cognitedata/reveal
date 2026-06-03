@@ -4,14 +4,14 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/api';
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../test-utilities';
 
 import { AxisViewTool } from './AxisViewTool';
 import { defaultAxisBoxConfig } from './types';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 
 describe('AxisViewTool', () => {
@@ -27,7 +27,7 @@ describe('AxisViewTool', () => {
     });
     mockClientAuthentication(sdk);
     const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
-    renderer.render = jest.fn();
+    renderer.render = vi.fn();
 
     domSize = { height: 480, width: 640 };
     canvasContainer = document.createElement('div');
@@ -52,15 +52,15 @@ describe('AxisViewTool', () => {
 
     const tool = new AxisViewTool(viewer, { size: size, position: { xAbsolute: xPosition, yAbsolute: yPosition } });
 
-    expect((tool as any).handleClick(xPosition + size / 2, yPosition - size / 2, domSize)).toBeTrue();
+    expect((tool as any).handleClick(xPosition + size / 2, yPosition - size / 2, domSize)).toBeTruthy();
 
-    expect((tool as any).handleClick(xPosition + size / 2, yPosition + size / 2, domSize)).toBeFalse();
-    expect((tool as any).handleClick(xPosition - size / 2, yPosition - size / 2, domSize)).toBeFalse();
+    expect((tool as any).handleClick(xPosition + size / 2, yPosition + size / 2, domSize)).toBeFalsy();
+    expect((tool as any).handleClick(xPosition - size / 2, yPosition - size / 2, domSize)).toBeFalsy();
 
-    expect((tool as any).handleClick(0, 0, domSize)).toBeFalse();
-    expect((tool as any).handleClick(domSize.width, 0, domSize)).toBeFalse();
-    expect((tool as any).handleClick(0, domSize.height, domSize)).toBeFalse();
-    expect((tool as any).handleClick(domSize.width, domSize.height, domSize)).toBeFalse();
+    expect((tool as any).handleClick(0, 0, domSize)).toBeFalsy();
+    expect((tool as any).handleClick(domSize.width, 0, domSize)).toBeFalsy();
+    expect((tool as any).handleClick(0, domSize.height, domSize)).toBeFalsy();
+    expect((tool as any).handleClick(domSize.width, domSize.height, domSize)).toBeFalsy();
   });
 
   test('Test custom configuration', () => {

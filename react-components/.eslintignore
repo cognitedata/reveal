@@ -1,7 +1,0 @@
-dist/*
-node_modules/*
-.yarn/*
-storybook-static/*
-yarn.lock
-webpack.config.js
-playwright-report/*

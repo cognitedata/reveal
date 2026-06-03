@@ -4,24 +4,24 @@
 import * as THREE from 'three';
 import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('TransformOverrideBuffer', () => {
-  const onGenerateNewTextureCb: (texture: THREE.DataTexture) => void = jest.fn();
+  const onGenerateNewTextureCb: (texture: THREE.DataTexture) => void = vi.fn();
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test('dispose() disposes texture', () => {
     const buffer = new TransformOverrideBuffer(onGenerateNewTextureCb);
     const texture = buffer.dataTexture;
-    const listener = jest.fn();
+    const listener = vi.fn();
     texture.addEventListener('dispose', listener);
 
     buffer.dispose();
 
-    expect(listener).toBeCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 
   test('addOverrideTransform called many times, triggers reallocation', () => {
@@ -29,7 +29,7 @@ describe('TransformOverrideBuffer', () => {
     for (let i = 0; i < 1000; i++) {
       buffer.addOverrideTransform(i, new THREE.Matrix4());
     }
-    expect(onGenerateNewTextureCb).toBeCalled();
+    expect(onGenerateNewTextureCb).toHaveBeenCalled();
   });
 
   test('consecutive add/removeOverrideTransform doesnt allocate new texture', () => {
@@ -38,6 +38,6 @@ describe('TransformOverrideBuffer', () => {
       buffer.addOverrideTransform(i, new THREE.Matrix4());
       buffer.removeOverrideTransform(i);
     }
-    expect(onGenerateNewTextureCb).not.toBeCalled();
+    expect(onGenerateNewTextureCb).not.toHaveBeenCalled();
   });
 });

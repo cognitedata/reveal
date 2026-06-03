@@ -1,14 +1,14 @@
 # Visual Regression Tests
 
 Reveal uses visual tests as a form of regression testing and smoke tests.
-The underlying stack leverages [puppeteer](https://www.npmjs.com/package/puppeteer) and [jest](https://www.npmjs.com/package/jest). 
+The underlying stack leverages [playwright](https://playwright.dev/). 
 
-The way it works is that we use [webpack-dev-server](https://www.npmjs.com/package/webpack-dev-server) to serve the contents of the visual tests (visual tests server) and have an instance of jest (visual tests client) play through the different visual tests using puppeteer.
+The way it works is that we use [webpack-dev-server](https://www.npmjs.com/package/webpack-dev-server) to serve the contents of the visual tests (visual tests server) and have an instance of playwright (visual tests automation) play through the different visual tests.
 
 To run the visual tests on your local environment, simply run `yarn run test:visual` from the `/viewer` directory.
 
 This will initiate a two-step process of hosting the visual tests server and running the visual tests client.
-In case you want to run the visual tests multiple times, you can run these processes separately such that you do not have to spin up the server on each run, which will shorten the feedback cycle. To do this, simply run `yarn run test:visual:server` and `yarn run test:visual:client` in two separate terminals. Once the visual tests complete, the test server will still keep running, and you can run the visual test client again. If you want to only test a subset of the visual tests, you can start them in watch mode with `yarn run test:visual:client --watch` and then use the standard jest terminal GUI to filter tests. Note that tests will not auto-run when you change visual tests since the watch mode is only on the test runner, so you will have to trigger a new run manually through the jest watch GUI.
+In case you want to run the visual tests multiple times, you can run these processes separately such that you do not have to spin up the server on each run, which will shorten the feedback cycle. To do this, simply run `yarn run test:visual:server` and `yarn run test:visual` in two separate terminals. Once the visual tests complete, the test server will still keep running, and you can run the visual test client again. If you want to only test a subset of the visual tests, you can start them in watch mode with `yarn run test:visual --ui` and then use the standard playwright GUI to filter tests. Note that tests will not auto-run when you change visual tests since the watch mode is only on the test runner, so you will have to trigger a new run manually through the watch GUI.
 
 
 ## Running visual test in browser
@@ -76,5 +76,3 @@ Most usecases should be covered by the following abstraction levels:
 
 When creating new visual tests you should almost always use one of these abstractions.
 If they do not cover a certain use-case or you create something that you think could be useful for other tests, consider either adding a new base VisualTestFixture or extend the current ones.
-
-

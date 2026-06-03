@@ -5,8 +5,9 @@
 import * as THREE from 'three';
 import { CogniteCadModel } from './CogniteCadModel';
 
-import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { NodesApiClient } from '@reveal/nodes-api';
+import type { NodeAppearance } from '@reveal/cad-styling';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import type { NodesApiClient } from '@reveal/nodes-api';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';
@@ -53,15 +54,15 @@ describe(CogniteCadModel.name, () => {
     model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
     model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(model.styledNodeCollections).not.toHaveLength(0);
 
     model.unassignStyledNodeCollection(collection2);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(model.styledNodeCollections).not.toHaveLength(0);
 
     model.unassignStyledNodeCollection(collection);
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(model.styledNodeCollections).toHaveLength(0);
   });
 
   test('assignStyledNodeCollection updates style if called twice with same collection', () => {
@@ -84,7 +85,7 @@ describe(CogniteCadModel.name, () => {
 
     model.removeAllStyledNodeCollections();
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(model.styledNodeCollections).toHaveLength(0);
   });
 
   test('styled node collections are kept in order of importance', () => {
@@ -145,7 +146,7 @@ describe(CogniteCadModel.name, () => {
 
   test('visible property hides or unhides model', () => {
     const visible = true;
-    expect(model.visible).toBeTrue();
+    expect(model.visible).toBeTruthy();
 
     model.visible = false;
 
@@ -156,5 +157,38 @@ describe(CogniteCadModel.name, () => {
 
     expect(model.cadNode.visible).toBe(visible);
     expect(model.visible).toBe(visible);
+  });
+
+  describe('tree index locking', () => {
+    test('lockTreeIndices populates lockedSectorIds for mapped tree indices', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+
+      model.lockTreeIndices([1, 2]);
+
+      expect(model.cadNode.lockedSectorIds.has(10)).toBe(true);
+      expect(model.cadNode.lockedSectorIds.has(20)).toBe(true);
+    });
+
+    test('unlockTreeIndices removes only the unlocked indices sectors', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+      model.lockTreeIndices([1, 2]);
+
+      model.unlockTreeIndices([1]);
+
+      expect(model.cadNode.lockedSectorIds.has(10)).toBe(false);
+      expect(model.cadNode.lockedSectorIds.has(20)).toBe(true);
+    });
+
+    test('unlockAllTreeIndices clears all locked sectors', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+      model.lockTreeIndices([1, 2]);
+
+      model.unlockAllTreeIndices();
+
+      expect(model.cadNode.lockedSectorIds.size).toBe(0);
+    });
   });
 });

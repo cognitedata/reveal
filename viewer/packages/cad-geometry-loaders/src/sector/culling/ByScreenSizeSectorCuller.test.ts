@@ -6,14 +6,15 @@ import * as THREE from 'three';
 
 import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
-import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import type { CadModelMetadata, WantedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 import { createCadModelMetadata, createV9SectorMetadata } from '../../../../../test-utilities';
-import { CadModelBudget } from '../../CadModelBudget';
+import type { CadModelBudget } from '../../CadModelBudget';
 
 import { createDetermineSectorInput } from './createDetermineSectorInput';
 import { Mock } from 'moq.ts';
-import { DetermineSectorsInput } from './types';
+import type { DetermineSectorsInput } from './types';
 
 describe(ByScreenSizeSectorCuller.name, () => {
   let camera: THREE.PerspectiveCamera;
@@ -63,12 +64,12 @@ describe(ByScreenSizeSectorCuller.name, () => {
     expect(spentBudget.renderCost).toBeLessThan(allSectorsRenderCost);
     expect(spentBudget.renderCost).toBeGreaterThanOrEqual(budget.maximumRenderCost);
     expect(scheduledSectors.length).toBeLessThan(model.scene.sectorCount);
-    expect(scheduledSectors.length).not.toBeEmpty();
+    expect(scheduledSectors.length).toBeGreaterThan(0);
   });
 
   test('determineSectors throws if model is not v9', () => {
     const mockDetermineSectorInput = new Mock<DetermineSectorsInput>();
-    expect(() => culler.determineSectors(mockDetermineSectorInput.object())).toThrowError();
+    expect(() => culler.determineSectors(mockDetermineSectorInput.object())).toThrow();
   });
 
   test('determineSectors doesnt return fully culled sectors', () => {
@@ -80,10 +81,12 @@ describe(ByScreenSizeSectorCuller.name, () => {
     const { wantedSectors } = culler.determineSectors(input);
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
-    expect(scheduledSectors).toSatisfyAll((x: WantedSector) => {
-      const bounds = x.metadata.subtreeBoundingBox;
-      return clipPlane.intersectsBox(bounds);
-    });
+    expect(
+      scheduledSectors.every((x: WantedSector) => {
+        const bounds = x.metadata.subtreeBoundingBox;
+        return clipPlane.intersectsBox(bounds);
+      })
+    ).to.be.true;
   });
 
   test('determineSectors prioritizes sectors intersecting prioritized areas', () => {
@@ -97,9 +100,47 @@ describe(ByScreenSizeSectorCuller.name, () => {
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
     const topPrioritySectors = scheduledSectors.slice(0, expectedTopPrioritySectors.length);
 
-    expect(topPrioritySectors).toSatisfyAll((x: WantedSector) => {
-      const bounds = x.metadata.subtreeBoundingBox;
-      return prioritizedAreaBounds.intersectsBox(bounds);
-    });
+    expect(
+      topPrioritySectors.every((x: WantedSector) => {
+        const bounds = x.metadata.subtreeBoundingBox;
+        return prioritizedAreaBounds.intersectsBox(bounds);
+      })
+    ).to.be.true;
+  });
+
+  test('determineSectors force-includes all sectors of a locked model even when budget is zero', () => {
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    input.lockedModelIdentifiers = new Set([model.modelIdentifier.revealInternalId]);
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.length).toBe(model.scene.sectorCount);
+  });
+
+  test('determineSectors force-includes specific locked sector IDs even when budget is zero', () => {
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    const lockedSectorId = model.scene.root.id;
+    input.lockedModelIdentifiers = new Set<symbol>();
+    input.lockedSectorIdsByModel = new Map([[model.modelIdentifier.revealInternalId, new Set([lockedSectorId])]]);
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.some(s => s.metadata.id === lockedSectorId)).toBe(true);
+  });
+
+  test('determineSectors does not force sectors for models not in lockedModelIdentifiers', () => {
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    input.lockedModelIdentifiers = new Set<symbol>();
+    input.lockedSectorIdsByModel = new Map();
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.length).toBe(0);
   });
 });

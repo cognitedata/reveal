@@ -4,16 +4,15 @@
 
 import * as THREE from 'three';
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import nock from 'nock';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { It, Mock } from 'moq.ts';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe('SinglePropertyFilterNodeCollection', () => {
   let mockClient: Mock<CogniteClient>;
@@ -31,15 +30,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
     set = new SinglePropertyFilterNodeCollection(mockClient.object(), mockModel.object());
   });
 
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll();
-      fail(new Error('Not all nock interceptors were used!'));
-    }
-  });
-
   test('isLoading is initially false', () => {
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('isLoading is true while executing request and false after', async () => {
@@ -50,16 +42,16 @@ describe('SinglePropertyFilterNodeCollection', () => {
     const promise = set.executeFilter('PDMS', ':capStatus', ['S8', 'S9']);
 
     // Assert
-    expect(set.isLoading).toBeTrue();
+    expect(set.isLoading).toBeTruthy();
     await promise;
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('executeFilter() with empty result triggers change', async () => {
     // Arrange
     setupPostReturn(mockClient, 200, { items: [] });
 
-    const listener = jest.fn();
+    const listener = vi.fn();
     set.on('changed', listener);
 
     // Act
@@ -67,7 +59,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
     // Assert
     expect(set.getIndexSet()).toEqual(new IndexSet());
-    expect(listener).toBeCalled();
+    expect(listener).toHaveBeenCalled();
   });
 
   test('executeFilter() with single batch result, creates correct IndexSet', async () => {
@@ -125,8 +117,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
     expectedSet.addRange(new NumericRange(30, 10));
     expectedSet.addRange(new NumericRange(50, 10));
     expect(set.getIndexSet()).toEqual(expectedSet);
-    expect(set.getAreas()).not.toBeEmpty();
-    expect(set.isLoading).toBeFalse();
+    expect(set.getAreas()).not.to.be.empty;
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('executeFilter() with two partitions, finishes and merges both', async () => {
@@ -146,7 +138,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
     expectedSet.addRange(new NumericRange(1, 10));
     expectedSet.addRange(new NumericRange(30, 10));
     expect(set.getIndexSet().toIndexArray()).toEqual(expectedSet.toIndexArray());
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('executeFilter() with very many values, splits into multiple requests', async () => {
@@ -162,7 +154,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
     expectedSet.addRange(new NumericRange(1, 10));
     expectedSet.addRange(new NumericRange(30, 10));
     expect(set.getIndexSet().toIndexArray()).toEqual(expectedSet.toIndexArray());
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
   });
 
   test('clear() interrupts ongoing operation and resets set', async () => {
@@ -175,7 +167,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
     await executeFilterOperation;
 
     // Assert
-    expect(set.isLoading).toBeFalse();
+    expect(set.isLoading).toBeFalsy();
     expect(set.getIndexSet()).toEqual(new IndexSet());
   });
 });

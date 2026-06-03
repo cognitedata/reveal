@@ -1,9 +1,9 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Image360Provider } from './Image360Provider';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import {
+import type { Image360Provider } from './Image360Provider';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import type {
   Historical360ImageSet,
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -13,13 +13,13 @@ import {
   Image360FileDescriptor,
   Image360FileProvider
 } from './types';
-import {
+import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
-import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
+import type { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
 
 export class Image360ProviderCombiner<T extends DataSourceType> implements Image360Provider<T> {
   private readonly _descriptorProvider: Image360DescriptorProvider<T>;
@@ -61,6 +61,16 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
     annotationSpecifier: Image360AnnotationSpecifier<T>
   ): Promise<T['image360AnnotationType'][]> {
     return this._annotationProvider.getRelevant360ImageAnnotations(annotationSpecifier);
+  }
+
+  resolveFileIdToExternalIdMapping(
+    annotations: T['image360AnnotationType'][],
+    descriptors: Image360FileDescriptor[]
+  ): Promise<Map<number, string>> {
+    if (this._annotationProvider.resolveFileIdToExternalIdMapping) {
+      return this._annotationProvider.resolveFileIdToExternalIdMapping(annotations, descriptors);
+    }
+    return Promise.resolve(new Map());
   }
 
   findImageAnnotationsForInstance(

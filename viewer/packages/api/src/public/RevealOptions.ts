@@ -2,10 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { RenderOptions } from '@reveal/rendering';
-import { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
+import type { RenderOptions } from '@reveal/rendering';
+import type { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.

@@ -5,22 +5,23 @@
 import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
-import { LoadingState } from '@reveal/model-base';
+import type { LoadingState } from '@reveal/model-base';
 
-import { PointCloudFactory } from './PointCloudFactory';
-import { PointCloudNode } from './PointCloudNode';
-import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
+import type { PointCloudFactory } from './PointCloudFactory';
+import type { PointCloudNode } from './PointCloudNode';
+import type { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PointCloudLoadingStateHandler } from './PointCloudLoadingStateHandler';
-import { Potree } from './potree-three-loader';
+import type { Potree } from './potree-three-loader';
 
-import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { asyncScheduler, combineLatest, scan, Subject, throttleTime } from 'rxjs';
 
-import { ModelIdentifier, AddModelOptionsWithModelRevisionId, DataSourceType } from '@reveal/data-providers';
+import type { ModelIdentifier, AddModelOptionsWithModelRevisionId, DataSourceType } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
-import { SupportedModelTypes } from '@reveal/model-base';
-import { PointCloudMaterialManager } from '@reveal/rendering';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { PointCloudMaterialManager } from '@reveal/rendering';
 
-import { Mesh } from 'three';
+import type { Mesh } from 'three';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;

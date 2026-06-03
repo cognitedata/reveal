@@ -4,16 +4,16 @@
 
 import * as THREE from 'three';
 import { CustomSectorBounds } from './CustomSectorBounds';
-import { CadNode } from '../wrappers/CadNode';
+import type { CadNode } from '../wrappers/CadNode';
 import { Mock } from 'moq.ts';
 import { createV9SectorMetadata } from '../../../../test-utilities';
-import { SectorMetadata } from '@reveal/cad-parsers';
+import type { SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 /*
 
 The following drawing shows the sectors and nodes used in this test. The layout is "2D": All sectors and nodes span z from 0 to 1, and all transforms
-are simple translations in x and y. This shouldn't decrease the likelihood of discovering a logical error in the code under test by much, but it makes 
+are simple translations in x and y. This shouldn't decrease the likelihood of discovering a logical error in the code under test by much, but it makes
 it much easier to reason about the expected result of any given test.
 
 (0,0)                                                                                                                          (8,0)
@@ -145,13 +145,13 @@ describe('CustomSectorBounds', () => {
   });
 
   test('Transform single node', () => {
-    expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeFalse();
+    expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeFalsy();
 
     // Register node A
     customSectorBounds.registerTransformedNode(nodeA.treeIndex, nodeA.originalBoundingBox);
     customSectorBounds.recomputeSectorBounds(); // Missing sectors and transform, nothing should happen
 
-    expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeTrue();
+    expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeTruthy();
     [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
 
     // Set transform
@@ -173,7 +173,7 @@ describe('CustomSectorBounds', () => {
     customSectorBounds.unregisterTransformedNode(nodeA.treeIndex);
     customSectorBounds.recomputeSectorBounds();
 
-    expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeFalse();
+    expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeFalsy();
     [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
   });
 
@@ -389,7 +389,7 @@ describe('CustomSectorBounds', () => {
       fail(`Failed to get metadata or original bounds for sector ${sectorId}`);
     }
 
-    expect(sectorBounds.equals(originalBounds)).toBeTrue();
+    expect(sectorBounds.equals(originalBounds)).toBeTruthy();
   }
 
   function expectBoundsApproximatelyEqual(sectorId: number, expected: THREE.Box3, precision = 3) {

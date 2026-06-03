@@ -2,10 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
-import { defaultRenderOptions, RenderOptions } from '../src/rendering/types';
+import type { RenderOptions } from '../src/rendering/types';
+import { defaultRenderOptions } from '../src/rendering/types';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { NumericRange } from '@reveal/utilities';
 import { CadNode } from '@reveal/cad-model';

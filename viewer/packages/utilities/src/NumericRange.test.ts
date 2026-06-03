@@ -6,7 +6,7 @@ import { NumericRange } from './NumericRange';
 
 describe('NumericRange', () => {
   test('constructor does not accept negative count', () => {
-    expect(() => new NumericRange(0, -1)).toThrowError();
+    expect(() => new NumericRange(0, -1)).toThrow();
   });
 
   test('toInclusive is less than from when range is empty', () => {
@@ -17,8 +17,8 @@ describe('NumericRange', () => {
 
   test('values() and toArray() returns no values when range is empty', () => {
     const range = new NumericRange(1, 0);
-    expect(range.values()).toBeEmpty();
-    expect(range.toArray()).toBeEmpty();
+    expect(range.values()).to.be.empty;
+    expect(range.toArray()).toHaveLength(0);
   });
 
   test('values() and toArray() returns correct values', () => {
@@ -32,11 +32,11 @@ describe('NumericRange', () => {
     expect(range.from).toBe(11);
     expect(range.toInclusive).toBe(20);
     expect(range.count).toBe(10);
-    expect(range.contains(11)).toBeTrue();
-    expect(range.contains(15)).toBeTrue();
-    expect(range.contains(20)).toBeTrue();
-    expect(range.contains(21)).toBeFalse();
-    expect(range.contains(10)).toBeFalse();
+    expect(range.contains(11)).toBeTruthy();
+    expect(range.contains(15)).toBeTruthy();
+    expect(range.contains(20)).toBeTruthy();
+    expect(range.contains(21)).toBeFalsy();
+    expect(range.contains(10)).toBeFalsy();
   });
 
   test('forEach applies callback to each value', () => {

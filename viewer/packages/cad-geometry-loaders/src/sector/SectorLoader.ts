@@ -2,17 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
 
-import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
-import { SectorCuller } from './culling/SectorCuller';
-import { ModelStateHandler } from './ModelStateHandler';
+import type { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
+import type { SectorCuller } from './culling/SectorCuller';
+import type { ModelStateHandler } from './ModelStateHandler';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import { File3dFormat } from '@reveal/data-providers';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
-import { CadNode } from '@reveal/cad-model';
+import type { CadNode } from '@reveal/cad-model';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -67,7 +67,9 @@ export class SectorLoader {
     const sectorCullerInput: DetermineSectorsInput = {
       ...input,
       cadModelsMetadata: visibleCadModels.map(x => x.cadModelMetadata),
-      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes])
+      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes]),
+      lockedModelIdentifiers: input.lockedModelIdentifiers,
+      lockedSectorIdsByModel: input.lockedSectorIdsByModel
     };
 
     if (sectorCullerInput.cadModelsMetadata.length <= 0) {
@@ -200,5 +202,6 @@ class ProgressReportHelper {
 
 function isGltfModelFormat(model: CadModelMetadata): boolean {
   // Add new versions here as support is added to Reveal
-  return model.format === File3dFormat.GltfCadModel && model.formatVersion === 9;
+  const isGltf = model.format === File3dFormat.GltfCadModel || model.format === File3dFormat.GltfPrioritizedNodes;
+  return isGltf && model.formatVersion === 9;
 }

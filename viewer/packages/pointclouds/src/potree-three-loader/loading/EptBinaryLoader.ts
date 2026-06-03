@@ -17,7 +17,7 @@ import {
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
-import { ParsedEptData, EptInputData } from '../workers/types';
+import type { ParsedEptData, EptInputData } from '../workers/types';
 
 import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 

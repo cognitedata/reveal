@@ -2,7 +2,7 @@
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
 import { Vector4 } from 'three';
-import { PointClassification } from './types';
+import type { PointClassification } from './types';
 
 export const DEFAULT_CLASSIFICATION: PointClassification = {
   0: new Vector4(0.5, 0.5, 0.5, 1.0),

@@ -3,15 +3,15 @@
  */
 
 import * as THREE from 'three';
-import { RenderPass } from '../RenderPass';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { SceneHandler } from '@reveal/utilities';
+import type { RenderPass } from '../RenderPass';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { SceneHandler } from '@reveal/utilities';
 import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
-import { PointCloudRenderTargets } from './types';
-import { PointCloudPassParameters } from '../render-passes/types';
-import { PointCloudParameters } from '../rendering/types';
+import type { PointCloudRenderTargets } from './types';
+import type { PointCloudPassParameters } from '../render-passes/types';
+import type { PointCloudParameters } from '../rendering/types';
 import { PointShape } from '../pointcloud-rendering';
-import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import { shouldApplyEdl } from './pointCloudParameterUtils';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {

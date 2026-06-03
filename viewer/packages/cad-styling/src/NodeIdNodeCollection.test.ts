@@ -3,9 +3,9 @@
  */
 import * as THREE from 'three';
 
-import { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
+import type { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
 import { NodeIdNodeCollection } from './NodeIdNodeCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
 import range from 'lodash/range';
@@ -49,8 +49,8 @@ describe(NodeIdNodeCollection.name, () => {
   test('executeFilter populates IndexSet and areas', async () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
-    expect(collection.getIndexSet().toIndexArray()).not.toBeEmpty();
-    expect(collection.getAreas().isEmpty).toBeFalse();
+    expect(collection.getIndexSet().toIndexArray()).not.toHaveLength(0);
+    expect(collection.getAreas().isEmpty).toBeFalsy();
   });
 
   test('executeFilter maps node bounds to ThreeJS coordinates', async () => {

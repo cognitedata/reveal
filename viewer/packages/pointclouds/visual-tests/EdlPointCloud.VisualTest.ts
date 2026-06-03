@@ -3,19 +3,12 @@
  */
 
 import { PointCloudNode } from '../src/PointCloudNode';
-import {
-  CadMaterialManager,
-  defaultRenderOptions,
-  DefaultRenderPipelineProvider,
-  PointCloudMaterialManager,
-  PointColorType
-} from '@reveal/rendering';
+import type { CadMaterialManager, PointCloudMaterialManager } from '@reveal/rendering';
+import { defaultRenderOptions, DefaultRenderPipelineProvider, PointColorType } from '@reveal/rendering';
 import assert from 'assert';
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
-import { SceneHandler } from '@reveal/utilities';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { SceneHandler } from '@reveal/utilities';
 
 import * as THREE from 'three';
 

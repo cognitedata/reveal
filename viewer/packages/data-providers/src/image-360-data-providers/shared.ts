@@ -1,10 +1,10 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Image360RevisionId } from '../types';
-import { DataSourceType } from '../DataSourceType';
-import { Metadata } from '@cognite/sdk';
-import {
+import type { Image360RevisionId } from '../types';
+import type { DataSourceType } from '../DataSourceType';
+import type { Metadata } from '@cognite/sdk';
+import type {
   Image360DataModelIdentifier,
   Image360LegacyDataModelIdentifier
 } from './descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';

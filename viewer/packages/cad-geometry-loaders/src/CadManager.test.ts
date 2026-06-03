@@ -2,11 +2,21 @@
  * Copyright 2025 Cognite AS
  */
 import { CadManager } from './CadManager';
-import { CadMaterialManager } from '@reveal/rendering';
-import { CadModelFactory } from '@reveal/cad-model';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { It, Mock, IMock } from 'moq.ts';
-import { PerspectiveCamera } from 'three';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { CadModelFactory } from '@reveal/cad-model';
+import type { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import type { IMock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
+import { PerspectiveCamera, Box3 } from 'three';
+import { File3dFormat } from '@reveal/data-providers';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { createCadModelMetadata, createV9SectorMetadata } from '../../../test-utilities';
+
+function createMinimalMetadata(format: File3dFormat, formatVersion: number): CadModelMetadata {
+  const root = createV9SectorMetadata([0, [], new Box3()]);
+  const base = createCadModelMetadata(formatVersion, root);
+  return { ...base, format, formatVersion };
+}
 
 describe(CadManager.name, () => {
   let cadManager: CadManager;
@@ -15,13 +25,7 @@ describe(CadManager.name, () => {
   let updateHandlerMock: IMock<CadModelUpdateHandler>;
 
   beforeEach(() => {
-    materialManagerMock = new Mock<CadMaterialManager>()
-      .setup(p => p.on(It.IsAny(), It.IsAny()))
-      .returns()
-      .setup(p => p.off(It.IsAny(), It.IsAny()))
-      .returns()
-      .setup(p => p.dispose())
-      .returns();
+    materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.dispose()).returns();
 
     cadModelFactoryMock = new Mock<CadModelFactory>().setup(p => p.dispose()).returns();
 
@@ -56,10 +60,6 @@ describe(CadManager.name, () => {
     expect(cadManager.updateCamera).toBeDefined();
   });
 
-  test('should register materials changed listener on initialization', () => {
-    materialManagerMock.verify(p => p.on('materialsChanged', It.IsAny()));
-  });
-
   test('should access budget correctly', () => {
     const budget = cadManager.budget;
     expect(budget).toBeDefined();
@@ -79,10 +79,34 @@ describe(CadManager.name, () => {
   test('should dispose properly', () => {
     expect(() => cadManager.dispose()).not.toThrow();
     updateHandlerMock.verify(p => p.dispose());
-    materialManagerMock.verify(p => p.off('materialsChanged', It.IsAny()));
   });
 
   test('should access material manager correctly', () => {
     expect(cadManager.materialManager).toBe(materialManagerMock.object());
+  });
+
+  describe('doesModelHaveCompatibleFormat', () => {
+    test('returns true when no compatible format has been set yet', () => {
+      const metadata = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      expect(cadManager.doesModelHaveCompatibleFormat(metadata)).toBe(true);
+    });
+
+    test('GltfCadModel and GltfPrioritizedNodes are compatible with each other', () => {
+      const gltfMetadata = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      const prioritizedMetadata = createMinimalMetadata(File3dFormat.GltfPrioritizedNodes, 9);
+
+      cadManager.updateModelCompatibilityFormat(gltfMetadata);
+
+      expect(cadManager.doesModelHaveCompatibleFormat(prioritizedMetadata)).toBe(true);
+    });
+
+    test('GltfPrioritizedNodes and GltfCadModel are compatible with each other', () => {
+      const gltfMetadata = createMinimalMetadata(File3dFormat.GltfCadModel, 9);
+      const prioritizedMetadata = createMinimalMetadata(File3dFormat.GltfPrioritizedNodes, 9);
+
+      cadManager.updateModelCompatibilityFormat(prioritizedMetadata);
+
+      expect(cadManager.doesModelHaveCompatibleFormat(gltfMetadata)).toBe(true);
+    });
   });
 });

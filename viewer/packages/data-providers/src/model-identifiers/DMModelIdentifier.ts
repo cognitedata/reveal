@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ClassicModelIdentifierType, DMModelIdentifierType } from '../DataSourceType';
+import type { ClassicModelIdentifierType, DMModelIdentifierType } from '../DataSourceType';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 export class DMModelIdentifier extends CdfModelIdentifier {

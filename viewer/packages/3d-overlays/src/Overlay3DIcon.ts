@@ -3,21 +3,10 @@
  */
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import {
-  PerspectiveCamera,
-  Ray,
-  Sphere,
-  Vector3,
-  Vector4,
-  MathUtils,
-  Color,
-  Matrix4,
-  Sprite,
-  Camera,
-  Vector2
-} from 'three';
-import { Overlay3D } from './Overlay3D';
-import { DefaultOverlay3DContentType } from './OverlayCollection';
+import type { PerspectiveCamera, Ray, Sprite, Camera, Vector2 } from 'three';
+import { Sphere, Vector3, Vector4, MathUtils, Color, Matrix4 } from 'three';
+import type { Overlay3D } from './Overlay3D';
+import type { DefaultOverlay3DContentType } from './OverlayCollection';
 
 export type IconParameters = {
   position: Vector3;
@@ -53,6 +42,8 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   private _color = new Color('white');
   private readonly _worldTransform: Matrix4;
   private readonly _ndcPosition = new Vector4();
+  private readonly _intersectPosition = new Vector3();
+  private _positionYOffset = 0;
 
   private readonly _events = {
     selected: new EventTrigger<SelectedDelegate>(),
@@ -186,8 +177,14 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     this._worldTransform.copy(matrix);
   }
 
+  public setPositionYOffset(offset: number): void {
+    this._positionYOffset = offset;
+  }
+
   public intersect(ray: Ray): Vector3 | null {
-    this._raycastBoundingSphere.set(this._position, this._adaptiveScale);
+    this._intersectPosition.copy(this._position);
+    this._intersectPosition.y += this._positionYOffset;
+    this._raycastBoundingSphere.set(this._intersectPosition, this._adaptiveScale);
 
     return ray.intersectSphere(this._raycastBoundingSphere, new Vector3());
   }

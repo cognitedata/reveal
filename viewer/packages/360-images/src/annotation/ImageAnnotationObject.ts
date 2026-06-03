@@ -2,20 +2,21 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
+import type {
   AnnotationsObjectDetection,
   AnnotationsTypesImagesAssetLink,
   AnnotationsTypesImagesInstanceLink,
   AnnotationsTypesPrimitivesGeometry2DGeometry
 } from '@cognite/sdk';
-import { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
+import type { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
 
-import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D, Group, Raycaster } from 'three';
-import { ImageAnnotationObjectGeometryData } from './geometry/ImageAnnotationGeometryData';
+import type { Object3D, Raycaster } from 'three';
+import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Group } from 'three';
+import type { ImageAnnotationObjectGeometryData } from './geometry/ImageAnnotationGeometryData';
 import { BoxAnnotationGeometryData } from './geometry/BoxAnnotationGeometryData';
 import { PolygonAnnotationGeometryData } from './geometry/PolygonAnnotationGeometryData';
-import { Image360Annotation } from './Image360Annotation';
-import { Image360AnnotationAppearance } from './types';
+import type { Image360Annotation } from './Image360Annotation';
+import type { Image360AnnotationAppearance } from './types';
 
 type FaceType = Image360FileDescriptor['face'];
 

@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, EventTrigger, NumericRange } from '@reveal/utilities';
+import type { NumericRange } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 import { cadFromCdfToThreeMatrix, cadFromThreeToCdfMatrix } from '@reveal/utilities/src/constants';
 import { Matrix4 } from 'three';
 

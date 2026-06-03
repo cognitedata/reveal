@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { SectorMetadata } from '../metadata/types';
-import { LevelOfDetail } from './LevelOfDetail';
-import { ParsedGeometry } from '@reveal/sector-parser';
-import { ModelIdentifier } from '@reveal/data-providers';
+import type { SectorMetadata } from '../metadata/types';
+import type { LevelOfDetail } from './LevelOfDetail';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
 export type TriangleMesh = {
   readonly fileId: number;

@@ -2,10 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
 import { Mock } from 'moq.ts';
-import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
+import type { CompositeShape } from '@reveal/utilities';
+import { Cylinder, Box } from '@reveal/utilities';
 import { CdfPointCloudStylableObjectProvider } from './CdfPointCloudStylableObjectProvider';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 
@@ -60,7 +61,7 @@ describe(CdfPointCloudStylableObjectProvider.name, () => {
     );
 
     expect(gottenIds.length).toEqual(expectedIds.length);
-    expect(gottenIds).toContainAllValues(expectedIds);
+    expect(gottenIds.sort()).toEqual(expectedIds.sort());
   });
 
   test('contains right geometry types for annotations provided by SDK', async () => {

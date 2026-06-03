@@ -1,47 +1,44 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
-import { RevealOptions } from './RevealOptions';
+import type { RevealOptions } from './RevealOptions';
 import { RevealManager } from './RevealManager';
 
 import { MetricsLogger } from '@reveal/metrics';
+import type { RenderOptions } from '@reveal/rendering';
 import {
-  RenderOptions,
   CadMaterialManager,
   PointCloudMaterialManager,
   BasicPipelineExecutor,
   DefaultRenderPipelineProvider,
   ResizeHandler
 } from '@reveal/rendering';
+import type { PointCloudStylableObjectProvider, DMDataSourceType } from '@reveal/data-providers';
 import {
   CdfPointCloudStylableObjectProvider,
-  PointCloudStylableObjectProvider,
   DummyPointCloudStylableObjectProvider,
   CdfPointCloudDMStylableObjectProvider,
-  DMDataSourceType,
-  DummyPointCloudDMStylableObjectProvider
+  DummyPointCloudDMStylableObjectProvider,
+  CachedModelDataProvider
 } from '@reveal/data-providers';
 import { createPointCloudManager } from '@reveal/pointclouds';
+import type { ModelMetadataProvider, ModelDataProvider } from '@reveal/data-providers';
 import {
-  ModelMetadataProvider,
   CdfModelMetadataProvider,
   LocalModelMetadataProvider,
   LocalModelDataProvider,
-  ModelDataProvider,
   CdfModelDataProvider
 } from '@reveal/data-providers';
 
-import { CogniteClient } from '@cognite/sdk';
-import { SceneHandler } from '@reveal/utilities';
+import type { CogniteClient } from '@cognite/sdk';
+import type { SceneHandler } from '@reveal/utilities';
+import { BINARY_FILES_CACHE_NAME, DataFileCacheManager } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
-import {
-  IPointClassificationsProvider,
-  LocalPointClassificationsProvider,
-  UrlPointClassificationsProvider
-} from '@reveal/pointclouds';
-import { CameraManager } from '@reveal/camera-manager';
+import type { IPointClassificationsProvider } from '@reveal/pointclouds';
+import { LocalPointClassificationsProvider, UrlPointClassificationsProvider } from '@reveal/pointclouds';
+import type { CameraManager } from '@reveal/camera-manager';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -159,17 +156,26 @@ export function createRevealManager(
   const resizeHandler = new ResizeHandler(renderer, cameraManager, {
     renderResolutionThreshold: revealOptions.rendererResolutionThreshold
   });
+  const binaryFileCacheManager = new DataFileCacheManager(
+    {
+      cacheName: BINARY_FILES_CACHE_NAME,
+      maxCacheSize: Infinity,
+      maxAge: Infinity
+    },
+    global.caches
+  );
+  const cachedProvider = new CachedModelDataProvider(modelDataProvider, binaryFileCacheManager.cacheConfig);
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
-    modelDataProvider,
     annotationProvider,
     pointClassificationsProvider,
     pointCloudDMProvider,
     pointCloudMaterialManager,
+    cachedProvider,
     sceneHandler.scene,
     renderer
   );
-  const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, cadMaterialManager, {
+  const cadManager = createCadManager(modelMetadataProvider, cachedProvider, cadMaterialManager, {
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
   });
