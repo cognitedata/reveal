@@ -25,7 +25,8 @@ import {
   Image360History,
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
-  Image360Action
+  Image360Action,
+  HtmlClusterCoordinator
 } from '@reveal/360-images';
 import type {
   ClassicDataSourceType,
@@ -93,6 +94,14 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _cachedCameraManager: CameraManager | undefined;
   private readonly _enableFloorIcons: boolean;
+  private readonly _htmlClusterCoordinator: HtmlClusterCoordinator | undefined;
+
+  private readonly onBeforeRender: BeforeSceneRenderedDelegate = params => {
+    for (const collection of this._image360Facade.collections) {
+      collection.updateIcons(params);
+    }
+    this._htmlClusterCoordinator?.runCoordinator(this._image360Facade.collections);
+  };
 
   private readonly onKeyPressed = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -164,7 +173,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const image360EntityFactory = new Image360CollectionFactory(
       image360ProviderMap,
       sceneHandler,
-      onBeforeSceneRendered,
       setNeedsRedraw,
       device,
       iconsOptions
@@ -177,6 +185,10 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     this._activeCameraManager = activeCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
+    if (iconsOptions?.enableHtmlClusters) {
+      this._htmlClusterCoordinator = new HtmlClusterCoordinator();
+    }
+    onBeforeSceneRendered.subscribe(this.onBeforeRender);
     if (!FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
       this._stationaryCameraManager = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
@@ -619,6 +631,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this.updateHoverStateOnRenderHandler);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this.onBeforeRender);
     if (this._hasEventListeners) {
       this._domElement.removeEventListener('pointermove', this.onHover);
       this._domElement.removeEventListener('keydown', this.onKeyPressed);

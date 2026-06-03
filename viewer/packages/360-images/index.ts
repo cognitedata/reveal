@@ -17,7 +17,7 @@ export { Image360CollectionFactory } from './src/collection/Image360CollectionFa
 export { Image360Entity } from './src/entity/Image360Entity';
 export { Image360RevisionEntity } from './src/entity/Image360RevisionEntity';
 export type { Image360Visualization } from './src/entity/Image360Visualization';
-export type { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
+export type { Image360EnteredDelegate, Image360ExitedDelegate, HtmlClusterRendererOptions } from './src/types';
 export type {
   Image360AnnotationAppearance,
   Image360AnnotationFilterOptions,
@@ -28,7 +28,8 @@ export type { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
 export type { IconsOptions } from './src/icons/IconCollection';
 export type { ClusteredIconData } from './src/icons/clustering/ClusterRenderingStrategy';
-export type { HtmlClusterRendererOptions } from './src/icons/clustering/HtmlClusterRenderer';
+export { HtmlClusterCoordinator } from './src/icons/clustering/HtmlClusterCoordinator';
+export type { HtmlClusterCollection } from './src/icons/clustering/HtmlClusterCoordinator';
 export type {
   Image360ClusterIntersectionData,
   Image360CollectionSourceType,

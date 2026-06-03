@@ -6,7 +6,7 @@ import assert from 'assert';
 import zip from 'lodash/zip';
 import uniqBy from 'lodash/uniqBy';
 import type { DataSourceType } from '@reveal/data-providers';
-import type { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import type { IconsOptions } from '../icons/IconCollection';
@@ -22,7 +22,6 @@ import { getImage360ProviderFromMap } from '@reveal/data-providers/src/Image360P
 export class Image360CollectionFactory {
   private readonly _image360ProviderMap: Image360ProviderMap;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconsOptions: IconsOptions | undefined;
   private readonly _device: DeviceDescriptor;
   private readonly _setNeedsRedraw: () => void;
@@ -30,14 +29,12 @@ export class Image360CollectionFactory {
   constructor(
     image360ProviderMap: Image360ProviderMap,
     sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     setNeedsRedraw: () => void,
     device: DeviceDescriptor,
     iconsOptions?: IconsOptions
   ) {
     this._image360ProviderMap = image360ProviderMap;
     this._sceneHandler = sceneHandler;
-    this._onBeforeSceneRendered = onBeforeSceneRendered;
     this._iconsOptions = iconsOptions;
     this._device = device;
     this._setNeedsRedraw = setNeedsRedraw;
@@ -58,13 +55,7 @@ export class Image360CollectionFactory {
     historicalDescriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = historicalDescriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new IconCollection(
-      points,
-      this._sceneHandler,
-      this._onBeforeSceneRendered,
-      this._iconsOptions,
-      this._setNeedsRedraw
-    );
+    const collectionIcons = new IconCollection(points, this._sceneHandler, this._iconsOptions, this._setNeedsRedraw);
     const icons = collectionIcons.icons;
 
     const annotationFilterer = new Image360AnnotationFilter(annotationFilter);
