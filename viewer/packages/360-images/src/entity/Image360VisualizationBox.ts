@@ -191,16 +191,7 @@ export class Image360VisualizationBox implements Image360Visualization {
         onFirstFaceTypeDetected?.(type);
       }
     };
-    return Promise.all(
-      faces.map(async face => {
-        if (hasDownloadUrl(face)) {
-          return this._loader.loadFromUrl(face, notifyFirstFace, notifyType, abortSignal);
-        }
-        const t = await this._loader.loadFromBuffer(face);
-        notifyFirstFace();
-        return t;
-      })
-    );
+    return Promise.all(faces.map(face => this._loader.load(face, notifyFirstFace, notifyType, abortSignal)));
   }
 
   public createPlaceholderMesh(): void {
