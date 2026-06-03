@@ -44,3 +44,17 @@ export type Image360ClusterIntersectionData<T extends DataSourceType = DataSourc
   clusterIcons: Image360Entity<T>[];
   distanceToCamera: number;
 };
+
+/**
+ * Options for HTML-based cluster rendering of 360 image icons.
+ */
+export type HtmlClusterRendererOptions = {
+  maxPoolSize?: number;
+  classPrefix?: string;
+  enableHoverAnimations?: boolean;
+  zIndex?: number;
+  clusterFadeStartDistance?: number;
+  clusterFadeEndDistance?: number;
+  clusterDistanceThreshold?: number;
+  maxOctreeDepth?: number;
+};

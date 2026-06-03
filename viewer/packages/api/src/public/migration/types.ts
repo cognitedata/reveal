@@ -43,6 +43,31 @@ export type RenderParameters = {
 };
 
 /**
+ * Configuration for HTML-based cluster rendering of 360 image icons.
+ * Passed via {@link Cognite3DViewerOptions.htmlClusterOptions}.
+ * Only takes effect when {@link Cognite3DViewerOptions.enableHtmlClusters} is true.
+ * @module @cognite/reveal
+ */
+export type HtmlClusterOptions = {
+  /** Camera distance (world units) at which an occluded cluster begins to fade out.
+   * @default 20
+   */
+  fadeStartDistance?: number;
+  /** Camera distance (world units) at which an occluded cluster becomes fully invisible.
+   * @default 150
+   */
+  fadeEndDistance?: number;
+  /** Maximum distance (world units) between icons for them to be grouped into a cluster.
+   * @default 11
+   */
+  clusterDistanceThreshold?: number;
+  /** Maximum octree depth for clustering. Lower values produce fewer, larger clusters.
+   * @default 2
+   */
+  maxOctreeDepth?: number;
+};
+
+/**
  * @module @cognite/reveal
  */
 export interface Cognite3DViewerOptions {
@@ -208,10 +233,20 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Enable HTML-based cluster rendering for 360 image icons.
-   * When enabled, nearby 360 icons are grouped into clusters with a count display.
+   * When enabled, nearby icons are grouped into cluster badges that show a count.
+   * Configure appearance and thresholds via htmlClusterOptions.
    * @default false
    */
   enableHtmlClusters?: boolean;
+
+  /**
+   * Fine-grained options for HTML cluster rendering.
+   * Only applies when enableHtmlClusters is true.
+   * Controls the 3D clustering distance, occlusion fade range,
+   * and advanced DOM rendering settings.
+   * See {@link HtmlClusterOptions}.
+   */
+  htmlClusterOptions?: HtmlClusterOptions;
 
   /**
    * Show floor disc icons for nearby 360 images when the user is inside a 360 image.

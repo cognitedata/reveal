@@ -569,6 +569,7 @@ export interface Cognite3DViewerOptions {
     enableHtmlClusters?: boolean;
     // @beta
     hasEventListeners?: boolean;
+    htmlClusterOptions?: HtmlClusterOptions;
     loadingIndicatorStyle?: {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
@@ -1179,6 +1180,14 @@ export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: numb
 
 // @beta
 export function getWheelEventDelta(event: WheelEvent): number;
+
+// @public
+export type HtmlClusterOptions = {
+    fadeStartDistance?: number;
+    fadeEndDistance?: number;
+    clusterDistanceThreshold?: number;
+    maxOctreeDepth?: number;
+};
 
 // @public
 export type HtmlOverlayCreateClusterDelegate = (overlayElements: {
