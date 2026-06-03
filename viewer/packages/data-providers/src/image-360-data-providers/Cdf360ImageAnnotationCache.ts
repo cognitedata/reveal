@@ -128,7 +128,7 @@ class Cdf360ImageAnnotationCacheImpl implements Cdf360ImageAnnotationCache {
     for (const idChunk of chunk(fileIds, 1000)) {
       const uncachedResultBatch = this._sdk.files.retrieve(idChunk);
 
-      this.cacheFileInfoResults(fileIds, uncachedResultBatch);
+      this.cacheFileInfoResults(idChunk, uncachedResultBatch);
       uncachedResultBatches.push(uncachedResultBatch);
     }
     return uncachedResultBatches;
