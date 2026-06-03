@@ -18,7 +18,7 @@ export default defineConfig(({ command }) => {
       rolldownOptions: {
         external: [...getDependencyMatchers(pkg.dependencies), ...getDependencyMatchers(pkg.peerDependencies)],
         output: {
-          preserveModules: false,
+          preserveModules: true,
           entryFileNames: '[name].js'
         }
       },

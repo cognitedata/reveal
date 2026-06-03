@@ -37,4 +37,9 @@
   "include": [],
   "exclude": [],
   "files": [],
+  "references": [
+    {
+      "path": "tsconfig.webpack.json"
+    }
+  ]
 }
