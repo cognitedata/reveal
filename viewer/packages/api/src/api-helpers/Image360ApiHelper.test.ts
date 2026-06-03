@@ -21,7 +21,8 @@ import type {
   DefaultImage360Collection,
   Image360RevisionEntity,
   Image360EnteredDelegate,
-  Image360ExitedDelegate
+  Image360ExitedDelegate,
+  IconsOptions
 } from '@reveal/360-images';
 import { Image360Facade } from '@reveal/360-images';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
@@ -125,7 +126,7 @@ function createTestHelper(
   domElement: HTMLElement,
   sdk: CogniteClient,
   cameraManagerType: CameraManagerType = 'mock',
-  iconsOptions?: { enableFloorIcons?: boolean },
+  iconsOptions?: IconsOptions,
   hasEventListeners = false
 ): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
   const mockCamera = new PerspectiveCamera();

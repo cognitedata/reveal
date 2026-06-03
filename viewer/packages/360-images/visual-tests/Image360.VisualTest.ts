@@ -19,7 +19,7 @@ import {
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
-import type { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import type { CogniteClient } from '@cognite/sdk';
 import type { Image360Entity } from '../src/entity/Image360Entity';
@@ -48,12 +48,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
-    const { facade, collection } = await this.setup360Images(
-      cogniteClient,
-      sceneHandler,
-      onBeforeRender,
-      desktopDevice
-    );
+    const { facade, collection } = await this.setup360Images(cogniteClient, sceneHandler, desktopDevice);
+    onBeforeRender.subscribe(params => collection.updateIcons(params));
     collection.image360Entities[1].setIconColor(new THREE.Color(1.0, 0.0, 1.0));
 
     const collectionTransform = new THREE.Matrix4()
@@ -221,14 +217,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   private setup360Images(
     cogniteClient: CogniteClient | undefined,
     sceneHandler: SceneHandler,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
   ): Promise<{
     facade: TestImage360Facade;
     collection: DefaultImage360Collection<DataSourceType>;
   }> {
     if (cogniteClient === undefined) {
-      return this.setupLocal(sceneHandler, onBeforeRender, device);
+      return this.setupLocal(sceneHandler, device);
     }
 
     const queryString = window.location.search;
@@ -261,20 +256,14 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       return getEvents360ImageCollection(providerMap, siteId);
     }
 
-    return this.setupLocal(sceneHandler, onBeforeRender, device);
+    return this.setupLocal(sceneHandler, device);
 
     async function getDM360ImageCollection(
       providerMap: Image360ProviderMap,
       externalId: string,
       space: string
     ): Promise<{ facade: TestImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
-      const image360Factory = new Image360CollectionFactory(
-        providerMap,
-        sceneHandler,
-        onBeforeRender,
-        () => {},
-        device
-      );
+      const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
       const image360Facade = new Image360Facade(image360Factory);
       const collection = await image360Facade.create({ image360CollectionExternalId: externalId, space: space });
 
@@ -285,13 +274,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       providerMap: Image360ProviderMap,
       siteId: string
     ): Promise<{ facade: TestImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
-      const image360Factory = new Image360CollectionFactory(
-        providerMap,
-        sceneHandler,
-        onBeforeRender,
-        () => {},
-        device
-      );
+      const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
       const image360Facade = new Image360Facade(image360Factory);
       const collection = await image360Facade.create({ siteId: siteId });
 
@@ -301,7 +284,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private async setupLocal(
     sceneHandler: SceneHandler,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<any>;
@@ -314,7 +296,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const providerMap = new Map<Image360CollectionSourceType, Image360Provider<ClassicDataSourceType>>([
       ['event', dataProvider]
     ]);
-    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, onBeforeRender, () => {}, device);
+    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
     const image360Facade = new Image360Facade(image360Factory);
     const collection = await image360Facade.create({});
 

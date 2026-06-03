@@ -56,6 +56,12 @@ describe('Cognite3DViewer', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   test('dispose does not dispose of externally supplied renderer', () => {
@@ -277,5 +283,19 @@ describe('Cognite3DViewer', () => {
     expect(result).toEqual({ type: 'image360Cluster', ...mockClusterData });
 
     spyIntersectClusters.mockRestore();
+  });
+
+  describe('htmlClusterOptions', () => {
+    test('accepts htmlClusterOptions without error', () => {
+      const viewer = new Cognite3DViewer({
+        sdk,
+        renderer,
+        _sectorCuller,
+        logMetrics: false,
+        enableHtmlClusters: true,
+        htmlClusterOptions: { fadeStartDistance: 10, fadeEndDistance: 100, clusterDistanceThreshold: 5 }
+      });
+      expect(() => viewer.dispose()).not.toThrow();
+    });
   });
 });
