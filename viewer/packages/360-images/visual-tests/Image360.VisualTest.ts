@@ -14,6 +14,7 @@ import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageAnnotationProvider,
+  createCdf360ImageAnnotationCache,
   Local360ImageProvider
 } from '@reveal/data-providers';
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
@@ -239,7 +240,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const space = urlParams.get('space');
 
     const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
-    const cdf360AnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
+    const cdf360AnnotationProvider = new Cdf360ImageAnnotationProvider(createCdf360ImageAnnotationCache(cogniteClient));
 
     const cdf360DMDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
 
