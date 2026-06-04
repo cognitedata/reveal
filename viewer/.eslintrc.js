@@ -99,7 +99,7 @@ module.exports = {
         ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
         sourceType: 'module' // Allows for the use of imports
       },
-      files: ['*.test.ts', 'test-utilities/**/*.ts', 'vite.config.ts'],
+      files: ['*.test.ts', 'test-utilities/**/*.ts', 'visual-tests/**/*.ts', 'vite.config.ts'],
       rules: {
         // complains when you do expect(mockObj.mockFn).toBeCalled() in tests
         '@typescript-eslint/unbound-method': 'off'
