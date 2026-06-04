@@ -2,16 +2,18 @@
  * Copyright 2022 Cognite AS
  */
 
-// @ts-ignore
-import visualTestsFixtures from '**/*.VisualTest.ts';
+/// <reference types="vite/client" />
 
-import type { VisualTestFixture } from './test-fixtures/VisualTestFixture';
+function testGenerator(): Map<string, () => Promise<unknown>> {
+  const testMap = new Map<string, () => Promise<unknown>>();
+  const visualTestsFixtures = import.meta.glob('../packages/**/*VisualTest.ts');
 
-async function testGenerator(): Promise<Map<string, new () => VisualTestFixture>> {
-  const testMap = new Map<string, new () => VisualTestFixture>();
-
-  visualTestsFixtures.forEach((visualTestsFixture: any) => {
-    testMap.set(visualTestsFixture.fileName, visualTestsFixture.module);
+  Object.entries(visualTestsFixtures).forEach(visualTestsFixture => {
+    const filename = visualTestsFixture[0]
+      .split(/[\/]/)
+      .pop()!
+      .replace(/\.[^/.]+$/, '');
+    testMap.set(filename, visualTestsFixture[1]);
   });
 
   return testMap;
@@ -26,8 +28,8 @@ let activeTest: any;
   }
 
   document.body.innerHTML = '';
-  const testConstructor = (await tests).get(testName)!;
-  activeTest = new testConstructor();
+  const testConstructor = (await tests.get(testName)!()) as any;
+  activeTest = new testConstructor.default();
   return activeTest.run();
 };
 
@@ -36,9 +38,9 @@ const testFixtureInstance = urlParams.get('testfixture');
 
 if (testFixtureInstance !== null) {
   (async function () {
-    const testMap = await tests;
-    if (testMap.has(testFixtureInstance)) {
-      new (testMap.get(testFixtureInstance)!)().run();
+    if (tests.has(testFixtureInstance)) {
+      const asd = (await tests.get(testFixtureInstance)!()) as any;
+      new asd.default().run();
     } else {
       alert('Unrecognized test name:' + testFixtureInstance);
     }
