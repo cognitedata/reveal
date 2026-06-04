@@ -177,10 +177,11 @@ export class Image360VisualizationBox implements Image360Visualization {
     if (faces.some(hasDownloadUrl)) {
       this.createPlaceholderMesh();
     }
-    let firstFaceNotified = false;
+    // Fire onFirstFaceReady only when ALL faces have their first scan ready
+    let facesWithFirstScan = 0;
     const notifyFirstFace = (): void => {
-      if (!firstFaceNotified) {
-        firstFaceNotified = true;
+      facesWithFirstScan++;
+      if (facesWithFirstScan === faces.length) {
         onFirstFaceReady?.();
       }
     };
