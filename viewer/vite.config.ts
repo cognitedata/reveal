@@ -10,11 +10,17 @@ import dts from 'unplugin-dts/vite';
 import type { Plugin } from 'vite';
 import typescript from 'typescript';
 import path from 'path';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig(({ command }) => {
   return {
     root: '.',
-    plugins: [glsl({ minify: true }), dts({ tsconfigPath: './tsconfig.lib.json' }), tsAccessorDecoratorPlugin()],
+    plugins: [
+      glsl({ minify: true }),
+      dts({ tsconfigPath: './tsconfig.lib.json' }),
+      tsAccessorDecoratorPlugin(),
+      nodePolyfills({ include: ['process'] })
+    ],
 
     worker: {
       format: 'es',
