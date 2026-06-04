@@ -13,10 +13,6 @@ import * as fs from 'fs';
 export const defaultBaseUrl = 'https://some_baseurl.com';
 const modelIdentifier = new LocalModelIdentifier('some_model_identifier');
 
-// https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
-import url from 'url';
-const __dirname = url.fileURLToPath(new url.URL('.', import.meta.url));
-
 export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
   const wantedFile = 'wanted_file.glb';
 
@@ -46,7 +42,7 @@ export function createMockedConsumedSector(): IMock<ConsumedSector> {
 }
 
 export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
-  const fileBuffer = fs.readFileSync(__dirname + '/test.glb');
+  const fileBuffer = fs.readFileSync(import.meta.dirname + '/test.glb');
   return new Mock<BinaryFileProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
     .returnsAsync(fileBuffer.buffer);

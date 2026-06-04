@@ -4,33 +4,42 @@
 
 ```ts
 
-import type { AnnotationModel } from '@cognite/sdk';
-import type { AnnotationsAssetRef } from '@cognite/sdk';
-import type { AnnotationStatus } from '@cognite/sdk';
-import type { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
-import type { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
+import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk';
+import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 import { Box3 } from 'three';
-import type { Camera } from 'three';
-import type { CogniteClient } from '@cognite/sdk';
-import type { CogniteInternalId } from '@cognite/sdk';
+import { BufferGeometry } from 'three';
+import { Camera } from 'three';
+import { CogniteClient } from '@cognite/sdk';
+import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
+import { DataTexture } from 'three';
 import { EventDispatcher } from 'three';
-import type { IdEither } from '@cognite/sdk';
-import type { ListResponse } from '@cognite/sdk';
+import { Group } from 'three';
+import { IdEither } from '@cognite/sdk';
+import { IUniform as IUniform_2 } from 'three';
+import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
-import type { Node3D } from '@cognite/sdk';
+import { Node3D } from '@cognite/sdk';
 import { Object3D } from 'three';
+import { Object3DEventMap } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
-import type { Plane } from 'three';
+import { Plane } from 'three';
 import { Quaternion } from 'three';
+import { RawShaderMaterial } from 'three';
+import { Ray } from 'three';
 import { Raycaster } from 'three';
-import type { Texture } from 'three';
+import { Sphere } from 'three';
+import { Texture } from 'three';
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
-import type { WebGLRenderer } from 'three';
-import type { WebGLRenderTarget } from 'three';
+import { Vector4 } from 'three';
+import { WebGLRenderer } from 'three';
+import { WebGLRenderTarget } from 'three';
 
 // @public
 export type AbsolutePosition = {
@@ -465,6 +474,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     addPointCloudModel(options: AddModelOptions<DataSourceT>): Promise<CognitePointCloudModel<DataSourceT>>;
     get cadBudget(): CadModelBudget;
     set cadBudget(budget: CadModelBudget);
+    // @internal (undocumented)
+    get cadLoadedStatistics(): CadModelSectorLoadStatistics;
     // (undocumented)
     get cameraManager(): CameraManager;
     // @beta
@@ -573,6 +584,8 @@ export interface Cognite3DViewerOptions {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
     };
+    // @internal
+    _localModels?: boolean;
     logMetrics?: boolean;
     onLoading?: OnLoadingCallback;
     pointCloudEffects?: {
@@ -587,6 +600,8 @@ export interface Cognite3DViewerOptions {
         autoSetSize?: boolean;
     };
     sdk: CogniteClient;
+    // @internal
+    _sectorCuller?: SectorCuller;
     ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
     // @beta
     useFlexibleCameraManager?: boolean;
@@ -597,11 +612,17 @@ export abstract class Cognite3DViewerToolBase {
     dispose(): void;
     protected ensureNotDisposed(): void;
     off(event: 'disposed', handler: () => void): void;
+    // @internal
+    on(event: 'disposed', handler: () => void): void;
 }
 
 // @public
 export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
+    // @internal
+    constructor(modelId: number, revisionId: number, cadNode: CadNode, client: NodesApiClient);
     assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance?: number): void;
+    // @internal (undocumented)
+    readonly cadNode: CadNode;
     dispose(): void;
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3>;
@@ -654,6 +675,8 @@ export type CogniteModel<T extends DataSourceType = ClassicDataSourceType> = Cog
 
 // @public
 export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSourceType> {
+    // @internal
+    constructor(identifier: T['modelIdentifier'], pointCloudNode: PointCloudNode<T>);
     assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
@@ -676,6 +699,8 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     // @deprecated
     readonly modelId: number;
     readonly modelIdentifier: T['modelIdentifier'];
+    // @internal
+    readonly pointCloudNode: PointCloudNode<T>;
     get pointColorType(): PointColorType;
     set pointColorType(type: PointColorType);
     get pointShape(): PointShape;
@@ -911,6 +936,8 @@ export class DebugCameraTool extends Cognite3DViewerToolBase {
 
 // @public
 export class DefaultCameraManager implements CameraManager {
+    // @internal
+    constructor(domElement: HTMLElement, inputHandler: InputHandler, raycastCallback: RaycastCallback, camera?: THREE.PerspectiveCamera);
     // (undocumented)
     activate(cameraManager?: CameraManager): void;
     automaticControlsSensitivity: boolean;
@@ -2044,7 +2071,7 @@ export type ResolutionOptions = {
 };
 
 // @public (undocumented)
-export const REVEAL_VERSION: string;
+export const REVEAL_VERSION: string | undefined;
 
 // @public
 export type SceneRenderedDelegate = (event: {

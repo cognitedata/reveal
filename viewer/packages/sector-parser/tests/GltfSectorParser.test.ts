@@ -7,10 +7,7 @@ import fs from 'fs';
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 
-// https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
-import url from 'url';
 import type { BufferGeometry } from 'three';
-const __dirname = url.fileURLToPath(new url.URL('.', import.meta.url));
 
 describe(GltfSectorParser.name, () => {
   let parsedPrimitivesResult: { type: RevealGeometryCollectionType; geometryBuffer: BufferGeometry }[];
@@ -18,7 +15,7 @@ describe(GltfSectorParser.name, () => {
 
   beforeAll(async () => {
     parser = new GltfSectorParser();
-    const primitivesByteBuffer = fs.readFileSync(__dirname + '/test-all-primitives.glb');
+    const primitivesByteBuffer = fs.readFileSync(import.meta.dirname + '/test-all-primitives.glb');
 
     parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
   });
@@ -200,7 +197,7 @@ describe(GltfSectorParser.name, () => {
   });
 
   test('Parsing texture.glb should return a textured mesh and an untextured mesh', async () => {
-    const primitivesByteBuffer = fs.readFileSync(__dirname + '/combined-texture.glb');
+    const primitivesByteBuffer = fs.readFileSync(import.meta.dirname + '/combined-texture.glb');
 
     const parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
 
