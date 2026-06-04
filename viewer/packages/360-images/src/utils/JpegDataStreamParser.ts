@@ -2,14 +2,17 @@
  * Copyright 2026 Cognite AS
  */
 
+/** Identifies whether a JPEG is progressive (SOF2) or baseline (SOF0/SOF1). */
+export type JpegType = 'progressive' | 'baseline';
+
 /**
  * Scans a JPEG byte buffer and returns whether it is progressive (SOF2) or
- * baseline (SOF0/SOF1) by fecthing segment headers until the SOF marker is found.
+ * baseline (SOF0/SOF1) by reading segment headers until the SOF marker is found.
  * Returns 'unknown' if the buffer does not yet contain the SOF marker.
  *
  * The SOF marker appears in the first 1–4 KB of any JPEG file, well before image data.
  */
-export function detectJpegType(buffer: Uint8Array): 'progressive' | 'baseline' | 'unknown' {
+export function detectJpegType(buffer: Uint8Array): JpegType | 'unknown' {
   if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) return 'unknown';
   let i = 2;
   while (i < buffer.length - 1) {

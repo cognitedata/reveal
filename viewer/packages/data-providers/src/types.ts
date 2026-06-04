@@ -164,6 +164,8 @@ export type Image360Face = {
   face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
+  /** Signed download URL for streaming. When present, data is empty. */
+  downloadUrl?: string;
 };
 
 export type Image360Texture = {
