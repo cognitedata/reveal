@@ -15,6 +15,7 @@
     "./packages/**/__fixtures__/**/*.ts",
     "./packages/**/__mocks__/**/*.ts",
     "./packages/**/__tests__/**/*.ts",
+    "./visual-tests/**/*.ts",
     "./test-utilities/**/*.ts"
   ],
   "exclude": ["**/node_modules/**", "**VisualTest.ts",],
