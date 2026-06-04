@@ -3,13 +3,13 @@
  */
 
 import init, { assign_points } from './pkg/pointclouds_wasm';
-import wasm from './pkg/pointclouds_wasm_bg.wasm';
+import wasmUrl from './pkg/pointclouds_wasm_bg.wasm?url';
 
 import type { AABB, Vec3 } from '@reveal/utilities';
 
 function getWasmInitPromise(): Promise<void> {
   return typeof init === 'function'
-    ? (init as (input: { module_or_path: unknown }) => Promise<unknown>)({ module_or_path: wasm }).then(() => {})
+    ? (init as (input: { module_or_path: unknown }) => Promise<unknown>)({ module_or_path: wasmUrl }).then(() => {})
     : Promise.resolve();
 }
 

@@ -9,6 +9,7 @@ import { Mock } from 'moq.ts';
 import { createV9SectorMetadata } from '../../../../test-utilities';
 import type { SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
+import assert from 'assert';
 
 /*
 
@@ -385,18 +386,17 @@ describe('CustomSectorBounds', () => {
   function expectOriginalBounds(sectorId: number) {
     const sectorBounds = sectorMetadataById.get(sectorId)?.subtreeBoundingBox;
     const originalBounds = originalSectorBounds.get(sectorId);
-    if (!sectorBounds || !originalBounds) {
-      fail(`Failed to get metadata or original bounds for sector ${sectorId}`);
-    }
+
+    assert(sectorBounds !== undefined);
+    assert(originalBounds !== undefined);
 
     expect(sectorBounds.equals(originalBounds)).toBeTruthy();
   }
 
   function expectBoundsApproximatelyEqual(sectorId: number, expected: THREE.Box3, precision = 3) {
     const sectorBounds = sectorMetadataById.get(sectorId)?.subtreeBoundingBox;
-    if (!sectorBounds) {
-      fail(`Failed to get metadata for sector ${sectorId}`);
-    }
+
+    assert(sectorBounds !== undefined);
 
     expect(sectorBounds.min.x).toBeCloseTo(expected.min.x, precision);
     expect(sectorBounds.min.y).toBeCloseTo(expected.min.y, precision);

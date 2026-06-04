@@ -21,12 +21,12 @@ in vec2 vUv;
 out vec4 fragColor;
 
 #if defined(OUTLINE)
-#pragma glslify: import('./outline.glsl')
+#include outline.glsl;
 #endif
 
 void main() {
-  vec4 diffuse = texture(tDiffuse, vUv); 
-  
+  vec4 diffuse = texture(tDiffuse, vUv);
+
   if(diffuse.a == 0.0){
     discard;
   }

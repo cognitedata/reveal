@@ -14,7 +14,7 @@ export default defineConfig({
   snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
   outputDir: '__diff_output__',
   use: {
-    baseURL: 'https://localhost:8080',
+    baseURL: 'http://localhost:8080',
     ignoreHTTPSErrors: true,
     viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,
@@ -24,7 +24,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'yarn run test:visual:server',
-    url: 'https://localhost:8080',
+    url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
     ignoreHTTPSErrors: true,
     timeout: 60 * 1000

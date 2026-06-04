@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import glsl from 'glslify';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import type { AxisBoxConfig, AxisBoxFaceConfig, AbsolutePosition, RelativePosition } from './types';
@@ -243,8 +242,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const compass = new THREE.Mesh(
       compassPlaneGeometry,
       new THREE.RawShaderMaterial({
-        vertexShader: glsl(vertexShader),
-        fragmentShader: glsl(fragmentShader),
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
         uniforms: {
           offset: { value: new THREE.Vector2() },
           scale: { value: new THREE.Vector2() },
@@ -338,8 +337,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const face = new THREE.Mesh(
       this._boxFaceGeometry,
       new THREE.RawShaderMaterial({
-        vertexShader: glsl(vertexShader),
-        fragmentShader: glsl(fragmentShader),
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
         uniforms: {
           offset: { value: new THREE.Vector2() },
           scale: { value: new THREE.Vector2() },

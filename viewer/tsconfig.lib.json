@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "stripInternal": true,
+    "types": ["vite/client", "node", "vite-plugin-glsl/ext"]
+  },
+  "include": ["./packages/**/*.ts", "./api-entry-points/**/*.ts"],
+  "exclude": [
+    "./packages/**/*.d.ts",
+    "./packages/**/*.spec.ts",
+    "./packages/**/*.test.ts",
+    "./packages/**/*.interaction.ts",
+    "./packages/**/__fixtures__/**/*.ts",
+    "./packages/**/__mocks__/**/*.ts",
+    "./packages/**/__tests__/**/*.ts",
+    "./visual-tests/**/*.ts",
+    "**/node_modules/**",
+
+  ],
+  "files": ["./index.ts"],
+}

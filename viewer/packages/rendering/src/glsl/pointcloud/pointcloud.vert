@@ -1,8 +1,8 @@
 precision highp float;
 precision highp int;
 
-#pragma glslify: import('../base/pointSizeRelativeToScreen.glsl');
-#pragma glslify: import('../base/isClipped.glsl');
+#include ../base/pointSizeRelativeToScreen.glsl;
+#include ../base/isClipped.glsl;
 
 #define max_clip_boxes 30
 

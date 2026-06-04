@@ -1,11 +1,11 @@
 precision highp float;
 
-#pragma glslify: import('../../base/nodeAppearance.glsl')
-#pragma glslify: import('../../base/updateFragmentColor.glsl')
-#pragma glslify: import('../../base/determineNodeAppearance.glsl');
-#pragma glslify: import('../../base/determineColor.glsl');
-#pragma glslify: import('../../base/isClipped.glsl');
-#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
+#include ../../base/nodeAppearance.glsl;
+#include ../../base/updateFragmentColor.glsl;
+#include ../../base/determineNodeAppearance.glsl;
+#include ../../base/determineColor.glsl;
+#include ../../base/isClipped.glsl;
+#include ../../treeIndex/treeIndexPacking.glsl;
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
@@ -14,7 +14,7 @@ uniform mat4 projectionMatrix;
 uniform lowp int renderMode;
 
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
-#pragma glslify: import('../../base/updateFragmentDepth.glsl')
+#include ../../base/updateFragmentDepth.glsl;
 
 in vec4 center;
 in float hRadius;

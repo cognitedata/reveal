@@ -1,4 +1,4 @@
-#pragma glslify: import('../math/floatBitsSubset.glsl')
+#include ../math/floatBitsSubset.glsl;
 
 NodeAppearance nodeAppearanceFromTexel(vec4 nodeAppearanceTexel) {
   float alphaUnwrapped = floor((nodeAppearanceTexel.a * 255.0) + 0.5);

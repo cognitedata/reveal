@@ -1,12 +1,12 @@
 precision highp float;
 
-#pragma glslify: import('../../base/nodeAppearance.glsl')
-#pragma glslify: import('../../base/updateFragmentColor.glsl')
-#pragma glslify: import('../../base/determineNodeAppearance.glsl');
-#pragma glslify: import('../../base/determineColor.glsl');
-#pragma glslify: import('../../base/isClipped.glsl');
-#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
-#pragma glslify: import('../../math/constants.glsl')
+#include ../../base/nodeAppearance.glsl;
+#include ../../base/updateFragmentColor.glsl;
+#include ../../base/determineNodeAppearance.glsl;
+#include ../../base/determineColor.glsl;
+#include ../../base/isClipped.glsl;
+#include ../../treeIndex/treeIndexPacking.glsl;
+#include ../../math/constants.glsl;
 
 // TODO general cylinder and cone are very similar and used
 // the same shader in the old code. Consider de-duplicating
@@ -19,7 +19,7 @@ uniform mat4 projectionMatrix;
 uniform lowp int renderMode;
 
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
-#pragma glslify: import('../../base/updateFragmentDepth.glsl')
+#include ../../base/updateFragmentDepth.glsl;
 
 in highp vec2  v_treeIndexPacked;
 in vec3 v_color;

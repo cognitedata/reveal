@@ -1,45 +1,46 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    // Basic Options
-    "target": "ES2019",
-    "module": "esnext",
+    "declaration": false,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "lib": [
+      "ES2019",
       "dom",
-      "esnext",
-      "webworker"
+      "dom.iterable",
+      "esnext"
     ],
-    "stripInternal": true,
-    "noUnusedLocals": true,
+    "module": "esnext",
+    "noFallthroughCasesInSwitch": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "sourceMap": true,
-    "noUnusedParameters": true,
-    // Strict Type-Checking Options
-    "strict": true,
-    // Module Resolution Options
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "declaration": true,
-    "outDir": "./build",
-    "types": ["vitest/globals"],
+    "moduleResolution": "bundler",
+    "target": "ES2019",
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "strict": true,
     "paths": {
       "@reveal/*": [
         "./packages/*"
       ],
       "*": [
-        "./*",
-        "./packages/api/src/@types/*"
+        "./*"
       ]
     },
   },
-  "include": [
-    "./**/*"
-  ],
-  "exclude": [
-    "coverage",
-    "node_modules",
-    "target",
-    "dist",
-    "./**/wasm/**/*"
-  ]
+  "include": [],
+    "exclude": [],
+    "files": [],
+    "references": [
+      {
+        "path": "./tsconfig.lib.json"
+      },
+      {
+        "path": "./tsconfig.test.json"
+      },
+    ]
 }
