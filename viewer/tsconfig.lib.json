@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
+    "stripInternal": true,
     "types": ["vite/client", "node", "vite-plugin-glsl/ext"]
   },
   "include": ["./packages/**/*.ts", "./api-entry-points/**/*.ts"],
