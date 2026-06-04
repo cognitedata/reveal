@@ -1,0 +1,18 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+{
+  "lsp": {
+    "vtsls": {
+      "initialization_options": {
+        "typescript": {
+          "tsdk": "node_modules/typescript/lib"
+        },
+        "vtsls": {
+          "autoUseWorkspaceTsdk": true
+        }
+      }
+    }
+  }
+}

@@ -10,11 +10,11 @@
     ]
   },
   "include": [
-    "./src/**/*.spec.ts",
-    "./src/**/*.test.ts",
-    "./src/**/__fixtures__/**/*.ts",
-    "./src/**/__mocks__/**/*.ts",
-    "./src/**/__tests__/**/*.ts",
+    "./packages/**/*.spec.ts",
+    "./packages/**/*.test.ts",
+    "./packages/**/__fixtures__/**/*.ts",
+    "./packages/**/__mocks__/**/*.ts",
+    "./packages/**/__tests__/**/*.ts",
     "./test-utilities/**/*.ts"
   ],
   "exclude": ["**/node_modules/**", "**VisualTest.ts",],

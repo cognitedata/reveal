@@ -2,6 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
+import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 import type { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
@@ -173,7 +174,10 @@ describe(Cdf360ImageFileProvider.name, () => {
   describe(Cdf360ImageFileProvider.name + ' class', () => {
     let mockClient: CogniteClient;
     let provider: Cdf360ImageFileProvider;
-    let fetchSpy: vi.SpiedFunction<typeof fetch>;
+    let fetchSpy: ViMock<{
+      (input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+      (input: string | URL | Request, init?: RequestInit): Promise<Response>;
+    }>;
 
     beforeEach(() => {
       fetchSpy = vi.spyOn(global, 'fetch');

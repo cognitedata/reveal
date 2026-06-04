@@ -89,6 +89,10 @@ jobs:
           rustup component add rustfmt
           cargo fmt --check
 
+      - name: Typecheck lib
+        working-directory: viewer
+        run: yarn run typecheck:lib
+
       - name: Build development version
         working-directory: viewer
         run: yarn run build
@@ -132,6 +136,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
           echo "DISPLAY=:99.0" >> $GITHUB_ENV
+
+      - name: Typecheck tests
+        working-directory: viewer
+        run: yarn run typecheck:tests
 
       - name: Run coverage tests
         working-directory: viewer

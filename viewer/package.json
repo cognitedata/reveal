@@ -53,6 +53,8 @@
     "test:visual:server": "yarn vite dev --config ./packages/visual-tests.vite.config.ts",
     "test:visual": "yarn run build:wasm && playwright test --config=visual-tests/playwright.config.ts",
     "test:visual:update": "playwright test --config=visual-tests/playwright.config.ts --update-snapshots",
+    "typecheck:lib": "tsc --project tsconfig.lib.json --noEmit",
+    "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
     "coverage": "yarn run build:wasm-test && vitest run --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "update-api": "api-extractor run --local && shx rm -rf api-extractor-temp/",

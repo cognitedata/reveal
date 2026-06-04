@@ -31,5 +31,16 @@
         "./*"
       ]
     },
-  }
+  },
+  "include": [],
+    "exclude": [],
+    "files": [],
+    "references": [
+      {
+        "path": "./tsconfig.lib.json"
+      },
+      {
+        "path": "./tsconfig.test.json"
+      },
+    ]
 }
