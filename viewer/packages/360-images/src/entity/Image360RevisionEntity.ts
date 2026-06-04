@@ -5,6 +5,7 @@
 import type {
   Image360FileDescriptor,
   Image360Descriptor,
+  Image360RevisionId,
   Image360Texture,
   DataSourceType,
   Image360Provider
@@ -20,7 +21,7 @@ import minBy from 'lodash/minBy';
 import type { Image360AnnotationAppearance } from '../annotation/types';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
-import type { Image360RevisionId } from '@reveal/data-providers/src/types';
+import { getAnnotationIdKey } from '@reveal/data-providers';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
   private readonly _imageProvider: Image360Provider<T>;
@@ -34,8 +35,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
   private readonly _identifier: Image360RevisionId<T>;
 
-  private _annotations: ImageAnnotationObject<T>[] | undefined;
-  private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
+  private readonly _annotationKeyToAnnotationObject: Map<string, Promise<ImageAnnotationObject<T> | undefined>> =
+    new Map();
+  private _allAnnotations: ImageAnnotationObject<T>[] | undefined;
+
   private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
@@ -73,25 +76,18 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 
   async getAnnotations(): Promise<ImageAnnotationObject<T>[]> {
-    if (this._annotations !== undefined) {
-      return this._annotations;
+    if (this._allAnnotations === undefined) {
+      return this.loadAndSetAllAnnotations();
     }
-
-    if (this._annotationsPromise !== undefined) {
-      return this._annotationsPromise;
-    }
-
-    this._annotationsPromise = this.loadAndSetAnnotations();
-
-    return this._annotationsPromise;
+    return this._allAnnotations;
   }
 
   public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject<T> | undefined {
-    if (this._annotations === undefined) {
-      return undefined;
+    if (this._allAnnotations === undefined) {
+      return;
     }
 
-    const intersectedAnnotations = this._annotations.filter(a => a.getVisible() && a.intersects(raycaster));
+    const intersectedAnnotations = this._allAnnotations.filter(a => a.getVisible() && a.intersects(raycaster));
 
     const smallestIntersectedBox = minBy(intersectedAnnotations, annotation => {
       const boundSize = new Box3().setFromObject(annotation.getObject()).getSize(new Vector3());
@@ -210,37 +206,62 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     this._image360VisualizationBox.loadImages(textures);
   }
 
-  private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {
+  private async loadAndSetAllAnnotations(): Promise<ImageAnnotationObject<T>[]> {
+    if (this._allAnnotations !== undefined) {
+      return this._allAnnotations;
+    }
+
     const annotationData = await this._imageProvider.getRelevant360ImageAnnotations({
       revisionId: this._image360Descriptor.id,
       fileDescriptors: this._image360Descriptor.faceDescriptors
     });
+    const annotationObjects = await this.createAndAddAnnotationObjects(annotationData);
+
+    this._image360VisualizationBox.setAnnotations(annotationObjects);
+    this._allAnnotations = annotationObjects;
+
+    this.propagateDefaultAppearanceToAnnotations();
+
+    return this._allAnnotations;
+  }
+
+  public createAndAddAnnotationObjects(
+    annotations: T['image360AnnotationType'][]
+  ): Promise<ImageAnnotationObject<T>[]> {
+    const relevantAnnotations = annotations.filter(a => this._annotationFilterer.filter(a));
+    const newAnnotations = relevantAnnotations.filter(
+      a => !this._annotationKeyToAnnotationObject.has(getAnnotationIdKey(a))
+    );
 
     // Get fileId to externalId mapping from provider
-    const fileIdToExternalId = this._imageProvider.resolveFileIdToExternalIdMapping
-      ? await this._imageProvider.resolveFileIdToExternalIdMapping(
-          annotationData,
-          this._image360Descriptor.faceDescriptors
-        )
-      : new Map<number, string>();
+    const fileIdToExternalIdPromise = this._imageProvider.resolveFileIdToExternalIdMapping
+      ? this._imageProvider.resolveFileIdToExternalIdMapping(newAnnotations, this._image360Descriptor.faceDescriptors)
+      : Promise.resolve(new Map<number, string>());
 
-    const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
-
-    const annotationObjects = filteredAnnotationData
-      .map(data => {
+    const newAnnotationObjectsPromisesWithKey = newAnnotations.map(data => ({
+      key: getAnnotationIdKey(data),
+      annotationPromise: fileIdToExternalIdPromise.then(fileIdToExternalId => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor, fileIdToExternalId);
+
         return ImageAnnotationObject.createAnnotationObject(
           data,
           faceDescriptor?.face,
           this._image360VisualizationBox.getTransform()
         );
       })
-      .filter(isDefined);
+    }));
 
-    this._image360VisualizationBox.setAnnotations(annotationObjects);
-    this.propagateDefaultAppearanceToAnnotations();
-    this._annotations = annotationObjects;
-    return annotationObjects;
+    // Ensure promises are inserted synchronously into the map to avoid race conditions
+    // in cases of overlapping calls to this method
+    newAnnotationObjectsPromisesWithKey.forEach(({ key, annotationPromise }) =>
+      this._annotationKeyToAnnotationObject.set(key, annotationPromise)
+    );
+
+    const allAnnotationObjectPromises = relevantAnnotations.map(annotationData =>
+      this._annotationKeyToAnnotationObject.get(getAnnotationIdKey(annotationData))
+    );
+
+    return Promise.all(allAnnotationObjectPromises).then(annotations => annotations.filter(isDefined));
   }
 
   public setDefaultAppearance(appearance: Image360AnnotationAppearance): void {
@@ -249,7 +270,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 
   private propagateDefaultAppearanceToAnnotations(): void {
-    this._annotations?.forEach(a => a.setDefaultStyle(this._defaultAppearance));
+    this._allAnnotations?.forEach(a => a.setDefaultStyle(this._defaultAppearance));
   }
 
   /**
