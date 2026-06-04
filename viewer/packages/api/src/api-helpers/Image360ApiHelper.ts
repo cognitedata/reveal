@@ -43,7 +43,8 @@ import {
   Cdf360ImageFileProvider,
   CoreDm360ImageAnnotationProvider,
   Image360ProviderCombiner,
-  isFdm360ImageCollectionIdentifier
+  isFdm360ImageCollectionIdentifier,
+  createCdf360ImageAnnotationCache
 } from '@reveal/data-providers';
 import type {
   BeforeSceneRenderedDelegate,
@@ -136,7 +137,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const image360CdmDescriptorProvider = new Cdf360CdmDescriptorProvider(cogniteClient);
 
     const cdm360ImageAnnotationProvider = new CoreDm360ImageAnnotationProvider(cogniteClient);
-    const cdf360ImageAnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
+    const cdf360ImageAnnotationProvider = new Cdf360ImageAnnotationProvider(
+      createCdf360ImageAnnotationCache(cogniteClient)
+    );
 
     const cdfFileProvider = new Cdf360ImageFileProvider(cogniteClient);
 

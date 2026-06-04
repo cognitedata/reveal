@@ -12,6 +12,7 @@ export { createCadModel } from './src/createCadModel';
 export { createCadNode } from './src/createCadNode';
 export { createPointCloudModel, createPointCloudNode } from './src/createPointCloudModel';
 export { createAnnotationModel } from './src/createAnnotationModel';
+export { createFileInfo } from './src/createFileInfo';
 export { createCursorAndAsyncIterator } from './src/createCursorAndAsyncIterator';
 
 export { mockClientAuthentication } from './src/cogniteClientAuth';
