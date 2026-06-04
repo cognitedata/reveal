@@ -29,6 +29,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   private _previewTextures: Image360Texture[];
   private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
+  private _jpegType: JpegType | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private readonly _identifier: Image360RevisionId<T>;
@@ -65,6 +66,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
    */
   get date(): Date | undefined {
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
+  }
+
+  get jpegType(): JpegType | undefined {
+    return this._jpegType;
   }
 
   async getAnnotations(): Promise<ImageAnnotationObject<T>[]> {
@@ -112,7 +117,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   } {
     // For progressive JPEG: resolves when first face scan 1 is decoded.
     // For baseline JPEG: resolves after the first face fully downloads.
-    // The no-op initializers are immediately replaced by the Promise executor (which runs synchronously).
     let resolveFirstFace: () => void = () => {};
     let rejectFirstFace: (reason: unknown) => void = () => {};
     const firstFaceReady = new Promise<void>((resolve, reject) => {
@@ -120,22 +124,22 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       rejectFirstFace = reject;
     });
 
-    // Resolves when icon previews load (baseline JPEG) or when firstFaceReady fires (progressive).
-    // The icon request is only made when the stream confirms baseline JPEG from the file header —
-    // so it is never triggered for progressive JPEG files.
-    let resolveIconPreview: () => void = () => {};
-    let rejectIconPreview: (reason: unknown) => void = () => {};
-    const iconPreviewCompleted = new Promise<void>((resolve, reject) => {
-      resolveIconPreview = resolve;
-      rejectIconPreview = reject;
-    });
+    // Start the low-resolution preview download in parallel with the full-resolution download so the
+    // small preview images are requested first and can drive an early camera transition for baseline JPEGs.
+    // Progressive JPEGs do not need the preview their first scan is the preview, so the request is aborted as
+    // soon as the stream confirms the file is progressive.
+    const previewAbort = new AbortController();
+    if (abortSignal?.aborted) {
+      previewAbort.abort();
+    } else {
+      abortSignal?.addEventListener('abort', () => previewAbort.abort(), { once: true });
+    }
+    const previewCompleted = this.loadPreviewTextures(previewAbort.signal);
 
     const onFirstFaceTypeDetected = (type: JpegType): void => {
-      if (type === 'baseline') {
-        this.loadPreviewTextures(abortSignal).then(resolveIconPreview).catch(rejectIconPreview);
-      } else {
-        // Progressive: no icon loading needed — complete when first scan is ready
-        firstFaceReady.then(resolveIconPreview).catch(() => {});
+      this._jpegType = type;
+      if (type === 'progressive') {
+        previewAbort.abort();
       }
     };
 
@@ -145,13 +149,14 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     // lowResolutionCompleted does not hang forever waiting for promises that will never resolve.
     fullResolutionCompleted.catch(err => {
       rejectFirstFace(err);
-      rejectIconPreview(err);
     });
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
     return {
-      lowResolutionCompleted: Promise.race([iconPreviewCompleted, firstFaceReady]),
+      // Resolve on whichever preview is ready first: the icon preview (baseline) or the first rendered scan
+      // (progressive, or baseline fallback if the preview request fails or is aborted).
+      lowResolutionCompleted: Promise.race([previewCompleted.catch(() => firstFaceReady), firstFaceReady]),
       fullResolutionCompleted
     };
   }

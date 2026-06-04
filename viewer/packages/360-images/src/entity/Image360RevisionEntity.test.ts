@@ -122,11 +122,16 @@ describe(Image360RevisionEntity.name, () => {
       await expect(lowResolutionCompleted).rejects.toThrow('fetch failed');
     });
 
-    test('getLowResolution360ImageFiles is NOT called for progressive JPEG', async () => {
+    test('preview request is started eagerly but aborted for progressive JPEG', async () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
+
+      let previewAbortSignal: AbortSignal | undefined;
       providerMock
         .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(makeFaces(1)));
+        .callback(({ args }) => {
+          previewAbortSignal = args[1] as AbortSignal | undefined;
+          return Promise.resolve(makeFaces(6));
+        });
 
       const textures = makeTextures(6);
       vi.spyOn(vizBox, 'loadFaceTextures').mockImplementation(
@@ -146,7 +151,8 @@ describe(Image360RevisionEntity.name, () => {
       ).loadTextures();
       await fullResolutionCompleted;
 
-      providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Never());
+      providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
+      expect(previewAbortSignal?.aborted).toBe(true);
     });
 
     test('getLowResolution360ImageFiles is called for baseline JPEG', async () => {
