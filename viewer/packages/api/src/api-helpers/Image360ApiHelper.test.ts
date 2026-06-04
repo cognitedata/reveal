@@ -739,7 +739,7 @@ describe(Image360ApiHelper.name, () => {
     }
 
     async function enterAt(position: Vector3): Promise<Image360Entity<DataSourceType>> {
-      const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision(), position);
+      const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision(), { position });
       const enterCollection = new Mock<DefaultImage360Collection<DataSourceType>>()
         .setup(c => c.isCollectionVisible)
         .returns(true)
