@@ -5,16 +5,10 @@
 import type { Matrix4, PerspectiveCamera } from 'three';
 import { Vector3 } from 'three';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
-import type { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
+import type { ClusteredIconData, ClusterRenderParams, ClusterScreenInfo } from './ClusterRenderingStrategy';
 import { worldToViewportCoordinates } from '@reveal/utilities';
 import { generateClusterStyles } from './htmlClusterStyles';
-
-export type HtmlClusterRendererOptions = {
-  maxPoolSize?: number;
-  classPrefix?: string;
-  enableHoverAnimations?: boolean;
-  zIndex?: number;
-};
+import type { HtmlClusterRendererOptions } from '../../types';
 
 /** HTML-based cluster rendering for high-definition text display */
 export class HtmlClusterRenderer {
@@ -29,6 +23,8 @@ export class HtmlClusterRenderer {
   private readonly _baseSize: number = 4000;
   private readonly _minSize: number = 48;
   private readonly _maxSize: number = 120;
+  private readonly _clusterFadeStartDistance: number;
+  private readonly _clusterFadeEndDistance: number;
 
   private readonly _pendingReleaseTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
@@ -37,8 +33,10 @@ export class HtmlClusterRenderer {
   private _isAttached: boolean = false;
   private _domElement: HTMLElement | undefined = undefined;
 
-  private readonly _tempPosition = new Vector3();
-  private readonly _tempProjectedPosition = new Vector3();
+  private _stagedScreenInfos: ClusterScreenInfo[] = [];
+  private _stagedCanvas: HTMLCanvasElement | undefined = undefined;
+  private _stagedCanvasRect: DOMRect | undefined = undefined;
+  private readonly _countSpanCache = new WeakMap<HTMLDivElement, HTMLSpanElement>();
 
   constructor(options: HtmlClusterRendererOptions = {}) {
     this._maxPoolSize = options.maxPoolSize ?? 100;
@@ -46,41 +44,65 @@ export class HtmlClusterRenderer {
     this._countSpanName = `${this._classPrefix}-count`;
     this._enableHoverAnimations = options.enableHoverAnimations ?? true;
     this._zIndex = options.zIndex;
+    this._clusterFadeStartDistance = options.clusterFadeStartDistance ?? 20;
+    this._clusterFadeEndDistance = options.clusterFadeEndDistance ?? 150;
     this._container = this.createContainer();
     this.injectStyles();
   }
 
-  public updateClusters(visibleClusters: ClusteredIconData[], params: ClusterRenderParams): void {
+  // Computes screen-space data and manages element lifecycle. Must be followed by applyWithOcclusion() to complete the DOM update.
+  public prepareClusters(visibleClusters: ClusteredIconData[], params: ClusterRenderParams): void {
     const { renderer, camera, modelTransform } = params;
 
     if (!this._isVisible) {
+      this._stagedScreenInfos = [];
+      this._stagedCanvas = undefined;
+      this._stagedCanvasRect = undefined;
       return;
     }
 
-    this.ensureAttached(renderer.domElement);
+    const canvas = renderer.domElement;
+    this.ensureAttached(canvas);
+
+    const canvasRect = canvas.getBoundingClientRect();
+    this._stagedCanvasRect = canvasRect;
+    this.updateContainerSize(canvasRect);
+
+    this._stagedScreenInfos = this.computeClusterScreenInfos(visibleClusters, camera, modelTransform, canvas);
+    this._stagedCanvas = canvas;
+
     const visibleIcons = new Set<Overlay3DIcon>();
-    this.updateContainerSize(renderer.domElement);
-
-    for (const clusterData of visibleClusters) {
-      if (!clusterData.isCluster) {
-        continue;
+    for (const info of this._stagedScreenInfos) {
+      visibleIcons.add(info.data.icon);
+      if (!this._activeElements.has(info.data.icon)) {
+        const element = this.acquireElement();
+        this._activeElements.set(info.data.icon, element);
       }
-
-      visibleIcons.add(clusterData.icon);
-
-      let element = this._activeElements.get(clusterData.icon);
-      if (!element) {
-        element = this.acquireElement();
-        this._activeElements.set(clusterData.icon, element);
-      }
-
-      this.updateClusterElement(element, clusterData, camera, modelTransform, renderer.domElement);
     }
 
     for (const [icon, element] of this._activeElements.entries()) {
       if (!visibleIcons.has(icon)) {
         this.releaseElement(element);
         this._activeElements.delete(icon);
+      }
+    }
+  }
+
+  // Returns the screen-space info computed during the last prepareClusters call.
+  public getStagedScreenInfos(): ClusterScreenInfo[] {
+    return this._stagedScreenInfos;
+  }
+
+  // Applies DOM positions and fade opacity using a globally-computed occlusion set.
+  public applyWithOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
+    if (!this._isVisible || !this._stagedCanvas || !this._stagedCanvasRect) {
+      return;
+    }
+    const canvasRect = this._stagedCanvasRect;
+    for (const info of this._stagedScreenInfos) {
+      const element = this._activeElements.get(info.data.icon);
+      if (element) {
+        this.applyClusterElementUpdate(element, info, occludedIcons.has(info.data.icon), canvasRect);
       }
     }
   }
@@ -168,7 +190,6 @@ export class HtmlClusterRenderer {
       pointer-events: none;
       overflow: hidden;
     `;
-    // Only set z-index if explicitly specified (undefined = natural DOM stacking)
     if (this._zIndex !== undefined) {
       container.style.zIndex = String(this._zIndex);
     }
@@ -197,8 +218,6 @@ export class HtmlClusterRenderer {
     }
 
     if (this._container.parentNode !== parent) {
-      // Insert as first child, then the natural stacking with z-index: 0 will place it behind
-      // canvas content but the absolute positioning keeps it visible
       parent.insertBefore(this._container, parent.firstChild);
     }
 
@@ -206,8 +225,7 @@ export class HtmlClusterRenderer {
     this._domElement = parent;
   }
 
-  private updateContainerSize(canvas: HTMLCanvasElement): void {
-    const rect = canvas.getBoundingClientRect();
+  private updateContainerSize(rect: DOMRect): void {
     this._container.style.width = `${rect.width}px`;
     this._container.style.height = `${rect.height}px`;
   }
@@ -215,7 +233,8 @@ export class HtmlClusterRenderer {
   private acquireElement(): HTMLDivElement {
     const element = this._elementPool.pop() ?? this.createClusterElement();
     element.classList.remove('fade-out', 'hovered');
-    element.style.display = 'flex';
+    element.style.display = 'none';
+    element.style.setProperty('--cluster-fade-opacity', '1');
     this._container.appendChild(element);
     return element;
   }
@@ -243,29 +262,61 @@ export class HtmlClusterRenderer {
     countSpan.className = this._countSpanName;
     element.appendChild(countSpan);
 
+    this._countSpanCache.set(element, countSpan);
     return element;
   }
 
-  private updateClusterElement(
-    element: HTMLDivElement,
-    clusterData: ClusteredIconData,
+  private computeClusterScreenInfos(
+    visibleClusters: ClusteredIconData[],
     camera: PerspectiveCamera,
     modelTransform: Matrix4,
     canvas: HTMLCanvasElement
+  ): ClusterScreenInfo[] {
+    const result: ClusterScreenInfo[] = [];
+    const tempWorldPos = new Vector3();
+    const tempProjected = new Vector3();
+
+    for (const clusterData of visibleClusters) {
+      if (!clusterData.isCluster) continue;
+
+      tempWorldPos.copy(clusterData.clusterPosition).applyMatrix4(modelTransform);
+      const distance = camera.position.distanceTo(tempWorldPos);
+      const projectedSize = Math.max(this._minSize, Math.min(this._maxSize, this._baseSize / Math.max(distance, 1)));
+      const screenPos = worldToViewportCoordinates(canvas, camera, tempWorldPos, tempProjected).clone();
+
+      result.push({
+        data: clusterData,
+        screenPos,
+        worldPos: tempWorldPos.clone(),
+        distance,
+        projectedSize
+      });
+    }
+
+    return result;
+  }
+
+  private computeFadeOpacity(distance: number): number {
+    if (distance <= this._clusterFadeStartDistance) return 1;
+    if (distance >= this._clusterFadeEndDistance) return 0;
+    const range = this._clusterFadeEndDistance - this._clusterFadeStartDistance;
+    return 1 - (distance - this._clusterFadeStartDistance) / range;
+  }
+
+  private applyClusterElementUpdate(
+    element: HTMLDivElement,
+    info: ClusterScreenInfo,
+    isOccluded: boolean,
+    canvasRect: DOMRect
   ): void {
-    this._tempPosition.copy(clusterData.clusterPosition);
-    this._tempPosition.applyMatrix4(modelTransform);
-
-    const screenPos = worldToViewportCoordinates(canvas, camera, this._tempPosition, this._tempProjectedPosition);
-
-    const distance = camera.position.distanceTo(this._tempPosition);
-    const projectedSize = Math.max(this._minSize, Math.min(this._maxSize, this._baseSize / Math.max(distance, 1)));
-
-    const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
-    // Use half the projected size as margin so the icon is fully off-screen before being hidden
+    const { screenPos, distance, projectedSize, data } = info;
+    const { width: canvasWidth, height: canvasHeight } = canvasRect;
     const offScreenMargin = projectedSize / 2;
 
+    const fadeOpacity = isOccluded ? this.computeFadeOpacity(distance) : 1;
+
     if (
+      fadeOpacity === 0 ||
       screenPos.z > 1 ||
       screenPos.x < -offScreenMargin ||
       screenPos.x > canvasWidth + offScreenMargin ||
@@ -276,25 +327,21 @@ export class HtmlClusterRenderer {
       return;
     }
 
-    element.style.display = 'flex';
-
+    element.style.setProperty('--cluster-fade-opacity', String(fadeOpacity));
     element.style.left = `${screenPos.x}px`;
     element.style.top = `${screenPos.y}px`;
-    element.style.width = `${projectedSize}px`;
-    element.style.height = `${projectedSize}px`;
-    element.style.fontSize = `${projectedSize * 0.25}px`;
-    // Set --size CSS variable for proportional border scaling
     element.style.setProperty('--size', `${projectedSize}px`);
+    element.style.display = 'flex';
 
-    const countSpan = element.querySelector(`.${this._countSpanName}`);
-    if (countSpan instanceof HTMLSpanElement) {
-      const displayCount = clusterData.clusterSize > 999 ? '999+' : clusterData.clusterSize.toString();
+    const countSpan = this._countSpanCache.get(element);
+    if (countSpan !== undefined) {
+      const displayCount = data.clusterSize > 999 ? '999+' : data.clusterSize.toString();
       if (countSpan.textContent !== displayCount) {
         countSpan.textContent = displayCount;
       }
     }
 
-    const isHovered = clusterData.icon === this._hoveredClusterIcon;
+    const isHovered = data.icon === this._hoveredClusterIcon;
     this.setElementHovered(element, isHovered);
   }
 

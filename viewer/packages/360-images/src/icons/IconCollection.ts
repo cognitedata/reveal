@@ -4,23 +4,21 @@
 
 import type { Color, Ray, Texture } from 'three';
 import { CanvasTexture, Frustum, Matrix4, Sphere, Sprite, SpriteMaterial, Vector2, Vector3 } from 'three';
-import type { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
+import type { BeforeSceneRenderedDelegate, SceneHandler } from '@reveal/utilities';
 import type { DefaultOverlay3DContentType } from '@reveal/3d-overlays';
 import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
 import type { PointOctant } from 'sparse-octree';
-import type { HtmlClusterRendererOptions } from './clustering/HtmlClusterRenderer';
 import { HtmlClusterRenderer } from './clustering/HtmlClusterRenderer';
-import type { ClusterRenderParams } from './clustering';
+import type { ClusterRenderParams, ClusterScreenInfo } from './clustering';
 import { FlooredIconManager } from './FlooredIconManager';
+import type { HtmlClusterRendererOptions } from '../types';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
 export type IconsOptions = {
   platformMaxPointsSize?: number;
   htmlClusterOptions?: HtmlClusterRendererOptions;
-  clusterDistanceThreshold?: number;
-  maxOctreeDepth?: number;
   enableHtmlClusters?: boolean;
   enableFloorIcons?: boolean;
 };
@@ -47,8 +45,8 @@ export class IconCollection {
   private static readonly DefaultRenderHeight = 1080;
   private static readonly DefaultProximityPointLimit = 50;
   private static readonly DefaultProximityRadius = Infinity;
-  private static readonly DefaultClusterDistanceThreshold = 25;
-  private static readonly DefaultMaxOctreeDepth = 3;
+  private static readonly DefaultClusterDistanceThreshold = 11;
+  private static readonly DefaultMaxOctreeDepth = 2;
   private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
@@ -58,7 +56,7 @@ export class IconCollection {
   private readonly _pointsObject: OverlayPointsObject;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
-  private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
+  private readonly _adaptiveScaleRenderSize = new Vector2();
   private readonly _iconRadius = 0.3;
 
   private readonly _renderPositions: Vector3[] = [];
@@ -86,8 +84,8 @@ export class IconCollection {
   // Maximum octree depth - limits how deep we expand, creating larger clusters
   private _maxOctreeDepth: number | undefined = IconCollection.DefaultMaxOctreeDepth;
 
-  private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
+  private _activeCullingHandler: BeforeSceneRenderedDelegate;
 
   private readonly _floorDiscs: FlooredIconManager;
   private _floorMode = false;
@@ -114,33 +112,16 @@ export class IconCollection {
 
   public setCullingScheme(scheme: IconCullingScheme): void {
     if (this._iconCullingScheme === scheme) return;
-
     this._iconCullingScheme = scheme;
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
-
-    switch (this._iconCullingScheme) {
-      case 'clustered': {
-        this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
-        if (this._htmlRenderer) {
-          this._htmlRenderer.setVisible(true);
-        }
-        break;
-      }
-      case 'proximity': {
-        this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
-        this._visibleClusteredIcons = [];
-        if (this._htmlRenderer) {
-          this._htmlRenderer.setVisible(false);
-        }
-        if (this._setNeedsRedraw) {
-          this._setNeedsRedraw();
-        }
-        break;
-      }
-      default:
-        break;
+    if (this._iconCullingScheme === 'proximity') {
+      this._visibleClusteredIcons = [];
+      this._htmlRenderer?.setVisible(false);
+      this._activeCullingHandler = this._computeProximityPointsEventHandler;
+      this._setNeedsRedraw?.();
+    } else {
+      this._htmlRenderer?.setVisible(true);
+      this._activeCullingHandler = this._computeClustersEventHandler;
     }
-    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
   }
 
   public setFloorMode(enabled: boolean): void {
@@ -202,21 +183,16 @@ export class IconCollection {
     }
   }
 
-  constructor(
-    points: Vector3[],
-    sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
-    iconOptions?: IconsOptions,
-    setNeedsRedraw?: () => void
-  ) {
+  constructor(points: Vector3[], sceneHandler: SceneHandler, iconOptions?: IconsOptions, setNeedsRedraw?: () => void) {
     this._setNeedsRedraw = setNeedsRedraw;
     this._enableHtmlClusters = iconOptions?.enableHtmlClusters ?? false;
     this._maxPixelSize = Math.min(
       IconCollection.DefaultMaxPixelSize,
       iconOptions?.platformMaxPointsSize ?? IconCollection.DefaultMaxPixelSize
     );
-    this._clusterDistanceThreshold = iconOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
-    this._maxOctreeDepth = iconOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
+    this._clusterDistanceThreshold =
+      iconOptions?.htmlClusterOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
+    this._maxOctreeDepth = iconOptions?.htmlClusterOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
 
     const sharedTexture = this.createOuterRingsTexture();
 
@@ -247,7 +223,7 @@ export class IconCollection {
     );
 
     this._sharedTexture = sharedTexture;
-    this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
+    this._icons = this.initializeImage360Icons(points, sceneHandler);
 
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
@@ -257,12 +233,10 @@ export class IconCollection {
       ? this.setIconsByLODWithClustering(octree, pointsObjects)
       : this.setIconsByLOD(octree, pointsObjects);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, pointsObjects);
-    this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
-    onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
+    this._activeCullingHandler = this._computeClustersEventHandler;
 
     this._sceneHandler = sceneHandler;
     this._pointsObject = pointsObjects;
-    this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
     sceneHandler.addObject3D(pointsObjects);
   }
@@ -355,6 +329,14 @@ export class IconCollection {
     if (hadHoveredCluster && this._setNeedsRedraw) {
       this._setNeedsRedraw();
     }
+  }
+
+  public getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[] {
+    return this._htmlRenderer?.getStagedScreenInfos() ?? [];
+  }
+
+  public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
+    this._htmlRenderer?.applyWithOcclusion(occludedIcons);
   }
 
   /**
@@ -494,7 +476,7 @@ export class IconCollection {
     const individuals = visibleClusters.filter(item => !item.isCluster);
 
     if (this._htmlRenderer) {
-      this._htmlRenderer.updateClusters(clusters, {
+      this._htmlRenderer.prepareClusters(clusters, {
         renderer: params.renderer,
         camera: params.camera,
         modelTransform: params.modelTransform
@@ -533,7 +515,6 @@ export class IconCollection {
     const clusteredIcons: ClusteredIcon[] = [];
 
     for (const node of nodes) {
-      // If node has data (leaf), show the individual icon(s)
       if (node.data !== null) {
         const icons = Array.isArray(node.data.data) ? node.data.data : [node.data.data];
         for (const icon of icons) {
@@ -546,29 +527,24 @@ export class IconCollection {
           });
         }
       } else {
-        // Node is a parent (cluster) - the octree has already decided
-        // this node should be clustered, so show the cluster.
         const representativeIcon = octree.getNodeIcon(node);
         if (!representativeIcon) continue;
 
-        // Get all leaf icons under this cluster node
         const clusterIcons = octree.getAllIconsFromNode(node);
-        const clusterSize = clusterIcons.length;
 
-        // Show as cluster if we have multiple icons, otherwise show as individual
-        if (clusterSize > 1) {
+        const clusterIconsLength = clusterIcons.length;
+
+        if (clusterIconsLength > 1) {
           const centroid = this.calculateCentroid(clusterIcons);
-
           clusteredIcons.push({
             icon: representativeIcon,
             isCluster: true,
-            clusterSize,
+            clusterSize: clusterIconsLength,
             clusterPosition: centroid,
             sizeScale: clusterIconSizeMultiplier,
-            clusterIcons: clusterIcons // Store all icons for click expansion
+            clusterIcons: clusterIcons
           });
         } else {
-          // Only one icon in this "cluster" - show as individual
           for (const icon of clusterIcons) {
             clusteredIcons.push({
               icon,
@@ -663,11 +639,7 @@ export class IconCollection {
     };
   }
 
-  private initializeImage360Icons(
-    points: Vector3[],
-    sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
-  ): Overlay3DIcon[] {
+  private initializeImage360Icons(points: Vector3[], sceneHandler: SceneHandler): Overlay3DIcon[] {
     sceneHandler.addObject3D(this._hoverSprite);
 
     const icons = points.map(
@@ -684,14 +656,6 @@ export class IconCollection {
         )
     );
 
-    const renderSize = new Vector2();
-
-    onBeforeSceneRendered.subscribe(({ renderer, camera }) =>
-      icons.forEach(icon =>
-        icon.updateAdaptiveScale({ camera, renderSize: renderer.getSize(renderSize), domElement: renderer.domElement })
-      )
-    );
-
     icons.forEach(icon =>
       icon.on('selected', () => {
         const worldPos = icon.getPosition().clone().applyMatrix4(this.getTransform());
@@ -704,8 +668,22 @@ export class IconCollection {
     return icons;
   }
 
+  public updateIcons(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    const { renderer, camera } = params;
+    this._icons.forEach(icon =>
+      icon.updateAdaptiveScale({
+        camera,
+        renderSize: renderer.getSize(this._adaptiveScaleRenderSize),
+        domElement: renderer.domElement
+      })
+    );
+  }
+
+  public updateCulling(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    this._activeCullingHandler(params);
+  }
+
   public dispose(): void {
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
     this._sceneHandler.removeObject3D(this._pointsObject);
     this._icons.forEach(icon => icon.dispose());
     this._icons.splice(0, this._icons.length);
@@ -718,9 +696,7 @@ export class IconCollection {
     this._hoverSprite.material.dispose();
     this._hoverIconTexture.dispose();
 
-    if (this._enableHtmlClusters && this._htmlRenderer) {
-      this._htmlRenderer.dispose();
-    }
+    this._htmlRenderer?.dispose();
   }
 
   private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
