@@ -249,6 +249,93 @@ describe(CdfImageFileProvider.name, () => {
     });
   });
 
+  describe('getFileDownloadUrls', () => {
+    test('returns array of download URL strings (not buffers)', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [{ id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' }]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls).toHaveLength(1);
+      expect(typeof urls[0]).toBe('string');
+    });
+
+    test('returns correct number of URLs matching identifiers', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }, { id: 456 }, { id: 789 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [
+            { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+            { id: 456, downloadUrl: 'https://storage.example.com/file2.jpg' },
+            { id: 789, downloadUrl: 'https://storage.example.com/file3.jpg' }
+          ]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls).toHaveLength(3);
+    });
+
+    test('each URL is the downloadUrl from the API response', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }, { id: 456 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [
+            { id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' },
+            { id: 456, downloadUrl: 'https://storage.example.com/file2.png' }
+          ]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls[0]).toBe('https://storage.example.com/file1.jpg');
+      expect(urls[1]).toBe('https://storage.example.com/file2.png');
+    });
+
+    test('resolves URLs for instanceId identifiers (CDM collections)', async () => {
+      const fileIdentifiers: FileIdentifier[] = [
+        { instanceId: { space: 'my-space', externalId: 'image-front' } },
+        { instanceId: { space: 'my-space', externalId: 'image-back' } }
+      ];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [
+            { downloadUrl: 'https://storage.example.com/front.jpg' },
+            { downloadUrl: 'https://storage.example.com/back.jpg' }
+          ]
+        })
+      );
+
+      const urls = await provider.getFileDownloadUrls(fileIdentifiers);
+
+      expect(urls).toEqual(['https://storage.example.com/front.jpg', 'https://storage.example.com/back.jpg']);
+    });
+
+    test('throws when the number of returned links does not match identifiers', async () => {
+      const fileIdentifiers: FileIdentifier[] = [{ id: 123 }, { id: 456 }];
+
+      fetchSpy.mockResolvedValueOnce(
+        createJsonResponse({
+          items: [{ id: 123, downloadUrl: 'https://storage.example.com/file1.jpg' }]
+        })
+      );
+
+      await expect(provider.getFileDownloadUrls(fileIdentifiers)).rejects.toThrow(
+        'Expected 2 download URLs but received 1'
+      );
+    });
+  });
+
   describe('parseMimeType', () => {
     test('recognizes image/jpg as jpeg', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ id: 123 }];

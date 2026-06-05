@@ -18,12 +18,14 @@ export class Cdf360ImageFileProvider implements Image360FileProvider {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    // Use getFileBuffersWithMimeType to get the actual mimeType from Content-Type header
-    const downloadResults = await this._imageFileProvider.getFileBuffersWithMimeType(
-      getFileIdentifiers(image360FaceDescriptors),
-      abortSignal
-    );
-    return createFacesFromDescriptorsAndDownloads(image360FaceDescriptors, downloadResults);
+    const identifiers = getFileIdentifiers(image360FaceDescriptors);
+    const urls = await this._imageFileProvider.getFileDownloadUrls(identifiers, abortSignal);
+    return image360FaceDescriptors.map((descriptor, i) => ({
+      face: descriptor.face,
+      mimeType: descriptor.mimeType,
+      data: new ArrayBuffer(0),
+      downloadUrl: urls[i]
+    }));
   }
 
   public async getLowResolution360ImageFiles(

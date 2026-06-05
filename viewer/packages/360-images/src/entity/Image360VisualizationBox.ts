@@ -8,6 +8,8 @@ import assert from 'assert';
 import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import type { Image360Visualization } from './Image360Visualization';
 import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import type { JpegType } from '../utils/JpegDataStreamParser';
+import { Image360FaceTextureLoader, hasDownloadUrl, type FaceTextureLoader } from './Image360FaceTextureLoader';
 
 type VisualizationState = {
   opacity: number;
@@ -19,17 +21,16 @@ type VisualizationState = {
 export const DEFAULT_IMAGE_360_OPACITY = 1;
 
 export class Image360VisualizationBox implements Image360Visualization {
-  private readonly MAX_MOBILE_IMAGE_SIZE = 1024;
   private readonly _worldTransform: THREE.Matrix4;
   private _visualizationMesh: THREE.Mesh | undefined;
   private _faceMaterials: THREE.MeshBasicMaterial[] = [];
   private readonly _sceneHandler: SceneHandler;
-  private readonly _device: DeviceDescriptor;
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
   private readonly _annotationsGroup: THREE.Group = new THREE.Group();
   private readonly _localTransform: THREE.Matrix4;
+  private readonly _loader: FaceTextureLoader;
 
   get visible(): boolean {
     return this._visualizationState.visible;
@@ -86,11 +87,16 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._annotationsGroup.add(...annotations.map(a => a.getObject()));
   }
 
-  constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler, device: DeviceDescriptor) {
+  constructor(
+    worldTransform: THREE.Matrix4,
+    sceneHandler: SceneHandler,
+    device: DeviceDescriptor,
+    private readonly _requestRedraw: () => void = () => {},
+    faceTextureLoader?: FaceTextureLoader
+  ) {
     this._localTransform = worldTransform.clone();
     this._worldTransform = worldTransform.clone();
     this._sceneHandler = sceneHandler;
-    this._device = device;
     this._textureLoader = new THREE.TextureLoader();
     this._visualizationState = {
       opacity: DEFAULT_IMAGE_360_OPACITY,
@@ -98,6 +104,15 @@ export class Image360VisualizationBox implements Image360Visualization {
       scale: new THREE.Vector3(1, 1, 1),
       visible: true
     };
+    this._loader =
+      faceTextureLoader ??
+      new Image360FaceTextureLoader(
+        device,
+        this._textureLoader,
+        this._requestRedraw,
+        (face, texture) => this.updateFaceTexture(face, texture),
+        () => this._visualizationMesh !== undefined
+      );
   }
 
   public setWorldTransform(matrix: THREE.Matrix4): void {
@@ -109,25 +124,40 @@ export class Image360VisualizationBox implements Image360Visualization {
     }
   }
 
-  public loadImages(textures: Image360Texture[]): void {
+  public setImages(textures: Image360Texture[]): void {
     if (this._visualizationMesh) {
       this._faceMaterialOrder.forEach((face, index) => {
+        this._faceMaterials[index].color.set(0xffffff);
         this._faceMaterials[index].map = getFaceTexture(face);
+        this._faceMaterials[index].needsUpdate = true;
       });
+      this._requestRedraw();
       return;
     }
 
-    this._faceMaterials = this._faceMaterialOrder.map(
-      face =>
-        new THREE.MeshBasicMaterial({
-          side: THREE.BackSide,
-          map: getFaceTexture(face),
-          depthTest: false,
-          depthWrite: false,
-          opacity: this._visualizationState.opacity,
-          transparent: true
-        })
+    this.buildVisualizationMesh(
+      this._faceMaterialOrder.map(
+        face =>
+          new THREE.MeshBasicMaterial({
+            side: THREE.BackSide,
+            map: getFaceTexture(face),
+            depthTest: false,
+            depthWrite: false,
+            opacity: this._visualizationState.opacity,
+            transparent: true
+          })
+      )
     );
+
+    function getFaceTexture(face: Image360Face['face']) {
+      const texture = textures.find(p => p.face === face);
+      assert(texture !== undefined);
+      return texture.texture;
+    }
+  }
+
+  private buildVisualizationMesh(faceMaterials: THREE.MeshBasicMaterial[]): void {
+    this._faceMaterials = faceMaterials;
 
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
@@ -141,41 +171,65 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh = visualizationMesh;
 
     this._sceneHandler.addObject3D(this._visualizationMesh);
-
-    function getFaceTexture(face: Image360Face['face']) {
-      const texture = textures.find(p => p.face === face);
-      assert(texture !== undefined);
-      return texture.texture;
-    }
   }
 
   public getTransform(): THREE.Matrix4 {
     return this._worldTransform;
   }
 
-  public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
-    return Promise.all(
-      faces.map(async image360Face => {
-        const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
-        const url = window.URL.createObjectURL(blob);
-        let faceTexture: THREE.Texture<HTMLImageElement | HTMLCanvasElement> = await this._textureLoader.loadAsync(url);
-        const faceImage = faceTexture.image;
-        if (
-          this._device.deviceType === 'mobile' &&
-          (faceImage.width > this.MAX_MOBILE_IMAGE_SIZE || faceImage.height > this.MAX_MOBILE_IMAGE_SIZE)
-        ) {
-          faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
-        }
+  public loadFaceTextures(
+    faces: Image360Face[],
+    onFirstFaceReady?: () => void,
+    onFirstFaceTypeDetected?: (type: JpegType) => void,
+    abortSignal?: AbortSignal
+  ): Promise<Image360Texture[]> {
+    if (faces.some(hasDownloadUrl)) {
+      this.createPlaceholderMesh();
+    }
+    // Fire onFirstFaceReady only when ALL faces have their first scan ready
+    let facesWithFirstScan = 0;
+    const notifyFirstFace = (): void => {
+      facesWithFirstScan++;
+      if (facesWithFirstScan === faces.length) {
+        onFirstFaceReady?.();
+      }
+    };
+    let typeNotified = false;
+    const notifyType = (type: JpegType): void => {
+      if (!typeNotified) {
+        typeNotified = true;
+        onFirstFaceTypeDetected?.(type);
+      }
+    };
+    return Promise.all(faces.map(face => this._loader.load(face, notifyFirstFace, notifyType, abortSignal)));
+  }
 
-        // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
-        window.URL.revokeObjectURL(url);
+  private createPlaceholderMesh(): void {
+    if (this._visualizationMesh !== undefined) return;
 
-        // Need to horizontally flip the texture since it is being rendered inside a cube
-        faceTexture.center.set(0.5, 0.5);
-        faceTexture.repeat.set(-1, 1);
-        return { face: image360Face.face, texture: faceTexture };
-      })
+    this.buildVisualizationMesh(
+      this._faceMaterialOrder.map(
+        () =>
+          new THREE.MeshBasicMaterial({
+            side: THREE.BackSide,
+            color: 0x000000,
+            depthTest: false,
+            depthWrite: false,
+            opacity: this._visualizationState.opacity,
+            transparent: true
+          })
+      )
     );
+  }
+
+  public updateFaceTexture(face: Image360Face['face'], texture: THREE.Texture): void {
+    if (this._visualizationMesh === undefined) return;
+    const index = this._faceMaterialOrder.indexOf(face);
+    if (index === -1) return;
+    const material = this._faceMaterials[index];
+    material.color.set(0xffffff);
+    material.map = texture;
+    material.needsUpdate = true;
   }
 
   public unloadImages(): void {
@@ -197,37 +251,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.geometry.dispose();
     this._visualizationMesh = undefined;
     this._faceMaterials = [];
-  }
-
-  private async getScaledImageTexture(
-    texture: THREE.Texture<HTMLImageElement | HTMLCanvasElement>,
-    imageSize: number
-  ): Promise<THREE.Texture<HTMLCanvasElement>> {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const { image } = texture;
-    //Scale down the width and height
-    let width = image.width;
-    let height = image.height;
-
-    // Calculate new dimensions while maintaining aspect ratio
-    if (width > imageSize) {
-      height *= imageSize / width;
-      width = imageSize;
-    }
-    if (height > imageSize) {
-      width *= imageSize / height;
-      height = imageSize;
-    }
-    canvas.width = width;
-    canvas.height = height;
-
-    context?.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-    const scaledImageTexture = new THREE.CanvasTexture(canvas);
-    texture.dispose();
-
-    return scaledImageTexture;
   }
 
   public setAnnotationsVisibility(visibility: boolean): void {

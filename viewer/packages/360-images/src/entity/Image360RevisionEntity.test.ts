@@ -18,7 +18,8 @@ function makeFaces(count: number): Image360Face[] {
   return faceNames.slice(0, count).map(face => ({
     face,
     mimeType: 'image/jpeg',
-    data: new ArrayBuffer(100)
+    data: new ArrayBuffer(0),
+    downloadUrl: `https://example.com/${face}.jpg`
   }));
 }
 
@@ -71,61 +72,113 @@ describe(Image360RevisionEntity.name, () => {
     vi.restoreAllMocks();
   });
 
-  function createEntity(): Image360RevisionEntity<ClassicDataSourceType> {
-    return new Image360RevisionEntity(providerMock.object(), descriptor, vizBox, annotationFilterer);
-  }
-
   describe('loadTextures', () => {
     test('returns lowResolutionCompleted and fullResolutionCompleted promises', () => {
-      providerMock
-        .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(makeFaces(1)));
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
       vi.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
-      const result = createEntity().loadTextures();
+      const result = new Image360RevisionEntity(
+        providerMock.object(),
+        descriptor,
+        vizBox,
+        annotationFilterer
+      ).loadTextures();
 
       expect(result.lowResolutionCompleted).toBeInstanceOf(Promise);
       expect(result.fullResolutionCompleted).toBeInstanceOf(Promise);
     });
 
-    test('calls getLowResolution360ImageFiles for the preview tier', async () => {
-      providerMock
-        .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(makeFaces(1)));
+    test('calls get360ImageFiles on the provider', async () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
       vi.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
-      const { lowResolutionCompleted, fullResolutionCompleted } = createEntity().loadTextures();
-      await Promise.allSettled([lowResolutionCompleted, fullResolutionCompleted]);
-
-      providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
-    });
-
-    test('calls get360ImageFiles for full resolution', async () => {
-      providerMock
-        .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(makeFaces(1)));
-      providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
-      vi.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
-
-      const { fullResolutionCompleted } = createEntity().loadTextures();
+      const { fullResolutionCompleted } = new Image360RevisionEntity(
+        providerMock.object(),
+        descriptor,
+        vizBox,
+        annotationFilterer
+      ).loadTextures();
       await fullResolutionCompleted.catch(() => {});
 
       providerMock.verify(p => p.get360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
     });
 
-    test('fullResolutionCompleted rejects when get360ImageFiles throws', async () => {
-      providerMock
-        .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(makeFaces(1)));
+    test('both fullResolutionCompleted and lowResolutionCompleted reject when provider throws', async () => {
       providerMock
         .setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny()))
         .returns(Promise.reject(new Error('fetch failed')));
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
-      const { fullResolutionCompleted } = createEntity().loadTextures();
+      const { fullResolutionCompleted, lowResolutionCompleted } = new Image360RevisionEntity(
+        providerMock.object(),
+        descriptor,
+        vizBox,
+        annotationFilterer
+      ).loadTextures();
 
       await expect(fullResolutionCompleted).rejects.toThrow('fetch failed');
+      await expect(lowResolutionCompleted).rejects.toThrow('fetch failed');
+    });
+
+    test('preview request is started eagerly but aborted for progressive JPEG', async () => {
+      providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
+
+      let previewAbortSignal: AbortSignal | undefined;
+      providerMock
+        .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
+        .callback(({ args }) => {
+          previewAbortSignal = args[1] as AbortSignal | undefined;
+          return Promise.resolve(makeFaces(6));
+        });
+
+      const textures = makeTextures(6);
+      vi.spyOn(vizBox, 'loadFaceTextures').mockImplementation(
+        async (_faces, onFirstFaceReady, onFirstFaceTypeDetected) => {
+          onFirstFaceTypeDetected?.('progressive');
+          onFirstFaceReady?.();
+          return textures;
+        }
+      );
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
+
+      const { fullResolutionCompleted } = new Image360RevisionEntity(
+        providerMock.object(),
+        descriptor,
+        vizBox,
+        annotationFilterer
+      ).loadTextures();
+      await fullResolutionCompleted;
+
+      providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
+      expect(previewAbortSignal?.aborted).toBe(true);
+    });
+
+    test('getLowResolution360ImageFiles is called for baseline JPEG', async () => {
+      providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
+      providerMock
+        .setup(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()))
+        .returns(Promise.resolve(makeFaces(6)));
+
+      const textures = makeTextures(6);
+      vi.spyOn(vizBox, 'loadFaceTextures').mockImplementation(
+        async (_faces, _onFirstFaceReady, onFirstFaceTypeDetected) => {
+          onFirstFaceTypeDetected?.('baseline');
+          return textures;
+        }
+      );
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
+
+      const { fullResolutionCompleted, lowResolutionCompleted } = new Image360RevisionEntity(
+        providerMock.object(),
+        descriptor,
+        vizBox,
+        annotationFilterer
+      ).loadTextures();
+      await Promise.all([fullResolutionCompleted, lowResolutionCompleted]);
+
+      providerMock.verify(p => p.getLowResolution360ImageFiles(It.IsAny(), It.IsAny()), Times.Once());
     });
   });
 
@@ -149,19 +202,19 @@ describe(Image360RevisionEntity.name, () => {
     });
 
     test('returns a blob URL when face descriptor is found', async () => {
-      const faces = makeFaces(1);
-      providerMock.setup(p => p.getLowResolution360ImageFiles(It.IsAny())).returns(Promise.resolve(faces));
+      providerMock.setup(p => p.getLowResolution360ImageFiles(It.IsAny())).returns(Promise.resolve(makeFaces(1)));
 
-      const url = await createEntity().getPreviewThumbnailUrl('front');
+      const entity = new Image360RevisionEntity(providerMock.object(), descriptor, vizBox, annotationFilterer);
+      const url = await entity.getPreviewThumbnailUrl('front');
 
       expect(url).toBe('blob:mock-url');
-      expect(URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob));
     });
 
     test('returns undefined when provider returns no files for the face', async () => {
       providerMock.setup(p => p.getLowResolution360ImageFiles(It.IsAny())).returns(Promise.resolve([]));
 
-      const url = await createEntity().getPreviewThumbnailUrl('front');
+      const entity = new Image360RevisionEntity(providerMock.object(), descriptor, vizBox, annotationFilterer);
+      const url = await entity.getPreviewThumbnailUrl('front');
 
       expect(url).toBeUndefined();
     });

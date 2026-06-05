@@ -31,12 +31,21 @@ type StreamResult = {
   jpegType: JpegType | 'unknown';
 };
 
+export interface FaceTextureLoader {
+  load(
+    face: Image360Face,
+    onFirstFaceReady?: () => void,
+    onJpegTypeDetected?: (type: JpegType) => void,
+    abortSignal?: AbortSignal
+  ): Promise<Image360Texture>;
+}
+
 /**
  * Handles all texture loading for 360 image cube faces:
  * - URL-based streaming (progressive and baseline JPEG detection)
  * - In-memory buffer decoding
  */
-export class Image360FaceTextureLoader {
+export class Image360FaceTextureLoader implements FaceTextureLoader {
   private readonly MAX_MOBILE_IMAGE_SIZE = 1024;
 
   constructor(

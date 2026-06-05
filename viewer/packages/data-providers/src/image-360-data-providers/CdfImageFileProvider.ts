@@ -69,6 +69,14 @@ export class CdfImageFileProvider {
     return results.map(r => r.data);
   }
 
+  public async getFileDownloadUrls(fileIdentifiers: FileIdentifier[], abortSignal?: AbortSignal): Promise<string[]> {
+    const fileLinks = await this.getDownloadUrls(fileIdentifiers, abortSignal);
+    if (fileLinks.length !== fileIdentifiers.length) {
+      throw new Error(`Expected ${fileIdentifiers.length} download URLs but received ${fileLinks.length}`);
+    }
+    return fileLinks.map(link => link.downloadUrl);
+  }
+
   /**
    * Downloads low-resolution icon versions of files.
    * The /files/icon endpoint only supports internal numeric IDs.
