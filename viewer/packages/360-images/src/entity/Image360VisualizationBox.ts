@@ -9,7 +9,7 @@ import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data
 import type { Image360Visualization } from './Image360Visualization';
 import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import type { JpegType } from '../utils/JpegDataStreamParser';
-import { Image360FaceTextureLoader, hasDownloadUrl } from './Image360FaceTextureLoader';
+import { Image360FaceTextureLoader, hasDownloadUrl, type FaceTextureLoader } from './Image360FaceTextureLoader';
 
 type VisualizationState = {
   opacity: number;
@@ -30,7 +30,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
   private readonly _annotationsGroup: THREE.Group = new THREE.Group();
   private readonly _localTransform: THREE.Matrix4;
-  private readonly _loader: Image360FaceTextureLoader;
+  private readonly _loader: FaceTextureLoader;
 
   get visible(): boolean {
     return this._visualizationState.visible;
@@ -91,7 +91,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     worldTransform: THREE.Matrix4,
     sceneHandler: SceneHandler,
     device: DeviceDescriptor,
-    private readonly _requestRedraw: () => void = () => {}
+    private readonly _requestRedraw: () => void = () => {},
+    faceTextureLoader?: FaceTextureLoader
   ) {
     this._localTransform = worldTransform.clone();
     this._worldTransform = worldTransform.clone();
@@ -103,13 +104,15 @@ export class Image360VisualizationBox implements Image360Visualization {
       scale: new THREE.Vector3(1, 1, 1),
       visible: true
     };
-    this._loader = new Image360FaceTextureLoader(
-      device,
-      this._textureLoader,
-      this._requestRedraw,
-      (face, texture) => this.updateFaceTexture(face, texture),
-      () => this._visualizationMesh !== undefined
-    );
+    this._loader =
+      faceTextureLoader ??
+      new Image360FaceTextureLoader(
+        device,
+        this._textureLoader,
+        this._requestRedraw,
+        (face, texture) => this.updateFaceTexture(face, texture),
+        () => this._visualizationMesh !== undefined
+      );
   }
 
   public setWorldTransform(matrix: THREE.Matrix4): void {
