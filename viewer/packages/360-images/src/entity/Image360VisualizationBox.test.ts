@@ -10,6 +10,7 @@ import type { SceneHandler } from '@reveal/utilities';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import type { FaceTextureLoader } from './Image360FaceTextureLoader';
 import type { Image360Face, Image360Texture } from '@reveal/data-providers';
+import type { JpegType } from '../utils/JpegDataStreamParser';
 
 function makeSixTextures(): Image360Texture[] {
   const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
@@ -27,8 +28,8 @@ function makeBufferFace(face: Image360Face['face'] = 'front'): Image360Face {
 describe(Image360VisualizationBox.name, () => {
   let sceneHandlerMock: IMock<SceneHandler>;
   let box: Image360VisualizationBox;
-  let loaderMock: { load: ReturnType<typeof vi.fn<FaceTextureLoader['load']>> };
-  let requestRedraw: ReturnType<typeof vi.fn<() => void>>;
+  let loaderMock: { load: vi.Mock<FaceTextureLoader['load']> };
+  let requestRedraw: vi.Mock<() => void>;
 
   const device = { deviceType: 'desktop' as const };
 
@@ -184,10 +185,12 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('calls onJpegTypeDetected once even when multiple faces report a type', async () => {
-      loaderMock.load.mockImplementation(async (face, _onFirstFaceReady, onJpegTypeDetected) => {
-        onJpegTypeDetected?.('progressive');
-        return { face: face.face, texture: new THREE.Texture() };
-      });
+      loaderMock.load.mockImplementation(
+        async (face: Image360Face, _onFirstFaceReady: () => void, onJpegTypeDetected: (type: JpegType) => void) => {
+          onJpegTypeDetected?.('progressive');
+          return { face: face.face, texture: new THREE.Texture() };
+        }
+      );
 
       const onJpegTypeDetected = vi.fn();
       const faces = [makeStreamingFace('front'), makeStreamingFace('back')];
