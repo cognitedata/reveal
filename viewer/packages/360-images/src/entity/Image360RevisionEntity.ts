@@ -189,7 +189,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   private async loadFullTextures(
     abortSignal?: AbortSignal,
     onFirstFaceReady?: () => void,
-    onFirstFaceTypeDetected?: (type: 'progressive' | 'baseline') => void
+    onFirstFaceTypeDetected?: (type: JpegType) => void
   ): Promise<void> {
     const fullImageFiles = await this._imageProvider.get360ImageFiles(
       this._image360Descriptor.faceDescriptors,
@@ -203,7 +203,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       abortSignal
     );
     this._fullResolutionTextures = textures;
-    this._image360VisualizationBox.loadImages(textures);
+    this._image360VisualizationBox.setImages(textures);
   }
 
   private async loadAndSetAllAnnotations(): Promise<ImageAnnotationObject<T>[]> {
@@ -288,11 +288,11 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
    */
   public applyTextures(): void {
     if (this._fullResolutionTextures.length === 6) {
-      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.setImages(this._fullResolutionTextures);
       return;
     }
     if (this._previewTextures.length === 6) {
-      this._image360VisualizationBox.loadImages(this._previewTextures);
+      this._image360VisualizationBox.setImages(this._previewTextures);
       return;
     }
   }
@@ -307,7 +307,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     try {
       await this._onFullResolutionCompleted;
       this._onFullResolutionCompleted = undefined;
-      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.setImages(this._fullResolutionTextures);
       if (this._previewTextures.length === 6) {
         this._previewTextures.forEach(t => t.texture.dispose());
         this._previewTextures = [];

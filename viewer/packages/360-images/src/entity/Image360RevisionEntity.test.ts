@@ -76,7 +76,7 @@ describe(Image360RevisionEntity.name, () => {
     test('returns lowResolutionCompleted and fullResolutionCompleted promises', () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
       vi.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
-      vi.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
       const result = new Image360RevisionEntity(
         providerMock.object(),
@@ -92,7 +92,7 @@ describe(Image360RevisionEntity.name, () => {
     test('calls get360ImageFiles on the provider', async () => {
       providerMock.setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny())).returns(Promise.resolve(makeFaces(1)));
       vi.spyOn(vizBox, 'loadFaceTextures').mockResolvedValue(makeTextures(1));
-      vi.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
       const { fullResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
@@ -109,7 +109,7 @@ describe(Image360RevisionEntity.name, () => {
       providerMock
         .setup(p => p.get360ImageFiles(It.IsAny(), It.IsAny()))
         .returns(Promise.reject(new Error('fetch failed')));
-      vi.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
       const { fullResolutionCompleted, lowResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
@@ -141,7 +141,7 @@ describe(Image360RevisionEntity.name, () => {
           return textures;
         }
       );
-      vi.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
       const { fullResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),
@@ -168,7 +168,7 @@ describe(Image360RevisionEntity.name, () => {
           return textures;
         }
       );
-      vi.spyOn(vizBox, 'loadImages').mockImplementation(() => {});
+      vi.spyOn(vizBox, 'setImages').mockImplementation(() => {});
 
       const { fullResolutionCompleted, lowResolutionCompleted } = new Image360RevisionEntity(
         providerMock.object(),

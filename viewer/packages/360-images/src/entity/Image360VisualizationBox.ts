@@ -107,7 +107,7 @@ export class Image360VisualizationBox implements Image360Visualization {
       device,
       this._textureLoader,
       this._requestRedraw,
-      this.updateFaceTexture.bind(this),
+      (face, texture) => this.updateFaceTexture(face, texture),
       () => this._visualizationMesh !== undefined
     );
   }
@@ -121,7 +121,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     }
   }
 
-  public loadImages(textures: Image360Texture[]): void {
+  public setImages(textures: Image360Texture[]): void {
     if (this._visualizationMesh) {
       this._faceMaterialOrder.forEach((face, index) => {
         this._faceMaterials[index].color.set(0xffffff);
@@ -132,17 +132,29 @@ export class Image360VisualizationBox implements Image360Visualization {
       return;
     }
 
-    this._faceMaterials = this._faceMaterialOrder.map(
-      face =>
-        new THREE.MeshBasicMaterial({
-          side: THREE.BackSide,
-          map: getFaceTexture(face),
-          depthTest: false,
-          depthWrite: false,
-          opacity: this._visualizationState.opacity,
-          transparent: true
-        })
+    this.buildVisualizationMesh(
+      this._faceMaterialOrder.map(
+        face =>
+          new THREE.MeshBasicMaterial({
+            side: THREE.BackSide,
+            map: getFaceTexture(face),
+            depthTest: false,
+            depthWrite: false,
+            opacity: this._visualizationState.opacity,
+            transparent: true
+          })
+      )
     );
+
+    function getFaceTexture(face: Image360Face['face']) {
+      const texture = textures.find(p => p.face === face);
+      assert(texture !== undefined);
+      return texture.texture;
+    }
+  }
+
+  private buildVisualizationMesh(faceMaterials: THREE.MeshBasicMaterial[]): void {
+    this._faceMaterials = faceMaterials;
 
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
@@ -156,12 +168,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh = visualizationMesh;
 
     this._sceneHandler.addObject3D(this._visualizationMesh);
-
-    function getFaceTexture(face: Image360Face['face']) {
-      const texture = textures.find(p => p.face === face);
-      assert(texture !== undefined);
-      return texture.texture;
-    }
   }
 
   public getTransform(): THREE.Matrix4 {
@@ -195,33 +201,22 @@ export class Image360VisualizationBox implements Image360Visualization {
     return Promise.all(faces.map(face => this._loader.load(face, notifyFirstFace, notifyType, abortSignal)));
   }
 
-  public createPlaceholderMesh(): void {
+  private createPlaceholderMesh(): void {
     if (this._visualizationMesh !== undefined) return;
 
-    this._faceMaterials = this._faceMaterialOrder.map(
-      () =>
-        new THREE.MeshBasicMaterial({
-          side: THREE.BackSide,
-          color: 0x000000,
-          depthTest: false,
-          depthWrite: false,
-          opacity: this._visualizationState.opacity,
-          transparent: true
-        })
+    this.buildVisualizationMesh(
+      this._faceMaterialOrder.map(
+        () =>
+          new THREE.MeshBasicMaterial({
+            side: THREE.BackSide,
+            color: 0x000000,
+            depthTest: false,
+            depthWrite: false,
+            opacity: this._visualizationState.opacity,
+            transparent: true
+          })
+      )
     );
-
-    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
-    visualizationMesh.renderOrder = this._visualizationState.renderOrder;
-    visualizationMesh.position.setFromMatrixPosition(this._worldTransform);
-    visualizationMesh.rotation.setFromRotationMatrix(this._worldTransform);
-    visualizationMesh.scale.copy(this._visualizationState.scale);
-    visualizationMesh.visible = this._visualizationState.visible;
-    visualizationMesh.add(this._annotationsGroup);
-    this.setAnnotationsVisibility(false);
-    this._visualizationMesh = visualizationMesh;
-
-    this._sceneHandler.addObject3D(this._visualizationMesh);
   }
 
   public updateFaceTexture(face: Image360Face['face'], texture: THREE.Texture): void {

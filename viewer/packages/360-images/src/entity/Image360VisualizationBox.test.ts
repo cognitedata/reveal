@@ -86,13 +86,12 @@ describe(Image360VisualizationBox.name, () => {
   afterEach(() => {
     Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
     Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
-    fetchSpy.mockRestore();
     vi.restoreAllMocks();
   });
 
-  describe('loadImages', () => {
+  describe('setImages', () => {
     test('creates mesh and adds it to sceneHandler on first call', () => {
-      box.loadImages(makeSixTextures());
+      box.setImages(makeSixTextures());
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
     });
@@ -100,8 +99,8 @@ describe(Image360VisualizationBox.name, () => {
     test('does not add a second mesh when called again — updates materials instead', () => {
       const textures1 = makeSixTextures();
       const textures2 = makeSixTextures();
-      box.loadImages(textures1);
-      box.loadImages(textures2);
+      box.setImages(textures1);
+      box.setImages(textures2);
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
       box['_faceMaterials'].forEach((material, index) => {
@@ -111,17 +110,17 @@ describe(Image360VisualizationBox.name, () => {
 
     test('calls requestRedraw when updating an existing mesh', () => {
       const textures = makeSixTextures();
-      box.loadImages(textures);
+      box.setImages(textures);
       requestRedraw.mockClear();
-      box.loadImages(textures);
+      box.setImages(textures);
 
       expect(requestRedraw).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('unloadImages', () => {
-    test('removes mesh from sceneHandler after loadImages', () => {
-      box.loadImages(makeSixTextures());
+    test('removes mesh from sceneHandler after setImages', () => {
+      box.setImages(makeSixTextures());
       box.unloadImages();
 
       sceneHandlerMock.verify(s => s.removeObject3D(It.IsAny()), Times.Once());
@@ -148,7 +147,7 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('getter reflects the value set and updates material opacities', () => {
-      box.loadImages(makeSixTextures());
+      box.setImages(makeSixTextures());
       box.opacity = 0.5;
       expect(box.opacity).toBe(0.5);
       box['_faceMaterials'].forEach(material => {
@@ -159,7 +158,7 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('opacity', () => {
     test('getter reflects the value set', () => {
-      box.loadImages(makeSixTextures());
+      box.setImages(makeSixTextures());
       box.opacity = 0.5;
       expect(box.opacity).toBe(0.5);
     });
@@ -167,14 +166,14 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('createPlaceholderMesh', () => {
     test('adds mesh to sceneHandler via addObject3D', () => {
-      box.createPlaceholderMesh();
+      box['createPlaceholderMesh']();
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
     });
 
     test('is idempotent — addObject3D called only once even when called twice', () => {
-      box.createPlaceholderMesh();
-      box.createPlaceholderMesh();
+      box['createPlaceholderMesh']();
+      box['createPlaceholderMesh']();
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
     });
