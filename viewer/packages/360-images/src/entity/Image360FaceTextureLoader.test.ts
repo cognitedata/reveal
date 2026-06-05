@@ -49,8 +49,6 @@ describe(Image360FaceTextureLoader.name, () => {
   let fetchSpy: vi.SpiedFunction<typeof fetch>;
 
   const device = { deviceType: 'desktop' as const };
-  const originalCreateObjectURL = URL.createObjectURL;
-  const originalRevokeObjectURL = URL.revokeObjectURL;
 
   beforeEach(() => {
     loader = new Image360FaceTextureLoader(
@@ -64,17 +62,15 @@ describe(Image360FaceTextureLoader.name, () => {
     fetchSpy = vi.spyOn(global, 'fetch');
     vi.spyOn(globalThis, 'createImageBitmap').mockResolvedValue({ width: 100, height: 100, close: () => {} });
 
-    Object.defineProperty(URL, 'createObjectURL', {
-      value: vi.fn(() => 'blob:mock-url'),
-      writable: true,
-      configurable: true
+    vi.stubGlobal('URL', {
+      ...URL,
+      createObjectURL: vi.fn(() => 'blob:mock-url'),
+      revokeObjectURL: vi.fn()
     });
-    Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), writable: true, configurable: true });
   });
 
   afterEach(() => {
-    Object.defineProperty(URL, 'createObjectURL', { value: originalCreateObjectURL, configurable: true });
-    Object.defineProperty(URL, 'revokeObjectURL', { value: originalRevokeObjectURL, configurable: true });
+    vi.unstubAllGlobals();
     fetchSpy.mockRestore();
     vi.restoreAllMocks();
   });
