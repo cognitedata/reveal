@@ -2,6 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
+import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 import * as THREE from 'three';
 import type { IMock } from 'moq.ts';
@@ -28,8 +29,8 @@ function makeBufferFace(face: Image360Face['face'] = 'front'): Image360Face {
 describe(Image360VisualizationBox.name, () => {
   let sceneHandlerMock: IMock<SceneHandler>;
   let box: Image360VisualizationBox;
-  let loaderMock: { load: vi.Mock<FaceTextureLoader['load']> };
-  let requestRedraw: vi.Mock<() => void>;
+  let loaderMock: { load: ViMock<FaceTextureLoader['load']> };
+  let requestRedraw: ViMock<() => void>;
 
   const device = { deviceType: 'desktop' as const };
 
@@ -186,7 +187,7 @@ describe(Image360VisualizationBox.name, () => {
 
     test('calls onJpegTypeDetected once even when multiple faces report a type', async () => {
       loaderMock.load.mockImplementation(
-        async (face: Image360Face, _onFirstFaceReady: () => void, onJpegTypeDetected: (type: JpegType) => void) => {
+        async (face: Image360Face, _onFirstFaceReady?: () => void, onJpegTypeDetected?: (type: JpegType) => void) => {
           onJpegTypeDetected?.('progressive');
           return { face: face.face, texture: new THREE.Texture() };
         }

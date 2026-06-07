@@ -2,6 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
+import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { Image360FaceTextureLoader, hasDownloadUrl } from './Image360FaceTextureLoader';
 import type { Image360Face } from '@reveal/data-providers';
@@ -46,7 +47,7 @@ function makeBufferFace(face: Image360Face['face'] = 'front'): Image360Face {
 
 describe(Image360FaceTextureLoader.name, () => {
   let loader: Image360FaceTextureLoader;
-  let fetchSpy: vi.SpiedFunction<typeof fetch>;
+  let fetchSpy: Mock<typeof fetch>;
 
   const device = { deviceType: 'desktop' as const };
 
