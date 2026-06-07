@@ -106,7 +106,6 @@
     "moq.ts": "10.0.8",
     "prettier": "^3.2.5",
     "random-seed": "^0.3.0",
-    "resize-observer-polyfill": "^1.5.1",
     "shx": "^0.4.0",
     "stats.js": "^0.17.0",
     "three": "0.184.0",

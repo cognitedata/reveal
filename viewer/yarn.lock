@@ -154,7 +154,6 @@ __metadata:
     moq.ts: "npm:10.0.8"
     prettier: "npm:^3.2.5"
     random-seed: "npm:^0.3.0"
-    resize-observer-polyfill: "npm:^1.5.1"
     rxjs: "npm:^7.8.1"
     shx: "npm:^0.4.0"
     skmeans: "npm:^0.11.3"
@@ -4837,13 +4836,6 @@ __metadata:
   version: 1.2.0
   resolution: "reserved-identifiers@npm:1.2.0"
   checksum: 10/02722585aa97f25384a59a33055529a90c8fa8ce3d32f02be4bcec1454254fb385429fc3168a85fe56bb952ad632ea8fecb8fa2addb47e7d97a1ab4922827ad9
-  languageName: node
-  linkType: hard
-
-"resize-observer-polyfill@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "resize-observer-polyfill@npm:1.5.1"
-  checksum: 10/e10ee50cd6cf558001de5c6fb03fee15debd011c2f694564b71f81742eef03fb30d6c2596d1d5bf946d9991cb692fcef529b7bd2e4057041377ecc9636c753ce
   languageName: node
   linkType: hard
 
