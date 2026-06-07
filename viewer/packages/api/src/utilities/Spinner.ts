@@ -7,6 +7,7 @@ import svg from './spinnerCogniteLogo.svg?raw';
 import type * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
+import { REVEAL_VERSION } from '../..';
 
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
@@ -22,8 +23,8 @@ export class Spinner {
     dark: 'reveal-viewer-spinner--dark'
   };
   private static readonly titles = {
-    idle: process.env.VERSION!,
-    loading: `${process.env.VERSION!} Loading...`
+    idle: REVEAL_VERSION,
+    loading: `${REVEAL_VERSION} Loading...`
   };
 
   private _loading = false;

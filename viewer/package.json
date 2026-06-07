@@ -40,7 +40,6 @@
   ],
   "scripts": {
     "build": "yarn run clean && yarn run build:wasm && vite build",
-    "build:vite": "yarn run clean && yarn run build:wasm && vite build",
     "build:wasm": "yarn workspaces foreach -A run run-wasm-pack build --target web ./wasm",
     "build:wasm-test": "yarn workspaces foreach -A run run-wasm-pack build --target nodejs ./wasm",
     "build:watch": "yarn run clean && yarn run build:wasm && vite build --watch",
