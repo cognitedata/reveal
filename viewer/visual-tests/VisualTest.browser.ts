@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import assert from 'assert';
 import type { VisualTestFixture } from './test-fixtures/VisualTestFixture';
 
 function testGenerator(): Map<string, () => Promise<{ default: new () => VisualTestFixture }>> {
@@ -30,7 +31,8 @@ let activeTest: VisualTestFixture;
   }
 
   document.body.innerHTML = '';
-  const testModuleImport = tests.get(testName)!;
+  const testModuleImport = tests.get(testName);
+  assert(testModuleImport !== undefined, 'Test not found: ' + testName);
   const testModule = await testModuleImport();
   activeTest = new testModule.default();
   return activeTest.run();
@@ -42,7 +44,8 @@ const testFixtureInstance = urlParams.get('testfixture');
 if (testFixtureInstance !== null) {
   (async function () {
     if (tests.has(testFixtureInstance)) {
-      const testModuleImport = tests.get(testFixtureInstance)!;
+      const testModuleImport = tests.get(testFixtureInstance);
+      assert(testModuleImport !== undefined, 'Test not found: ' + testFixtureInstance);
       const testModule = await testModuleImport();
       const visualTestInstance = new testModule.default();
       await visualTestInstance.run();
