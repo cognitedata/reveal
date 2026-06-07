@@ -18,7 +18,7 @@
     "./visual-tests/**/*.ts",
     "./test-utilities/**/*.ts"
   ],
-  "exclude": ["**/node_modules/**", "**VisualTest.ts",],
+  "exclude": ["**/node_modules/**", "**VisualTest.ts"],
   "files": ["vite.config.ts"],
   "extends": ["./tsconfig.json"]
 }
