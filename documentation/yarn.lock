@@ -1719,7 +1719,7 @@ __metadata:
     rimraf: 6.1.3
     styled-components: 6.4.2
     typedoc: 0.28.19
-    typedoc-plugin-markdown: 4.11.0
+    typedoc-plugin-markdown: 4.12.0
     typedoc-plugin-no-inherit: 1.6.1
     typescript: 6.0.3
   languageName: unknown
@@ -14253,12 +14253,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:4.11.0":
-  version: 4.11.0
-  resolution: "typedoc-plugin-markdown@npm:4.11.0"
+"typedoc-plugin-markdown@npm:4.12.0":
+  version: 4.12.0
+  resolution: "typedoc-plugin-markdown@npm:4.12.0"
   peerDependencies:
     typedoc: 0.28.x
-  checksum: 38c8f260ff3142a9e2c2fcd866c1096311a7afa5fdec6158edca929576c581ee6ea57dac17816a63926935b381eb2720d2da617103ee67e26ca41cb158f187ff
+  checksum: f98a25f5e5a59bbb78f26164de2b9349a78a61829402fefb5ad081c72bd60a5090fb000a3a86bd283d7e3271342517716ff53320088ba57f9c5e03a69b708d84
   languageName: node
   linkType: hard
 
