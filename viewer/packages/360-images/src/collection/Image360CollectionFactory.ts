@@ -70,7 +70,8 @@ export class Image360CollectionFactory {
           annotationFilterer,
           descriptor.transform,
           icon,
-          this._device
+          this._device,
+          this._setNeedsRedraw
         );
       });
 

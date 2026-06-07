@@ -13,6 +13,7 @@ import type {
 import { getExternalIdFromDescriptor } from '@reveal/data-providers';
 import type { Image360Revision } from './Image360Revision';
 import type { Image360VisualizationBox } from './Image360VisualizationBox';
+import type { JpegType } from '../utils/JpegDataStreamParser';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Box3, Vector3, type Raycaster } from 'three';
@@ -29,6 +30,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   private _previewTextures: Image360Texture[];
   private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
+  private _jpegType: JpegType | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private readonly _identifier: Image360RevisionId<T>;
@@ -69,6 +71,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
   }
 
+  get jpegType(): JpegType | undefined {
+    return this._jpegType;
+  }
+
   async getAnnotations(): Promise<ImageAnnotationObject<T>[]> {
     if (this._allAnnotations === undefined) {
       return this.loadAndSetAllAnnotations();
@@ -105,12 +111,50 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     lowResolutionCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
   } {
-    const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
-    const fullResolutionCompleted = this.loadFullTextures(abortSignal);
+    // For progressive JPEG: resolves when first face scan 1 is decoded.
+    // For baseline JPEG: resolves after the first face fully downloads.
+    let resolveFirstFace: () => void = () => {};
+    let rejectFirstFace: (reason: unknown) => void = () => {};
+    const firstFaceReady = new Promise<void>((resolve, reject) => {
+      resolveFirstFace = resolve;
+      rejectFirstFace = reject;
+    });
+
+    // Start the low-resolution preview download in parallel with the full-resolution download so the
+    // small preview images are requested first and can drive an early camera transition for baseline JPEGs.
+    // Progressive JPEGs do not need the preview their first scan is the preview, so the request is aborted as
+    // soon as the stream confirms the file is progressive.
+    const previewAbort = new AbortController();
+    if (abortSignal?.aborted) {
+      previewAbort.abort();
+    } else {
+      abortSignal?.addEventListener('abort', () => previewAbort.abort(), { once: true });
+    }
+    const previewCompleted = this.loadPreviewTextures(previewAbort.signal);
+
+    const onFirstFaceTypeDetected = (type: JpegType): void => {
+      this._jpegType = type;
+      if (type === 'progressive') {
+        previewAbort.abort();
+      }
+    };
+
+    const fullResolutionCompleted = this.loadFullTextures(abortSignal, resolveFirstFace, onFirstFaceTypeDetected);
+
+    // If full resolution fails, propagate the rejection to both gate promises so that
+    // lowResolutionCompleted does not hang forever waiting for promises that will never resolve.
+    fullResolutionCompleted.catch(err => {
+      rejectFirstFace(err);
+    });
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
-    return { lowResolutionCompleted, fullResolutionCompleted };
+    return {
+      // Resolve on whichever preview is ready first: the icon preview (baseline) or the first rendered scan
+      // (progressive, or baseline fallback if the preview request fails or is aborted).
+      lowResolutionCompleted: Promise.race([previewCompleted.catch(() => firstFaceReady), firstFaceReady]),
+      fullResolutionCompleted
+    };
   }
 
   public async getPreviewThumbnailUrl(
@@ -142,14 +186,24 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     this._previewTextures = previewTextures;
   }
 
-  private async loadFullTextures(abortSignal?: AbortSignal): Promise<void> {
+  private async loadFullTextures(
+    abortSignal?: AbortSignal,
+    onFirstFaceReady?: () => void,
+    onFirstFaceTypeDetected?: (type: JpegType) => void
+  ): Promise<void> {
     const fullImageFiles = await this._imageProvider.get360ImageFiles(
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
 
-    const textures = await this._image360VisualizationBox.loadFaceTextures(fullImageFiles);
+    const textures = await this._image360VisualizationBox.loadFaceTextures(
+      fullImageFiles,
+      onFirstFaceReady,
+      onFirstFaceTypeDetected,
+      abortSignal
+    );
     this._fullResolutionTextures = textures;
+    this._image360VisualizationBox.setImages(textures);
   }
 
   private async loadAndSetAllAnnotations(): Promise<ImageAnnotationObject<T>[]> {
@@ -234,11 +288,11 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
    */
   public applyTextures(): void {
     if (this._fullResolutionTextures.length === 6) {
-      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.setImages(this._fullResolutionTextures);
       return;
     }
     if (this._previewTextures.length === 6) {
-      this._image360VisualizationBox.loadImages(this._previewTextures);
+      this._image360VisualizationBox.setImages(this._previewTextures);
       return;
     }
   }
@@ -253,7 +307,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     try {
       await this._onFullResolutionCompleted;
       this._onFullResolutionCompleted = undefined;
-      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.setImages(this._fullResolutionTextures);
       if (this._previewTextures.length === 6) {
         this._previewTextures.forEach(t => t.texture.dispose());
         this._previewTextures = [];
