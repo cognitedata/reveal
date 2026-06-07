@@ -103,7 +103,7 @@ import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-provide
 import { isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
-import { REVEAL_VERSION } from '../../../index';
+import { REVEAL_VERSION } from '../../version';
 
 type Cognite3DViewerEvents =
   | 'click'

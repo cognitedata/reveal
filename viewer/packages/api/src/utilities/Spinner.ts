@@ -7,7 +7,7 @@ import svg from './spinnerCogniteLogo.svg?raw';
 import type * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
-import { REVEAL_VERSION } from '../..';
+import { REVEAL_VERSION } from '../version';
 
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
