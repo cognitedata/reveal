@@ -44,6 +44,10 @@ export default defineConfig(({ command }) => {
       }
     },
 
+    define: {
+      'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG || '')
+    },
+
     css: {
       modules: {
         scopeBehaviour: 'global' // Disables hashing/renaming globally
