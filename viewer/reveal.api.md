@@ -2053,7 +2053,7 @@ export type ResolutionOptions = {
 };
 
 // @public (undocumented)
-export const REVEAL_VERSION: string | undefined;
+export const REVEAL_VERSION: string;
 
 // @public
 export type SceneRenderedDelegate = (event: {
