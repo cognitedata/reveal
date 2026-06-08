@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import assert from 'assert';
+import { assert } from '../packages/utilities/src/assert';
 import type { VisualTestFixture } from './test-fixtures/VisualTestFixture';
 
 function testGenerator(): Map<string, () => Promise<{ default: new () => VisualTestFixture }>> {

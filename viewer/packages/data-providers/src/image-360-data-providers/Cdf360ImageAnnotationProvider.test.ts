@@ -11,7 +11,7 @@ import type { Image360Descriptor, Image360FileDescriptor } from '../types';
 import type { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
 import { createAnnotationModel, createFileInfo } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
 
 describe(Cdf360ImageAnnotationProvider.name, () => {

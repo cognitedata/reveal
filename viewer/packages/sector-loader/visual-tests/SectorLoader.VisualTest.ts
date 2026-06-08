@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 import type { ModelIdentifier } from '@reveal/data-providers';
 import type { Materials } from '@reveal/rendering';

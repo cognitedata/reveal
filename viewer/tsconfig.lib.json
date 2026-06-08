@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "stripInternal": true,
-    "types": ["vite/client", "node", "vite-plugin-glsl/ext"]
+    "types": ["vite/client", "vite-plugin-glsl/ext"]
   },
   "include": ["./packages/**/*.ts", "./api-entry-points/**/*.ts", "./visual-tests/visual-tests.vite.config.ts"],
   "exclude": [
@@ -13,6 +13,7 @@
     "./packages/**/*.interaction.ts",
     "./packages/**/__fixtures__/**/*.ts",
     "./packages/**/__mocks__/**/*.ts",
+    "./packages/**/tests/**/*.ts",
     "./packages/**/__tests__/**/*.ts",
     "./visual-tests/**/*.ts",
     "**/node_modules/**",

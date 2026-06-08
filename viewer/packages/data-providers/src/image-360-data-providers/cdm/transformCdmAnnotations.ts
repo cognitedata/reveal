@@ -6,7 +6,7 @@ import type { CoreDmImage360Annotation } from './types';
 import { getObject3dAssetMap } from './getObject3dAssetMap';
 import type { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
 import type { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import { readAnnotations } from './readAnnotations';
 import { isSemanticVersion } from './semanticVersioningUtils';
 

@@ -9,7 +9,7 @@ import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import { vi } from 'vitest';
 import { HtmlClusterRenderer } from './HtmlClusterRenderer';
 import type { ClusteredIconData, ClusterRenderParams } from './ClusterRenderingStrategy';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 describe(HtmlClusterRenderer.name, () => {
   let renderer: HtmlClusterRenderer;

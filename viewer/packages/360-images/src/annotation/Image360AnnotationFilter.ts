@@ -3,7 +3,7 @@
  */
 
 import type { Image360AnnotationFilterOptions } from './types';
-import isArray from 'lodash/isArray';
+import { isArray } from 'lodash-es';
 import type { DataSourceType } from '@reveal/data-providers';
 
 export class Image360AnnotationFilter {

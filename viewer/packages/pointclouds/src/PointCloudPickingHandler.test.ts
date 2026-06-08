@@ -12,7 +12,7 @@ import { createPointCloudNode } from '../../../test-utilities';
 import type { ClassicDataSourceType, DMDataSourceType } from '@reveal/data-providers';
 import type { PointCloudObject } from '@reveal/data-providers';
 import { Cylinder } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 function createMockIntersectInput(): IntersectInput {
   return {

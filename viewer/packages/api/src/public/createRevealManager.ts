@@ -162,7 +162,7 @@ export function createRevealManager(
       maxCacheSize: Infinity,
       maxAge: Infinity
     },
-    global.caches
+    window.caches
   );
   const cachedProvider = new CachedModelDataProvider(modelDataProvider, binaryFileCacheManager.cacheConfig);
   const pointCloudManager = createPointCloudManager(

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import remove from 'lodash/remove';
+import { remove } from 'lodash-es';
 import type { Spherical } from 'three';
 import { MathUtils, OrthographicCamera, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import Keyboard from '../Keyboard';

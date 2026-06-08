@@ -2,9 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import assert from 'assert';
-import zip from 'lodash/zip';
-import uniqBy from 'lodash/uniqBy';
+import { assert } from '@reveal/utilities/assert';
+import { zip, uniqBy } from 'lodash-es';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { DefaultImage360Collection } from './DefaultImage360Collection';

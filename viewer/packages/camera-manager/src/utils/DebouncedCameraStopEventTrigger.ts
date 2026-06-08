@@ -5,7 +5,7 @@
 import type { CameraManager } from '../CameraManager';
 import type { CameraStopDelegate } from '../types';
 
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import { EventTrigger } from '@reveal/utilities';
 
 /**

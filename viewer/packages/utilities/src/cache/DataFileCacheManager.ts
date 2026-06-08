@@ -45,7 +45,7 @@ export class DataFileCacheManager {
     return this._config;
   }
 
-  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = global.caches) {
+  constructor(config: Partial<CacheConfig> = {}, cacheStorage: CacheStorage = window.caches) {
     this._config = { ...this.DEFAULT_CONFIG, ...config };
     this._caches = cacheStorage;
   }

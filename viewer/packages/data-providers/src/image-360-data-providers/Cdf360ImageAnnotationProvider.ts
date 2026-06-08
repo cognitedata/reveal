@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import chunk from 'lodash/chunk';
+import { chunk } from 'lodash-es';
 
 import type { AnnotationModel, IdEither } from '@cognite/sdk';
 import type {

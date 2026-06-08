@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import range from 'lodash/range';
+import { range } from 'lodash-es';
 
 import { HtmlOverlayTool } from './HtmlOverlayTool';
 import type { Box2 } from 'three';

@@ -3,7 +3,7 @@
  */
 
 import { fitCameraToBoundingBox } from '@reveal/utilities';
-import range from 'lodash/range';
+import { range } from 'lodash-es';
 import type { Box3, PerspectiveCamera } from 'three';
 import { Plane, Quaternion, Vector3 } from 'three';
 

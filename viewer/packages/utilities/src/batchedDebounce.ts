@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 
 export interface BatchedDebounce<T, R> {
   (item: T): Promise<R>;

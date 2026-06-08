@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { CogniteClient } from '@cognite/sdk';
 import { NumericRange, IndexSet } from '@reveal/utilities';
 

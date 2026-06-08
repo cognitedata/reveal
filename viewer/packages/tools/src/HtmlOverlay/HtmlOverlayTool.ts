@@ -11,7 +11,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import type { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import type { Cognite3DViewer } from '@reveal/api';
 import type { DataSourceType } from '@reveal/data-providers';
 

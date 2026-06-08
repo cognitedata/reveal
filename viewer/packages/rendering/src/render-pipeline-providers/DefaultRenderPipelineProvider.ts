@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
