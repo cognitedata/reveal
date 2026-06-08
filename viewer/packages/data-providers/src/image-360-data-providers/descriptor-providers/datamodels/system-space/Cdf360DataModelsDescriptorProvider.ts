@@ -16,9 +16,8 @@ import { assert } from '@reveal/utilities/assert';
 import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
 import { groupBy, partition } from 'lodash-es';
-import type { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef, DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey } from '@reveal/utilities';
-import type { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
 import type { ClassicDataSourceType } from '../../../../DataSourceType';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../../../../utilities/constants';
 
