@@ -15,7 +15,7 @@ import type { ClusterIntersectionData } from './icons/IconCollection';
 import type { Image360AnnotationFilterOptions } from './annotation/types';
 
 import SeededRandom from 'random-seed';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 type FacadeTestParams = {
   entityPosition?: Vector3;

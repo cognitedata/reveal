@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { NumericRange, createUint8View } from '@reveal/utilities';
 import { NodeTransformProvider } from './NodeTransformProvider';
 import { NodeTransformTextureBuilder } from './NodeTransformTextureBuilder';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 describe('NodeTransformTextureBuilder', () => {
   let transformProvider: NodeTransformProvider;

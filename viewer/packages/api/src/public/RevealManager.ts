@@ -4,7 +4,7 @@
 
 import type * as THREE from 'three';
 
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash-es';
 
 import type { Subscription } from 'rxjs';
 import { combineLatest, fromEventPattern } from 'rxjs';

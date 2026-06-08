@@ -6,7 +6,7 @@ import { Color, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { Overlay3DCollection } from './Overlay3DCollection';
 import type { OverlayInfo } from './OverlayCollection';
 import type { Overlay3D } from './Overlay3D';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import { Mock, It } from 'moq.ts';
 
 describe(Overlay3DCollection.name, () => {

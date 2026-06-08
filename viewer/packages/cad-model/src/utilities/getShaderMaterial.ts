@@ -7,7 +7,7 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { assertNever } from '@reveal/utilities';
 import type { RawShaderMaterial } from 'three';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export function getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): RawShaderMaterial {
   assert(type !== RevealGeometryCollectionType.TexturedTriangleMesh);

@@ -7,7 +7,7 @@ import { CanvasTexture, Frustum, Matrix4, Sphere, Sprite, SpriteMaterial, Vector
 import type { BeforeSceneRenderedDelegate, SceneHandler } from '@reveal/utilities';
 import type { DefaultOverlay3DContentType } from '@reveal/3d-overlays';
 import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
-import clamp from 'lodash/clamp';
+import { clamp } from 'lodash-es';
 import type { PointOctant } from 'sparse-octree';
 import { HtmlClusterRenderer } from './clustering/HtmlClusterRenderer';
 import type { ClusterRenderParams, ClusterScreenInfo } from './clustering';

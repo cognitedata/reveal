@@ -6,7 +6,7 @@ import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
 import type { CdfPointCloudObjectAnnotation } from './types';
 import { isVolumeAnnotation } from './types';
 import { Vector3 } from 'three';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 describe(cdfAnnotationsToObjects.name, () => {
   const ARBITRARY_ANNOTATION_ID = 123;

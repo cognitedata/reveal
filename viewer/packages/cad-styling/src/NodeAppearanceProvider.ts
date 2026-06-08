@@ -9,8 +9,7 @@ import type { PrioritizedArea } from './prioritized/types';
 import type { IndexSet } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
-import debounce from 'lodash/debounce';
-import sortBy from 'lodash/sortBy';
+import { debounce, sortBy } from 'lodash-es';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.

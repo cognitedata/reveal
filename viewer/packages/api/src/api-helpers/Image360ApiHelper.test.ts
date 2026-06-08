@@ -6,7 +6,7 @@ import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 import { vi } from 'vitest';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
 import type { SceneHandler, InputHandler, BeforeSceneRenderedDelegate } from '@reveal/utilities';

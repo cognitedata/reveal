@@ -4,7 +4,7 @@
 
 import type { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 import { type NodeTransformProvider } from '@reveal/cad-styling';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import type { SectorScene, CadModelMetadata, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { RootSectorNode } from '@reveal/cad-parsers';
 import type { SectorRepository } from '@reveal/sector-loader';

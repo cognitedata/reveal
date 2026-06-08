@@ -8,7 +8,7 @@ import { Log } from '@reveal/logger';
 import pkg from '../../../package.json' with { type: 'json' };
 
 import type { TrackedEvents, EventProps } from './types';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import { getUserFingerprint } from './Fingerprint';
 
 /**

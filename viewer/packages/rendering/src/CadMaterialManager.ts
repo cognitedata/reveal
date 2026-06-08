@@ -19,7 +19,7 @@ import type { IndexSet } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export type CadMaterial = {
   materials: Materials;

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import remove from 'lodash/remove';
+import { remove } from 'lodash-es';
 import type { ICustomObject } from './customObject/ICustomObject';
 import { CustomObject } from './customObject/CustomObject';
 

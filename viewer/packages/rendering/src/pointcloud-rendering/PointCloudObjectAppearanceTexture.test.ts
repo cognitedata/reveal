@@ -13,7 +13,7 @@ import {
 import { Color } from 'three';
 import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 const textureWidth = 10;
 const textureHeight = 10;

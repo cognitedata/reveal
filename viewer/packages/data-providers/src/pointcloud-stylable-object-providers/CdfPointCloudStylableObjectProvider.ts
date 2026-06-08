@@ -10,7 +10,7 @@ import type {
 } from '@cognite/sdk';
 import type { IShape, DMInstanceRef } from '@reveal/utilities';
 import { Box, Cylinder } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
 import type { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 

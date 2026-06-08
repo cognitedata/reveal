@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import { getPixelCoordinatesFromEvent, getWheelEventDelta } from '@reveal/utilities';
-import remove from 'lodash/remove';
+import { remove, clamp } from 'lodash-es';
 import {
   EventDispatcher,
   MathUtils,
@@ -19,7 +19,6 @@ import {
   Vector3
 } from 'three';
 import Keyboard from './Keyboard';
-import clamp from 'lodash/clamp';
 import type { ComboControlsOptions } from './ComboControlsOptions';
 import { CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';

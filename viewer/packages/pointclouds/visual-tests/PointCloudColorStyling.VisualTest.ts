@@ -23,7 +23,7 @@ import {
   StyledPointCloudVolumeCollection
 } from '../../pointcloud-styling';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import * as THREE from 'three';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 import { PointColorType } from '@reveal/rendering';

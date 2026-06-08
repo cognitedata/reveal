@@ -8,7 +8,7 @@ import type { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { HttpError } from '@cognite/sdk';
 import { toThreeBox3 } from '@reveal/utilities';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 import type { NodesApiClient } from './NodesApiClient';
 import type { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';

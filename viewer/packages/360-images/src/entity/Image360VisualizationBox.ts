@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import type { Image360Visualization } from './Image360Visualization';
 import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';

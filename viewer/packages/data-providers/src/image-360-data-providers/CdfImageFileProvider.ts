@@ -3,7 +3,7 @@
  */
 import type { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 import type { DMInstanceRef } from '@reveal/utilities';
-import chunk from 'lodash/chunk';
+import { chunk } from 'lodash-es';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 
 /**

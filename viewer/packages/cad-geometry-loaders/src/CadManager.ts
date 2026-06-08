@@ -16,7 +16,7 @@ import { defaultDesktopCadModelBudget } from './CadModelBudget';
 import type { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { batchedDebounce, EventTrigger } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;

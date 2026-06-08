@@ -9,7 +9,7 @@ import type { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
 import type { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
-import minBy from 'lodash/minBy';
+import { minBy } from 'lodash-es';
 import { CameraChangeThrottler } from './CameraChangeThrottler';
 
 /**
