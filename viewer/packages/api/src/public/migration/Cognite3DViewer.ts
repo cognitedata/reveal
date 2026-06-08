@@ -103,6 +103,7 @@ import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-provide
 import { isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
+import { REVEAL_VERSION } from '../../version';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -438,7 +439,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * Returns reveal version installed.
    */
   getVersion(): string {
-    return process.env.VERSION!;
+    return REVEAL_VERSION;
   }
 
   /**

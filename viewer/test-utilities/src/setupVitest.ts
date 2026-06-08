@@ -5,7 +5,6 @@
 import 'vitest-canvas-mock';
 import { vi } from 'vitest';
 import { TextDecoder, TextEncoder } from 'node:util';
-import packageObject from '../../package.json' with { type: 'json' };
 
 window.URL.createObjectURL = vi.fn<() => string>();
 
@@ -38,7 +37,3 @@ global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 global.TextEncoder = TextEncoder as typeof global.TextEncoder;
 (window as any).TextDecoder = TextDecoder;
 (window as any).TextEncoder = TextEncoder;
-
-Object.assign(process.env, {
-  VERSION: packageObject.version
-});

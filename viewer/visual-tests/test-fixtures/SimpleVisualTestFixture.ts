@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/addons';
 
 import type { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/data-providers';
 import { createDataProviders } from './utilities/createDataProviders';

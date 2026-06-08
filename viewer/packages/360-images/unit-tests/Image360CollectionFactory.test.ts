@@ -6,8 +6,7 @@ import * as THREE from 'three';
 
 import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
-import type { BeforeSceneRenderedDelegate, DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { EventTrigger } from '@reveal/utilities';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 
 describe(Image360CollectionFactory.name, () => {
@@ -63,7 +62,6 @@ describe(Image360CollectionFactory.name, () => {
     const image360EntityFactory = new Image360CollectionFactory(
       new Map([['event', mock360ImageProvider.object()]]),
       mockSceneHandler.object(),
-      new EventTrigger<BeforeSceneRenderedDelegate>(),
       () => {},
       desktopDevice,
       { platformMaxPointsSize: 256 }

@@ -93,6 +93,10 @@ jobs:
         working-directory: viewer
         run: yarn run build
 
+      - name: Typecheck lib
+        working-directory: viewer
+        run: yarn run typecheck:lib
+
       - name: Check for API changes
         working-directory: viewer
         continue-on-error: false
@@ -137,6 +141,10 @@ jobs:
         working-directory: viewer
         run: |
           xvfb-run yarn run coverage
+
+      - name: Typecheck tests
+        working-directory: viewer
+        run: yarn run typecheck:tests
 
       - name: Publish to codecov
         uses: codecov/codecov-action@v6

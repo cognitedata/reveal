@@ -15,7 +15,7 @@ import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from '../../../test-utilities';
 
 declare module 'vitest' {
-  interface Matchers<R = void> {
+  interface Matchers<T = any, R = void> {
     toBeInRange(min: number, max: number): R;
   }
 }

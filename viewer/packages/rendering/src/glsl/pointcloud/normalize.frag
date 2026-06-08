@@ -4,7 +4,7 @@ uniform sampler2D tDepth;
 uniform sampler2D tDiffuse;
 
 #if defined(use_edl)
-	#pragma glslify: import('./edl.glsl');
+	#include edl.glsl;
 
 	uniform float screenWidth;
 	uniform float screenHeight;

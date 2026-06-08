@@ -93,8 +93,6 @@ export { createUint8View } from './src/createUint8View';
 
 export { isDefined } from './src/isDefined';
 
-export * from './src/workers/workerize-transferable';
-
 export * from './src/fdm';
 export * from './src/assetMappings';
 

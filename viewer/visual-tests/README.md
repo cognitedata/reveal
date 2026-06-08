@@ -3,7 +3,7 @@
 Reveal uses visual tests as a form of regression testing and smoke tests.
 The underlying stack leverages [playwright](https://playwright.dev/). 
 
-The way it works is that we use [webpack-dev-server](https://www.npmjs.com/package/webpack-dev-server) to serve the contents of the visual tests (visual tests server) and have an instance of playwright (visual tests automation) play through the different visual tests.
+The way it works is that we use [vite dev server](https://vite.dev/guide/cli#vite) to serve the contents of the visual tests (visual tests server) and have an instance of playwright (visual tests automation) play through the different visual tests.
 
 To run the visual tests on your local environment, simply run `yarn run test:visual` from the `/viewer` directory.
 
@@ -22,7 +22,7 @@ Changes made to the visual test will automatically rebuild the test server and r
 It is also possible to programatically start a visual test from the blank root page (`https://localhost:8080`) with `window.render` method (f.ex. `window.render('Rendering.VisualTest')`).
 
 For packages in Reveal you might want to create an visual test entrypoint in a `yarn start` command.
-This can be done by simply specifying and passing environment variable to webpack in the command call.
+This can be done by simply specifying and passing environment variable to vite in the command call.
 
 
 An example script for a package.json would be something like this:

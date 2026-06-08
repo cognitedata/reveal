@@ -2,16 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-// @ts-ignore
-import visualTestsFixtures from '**/*.VisualTest.ts';
-
+import assert from 'assert';
 import type { VisualTestFixture } from './test-fixtures/VisualTestFixture';
 
-async function testGenerator(): Promise<Map<string, new () => VisualTestFixture>> {
-  const testMap = new Map<string, new () => VisualTestFixture>();
+function testGenerator(): Map<string, () => Promise<{ default: new () => VisualTestFixture }>> {
+  const testMap = new Map<string, () => Promise<{ default: new () => VisualTestFixture }>>();
+  const visualTestsFixtures = import.meta.glob('../packages/**/*VisualTest.ts');
 
-  visualTestsFixtures.forEach((visualTestsFixture: any) => {
-    testMap.set(visualTestsFixture.fileName, visualTestsFixture.module);
+  Object.entries(visualTestsFixtures).forEach(visualTestsFixture => {
+    const filename = visualTestsFixture[0]
+      .split(/[\/]/)
+      .pop()!
+      .replace(/\.[^/.]+$/, '');
+    const testModuleImport: () => Promise<{ default: new () => VisualTestFixture }> =
+      visualTestsFixture[1] as unknown as () => Promise<{ default: new () => VisualTestFixture }>;
+    testMap.set(filename, testModuleImport);
   });
 
   return testMap;
@@ -19,15 +24,17 @@ async function testGenerator(): Promise<Map<string, new () => VisualTestFixture>
 
 const tests = testGenerator();
 
-let activeTest: any;
+let activeTest: VisualTestFixture;
 (window as any).render = async (testName: string) => {
   if (activeTest) {
     activeTest.dispose();
   }
 
   document.body.innerHTML = '';
-  const testConstructor = (await tests).get(testName)!;
-  activeTest = new testConstructor();
+  const testModuleImport = tests.get(testName);
+  assert(testModuleImport !== undefined, 'Test not found: ' + testName);
+  const testModule = await testModuleImport();
+  activeTest = new testModule.default();
   return activeTest.run();
 };
 
@@ -36,9 +43,12 @@ const testFixtureInstance = urlParams.get('testfixture');
 
 if (testFixtureInstance !== null) {
   (async function () {
-    const testMap = await tests;
-    if (testMap.has(testFixtureInstance)) {
-      new (testMap.get(testFixtureInstance)!)().run();
+    if (tests.has(testFixtureInstance)) {
+      const testModuleImport = tests.get(testFixtureInstance);
+      assert(testModuleImport !== undefined, 'Test not found: ' + testFixtureInstance);
+      const testModule = await testModuleImport();
+      const visualTestInstance = new testModule.default();
+      await visualTestInstance.run();
     } else {
       alert('Unrecognized test name:' + testFixtureInstance);
     }

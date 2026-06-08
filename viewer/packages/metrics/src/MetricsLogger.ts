@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import mixpanel from 'mixpanel-browser';
 import { Log } from '@reveal/logger';
+import pkg from '../../../package.json' with { type: 'json' };
 
 import type { TrackedEvents, EventProps } from './types';
 import throttle from 'lodash/throttle';
@@ -21,7 +22,9 @@ function generateUuidv4(): string {
   });
 }
 
-const { VERSION, MIXPANEL_TOKEN } = process.env;
+const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
+const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
+const MIXPANEL_TOKEN = import.meta.env.PROD ? MIXPANEL_TOKEN_PROD : MIXPANEL_TOKEN_DEV;
 
 export class MetricsLogger {
   private readonly _sessionProps: {
@@ -72,7 +75,7 @@ export class MetricsLogger {
     mixpanel.reset();
 
     this._sessionProps = {
-      VERSION: VERSION!,
+      VERSION: pkg.version,
       project: 'unknown',
       application: 'unknown',
       // Use a random identifier because we want to don't track users over multiple sessions to not

@@ -3,8 +3,7 @@
  */
 
 import type { SerializableStylableObject } from '@reveal/data-providers';
-import type { SerializableCylinder, SerializableBox } from '@reveal/utilities';
-import { assertNever, ShapeType } from '@reveal/utilities';
+import { type SerializableCylinder, type SerializableBox, ShapeType, assertNever } from '@reveal/utilities';
 
 import type { WasmSerializedPointCloudObject } from '../../../wasm';
 import { assignPoints } from '../../../wasm';

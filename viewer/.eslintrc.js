@@ -9,7 +9,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
-    project: './tsconfig.json',
+    project: './tsconfig.lib.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
@@ -93,7 +93,13 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.test.ts', 'test-utilities/**/*.ts'],
+      parserOptions: {
+        project: './tsconfig.test.json',
+        tsconfigRootDir: __dirname,
+        ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
+        sourceType: 'module' // Allows for the use of imports
+      },
+      files: ['*.test.ts', 'test-utilities/**/*.ts', 'visual-tests/**/*.ts', 'vite.config.ts'],
       rules: {
         // complains when you do expect(mockObj.mockFn).toBeCalled() in tests
         '@typescript-eslint/unbound-method': 'off'

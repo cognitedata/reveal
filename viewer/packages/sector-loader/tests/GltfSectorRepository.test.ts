@@ -14,6 +14,7 @@ import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-p
 import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 
+import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 
 describe(GltfSectorRepository.name, () => {
@@ -37,7 +38,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('previously fetched sector is cached by GltfSectorRepository', async () => {
-    const mockGetBinaryFile: vi.MockedFunction<BinaryFileProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile: ViMock<BinaryFileProvider['getBinaryFile']> = vi.fn();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
@@ -80,7 +81,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('clearCache should clear the cache', async () => {
-    const mockGetBinaryFile: vi.MockedFunction<BinaryFileProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile: ViMock<BinaryFileProvider['getBinaryFile']> = vi.fn();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
@@ -102,7 +103,7 @@ describe(GltfSectorRepository.name, () => {
       createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
     );
 
-    const mockGetBinaryFile: vi.MockedFunction<BinaryFileProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile: ViMock<BinaryFileProvider['getBinaryFile']> = vi.fn();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
