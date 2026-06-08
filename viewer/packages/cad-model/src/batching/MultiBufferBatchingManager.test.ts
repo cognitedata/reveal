@@ -8,7 +8,7 @@ import { Mock } from 'moq.ts';
 import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import sum from 'lodash/sum';
+import { sum } from 'lodash-es';
 import { IndexSet } from '@reveal/utilities';
 
 describe(MultiBufferBatchingManager.name, () => {

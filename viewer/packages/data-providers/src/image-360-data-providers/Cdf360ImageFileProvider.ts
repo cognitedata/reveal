@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import zipWith from 'lodash/zipWith';
+import { zipWith } from 'lodash-es';
 import type { Image360Face, Image360FileDescriptor, Image360FileProvider } from '../types';
 import type { FileIdentifier, FileDownloadResult } from './CdfImageFileProvider';
 import { CdfImageFileProvider } from './CdfImageFileProvider';

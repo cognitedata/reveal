@@ -3,8 +3,7 @@
  */
 
 import * as THREE from 'three';
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
+import { cloneDeep, merge } from 'lodash-es';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import type { AxisBoxConfig, AxisBoxFaceConfig, AbsolutePosition, RelativePosition } from './types';

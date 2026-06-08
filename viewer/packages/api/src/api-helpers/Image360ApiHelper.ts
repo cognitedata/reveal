@@ -57,7 +57,7 @@ import { determineCurrentDevice, getNormalizedPixelCoordinates, WaitCursor } fro
 import type { CameraManager, ProxyCameraManager } from '@reveal/camera-manager';
 import { FlexibleCameraManager, isDefaultCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import type { Image360WithCollection } from '../public/types';
 import { moveCameraPositionAndTargetTo } from '@reveal/camera-manager/src/Flexible/moveCamera';
 

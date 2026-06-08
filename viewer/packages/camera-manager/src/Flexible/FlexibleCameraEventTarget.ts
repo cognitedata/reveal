@@ -6,7 +6,7 @@ import type { FlexibleControls } from './FlexibleControls';
 import { EventTrigger, assertNever } from '@reveal/utilities';
 import type { CameraChangeDelegate, CameraEventDelegate, CameraManagerEventType, CameraStopDelegate } from '../types';
 import type { FlexibleControlsTypeChangeDelegate } from './IFlexibleCameraManager';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 
 const DEBOUNCE_TIME_MS = 100;
 

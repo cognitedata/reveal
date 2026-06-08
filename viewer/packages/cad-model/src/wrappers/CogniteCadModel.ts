@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import type { CogniteInternalId } from '@cognite/sdk';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'lodash-es';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 

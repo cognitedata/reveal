@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
-import pick from 'lodash/pick';
+import { pick } from 'lodash-es';
 
 import type { EdlOptions } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';

@@ -6,9 +6,7 @@ import type { InstanceReference } from '../types';
 import type { DataSourceType } from '../DataSourceType';
 import { getInstanceKey } from '../utilities/instanceIds';
 import { isDefined, isDmIdentifier } from '@reveal/utilities';
-import chunk from 'lodash/chunk';
-import groupBy from 'lodash/groupBy';
-import partition from 'lodash/partition';
+import { chunk, groupBy, partition } from 'lodash-es';
 
 export interface Cdf360ImageAnnotationCache {
   reverseLookup(assetId: InstanceReference<DataSourceType>): Promise<AnnotationModel[]>;

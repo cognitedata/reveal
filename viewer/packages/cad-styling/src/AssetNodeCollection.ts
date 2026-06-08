@@ -14,7 +14,7 @@ import { IndexSet, NumericRange } from '@reveal/utilities';
 
 import type { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash-es';
 import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { isCdfAssetMapping } from '@reveal/utilities';
 

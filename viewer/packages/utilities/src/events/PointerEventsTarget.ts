@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import type { Vector2 } from 'three';
 import { MOUSE } from 'three';
 import type { PointerEvents } from './PointerEvents';

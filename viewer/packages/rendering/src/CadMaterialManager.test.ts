@@ -11,8 +11,7 @@ import { RenderMode } from './rendering/RenderMode';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 
-import range from 'lodash/range';
-import cloneDeep from 'lodash/cloneDeep';
+import { range, cloneDeep } from 'lodash-es';
 
 import { vi } from 'vitest';
 import { createCadNode } from '../../../test-utilities';

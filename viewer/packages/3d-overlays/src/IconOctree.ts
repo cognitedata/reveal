@@ -4,8 +4,7 @@
 
 import { getApproximateProjectedBounds, getScreenArea } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
-import minBy from 'lodash/minBy';
-import pullAll from 'lodash/pullAll';
+import { minBy, pullAll } from 'lodash-es';
 import type { Node } from 'sparse-octree';
 import { PointOctant, PointOctree } from 'sparse-octree';
 import type { Matrix4 } from 'three';

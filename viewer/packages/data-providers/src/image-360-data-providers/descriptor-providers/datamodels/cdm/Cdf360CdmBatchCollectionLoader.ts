@@ -13,8 +13,7 @@ import type {
   Image360RevisionId
 } from '../../../../types';
 import type { DMDataSourceType } from '../../../../DataSourceType';
-import groupBy from 'lodash/groupBy';
-import partition from 'lodash/partition';
+import { groupBy, partition } from 'lodash-es';
 import { Euler, Matrix4 } from 'three';
 import { DEFAULT_360_IMAGE_MIME_TYPE, MAX_DMS_QUERY_LIMIT } from '../../../../utilities/constants';
 import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';

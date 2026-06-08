@@ -3,7 +3,7 @@
  */
 import type { Camera, Ray, Vector2 } from 'three';
 import { Matrix4, Raycaster, Vector3 } from 'three';
-import pull from 'lodash/pull';
+import { pull } from 'lodash-es';
 
 import type { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';

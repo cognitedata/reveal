@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import TWEEN, { type Tween } from '@tweenjs/tween.js';
-import clamp from 'lodash/clamp';
+import { clamp } from 'lodash-es';
 
 import { ComboControls } from './ComboControls';
 import type { ComboControlsOptions } from './ComboControlsOptions';

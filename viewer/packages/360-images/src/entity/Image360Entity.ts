@@ -11,7 +11,7 @@ import type {
   Image360RevisionId
 } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
-import minBy from 'lodash/minBy';
+import { minBy } from 'lodash-es';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
@@ -19,7 +19,7 @@ import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationF
 import type { Color, Matrix4 } from 'three';
 import { type Raycaster } from 'three';
 
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash-es';
 
 export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   private readonly _revisions: Image360RevisionEntity<T>[];

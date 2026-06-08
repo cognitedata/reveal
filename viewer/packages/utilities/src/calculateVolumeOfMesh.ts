@@ -3,8 +3,7 @@
  */
 
 import * as THREE from 'three';
-import chunk from 'lodash/chunk';
-import map from 'lodash/map';
+import { chunk, map } from 'lodash-es';
 import { assert } from '@reveal/utilities/assert';
 
 export function calculateVolumeOfMesh(vertexBuffer: Float32Array, indexBuffer: Uint16Array | Uint32Array): number {

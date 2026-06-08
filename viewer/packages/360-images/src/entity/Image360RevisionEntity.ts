@@ -17,7 +17,7 @@ import type { JpegType } from '../utils/JpegDataStreamParser';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Box3, Vector3, type Raycaster } from 'three';
-import minBy from 'lodash/minBy';
+import { minBy } from 'lodash-es';
 import type { Image360AnnotationAppearance } from '../annotation/types';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { isCoreDmImage360Annotation } from '../annotation/typeGuards';

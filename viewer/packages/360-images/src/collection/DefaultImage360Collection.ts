@@ -4,8 +4,7 @@
 
 import type { BeforeSceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import pull from 'lodash/pull';
-import cloneDeep from 'lodash/cloneDeep';
+import { pull, cloneDeep } from 'lodash-es';
 import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,

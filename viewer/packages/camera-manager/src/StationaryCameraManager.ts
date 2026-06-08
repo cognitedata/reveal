@@ -6,8 +6,7 @@ import { Euler, MathUtils, Quaternion, Vector3 } from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
 
-import pull from 'lodash/pull';
-import remove from 'lodash/remove';
+import { pull, remove } from 'lodash-es';
 
 import type { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';

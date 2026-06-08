@@ -7,7 +7,7 @@ import type { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad
 import type { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 import type { SectorCuller } from './culling/SectorCuller';
 import type { ModelStateHandler } from './ModelStateHandler';
-import chunk from 'lodash/chunk';
+import { chunk } from 'lodash-es';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import { File3dFormat } from '@reveal/data-providers';

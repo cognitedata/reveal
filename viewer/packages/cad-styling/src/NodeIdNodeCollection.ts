@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import type { CogniteClient, ListResponse, Node3D } from '@cognite/sdk';
-import chunk from 'lodash/chunk';
+import { chunk } from 'lodash-es';
 import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
 import type { NodeCollectionSerializationContext } from './NodeCollectionDeserializer';

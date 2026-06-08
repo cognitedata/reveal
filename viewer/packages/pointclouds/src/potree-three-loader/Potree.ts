@@ -21,7 +21,7 @@ import type { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeom
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
 import type { ModelDataProvider, StylableObject } from '@reveal/data-providers';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import { createVisibilityTextureData } from './utils/utils';
 
 const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view

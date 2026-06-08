@@ -7,8 +7,7 @@ import type { CogniteClient } from '@cognite/sdk';
 import type { SerializedNodeCollection } from './SerializedNodeCollection';
 import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
-import range from 'lodash/range';
-import cloneDeep from 'lodash/cloneDeep';
+import { range, cloneDeep } from 'lodash-es';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
 import { NodeCollection } from './NodeCollection';
 

@@ -7,7 +7,7 @@ import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
-import remove from 'lodash/remove';
+import { remove } from 'lodash-es';
 
 type DownloadRequest = {
   consumedSector: Promise<ConsumedSector>;
