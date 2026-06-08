@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import chunk from 'lodash/chunk';
 import map from 'lodash/map';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export function calculateVolumeOfMesh(vertexBuffer: Float32Array, indexBuffer: Uint16Array | Uint32Array): number {
   assert(vertexBuffer.length % 3 === 0);

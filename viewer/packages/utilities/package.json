@@ -10,6 +10,9 @@
     ".": {
       "import": "./index.ts"
     },
+    "./assert": {
+      "import": "./src/assert.ts"
+    },
     "./assertNever": {
       "import": "./src/assertNever.ts"
     },

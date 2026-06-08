@@ -15,7 +15,7 @@ import { Color } from 'three';
 
 import { vi } from 'vitest';
 import { NodeOutlineColor, type NodeAppearance } from './NodeAppearance';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 function toByteTuple(color: Color): [number, number, number] {
   return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];

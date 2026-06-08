@@ -134,7 +134,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     "@vitest/coverage-v8": "npm:^4.1.7"
-    assert: "npm:^2.1.0"
     async-mutex: "npm:^0.5.0"
     comlink: "npm:^4.4.2"
     dat.gui: "npm:^0.7.9"
@@ -1860,7 +1859,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assert@npm:^2.0.0, assert@npm:^2.1.0":
+"assert@npm:^2.0.0":
   version: 2.1.0
   resolution: "assert@npm:2.1.0"
   dependencies:

@@ -3,7 +3,7 @@
  */
 
 import type { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import {
   BufferAttribute,
   InterleavedBufferAttribute,

@@ -5,7 +5,7 @@
 import { PointCloudNode } from '../src/PointCloudNode';
 import type { CadMaterialManager, PointCloudMaterialManager } from '@reveal/rendering';
 import { defaultRenderOptions, DefaultRenderPipelineProvider, PointColorType } from '@reveal/rendering';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import type { SceneHandler } from '@reveal/utilities';

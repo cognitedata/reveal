@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import zip from 'lodash/zip';
 import uniqBy from 'lodash/uniqBy';
 import type { DataSourceType } from '@reveal/data-providers';

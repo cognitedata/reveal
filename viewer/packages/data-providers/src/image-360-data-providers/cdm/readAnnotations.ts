@@ -5,7 +5,7 @@ import type { Vector3 } from 'three';
 
 import type { CoreDmImage360Properties } from './properties';
 import { transformSphericalCoordinatesToVectors } from './transformSphericalCoordinatesToVectors';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { SemanticVersion } from './semanticVersioningUtils';
 import { isSemanticVersion, isSemanticVersionGreaterThanOrEqual } from './semanticVersioningUtils';
 

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import minBy from 'lodash/minBy';
 import type { BufferGeometry, Group, RawShaderMaterial } from 'three';
 import {

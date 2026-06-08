@@ -11,7 +11,7 @@ import type { ClusteredIcon } from './IconCollection';
 import { IconCollection } from './IconCollection';
 import type { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import { PointOctant } from 'sparse-octree';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 describe(IconCollection.name, () => {
   let mockSceneHandler: SceneHandler;

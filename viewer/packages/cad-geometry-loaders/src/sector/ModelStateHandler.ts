@@ -5,7 +5,7 @@
 import type { SceneModelState } from './rxSectorUtilities';
 import { LevelOfDetail } from '@reveal/cad-parsers';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export class ModelStateHandler {
   private readonly _sceneModelState: SceneModelState;

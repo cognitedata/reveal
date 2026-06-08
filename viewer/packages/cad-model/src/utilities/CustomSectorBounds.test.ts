@@ -9,7 +9,7 @@ import { Mock } from 'moq.ts';
 import { createV9SectorMetadata } from '../../../../test-utilities';
 import type { SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 /*
 

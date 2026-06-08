@@ -12,7 +12,7 @@ import type {
 } from '../../../../types';
 import type { Cdf360FdmQuery } from './get360CollectionQuery';
 import { get360CollectionQuery } from './get360CollectionQuery';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
 import groupBy from 'lodash/groupBy';

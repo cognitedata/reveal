@@ -101,7 +101,7 @@ import { AsyncSequencer } from '../../../../utilities/src/AsyncSequencer';
 import { getModelAndRevisionId } from '../../utilities/utils';
 import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 import { isClassicIdentifier } from '@reveal/data-providers';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
 import { REVEAL_VERSION } from '../../version';
 

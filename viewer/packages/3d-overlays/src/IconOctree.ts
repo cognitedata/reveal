@@ -3,7 +3,7 @@
  */
 
 import { getApproximateProjectedBounds, getScreenArea } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import minBy from 'lodash/minBy';
 import pullAll from 'lodash/pullAll';
 import type { Node } from 'sparse-octree';
