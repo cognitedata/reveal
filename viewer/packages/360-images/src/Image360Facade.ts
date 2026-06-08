@@ -12,7 +12,7 @@ import type { DefaultImage360Collection } from './collection/DefaultImage360Coll
 import type { IconCullingScheme } from './icons/IconCollection';
 import type { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import type { Image360AnnotationFilterOptions } from './annotation/types';
-import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
+import { AsyncSequencer } from '@reveal/utilities/AsyncSequencer';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { Image360ClusterIntersectionData, Image360IconIntersectionData } from './types';
 import { ClosestGeometryFinder } from '@reveal/utilities';

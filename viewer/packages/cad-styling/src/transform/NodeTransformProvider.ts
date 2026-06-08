@@ -4,7 +4,7 @@
 
 import type { NumericRange } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import { cadFromCdfToThreeMatrix, cadFromThreeToCdfMatrix } from '@reveal/utilities/src/constants';
+import { cadFromCdfToThreeMatrix, cadFromThreeToCdfMatrix } from '@reveal/utilities/constants';
 import { Matrix4 } from 'three';
 
 const identityTransform = new Matrix4().identity();
