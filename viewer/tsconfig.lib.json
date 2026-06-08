@@ -3,6 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "stripInternal": true,
+    "isolatedModules": true,
     "isolatedDeclarations": true,
     "types": ["vite/client", "vite-plugin-glsl/ext"]
   },

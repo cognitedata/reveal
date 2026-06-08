@@ -14,7 +14,11 @@ import path from 'path';
 export default defineConfig(({ command }) => {
   return {
     root: '.',
-    plugins: [glsl({ minify: true }), dts({ tsconfigPath: './tsconfig.lib.json' }), tsAccessorDecoratorPlugin()],
+    plugins: [
+      glsl({ minify: true }),
+      dts({ tsconfigPath: './tsconfig.lib.json', compilerOptions: { noCheck: true } }),
+      tsAccessorDecoratorPlugin()
+    ],
 
     worker: {
       format: 'es',
