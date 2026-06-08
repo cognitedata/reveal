@@ -1510,7 +1510,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * document.body.appendChild(image);
    * ```
    */
-  async getScreenshot(width = this.canvas.width, height = this.canvas.height, includeUI = true): Promise<string> {
+  async getScreenshot(width: number = this.canvas.width, height: number = this.canvas.height, includeUI = true): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }

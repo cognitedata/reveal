@@ -54,7 +54,7 @@ function makePointAttribute(name: PointAttributeName, type: PointAttributeType, 
 
 const RGBA_PACKED = makePointAttribute(PointAttributeName.COLOR_PACKED, POINT_ATTRIBUTE_TYPES.DATA_TYPE_INT8, 4);
 
-export const POINT_ATTRIBUTES = {
+export const POINT_ATTRIBUTES: { POSITION_CARTESIAN: IPointAttribute; RGBA_PACKED: IPointAttribute; COLOR_PACKED: IPointAttribute; RGB_PACKED: IPointAttribute; NORMAL_FLOATS: IPointAttribute; FILLER_1B: IPointAttribute; INTENSITY: IPointAttribute; CLASSIFICATION: IPointAttribute; NORMAL_SPHEREMAPPED: IPointAttribute; NORMAL_OCT16: IPointAttribute; NORMAL: IPointAttribute; } = {
   POSITION_CARTESIAN: makePointAttribute(
     PointAttributeName.POSITION_CARTESIAN,
     POINT_ATTRIBUTE_TYPES.DATA_TYPE_FLOAT,

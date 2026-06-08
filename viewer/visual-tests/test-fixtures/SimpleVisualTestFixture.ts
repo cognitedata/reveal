@@ -21,7 +21,7 @@ export type SimpleTestFixtureComponents = {
 };
 
 export abstract class SimpleVisualTestFixture implements VisualTestFixture {
-  public readonly cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
+  public readonly cadFromCdfToThreeMatrix: THREE.Matrix4 = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
 
   private readonly _perspectiveCamera: THREE.PerspectiveCamera;
   private readonly _scene: THREE.Scene;

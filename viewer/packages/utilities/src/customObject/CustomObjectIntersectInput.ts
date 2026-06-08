@@ -14,7 +14,7 @@ export class CustomObjectIntersectInput {
   readonly normalizedCoords: Vector2;
   readonly camera: PerspectiveCamera;
   readonly clippingPlanes: Plane[] | undefined;
-  readonly raycaster = new Raycaster();
+  readonly raycaster: Raycaster = new Raycaster();
 
   constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes: Plane[] | undefined = undefined) {
     this.normalizedCoords = normalizedCoords;

@@ -49,7 +49,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   // Manages mesh for sectors
   private readonly _meshManager: CadMeshManager;
 
-  public readonly treeIndexToSectorsMap;
+  public readonly treeIndexToSectorsMap: TreeIndexToSectorsMap;
 
   private readonly _lockedTreeIndices = new Set<number>();
   private readonly _lockedSectorIds = new Set<number>();

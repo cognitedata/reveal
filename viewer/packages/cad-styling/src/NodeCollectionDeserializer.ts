@@ -22,7 +22,7 @@ import type { SerializedNodeCollection } from './SerializedNodeCollection';
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
 
 export class NodeCollectionDeserializer {
-  public static readonly Instance = new NodeCollectionDeserializer();
+  public static readonly Instance: NodeCollectionDeserializer = new NodeCollectionDeserializer();
   private readonly _types = new Map<
     string,
     {

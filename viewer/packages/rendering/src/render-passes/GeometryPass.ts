@@ -18,7 +18,7 @@ export class GeometryPass implements RenderPass {
   constructor(
     scene: THREE.Object3D,
     materialManager: CadMaterialManager,
-    renderMode = RenderMode.Color,
+    renderMode: RenderMode = RenderMode.Color,
     overrideLayerMask?: number
   ) {
     this._geometryScene = scene;

@@ -56,7 +56,55 @@ import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert
 import depthBlendFrag from '../glsl/post-processing/depthBlendBlit.frag';
 import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
-export const sectorShaders = {
+export const sectorShaders: {
+    // ----------------
+    // "Regular" meshes
+    // ----------------
+    detailedMesh: {
+        fragment: string;
+        vertex: string;
+    }; instancedMesh: {
+        fragment: string;
+        vertex: string;
+    };
+    // ----------------
+    // Primitives
+    // ----------------
+    boxPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; circlePrimitive: {
+        fragment: string;
+        vertex: string;
+    }; conePrimitive: {
+        fragment: string;
+        vertex: string;
+    }; eccentricConePrimitive: {
+        fragment: string;
+        vertex: string;
+    }; ellipsoidSegmentPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; generalCylinderPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; generalRingPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; nutPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; quadPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; torusSegmentPrimitive: {
+        fragment: string;
+        vertex: string;
+    }; trapeziumPrimitive: {
+        fragment: string;
+        vertex: string;
+    };
+} = {
   // ----------------
   // "Regular" meshes
   // ----------------
@@ -121,7 +169,16 @@ export const sectorShaders = {
 /**
  * Point cloud shaders.
  */
-export const pointCloudShaders = {
+export const pointCloudShaders: {
+    normalize: {
+        fragment: string;
+        vertex: string;
+    };
+    pointcloud: {
+        fragment: string;
+        vertex: string;
+    };
+} = {
   normalize: {
     fragment: pointCloudNormalizeFrag,
     vertex: pointCloudNormalizeVert
@@ -135,17 +192,26 @@ export const pointCloudShaders = {
 /**
  * Screen space ambient occlusion shader
  */
-export const ssaoShaders = {
+export const ssaoShaders: {
+    fragment: string;
+    vertex: string;
+} = {
   fragment: ssaoFrag,
   vertex: ssaoVert
 };
 
-export const blitShaders = {
+export const blitShaders: {
+    fragment: string;
+    vertex: string;
+} = {
   fragment: blitFrag,
   vertex: blitVert
 };
 
-export const depthBlendBlitShaders = {
+export const depthBlendBlitShaders: {
+    fragment: string;
+    vertex: string;
+} = {
   fragment: depthBlendFrag,
   vertex: depthBlendVert
 };

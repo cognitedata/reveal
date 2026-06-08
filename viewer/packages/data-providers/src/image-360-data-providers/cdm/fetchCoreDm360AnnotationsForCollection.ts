@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import type { CogniteClient, QueryRequest } from '@cognite/sdk';
+import type { CogniteClient, QueryRequest, TableExpressionEqualsFilterV3 } from '@cognite/sdk';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { isCoreDmImage360CollectionFilter } from './queryFilters';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
@@ -44,7 +44,121 @@ export type GetImage360AnnotationsFromCollectionResponse = Awaited<
   >
 >;
 
-function getImage360AnnotationsQuery(collectionReference: DMInstanceRef) {
+function getImage360AnnotationsQuery(collectionReference: DMInstanceRef): {
+    readonly with: {
+        readonly collection: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly and: [{
+                        readonly and: [{
+                            hasData: {
+                                readonly type: "view";
+                                readonly space: "cdf_cdm";
+                                readonly externalId: "Cognite3DRevision";
+                                readonly version: "v1";
+                            }[];
+                        }, {
+                            readonly equals: {
+                                readonly property: ["cdf_cdm_3d", "Cognite3DRevision", "type"];
+                                readonly value: "Image360";
+                            };
+                        }];
+                    }, TableExpressionEqualsFilterV3, TableExpressionEqualsFilterV3];
+                };
+            };
+        };
+        readonly images: {
+            readonly nodes: {
+                readonly from: "collection";
+                readonly through: {
+                    readonly view: {
+                        readonly type: "view";
+                        readonly space: "cdf_cdm";
+                        readonly externalId: "Cognite360Image";
+                        readonly version: "v1";
+                    };
+                    readonly identifier: "collection360";
+                };
+                readonly direction: "inwards";
+            };
+            readonly limit: 10000;
+        };
+        readonly annotations: {
+            readonly edges: {
+                readonly from: "images";
+                readonly direction: "inwards";
+                readonly filter: {
+                    readonly and: [{
+                        readonly hasData: [{
+                            readonly type: "view";
+                            readonly space: "cdf_cdm";
+                            readonly externalId: "Cognite360ImageAnnotation";
+                            readonly version: "v1";
+                        }];
+                    }];
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly object3d: {
+            readonly nodes: {
+                readonly from: "annotations";
+            };
+            readonly limit: 10000;
+        };
+        readonly assets: {
+            readonly nodes: {
+                readonly from: "object3d";
+                readonly through: {
+                    readonly view: {
+                        readonly type: "view";
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                    };
+                    readonly identifier: "object3D";
+                };
+            };
+            readonly limit: 10000;
+        };
+    }; readonly select: {
+        readonly collection: {};
+        readonly images: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_cdm";
+                    readonly externalId: "Cognite360Image";
+                    readonly version: "v1";
+                };
+                readonly properties: ["translationX", "translationY", "translationZ", "eulerRotationX", "eulerRotationY", "eulerRotationZ", "scaleX", "scaleY", "scaleZ", "front", "back", "left", "right", "top", "bottom", "collection360", "station360", "takenAt"];
+            }];
+        };
+        readonly annotations: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_cdm";
+                    readonly externalId: "Cognite360ImageAnnotation";
+                    readonly version: "v1";
+                };
+                readonly properties: ["polygon", "formatVersion"];
+            }];
+        };
+        readonly object3d: {};
+        readonly assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                };
+                readonly properties: ["name", "description", "object3D"];
+            }];
+        };
+    };
+} {
   return {
     with: {
       collection: {

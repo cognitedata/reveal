@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import type { CogniteClient, QueryRequest } from '@cognite/sdk';
+import type { CogniteClient, QueryRequest, TableExpressionEqualsFilterV3 } from '@cognite/sdk';
 import { transformAnnotations } from './transformCdmAnnotations';
 import {
   COGNITE_ASSET_VIEW_REFERENCE,
@@ -41,7 +41,98 @@ export type GetImage360FromRevisionResponse = Awaited<
   >
 >;
 
-function getImage360AnnotationsByRevisionQuery(revisionReference: DMInstanceRef) {
+function getImage360AnnotationsByRevisionQuery(revisionReference: DMInstanceRef): {
+    readonly with: {
+        readonly images: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly and: [{
+                        readonly hasData: [{
+                            readonly type: "view";
+                            readonly space: "cdf_cdm";
+                            readonly externalId: "Cognite360Image";
+                            readonly version: "v1";
+                        }];
+                    }, TableExpressionEqualsFilterV3, TableExpressionEqualsFilterV3];
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly annotations: {
+            readonly edges: {
+                readonly from: "images";
+                readonly direction: "inwards";
+                readonly filter: {
+                    readonly and: [{
+                        readonly hasData: [{
+                            readonly type: "view";
+                            readonly space: "cdf_cdm";
+                            readonly externalId: "Cognite360ImageAnnotation";
+                            readonly version: "v1";
+                        }];
+                    }];
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly object3d: {
+            readonly nodes: {
+                readonly from: "annotations";
+            };
+            readonly limit: 10000;
+        };
+        readonly assets: {
+            readonly nodes: {
+                readonly from: "object3d";
+                readonly through: {
+                    readonly view: {
+                        readonly type: "view";
+                        readonly externalId: "CogniteAsset";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                    };
+                    readonly identifier: "object3D";
+                };
+            };
+            readonly limit: 10000;
+        };
+    }; readonly select: {
+        readonly images: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_cdm";
+                    readonly externalId: "Cognite360Image";
+                    readonly version: "v1";
+                };
+                readonly properties: ["translationX", "translationY", "translationZ", "eulerRotationX", "eulerRotationY", "eulerRotationZ", "scaleX", "scaleY", "scaleZ", "front", "back", "left", "right", "top", "bottom", "collection360", "station360", "takenAt"];
+            }];
+        };
+        readonly annotations: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_cdm";
+                    readonly externalId: "Cognite360ImageAnnotation";
+                    readonly version: "v1";
+                };
+                readonly properties: ["polygon", "formatVersion"];
+            }];
+        };
+        readonly object3d: {};
+        readonly assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                };
+                readonly properties: ["name", "description", "object3D"];
+            }];
+        };
+    };
+} {
   return {
     with: {
       images: {

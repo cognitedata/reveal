@@ -23,7 +23,7 @@ import { NodeOutlineColor } from '@reveal/cad-styling';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
-export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
+export const unitOrthographicCamera: THREE.OrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
 export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMaterial): THREE.Mesh {
   const renderTriangle = createRenderTriangle();
@@ -226,10 +226,10 @@ function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
 }
 
 export enum RenderLayer {
-  Back = RenderMode.Color,
-  InFront = RenderMode.Effects,
-  Ghost = RenderMode.Ghost,
-  PointCloud,
+  Back = RenderMode.Color satisfies number,
+  InFront = RenderMode.Effects satisfies number,
+  Ghost = RenderMode.Ghost satisfies number,
+  PointCloud = 8,
   Default = 0
 }
 

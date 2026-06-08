@@ -203,7 +203,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     this._needsRedraw = true;
   }
 
-  getModelTransformation(out = new Matrix4()): Matrix4 {
+  getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this._customTransform);
   }
 

@@ -43,7 +43,89 @@ export type GetImage360AnnotationsForInstanceResponse = Awaited<
   >
 >;
 
-function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef) {
+function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef): {
+    readonly with: {
+        readonly instance_object: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly and: [{
+                        readonly equals: {
+                            readonly property: ["node", "externalId"];
+                            readonly value: string;
+                        };
+                    }, {
+                        readonly equals: {
+                            readonly property: ["node", "space"];
+                            readonly value: string;
+                        };
+                    }];
+                };
+            };
+            readonly limit: 1;
+        };
+        readonly object3ds: {
+            readonly nodes: {
+                readonly from: "instance_object";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteVisualizable";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+        };
+        readonly annotation_edges: {
+            readonly edges: {
+                readonly from: "object3ds";
+                readonly direction: "outwards";
+                readonly filter: {
+                    readonly hasData: [{
+                        readonly type: "view";
+                        readonly space: "cdf_cdm";
+                        readonly externalId: "Cognite360ImageAnnotation";
+                        readonly version: "v1";
+                    }];
+                };
+            };
+            readonly limit: 10000;
+        };
+        readonly image_revisions: {
+            readonly nodes: {
+                readonly from: "annotation_edges";
+                readonly chainTo: "destination";
+                readonly direction: "outwards";
+            };
+            readonly limit: 10000;
+        };
+    }; readonly select: {
+        readonly image_revisions: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_cdm";
+                    readonly externalId: "Cognite360Image";
+                    readonly version: "v1";
+                };
+                readonly properties: ["translationX", "translationY", "translationZ", "eulerRotationX", "eulerRotationY", "eulerRotationZ", "scaleX", "scaleY", "scaleZ", "front", "back", "left", "right", "top", "bottom", "collection360", "station360", "takenAt"];
+            }];
+        };
+        readonly annotation_edges: {
+            readonly sources: [{
+                readonly source: {
+                    readonly type: "view";
+                    readonly space: "cdf_cdm";
+                    readonly externalId: "Cognite360ImageAnnotation";
+                    readonly version: "v1";
+                };
+                readonly properties: ["polygon", "formatVersion"];
+            }];
+        };
+    };
+} {
   return {
     with: {
       instance_object: {

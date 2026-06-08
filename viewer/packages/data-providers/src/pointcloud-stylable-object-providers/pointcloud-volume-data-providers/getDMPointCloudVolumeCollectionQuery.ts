@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import type { QueryRequest } from '@cognite/sdk';
+import type { QueryRequest, TableExpressionContainsAnyFilterV3 } from '@cognite/sdk';
 import {
   pointCloudVolumeFilter,
   POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
@@ -16,7 +16,82 @@ import {
 } from '../../utilities/constants';
 import type { DMInstanceRef } from '@reveal/utilities';
 
-const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
+const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef): {
+    readonly with: {
+        readonly pointCloudVolumes: {
+            readonly nodes: {
+                readonly filter: {
+                    readonly and: [{
+                        readonly hasData: [{
+                            readonly externalId: "CognitePointCloudVolume";
+                            readonly space: "cdf_cdm";
+                            readonly version: "v1";
+                            readonly type: "view";
+                        }];
+                    }, TableExpressionContainsAnyFilterV3];
+                };
+            };
+            readonly limit: 1000;
+        };
+        readonly object3D: {
+            readonly nodes: {
+                readonly from: "pointCloudVolumes";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CognitePointCloudVolume";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+                readonly direction: "outwards";
+            };
+            readonly limit: 1000;
+        };
+        readonly assets: {
+            readonly nodes: {
+                readonly from: "object3D";
+                readonly through: {
+                    readonly view: {
+                        readonly externalId: "CogniteVisualizable";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    readonly identifier: "object3D";
+                };
+            };
+            readonly limit: 1000;
+        };
+    }; readonly select: {
+        readonly pointCloudVolumes: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CognitePointCloudVolume";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["revisions", "volumeReferences", "volumeType", "volume", "object3D"];
+            }];
+        };
+        readonly object3D: {
+            readonly sources: [];
+        };
+        readonly assets: {
+            readonly sources: [{
+                readonly source: {
+                    readonly externalId: "CogniteAsset";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                readonly properties: ["name", "description", "object3D"];
+            }];
+        };
+    };
+} => {
   return {
     with: {
       pointCloudVolumes: {

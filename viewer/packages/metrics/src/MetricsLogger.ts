@@ -10,6 +10,7 @@ import pkg from '../../../package.json' with { type: 'json' };
 import type { TrackedEvents, EventProps } from './types';
 import { throttle } from 'lodash-es';
 import { getUserFingerprint } from './Fingerprint';
+import { DebouncedFuncLeading } from 'node_modules/@types/lodash';
 
 /**
  * Source: https://stackoverflow.com/a/2117523/167251
@@ -142,8 +143,8 @@ export class MetricsLogger {
    * @param nodeCount Number of nodes affected by the transform override
    * @param matrix  Matrix used to override the node transform
    */
-  static readonly trackCadNodeTransformOverridden = throttle(
-    (nodeCount: number, matrix: THREE.Matrix4) => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
+  static readonly trackCadNodeTransformOverridden: DebouncedFuncLeading<(nodeCount: number, matrix: THREE.Matrix4) => void> = throttle(
+    (nodeCount: number, matrix: THREE.Matrix4): void => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
     MetricsLogger.TrackCadNodeTransformOverriddenThrottleDelay
   );
 
@@ -167,8 +168,8 @@ export class MetricsLogger {
    * Track camera navigation events. Note that the metric is throttled and will only trigger
    * once per second.
    */
-  static readonly trackCameraNavigation = throttle(
-    (eventProps: EventProps) => MetricsLogger.trackCameraNavigationImpl(eventProps),
+  static readonly trackCameraNavigation: DebouncedFuncLeading<(eventProps: EventProps) => void> = throttle(
+    (eventProps: EventProps): void => MetricsLogger.trackCameraNavigationImpl(eventProps),
     MetricsLogger.TrackCameraNavigationThrottleDelay
   );
 

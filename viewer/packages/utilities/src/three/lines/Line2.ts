@@ -10,7 +10,7 @@ class Line2 extends LineSegments2 {
   public type = 'Line2';
   public readonly isLine2 = true;
 
-  constructor(geometry = new LineGeometry(), material = new LineMaterial({ color: Math.random() * 0xffffff })) {
+  constructor(geometry: LineGeometry = new LineGeometry(), material: LineMaterial = new LineMaterial({ color: Math.random() * 0xffffff })) {
     super(geometry, material);
   }
 }

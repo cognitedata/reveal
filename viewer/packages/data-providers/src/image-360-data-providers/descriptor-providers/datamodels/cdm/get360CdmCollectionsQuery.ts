@@ -11,7 +11,83 @@ import {
 import type { DMInstanceRef } from '@reveal/utilities';
 import { CORE_DM_IMAGE_360_PROPERTIES_LIST } from '../../../cdm/queryProperties';
 
-function createCollectionsQuery(instanceReferences: DMInstanceRef[]) {
+function createCollectionsQuery(instanceReferences: DMInstanceRef[]): {
+    with: {
+        image_collections: {
+            nodes: {
+                filter: {
+                    instanceReferences: DMInstanceRef[];
+                };
+            };
+            limit: number;
+        };
+        images: {
+            nodes: {
+                from: string;
+                through: {
+                    view: {
+                        readonly externalId: "Cognite360Image";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    identifier: string;
+                };
+            };
+            limit: number;
+        };
+        stations: {
+            nodes: {
+                from: string;
+                through: {
+                    view: {
+                        readonly externalId: "Cognite360Image";
+                        readonly space: "cdf_cdm";
+                        readonly version: "v1";
+                        readonly type: "view";
+                    };
+                    identifier: string;
+                };
+                direction: "outwards";
+            };
+            limit: number;
+        };
+    }; select: {
+        image_collections: {
+            sources: {
+                source: {
+                    readonly externalId: "Cognite360ImageCollection";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                properties: string[];
+            }[];
+        };
+        images: {
+            sources: {
+                source: {
+                    readonly externalId: "Cognite360Image";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                properties: ["translationX", "translationY", "translationZ", "eulerRotationX", "eulerRotationY", "eulerRotationZ", "scaleX", "scaleY", "scaleZ", "front", "back", "left", "right", "top", "bottom", "collection360", "station360", "takenAt"];
+            }[];
+        };
+        stations: {
+            sources: {
+                source: {
+                    readonly externalId: "Cognite360ImageStation";
+                    readonly space: "cdf_cdm";
+                    readonly version: "v1";
+                    readonly type: "view";
+                };
+                properties: string[];
+            }[];
+        };
+    };
+} {
   return {
     with: {
       image_collections: {
