@@ -7,7 +7,6 @@ import glsl from 'vite-plugin-glsl';
 import wasm from 'vite-plugin-wasm';
 import fs from 'fs';
 import path from 'path';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { tsAccessorDecoratorPlugin } from '../vite.config';
 
 function setTestFixture(testFixture: string | undefined): string | boolean {
@@ -38,7 +37,7 @@ export default defineConfig(_ => {
   return {
     root: __dirname,
 
-    plugins: [nodePolyfills({ include: ['process'] }), tsAccessorDecoratorPlugin(), glsl()],
+    plugins: [tsAccessorDecoratorPlugin(), glsl()],
 
     define: {
       CDF_ENV: cdfEnv
