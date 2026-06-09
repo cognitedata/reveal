@@ -5,7 +5,6 @@ import { Mock, It } from 'moq.ts';
 import { Image360Facade } from './Image360Facade';
 
 import type { Image360CollectionFactory } from './collection/Image360CollectionFactory';
-import type { DataSourceType } from 'api-entry-points/core';
 import type { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import type { Ray } from 'three';
 import { Matrix4, PerspectiveCamera, Vector2, Vector3 } from 'three';
@@ -16,6 +15,7 @@ import type { Image360AnnotationFilterOptions } from './annotation/types';
 
 import SeededRandom from 'random-seed';
 import { assert } from '@reveal/utilities/assert';
+import type { DataSourceType } from '@reveal/data-providers';
 
 type FacadeTestParams = {
   entityPosition?: Vector3;
