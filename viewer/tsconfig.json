@@ -23,14 +23,6 @@
     "resolveJsonModule": true,
     "rootDir": ".",
     "strict": true,
-    "paths": {
-      "@reveal/*": [
-        "./packages/*"
-      ],
-      "*": [
-        "./*"
-      ]
-    },
   },
   "include": [],
   "exclude": [],
