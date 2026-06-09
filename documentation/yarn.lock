@@ -228,12 +228,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:5.11.0":
-  version: 5.11.0
-  resolution: "@azure/msal-browser@npm:5.11.0"
+"@azure/msal-browser@npm:5.12.0":
+  version: 5.12.0
+  resolution: "@azure/msal-browser@npm:5.12.0"
   dependencies:
-    "@azure/msal-common": 16.6.2
-  checksum: 6e4d3b376008ee31aefdc0e4b6e2c0024cba198aee772ab29ae920dd775f28ee69aae2accf7d6bd00be323ca0ffbfcffbf659f3e2ccdb41f327582c3df846bd8
+    "@azure/msal-common": 16.7.0
+  checksum: 30c5867399755b152d27867db13d62733d8151b8ab72a7069035c606c6448ab2a83f5e9d0d4b8a94754d68cce46ef37e7ce663d03fd54fee6241ad7731cfe02a
   languageName: node
   linkType: hard
 
@@ -253,10 +253,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:16.6.2":
-  version: 16.6.2
-  resolution: "@azure/msal-common@npm:16.6.2"
-  checksum: fbbfb1519732a20e0de37ca672e58f69632f3a7f73f32d5e5dbfa256b337d8e0f1a91e21fc7aaccdb41af3f01e0544bea5638561d842882414b97c25e0957797
+"@azure/msal-common@npm:16.7.0":
+  version: 16.7.0
+  resolution: "@azure/msal-common@npm:16.7.0"
+  checksum: 37268e8d3de05319dde0242924a69e3bcf15d3b0e00d3ca9b5bd02c12bcfc09296963d07178bfb109fd2256d48f58baf73216f1b168e65018dd4eac469ef35a5
   languageName: node
   linkType: hard
 
@@ -1700,12 +1700,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 5.11.0
+    "@azure/msal-browser": 5.12.0
     "@codemirror/lang-javascript": 6.2.5
     "@docusaurus/core": 3.10.1
     "@docusaurus/preset-classic": 3.10.1
     "@docusaurus/remark-plugin-npm2yarn": 3.10.1
-    "@types/react": 19.2.16
+    "@types/react": 19.2.17
     "@uiw/codemirror-theme-material": 4.25.10
     "@uiw/react-codemirror": 4.25.10
     clsx: 2.1.1
@@ -4595,12 +4595,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:19.2.16":
-  version: 19.2.16
-  resolution: "@types/react@npm:19.2.16"
+"@types/react@npm:*, @types/react@npm:19.2.17":
+  version: 19.2.17
+  resolution: "@types/react@npm:19.2.17"
   dependencies:
     csstype: ^3.2.2
-  checksum: 916341127620a2109843af2d0c84a84019c2699b0f5201335cdb110d7df8ef7c50a1966c7677ef583a7b21b19656e47a31c6b53858e1e5efa644e5c11d441e77
+  checksum: 9704dc2001b6bcc32efc6e3fe144e18c411d5ee8a5c8dfe572535e44bd300424c4e7bddc9314299eeec28efb547816368b5c9851c93a3082e8ad1265786f3d31
   languageName: node
   linkType: hard
 
