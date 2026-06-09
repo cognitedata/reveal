@@ -24,7 +24,6 @@ import type { ModelIdentifier } from '@reveal/data-providers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
-  private readonly _materialManager: CadMaterialManager;
   private readonly _sectorRepository: SectorRepository;
   private readonly _modelIdentifier: ModelIdentifier;
 
@@ -59,7 +58,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
     this.name = 'Sector model';
-    this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
     this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
@@ -109,14 +107,12 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
     this._sectorScene = scene;
 
-    // Initialize mesh manager
     this._meshManager = new CadMeshManager(
       materialManager,
       model.modelIdentifier.revealInternalId,
       this.treeIndexToSectorsMap
     );
 
-    // Prepare renderables
     this.add(this._rootSector);
 
     this.matrixAutoUpdate = false;
@@ -134,7 +130,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._needsRedraw = false;
   }
 
-  // TODO: cleanup type
   get cadMaterial(): CadMaterial {
     return this._cadMaterial;
   }
@@ -161,11 +156,11 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   get clippingPlanes(): Plane[] {
-    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    return this._cadMaterial.clippingPlanesProvider.clippingPlanes;
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId, planes);
+    this._cadMaterial.clippingPlanesProvider.clippingPlanes = planes;
   }
 
   get cadModelMetadata(): CadModelMetadata {
@@ -299,7 +294,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
-    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    // this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
     this._geometryBatchingManager?.dispose();
 
     // Remove all mesh groups from the scene and dereference sectors in cache

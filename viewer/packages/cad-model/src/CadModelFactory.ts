@@ -58,7 +58,7 @@ export class CadModelFactory {
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
       const clippingPlanes = new BoundingBoxClipper(clipBox).clippingPlanes;
-      this._materialManager.setModelClippingPlanes(modelMetadata.modelIdentifier.revealInternalId, clippingPlanes);
+      cadModel.clippingPlanes = clippingPlanes;
     }
 
     return cadModel;
