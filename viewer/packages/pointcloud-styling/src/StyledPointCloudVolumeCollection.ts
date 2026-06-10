@@ -20,7 +20,6 @@ export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
   constructor(
     /**
      * The volume collection this StyledPointCloudVolumeCollection represents
-     * @deprecated
      */
     public objectCollection: T['pointCloudCollectionType'],
     /**
