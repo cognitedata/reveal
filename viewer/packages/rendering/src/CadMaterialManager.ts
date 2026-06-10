@@ -171,7 +171,7 @@ export class CadMaterialManager {
       );
     }
 
-    return materialWrapper.clippingPlanesProvider.clippingPlanes;
+    return materialWrapper.clippingPlanesProvider.getClippingPlanes();
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: symbol, defaultAppearance: NodeAppearance): void {
@@ -233,7 +233,7 @@ export class CadMaterialManager {
       );
     }
 
-    const clippingPlanes = [...materialWrapper.clippingPlanesProvider.clippingPlanes, ...this.clippingPlanes];
+    const clippingPlanes = [...materialWrapper.clippingPlanesProvider.getClippingPlanes(), ...this.clippingPlanes];
     const clippingPlanesAsUniform = clippingPlanes.map(
       p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
     );

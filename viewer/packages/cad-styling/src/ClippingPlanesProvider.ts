@@ -14,11 +14,11 @@ export class ClippingPlanesProvider {
     this._changed = new EventTrigger<(clippingPlanes: Plane[]) => void>();
   }
 
-  get clippingPlanes(): Plane[] {
+  getClippingPlanes(): Plane[] {
     return this._clippingPlanes;
   }
 
-  set clippingPlanes(clippingPlanes: Plane[]) {
+  setClippingPlanes(clippingPlanes: Plane[]): void {
     this._clippingPlanes = clippingPlanes;
     this._changed.fire(this._clippingPlanes);
   }

@@ -152,11 +152,11 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   get clippingPlanes(): Plane[] {
-    return this._cadMaterial.clippingPlanesProvider.clippingPlanes;
+    return this._cadMaterial.clippingPlanesProvider.getClippingPlanes();
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._cadMaterial.clippingPlanesProvider.clippingPlanes = planes;
+    this._cadMaterial.clippingPlanesProvider.setClippingPlanes(planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
