@@ -353,20 +353,22 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * a style previously, the previous style will be replaced by the new one.
    * @param objectCollection The object collection to assign a style to
    * @param appearance The style to assign to the object collection
+   * @param importance The importance of the styling, used for ordering styles to apply. Collections with higher importance gets applied later
    */
   assignStyledObjectCollection(
     objectCollection: T['pointCloudCollectionType'],
-    appearance: PointCloudAppearance
+    appearance: PointCloudAppearance,
+    importance: number = 0
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
     const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
     if (index !== -1) {
       this._styledVolumeCollections[index].style = fullAppearance;
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index], importance);
     } else {
       const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
       this._styledVolumeCollections.push(newObjectCollection);
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection, importance);
     }
   }
 

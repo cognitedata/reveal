@@ -15,12 +15,16 @@ import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import { sortBy } from 'lodash-es';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
-  private readonly _styledObjectSets: StyledPointCloudVolumeCollection<DataSourceType>[] = [];
+  private readonly _styledObjectSets: {
+    collection: StyledPointCloudVolumeCollection<DataSourceType>;
+    importance: number;
+  }[] = [];
 
   private _defaultAppearance: CompletePointCloudAppearance = { ...DefaultPointCloudAppearance };
 
@@ -100,7 +104,7 @@ export class PointCloudObjectAppearanceTexture {
     if (this._needsReconstruction) {
       this.resetTexture();
       for (const styledCollection of this._styledObjectSets) {
-        this.setObjectCollectionStyle(styledCollection);
+        this.setObjectCollectionStyle(styledCollection.collection);
       }
 
       this._objectStyleTexture.needsUpdate = true;
@@ -108,20 +112,27 @@ export class PointCloudObjectAppearanceTexture {
     }
   }
 
-  assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
-    const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
+  assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>, importance: number): void {
+    const ind = this._styledObjectSets.findIndex(
+      s => s.collection.objectCollection === styledCollection.objectCollection
+    );
 
     if (ind !== -1) {
-      this._styledObjectSets[ind].style = styledCollection.style;
+      this._styledObjectSets[ind].collection.style = styledCollection.style;
+      this._styledObjectSets[ind].importance = importance;
     } else {
-      this._styledObjectSets.push(styledCollection);
+      this._styledObjectSets.push({ importance, collection: styledCollection });
     }
+
+    this._styledObjectSets.sort(
+      ({ importance: importance0 }, { importance: importance1 }) => importance0 - importance1
+    );
 
     this._needsReconstruction = true;
   }
 
   removeStyledObjectSet(collection: PointCloudAnnotationVolumeCollection): void {
-    const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
+    const ind = this._styledObjectSets.findIndex(s => s.collection.objectCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);
     }
