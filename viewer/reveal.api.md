@@ -26,7 +26,6 @@ import { Plane } from 'three';
 import { Quaternion } from 'three';
 import { Raycaster } from 'three';
 import { Texture } from 'three';
-import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
 import { WebGLRenderer } from 'three';
@@ -93,14 +92,14 @@ export class AssetNodeCollection extends NodeCollection {
     clear(): void;
     executeFilter(filter: {
         assetId?: number;
-        boundingBox?: THREE.Box3;
+        boundingBox?: Box3;
     }): Promise<void>;
     // (undocumented)
     getAreas(): AreaCollection;
     // (undocumented)
     getFilter(): {
         assetId?: number | undefined;
-        boundingBox?: THREE.Box3 | undefined;
+        boundingBox?: Box3 | undefined;
     } | undefined;
     // (undocumented)
     getIndexSet(): IndexSet;
@@ -115,8 +114,8 @@ export type AxisBoxCompassConfig = {
     ringLabel?: string;
     labelDelta?: number;
     fontSize?: number;
-    fontColor?: THREE.Color;
-    tickColor?: THREE.Color;
+    fontColor?: Color;
+    tickColor?: Color;
 };
 
 // @public
@@ -139,10 +138,10 @@ export type AxisBoxConfig = {
 export type AxisBoxFaceConfig = {
     label?: string;
     fontSize?: number;
-    fontColor?: THREE.Color;
+    fontColor?: Color;
     outlineSize?: number;
-    outlineColor?: THREE.Color;
-    faceColor?: THREE.Color;
+    outlineColor?: Color;
+    faceColor?: Color;
 };
 
 // @beta
@@ -238,9 +237,9 @@ export interface BlobOutputMetadata {
 
 // @public (undocumented)
 export class BoundingBoxClipper {
-    constructor(box?: THREE.Box3);
+    constructor(box?: Box3);
     // (undocumented)
-    get clippingPlanes(): THREE.Plane[];
+    get clippingPlanes(): Plane[];
     set maxX(x: number);
     // (undocumented)
     get maxX(): number;
@@ -368,8 +367,8 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
 // @public
 export interface CdfModelNodeCollectionDataProvider {
-    getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
-    getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+    getCdfToDefaultModelTransformation(out?: Matrix4): Matrix4;
+    getModelTransformation(out?: Matrix4): Matrix4;
     modelId: number;
     nodeCount: number;
     // (undocumented)
@@ -461,7 +460,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // @beta
     addCustomObject(customObject: ICustomObject): void;
     addModel(options: AddModelOptions<DataSourceT>): Promise<CogniteModel<DataSourceT>>;
-    addObject3D(object: THREE.Object3D): void;
+    addObject3D(object: Object3D): void;
     addPointCloudModel(options: AddModelOptions<DataSourceT>): Promise<CognitePointCloudModel<DataSourceT>>;
     get cadBudget(): CadModelBudget;
     set cadBudget(budget: CadModelBudget);
@@ -471,14 +470,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     canDoImage360Action(action: Image360Action): boolean;
     get canvas(): HTMLCanvasElement;
     // @beta
-    createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
+    createCustomObjectIntersectInput(pixelCoords: Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
-    findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined;
-    fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
+    findBestNext360ImageEntity(clickedWorldPosition: Vector3): Image360WithCollection<DataSourceT> | undefined;
+    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
     fitCameraToVisualSceneBoundingBox(duration?: number): void;
@@ -486,24 +485,24 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     get360ImageCollections(): Image360Collection<DataSourceT>[];
     getActive360ImageInfo(): Image360WithCollection<DataSourceT> | undefined;
     // @beta
-    getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2, options?: {
+    getAnyIntersectionFromPixel(pixelCoords: Vector2, options?: {
         stopOnHitting360Icon?: boolean;
         predicate?: (customObject: ICustomObject) => boolean;
     }): Promise<AnyIntersection<DataSourceT> | undefined>;
     // @deprecated
-    getClippingPlanes(): THREE.Plane[];
-    getGlobalClippingPlanes(): THREE.Plane[];
+    getClippingPlanes(): Plane[];
+    getGlobalClippingPlanes(): Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>>;
-    getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
-    getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
+    getNormalizedPixelCoordinates(pixelCoords: Vector2): Vector2;
+    getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): Vector2;
     getResolutionOptions(): ResolutionOptions;
     // @beta
-    getSceneBoundingBox(): THREE.Box3;
+    getSceneBoundingBox(): Box3;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
     getViewState(): ViewerState;
     // @beta
-    getVisualSceneBoundingBox(): THREE.Box3;
+    getVisualSceneBoundingBox(): Box3;
     // @beta
     image360Action(action: Image360Action): Promise<void>;
     loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
@@ -540,21 +539,21 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // @beta
     removeCustomObject(customObject: ICustomObject): void;
     removeModel(model: CogniteModel<DataSourceT>): void;
-    removeObject3D(object: THREE.Object3D): void;
+    removeObject3D(object: Object3D): void;
     get renderParameters(): RenderParameters;
     requestRedraw(): void;
     setBackgroundColor(backgroundColor: {
-        color?: THREE.Color;
+        color?: Color;
         alpha?: number;
     }): void;
     setCameraManager(cameraManager: CameraManager): void;
     // @deprecated
-    setClippingPlanes(clippingPlanes: THREE.Plane[]): void;
-    setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void;
+    setClippingPlanes(clippingPlanes: Plane[]): void;
+    setGlobalClippingPlanes(clippingPlanes: Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
-    worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null;
+    worldToScreen(point: Vector3, normalize?: boolean): Vector2 | null;
 }
 
 // @public
@@ -605,23 +604,23 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance?: number): void;
     dispose(): void;
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
-    getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3>;
-    getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE.Box3): Promise<THREE.Box3>;
-    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE.Box3[]>;
+    getBoundingBoxByNodeId(nodeId: number, box?: Box3): Promise<Box3>;
+    getBoundingBoxByTreeIndex(treeIndex: number, box?: Box3): Promise<Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
-    getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+    getCdfToDefaultModelTransformation(out?: Matrix4): Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
-    getModelBoundingBox(outBoundingBox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3;
-    getModelClippingPlanes(): THREE.Plane[];
-    getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+    getModelBoundingBox(outBoundingBox?: Box3, restrictToMostGeometry?: boolean): Box3;
+    getModelClippingPlanes(): Plane[];
+    getModelTransformation(out?: Matrix4): Matrix4;
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
     lockTreeIndices(treeIndices: number[]): void;
-    mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
+    mapBoxFromCdfToModelCoordinates(box: Box3, out?: Box3): Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
-    mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3;
+    mapPointFromCdfToModelCoordinates(point: Vector3, out?: Vector3): Vector3;
     mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId>;
     mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]>;
     readonly modelId: number;
@@ -633,10 +632,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren?: boolean): Promise<number>;
     readonly revisionId: number;
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
-    setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void;
-    setModelTransformation(matrix: THREE.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4, boundingBox?: THREE.Box3, space?: 'model' | 'world'): void;
-    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE.Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
+    setModelClippingPlanes(clippingPlanes: Plane[]): void;
+    setModelTransformation(matrix: Matrix4): void;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: Matrix4, boundingBox?: Box3, space?: 'model' | 'world'): void;
+    setNodeTransformByTreeIndex(treeIndex: number, transform: Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;
         appearance: NodeAppearance;
@@ -658,22 +657,22 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
-    getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+    getCdfToDefaultModelTransformation(out?: Matrix4): Matrix4;
     getClasses(): Array<{
         name: string;
         code: number | WellKnownAsprsPointClassCodes;
-        color: THREE.Color;
+        color: Color;
     }>;
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
-    getModelBoundingBox(outBoundingBox?: THREE.Box3): THREE.Box3;
-    getModelClippingPlanes(): THREE.Plane[];
-    getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
-    getPointsByBoundingBox(box: THREE.Box3): THREE.Vector3[];
+    getModelBoundingBox(outBoundingBox?: Box3): Box3;
+    getModelClippingPlanes(): Plane[];
+    getModelTransformation(out?: Matrix4): Matrix4;
+    getPointsByBoundingBox(box: Box3): Vector3[];
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
-    mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
-    mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3;
+    mapBoxFromCdfToModelCoordinates(box: Box3, out?: Box3): Box3;
+    mapPointFromCdfToModelCoordinates(point: Vector3, out?: Vector3): Vector3;
     // @deprecated
     readonly modelId: number;
     readonly modelIdentifier: T['modelIdentifier'];
@@ -690,8 +689,8 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     readonly revisionId: number;
     setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void;
     setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void;
-    setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void;
-    setModelTransformation(transformationMatrix: THREE.Matrix4): void;
+    setModelClippingPlanes(clippingPlanes: Plane[]): void;
+    setModelTransformation(transformationMatrix: Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
     get stylableObjects(): PointCloudObjectMetadata<T>[];
@@ -921,16 +920,16 @@ export class DefaultCameraManager implements CameraManager {
     // (undocumented)
     dispose(): void;
     // (undocumented)
-    fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor?: number): void;
+    fitCameraToBoundingBox(box: Box3, duration?: number, radiusFactor?: number): void;
     // (undocumented)
-    getCamera(): THREE.PerspectiveCamera;
+    getCamera(): PerspectiveCamera;
     getCameraControlsOptions(): CameraControlsOptions;
     // (undocumented)
     getCameraState(): Required<CameraState>;
     getComboControlsOptions(): Readonly<ComboControlsOptions>;
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
-    moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number, keyboardNavigationEnabled?: boolean): void;
+    moveCameraTo(position: Vector3, target: Vector3, duration?: number, keyboardNavigationEnabled?: boolean): void;
     // (undocumented)
     off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     // (undocumented)
@@ -939,7 +938,7 @@ export class DefaultCameraManager implements CameraManager {
     setCameraState(state: CameraState): void;
     setComboControlsOptions(options: Partial<ComboControlsOptions>): void;
     // (undocumented)
-    update(deltaTime: number, boundingBox: THREE.Box3): void;
+    update(deltaTime: number, boundingBox: Box3): void;
 }
 
 // @public
@@ -1173,10 +1172,10 @@ export type GeometryFilter = {
 };
 
 // @public (undocumented)
-export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): THREE.Vector2;
+export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): Vector2;
 
 // @public
-export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: number, width: number, height: number): THREE.Vector2;
+export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: number, width: number, height: number): Vector2;
 
 // @beta
 export function getWheelEventDelta(event: WheelEvent): number;
@@ -1202,20 +1201,20 @@ export type HtmlOverlayOptions = {
 };
 
 // @public
-export type HtmlOverlayPositionUpdatedDelegate = (element: HTMLElement, position2D: THREE.Vector2, position3D: THREE.Vector3, distanceToCamera: number, userData: any) => void;
+export type HtmlOverlayPositionUpdatedDelegate = (element: HTMLElement, position2D: Vector2, position3D: Vector3, distanceToCamera: number, userData: any) => void;
 
 // @public
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer<DataSourceType>, options?: HtmlOverlayToolOptions);
-    add(htmlElement: HTMLElement, position3D: THREE.Vector3, options?: HtmlOverlayOptions): void;
+    add(htmlElement: HTMLElement, position3D: Vector3, options?: HtmlOverlayOptions): void;
     clear(): void;
     // @override
     dispose(): void;
     get elements(): {
         element: HTMLElement;
-        position3D: THREE.Vector3;
+        position3D: Vector3;
     }[];
-    forceUpdate(customCamera?: THREE.PerspectiveCamera): void;
+    forceUpdate(customCamera?: PerspectiveCamera): void;
     remove(htmlElement: HTMLElement): void;
     visible(enable: boolean): void;
 }
@@ -1598,7 +1597,7 @@ export type MeasurementStartedDelegate = () => void;
 // @public
 export class MeasurementTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer<DataSourceType>, options?: MeasurementOptions);
-    addMeasurement(startPoint: THREE.Vector3, endPoint: THREE.Vector3): Measurement;
+    addMeasurement(startPoint: Vector3, endPoint: Vector3): Measurement;
     dispose(): void;
     enterMeasurementMode(): void;
     exitMeasurementMode(): void;
@@ -1620,7 +1619,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     removeMeasurement(measurement: Measurement): void;
     setLineOptions(options: MeasurementOptions): void;
     setMeasurementLabelsVisible(enable: boolean): void;
-    updateLineColor(measurement: Measurement, color: THREE.Color): void;
+    updateLineColor(measurement: Measurement, color: Color): void;
     updateLineWidth(measurement: Measurement, lineWidth: number): void;
     visible(enable: boolean): void;
 }
@@ -1641,11 +1640,11 @@ export interface ModelIdentifier {
 export interface ModelMetadataProvider {
     // (undocumented)
     getModelCamera(identifier: ModelIdentifier): Promise<{
-        position: THREE.Vector3;
-        target: THREE.Vector3;
+        position: Vector3;
+        target: Vector3;
     } | undefined>;
     // (undocumented)
-    getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE.Matrix4>;
+    getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<Matrix4>;
     // (undocumented)
     getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
     // (undocumented)
@@ -1744,7 +1743,7 @@ export interface NodesApiClient {
         treeIndex: number;
         subtreeSize: number;
     }[]>;
-    getBoundingBoxesByNodeIds(modelId: CogniteInternalId, revisionId: CogniteInternalId, nodeIds: CogniteInternalId[]): Promise<THREE.Box3[]>;
+    getBoundingBoxesByNodeIds(modelId: CogniteInternalId, revisionId: CogniteInternalId, nodeIds: CogniteInternalId[]): Promise<Box3[]>;
     mapNodeIdsToTreeIndices(modelId: CogniteInternalId, revisionId: CogniteInternalId, nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapTreeIndicesToNodeIds(modelId: CogniteInternalId, revisionId: CogniteInternalId, treeIndices: number[]): Promise<CogniteInternalId[]>;
 }
@@ -1847,7 +1846,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 // @public
 export type Overlay3DToolParameters = {
     maxPointSize?: number;
-    defaultOverlayColor: THREE.Color;
+    defaultOverlayColor: Color;
 };
 
 // @public
@@ -1861,9 +1860,9 @@ export interface OverlayCollection<ContentType> {
 
 // @public
 export type OverlayCollectionOptions = {
-    defaultOverlayColor?: THREE.Color;
-    overlayTexture?: THREE.Texture;
-    overlayTextureMask?: THREE.Texture;
+    defaultOverlayColor?: Color;
+    overlayTexture?: Texture;
+    overlayTextureMask?: Texture;
 };
 
 // @public
@@ -2038,7 +2037,7 @@ export function registerNodeCollectionType<T extends NodeCollection>(nodeCollect
 // @public
 export type RelativePosition = {
     corner: Corner;
-    padding: THREE.Vector2;
+    padding: Vector2;
 };
 
 // @public
@@ -2139,8 +2138,8 @@ export class TreeIndexNodeCollection extends NodeCollection {
     constructor(treeIndexSet?: IndexSet);
     constructor(treeIndices?: Iterable<number>);
     constructor(treeIndexRange?: NumericRange);
-    addAreaPoints(points: THREE.Vector3[]): void;
-    addAreas(areas: THREE.Box3[]): void;
+    addAreaPoints(points: Vector3[]): void;
+    addAreas(areas: Box3[]): void;
     // (undocumented)
     static readonly classToken = "TreeIndexNodeCollection";
     clear(): void;
