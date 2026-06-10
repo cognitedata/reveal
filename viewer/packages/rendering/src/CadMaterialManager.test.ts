@@ -104,8 +104,8 @@ describe('CadMaterialManager', () => {
     manager.addModelMaterials(modelIdentifier2, cadMaterial2);
 
     // Act
-    cadMaterial1.clippingPlanesProvider.clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
-    cadMaterial2.clippingPlanesProvider.clippingPlanes = [new THREE.Plane()];
+    cadMaterial1.clippingPlanesProvider.setClippingPlanes([new THREE.Plane(), new THREE.Plane()]);
+    cadMaterial2.clippingPlanesProvider.setClippingPlanes([new THREE.Plane()]);
 
     // Assert
     for (const material of iterateMaterials(manager.getModelMaterials(modelIdentifier1))) {

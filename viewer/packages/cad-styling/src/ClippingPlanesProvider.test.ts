@@ -14,20 +14,20 @@ describe(ClippingPlanesProvider, () => {
   });
 
   test('initializes with empty clipping planes', () => {
-    expect(provider.clippingPlanes).toEqual([]);
+    expect(provider.getClippingPlanes()).toEqual([]);
   });
 
   test('setter updates clipping planes', () => {
     const planes = [new Plane(), new Plane()];
-    provider.clippingPlanes = planes;
-    expect(provider.clippingPlanes).toBe(planes);
+    provider.setClippingPlanes(planes);
+    expect(provider.getClippingPlanes()).toBe(planes);
   });
 
   test('setter fires changed event with new planes', () => {
     const listener = vi.fn();
     const planes = [new Plane()];
     provider.on('changed', listener);
-    provider.clippingPlanes = planes;
+    provider.setClippingPlanes(planes);
     expect(listener).toHaveBeenCalledWith(planes);
   });
 
@@ -35,7 +35,7 @@ describe(ClippingPlanesProvider, () => {
     const listener = vi.fn();
     provider.on('changed', listener);
     provider.off('changed', listener);
-    provider.clippingPlanes = [new Plane()];
+    provider.setClippingPlanes([new Plane()]);
     expect(listener).not.toHaveBeenCalled();
   });
 
@@ -43,7 +43,7 @@ describe(ClippingPlanesProvider, () => {
     const listener = vi.fn();
     provider.on('changed', listener);
     provider.dispose();
-    provider.clippingPlanes = [new Plane()];
+    provider.setClippingPlanes([new Plane()]);
     expect(listener).not.toHaveBeenCalled();
   });
 });
