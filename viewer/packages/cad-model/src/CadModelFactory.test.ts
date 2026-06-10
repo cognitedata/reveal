@@ -74,17 +74,14 @@ describe(CadModelFactory.name, () => {
   });
 
   test('createModel() sets model clipping planes when a clip box is set', async () => {
-    const setModelClippingPlanesSpy = vi.spyOn(materialManager, 'setModelClippingPlanes');
-
     const geometryFilter: GeometryFilter = {
       boundingBox: new THREE.Box3(new THREE.Vector3(-1, -2, -3), new THREE.Vector3(4, 5, 6)),
       isBoundingBoxInModelCoordinates: true
     };
 
     const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
-    factory.createModel(modelMetadata, geometryFilter);
+    const cadNode = factory.createModel(modelMetadata, geometryFilter);
 
-    expect(setModelClippingPlanesSpy).toHaveBeenCalledTimes(1);
-    expect(setModelClippingPlanesSpy).toHaveBeenCalledWith(expect.any(Symbol), expect.objectContaining({ length: 6 }));
+    expect(cadNode.clippingPlanes.length).equals(6);
   });
 });

@@ -9,7 +9,7 @@ import type { SectorScene, CadModelMetadata, WantedSector, ConsumedSector } from
 import { RootSectorNode } from '@reveal/cad-parsers';
 import type { SectorRepository } from '@reveal/sector-loader';
 import type { ParsedGeometry } from '@reveal/sector-parser';
-import type { CadMaterialManager, StyledTreeIndexSets } from '@reveal/rendering';
+import type { StyledTreeIndexSets } from '@reveal/rendering';
 import { setModelRenderLayers, createCadMaterial, type CadMaterial } from '@reveal/rendering';
 
 import type { Plane, Object3DEventMap } from 'three';
@@ -55,7 +55,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public readonly type = 'CadNode';
 
-  constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
+  constructor(model: CadModelMetadata, sectorRepository: SectorRepository) {
     super();
     this.name = 'Sector model';
     this._sectorRepository = sectorRepository;
@@ -107,11 +107,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
     this._sectorScene = scene;
 
-    this._meshManager = new CadMeshManager(
-      materialManager,
-      model.modelIdentifier.revealInternalId,
-      this.treeIndexToSectorsMap
-    );
+    this._meshManager = new CadMeshManager(this._cadMaterial, this.treeIndexToSectorsMap);
 
     this.add(this._rootSector);
 
