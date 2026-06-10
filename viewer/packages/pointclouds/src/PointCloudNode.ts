@@ -12,14 +12,10 @@ import type { PointSizeType } from '@reveal/rendering';
 import { PointColorType, PointShape } from '@reveal/rendering';
 
 import type { DataSourceType, PointCloudObject, PointCloudObjectMetadata } from '@reveal/data-providers';
-import {
-  isClassicPointCloudVolumeObject,
-  isDMPointCloudVolume,
-  isDMPointCloudVolumeObject
-} from '@reveal/data-providers';
+import { isClassicPointCloudVolumeObject, isDMPointCloudVolumeObject } from '@reveal/data-providers';
 import { ClassificationHandler } from './ClassificationHandler';
 
-import { isPointCloudObjectCollection, type CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+import { type CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import type { Color } from 'three';
 import { Matrix4, Group, Box3, Vector3, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';

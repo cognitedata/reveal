@@ -5,11 +5,7 @@
 import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
-import type {
-  PointCloudAnnotationVolumeCollection,
-  CompletePointCloudAppearance,
-  StyledPointCloudVolumeCollection
-} from '@reveal/pointcloud-styling';
+import type { CompletePointCloudAppearance, StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 import { DefaultPointCloudAppearance, isPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import type { DataSourceType } from '@reveal/data-providers';
