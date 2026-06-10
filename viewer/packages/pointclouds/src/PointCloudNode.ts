@@ -302,10 +302,8 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   removeStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
-    if (isPointCloudObjectCollection(styledCollection.objectCollection)) {
-      this._octree.material.objectAppearanceTexture.removeStyledObjectSet(styledCollection.objectCollection);
-      this._needsRedraw = true;
-    }
+    this._octree.material.objectAppearanceTexture.removeStyledObjectSet(styledCollection.objectCollection);
+    this._needsRedraw = true;
   }
 
   removeAllStyledPointCloudObjects(): void {

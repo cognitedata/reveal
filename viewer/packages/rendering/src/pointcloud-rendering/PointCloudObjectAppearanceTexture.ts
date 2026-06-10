@@ -130,7 +130,7 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: PointCloudAnnotationVolumeCollection): void {
+  removeStyledObjectSet(collection: StyledPointCloudVolumeCollection<DataSourceType>['objectCollection']): void {
     const ind = this._styledObjectSets.findIndex(s => s.collection.objectCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);
