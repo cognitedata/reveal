@@ -4,7 +4,8 @@
  * License in LICENSE.potree
  */
 
-import * as THREE from 'three';
+import type { TypedArray } from 'three';
+import { Box3, BufferAttribute, BufferGeometry, Vector3 } from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import type { ILoader } from './ILoader';
@@ -24,7 +25,7 @@ import type { EptBinaryDecoderWorker } from '../workers/eptBinaryDecoder.worker'
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjectsWithBox: [SerializableStylableObject, THREE.Box3][];
+  private readonly _stylableObjectsWithBox: [SerializableStylableObject, Box3][];
 
   static readonly WORKER_POOL = new WorkerPool(8, EptDecoderWorker);
 
@@ -80,7 +81,7 @@ export class EptBinaryLoader implements ILoader {
     const tightBoundingBox = createTightBoundingBox(parsedData);
 
     const numPoints = parsedData.numPoints;
-    node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...parsedData.mean));
+    node.doneLoading(geometry, tightBoundingBox, numPoints, new Vector3(...parsedData.mean));
   }
 
   async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData | Error> {
@@ -113,18 +114,18 @@ export class EptBinaryLoader implements ILoader {
   }
 }
 
-function createTightBoundingBox(data: ParsedEptData): THREE.Box3 {
-  return new THREE.Box3(
-    new THREE.Vector3().fromArray(data.tightBoundingBox.min),
-    new THREE.Vector3().fromArray(data.tightBoundingBox.max)
+function createTightBoundingBox(data: ParsedEptData): Box3 {
+  return new Box3(
+    new Vector3().fromArray(data.tightBoundingBox.min),
+    new Vector3().fromArray(data.tightBoundingBox.max)
   );
 }
 
-function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
-  const geometry = new THREE.BufferGeometry();
+function createGeometryFromEptData(data: ParsedEptData): BufferGeometry {
+  const geometry = new BufferGeometry();
 
   function addAttributeIfPresent(
-    typedArrayConstructor: { new (data: ArrayBuffer): THREE.TypedArray },
+    typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
     name: string,
     componentCount: number,
     data?: ArrayBuffer | undefined,
@@ -132,7 +133,7 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   ): void {
     if (data) {
       const typedArray = new typedArrayConstructor(data);
-      geometry.setAttribute(name, new THREE.BufferAttribute(typedArray, componentCount, normalized));
+      geometry.setAttribute(name, new BufferAttribute(typedArray, componentCount, normalized));
     }
   }
 
@@ -143,7 +144,7 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   addAttributeIfPresent(Uint8Array, 'classification', 1, data.classification);
   addAttributeIfPresent(Uint16Array, 'objectId', 1, data.objectId);
 
-  (geometry.attributes.indices as THREE.BufferAttribute).normalized = true;
+  (geometry.attributes.indices as BufferAttribute).normalized = true;
 
   return geometry;
 }

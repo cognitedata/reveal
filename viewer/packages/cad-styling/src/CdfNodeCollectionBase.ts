@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3 } from 'three';
 import type { ListResponse, Node3D } from '@cognite/sdk';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import type { AreaCollection } from './prioritized/AreaCollection';
@@ -41,7 +41,7 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
       nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
       async nodes =>
         nodes.map(node => {
-          const bounds = new THREE.Box3();
+          const bounds = new Box3();
           if (node.boundingBox !== undefined) {
             toThreeBox3(node.boundingBox, bounds);
             bounds.applyMatrix4(totalModelTransformation);

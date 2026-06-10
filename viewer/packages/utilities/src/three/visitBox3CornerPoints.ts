@@ -1,10 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { Box3 } from 'three';
+import { Vector3, Vector4 } from 'three';
 
 const visitBox3CornerPointsVars = {
-  tmpVector: new THREE.Vector3()
+  tmpVector: new Vector3()
 };
 
 /**
@@ -14,7 +15,7 @@ const visitBox3CornerPointsVars = {
  * that will be changed later, so if this is to be stored
  * it must be cloned first.
  */
-export function visitBox3CornerPoints(box: THREE.Box3, callback: (corner: THREE.Vector3) => void): void {
+export function visitBox3CornerPoints(box: Box3, callback: (corner: Vector3) => void): void {
   const { tmpVector } = visitBox3CornerPointsVars;
   tmpVector.set(box.min.x, box.min.y, box.min.z); // 000
   callback(tmpVector);
@@ -34,15 +35,15 @@ export function visitBox3CornerPoints(box: THREE.Box3, callback: (corner: THREE.
   callback(tmpVector);
 }
 
-export function getBox3CornerPoints(box: THREE.Box3): THREE.Vector4[] {
+export function getBox3CornerPoints(box: Box3): Vector4[] {
   return [
-    new THREE.Vector4(box.min.x, box.min.y, box.min.z),
-    new THREE.Vector4(box.min.x, box.min.y, box.max.z),
-    new THREE.Vector4(box.min.x, box.max.y, box.min.z),
-    new THREE.Vector4(box.min.x, box.max.y, box.max.z),
-    new THREE.Vector4(box.max.x, box.min.y, box.min.z),
-    new THREE.Vector4(box.max.x, box.min.y, box.max.z),
-    new THREE.Vector4(box.max.x, box.max.y, box.min.z),
-    new THREE.Vector4(box.max.x, box.max.y, box.max.z)
+    new Vector4(box.min.x, box.min.y, box.min.z),
+    new Vector4(box.min.x, box.min.y, box.max.z),
+    new Vector4(box.min.x, box.max.y, box.min.z),
+    new Vector4(box.min.x, box.max.y, box.max.z),
+    new Vector4(box.max.x, box.min.y, box.min.z),
+    new Vector4(box.max.x, box.min.y, box.max.z),
+    new Vector4(box.max.x, box.max.y, box.min.z),
+    new Vector4(box.max.x, box.max.y, box.max.z)
   ];
 }

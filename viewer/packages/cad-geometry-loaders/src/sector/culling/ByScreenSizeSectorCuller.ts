@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Plane } from 'three';
+import { Box3, Matrix4 } from 'three';
 
 import type { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
@@ -136,7 +137,7 @@ function takeSectorsWithinBudget(
 }
 
 const sortSectorsByPriorityVars = {
-  transformedBounds: new THREE.Box3()
+  transformedBounds: new Box3()
 };
 
 function sortSectorsByPriority(
@@ -176,8 +177,8 @@ function sortSectorsByPriority(
  */
 function determineCandidateSectorsByModel(
   cadModelsMetadata: CadModelMetadata[],
-  cameraWorldInverseMatrix: THREE.Matrix4,
-  cameraProjectionMatrix: THREE.Matrix4,
+  cameraWorldInverseMatrix: Matrix4,
+  cameraProjectionMatrix: Matrix4,
   input: DetermineSectorsInput
 ) {
   return cadModelsMetadata.reduce((result, model, i) => {
@@ -213,17 +214,17 @@ function initializeTakenSectorsAndWeightFunctions(
  * Determines candidate sectors, i.e.
  */
 function determineCandidateSectors(
-  cameraWorldInverseMatrix: THREE.Matrix4,
-  cameraProjectionMatrix: THREE.Matrix4,
-  modelMatrix: THREE.Matrix4,
+  cameraWorldInverseMatrix: Matrix4,
+  cameraProjectionMatrix: Matrix4,
+  modelMatrix: Matrix4,
   modelScene: SectorScene,
-  clippingPlanes: THREE.Plane[]
+  clippingPlanes: Plane[]
 ): SectorMetadata[] {
   if (modelScene.version !== 9) {
     throw new Error(`Expected model version 9, but got ${modelScene.version}`);
   }
 
-  const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
+  const transformedCameraMatrixWorldInverse = new Matrix4();
   transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
   const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
 
@@ -231,7 +232,7 @@ function determineCandidateSectors(
     return sectors;
   }
 
-  const bounds = new THREE.Box3();
+  const bounds = new Box3();
   return sectors.filter(sector => {
     bounds.copy(sector.subtreeBoundingBox);
     bounds.applyMatrix4(modelMatrix);
@@ -247,7 +248,7 @@ function determineCandidateSectors(
 function determineSectorPriority(
   weightFunctions: WeightFunctionsHelper,
   sector: SectorMetadata,
-  transformedBounds: THREE.Box3,
+  transformedBounds: Box3,
   prioritizedAreas: PrioritizedArea[]
 ) {
   const levelWeightImportance = 2.0;

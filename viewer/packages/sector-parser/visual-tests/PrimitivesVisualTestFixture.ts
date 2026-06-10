@@ -1,7 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import type { Matrix4, Scene, Vector3 } from 'three';
+import { Group, InstancedMesh } from 'three';
 import type { Primitive, PrimitiveName } from '../../../test-utilities/src/primitives';
 import { createPrimitiveInterleavedGeometry, getCollectionType } from '../../../test-utilities/src/primitives';
 import type { SimpleTestFixtureComponents } from '../../../visual-tests';
@@ -26,11 +27,11 @@ export abstract class PrimitivesVisualTestFixture extends SimpleVisualTestFixtur
     const materials = getMaterialsMap(this._primitives.length);
 
     const generalCylinderMaterial = materials.get(getCollectionType(this._primitiveName))!;
-    const mesh = new THREE.InstancedMesh(geometry, generalCylinderMaterial, this._primitives.length);
+    const mesh = new InstancedMesh(geometry, generalCylinderMaterial, this._primitives.length);
     mesh.frustumCulled = false;
     mesh.onBeforeRender = () => {
-      (generalCylinderMaterial.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-      (generalCylinderMaterial.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+      (generalCylinderMaterial.uniforms.inverseModelMatrix?.value as Matrix4)?.copy(mesh.matrixWorld).invert();
+      (generalCylinderMaterial.uniforms.cameraPosition?.value as Vector3)?.copy(camera.position);
     };
 
     group.add(mesh);
@@ -41,8 +42,8 @@ export abstract class PrimitivesVisualTestFixture extends SimpleVisualTestFixtur
     return Promise.resolve();
   }
 
-  private initializeGroup(scene: THREE.Scene) {
-    const group = new THREE.Group();
+  private initializeGroup(scene: Scene) {
+    const group = new Group();
     group.frustumCulled = false;
     group.applyMatrix4(this.cadFromCdfToThreeMatrix);
     scene.add(group);

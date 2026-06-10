@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
 
@@ -47,7 +47,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
-    const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
+    const inverseModelMatrix = new Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
     return {
@@ -85,11 +85,11 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   }
 }
 
-function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4): THREE.Matrix4 {
+function createScaleToMetersModelMatrix(unit: string, modelMatrix: Matrix4): Matrix4 {
   const conversionFactor = getDistanceToMeterConversionFactor(unit) ?? 1;
   if (conversionFactor === undefined) {
     throw new Error(`Unknown model unit '${unit}'`);
   }
-  const scaledModelMatrix = new THREE.Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
+  const scaledModelMatrix = new Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
   return scaledModelMatrix.multiply(modelMatrix);
 }

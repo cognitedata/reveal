@@ -2,13 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
+import { Matrix4 } from 'three';
 import type { SectorMetadata } from '@reveal/cad-parsers';
 import type { CadNode } from '../wrappers/CadNode';
 
 type TransformedNode = {
-  currentTransform: THREE.Matrix4;
-  originalBoundingBox?: THREE.Box3;
+  currentTransform: Matrix4;
+  originalBoundingBox?: Box3;
   inSectors: Set<number>;
 };
 
@@ -23,7 +24,7 @@ type TransformedNode = {
 export class CustomSectorBounds {
   private readonly _treeIndexToTransformedNodeMap = new Map<number, TransformedNode>();
   private readonly _sectorIdToTransformedNodesMap = new Map<number, Set<TransformedNode>>();
-  private readonly _originalSectorBounds = new Map<number, THREE.Box3>();
+  private readonly _originalSectorBounds = new Map<number, Box3>();
   private readonly _sectorsWithInvalidBounds = new Set<number>();
   private readonly _allSectorsSortedByDepth: SectorMetadata[];
 
@@ -47,14 +48,14 @@ export class CustomSectorBounds {
    * @param treeIndex Tree index of the transformed node
    * @param originalBoundingBox The original bounding box of this node
    */
-  registerTransformedNode(treeIndex: number, originalBoundingBox?: THREE.Box3): void {
+  registerTransformedNode(treeIndex: number, originalBoundingBox?: Box3): void {
     if (this.isRegistered(treeIndex)) {
       throw new Error(`Attempted to register already registered node (tree index ${treeIndex})`);
     }
 
     // Update mapping from tree index to transformed node
     this._treeIndexToTransformedNodeMap.set(treeIndex, {
-      currentTransform: new THREE.Matrix4(),
+      currentTransform: new Matrix4(),
       originalBoundingBox: originalBoundingBox?.clone(),
       inSectors: new Set<number>()
     });
@@ -65,7 +66,7 @@ export class CustomSectorBounds {
    * @param treeIndex Tree index of the transformed node
    * @param newTransform The transform
    */
-  updateNodeTransform(treeIndex: number, newTransform: THREE.Matrix4): void {
+  updateNodeTransform(treeIndex: number, newTransform: Matrix4): void {
     const transformedNode = this._treeIndexToTransformedNodeMap.get(treeIndex);
     if (!transformedNode) {
       throw new Error(`Attempted to update transform for non-registered node (tree index ${treeIndex})`);
@@ -142,7 +143,7 @@ export class CustomSectorBounds {
   recomputeSectorBounds(): void {
     this._sectorsWithInvalidBounds.forEach(sectorId => {
       // Compute the bounding boxes for the transformed nodes in this sector
-      const boundingBoxes: THREE.Box3[] = [];
+      const boundingBoxes: Box3[] = [];
       this._sectorIdToTransformedNodesMap.get(sectorId)?.forEach(transformedNode => {
         // Compute the intersection between the original sector bounds and the original node bounds if available,
         // otherwise just assume the node has geometry in the entire sector
@@ -190,7 +191,7 @@ export class CustomSectorBounds {
    * @param customBoundingBoxes An array of bounding boxes this sector should contain
    * @returns True if the new sector bounds are different from the original values. False otherwise
    */
-  private updateSector(sectorId: number, customBoundingBoxes: THREE.Box3[]): void {
+  private updateSector(sectorId: number, customBoundingBoxes: Box3[]): void {
     const originalSectorBounds = this.getOriginalSectorBounds(sectorId);
 
     if (customBoundingBoxes.length) {
@@ -212,7 +213,7 @@ export class CustomSectorBounds {
     this.clearCustomSectorBounds(sectorId);
   }
 
-  private getOriginalSectorBounds(sectorId: number): THREE.Box3 {
+  private getOriginalSectorBounds(sectorId: number): Box3 {
     let originalSectorBounds = this._originalSectorBounds.get(sectorId);
     if (!originalSectorBounds) {
       originalSectorBounds = this.sectorMetadata(sectorId).subtreeBoundingBox.clone();
@@ -220,7 +221,7 @@ export class CustomSectorBounds {
     return originalSectorBounds;
   }
 
-  private setCustomSectorBounds(sectorId: number, customBounds: THREE.Box3): void {
+  private setCustomSectorBounds(sectorId: number, customBounds: Box3): void {
     const sectorMetadata = this.sectorMetadata(sectorId);
 
     const existingOriginal = this._originalSectorBounds.get(sectorId);

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 
 import { CadModelFactory } from './CadModelFactory';
 
@@ -53,9 +53,9 @@ describe(CadModelFactory.name, () => {
       .setup(p => p.getModelUri(mockIdentifier, testOutput))
       .returns(Promise.resolve(testBaseUrl))
       .setup(p => p.getModelMatrix(mockIdentifier, testOutput.format))
-      .returns(Promise.resolve(new THREE.Matrix4()))
+      .returns(Promise.resolve(new Matrix4()))
       .setup(p => p.getModelCamera(mockIdentifier))
-      .returns(Promise.resolve({ position: new THREE.Vector3(), target: new THREE.Vector3(0, 0, 1) }));
+      .returns(Promise.resolve({ position: new Vector3(), target: new Vector3(0, 0, 1) }));
 
     const mock = new Mock<ModelDataProvider>()
       .setup(p => p.getJsonFile(testBaseUrl, It.IsAny<string>()))
@@ -75,7 +75,7 @@ describe(CadModelFactory.name, () => {
 
   test('createModel() sets model clipping planes when a clip box is set', async () => {
     const geometryFilter: GeometryFilter = {
-      boundingBox: new THREE.Box3(new THREE.Vector3(-1, -2, -3), new THREE.Vector3(4, 5, 6)),
+      boundingBox: new Box3(new Vector3(-1, -2, -3), new Vector3(4, 5, 6)),
       isBoundingBoxInModelCoordinates: true
     };
 

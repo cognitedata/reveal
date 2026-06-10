@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { DataTexture } from 'three';
+import { Matrix4 } from 'three';
 import { NumericRange, createUint8View } from '@reveal/utilities';
 import { NodeTransformProvider } from './NodeTransformProvider';
 import { NodeTransformTextureBuilder } from './NodeTransformTextureBuilder';
@@ -26,7 +27,7 @@ describe('NodeTransformTextureBuilder', () => {
     const originalLookupTexels = texelsOf(builder.transformLookupTexture);
     const originalIndexTexels = texelsOf(builder.overrideTransformIndexTexture);
 
-    const matrix = new THREE.Matrix4().makeTranslation(10, 20, 30);
+    const matrix = new Matrix4().makeTranslation(10, 20, 30);
     transformProvider.setNodeTransform(new NumericRange(0, 16), matrix);
     builder.build();
 
@@ -37,7 +38,7 @@ describe('NodeTransformTextureBuilder', () => {
   test('reset transform in provider, restores index', () => {
     const originalIndexTexels = texelsOf(builder.overrideTransformIndexTexture);
 
-    const matrix = new THREE.Matrix4().makeTranslation(10, 20, 30);
+    const matrix = new Matrix4().makeTranslation(10, 20, 30);
     transformProvider.setNodeTransform(new NumericRange(0, 16), matrix);
     transformProvider.resetNodeTransform(new NumericRange(0, 16));
     builder.build();
@@ -46,7 +47,7 @@ describe('NodeTransformTextureBuilder', () => {
   });
 });
 
-function texelsOf(texture: THREE.DataTexture): number[] {
+function texelsOf(texture: DataTexture): number[] {
   const data = texture.image.data;
   assert(data !== null);
   return Array.from(createUint8View(data));

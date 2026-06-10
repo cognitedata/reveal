@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { Vector2, Vector3 } from 'three';
 
 import type { HtmlOverlayOptions, HtmlOverlayToolOptions, HtmlOverlayCreateClusterDelegate } from './HtmlOverlayTool';
 import { HtmlOverlayTool } from './HtmlOverlayTool';
@@ -17,7 +18,7 @@ const TIMER_ADVANCE_MS = 50;
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer<DataSourceType>;
-  let renderer: THREE.WebGLRenderer;
+  let renderer: WebGLRenderer;
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -33,7 +34,7 @@ describe(HtmlOverlayTool.name, () => {
     const htmlElement = document.createElement('div');
     htmlElement.className = 'overlay';
     htmlElement.style.position = 'relative';
-    const position = new THREE.Vector3();
+    const position = new Vector3();
 
     // Act & Assert
     expect(() => {
@@ -47,7 +48,7 @@ describe(HtmlOverlayTool.name, () => {
     const helper = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');
     htmlElement.style.cssText = 'position: absolute;';
-    const position = new THREE.Vector3();
+    const position = new Vector3();
 
     // Act & Assert
     expect(() => helper.add(htmlElement, position)).not.toThrow();
@@ -60,7 +61,7 @@ describe(HtmlOverlayTool.name, () => {
     htmlElement.style.position = 'absolute';
     expect(htmlElement.style.top).toHaveLength(0);
     expect(htmlElement.style.left).toHaveLength(0);
-    const position = new THREE.Vector3(0, 0, 0.5);
+    const position = new Vector3(0, 0, 0.5);
 
     // Act
     helper.add(htmlElement, position);
@@ -82,8 +83,8 @@ describe(HtmlOverlayTool.name, () => {
     behindFarPlaneElement.style.position = 'absolute';
 
     // Act
-    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1));
-    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10));
+    helper.add(behindCameraElement, new Vector3(0, 0, -1));
+    helper.add(behindFarPlaneElement, new Vector3(0, 0, 10));
     helper.forceUpdate();
 
     // Assert
@@ -95,7 +96,7 @@ describe(HtmlOverlayTool.name, () => {
     const helper = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');
     htmlElement.style.position = 'absolute';
-    const position = new THREE.Vector3(0, 0, 0.5);
+    const position = new Vector3(0, 0, 0.5);
 
     helper.add(htmlElement, position);
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
@@ -125,11 +126,11 @@ describe(HtmlOverlayTool.name, () => {
     const options: HtmlOverlayOptions = { positionUpdatedCallback: vi.fn() };
 
     // Act
-    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), { ...options, userData: 'behindCameraElement' });
+    helper.add(behindCameraElement, new Vector3(0, 0, -1), { ...options, userData: 'behindCameraElement' });
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
-    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), { ...options, userData: 'behindFarPlaneElement' });
+    helper.add(behindFarPlaneElement, new Vector3(0, 0, 10), { ...options, userData: 'behindFarPlaneElement' });
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
-    helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), {
+    helper.add(withinNearAndFarPlaneElement, new Vector3(0, 0, 0.5), {
       ...options,
       userData: 'withinNearAndFarPlaneElement'
     });
@@ -140,22 +141,22 @@ describe(HtmlOverlayTool.name, () => {
     // Assert
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       behindCameraElement,
-      expect.any(THREE.Vector2),
-      expect.any(THREE.Vector3),
+      expect.any(Vector2),
+      expect.any(Vector3),
       expect.anything(),
       'behindCameraElement'
     );
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       behindFarPlaneElement,
-      expect.any(THREE.Vector2),
-      expect.any(THREE.Vector3),
+      expect.any(Vector2),
+      expect.any(Vector3),
       expect.anything(),
       'behindFarPlaneElement'
     );
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       withinNearAndFarPlaneElement,
-      expect.any(THREE.Vector2),
-      expect.any(THREE.Vector3),
+      expect.any(Vector2),
+      expect.any(Vector3),
       expect.anything(),
       'withinNearAndFarPlaneElement'
     );
@@ -168,7 +169,7 @@ describe(HtmlOverlayTool.name, () => {
     for (let i = 0; i < 10; i++) {
       const element = document.createElement('div');
       element.style.position = 'absolute';
-      helper.add(element, new THREE.Vector3(0, 0, 0));
+      helper.add(element, new Vector3(0, 0, 0));
       vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     }
     expect(canvasContainer.children.length).toBe(initialNumberOfElements + 10);
@@ -187,7 +188,7 @@ describe(HtmlOverlayTool.name, () => {
     for (let i = 0; i < 10; i++) {
       const element = document.createElement('div');
       element.style.position = 'absolute';
-      helper.add(element, new THREE.Vector3(0, 0, 0));
+      helper.add(element, new Vector3(0, 0, 0));
       vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     }
 
@@ -216,10 +217,10 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
     // Act
-    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div1, new Vector3(0, 0, 0.5));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
-    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.add(div2, new Vector3(0, 0, 0.7));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
@@ -247,10 +248,10 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
     // Act
-    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div1, new Vector3(0, 0, 0.5));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
-    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.add(div2, new Vector3(0, 0, 0.7));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
@@ -282,9 +283,9 @@ describe(HtmlOverlayTool.name, () => {
     div2.style.position = 'absolute';
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
-    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div1, new Vector3(0, 0, 0.5));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
-    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.add(div2, new Vector3(0, 0, 0.7));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     // Act — first update creates the composite
@@ -322,9 +323,9 @@ describe(HtmlOverlayTool.name, () => {
     div3.style.position = 'absolute';
     fakeGetBoundingClientRect(div3, 0, 0, 64, 18);
 
-    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div1, new Vector3(0, 0, 0.5));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
-    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.add(div2, new Vector3(0, 0, 0.7));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     // Act — first cluster composition is {div1, div2}
@@ -332,7 +333,7 @@ describe(HtmlOverlayTool.name, () => {
     expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
 
     // Adding a third overlapping element changes the cluster composition
-    helper.add(div3, new THREE.Vector3(0, 0, 0.6));
+    helper.add(div3, new Vector3(0, 0, 0.6));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.forceUpdate();
 
@@ -356,9 +357,9 @@ describe(HtmlOverlayTool.name, () => {
     div2.style.position = 'absolute';
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
-    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div1, new Vector3(0, 0, 0.5));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
-    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.add(div2, new Vector3(0, 0, 0.7));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();
@@ -387,9 +388,9 @@ describe(HtmlOverlayTool.name, () => {
     div2.style.position = 'absolute';
     fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
-    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div1, new Vector3(0, 0, 0.5));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
-    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.add(div2, new Vector3(0, 0, 0.7));
     vi.advanceTimersByTime(TIMER_ADVANCE_MS);
 
     helper.forceUpdate();

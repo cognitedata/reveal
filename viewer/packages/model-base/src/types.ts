@@ -2,13 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { PerspectiveCamera, Plane, Vector2, WebGLRenderer } from 'three';
 
 export interface IntersectInput {
-  normalizedCoords: THREE.Vector2;
-  camera: THREE.PerspectiveCamera;
-  clippingPlanes: THREE.Plane[];
-  renderer: THREE.WebGLRenderer;
+  normalizedCoords: Vector2;
+  camera: PerspectiveCamera;
+  clippingPlanes: Plane[];
+  renderer: WebGLRenderer;
   domElement: HTMLElement;
 }
 

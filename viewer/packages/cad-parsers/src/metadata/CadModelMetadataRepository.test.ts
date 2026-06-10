@@ -6,7 +6,7 @@ import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import type { BlobOutputMetadata, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { File3dFormat, LocalModelIdentifier } from '@reveal/data-providers';
 
-import * as THREE from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { createV9SceneSectorMetadata } from '../../../../test-utilities';
 import type { CadSceneRootMetadata } from './parsers/types';
 
@@ -56,10 +56,10 @@ function createMockedMetadataProvider(outputList: BlobOutputMetadata[]): ModelMe
       return urlFromBlobId(cadOutput.blobId);
     },
     getModelCamera: async () => {
-      return { position: new THREE.Vector3(), target: new THREE.Vector3() };
+      return { position: new Vector3(), target: new Vector3() };
     },
     getModelMatrix: async () => {
-      return new THREE.Matrix4();
+      return new Matrix4();
     }
   };
 }
