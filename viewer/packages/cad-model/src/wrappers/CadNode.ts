@@ -9,8 +9,8 @@ import type { SectorScene, CadModelMetadata, WantedSector, ConsumedSector } from
 import { RootSectorNode } from '@reveal/cad-parsers';
 import type { SectorRepository } from '@reveal/sector-loader';
 import type { ParsedGeometry } from '@reveal/sector-parser';
-import type { StyledTreeIndexSets } from '@reveal/rendering';
-import { setModelRenderLayers, createCadMaterial, type CadMaterial } from '@reveal/rendering';
+import type { StyledTreeIndexSets, CadMaterial } from '@reveal/rendering';
+import { setModelRenderLayers, createCadMaterial, forEachMaterial } from '@reveal/rendering';
 
 import type { Plane, Object3DEventMap } from 'three';
 import { Group, Object3D, Matrix4 } from 'three';
@@ -290,7 +290,13 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
-    // this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
+
+    forEachMaterial(this.cadMaterial.materials, mat => mat.dispose());
+
+    this.cadMaterial.nodeTransformTextureBuilder.dispose();
+    this.cadMaterial.nodeAppearanceTextureBuilder.dispose();
+    this.cadMaterial.clippingPlanesProvider.dispose();
+
     this._geometryBatchingManager?.dispose();
 
     // Remove all mesh groups from the scene and dereference sectors in cache
