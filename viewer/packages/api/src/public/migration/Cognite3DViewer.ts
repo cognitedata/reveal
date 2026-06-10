@@ -1600,6 +1600,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
       this.renderer.setDrawingBufferSize(originalWidth, originalHeight, originalPixelRatio);
       this.revealManager.render(this.cameraManager.getCamera());
+      // The screenshot renders happen outside the animate loop, so invalidate the pick
+      // cache explicitly.
+      this._pointCloudPickingHandler.invalidatePickCache();
 
       // Restart animate loop
       this.latestRequestId = requestAnimationFrame(this._boundAnimate);
@@ -1884,6 +1887,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     });
     this.revealManager.render(camera);
     this.revealManager.resetRedraw();
+    this._pointCloudPickingHandler.invalidatePickCache();
     this._image360ApiHelper?.resetRedraw();
     this._clippingNeedsUpdate = false;
     const renderTime = Date.now() - start;

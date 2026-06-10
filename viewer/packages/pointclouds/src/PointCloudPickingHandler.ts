@@ -32,6 +32,14 @@ export class PointCloudPickingHandler {
     this._picker.dispose();
   }
 
+  /**
+   * Invalidates the picker's cached full-frame pick buffer. Must be called whenever a new
+   * frame of the scene is rendered.
+   */
+  invalidatePickCache(): void {
+    this._picker.invalidateCache();
+  }
+
   async intersectPointClouds(
     nodes: PointCloudNode<DataSourceType>[],
     input: IntersectInput
@@ -47,11 +55,20 @@ export class PointCloudPickingHandler {
       // Get PointCloudNodes which are visible.
       const visibleNodes = nodes.filter(node => node.visible);
 
-      for (const node of visibleNodes) {
-        const pick = await this._picker.pick(camera, this._raycaster.ray, [node.octree], {
+      // Pick against all octrees in a single call - one render sequence and one GPU readback.
+      // The picker tags the result with the octree it hit, which maps back to the owning node.
+      const octreeToNode = new Map(visibleNodes.map(node => [node.octree, node]));
+      const pick = await this._picker.pick(
+        camera,
+        this._raycaster.ray,
+        visibleNodes.map(node => node.octree),
+        {
           pickWindowSize: PointCloudPickingHandler.PickingWindowSize
-        });
-        if (pick !== null) {
+        }
+      );
+      if (pick !== null && pick.pointCloud !== undefined) {
+        const node = octreeToNode.get(pick.pointCloud);
+        if (node !== undefined) {
           intersections.push({ node, pick });
         }
       }
