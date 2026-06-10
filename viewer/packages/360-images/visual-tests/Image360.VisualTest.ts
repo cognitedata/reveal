@@ -26,7 +26,7 @@ import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import type { CogniteClient } from '@cognite/sdk';
 import type { Image360Entity } from '../src/entity/Image360Entity';
 import TWEEN from '@tweenjs/tween.js';
-import type { OrbitControls } from 'three/addons';
+import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
