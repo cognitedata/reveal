@@ -377,7 +377,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * @param objectCollection The object collection from which to remove the style
    */
   unassignStyledObjectCollection(objectCollection: T['pointCloudCollectionType']): void {
-    const index = this._styledVolumeCollections.findIndex(x => x.objectCollection === objectCollection);
+    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
     if (index !== -1) {
       this.pointCloudNode.removeStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
       this._styledVolumeCollections.splice(index, 1);
