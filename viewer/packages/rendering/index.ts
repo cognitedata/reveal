@@ -19,7 +19,7 @@ export { RenderMode } from './src/rendering/RenderMode';
 export { RenderLayer, setModelRenderLayers } from './src/utilities/renderUtilities';
 export type { StyledTreeIndexSets } from './src/utilities/types';
 
-export type { Materials } from './src/rendering/materials';
+export { type Materials, initializeDefinesAndUniforms } from './src/rendering/materials';
 export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
 

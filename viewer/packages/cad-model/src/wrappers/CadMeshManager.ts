@@ -12,7 +12,7 @@ import type { ModelIdentifier } from '@reveal/data-providers';
 
 import type { BufferGeometry, RawShaderMaterial, BufferAttribute, Box3, Matrix4, Texture } from 'three';
 import { Sphere, Mesh, Group, SRGBColorSpace } from 'three';
-import { initializeDefinesAndUniforms } from '@reveal/rendering/src/rendering/materials';
+import { initializeDefinesAndUniforms } from '@reveal/rendering';
 
 /**
  * Manages mesh data for CAD sectors.
