@@ -2099,7 +2099,6 @@ export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
     constructor(
     objectCollection: T['pointCloudCollectionType'],
     style: CompletePointCloudAppearance);
-    // @deprecated
     objectCollection: T['pointCloudCollectionType'];
     style: CompletePointCloudAppearance;
     get volumeCollection(): T['pointCloudCollectionType'];
