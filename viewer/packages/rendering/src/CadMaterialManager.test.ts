@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { RawShaderMaterial } from 'three';
+import { Matrix4, Plane, Texture } from 'three';
 
 import { CadMaterialManager, createCadMaterial } from './CadMaterialManager';
 import type { Materials } from './rendering/materials';
@@ -44,7 +45,7 @@ describe('CadMaterialManager', () => {
     const cadMaterial = createCadMaterial(16);
 
     manager.addModelMaterials(modelIdentifier1, cadMaterial);
-    manager.clippingPlanes = [new THREE.Plane()];
+    manager.clippingPlanes = [new Plane()];
 
     expect(cadMaterial.materials.box.clippingPlanes).toEqual(manager.clippingPlanes);
   });
@@ -87,7 +88,7 @@ describe('CadMaterialManager', () => {
     const provider = manager.getModelNodeTransformProvider(modelIdentifier);
     provider.on('changed', listener);
 
-    provider.setNodeTransform(new NumericRange(0, 2), new THREE.Matrix4().makeRotationY(Math.PI / 4.0));
+    provider.setNodeTransform(new NumericRange(0, 2), new Matrix4().makeRotationY(Math.PI / 4.0));
 
     expect(listener).toHaveBeenCalled();
   });
@@ -95,7 +96,7 @@ describe('CadMaterialManager', () => {
   test('per-model clipping planes are combined with global clipping planes', () => {
     // Arrange
 
-    const globalClipPlanes = [new THREE.Plane(), new THREE.Plane()];
+    const globalClipPlanes = [new Plane(), new Plane()];
     manager.clippingPlanes = globalClipPlanes;
 
     const cadMaterial1 = createCadMaterial(16);
@@ -104,8 +105,8 @@ describe('CadMaterialManager', () => {
     manager.addModelMaterials(modelIdentifier2, cadMaterial2);
 
     // Act
-    cadMaterial1.clippingPlanesProvider.clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
-    cadMaterial2.clippingPlanesProvider.clippingPlanes = [new THREE.Plane()];
+    cadMaterial1.clippingPlanesProvider.clippingPlanes = [new Plane(), new Plane()];
+    cadMaterial2.clippingPlanesProvider.clippingPlanes = [new Plane()];
 
     // Assert
     for (const material of iterateMaterials(manager.getModelMaterials(modelIdentifier1))) {
@@ -123,7 +124,7 @@ describe('CadMaterialManager', () => {
   test('addTexturedMeshMaterial creates textured material successfully', () => {
     // Arrange
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
-    const texture = new THREE.Texture();
+    const texture = new Texture();
     const sectorId = 123;
     // Act
     const texturedMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture);
@@ -140,7 +141,7 @@ describe('CadMaterialManager', () => {
   test('addTexturedMeshMaterial throws error when model identifier not found', () => {
     // Arrange
     const nonExistentModelId = Symbol('nonExistent');
-    const texture = new THREE.Texture();
+    const texture = new Texture();
     const sectorId = 123;
     // Act & Assert
     expect(() => {
@@ -151,8 +152,8 @@ describe('CadMaterialManager', () => {
   test('addTexturedMeshMaterial disposes existing textured material when replacing', () => {
     // Arrange
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
-    const texture1 = new THREE.Texture();
-    const texture2 = new THREE.Texture();
+    const texture1 = new Texture();
+    const texture2 = new Texture();
     const sectorId = 123;
     // Create first textured material
     const firstMaterial = manager.addTexturedMeshMaterial(modelIdentifier1, sectorId, texture1);
@@ -170,7 +171,7 @@ describe('CadMaterialManager', () => {
   test('addTexturedMeshMaterial clones original triangle mesh material properties', () => {
     // Arrange
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
-    const texture = new THREE.Texture();
+    const texture = new Texture();
     const sectorId = 123;
 
     const originalMaterial = manager.getModelMaterials(modelIdentifier1).triangleMesh;
@@ -189,6 +190,6 @@ describe('CadMaterialManager', () => {
   });
 });
 
-function* iterateMaterials(materials: Materials): Generator<THREE.RawShaderMaterial> {
-  return Object.values(materials).map(x => x as THREE.RawShaderMaterial);
+function* iterateMaterials(materials: Materials): Generator<RawShaderMaterial> {
+  return Object.values(materials).map(x => x as RawShaderMaterial);
 }

@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 import type { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
 
-export type SectorTree = [id: number, subtree: SectorTree[], bounds?: THREE.Box3];
+export type SectorTree = [id: number, subtree: SectorTree[], bounds?: Box3];
 
-const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+const unitBox = new Box3(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
 
 export function createV9SectorMetadata(
   tree: SectorTree,
@@ -50,7 +50,7 @@ export function generateV9SectorTree(depth: number, childrenPerLevel: number = 4
 
 function generateSectorTreeChildren(
   depth: number,
-  bounds: THREE.Box3,
+  bounds: Box3,
   childCount: number,
   firstId: number
 ): { children: SectorTree[]; nextId: number } {

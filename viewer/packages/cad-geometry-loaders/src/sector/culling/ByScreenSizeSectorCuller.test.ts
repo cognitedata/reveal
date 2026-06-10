@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, PerspectiveCamera, Plane, Vector3 } from 'three';
 
 import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
@@ -17,7 +17,7 @@ import { Mock } from 'moq.ts';
 import type { DetermineSectorsInput } from './types';
 
 describe(ByScreenSizeSectorCuller.name, () => {
-  let camera: THREE.PerspectiveCamera;
+  let camera: PerspectiveCamera;
   let model: CadModelMetadata;
   let budget: CadModelBudget;
   let allSectorsRenderCost: number;
@@ -28,17 +28,17 @@ describe(ByScreenSizeSectorCuller.name, () => {
     const root = createV9SectorMetadata([
       0,
       [
-        [1, [], new THREE.Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
-        [2, [], new THREE.Box3().setFromArray([0, -1, 1, 0, 0, 1])],
-        [3, [], new THREE.Box3().setFromArray([-1, 0, 1, 0, 1, 1])],
-        [4, [], new THREE.Box3().setFromArray([0, 0, 1, 1, 1, 1])]
+        [1, [], new Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
+        [2, [], new Box3().setFromArray([0, -1, 1, 0, 0, 1])],
+        [3, [], new Box3().setFromArray([-1, 0, 1, 0, 1, 1])],
+        [4, [], new Box3().setFromArray([0, 0, 1, 1, 1, 1])]
       ],
-      new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1])
+      new Box3().setFromArray([-1, -1, -1, 1, 1, 1])
     ]);
     model = createCadModelMetadata(9, root);
     allSectorsRenderCost = model.scene.getAllSectors().reduce((sum, x) => sum + x.estimatedRenderCost, 0);
 
-    camera = new THREE.PerspectiveCamera();
+    camera = new PerspectiveCamera();
     camera.position.set(0, 0, 0);
     camera.near = 1.0;
     camera.far = 10.0;
@@ -75,7 +75,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
   test('determineSectors doesnt return fully culled sectors', () => {
     budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
     const input = createDetermineSectorInput(camera, model, budget);
-    const clipPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.5);
+    const clipPlane = new Plane(new Vector3(1, 0, 0), -0.5);
     input.modelClippingPlanes = [[clipPlane]];
 
     const { wantedSectors } = culler.determineSectors(input);
@@ -92,7 +92,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
   test('determineSectors prioritizes sectors intersecting prioritized areas', () => {
     budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
     const input = createDetermineSectorInput(camera, model, budget);
-    const prioritizedAreaBounds = new THREE.Box3().setFromArray([0.5, 0.5, 0.5, 1.0, 1.0, 1.0]);
+    const prioritizedAreaBounds = new Box3().setFromArray([0.5, 0.5, 0.5, 1.0, 1.0, 1.0]);
     const expectedTopPrioritySectors = model.scene.getSectorsIntersectingBox(prioritizedAreaBounds);
     input.prioritizedAreas = [{ area: prioritizedAreaBounds, extraPriority: 10 }];
 

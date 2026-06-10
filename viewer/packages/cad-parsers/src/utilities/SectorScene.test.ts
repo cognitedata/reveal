@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, PerspectiveCamera, Vector3 } from 'three';
 
 import type { SectorMetadata } from '../metadata/types';
 import { SectorSceneImpl } from './SectorScene';
@@ -14,10 +14,10 @@ describe('SectorSceneImpl', () => {
   const root = createV9SectorMetadata([
     0,
     [
-      [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
-      [2, [], new THREE.Box3(new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(1, 1, 1))]
+      [1, [], new Box3(new Vector3(0, 0, 0), new Vector3(0.5, 1, 1))],
+      [2, [], new Box3(new Vector3(0.5, 0, 0), new Vector3(1, 1, 1))]
     ],
-    new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1))
+    new Box3(new Vector3(0, 0, 0), new Vector3(1, 1, 1))
   ]) as SectorMetadata;
   const sectorsById = new Map<number, SectorMetadata>();
   traverseDepthFirst(root, x => {
@@ -28,28 +28,28 @@ describe('SectorSceneImpl', () => {
   test('getSectorsContainingPoint', () => {
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
 
-    expect(sectorIds(scene.getSectorsContainingPoint(new THREE.Vector3(0.2, 0.5, 0.5)))).toEqual([0, 1]);
-    expect(sectorIds(scene.getSectorsContainingPoint(new THREE.Vector3(0.75, 0.5, 0.5)))).toEqual([0, 2]);
-    expect(sectorIds(scene.getSectorsContainingPoint(new THREE.Vector3(2, 0.5, 0.5)))).toEqual([]);
+    expect(sectorIds(scene.getSectorsContainingPoint(new Vector3(0.2, 0.5, 0.5)))).toEqual([0, 1]);
+    expect(sectorIds(scene.getSectorsContainingPoint(new Vector3(0.75, 0.5, 0.5)))).toEqual([0, 2]);
+    expect(sectorIds(scene.getSectorsContainingPoint(new Vector3(2, 0.5, 0.5)))).toEqual([]);
   });
 
   test('getSectorsIntersectingBox', () => {
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
-    expect(
-      sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([-10, -10, -10, 10, 10, 10])))
-    ).toEqual([0, 1, 2]);
-    expect(sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0, 0, 0, 0.2, 0.2, 0.2])))).toEqual(
-      [0, 1]
-    );
-    expect(sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0.6, 0.6, 0.6, 1, 1, 1])))).toEqual(
-      [0, 2]
-    );
+    expect(sectorIds(scene.getSectorsIntersectingBox(new Box3().setFromArray([-10, -10, -10, 10, 10, 10])))).toEqual([
+      0, 1, 2
+    ]);
+    expect(sectorIds(scene.getSectorsIntersectingBox(new Box3().setFromArray([0, 0, 0, 0.2, 0.2, 0.2])))).toEqual([
+      0, 1
+    ]);
+    expect(sectorIds(scene.getSectorsIntersectingBox(new Box3().setFromArray([0.6, 0.6, 0.6, 1, 1, 1])))).toEqual([
+      0, 2
+    ]);
   });
 
   test('getSectorsIntersectingFrustum, some sectors inside', () => {
     // Arrange
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10.0);
+    const camera = new PerspectiveCamera(60, 1, 0.1, 10.0);
     camera.position.set(2.0, 0.5, -1);
     camera.lookAt(2.0, 0.5, 0.5);
     camera.updateMatrixWorld();
@@ -67,7 +67,7 @@ describe('SectorSceneImpl', () => {
   test('getSectorsIntersectingFrustum, all sectors inside frustum', () => {
     // Arrange
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10.0);
+    const camera = new PerspectiveCamera(60, 1, 0.1, 10.0);
     camera.position.set(0.5, 0.5, -1);
     camera.lookAt(0.5, 0.5, 0.5);
     camera.updateMatrixWorld();
@@ -94,11 +94,11 @@ describe('SectorSceneImpl', () => {
       [
         0,
         [
-          [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
-          [2, [], new THREE.Box3(new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(1, 1, 1))],
-          [3, [], new THREE.Box3(new THREE.Vector3(1000.5, 1000, 1000), new THREE.Vector3(1001, 1001, 1001))]
+          [1, [], new Box3(new Vector3(0, 0, 0), new Vector3(0.5, 1, 1))],
+          [2, [], new Box3(new Vector3(0.5, 0, 0), new Vector3(1, 1, 1))],
+          [3, [], new Box3(new Vector3(1000.5, 1000, 1000), new Vector3(1001, 1001, 1001))]
         ],
-        new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1001, 1001, 1001))
+        new Box3(new Vector3(0, 0, 0), new Vector3(1001, 1001, 1001))
       ],
       0,
       '0/',
@@ -122,9 +122,9 @@ describe('SectorSceneImpl', () => {
 
   test('getBoundsOfMostGeometry with root with only one child, result is child bounds', () => {
     // Arrange
-    const leafBounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+    const leafBounds = new Box3(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
     const root = createV9SectorMetadata(
-      [0, [[1, [], leafBounds]], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10))],
+      [0, [[1, [], leafBounds]], new Box3(new Vector3(0, 0, 0), new Vector3(10, 10, 10))],
       0,
       '0/',
       0

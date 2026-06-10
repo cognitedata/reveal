@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Camera, Mesh, Texture, WebGLRenderer } from 'three';
+import { GLSL3, Matrix4, RawShaderMaterial, Vector3 } from 'three';
 import { ssaoShaders } from '../rendering/shaders';
 import type { SsaoParameters } from '../rendering/types';
 import type { RenderPass } from '../RenderPass';
@@ -11,8 +12,8 @@ import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utiliti
 import SeededRandom from 'random-seed';
 
 export class SSAOPass implements RenderPass {
-  private readonly _fullScreenTriangle: THREE.Mesh;
-  private readonly _ssaoShaderMaterial: THREE.RawShaderMaterial;
+  private readonly _fullScreenTriangle: Mesh;
+  private readonly _ssaoShaderMaterial: RawShaderMaterial;
 
   set ssaoParameters(ssaoParameters: SsaoParameters) {
     const { sampleSize, depthCheckBias, sampleRadius } = ssaoParameters;
@@ -29,26 +30,26 @@ export class SSAOPass implements RenderPass {
     this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
-  constructor(depthTexture: THREE.Texture | null, ssaoParameters: SsaoParameters) {
+  constructor(depthTexture: Texture | null, ssaoParameters: SsaoParameters) {
     const { sampleSize, depthCheckBias, sampleRadius } = ssaoParameters;
 
     const uniforms = {
       tDepth: { value: depthTexture },
-      projMatrix: { value: new THREE.Matrix4() },
-      inverseProjectionMatrix: { value: new THREE.Matrix4() },
+      projMatrix: { value: new Matrix4() },
+      inverseProjectionMatrix: { value: new Matrix4() },
       sampleRadius: { value: sampleRadius },
       bias: { value: depthCheckBias },
       kernel: { value: this.createKernel(sampleSize) }
     };
 
-    this._ssaoShaderMaterial = new THREE.RawShaderMaterial({
+    this._ssaoShaderMaterial = new RawShaderMaterial({
       vertexShader: ssaoShaders.vertex,
       fragmentShader: ssaoShaders.fragment,
       uniforms,
       defines: {
         MAX_KERNEL_SIZE: sampleSize
       },
-      glslVersion: THREE.GLSL3,
+      glslVersion: GLSL3,
       depthTest: false,
       depthWrite: false
     });
@@ -57,18 +58,18 @@ export class SSAOPass implements RenderPass {
     this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
+  public render(renderer: WebGLRenderer, camera: Camera): void {
     this._ssaoShaderMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
     this._ssaoShaderMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
 
     renderer.render(this._fullScreenTriangle, unitOrthographicCamera);
   }
 
-  private createKernel(kernelSize: number): THREE.Vector3[] {
+  private createKernel(kernelSize: number): Vector3[] {
     const random = SeededRandom.create('some_seed');
-    const result: THREE.Vector3[] = [];
+    const result: Vector3[] = [];
     for (let i = 0; i < kernelSize; i++) {
-      const sample = new THREE.Vector3(1, 1, 1);
+      const sample = new Vector3(1, 1, 1);
       while (sample.length() > 1.0) {
         // Ensure some distance in samples
         sample.x = random.random() * 2 - 1;

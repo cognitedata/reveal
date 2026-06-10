@@ -1,7 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { Object3D, Scene } from 'three';
+import { Box3Helper, Color, Group } from 'three';
 
 import type { SectorNode } from '../../cad-parsers/';
 import { LevelOfDetail } from '../../cad-parsers/';
@@ -19,12 +20,12 @@ export type DebugLoadedSectorsToolOptions = {
 };
 
 export class DebugLoadedSectorsTool {
-  private readonly _boundingBoxes = new THREE.Group();
-  private readonly _scene: THREE.Scene;
+  private readonly _boundingBoxes = new Group();
+  private readonly _scene: Scene;
   private _options: Required<DebugLoadedSectorsToolOptions>;
   private _model?: CadNode;
 
-  constructor(scene: THREE.Scene, options: DebugLoadedSectorsToolOptions = {}) {
+  constructor(scene: Scene, options: DebugLoadedSectorsToolOptions = {}) {
     this._scene = scene;
     this._scene.add(this._boundingBoxes);
     this._options = {} as any; // Force - it's set in setOptions
@@ -98,7 +99,7 @@ export class DebugLoadedSectorsTool {
       switch (options.colorBy) {
         case 'depth': {
           const s = Math.min(1.0, node.depth / 8);
-          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
+          return new Color(Colors.green).lerpHSL(Colors.red, s);
         }
         case 'lod': {
           switch (node.levelOfDetail) {
@@ -113,7 +114,7 @@ export class DebugLoadedSectorsTool {
           }
         }
         case 'random':
-          return new THREE.Color().setHSL(Math.random(), 1.0, 0.5);
+          return new Color().setHSL(Math.random(), 1.0, 0.5);
 
         // Note! The two next modes are horribly slow since we do this for every sector,
         // but since this is a debug tool we consider it OK
@@ -121,7 +122,7 @@ export class DebugLoadedSectorsTool {
           const nodesByTimestamp = [...allSelectedNodes].sort((a, b) => a.updatedTimestamp - b.updatedTimestamp);
           const indexOfNode = nodesByTimestamp.findIndex(x => x === node);
           const s = (nodesByTimestamp.length - 1 - indexOfNode) / Math.max(nodesByTimestamp.length - 1, 1);
-          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
+          return new Color(Colors.green).lerpHSL(Colors.red, s);
         }
         case 'drawcalls': {
           const [minDrawCalls, maxDrawCalls] = allSelectedNodes.reduce(
@@ -133,24 +134,24 @@ export class DebugLoadedSectorsTool {
           );
           const sector = model.sectorScene.getSectorById(node.sectorId)!;
           const s = (sector.estimatedDrawCallCount - minDrawCalls) / (maxDrawCalls - minDrawCalls);
-          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
+          return new Color(Colors.green).lerpHSL(Colors.red, s);
         }
         default:
           assertNever(options.colorBy);
       }
     }
     const color = determineColor();
-    return new THREE.Box3Helper(node.bounds, color);
+    return new Box3Helper(node.bounds, color);
   }
 }
 
 const Colors = {
-  green: new THREE.Color('#00ff00'),
-  yellow: new THREE.Color('yellow'),
-  red: new THREE.Color('red')
+  green: new Color('#00ff00'),
+  yellow: new Color('yellow'),
+  red: new Color('red')
 };
 
-function isSectorNode(node: THREE.Object3D): node is SectorNode {
+function isSectorNode(node: Object3D): node is SectorNode {
   return node.name.match(/^Sector \d+$/) ? true : false;
 }
 

@@ -3,7 +3,7 @@
  */
 import type { Cognite3DViewer, CogniteModel } from '..';
 import { CogniteCadModel } from '..';
-import * as THREE from 'three';
+import { Matrix4, WebGLRenderer } from 'three';
 
 import type { VisualTestFixture } from '../../../visual-tests/test-fixtures/VisualTestFixture';
 import { DefaultNodeAppearance } from '@reveal/cad-styling';
@@ -12,14 +12,14 @@ import { AxisViewTool } from '../../../packages/tools';
 
 export default class TwoModelsVisualTest implements VisualTestFixture {
   private _viewer!: Cognite3DViewer;
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
 
   private _modelLoadingResolve: (() => void) | null = null;
   private _itemsLoaded = 0;
   private _itemsRequested = 0;
 
   constructor() {
-    this._renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
+    this._renderer = new WebGLRenderer({ powerPreference: 'high-performance' });
     this._renderer.setPixelRatio(window.devicePixelRatio);
   }
 
@@ -88,7 +88,7 @@ export default class TwoModelsVisualTest implements VisualTestFixture {
 
     model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
-    const translation = new THREE.Matrix4().makeTranslation(0, 5, 0);
+    const translation = new Matrix4().makeTranslation(0, 5, 0);
     const transform = model.getModelTransformation();
     transform.multiply(translation);
     model.setModelTransformation(transform);

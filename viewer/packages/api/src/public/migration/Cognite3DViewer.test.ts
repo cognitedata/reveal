@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { Box3, Mesh, MeshBasicMaterial, Sphere, SphereGeometry, Vector2, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelMetadataProvider, CdfModelDataProvider, File3dFormat } from '@reveal/data-providers';
@@ -27,7 +28,7 @@ describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest', project: 'dummy', getToken: async () => 'dummy' });
   mockClientAuthentication(sdk);
 
-  const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
+  const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
   renderer.render = vi.fn();
   const _sectorCuller = new Mock<SectorCuller>()
     .setup(p => p.determineSectors(It.IsAny()))
@@ -106,13 +107,13 @@ describe('Cognite3DViewer', () => {
 
   test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
-    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = vi.fn();
+    const onCameraChange: (position: Vector3, target: Vector3) => void = vi.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('cameraChange', onCameraChange);
 
     // Act
-    viewer.cameraManager.setCameraState({ position: new THREE.Vector3(123, 456, 789) });
-    viewer.cameraManager.setCameraState({ target: new THREE.Vector3(1, 2, 3) });
+    viewer.cameraManager.setCameraState({ position: new Vector3(123, 456, 789) });
+    viewer.cameraManager.setCameraState({ target: new Vector3(1, 2, 3) });
 
     // Assert
     expect(onCameraChange).toHaveBeenCalledTimes(2);
@@ -125,7 +126,7 @@ describe('Cognite3DViewer', () => {
     ]);
     vi.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
 
-    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = vi.fn();
+    const onCameraChange: (position: Vector3, target: Vector3) => void = vi.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     viewer.on('cameraChange', onCameraChange);
 
@@ -141,8 +142,8 @@ describe('Cognite3DViewer', () => {
   test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
-    const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
-    const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
+    const bbox = new Box3(new Vector3(1, 1, 1), new Vector3(2, 2, 2));
+    const bSphere = bbox.getBoundingSphere(new Sphere());
     bSphere.radius *= 3;
 
     // Act
@@ -151,7 +152,7 @@ describe('Cognite3DViewer', () => {
 
     // Assert
     const cameraState = viewer.cameraManager.getCameraState();
-    expect(cameraState.target).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(cameraState.target).toEqual(bbox.getCenter(new Vector3()));
     expect(bSphere.containsPoint(cameraState.position)).toBeTruthy();
   });
 
@@ -159,9 +160,9 @@ describe('Cognite3DViewer', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
     const cameraManager = viewer.cameraManager;
-    cameraManager.setCameraState({ position: new THREE.Vector3(30, 10, 50), target: new THREE.Vector3() });
-    const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
-    const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
+    cameraManager.setCameraState({ position: new Vector3(30, 10, 50), target: new Vector3() });
+    const bbox = new Box3(new Vector3(1, 1, 1), new Vector3(2, 2, 2));
+    const bSphere = bbox.getBoundingSphere(new Sphere());
     bSphere.radius *= 3;
 
     // Act
@@ -169,19 +170,19 @@ describe('Cognite3DViewer', () => {
     const now = TWEEN.now();
     TWEEN.update(now + 500);
     const cameraState1 = viewer.cameraManager.getCameraState();
-    expect(cameraState1.target).not.toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(cameraState1.target).not.toEqual(bbox.getCenter(new Vector3()));
     expect(bSphere.containsPoint(cameraState1.position)).toBeFalsy();
     TWEEN.update(now + 1000);
 
     // Assert
     const cameraState2 = viewer.cameraManager.getCameraState();
-    expect(cameraState2.target).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(cameraState2.target).toEqual(bbox.getCenter(new Vector3()));
     expect(bSphere.containsPoint(cameraState2.position)).toBeTruthy();
   });
 
   test('viewer can add/remove Object3d on scene', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
-    const obj = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
+    const obj = new Mesh(new SphereGeometry(), new MeshBasicMaterial());
 
     expect(() => viewer.addObject3D(obj)).not.toThrow();
     expect(() => viewer.removeObject3D(obj)).not.toThrow();
@@ -193,7 +194,7 @@ describe('Cognite3DViewer', () => {
     // Create 10 custom objects
     const customObjects: CustomObject[] = [];
     for (let i = 0; i < 10; i++) {
-      const obj = new THREE.Mesh(new THREE.SphereGeometry(i), new THREE.MeshBasicMaterial());
+      const obj = new Mesh(new SphereGeometry(i), new MeshBasicMaterial());
       customObjects.push(new CustomObject(obj));
     }
     // Add them to the viewer
@@ -241,7 +242,7 @@ describe('Cognite3DViewer', () => {
   test('fitCameraToBoundingBox with zero duration updates camera immediatly', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
-    const box = new THREE.Box3(new THREE.Vector3(-1001, -1001, -1001), new THREE.Vector3(-1000, -1000, -1000));
+    const box = new Box3(new Vector3(-1001, -1001, -1001), new Vector3(-1000, -1000, -1000));
     const { position: originalCameraPosition, target: originalCameraTarget } = viewer.cameraManager.getCameraState();
 
     // Act
@@ -266,7 +267,7 @@ describe('Cognite3DViewer', () => {
   test('getAnyIntersectionFromPixel returns cluster intersection when a cluster is hit', async () => {
     const mockClusterData: Image360ClusterIntersectionData<DataSourceType> = {
       image360Collection: new Mock<DefaultImage360Collection<DataSourceType>>().object(),
-      clusterPosition: new THREE.Vector3(5, 0, 0),
+      clusterPosition: new Vector3(5, 0, 0),
       clusterSize: 3,
       clusterIcons: [new Mock<Image360Entity<DataSourceType>>().object()],
       distanceToCamera: 15
@@ -278,7 +279,7 @@ describe('Cognite3DViewer', () => {
 
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
 
-    const result = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(100, 200));
+    const result = await viewer.getAnyIntersectionFromPixel(new Vector2(100, 200));
 
     expect(result).toEqual({ type: 'image360Cluster', ...mockClusterData });
 

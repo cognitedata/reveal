@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NodeCollection } from './NodeCollection';
@@ -32,7 +32,7 @@ export class AssetNodeCollection extends NodeCollection {
   private _areas: AreaCollection = EmptyAreaCollection.instance();
   private readonly _modelMetadataProvider: CdfModelNodeCollectionDataProvider;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
-  private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
+  private _filter: { assetId?: number; boundingBox?: Box3 } | undefined;
 
   constructor(client: CogniteClient, modelMetadataProvider: CdfModelNodeCollectionDataProvider) {
     super(AssetNodeCollection.classToken);
@@ -52,7 +52,7 @@ export class AssetNodeCollection extends NodeCollection {
    * @param filter.assetId      ID of a single [asset]{@link https://docs.cognite.com/dev/concepts/resource_types/assets.html} (optional)
    * @param filter.boundingBox  When provided, only assets within the provided bounds will be included in the filter.
    */
-  async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
+  async executeFilter(filter: { assetId?: number; boundingBox?: Box3 }): Promise<void> {
     const model = this._modelMetadataProvider;
 
     if (this._fetchResultHelper !== undefined) {
@@ -75,12 +75,12 @@ export class AssetNodeCollection extends NodeCollection {
       .multiply(model.getCdfToDefaultModelTransformation())
       .invert();
 
-    function mapBoundingBoxToCdf(box?: THREE.Box3) {
+    function mapBoundingBoxToCdf(box?: Box3) {
       if (box === undefined) {
         return undefined;
       }
 
-      const result = new THREE.Box3().copy(box);
+      const result = new Box3().copy(box);
       result.applyMatrix4(totalInverseModelTransform);
       return { min: [result.min.x, result.min.y, result.min.z], max: [result.max.x, result.max.y, result.max.z] };
     }
@@ -128,7 +128,7 @@ export class AssetNodeCollection extends NodeCollection {
       .map(node => {
         const bmin = node.boundingBox!.min;
         const bmax = node.boundingBox!.max;
-        const bounds = new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
+        const bounds = new Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
         bounds.applyMatrix4(totalModelTransformation);
         return bounds;
       });
@@ -136,7 +136,7 @@ export class AssetNodeCollection extends NodeCollection {
     return boundingBoxes;
   }
 
-  getFilter(): { assetId?: number | undefined; boundingBox?: THREE.Box3 | undefined } | undefined {
+  getFilter(): { assetId?: number | undefined; boundingBox?: Box3 | undefined } | undefined {
     return this._filter;
   }
 

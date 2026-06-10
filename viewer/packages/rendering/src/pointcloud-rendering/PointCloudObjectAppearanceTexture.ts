@@ -4,7 +4,8 @@
 
 import { generateDataTexture } from './texture-generation';
 
-import * as THREE from 'three';
+import type { DataTexture } from 'three';
+import { Color } from 'three';
 import type {
   PointCloudAnnotationVolumeCollection,
   CompletePointCloudAppearance,
@@ -17,7 +18,7 @@ import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 
 export class PointCloudObjectAppearanceTexture {
-  private readonly _objectStyleTexture: THREE.DataTexture;
+  private readonly _objectStyleTexture: DataTexture;
   private _needsReconstruction: boolean = true;
 
   private readonly _styledObjectSets: StyledPointCloudVolumeCollection<DataSourceType>[] = [];
@@ -30,7 +31,7 @@ export class PointCloudObjectAppearanceTexture {
   private _annotationIdsToObjectId: Map<number | DMInstanceKey, number> | undefined;
 
   constructor(width: number, height: number) {
-    this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x0), 0x01); // Initialize with visibility bit set
+    this._objectStyleTexture = generateDataTexture(width, height, new Color(0x0), 0x01); // Initialize with visibility bit set
 
     this._width = width;
     this._height = height;
@@ -143,7 +144,7 @@ export class PointCloudObjectAppearanceTexture {
     return this._defaultAppearance;
   }
 
-  get objectStyleTexture(): THREE.DataTexture {
+  get objectStyleTexture(): DataTexture {
     return this._objectStyleTexture;
   }
 }

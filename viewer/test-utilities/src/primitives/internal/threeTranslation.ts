@@ -12,7 +12,7 @@ import { writePrimitiveToBuffer } from './write';
 import { readPrimitiveFromBuffer } from './read';
 import type { PrimitiveName, Primitive } from './types';
 
-import * as THREE from 'three';
+import { BufferGeometry, InstancedInterleavedBuffer, InterleavedBufferAttribute } from 'three';
 import type { TypedArray } from '../../../../packages/utilities';
 import { assert } from '../../../../packages/utilities/src/assert';
 
@@ -30,11 +30,11 @@ function createInstancedInterleavedBuffers(
   types: PrimitiveName[],
   primitiveDescs: Primitive[][],
   elementSizes: number[]
-): THREE.InstancedInterleavedBuffer[] {
+): InstancedInterleavedBuffer[] {
   let currentByteOffset = 0;
   let lastByteOffset = 0;
 
-  const interleavedBuffers: THREE.InstancedInterleavedBuffer[] = [];
+  const interleavedBuffers: InstancedInterleavedBuffer[] = [];
 
   for (let i = 0; i < types.length; i++) {
     for (const primitiveDesc of primitiveDescs[i]) {
@@ -48,9 +48,7 @@ function createInstancedInterleavedBuffers(
     );
     lastByteOffset = currentByteOffset;
 
-    interleavedBuffers.push(
-      new THREE.InstancedInterleavedBuffer(floatView, elementSizes[i] / floatView.BYTES_PER_ELEMENT)
-    );
+    interleavedBuffers.push(new InstancedInterleavedBuffer(floatView, elementSizes[i] / floatView.BYTES_PER_ELEMENT));
   }
 
   return interleavedBuffers;
@@ -58,14 +56,14 @@ function createInstancedInterleavedBuffers(
 
 function createBufferGeometries(
   types: PrimitiveName[],
-  interleavedBuffers: THREE.InstancedInterleavedBuffer[]
-): THREE.BufferGeometry[] {
-  const geometries: THREE.BufferGeometry[] = [];
+  interleavedBuffers: InstancedInterleavedBuffer[]
+): BufferGeometry[] {
+  const geometries: BufferGeometry[] = [];
 
   for (let i = 0; i < types.length; i++) {
     const attributeDescriptions = createAttributeDescriptionsForPrimitive(types[i]);
 
-    const geometry = new THREE.BufferGeometry();
+    const geometry = new BufferGeometry();
 
     for (const attributeDescription of attributeDescriptions) {
       const itemSize =
@@ -78,7 +76,7 @@ function createBufferGeometries(
 
       const shouldNormalize = getShouldNormalize(attributeDescription.format.componentType);
 
-      const bufferAttribute = new THREE.InterleavedBufferAttribute(
+      const bufferAttribute = new InterleavedBufferAttribute(
         interleavedBuffers[i],
         itemSize,
         attributeDescription.byteOffset / Float32Array.BYTES_PER_ELEMENT,
@@ -96,13 +94,13 @@ function createBufferGeometries(
 /**
  * Takes a list of primitive names and a list of lists containing
  * instances of the corresponding primitives.
- * Returns a list of THREE.BufferGeometry objects describing the primitives
+ * Returns a list of BufferGeometry objects describing the primitives
  * written to a single shared underlying buffer.
  */
 export function createPrimitiveInterleavedGeometriesSharingBuffer(
   types: PrimitiveName[],
   primitiveDescs: Primitive[][]
-): THREE.BufferGeometry[] {
+): BufferGeometry[] {
   assert(types.length == primitiveDescs.length);
 
   const elementSizes = types.map(computeTotalAttributeByteSize);
@@ -115,23 +113,20 @@ export function createPrimitiveInterleavedGeometriesSharingBuffer(
 
 /**
  * Takes a primitive name and a list of primitive instances of that type
- * Returns a THREE.BufferGeometry containing the primitives
+ * Returns a BufferGeometry containing the primitives
  */
-export function createPrimitiveInterleavedGeometry(
-  name: PrimitiveName,
-  primitiveDescs: Primitive[]
-): THREE.BufferGeometry {
+export function createPrimitiveInterleavedGeometry(name: PrimitiveName, primitiveDescs: Primitive[]): BufferGeometry {
   return createPrimitiveInterleavedGeometriesSharingBuffer([name], [primitiveDescs])[0];
 }
 
 /* NB: Assumes BufferGeometry only uses one underlying buffer for interleaved attributes */
-function getBufferByteSize(geometryBuffer: THREE.BufferGeometry): [number, number] {
+function getBufferByteSize(geometryBuffer: BufferGeometry): [number, number] {
   let underlyingByteBufferLength: number | undefined = undefined;
   let underlyingByteBufferOffset: number | undefined = undefined;
   for (const attr of Object.entries(geometryBuffer.attributes)) {
-    if (attr[1] instanceof THREE.InterleavedBufferAttribute) {
-      underlyingByteBufferLength = ((attr[1] as THREE.InterleavedBufferAttribute).array as TypedArray).byteLength;
-      underlyingByteBufferOffset = ((attr[1] as THREE.InterleavedBufferAttribute).array as TypedArray).byteOffset;
+    if (attr[1] instanceof InterleavedBufferAttribute) {
+      underlyingByteBufferLength = ((attr[1] as InterleavedBufferAttribute).array as TypedArray).byteLength;
+      underlyingByteBufferOffset = ((attr[1] as InterleavedBufferAttribute).array as TypedArray).byteOffset;
     }
   }
 
@@ -143,10 +138,10 @@ function getBufferByteSize(geometryBuffer: THREE.BufferGeometry): [number, numbe
 }
 
 /**
- * Reads primitives of the specified type out of the provided THREE.BufferGeometry object
+ * Reads primitives of the specified type out of the provided BufferGeometry object
  * Returns list of records containing the resulting primitives
  */
-export function parseInterleavedGeometry(name: PrimitiveName, geometryBuffer: THREE.BufferGeometry): Primitive[] {
+export function parseInterleavedGeometry(name: PrimitiveName, geometryBuffer: BufferGeometry): Primitive[] {
   const singleElementSize = computeTotalAttributeByteSize(name);
 
   const [byteLength, byteOffset] = getBufferByteSize(geometryBuffer);
