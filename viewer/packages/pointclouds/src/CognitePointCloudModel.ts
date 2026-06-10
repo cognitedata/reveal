@@ -47,6 +47,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
   readonly pointCloudNode: PointCloudNode<T>;
 
   private readonly _styledVolumeCollections: StyledPointCloudVolumeCollection<T>[] = [];
+  private readonly _styledVolumeCollectionImportance: Map<StyledPointCloudVolumeCollection<T>, number> = new Map();
 
   /**
    * @param identifier
@@ -364,10 +365,12 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
     if (index !== -1) {
       this._styledVolumeCollections[index].style = fullAppearance;
+      this._styledVolumeCollectionImportance.set(this._styledVolumeCollections[index], importance);
       this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index], importance);
     } else {
       const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
       this._styledVolumeCollections.push(newObjectCollection);
+      this._styledVolumeCollectionImportance.set(newObjectCollection, importance);
       this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection, importance);
     }
   }
@@ -383,6 +386,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     ) => {
       const index = collections.findIndex(x => x.objectCollection === objectCollection);
       if (index !== -1) {
+        this._styledVolumeCollectionImportance.delete(collections[index]);
         collections.splice(index, 1);
       }
       return index !== -1;
@@ -398,7 +402,10 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
 
     const reassignCollections = (collections: Array<StyledPointCloudVolumeCollection<T>>) => {
       for (const styledObjectCollection of collections) {
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
+        this.pointCloudNode.assignStyledPointCloudObjectCollection(
+          styledObjectCollection,
+          this._styledVolumeCollectionImportance.get(styledObjectCollection) ?? 0
+        );
       }
     };
 

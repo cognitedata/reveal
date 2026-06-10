@@ -15,7 +15,6 @@ import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
-import { sortBy } from 'lodash-es';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
