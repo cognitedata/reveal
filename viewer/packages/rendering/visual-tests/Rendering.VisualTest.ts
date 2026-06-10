@@ -7,7 +7,7 @@ import type { SceneHandler } from '@reveal/utilities';
 import { DeferredPromise, NumericRange } from '@reveal/utilities';
 import type { Box3, Object3D, PerspectiveCamera, WebGLRenderer } from 'three';
 import { BoxGeometry, Color, GridHelper, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
-import { TransformControls } from 'three/addons';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import type { PointCloudMaterialManager } from '..';
 import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 

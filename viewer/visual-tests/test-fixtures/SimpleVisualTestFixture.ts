@@ -3,7 +3,7 @@
  */
 import type { Box3 } from 'three';
 import { Matrix4, PerspectiveCamera, Scene, Sphere, Vector3, WebGLRenderer } from 'three';
-import { OrbitControls } from 'three/addons';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import type { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/data-providers';
 import { createDataProviders } from './utilities/createDataProviders';

@@ -3,7 +3,7 @@
  */
 import type { Box3 } from 'three';
 import { Matrix4, PerspectiveCamera, WebGLRenderer } from 'three';
-import { OrbitControls } from 'three/addons';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
