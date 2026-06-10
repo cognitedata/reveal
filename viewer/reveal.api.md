@@ -655,7 +655,7 @@ export type CogniteModel<T extends DataSourceType = ClassicDataSourceType> = Cog
 
 // @public
 export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSourceType> {
-    assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance): void;
+    assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance, importance?: number): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
