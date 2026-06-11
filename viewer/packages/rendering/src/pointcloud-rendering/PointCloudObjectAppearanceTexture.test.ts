@@ -50,7 +50,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet, 0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet);
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
@@ -88,7 +88,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet, 0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet);
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
@@ -126,7 +126,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet, 0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet);
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
@@ -163,7 +163,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet, 0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet);
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
