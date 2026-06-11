@@ -5,16 +5,13 @@
 import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
-import type {
-  PointCloudAnnotationVolumeCollection,
-  CompletePointCloudAppearance,
-  StyledPointCloudVolumeCollection
-} from '@reveal/pointcloud-styling';
+import type { CompletePointCloudAppearance, StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 import { DefaultPointCloudAppearance, isPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import { sortBy } from 'lodash-es';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
@@ -99,7 +96,9 @@ export class PointCloudObjectAppearanceTexture {
   onBeforeRender(): void {
     if (this._needsReconstruction) {
       this.resetTexture();
-      for (const styledCollection of this._styledObjectSets) {
+
+      const sortedStyledCollections = sortBy(this._styledObjectSets, 'importance');
+      for (const styledCollection of sortedStyledCollections) {
         this.setObjectCollectionStyle(styledCollection);
       }
 
@@ -109,10 +108,10 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
-    const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
+    const ind = this._styledObjectSets.findIndex(s => s.volumeCollection === styledCollection.volumeCollection);
 
     if (ind !== -1) {
-      this._styledObjectSets[ind].style = styledCollection.style;
+      this._styledObjectSets[ind] = styledCollection;
     } else {
       this._styledObjectSets.push(styledCollection);
     }
@@ -120,8 +119,8 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: PointCloudAnnotationVolumeCollection): void {
-    const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
+  removeStyledObjectSet(collection: StyledPointCloudVolumeCollection<DataSourceType>['volumeCollection']): void {
+    const ind = this._styledObjectSets.findIndex(s => s.volumeCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);
     }
