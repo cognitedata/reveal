@@ -3,7 +3,7 @@
  */
 import type { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 import type { DMInstanceRef } from '@reveal/utilities';
-import chunk from 'lodash/chunk';
+import { chunk } from 'lodash-es';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 
 /**
@@ -67,6 +67,14 @@ export class CdfImageFileProvider {
   public async getFileBuffers(fileIdentifiers: FileIdentifier[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
     const results = await this.getFileBuffersWithMimeType(fileIdentifiers, abortSignal);
     return results.map(r => r.data);
+  }
+
+  public async getFileDownloadUrls(fileIdentifiers: FileIdentifier[], abortSignal?: AbortSignal): Promise<string[]> {
+    const fileLinks = await this.getDownloadUrls(fileIdentifiers, abortSignal);
+    if (fileLinks.length !== fileIdentifiers.length) {
+      throw new Error(`Expected ${fileIdentifiers.length} download URLs but received ${fileLinks.length}`);
+    }
+    return fileLinks.map(link => link.downloadUrl);
   }
 
   /**

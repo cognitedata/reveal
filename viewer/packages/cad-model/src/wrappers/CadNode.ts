@@ -4,13 +4,13 @@
 
 import type { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 import { type NodeTransformProvider } from '@reveal/cad-styling';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import type { SectorScene, CadModelMetadata, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { RootSectorNode } from '@reveal/cad-parsers';
 import type { SectorRepository } from '@reveal/sector-loader';
 import type { ParsedGeometry } from '@reveal/sector-parser';
-import type { CadMaterialManager, StyledTreeIndexSets } from '@reveal/rendering';
-import { setModelRenderLayers, createCadMaterial, type CadMaterial } from '@reveal/rendering';
+import type { StyledTreeIndexSets, CadMaterial } from '@reveal/rendering';
+import { setModelRenderLayers, createCadMaterial, forEachMaterial } from '@reveal/rendering';
 
 import type { Plane, Object3DEventMap } from 'three';
 import { Group, Object3D, Matrix4 } from 'three';
@@ -24,7 +24,6 @@ import type { ModelIdentifier } from '@reveal/data-providers';
 
 export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> {
   private readonly _cadModelMetadata: CadModelMetadata;
-  private readonly _materialManager: CadMaterialManager;
   private readonly _sectorRepository: SectorRepository;
   private readonly _modelIdentifier: ModelIdentifier;
 
@@ -56,10 +55,9 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public readonly type = 'CadNode';
 
-  constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
+  constructor(model: CadModelMetadata, sectorRepository: SectorRepository) {
     super();
     this.name = 'Sector model';
-    this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
     this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
@@ -109,14 +107,8 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
     this._sectorScene = scene;
 
-    // Initialize mesh manager
-    this._meshManager = new CadMeshManager(
-      materialManager,
-      model.modelIdentifier.revealInternalId,
-      this.treeIndexToSectorsMap
-    );
+    this._meshManager = new CadMeshManager(this._cadMaterial, this.treeIndexToSectorsMap);
 
-    // Prepare renderables
     this.add(this._rootSector);
 
     this.matrixAutoUpdate = false;
@@ -134,7 +126,6 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._needsRedraw = false;
   }
 
-  // TODO: cleanup type
   get cadMaterial(): CadMaterial {
     return this._cadMaterial;
   }
@@ -161,11 +152,11 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   get clippingPlanes(): Plane[] {
-    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId);
+    return this._cadMaterial.clippingPlanesProvider.getClippingPlanes();
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId, planes);
+    this._cadMaterial.clippingPlanesProvider.setClippingPlanes(planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
@@ -299,7 +290,13 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
-    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
+
+    forEachMaterial(this.cadMaterial.materials, mat => mat.dispose());
+
+    this.cadMaterial.nodeTransformTextureBuilder.dispose();
+    this.cadMaterial.nodeAppearanceTextureBuilder.dispose();
+    this.cadMaterial.clippingPlanesProvider.dispose();
+
     this._geometryBatchingManager?.dispose();
 
     // Remove all mesh groups from the scene and dereference sectors in cache

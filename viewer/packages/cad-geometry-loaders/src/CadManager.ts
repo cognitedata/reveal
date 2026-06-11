@@ -16,7 +16,7 @@ import { defaultDesktopCadModelBudget } from './CadModelBudget';
 import type { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { batchedDebounce, EventTrigger } from '@reveal/utilities';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -233,6 +233,7 @@ export class CadManager {
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
+    this.materialManager.removeModelMaterials(model.cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   on(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {

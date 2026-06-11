@@ -4,7 +4,7 @@
 import type { IndexNode } from './IndexSet';
 import { LeafIndexNode } from './LeafIndexNode';
 import { NumericRange } from '../NumericRange';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 export class IntermediateIndexNode {
   readonly range: NumericRange;

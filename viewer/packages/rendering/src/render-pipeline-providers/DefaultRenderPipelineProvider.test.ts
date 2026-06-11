@@ -10,14 +10,13 @@ import type { CadMaterialManager } from '../CadMaterialManager';
 import { IndexSet, SceneHandler } from '@reveal/utilities';
 import { defaultRenderOptions } from '../rendering/types';
 import type { CadNode } from '@reveal/cad-model';
-import type { PointCloudNode } from '@reveal/pointclouds';
 import { createCadModel, createPointCloudModel } from '../../../../test-utilities';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 describe(DefaultRenderPipelineProvider.name, () => {
   let rendererMock: IMock<THREE.WebGLRenderer>;
   let cadNodeMock: CadNode;
-  let pointCloudNodeMock: PointCloudNode;
+  let pointCloudNodeMock: THREE.Object3D & { modelIdentifier: symbol };
 
   const modelIdentifierSymbol = Symbol('0');
 

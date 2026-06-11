@@ -15,21 +15,24 @@ export function generateClusterStyles(classPrefix: string): string {
   --inner-border: calc(var(--size) * 0.05);
   --innermost-border: calc(var(--size) * 0.1);
   position: absolute;
+  width: var(--size);
+  height: var(--size);
+  font-size: calc(var(--size) * 0.25);
   transform: translate(-50%, -50%);
   pointer-events: none;
   user-select: none;
   box-sizing: border-box;
   border: var(--outer-border) solid #FFFFFF;
   border-radius: 50%;
-  filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.15));
   background: transparent;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  transition: transform 0.15s ease-out;
+  transition: filter 0.1s ease-in;
   opacity: 0;
   animation: ${classPrefix}-fade-in 0.2s ease-out forwards;
+  filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.15)) opacity(var(--cluster-fade-opacity, 1));
 }
 
 .${classPrefix}-icon::before {
@@ -61,9 +64,6 @@ export function generateClusterStyles(classPrefix: string): string {
   border-color: #8893CD;
 }
 
-.${classPrefix}-icon.hovered {
-  transform: translate(-50%, -50%) scale(2.1);
-}
 
 .${classPrefix}-icon.fade-out {
   animation: ${classPrefix}-fade-out 0.15s ease-out forwards;

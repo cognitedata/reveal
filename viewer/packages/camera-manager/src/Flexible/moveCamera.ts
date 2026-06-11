@@ -7,7 +7,7 @@ import { Raycaster, Vector2, Vector3 } from 'three';
 import TWEEN, { type Tween } from '@tweenjs/tween.js';
 
 import type { FlexibleCameraManager } from './FlexibleCameraManager';
-import clamp from 'lodash/clamp';
+import { clamp } from 'lodash-es';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
 //================================================

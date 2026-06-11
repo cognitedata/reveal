@@ -21,6 +21,7 @@ import { Matrix4, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
 import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 const annotationFixture0 = {
+  id: 123,
   annotatedResourceId: 1,
   annotationType: 'images.ObjectDetection',
   status: 'approved',
@@ -36,6 +37,7 @@ const annotationFixture0 = {
 } as AnnotationModel;
 
 const annotationFixture1 = {
+  id: 234,
   annotatedResourceId: 1,
   annotationType: 'images.ObjectDetection',
   status: 'approved',

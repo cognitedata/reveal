@@ -2,7 +2,6 @@
  * Copyright 2023 Cognite AS
  */
 
-import glsl from 'glslify';
 import type { DepthModes, Object3D, ShaderMaterial, Texture, Vector3, WebGLRenderer } from 'three';
 import {
   BufferAttribute,
@@ -240,8 +239,8 @@ export class OverlayPointsObject extends Group {
       defines: {
         isMaskDefined: maskTexture !== undefined
       },
-      vertexShader: glsl(overlay3DIconVert),
-      fragmentShader: glsl(overlay3DIconFrag),
+      vertexShader: overlay3DIconVert,
+      fragmentShader: overlay3DIconFrag,
       depthTest: true,
       depthWrite: depthWrite,
       depthFunc: depthFunction,

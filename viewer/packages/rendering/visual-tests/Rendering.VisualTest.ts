@@ -6,7 +6,7 @@ import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styl
 import type { SceneHandler } from '@reveal/utilities';
 import { DeferredPromise, NumericRange } from '@reveal/utilities';
 import * as THREE from 'three';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { TransformControls } from 'three/addons';
 import type { PointCloudMaterialManager } from '..';
 import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 

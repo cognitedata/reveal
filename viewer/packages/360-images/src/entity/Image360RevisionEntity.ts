@@ -5,6 +5,7 @@
 import type {
   Image360FileDescriptor,
   Image360Descriptor,
+  Image360RevisionId,
   Image360Texture,
   DataSourceType,
   Image360Provider
@@ -12,14 +13,15 @@ import type {
 import { getExternalIdFromDescriptor } from '@reveal/data-providers';
 import type { Image360Revision } from './Image360Revision';
 import type { Image360VisualizationBox } from './Image360VisualizationBox';
+import type { JpegType } from '../utils/JpegDataStreamParser';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Box3, Vector3, type Raycaster } from 'three';
-import minBy from 'lodash/minBy';
+import { minBy } from 'lodash-es';
 import type { Image360AnnotationAppearance } from '../annotation/types';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
-import type { Image360RevisionId } from '@reveal/data-providers/src/types';
+import { getAnnotationIdKey } from '@reveal/data-providers';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
   private readonly _imageProvider: Image360Provider<T>;
@@ -28,12 +30,15 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   private _previewTextures: Image360Texture[];
   private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
+  private _jpegType: JpegType | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private readonly _identifier: Image360RevisionId<T>;
 
-  private _annotations: ImageAnnotationObject<T>[] | undefined;
-  private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
+  private readonly _annotationKeyToAnnotationObject: Map<string, Promise<ImageAnnotationObject<T> | undefined>> =
+    new Map();
+  private _allAnnotations: ImageAnnotationObject<T>[] | undefined;
+
   private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
@@ -66,26 +71,23 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
   }
 
+  get jpegType(): JpegType | undefined {
+    return this._jpegType;
+  }
+
   async getAnnotations(): Promise<ImageAnnotationObject<T>[]> {
-    if (this._annotations !== undefined) {
-      return this._annotations;
+    if (this._allAnnotations === undefined) {
+      return this.loadAndSetAllAnnotations();
     }
-
-    if (this._annotationsPromise !== undefined) {
-      return this._annotationsPromise;
-    }
-
-    this._annotationsPromise = this.loadAndSetAnnotations();
-
-    return this._annotationsPromise;
+    return this._allAnnotations;
   }
 
   public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject<T> | undefined {
-    if (this._annotations === undefined) {
-      return undefined;
+    if (this._allAnnotations === undefined) {
+      return;
     }
 
-    const intersectedAnnotations = this._annotations.filter(a => a.getVisible() && a.intersects(raycaster));
+    const intersectedAnnotations = this._allAnnotations.filter(a => a.getVisible() && a.intersects(raycaster));
 
     const smallestIntersectedBox = minBy(intersectedAnnotations, annotation => {
       const boundSize = new Box3().setFromObject(annotation.getObject()).getSize(new Vector3());
@@ -109,12 +111,50 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     lowResolutionCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
   } {
-    const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
-    const fullResolutionCompleted = this.loadFullTextures(abortSignal);
+    // For progressive JPEG: resolves when first face scan 1 is decoded.
+    // For baseline JPEG: resolves after the first face fully downloads.
+    let resolveFirstFace: () => void = () => {};
+    let rejectFirstFace: (reason: unknown) => void = () => {};
+    const firstFaceReady = new Promise<void>((resolve, reject) => {
+      resolveFirstFace = resolve;
+      rejectFirstFace = reject;
+    });
+
+    // Start the low-resolution preview download in parallel with the full-resolution download so the
+    // small preview images are requested first and can drive an early camera transition for baseline JPEGs.
+    // Progressive JPEGs do not need the preview their first scan is the preview, so the request is aborted as
+    // soon as the stream confirms the file is progressive.
+    const previewAbort = new AbortController();
+    if (abortSignal?.aborted) {
+      previewAbort.abort();
+    } else {
+      abortSignal?.addEventListener('abort', () => previewAbort.abort(), { once: true });
+    }
+    const previewCompleted = this.loadPreviewTextures(previewAbort.signal);
+
+    const onFirstFaceTypeDetected = (type: JpegType): void => {
+      this._jpegType = type;
+      if (type === 'progressive') {
+        previewAbort.abort();
+      }
+    };
+
+    const fullResolutionCompleted = this.loadFullTextures(abortSignal, resolveFirstFace, onFirstFaceTypeDetected);
+
+    // If full resolution fails, propagate the rejection to both gate promises so that
+    // lowResolutionCompleted does not hang forever waiting for promises that will never resolve.
+    fullResolutionCompleted.catch(err => {
+      rejectFirstFace(err);
+    });
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
-    return { lowResolutionCompleted, fullResolutionCompleted };
+    return {
+      // Resolve on whichever preview is ready first: the icon preview (baseline) or the first rendered scan
+      // (progressive, or baseline fallback if the preview request fails or is aborted).
+      lowResolutionCompleted: Promise.race([previewCompleted.catch(() => firstFaceReady), firstFaceReady]),
+      fullResolutionCompleted
+    };
   }
 
   public async getPreviewThumbnailUrl(
@@ -146,47 +186,82 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     this._previewTextures = previewTextures;
   }
 
-  private async loadFullTextures(abortSignal?: AbortSignal): Promise<void> {
+  private async loadFullTextures(
+    abortSignal?: AbortSignal,
+    onFirstFaceReady?: () => void,
+    onFirstFaceTypeDetected?: (type: JpegType) => void
+  ): Promise<void> {
     const fullImageFiles = await this._imageProvider.get360ImageFiles(
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
 
-    const textures = await this._image360VisualizationBox.loadFaceTextures(fullImageFiles);
+    const textures = await this._image360VisualizationBox.loadFaceTextures(
+      fullImageFiles,
+      onFirstFaceReady,
+      onFirstFaceTypeDetected,
+      abortSignal
+    );
     this._fullResolutionTextures = textures;
+    this._image360VisualizationBox.setImages(textures);
   }
 
-  private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {
+  private async loadAndSetAllAnnotations(): Promise<ImageAnnotationObject<T>[]> {
+    if (this._allAnnotations !== undefined) {
+      return this._allAnnotations;
+    }
+
     const annotationData = await this._imageProvider.getRelevant360ImageAnnotations({
       revisionId: this._image360Descriptor.id,
       fileDescriptors: this._image360Descriptor.faceDescriptors
     });
+    const annotationObjects = await this.createAndAddAnnotationObjects(annotationData);
+
+    this._image360VisualizationBox.setAnnotations(annotationObjects);
+    this._allAnnotations = annotationObjects;
+
+    this.propagateDefaultAppearanceToAnnotations();
+
+    return this._allAnnotations;
+  }
+
+  public createAndAddAnnotationObjects(
+    annotations: T['image360AnnotationType'][]
+  ): Promise<ImageAnnotationObject<T>[]> {
+    const relevantAnnotations = annotations.filter(a => this._annotationFilterer.filter(a));
+    const newAnnotations = relevantAnnotations.filter(
+      a => !this._annotationKeyToAnnotationObject.has(getAnnotationIdKey(a))
+    );
 
     // Get fileId to externalId mapping from provider
-    const fileIdToExternalId = this._imageProvider.resolveFileIdToExternalIdMapping
-      ? await this._imageProvider.resolveFileIdToExternalIdMapping(
-          annotationData,
-          this._image360Descriptor.faceDescriptors
-        )
-      : new Map<number, string>();
+    const fileIdToExternalIdPromise = this._imageProvider.resolveFileIdToExternalIdMapping
+      ? this._imageProvider.resolveFileIdToExternalIdMapping(newAnnotations, this._image360Descriptor.faceDescriptors)
+      : Promise.resolve(new Map<number, string>());
 
-    const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
-
-    const annotationObjects = filteredAnnotationData
-      .map(data => {
+    const newAnnotationObjectsPromisesWithKey = newAnnotations.map(data => ({
+      key: getAnnotationIdKey(data),
+      annotationPromise: fileIdToExternalIdPromise.then(fileIdToExternalId => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor, fileIdToExternalId);
+
         return ImageAnnotationObject.createAnnotationObject(
           data,
           faceDescriptor?.face,
           this._image360VisualizationBox.getTransform()
         );
       })
-      .filter(isDefined);
+    }));
 
-    this._image360VisualizationBox.setAnnotations(annotationObjects);
-    this.propagateDefaultAppearanceToAnnotations();
-    this._annotations = annotationObjects;
-    return annotationObjects;
+    // Ensure promises are inserted synchronously into the map to avoid race conditions
+    // in cases of overlapping calls to this method
+    newAnnotationObjectsPromisesWithKey.forEach(({ key, annotationPromise }) =>
+      this._annotationKeyToAnnotationObject.set(key, annotationPromise)
+    );
+
+    const allAnnotationObjectPromises = relevantAnnotations.map(annotationData =>
+      this._annotationKeyToAnnotationObject.get(getAnnotationIdKey(annotationData))
+    );
+
+    return Promise.all(allAnnotationObjectPromises).then(annotations => annotations.filter(isDefined));
   }
 
   public setDefaultAppearance(appearance: Image360AnnotationAppearance): void {
@@ -195,7 +270,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 
   private propagateDefaultAppearanceToAnnotations(): void {
-    this._annotations?.forEach(a => a.setDefaultStyle(this._defaultAppearance));
+    this._allAnnotations?.forEach(a => a.setDefaultStyle(this._defaultAppearance));
   }
 
   /**
@@ -213,11 +288,11 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
    */
   public applyTextures(): void {
     if (this._fullResolutionTextures.length === 6) {
-      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.setImages(this._fullResolutionTextures);
       return;
     }
     if (this._previewTextures.length === 6) {
-      this._image360VisualizationBox.loadImages(this._previewTextures);
+      this._image360VisualizationBox.setImages(this._previewTextures);
       return;
     }
   }
@@ -232,7 +307,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     try {
       await this._onFullResolutionCompleted;
       this._onFullResolutionCompleted = undefined;
-      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.setImages(this._fullResolutionTextures);
       if (this._previewTextures.length === 6) {
         this._previewTextures.forEach(t => t.texture.dispose());
         this._previewTextures = [];

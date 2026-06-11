@@ -13,6 +13,10 @@
     "resolveJsonModule": true,
     "strict": true,
     "allowJs": true,
+    "types": [
+      "vite/client",
+      "vite-plugin-glsl/ext"
+    ]
   },
   "exclude": [
     "./**/*.test.ts",

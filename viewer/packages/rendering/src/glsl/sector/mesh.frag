@@ -1,13 +1,13 @@
 precision highp float;
 
-#pragma glslify: import('../math/colorSpaceConversion.glsl')
-#pragma glslify: import('../math/derivateNormal.glsl')
-#pragma glslify: import('../base/updateFragmentColor.glsl')
-#pragma glslify: import('../base/nodeAppearance.glsl')
-#pragma glslify: import('../base/determineNodeAppearance.glsl');
-#pragma glslify: import('../base/determineColor.glsl');
-#pragma glslify: import('../base/isClipped.glsl')
-#pragma glslify: import('../treeIndex/treeIndexPacking.glsl')
+#include ../math/colorSpaceConversion.glsl;
+#include ../math/derivateNormal.glsl;
+#include ../base/updateFragmentColor.glsl;
+#include ../base/nodeAppearance.glsl;
+#include ../base/determineNodeAppearance.glsl;
+#include ../base/determineColor.glsl;
+#include ../base/isClipped.glsl;
+#include ../treeIndex/treeIndexPacking.glsl;
 
 uniform sampler2D matCapTexture;
 uniform lowp int renderMode;

@@ -11,8 +11,7 @@ import { RenderMode } from './rendering/RenderMode';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 
-import range from 'lodash/range';
-import cloneDeep from 'lodash/cloneDeep';
+import { range, cloneDeep } from 'lodash-es';
 
 import { vi } from 'vitest';
 import { createCadNode } from '../../../test-utilities';
@@ -98,12 +97,15 @@ describe('CadMaterialManager', () => {
 
     const globalClipPlanes = [new THREE.Plane(), new THREE.Plane()];
     manager.clippingPlanes = globalClipPlanes;
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
-    manager.addModelMaterials(modelIdentifier2, createCadMaterial(16));
+
+    const cadMaterial1 = createCadMaterial(16);
+    const cadMaterial2 = createCadMaterial(16);
+    manager.addModelMaterials(modelIdentifier1, cadMaterial1);
+    manager.addModelMaterials(modelIdentifier2, cadMaterial2);
 
     // Act
-    manager.setModelClippingPlanes(modelIdentifier1, [new THREE.Plane(), new THREE.Plane()]);
-    manager.setModelClippingPlanes(modelIdentifier2, [new THREE.Plane()]);
+    cadMaterial1.clippingPlanesProvider.setClippingPlanes([new THREE.Plane(), new THREE.Plane()]);
+    cadMaterial2.clippingPlanesProvider.setClippingPlanes([new THREE.Plane()]);
 
     // Assert
     for (const material of iterateMaterials(manager.getModelMaterials(modelIdentifier1))) {

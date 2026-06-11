@@ -2,9 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import clamp from 'lodash/clamp';
-import maxBy from 'lodash/maxBy';
-import minBy from 'lodash/minBy';
+import { clamp, maxBy, minBy } from 'lodash-es';
 import type { Box3, Matrix4 } from 'three';
 import { Box2, Vector2 } from 'three';
 import { getBox3CornerPoints } from './three/visitBox3CornerPoints';

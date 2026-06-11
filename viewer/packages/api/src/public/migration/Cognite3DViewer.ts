@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
-import pick from 'lodash/pick';
+import { pick } from 'lodash-es';
 
 import type { EdlOptions } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';
@@ -101,8 +101,9 @@ import { AsyncSequencer } from '../../../../utilities/src/AsyncSequencer';
 import { getModelAndRevisionId } from '../../utilities/utils';
 import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 import { isClassicIdentifier } from '@reveal/data-providers';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
+import { REVEAL_VERSION } from '../../version';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -362,8 +363,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         {
           platformMaxPointsSize: getMaxPointSize(this._renderer),
           enableHtmlClusters: options.enableHtmlClusters ?? false,
-          enableFloorIcons: options.enableFloorIcons ?? false,
-          clusterDistanceThreshold: 10
+          htmlClusterOptions: {
+            clusterFadeStartDistance: options.htmlClusterOptions?.fadeStartDistance,
+            clusterFadeEndDistance: options.htmlClusterOptions?.fadeEndDistance,
+            clusterDistanceThreshold: options.htmlClusterOptions?.clusterDistanceThreshold,
+            maxOctreeDepth: options.htmlClusterOptions?.maxOctreeDepth
+          },
+          enableFloorIcons: options.enableFloorIcons ?? false
         }
       );
     }
@@ -433,7 +439,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * Returns reveal version installed.
    */
   getVersion(): string {
-    return process.env.VERSION!;
+    return REVEAL_VERSION;
   }
 
   /**

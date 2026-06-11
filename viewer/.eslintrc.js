@@ -9,12 +9,12 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
-    project: './tsconfig.json',
+    project: './tsconfig.lib.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
   },
-  plugins: ['header', '@typescript-eslint', 'jsdoc', 'unused-imports', 'lodash'],
+  plugins: ['header', '@typescript-eslint', 'jsdoc', 'unused-imports'],
 
   extends: [
     'plugin:@typescript-eslint/recommended',
@@ -51,10 +51,6 @@ module.exports = {
         }
       ]
     ],
-
-    // see relevant discussion https://github.com/cognitedata/cognite-sdk-js/pull/386
-    'lodash/import-scope': ['error', 'method'],
-
     'no-return-await': 'error',
     'no-empty': 'off',
     'object-literal-sort-keys': 'off',
@@ -93,7 +89,13 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.test.ts', 'test-utilities/**/*.ts'],
+      parserOptions: {
+        project: './tsconfig.test.json',
+        tsconfigRootDir: __dirname,
+        ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
+        sourceType: 'module' // Allows for the use of imports
+      },
+      files: ['*.test.ts', 'test-utilities/**/*.ts', '**/tests/**/*.ts', 'visual-tests/**/*.ts', 'vite.config.ts'],
       rules: {
         // complains when you do expect(mockObj.mockFn).toBeCalled() in tests
         '@typescript-eslint/unbound-method': 'off'

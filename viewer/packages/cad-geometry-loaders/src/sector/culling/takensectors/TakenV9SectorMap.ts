@@ -10,7 +10,7 @@ import type { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 import type { Box3 } from 'three';
 import type { ModelIdentifier } from '@reveal/data-providers';
 

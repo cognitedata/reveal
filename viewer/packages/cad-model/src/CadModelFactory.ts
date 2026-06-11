@@ -52,13 +52,13 @@ export class CadModelFactory {
     );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
-    const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
+    const cadModel = new CadNode(modelMetadata, sectorRepository);
     this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, cadModel.cadMaterial);
 
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
       const clippingPlanes = new BoundingBoxClipper(clipBox).clippingPlanes;
-      this._materialManager.setModelClippingPlanes(modelMetadata.modelIdentifier.revealInternalId, clippingPlanes);
+      cadModel.clippingPlanes = clippingPlanes;
     }
 
     return cadModel;

@@ -8,7 +8,7 @@ import { NodeIdNodeCollection } from './NodeIdNodeCollection';
 import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
-import range from 'lodash/range';
+import { range } from 'lodash-es';
 
 import { It, Mock, Times } from 'moq.ts';
 

@@ -13,7 +13,8 @@ import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
   DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult
+  Image360AnnotationAssetQueryResult,
+  Image360AnnotationInstanceReference
 } from '@reveal/360-images';
 import { DMInstanceRef } from '@reveal/utilities';
 import { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
@@ -189,19 +190,23 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
   transform: THREE.Matrix4;
 };
 
+export type FaceName = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+
 export type Image360Face = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
+  /** Signed download URL for streaming. When present, data is empty. */
+  downloadUrl?: string;
 };
 
 export type Image360Texture = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   texture: THREE.Texture;
 };
 
 export type Image360FileDescriptor = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
   /** Internal CDF file ID (numeric) */
   fileId?: number;

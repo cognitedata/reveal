@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 import { setPrimitiveTopology } from './reveal-glb-parser/primitiveGeometries';
 import type { Node, GlbHeaderData, GeometryProcessingPayload, Primitive, GltfJson, ParsedGeometry } from './types';

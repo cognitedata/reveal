@@ -4,7 +4,7 @@
 
 import type { ConsumedSector, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
-import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
+import { DeferredPromise } from '@reveal/utilities';
 import type { IMock } from 'moq.ts';
 import { Mock } from 'moq.ts';
 import type { SectorDownloadData } from './SectorDownloadScheduler';

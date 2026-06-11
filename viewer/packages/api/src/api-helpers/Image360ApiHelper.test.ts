@@ -6,7 +6,7 @@ import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 import { vi } from 'vitest';
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 import { Image360ApiHelper } from './Image360ApiHelper';
 import type { SceneHandler, InputHandler, BeforeSceneRenderedDelegate } from '@reveal/utilities';
@@ -21,7 +21,8 @@ import type {
   DefaultImage360Collection,
   Image360RevisionEntity,
   Image360EnteredDelegate,
-  Image360ExitedDelegate
+  Image360ExitedDelegate,
+  IconsOptions
 } from '@reveal/360-images';
 import { Image360Facade } from '@reveal/360-images';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
@@ -125,7 +126,7 @@ function createTestHelper(
   domElement: HTMLElement,
   sdk: CogniteClient,
   cameraManagerType: CameraManagerType = 'mock',
-  iconsOptions?: { enableFloorIcons?: boolean },
+  iconsOptions?: IconsOptions,
   hasEventListeners = false
 ): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
   const mockCamera = new PerspectiveCamera();
@@ -738,7 +739,7 @@ describe(Image360ApiHelper.name, () => {
     }
 
     async function enterAt(position: Vector3): Promise<Image360Entity<DataSourceType>> {
-      const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision(), position);
+      const entity = createMockEntity(createMockIcon(), createMockVisualization(), createMockRevision(), { position });
       const enterCollection = new Mock<DefaultImage360Collection<DataSourceType>>()
         .setup(c => c.isCollectionVisible)
         .returns(true)

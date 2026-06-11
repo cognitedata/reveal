@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import css from './spinnerStyles.css';
-import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
+import css from './spinnerStyles.module.css?inline';
+import svg from './spinnerCogniteLogo.svg?raw';
 import type * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
+import { REVEAL_VERSION } from '../version';
 
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
@@ -22,8 +23,8 @@ export class Spinner {
     dark: 'reveal-viewer-spinner--dark'
   };
   private static readonly titles = {
-    idle: process.env.VERSION!,
-    loading: `${process.env.VERSION!} Loading...`
+    idle: REVEAL_VERSION,
+    loading: `${REVEAL_VERSION} Loading...`
   };
 
   private _loading = false;

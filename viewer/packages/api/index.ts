@@ -8,5 +8,4 @@ export type { ViewerState, ModelState, ClippingPlanesState } from './src/utiliti
 
 export * from './src/public/types';
 
-const REVEAL_VERSION = process.env.VERSION;
-export { REVEAL_VERSION };
+export { REVEAL_VERSION } from './src/version';

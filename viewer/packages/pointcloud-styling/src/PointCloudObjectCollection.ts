@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
 import { EventTrigger } from '@reveal/utilities';
 

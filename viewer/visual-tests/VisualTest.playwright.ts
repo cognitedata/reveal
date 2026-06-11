@@ -22,7 +22,7 @@ test.beforeAll(async ({ browser }) => {
     ignoreHTTPSErrors: true,
     viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,
-    baseURL: 'https://localhost:8080'
+    baseURL: 'http://localhost:8080'
   });
   sharedPage = await sharedContext.newPage();
   await sharedPage.goto('/', { waitUntil: 'load' });

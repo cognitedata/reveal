@@ -4,10 +4,7 @@
 
 import type { Image360Entity } from '../entity/Image360Entity';
 import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
-import pull from 'lodash/pull';
-import findLast from 'lodash/findLast';
-import find from 'lodash/find';
-import remove from 'lodash/remove';
+import { pull, findLast, find, remove } from 'lodash-es';
 import type { DataSourceType } from '@reveal/data-providers';
 
 export type DownloadRequest<T extends DataSourceType> = {

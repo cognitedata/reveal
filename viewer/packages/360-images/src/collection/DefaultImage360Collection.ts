@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
+import type { BeforeSceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import pull from 'lodash/pull';
-import cloneDeep from 'lodash/cloneDeep';
+import { pull, cloneDeep } from 'lodash-es';
 import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
@@ -17,6 +17,8 @@ import type { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import type { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import type { Image360AnnotationAppearance } from '../annotation/types';
+import type { ClusterScreenInfo } from '../icons/clustering';
+import type { HtmlClusterCollection } from '../icons/clustering/HtmlClusterCoordinator';
 
 import type {
   ClassicDataSourceType,
@@ -38,7 +40,9 @@ type Image360Events = 'image360Entered' | 'image360Exited';
  * Default implementation of {@link Image360Collection}. Used for events when entering
  * and exiting 360 image mode
  */
-export class DefaultImage360Collection<T extends DataSourceType> implements Image360Collection<T> {
+export class DefaultImage360Collection<T extends DataSourceType>
+  implements Image360Collection<T>, HtmlClusterCollection
+{
   /**
    * A list containing all the 360 images in this set.
    */
@@ -341,6 +345,19 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
 
   public setHoveredClusterIcon(icon: Overlay3DIcon | undefined): void {
     this._icons.setHoveredClusterIcon(icon);
+  }
+
+  public getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[] {
+    return this._icons.getStagedHtmlClusterScreenInfos();
+  }
+
+  public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
+    this._icons.applyHtmlClusterOcclusion(occludedIcons);
+  }
+
+  public updateIcons(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    this._icons.updateIcons(params);
+    this._icons.updateCulling(params);
   }
 
   public remove(entity: Image360Entity<T>): void {

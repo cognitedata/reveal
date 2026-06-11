@@ -2,11 +2,11 @@ precision highp float;
 
 uniform sampler2D tDiffuse;
 
-#if defined(DEPTH_WRITE) 
+#if defined(DEPTH_WRITE)
 uniform sampler2D tDepth;
 #endif
 
-#if defined(SSAO_BLUR) 
+#if defined(SSAO_BLUR)
 uniform sampler2D tSsao;
 #endif
 
@@ -25,29 +25,29 @@ in float far;
 
 out vec4 fragColor;
 
-#if defined(SSAO_BLUR) 
-#pragma glslify: import('./gaussian-blur.glsl')
+#if defined(SSAO_BLUR)
+#include gaussian-blur.glsl;
 #endif
 
-#if defined(FXAA) 
-#pragma glslify: import('./fxaa.glsl')
+#if defined(FXAA)
+#include fxaa.glsl;
 #endif
 
 #if defined(EDGES)
-#pragma glslify: import('./edge-detect.glsl')
+#include edge-detect.glsl;
 #endif
 
 #if defined(OUTLINE)
-#pragma glslify: import('./outline.glsl')
+#include outline.glsl;
 #endif
 
-#if defined(EDGES) && defined(DEPTH_WRITE) 
-#pragma glslify: import('../math/toViewZ.glsl')
+#if defined(EDGES) && defined(DEPTH_WRITE)
+#include ../math/toViewZ.glsl;
 #endif
 
 void main() {
-  vec4 diffuse = texture(tDiffuse, vUv); 
-  
+  vec4 diffuse = texture(tDiffuse, vUv);
+
   if(diffuse.a == 0.0){
     discard;
   }
@@ -78,7 +78,7 @@ void main() {
   fragColor.a = alpha;
 #endif
 
-#if defined(DEPTH_WRITE) 
+#if defined(DEPTH_WRITE)
   gl_FragDepth = texture(tDepth, vUv).r;
 #endif
 }

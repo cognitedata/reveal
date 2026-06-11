@@ -4,33 +4,33 @@
 
 ```ts
 
-import type { AnnotationModel } from '@cognite/sdk';
-import type { AnnotationsAssetRef } from '@cognite/sdk';
-import type { AnnotationStatus } from '@cognite/sdk';
-import type { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
-import type { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
+import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk';
+import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import { AnnotationsTypesImagesInstanceLink } from '@cognite/sdk';
 import { Box3 } from 'three';
-import type { Camera } from 'three';
-import type { CogniteClient } from '@cognite/sdk';
-import type { CogniteInternalId } from '@cognite/sdk';
+import { Camera } from 'three';
+import { CogniteClient } from '@cognite/sdk';
+import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
 import { EventDispatcher } from 'three';
-import type { IdEither } from '@cognite/sdk';
-import type { ListResponse } from '@cognite/sdk';
+import { IdEither } from '@cognite/sdk';
+import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
-import type { Node3D } from '@cognite/sdk';
+import { Node3D } from '@cognite/sdk';
 import { Object3D } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
-import type { Plane } from 'three';
+import { Plane } from 'three';
 import { Quaternion } from 'three';
 import { Raycaster } from 'three';
-import type { Texture } from 'three';
+import { Texture } from 'three';
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
-import type { WebGLRenderer } from 'three';
-import type { WebGLRenderTarget } from 'three';
+import { WebGLRenderer } from 'three';
+import { WebGLRenderTarget } from 'three';
 
 // @public
 export type AbsolutePosition = {
@@ -569,6 +569,7 @@ export interface Cognite3DViewerOptions {
     enableHtmlClusters?: boolean;
     // @beta
     hasEventListeners?: boolean;
+    htmlClusterOptions?: HtmlClusterOptions;
     loadingIndicatorStyle?: {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
@@ -654,7 +655,7 @@ export type CogniteModel<T extends DataSourceType = ClassicDataSourceType> = Cog
 
 // @public
 export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSourceType> {
-    assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance): void;
+    assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance, importance?: number): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
@@ -1179,6 +1180,14 @@ export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: numb
 
 // @beta
 export function getWheelEventDelta(event: WheelEvent): number;
+
+// @public
+export type HtmlClusterOptions = {
+    fadeStartDistance?: number;
+    fadeEndDistance?: number;
+    clusterDistanceThreshold?: number;
+    maxOctreeDepth?: number;
+};
 
 // @public
 export type HtmlOverlayCreateClusterDelegate = (overlayElements: {
@@ -2089,7 +2098,9 @@ export class StyledPointCloudObjectCollection extends StyledPointCloudVolumeColl
 export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
     constructor(
     objectCollection: T['pointCloudCollectionType'],
-    style: CompletePointCloudAppearance);
+    style: CompletePointCloudAppearance,
+    importance?: number);
+    importance: number;
     // @deprecated
     objectCollection: T['pointCloudCollectionType'];
     style: CompletePointCloudAppearance;

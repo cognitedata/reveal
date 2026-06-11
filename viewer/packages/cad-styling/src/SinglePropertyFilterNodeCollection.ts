@@ -9,9 +9,7 @@ import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectio
 
 import type { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
-import range from 'lodash/range';
-import chunk from 'lodash/chunk';
-import cloneDeep from 'lodash/cloneDeep';
+import { range, chunk, cloneDeep } from 'lodash-es';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
 
 /**
