@@ -195,20 +195,28 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
       objectToAnnotationIds: new Map<number, DMInstanceRef>([[OBJECT_ID0, volumeIntanceRef]])
     };
 
-    const stylableObjectSet0 = new StyledPointCloudVolumeCollection(objectSet0, {
-      color: new Color('black'),
-      visible: true
-    });
+    const stylableObjectSet0 = new StyledPointCloudVolumeCollection(
+      objectSet0,
+      {
+        color: new Color('black'),
+        visible: true
+      },
+      0
+    );
 
-    const stylableObjectSet1 = new StyledPointCloudVolumeCollection(objectSet1, {
-      color: new Color('red'),
-      visible: false
-    });
+    const stylableObjectSet1 = new StyledPointCloudVolumeCollection(
+      objectSet1,
+      {
+        color: new Color('red'),
+        visible: false
+      },
+      1
+    );
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet1, 1);
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet0, 0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet1);
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
@@ -219,8 +227,11 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     expect([...resultRgb0.values()]).toEqual([255, 0, 0, 0]);
 
     // swap importance
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet1, 0);
-    appearanceTexture.assignStyledObjectSet(stylableObjectSet0, 1);
+    stylableObjectSet0.importance = 1;
+    stylableObjectSet1.importance = 0;
+
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet0);
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet1);
     appearanceTexture.onBeforeRender();
 
     const resultRgb1 = createUint8View(textureData).slice(4 * OBJECT_ID0, 4 * (OBJECT_ID0 + 1));
