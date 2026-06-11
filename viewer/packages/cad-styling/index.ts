@@ -32,3 +32,4 @@ export type { PrioritizedArea } from './src/prioritized/types';
 export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
 export { NodeTransformTextureBuilder } from './src/transform/NodeTransformTextureBuilder';
 export { NodeAppearanceTextureBuilder } from './src/NodeAppearanceTextureBuilder';
+export { ClippingPlanesProvider } from './src/ClippingPlanesProvider';

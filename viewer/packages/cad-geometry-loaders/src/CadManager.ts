@@ -233,6 +233,7 @@ export class CadManager {
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
+    this.materialManager.removeModelMaterials(model.cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   on(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {

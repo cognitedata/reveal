@@ -10,6 +10,7 @@ import { RenderMode } from './rendering/RenderMode';
 
 import type { NodeAppearance } from '@reveal/cad-styling';
 import {
+  ClippingPlanesProvider,
   NodeAppearanceProvider,
   NodeAppearanceTextureBuilder,
   NodeTransformProvider,
@@ -28,10 +29,10 @@ export type CadMaterial = {
   nodeAppearanceTextureBuilder: NodeAppearanceTextureBuilder;
   nodeTransformTextureBuilder: NodeTransformTextureBuilder;
   matCapTexture: THREE.Texture;
+  clippingPlanesProvider: ClippingPlanesProvider;
 };
 
 type MaterialsWrapper = CadMaterial & {
-  perModelClippingPlanes: THREE.Plane[];
   updateTransformsCallback: () => void;
 };
 
@@ -65,7 +66,8 @@ export class CadMaterialManager {
       nodeAppearanceProvider,
       nodeAppearanceTextureBuilder,
       nodeTransformProvider,
-      nodeTransformTextureBuilder
+      nodeTransformTextureBuilder,
+      clippingPlanesProvider
     } = cadMaterial;
 
     const updateTransformsCallback = () => this.updateTransforms(modelIdentifier);
@@ -74,13 +76,18 @@ export class CadMaterialManager {
 
     this.materialsMap.set(modelIdentifier, {
       materials,
-      perModelClippingPlanes: [],
       nodeAppearanceProvider,
       nodeTransformProvider,
       nodeAppearanceTextureBuilder,
       nodeTransformTextureBuilder,
       updateTransformsCallback,
-      matCapTexture
+      matCapTexture,
+      clippingPlanesProvider
+    });
+
+    clippingPlanesProvider.on('changed', () => {
+      this.updateClippingPlanesForModel(modelIdentifier);
+      this._needsRedraw = true;
     });
 
     const colorWrite = this._renderMode !== RenderMode.DepthBufferOnly;
@@ -164,20 +171,7 @@ export class CadMaterialManager {
       );
     }
 
-    return materialWrapper.perModelClippingPlanes;
-  }
-
-  setModelClippingPlanes(modelIdentifier: symbol, clippingPlanes: THREE.Plane[]): void {
-    const materialWrapper = this.materialsMap.get(modelIdentifier);
-    if (materialWrapper === undefined) {
-      throw new Error(
-        `Materials for model ${String(modelIdentifier)} has not been added, call ${this.addModelMaterials.name} first`
-      );
-    }
-
-    materialWrapper.perModelClippingPlanes = clippingPlanes;
-    this.updateClippingPlanesForModel(modelIdentifier);
-    this._needsRedraw = true;
+    return materialWrapper.clippingPlanesProvider.getClippingPlanes();
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: symbol, defaultAppearance: NodeAppearance): void {
@@ -239,7 +233,7 @@ export class CadMaterialManager {
       );
     }
 
-    const clippingPlanes = [...materialWrapper.perModelClippingPlanes, ...this.clippingPlanes];
+    const clippingPlanes = [...materialWrapper.clippingPlanesProvider.getClippingPlanes(), ...this.clippingPlanes];
     const clippingPlanesAsUniform = clippingPlanes.map(
       p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
     );
@@ -336,6 +330,8 @@ export function createCadMaterial(maxTreeIndex: number): CadMaterial {
   const matCapTexture = new THREE.Texture(getMatCapTextureData());
   matCapTexture.needsUpdate = true;
 
+  const clippingPlanesProvider = new ClippingPlanesProvider();
+
   const materials = createMaterials(
     nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
     nodeTransformTextureBuilder.overrideTransformIndexTexture,
@@ -349,6 +345,7 @@ export function createCadMaterial(maxTreeIndex: number): CadMaterial {
     nodeTransformProvider,
     nodeAppearanceTextureBuilder,
     nodeTransformTextureBuilder,
-    matCapTexture
+    matCapTexture,
+    clippingPlanesProvider
   };
 }
