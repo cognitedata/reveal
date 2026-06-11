@@ -353,18 +353,21 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * a style previously, the previous style will be replaced by the new one.
    * @param objectCollection The object collection to assign a style to
    * @param appearance The style to assign to the object collection
+   * @param importance The importance of the styling, used for ordering styles to apply. Collections with higher importance gets applied later
    */
   assignStyledObjectCollection(
     objectCollection: T['pointCloudCollectionType'],
-    appearance: PointCloudAppearance
+    appearance: PointCloudAppearance,
+    importance: number = 0
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
-    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
-    if (index !== -1) {
-      this._styledVolumeCollections[index].style = fullAppearance;
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
+    const alreadyAddedCollection = this._styledVolumeCollections.find(x => x.volumeCollection === objectCollection);
+    if (alreadyAddedCollection !== undefined) {
+      alreadyAddedCollection.style = fullAppearance;
+      alreadyAddedCollection.importance = importance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(alreadyAddedCollection);
     } else {
-      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
+      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance, importance);
       this._styledVolumeCollections.push(newObjectCollection);
       this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
     }
@@ -375,32 +378,11 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * @param objectCollection The object collection from which to remove the style
    */
   unassignStyledObjectCollection(objectCollection: T['pointCloudCollectionType']): void {
-    const removeCollection = (
-      collections: Array<StyledPointCloudVolumeCollection<T>>,
-      objectCollection: T['pointCloudCollectionType']
-    ) => {
-      const index = collections.findIndex(x => x.objectCollection === objectCollection);
-      if (index !== -1) {
-        collections.splice(index, 1);
-      }
-      return index !== -1;
-    };
-
-    const removedVolume = removeCollection(this._styledVolumeCollections, objectCollection);
-
-    if (!removedVolume) {
-      return;
+    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
+    if (index !== -1) {
+      this.pointCloudNode.removeStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
+      this._styledVolumeCollections.splice(index, 1);
     }
-
-    this.pointCloudNode.removeAllStyledPointCloudObjects();
-
-    const reassignCollections = (collections: Array<StyledPointCloudVolumeCollection<T>>) => {
-      for (const styledObjectCollection of collections) {
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
-      }
-    };
-
-    reassignCollections(this._styledVolumeCollections);
   }
 
   /**
