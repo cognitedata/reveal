@@ -108,9 +108,11 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
-    const isAlreadyAdded = this._styledObjectSets.some(s => s === styledCollection);
+    const ind = this._styledObjectSets.findIndex(s => s.volumeCollection === styledCollection.volumeCollection);
 
-    if (!isAlreadyAdded) {
+    if (ind !== -1) {
+      this._styledObjectSets[ind] = styledCollection;
+    } else {
       this._styledObjectSets.push(styledCollection);
     }
 
