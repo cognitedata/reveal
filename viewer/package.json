@@ -35,29 +35,26 @@
       "default": "./dist/index.js"
     }
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "build": "yarn run clean && yarn run build:wasm && vite build",
-    "build:wasm": "yarn workspaces foreach -A run run-wasm-pack build --target web ./wasm",
-    "build:wasm-test": "yarn workspaces foreach -A run run-wasm-pack build --target nodejs ./wasm",
-    "build:watch": "yarn run clean && yarn run build:wasm && vite build --watch",
-    "build:prod": "yarn run clean && yarn run build:wasm && vite build",
+    "build": "pnpm run clean && pnpm run build:wasm && vite build",
+    "build:wasm": "pnpm -r run --if-present run-wasm-pack build --target web ./wasm",
+    "build:wasm-test": "pnpm -r run --if-present run-wasm-pack build --target nodejs ./wasm",
+    "build:watch": "pnpm run clean && pnpm run build:wasm && vite build --watch",
+    "build:prod": "pnpm run clean && pnpm run build:wasm && vite build",
     "clean": "shx rm -rf dist/ && shx mkdir -p dist",
     "clean:wasm": "cargo clean --manifest-path ./Cargo.toml",
-    "test": "yarn run test:wasm && yarn run test:ts",
-    "test:ts": "yarn run build:wasm-test && vitest run --reporter=verbose",
-    "test:wasm": "yarn workspaces foreach -A run run-wasm-pack test --headless --chrome ./wasm",
-    "test:visual:server": "yarn run build:wasm && yarn vite dev --config ./visual-tests/visual-tests.vite.config.ts",
+    "test": "pnpm run test:wasm && pnpm run test:ts",
+    "test:ts": "pnpm run build:wasm-test && vitest run --reporter=verbose",
+    "test:wasm": "pnpm -r run --if-present run-wasm-pack test --headless --chrome ./wasm",
+    "test:visual:server": "pnpm run build:wasm && vite dev --config ./visual-tests/visual-tests.vite.config.ts",
     "test:visual": "playwright test --config=visual-tests/playwright.config.ts",
     "test:visual:update": "playwright test --config=visual-tests/playwright.config.ts --update-snapshots",
     "typecheck:lib": "tsc --project tsconfig.lib.json --noEmit",
     "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
-    "coverage": "yarn run build:wasm-test && vitest run --coverage",
+    "coverage": "pnpm run build:wasm-test && vitest run --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "update-api": "api-extractor run --local && shx rm -rf api-extractor-temp/",
-    "ws:serve": "yarn run build:wasm && yarn vite dev --config ./visual-tests/visual-tests.vite.config.ts",
+    "ws:serve": "pnpm run build:wasm && vite dev --config ./visual-tests/visual-tests.vite.config.ts",
     "ws:test": "cd $INIT_CWD && vitest run",
     "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
     "ws:update-cargo-index": "cargo update --dry-run",
@@ -85,6 +82,7 @@
     "@types/jsdom": "^28.0.0",
     "@types/lodash-es": "^4.17.12",
     "@types/mixpanel-browser": "^2.49.0",
+    "@types/node": "^25.9.3",
     "@types/random-seed": "^0.3.5",
     "@types/skmeans": "^0.11.7",
     "@types/stats": "^0.16.30",
@@ -123,11 +121,13 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.16.0",
-  "resolutions": {
-    "binary-install/axios": "^1.0.0",
-    "tar": "^7.5.11",
-    "serialize-javascript": "^7.0.3",
-    "minimatch": "^10.2.3"
+  "packageManager": "pnpm@10.17.1",
+  "pnpm": {
+    "overrides": {
+      "binary-install>axios": "^1.0.0",
+      "tar": "^7.5.11",
+      "serialize-javascript": "^7.0.3",
+      "minimatch": "^10.2.3"
+    }
   }
 }

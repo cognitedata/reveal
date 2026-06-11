@@ -143,7 +143,7 @@ export class MetricsLogger {
    * @param nodeCount Number of nodes affected by the transform override
    * @param matrix  Matrix used to override the node transform
    */
-  static readonly trackCadNodeTransformOverridden = throttle(
+  static readonly trackCadNodeTransformOverridden: (nodeCount: number, matrix: Matrix4) => void = throttle(
     (nodeCount: number, matrix: Matrix4) => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
     MetricsLogger.TrackCadNodeTransformOverriddenThrottleDelay
   );
@@ -168,7 +168,7 @@ export class MetricsLogger {
    * Track camera navigation events. Note that the metric is throttled and will only trigger
    * once per second.
    */
-  static readonly trackCameraNavigation = throttle(
+  static readonly trackCameraNavigation: (eventProps: EventProps) => void = throttle(
     (eventProps: EventProps) => MetricsLogger.trackCameraNavigationImpl(eventProps),
     MetricsLogger.TrackCameraNavigationThrottleDelay
   );

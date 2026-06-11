@@ -23,7 +23,7 @@ export default defineConfig({
     }
   },
   webServer: {
-    command: 'yarn run test:visual:server',
+    command: 'pnpm run test:visual:server',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
     ignoreHTTPSErrors: true,

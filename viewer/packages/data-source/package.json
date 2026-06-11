@@ -3,8 +3,8 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "test": "yarn ws:test --config ./../../vitest.config.ts",
-    "lint": "yarn ws:lint"
+    "test": "vitest run --config ./../../vitest.config.ts",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
     "@reveal/data-providers": "workspace:*",
