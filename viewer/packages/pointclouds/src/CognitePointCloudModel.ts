@@ -361,14 +361,15 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     importance: number = 0
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
-    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
-    if (index !== -1) {
-      this._styledVolumeCollections[index].style = fullAppearance;
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index], importance);
+    const alreadyAddedCollection = this._styledVolumeCollections.find(x => x.volumeCollection === objectCollection);
+    if (alreadyAddedCollection !== undefined) {
+      alreadyAddedCollection.style = fullAppearance;
+      alreadyAddedCollection.importance = importance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(alreadyAddedCollection);
     } else {
-      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
+      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance, importance);
       this._styledVolumeCollections.push(newObjectCollection);
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection, importance);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
     }
   }
 

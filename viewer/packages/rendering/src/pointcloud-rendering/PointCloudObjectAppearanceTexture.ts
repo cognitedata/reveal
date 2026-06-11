@@ -11,15 +11,13 @@ import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import { sortBy } from 'lodash-es';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
-  private readonly _styledObjectSets: {
-    collection: StyledPointCloudVolumeCollection<DataSourceType>;
-    importance: number;
-  }[] = [];
+  private readonly _styledObjectSets: StyledPointCloudVolumeCollection<DataSourceType>[] = [];
 
   private _defaultAppearance: CompletePointCloudAppearance = { ...DefaultPointCloudAppearance };
 
@@ -98,8 +96,10 @@ export class PointCloudObjectAppearanceTexture {
   onBeforeRender(): void {
     if (this._needsReconstruction) {
       this.resetTexture();
-      for (const styledCollection of this._styledObjectSets) {
-        this.setObjectCollectionStyle(styledCollection.collection);
+
+      const sortedStyledCollections = sortBy(this._styledObjectSets, 'importance');
+      for (const styledCollection of sortedStyledCollections) {
+        this.setObjectCollectionStyle(styledCollection);
       }
 
       this._objectStyleTexture.needsUpdate = true;
@@ -107,27 +107,18 @@ export class PointCloudObjectAppearanceTexture {
     }
   }
 
-  assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>, importance: number): void {
-    const ind = this._styledObjectSets.findIndex(
-      s => s.collection.objectCollection === styledCollection.objectCollection
-    );
+  assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
+    const isAlreadyAdded = this._styledObjectSets.some(s => s === styledCollection);
 
-    if (ind !== -1) {
-      this._styledObjectSets[ind].collection.style = styledCollection.style;
-      this._styledObjectSets[ind].importance = importance;
-    } else {
-      this._styledObjectSets.push({ importance, collection: styledCollection });
+    if (!isAlreadyAdded) {
+      this._styledObjectSets.push(styledCollection);
     }
-
-    this._styledObjectSets.sort(
-      ({ importance: importance0 }, { importance: importance1 }) => importance0 - importance1
-    );
 
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: StyledPointCloudVolumeCollection<DataSourceType>['objectCollection']): void {
-    const ind = this._styledObjectSets.findIndex(s => s.collection.objectCollection === collection);
+  removeStyledObjectSet(collection: StyledPointCloudVolumeCollection<DataSourceType>['volumeCollection']): void {
+    const ind = this._styledObjectSets.findIndex(s => s.volumeCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);
     }

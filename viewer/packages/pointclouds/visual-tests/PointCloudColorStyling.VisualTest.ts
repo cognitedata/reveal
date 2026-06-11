@@ -92,8 +92,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
 
     model.geometryNode.pointSize = 5;
     model.geometryNode.assignStyledPointCloudObjectCollection(
-      new StyledPointCloudVolumeCollection<ClassicDataSourceType>(objectCollection, appearance),
-      0
+      new StyledPointCloudVolumeCollection<ClassicDataSourceType>(objectCollection, appearance)
     );
     model.geometryNode.defaultAppearance = applyDefaultsToPointCloudAppearance({ visible: false });
     model.geometryNode.pointColorType = PointColorType.Height;

@@ -289,11 +289,8 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     this._needsRedraw = true;
   }
 
-  assignStyledPointCloudObjectCollection(
-    styledCollection: StyledPointCloudVolumeCollection<T>,
-    importance: number
-  ): void {
-    this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection, importance);
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
+    this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }
 
