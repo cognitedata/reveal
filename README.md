@@ -29,7 +29,7 @@ To test the viewer, you need to build the viewer and then start the examples.
 
 ```
 cd viewer
-yarn && yarn run build
+pnpm && pnpm run build
 cd ../examples
 yarn && yarn run start
 ```
@@ -58,13 +58,13 @@ This may or may not work on the first try, seemingly depending on the access tok
 
 Building Reveal on Macbook M1 might require some special care.
 
-If you experience issues during the `yarn`-stage in `viewer/`, e.g.
+If you experience issues during the `pnpm i`-stage in `viewer/`, e.g.
 ```
    no template named 'remove_cv_t' in namespace 'std'
 ```
 try forcing GCC to build for C++14:
 
-`env CXXFLAGS=-std=c++14 yarn`
+`env CXXFLAGS=-std=c++14 pnpm i`
 
 There also could be an issue with puppeteer in `examples/` that is caused by it not finding a correct version of chromium for arm64. To solve it you should follow additional steps:
 
@@ -83,7 +83,7 @@ or create `.env` file within the same folder and paste them there, then use sour
 ```
 source .env
 ```
-3. Run `yarn` again and be happy!
+3. Run `pnpm i` again and be happy!
 
 ## Credentials Environment
 
@@ -107,12 +107,12 @@ placing the converted model folder under `examples/public/`, by providing a `mod
 
 ```bash
 cd viewer
-yarn run build
+pnpm run build
 ```
 
 2. Use the build from `viewer/dist`.
 You can simply use it as a link dependency in the project that uses reveal if
-the target project uses yarn as its package manager.
+the target project uses pnpm as its package manager.
 
   * Replace reveal version with the link on `viewer/dist` in the project `package.json`
 ```json
@@ -122,24 +122,24 @@ the target project uses yarn as its package manager.
   }
 }
 ```
-  * After that, run `yarn` in the target project.
+  * After that, run `pnpm i` in the target project.
   * Don't forget you must not commit that change to the target project.
 
 If you don't want to change package.json, you can use CLI utility [npm link](https://docs.npmjs.com/cli/link)
-or [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/). To do that:
+or [pnpm link](https://pnpm.io/cli/link). To do that:
 
 1. Create a link
 
 ```bash
 cd viewer/dist
-npm link
+pnpm link
 ```
 
 2. Use the link in your target project
 
 ```bash
 cd your-project-path
-npm link @cognite/reveal
+pnpm link @cognite/reveal
 ```
 
 Now reveal should be replaced with the local build.
@@ -147,14 +147,14 @@ Now reveal should be replaced with the local build.
 When you don't need it linked in the target project anymore, run:
 
 ```bash
-npm unlink @cognite/reveal
+pnpm unlink @cognite/reveal
 ```
 
 To unregister the link from your local environment:
 
 ```bash
 cd viewer/dist
-npm unlink
+pnpm unlink
 ```
 
 ## Releasing Reveal
