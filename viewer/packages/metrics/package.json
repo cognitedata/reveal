@@ -3,8 +3,8 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:start",
-    "lint": "yarn ws:lint"
+    "start": "pnpm -w run ws:start",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
     "@reveal/logger": "workspace:*"
