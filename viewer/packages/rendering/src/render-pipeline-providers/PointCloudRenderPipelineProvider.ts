@@ -2,7 +2,20 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import {
+  CustomBlending,
+  DepthTexture,
+  FloatType,
+  NearestFilter,
+  NoBlending,
+  OneFactor,
+  RGBAFormat,
+  SrcAlphaFactor,
+  UnsignedIntType,
+  Vector2,
+  WebGLRenderTarget
+} from 'three';
 import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import type { SceneHandler } from '@reveal/utilities';
@@ -16,9 +29,9 @@ import { shouldApplyEdl } from './pointCloudParameterUtils';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _renderTargetData: {
-    currentRenderSize: THREE.Vector2;
-    logDepthAndDepthOutput: THREE.WebGLRenderTarget;
-    output: THREE.WebGLRenderTarget;
+    currentRenderSize: Vector2;
+    logDepthAndDepthOutput: WebGLRenderTarget;
+    output: WebGLRenderTarget;
   };
   private readonly _renderParameters: PointCloudParameters;
   private readonly _depthPass: PointCloudEffectsPass;
@@ -32,7 +45,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
       shape: PointShape.Circle,
       hqDepthPass: true,
       depthWrite: true,
-      blending: THREE.NoBlending,
+      blending: NoBlending,
       colorWrite: true
     }
   };
@@ -42,9 +55,9 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
       shape: PointShape.Circle,
       hqDepthPass: false,
       depthWrite: false,
-      blending: THREE.CustomBlending,
-      blendSrc: THREE.SrcAlphaFactor,
-      blendDst: THREE.OneFactor,
+      blending: CustomBlending,
+      blendSrc: SrcAlphaFactor,
+      blendDst: OneFactor,
       colorWrite: true
     },
     renderer: {
@@ -57,21 +70,21 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     pointCloudMaterialManager: PointCloudMaterialManager,
     renderParameters: PointCloudParameters
   ) {
-    const depthTexture = new THREE.DepthTexture(1, 1, THREE.UnsignedIntType);
+    const depthTexture = new DepthTexture(1, 1, UnsignedIntType);
     this._renderTargetData = {
-      currentRenderSize: new THREE.Vector2(1, 1),
-      logDepthAndDepthOutput: new THREE.WebGLRenderTarget(1, 1, {
-        minFilter: THREE.NearestFilter,
-        magFilter: THREE.NearestFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType,
+      currentRenderSize: new Vector2(1, 1),
+      logDepthAndDepthOutput: new WebGLRenderTarget(1, 1, {
+        minFilter: NearestFilter,
+        magFilter: NearestFilter,
+        format: RGBAFormat,
+        type: FloatType,
         depthTexture: depthTexture
       }),
-      output: new THREE.WebGLRenderTarget(1, 1, {
-        minFilter: THREE.NearestFilter,
-        magFilter: THREE.NearestFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType,
+      output: new WebGLRenderTarget(1, 1, {
+        minFilter: NearestFilter,
+        magFilter: NearestFilter,
+        format: RGBAFormat,
+        type: FloatType,
         depthTexture: depthTexture
       })
     };
@@ -111,7 +124,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     };
   }
 
-  public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
+  public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
 
     // Needs to be updated manually since automatic update is disabled because of CAD pipeline.
@@ -140,8 +153,8 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._renderTargetData.output.dispose();
   }
 
-  private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
-    const renderSize = new THREE.Vector2();
+  private updateRenderTargetSizes(renderer: WebGLRenderer): void {
+    const renderSize = new Vector2();
     renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;

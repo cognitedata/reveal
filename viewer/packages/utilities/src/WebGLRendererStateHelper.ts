@@ -1,18 +1,17 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
-import { Vector4 } from 'three';
-
+import type { WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Color, Vector2, Vector4 } from 'three';
 type WebGLRendererState = {
   autoClear?: boolean;
   autoClearDepth?: boolean;
-  clearColor?: THREE.Color | number;
+  clearColor?: Color | number;
   clearAlpha?: number;
-  size?: THREE.Vector2;
+  size?: Vector2;
   localClippingEnabled?: boolean;
-  renderTarget?: THREE.WebGLRenderTarget | null;
-  scissorData?: THREE.Vector4;
+  renderTarget?: WebGLRenderTarget | null;
+  scissorData?: Vector4;
   scissorTest?: boolean;
   webGLState?: WebGLState;
 };
@@ -28,7 +27,7 @@ type WebGLState = {
 
 export class WebGLRendererStateHelper {
   private _originalState: WebGLRendererState = {};
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
 
   private static readonly DefaultWebGLState: WebGLState = {
     buffers: {
@@ -39,7 +38,7 @@ export class WebGLRendererStateHelper {
     }
   };
 
-  constructor(renderer: THREE.WebGLRenderer) {
+  constructor(renderer: WebGLRenderer) {
     this._renderer = renderer;
     this._originalState = {};
   }
@@ -55,9 +54,9 @@ export class WebGLRendererStateHelper {
     this._renderer.setScissorTest(enabled);
   }
 
-  setClearColor(color: THREE.Color | number, alpha?: number): void {
+  setClearColor(color: Color | number, alpha?: number): void {
     this._originalState = {
-      clearColor: this._renderer.getClearColor(new THREE.Color()),
+      clearColor: this._renderer.getClearColor(new Color()),
       clearAlpha: this._renderer.getClearAlpha(),
       ...this._originalState
     };
@@ -87,7 +86,7 @@ export class WebGLRendererStateHelper {
   }
 
   setSize(width: number, height: number): void {
-    this._originalState = { size: this._renderer.getSize(new THREE.Vector2()), ...this._originalState };
+    this._originalState = { size: this._renderer.getSize(new Vector2()), ...this._originalState };
     this._renderer.setSize(width, height);
   }
 
@@ -106,7 +105,7 @@ export class WebGLRendererStateHelper {
     this._renderer.autoClearDepth = enabled;
   }
 
-  setRenderTarget(renderTarget: THREE.WebGLRenderTarget | null): void {
+  setRenderTarget(renderTarget: WebGLRenderTarget | null): void {
     this._originalState = { renderTarget: this._renderer.getRenderTarget(), ...this._originalState };
     this._renderer.setRenderTarget(renderTarget);
   }

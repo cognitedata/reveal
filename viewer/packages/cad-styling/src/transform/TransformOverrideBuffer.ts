@@ -2,23 +2,24 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Matrix4 } from 'three';
+import { DataTexture, FloatType, RedFormat } from 'three';
 
 export class TransformOverrideBuffer {
   private static readonly MIN_NUMBER_OF_TREE_INDICES = 16;
   private static readonly NUMBER_OF_ELEMENTS_PER_MATRIX = 16;
   private static readonly NUMBER_OF_ROWS_PER_MATRIX = 4;
 
-  private _dataTexture: THREE.DataTexture;
+  private _dataTexture: DataTexture;
   private _textureBuffer: Float32Array;
 
   private readonly _unusedIndices: number[];
 
   private readonly _treeIndexToOverrideIndex: Map<number, number>;
 
-  private readonly _onGenerateNewDataTextureCallback: (datatexture: THREE.DataTexture) => void;
+  private readonly _onGenerateNewDataTextureCallback: (datatexture: DataTexture) => void;
 
-  get dataTexture(): THREE.DataTexture {
+  get dataTexture(): DataTexture {
     return this._dataTexture;
   }
 
@@ -26,18 +27,12 @@ export class TransformOverrideBuffer {
     return this._treeIndexToOverrideIndex;
   }
 
-  constructor(onGenerateNewDataTexture: (datatexture: THREE.DataTexture) => void) {
+  constructor(onGenerateNewDataTexture: (datatexture: DataTexture) => void) {
     this._textureBuffer = new Float32Array(
       TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDICES * TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX
     );
 
-    this._dataTexture = new THREE.DataTexture(
-      this._textureBuffer,
-      this._textureBuffer.length,
-      1,
-      THREE.RedFormat,
-      THREE.FloatType
-    );
+    this._dataTexture = new DataTexture(this._textureBuffer, this._textureBuffer.length, 1, RedFormat, FloatType);
 
     this._onGenerateNewDataTextureCallback = onGenerateNewDataTexture;
 
@@ -52,7 +47,7 @@ export class TransformOverrideBuffer {
     delete this._dataTexture.image;
   }
 
-  public addOverrideTransform(treeIndex: number, transform: THREE.Matrix4): number {
+  public addOverrideTransform(treeIndex: number, transform: Matrix4): number {
     const transformBuffer = transform.toArray();
 
     let matrixIndex: number | undefined;
@@ -99,13 +94,7 @@ export class TransformOverrideBuffer {
 
     newTextureBuffer.set(this._textureBuffer);
 
-    const newDataTexture = new THREE.DataTexture(
-      newTextureBuffer,
-      newTextureBuffer.length,
-      1,
-      THREE.RedFormat,
-      THREE.FloatType
-    );
+    const newDataTexture = new DataTexture(newTextureBuffer, newTextureBuffer.length, 1, RedFormat, FloatType);
 
     const currentLastMatrixIndex = currentTextureBufferLength / TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX;
 

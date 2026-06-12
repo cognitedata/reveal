@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
@@ -20,7 +20,7 @@ describe(Image360CollectionFactory.name, () => {
           label: 'test_0',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transform: new THREE.Matrix4(),
+          transform: new Matrix4(),
           imageRevisions: [
             {
               id: 'revision_0',
@@ -33,7 +33,7 @@ describe(Image360CollectionFactory.name, () => {
           label: 'test_1',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transform: new THREE.Matrix4(),
+          transform: new Matrix4(),
           imageRevisions: [
             {
               id: 'revision_1',
@@ -46,7 +46,7 @@ describe(Image360CollectionFactory.name, () => {
           label: 'test_2',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transform: new THREE.Matrix4(),
+          transform: new Matrix4(),
           imageRevisions: [
             {
               id: 'revision_2',
@@ -66,7 +66,7 @@ describe(Image360CollectionFactory.name, () => {
       desktopDevice,
       { platformMaxPointsSize: 256 }
     );
-    const collection = await image360EntityFactory.create({ site_id: 'someString' }, new THREE.Matrix4(), true, {});
+    const collection = await image360EntityFactory.create({ site_id: 'someString' }, new Matrix4(), true, {});
 
     expect(collection.image360Entities.length).toBe(3);
   });

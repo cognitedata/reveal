@@ -1,7 +1,16 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { TypedArray } from 'three';
+import {
+  BufferAttribute,
+  BufferGeometry,
+  InstancedBufferGeometry,
+  InstancedInterleavedBuffer,
+  InterleavedBuffer,
+  InterleavedBufferAttribute,
+  Texture
+} from 'three';
 import { assert } from '@reveal/utilities/assert';
 
 import { setPrimitiveTopology } from './reveal-glb-parser/primitiveGeometries';
@@ -55,7 +64,7 @@ export class GltfSectorParser {
 
     if (instancingExtension === undefined && meshId === undefined) return undefined;
 
-    const bufferGeometry = instancingExtension ? new THREE.InstancedBufferGeometry() : new THREE.BufferGeometry();
+    const bufferGeometry = instancingExtension ? new InstancedBufferGeometry() : new BufferGeometry();
 
     const geometryType = RevealGeometryCollectionType[node.name as keyof typeof RevealGeometryCollectionType];
 
@@ -119,7 +128,7 @@ export class GltfSectorParser {
     const instanceBufferByteOffset = payload.glbHeaderData.byteOffsetToBinContent + (sharedBufferView.byteOffset ?? 0);
     const { byteLength: instanceBufferByteLength, byteStride: instanceBufferByteStride } = sharedBufferView;
 
-    this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
+    this.setInterleavedBufferAttributes<InstancedInterleavedBuffer>(
       payload.glbHeaderData.json,
       payload.instancingExtension!.attributes,
       payload.data,
@@ -128,7 +137,7 @@ export class GltfSectorParser {
       instanceBufferByteStride,
       primitivesAttributeNameTransformer,
       payload.bufferGeometry,
-      THREE.InstancedInterleavedBuffer
+      InstancedInterleavedBuffer
     );
 
     return {
@@ -153,7 +162,7 @@ export class GltfSectorParser {
     const byteOffset = payload.glbHeaderData.byteOffsetToBinContent + (sharedBufferView.byteOffset ?? 0);
     const { byteLength, byteStride } = sharedBufferView;
 
-    this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
+    this.setInterleavedBufferAttributes<InstancedInterleavedBuffer>(
       payload.glbHeaderData.json,
       payload.instancingExtension!.attributes!,
       payload.data,
@@ -162,7 +171,7 @@ export class GltfSectorParser {
       byteStride,
       primitivesAttributeNameTransformer,
       payload.bufferGeometry,
-      THREE.InstancedInterleavedBuffer
+      InstancedInterleavedBuffer
     );
   }
 
@@ -187,7 +196,7 @@ export class GltfSectorParser {
       bufferGeometry
     );
 
-    this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
+    this.setInterleavedBufferAttributes<InterleavedBuffer>(
       json,
       primitive.attributes,
       vertexBuffer,
@@ -196,7 +205,7 @@ export class GltfSectorParser {
       byteStride,
       attributeNameTransformer,
       bufferGeometry,
-      THREE.InterleavedBuffer
+      InterleavedBuffer
     );
 
     payload.texture = await this.getDiffuseTexture(json, glbHeaderData, data, primitive);
@@ -222,7 +231,7 @@ export class GltfSectorParser {
     glbHeaderData: GlbHeaderData,
     data: ArrayBuffer,
     primitive: Primitive
-  ): Promise<THREE.Texture | undefined> {
+  ): Promise<Texture | undefined> {
     if (primitive.material === undefined) {
       return undefined;
     }
@@ -234,7 +243,7 @@ export class GltfSectorParser {
     const byteOffsetInData = offsetToBinChunk + (bufferView.byteOffset ?? 0);
     const newView = data.slice(byteOffsetInData, byteOffsetInData + bufferView.byteLength);
 
-    const texture = new THREE.Texture();
+    const texture = new Texture();
     const blob = new Blob([newView], { type: image.mimeType });
 
     return createImageBitmap(blob).then(bitmap => {
@@ -249,7 +258,7 @@ export class GltfSectorParser {
     glbHeaderData: GlbHeaderData,
     data: ArrayBuffer,
     primitive: Primitive,
-    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+    bufferGeometry: InstancedBufferGeometry | BufferGeometry
   ) {
     let vertexBuffer: ArrayBuffer;
     let byteOffset: number;
@@ -278,7 +287,7 @@ export class GltfSectorParser {
     glbHeaderData: GlbHeaderData,
     primitive: Primitive,
     data: ArrayBuffer,
-    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+    bufferGeometry: InstancedBufferGeometry | BufferGeometry
   ) {
     const json = glbHeaderData.json;
     const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
@@ -297,21 +306,21 @@ export class GltfSectorParser {
 
     const elementSize = COLLECTION_TYPE_SIZES.get(indicesAccessor.type)!;
 
-    bufferGeometry.setIndex(new THREE.BufferAttribute(indicesTypedArray, elementSize));
+    bufferGeometry.setIndex(new BufferAttribute(indicesTypedArray, elementSize));
   }
 
   private setPositionBuffer(
     data: ArrayBuffer,
     byteOffset: number,
     byteLength: number,
-    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+    bufferGeometry: InstancedBufferGeometry | BufferGeometry
   ) {
     const positionBytesPerElement = Float32Array.BYTES_PER_ELEMENT;
     const elementSize = 3;
 
     const positionTypedArray = new Float32Array(data, byteOffset, byteLength / positionBytesPerElement);
 
-    bufferGeometry.setAttribute('position', new THREE.BufferAttribute(positionTypedArray, elementSize));
+    bufferGeometry.setAttribute('position', new BufferAttribute(positionTypedArray, elementSize));
   }
 
   private getSharedBufferView(
@@ -333,7 +342,7 @@ export class GltfSectorParser {
     return json.bufferViews[bufferViewId];
   }
 
-  private setInterleavedBufferAttributes<T extends THREE.InterleavedBuffer>(
+  private setInterleavedBufferAttributes<T extends InterleavedBuffer>(
     json: GltfJson,
     attributes: {
       [key: string]: number;
@@ -343,8 +352,8 @@ export class GltfSectorParser {
     byteLength: number,
     stride: number,
     transformAttributeName: (attributeName: string) => string,
-    bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
-    bufferType: { new (array: THREE.TypedArray, stride: number): T }
+    bufferGeometry: BufferGeometry | InstancedBufferGeometry,
+    bufferType: { new (array: TypedArray, stride: number): T }
   ) {
     const componentTypes = Object.values(attributes).map(accessorId => json.accessors[accessorId].componentType);
 
@@ -360,12 +369,12 @@ export class GltfSectorParser {
     this.setAttributes<T>(attributes, json, typedArrayMap, transformAttributeName, bufferGeometry);
   }
 
-  private setAttributes<T extends THREE.InterleavedBuffer>(
+  private setAttributes<T extends InterleavedBuffer>(
     attributes: { [key: string]: number },
     json: GltfJson,
     typedArrayMap: { [key: string]: T },
     transformAttributeName: (attributeName: string) => string,
-    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+    bufferGeometry: InstancedBufferGeometry | BufferGeometry
   ) {
     Object.keys(attributes).forEach(attributeName => {
       const accessor = json.accessors[attributes[attributeName]];
@@ -385,7 +394,7 @@ export class GltfSectorParser {
 
       assert(elementSize !== undefined);
 
-      const interleavedBufferAttribute = new THREE.InterleavedBufferAttribute(
+      const interleavedBufferAttribute = new InterleavedBufferAttribute(
         interleavedBuffer,
         size,
         byteOffset / elementSize
@@ -395,13 +404,13 @@ export class GltfSectorParser {
     });
   }
 
-  private getUniqueComponentViews<T extends THREE.InterleavedBuffer>(
+  private getUniqueComponentViews<T extends InterleavedBuffer>(
     componentTypes: number[],
     data: ArrayBuffer,
     byteOffset: number,
     byteLength: number,
     byteStride: number,
-    bufferType: new (array: THREE.TypedArray, stride: number) => T
+    bufferType: new (array: TypedArray, stride: number) => T
   ) {
     const typedArrays = [...new Set(componentTypes)].map(componentType => {
       const TypedArray = DATA_TYPE_BYTE_SIZES.get(componentType)!;

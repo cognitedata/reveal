@@ -2,19 +2,19 @@
  * Copyright 2022 Cognite AS
  */
 import { WebGLRendererStateHelper } from '@reveal/utilities';
-import type * as THREE from 'three';
+import type { Camera, Object3D, WebGLRenderer } from 'three';
 import type { RenderPass } from '../RenderPass';
 import { getLayerMask, RenderLayer, setRendererParameters } from '../utilities/renderUtilities';
 import type { PointCloudPassParameters } from './types';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 export class PointCloudEffectsPass implements RenderPass {
-  private readonly _viewerScene: THREE.Object3D;
+  private readonly _viewerScene: Object3D;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
   private readonly _passMaterialParameters: PointCloudPassParameters;
 
   constructor(
-    scene: THREE.Object3D,
+    scene: Object3D,
     pointCloudMaterialManager: PointCloudMaterialManager,
     materialParameters?: PointCloudPassParameters
   ) {
@@ -23,7 +23,7 @@ export class PointCloudEffectsPass implements RenderPass {
     this._passMaterialParameters = materialParameters ?? {};
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
+  public render(renderer: WebGLRenderer, camera: Camera): void {
     const currentCameraMask = camera.layers.mask;
     const rendererStateHelper = new WebGLRendererStateHelper(renderer);
     try {

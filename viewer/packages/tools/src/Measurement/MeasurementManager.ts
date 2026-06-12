@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Camera, Color, Group, Plane } from 'three';
+import { Ray, Vector3 } from 'three';
 import type { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
@@ -14,26 +15,26 @@ export class MeasurementManager {
   private readonly _line: MeasurementLine;
   private readonly _options: Required<MeasurementOptions>;
   private readonly _domElement: HTMLElement;
-  private readonly _camera: THREE.Camera;
-  private readonly _meshGroup: THREE.Group;
+  private readonly _camera: Camera;
+  private readonly _meshGroup: Group;
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement | undefined;
   private readonly _distanceToCamera: number;
-  private readonly _startPoint: THREE.Vector3;
+  private readonly _startPoint: Vector3;
   private _measurement: Measurement = {
     measurementId: 0,
-    startPoint: new THREE.Vector3(),
-    endPoint: new THREE.Vector3(),
+    startPoint: new Vector3(),
+    endPoint: new Vector3(),
     distanceInMeters: 0
   };
 
   constructor(
     viewerDomElement: HTMLElement,
-    camera: THREE.Camera,
-    meshGroup: THREE.Group,
+    camera: Camera,
+    meshGroup: Group,
     options: Required<MeasurementOptions>,
     overlay: HtmlOverlayTool,
-    startPoint: THREE.Vector3
+    startPoint: Vector3
   ) {
     this._options = options;
     this._measurementLabel = new MeasurementLabels();
@@ -42,7 +43,7 @@ export class MeasurementManager {
     this._camera = camera;
     this._meshGroup = meshGroup;
     this._startPoint = startPoint;
-    this._distanceToCamera = this._camera.getWorldPosition(new THREE.Vector3()).distanceTo(startPoint);
+    this._distanceToCamera = this._camera.getWorldPosition(new Vector3()).distanceTo(startPoint);
     this._line = this.startMeasurement(startPoint);
     this._meshGroup.add(this._line.meshes);
   }
@@ -59,7 +60,7 @@ export class MeasurementManager {
    * End the measurement.
    * @param point World position at which measuring line ends.
    */
-  endMeasurement(point: THREE.Vector3): void {
+  endMeasurement(point: Vector3): void {
     const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
     this._line.updateLine(point);
@@ -97,7 +98,7 @@ export class MeasurementManager {
    * Updates the measuring line clipping planes
    * @param clippingPlanes current active global clipping planes.
    */
-  updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  updateLineClippingPlanes(clippingPlanes: Plane[]): void {
     this._line.updateLineClippingPlanes(clippingPlanes);
     if (this._labelElement) {
       this._labelElement.hidden = !this._line.meshes.visible;
@@ -116,7 +117,7 @@ export class MeasurementManager {
    * Update current line color.
    * @param color Color of the measuring line mesh.
    */
-  updateLineColor(color: THREE.Color): void {
+  updateLineColor(color: Color): void {
     this._line.updateLineColor(color);
   }
 
@@ -134,7 +135,7 @@ export class MeasurementManager {
    * Start the measurement.
    * @param point World position to start measurement operation from.
    */
-  private startMeasurement(point: THREE.Vector3): MeasurementLine {
+  private startMeasurement(point: Vector3): MeasurementLine {
     return new MeasurementLine(this._options.lineWidth, this._options.color, point);
   }
 
@@ -144,28 +145,28 @@ export class MeasurementManager {
    * @param label Label text.
    * @returns HTML element.
    */
-  private addLabel(position: THREE.Vector3, label: string): HTMLDivElement {
+  private addLabel(position: Vector3, label: string): HTMLDivElement {
     const labelElement = this._measurementLabel.createLabel(label);
     this._htmlOverlay.add(labelElement, position);
     return labelElement;
   }
 
-  private pointerTo3DPosition(offsetX: number, offsetY: number): THREE.Vector3 {
+  private pointerTo3DPosition(offsetX: number, offsetY: number): Vector3 {
     const mouse = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
 
     // Set the origin of the Ray to camera.
-    const origin = new THREE.Vector3();
+    const origin = new Vector3();
     origin.setFromMatrixPosition(this._camera.matrixWorld);
 
-    const ray = new THREE.Ray();
+    const ray = new Ray();
     ray.origin.copy(origin);
 
     // Calculate the camera direction.
-    const direction = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(this._camera).sub(ray.origin).normalize();
+    const direction = new Vector3(mouse.x, mouse.y, 0.5).unproject(this._camera).sub(ray.origin).normalize();
     ray.direction.copy(direction);
 
     // Note: Using the initial/start point as reference for ray to emit till that distance from camera.
-    const position = new THREE.Vector3();
+    const position = new Vector3();
     ray.at(this._distanceToCamera, position);
     return position;
   }

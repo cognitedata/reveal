@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
 
 import type { RevealOptions } from './RevealOptions';
 import { RevealManager } from './RevealManager';
@@ -49,7 +49,7 @@ import type { CameraManager } from '@reveal/camera-manager';
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(
-  renderer: THREE.WebGLRenderer,
+  renderer: WebGLRenderer,
   sceneHandler: SceneHandler,
   cameraManager: CameraManager,
   revealOptions: RevealOptions = {}
@@ -84,7 +84,7 @@ export function createLocalRevealManager(
  */
 export function createCdfRevealManager(
   client: CogniteClient,
-  renderer: THREE.WebGLRenderer,
+  renderer: WebGLRenderer,
   sceneHandler: SceneHandler,
   cameraManager: CameraManager,
   revealOptions: RevealOptions = {}
@@ -133,7 +133,7 @@ export function createRevealManager(
   annotationProvider: PointCloudStylableObjectProvider,
   pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
   pointClassificationsProvider: IPointClassificationsProvider,
-  renderer: THREE.WebGLRenderer,
+  renderer: WebGLRenderer,
   sceneHandler: SceneHandler,
   cameraManager: CameraManager,
   revealOptions: RevealOptions = {}

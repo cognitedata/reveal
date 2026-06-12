@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import { CadNode } from '..';
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
@@ -19,7 +19,7 @@ export default class RotationVisualTest extends StreamingVisualTestFixture {
     }
 
     const matrix = cadNode.getModelTransformation();
-    const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationZ(-Math.PI / 3.0));
+    const newMatrix = new Matrix4().multiplyMatrices(matrix, new Matrix4().makeRotationZ(-Math.PI / 3.0));
     cadNode.setModelTransformation(newMatrix);
 
     return Promise.resolve();

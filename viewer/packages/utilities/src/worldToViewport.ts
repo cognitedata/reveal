@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera } from 'three';
+import { Vector2, Vector3 } from 'three';
 
 const worldToViewportVars = {
-  renderSize: new THREE.Vector2(),
-  position: new THREE.Vector3()
+  renderSize: new Vector2(),
+  position: new Vector3()
 };
 
 /**
@@ -16,16 +17,16 @@ const worldToViewportVars = {
  * is inside the camera near and far planes.
  * @param camera      Camera used to project point from 3D to NDC coordinates
  * @param position3D  World position in 3D
- * @param out         Optionally pre-allocated THREE.Vector3
+ * @param out         Optionally pre-allocated Vector3
  * @returns           Relative screen coordinates in X, Y and Z in range [-1, 1] if point
  * is within near/far of camera.
  */
 
 export function worldToNormalizedViewportCoordinates(
-  camera: THREE.PerspectiveCamera,
-  position3D: THREE.Vector3,
-  out: THREE.Vector3 = new THREE.Vector3()
-): THREE.Vector3 {
+  camera: PerspectiveCamera,
+  position3D: Vector3,
+  out: Vector3 = new Vector3()
+): Vector3 {
   const { position } = worldToViewportVars;
 
   // map to normalized device coordinate (NDC) space
@@ -48,16 +49,16 @@ export function worldToNormalizedViewportCoordinates(
  * @param canvas      Renderer canvas used to render the "world"
  * @param camera      Camera used to project point from 3D to NDC coordinates
  * @param position3D  World position in 3D
- * @param out         Optionally pre-allocated THREE.Vector3
+ * @param out         Optionally pre-allocated Vector3
  * @returns           Relative screen coordinates in X, Y and Z in range [-1, 1] if point
  * is within near/far of camera.
  */
 export function worldToViewportCoordinates(
   canvas: HTMLCanvasElement,
-  camera: THREE.PerspectiveCamera,
-  position3D: THREE.Vector3,
-  out: THREE.Vector3 = new THREE.Vector3()
-): THREE.Vector3 {
+  camera: PerspectiveCamera,
+  position3D: Vector3,
+  out: Vector3 = new Vector3()
+): Vector3 {
   worldToNormalizedViewportCoordinates(camera, position3D, out);
 
   const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
@@ -75,14 +76,14 @@ export function getNormalizedPixelCoordinatesBySize(
   pixelY: number,
   width: number,
   height: number
-): THREE.Vector2 {
-  return new THREE.Vector2((pixelX / width) * 2 - 1, -(pixelY / height) * 2 + 1);
+): Vector2 {
+  return new Vector2((pixelX / width) * 2 - 1, -(pixelY / height) * 2 + 1);
 }
 
-export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): THREE.Vector2 {
+export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): Vector2 {
   const { width, height } = domElement.getBoundingClientRect();
   if (width === 0 || height === 0) {
-    return new THREE.Vector2();
+    return new Vector2();
   }
   return getNormalizedPixelCoordinatesBySize(pixelX, pixelY, width, height);
 }

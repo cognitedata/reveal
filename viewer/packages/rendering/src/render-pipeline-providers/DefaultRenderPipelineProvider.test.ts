@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { Color, Object3D, Vector2 } from 'three';
 import type { IMock } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
@@ -14,26 +15,26 @@ import { createCadModel, createPointCloudModel } from '../../../../test-utilitie
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 describe(DefaultRenderPipelineProvider.name, () => {
-  let rendererMock: IMock<THREE.WebGLRenderer>;
+  let rendererMock: IMock<WebGLRenderer>;
   let cadNodeMock: CadNode;
-  let pointCloudNodeMock: THREE.Object3D & { modelIdentifier: symbol };
+  let pointCloudNodeMock: Object3D & { modelIdentifier: symbol };
 
   const modelIdentifierSymbol = Symbol('0');
 
   beforeEach(() => {
-    rendererMock = new Mock<THREE.WebGLRenderer>()
+    rendererMock = new Mock<WebGLRenderer>()
       .setup(p => (p.info.autoReset = It.IsAny()))
       .callback(() => true)
       .setup(p => p.info.reset())
       .returns()
       .setup(p => p.getClearColor(It.IsAny()))
-      .returns(new THREE.Color())
+      .returns(new Color())
       .setup(p => p.getClearAlpha())
       .returns(0)
       .setup(p => p.setClearColor(It.IsAny(), It.IsAny()))
       .returns()
       .setup(p => p.getDrawingBufferSize(It.IsAny()))
-      .returns(new THREE.Vector2())
+      .returns(new Vector2())
       .setup(p => p.setRenderTarget(It.IsAny()))
       .returns()
       .setup(p => p.clear())
@@ -127,7 +128,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addObject3D(new THREE.Object3D());
+    sceneHandler.addObject3D(new Object3D());
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),

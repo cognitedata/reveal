@@ -5,7 +5,8 @@
 import { PointCloudNode } from './PointCloudNode';
 import { createPointCloudNode } from '../../../test-utilities';
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { Box3, BufferAttribute, BufferGeometry, Euler, Matrix4, PerspectiveCamera, Points, Ray, Vector3 } from 'three';
 import { PointCloudOctree, PointCloudOctreeNode } from './potree-three-loader';
 import { Mock } from 'moq.ts';
 import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
@@ -24,7 +25,7 @@ describe(PointCloudNode.name, () => {
     const node = createPointCloudNode();
     vi.spyOn(PointCloudOctree.prototype, 'pick').mockResolvedValue(null);
 
-    const result = node.pick(new Mock<THREE.WebGLRenderer>().object(), new THREE.PerspectiveCamera(), new THREE.Ray());
+    const result = node.pick(new Mock<WebGLRenderer>().object(), new PerspectiveCamera(), new Ray());
 
     expect(result).toBeInstanceOf(Promise);
     await result;
@@ -32,9 +33,7 @@ describe(PointCloudNode.name, () => {
 
   test('getModelTransformation returns transformation set by setModelTransformation', () => {
     const node = createPointCloudNode();
-    const transform = new THREE.Matrix4()
-      .makeRotationFromEuler(new THREE.Euler(190, 35, 230))
-      .setPosition(new THREE.Vector3(12, 34, 12));
+    const transform = new Matrix4().makeRotationFromEuler(new Euler(190, 35, 230)).setPosition(new Vector3(12, 34, 12));
 
     node.setModelTransformation(transform.clone());
     const receivedTransform = node.getModelTransformation();
@@ -49,7 +48,7 @@ describe(PointCloudNode.name, () => {
     });
 
     test('returns volume objects from annotation list', () => {
-      const shape = new Cylinder(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1), 1);
+      const shape = new Cylinder(new Vector3(0, 0, 0), new Vector3(1, 1, 1), 1);
       const boundingBox = shape.createBoundingBox();
       const annotations = [
         {
@@ -87,7 +86,7 @@ describe(PointCloudNode.name, () => {
         get: vi.fn().mockReturnValue(undefined)
       });
 
-      const box = new THREE.Box3(new THREE.Vector3(-10, -10, -10), new THREE.Vector3(10, 10, 10));
+      const box = new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10));
 
       const result = node.getSubtreePointsByBox(box);
 
@@ -112,28 +111,28 @@ describe(PointCloudNode.name, () => {
               .setup(p => p.children)
               .returns([])
               .setup(p => p.boundingBox)
-              .returns(new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(15, 15, 15)))
+              .returns(new Box3(new Vector3(1, 1, 1), new Vector3(15, 15, 15)))
               .object(),
-            new THREE.Points(
-              new THREE.BufferGeometry().setAttribute(
+            new Points(
+              new BufferGeometry().setAttribute(
                 'position',
-                new THREE.BufferAttribute(new Float32Array([1, 1, 1, 15, 15, 15, 5, 5, 5]), 3)
+                new BufferAttribute(new Float32Array([1, 1, 1, 15, 15, 15, 5, 5, 5]), 3)
               )
             )
           )
         )
         .object();
 
-      const sourceMatrix = new THREE.Matrix4().identity();
+      const sourceMatrix = new Matrix4().identity();
       const node = new PointCloudNode(Symbol(), sourceMatrix, pointCloudOctree, [], { classificationSets: [] });
 
-      const box = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10));
+      const box = new Box3(new Vector3(0, 0, 0), new Vector3(10, 10, 10));
 
       const result = node.getSubtreePointsByBox(box);
 
       expect(result.length).toBe(2);
-      expect(result[0].equals(new THREE.Vector3(1, 1, 1))).toBeTruthy();
-      expect(result[1].equals(new THREE.Vector3(5, 5, 5))).toBeTruthy();
+      expect(result[0].equals(new Vector3(1, 1, 1))).toBeTruthy();
+      expect(result[1].equals(new Vector3(5, 5, 5))).toBeTruthy();
     });
   });
 });

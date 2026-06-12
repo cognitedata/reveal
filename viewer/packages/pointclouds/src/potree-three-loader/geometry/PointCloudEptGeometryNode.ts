@@ -6,7 +6,7 @@
 
 import type { IPointCloudTreeGeometryNode } from './IPointCloudTreeGeometryNode';
 import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import type * as THREE from 'three';
+import type { Box3, BufferGeometry, Sphere, Vector3 } from 'three';
 import type { PointCloudEptGeometry } from './PointCloudEptGeometry';
 import { EptKey } from './PointCloudEptGeometry';
 import { sphereFrom } from './translationUtils';
@@ -26,9 +26,9 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   private readonly _dataLoader: ModelDataProvider;
 
-  private readonly _boundingBox: THREE.Box3;
+  private readonly _boundingBox: Box3;
 
-  private readonly _boundingSphere: THREE.Sphere;
+  private readonly _boundingSphere: Sphere;
   private readonly _spacing: number;
   private _level: number;
   private _numPoints: number;
@@ -44,7 +44,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   private _isLeafNode: boolean;
 
-  private _geometry: THREE.BufferGeometry | undefined;
+  private _geometry: BufferGeometry | undefined;
 
   private _oneTimeDisposeHandlers: (() => void)[];
 
@@ -66,11 +66,11 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._spacing;
   }
 
-  get boundingBox(): THREE.Box3 {
+  get boundingBox(): Box3 {
     return this._boundingBox;
   }
 
-  get boundingSphere(): THREE.Sphere {
+  get boundingSphere(): Sphere {
     return this._boundingSphere;
   }
 
@@ -103,7 +103,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._isLeafNode;
   }
 
-  get geometry(): THREE.BufferGeometry | undefined {
+  get geometry(): BufferGeometry | undefined {
     return this._geometry!;
   }
 
@@ -126,7 +126,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   constructor(
     ept: PointCloudEptGeometry,
     modelDataProvider: ModelDataProvider,
-    b?: THREE.Box3,
+    b?: Box3,
     d?: number,
     x?: number,
     y?: number,
@@ -173,11 +173,11 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._loaded;
   }
 
-  getBoundingSphere(): THREE.Sphere {
+  getBoundingSphere(): Sphere {
     return this._boundingSphere;
   }
 
-  getBoundingBox(): THREE.Box3 {
+  getBoundingBox(): Box3 {
     return this._boundingBox;
   }
 
@@ -289,12 +289,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     });
   }
 
-  doneLoading(
-    bufferGeometry: THREE.BufferGeometry,
-    _tightBoundingBox: THREE.Box3,
-    np: number,
-    _mean: THREE.Vector3
-  ): void {
+  doneLoading(bufferGeometry: BufferGeometry, _tightBoundingBox: Box3, np: number, _mean: Vector3): void {
     bufferGeometry.boundingBox = this._boundingBox;
     this._geometry = bufferGeometry;
     this._numPoints = np;

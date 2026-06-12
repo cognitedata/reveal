@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Matrix4 } from 'three';
+import { Quaternion, Vector3 } from 'three';
 import mixpanel from 'mixpanel-browser';
 import { Log } from '@reveal/logger';
 import pkg from '../../../package.json' with { type: 'json' };
@@ -127,13 +128,13 @@ export class MetricsLogger {
   }
 
   private static readonly trackCadNodeTransformOverriddenVars = {
-    zeroVector: new THREE.Vector3(0, 0, 0),
-    oneVector: new THREE.Vector3(1, 1, 1),
-    identityRotation: new THREE.Quaternion().identity(),
+    zeroVector: new Vector3(0, 0, 0),
+    oneVector: new Vector3(1, 1, 1),
+    identityRotation: new Quaternion().identity(),
 
-    translation: new THREE.Vector3(),
-    scale: new THREE.Vector3(),
-    rotation: new THREE.Quaternion()
+    translation: new Vector3(),
+    scale: new Vector3(),
+    rotation: new Quaternion()
   };
 
   /**
@@ -143,11 +144,11 @@ export class MetricsLogger {
    * @param matrix  Matrix used to override the node transform
    */
   static readonly trackCadNodeTransformOverridden = throttle(
-    (nodeCount: number, matrix: THREE.Matrix4) => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
+    (nodeCount: number, matrix: Matrix4) => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
     MetricsLogger.TrackCadNodeTransformOverriddenThrottleDelay
   );
 
-  private static trackCadNodeTransformOverriddenImpl(nodeCount: number, matrix: THREE.Matrix4): void {
+  private static trackCadNodeTransformOverriddenImpl(nodeCount: number, matrix: Matrix4): void {
     const { zeroVector, oneVector, identityRotation, translation, scale, rotation } =
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);

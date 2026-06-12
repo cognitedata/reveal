@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
@@ -21,7 +21,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     notifyChangedCallback = vi.fn();
     helper = new PopulateIndexSetFromPagedResponseHelper<number>(
       xs => xs.map(x => new NumericRange(x, 1)),
-      async xs => xs.map(x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1])),
+      async xs => xs.map(x => new Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1])),
       notifyChangedCallback
     );
   });

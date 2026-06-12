@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Vector3 } from 'three';
+import { Box3, Frustum, Matrix4 } from 'three';
 import { traverseDepthFirst } from '@reveal/utilities';
 import type { SectorScene } from './types';
 import type { SectorMetadata } from '../metadata/types';
@@ -14,7 +15,7 @@ export class SectorSceneImpl implements SectorScene {
   readonly root: SectorMetadata;
   readonly unit: string;
   private readonly sectors: Map<number, SectorMetadata>;
-  private _cachedBoundsOfMostGeometry: THREE.Box3 | undefined;
+  private _cachedBoundsOfMostGeometry: Box3 | undefined;
 
   constructor(
     version: number,
@@ -42,7 +43,7 @@ export class SectorSceneImpl implements SectorScene {
     return [...this.sectors.values()];
   }
 
-  getSectorsContainingPoint(p: THREE.Vector3): SectorMetadata[] {
+  getSectorsContainingPoint(p: Vector3): SectorMetadata[] {
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
       if (x.subtreeBoundingBox.containsPoint(p)) {
@@ -54,7 +55,7 @@ export class SectorSceneImpl implements SectorScene {
     return accepted;
   }
 
-  getSectorsIntersectingBox(b: THREE.Box3): SectorMetadata[] {
+  getSectorsIntersectingBox(b: Box3): SectorMetadata[] {
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
       if (x.subtreeBoundingBox.intersectsBox(b)) {
@@ -66,17 +67,14 @@ export class SectorSceneImpl implements SectorScene {
     return accepted;
   }
 
-  getBoundsOfMostGeometry(): THREE.Box3 {
+  getBoundsOfMostGeometry(): Box3 {
     this._cachedBoundsOfMostGeometry = this._cachedBoundsOfMostGeometry ?? this.computeBoundsOfMostGeometry();
     return this._cachedBoundsOfMostGeometry;
   }
 
-  getSectorsIntersectingFrustum(
-    projectionMatrix: THREE.Matrix4,
-    inverseCameraModelMatrix: THREE.Matrix4
-  ): SectorMetadata[] {
-    const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, inverseCameraModelMatrix);
-    const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
+  getSectorsIntersectingFrustum(projectionMatrix: Matrix4, inverseCameraModelMatrix: Matrix4): SectorMetadata[] {
+    const frustumMatrix = new Matrix4().multiplyMatrices(projectionMatrix, inverseCameraModelMatrix);
+    const frustum = new Frustum().setFromProjectionMatrix(frustumMatrix);
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
       if (frustum.intersectsBox(x.subtreeBoundingBox)) {
@@ -91,9 +89,9 @@ export class SectorSceneImpl implements SectorScene {
   /**
    * Recursive intersection detection.
    */
-  private detectIntersectingBounds(bounds: THREE.Box3, clusters: THREE.Box3[]): THREE.Box3[] {
-    const intersectingClusters: THREE.Box3[] = [];
-    const potentialJunkClusters: THREE.Box3[] = [];
+  private detectIntersectingBounds(bounds: Box3, clusters: Box3[]): Box3[] {
+    const intersectingClusters: Box3[] = [];
+    const potentialJunkClusters: Box3[] = [];
 
     clusters.forEach(cluster => {
       if (bounds !== cluster) {
@@ -120,11 +118,11 @@ export class SectorSceneImpl implements SectorScene {
    * @param inBounds The bounds to be grouped into clusters.
    * @returns Both the list of cluster bounds and the cluster with the highest node count
    */
-  private generateClusters(inBounds: THREE.Box3[]): [THREE.Box3[], THREE.Box3] {
+  private generateClusters(inBounds: Box3[]): [Box3[], Box3] {
     // Store the position of the min and max corners of each bound in 'nodes'
     // Also generate a merged box of all bounds that is used to calculate centroid positions later
     const nodes: number[][] = [];
-    const mergedBounds = new THREE.Box3();
+    const mergedBounds = new Box3();
     inBounds.forEach(x => {
       nodes.push(x.min.toArray(), x.max.toArray());
       mergedBounds.union(x);
@@ -156,7 +154,7 @@ export class SectorSceneImpl implements SectorScene {
     }).idx;
 
     // For each cluster, create the combined bounds of all nodes that belong to it
-    const clusterBounds = clusterCounts.map(_ => new THREE.Box3());
+    const clusterBounds = clusterCounts.map(_ => new Box3());
     result.idxs.forEach((cluster, idx) => {
       clusterBounds[cluster].union(inBounds[Math.floor(idx / 2)]);
     });
@@ -164,12 +162,12 @@ export class SectorSceneImpl implements SectorScene {
     return [clusterBounds, clusterBounds[biggestClusterIndex]];
   }
 
-  private computeBoundsOfMostGeometry(): THREE.Box3 {
+  private computeBoundsOfMostGeometry(): Box3 {
     if (this.root.children.length === 0) {
       return this.root.subtreeBoundingBox;
     }
 
-    const allBounds: THREE.Box3[] = [];
+    const allBounds: Box3[] = [];
     {
       // Find all leaf bounds and count overall render cost
       let allBoundsRenderCost = 0;

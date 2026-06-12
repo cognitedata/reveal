@@ -2,34 +2,35 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { DataTexture, Texture } from 'three';
+import { DoubleSide, GLSL3, Matrix4, RawShaderMaterial, Vector2, Vector3 } from 'three';
 import { sectorShaders } from './shaders';
 import { RenderMode } from './RenderMode';
 
 export interface Materials {
   // Materials
-  box: THREE.RawShaderMaterial;
-  circle: THREE.RawShaderMaterial;
-  generalRing: THREE.RawShaderMaterial;
-  nut: THREE.RawShaderMaterial;
-  quad: THREE.RawShaderMaterial;
-  cone: THREE.RawShaderMaterial;
-  eccentricCone: THREE.RawShaderMaterial;
-  torusSegment: THREE.RawShaderMaterial;
-  generalCylinder: THREE.RawShaderMaterial;
-  trapezium: THREE.RawShaderMaterial;
-  ellipsoidSegment: THREE.RawShaderMaterial;
-  instancedMesh: THREE.RawShaderMaterial;
-  triangleMesh: THREE.RawShaderMaterial;
-  texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
+  box: RawShaderMaterial;
+  circle: RawShaderMaterial;
+  generalRing: RawShaderMaterial;
+  nut: RawShaderMaterial;
+  quad: RawShaderMaterial;
+  cone: RawShaderMaterial;
+  eccentricCone: RawShaderMaterial;
+  torusSegment: RawShaderMaterial;
+  generalCylinder: RawShaderMaterial;
+  trapezium: RawShaderMaterial;
+  ellipsoidSegment: RawShaderMaterial;
+  instancedMesh: RawShaderMaterial;
+  triangleMesh: RawShaderMaterial;
+  texturedMaterials: { [key: string]: RawShaderMaterial };
 }
 
-export function forEachMaterial(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void): void {
+export function forEachMaterial(materials: Materials, callback: (material: RawShaderMaterial) => void): void {
   for (const materialOrMaterialSet of Object.values(materials)) {
     if (materialOrMaterialSet.isMaterial === true) {
-      callback(materialOrMaterialSet as THREE.RawShaderMaterial);
+      callback(materialOrMaterialSet as RawShaderMaterial);
     } else {
-      const materialSet = materialOrMaterialSet as { [key: string]: THREE.RawShaderMaterial };
+      const materialSet = materialOrMaterialSet as { [key: string]: RawShaderMaterial };
 
       Object.values(materialSet).forEach(material => callback(material));
     }
@@ -37,27 +38,27 @@ export function forEachMaterial(materials: Materials, callback: (material: THREE
 }
 
 export function createMaterials(
-  overrideColorPerTreeIndex: THREE.DataTexture,
-  transformOverrideIndexTexture: THREE.DataTexture,
-  transformOverrideLookupTexture: THREE.DataTexture,
-  matCapTexture: THREE.Texture
+  overrideColorPerTreeIndex: DataTexture,
+  transformOverrideIndexTexture: DataTexture,
+  transformOverrideLookupTexture: DataTexture,
+  matCapTexture: Texture
 ): Materials {
-  const boxMaterial = new THREE.RawShaderMaterial({
+  const boxMaterial = new RawShaderMaterial({
     name: 'Primitives (Box)',
     clipping: true,
     clippingPlanes: [],
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
-    glslVersion: THREE.GLSL3
+    glslVersion: GLSL3
   });
 
-  const circleMaterial = new THREE.RawShaderMaterial({
+  const circleMaterial = new RawShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: true,
     clippingPlanes: [],
@@ -65,164 +66,164 @@ export function createMaterials(
     fragmentShader: sectorShaders.circlePrimitive.fragment,
     // TODO double side is not necessary for all,
     // we should indicate this in the data from Rust
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
-    glslVersion: THREE.GLSL3
+    glslVersion: GLSL3
   });
 
-  const nutMaterial = new THREE.RawShaderMaterial({
+  const nutMaterial = new RawShaderMaterial({
     name: 'Primitives (Nuts)',
     clipping: true,
     clippingPlanes: [],
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const quadMaterial = new THREE.RawShaderMaterial({
+  const quadMaterial = new RawShaderMaterial({
     name: 'Primitives (Quads)',
     clipping: true,
     clippingPlanes: [],
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const generalRingMaterial = new THREE.RawShaderMaterial({
+  const generalRingMaterial = new RawShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     // TODO we can avoid drawing DoubleSide if we flip the ring in Rust and adjust the angle and
     // arc_angle accordingly
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const coneMaterial = new THREE.RawShaderMaterial({
+  const coneMaterial = new RawShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
     vertexShader: sectorShaders.conePrimitive.vertex,
     fragmentShader: sectorShaders.conePrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const eccentricConeMaterial = new THREE.RawShaderMaterial({
+  const eccentricConeMaterial = new RawShaderMaterial({
     name: 'Primitives (Eccentric cone)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
     fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const ellipsoidSegmentMaterial = new THREE.RawShaderMaterial({
+  const ellipsoidSegmentMaterial = new RawShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
 
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const generalCylinderMaterial = new THREE.RawShaderMaterial({
+  const generalCylinderMaterial = new RawShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       },
       cameraPosition: {
-        value: new THREE.Vector3()
+        value: new Vector3()
       }
     },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const trapeziumMaterial = new THREE.RawShaderMaterial({
+  const trapeziumMaterial = new RawShaderMaterial({
     name: 'Primitives (Trapezium)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
     fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const torusSegmentMaterial = new THREE.RawShaderMaterial({
+  const torusSegmentMaterial = new RawShaderMaterial({
     name: 'Primitives (Torus segment)',
     clipping: true,
     clippingPlanes: [],
     uniforms: {
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       }
     },
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    side: DoubleSide,
+    glslVersion: GLSL3
   });
 
-  const triangleMeshMaterial = new THREE.RawShaderMaterial({
+  const triangleMeshMaterial = new RawShaderMaterial({
     name: 'Triangle meshes',
     clipping: true,
     clippingPlanes: [],
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
     vertexShader: sectorShaders.detailedMesh.vertex,
-    glslVersion: THREE.GLSL3
+    glslVersion: GLSL3
   });
 
-  const instancedMeshMaterial = new THREE.RawShaderMaterial({
+  const instancedMeshMaterial = new RawShaderMaterial({
     name: 'Instanced meshes',
     clipping: true,
     clippingPlanes: [],
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
     vertexShader: sectorShaders.instancedMesh.vertex,
-    glslVersion: THREE.GLSL3
+    glslVersion: GLSL3
   });
 
   const allMaterials = {
@@ -259,18 +260,18 @@ export function createMaterials(
 }
 
 export function initializeDefinesAndUniforms(
-  material: THREE.RawShaderMaterial,
-  overrideColorPerTreeIndex: THREE.DataTexture,
-  transformOverrideIndexTexture: THREE.DataTexture,
-  transformOverrideTexture: THREE.DataTexture,
-  matCapTexture: THREE.Texture,
+  material: RawShaderMaterial,
+  overrideColorPerTreeIndex: DataTexture,
+  transformOverrideIndexTexture: DataTexture,
+  transformOverrideTexture: DataTexture,
+  matCapTexture: Texture,
   renderMode: RenderMode
 ): void {
-  const treeIndexTextureSize = new THREE.Vector2(
+  const treeIndexTextureSize = new Vector2(
     overrideColorPerTreeIndex.image.width,
     overrideColorPerTreeIndex.image.height
   );
-  const transformOverrideTextureSize = new THREE.Vector2(
+  const transformOverrideTextureSize = new Vector2(
     transformOverrideTexture.image.width,
     transformOverrideTexture.image.height
   );

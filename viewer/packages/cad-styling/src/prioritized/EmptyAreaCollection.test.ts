@@ -4,7 +4,7 @@
 
 import { EmptyAreaCollection } from './EmptyAreaCollection';
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 describe('EmptyAreaCollection', () => {
   test('empty area collection does empty area collection stuff', () => {
@@ -12,8 +12,8 @@ describe('EmptyAreaCollection', () => {
 
     expect(areaCollection).toBeTruthy();
 
-    expect(() => areaCollection.addAreas([new THREE.Box3()])).toThrow();
-    expect(() => areaCollection.intersectWith([new THREE.Box3()])).not.toThrow();
+    expect(() => areaCollection.addAreas([new Box3()])).toThrow();
+    expect(() => areaCollection.intersectWith([new Box3()])).not.toThrow();
 
     expect(areaCollection.isEmpty).toBeTruthy();
   });

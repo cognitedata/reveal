@@ -2,7 +2,22 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import {
+  CanvasTexture,
+  CustomBlending,
+  DoubleSide,
+  GLSL3,
+  Group,
+  Mesh,
+  OneMinusSrcAlphaFactor,
+  PlaneGeometry,
+  RawShaderMaterial,
+  Raycaster,
+  SrcAlphaFactor,
+  Vector2,
+  Vector3
+} from 'three';
 import { cloneDeep, merge } from 'lodash-es';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
@@ -19,16 +34,16 @@ import { Corner } from '../utilities/Corner';
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
 
-  private readonly _boxFaceGeometry: THREE.PlaneGeometry;
+  private readonly _boxFaceGeometry: PlaneGeometry;
 
   private readonly _viewer: Cognite3DViewer;
 
-  private readonly _axisGroup: THREE.Group;
+  private readonly _axisGroup: Group;
 
-  private readonly _interactiveObjects: THREE.Mesh[];
-  private readonly _raycaster: THREE.Raycaster;
+  private readonly _interactiveObjects: Mesh[];
+  private readonly _raycaster: Raycaster;
 
-  private readonly _screenPosition: THREE.Vector2;
+  private readonly _screenPosition: Vector2;
 
   private readonly _disposeClickDiv: () => void;
 
@@ -38,17 +53,17 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   constructor(viewer: Cognite3DViewer, config?: AxisBoxConfig) {
     super();
 
-    this._screenPosition = new THREE.Vector2();
-    this._boxFaceGeometry = new THREE.PlaneGeometry(0.9, 0.9, 1, 1);
+    this._screenPosition = new Vector2();
+    this._boxFaceGeometry = new PlaneGeometry(0.9, 0.9, 1, 1);
 
-    this._raycaster = new THREE.Raycaster();
+    this._raycaster = new Raycaster();
     this._raycaster.layers.enableAll();
 
     this._viewer = viewer;
 
     this._layoutConfig = merge(cloneDeep(defaultAxisBoxConfig), config);
 
-    this._axisGroup = new THREE.Group();
+    this._axisGroup = new Group();
     this._axisGroup.name = 'Axis View Tool';
     this._axisGroup.renderOrder = 1;
     this._interactiveObjects = this.createAxisCross(this._axisGroup);
@@ -103,7 +118,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     ];
   }
 
-  private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
+  private addAxisBoxToViewer(axisGroup: Group, position: AbsolutePosition | RelativePosition) {
     const size = this._layoutConfig.size;
 
     if (isAbsolute(position)) {
@@ -155,8 +170,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private handleClick(xScreenPos: number, yScreenPos: number, boundingRect: DOMRect): boolean {
     const xNdc = (2 * (xScreenPos - this._screenPosition.x)) / this._layoutConfig.size - 1;
     const yNdc = (2 * (boundingRect.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size - 1;
-    const rayOrigin = new THREE.Vector3(xNdc, yNdc, 1);
-    const rayDirection = new THREE.Vector3(0, 0, -1).normalize();
+    const rayOrigin = new Vector3(xNdc, yNdc, 1);
+    const rayDirection = new Vector3(0, 0, -1).normalize();
     this._raycaster.set(rayOrigin, rayDirection);
 
     const intersects = this._raycaster.intersectObjects(this._interactiveObjects);
@@ -164,13 +179,13 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     if (!(intersects.length > 0)) return false;
 
     const targetAxis = intersects[0].object.position.clone().normalize();
-    const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
+    const targetUp = (intersects[0].object.userData.upVector as Vector3).clone();
 
     moveCameraTo(this._viewer.cameraManager, targetAxis, targetUp, this._layoutConfig.animationSpeed);
     return true;
   }
 
-  private createAxisCross(axisGroup: THREE.Group) {
+  private createAxisCross(axisGroup: Group) {
     const compass = this.createCompass();
     axisGroup.add(compass);
 
@@ -182,8 +197,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     return interactiveObjects;
   }
 
-  private setupTransformOnRender(axisGroup: THREE.Group) {
-    axisGroup.children[0].onBeforeRender = (renderer: THREE.WebGLRenderer) => {
+  private setupTransformOnRender(axisGroup: Group) {
+    axisGroup.children[0].onBeforeRender = (renderer: WebGLRenderer) => {
       this._dynamicUpdatePosition();
       axisGroup.quaternion.copy(this._viewer.cameraManager.getCamera().quaternion).invert();
       axisGroup.updateMatrixWorld();
@@ -192,22 +207,22 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       const cWidth = renderer.domElement.clientWidth;
       const cHeight = renderer.domElement.clientHeight;
 
-      const renderSize = new THREE.Vector2();
+      const renderSize = new Vector2();
       renderer.getSize(renderSize);
 
       const size = this._layoutConfig.size;
 
-      const scale = new THREE.Vector2(size / cWidth, size / cHeight);
-      const offset = new THREE.Vector2(
+      const scale = new Vector2(size / cWidth, size / cHeight);
+      const offset = new Vector2(
         (this._screenPosition.x / cWidth) * 2 + size / cWidth,
         (this._screenPosition.y / cHeight) * 2 + size / cHeight
       );
 
       axisGroup.traverse(node => {
-        if (node instanceof THREE.Mesh) {
-          (node.material as THREE.RawShaderMaterial).uniforms.offset.value = offset;
-          (node.material as THREE.RawShaderMaterial).uniforms.scale.value = scale;
-          (node.material as THREE.RawShaderMaterial).uniformsNeedUpdate = true;
+        if (node instanceof Mesh) {
+          (node.material as RawShaderMaterial).uniforms.offset.value = offset;
+          (node.material as RawShaderMaterial).uniforms.scale.value = scale;
+          (node.material as RawShaderMaterial).uniformsNeedUpdate = true;
         }
       });
     };
@@ -216,44 +231,36 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private createBoxFaces() {
     const facesConfig = this._layoutConfig.faces;
 
-    const posXFace = this.createBoxFace(new THREE.Vector3(1, 0, 0), facesConfig.xPositiveFace!);
-    const negXFace = this.createBoxFace(new THREE.Vector3(-1, 0, 0), facesConfig.xNegativeFace!);
+    const posXFace = this.createBoxFace(new Vector3(1, 0, 0), facesConfig.xPositiveFace!);
+    const negXFace = this.createBoxFace(new Vector3(-1, 0, 0), facesConfig.xNegativeFace!);
 
-    const posYFace = this.createBoxFace(
-      new THREE.Vector3(0, 1, 0),
-      facesConfig.yPositiveFace!,
-      new THREE.Vector3(0, 0, -1)
-    );
-    const negYFace = this.createBoxFace(
-      new THREE.Vector3(0, -1, 0),
-      facesConfig.yNegativeFace!,
-      new THREE.Vector3(0, 0, 1)
-    );
+    const posYFace = this.createBoxFace(new Vector3(0, 1, 0), facesConfig.yPositiveFace!, new Vector3(0, 0, -1));
+    const negYFace = this.createBoxFace(new Vector3(0, -1, 0), facesConfig.yNegativeFace!, new Vector3(0, 0, 1));
 
-    const posZFace = this.createBoxFace(new THREE.Vector3(0, 0, 1), facesConfig.zPositiveFace!);
-    const negZFace = this.createBoxFace(new THREE.Vector3(0, 0, -1), facesConfig.zNegativeFace!);
+    const posZFace = this.createBoxFace(new Vector3(0, 0, 1), facesConfig.zPositiveFace!);
+    const negZFace = this.createBoxFace(new Vector3(0, 0, -1), facesConfig.zNegativeFace!);
 
     return [posXFace, negXFace, posYFace, negYFace, posZFace, negZFace];
   }
 
   private createCompass() {
-    const compassPlaneGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
-    const compass = new THREE.Mesh(
+    const compassPlaneGeometry = new PlaneGeometry(2, 2, 1, 1);
+    const compass = new Mesh(
       compassPlaneGeometry,
-      new THREE.RawShaderMaterial({
+      new RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
-          offset: { value: new THREE.Vector2() },
-          scale: { value: new THREE.Vector2() },
+          offset: { value: new Vector2() },
+          scale: { value: new Vector2() },
           tex: { value: this.createCompassTexture() }
         },
-        side: THREE.DoubleSide,
-        glslVersion: THREE.GLSL3,
+        side: DoubleSide,
+        glslVersion: GLSL3,
         depthTest: false,
-        blending: THREE.CustomBlending,
-        blendDst: THREE.OneMinusSrcAlphaFactor,
-        blendSrc: THREE.SrcAlphaFactor
+        blending: CustomBlending,
+        blendDst: OneMinusSrcAlphaFactor,
+        blendSrc: SrcAlphaFactor
       })
     );
 
@@ -264,7 +271,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const z = Math.cos(this._layoutConfig.compass.labelDelta!);
 
     compass.position.y = -0.45;
-    compass.up.copy(new THREE.Vector3(x, 0, z));
+    compass.up.copy(new Vector3(x, 0, z));
     compass.lookAt(0, 0, 0);
 
     return compass;
@@ -299,7 +306,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.fillStyle = compassLayout.fontColor!.getStyle();
       context.fillText(compassLayout.ringLabel, halfSize, halfSize * (1 / 4) + fontSize / 3);
     }
-    const canvasTexture = new THREE.CanvasTexture(canvas);
+    const canvasTexture = new CanvasTexture(canvas);
     canvasTexture.anisotropy = 8;
     return canvasTexture;
   }
@@ -327,24 +334,24 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.fillStyle = faceConfig.fontColor!.getStyle();
       context.fillText(faceConfig.label!, textureSize / 2, textureSize / 2 + fontSize / 3);
     }
-    const canvasTexture = new THREE.CanvasTexture(canvas);
+    const canvasTexture = new CanvasTexture(canvas);
     canvasTexture.anisotropy = 8;
     return canvasTexture;
   }
 
-  private createBoxFace(position: THREE.Vector3, faceConfig: AxisBoxFaceConfig, upVector = new THREE.Vector3(0, 1, 0)) {
-    const face = new THREE.Mesh(
+  private createBoxFace(position: Vector3, faceConfig: AxisBoxFaceConfig, upVector = new Vector3(0, 1, 0)) {
+    const face = new Mesh(
       this._boxFaceGeometry,
-      new THREE.RawShaderMaterial({
+      new RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
-          offset: { value: new THREE.Vector2() },
-          scale: { value: new THREE.Vector2() },
+          offset: { value: new Vector2() },
+          scale: { value: new Vector2() },
           tex: { value: this.getFaceTexture(faceConfig, this._layoutConfig.size) }
         },
         depthTest: false,
-        glslVersion: THREE.GLSL3,
+        glslVersion: GLSL3,
         // Even if this isn't transparent, we want ThreeJS to draw the object
         // after transparent objects so its correctly blended
         transparent: true

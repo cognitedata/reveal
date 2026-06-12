@@ -1,14 +1,26 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { ShaderMaterialParameters } from 'three';
+import {
+  CustomBlending,
+  DataTexture,
+  DoubleSide,
+  GLSL3,
+  Matrix4,
+  OneFactor,
+  RawShaderMaterial,
+  Texture,
+  Vector2,
+  ZeroFactor
+} from 'three';
 
 // TODO: Fix dependencies such that test app doesn't depend on core internals
 import { getMatCapTextureData } from '../../../packages/rendering/src/rendering/matCapTextureData';
 import { sectorShaders } from '../../../packages/rendering/src/rendering/shaders';
 import { RevealGeometryCollectionType } from '../src/types';
 
-const matCapTexture = new THREE.Texture(getMatCapTextureData());
+const matCapTexture = new Texture(getMatCapTextureData());
 matCapTexture.needsUpdate = true;
 
 function getColorDataTexture(treeIndexCount: number) {
@@ -20,7 +32,7 @@ function getColorDataTexture(treeIndexCount: number) {
     buffer[i * 4 + 3] = 1;
   }
   // Color and style override texture
-  const overrideColorPerTreeIndexTexture = new THREE.DataTexture(buffer, width, height);
+  const overrideColorPerTreeIndexTexture = new DataTexture(buffer, width, height);
 
   return { colorDataTexture: overrideColorPerTreeIndexTexture, width, height };
 
@@ -35,28 +47,28 @@ function getColorDataTexture(treeIndexCount: number) {
   }
 }
 
-export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryCollectionType, THREE.RawShaderMaterial> {
+export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryCollectionType, RawShaderMaterial> {
   const { colorDataTexture, width, height } = getColorDataTexture(treeIndexCount);
   colorDataTexture.needsUpdate = true;
 
-  const sharedParams: THREE.ShaderMaterialParameters = {
+  const sharedParams: ShaderMaterialParameters = {
     clipping: false,
     uniforms: {
       renderMode: { value: 1 },
       inverseModelMatrix: {
-        value: new THREE.Matrix4()
+        value: new Matrix4()
       },
       matCapTexture: { value: matCapTexture },
-      treeIndexTextureSize: { value: new THREE.Vector2(width, height) },
+      treeIndexTextureSize: { value: new Vector2(width, height) },
       colorDataTexture: { value: colorDataTexture }
     },
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3,
-    blending: THREE.CustomBlending,
-    blendDst: THREE.ZeroFactor,
-    blendDstAlpha: THREE.OneFactor,
-    blendSrc: THREE.OneFactor,
-    blendSrcAlpha: THREE.ZeroFactor
+    side: DoubleSide,
+    glslVersion: GLSL3,
+    blending: CustomBlending,
+    blendDst: ZeroFactor,
+    blendDstAlpha: OneFactor,
+    blendSrc: OneFactor,
+    blendSrcAlpha: ZeroFactor
   };
   return new Map([
     [
@@ -183,9 +195,9 @@ function createMaterial(
   name: string,
   vertexShader: string,
   fragmentShader: string,
-  sharedParams: THREE.ShaderMaterialParameters
-): THREE.RawShaderMaterial {
-  return new THREE.RawShaderMaterial({
+  sharedParams: ShaderMaterialParameters
+): RawShaderMaterial {
+  return new RawShaderMaterial({
     ...sharedParams,
     name,
     vertexShader,

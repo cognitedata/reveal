@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Plane, Vector3 } from 'three';
 
 import { CognitePointCloudModel } from '@reveal/pointclouds';
 import { PointColorType } from '@reveal/rendering';
@@ -22,7 +22,7 @@ export default class ClippingPointCloudVisualTest extends ViewerVisualTestFixtur
     }
 
     viewer.setGlobalClippingPlanes([
-      new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0))
+      new Plane().setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), new Vector3(0, 0, 0))
     ]);
 
     model.pointColorType = PointColorType.Height;

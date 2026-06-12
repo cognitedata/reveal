@@ -14,7 +14,7 @@ import { assert } from '@reveal/utilities/assert';
 import type { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
 import type { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 
-import * as THREE from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
 import type { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
 
@@ -31,13 +31,13 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
 
   private annotationGeometryToRevealShapes(geometry: AnnotationsGeometry): IShape {
     if (geometry.box) {
-      return new Box(new THREE.Matrix4().fromArray(geometry.box.matrix).transpose());
+      return new Box(new Matrix4().fromArray(geometry.box.matrix).transpose());
     }
 
     if (geometry.cylinder) {
       return new Cylinder(
-        new THREE.Vector3().fromArray(geometry.cylinder.centerA),
-        new THREE.Vector3().fromArray(geometry.cylinder.centerB),
+        new Vector3().fromArray(geometry.cylinder.centerA),
+        new Vector3().fromArray(geometry.cylinder.centerB),
         geometry.cylinder.radius
       );
     }

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import type { SectorMetadata } from '../types';
@@ -44,9 +44,9 @@ describe('CadMetadataParserGltf', () => {
       sectors: [sectorRoot]
     };
 
-    const subtreeBoundingBox = new THREE.Box3(
-      new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
-      new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
+    const subtreeBoundingBox = new Box3(
+      new Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
+      new Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
     );
 
     const expectedRoot: SectorMetadata = {
@@ -193,12 +193,12 @@ describe('CadMetadataParserGltf', () => {
     expectBoxesEqual(rootBoundingBox, expectedBoundingBox);
   });
 
-  function expectBoxesEqual(box0: THREE.Box3, box1: THREE.Box3) {
+  function expectBoxesEqual(box0: Box3, box1: Box3) {
     expectVectorsEqual(box0.min, box1.min);
     expectVectorsEqual(box0.max, box1.max);
   }
 
-  function expectVectorsEqual(vec0: THREE.Vector3, vec1: THREE.Vector3) {
+  function expectVectorsEqual(vec0: Vector3, vec1: Vector3) {
     expect(vec0.x).toBe(vec1.x);
     expect(vec0.y).toBe(vec1.y);
     expect(vec0.z).toBe(vec1.z);

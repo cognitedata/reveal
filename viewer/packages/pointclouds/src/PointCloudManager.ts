@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera, Plane, Scene, WebGLRenderer } from 'three';
+import { BufferGeometry, Mesh } from 'three';
 
 import { assertNever } from '@reveal/utilities';
 import type { LoadingState } from '@reveal/model-base';
@@ -21,8 +22,6 @@ import { MetricsLogger } from '@reveal/metrics';
 import type { SupportedModelTypes } from '@reveal/model-base';
 import type { PointCloudMaterialManager } from '@reveal/rendering';
 
-import type { Mesh } from 'three';
-
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
@@ -30,14 +29,14 @@ export class PointCloudManager {
   private readonly _loadingStateHandler: PointCloudLoadingStateHandler;
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudNodes: PointCloudNode[] = [];
-  private _globalClippingPlanes: THREE.Plane[] = [];
+  private _globalClippingPlanes: Plane[] = [];
 
-  private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
+  private readonly _cameraSubject: Subject<PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
     new Subject();
   private readonly _budgetSubject: Subject<number> = new Subject();
 
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
 
   private _needsRedraw: boolean = false;
 
@@ -46,8 +45,8 @@ export class PointCloudManager {
     materialManager: PointCloudMaterialManager,
     modelFactory: PointCloudFactory,
     potreeInstance: Potree,
-    scene: THREE.Scene,
-    renderer: THREE.WebGLRenderer
+    scene: Scene,
+    renderer: WebGLRenderer
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
@@ -59,7 +58,7 @@ export class PointCloudManager {
 
     combineLatest([this._cameraSubject, this.loadedModelsObservable(), this._budgetSubject])
       .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
-      .subscribe(([cam, _models, _budget]: [THREE.PerspectiveCamera, ModelIdentifier[], number]) => {
+      .subscribe(([cam, _models, _budget]: [PerspectiveCamera, ModelIdentifier[], number]) => {
         this.updatePointClouds(cam);
       });
 
@@ -95,7 +94,7 @@ export class PointCloudManager {
     );
   }
 
-  set clippingPlanes(planes: THREE.Plane[]) {
+  set clippingPlanes(planes: Plane[]) {
     this._globalClippingPlanes = planes;
     this._pointCloudNodes.forEach(node => node.octree.setGlobalClippingPlane(planes));
     this.requestRedraw();
@@ -105,12 +104,12 @@ export class PointCloudManager {
     return this._loadingStateHandler.getLoadingStateObserver();
   }
 
-  updatePointClouds(camera: THREE.PerspectiveCamera): void {
+  updatePointClouds(camera: PerspectiveCamera): void {
     const octrees = this._pointCloudNodes.filter(node => node.visible).map(node => node.octree);
     this._potreeInstance.updatePointClouds(octrees, camera, this._renderer);
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera): void {
+  updateCamera(camera: PerspectiveCamera): void {
     this._cameraSubject.next(camera);
     this.requestRedraw();
   }
@@ -185,7 +184,7 @@ export class PointCloudManager {
   }
 
   createDrawResetTrigger(): Mesh {
-    const drawResetTriggerMesh = new THREE.Mesh(new THREE.BufferGeometry());
+    const drawResetTriggerMesh = new Mesh(new BufferGeometry());
     drawResetTriggerMesh.name = 'onAfterRender trigger (no geometry)';
     drawResetTriggerMesh.frustumCulled = false;
     drawResetTriggerMesh.onAfterRender = () => {

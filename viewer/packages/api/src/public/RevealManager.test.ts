@@ -1,7 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { PerspectiveCamera, Plane } from 'three';
 
 import { createRevealManager } from './createRevealManager';
 import type { RevealManager, LoadingStateChangeListener } from './RevealManager';
@@ -18,8 +19,6 @@ import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import type { SetPropertyExpression } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import type { CameraManager } from '@reveal/camera-manager';
-import { PerspectiveCamera } from 'three';
-
 import { vi } from 'vitest';
 
 describe('RevealManager', () => {
@@ -63,7 +62,7 @@ describe('RevealManager', () => {
     onChangeListeners = [];
     onStopListeners = [];
 
-    const rendererMock = new Mock<THREE.WebGLRenderer>()
+    const rendererMock = new Mock<WebGLRenderer>()
       .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
       .returns({})
       .setup(p => p.domElement)
@@ -107,7 +106,7 @@ describe('RevealManager', () => {
 
   test('set clippingPlanes triggers redraw', () => {
     expect(manager.needsRedraw).toBeFalsy();
-    const planes = [new THREE.Plane(), new THREE.Plane()];
+    const planes = [new Plane(), new Plane()];
     manager.clippingPlanes = planes;
     expect(manager.needsRedraw).toBeTruthy();
   });
@@ -137,7 +136,7 @@ describe('RevealManager', () => {
   });
 
   test('loadingStateChanged is not triggered if loading state doesnt change', () => {
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
+    const camera = new PerspectiveCamera(60, 1, 0.5, 100);
     const loadingStateChangedCb: LoadingStateChangeListener = vi.fn();
     manager.on('loadingStateChanged', loadingStateChangedCb);
 

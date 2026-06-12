@@ -1,14 +1,14 @@
 import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
-import type * as THREE from 'three';
+import type { Box3, Vector3 } from 'three';
 
 export interface IPointCloudTreeGeometry {
   root: IPointCloudTreeNodeBase | undefined;
 
-  boundingBox: THREE.Box3;
-  tightBoundingBox: THREE.Box3;
+  boundingBox: Box3;
+  tightBoundingBox: Box3;
 
-  offset: THREE.Vector3;
+  offset: Vector3;
   spacing: number;
 
   dispose(): void;

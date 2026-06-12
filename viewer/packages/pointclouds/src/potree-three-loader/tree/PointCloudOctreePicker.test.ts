@@ -1,7 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import * as THREE from 'three';
+import type { WebGLRenderTarget, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Ray, Scene, Vector2 } from 'three';
 import { Mock, It } from 'moq.ts';
 import { vi } from 'vitest';
 
@@ -17,16 +18,16 @@ const MINIMAL_PIXEL_BUFFER_SIZE = 4;
 
 function createMockPickState(): IPickState {
   return {
-    renderTarget: new Mock<THREE.WebGLRenderTarget>().object(),
+    renderTarget: new Mock<WebGLRenderTarget>().object(),
     material: new Mock<PointCloudMaterial>().object(),
-    scene: new THREE.Scene()
+    scene: new Scene()
   };
 }
 
-function createMockRenderer(): THREE.WebGLRenderer {
-  return new Mock<THREE.WebGLRenderer>()
+function createMockRenderer(): WebGLRenderer {
+  return new Mock<WebGLRenderer>()
     .setup(r => r.getDrawingBufferSize(It.IsAny()))
-    .returns(new THREE.Vector2(RENDER_TARGET_WIDTH, RENDER_TARGET_HEIGHT))
+    .returns(new Vector2(RENDER_TARGET_WIDTH, RENDER_TARGET_HEIGHT))
     .object();
 }
 
@@ -37,8 +38,8 @@ describe(PointCloudOctreePicker.name, () => {
 
   test('picking returns null immediately for empty octrees array', async () => {
     const picker = new PointCloudOctreePicker(createMockRenderer());
-    const camera = new THREE.PerspectiveCamera();
-    const ray = new THREE.Ray();
+    const camera = new PerspectiveCamera();
+    const ray = new Ray();
 
     const result = await picker.pick(camera, ray, []);
 
@@ -66,8 +67,8 @@ describe(PointCloudOctreePicker.name, () => {
 
     const picker = new PointCloudOctreePicker(createMockRenderer());
     const octree = new Mock<PointCloudOctree>().object();
-    const camera = new THREE.PerspectiveCamera();
-    const ray = new THREE.Ray();
+    const camera = new PerspectiveCamera();
+    const ray = new Ray();
 
     // Starting pick() runs the function synchronously up to the first `await readPixelsPromise`.
     // resetState() and readPixelsAsync() are both called before that await.
