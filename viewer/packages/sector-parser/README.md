@@ -31,7 +31,7 @@ enum RevealGeometryCollectionType {
 The buffer geometry result has all the neccesary attributes added and it also adds the geometry such as quads for those types that are ray-traced.
 
 ## Sector parser test app
-The `/app/` folder contains a test app which can be used to test the sector parser in a browser context. The app can be started by running `yarn start` in the package root.
+The `/app/` folder contains a test app which can be used to test the sector parser in a browser context. The app can be started by running `pnpm run start` in the package root.
 The app will automatically load any and all sector files located in the `/test-models/` directory. Note that the test app has no concept of where the geometry is so you might have to change the camera position / target.
 
 ## Texture Support
