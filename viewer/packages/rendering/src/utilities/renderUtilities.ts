@@ -242,10 +242,10 @@ function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
 }
 
 export enum RenderLayer {
-  Back = RenderMode.Color,
-  InFront = RenderMode.Effects,
-  Ghost = RenderMode.Ghost,
-  PointCloud,
+  Back = RenderMode.Color satisfies number as number,
+  InFront = RenderMode.Effects satisfies number as number,
+  Ghost = RenderMode.Ghost satisfies number as number,
+  PointCloud = 8,
   Default = 0
 }
 
