@@ -40,7 +40,7 @@ export class RootSectorNode extends SectorNode {
     this.updateMatrixWorld(true);
   }
 
-  getModelTransformation(out = new Matrix4()): Matrix4 {
+  getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this.matrix);
   }
 }

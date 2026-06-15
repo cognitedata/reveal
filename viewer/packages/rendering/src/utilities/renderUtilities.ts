@@ -39,7 +39,7 @@ import { NodeOutlineColor } from '@reveal/cad-styling';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
-export const unitOrthographicCamera = new OrthographicCamera(-1, 1, 1, -1, -1, 1);
+export const unitOrthographicCamera: OrthographicCamera = new OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
 export function createFullScreenTriangleMesh(shaderMaterial: RawShaderMaterial): Mesh {
   const renderTriangle = createRenderTriangle();

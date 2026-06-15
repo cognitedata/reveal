@@ -19,7 +19,10 @@ import { LineMaterial } from './LineMaterial';
 class LineSegments2 extends Mesh<LineSegmentsGeometry, LineMaterial> {
   public type = 'LineSegments2';
 
-  constructor(geometry = new LineSegmentsGeometry(), material = new LineMaterial({ color: Math.random() * 0xffffff })) {
+  constructor(
+    geometry: LineSegmentsGeometry = new LineSegmentsGeometry(),
+    material: LineMaterial = new LineMaterial({ color: Math.random() * 0xffffff })
+  ) {
     super(geometry, material);
   }
 

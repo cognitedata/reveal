@@ -95,7 +95,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   lights = false;
   fog = false;
   visibleNodesTexture: DataTexture | undefined;
-  visibleNodeTextureOffsets = new Map<string, number>();
+  visibleNodeTextureOffsets: Map<string, number> = new Map<string, number>();
 
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
@@ -157,12 +157,12 @@ export class PointCloudMaterial extends RawShaderMaterial {
   @requiresShaderUpdate() accessor shape: PointShape = PointShape.Circle;
 
   attributes = {
-    position: { type: 'fv', value: [] },
-    color: { type: 'fv', value: [] },
-    intensity: { type: 'f', value: [] },
-    classification: { type: 'f', value: [] },
-    objectId: { type: 'f', value: [] },
-    indices: { type: 'fv', value: [] }
+    position: { type: 'fv', value: [] as const },
+    color: { type: 'fv', value: [] as const },
+    intensity: { type: 'f', value: [] as const },
+    classification: { type: 'f', value: [] as const },
+    objectId: { type: 'f', value: [] as const },
+    indices: { type: 'fv', value: [] as const }
   };
 
   constructor(parameters: Partial<IPointCloudMaterialParameters> = {}) {
