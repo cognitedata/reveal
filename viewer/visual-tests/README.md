@@ -62,6 +62,46 @@ Note that for Cognite developers, default values of `env`, `project` and `cluste
 https://localhost:8080/?testfixture=Rendering.VisualTest&modelId=123456789&revisionId=987654321
 ```
 
+## Migrating a visual test to WebGPU
+
+Individual visual tests can opt in to `WebGPURenderer` while the rest of the suite continues to run on WebGL. When a test is migrated, its existing baseline PNG is replaced with a WebGPU render.
+
+### Opt in from a test module
+
+Export a `renderer` constant from your `*.VisualTest.ts` file:
+
+```ts
+export const renderer = 'webgpu' as const;
+
+export default class MyVisualTest extends SimpleVisualTestFixture {
+  // ...
+}
+```
+
+Tests that omit this export default to `'webgl'`. Only tests based on `SimpleVisualTestFixture` support WebGPU today; `StreamingVisualTestFixture` and `ViewerVisualTestFixture` remain WebGL-only until the production render pipeline is migrated.
+
+Use standard Three.js materials (for example `MeshBasicMaterial`) in WebGPU tests. Custom GLSL `ShaderMaterial` / `RawShaderMaterial` used elsewhere in Reveal is not compatible with `WebGPURenderer`.
+
+### Regenerating baselines after migration
+
+After switching a test to WebGPU, regenerate its baseline:
+
+```sh
+pnpm exec playwright test --config=visual-tests/playwright.config.ts --update-snapshots -g "<TestName>"
+```
+
+The snapshot path is unchanged (`__image_snapshots__/<TestName>.png`); only the pixel content changes to match the WebGPU output.
+
+### Browser and CI requirements
+
+Playwright launches Chromium with both WebGL (ANGLE + SwiftShader) and WebGPU (Dawn + SwiftShader-Vulkan) enabled. CI installs Mesa software Vulkan (`mesa-vulkan-drivers`) on `ubuntu-latest` so Dawn can acquire a deterministic software adapter.
+
+If WebGPU fails locally:
+
+1. Confirm `navigator.gpu.requestAdapter()` succeeds in the test browser (the suite checks this in `beforeAll`).
+2. Inspect `chrome://gpu` in a Chromium instance launched with the same flags as [playwright.config.ts](./playwright.config.ts).
+3. On Linux, verify `vulkaninfo --summary` reports a software device such as `llvmpipe`.
+
 ## Creating your own Visual Test
 Reveal requires no form of registration of visual tests and simply detects a visual test based on the filename suffix similar to how normal unit tests work.
 For the testing framework to recognize a visual test it must have the `.VisualTest.ts` suffix, so for example `Colors.VisualTest.ts` is a valid name.
@@ -70,7 +110,7 @@ Other than that there are no restrictions placed and successfully doing this wil
 
 For convenience, there exists base classes that can be used to handle a lot of the common boilerplate code for a visual tests (model loading, instantiating common components and authentication).
 Most usecases should be covered by the following abstraction levels:
-- SimpleVisualTestFixture: Basic setup with a WebGLRenderer, scene, camera etc.
+- SimpleVisualTestFixture: Basic setup with a WebGL or WebGPU renderer (via `export const renderer`), scene, camera etc.
 - StreamingVisualTestFixture: Component-level abstraction with CadMaterialManager, UpdateHandler, RenderPipeline etc.
 - ViewerVisualTestFixture: API-level abstraction on top of Cognite3DViewer.
 

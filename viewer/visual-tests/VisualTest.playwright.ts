@@ -26,10 +26,19 @@ test.beforeAll(async ({ browser }) => {
   });
   sharedPage = await sharedContext.newPage();
   await sharedPage.goto('/', { waitUntil: 'load' });
+
+  const webGpuAvailable = await sharedPage.evaluate(async () => {
+    if (navigator.gpu === undefined) {
+      return false;
+    }
+    const adapter = await navigator.gpu.requestAdapter();
+    return adapter !== null;
+  });
+  expect(webGpuAvailable).toBe(true);
 });
 
 test.afterAll(async () => {
-  await sharedContext.close();
+  await sharedContext?.close();
 });
 
 for (const testFilePath of testFiles) {

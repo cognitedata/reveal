@@ -1,16 +1,19 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 import type { Box3 } from 'three';
-import { Matrix4, PerspectiveCamera, Scene, Sphere, Vector3, WebGLRenderer } from 'three';
+import { Matrix4, PerspectiveCamera, Scene, Sphere, Vector3 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import type { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/data-providers';
 import { createDataProviders } from './utilities/createDataProviders';
+import type { TestRenderer } from './createTestRenderer';
+import { createTestRenderer } from './createTestRenderer';
+import { getTestRendererKind } from './testRendererKind';
 import type { VisualTestFixture } from './VisualTestFixture';
 
 export type SimpleTestFixtureComponents = {
-  renderer: WebGLRenderer;
+  renderer: TestRenderer;
   scene: Scene;
   camera: PerspectiveCamera;
   cameraControls: OrbitControls;
@@ -26,24 +29,21 @@ export abstract class SimpleVisualTestFixture implements VisualTestFixture {
 
   private readonly _perspectiveCamera: PerspectiveCamera;
   private readonly _scene: Scene;
-  private readonly _renderer: WebGLRenderer;
-  private readonly _controls: OrbitControls;
+  private _renderer!: TestRenderer;
+  private _controls!: OrbitControls;
 
   constructor() {
     this._perspectiveCamera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
-
     this._scene = new Scene();
-
-    this._renderer = new WebGLRenderer();
-
-    this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
-
-    this._controls.addEventListener('change', () => {
-      this.render();
-    });
   }
 
   public async run(): Promise<void> {
+    this._renderer = await createTestRenderer(getTestRendererKind());
+    this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
+    this._controls.addEventListener('change', () => {
+      void this.render();
+    });
+
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this._renderer.domElement);
     document.body.style.margin = '0px 0px 0px 0px';
@@ -58,12 +58,12 @@ export abstract class SimpleVisualTestFixture implements VisualTestFixture {
     };
 
     await this.setup(components);
-    this.render();
+    await this.render();
   }
 
   public abstract setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void>;
 
-  public render(): void {
+  public async render(): Promise<void> {
     this._renderer.render(this._scene, this._perspectiveCamera);
   }
 
@@ -87,6 +87,8 @@ export abstract class SimpleVisualTestFixture implements VisualTestFixture {
   public dispose(): void {
     this._controls.dispose();
     this._renderer.dispose();
-    this._renderer.forceContextLoss();
+    if ('forceContextLoss' in this._renderer && typeof this._renderer.forceContextLoss === 'function') {
+      this._renderer.forceContextLoss();
+    }
   }
 }

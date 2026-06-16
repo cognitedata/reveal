@@ -188,6 +188,12 @@ jobs:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
+      - name: Install software Vulkan
+        run: sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers vulkan-tools libvulkan1
+
+      - name: Verify software Vulkan
+        run: vulkaninfo --summary | grep -E 'llvmpipe|deviceName'
+
       - name: Install Playwright Browsers
         working-directory: viewer
         run: pnpm exec playwright install
