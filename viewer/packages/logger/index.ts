@@ -3,5 +3,5 @@
  */
 
 import defaultLog from './src/Log';
-const Log = defaultLog.default;
+const Log: defaultLog.RootLogger = defaultLog.default;
 export { Log };

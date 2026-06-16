@@ -136,10 +136,19 @@ const DefaultAppearance: NodeAppearance = {
   prioritizedForLoadingHint: 0
 };
 
+export type DefaultNodeAppearanceInstances = {
+  Default: NodeAppearance;
+  Outlined: NodeAppearance;
+  Hidden: NodeAppearance;
+  InFront: NodeAppearance;
+  Ghosted: NodeAppearance;
+  Highlighted: NodeAppearance;
+};
+
 /**
  * A set of default node appearances used in Reveal.
  */
-export const DefaultNodeAppearance = {
+export const DefaultNodeAppearance: DefaultNodeAppearanceInstances = {
   Default: DefaultAppearance,
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,

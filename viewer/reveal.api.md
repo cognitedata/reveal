@@ -155,7 +155,7 @@ export class AxisGizmoOptions {
     // (undocumented)
     corner: Corner;
     // (undocumented)
-    darkColors: number[];
+    darkColors: readonly [9708580, 4291095, 939152];
     // (undocumented)
     focusCircleAlpha: number;
     // (undocumented)
@@ -172,7 +172,7 @@ export class AxisGizmoOptions {
     // (undocumented)
     insideMargin: number;
     // (undocumented)
-    lightColors: number[];
+    lightColors: readonly [16202812, 7129894, 1543408];
     // (undocumented)
     normalTextColor: string;
     // (undocumented)
@@ -942,20 +942,16 @@ export class DefaultCameraManager implements CameraManager {
 }
 
 // @public
-export const DefaultNodeAppearance: {
+export const DefaultNodeAppearance: DefaultNodeAppearanceInstances;
+
+// @public (undocumented)
+export type DefaultNodeAppearanceInstances = {
     Default: NodeAppearance;
     Outlined: NodeAppearance;
     Hidden: NodeAppearance;
     InFront: NodeAppearance;
     Ghosted: NodeAppearance;
-    Highlighted: {
-        color?: Color;
-        visible?: boolean;
-        renderInFront?: boolean;
-        renderGhosted?: boolean;
-        outlineColor?: NodeOutlineColor;
-        prioritizedForLoadingHint?: number;
-    };
+    Highlighted: NodeAppearance;
 };
 
 // @public

@@ -6,8 +6,8 @@ import { Spherical, Vector3 } from 'three';
 import { DampedSpherical } from './DampedSpherical';
 
 export class DampedVector3 {
-  public readonly value = new Vector3();
-  public readonly end = new Vector3();
+  public readonly value: Vector3 = new Vector3();
+  public readonly end: Vector3 = new Vector3();
 
   // Used as a temporary variable to avoid creating new objects
   private readonly _valueVector = new Vector3();
