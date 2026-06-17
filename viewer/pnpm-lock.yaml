@@ -56,7 +56,7 @@ importers:
         version: 10.12.0
       '@microsoft/api-extractor':
         specifier: ^7.58.7
-        version: 7.58.8(@types/node@25.9.3)
+        version: 7.58.9(@types/node@25.9.3)
       '@playwright/test':
         specifier: ^1.52.0
         version: 1.60.0
@@ -143,7 +143,7 @@ importers:
         version: 6.0.3
       unplugin-dts:
         specifier: ^1.0.2
-        version: 1.0.2(@microsoft/api-extractor@7.58.8(@types/node@25.9.3))(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3))
+        version: 1.0.2(@microsoft/api-extractor@7.58.9(@types/node@25.9.3))(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3))
       vite:
         specifier: ^8.0.16
         version: 8.0.16(@types/node@25.9.3)
@@ -690,8 +690,8 @@ packages:
   '@microsoft/api-extractor-model@7.33.8':
     resolution: {integrity: sha512-aIcoQggPyer3B6Ze3usz0YWC/oBwUHfRH5ETUsr+oT2BRA6SfTJl7IKPcPZkX4UR+PohowzW4uMxsvjrn8vm+w==}
 
-  '@microsoft/api-extractor@7.58.8':
-    resolution: {integrity: sha512-Y45rdEvZodD1WBAK9w8Wvqj7k/6z21YOEP8aVNWv1vemEzanjThvCowc3Eyt/bmJJyqI4gj0BQr9nLC51fsDiQ==}
+  '@microsoft/api-extractor@7.58.9':
+    resolution: {integrity: sha512-S2UF4yza5GoxCmf7hJQNxJNZN9ltOVuOQv8Dy+Z21aol5ERoBNMdWcQHm4MJMPPItW4H/4rZD906iaf4mUojJA==}
     hasBin: true
 
   '@microsoft/tsdoc-config@0.18.1':
@@ -888,8 +888,8 @@ packages:
       '@types/node':
         optional: true
 
-  '@rushstack/ts-command-line@5.3.9':
-    resolution: {integrity: sha512-GIHqU+sRGQ3LGWAZu1O+9Yh++qwtyNIIGuNbcWHJjBTm2qRez0cwINUHZ+pQLR8UuzZDcMajrDaNbUYoaL/XtQ==}
+  '@rushstack/ts-command-line@5.3.10':
+    resolution: {integrity: sha512-fwI076HYknC0IrMXdY6UmjDv+PH7NHhNJX3/pY2UblSE5XrXgndXZPiOe/6ZtuFpn6DvVDVNhtkIzQ+Qu/MhVQ==}
 
   '@sindresorhus/base62@1.0.0':
     resolution: {integrity: sha512-TeheYy0ILzBEI/CO55CP6zJCSdSWeRtGnHy8U8dWSUH4I68iqTsy7HkMktR4xakThc9jotkPQUXT4ITdbV7cHA==}
@@ -2720,7 +2720,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.58.8(@types/node@25.9.3)':
+  '@microsoft/api-extractor@7.58.9(@types/node@25.9.3)':
     dependencies:
       '@microsoft/api-extractor-model': 7.33.8(@types/node@25.9.3)
       '@microsoft/tsdoc': 0.16.0
@@ -2728,7 +2728,7 @@ snapshots:
       '@rushstack/node-core-library': 5.23.1(@types/node@25.9.3)
       '@rushstack/rig-package': 0.7.3
       '@rushstack/terminal': 0.24.0(@types/node@25.9.3)
-      '@rushstack/ts-command-line': 5.3.9(@types/node@25.9.3)
+      '@rushstack/ts-command-line': 5.3.10(@types/node@25.9.3)
       diff: 8.0.4
       minimatch: 10.2.5
       resolve: 1.22.12
@@ -2891,7 +2891,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 25.9.3
 
-  '@rushstack/ts-command-line@5.3.9(@types/node@25.9.3)':
+  '@rushstack/ts-command-line@5.3.10(@types/node@25.9.3)':
     dependencies:
       '@rushstack/terminal': 0.24.0(@types/node@25.9.3)
       '@types/argparse': 1.0.38
@@ -4242,7 +4242,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unplugin-dts@1.0.2(@microsoft/api-extractor@7.58.8(@types/node@25.9.3))(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3)):
+  unplugin-dts@1.0.2(@microsoft/api-extractor@7.58.9(@types/node@25.9.3))(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3)):
     dependencies:
       '@rollup/pluginutils': 5.4.0
       '@volar/typescript': 2.4.28
@@ -4254,7 +4254,7 @@ snapshots:
       typescript: 6.0.3
       unplugin: 2.3.11
     optionalDependencies:
-      '@microsoft/api-extractor': 7.58.8(@types/node@25.9.3)
+      '@microsoft/api-extractor': 7.58.9(@types/node@25.9.3)
       rolldown: 1.0.3
       vite: 8.0.16(@types/node@25.9.3)
     transitivePeerDependencies:
