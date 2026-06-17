@@ -1,14 +1,19 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
-import type { Matrix4, Scene, Vector3 } from 'three';
+
+import type { Matrix4, Material, Scene, Vector3 } from 'three';
 import { Group, InstancedMesh } from 'three';
+
 import type { Primitive, PrimitiveName } from '../../../test-utilities/src/primitives';
 import { createPrimitiveInterleavedGeometry, getCollectionType } from '../../../test-utilities/src/primitives';
 import type { SimpleTestFixtureComponents } from '../../../visual-tests';
 import { SimpleVisualTestFixture } from '../../../visual-tests';
+import { getTestRendererKind } from '../../../visual-tests/test-fixtures/testRendererKind';
+import { setCameraPosition, setInverseModelMatrix } from '../../../packages/rendering/src/tsl/CadSharedUniforms';
+import type { CadNodeMaterial } from '../../../packages/rendering/src/tsl/CadNodeMaterial';
 import { setConeGeometry } from '../src/reveal-glb-parser/primitiveGeometries';
-import { getMaterialsMap } from './testMaterials';
+import { getMaterialsMapForBackend } from './testMaterials';
 
 export abstract class PrimitivesVisualTestFixture extends SimpleVisualTestFixture {
   private readonly _primitives: Primitive[];
@@ -20,18 +25,24 @@ export abstract class PrimitivesVisualTestFixture extends SimpleVisualTestFixtur
   }
   public setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void> {
     const { camera, scene } = simpleTestFixtureComponents;
+    const backend = getTestRendererKind();
 
     const group = this.initializeGroup(scene);
     const geometry = createPrimitiveInterleavedGeometry(this._primitiveName, this._primitives);
     setConeGeometry(geometry);
-    const materials = getMaterialsMap(this._primitives.length);
+    const materials = getMaterialsMapForBackend(this._primitives.length, backend);
 
-    const generalCylinderMaterial = materials.get(getCollectionType(this._primitiveName))!;
-    const mesh = new InstancedMesh(geometry, generalCylinderMaterial, this._primitives.length);
+    const primitiveMaterial = materials.get(getCollectionType(this._primitiveName))!;
+    const mesh = new InstancedMesh(geometry, primitiveMaterial, this._primitives.length);
     mesh.frustumCulled = false;
     mesh.onBeforeRender = () => {
-      (generalCylinderMaterial.uniforms.inverseModelMatrix?.value as Matrix4)?.copy(mesh.matrixWorld).invert();
-      (generalCylinderMaterial.uniforms.cameraPosition?.value as Vector3)?.copy(camera.position);
+      if ('sharedUniforms' in primitiveMaterial) {
+        setInverseModelMatrix((primitiveMaterial as CadNodeMaterial).sharedUniforms, mesh.matrixWorld.clone().invert());
+        setCameraPosition((primitiveMaterial as CadNodeMaterial).sharedUniforms, camera.position);
+      } else {
+        (primitiveMaterial as Material & { uniforms?: { inverseModelMatrix?: { value: Matrix4 }; cameraPosition?: { value: Vector3 } } }).uniforms?.inverseModelMatrix?.value.copy(mesh.matrixWorld).invert();
+        (primitiveMaterial as Material & { uniforms?: { cameraPosition?: { value: Vector3 } } }).uniforms?.cameraPosition?.value.copy(camera.position);
+      }
     };
 
     group.add(mesh);

@@ -2,7 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 import type { Object3D, PerspectiveCamera, Plane } from 'three';
-import { Box3, Clock, Color, Matrix4, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
+import { Box3, Clock, Color, Matrix4, REVISION, Vector2, Vector3 } from 'three';
+import { WebGPURenderer } from 'three/webgpu';
+import type { RevealRenderer } from '@reveal/rendering';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
@@ -159,7 +161,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   /**
    * Returns the renderer used to produce images from 3D geometry.
    */
-  private get renderer(): WebGLRenderer {
+  private get renderer(): RevealRenderer {
     return this._renderer;
   }
 
@@ -170,7 +172,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
-  private readonly _renderer: WebGLRenderer;
+  private readonly _renderer: RevealRenderer;
+  private readonly _rendererInitPromise: Promise<void>;
   private readonly _ownsRenderer: boolean;
 
   private readonly _pickingHandler: PickingHandler;
@@ -275,6 +278,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       );
     }
     this._renderer = options.renderer ?? createRenderer();
+    this._rendererInitPromise =
+      'init' in this._renderer && typeof this._renderer.init === 'function'
+        ? this._renderer.init().then(() => {
+            this._renderer.setPixelRatio(window.devicePixelRatio);
+          })
+        : Promise.resolve();
     this._renderer.localClippingEnabled = true;
     this._ownsRenderer = options.renderer === undefined;
 
@@ -1851,6 +1860,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     }
     this.latestRequestId = requestAnimationFrame(this._boundAnimate);
 
+    void this._rendererInitPromise.then(() => this.animateFrame(time));
+  }
+
+  private animateFrame(time: number) {
+    if (this.isDisposed) {
+      return;
+    }
+
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
@@ -2144,9 +2161,8 @@ function createCanvasWrapper(): HTMLElement {
   return domElement;
 }
 
-function createRenderer(): WebGLRenderer {
-  const renderer = new WebGLRenderer({ powerPreference: 'high-performance' });
-  renderer.setPixelRatio(window.devicePixelRatio);
+function createRenderer(): RevealRenderer {
+  const renderer = new WebGPURenderer({ powerPreference: 'high-performance', antialias: false });
   return renderer;
 }
 
@@ -2210,7 +2226,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
   return revealOptions;
 }
 
-function getMaxPointSize(renderer: WebGLRenderer): number {
+function getMaxPointSize(renderer: RevealRenderer): number {
   const gl = renderer.getContext();
   const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
   return maxPointSize;

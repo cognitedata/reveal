@@ -2,7 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 import type { Box3 } from 'three';
-import { Matrix4, PerspectiveCamera, WebGLRenderer } from 'three';
+import { Matrix4, PerspectiveCamera } from 'three';
+import { WebGPURenderer } from 'three/webgpu';
+import type { RevealRenderer } from '../../packages/rendering/src/rendering/RevealRenderer';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -49,7 +51,7 @@ import type { CogniteClient } from '@cognite/sdk';
 import { getDistanceToMeterConversionFactor } from '../../packages/cad-parsers';
 
 export type StreamingTestFixtureComponents = {
-  renderer: WebGLRenderer;
+  renderer: RevealRenderer;
   sceneHandler: SceneHandler;
   model: {
     geometryNode: CadNode | PointCloudNode;
@@ -68,7 +70,7 @@ export type StreamingTestFixtureComponents = {
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _perspectiveCamera: PerspectiveCamera;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _renderer: WebGLRenderer;
+  private readonly _renderer: RevealRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
   protected readonly _pcMaterialManager: PointCloudMaterialManager;
@@ -162,8 +164,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._cadNodes = new Array<CadNode>();
     this._sceneHandler = new SceneHandler();
 
-    this._renderer = new WebGLRenderer();
-    this._renderer.setPixelRatio(window.devicePixelRatio);
+    this._renderer = new WebGPURenderer({ antialias: false }) as RevealRenderer;
+    void this._renderer.init().then(() => this._renderer.setPixelRatio(window.devicePixelRatio));
     this._renderer.localClippingEnabled = true;
 
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);

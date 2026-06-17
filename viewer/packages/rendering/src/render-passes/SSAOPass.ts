@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Mesh, Texture, WebGLRenderer } from 'three';
+import type { Camera, Mesh, Texture } from 'three';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 import { GLSL3, Matrix4, RawShaderMaterial, Vector3 } from 'three';
 import { ssaoShaders } from '../rendering/shaders';
 import type { SsaoParameters } from '../rendering/types';
@@ -58,7 +59,7 @@ export class SSAOPass implements RenderPass {
     this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
-  public render(renderer: WebGLRenderer, camera: Camera): void {
+  public render(renderer: RevealRenderer, camera: Camera): void {
     this._ssaoShaderMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
     this._ssaoShaderMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
 

@@ -2,9 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Object3D, WebGLRenderer } from 'three';
+import type { Camera, Object3D } from 'three';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 import type { RenderPass } from '../RenderPass';
 import { getLayerMask } from '../utilities/renderUtilities';
 
@@ -28,7 +29,7 @@ export class GeometryPass implements RenderPass {
     this._renderLayer = this._overrideRenderLayer ?? getLayerMask(this._renderMode);
   }
 
-  public render(renderer: WebGLRenderer, camera: Camera): void {
+  public render(renderer: RevealRenderer, camera: Camera): void {
     const currentCameraMask = camera.layers.mask;
     let renderMode: RenderMode = this._renderMode;
     try {

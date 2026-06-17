@@ -2,22 +2,23 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Color, Object3D } from 'three';
+import type { Color, DepthTexture, RenderTarget } from 'three';
 import {
   AlwaysDepth,
+  Color as ThreeColor,
   CustomBlending,
   DataTexture,
   DepthFormat,
-  DepthTexture,
+  DepthTexture as ThreeDepthTexture,
   GLSL3,
   Mesh,
   NormalBlending,
   OneMinusSrcAlphaFactor,
   OrthographicCamera,
   RawShaderMaterial,
+  RenderTarget as ThreeRenderTarget,
   SrcAlphaFactor,
-  UnsignedIntType,
-  WebGLRenderTarget
+  UnsignedIntType
 } from 'three';
 import type { WebGLRendererStateHelper } from '@reveal/utilities';
 import { createRenderTriangle, createUint8View } from '@reveal/utilities';
@@ -48,11 +49,11 @@ export function createFullScreenTriangleMesh(shaderMaterial: RawShaderMaterial):
   return mesh;
 }
 
-export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): WebGLRenderTarget {
-  const renderTarget = new WebGLRenderTarget(width, height);
+export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): RenderTarget {
+  const renderTarget = new ThreeRenderTarget(width, height);
   renderTarget.samples = multiSampleCount > 1 ? multiSampleCount : 0;
 
-  renderTarget.depthTexture = new DepthTexture(width, height);
+  renderTarget.depthTexture = new ThreeDepthTexture(width, height);
   renderTarget.depthTexture.format = DepthFormat;
   renderTarget.depthTexture.type = UnsignedIntType;
 
@@ -191,7 +192,7 @@ function createOutlineColorTexture(): DataTexture {
   return outlineColorTexture;
 }
 
-function setOutlineColor(outlineTextureData: Uint8Array | Uint8ClampedArray, colorIndex: number, color: Color) {
+function setOutlineColor(outlineTextureData: Uint8Array | Uint8ClampedArray, colorIndex: number, color: ThreeColor) {
   outlineTextureData[4 * colorIndex + 0] = Math.floor(255 * color.r);
   outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
   outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);

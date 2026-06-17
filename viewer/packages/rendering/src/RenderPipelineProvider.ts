@@ -1,9 +1,9 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 
-import type { WebGLRenderer } from 'three';
 import type { RenderPass } from './RenderPass';
+import type { RevealRenderer } from './rendering/RevealRenderer';
 
 /**
  * Defines a provider that provides a set of renderpasses
@@ -13,6 +13,6 @@ import type { RenderPass } from './RenderPass';
  * render passes given some dependency.
  */
 export interface RenderPipelineProvider {
-  pipeline(renderer: WebGLRenderer): Generator<RenderPass>;
+  pipeline(renderer: RevealRenderer): Generator<RenderPass>;
   dispose(): void;
 }

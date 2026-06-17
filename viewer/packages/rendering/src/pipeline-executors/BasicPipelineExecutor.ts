@@ -2,14 +2,16 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { PerspectiveCamera, WebGLRenderer } from 'three';
+import type { PerspectiveCamera } from 'three';
+
 import type { RenderPipelineExecutor } from '../RenderPipelineExecutor';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 
 export class BasicPipelineExecutor implements RenderPipelineExecutor {
-  private readonly _renderer: WebGLRenderer;
+  private readonly _renderer: RevealRenderer;
 
-  constructor(renderer: WebGLRenderer) {
+  constructor(renderer: RevealRenderer) {
     this._renderer = renderer;
 
     renderer.info.autoReset = false;

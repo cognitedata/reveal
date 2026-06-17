@@ -1,7 +1,11 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2026 Cognite AS
  */
-import type { ShaderMaterialParameters } from 'three';
+
+import type { MaterialBackend } from '../../../packages/rendering/src/rendering/materialBackend';
+import { createNodeMaterials } from '../../../packages/rendering/src/tsl/nodeMaterials';
+import type { NodeMaterial } from 'three/webgpu';
+import type { Material, RawShaderMaterial } from 'three';
 import {
   CustomBlending,
   DataTexture,
@@ -9,19 +13,18 @@ import {
   GLSL3,
   Matrix4,
   OneFactor,
-  RawShaderMaterial,
+  RawShaderMaterial as ThreeRawShaderMaterial,
   Texture,
   Vector2,
+  Vector3,
   ZeroFactor
 } from 'three';
 
-// TODO: Fix dependencies such that test app doesn't depend on core internals
-import { getMatCapTextureData } from '../../../packages/rendering/src/rendering/matCapTextureData';
+import { createMatCapTexture } from '../../../packages/rendering/src/rendering/matCapTextureData';
 import { sectorShaders } from '../../../packages/rendering/src/rendering/shaders';
 import { RevealGeometryCollectionType } from '../src/types';
 
-const matCapTexture = new Texture(getMatCapTextureData());
-matCapTexture.needsUpdate = true;
+const matCapTexture = createMatCapTexture();
 
 function getColorDataTexture(treeIndexCount: number) {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
@@ -31,7 +34,6 @@ function getColorDataTexture(treeIndexCount: number) {
   for (let i = 0; i < textureElementCount; i++) {
     buffer[i * 4 + 3] = 1;
   }
-  // Color and style override texture
   const overrideColorPerTreeIndexTexture = new DataTexture(buffer, width, height);
 
   return { colorDataTexture: overrideColorPerTreeIndexTexture, width, height };
@@ -47,11 +49,11 @@ function getColorDataTexture(treeIndexCount: number) {
   }
 }
 
-export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryCollectionType, RawShaderMaterial> {
+function createWebglMaterialsMap(treeIndexCount: number): Map<RevealGeometryCollectionType, RawShaderMaterial> {
   const { colorDataTexture, width, height } = getColorDataTexture(treeIndexCount);
   colorDataTexture.needsUpdate = true;
 
-  const sharedParams: ShaderMaterialParameters = {
+  const sharedParams = {
     clipping: false,
     uniforms: {
       renderMode: { value: 1 },
@@ -70,15 +72,11 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
     blendSrc: OneFactor,
     blendSrcAlpha: ZeroFactor
   };
+
   return new Map([
     [
       RevealGeometryCollectionType.BoxCollection,
-      createMaterial(
-        'Primitives (Box)',
-        sectorShaders.boxPrimitive.vertex,
-        sectorShaders.boxPrimitive.fragment,
-        sharedParams
-      )
+      createMaterial('Primitives (Box)', sectorShaders.boxPrimitive.vertex, sectorShaders.boxPrimitive.fragment, sharedParams)
     ],
     [
       RevealGeometryCollectionType.CircleCollection,
@@ -91,12 +89,7 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
     ],
     [
       RevealGeometryCollectionType.ConeCollection,
-      createMaterial(
-        'Primitives (Cone)',
-        sectorShaders.conePrimitive.vertex,
-        sectorShaders.conePrimitive.fragment,
-        sharedParams
-      )
+      createMaterial('Primitives (Cone)', sectorShaders.conePrimitive.vertex, sectorShaders.conePrimitive.fragment, sharedParams)
     ],
     [
       RevealGeometryCollectionType.EccentricConeCollection,
@@ -136,12 +129,7 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
     ],
     [
       RevealGeometryCollectionType.QuadCollection,
-      createMaterial(
-        'Primitives (Quad)',
-        sectorShaders.quadPrimitive.vertex,
-        sectorShaders.quadPrimitive.fragment,
-        sharedParams
-      )
+      createMaterial('Primitives (Quad)', sectorShaders.quadPrimitive.vertex, sectorShaders.quadPrimitive.fragment, sharedParams)
     ],
     [
       RevealGeometryCollectionType.TorusSegmentCollection,
@@ -163,12 +151,7 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
     ],
     [
       RevealGeometryCollectionType.NutCollection,
-      createMaterial(
-        'Primitives (Nut)',
-        sectorShaders.nutPrimitive.vertex,
-        sectorShaders.nutPrimitive.fragment,
-        sharedParams
-      )
+      createMaterial('Primitives (Nut)', sectorShaders.nutPrimitive.vertex, sectorShaders.nutPrimitive.fragment, sharedParams)
     ],
     [
       RevealGeometryCollectionType.TriangleMesh,
@@ -191,13 +174,64 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
   ]);
 }
 
+function createWebgpuMaterialsMap(treeIndexCount: number): Map<RevealGeometryCollectionType, NodeMaterial> {
+  const { colorDataTexture, width, height } = getColorDataTexture(treeIndexCount);
+  colorDataTexture.needsUpdate = true;
+
+  const emptyTransformIndex = new DataTexture(new Float32Array(width * height), width, height);
+  emptyTransformIndex.needsUpdate = true;
+  const emptyTransformLookup = new DataTexture(new Float32Array(16), 16, 1);
+  emptyTransformLookup.needsUpdate = true;
+
+  const nodeMaterials = createNodeMaterials(colorDataTexture, emptyTransformIndex, emptyTransformLookup, matCapTexture);
+
+  return new Map([
+    [RevealGeometryCollectionType.BoxCollection, nodeMaterials.box],
+    [RevealGeometryCollectionType.CircleCollection, nodeMaterials.circle],
+    [RevealGeometryCollectionType.ConeCollection, nodeMaterials.cone],
+    [RevealGeometryCollectionType.EccentricConeCollection, nodeMaterials.eccentricCone],
+    [RevealGeometryCollectionType.EllipsoidSegmentCollection, nodeMaterials.ellipsoidSegment],
+    [RevealGeometryCollectionType.GeneralCylinderCollection, nodeMaterials.generalCylinder],
+    [RevealGeometryCollectionType.GeneralRingCollection, nodeMaterials.generalRing],
+    [RevealGeometryCollectionType.QuadCollection, nodeMaterials.quad],
+    [RevealGeometryCollectionType.TorusSegmentCollection, nodeMaterials.torusSegment],
+    [RevealGeometryCollectionType.TrapeziumCollection, nodeMaterials.trapezium],
+    [RevealGeometryCollectionType.NutCollection, nodeMaterials.nut],
+    [RevealGeometryCollectionType.TriangleMesh, nodeMaterials.triangleMesh],
+    [RevealGeometryCollectionType.InstanceMesh, nodeMaterials.instancedMesh]
+  ]);
+}
+
+export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryCollectionType, RawShaderMaterial> {
+  return createWebglMaterialsMap(treeIndexCount);
+}
+
+export function getMaterialsMapForBackend(
+  treeIndexCount: number,
+  backend: MaterialBackend
+): Map<RevealGeometryCollectionType, Material> {
+  return backend === 'webgpu'
+    ? createWebgpuMaterialsMap(treeIndexCount)
+    : createWebglMaterialsMap(treeIndexCount);
+}
+
 function createMaterial(
   name: string,
   vertexShader: string,
   fragmentShader: string,
-  sharedParams: ShaderMaterialParameters
-): RawShaderMaterial {
-  return new RawShaderMaterial({
+  sharedParams: {
+    clipping: boolean;
+    uniforms: Record<string, { value: unknown }>;
+    side: typeof DoubleSide;
+    glslVersion: typeof GLSL3;
+    blending: typeof CustomBlending;
+    blendDst: typeof ZeroFactor;
+    blendDstAlpha: typeof OneFactor;
+    blendSrc: typeof OneFactor;
+    blendSrcAlpha: typeof ZeroFactor;
+  }
+): ThreeRawShaderMaterial {
+  return new ThreeRawShaderMaterial({
     ...sharedParams,
     name,
     vertexShader,

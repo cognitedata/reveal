@@ -17,7 +17,8 @@ import { DefaultCameraManager } from '@reveal/camera-manager';
 import type { CommonModelOptions } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
-import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
+import type { Vector2, WebGLRenderTarget, Matrix4, Vector3 } from 'three';
+import type { RevealRenderer } from '@reveal/rendering';
 import type { CustomObjectIntersection } from '@reveal/utilities';
 import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 
@@ -112,7 +113,7 @@ export interface Cognite3DViewerOptions {
    * Note that when providing a custom renderer, this should be configured with
    * `'powerPreference': 'high-performance'` for best performance.
    */
-  renderer?: WebGLRenderer;
+  renderer?: RevealRenderer;
 
   /**
    * Generally Reveal will follow the resolution given by the size

@@ -2,11 +2,38 @@
  * Copyright 2021 Cognite AS
  */
 
+import { DataTexture, Texture } from 'three';
+
 export function getMatCapTextureData(): HTMLImageElement {
   const image = new Image();
   image.src = imageSource;
 
   return image;
+}
+
+/** Synchronous matcap for WebGPU where Image-based textures may not be ready at first draw. */
+export function createMatCapTexture(): Texture {
+  const size = 128;
+  const data = new Uint8Array(size * size * 4);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = ((x + 0.5) / size) * 2 - 1;
+      const ny = ((y + 0.5) / size) * 2 - 1;
+      const nzSquared = 1 - nx * nx - ny * ny;
+      const nz = nzSquared > 0 ? Math.sqrt(nzSquared) : 0;
+      const shade = Math.floor((0.35 + 0.65 * nz) * 255);
+      const index = (y * size + x) * 4;
+      data[index] = shade;
+      data[index + 1] = shade;
+      data[index + 2] = shade;
+      data[index + 3] = 255;
+    }
+  }
+
+  const texture = new DataTexture(data, size, size);
+  texture.needsUpdate = true;
+  return texture;
 }
 
 // Image source https://github.com/nidorx/matcaps/blob/master/PAGE-26.md

@@ -2,10 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { WebGLRenderer, PerspectiveCamera } from 'three';
+import type { PerspectiveCamera } from 'three';
 import { Vector2 } from 'three';
 
 import type { CameraManager } from '@reveal/camera-manager';
+import type { RevealRenderer } from './rendering/RevealRenderer';
 
 export type ResizeHandlerOptions = {
   renderResolutionThreshold?: number;
@@ -14,7 +15,7 @@ export type ResizeHandlerOptions = {
 export class ResizeHandler {
   private readonly _defaultResolutionThreshold = 1.4e6;
 
-  private readonly _renderer: WebGLRenderer;
+  private readonly _renderer: RevealRenderer;
   private readonly _cameraManager: CameraManager;
 
   private _stoppedCameraResolutionThreshold: number;
@@ -28,7 +29,7 @@ export class ResizeHandler {
 
   private _shouldResize: boolean = false;
 
-  constructor(renderer: WebGLRenderer, cameraManager: CameraManager, resizeOptions?: ResizeHandlerOptions) {
+  constructor(renderer: RevealRenderer, cameraManager: CameraManager, resizeOptions?: ResizeHandlerOptions) {
     this._stoppedCameraResolutionThreshold =
       resizeOptions?.renderResolutionThreshold ?? this._defaultResolutionThreshold;
     this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
@@ -104,7 +105,7 @@ export class ResizeHandler {
     }
   }
 
-  private setupResizeListener(renderer: WebGLRenderer): ResizeObserver | undefined {
+  private setupResizeListener(renderer: RevealRenderer): ResizeObserver | undefined {
     const domElement = renderer.domElement.parentElement;
     if (!domElement) {
       throw new Error('Canvas does not have a parent element');
@@ -164,7 +165,7 @@ function getVirtualDomElementWidthAndHeight(canvas: HTMLElement): [number, numbe
   return [virtualDomElementWidth, virtualDomElementHeight];
 }
 
-function getPhysicalSize(renderer: WebGLRenderer): number {
+function getPhysicalSize(renderer: RevealRenderer): number {
   const canvas = renderer.domElement;
   const [virtualWidth, virtualHeight] = getVirtualDomElementWidthAndHeight(canvas);
   const pixelRatio = renderer.getPixelRatio();

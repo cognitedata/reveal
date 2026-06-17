@@ -2,13 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, WebGLRenderer } from 'three';
+import type { Camera } from 'three';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 import type { RenderPipelineExecutor } from '../RenderPipelineExecutor';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { GpuTimer } from '../utilities/GpuTimer';
 
 export class StepPipelineExecutor implements RenderPipelineExecutor {
-  private readonly _renderer: WebGLRenderer;
+  private readonly _renderer: RevealRenderer;
   private _numSteps: number | undefined;
   private readonly _gpuTimer: GpuTimer;
 
@@ -20,7 +21,7 @@ export class StepPipelineExecutor implements RenderPipelineExecutor {
     return this._gpuTimer.timings;
   }
 
-  constructor(renderer: WebGLRenderer) {
+  constructor(renderer: RevealRenderer) {
     this._renderer = renderer;
     renderer.info.autoReset = false;
     this._gpuTimer = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);

@@ -3,16 +3,17 @@
  */
 
 import type { SceneHandler } from '@reveal/utilities';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
-import type { Object3D, WebGLRenderer } from 'three';
+import type { Object3D } from 'three';
 import { Color, Vector2 } from 'three';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderMode } from '../rendering/RenderMode';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 import type { RenderOptions } from '../rendering/types';
 import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
+import { RevealRendererStateHelper } from '../utilities/RevealRendererStateHelper';
 import type { CadGeometryRenderTargets } from './types';
 
 type CadGeometryRenderPasses = {
@@ -29,7 +30,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     modelIdentifier: symbol;
   }[];
   private readonly _materialManager: CadMaterialManager;
-  private _rendererStateHelper: WebGLRendererStateHelper | undefined;
+  private _rendererStateHelper: RevealRendererStateHelper | undefined;
 
   get cadGeometryRenderTargets(): CadGeometryRenderTargets {
     return this._cadGeometryRenderTargets;
@@ -44,7 +45,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this._cadGeometryRenderPasses = this.initializeRenderPasses(sceneHandler);
   }
 
-  public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
+  public *pipeline(renderer: RevealRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
     try {
@@ -82,8 +83,8 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this._cadGeometryRenderTargets.inFront.dispose();
   }
 
-  private pipelineSetup(renderer: WebGLRenderer) {
-    this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
+  private pipelineSetup(renderer: RevealRenderer) {
+    this._rendererStateHelper = new RevealRendererStateHelper(renderer);
     this._rendererStateHelper.autoClear = true;
     this._rendererStateHelper.setClearColor(renderer.getClearColor(new Color()), 0);
 
@@ -107,7 +108,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     };
   }
 
-  private updateRenderTargetSizes(renderer: WebGLRenderer): void {
+  private updateRenderTargetSizes(renderer: RevealRenderer): void {
     const renderSize = new Vector2();
     renderer.getDrawingBufferSize(renderSize);
 

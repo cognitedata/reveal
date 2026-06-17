@@ -2,13 +2,18 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Box3, Object3D, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
-import { Color, Raycaster, Scene, Vector3, Vector4, WebGLRenderTarget } from 'three';
+import type { Box3, Object3D, PerspectiveCamera, Ray, RenderTarget } from 'three';
+import { Color, Raycaster, RenderTarget as ThreeRenderTarget, Scene, Vector3, Vector4 } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
-import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
-import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
+import type { CadMaterialManager, RenderPipelineProvider, RevealRenderer } from '@reveal/rendering';
+import {
+  BasicPipelineExecutor,
+  CadGeometryRenderModePipelineProvider,
+  isWebGPURenderer,
+  RenderMode,
+  RevealRendererStateHelper
+} from '@reveal/rendering';
 import type { SceneHandler } from '@reveal/utilities';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
 import type { CadNode } from '../wrappers/CadNode';
 import { Mutex } from 'async-mutex';
 
@@ -18,7 +23,7 @@ type PickingInput = {
     y: number;
   };
   camera: PerspectiveCamera;
-  renderer: WebGLRenderer;
+  renderer: RevealRenderer;
   domElement: HTMLElement;
   cadNodes: CadNode[];
 };
@@ -41,7 +46,7 @@ export class PickingHandler {
   private readonly _raycaster: Raycaster;
 
   private readonly _pickPixelColorStorage: {
-    renderTarget: WebGLRenderTarget;
+    renderTarget: RenderTarget;
     pixelBuffer: Uint8Array;
   };
 
@@ -62,13 +67,13 @@ export class PickingHandler {
   private readonly _treeIndexRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _mutex = new Mutex();
 
-  constructor(renderer: WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
+  constructor(renderer: RevealRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this._clearColor = new Color('black');
     this._clearAlpha = 0;
     this._raycaster = new Raycaster();
 
     this._pickPixelColorStorage = {
-      renderTarget: new WebGLRenderTarget(1, 1),
+      renderTarget: new ThreeRenderTarget(1, 1),
       pixelBuffer: new Uint8Array(4)
     };
 
@@ -276,6 +281,7 @@ export class PickingHandler {
   ) {
     const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
     const { camera, normalizedCoords, renderer, domElement } = input;
+    const useAsyncReadback = shouldRunAsync || isWebGPURenderer(renderer);
 
     // Prepare camera that only renders the single pixel we are interested in
     const pickCamera = camera.clone() as PerspectiveCamera;
@@ -285,12 +291,12 @@ export class PickingHandler {
     };
     pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
 
-    const stateHelper = new WebGLRendererStateHelper(renderer);
+    const stateHelper = new RevealRendererStateHelper(renderer);
     let readPixelsPromise: Promise<void>;
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
       this._pipelineExecutor.render(renderPipeline, pickCamera);
-      readPixelsPromise = shouldRunAsync
+      readPixelsPromise = useAsyncReadback
         ? renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, 1, 1, pixelBuffer).then(() => {})
         : Promise.resolve(renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer));
     } finally {
