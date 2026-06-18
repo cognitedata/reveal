@@ -19,8 +19,11 @@ export class AutoTerminatingWorker {
   }
 
   public getComlinkProxy<T>(): Comlink.Remote<T> {
+    if (this.terminated || !this._wrappedWorker) {
+      throw new Error('Cannot get Comlink proxy for a terminated worker');
+    }
     if (!this._comlinkProxy) {
-      this._comlinkProxy = Comlink.wrap<unknown>(this._wrappedWorker!);
+      this._comlinkProxy = Comlink.wrap<unknown>(this._wrappedWorker);
     }
     return this._comlinkProxy as Comlink.Remote<T>;
   }
