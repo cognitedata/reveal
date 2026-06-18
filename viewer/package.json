@@ -121,7 +121,7 @@
   "files": [
     "dist"
   ],
-  "packageManager": "pnpm@10.34.3",
+  "packageManager": "pnpm@11.5.2",
   "pnpm": {
     "overrides": {
       "binary-install>axios": "^1.0.0",
