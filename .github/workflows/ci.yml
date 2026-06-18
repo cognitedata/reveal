@@ -159,7 +159,7 @@ jobs:
         run: pnpm run typecheck:tests
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: viewer
