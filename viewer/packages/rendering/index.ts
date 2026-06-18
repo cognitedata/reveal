@@ -20,6 +20,10 @@ export { RenderLayer, setModelRenderLayers } from './src/utilities/renderUtiliti
 export type { StyledTreeIndexSets } from './src/utilities/types';
 
 export { type Materials, initializeDefinesAndUniforms, forEachMaterial } from './src/rendering/materials';
+export { createCadMaterialsForBackend, isNodeMaterials, type CadMaterials } from './src/rendering/cadMaterialFactory';
+export { type MaterialBackend } from './src/rendering/materialBackend';
+export { createRevealRenderer, isWebGPURenderer, type RevealRenderer } from './src/rendering/RevealRenderer';
+export { createNodeMaterials, forEachNodeMaterial, setNodeMaterialsRenderMode, type NodeMaterials } from './src/tsl/nodeMaterials';
 export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
 
@@ -29,5 +33,6 @@ export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-pro
 export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
 export type { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
 export type { RenderPipelineProvider } from './src/RenderPipelineProvider';
+export { RevealRendererStateHelper } from './src/utilities/RevealRendererStateHelper';
 export { ResizeHandler } from './src/ResizeHandler';
 export type { SettableRenderTarget } from './src/rendering/SettableRenderTarget';

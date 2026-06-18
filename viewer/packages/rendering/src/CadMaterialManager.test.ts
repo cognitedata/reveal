@@ -33,7 +33,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('addModelMaterials creates material and initializes collections for model', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, 'webgl'));
     expect(manager.getModelMaterials(modelIdentifier1)).not.to.be.empty;
     expect(manager.getModelBackTreeIndices(modelIdentifier1)).toEqual(new IndexSet(range(0, 17)));
     expect(manager.getModelGhostedTreeIndices(modelIdentifier1)).toEqual(new IndexSet());
@@ -42,7 +42,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('set clipping planes, materials are updated', () => {
-    const cadMaterial = createCadMaterial(16);
+    const cadMaterial = createCadMaterial(16, 'webgl');
 
     manager.addModelMaterials(modelIdentifier1, cadMaterial);
     manager.clippingPlanes = [new Plane()];
@@ -51,7 +51,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('set render mode, materials are updated', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, 'webgl'));
     const initialRenderMode = cloneDeep(manager.getModelMaterials(modelIdentifier1).box.uniforms['renderMode']);
 
     manager.setRenderMode(RenderMode.TreeIndex);
@@ -59,7 +59,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('setModelDefaultNodeAppearance, node collection are updated', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4, 'webgl'));
 
     manager.setModelDefaultNodeAppearance(modelIdentifier1, { renderGhosted: true });
 
@@ -83,7 +83,7 @@ describe('CadMaterialManager', () => {
 
   test('transform provider triggers update, triggers materialChanged', () => {
     const modelIdentifier = Symbol('model');
-    manager.addModelMaterials(modelIdentifier, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier, createCadMaterial(4, 'webgl'));
     const listener = vi.fn();
     const provider = manager.getModelNodeTransformProvider(modelIdentifier);
     provider.on('changed', listener);
@@ -99,8 +99,8 @@ describe('CadMaterialManager', () => {
     const globalClipPlanes = [new Plane(), new Plane()];
     manager.clippingPlanes = globalClipPlanes;
 
-    const cadMaterial1 = createCadMaterial(16);
-    const cadMaterial2 = createCadMaterial(16);
+    const cadMaterial1 = createCadMaterial(16, 'webgl');
+    const cadMaterial2 = createCadMaterial(16, 'webgl');
     manager.addModelMaterials(modelIdentifier1, cadMaterial1);
     manager.addModelMaterials(modelIdentifier2, cadMaterial2);
 
@@ -123,7 +123,7 @@ describe('CadMaterialManager', () => {
 
   test('addTexturedMeshMaterial creates textured material successfully', () => {
     // Arrange
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, 'webgl'));
     const texture = new Texture();
     const sectorId = 123;
     // Act
@@ -151,7 +151,7 @@ describe('CadMaterialManager', () => {
 
   test('addTexturedMeshMaterial disposes existing textured material when replacing', () => {
     // Arrange
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, 'webgl'));
     const texture1 = new Texture();
     const texture2 = new Texture();
     const sectorId = 123;
@@ -170,7 +170,7 @@ describe('CadMaterialManager', () => {
 
   test('addTexturedMeshMaterial clones original triangle mesh material properties', () => {
     // Arrange
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, 'webgl'));
     const texture = new Texture();
     const sectorId = 123;
 

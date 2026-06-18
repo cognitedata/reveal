@@ -5,8 +5,18 @@
 import type { Plane, RawShaderMaterial } from 'three';
 import { SRGBColorSpace, Texture, Vector2, Vector4 } from 'three';
 
-import type { Materials } from './rendering/materials';
-import { createMaterials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
+import type { CadMaterials } from './rendering/cadMaterialFactory';
+import { createCadMaterialsForBackend } from './rendering/cadMaterialFactory';
+import type { MaterialBackend } from './rendering/materialBackend';
+import {
+  initializeCadMaterialUniforms,
+  isNodeMaterial,
+  setCadMaterialsClipping,
+  setCadMaterialsRenderMode,
+  updateCadMaterialsTransformTextures,
+  forEachCadMaterial
+} from './rendering/cadMaterialUtils';
+import { forEachMaterial, initializeDefinesAndUniforms, type Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import type { NodeAppearance } from '@reveal/cad-styling';
@@ -19,12 +29,12 @@ import {
 } from '@reveal/cad-styling';
 import type { IndexSet } from '@reveal/utilities';
 
-import { getMatCapTextureData } from './rendering/matCapTextureData';
+import { createMatCapTexture } from './rendering/matCapTextureData';
 
 import { assert } from '@reveal/utilities/assert';
 
 export type CadMaterial = {
-  materials: Materials;
+  materials: CadMaterials;
   nodeAppearanceProvider: NodeAppearanceProvider;
   nodeTransformProvider: NodeTransformProvider;
   nodeAppearanceTextureBuilder: NodeAppearanceTextureBuilder;
@@ -92,8 +102,8 @@ export class CadMaterialManager {
     });
 
     const colorWrite = this._renderMode !== RenderMode.DepthBufferOnly;
-    forEachMaterial(materials, material => {
-      material.uniforms.renderMode.value = this._renderMode;
+    setCadMaterialsRenderMode(materials, this._renderMode);
+    forEachCadMaterial(materials, material => {
       material.colorWrite = colorWrite;
     });
 
@@ -144,7 +154,7 @@ export class CadMaterialManager {
     return newMaterial;
   }
 
-  getModelMaterials(modelIdentifier: symbol): Materials {
+  getModelMaterials(modelIdentifier: symbol): CadMaterials {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.materials;
   }
@@ -203,11 +213,9 @@ export class CadMaterialManager {
 
   setRenderMode(mode: RenderMode): void {
     this._renderMode = mode;
-    const colorWrite = mode !== RenderMode.DepthBufferOnly;
-    this.applyToAllMaterials(material => {
-      material.uniforms.renderMode.value = mode;
-      material.colorWrite = colorWrite;
-    });
+    for (const materialWrapper of this.materialsMap.values()) {
+      setCadMaterialsRenderMode(materialWrapper.materials, mode);
+    }
   }
 
   getRenderMode(): RenderMode {
@@ -235,21 +243,7 @@ export class CadMaterialManager {
     }
 
     const clippingPlanes = [...materialWrapper.clippingPlanesProvider.getClippingPlanes(), ...this.clippingPlanes];
-    const clippingPlanesAsUniform = clippingPlanes.map(
-      p => new Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
-    );
-
-    forEachMaterial(materialWrapper.materials, m => {
-      m.clipping = clippingPlanes.length > 0;
-      m.clipIntersection = false;
-      m.clippingPlanes = clippingPlanes;
-      m.defines = {
-        ...m.defines,
-        NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
-        UNION_CLIPPING_PLANES: 0
-      };
-      m.needsUpdate = true;
-    });
+    setCadMaterialsClipping(materialWrapper.materials, clippingPlanes);
   }
 
   private updateMaterials(modelIdentifier: symbol) {
@@ -267,15 +261,12 @@ export class CadMaterialManager {
       const { nodeTransformTextureBuilder, materials } = wrapper;
       nodeTransformTextureBuilder.build();
 
-      const transformsLookupTexture = nodeTransformTextureBuilder.transformLookupTexture;
-      const transformsLookupTextureSize = new Vector2(
-        transformsLookupTexture.image.width,
-        transformsLookupTexture.image.height
+      updateCadMaterialsTransformTextures(
+        materials,
+        nodeTransformTextureBuilder.transformLookupTexture,
+        nodeTransformTextureBuilder.overrideTransformIndexTexture,
+        wrapper.nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture
       );
-      forEachMaterial(materials, material => {
-        material.uniforms.transformOverrideTexture.value = transformsLookupTexture;
-        material.uniforms.transformOverrideTextureSize.value = transformsLookupTextureSize;
-      });
     }
     this._needsRedraw = true;
   }
@@ -294,8 +285,11 @@ export class CadMaterialManager {
 
   private applyToAllMaterials(callback: (material: RawShaderMaterial) => void) {
     for (const materialWrapper of this.materialsMap.values()) {
-      const materials = materialWrapper.materials;
-      forEachMaterial(materials, callback);
+      forEachCadMaterial(materialWrapper.materials, material => {
+        if (!isNodeMaterial(material)) {
+          callback(material as RawShaderMaterial);
+        }
+      });
     }
   }
 
@@ -304,13 +298,14 @@ export class CadMaterialManager {
 
     assert(materialData !== undefined);
 
-    initializeDefinesAndUniforms(
-      material,
+    initializeCadMaterialUniforms(
+      materialData.materials,
       materialData.nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
       materialData.nodeTransformTextureBuilder.overrideTransformIndexTexture,
       materialData.nodeTransformTextureBuilder.transformLookupTexture,
       materialData.matCapTexture,
-      this._renderMode
+      this._renderMode,
+      material
     );
   }
 }
@@ -319,7 +314,7 @@ function toTextureMaterialName(sectorId: number) {
   return `texturedMaterial_${sectorId}`;
 }
 
-export function createCadMaterial(maxTreeIndex: number): CadMaterial {
+export function createCadMaterial(maxTreeIndex: number, backend: MaterialBackend = 'webgpu'): CadMaterial {
   const nodeAppearanceProvider = new NodeAppearanceProvider();
   const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
   nodeAppearanceTextureBuilder.build();
@@ -328,12 +323,12 @@ export function createCadMaterial(maxTreeIndex: number): CadMaterial {
   const nodeTransformTextureBuilder = new NodeTransformTextureBuilder(maxTreeIndex + 1, nodeTransformProvider);
   nodeTransformTextureBuilder.build();
 
-  const matCapTexture = new Texture(getMatCapTextureData());
-  matCapTexture.needsUpdate = true;
+  const matCapTexture = createMatCapTexture();
 
   const clippingPlanesProvider = new ClippingPlanesProvider();
 
-  const materials = createMaterials(
+  const materials = createCadMaterialsForBackend(
+    backend,
     nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
     nodeTransformTextureBuilder.overrideTransformIndexTexture,
     nodeTransformTextureBuilder.transformLookupTexture,

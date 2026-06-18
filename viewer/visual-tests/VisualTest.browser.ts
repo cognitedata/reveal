@@ -1,12 +1,18 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 
 import { assert } from '../packages/utilities/src/assert';
 import type { VisualTestFixture } from './test-fixtures/VisualTestFixture';
+import { setTestRendererKind, type TestRendererKind } from './test-fixtures/testRendererKind';
 
-function testGenerator(): Map<string, () => Promise<{ default: new () => VisualTestFixture }>> {
-  const testMap = new Map<string, () => Promise<{ default: new () => VisualTestFixture }>>();
+type VisualTestModule = {
+  default: new () => VisualTestFixture;
+  renderer?: TestRendererKind;
+};
+
+function testGenerator(): Map<string, () => Promise<VisualTestModule>> {
+  const testMap = new Map<string, () => Promise<VisualTestModule>>();
   const visualTestsFixtures = import.meta.glob('../packages/**/*VisualTest.ts');
 
   Object.entries(visualTestsFixtures).forEach(visualTestsFixture => {
@@ -14,8 +20,8 @@ function testGenerator(): Map<string, () => Promise<{ default: new () => VisualT
       .split(/[\/]/)
       .pop()!
       .replace(/\.[^/.]+$/, '');
-    const testModuleImport: () => Promise<{ default: new () => VisualTestFixture }> =
-      visualTestsFixture[1] as unknown as () => Promise<{ default: new () => VisualTestFixture }>;
+    const testModuleImport: () => Promise<VisualTestModule> =
+      visualTestsFixture[1] as unknown as () => Promise<VisualTestModule>;
     testMap.set(filename, testModuleImport);
   });
 
@@ -25,7 +31,8 @@ function testGenerator(): Map<string, () => Promise<{ default: new () => VisualT
 const tests = testGenerator();
 
 let activeTest: VisualTestFixture;
-(window as any).render = async (testName: string) => {
+
+async function runVisualTest(testName: string): Promise<void> {
   if (activeTest) {
     activeTest.dispose();
   }
@@ -34,21 +41,20 @@ let activeTest: VisualTestFixture;
   const testModuleImport = tests.get(testName);
   assert(testModuleImport !== undefined, 'Test not found: ' + testName);
   const testModule = await testModuleImport();
+  setTestRendererKind(testModule.renderer ?? 'webgl');
   activeTest = new testModule.default();
-  return activeTest.run();
-};
+  await activeTest.run();
+}
+
+(window as any).render = runVisualTest;
 
 const urlParams = new URLSearchParams(window.location.search);
 const testFixtureInstance = urlParams.get('testfixture');
 
 if (testFixtureInstance !== null) {
-  (async function () {
+  void (async function () {
     if (tests.has(testFixtureInstance)) {
-      const testModuleImport = tests.get(testFixtureInstance);
-      assert(testModuleImport !== undefined, 'Test not found: ' + testFixtureInstance);
-      const testModule = await testModuleImport();
-      const visualTestInstance = new testModule.default();
-      await visualTestInstance.run();
+      await runVisualTest(testFixtureInstance);
     } else {
       alert('Unrecognized test name:' + testFixtureInstance);
     }

@@ -19,7 +19,16 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,
     launchOptions: {
-      args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--allow-insecure-localhost']
+      args: [
+        '--no-sandbox',
+        '--use-gl=angle',
+        '--use-angle=swiftshader',
+        '--enable-unsafe-webgpu',
+        '--enable-features=Vulkan',
+        '--use-vulkan=swiftshader',
+        '--disable-vulkan-surface',
+        '--allow-insecure-localhost'
+      ]
     }
   },
   webServer: {

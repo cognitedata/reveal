@@ -2,25 +2,25 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Texture, Vector2, WebGLRenderTarget } from 'three';
+import type { RenderTarget, Texture, Vector2 } from 'three';
 import type { EdlOptions } from '../rendering/types';
 
 export type RenderTargetData = {
   currentRenderSize: Vector2;
-  ssaoRenderTarget: WebGLRenderTarget;
-  postProcessingRenderTarget: WebGLRenderTarget;
+  ssaoRenderTarget: RenderTarget;
+  postProcessingRenderTarget: RenderTarget;
 };
 
 export type CadGeometryRenderTargets = {
   currentRenderSize: Vector2;
-  back: WebGLRenderTarget;
-  ghost: WebGLRenderTarget;
-  inFront: WebGLRenderTarget;
+  back: RenderTarget;
+  ghost: RenderTarget;
+  inFront: RenderTarget;
 };
 
 export type PointCloudRenderTargets = {
-  pointCloudLogDepth: WebGLRenderTarget;
-  pointCloud: WebGLRenderTarget;
+  pointCloudLogDepth: RenderTarget;
+  pointCloud: RenderTarget;
 };
 
 export type PostProcessingPipelineOptions = CadGeometryRenderTargets &

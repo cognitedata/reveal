@@ -1,8 +1,10 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 
-import type { Camera, WebGLRenderer } from 'three';
+import type { Camera } from 'three';
+
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 
 /**
  * The RenderPass interface describes some render pass
@@ -13,5 +15,5 @@ import type { Camera, WebGLRenderer } from 'three';
  * some RenderPipelineProvider that defines the rendering job.
  */
 export interface RenderPass {
-  render(renderer: WebGLRenderer, camera: Camera): void;
+  render(renderer: RevealRenderer, camera: Camera): void;
 }

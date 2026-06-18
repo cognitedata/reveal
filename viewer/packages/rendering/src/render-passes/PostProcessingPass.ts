@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import type { Camera, Material, Mesh, Scene, ShaderMaterial } from 'three';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -113,7 +114,7 @@ export class PostProcessingPass implements RenderPass {
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
   }
 
-  public render(renderer: WebGLRenderer, camera: Camera): void {
+  public render(renderer: RevealRenderer, camera: Camera): void {
     if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
       this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
       this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };

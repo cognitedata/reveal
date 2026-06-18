@@ -2,13 +2,17 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import type { Material, Mesh, Object3D, RenderTarget, Scene } from 'three';
 import { Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
+import { RevealRendererStateHelper } from '../utilities/RevealRendererStateHelper';
+import type { RevealRenderer } from '../rendering/RevealRenderer';
+import { isWebGPURenderer } from '../rendering/RevealRenderer';
+import { createBlitNodeMaterial } from '../tsl/post-processing/BlitNodeMaterial';
 import type { RenderTargetData } from './types';
 import type { RenderOptions } from '../rendering/types';
 import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
@@ -17,7 +21,6 @@ import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
@@ -35,15 +38,15 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   }[];
   private readonly _customObjects: ICustomObject[];
   private _autoResizeOutputTarget: boolean;
-  private _outputRenderTarget: WebGLRenderTarget | null;
+  private _outputRenderTarget: RenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
-  private readonly _blitToScreenMaterial: RawShaderMaterial;
+  private _blitToScreenMaterial: RawShaderMaterial | ReturnType<typeof createBlitNodeMaterial>;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
-  private _rendererStateHelper: WebGLRendererStateHelper | undefined;
+  private _rendererStateHelper: RevealRendererStateHelper | undefined;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -72,7 +75,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     sceneHandler: SceneHandler,
     renderOptions: RenderOptions,
     outputRenderTarget?: {
-      target: WebGLRenderTarget;
+      target: RenderTarget;
       autoSize?: boolean;
     }
   ) {
@@ -133,17 +136,17 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       }
     });
 
-    this._blitToScreenMesh = createFullScreenTriangleMesh(this._blitToScreenMaterial);
+    this._blitToScreenMesh = createFullScreenTriangleMesh(this._blitToScreenMaterial as RawShaderMaterial);
 
     this.renderOptions = cloneDeep(renderOptions);
   }
 
-  public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
+  public setOutputRenderTarget(target: RenderTarget | null, autoSizeRenderTarget?: boolean): void {
     this._outputRenderTarget = target;
     if (autoSizeRenderTarget) this._autoResizeOutputTarget = autoSizeRenderTarget;
   }
 
-  public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
+  public *pipeline(renderer: RevealRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
     const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
@@ -196,10 +199,15 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     (this._blitToScreenMesh.material as Material).dispose();
   }
 
-  private pipelineSetup(renderer: WebGLRenderer) {
-    this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
+  private pipelineSetup(renderer: RevealRenderer) {
+    this._rendererStateHelper = new RevealRendererStateHelper(renderer);
     this._rendererStateHelper.autoClear = true;
     this._rendererStateHelper.setClearColor(renderer.getClearColor(new Color()), 0);
+
+    if (isWebGPURenderer(renderer)) {
+      const blitMaterial = createBlitNodeMaterial(this._renderTargetData.postProcessingRenderTarget.texture);
+      this._blitToScreenMesh.material = blitMaterial;
+    }
 
     this._cadModels.forEach(cadModel => {
       cadModel.cadNode.matrixAutoUpdate = false;
@@ -212,7 +220,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this.updateRenderTargetSizes(renderer);
   }
 
-  private updateRenderTargetSizes(renderer: WebGLRenderer): void {
+  private updateRenderTargetSizes(renderer: RevealRenderer): void {
     const renderSize = new Vector2();
     renderer.getDrawingBufferSize(renderSize);
 
