@@ -86,7 +86,7 @@ export class EptBinaryLoader implements ILoader {
 
   async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData | Error> {
     const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
-    const eptDecoderWorker = Comlink.wrap<EptBinaryDecoderWorker>(autoTerminatingWorker.worker);
+    const eptDecoderWorker = autoTerminatingWorker.getComlinkProxy<EptBinaryDecoderWorker>();
     const eptData: EptInputData = {
       buffer: data,
       schema: node.ept.schema,
@@ -99,18 +99,22 @@ export class EptBinaryLoader implements ILoader {
       .filter(objAndBox => objAndBox[1].intersectsBox(node.boundingBox))
       .map(objAndBox => objAndBox[0]);
 
-    const result = await eptDecoderWorker(
-      Comlink.transfer(eptData, [eptData.buffer]),
-      relevantObjects,
-      node.boundingBox.min.toArray(),
-      {
-        min: node.boundingBox.min.toArray(),
-        max: node.boundingBox.max.toArray()
-      }
-    );
-
-    EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
-    return result;
+    try {
+      const result = await eptDecoderWorker(
+        Comlink.transfer(eptData, [eptData.buffer]),
+        relevantObjects,
+        node.boundingBox.min.toArray(),
+        {
+          min: node.boundingBox.min.toArray(),
+          max: node.boundingBox.max.toArray()
+        }
+      );
+      return result;
+    } catch (err) {
+      return err as Error;
+    } finally {
+      EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
+    }
   }
 }
 
