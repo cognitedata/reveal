@@ -20,7 +20,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.17.1
+          version: 10.28.2
 
       - name: Build Reveal
         working-directory: viewer
