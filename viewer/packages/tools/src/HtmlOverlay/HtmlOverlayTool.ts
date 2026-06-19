@@ -245,13 +245,11 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
     htmlElement.style.visibility = 'hidden';
 
-    // Note! Must be part of DOM tree before we do getComputedStyle(), so add before check
     this.viewerDomElement.appendChild(htmlElement);
     setTimeout(() => {
-      const style = getComputedStyle(htmlElement);
-      if (!style.position || style.position !== 'absolute') {
+      if (htmlElement.style.position !== 'absolute') {
         this.viewerDomElement.removeChild(htmlElement);
-        throw new Error(`htmlElement style must have a position of absolute. but was '${style.position}'`);
+        throw new Error(`htmlElement style must have a position of absolute. but was '${htmlElement.style.position}'`);
       }
 
       const element: HtmlOverlayElement = {
