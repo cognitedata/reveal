@@ -44,10 +44,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
+  private _ssaoSampleSize: number;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
-    this._ssaoPass.ssaoParameters = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
+    const resolvedSsaoParams = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
+    this._ssaoSampleSize = resolvedSsaoParams.sampleSize;
+    this._ssaoPass.ssaoParameters = resolvedSsaoParams;
 
     const shouldAddFxaa =
       AntiAliasingMode[renderOptions.antiAliasing ?? AntiAliasingMode.NoAA] === AntiAliasingMode[AntiAliasingMode.FXAA];
@@ -91,6 +94,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._customObjects = sceneHandler.customObjects;
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
+    this._ssaoSampleSize = ssaoParameters.sampleSize;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
     const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
@@ -233,10 +237,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   }
 
   private shouldRenderSsao(hasBackStyling: boolean): boolean {
-    const ssaoSampleSize =
-      this.renderOptions?.ssaoRenderParameters?.sampleSize ?? defaultRenderOptions.ssaoRenderParameters.sampleSize;
-
-    return ssaoSampleSize > 0 && hasBackStyling;
+    return this._ssaoSampleSize > 0 && hasBackStyling;
   }
 
   private shouldRenderPointClouds(): boolean {
