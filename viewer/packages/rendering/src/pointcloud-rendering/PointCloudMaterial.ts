@@ -260,12 +260,71 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
   }
 
-  @requiresShaderUpdate() accessor weighted: boolean = false;
-  @requiresShaderUpdate() accessor hqDepthPass: boolean = false;
-  @requiresShaderUpdate() accessor pointColorType: PointColorType = PointColorType.Rgb;
-  @requiresShaderUpdate() accessor pointSizeType: PointSizeType = PointSizeType.Adaptive;
-  @requiresShaderUpdate() accessor useEDL: boolean = false;
-  @requiresShaderUpdate() accessor shape: PointShape = PointShape.Circle;
+  private _weighted: boolean = false;
+  get weighted(): boolean {
+    return this._weighted;
+  }
+  set weighted(value: boolean) {
+    if (value !== this._weighted) {
+      this._weighted = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _hqDepthPass: boolean = false;
+  get hqDepthPass(): boolean {
+    return this._hqDepthPass;
+  }
+  set hqDepthPass(value: boolean) {
+    if (value !== this._hqDepthPass) {
+      this._hqDepthPass = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _pointColorType: PointColorType = PointColorType.Rgb;
+  get pointColorType(): PointColorType {
+    return this._pointColorType;
+  }
+  set pointColorType(value: PointColorType) {
+    if (value !== this._pointColorType) {
+      this._pointColorType = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _pointSizeType: PointSizeType = PointSizeType.Adaptive;
+  get pointSizeType(): PointSizeType {
+    return this._pointSizeType;
+  }
+  set pointSizeType(value: PointSizeType) {
+    if (value !== this._pointSizeType) {
+      this._pointSizeType = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _useEDL: boolean = false;
+  get useEDL(): boolean {
+    return this._useEDL;
+  }
+  set useEDL(value: boolean) {
+    if (value !== this._useEDL) {
+      this._useEDL = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _shape: PointShape = PointShape.Circle;
+  get shape(): PointShape {
+    return this._shape;
+  }
+  set shape(value: PointShape) {
+    if (value !== this._shape) {
+      this._shape = value;
+      this.updateShaderSource();
+    }
+  }
 
   attributes = {
     position: { type: 'fv', value: [] as const },
@@ -475,25 +534,4 @@ function makeUniform<T>(type: string, value: T): IUniform<T> {
 
 function getValid<T>(a: T | undefined, b: T): T {
   return a === undefined ? b : a;
-}
-
-function requiresShaderUpdate() {
-  return (_target: any, context: { name: string | symbol }) => ({
-    get(this: PointCloudMaterial & Record<string, any>) {
-      const fieldName = `_${context.name.toString()}`;
-      return this[fieldName];
-    },
-    set(this: PointCloudMaterial & Record<string, any>, value: any) {
-      const fieldName = `_${context.name.toString()}`;
-      if (value !== this[fieldName]) {
-        this[fieldName] = value;
-        this.updateShaderSource();
-      }
-    },
-    init(this: PointCloudMaterial & Record<string, any>, value: any) {
-      const fieldName = `_${context.name.toString()}`;
-      this[fieldName] = value;
-      return value;
-    }
-  });
 }
