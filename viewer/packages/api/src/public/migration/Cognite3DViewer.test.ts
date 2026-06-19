@@ -21,6 +21,7 @@ import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image3
 
 import { vi } from 'vitest';
 import type { ResolutionOptions } from './types';
+import { visibility } from 'html2canvas/dist/types/css/property-descriptors/visibility';
 
 const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { with: { type: 'json' } })).default;
 
@@ -208,6 +209,12 @@ describe('Cognite3DViewer', () => {
   });
 
   test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
+    const computedStyleMock = vi.spyOn(window, 'getComputedStyle').mockImplementation(() => {
+      return {
+        visibility: 'visible',
+        display: 'block'
+      } as Partial<CSSStyleDeclaration> as CSSStyleDeclaration;
+    })
     // Setup a fake rendering loop
     const requestAnimationFrameSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
       requestAnimationFrameCallback = cb;
@@ -236,6 +243,7 @@ describe('Cognite3DViewer', () => {
       expect(onRendered).not.toHaveBeenCalled();
     } finally {
       requestAnimationFrameSpy.mockRestore();
+      computedStyleMock.mockReset();
     }
   });
 
