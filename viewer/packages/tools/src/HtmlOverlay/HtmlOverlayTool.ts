@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera, WebGLRenderer } from 'three';
+import { Box2, Plane, Vector2, Vector3 } from 'three';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { BucketGrid2D } from './BucketGrid2D';
@@ -21,8 +22,8 @@ import type { DataSourceType } from '@reveal/data-providers';
  */
 export type HtmlOverlayPositionUpdatedDelegate = (
   element: HTMLElement,
-  position2D: THREE.Vector2,
-  position3D: THREE.Vector3,
+  position2D: Vector2,
+  position3D: Vector3,
   distanceToCamera: number,
   userData: any
 ) => void;
@@ -101,12 +102,12 @@ export type HtmlOverlayToolOptions = {
 };
 
 type HtmlOverlayElement = {
-  position3D: THREE.Vector3;
+  position3D: Vector3;
   options: HtmlOverlayOptions;
 
   state: {
     visible: boolean;
-    position2D: THREE.Vector2;
+    position2D: Vector2;
     width: number;
     height: number;
   };
@@ -139,7 +140,7 @@ type HtmlOverlayElement = {
  * el.innerHtml = '<h1>Overlay</h1>';
  *
  * const overlayTool = new HtmlOverlayTool(viewer);
- * overlayTool.add(el, new THREE.Vector3(10, 10, 10));
+ * overlayTool.add(el, new Vector3(10, 10, 10));
  * // ...
  * overlayTool.remove(el);
  * // or, to remove all attached elements
@@ -169,12 +170,12 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _onViewerDisposedHandler: DisposedDelegate;
   // Allocate variables needed for processing once to avoid allocations
   private readonly _preallocatedVariables = {
-    camPos: new THREE.Vector3(),
-    camNormal: new THREE.Vector3(),
-    point: new THREE.Vector3(),
-    nearPlane: new THREE.Plane(),
-    farPlane: new THREE.Plane(),
-    position2D: new THREE.Vector2()
+    camPos: new Vector3(),
+    camNormal: new Vector3(),
+    point: new Vector3(),
+    nearPlane: new Plane(),
+    farPlane: new Plane(),
+    position2D: new Vector2()
   };
 
   private readonly scheduleUpdate: () => void;
@@ -183,7 +184,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     return this._viewer.domElement;
   }
 
-  private get viewerCamera(): THREE.PerspectiveCamera {
+  private get viewerCamera(): PerspectiveCamera {
     return this._viewer.cameraManager.getCamera();
   }
 
@@ -211,7 +212,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   /**
    * Returns all added HTML elements along with their 3D positions.
    */
-  get elements(): { element: HTMLElement; position3D: THREE.Vector3 }[] {
+  get elements(): { element: HTMLElement; position3D: Vector3 }[] {
     return Array.from(this._htmlOverlays.entries()).map(([element, info]) => {
       return { element, position3D: info.position3D };
     });
@@ -235,7 +236,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * @param position3D
    * @param options
    */
-  add(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}): void {
+  add(htmlElement: HTMLElement, position3D: Vector3, options: HtmlOverlayOptions = {}): void {
     this.ensureNotDisposed();
 
     if (this.viewerDomElement.contains(htmlElement)) {
@@ -257,7 +258,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         position3D,
         options,
         state: {
-          position2D: new THREE.Vector2(),
+          position2D: new Vector2(),
           width: -1,
           height: -1,
           visible: true
@@ -329,7 +330,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Calling this function often might cause degraded performance.
    * @param customCamera Optional camera to be used in place of viewerCamera when calculating positions
    */
-  forceUpdate(customCamera?: THREE.PerspectiveCamera): void {
+  forceUpdate(customCamera?: PerspectiveCamera): void {
     // Do not update elements if overlay visibility is set to hidden/false.
     if (!this._visible) {
       return;
@@ -497,8 +498,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
     const canvas = this.viewerCanvas;
     const canvasBounds = domRectToBox2(canvas.getBoundingClientRect());
-    const canvasSize = canvasBounds.getSize(new THREE.Vector2());
-    canvasBounds.set(new THREE.Vector2(0, 0), canvasSize);
+    const canvasSize = canvasBounds.getSize(new Vector2());
+    canvasBounds.set(new Vector2(0, 0), canvasSize);
     // Compute once as updating styles below will cause (unnecessary)
     // recomputation which slows down the process
 
@@ -512,8 +513,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       grid.insert(elementBounds, { htmlElement, ...element });
     }
 
-    const elementBounds = new THREE.Box2();
-    const clusterMidpoint = new THREE.Vector2();
+    const elementBounds = new Box2();
+    const clusterMidpoint = new Vector2();
     for (const element of this._htmlOverlays.values()) {
       const { state } = element;
       createElementBounds(element, elementBounds);
@@ -564,7 +565,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       .join(',');
   }
 
-  private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
+  private addComposite(htmlElement: HTMLElement, position: Vector2) {
     const canvas = this.viewerCanvas;
     htmlElement.style.visibility = 'visible';
     htmlElement.style.left = `${position.x + canvas.offsetLeft}px`;
@@ -574,8 +575,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private onSceneRendered(event: {
     frameNumber: number;
     renderTime: number;
-    renderer: THREE.WebGLRenderer;
-    camera: THREE.PerspectiveCamera;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
   }): void {
     this.forceUpdate(event.camera);
   }
@@ -605,8 +606,8 @@ function fadeIn(htmlElement: HTMLElement) {
   htmlElement.style.transition = 'opacity 0.2s linear';
 }
 
-function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
-  out = out ?? new THREE.Box2();
+function domRectToBox2(rect: DOMRect, out?: Box2): Box2 {
+  out = out ?? new Box2();
   out.min.set(rect.left, rect.top);
   out.max.set(rect.right, rect.bottom);
   return out;
@@ -616,9 +617,9 @@ function clusterKeyContainsId(key: string, id: number): boolean {
   return key.split(',').includes(`${id}`);
 }
 
-function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {
+function createElementBounds(element: HtmlOverlayElement, out?: Box2) {
   const { state } = element;
-  out = out ?? new THREE.Box2();
+  out = out ?? new Box2();
   out.min.set(state.position2D.x, state.position2D.y);
   out.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
   return out;

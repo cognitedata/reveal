@@ -3,7 +3,6 @@
   "compilerOptions": {
     "declaration": false,
     "forceConsistentCasingInFileNames": true,
-    "importHelpers": true,
     "lib": [
       "ES2019",
       "dom",

@@ -13,8 +13,7 @@
     {
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
-      "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["three", "@types/three"],
+      "matchPackageNames": ["!three", "!@types/three"],
       "automerge": true,
       "stabilityDays": 3,
       "internalChecksFilter": "strict",
@@ -23,8 +22,7 @@
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["three", "@types/three"],
+      "matchPackageNames": ["!three", "!@types/three"],
       "addLabels": ["slack"],
       "automerge": false,
       "stabilityDays": 10,
@@ -60,7 +58,7 @@
     "stabilityDays": 0,
     "automerge": false
   },
-  "postUpdateOptions": ["yarnDedupeHighest"],
+  "postUpdateOptions": ["pnpmDedupe"],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,

@@ -1,7 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { Object3D, PerspectiveCamera, Plane } from 'three';
+import { Box3, Clock, Color, Matrix4, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
@@ -147,18 +148,18 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Returns parameters of THREE.WebGLRenderer used by the viewer.
+   * Returns parameters of WebGLRenderer used by the viewer.
    */
   get renderParameters(): RenderParameters {
     return {
-      renderSize: this._renderer.getSize(new THREE.Vector2())
+      renderSize: this._renderer.getSize(new Vector2())
     };
   }
 
   /**
    * Returns the renderer used to produce images from 3D geometry.
    */
-  private get renderer(): THREE.WebGLRenderer {
+  private get renderer(): WebGLRenderer {
     return this._renderer;
   }
 
@@ -169,7 +170,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
   private readonly _ownsRenderer: boolean;
 
   private readonly _pickingHandler: PickingHandler;
@@ -191,7 +192,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private latestRequestId: number = -1;
   private readonly sessionLogger: SessionLogger;
 
-  private readonly cameraManagerClock = new THREE.Clock();
+  private readonly cameraManagerClock = new Clock();
   private _clippingNeedsUpdate: boolean = false;
   private _forceStopRendering: boolean = false;
 
@@ -210,9 +211,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
    */
   private readonly _boundingBoxes = {
-    nearFarPlaneBoundingBox: new THREE.Box3(),
-    sceneBoundingBox: new THREE.Box3(),
-    temporaryBox: new THREE.Box3()
+    nearFarPlaneBoundingBox: new Box3(),
+    sceneBoundingBox: new Box3(),
+    temporaryBox: new Box3()
   };
 
   /**
@@ -267,7 +268,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   constructor(options: Cognite3DViewerOptions) {
     const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
-    if (threejsRequiredVersion != THREE.REVISION) {
+    if (threejsRequiredVersion != REVISION) {
       Log.warn(
         `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
         In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
@@ -901,7 +902,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       throw new Error('Adding 360 image sets is only supported when connecting to Cognite Data Fusion');
     }
 
-    const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
+    const collectionTransform = add360ImageOptions?.collectionTransform ?? new Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
@@ -1100,18 +1101,18 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Add a THREE.Object3D to the viewer.
+   * Add a Object3D to the viewer.
    * @param object
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(
-   * new THREE.SphereGeometry(),
-   * new THREE.MeshBasicMaterial()
+   * const sphere = new Mesh(
+   * new SphereGeometry(),
+   * new MeshBasicMaterial()
    * );
    * viewer.addObject3D(sphere);
    * ```
    */
-  addObject3D(object: THREE.Object3D): void {
+  addObject3D(object: Object3D): void {
     if (this.isDisposed) {
       return;
     }
@@ -1127,9 +1128,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param customObject
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(
-   * new THREE.SphereGeometry(),
-   * new THREE.MeshBasicMaterial()
+   * const sphere = new Mesh(
+   * new SphereGeometry(),
+   * new MeshBasicMaterial()
    * );
    * const customObject = CustomObject(sphere);
    * customObject.isPartOfBoundingBox = false;
@@ -1150,16 +1151,16 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Remove a THREE.Object3D from the viewer.
+   * Remove a Object3D from the viewer.
    * @param object
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
+   * const sphere = new Mesh(new SphereGeometry(), new MeshBasicMaterial());
    * viewer.addObject3D(sphere);
    * viewer.removeObject3D(sphere);
    * ```
    */
-  removeObject3D(object: THREE.Object3D): void {
+  removeObject3D(object: Object3D): void {
     if (this.isDisposed) {
       return;
     }
@@ -1173,7 +1174,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param customObject
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
+   * const sphere = new Mesh(new SphereGeometry(), new MeshBasicMaterial());
    * const customObject = CustomObject(sphere);
    * viewer.addCustomObject(sphere);
    * viewer.removeCustomObject(sphere);
@@ -1197,14 +1198,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param backgroundColor.color
    * @param backgroundColor.alpha
    */
-  setBackgroundColor(backgroundColor: { color?: THREE.Color; alpha?: number }): void {
+  setBackgroundColor(backgroundColor: { color?: Color; alpha?: number }): void {
     if (this.isDisposed) {
       return;
     }
 
     const srgbColor = backgroundColor.color?.clone().convertLinearToSRGB();
 
-    const color = srgbColor ?? this.renderer.getClearColor(new THREE.Color());
+    const color = srgbColor ?? this.renderer.getClearColor(new Color());
     const alpha = backgroundColor.alpha ?? this.renderer.getClearAlpha();
 
     this.renderer.setClearColor(color, alpha);
@@ -1218,23 +1219,23 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @example
    * ```js
    * // Hide pixels with values less than 0 in the x direction
-   * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
+   * const plane = new Plane(new Vector3(1, 0, 0), 0);
    * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
-   *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
+   *  const plane = new Plane(new Vector3(-1, 0, 0), 20);
    * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
-   * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
+   * const xPlane = new Plane(new Vector3(1, 0, 0), 0);
+   * const yPlane = new Plane(new Vector3(0, -1, 0), 0);
    * viewer.setGlobalClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
-   *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
+   *  const plane = new Plane(new Vector3(1.5, 20, -19), 20);
    * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
@@ -1242,7 +1243,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    *  viewer.setGlobalClippingPlanes([]);
    * ```
    */
-  setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setGlobalClippingPlanes(clippingPlanes: Plane[]): void {
     this.revealManager.clippingPlanes = clippingPlanes;
     this._clippingNeedsUpdate = true;
   }
@@ -1252,7 +1253,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param clippingPlanes
    * @deprecated Use {@link Cognite3DViewer.setGlobalClippingPlanes} instead.
    */
-  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setClippingPlanes(clippingPlanes: Plane[]): void {
     this.setGlobalClippingPlanes(clippingPlanes);
   }
 
@@ -1260,14 +1261,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * Returns the current active global clipping planes.
    * @deprecated Use {@link Cognite3DViewer.getGlobalClippingPlanes} instead.
    */
-  getClippingPlanes(): THREE.Plane[] {
+  getClippingPlanes(): Plane[] {
     return this.getGlobalClippingPlanes();
   }
 
   /**
    * Returns the current active global clipping planes.
    */
-  getGlobalClippingPlanes(): THREE.Plane[] {
+  getGlobalClippingPlanes(): Plane[] {
     return this.revealManager.clippingPlanes.map(p => p.clone());
   }
 
@@ -1275,7 +1276,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * Returns the union of all bounding boxes in reveal, including custom objects.
    * @beta
    */
-  getSceneBoundingBox(): THREE.Box3 {
+  getSceneBoundingBox(): Box3 {
     return this._boundingBoxes.sceneBoundingBox;
   }
 
@@ -1284,14 +1285,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @returns The visual bounding box of the Cognite3DViewer.
    * @beta
    */
-  getVisualSceneBoundingBox(): THREE.Box3 {
-    const boundingBox = new THREE.Box3();
+  getVisualSceneBoundingBox(): Box3 {
+    const boundingBox = new Box3();
     boundingBox.makeEmpty();
 
     if (this.isDisposed) {
       return boundingBox;
     }
-    const temporaryBox = new THREE.Box3();
+    const temporaryBox = new Box3();
     for (const model of this.models) {
       if (!model.visible) {
         continue;
@@ -1357,7 +1358,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * ```
    */
   fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void {
-    const boundingBox = model.getModelBoundingBox(new THREE.Box3(), true);
+    const boundingBox = model.getModelBoundingBox(new Box3(), true);
     if (boundingBox.isEmpty()) {
       return;
     }
@@ -1377,10 +1378,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return;
     }
 
-    const boundingBox = cogniteModels.reduce<THREE.Box3>((combinedBoundingBox, model) => {
+    const boundingBox = cogniteModels.reduce<Box3>((combinedBoundingBox, model) => {
       combinedBoundingBox.union(model.getModelBoundingBox(undefined, restrictToMostGeometry));
       return combinedBoundingBox;
-    }, new THREE.Box3());
+    }, new Box3());
 
     this.fitCameraToBoundingBox(boundingBox, duration);
   }
@@ -1413,7 +1414,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * viewer.fitCameraToBoundingBox(boundingBox, 500, 2);
    * ```
    */
-  fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
+  fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor: number = 2): void {
     if (boundingBox.isEmpty()) {
       return;
     }
@@ -1435,21 +1436,21 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @returns Returns 2D coordinates if the point is visible on screen, or `null` if object is outside screen.
    * @example
    * ```js
-   * const boundingBoxCenter = new THREE.Vector3();
+   * const boundingBoxCenter = new Vector3();
    * // Find center of bounding box in world space
    * model.getBoundingBox(nodeId).getCenter(boundingBoxCenter);
    * // Screen coordinates of that point
    * const screenCoordinates = viewer.worldToScreen(boundingBoxCenter);
    * ```
    * ```js
-   * const boundingBoxCenter = new THREE.Vector3();
+   * const boundingBoxCenter = new Vector3();
    * // Find center of bounding box in world space
    * model.getBoundingBox(nodeId).getCenter(boundingBoxCenter);
    * // Screen coordinates of that point normalized in the range [0,1]
    * const screenCoordinates = viewer.worldToScreen(boundingBoxCenter, true);
    * ```
    * ```js
-   * const boundingBoxCenter = new THREE.Vector3();
+   * const boundingBoxCenter = new Vector3();
    * // Find center of bounding box in world space
    * model.getBoundingBox(nodeId).getCenter(boundingBoxCenter);
    * // Screen coordinates of that point
@@ -1461,10 +1462,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * }
    * ```
    */
-  worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
+  worldToScreen(point: Vector3, normalize?: boolean): Vector2 | null {
     const camera = this.cameraManager.getCamera();
     camera.updateMatrixWorld();
-    const screenPosition = new THREE.Vector3();
+    const screenPosition = new Vector3();
     if (normalize) {
       worldToNormalizedViewportCoordinates(camera, point, screenPosition);
     } else {
@@ -1485,7 +1486,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return null;
     }
 
-    return new THREE.Vector2(screenPosition.x, screenPosition.y);
+    return new Vector2(screenPosition.x, screenPosition.y);
   }
 
   /**
@@ -1510,13 +1511,17 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * document.body.appendChild(image);
    * ```
    */
-  async getScreenshot(width = this.canvas.width, height = this.canvas.height, includeUI = true): Promise<string> {
+  async getScreenshot(
+    width: number = this.canvas.width,
+    height: number = this.canvas.height,
+    includeUI = true
+  ): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
 
     const customRenderTarget = this.renderer.getRenderTarget();
-    const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+    const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new Vector2());
     const originalPixelRatio = this._renderer.getPixelRatio();
 
     const originalDomeStyle = {
@@ -1544,7 +1549,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       this.domElement.style.left = '0px';
       this.domElement.style.top = '0px';
 
-      const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
+      const screenshotCamera = this.cameraManager.getCamera().clone() as PerspectiveCamera;
       adjustCamera(screenshotCamera, width, height);
 
       // Disregard pixelRatio to get the screenshot in requested resolution.
@@ -1612,7 +1617,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param pixelCoords A Vector2 containing pixel coordinates relative to the 3D viewer.
    * @returns A Vector2 containing the normalized device coordinate (in range [-1, 1]).
    */
-  getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2 {
+  getNormalizedPixelCoordinates(pixelCoords: Vector2): Vector2 {
     return getNormalizedPixelCoordinates(this.domElement, pixelCoords.x, pixelCoords.y);
   }
 
@@ -1621,7 +1626,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param event An PointerEvent or WheelEvent.
    * @returns A Vector2 containing pixel coordinates relative to the 3D viewer.
    */
-  getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2 {
+  getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): Vector2 {
     return getPixelCoordinatesFromEvent(event, this.domElement);
   }
 
@@ -1631,7 +1636,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @returns A CustomObjectIntersectInput ready to use.
    * @beta
    */
-  public createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput {
+  public createCustomObjectIntersectInput(pixelCoords: Vector2): CustomObjectIntersectInput {
     return new CustomObjectIntersectInput(
       this.getNormalizedPixelCoordinates(pixelCoords),
       this.cameraManager.getCamera(),
@@ -1673,7 +1678,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>> {
-    const pixelCoords = new THREE.Vector2(offsetX, offsetY);
+    const pixelCoords = new Vector2(offsetX, offsetY);
     // Check cluster intersection first (clusters have priority over geometry)
     if (this.intersect360Clusters(pixelCoords) !== undefined) {
       return null;
@@ -1695,7 +1700,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @beta
    */
   public async getAnyIntersectionFromPixel(
-    pixelCoords: THREE.Vector2,
+    pixelCoords: Vector2,
     options?: {
       stopOnHitting360Icon?: boolean;
       predicate?: (customObject: ICustomObject) => boolean;
@@ -1769,7 +1774,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return true;
   }
 
-  private intersect360Icons(vector: THREE.Vector2): Image360IconIntersection<DataSourceT> | undefined {
+  private intersect360Icons(vector: Vector2): Image360IconIntersection<DataSourceT> | undefined {
     const iconIntersection = this._image360ApiHelper?.intersect360ImageIcons(vector.x, vector.y);
     if (iconIntersection === undefined) {
       return undefined;
@@ -1781,7 +1786,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     };
   }
 
-  private intersect360Clusters(vector: THREE.Vector2): Image360ClusterIntersection<DataSourceT> | undefined {
+  private intersect360Clusters(vector: Vector2): Image360ClusterIntersection<DataSourceT> | undefined {
     const clusterIntersection = this._image360ApiHelper?.intersect360ImageClusters(vector.x, vector.y);
     if (clusterIntersection === undefined) {
       return undefined;
@@ -1816,7 +1821,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param clickedWorldPosition  World-space position of the user's click (e.g. from a point cloud intersection).
    * @returns The best matching Image360 Entity and its collection, or `undefined` if not inside a 360 image or no candidates qualify.
    */
-  findBestNext360ImageEntity(clickedWorldPosition: THREE.Vector3): Image360WithCollection<DataSourceT> | undefined {
+  findBestNext360ImageEntity(clickedWorldPosition: Vector3): Image360WithCollection<DataSourceT> | undefined {
     return this._image360ApiHelper?.findBestNext360ImageEntity(clickedWorldPosition);
   }
 
@@ -1974,7 +1979,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   private getCustomObjectIntersectionIfCloser(
-    pixelCoords: THREE.Vector2,
+    pixelCoords: Vector2,
     options: {
       useDepthTest: boolean;
       closestDistanceToCamera?: number;
@@ -2020,7 +2025,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     offsetY: number,
     pickBoundingBox: boolean
   ): Promise<CameraManagerCallbackData> {
-    const pixelCoords = new THREE.Vector2(offsetX, offsetY);
+    const pixelCoords = new Vector2(offsetX, offsetY);
 
     const intersection = await this.getAnyIntersectionFromPixel(pixelCoords);
     if (intersection === undefined) {
@@ -2039,7 +2044,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       };
     }
     if (intersection.type === 'cad') {
-      const getBoundingBox = async (intersection: CadIntersection): Promise<THREE.Box3 | undefined> => {
+      const getBoundingBox = async (intersection: CadIntersection): Promise<Box3 | undefined> => {
         const model = intersection.model;
         const treeIndex = intersection.treeIndex;
         return model.getBoundingBoxByTreeIndex(treeIndex);
@@ -2127,7 +2132,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 }
 
-function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
+function adjustCamera(camera: PerspectiveCamera, width: number, height: number) {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
@@ -2139,8 +2144,8 @@ function createCanvasWrapper(): HTMLElement {
   return domElement;
 }
 
-function createRenderer(): THREE.WebGLRenderer {
-  const renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
+function createRenderer(): WebGLRenderer {
+  const renderer = new WebGLRenderer({ powerPreference: 'high-performance' });
   renderer.setPixelRatio(window.devicePixelRatio);
   return renderer;
 }
@@ -2205,7 +2210,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
   return revealOptions;
 }
 
-function getMaxPointSize(renderer: THREE.WebGLRenderer): number {
+function getMaxPointSize(renderer: WebGLRenderer): number {
   const gl = renderer.getContext();
   const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
   return maxPointSize;

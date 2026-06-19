@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Box3, Matrix4, Vector3 } from 'three';
 
 import type { SectorMetadata } from '../metadata/types';
 
@@ -52,15 +52,15 @@ export interface SectorScene {
 
   readonly sectorCount: number;
   getSectorById(sectorId: number): SectorMetadata | undefined;
-  getSectorsContainingPoint(p: THREE.Vector3): SectorMetadata[];
-  getSectorsIntersectingBox(b: THREE.Box3): SectorMetadata[];
+  getSectorsContainingPoint(p: Vector3): SectorMetadata[];
+  getSectorsIntersectingBox(b: Box3): SectorMetadata[];
 
   /**
    * Returns bounds that contains "most geometry". This bounds is an
    * attempt to remove junk geometry from the bounds to allow e.g. setting
    * a good camera position.
    */
-  getBoundsOfMostGeometry(): THREE.Box3;
+  getBoundsOfMostGeometry(): Box3;
 
   /**
    * Gets the sectors intersecting the frustum provided from the projection and inverse
@@ -73,7 +73,7 @@ export interface SectorScene {
    * const cameraProjectionMatrix = camera.projectionMatrix;
    *
    * const transformedCameraMatrixWorldInverse =
-   *  new THREE.Matrix4().multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix)
+   *  new Matrix4().multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix)
    *
    * const intersectingSectors = model.scene.getSectorsIntersectingFrustum(
    *   cameraProjectionMatrix,
@@ -83,10 +83,7 @@ export interface SectorScene {
    * @param projectionMatrix
    * @param inverseCameraModelMatrix
    */
-  getSectorsIntersectingFrustum(
-    projectionMatrix: THREE.Matrix4,
-    inverseCameraModelMatrix: THREE.Matrix4
-  ): SectorMetadata[];
+  getSectorsIntersectingFrustum(projectionMatrix: Matrix4, inverseCameraModelMatrix: Matrix4): SectorMetadata[];
   getAllSectors(): SectorMetadata[];
 
   // Available, but not supported:

@@ -1,28 +1,28 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Box2, Vector2 } from 'three';
 import { BucketGrid2D } from './BucketGrid2D';
 
 describe('BucketGrid2D', () => {
   let dimensions: [number, number];
-  let bounds: THREE.Box2;
+  let bounds: Box2;
   let grid: BucketGrid2D<number>;
-  let cellBounds: (i: number, j: number) => THREE.Box2;
+  let cellBounds: (i: number, j: number) => Box2;
 
   beforeEach(() => {
     dimensions = [2, 2];
 
-    bounds = new THREE.Box2(new THREE.Vector2(1, 2), new THREE.Vector2(2, 4));
+    bounds = new Box2(new Vector2(1, 2), new Vector2(2, 4));
     grid = new BucketGrid2D<number>(bounds, dimensions);
 
     cellBounds = (i, j) => {
       // Create box that is just inside the bounds of the cell
-      const boundsSize = bounds.getSize(new THREE.Vector2());
-      const cellSize = new THREE.Vector2(boundsSize.x / dimensions[0], boundsSize.y / dimensions[1]);
-      return new THREE.Box2(
-        new THREE.Vector2(bounds.min.x + cellSize.x * i + 1e-4, bounds.min.y + cellSize.y * j + 1e-4),
-        new THREE.Vector2(bounds.min.x + cellSize.x * (i + 1) - 1e-4, bounds.min.y + cellSize.y * (j + 1) - 1e-4)
+      const boundsSize = bounds.getSize(new Vector2());
+      const cellSize = new Vector2(boundsSize.x / dimensions[0], boundsSize.y / dimensions[1]);
+      return new Box2(
+        new Vector2(bounds.min.x + cellSize.x * i + 1e-4, bounds.min.y + cellSize.y * j + 1e-4),
+        new Vector2(bounds.min.x + cellSize.x * (i + 1) - 1e-4, bounds.min.y + cellSize.y * (j + 1) - 1e-4)
       );
     };
   });
@@ -84,6 +84,6 @@ describe('BucketGrid2D', () => {
   });
 });
 
-function createBounds(min: [x: number, y: number], max: [x: number, y: number]): THREE.Box2 {
-  return new THREE.Box2(new THREE.Vector2(min[0], min[1]), new THREE.Vector2(max[0], max[1]));
+function createBounds(min: [x: number, y: number], max: [x: number, y: number]): Box2 {
+  return new Box2(new Vector2(min[0], min[1]), new Vector2(max[0], max[1]));
 }

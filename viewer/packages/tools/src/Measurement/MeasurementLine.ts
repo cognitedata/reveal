@@ -3,21 +3,22 @@
  */
 
 import { Line2, LineGeometry, LineMaterial, isPointVisibleByPlanes } from '@reveal/utilities';
-import * as THREE from 'three';
+import type { Color, Plane } from 'three';
+import { BufferGeometry, Group, Mesh, Vector2, Vector3 } from 'three';
 
 export class MeasurementLine {
   private readonly _geometry: LineGeometry;
-  private readonly _meshes: THREE.Group;
+  private readonly _meshes: Group;
   private readonly _fixedWidthLineMaterial: LineMaterial;
   private readonly _adaptiveWidthLineMaterial: LineMaterial;
-  private readonly _startPos: THREE.Vector3;
-  private readonly _endpoint: THREE.Vector3;
+  private readonly _startPos: Vector3;
+  private readonly _endpoint: Vector3;
 
-  constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
+  constructor(lineWidth: number, lineColor: Color, startPoint: Vector3) {
     this._geometry = new LineGeometry();
 
     this._startPos = startPoint;
-    this._endpoint = new THREE.Vector3();
+    this._endpoint = new Vector3();
 
     //Adaptive Line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
@@ -35,13 +36,13 @@ export class MeasurementLine {
       depthTest: false
     });
 
-    this._meshes = new THREE.Group();
+    this._meshes = new Group();
     this._meshes.name = 'Measurement';
 
-    const onBeforeRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
+    const onBeforeRenderTrigger = new Mesh(new BufferGeometry());
     onBeforeRenderTrigger.name = 'onBeforeRenderTrigger trigger (no geometry)';
     onBeforeRenderTrigger.frustumCulled = false;
-    const resolution = new THREE.Vector2();
+    const resolution = new Vector2();
     onBeforeRenderTrigger.onBeforeRender = renderer => {
       const { width, height } = renderer.domElement.getBoundingClientRect();
       resolution.set(width, height);
@@ -61,7 +62,7 @@ export class MeasurementLine {
     this._meshes.removeFromParent();
   }
 
-  get meshes(): THREE.Group {
+  get meshes(): Group {
     return this._meshes;
   }
 
@@ -69,7 +70,7 @@ export class MeasurementLine {
    * Update the measuring line end point.
    * @param endPoint Second point of the line to end the measurement.
    */
-  updateLine(endPoint: THREE.Vector3): void {
+  updateLine(endPoint: Vector3): void {
     this._endpoint.copy(endPoint);
     this._meshes.position.copy(this.getMidPointOnLine());
     this._meshes.lookAt(endPoint);
@@ -80,7 +81,7 @@ export class MeasurementLine {
    * Updates the measuring line clipping planes
    * @param clippingPlanes current active global clipping planes.
    */
-  updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  updateLineClippingPlanes(clippingPlanes: Plane[]): void {
     const visible =
       !isPointVisibleByPlanes(clippingPlanes, this._startPos) ||
       !isPointVisibleByPlanes(clippingPlanes, this._endpoint);
@@ -99,7 +100,7 @@ export class MeasurementLine {
    * Calculate mid point on the Line.
    * @returns Returns mid point between start and end points.
    */
-  getMidPointOnLine(): THREE.Vector3 {
+  getMidPointOnLine(): Vector3 {
     return this._endpoint.clone().add(this._startPos).multiplyScalar(0.5);
   }
 
@@ -115,7 +116,7 @@ export class MeasurementLine {
    * Update current line color.
    * @param color Color of the measuring line mesh.
    */
-  updateLineColor(color: THREE.Color): void {
+  updateLineColor(color: Color): void {
     this._fixedWidthLineMaterial.color = this._adaptiveWidthLineMaterial.color = color;
   }
 

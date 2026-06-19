@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 
 import { CadMetadataWithSignedFiles, SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
@@ -61,18 +61,15 @@ export function parseCadMetadataGltf(metadata: CadMetadataWithSignedFiles): Sect
   return new SectorSceneImpl(metadata.fileData.version, metadata.fileData.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-export function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
-  return new THREE.Box3(
-    new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-    new THREE.Vector3(box.max.x, box.max.y, box.max.z)
-  );
+export function toThreeBoundingBox(box: BoundingBox): Box3 {
+  return new Box3(new Vector3(box.min.x, box.min.y, box.min.z), new Vector3(box.max.x, box.max.y, box.max.z));
 }
 
 function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: DMSJsonFileItem[]): SectorMetadata {
   const metadataBoundingBox = toThreeBoundingBox(metadata.boundingBox);
 
-  let geometryBoundingBox: THREE.Box3;
-  let subtreeBoundingBox: THREE.Box3;
+  let geometryBoundingBox: Box3;
+  let subtreeBoundingBox: Box3;
 
   // In earlier v9 models, geometryBoundingBox does not exist, and boundingBox
   // only encapsulates geometry in the current sector. This case must be treated differently
@@ -83,7 +80,7 @@ function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: DMSJso
     geometryBoundingBox = metadataBoundingBox;
 
     // Compute this from children's bounding boxes later on
-    subtreeBoundingBox = new THREE.Box3();
+    subtreeBoundingBox = new Box3();
   }
 
   let signedUrl: string | undefined = metadata.signedUrl;

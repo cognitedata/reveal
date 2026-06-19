@@ -7,7 +7,7 @@ import type {
   AnnotationsTypesImagesInstanceLink,
   IdEither
 } from '@cognite/sdk';
-import type * as THREE from 'three';
+import type { Matrix4, Texture } from 'three';
 import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
 import type {
   AssetAnnotationImage360Info,
@@ -187,7 +187,7 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
   label: string | undefined;
   collectionId: string;
   collectionLabel: string | undefined;
-  transform: THREE.Matrix4;
+  transform: Matrix4;
 };
 
 export type FaceName = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
@@ -202,7 +202,7 @@ export type Image360Face = {
 
 export type Image360Texture = {
   face: FaceName;
-  texture: THREE.Texture;
+  texture: Texture;
 };
 
 export type Image360FileDescriptor = {

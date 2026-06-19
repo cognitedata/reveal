@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Euler, Matrix4 } from 'three';
 
 import { CogniteCadModel } from '..';
 import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
@@ -14,13 +14,13 @@ export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
 
     const model = models[0];
 
-    const modelTransform = new THREE.Matrix4().makeTranslation(25, -5, 5);
-    modelTransform.multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 4, Math.PI / 2, 0)));
+    const modelTransform = new Matrix4().makeTranslation(25, -5, 5);
+    modelTransform.multiply(new Matrix4().makeRotationFromEuler(new Euler(Math.PI / 4, Math.PI / 2, 0)));
 
     if (model instanceof CogniteCadModel) {
-      const scale = new THREE.Matrix4().makeScale(3, 3, 3);
-      const rotation = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 6, 0, 0));
-      const translation = new THREE.Matrix4().makeTranslation(-50, 25, 0);
+      const scale = new Matrix4().makeScale(3, 3, 3);
+      const rotation = new Matrix4().makeRotationFromEuler(new Euler(Math.PI / 6, 0, 0));
+      const translation = new Matrix4().makeTranslation(-50, 25, 0);
 
       const transform = translation.multiply(rotation.multiply(scale));
       model.setNodeTransform(new NumericRange(1, 1), transform);
@@ -28,7 +28,7 @@ export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
       Array.from({ length: 80 - 2 }, (_, k) => k + 2).map(i => {
         return model.setNodeTransform(
           new NumericRange(i, 1),
-          new THREE.Matrix4().makeTranslation(0, (((i + 1) % 2) * 2 - 1) * 2, 0)
+          new Matrix4().makeTranslation(0, (((i + 1) % 2) * 2 - 1) * 2, 0)
         );
       });
     }

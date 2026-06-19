@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import type { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
 import { NodeIdNodeCollection } from './NodeIdNodeCollection';
@@ -29,8 +29,8 @@ describe(NodeIdNodeCollection.name, () => {
     mockClient.setup(x => x.revisions3D).returns(mockRevisions3DAPI.object());
 
     mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
-    mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
-    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new THREE.Matrix4());
+    mockModel.setup(x => x.getModelTransformation()).returns(new Matrix4());
+    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new Matrix4());
   });
 
   test('executeFilter with 1001 nodeIds, splits into two chunks', async () => {

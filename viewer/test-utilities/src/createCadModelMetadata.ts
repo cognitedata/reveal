@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import { File3dFormat, LocalModelIdentifier } from '../../packages/data-providers';
 import type { SectorMetadata, CadModelMetadata } from '../../packages/cad-parsers';
@@ -20,8 +20,8 @@ export function createCadModelMetadata(sceneVersion: number, root: SectorMetadat
     formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,
     signedFilesBaseUrl: `https://localhost/${modelId}`,
-    modelMatrix: new THREE.Matrix4().identity(),
-    inverseModelMatrix: new THREE.Matrix4().identity(),
+    modelMatrix: new Matrix4().identity(),
+    inverseModelMatrix: new Matrix4().identity(),
     scene,
     geometryClipBox: null
   };

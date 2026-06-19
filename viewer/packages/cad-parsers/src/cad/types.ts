@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Box3 } from 'three';
 
 import type { SectorMetadata } from '../metadata/types';
 import type { LevelOfDetail } from './LevelOfDetail';
@@ -52,5 +52,5 @@ export interface WantedSector {
 }
 
 export type ParsedMeshGeometry = ParsedGeometry & {
-  wholeSectorBoundingBox: THREE.Box3;
+  wholeSectorBoundingBox: Box3;
 };

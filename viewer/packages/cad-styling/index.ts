@@ -18,7 +18,7 @@ export { InvertedNodeCollection } from './src/InvertedNodeCollection';
 export type { NodeCollectionSerializationContext } from './src/NodeCollectionDeserializer';
 export { registerNodeCollectionType, NodeCollectionDeserializer } from './src/NodeCollectionDeserializer';
 
-export type { NodeAppearance, SerializableNodeAppearance } from './src/NodeAppearance';
+export type { NodeAppearance, SerializableNodeAppearance, DefaultNodeAppearanceInstances } from './src/NodeAppearance';
 export { DefaultNodeAppearance, NodeOutlineColor } from './src/NodeAppearance';
 export { toSerializableNodeAppearance, fromSerializableNodeAppearance } from './src/nodeAppearanceSerialization';
 export { NodeAppearanceProvider } from './src/NodeAppearanceProvider';

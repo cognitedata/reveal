@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { Raycaster, Vector2 } from 'three';
 
 import type { IntersectInput } from '@reveal/model-base';
 import type { PointCloudNode } from './PointCloudNode';
@@ -16,15 +17,15 @@ import { isClassicPointCloudVolume, isDMPointCloudVolume } from '@reveal/data-pr
 import type { IntersectPointCloudNodeResult } from './types';
 
 export class PointCloudPickingHandler {
-  private readonly _normalized = new THREE.Vector2();
-  private readonly _raycaster = new THREE.Raycaster();
+  private readonly _normalized = new Vector2();
+  private readonly _raycaster = new Raycaster();
   private readonly _picker: PointCloudOctreePicker;
   private readonly _mutex = new Mutex();
 
   // To solve https://cognitedata.atlassian.net/browse/REV-523
   private static readonly PickingWindowSize = 5;
 
-  constructor(renderer: THREE.WebGLRenderer) {
+  constructor(renderer: WebGLRenderer) {
     this._picker = new PointCloudOctreePicker(renderer);
   }
 

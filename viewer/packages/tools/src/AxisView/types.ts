@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Color, Vector2 } from 'three';
 import { AxisViewTool } from './AxisViewTool';
 import { Corner } from '../utilities/Corner';
 
@@ -57,7 +57,7 @@ export type AbsolutePosition = {
  */
 export type RelativePosition = {
   corner: Corner;
-  padding: THREE.Vector2;
+  padding: Vector2;
 };
 
 /**
@@ -69,10 +69,10 @@ export type AxisBoxFaceConfig = {
    */
   label?: string;
   fontSize?: number;
-  fontColor?: THREE.Color;
+  fontColor?: Color;
   outlineSize?: number;
-  outlineColor?: THREE.Color;
-  faceColor?: THREE.Color;
+  outlineColor?: Color;
+  faceColor?: Color;
 };
 
 /**
@@ -89,32 +89,32 @@ export type AxisBoxCompassConfig = {
    */
   labelDelta?: number;
   fontSize?: number;
-  fontColor?: THREE.Color;
-  tickColor?: THREE.Color;
+  fontColor?: Color;
+  tickColor?: Color;
 };
 
 export const defaultAxisBoxCompassConfig: AxisBoxCompassConfig = {
   ringLabel: 'N',
   labelDelta: Math.PI,
   fontSize: undefined,
-  fontColor: new THREE.Color(0xff0000),
-  tickColor: new THREE.Color(0x949494)
+  fontColor: new Color(0xff0000),
+  tickColor: new Color(0x949494)
 };
 
 export const defaultFaceConfig: AxisBoxFaceConfig = {
   label: '',
   fontSize: undefined,
-  fontColor: new THREE.Color(0x333333),
+  fontColor: new Color(0x333333),
   outlineSize: undefined,
-  outlineColor: new THREE.Color(0x333333),
-  faceColor: new THREE.Color(0x949494)
+  outlineColor: new Color(0x333333),
+  faceColor: new Color(0x949494)
 };
 
 export const defaultAxisBoxConfig: Required<AxisBoxConfig> = {
   size: 128,
   position: {
     corner: Corner.BottomRight,
-    padding: new THREE.Vector2()
+    padding: new Vector2()
   },
   animationSpeed: 200,
   faces: {

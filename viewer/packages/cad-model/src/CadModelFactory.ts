@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
 import type { GeometryFilter } from './types';
@@ -80,16 +80,13 @@ export class CadModelFactory {
   }
 }
 
-function transformToThreeJsSpace(geometryClipBox: THREE.Box3, modelMetadata: CadModelMetadata): THREE.Box3 {
+function transformToThreeJsSpace(geometryClipBox: Box3, modelMetadata: CadModelMetadata): Box3 {
   const min = geometryClipBox.min.clone().applyMatrix4(modelMetadata.modelMatrix);
   const max = geometryClipBox.max.clone().applyMatrix4(modelMetadata.modelMatrix);
-  return new THREE.Box3().setFromPoints([min, max]);
+  return new Box3().setFromPoints([min, max]);
 }
 
-function determineGeometryClipBox(
-  geometryFilter: GeometryFilter | undefined,
-  cadModel: CadModelMetadata
-): THREE.Box3 | null {
+function determineGeometryClipBox(geometryFilter: GeometryFilter | undefined, cadModel: CadModelMetadata): Box3 | null {
   if (geometryFilter === undefined || geometryFilter.boundingBox === undefined) {
     return null;
   }
@@ -102,7 +99,7 @@ function determineGeometryClipBox(
   return bbox;
 }
 
-function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null): CadModelMetadata {
+function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: Box3 | null): CadModelMetadata {
   if (geometryClipBox === null) {
     return cadModel;
   }

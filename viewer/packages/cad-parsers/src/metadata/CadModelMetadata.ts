@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Box3, Matrix4 } from 'three';
 import type { SectorScene } from '../utilities/types';
 import type { CameraConfiguration } from '@reveal/utilities';
 import type { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
@@ -42,16 +42,16 @@ export interface CadModelMetadata {
    * around the geometry, it must be transformed to "viewer space"
    * first.
    */
-  readonly geometryClipBox: THREE.Box3 | null;
+  readonly geometryClipBox: Box3 | null;
   /**
    * Matrix transforming from coordinates of the model to ThreeJS
    * coordinates.
    */
-  readonly modelMatrix: THREE.Matrix4;
+  readonly modelMatrix: Matrix4;
   /**
    * Inverse of {@see modelMatrix}.
    */
-  readonly inverseModelMatrix: THREE.Matrix4;
+  readonly inverseModelMatrix: Matrix4;
   /**
    * Description of the tree structure holding geometry.
    */

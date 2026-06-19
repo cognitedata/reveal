@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
@@ -22,25 +23,25 @@ import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
-  private readonly _viewerScene: THREE.Scene;
+  private readonly _viewerScene: Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: {
-    cadNode: THREE.Object3D;
+    cadNode: Object3D;
     modelIdentifier: symbol;
   }[];
   private readonly _pointCloudModels: {
-    pointCloudNode: THREE.Object3D;
+    pointCloudNode: Object3D;
     modelIdentifier: symbol;
   }[];
   private readonly _customObjects: ICustomObject[];
   private _autoResizeOutputTarget: boolean;
-  private _outputRenderTarget: THREE.WebGLRenderTarget | null;
+  private _outputRenderTarget: WebGLRenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
-  private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
-  private readonly _blitToScreenMesh: THREE.Mesh;
+  private readonly _blitToScreenMaterial: RawShaderMaterial;
+  private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
 
@@ -71,7 +72,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     sceneHandler: SceneHandler,
     renderOptions: RenderOptions,
     outputRenderTarget?: {
-      target: THREE.WebGLRenderTarget;
+      target: WebGLRenderTarget;
       autoSize?: boolean;
     }
   ) {
@@ -81,7 +82,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._outputRenderTarget = outputRenderTarget?.target ?? null;
 
     this._renderTargetData = {
-      currentRenderSize: new THREE.Vector2(1, 1),
+      currentRenderSize: new Vector2(1, 1),
       ssaoRenderTarget: createRenderTarget(),
       postProcessingRenderTarget: createRenderTarget()
     };
@@ -118,14 +119,14 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
 
-    this._blitToScreenMaterial = new THREE.RawShaderMaterial({
+    this._blitToScreenMaterial = new RawShaderMaterial({
       vertexShader: blitShaders.vertex,
       fragmentShader: blitShaders.fragment,
       uniforms: {
         tDiffuse: { value: this._renderTargetData.postProcessingRenderTarget.texture },
         tDepth: { value: this._renderTargetData.postProcessingRenderTarget.depthTexture }
       },
-      glslVersion: THREE.GLSL3,
+      glslVersion: GLSL3,
       defines: {
         DEPTH_WRITE: true,
         FXAA: true
@@ -137,12 +138,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this.renderOptions = cloneDeep(renderOptions);
   }
 
-  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
+  public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
     this._outputRenderTarget = target;
     if (autoSizeRenderTarget) this._autoResizeOutputTarget = autoSizeRenderTarget;
   }
 
-  public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
+  public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
     const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
@@ -192,13 +193,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._renderTargetData.postProcessingRenderTarget.dispose();
 
     this._blitToScreenMesh.geometry.dispose();
-    (this._blitToScreenMesh.material as THREE.Material).dispose();
+    (this._blitToScreenMesh.material as Material).dispose();
   }
 
-  private pipelineSetup(renderer: THREE.WebGLRenderer) {
+  private pipelineSetup(renderer: WebGLRenderer) {
     this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
     this._rendererStateHelper.autoClear = true;
-    this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
+    this._rendererStateHelper.setClearColor(renderer.getClearColor(new Color()), 0);
 
     this._cadModels.forEach(cadModel => {
       cadModel.cadNode.matrixAutoUpdate = false;
@@ -211,8 +212,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this.updateRenderTargetSizes(renderer);
   }
 
-  private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
-    const renderSize = new THREE.Vector2();
+  private updateRenderTargetSizes(renderer: WebGLRenderer): void {
+    const renderSize = new Vector2();
     renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;

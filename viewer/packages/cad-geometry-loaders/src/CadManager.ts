@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { PerspectiveCamera, Plane } from 'three';
 
 import type { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
@@ -160,15 +160,15 @@ export class CadManager {
     );
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+  updateCamera(camera: PerspectiveCamera, cameraInMotion: boolean): void {
     this._cadModelUpdateHandler.updateCamera(camera, cameraInMotion);
   }
 
-  get clippingPlanes(): THREE.Plane[] {
+  get clippingPlanes(): Plane[] {
     return this._materialManager.clippingPlanes;
   }
 
-  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+  set clippingPlanes(clippingPlanes: Plane[]) {
     this._materialManager.clippingPlanes = clippingPlanes;
     this._cadModelUpdateHandler.clippingPlanes = clippingPlanes;
     this._needsRedraw = true;

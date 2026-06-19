@@ -1,4 +1,4 @@
-import type * as THREE from 'three';
+import type { Box3, Sphere } from 'three';
 
 export interface IPointCloudTreeNodeBase {
   id: number;
@@ -6,8 +6,8 @@ export interface IPointCloudTreeNodeBase {
   level: number;
   index: number;
   spacing: number;
-  boundingBox: THREE.Box3;
-  boundingSphere: THREE.Sphere;
+  boundingBox: Box3;
+  boundingSphere: Sphere;
   loaded: boolean;
   numPoints: number;
   isTreeNode: boolean;

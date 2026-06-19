@@ -2,20 +2,20 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 import { BoundingBoxClipper } from './BoundingBoxClipper';
 
 describe('BoundingBoxClipper', () => {
   test('Clip planes placed correctly', () => {
-    const box = new THREE.Box3(new THREE.Vector3(1.0, 2.0, 3.0), new THREE.Vector3(4.0, 5.0, 6.0));
+    const box = new Box3(new Vector3(1.0, 2.0, 3.0), new Vector3(4.0, 5.0, 6.0));
     const clipper = new BoundingBoxClipper(box);
 
-    expect(clipper.clippingPlanes[0].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(1);
-    expect(clipper.clippingPlanes[1].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(-1);
-    expect(clipper.clippingPlanes[2].normal.dot(new THREE.Vector3(0, 1, 0))).toBe(1);
-    expect(clipper.clippingPlanes[3].normal.dot(new THREE.Vector3(0, 1, 0))).toBe(-1);
-    expect(clipper.clippingPlanes[4].normal.dot(new THREE.Vector3(0, 0, 1))).toBe(1);
-    expect(clipper.clippingPlanes[5].normal.dot(new THREE.Vector3(0, 0, 1))).toBe(-1);
+    expect(clipper.clippingPlanes[0].normal.dot(new Vector3(1, 0, 0))).toBe(1);
+    expect(clipper.clippingPlanes[1].normal.dot(new Vector3(1, 0, 0))).toBe(-1);
+    expect(clipper.clippingPlanes[2].normal.dot(new Vector3(0, 1, 0))).toBe(1);
+    expect(clipper.clippingPlanes[3].normal.dot(new Vector3(0, 1, 0))).toBe(-1);
+    expect(clipper.clippingPlanes[4].normal.dot(new Vector3(0, 0, 1))).toBe(1);
+    expect(clipper.clippingPlanes[5].normal.dot(new Vector3(0, 0, 1))).toBe(-1);
 
     expect(clipper.clippingPlanes[0].constant).toBe(-1);
     expect(clipper.clippingPlanes[1].constant).toBe(4);
@@ -28,12 +28,12 @@ describe('BoundingBoxClipper', () => {
   test('Changing min and max values should move clip planes', () => {
     const clipper = new BoundingBoxClipper();
 
-    expect(clipper.clippingPlanes[0].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(1);
-    expect(clipper.clippingPlanes[1].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(-1);
-    expect(clipper.clippingPlanes[2].normal.dot(new THREE.Vector3(0, 1, 0))).toBe(1);
-    expect(clipper.clippingPlanes[3].normal.dot(new THREE.Vector3(0, 1, 0))).toBe(-1);
-    expect(clipper.clippingPlanes[4].normal.dot(new THREE.Vector3(0, 0, 1))).toBe(1);
-    expect(clipper.clippingPlanes[5].normal.dot(new THREE.Vector3(0, 0, 1))).toBe(-1);
+    expect(clipper.clippingPlanes[0].normal.dot(new Vector3(1, 0, 0))).toBe(1);
+    expect(clipper.clippingPlanes[1].normal.dot(new Vector3(1, 0, 0))).toBe(-1);
+    expect(clipper.clippingPlanes[2].normal.dot(new Vector3(0, 1, 0))).toBe(1);
+    expect(clipper.clippingPlanes[3].normal.dot(new Vector3(0, 1, 0))).toBe(-1);
+    expect(clipper.clippingPlanes[4].normal.dot(new Vector3(0, 0, 1))).toBe(1);
+    expect(clipper.clippingPlanes[5].normal.dot(new Vector3(0, 0, 1))).toBe(-1);
 
     expect(clipper.clippingPlanes[0].constant).toBe(-Infinity);
     expect(clipper.clippingPlanes[1].constant).toBe(-Infinity);
@@ -49,12 +49,12 @@ describe('BoundingBoxClipper', () => {
     clipper.maxY = 5.0;
     clipper.maxZ = 6.0;
 
-    expect(clipper.clippingPlanes[0].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(1);
-    expect(clipper.clippingPlanes[1].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(-1);
-    expect(clipper.clippingPlanes[2].normal.dot(new THREE.Vector3(0, 1, 0))).toBe(1);
-    expect(clipper.clippingPlanes[3].normal.dot(new THREE.Vector3(0, 1, 0))).toBe(-1);
-    expect(clipper.clippingPlanes[4].normal.dot(new THREE.Vector3(0, 0, 1))).toBe(1);
-    expect(clipper.clippingPlanes[5].normal.dot(new THREE.Vector3(0, 0, 1))).toBe(-1);
+    expect(clipper.clippingPlanes[0].normal.dot(new Vector3(1, 0, 0))).toBe(1);
+    expect(clipper.clippingPlanes[1].normal.dot(new Vector3(1, 0, 0))).toBe(-1);
+    expect(clipper.clippingPlanes[2].normal.dot(new Vector3(0, 1, 0))).toBe(1);
+    expect(clipper.clippingPlanes[3].normal.dot(new Vector3(0, 1, 0))).toBe(-1);
+    expect(clipper.clippingPlanes[4].normal.dot(new Vector3(0, 0, 1))).toBe(1);
+    expect(clipper.clippingPlanes[5].normal.dot(new Vector3(0, 0, 1))).toBe(-1);
 
     expect(clipper.clippingPlanes[0].constant).toBe(-1);
     expect(clipper.clippingPlanes[1].constant).toBe(4);

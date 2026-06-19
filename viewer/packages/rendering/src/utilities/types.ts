@@ -3,30 +3,30 @@
  */
 
 import type { IndexSet } from '@reveal/utilities';
-import * as THREE from 'three';
+import { Color } from 'three';
 
 /**
  * Colors from the Cognite theme.
  */
 export class CogniteColors {
-  public static readonly Black = new THREE.Color('rgb(0, 0, 0)');
-  public static readonly White = new THREE.Color('rgb(255, 255, 255)');
-  public static readonly Cyan = new THREE.Color('rgb(102, 213, 234)');
-  public static readonly Blue = new THREE.Color('rgb(77, 106, 242)');
-  public static readonly Purple = new THREE.Color('rgb(186, 82, 212)');
-  public static readonly Pink = new THREE.Color('rgb(232, 64, 117)');
-  public static readonly Orange = new THREE.Color('rgb(238, 113, 53)');
-  public static readonly Yellow = new THREE.Color('rgb(246, 189, 65)');
-  public static readonly VeryLightGray = new THREE.Color('rgb(247, 246, 245)');
-  public static readonly LightGray = new THREE.Color('rgb(242, 241, 240)');
+  public static readonly Black: Color = new Color('rgb(0, 0, 0)');
+  public static readonly White: Color = new Color('rgb(255, 255, 255)');
+  public static readonly Cyan: Color = new Color('rgb(102, 213, 234)');
+  public static readonly Blue: Color = new Color('rgb(77, 106, 242)');
+  public static readonly Purple: Color = new Color('rgb(186, 82, 212)');
+  public static readonly Pink: Color = new Color('rgb(232, 64, 117)');
+  public static readonly Orange: Color = new Color('rgb(238, 113, 53)');
+  public static readonly Yellow: Color = new Color('rgb(246, 189, 65)');
+  public static readonly VeryLightGray: Color = new Color('rgb(247, 246, 245)');
+  public static readonly LightGray: Color = new Color('rgb(242, 241, 240)');
 }
 
 /**
  * Some additional colors to supplement {@link CogniteColors}.
  */
 export class RevealColors {
-  public static readonly Red = new THREE.Color('rgb(235,0,4)');
-  public static readonly Green = new THREE.Color('rgb(46,164,79)');
+  public static readonly Red: Color = new Color('rgb(235,0,4)');
+  public static readonly Green: Color = new Color('rgb(46,164,79)');
 }
 
 export type StyledTreeIndexSets = {

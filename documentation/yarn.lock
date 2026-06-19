@@ -9280,15 +9280,15 @@ __metadata:
   linkType: hard
 
 "joi@npm:^17.9.2":
-  version: 17.13.3
-  resolution: "joi@npm:17.13.3"
+  version: 17.13.4
+  resolution: "joi@npm:17.13.4"
   dependencies:
     "@hapi/hoek": ^9.3.0
     "@hapi/topo": ^5.1.0
     "@sideway/address": ^4.1.5
     "@sideway/formula": ^3.0.1
     "@sideway/pinpoint": ^2.0.0
-  checksum: 66ed454fee3d8e8da1ce21657fd2c7d565d98f3e539d2c5c028767e5f38cbd6297ce54df8312d1d094e62eb38f9452ebb43da4ce87321df66cf5e3f128cbc400
+  checksum: 99e0a784f08cb0b6910bd42df094e4f3f047c2589c61b139b7eb25a21f814478a1d3b5c68134bbcc4153ac216cbae2710a2b7f56605974e5c66a0ebdfab08e8f
   languageName: node
   linkType: hard
 
@@ -9442,12 +9442,12 @@ __metadata:
   linkType: hard
 
 "launch-editor@npm:^2.6.1":
-  version: 2.14.0
-  resolution: "launch-editor@npm:2.14.0"
+  version: 2.14.1
+  resolution: "launch-editor@npm:2.14.1"
   dependencies:
     picocolors: ^1.1.1
     shell-quote: ^1.8.4
-  checksum: 279ade5f7a17bdafe8e41060b5cb305765fe77688b6984b36da3453b0624bd80c92bdf0a9ebbb4f4d80209ddf7a47ff8f385c706bae5a6e74fdae0e38431a36f
+  checksum: 232ea8a80146e7fec6c8ece7ebb600d58a82e9938f36111194980188d276935f424754b18e37d5b098f596d30580def723b231e093c27c3bcd703418278afc4c
   languageName: node
   linkType: hard
 
@@ -13925,15 +13925,15 @@ __metadata:
   linkType: hard
 
 "tar@npm:^7.5.4":
-  version: 7.5.15
-  resolution: "tar@npm:7.5.15"
+  version: 7.5.16
+  resolution: "tar@npm:7.5.16"
   dependencies:
     "@isaacs/fs-minipass": ^4.0.0
     chownr: ^3.0.0
     minipass: ^7.1.2
     minizlib: ^3.1.0
     yallist: ^5.0.0
-  checksum: b00ede0737f262691b18bd60aebdd15663c7cdabd40adce64dde0b69f65b7afb91cf31a4cae3bc184e2358aa14371fb0b56d6f7c0c0cc8b0238df1242c0e07ca
+  checksum: 9b7f886f5ce8681a7430f80b9b377bfa498e6feb957b9afe6507db08e59d309f8546b7f76a0c2e47bdb54da4602575a5c7519e287fe94de8302e635032fc94f1
   languageName: node
   linkType: hard
 
@@ -14726,8 +14726,8 @@ __metadata:
   linkType: hard
 
 "webpack-dev-server@npm:^5.2.2":
-  version: 5.2.4
-  resolution: "webpack-dev-server@npm:5.2.4"
+  version: 5.2.5
+  resolution: "webpack-dev-server@npm:5.2.5"
   dependencies:
     "@types/bonjour": ^3.5.13
     "@types/connect-history-api-fallback": ^1.5.4
@@ -14766,7 +14766,7 @@ __metadata:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: 4e1b13dc170b9964e579e5703dd56e97c2fbb6b101586cfda56f58f1ea0327ea9fcb9e4f36ff6264ee02ab69298697df87bd9617716d9c8379d2a6dc22bb103f
+  checksum: 349719d0487a5672f65a7427d54afc9f8ddc6b695042641ed9f468cb5a3c90866e16a236ecdb2ac62d2a922712f9c1296b8805b7ec0880f6a3f5c4280785f200
   languageName: node
   linkType: hard
 

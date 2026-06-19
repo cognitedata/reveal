@@ -18,11 +18,15 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.5.2
+
       - name: Build Reveal
         working-directory: viewer
         run: |
-          yarn install --immutable
-          yarn build:prod
+          pnpm install --frozen-lockfile
+          pnpm run build:prod
 
       - name: Install and Build documentation 🔧
         working-directory: documentation

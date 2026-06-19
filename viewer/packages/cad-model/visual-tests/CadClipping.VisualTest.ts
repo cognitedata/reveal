@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 
 import { BoundingBoxClipper, CadNode } from '..';
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
@@ -26,9 +26,9 @@ export default class CadClippingVisualTest extends StreamingVisualTestFixture {
     };
 
     const boxClipper = new BoundingBoxClipper(
-      new THREE.Box3(
-        new THREE.Vector3(params.x - params.width / 2, params.y - params.height / 2, params.z - params.depth / 1.5),
-        new THREE.Vector3(params.x + params.width / 1.5, params.y + params.height / 2, params.z + params.depth / 2)
+      new Box3(
+        new Vector3(params.x - params.width / 2, params.y - params.height / 2, params.z - params.depth / 1.5),
+        new Vector3(params.x + params.width / 1.5, params.y + params.height / 2, params.z + params.depth / 2)
       )
     );
 

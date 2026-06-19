@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Euler, Matrix4 } from 'three';
 import type { Image360Provider } from '../Image360Provider';
 import type {
   Historical360ImageSet,
@@ -60,13 +60,13 @@ export class Local360ImageProvider implements Image360Provider<ClassicDataSource
     const local360ImagesDescriptor: Local360ImagesDescriptor[] = await response.json();
 
     return local360ImagesDescriptor.map((localDescriptor, index) => {
-      const translation = new THREE.Matrix4().makeTranslation(
+      const translation = new Matrix4().makeTranslation(
         localDescriptor.translation.x,
         localDescriptor.translation.y,
         localDescriptor.translation.z
       );
-      const rotation = new THREE.Matrix4().makeRotationFromEuler(
-        new THREE.Euler(localDescriptor.rotation.x, localDescriptor.rotation.y, localDescriptor.rotation.z)
+      const rotation = new Matrix4().makeRotationFromEuler(
+        new Euler(localDescriptor.rotation.x, localDescriptor.rotation.y, localDescriptor.rotation.z)
       );
 
       const historicalImage360Descriptor = {

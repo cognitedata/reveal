@@ -3,7 +3,7 @@
  */
 
 import { vi } from 'vitest';
-import * as THREE from 'three';
+import { Matrix4, Texture, TextureLoader } from 'three';
 import type { IMock } from 'moq.ts';
 import { Mock, It, Times } from 'moq.ts';
 import type { SceneHandler } from '@reveal/utilities';
@@ -25,7 +25,7 @@ function makeFaces(count: number): Image360Face[] {
 
 function makeTextures(count: number): Image360Texture[] {
   const faceNames: Image360Face['face'][] = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-  return faceNames.slice(0, count).map(face => ({ face, texture: new THREE.Texture() }));
+  return faceNames.slice(0, count).map(face => ({ face, texture: new Texture() }));
 }
 
 describe(Image360RevisionEntity.name, () => {
@@ -48,7 +48,7 @@ describe(Image360RevisionEntity.name, () => {
       .setup(s => s.removeObject3D(It.IsAny()))
       .callback(() => {});
 
-    vizBox = new Image360VisualizationBox(new THREE.Matrix4(), sceneHandlerMock.object(), device);
+    vizBox = new Image360VisualizationBox(new Matrix4(), sceneHandlerMock.object(), device);
 
     Object.defineProperty(URL, 'createObjectURL', {
       value: vi.fn(() => 'blob:mock-url'),
@@ -56,7 +56,7 @@ describe(Image360RevisionEntity.name, () => {
       configurable: true
     });
     Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), writable: true, configurable: true });
-    vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync').mockResolvedValue(new THREE.Texture());
+    vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
 
     annotationFilterer = new Image360AnnotationFilter({});
 

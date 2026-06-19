@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 import { assert } from '@reveal/utilities/assert';
 import type { CogniteClient } from '@cognite/sdk';
 import { NumericRange, IndexSet } from '@reveal/utilities';
@@ -22,7 +22,7 @@ import type { SerializedNodeCollection } from './SerializedNodeCollection';
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
 
 export class NodeCollectionDeserializer {
-  public static readonly Instance = new NodeCollectionDeserializer();
+  public static readonly Instance: NodeCollectionDeserializer = new NodeCollectionDeserializer();
   private readonly _types = new Map<
     string,
     {
@@ -109,9 +109,9 @@ export class NodeCollectionDeserializer {
           max: { x: number; y: number; z: number };
         }[];
         const areaBoxes = areas.map(area => {
-          const min = new THREE.Vector3(area.min.x, area.min.y, area.min.z);
-          const max = new THREE.Vector3(area.max.x, area.max.y, area.max.z);
-          return new THREE.Box3(min, max);
+          const min = new Vector3(area.min.x, area.min.y, area.min.z);
+          const max = new Vector3(area.max.x, area.max.y, area.max.z);
+          return new Box3(min, max);
         });
         nodeCollection.addAreas(areaBoxes);
       }

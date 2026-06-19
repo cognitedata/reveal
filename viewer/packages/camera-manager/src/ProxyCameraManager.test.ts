@@ -1,7 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import type { PerspectiveCamera } from 'three';
+import { Vector3 } from 'three';
 
 import { It, Mock } from 'moq.ts';
 import { ProxyCameraManager } from './ProxyCameraManager';
@@ -11,8 +12,8 @@ import type { CameraChangeDelegate } from './types';
 describe(ProxyCameraManager.name, () => {
   test('Switching camera manager should also switch event handling', () => {
     const cameraOneEventHandlers = new Set<CameraChangeDelegate>();
-    const cameraOnePositionResult = new THREE.Vector3().random();
-    const cameraOneTargetResult = new THREE.Vector3().random();
+    const cameraOnePositionResult = new Vector3().random();
+    const cameraOneTargetResult = new Vector3().random();
     const cameraManagerOne = new Mock<CameraManager>()
       .setup(p => p.activate())
       .returns()
@@ -31,11 +32,11 @@ describe(ProxyCameraManager.name, () => {
         cameraOneEventHandlers.delete(eventHandler);
       })
       .setup(p => p.getCamera())
-      .returns({ aspect: 70 } as THREE.PerspectiveCamera)
+      .returns({ aspect: 70 } as PerspectiveCamera)
       .object();
 
-    const cameraTwoPositionResult = new THREE.Vector3().random();
-    const cameraTwoTargetResult = new THREE.Vector3().random();
+    const cameraTwoPositionResult = new Vector3().random();
+    const cameraTwoTargetResult = new Vector3().random();
     let cameraTwoEventHandler: CameraChangeDelegate;
     const cameraManagerTwo = new Mock<CameraManager>()
       .setup(p => p.activate())
@@ -51,12 +52,12 @@ describe(ProxyCameraManager.name, () => {
         cameraTwoEventHandler(cameraTwoPositionResult, cameraTwoTargetResult);
       })
       .setup(p => p.getCamera())
-      .returns({ aspect: 70 } as THREE.PerspectiveCamera)
+      .returns({ aspect: 70 } as PerspectiveCamera)
       .object();
 
     const activeCameraManager = new ProxyCameraManager(cameraManagerOne);
 
-    const cameraChangedResults: [THREE.Vector3, THREE.Vector3][] = [];
+    const cameraChangedResults: [Vector3, Vector3][] = [];
     activeCameraManager.on('cameraChange', (position, target) => {
       cameraChangedResults.push([position, target]);
     });

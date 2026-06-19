@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Camera } from 'three';
 import type { RenderPipelineProvider } from './RenderPipelineProvider';
 
 /**
@@ -10,6 +10,6 @@ import type { RenderPipelineProvider } from './RenderPipelineProvider';
  * a given pipeline from a RenderPipelineProvider.
  */
 export interface RenderPipelineExecutor {
-  render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void;
+  render(renderPipeline: RenderPipelineProvider, camera: Camera): void;
   dispose(): void;
 }

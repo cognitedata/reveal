@@ -7,7 +7,8 @@ import type { LoadingState } from '@reveal/model-base';
 import type { Observable } from 'rxjs';
 import { combineLatest, interval, of, pipe, Subject } from 'rxjs';
 import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'rxjs/operators';
-import * as THREE from 'three';
+import type { BufferGeometry, Object3D } from 'three';
+import { Points } from 'three';
 
 import type { PointCloudNode } from './PointCloudNode';
 import { numPointCloudNodesLoading } from './potree-three-loader';
@@ -94,11 +95,11 @@ export class PointCloudLoadingStateHandler {
   private getPointBuffersHash(pointCloudNodes: PointCloudNode<DataSourceType>[]) {
     let pointHash = 0xbaadf00d; // Kind of random bit pattern
     for (const pointCloud of pointCloudNodes) {
-      pointCloud.octree.traverseVisible((x: THREE.Object3D) => {
-        // Note! We pretend everything in the scene graph is THREE.Points,
+      pointCloud.octree.traverseVisible((x: Object3D) => {
+        // Note! We pretend everything in the scene graph is Points,
         // but verify that we only visit Points nodes here.
-        if (x instanceof THREE.Points) {
-          const geometry = x.geometry as THREE.BufferGeometry;
+        if (x instanceof Points) {
+          const geometry = x.geometry as BufferGeometry;
           pointHash ^= geometry.getAttribute('position').count;
         }
       });

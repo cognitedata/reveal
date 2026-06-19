@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Matrix4 } from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
@@ -14,7 +14,7 @@ export interface PointCloudMetadata {
   readonly modelBaseUrl: string;
   readonly signedFilesBaseUrl: string;
   readonly modelIdentifier: ModelIdentifier;
-  readonly modelMatrix: THREE.Matrix4;
+  readonly modelMatrix: Matrix4;
   readonly cameraConfiguration?: CameraConfiguration;
   readonly scene: any;
   readonly signedFiles?: { items: DMSJsonFileItem[] };

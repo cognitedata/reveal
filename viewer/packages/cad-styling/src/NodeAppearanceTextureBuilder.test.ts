@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { DataTexture } from 'three';
 
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
@@ -273,7 +273,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 });
 
-function texelsOf(texture: THREE.DataTexture): number[] | undefined {
+function texelsOf(texture: DataTexture): number[] | undefined {
   const data = texture.image.data;
   assert(data !== null);
   return Array.from(createUint8View(data));

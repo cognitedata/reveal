@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "stripInternal": true,
-    "types": ["vite/client", "vite-plugin-glsl/ext"]
+    "types": ["vite/client", "vite-plugin-glsl/ext", "@types/stats"]
   },
   "include": ["./packages/**/*.ts", "./api-entry-points/**/*.ts", "./visual-tests/visual-tests.vite.config.ts"],
   "exclude": [

@@ -3,14 +3,14 @@
  */
 
 import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
-import * as THREE from 'three';
+import type { Box3 } from 'three';
 import { CadSceneRootMetadata } from './parsers/types';
 
 export type SectorMetadata = {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
-  readonly subtreeBoundingBox: THREE.Box3;
+  readonly subtreeBoundingBox: Box3;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
   readonly estimatedRenderCost: number;
@@ -19,7 +19,7 @@ export type SectorMetadata = {
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
-  readonly geometryBoundingBox: THREE.Box3;
+  readonly geometryBoundingBox: Box3;
   readonly signedUrl?: string;
 };
 

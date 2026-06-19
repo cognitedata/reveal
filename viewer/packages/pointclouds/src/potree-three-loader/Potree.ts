@@ -76,7 +76,7 @@ export class Potree implements IPotree {
   private readonly _tempToNode: Vector3 = new Vector3();
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
-  lru = new LRU(this._pointBudget);
+  lru: LRU = new LRU(this._pointBudget);
 
   constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
     this._modelDataProvider = modelDataProvider;
