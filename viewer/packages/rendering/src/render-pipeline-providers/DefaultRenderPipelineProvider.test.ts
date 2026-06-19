@@ -165,8 +165,10 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     sceneHandler.addCadModel(cadNodeMock, modelIdentifierSymbol);
 
-    const renderOptions = defaultRenderOptions;
-    renderOptions.ssaoRenderParameters.sampleSize = 0;
+    const renderOptions = {
+      ...defaultRenderOptions,
+      ssaoRenderParameters: { ...defaultRenderOptions.ssaoRenderParameters, sampleSize: 0 }
+    };
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),

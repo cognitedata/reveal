@@ -15,6 +15,10 @@ class StubWorker {
 }
 (window as any).Worker = StubWorker;
 
+afterEach(() => {
+  document.body.innerHTML = '';
+});
+
 vi.stubGlobal(
   'ResizeObserver',
   class {
