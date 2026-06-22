@@ -46,7 +46,7 @@
     "test": "pnpm run test:wasm && pnpm run test:ts",
     "test:ts": "pnpm run build:wasm-test && vitest run --reporter=verbose",
     "test:wasm": "pnpm -r run --if-present run-wasm-pack test --headless --chrome ./wasm",
-    "test:visual:server": "pnpm run build:wasm && vite dev --config ./visual-tests/visual-tests.vite.config.ts",
+    "test:visual:server": "pnpm run build:wasm && pnpm vite build --config ./visual-tests/visual-tests.vite.config.ts && pnpm vite preview --config ./visual-tests/visual-tests.vite.config.ts --port 8080",
     "test:visual": "playwright test --config=visual-tests/playwright.config.ts",
     "test:visual:update": "playwright test --config=visual-tests/playwright.config.ts --update-snapshots",
     "typecheck:lib": "tsc --project tsconfig.lib.json --noEmit",
