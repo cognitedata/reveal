@@ -28,6 +28,10 @@ describe(HtmlOverlayTool.name, () => {
     canvasContainer = components.canvasContainer;
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test('add() only accepts absolute position', () => {
     // Arrange
     const helper = new HtmlOverlayTool(viewer);

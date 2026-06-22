@@ -5,10 +5,13 @@ import { batchedDebounce } from './batchedDebounce';
 import { vi } from 'vitest';
 
 describe(batchedDebounce.name, () => {
-  vi.useFakeTimers();
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
 
   afterEach(() => {
     vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   it('should batch multiple calls and resolve with correct results', async () => {

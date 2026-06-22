@@ -208,6 +208,12 @@ describe('Cognite3DViewer', () => {
   });
 
   test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
+    const computedStyleMock = vi.spyOn(window, 'getComputedStyle').mockImplementation(() => {
+      return {
+        visibility: 'visible',
+        display: 'block'
+      } as Partial<CSSStyleDeclaration> as CSSStyleDeclaration;
+    });
     // Setup a fake rendering loop
     const requestAnimationFrameSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
       requestAnimationFrameCallback = cb;
@@ -236,6 +242,7 @@ describe('Cognite3DViewer', () => {
       expect(onRendered).not.toHaveBeenCalled();
     } finally {
       requestAnimationFrameSpy.mockRestore();
+      computedStyleMock.mockReset();
     }
   });
 
