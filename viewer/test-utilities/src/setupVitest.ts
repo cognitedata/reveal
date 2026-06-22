@@ -17,6 +17,7 @@ class StubWorker {
 
 afterEach(() => {
   document.body.innerHTML = '';
+  document.head.innerHTML = '';
 });
 
 vi.stubGlobal(
