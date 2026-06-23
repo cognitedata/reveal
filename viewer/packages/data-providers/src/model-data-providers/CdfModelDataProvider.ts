@@ -1,12 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
-import { ModelDataProvider } from '../ModelDataProvider';
-import { isDMIdentifier } from '../DataSourceType';
-import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
+import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
+import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import { DMSJsonFileItem, DMSJsonFileResponse } from '../types';
+import type { DMSJsonFileItem, DMSJsonFileResponse } from '../types';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
@@ -44,10 +42,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
       throw Error('Could not download Json file');
     });
-    return {
-      signedFiles: { items: [] },
-      fileData: response.data
-    };
+    return response.data;
   }
 
   public async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
@@ -55,7 +50,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
-
     const response = await this.fetchWithRetry(signedUrl, {
       headers,
       signal: abortSignal,
@@ -69,21 +63,18 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.arrayBuffer();
   }
 
-  /**
-   * Download and parse a JSON file through signed URL endpoint for a given model identifier.
-   * @param baseUrl         Base URL of the signed files endpoint.
-   * @param modelIdentifier DM model identifier containing revision info (required).
-   */
-  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
-    const signedUrlItemsData = await this.getDMSJsonFileFromModelIdentifier(baseUrl, modelIdentifier);
-    const fileData = await this.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName);
-
-    console.log('TEST signedUrlItemsData', signedUrlItemsData);
-    console.log('TEST fileData', fileData);
-    return {
-      signedFiles: signedUrlItemsData,
-      fileData
+  public async getSignedJsonFile(signedUrl: string): Promise<unknown> {
+    const headers = {
+      ...this.client.getDefaultRequestHeaders(),
+      Accept: 'application/json'
     };
+    const response = await this.fetchWithRetry(signedUrl, {
+      headers,
+      method: 'GET'
+    }).catch(() => {
+      throw Error('Could not download signed JSON file');
+    });
+    return response.json();
   }
 
   /**
@@ -91,11 +82,16 @@ export class CdfModelDataProvider implements ModelDataProvider {
    * @param baseUrl         Base URL of the signed files endpoint.
    * @param modelIdentifier DM model identifier containing revision info (required).
    */
-  async getDMSJsonFileFromModelIdentifier(
-    baseUrl: string,
-    modelIdentifier: DMModelIdentifier
-  ): Promise<DMSJsonFileResponse> {
-    return this.fetchDMSJsonFile(baseUrl, modelIdentifier);
+  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
+    const [signedUrlItemsData, fileData] = await Promise.all([
+      this.fetchDMSJsonFile(baseUrl, modelIdentifier),
+      this.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName)
+    ]);
+
+    return {
+      signedFiles: signedUrlItemsData,
+      fileData
+    };
   }
 
   /**
@@ -109,12 +105,11 @@ export class CdfModelDataProvider implements ModelDataProvider {
     modelIdentifier: DMModelIdentifier,
     fileName: string
   ): Promise<unknown> {
-    const fileResponse = await this.fetchDMSJsonFile(baseUrl, modelIdentifier, fileName);
-    const fileNameData = await this.fetchWithRetry(fileResponse.items[0].signedUrl, {
-      headers: { Accept: '*/*' },
-      method: 'GET'
-    });
-    return fileNameData.json();
+    const fileResponse = await this.fetchDMSJsonFile(baseUrl, modelIdentifier, [fileName]);
+    if (!fileResponse.items.length) {
+      throw new Error(`File "${fileName}" not found via filtered request to signed files endpoint`);
+    }
+    return this.getSignedJsonFile(fileResponse.items[0].signedUrl);
   }
 
   /**
@@ -126,16 +121,16 @@ export class CdfModelDataProvider implements ModelDataProvider {
   async fetchDMSJsonFile(
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
-    fileName?: string
+    fileNames?: string[]
   ): Promise<DMSJsonFileResponse> {
-    if (!(modelIdentifier instanceof CdfModelIdentifier && isDMIdentifier(modelIdentifier))) {
+    if (!(modelIdentifier instanceof DMModelIdentifier)) {
       throw new Error('getDMSJsonFile requires a valid DM model identifier');
     }
 
     const items: DMSJsonFileItem[] = [];
     let cursor: string | undefined = undefined;
 
-    const filter = fileName ? { filter: { paths: [fileName] } } : undefined;
+    const filter = fileNames?.length ? { filter: { paths: fileNames } } : undefined;
     do {
       const payload: HttpRequestOptions = {
         data: {

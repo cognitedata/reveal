@@ -11,12 +11,10 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  File3dFormat,
-  BlobOutputMetadata,
-  DMModelIdentifier,
-  isDMIdentifier
+  BlobOutputMetadata
 } from '@reveal/data-providers';
-import { PointCloudMetadataWithSignedFiles } from './types';
+import { File3dFormat, DMModelIdentifier, isDMIdentifier } from '@reveal/data-providers';
+import type { PointCloudMetadataWithSignedFiles } from './types';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -64,7 +62,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     signedFilesBaseUrl: string,
     fileName: string
   ): Promise<PointCloudMetadataWithSignedFiles> {
-    if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier)) {
+    if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
       const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
       return {
         type: 'pointCloudMetadata',
@@ -76,7 +74,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     return {
       type: 'pointCloudMetadata',
       signedFiles: { items: [] },
-      fileData: jsonData.fileData
+      fileData: jsonData
     };
   }
 

@@ -8,17 +8,12 @@ import type { TypedArray } from 'three';
 import { Box3, BufferAttribute, BufferGeometry, Vector3 } from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
-import { ILoader } from './ILoader';
-import {
-  DMModelIdentifier,
-  ModelDataProvider,
-  SerializableStylableObject,
-  StylableObject
-} from '@reveal/data-providers';
-import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
-
+import type { ILoader } from './ILoader';
+import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as Comlink from 'comlink';
+import EptBinaryDecoderWorkerConstructor from '../workers/eptBinaryDecoder.worker.ts?worker&inline';
 
 import type { ParsedEptData, EptInputData } from '../workers/types';
 
@@ -32,7 +27,7 @@ export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
   private readonly _stylableObjectsWithBox: [SerializableStylableObject, Box3][];
 
-  static readonly WORKER_POOL: WorkerPool<Worker> = new WorkerPool(8, EptDecoderWorker);
+  static readonly WORKER_POOL = new WorkerPool(8, EptBinaryDecoderWorkerConstructor);
 
   extension(): string {
     return '.bin';

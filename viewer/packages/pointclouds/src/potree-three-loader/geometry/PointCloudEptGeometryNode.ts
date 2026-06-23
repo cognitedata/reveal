@@ -17,9 +17,10 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import { DMModelIdentifier, ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
-import { PointCloudMetadataWithSignedFiles } from '../../types';
-import { EptJson } from '../loading/EptJson';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type { PointCloudMetadataWithSignedFiles } from '../../types';
+import type { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
@@ -133,10 +134,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._ept;
   }
 
-  get eptMetadata(): PointCloudMetadataWithSignedFiles | { fileData: EptJson } {
-    return this._eptMetadata;
-  }
-
   get index(): number {
     return this._index;
   }
@@ -167,7 +164,10 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
     const nodeFileName = this._key.name() + this._ept.loader.extension();
     if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-      this._signedUrl = this._eptMetadata.signedFiles.items.find(file => file.fileName === nodeFileName)?.signedUrl;
+      const found = this._eptMetadata.signedFiles.items.find(
+        file => file.fileName === nodeFileName || file.fileName.endsWith('/' + nodeFileName)
+      );
+      this._signedUrl = found?.signedUrl;
     }
 
     this._dataLoader = modelDataProvider;
@@ -282,6 +282,16 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
     if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
       const filePath = `ept-hierarchy/${fileName}`;
+
+      if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
+        const fileItem = this._eptMetadata.signedFiles.items.find(
+          item => item.fileName === filePath || item.fileName.endsWith('/' + filePath)
+        );
+        if (fileItem) {
+          return this._dataLoader.getSignedJsonFile(fileItem.signedUrl) as Promise<{ [key: string]: number }>;
+        }
+      }
+
       return this._dataLoader.getDMSJsonFileFromFileName(
         this.signedFilesBaseUrl,
         this._modelIdentifier,
@@ -289,7 +299,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       ) as Promise<{ [key: string]: number }>;
     } else {
       const baseUrl = `${this.ept.url}ept-hierarchy`;
-      return this._dataLoader.getJsonFile(baseUrl, fileName) as Promise<{ [key: string]: number }>;
+      return this._dataLoader.getJsonFile(baseUrl, fileName).then((result: { [key: string]: number }) => result);
     }
   }
 
@@ -300,12 +310,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     const fileName = `${this.fileName()}.json`;
 
     const hier = await this.getHierarchy(fileName);
-    /*     if (hasSignedFiles(hier)) {
-      const signedFiles = hier.signedFiles.items;
-      if (signedFiles.length > 0) {
-        this.signedUrl = signedFiles.find((file: { fileName: string }) => file.fileName === fileName)?.signedUrl;
-      }
-    } */
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.

@@ -9,7 +9,7 @@ import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
 import type { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
-import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
+import type { DMSJsonFileItem } from '@reveal/data-providers';
 
 export function parseCadMetadataGltf(metadata: CadMetadataWithSignedFiles): SectorScene {
   if (!metadata.fileData.sectors || metadata.fileData.sectors.length === 0) {
@@ -85,7 +85,9 @@ function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: DMSJso
 
   let signedUrl: string | undefined = metadata.signedUrl;
   if (signedFiles.length > 0) {
-    signedUrl = signedFiles.find(f => f.fileName === metadata.sectorFileName)?.signedUrl;
+    const sectorFileName = metadata.sectorFileName;
+    const found = signedFiles.find(f => f.fileName === sectorFileName || f.fileName.endsWith('/' + sectorFileName));
+    if (found !== undefined) signedUrl = found.signedUrl;
   }
 
   return {

@@ -12,7 +12,7 @@ import type { CadModelMetadata } from './CadModelMetadata';
 import type { MetadataRepository } from '@reveal/model-base';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import type {
+import {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
@@ -55,17 +55,6 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const inverseModelMatrix = new Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
-    console.log(
-      'TEST SCENE JSON CAD',
-      'blobBaseUrl',
-      blobBaseUrl,
-      'this._blobFileName',
-      this._blobFileName,
-      'json',
-      json,
-      'scene',
-      scene
-    );
     return {
       modelIdentifier,
       modelBaseUrl: blobBaseUrl,
@@ -90,7 +79,6 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
       const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
       return {
-        type: 'cadMetadata',
         signedFiles: (jsonData as CadMetadataWithSignedFiles).signedFiles,
         fileData: (jsonData as CadMetadataWithSignedFiles).fileData
       };
@@ -98,9 +86,8 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     if (baseUrl) {
       const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
       return {
-        type: 'cadMetadata',
         signedFiles: { items: [] },
-        fileData: jsonData.fileData
+        fileData: jsonData
       };
     }
     throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');

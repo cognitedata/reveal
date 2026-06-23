@@ -46,7 +46,7 @@ export interface WantedSector {
   modelIdentifier: ModelIdentifier;
   modelBaseUrl: string | undefined;
   signedFilesBaseUrl: string | undefined;
-  geometryClipBox: THREE.Box3 | null;
+  geometryClipBox: Box3 | null;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }

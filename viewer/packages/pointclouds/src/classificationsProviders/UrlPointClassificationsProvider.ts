@@ -2,11 +2,19 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DMModelIdentifier, isDMIdentifier, ModelDataProvider } from '@reveal/data-providers';
+import type { ModelDataProvider } from '@reveal/data-providers';
+import { DMModelIdentifier, isDMIdentifier } from '@reveal/data-providers';
 import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../constants';
-import { IPointClassificationsProvider } from './IPointClassificationsProvider';
-import { PointCloudMetadata } from '../PointCloudMetadata';
-import { PointCloudClassificationInfoWithSignedFiles } from '../types';
+import type { IPointClassificationsProvider } from './IPointClassificationsProvider';
+import type { PointCloudMetadata } from '../PointCloudMetadata';
+import type { PointCloudClassificationInfoWithSignedFiles } from '../types';
+import type { ClassificationInfo } from '../potree-three-loader';
+
+const EMPTY_CLASSIFICATION: PointCloudClassificationInfoWithSignedFiles = {
+  type: 'classificationInfo',
+  signedFiles: { items: [] },
+  fileData: { classificationSets: [] }
+};
 
 export class UrlPointClassificationsProvider implements IPointClassificationsProvider {
   _dataProvider: ModelDataProvider;
@@ -23,12 +31,20 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
           modelMetadata.modelIdentifier,
           DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE
         )
-        .then(json => json as PointCloudClassificationInfoWithSignedFiles)
-        .catch(_ => ({ type: 'classificationInfo', signedFiles: { items: [] }, fileData: { classificationSets: [] } }));
+        .then(json => ({
+          type: 'classificationInfo' as const,
+          signedFiles: { items: [] },
+          fileData: json as ClassificationInfo
+        }))
+        .catch(() => EMPTY_CLASSIFICATION);
     }
     return this._dataProvider
       .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
-      .then(json => json as PointCloudClassificationInfoWithSignedFiles)
-      .catch(_ => ({ type: 'classificationInfo', signedFiles: { items: [] }, fileData: { classificationSets: [] } }));
+      .then(json => ({
+        type: 'classificationInfo' as const,
+        signedFiles: { items: [] },
+        fileData: json as ClassificationInfo
+      }))
+      .catch(() => EMPTY_CLASSIFICATION);
   }
 }
