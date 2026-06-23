@@ -29,7 +29,7 @@ function readCdfEnv(): string {
   }
 }
 
-export default defineConfig(_ => {
+export default defineConfig(({ command }) => {
   const open = setTestFixture(process.env.testFixture);
   const cdfEnv = readCdfEnv();
 
@@ -55,11 +55,9 @@ export default defineConfig(_ => {
     },
 
     build: {
+      assetsInlineLimit: Infinity,
       outDir: path.resolve(__dirname, 'dist'),
-      sourcemap: 'inline',
-      rollupOptions: {
-        input: path.resolve(__dirname, './VisualTest.browser.ts')
-      }
+      sourcemap: command === 'serve' ? 'inline' : false
     },
 
     worker: {
