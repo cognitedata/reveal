@@ -4,10 +4,10 @@
 
 import { Box3, Vector3 } from 'three';
 
-import { CadMetadataWithSignedFiles, SectorMetadata } from '../types';
-import { SectorScene } from '../../utilities/types';
+import type { CadMetadataWithSignedFiles, SectorMetadata } from '../types';
+import type { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import type { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
+import type { BoundingBox, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
 import type { DMSJsonFileItem } from '@reveal/data-providers';
 

@@ -47,7 +47,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
 
   public async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const headers = {
-      ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
     const response = await this.fetchWithRetry(signedUrl, {
@@ -65,8 +64,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
 
   public async getSignedJsonFile(signedUrl: string): Promise<unknown> {
     const headers = {
-      ...this.client.getDefaultRequestHeaders(),
-      Accept: 'application/json'
+      Accept: 'application/json, */*'
     };
     const response = await this.fetchWithRetry(signedUrl, {
       headers,
@@ -74,6 +72,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
     }).catch(() => {
       throw Error('Could not download signed JSON file');
     });
+    if (response.ok === false) {
+      throw new Error(`Signed JSON file request failed with status ${response.status}`);
+    }
     return response.json();
   }
 

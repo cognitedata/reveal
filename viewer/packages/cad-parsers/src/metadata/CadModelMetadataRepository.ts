@@ -12,16 +12,14 @@ import type { CadModelMetadata } from './CadModelMetadata';
 import type { MetadataRepository } from '@reveal/model-base';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import {
+import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  File3dFormat,
-  BlobOutputMetadata,
-  isDMIdentifier,
-  DMModelIdentifier
+  BlobOutputMetadata
 } from '@reveal/data-providers';
-import { CadMetadataWithSignedFiles } from './types';
+import { File3dFormat, isDMIdentifier, DMModelIdentifier } from '@reveal/data-providers';
+import type { CadMetadataWithSignedFiles } from './types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
