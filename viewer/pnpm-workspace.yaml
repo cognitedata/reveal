@@ -1,7 +1,6 @@
 packages:
   - 'packages/*'
 allowBuilds:
-  '@swc/core': true
   wasm-pack: true
 overrides:
   "binary-install>axios": "^1.0.0"

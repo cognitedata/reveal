@@ -7,7 +7,6 @@ import glsl from 'vite-plugin-glsl';
 import wasm from 'vite-plugin-wasm';
 import fs from 'fs';
 import path from 'path';
-import { tsAccessorDecoratorPlugin } from '../vite.config';
 
 function setTestFixture(testFixture: string | undefined): string | boolean {
   if (testFixture === undefined) {
@@ -37,7 +36,7 @@ export default defineConfig(_ => {
   return {
     root: __dirname,
 
-    plugins: [tsAccessorDecoratorPlugin(), glsl()],
+    plugins: [glsl()],
 
     define: {
       CDF_ENV: cdfEnv
