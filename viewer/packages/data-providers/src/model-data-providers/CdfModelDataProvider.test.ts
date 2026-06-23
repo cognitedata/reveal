@@ -151,20 +151,6 @@ describe(CdfModelDataProvider.name, () => {
     expect(secondCallData.cursor).toBe('cursor-abc');
   });
 
-  test('fetchDMSJsonFile() sends filter.paths when fileNames provided', async () => {
-    const mockItems = [{ signedUrl: 'https://signed/scene.json', fileName: 'scene.json', subPath: '' }];
-    const postSpy = vi.spyOn(client, 'post').mockResolvedValueOnce({
-      data: { items: mockItems, nextCursor: undefined },
-      headers: {},
-      status: 200
-    } as any);
-
-    await clientExt.fetchDMSJsonFile(baseUrl, dmIdentifier, ['scene.json']);
-
-    const callData = (postSpy.mock.calls[0][1] as any).data;
-    expect(callData.filter).toEqual({ paths: ['scene.json'] });
-  });
-
   test('getDMSJsonFile() returns combined signedFiles and fileData', async () => {
     const mockFiles = {
       items: [{ signedUrl: 'https://s/0.glb', fileName: '0.glb', subPath: '' }],

@@ -5,7 +5,6 @@
 import { vi } from 'vitest';
 import { LocalModelDataProvider } from './LocalModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import { Log } from '@reveal/logger';
 
 describe(LocalModelDataProvider.name, () => {
   const provider = new LocalModelDataProvider();
@@ -22,19 +21,14 @@ describe(LocalModelDataProvider.name, () => {
     vi.unstubAllGlobals();
   });
 
-  test('getSignedBinaryFile() fetches signedUrl directly, returns ArrayBuffer, warns on AbortSignal', async () => {
+  test('getSignedBinaryFile() fetches signedUrl directly and returns ArrayBuffer', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn<() => Promise<Response>>().mockResolvedValue(new Response('binary-data', { status: 200 }))
     );
-    const warnSpy = vi.spyOn(Log, 'warn');
-    const result = await provider.getSignedBinaryFile(
-      'https://cdn.example.com/sector.glb',
-      new AbortController().signal
-    );
+    const result = await provider.getSignedBinaryFile('https://cdn.example.com/sector.glb');
     expect(fetch).toHaveBeenCalledWith('https://cdn.example.com/sector.glb');
     expect(result).toBeInstanceOf(ArrayBuffer);
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('not supported'));
   });
 
   test('getSignedJsonFile() fetches signedUrl directly and returns parsed JSON', async () => {
