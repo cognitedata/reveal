@@ -5,6 +5,7 @@ import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { DMSJsonFileItem, DMSJsonFileResponse } from '../types';
+import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
@@ -149,7 +150,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
 
       const response = await this.client.post<DMSJsonFileResponse>(`${baseUrl}`, payload);
       const responseData = response.data;
-      items.push(...responseData.items);
+      items.push(
+        ...responseData.items.map(item => ({ ...item, signedUrl: stripRestrictedApiGateway(item.signedUrl) }))
+      );
       cursor = responseData.nextCursor;
     } while (cursor);
 
