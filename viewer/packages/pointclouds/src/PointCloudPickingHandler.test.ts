@@ -77,6 +77,7 @@ describe(PointCloudPickingHandler.name, () => {
       pointIndex: 0,
       object: node.octree,
       position: new Vector3(1, 2, 3),
+      pointCloud: node.octree,
       objectId
     });
 
@@ -102,6 +103,7 @@ describe(PointCloudPickingHandler.name, () => {
       pointIndex: 0,
       object: node.octree,
       position: new Vector3(1, 2, 3),
+      pointCloud: node.octree,
       objectId
     });
 
@@ -112,46 +114,80 @@ describe(PointCloudPickingHandler.name, () => {
     expect(result[0].volumeMetadata).toEqual({ volumeInstanceRef, assetRef: undefined });
   });
 
-  test('intersectPointClouds returns intersections sorted by distance to camera (closest first)', async () => {
+  test('intersectPointClouds calls pick() once with all visible octrees regardless of node count', async () => {
+    const node1 = createPointCloudNode();
+    const node2 = createPointCloudNode();
+    const node3 = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+    await handler.intersectPointClouds([node1, node2, node3], createMockIntersectInput());
+
+    expect(pickSpy).toHaveBeenCalledOnce();
+    const [, , octreesArg] = pickSpy.mock.calls[0];
+    expect(octreesArg).toEqual([node1.octree, node2.octree, node3.octree]);
+  });
+
+  test('intersectPointClouds returns nearest intersection from batched pick across multiple point clouds', async () => {
     const node1 = createPointCloudNode();
     const node2 = createPointCloudNode();
     const input = createMockIntersectInput();
-    // Camera is at origin; node1 octree is at distance 5, node2 octree is at distance 1
-    vi.spyOn(PointCloudOctreePicker.prototype, 'pick')
-      .mockResolvedValueOnce({ pointIndex: 0, object: node1.octree, position: new Vector3(5, 0, 0), objectId: 0 })
-      .mockResolvedValueOnce({
-        pointIndex: 0,
-        object: node2.octree,
-        position: new Vector3(1, 0, 0),
-        objectId: 0
-      });
+
+    // Simulate picker returning the nearest hit (node2 at distance 1) from a single batched call
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
+      pointIndex: 0,
+      object: node2.octree,
+      position: new Vector3(1, 0, 0),
+      pointCloud: node2.octree,
+      objectId: 0
+    });
 
     const result = await handler.intersectPointClouds([node1, node2], input);
 
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(1);
+    expect(result[0].pointCloudNode).toBe(node2);
     expect(result[0].point).toEqual(new Vector3(1, 0, 0));
-    expect(result[1].point).toEqual(new Vector3(5, 0, 0));
   });
 
-  test('intersectPointClouds filters out intersections clipped by clipping planes', async () => {
-    const node1 = createPointCloudNode();
-    const node2 = createPointCloudNode();
+  test('intersectPointClouds filters out intersection clipped by clipping planes', async () => {
+    const node = createPointCloudNode();
     // Clipping plane: normal (-1,0,0) + constant 5 → clips all points with x > 5
     const clippingPlane = new Plane(new Vector3(-1, 0, 0), 5);
     const input: IntersectInput = {
       ...createMockIntersectInput(),
       clippingPlanes: [clippingPlane]
     };
-    vi.spyOn(PointCloudOctreePicker.prototype, 'pick')
-      .mockResolvedValueOnce({ pointIndex: 0, object: node1.octree, position: new Vector3(1, 0, 0), objectId: 0 })
-      .mockResolvedValueOnce({
-        pointIndex: 0,
-        object: node2.octree,
-        position: new Vector3(10, 0, 0),
-        objectId: 0
-      });
 
-    const result = await handler.intersectPointClouds([node1, node2], input);
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
+      pointIndex: 0,
+      object: node.octree,
+      position: new Vector3(10, 0, 0), // clipped
+      pointCloud: node.octree,
+      objectId: 0
+    });
+
+    const result = await handler.intersectPointClouds([node], input);
+
+    expect(result).toEqual([]);
+  });
+
+  test('intersectPointClouds returns result when intersection is not clipped', async () => {
+    const node = createPointCloudNode();
+    // Clipping plane: normal (-1,0,0) + constant 5 → clips all points with x > 5
+    const clippingPlane = new Plane(new Vector3(-1, 0, 0), 5);
+    const input: IntersectInput = {
+      ...createMockIntersectInput(),
+      clippingPlanes: [clippingPlane]
+    };
+
+    vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue({
+      pointIndex: 0,
+      object: node.octree,
+      position: new Vector3(1, 0, 0), // not clipped
+      pointCloud: node.octree,
+      objectId: 0
+    });
+
+    const result = await handler.intersectPointClouds([node], input);
 
     expect(result).toHaveLength(1);
     expect(result[0].point).toEqual(new Vector3(1, 0, 0));
