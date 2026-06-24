@@ -46,19 +46,19 @@
     "test": "pnpm run test:wasm && pnpm run test:ts",
     "test:ts": "pnpm run build:wasm-test && vitest run --reporter=verbose",
     "test:wasm": "pnpm -r run --if-present run-wasm-pack test --headless --chrome ./wasm",
-    "test:visual:server": "pnpm run build:wasm && vite dev --config ./visual-tests/visual-tests.vite.config.ts",
+    "test:visual:server": "pnpm run build:wasm && pnpm vite build --config ./visual-tests/visual-tests.vite.config.ts && pnpm vite preview --config ./visual-tests/visual-tests.vite.config.ts --port 8080",
     "test:visual": "playwright test --config=visual-tests/playwright.config.ts",
     "test:visual:update": "playwright test --config=visual-tests/playwright.config.ts --update-snapshots",
     "typecheck:lib": "tsc --project tsconfig.lib.json --noEmit",
     "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
     "coverage": "pnpm run build:wasm-test && vitest run --coverage",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
+    "lint": "eslint . --max-warnings 0 --cache",
     "update-api": "api-extractor run --local && shx rm -rf api-extractor-temp/",
     "ws:serve": "pnpm run build:wasm && vite dev --config ./visual-tests/visual-tests.vite.config.ts",
     "ws:test": "cd $INIT_CWD && vitest run",
     "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
     "ws:update-cargo-index": "cargo update --dry-run",
-    "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
+    "ws:lint": "cd $INIT_CWD && eslint . --max-warnings 0 --cache"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",
@@ -87,16 +87,15 @@
     "@types/skmeans": "^0.11.7",
     "@types/stats": "^0.16.30",
     "@types/three": "^0.184.0",
-    "@typescript-eslint/eslint-plugin": "^7.7.1",
-    "@typescript-eslint/parser": "^7.7.1",
     "@vitest/coverage-v8": "^4.1.7",
     "dat.gui": "^0.7.9",
-    "eslint": "^8.57.0",
+    "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.0.0",
-    "eslint-plugin-header": "^3.1.1",
-    "eslint-plugin-jsdoc": "^62.0.0",
+    "eslint-plugin-jsdoc": "^63.0.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-unused-imports": "^3.1.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
+    "globals": "^17.0.0",
+    "typescript-eslint": "^8.0.0",
     "glob": "^13.0.0",
     "happy-dom": "^20.10.6",
     "moq.ts": "10.0.8",
@@ -120,5 +119,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "pnpm@11.7.0"
+  "packageManager": "pnpm@11.8.0"
 }
