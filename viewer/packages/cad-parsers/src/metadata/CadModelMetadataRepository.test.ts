@@ -74,6 +74,10 @@ function createMockedModelDataProvider(): ModelDataProvider {
     },
     getBinaryFile: async () => {
       return new ArrayBuffer(1);
-    }
+    },
+    getDMSJsonFile: async () => undefined,
+    getSignedBinaryFile: async () => new ArrayBuffer(0),
+    getSignedJsonFile: async () => undefined,
+    getDMSJsonFileFromFileName: async () => undefined
   };
 }
