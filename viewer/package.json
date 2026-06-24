@@ -96,7 +96,7 @@
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-jsdoc": "^62.0.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-unused-imports": "^3.1.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
     "glob": "^13.0.0",
     "happy-dom": "^20.10.6",
     "moq.ts": "10.0.8",
