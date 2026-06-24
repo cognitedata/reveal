@@ -105,9 +105,8 @@
     "three": "0.184.0",
     "typescript": "^6.0.3",
     "unplugin-dts": "^1.0.2",
-    "vite": "^8.0.16",
+    "vite": "^8.1.0",
     "vite-plugin-glsl": "^1.6.0",
-    "vite-plugin-wasm": "^3.6.0",
     "vitest": "^4.1.7",
     "vitest-canvas-mock": "^1.1.4",
     "wasm-pack": "^0.15.0"

@@ -4,7 +4,6 @@
 
 import { defineConfig } from 'vite';
 import glsl from 'vite-plugin-glsl';
-import wasm from 'vite-plugin-wasm';
 import pkg from './package.json' with { type: 'json' };
 import dts from 'unplugin-dts/vite';
 import path from 'path';
@@ -25,8 +24,7 @@ export default defineConfig(({ command }) => {
     ],
 
     worker: {
-      format: 'es',
-      plugins: () => [wasm()]
+      format: 'es'
     },
 
     build: {
