@@ -10,7 +10,6 @@ import { batchedDebounce, type BatchedDebounce } from '@reveal/utilities';
 type NodeIdRequest = CogniteInternalId;
 type TreeIndexRequest = number;
 
-/* eslint-disable jsdoc/require-jsdoc */
 /**
  * @internal
  */

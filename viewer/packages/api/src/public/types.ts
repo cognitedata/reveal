@@ -26,4 +26,4 @@ export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceT
   image360: Image360<T>;
 };
 
-export * from './migration/types';
+export type * from './migration/types';

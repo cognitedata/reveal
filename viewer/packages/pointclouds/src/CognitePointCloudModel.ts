@@ -4,6 +4,7 @@
 
 import type { Color, Matrix4, Plane } from 'three';
 import { Box3, Vector3 } from 'three';
+
 import type { CameraConfiguration } from '@reveal/utilities';
 import type { WellKnownAsprsPointClassCodes } from './types';
 import type { PointCloudNode } from './PointCloudNode';
@@ -68,7 +69,6 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    */
   dispose(): void {}
 
-  // eslint-disable-next-line jsdoc/require-description
   /**
    * @param outBoundingBox Optional. Used to write result to.
    * @returns Model's bounding box.

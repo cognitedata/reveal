@@ -1,4 +1,0 @@
-dist/*
-packages/**/wasm/pkg/*
-target/*
-coverage/*
