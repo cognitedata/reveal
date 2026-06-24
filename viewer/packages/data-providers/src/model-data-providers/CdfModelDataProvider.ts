@@ -1,8 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
+import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
+import type { DMSJsonFileItem, DMSJsonFileResponse } from '../types';
+import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
@@ -36,11 +39,107 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.arrayBuffer();
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
+  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
     const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
       throw Error('Could not download Json file');
     });
     return response.data;
+  }
+
+  public async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
+    const headers = {
+      Accept: '*/*'
+    };
+    const response = await this.fetchWithRetry(signedUrl, {
+      headers,
+      signal: abortSignal,
+      method: 'GET'
+    }).catch(e => {
+      if (e?.name === 'AbortError') {
+        throw e;
+      }
+      throw Error('Could not download signed binary file');
+    });
+    return response.arrayBuffer();
+  }
+
+  public async getSignedJsonFile(signedUrl: string): Promise<unknown> {
+    const headers = {
+      Accept: 'application/json, */*'
+    };
+    const response = await this.fetchWithRetry(signedUrl, {
+      headers,
+      method: 'GET'
+    }).catch(() => {
+      throw Error('Could not download signed JSON file');
+    });
+    if (response.ok === false) {
+      throw new Error(`Signed JSON file request failed with status ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
+    const [signedUrlItemsData, fileData] = await Promise.all([
+      this.fetchDMSJsonFile(baseUrl, modelIdentifier),
+      this.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName)
+    ]);
+
+    return {
+      signedFiles: signedUrlItemsData,
+      fileData
+    };
+  }
+
+  async getDMSJsonFileFromFileName(
+    baseUrl: string,
+    modelIdentifier: DMModelIdentifier,
+    fileName: string
+  ): Promise<unknown> {
+    const fileResponse = await this.fetchDMSJsonFile(baseUrl, modelIdentifier, [fileName]);
+    if (!fileResponse.items.length) {
+      throw new Error(`File "${fileName}" not found via filtered request to signed files endpoint`);
+    }
+    return this.getSignedJsonFile(fileResponse.items[0].signedUrl);
+  }
+
+  async fetchDMSJsonFile(
+    baseUrl: string,
+    modelIdentifier: DMModelIdentifier,
+    fileNames?: string[]
+  ): Promise<DMSJsonFileResponse> {
+    if (!(modelIdentifier instanceof DMModelIdentifier)) {
+      throw new Error('getDMSJsonFile requires a valid DM model identifier');
+    }
+
+    const items: DMSJsonFileItem[] = [];
+    let cursor: string | undefined = undefined;
+
+    const filter = fileNames?.length ? { filter: { paths: fileNames } } : undefined;
+    do {
+      const payload: HttpRequestOptions = {
+        data: {
+          revision: {
+            instanceId: {
+              space: modelIdentifier.revisionSpace,
+              externalId: modelIdentifier.revisionExternalId
+            }
+          },
+          ...filter,
+          limit: 1000,
+          cursor: cursor
+        }
+      };
+
+      const response = await this.client.post<DMSJsonFileResponse>(`${baseUrl}`, payload);
+      const responseData = response.data;
+      items.push(
+        ...responseData.items.map(item => ({ ...item, signedUrl: stripRestrictedApiGateway(item.signedUrl) }))
+      );
+      cursor = responseData.nextCursor;
+    } while (cursor);
+
+    return { items, nextCursor: cursor };
   }
 
   private async fetchWithRetry(input: RequestInfo, options: RequestInit, retries: number = 3) {
