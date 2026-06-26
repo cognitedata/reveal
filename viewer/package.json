@@ -86,7 +86,7 @@
     "@types/random-seed": "^0.3.5",
     "@types/skmeans": "^0.11.7",
     "@types/stats": "^0.16.30",
-    "@types/three": "^0.184.0",
+    "@types/three": "^0.185.0",
     "@vitest/coverage-v8": "^4.1.7",
     "dat.gui": "^0.7.9",
     "eslint": "^10.5.0",
@@ -102,7 +102,7 @@
     "prettier": "^3.2.5",
     "shx": "^0.4.0",
     "stats.js": "^0.17.0",
-    "three": "0.184.0",
+    "three": "0.185.0",
     "typescript": "^6.0.3",
     "unplugin-dts": "^1.0.2",
     "vite": "^8.1.0",
@@ -113,7 +113,7 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "^10.0.0",
-    "three": "0.184.0"
+    "three": "0.185.0"
   },
   "files": [
     "dist"
