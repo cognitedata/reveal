@@ -3,6 +3,7 @@
  */
 
 import type { ModelDataProvider } from '../ModelDataProvider';
+import type { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -77,6 +78,26 @@ export class CachedModelDataProvider implements ModelDataProvider {
       .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
 
     return data;
+  }
+
+  async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
+    return this.baseProvider.getSignedBinaryFile(signedUrl, abortSignal);
+  }
+
+  async getSignedJsonFile(signedUrl: string): Promise<unknown> {
+    return this.baseProvider.getSignedJsonFile(signedUrl);
+  }
+
+  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
+    return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
+  }
+
+  async getDMSJsonFileFromFileName(
+    baseUrl: string,
+    modelIdentifier: DMModelIdentifier,
+    fileName: string
+  ): Promise<unknown> {
+    return this.baseProvider.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName);
   }
 
   /**

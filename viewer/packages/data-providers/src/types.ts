@@ -30,6 +30,17 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
+export type DMSJsonFileItem = {
+  signedUrl: string;
+  fileName: string;
+  subPath: string;
+};
+
+export type DMSJsonFileResponse = {
+  items: DMSJsonFileItem[];
+  nextCursor?: string;
+};
+
 /**
  * An ID identifiying a single Image360 entity within a collection
  */
