@@ -6,18 +6,18 @@ __metadata:
   cacheKey: 10
 
 "@azure/msal-browser@npm:^5.0.0":
-  version: 5.14.0
-  resolution: "@azure/msal-browser@npm:5.14.0"
+  version: 5.15.0
+  resolution: "@azure/msal-browser@npm:5.15.0"
   dependencies:
-    "@azure/msal-common": "npm:16.9.0"
-  checksum: 10/652d1738fbf5207957409797d8b79764fa3767128cc156976b5b97077e93fe6a86e2ff181c0f48879b5368f9d356f79b2541c07afb601f8d42322ca8d0a58e75
+    "@azure/msal-common": "npm:16.10.0"
+  checksum: 10/caa662db5e320188683bf0245c3c9a0b6842800080fa3de8db2ab39fb22227258dbac7ba0d905f2f08285f137c595df7e487b18488124aa4ae3099c60580cc79
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:16.9.0":
-  version: 16.9.0
-  resolution: "@azure/msal-common@npm:16.9.0"
-  checksum: 10/424deba4ef6f593a862e0a997b6e8ee71be12b732898b7040477cd788edae6a02fe631ce4588138f9ce0840b97db734415fe826b96cd6c611255bb69b431de8e
+"@azure/msal-common@npm:16.10.0":
+  version: 16.10.0
+  resolution: "@azure/msal-common@npm:16.10.0"
+  checksum: 10/5b0d0968dbf6612ea8fd3a51d4b339526a396827727384dfb91c2ecdf09cc02075c6f8610ff30e67ab981894ebdbf6e484aeda47b8038ce23db2b92b799d3465
   languageName: node
   linkType: hard
 
@@ -44,9 +44,9 @@ __metadata:
     react: "npm:19.2.7"
     react-dom: "npm:19.2.7"
     stats.js: "npm:0.17.0"
-    styled-components: "npm:6.4.2"
+    styled-components: "npm:6.4.3"
     three: "npm:0.184.0"
-    ts-loader: "npm:9.6.1"
+    ts-loader: "npm:9.6.2"
     typescript: "npm:^6.0.0"
     webpack: "npm:^5.76.0"
     webpack-cli: "npm:^7.0.0"
@@ -76,25 +76,25 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@cognite/sdk-core@npm:^5.2.2":
-  version: 5.2.2
-  resolution: "@cognite/sdk-core@npm:5.2.2"
+"@cognite/sdk-core@npm:^5.2.3":
+  version: 5.2.3
+  resolution: "@cognite/sdk-core@npm:5.2.3"
   dependencies:
     cross-fetch: "npm:^3.1.8"
     lodash: "npm:^4.17.21"
-  checksum: 10/ba7edef29ee09bab216a01f5c9a25f574bb3b9f1833934086b987773fa84ea44b7188975efdaf641a59c52a9fceadd8ea2782b67f05b2ad777be5c8446fd5c97
+  checksum: 10/e04e8f43c2c2f64100e19e2580f0b7abcc7de6d163a5491b62b026e98906d222399a59d8fee2cdfec79a2854920aa6bee3aca48c019c37a87835f06ab84e08e7
   languageName: node
   linkType: hard
 
 "@cognite/sdk@npm:^10.1.3":
-  version: 10.12.0
-  resolution: "@cognite/sdk@npm:10.12.0"
+  version: 10.12.1
+  resolution: "@cognite/sdk@npm:10.12.1"
   dependencies:
-    "@cognite/sdk-core": "npm:^5.2.2"
+    "@cognite/sdk-core": "npm:^5.2.3"
     "@types/geojson": "npm:^7946.0.14"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.21"
-  checksum: 10/53946809ab0d9240509840d772d75f95b5248a57b7279a5f0d65208f37d5b773b00a20619852f808d8cb7270c6d1de74356931e2ec9f4e7ad90370434caa04c2
+  checksum: 10/3e167e102e719fbaf2d9f86fff67cd0581070fb9e8af4b0b63ec19b04fe3435f548dfc0ad31c9d84348ea85d28d7056373522166a8e69012f2548392babf92f1
   languageName: node
   linkType: hard
 
@@ -2000,7 +2000,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.0.0, enhanced-resolve@npm:^5.22.0":
+"enhanced-resolve@npm:^5.22.0":
   version: 5.24.0
   resolution: "enhanced-resolve@npm:5.24.0"
   dependencies:
@@ -2951,7 +2951,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.0, micromatch@npm:^4.0.2":
+"micromatch@npm:^4.0.2":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
@@ -3333,7 +3333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:^4.0.4":
+"picomatch@npm:^4.0.0, picomatch@npm:^4.0.4":
   version: 4.0.4
   resolution: "picomatch@npm:4.0.4"
   checksum: 10/f6ef80a3590827ce20378ae110ac78209cc4f74d39236370f1780f957b7ee41c12acde0e4651b90f39983506fd2f5e449994716f516db2e9752924aff8de93ce
@@ -3758,7 +3758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.6.3":
+"semver@npm:^7.3.5, semver@npm:^7.6.3":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
@@ -4035,9 +4035,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:6.4.2":
-  version: 6.4.2
-  resolution: "styled-components@npm:6.4.2"
+"styled-components@npm:6.4.3":
+  version: 6.4.3
+  resolution: "styled-components@npm:6.4.3"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.4.0"
     css-to-react-native: "npm:3.2.0"
@@ -4055,7 +4055,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10/9298e414c4c6719ab5936eb2ed11d74717f55bd6e620660da8f672caac4f76f455630a8472aaf5e633b2c106262f9ad854b5caa4ec414ede8b1dc94b5686298c
+  checksum: 10/99f95375fd74c60c9c0cffdcb5fc65c27ed35bbd124f57fac829baacdacf17deee96ddb96724452fdb5f715a53e62b6e8c1a250064d4c48455c1d416312bbb4b
   languageName: node
   linkType: hard
 
@@ -4247,14 +4247,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:9.6.1":
-  version: 9.6.1
-  resolution: "ts-loader@npm:9.6.1"
+"ts-loader@npm:9.6.2":
+  version: 9.6.2
+  resolution: "ts-loader@npm:9.6.2"
   dependencies:
     chalk: "npm:^4.1.0"
-    enhanced-resolve: "npm:^5.0.0"
-    micromatch: "npm:^4.0.0"
-    semver: "npm:^7.3.4"
+    picomatch: "npm:^4.0.0"
     source-map: "npm:^0.7.4"
   peerDependencies:
     loader-utils: "*"
@@ -4263,7 +4261,7 @@ __metadata:
   peerDependenciesMeta:
     loader-utils:
       optional: true
-  checksum: 10/c0353835445ff31ac5a21f40760c745f7727b1a340058cf44e25791427956fb9f89d2c35dde0ee734677ec747c7e3ff7bbd447ca49ee16cf207d0bfe8118c965
+  checksum: 10/9df2167f5d558a57ade8e6340b854dbe19433ab1fe4ce0314995dd7f8133b03fb2a219e5206a130cf1d260717f838c9f735a5476d152c8777fcbe99d847f1f2d
   languageName: node
   linkType: hard
 

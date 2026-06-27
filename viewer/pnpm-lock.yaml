@@ -50,16 +50,16 @@ importers:
     devDependencies:
       '@azure/msal-browser':
         specifier: ^5.0.0
-        version: 5.14.0
+        version: 5.15.0
       '@cognite/sdk':
         specifier: ^10.1.3
-        version: 10.12.0
+        version: 10.12.1
       '@microsoft/api-extractor':
         specifier: ^7.58.7
         version: 7.58.9(@types/node@25.9.4)
       '@playwright/test':
         specifier: ^1.52.0
-        version: 1.61.0
+        version: 1.61.1
       '@types/dat.gui':
         specifier: ^0.7.13
         version: 0.7.13
@@ -140,7 +140,7 @@ importers:
         version: 8.62.0(eslint@10.5.0)(typescript@6.0.3)
       unplugin-dts:
         specifier: ^1.0.2
-        version: 1.0.2(@microsoft/api-extractor@7.58.9(@types/node@25.9.4))(rolldown@1.1.2)(typescript@6.0.3)(vite@8.1.0(@types/node@25.9.4))
+        version: 1.0.3(@microsoft/api-extractor@7.58.9(@types/node@25.9.4))(rolldown@1.1.2)(typescript@6.0.3)(vite@8.1.0(@types/node@25.9.4))
       vite:
         specifier: ^8.1.0
         version: 8.1.0(@types/node@25.9.4)
@@ -508,12 +508,12 @@ importers:
 
 packages:
 
-  '@azure/msal-browser@5.14.0':
-    resolution: {integrity: sha512-Dfl7hPZe9/JJwRhFFXHq2z1oHYBuGubmff3kWXOsd1AGgyXlqjNYAWuN/1JL/ZrcZBs8TKMjGSil6Rcc7E8VPQ==}
+  '@azure/msal-browser@5.15.0':
+    resolution: {integrity: sha512-2NYT6v+eeQn8kmNddr9LnbXSvXbVELpmFMmfFvtRxD7I/5+5GlkMlncApeuRFj+mY6C9syOwQip1a0Y+TIbyiA==}
     engines: {node: '>=0.8.0'}
 
-  '@azure/msal-common@16.9.0':
-    resolution: {integrity: sha512-1MWGjqgUCRAYgLmVFZKp7fs3Rg1TFvIMgywY8ze2olNVvLlJoRThuoziWSDJuwwyJI5L4rnLb9Tyt5D9GvSLPw==}
+  '@azure/msal-common@16.10.0':
+    resolution: {integrity: sha512-iYtjpanlv6963Jprs0MvzIap07V+QhultjQctfbEDQCflsDAEeO3R7XnVA5gk30fhoBFLdgJT7VqO0TGsEsN9w==}
     engines: {node: '>=0.8.0'}
 
   '@babel/helper-string-parser@7.29.7':
@@ -537,11 +537,11 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@cognite/sdk-core@5.2.2':
-    resolution: {integrity: sha512-WhDyhqzsy5A7Nz56s5JEjo5J3sGjrfWdhgRs+yCFKejM38XJvePbd+Dg2BXV4AzWiYI4EyCLDOcODwKEC3aB0Q==}
+  '@cognite/sdk-core@5.2.3':
+    resolution: {integrity: sha512-XBAK8SCxF4edRBTvizPzxl3QiM73gbkaeiZHMUO81Pkqvq1bAnFeqmo/PEW1FH6LLY0MkTKvg7UlugrIMl3WOQ==}
 
-  '@cognite/sdk@10.12.0':
-    resolution: {integrity: sha512-xvy2wdH5jo9l6e8NVsMGYTg5qabkztRItfcbmgdhzJaHvxEytHXKn1B2x05AGbrndhEWJmjU5sW5ae5RNWSRzw==}
+  '@cognite/sdk@10.12.1':
+    resolution: {integrity: sha512-qOZvwA7fFRLtSEPu3F4vrWRBBWSOIP3txX0qIdcLfgNjQyiFSBMXL1z7P9uiRztGELhH78TCuM1t0/XUw5Bamg==}
 
   '@dimforge/rapier3d-compat@0.12.0':
     resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
@@ -667,8 +667,8 @@ packages:
   '@mixpanel/rrweb@2.0.0-alpha.18.4':
     resolution: {integrity: sha512-ICpEYDFEEiCoUuQg+de3VvQCsolF4lNHfEM9DBp5Pwuc7EgXqwWV4wUpiRF/NbhoKk+82X1Qe+oqqlKJb/CGFw==}
 
-  '@napi-rs/wasm-runtime@1.1.5':
-    resolution: {integrity: sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q==}
+  '@napi-rs/wasm-runtime@1.1.6':
+    resolution: {integrity: sha512-ZLv/JdUfkvOy9eCnnBaGfiO+XimbjebAeO+MRQqD/B+FR1tnRN0tpKSJHRbE8sFfS6aqsXZ67TQjfwfsxULVbg==}
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
@@ -692,8 +692,8 @@ packages:
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
-  '@playwright/test@1.61.0':
-    resolution: {integrity: sha512-cKA5B6lpFEMyMGjxF54QihfYpB4FkEGH+qZhtArDEG+wezQAJY8Pq6C7T1SjWz+FFzt3TbyoXBQYk/0292TdJA==}
+  '@playwright/test@1.61.1':
+    resolution: {integrity: sha512-8nKv6+0RJSL9FE4jYOEGXnPeM/Hg12qZpmqzZjRh3qM0Y7c3z1mrOTfFLids72RDQYVh9WpLEfR5WdpNX4fkig==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -847,8 +847,8 @@ packages:
   '@tweenjs/tween.js@25.0.0':
     resolution: {integrity: sha512-XKLA6syeBUaPzx4j3qwMqzzq+V4uo72BnlbOjmuljLrRqdsd3qnzvZZoxvMHZ23ndsRS4aufU6JOZYpCbU6T1A==}
 
-  '@tybys/wasm-util@0.10.2':
-    resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
+  '@tybys/wasm-util@0.10.3':
+    resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -1284,8 +1284,8 @@ packages:
     resolution: {integrity: sha512-knvyeauYhqjOYvQ66MznSMs83wmHrCycNEN6Ao+2AeYEfxUIkuiVxdEa1qlGEPK+We3n0THiDciYSsCcgW/DoA==}
     engines: {node: '>=12.0.0'}
 
-  exsolve@1.0.8:
-    resolution: {integrity: sha512-LmDxfWXwcTArk8fUEnOfSZpHOJ6zOMUJKOtFLFqJLoKJetuQG874Uc7/Kki7zFLzYybmZhp1M7+98pfMqeX8yA==}
+  exsolve@1.1.0:
+    resolution: {integrity: sha512-D+42+T12DdIlJM3uepa55qGiL3sYdLBOxIl2ifQCzCHz4c7eiolaHsi3BIqEr7JxBzxv2pYZQX9kw16ziMcEmw==}
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -1754,13 +1754,13 @@ packages:
   pkg-types@2.3.1:
     resolution: {integrity: sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg==}
 
-  playwright-core@1.61.0:
-    resolution: {integrity: sha512-caX7TrY3Ml6egyDX0WUcTHDxodl/b51y5wJOdCEA36QviK/s2g081hvmGs8eaE3DWb6NYZQ6BjO/QkNRPenoPA==}
+  playwright-core@1.61.1:
+    resolution: {integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.61.0:
-    resolution: {integrity: sha512-Z+7BeeqQPRRzklHsVFP4KTGIyMxKUmfeRA4WisM6G3/XW6nwGeX6fX9qYaDa+CiUqpOkb2f6X3nar05R3kSuJQ==}
+  playwright@1.61.1:
+    resolution: {integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -1839,8 +1839,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  semver@7.8.4:
-    resolution: {integrity: sha512-rUCObTnP32Q08R2uuIrt7r9PlEonuTmtuXYcW6s5kjdlj3xbnwe+21yXptAUYcMAABLkYYTtnmzb3w3EDZfueA==}
+  semver@7.8.5:
+    resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -2017,12 +2017,12 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
-  unplugin-dts@1.0.2:
-    resolution: {integrity: sha512-VbNiMD0LMl/t6nJueGtrCp79N7ZO1nquxj/FUybJDnKwZGsnW2wjdwBSzA3QEHujoxmxZIptsG43hL7LzXE96w==}
+  unplugin-dts@1.0.3:
+    resolution: {integrity: sha512-/GR887wfG4r1cWyt1UZsLRuMIjsmEbGkS9yJrz+0dsToHAYUD5CTyP3JMGVLv25j9K0mJcwAVvZno/aTuSUvNg==}
     peerDependencies:
       '@microsoft/api-extractor': '>=7'
       '@rspack/core': ^1
-      '@vue/language-core': ~3.1.5
+      '@vue/language-core': ^3.1.5
       esbuild: '*'
       rolldown: '*'
       rollup: '>=3'
@@ -2223,11 +2223,11 @@ packages:
 
 snapshots:
 
-  '@azure/msal-browser@5.14.0':
+  '@azure/msal-browser@5.15.0':
     dependencies:
-      '@azure/msal-common': 16.9.0
+      '@azure/msal-common': 16.10.0
 
-  '@azure/msal-common@16.9.0': {}
+  '@azure/msal-common@16.10.0': {}
 
   '@babel/helper-string-parser@7.29.7': {}
 
@@ -2244,16 +2244,16 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@cognite/sdk-core@5.2.2':
+  '@cognite/sdk-core@5.2.3':
     dependencies:
       cross-fetch: 3.2.0
       lodash: 4.18.1
     transitivePeerDependencies:
       - encoding
 
-  '@cognite/sdk@10.12.0':
+  '@cognite/sdk@10.12.1':
     dependencies:
-      '@cognite/sdk-core': 5.2.2
+      '@cognite/sdk-core': 5.2.3
       '@types/geojson': 7946.0.16
       geojson: 0.5.0
       lodash: 4.18.1
@@ -2420,11 +2420,11 @@ snapshots:
       base64-arraybuffer: 1.0.2
       mitt: 3.0.1
 
-  '@napi-rs/wasm-runtime@1.1.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)':
+  '@napi-rs/wasm-runtime@1.1.6(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)':
     dependencies:
       '@emnapi/core': 1.11.1
       '@emnapi/runtime': 1.11.1
-      '@tybys/wasm-util': 0.10.2
+      '@tybys/wasm-util': 0.10.3
     optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -2443,9 +2443,9 @@ snapshots:
 
   '@pkgr/core@0.3.6': {}
 
-  '@playwright/test@1.61.0':
+  '@playwright/test@1.61.1':
     dependencies:
-      playwright: 1.61.0
+      playwright: 1.61.1
 
   '@rolldown/binding-android-arm64@1.1.2':
     optional: true
@@ -2487,7 +2487,7 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.11.1
       '@emnapi/runtime': 1.11.1
-      '@napi-rs/wasm-runtime': 1.1.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)
+      '@napi-rs/wasm-runtime': 1.1.6(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)
     optional: true
 
   '@rolldown/binding-win32-arm64-msvc@1.1.2':
@@ -2551,7 +2551,7 @@ snapshots:
 
   '@tweenjs/tween.js@25.0.0': {}
 
-  '@tybys/wasm-util@0.10.2':
+  '@tybys/wasm-util@0.10.3':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -2695,7 +2695,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.62.0
       debug: 4.4.3
       minimatch: 10.2.5
-      semver: 7.8.4
+      semver: 7.8.5
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -2937,7 +2937,7 @@ snapshots:
       html-entities: 2.6.0
       object-deep-merge: 2.0.1
       parse-imports-exports: 0.2.4
-      semver: 7.8.4
+      semver: 7.8.5
       spdx-expression-parse: 4.0.0
       to-valid-identifier: 1.0.0
     transitivePeerDependencies:
@@ -3040,7 +3040,7 @@ snapshots:
 
   expect-type@1.3.0: {}
 
-  exsolve@1.0.8: {}
+  exsolve@1.1.0: {}
 
   fast-deep-equal@3.1.3: {}
 
@@ -3309,7 +3309,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.8.4
+      semver: 7.8.5
 
   merge2@1.4.1: {}
 
@@ -3442,14 +3442,14 @@ snapshots:
   pkg-types@2.3.1:
     dependencies:
       confbox: 0.2.4
-      exsolve: 1.0.8
+      exsolve: 1.1.0
       pathe: 2.0.3
 
-  playwright-core@1.61.0: {}
+  playwright-core@1.61.1: {}
 
-  playwright@1.61.0:
+  playwright@1.61.1:
     dependencies:
-      playwright-core: 1.61.0
+      playwright-core: 1.61.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -3532,7 +3532,7 @@ snapshots:
 
   semver@7.7.4: {}
 
-  semver@7.8.4: {}
+  semver@7.8.5: {}
 
   shebang-command@1.2.0:
     dependencies:
@@ -3676,7 +3676,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unplugin-dts@1.0.2(@microsoft/api-extractor@7.58.9(@types/node@25.9.4))(rolldown@1.1.2)(typescript@6.0.3)(vite@8.1.0(@types/node@25.9.4)):
+  unplugin-dts@1.0.3(@microsoft/api-extractor@7.58.9(@types/node@25.9.4))(rolldown@1.1.2)(typescript@6.0.3)(vite@8.1.0(@types/node@25.9.4)):
     dependencies:
       '@rollup/pluginutils': 5.4.0
       '@volar/typescript': 2.4.28
