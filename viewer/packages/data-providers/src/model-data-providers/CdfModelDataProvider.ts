@@ -79,11 +79,14 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.json();
   }
 
-  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle> {
+  async getDMSJsonFile(
+    baseUrl: string,
+    modelIdentifier: DMModelIdentifier,
+    fileName: string
+  ): Promise<DMSModelFilesBundle> {
     const signedFiles = await this.fetchDMSJsonFile(baseUrl, modelIdentifier);
-    const found = signedFiles.items.find(
-      item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
-    );
+    const found = signedFiles.items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+
     if (!found) {
       throw new Error(`File "${fileName}" not found in signed files response`);
     }
