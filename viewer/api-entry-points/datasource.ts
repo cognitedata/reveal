@@ -12,6 +12,9 @@ export type {
   ModelDataProvider,
   BlobOutputMetadata,
   JsonFileProvider,
-  BinaryFileProvider
+  BinaryFileProvider,
+  DMSModelFilesBundle,
+  DMSJsonFileResponse,
+  DMSJsonFileItem
 } from '../packages/data-providers';
-export { CdfModelIdentifier, File3dFormat } from '../packages/data-providers';
+export { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '../packages/data-providers';

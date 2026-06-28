@@ -990,10 +990,44 @@ export type DMInstanceRef = {
     space: string;
 };
 
+// @public (undocumented)
+export class DMModelIdentifier extends CdfModelIdentifier {
+    constructor(input: DMModelIdentifierType & ClassicModelIdentifierType);
+    // (undocumented)
+    readonly revealInternalId: symbol;
+    // (undocumented)
+    readonly revisionExternalId: string;
+    // (undocumented)
+    readonly revisionSpace: string;
+    // (undocumented)
+    sourceModelIdentifier(): string;
+    // (undocumented)
+    toString(): string;
+}
+
 // @public
 export type DMModelIdentifierType = {
     revisionExternalId: string;
     revisionSpace: string;
+};
+
+// @public (undocumented)
+export type DMSJsonFileItem = {
+    signedUrl: string;
+    fileName: string;
+    subPath: string;
+};
+
+// @public (undocumented)
+export type DMSJsonFileResponse = {
+    items: DMSJsonFileItem[];
+    nextCursor?: string;
+};
+
+// @public (undocumented)
+export type DMSModelFilesBundle = {
+    signedFiles: DMSJsonFileResponse;
+    fileData: unknown;
 };
 
 // @public
@@ -1649,8 +1683,6 @@ export interface ModelMetadataProvider {
     getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
     // (undocumented)
     getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string>;
-    // (undocumented)
-    getModelUriForSignedFiles(): Promise<string>;
 }
 
 // @public (undocumented)
