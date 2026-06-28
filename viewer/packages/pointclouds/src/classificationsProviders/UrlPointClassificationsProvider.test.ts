@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 
 import { vi } from 'vitest';
@@ -16,7 +16,7 @@ function createMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDa
     getSignedBinaryFile: vi.fn<ModelDataProvider['getSignedBinaryFile']>(),
     getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
     getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
-    getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(),
+    getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
   };
   Object.assign(base, overrides);
   return base;
@@ -79,20 +79,28 @@ describe(UrlPointClassificationsProvider.name, () => {
   });
 
   test.each<[string, CdfModelIdentifier, Partial<ModelDataProvider>]>([
-    ['DM', dmIdentifier, {
-      getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(
-        async () => { throw new Error(); }
-      )
-    }],
-    ['Classic', new CdfModelIdentifier(10, 20), {
-      getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(
-        async () => { throw new Error(); }
-      )
-    }]
+    [
+      'DM',
+      dmIdentifier,
+      {
+        getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(async () => {
+          throw new Error();
+        })
+      }
+    ],
+    [
+      'Classic',
+      new CdfModelIdentifier(10, 20),
+      {
+        getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => {
+          throw new Error();
+        })
+      }
+    ]
   ])('%s returns EMPTY_CLASSIFICATION when provider throws', async (_, identifier, override) => {
-    const result = await new UrlPointClassificationsProvider(
-      createMockProvider(override)
-    ).getClassifications(createMetadata(identifier));
+    const result = await new UrlPointClassificationsProvider(createMockProvider(override)).getClassifications(
+      createMetadata(identifier)
+    );
 
     expect(result.type).toBe('classificationInfo');
     expect(result.fileData.classificationSets).toEqual([]);
