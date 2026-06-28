@@ -1683,6 +1683,8 @@ export interface ModelMetadataProvider {
     getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
     // (undocumented)
     getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string>;
+    // (undocumented)
+    getModelUriForSignedFiles(): Promise<string>;
 }
 
 // @public (undocumented)
