@@ -79,16 +79,14 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.json();
   }
 
-  /**
-   * Download and parse a JSON file through signed URL endpoint for a given model identifier.
-   * @param baseUrl         Base URL of the signed files endpoint.
-   * @param modelIdentifier DM model identifier containing revision info (required).
-   */
-  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle> {
+  async getDMSJsonFile(
+    baseUrl: string,
+    modelIdentifier: DMModelIdentifier,
+    fileName: string
+  ): Promise<DMSModelFilesBundle> {
     const signedFiles = await this.fetchDMSJsonFile(baseUrl, modelIdentifier);
-    const found = signedFiles.items.find(
-      item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
-    );
+    const found = signedFiles.items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+
     if (!found) {
       throw new Error(`File "${fileName}" not found in signed files response`);
     }
@@ -96,12 +94,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return { signedFiles, fileData };
   }
 
-  /**
-   * Download and parse a JSON file through signed URL endpoint for a given file name.
-   * @param baseUrl         Base URL of the signed files endpoint.
-   * @param modelIdentifier DM model identifier containing revision info (required).
-   * @param fileName        Filename to filter by specific file path.
-   */
   async getDMSJsonFileFromFileName(
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
@@ -114,12 +106,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return this.getSignedJsonFile(fileResponse.items[0].signedUrl);
   }
 
-  /**
-   * Download and parse a JSON file through signed URL endpoint.
-   * @param baseUrl         Base URL of the signed files endpoint.
-   * @param modelIdentifier DM model identifier containing revision info (required).
-   * @param fileName        Optional filename to filter by specific file path.
-   */
   private async fetchDMSJsonFile(
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
