@@ -9,12 +9,11 @@ import type { IMock } from 'moq.ts';
 import { Mock, It } from 'moq.ts';
 
 import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
-import { LocalModelIdentifier } from '@reveal/data-providers';
+import { DMModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
 import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 
-import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 
 describe(GltfSectorRepository.name, () => {
@@ -38,7 +37,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('previously fetched sector is cached by GltfSectorRepository', async () => {
-    const mockGetBinaryFile: ViMock<ModelDataProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider = { getBinaryFile: mockGetBinaryFile } as Partial<ModelDataProvider> as ModelDataProvider;
@@ -82,7 +81,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('clearCache should clear the cache', async () => {
-    const mockGetBinaryFile: ViMock<ModelDataProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider = { getBinaryFile: mockGetBinaryFile } as Partial<ModelDataProvider> as ModelDataProvider;
@@ -104,7 +103,7 @@ describe(GltfSectorRepository.name, () => {
       createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
     );
 
-    const mockGetBinaryFile: ViMock<ModelDataProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
     const mockBinaryProvider = { getBinaryFile: mockGetBinaryFile } as Partial<ModelDataProvider> as ModelDataProvider;
@@ -357,6 +356,50 @@ describe(GltfSectorRepository.name, () => {
     for (let i = 100; i < 250; i++) {
       sectorRepository.dereferenceSector(modelId, i);
     }
+  });
+
+  test('loadSector calls getSignedBinaryFile for DM model and getBinaryFile for classic model', async () => {
+    const signedUrl = 'https://signed.cdn.example.com/sector.glb';
+    const getSignedBinaryFile = vi.fn<ModelDataProvider['getSignedBinaryFile']>().mockResolvedValue(new ArrayBuffer(0));
+    const getBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>().mockResolvedValue(new ArrayBuffer(0));
+
+    const provider: ModelDataProvider = {
+      getBinaryFile,
+      getSignedBinaryFile,
+      getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
+      getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
+      getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
+      getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
+    };
+
+    const dmIdentifier = new DMModelIdentifier({
+      modelId: 1,
+      revisionId: 1,
+      revisionExternalId: 'ext',
+      revisionSpace: 'space'
+    });
+    const dmMetadata = new Mock<SectorMetadata>()
+      .setup(m => m.sectorFileName)
+      .returns('sector.glb')
+      .setup(m => m.downloadSize)
+      .returns(100)
+      .setup(m => m.signedUrl)
+      .returns(signedUrl)
+      .object();
+    const dmSector = new Mock<WantedSector>()
+      .setup(s => s.modelIdentifier)
+      .returns(dmIdentifier)
+      .setup(s => s.metadata)
+      .returns(dmMetadata)
+      .setup(s => s.modelBaseUrl)
+      .returns('https://example.com')
+      .object();
+
+    const repo = new GltfSectorRepository(provider);
+    await repo.loadSector(dmSector);
+
+    expect(getSignedBinaryFile).toHaveBeenCalledWith(signedUrl, undefined);
+    expect(getBinaryFile).not.toHaveBeenCalled();
   });
 
   // Helper functions
