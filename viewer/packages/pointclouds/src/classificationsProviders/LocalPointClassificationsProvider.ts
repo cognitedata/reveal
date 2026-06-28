@@ -2,12 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { IPointClassificationsProvider } from './IPointClassificationsProvider';
-import type { PointCloudMetadata } from '../PointCloudMetadata';
-import type { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
+import { IPointClassificationsProvider } from './IPointClassificationsProvider';
+import { PointCloudMetadata } from '../PointCloudMetadata';
+import { PointCloudClassificationInfoWithSignedFiles } from '../types';
 
 export class LocalPointClassificationsProvider implements IPointClassificationsProvider {
-  async getClassifications(_modelMetadata: PointCloudMetadata): Promise<ClassificationInfo> {
-    return { classificationSets: [] };
+  async getClassifications(_modelMetadata: PointCloudMetadata): Promise<PointCloudClassificationInfoWithSignedFiles> {
+    return { type: 'pointCloudClassificationInfoWithSignedFiles', signedFiles: { items: [] }, fileData: { classificationSets: [] } };
   }
 }

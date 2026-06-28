@@ -3,16 +3,19 @@
  */
 
 import type { Matrix4 } from 'three';
-import type { CameraConfiguration } from '@reveal/utilities';
-import type { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
+import { CameraConfiguration } from '@reveal/utilities';
+import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
+import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
 
 export interface PointCloudMetadata {
   readonly format: File3dFormat;
   readonly formatVersion: number;
 
   readonly modelBaseUrl: string;
+  readonly signedFilesBaseUrl: string;
   readonly modelIdentifier: ModelIdentifier;
   readonly modelMatrix: Matrix4;
   readonly cameraConfiguration?: CameraConfiguration;
   readonly scene: any;
+  readonly signedFiles?: { items: DMSJsonFileItem[] };
 }

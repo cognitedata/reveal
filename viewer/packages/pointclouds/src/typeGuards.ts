@@ -26,3 +26,13 @@ export function isClassicPointCloudModel(
 ): model is CognitePointCloudModel<ClassicDataSourceType> {
   return isClassicIdentifier(model.modelIdentifier);
 }
+
+export function hasFileData(data: unknown): boolean {
+  return (
+    data !== null &&
+    typeof data === 'object' &&
+    'fileData' in data &&
+    data.fileData !== null &&
+    typeof data.fileData === 'object'
+  );
+}

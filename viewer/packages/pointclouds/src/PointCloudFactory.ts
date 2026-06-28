@@ -19,7 +19,8 @@ import type { IPointClassificationsProvider } from './classificationsProviders/I
 import type { PointCloudMaterialManager } from '@reveal/rendering';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
 import { isLocalIdentifier } from '@reveal/data-providers';
-import type { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import { hasFileData } from './typeGuards';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -51,7 +52,7 @@ export class PointCloudFactory {
     modelIdentifier: ModelIdentifier,
     modelMetadata: PointCloudMetadata
   ): Promise<PointCloudNode<T>> {
-    const { modelBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
+    const { modelBaseUrl, signedFilesBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
 
     const annotationInfoPromise = isLocalIdentifier(identifier)
       ? this._pointCloudObjectProvider.getPointCloudObjects({ modelId: -1, revisionId: -1 })
@@ -61,7 +62,9 @@ export class PointCloudFactory {
 
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
-    const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
+    const [annotationInfo, classSchemaData] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
+
+    const classSchema = hasFileData(classSchemaData) ? classSchemaData.fileData : { classificationSets: [] };
 
     const stylableObject = annotationInfo.map(obj => obj.stylableObject);
 
@@ -70,11 +73,18 @@ export class PointCloudFactory {
       createObjectIdMaps<DataSourceType>(annotationInfo)
     );
 
+    const preloadedEptData =
+      modelMetadata.signedFiles && modelMetadata.scene
+        ? { type: 'pointCloudMetadataWithSignedFiles' as const, signedFiles: modelMetadata.signedFiles, fileData: modelMetadata.scene }
+        : undefined;
+
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
+      signedFilesBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       stylableObject,
-      modelIdentifier.revealInternalId
+      modelIdentifier,
+      preloadedEptData
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
