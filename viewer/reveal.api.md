@@ -1623,7 +1623,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 // @public
 export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+    getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle>;
+    getDMSJsonFileFromFileName(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown>;
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+    getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+    getSignedJsonFile(signedUrl: string): Promise<unknown>;
 }
 
 // @public
@@ -1645,6 +1649,8 @@ export interface ModelMetadataProvider {
     getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
     // (undocumented)
     getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string>;
+    // (undocumented)
+    getModelUriForSignedFiles(): Promise<string>;
 }
 
 // @public (undocumented)
