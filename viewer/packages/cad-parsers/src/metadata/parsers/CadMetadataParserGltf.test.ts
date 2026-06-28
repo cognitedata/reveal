@@ -16,7 +16,7 @@ import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../tes
 import SeededRandom from 'random-seed';
 
 function wrapMetadata(fileData: CadSceneRootMetadata, signedFiles: DMSJsonFileItem[] = []): CadMetadataWithSignedFiles {
-  return { signedFiles: { items: signedFiles }, fileData };
+  return { type: 'cadMetadataWithSignedFiles', signedFiles: { items: signedFiles }, fileData };
 }
 
 describe('CadMetadataParserGltf', () => {

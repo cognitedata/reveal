@@ -42,16 +42,24 @@ describe(LocalModelDataProvider.name, () => {
     expect(result).toEqual(data);
   });
 
-  test.each<[string, (p: LocalModelDataProvider, fileName: string) => Promise<unknown>]>([
-    ['getDMSJsonFile', (p, f) => p.getDMSJsonFile(baseUrl, dmIdentifier, f)],
-    ['getDMSJsonFileFromFileName', (p, f) => p.getDMSJsonFileFromFileName(baseUrl, dmIdentifier, f)]
-  ])('%s() constructs URL from baseUrl and fileName, ignores modelIdentifier', async (_, callMethod) => {
+  test('getDMSJsonFile() constructs URL from baseUrl and fileName and returns bundle', async () => {
     const data = { sectors: [] };
     vi.stubGlobal(
       'fetch',
       vi.fn<() => Promise<Response>>().mockResolvedValueOnce(new Response(JSON.stringify(data), { status: 200 }))
     );
-    const result = await callMethod(provider, 'scene.json');
+    const result = await provider.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
+    expect(fetch).toHaveBeenCalledWith(`${baseUrl}/scene.json`);
+    expect(result).toEqual({ signedFiles: { items: [] }, fileData: data });
+  });
+
+  test('getDMSJsonFileFromFileName() constructs URL from baseUrl and fileName, ignores modelIdentifier', async () => {
+    const data = { sectors: [] };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<() => Promise<Response>>().mockResolvedValueOnce(new Response(JSON.stringify(data), { status: 200 }))
+    );
+    const result = await provider.getDMSJsonFileFromFileName(baseUrl, dmIdentifier, 'scene.json');
     expect(fetch).toHaveBeenCalledWith(`${baseUrl}/scene.json`);
     expect(result).toEqual(data);
   });
