@@ -4,6 +4,7 @@
 
 import type { ModelDataProvider } from '../ModelDataProvider';
 import type { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
+import type { DMSModelFilesBundle } from '../types';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -88,7 +89,11 @@ export class CachedModelDataProvider implements ModelDataProvider {
     return this.baseProvider.getSignedJsonFile(signedUrl);
   }
 
-  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string) {
+  async getDMSJsonFile(
+    baseUrl: string,
+    modelIdentifier: DMModelIdentifier,
+    fileName: string
+  ): Promise<DMSModelFilesBundle> {
     return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
   }
 
@@ -96,7 +101,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
     fileName: string
-  ) {
+  ): Promise<unknown> {
     return this.baseProvider.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName);
   }
 
