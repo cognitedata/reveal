@@ -44,7 +44,7 @@ export interface ConsumedSector {
 
 export interface WantedSector {
   modelIdentifier: ModelIdentifier;
-  modelBaseUrl: string | undefined;
+  modelBaseUrl: string;
   signedFilesBaseUrl: string | undefined;
   geometryClipBox: Box3 | null;
   levelOfDetail: LevelOfDetail;

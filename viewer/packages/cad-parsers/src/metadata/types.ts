@@ -4,7 +4,7 @@
 
 import type { DMSJsonFileItem } from '@reveal/data-providers';
 import type { Box3 } from 'three';
-import { CadSceneRootMetadata } from './parsers/types';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export type SectorMetadata = {
   readonly id: number;

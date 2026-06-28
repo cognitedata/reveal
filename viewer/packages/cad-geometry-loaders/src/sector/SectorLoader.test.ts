@@ -199,6 +199,7 @@ function createWantedSector(model: CadModelMetadata, sector: SectorMetadata): Wa
     levelOfDetail: LevelOfDetail.Detailed,
     metadata: sector,
     modelBaseUrl: model.modelBaseUrl,
+    signedFilesBaseUrl: model.signedFilesBaseUrl,
     modelIdentifier: model.modelIdentifier
   };
   return wanted;
