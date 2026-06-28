@@ -35,7 +35,10 @@ function createMockedMetadataProvider(signedFilesBaseUrl = ''): ModelMetadataPro
     getModelOutputs: vi.fn<ModelMetadataProvider['getModelOutputs']>(async () => [eptOutput]),
     getModelUri: vi.fn<ModelMetadataProvider['getModelUri']>(async () => 'https://example.com/model'),
     getModelMatrix: vi.fn<ModelMetadataProvider['getModelMatrix']>(async () => new Matrix4()),
-    getModelCamera: vi.fn<ModelMetadataProvider['getModelCamera']>(async () => ({ position: new Vector3(), target: new Vector3() })),
+    getModelCamera: vi.fn<ModelMetadataProvider['getModelCamera']>(async () => ({
+      position: new Vector3(),
+      target: new Vector3()
+    })),
     getModelUriForSignedFiles: vi.fn<ModelMetadataProvider['getModelUriForSignedFiles']>(async () => signedFilesBaseUrl)
   };
 }
@@ -46,7 +49,10 @@ function createMockedModelDataProvider(): ModelDataProvider {
     getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => minimalEptJson),
     getSignedBinaryFile: vi.fn<ModelDataProvider['getSignedBinaryFile']>(),
     getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
-    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(async () => ({ signedFiles: { items: [] }, fileData: minimalEptJson })),
+    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(async () => ({
+      signedFiles: { items: [] },
+      fileData: minimalEptJson
+    })),
     getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
   };
 }
@@ -69,12 +75,12 @@ describe(PointCloudMetadataRepository.name, () => {
     const signedItem = { signedUrl: 'https://cdn.example.com/0-0-0-0.bin', fileName: '0-0-0-0.bin', subPath: '' };
     const dataProvider: ModelDataProvider = {
       ...createMockedModelDataProvider(),
-      getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(async () => ({ signedFiles: { items: [signedItem] }, fileData: minimalEptJson }))
+      getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(async () => ({
+        signedFiles: { items: [signedItem] },
+        fileData: minimalEptJson
+      }))
     };
-    const repo = new PointCloudMetadataRepository(
-      createMockedMetadataProvider(signedFilesBaseUrl),
-      dataProvider
-    );
+    const repo = new PointCloudMetadataRepository(createMockedMetadataProvider(signedFilesBaseUrl), dataProvider);
 
     const result = await repo.loadData(dmIdentifier);
 

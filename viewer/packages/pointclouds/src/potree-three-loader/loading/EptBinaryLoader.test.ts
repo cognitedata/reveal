@@ -67,7 +67,11 @@ describe(EptBinaryLoader.name, () => {
     vi.clearAllMocks();
 
     await loader.getBinaryFile(
-      createMockNode({ modelIdentifier: new CdfModelIdentifier(10, 20), nodeFileName: '1-1-0-0', nodeBaseUrl: 'https://example.com/ept-data' })
+      createMockNode({
+        modelIdentifier: new CdfModelIdentifier(10, 20),
+        nodeFileName: '1-1-0-0',
+        nodeBaseUrl: 'https://example.com/ept-data'
+      })
     );
     expect(dataProvider.getBinaryFile).toHaveBeenCalledWith('https://example.com/ept-data', '1-1-0-0.bin');
     expect(dataProvider.getSignedBinaryFile).not.toHaveBeenCalled();

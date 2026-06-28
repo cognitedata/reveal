@@ -16,12 +16,19 @@ import type { EptJson } from '../loading/EptJson';
 const TEST_BOX = new Box3(new Vector3(0, 0, 0), new Vector3(100, 100, 100));
 
 function createMockEpt(url = 'https://example.com/model/'): PointCloudEptGeometry {
-  const mockLoader = new Mock<EptBinaryLoader>().setup(l => l.extension()).returns('.bin').object();
+  const mockLoader = new Mock<EptBinaryLoader>()
+    .setup(l => l.extension())
+    .returns('.bin')
+    .object();
   return new Mock<PointCloudEptGeometry>()
-    .setup(e => e.boundingBox).returns(TEST_BOX)
-    .setup(e => e.loader).returns(mockLoader)
-    .setup(e => e.spacing).returns(1)
-    .setup(e => e.url).returns(url)
+    .setup(e => e.boundingBox)
+    .returns(TEST_BOX)
+    .setup(e => e.loader)
+    .returns(mockLoader)
+    .setup(e => e.spacing)
+    .returns(1)
+    .setup(e => e.url)
+    .returns(url)
     .object();
 }
 
@@ -71,21 +78,27 @@ describe(PointCloudEptGeometryNode.name, () => {
       const subPathUrl = 'https://cdn.example.com/sub/0-0-0-0.bin';
 
       const nodeExact = new PointCloudEptGeometryNode(
-        createMockEpt(), createMockDataProvider(), dmIdentifier,
+        createMockEpt(),
+        createMockDataProvider(),
+        dmIdentifier,
         makeMetadata([{ fileName: '0-0-0-0.bin', signedUrl: exactUrl }]),
         'https://signed.example.com'
       );
       expect(nodeExact.signedUrl).toBe(exactUrl);
 
       const nodeSubPath = new PointCloudEptGeometryNode(
-        createMockEpt(), createMockDataProvider(), dmIdentifier,
+        createMockEpt(),
+        createMockDataProvider(),
+        dmIdentifier,
         makeMetadata([{ fileName: 'sub/0-0-0-0.bin', signedUrl: subPathUrl }]),
         'https://signed.example.com'
       );
       expect(nodeSubPath.signedUrl).toBe(subPathUrl);
 
       const nodeMissing = new PointCloudEptGeometryNode(
-        createMockEpt(), createMockDataProvider(), dmIdentifier,
+        createMockEpt(),
+        createMockDataProvider(),
+        dmIdentifier,
         makeMetadata([{ fileName: 'other.bin', signedUrl: 'https://cdn.example.com/other.bin' }]),
         'https://signed.example.com'
       );
@@ -94,8 +107,11 @@ describe(PointCloudEptGeometryNode.name, () => {
 
     test('signedUrl is undefined when metadata has no signedFiles property', () => {
       const node = new PointCloudEptGeometryNode(
-        createMockEpt(), createMockDataProvider(), dmIdentifier,
-        { fileData: minimalEptJson }, undefined
+        createMockEpt(),
+        createMockDataProvider(),
+        dmIdentifier,
+        { fileData: minimalEptJson },
+        undefined
       );
       expect(node.signedUrl).toBeUndefined();
     });
@@ -106,34 +122,48 @@ describe(PointCloudEptGeometryNode.name, () => {
       const signedFilesBaseUrl = 'https://signed.example.com';
       const hierarchySignedUrl = 'https://cdn.example.com/ept-hierarchy/0-0-0-0.json';
 
-      const dataProviderHit = createMockDataProvider({ getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(async () => ({})) });
+      const dataProviderHit = createMockDataProvider({
+        getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(async () => ({}))
+      });
       const nodeHit = new PointCloudEptGeometryNode(
-        createMockEpt(), dataProviderHit, dmIdentifier,
+        createMockEpt(),
+        dataProviderHit,
+        dmIdentifier,
         makeMetadata([{ fileName: 'ept-hierarchy/0-0-0-0.json', signedUrl: hierarchySignedUrl }]),
         signedFilesBaseUrl
       );
       await nodeHit.getHierarchy('0-0-0-0.json');
       expect(dataProviderHit.getSignedJsonFile).toHaveBeenCalledWith(hierarchySignedUrl);
 
-      const dataProviderMiss = createMockDataProvider({ getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(async () => ({})) });
+      const dataProviderMiss = createMockDataProvider({
+        getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(async () => ({}))
+      });
       const nodeMiss = new PointCloudEptGeometryNode(
-        createMockEpt(), dataProviderMiss, dmIdentifier,
+        createMockEpt(),
+        dataProviderMiss,
+        dmIdentifier,
         makeMetadata([]),
         signedFilesBaseUrl
       );
       await nodeMiss.getHierarchy('0-0-0-0.json');
       expect(dataProviderMiss.getDMSJsonFileFromFileName).toHaveBeenCalledWith(
-        signedFilesBaseUrl, dmIdentifier, 'ept-hierarchy/0-0-0-0.json'
+        signedFilesBaseUrl,
+        dmIdentifier,
+        'ept-hierarchy/0-0-0-0.json'
       );
     });
 
     test('classic model uses getJsonFile with ept-hierarchy base URL', async () => {
       const eptUrl = 'https://example.com/model/';
-      const dataProvider = createMockDataProvider({ getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({})) });
+      const dataProvider = createMockDataProvider({
+        getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({}))
+      });
       const node = new PointCloudEptGeometryNode(
-        createMockEpt(eptUrl), dataProvider,
+        createMockEpt(eptUrl),
+        dataProvider,
         new CdfModelIdentifier(10, 20),
-        { fileData: minimalEptJson }, undefined
+        { fileData: minimalEptJson },
+        undefined
       );
 
       await node.getHierarchy('0-0-0-0.json');
