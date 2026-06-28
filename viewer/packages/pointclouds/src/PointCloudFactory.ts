@@ -75,7 +75,7 @@ export class PointCloudFactory {
 
     const preloadedEptData =
       modelMetadata.signedFiles && modelMetadata.scene
-        ? { type: 'pointCloudMetadata' as const, signedFiles: modelMetadata.signedFiles, fileData: modelMetadata.scene }
+        ? { type: 'pointCloudMetadataWithSignedFiles' as const, signedFiles: modelMetadata.signedFiles, fileData: modelMetadata.scene }
         : undefined;
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(

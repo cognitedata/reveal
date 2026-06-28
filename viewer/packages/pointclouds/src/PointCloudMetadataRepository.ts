@@ -65,14 +65,14 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
       const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
       return {
-        type: 'pointCloudMetadata',
-        signedFiles: (jsonData as PointCloudMetadataWithSignedFiles).signedFiles,
-        fileData: (jsonData as PointCloudMetadataWithSignedFiles).fileData
+        type: 'pointCloudMetadataWithSignedFiles',
+        signedFiles: jsonData.signedFiles,
+        fileData: jsonData.fileData as PointCloudMetadataWithSignedFiles['fileData']
       };
     }
     const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
-      type: 'pointCloudMetadata',
+      type: 'pointCloudMetadataWithSignedFiles',
       signedFiles: { items: [] },
       fileData: jsonData
     };

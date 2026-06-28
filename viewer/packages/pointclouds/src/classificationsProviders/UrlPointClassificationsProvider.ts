@@ -11,7 +11,7 @@ import type { PointCloudClassificationInfoWithSignedFiles } from '../types';
 import type { ClassificationInfo } from '../potree-three-loader';
 
 const EMPTY_CLASSIFICATION: PointCloudClassificationInfoWithSignedFiles = {
-  type: 'classificationInfo',
+  type: 'pointCloudClassificationInfoWithSignedFiles',
   signedFiles: { items: [] },
   fileData: { classificationSets: [] }
 };
@@ -32,7 +32,7 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
           DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE
         )
         .then(json => ({
-          type: 'classificationInfo' as const,
+          type: 'pointCloudClassificationInfoWithSignedFiles' as const,
           signedFiles: { items: [] },
           fileData: json as ClassificationInfo
         }))
@@ -41,7 +41,7 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
     return this._dataProvider
       .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
       .then(json => ({
-        type: 'classificationInfo' as const,
+        type: 'pointCloudClassificationInfoWithSignedFiles' as const,
         signedFiles: { items: [] },
         fileData: json as ClassificationInfo
       }))

@@ -120,7 +120,7 @@ export type PointCloudMetadataWithSignedFiles = {
   /**
    * Type of the file data.
    */
-  type: 'pointCloudMetadata';
+  type: 'pointCloudMetadataWithSignedFiles';
   /**
    * Signed files metadata.
    */
@@ -135,7 +135,7 @@ export type PointCloudClassificationInfoWithSignedFiles = {
   /**
    * Type of the file data.
    */
-  type: 'classificationInfo';
+  type: 'pointCloudClassificationInfoWithSignedFiles';
   /**
    * Signed files metadata.
    */

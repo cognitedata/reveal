@@ -77,13 +77,15 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
       const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
       return {
-        signedFiles: (jsonData as CadMetadataWithSignedFiles).signedFiles,
-        fileData: (jsonData as CadMetadataWithSignedFiles).fileData
+        type: 'cadMetadataWithSignedFiles',
+        signedFiles: jsonData.signedFiles,
+        fileData: jsonData.fileData as CadMetadataWithSignedFiles['fileData']
       };
     }
     if (baseUrl) {
       const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
       return {
+        type: 'cadMetadataWithSignedFiles',
         signedFiles: { items: [] },
         fileData: jsonData
       };

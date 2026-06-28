@@ -8,6 +8,6 @@ import { PointCloudClassificationInfoWithSignedFiles } from '../types';
 
 export class LocalPointClassificationsProvider implements IPointClassificationsProvider {
   async getClassifications(_modelMetadata: PointCloudMetadata): Promise<PointCloudClassificationInfoWithSignedFiles> {
-    return { type: 'classificationInfo', signedFiles: { items: [] }, fileData: { classificationSets: [] } };
+    return { type: 'pointCloudClassificationInfoWithSignedFiles', signedFiles: { items: [] }, fileData: { classificationSets: [] } };
   }
 }

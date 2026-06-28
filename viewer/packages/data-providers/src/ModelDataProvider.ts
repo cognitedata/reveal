@@ -3,7 +3,7 @@
  */
 
 import type { DMModelIdentifier } from './model-identifiers/DMModelIdentifier';
-import type { BinaryFileProvider, JsonFileProvider } from './types';
+import type { BinaryFileProvider, JsonFileProvider, DMSModelFilesBundle } from './types';
 
 /**
  * Provides data for 3D models.
@@ -29,7 +29,7 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
    * @param modelIdentifier DM identifier containing revision info (required).
    * @param fileName        Optional filename to filter by specific file path.
    */
-  getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown>;
+  getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle>;
 
   /**
    * Downloads signed binary blobs.

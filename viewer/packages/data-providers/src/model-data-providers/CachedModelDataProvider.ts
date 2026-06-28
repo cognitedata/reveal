@@ -88,7 +88,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
     return this.baseProvider.getSignedJsonFile(signedUrl);
   }
 
-  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
+  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string) {
     return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
   }
 
@@ -96,7 +96,7 @@ export class CachedModelDataProvider implements ModelDataProvider {
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
     fileName: string
-  ): Promise<unknown> {
+  ) {
     return this.baseProvider.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName);
   }
 

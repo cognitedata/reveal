@@ -24,6 +24,7 @@ export type SectorMetadata = {
 };
 
 export type CadMetadataWithSignedFiles = {
+  type: 'cadMetadataWithSignedFiles';
   readonly signedFiles: { items: DMSJsonFileItem[] };
   readonly fileData: CadSceneRootMetadata;
 };
