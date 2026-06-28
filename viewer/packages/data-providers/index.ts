@@ -71,7 +71,8 @@ export type {
   Image360Id,
   Image360RevisionId,
   DMSJsonFileItem,
-  DMSJsonFileResponse
+  DMSJsonFileResponse,
+  DMSModelFilesBundle
 } from './src/types';
 export { File3dFormat } from './src/types';
 

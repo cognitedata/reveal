@@ -75,7 +75,7 @@ function createMockedModelDataProvider(): ModelDataProvider {
     getBinaryFile: async () => {
       return new ArrayBuffer(1);
     },
-    getDMSJsonFile: async () => undefined,
+    getDMSJsonFile: async () => ({ signedFiles: { items: [] }, fileData: {} }),
     getSignedBinaryFile: async () => new ArrayBuffer(0),
     getSignedJsonFile: async () => undefined,
     getDMSJsonFileFromFileName: async () => undefined

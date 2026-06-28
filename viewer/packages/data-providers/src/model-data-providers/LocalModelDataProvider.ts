@@ -6,6 +6,7 @@ import { Log } from '@reveal/logger';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { fetchWithStatusCheck } from '../utilities/fetchWithStatusCheck';
 import type { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
+import type { DMSModelFilesBundle } from '../types';
 
 export class LocalModelDataProvider implements ModelDataProvider {
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
@@ -34,9 +35,10 @@ export class LocalModelDataProvider implements ModelDataProvider {
     return response.json();
   }
 
-  async getDMSJsonFile(baseUrl: string, _modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
+  async getDMSJsonFile(baseUrl: string, _modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle> {
     const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
-    return response.json();
+    const fileData = await response.json();
+    return { signedFiles: { items: [] }, fileData };
   }
 
   async getDMSJsonFileFromFileName(

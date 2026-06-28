@@ -41,6 +41,11 @@ export type DMSJsonFileResponse = {
   nextCursor?: string;
 };
 
+export type DMSModelFilesBundle = {
+  signedFiles: DMSJsonFileResponse;
+  fileData: unknown;
+};
+
 /**
  * An ID identifiying a single Image360 entity within a collection
  */

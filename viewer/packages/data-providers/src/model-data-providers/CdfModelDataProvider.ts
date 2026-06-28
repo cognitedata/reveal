@@ -4,7 +4,7 @@
 import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import type { DMSJsonFileItem, DMSJsonFileResponse } from '../types';
+import type { DMSJsonFileItem, DMSJsonFileResponse, DMSModelFilesBundle } from '../types';
 import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
 
 /**
@@ -79,16 +79,16 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.json();
   }
 
-  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown> {
-    const [signedUrlItemsData, fileData] = await Promise.all([
-      this.fetchDMSJsonFile(baseUrl, modelIdentifier),
-      this.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName)
-    ]);
-
-    return {
-      signedFiles: signedUrlItemsData,
-      fileData
-    };
+  async getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle> {
+    const signedFiles = await this.fetchDMSJsonFile(baseUrl, modelIdentifier);
+    const found = signedFiles.items.find(
+      item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
+    );
+    if (!found) {
+      throw new Error(`File "${fileName}" not found in signed files response`);
+    }
+    const fileData = await this.getSignedJsonFile(found.signedUrl);
+    return { signedFiles, fileData };
   }
 
   async getDMSJsonFileFromFileName(
@@ -103,7 +103,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return this.getSignedJsonFile(fileResponse.items[0].signedUrl);
   }
 
-  async fetchDMSJsonFile(
+  private async fetchDMSJsonFile(
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
     fileNames?: string[]
