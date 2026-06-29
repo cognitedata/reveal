@@ -20,11 +20,12 @@ import type { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
 import type { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
-import { DMModelIdentifier, ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
-import { PointCloudMetadataWithSignedFiles } from '../types';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
+import type { PointCloudMetadataWithSignedFiles } from '../types';
 import { throttle } from 'lodash-es';
 import { createVisibilityTextureData } from './utils/utils';
-import { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
+import type { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
 
 const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view
 

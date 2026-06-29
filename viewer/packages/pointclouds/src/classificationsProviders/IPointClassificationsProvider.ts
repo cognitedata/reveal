@@ -2,9 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudMetadata } from '../PointCloudMetadata';
-import { PointCloudClassificationInfoWithSignedFiles } from '../types';
-import type { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
+import type { PointCloudMetadata } from '../PointCloudMetadata';
+import type { PointCloudClassificationInfoWithSignedFiles } from '../types';
 
 export interface IPointClassificationsProvider {
   getClassifications(modelMetadata: PointCloudMetadata): Promise<PointCloudClassificationInfoWithSignedFiles>;

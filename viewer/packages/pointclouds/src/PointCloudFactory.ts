@@ -19,7 +19,7 @@ import type { IPointClassificationsProvider } from './classificationsProviders/I
 import type { PointCloudMaterialManager } from '@reveal/rendering';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
 import { isLocalIdentifier } from '@reveal/data-providers';
-import { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import type { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
 import { hasFileData } from './typeGuards';
 
 export class PointCloudFactory {
@@ -75,7 +75,11 @@ export class PointCloudFactory {
 
     const preloadedEptData =
       modelMetadata.signedFiles && modelMetadata.scene
-        ? { type: 'pointCloudMetadataWithSignedFiles' as const, signedFiles: modelMetadata.signedFiles, fileData: modelMetadata.scene }
+        ? {
+            type: 'pointCloudMetadataWithSignedFiles' as const,
+            signedFiles: modelMetadata.signedFiles,
+            fileData: modelMetadata.scene
+          }
         : undefined;
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(

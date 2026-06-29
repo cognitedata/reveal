@@ -88,5 +88,4 @@ describe(EptBinaryLoader.name, () => {
     expect(dataProvider.getBinaryFile).toHaveBeenCalledWith(expect.any(String), '0-0-0-0.bin');
     expect(dataProvider.getSignedBinaryFile).not.toHaveBeenCalled();
   });
-
 });
