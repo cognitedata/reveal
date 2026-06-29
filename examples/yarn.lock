@@ -44,9 +44,9 @@ __metadata:
     react: "npm:19.2.7"
     react-dom: "npm:19.2.7"
     stats.js: "npm:0.17.0"
-    styled-components: "npm:6.4.2"
+    styled-components: "npm:6.4.3"
     three: "npm:0.184.0"
-    ts-loader: "npm:9.6.1"
+    ts-loader: "npm:9.6.2"
     typescript: "npm:^6.0.0"
     webpack: "npm:^5.76.0"
     webpack-cli: "npm:^7.0.0"
@@ -2000,7 +2000,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.0.0, enhanced-resolve@npm:^5.22.2":
+"enhanced-resolve@npm:^5.22.2":
   version: 5.24.1
   resolution: "enhanced-resolve@npm:5.24.1"
   dependencies:
@@ -2944,7 +2944,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.0, micromatch@npm:^4.0.2":
+"micromatch@npm:^4.0.2":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
@@ -3365,7 +3365,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:^4.0.4":
+"picomatch@npm:^4.0.0, picomatch@npm:^4.0.4":
   version: 4.0.4
   resolution: "picomatch@npm:4.0.4"
   checksum: 10/f6ef80a3590827ce20378ae110ac78209cc4f74d39236370f1780f957b7ee41c12acde0e4651b90f39983506fd2f5e449994716f516db2e9752924aff8de93ce
@@ -3798,7 +3798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.6.3":
+"semver@npm:^7.3.5, semver@npm:^7.6.3":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
@@ -4075,9 +4075,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:6.4.2":
-  version: 6.4.2
-  resolution: "styled-components@npm:6.4.2"
+"styled-components@npm:6.4.3":
+  version: 6.4.3
+  resolution: "styled-components@npm:6.4.3"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.4.0"
     css-to-react-native: "npm:3.2.0"
@@ -4095,7 +4095,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10/9298e414c4c6719ab5936eb2ed11d74717f55bd6e620660da8f672caac4f76f455630a8472aaf5e633b2c106262f9ad854b5caa4ec414ede8b1dc94b5686298c
+  checksum: 10/99f95375fd74c60c9c0cffdcb5fc65c27ed35bbd124f57fac829baacdacf17deee96ddb96724452fdb5f715a53e62b6e8c1a250064d4c48455c1d416312bbb4b
   languageName: node
   linkType: hard
 
@@ -4248,14 +4248,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:9.6.1":
-  version: 9.6.1
-  resolution: "ts-loader@npm:9.6.1"
+"ts-loader@npm:9.6.2":
+  version: 9.6.2
+  resolution: "ts-loader@npm:9.6.2"
   dependencies:
     chalk: "npm:^4.1.0"
-    enhanced-resolve: "npm:^5.0.0"
-    micromatch: "npm:^4.0.0"
-    semver: "npm:^7.3.4"
+    picomatch: "npm:^4.0.0"
     source-map: "npm:^0.7.4"
   peerDependencies:
     loader-utils: "*"
@@ -4264,7 +4262,7 @@ __metadata:
   peerDependenciesMeta:
     loader-utils:
       optional: true
-  checksum: 10/c0353835445ff31ac5a21f40760c745f7727b1a340058cf44e25791427956fb9f89d2c35dde0ee734677ec747c7e3ff7bbd447ca49ee16cf207d0bfe8118c965
+  checksum: 10/9df2167f5d558a57ade8e6340b854dbe19433ab1fe4ce0314995dd7f8133b03fb2a219e5206a130cf1d260717f838c9f735a5476d152c8777fcbe99d847f1f2d
   languageName: node
   linkType: hard
 
