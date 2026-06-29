@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Object3D, Vector3 } from 'three';
-import { PointCloudNode } from './PointCloudNode';
-import { DataSourceType } from '@reveal/data-providers';
-import { DMSJsonFileItem } from '@reveal/data-providers/src/types';
-import { ClassificationInfo } from './potree-three-loader';
-import { EptJson } from './potree-three-loader/loading/EptJson';
+import type { Object3D, Vector3 } from 'three';
+import type { PointCloudNode } from './PointCloudNode';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { DMSJsonFileItem } from '@reveal/data-providers/src/types';
+import type { ClassificationInfo } from './potree-three-loader';
+import type { EptJson } from './potree-three-loader/loading/EptJson';
 
 /**
  * ASPRS well known point class types.

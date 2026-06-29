@@ -89,5 +89,4 @@ describe(PointCloudMetadataRepository.name, () => {
     expect(result.signedFiles?.items).toContainEqual(signedItem);
     expect(result.signedFilesBaseUrl).toBe(signedFilesBaseUrl);
   });
-
 });
