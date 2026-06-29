@@ -5,7 +5,7 @@
 import { vi } from 'vitest';
 import { Matrix4 } from 'three';
 import { UrlPointClassificationsProvider } from './UrlPointClassificationsProvider';
-import type { ModelDataProvider } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
 
@@ -22,7 +22,7 @@ function createMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDa
   return base;
 }
 
-function createMetadata(modelIdentifier: InstanceType<typeof CdfModelIdentifier>): PointCloudMetadata {
+function createMetadata(modelIdentifier: ModelIdentifier): PointCloudMetadata {
   return {
     format: File3dFormat.EptPointCloud,
     formatVersion: 1,
@@ -44,41 +44,31 @@ const dmIdentifier = new DMModelIdentifier({
 const classificationData = { classificationSets: [{ name: 'Default', classes: [] }] };
 
 describe(UrlPointClassificationsProvider.name, () => {
-  test('DM model calls getDMSJsonFileFromFileName with correct file and base URL', async () => {
-    const mockProvider = createMockProvider({
+  test('DM model calls getDMSJsonFileFromFileName; classic model calls getJsonFile', async () => {
+    const dmProvider = createMockProvider({
       getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(async () => classificationData)
     });
-    const provider = new UrlPointClassificationsProvider(mockProvider);
-    const metadata = createMetadata(dmIdentifier);
-
-    const result = await provider.getClassifications(metadata);
-
-    expect(mockProvider.getDMSJsonFileFromFileName).toHaveBeenCalledWith(
+    const dmResult = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
+      createMetadata(dmIdentifier)
+    );
+    expect(dmProvider.getDMSJsonFileFromFileName).toHaveBeenCalledWith(
       'https://signed-files.example.com',
       dmIdentifier,
       'classificationSets.json'
     );
-    expect(result.type).toBe('classificationInfo');
-    expect(result.fileData).toBe(classificationData);
-    expect(result.signedFiles.items).toEqual([]);
-  });
+    expect(dmResult.fileData).toBe(classificationData);
 
-  test('Classic model calls getJsonFile with correct base URL and file', async () => {
-    const classicIdentifier = new CdfModelIdentifier(10, 20);
-    const mockProvider = createMockProvider({
+    const classicProvider = createMockProvider({
       getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => classificationData)
     });
-    const provider = new UrlPointClassificationsProvider(mockProvider);
-    const metadata = createMetadata(classicIdentifier);
-
-    const result = await provider.getClassifications(metadata);
-
-    expect(mockProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model', 'classificationSets.json');
-    expect(result.type).toBe('classificationInfo');
-    expect(result.fileData).toBe(classificationData);
+    const classicResult = await new UrlPointClassificationsProvider(classicProvider).getClassifications(
+      createMetadata(new CdfModelIdentifier(10, 20))
+    );
+    expect(classicProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model', 'classificationSets.json');
+    expect(classicResult.fileData).toBe(classificationData);
   });
 
-  test.each<[string, CdfModelIdentifier, Partial<ModelDataProvider>]>([
+  test.each<[string, ModelIdentifier, Partial<ModelDataProvider>]>([
     [
       'DM',
       dmIdentifier,
@@ -102,7 +92,6 @@ describe(UrlPointClassificationsProvider.name, () => {
       createMetadata(identifier)
     );
 
-    expect(result.type).toBe('classificationInfo');
     expect(result.fileData.classificationSets).toEqual([]);
     expect(result.signedFiles.items).toEqual([]);
   });

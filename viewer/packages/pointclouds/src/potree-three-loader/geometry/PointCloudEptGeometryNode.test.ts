@@ -51,29 +51,17 @@ const dmIdentifier = new DMModelIdentifier({
   revisionSpace: 'my-space'
 });
 
-const minimalEptJson: EptJson = {
-  schema: [
-    { name: 'X', type: 'float', size: 8, scale: 1, offset: 0 },
-    { name: 'Y', type: 'float', size: 8, scale: 1, offset: 0 },
-    { name: 'Z', type: 'float', size: 8, scale: 1, offset: 0 }
-  ],
-  bounds: [0, 0, 0, 100, 100, 100],
-  boundsConforming: [0, 0, 0, 100, 100, 100],
-  ticks: 128,
-  dataType: 'binary'
-};
-
 function makeMetadata(items: { fileName: string; signedUrl: string }[]): PointCloudMetadataWithSignedFiles {
   return {
     type: 'pointCloudMetadataWithSignedFiles',
     signedFiles: { items: items.map(i => ({ ...i, subPath: '' })) },
-    fileData: minimalEptJson
+    fileData: {} as Partial<EptJson> as EptJson
   };
 }
 
 describe(PointCloudEptGeometryNode.name, () => {
   describe('constructor — signedUrl resolution from eptMetadata', () => {
-    test('resolves signedUrl by exact and subPath fileName match; undefined when not found', () => {
+    test('resolves signedUrl by exact match, subPath match, missing, and no metadata', () => {
       const exactUrl = 'https://cdn.example.com/0-0-0-0.bin';
       const subPathUrl = 'https://cdn.example.com/sub/0-0-0-0.bin';
 
@@ -103,17 +91,15 @@ describe(PointCloudEptGeometryNode.name, () => {
         'https://signed.example.com'
       );
       expect(nodeMissing.signedUrl).toBeUndefined();
-    });
 
-    test('signedUrl is undefined when metadata has no signedFiles property', () => {
-      const node = new PointCloudEptGeometryNode(
+      const nodeNoMetadata = new PointCloudEptGeometryNode(
         createMockEpt(),
         createMockDataProvider(),
         dmIdentifier,
-        { fileData: minimalEptJson },
+        { fileData: {} as Partial<EptJson> as EptJson },
         undefined
       );
-      expect(node.signedUrl).toBeUndefined();
+      expect(nodeNoMetadata.signedUrl).toBeUndefined();
     });
   });
 
@@ -154,21 +140,20 @@ describe(PointCloudEptGeometryNode.name, () => {
     });
 
     test('classic model uses getJsonFile with ept-hierarchy base URL', async () => {
-      const eptUrl = 'https://example.com/model/';
       const dataProvider = createMockDataProvider({
         getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({}))
       });
       const node = new PointCloudEptGeometryNode(
-        createMockEpt(eptUrl),
+        createMockEpt(),
         dataProvider,
         new CdfModelIdentifier(10, 20),
-        { fileData: minimalEptJson },
+        { fileData: {} as Partial<EptJson> as EptJson },
         undefined
       );
 
       await node.getHierarchy('0-0-0-0.json');
 
-      expect(dataProvider.getJsonFile).toHaveBeenCalledWith(`${eptUrl}ept-hierarchy`, '0-0-0-0.json');
+      expect(dataProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model/ept-hierarchy', '0-0-0-0.json');
     });
   });
 });

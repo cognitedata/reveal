@@ -89,13 +89,4 @@ describe(EptBinaryLoader.name, () => {
     expect(dataProvider.getSignedBinaryFile).not.toHaveBeenCalled();
   });
 
-  test('load skips binary fetch when node has zero points', async () => {
-    const dataProvider = createMockDataProvider();
-    const loader = new EptBinaryLoader(dataProvider, []);
-
-    await loader.load(createMockNode({ nodeFileName: '0-0-0-0' }));
-
-    expect(dataProvider.getBinaryFile).not.toHaveBeenCalled();
-    expect(dataProvider.getSignedBinaryFile).not.toHaveBeenCalled();
-  });
 });

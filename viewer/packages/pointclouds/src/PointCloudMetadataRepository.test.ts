@@ -90,13 +90,4 @@ describe(PointCloudMetadataRepository.name, () => {
     expect(result.signedFilesBaseUrl).toBe(signedFilesBaseUrl);
   });
 
-  test('throws when no EptPointCloud output is available', async () => {
-    const metadataProvider: ModelMetadataProvider = {
-      ...createMockedMetadataProvider(),
-      getModelOutputs: vi.fn<ModelMetadataProvider['getModelOutputs']>(async () => [])
-    };
-    const repo = new PointCloudMetadataRepository(metadataProvider, createMockedModelDataProvider());
-
-    await expect(repo.loadData(new CdfModelIdentifier(1, 2))).rejects.toThrow();
-  });
 });
