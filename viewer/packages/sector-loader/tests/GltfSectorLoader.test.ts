@@ -20,7 +20,7 @@ function makeMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelData
     getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
     getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
     getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
-    getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(),
+    getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
   };
   Object.assign(base, overrides);
   return base;
@@ -73,7 +73,9 @@ describe(GltfSectorLoader.name, () => {
       revisionExternalId: 'rev',
       revisionSpace: 'space'
     });
-    const getSignedBinaryFileMock: ViMock<ModelDataProvider['getSignedBinaryFile']> = vi.fn<ModelDataProvider['getSignedBinaryFile']>().mockResolvedValue(expectedBuffer);
+    const getSignedBinaryFileMock: ViMock<ModelDataProvider['getSignedBinaryFile']> = vi
+      .fn<ModelDataProvider['getSignedBinaryFile']>()
+      .mockResolvedValue(expectedBuffer);
     const mockProvider = makeMockProvider({ getSignedBinaryFile: getSignedBinaryFileMock });
 
     const dmLoader = new GltfSectorLoader(mockProvider);
@@ -104,7 +106,9 @@ describe(GltfSectorLoader.name, () => {
   test('getSectorByteBuffer calls getBinaryFile for Classic model', async () => {
     const expectedBuffer = new ArrayBuffer(64);
     const classicIdentifier = new LocalModelIdentifier('classic-model');
-    const getBinaryFileMock: ViMock<ModelDataProvider['getBinaryFile']> = vi.fn<ModelDataProvider['getBinaryFile']>().mockResolvedValue(expectedBuffer);
+    const getBinaryFileMock: ViMock<ModelDataProvider['getBinaryFile']> = vi
+      .fn<ModelDataProvider['getBinaryFile']>()
+      .mockResolvedValue(expectedBuffer);
     const mockProvider = makeMockProvider({ getBinaryFile: getBinaryFileMock });
 
     const classicLoader = new GltfSectorLoader(mockProvider);
