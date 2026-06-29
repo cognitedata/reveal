@@ -107,13 +107,7 @@ import type { Image360Action } from '@reveal/360-images/src/Image360Action';
 import { REVEAL_VERSION } from '../../version';
 
 type Cognite3DViewerEvents =
-  | 'click'
-  | 'hover'
-  | 'cameraChange'
-  | 'cameraStop'
-  | 'beforeSceneRendered'
-  | 'sceneRendered'
-  | 'disposed';
+  'click' | 'hover' | 'cameraChange' | 'cameraStop' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
 /**
  * @example
