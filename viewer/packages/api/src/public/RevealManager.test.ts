@@ -5,7 +5,8 @@ import type { WebGLRenderer } from 'three';
 import { PerspectiveCamera, Plane } from 'three';
 
 import { createRevealManager } from './createRevealManager';
-import type { RevealManager, LoadingStateChangeListener } from './RevealManager';
+import { RevealManager } from './RevealManager';
+import type { LoadingStateChangeListener } from './RevealManager';
 
 import type {
   DMDataSourceType,
@@ -13,13 +14,22 @@ import type {
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
 } from '@reveal/data-providers';
-import type { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { CdfModelIdentifier, DMModelIdentifier } from '@reveal/data-providers';
+import type { CadManager, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
-import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
+import { LocalPointClassificationsProvider, PointCloudManager } from '@reveal/pointclouds';
 import type { SetPropertyExpression } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import type { CameraManager } from '@reveal/camera-manager';
+import type { CadNode } from '@reveal/cad-model';
+import type {
+  RenderPipelineExecutor,
+  RenderPipelineProvider,
+  ResizeHandler,
+  SettableRenderTarget
+} from '@reveal/rendering';
 import { vi } from 'vitest';
+import { NEVER } from 'rxjs';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -144,5 +154,31 @@ describe('RevealManager', () => {
     vi.advanceTimersByTime(10000);
 
     expect(loadingStateChangedCb).toHaveBeenCalledTimes(0);
+  });
+
+  test('addModel routes DM and Classic CAD models to correct identifier types', async () => {
+    const addModelMock = vi.fn<CadManager['addModel']>().mockResolvedValue({} as Partial<CadNode> as CadNode);
+    const rm = new RevealManager(
+      { on: vi.fn(), off: vi.fn(), addModel: addModelMock } as Partial<CadManager> as CadManager,
+      { getLoadingStateObserver: () => NEVER } as Partial<PointCloudManager> as PointCloudManager,
+      {} as Partial<RenderPipelineExecutor> as RenderPipelineExecutor,
+      {} as Partial<RenderPipelineProvider & SettableRenderTarget> as RenderPipelineProvider & SettableRenderTarget,
+      {} as Partial<ResizeHandler> as ResizeHandler,
+      cameraManagerMock.object()
+    );
+
+    await rm.addModel('cad', {
+      revisionExternalId: 'ext',
+      revisionSpace: 'space',
+      classicModelRevisionId: { modelId: 1, revisionId: 2 }
+    });
+    const dmId = addModelMock.mock.calls[0][0] as DMModelIdentifier;
+    expect(dmId).toBeInstanceOf(DMModelIdentifier);
+    expect(dmId.modelId).toBe(1);
+    expect(dmId.revisionId).toBe(2);
+
+    addModelMock.mockClear();
+    await rm.addModel('cad', { modelId: 10, revisionId: 20, classicModelRevisionId: { modelId: 10, revisionId: 20 } });
+    expect(addModelMock.mock.calls[0][0]).toBeInstanceOf(CdfModelIdentifier);
   });
 });

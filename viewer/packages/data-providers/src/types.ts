@@ -23,11 +23,13 @@ export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
 ) => boolean;
 
 export interface JsonFileProvider {
-  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
+  getJsonFile<T = unknown>(signedUrl: string): Promise<T>;
 }
 
 export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  getBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
 export type DMSJsonFileItem = {

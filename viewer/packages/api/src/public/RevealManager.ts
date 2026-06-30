@@ -26,13 +26,7 @@ import type {
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import type { CameraManager } from '@reveal/camera-manager';
 
-import type {
-  ClassicModelIdentifierType,
-  DataSourceType,
-  File3dFormat,
-  InternalDataSourceType,
-  LocalModelIdentifierType
-} from '@reveal/data-providers';
+import type { DataSourceType, File3dFormat, InternalDataSourceType } from '@reveal/data-providers';
 import { createModelIdentifier } from '@reveal/data-providers';
 import type { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
@@ -239,7 +233,7 @@ export class RevealManager {
       case 'cad': {
         return this._cadManager.addModel(
           createModelIdentifier(
-            modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType,
+            { ...modelIdentifier, ...modelIdentifier.classicModelRevisionId },
             options?.outputFormat
           ),
           options?.geometryFilter,
