@@ -19,58 +19,45 @@ export class CdfModelDataProvider implements ModelDataProvider {
     this.authenticationPromise = client.authenticate();
   }
 
-  public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const url = `${baseUrl}/${fileName}`;
+  public getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  public getBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  public async getBinaryFile(
+    baseOrSigned: string,
+    fileNameOrSignal?: string | AbortSignal,
+    abortSignal?: AbortSignal
+  ): Promise<ArrayBuffer> {
+    const isStandard = typeof fileNameOrSignal === 'string';
+    const url = isStandard ? `${baseOrSigned}/${fileNameOrSignal}` : baseOrSigned;
+    const signal = isStandard ? abortSignal : (fileNameOrSignal as AbortSignal | undefined);
     const headers = {
-      ...this.client.getDefaultRequestHeaders(),
+      ...(isStandard ? this.client.getDefaultRequestHeaders() : {}),
       Accept: '*/*'
     };
 
     const response = await this.fetchWithRetry(url, {
       headers,
-      signal: abortSignal,
+      signal,
       method: 'GET'
     }).catch(e => {
       if (e?.name === 'AbortError') {
         throw e;
       }
-      throw Error('Could not download binary file');
+      throw new Error(isStandard ? 'Could not download binary file' : 'Could not download signed binary file');
     });
     return response.arrayBuffer();
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
-    const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
-      throw Error('Could not download Json file');
-    });
-    return response.data;
-  }
-
-  public async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const headers = {
-      Accept: '*/*'
-    };
-    const response = await this.fetchWithRetry(signedUrl, {
-      headers,
-      signal: abortSignal,
-      method: 'GET'
-    }).catch(e => {
-      if (e?.name === 'AbortError') {
-        throw e;
-      }
-      throw Error('Could not download signed binary file');
-    });
-    return response.arrayBuffer();
-  }
-
-  public async getSignedJsonFile(signedUrl: string): Promise<unknown> {
-    const headers = {
-      Accept: 'application/json, */*'
-    };
-    const response = await this.fetchWithRetry(signedUrl, {
-      headers,
-      method: 'GET'
-    }).catch(() => {
+  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
+  getJsonFile<T = unknown>(signedUrl: string): Promise<T>;
+  async getJsonFile<T = unknown>(baseOrSigned: string, fileName?: string): Promise<T> {
+    if (fileName !== undefined) {
+      const response = await this.client.get<T>(`${baseOrSigned}/${fileName}`).catch(_err => {
+        throw Error('Could not download Json file');
+      });
+      return response.data;
+    }
+    const headers = { Accept: 'application/json, */*' };
+    const response = await this.fetchWithRetry(baseOrSigned, { headers, method: 'GET' }).catch(() => {
       throw Error('Could not download signed JSON file');
     });
     if (response.ok === false) {
@@ -90,7 +77,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     if (!found) {
       throw new Error(`File "${fileName}" not found in signed files response`);
     }
-    const fileData = await this.getSignedJsonFile(found.signedUrl);
+    const fileData = await this.getJsonFile(found.signedUrl);
     return { signedFiles, fileData };
   }
 
@@ -103,7 +90,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     if (!fileResponse.items.length) {
       throw new Error(`File "${fileName}" not found via filtered request to signed files endpoint`);
     }
-    return this.getSignedJsonFile(fileResponse.items[0].signedUrl);
+    return this.getJsonFile(fileResponse.items[0].signedUrl);
   }
 
   private async fetchDMSJsonFile(

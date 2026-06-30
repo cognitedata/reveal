@@ -23,33 +23,46 @@ export class CachedModelDataProvider implements ModelDataProvider {
     this.cacheManager = new DataFileCacheManager(cacheConfig, cacheStorage);
   }
 
-  async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const convertToArrayBuffer = (data: ArrayBuffer): ArrayBuffer => data;
-
-    return this.fetchWithCache(
-      baseUrl,
-      fileName,
-      response => response.arrayBuffer(),
-      () => this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal),
-      convertToArrayBuffer,
-      'application/octet-stream'
-    );
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  getBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  async getBinaryFile(
+    baseOrSigned: string,
+    fileNameOrAbortSignal?: string | AbortSignal,
+    abortSignal?: AbortSignal
+  ): Promise<ArrayBuffer> {
+    if (typeof fileNameOrAbortSignal === 'string') {
+      const fileName = fileNameOrAbortSignal;
+      return this.fetchWithCache(
+        baseOrSigned,
+        fileName,
+        response => response.arrayBuffer(),
+        () => this.baseProvider.getBinaryFile(baseOrSigned, fileName, abortSignal),
+        data => data,
+        'application/octet-stream'
+      );
+    }
+    const signal = fileNameOrAbortSignal instanceof AbortSignal ? fileNameOrAbortSignal : abortSignal;
+    return this.baseProvider.getBinaryFile(baseOrSigned, signal);
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
-    const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
-      const jsonString = JSON.stringify(data);
-      return new TextEncoder().encode(jsonString).buffer;
-    };
-
-    return this.fetchWithCache(
-      baseUrl,
-      fileName,
-      response => response.json(),
-      () => this.baseProvider.getJsonFile(baseUrl, fileName),
-      convertToArrayBuffer,
-      'application/json'
-    );
+  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
+  getJsonFile<T = unknown>(signedUrl: string): Promise<T>;
+  async getJsonFile<T = unknown>(baseOrSigned: string, fileName?: string): Promise<T> {
+    if (fileName !== undefined) {
+      const convertToArrayBuffer = (data: T): ArrayBuffer => {
+        const jsonString = JSON.stringify(data);
+        return new TextEncoder().encode(jsonString).buffer;
+      };
+      return this.fetchWithCache<T>(
+        baseOrSigned,
+        fileName,
+        response => response.json(),
+        () => this.baseProvider.getJsonFile<T>(baseOrSigned, fileName),
+        convertToArrayBuffer,
+        'application/json'
+      );
+    }
+    return this.baseProvider.getJsonFile<T>(baseOrSigned);
   }
 
   private async fetchWithCache<T>(
@@ -79,14 +92,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
       .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
 
     return data;
-  }
-
-  async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    return this.baseProvider.getSignedBinaryFile(signedUrl, abortSignal);
-  }
-
-  async getSignedJsonFile(signedUrl: string): Promise<unknown> {
-    return this.baseProvider.getSignedJsonFile(signedUrl);
   }
 
   async getDMSJsonFile(
