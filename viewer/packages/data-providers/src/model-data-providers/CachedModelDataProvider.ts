@@ -102,14 +102,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
     return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
   }
 
-  async getDMSJsonFileFromFileName(
-    baseUrl: string,
-    modelIdentifier: DMModelIdentifier,
-    fileName: string
-  ): Promise<unknown> {
-    return this.baseProvider.getDMSJsonFileFromFileName(baseUrl, modelIdentifier, fileName);
-  }
-
   /**
    * Get the underlying cache manager for direct cache operations
    */

@@ -39,13 +39,4 @@ export class LocalModelDataProvider implements ModelDataProvider {
     const fileData = await response.json();
     return { signedFiles: { items: [] }, fileData };
   }
-
-  async getDMSJsonFileFromFileName(
-    baseUrl: string,
-    _modelIdentifier: DMModelIdentifier,
-    fileName: string
-  ): Promise<unknown> {
-    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
-    return response.json();
-  }
 }

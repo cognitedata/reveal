@@ -52,15 +52,4 @@ describe(LocalModelDataProvider.name, () => {
     expect(fetch).toHaveBeenCalledWith(`${baseUrl}/scene.json`);
     expect(result).toEqual({ signedFiles: { items: [] }, fileData: data });
   });
-
-  test('getDMSJsonFileFromFileName() constructs URL from baseUrl and fileName, ignores modelIdentifier', async () => {
-    const data = { sectors: [] };
-    vi.stubGlobal(
-      'fetch',
-      vi.fn<() => Promise<Response>>().mockResolvedValueOnce(new Response(JSON.stringify(data), { status: 200 }))
-    );
-    const result = await provider.getDMSJsonFileFromFileName(baseUrl, dmIdentifier, 'scene.json');
-    expect(fetch).toHaveBeenCalledWith(`${baseUrl}/scene.json`);
-    expect(result).toEqual(data);
-  });
 });

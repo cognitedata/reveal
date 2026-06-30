@@ -19,13 +19,4 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
    * @returns Bundle with all signed file metadata and the parsed content of the requested file.
    */
   getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle>;
-
-  /**
-   * Downloads and parses the content of a specific file via a filtered signed URL request.
-   * @param baseUrl         Base URL of the signed files endpoint.
-   * @param modelIdentifier DM identifier containing revision info (required).
-   * @param fileName        Filename to fetch.
-   * @returns The parsed content of the requested file.
-   */
-  getDMSJsonFileFromFileName(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown>;
 }

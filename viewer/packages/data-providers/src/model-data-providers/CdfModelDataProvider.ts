@@ -81,18 +81,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return { signedFiles, fileData };
   }
 
-  async getDMSJsonFileFromFileName(
-    baseUrl: string,
-    modelIdentifier: DMModelIdentifier,
-    fileName: string
-  ): Promise<unknown> {
-    const fileResponse = await this.fetchDMSJsonFile(baseUrl, modelIdentifier, [fileName]);
-    if (!fileResponse.items.length) {
-      throw new Error(`File "${fileName}" not found via filtered request to signed files endpoint`);
-    }
-    return this.getJsonFile(fileResponse.items[0].signedUrl);
-  }
-
   private async fetchDMSJsonFile(
     baseUrl: string,
     modelIdentifier: DMModelIdentifier,
