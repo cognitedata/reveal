@@ -120,9 +120,6 @@ function createMockedModelDataProvider(): ModelDataProvider {
       }
     },
     getBinaryFile: async () => new ArrayBuffer(1),
-    getSignedBinaryFile: async () => new ArrayBuffer(1),
-    getSignedJsonFile: async () => ({}),
-    getDMSJsonFile: async () => ({ signedFiles: { items: [] }, fileData: {} }),
-    getDMSJsonFileFromFileName: async () => ({})
+    getDMSJsonFile: async () => ({ signedFiles: { items: [] }, fileData: {} })
   };
 }
