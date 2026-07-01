@@ -5,7 +5,7 @@
 import type { Object3D, Vector3 } from 'three';
 import type { PointCloudNode } from './PointCloudNode';
 import type { DataSourceType } from '@reveal/data-providers';
-import type { DMSJsonFileItem } from '@reveal/data-providers/src/types';
+import type { SignedFileItem } from '@reveal/data-providers';
 import type { ClassificationInfo } from './potree-three-loader';
 import type { EptJson } from './potree-three-loader/loading/EptJson';
 
@@ -124,7 +124,7 @@ export type PointCloudMetadataWithSignedFiles = {
   /**
    * Signed files metadata.
    */
-  readonly signedFiles: { items: DMSJsonFileItem[] };
+  readonly signedFiles: { items: SignedFileItem[] };
   /**
    * Point cloud metadata.
    */
@@ -139,7 +139,7 @@ export type PointCloudClassificationInfoWithSignedFiles = {
   /**
    * Signed files metadata.
    */
-  readonly signedFiles: { items: DMSJsonFileItem[] };
+  readonly signedFiles: { items: SignedFileItem[] };
   /**
    * Classification info.
    */
