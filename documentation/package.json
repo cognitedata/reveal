@@ -24,7 +24,7 @@
     "ws:replace": "replace"
   },
   "dependencies": {
-    "@azure/msal-browser": "4.30.0",
+    "@azure/msal-browser": "5.14.0",
     "@codemirror/lang-javascript": "6.2.5",
     "@docusaurus/core": "3.10.1",
     "@docusaurus/preset-classic": "3.10.1",
