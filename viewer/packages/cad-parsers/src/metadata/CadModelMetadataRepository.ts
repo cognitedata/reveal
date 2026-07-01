@@ -18,7 +18,9 @@ import type {
   ModelIdentifier,
   BlobOutputMetadata
 } from '@reveal/data-providers';
-import { File3dFormat } from '@reveal/data-providers';
+import { File3dFormat, isDMIdentifier, DMModelIdentifier } from '@reveal/data-providers';
+import type { CadMetadataWithSignedFiles } from './types';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -40,11 +42,13 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   async loadData(modelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
     const cadOutput = await this.getSupportedOutput(modelIdentifier, outputFormat);
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
+    const signedFilesBaseUrlPromise = this._modelMetadataProvider.getModelUriForSignedFiles?.() ?? Promise.resolve('');
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
-    const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
+    const signedFilesBaseUrl = await signedFilesBaseUrlPromise;
+    const json = await this.getJsonFile(modelIdentifier, blobBaseUrl, signedFilesBaseUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new Matrix4().copy(modelMatrix).invert();
@@ -53,6 +57,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     return {
       modelIdentifier,
       modelBaseUrl: blobBaseUrl,
+      signedFilesBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
       format: cadOutput.format as File3dFormat,
@@ -62,6 +67,40 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
+  }
+
+  private async getJsonFile(
+    modelIdentifier: ModelIdentifier,
+    baseUrl: string | undefined,
+    signedFilesBaseUrl: string | undefined,
+    fileName: string
+  ): Promise<CadMetadataWithSignedFiles> {
+    if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
+      if (!this._modelDataProvider.getDMSJsonFile) {
+        throw new Error('Model data provider does not support signed file fetching');
+      }
+      const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, '');
+      const found = jsonData.items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+
+      if (!found) {
+        throw new Error(`File "${fileName}" not found in signed files response`);
+      }
+      const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
+      return {
+        type: 'cadMetadataWithSignedFiles',
+        signedFiles: jsonData,
+        fileData: fileData as CadSceneRootMetadata
+      };
+    }
+    if (baseUrl) {
+      const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+      return {
+        type: 'cadMetadataWithSignedFiles',
+        signedFiles: { items: [] },
+        fileData: jsonData as CadSceneRootMetadata
+      };
+    }
+    throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
   }
 
   private async getSupportedOutput(

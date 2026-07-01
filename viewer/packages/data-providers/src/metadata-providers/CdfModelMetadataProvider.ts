@@ -72,7 +72,12 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
+
     return `${this._client.getBaseUrl()}${this.getRequestPath(formatMetadata.blobId)}`;
+  }
+
+  public async getModelUriForSignedFiles(): Promise<string> {
+    return `${this._client.getBaseUrl()}${this.getRequestPathForSignedFiles()}`;
   }
 
   public async getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
@@ -97,5 +102,9 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
 
   private getRequestPath(directoryId: number): string {
     return `/api/v1/projects/${this._client.project}/3d/files/${directoryId}`;
+  }
+
+  private getRequestPathForSignedFiles(): string {
+    return `/api/v1/projects/${this._client.project}/3d/output/files`;
   }
 }

@@ -103,11 +103,26 @@ function mockWantedSectors(id: number): {
   const modelIdentifier = new LocalModelIdentifier('modelIdentifer');
   const modelBaseUrl = 'https://localhost/';
   return {
-    simple: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Simple, geometryClipBox: null },
-    detailed: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Detailed, geometryClipBox: null },
+    simple: {
+      modelIdentifier,
+      modelBaseUrl,
+      signedFilesBaseUrl: undefined,
+      metadata,
+      levelOfDetail: LevelOfDetail.Simple,
+      geometryClipBox: null
+    },
+    detailed: {
+      modelIdentifier,
+      modelBaseUrl,
+      signedFilesBaseUrl: undefined,
+      metadata,
+      levelOfDetail: LevelOfDetail.Detailed,
+      geometryClipBox: null
+    },
     discarded: {
       modelIdentifier,
       modelBaseUrl,
+      signedFilesBaseUrl: undefined,
       metadata,
       levelOfDetail: LevelOfDetail.Discarded,
       geometryClipBox: null

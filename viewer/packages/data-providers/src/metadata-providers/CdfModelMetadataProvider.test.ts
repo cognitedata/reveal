@@ -29,14 +29,19 @@ describe(CdfModelMetadataProvider.name, () => {
   });
 
   test('getModelUri returns correct URL for a valid output', async () => {
-    // Arrange
     const formatMetadata = { format: File3dFormat.GltfCadModel, version: 9, blobId: 1 };
     const expectedUrl = `${baseUrl}/api/v1/projects/${project}/3d/files/${formatMetadata.blobId}`;
 
-    // Act
     const uri = await provider.getModelUri(modelIdentifier, formatMetadata);
 
-    // Assert
+    expect(uri).toEqual(expectedUrl);
+  });
+
+  test('getModelUriForSignedFiles returns correct signed files endpoint URL', async () => {
+    const expectedUrl = `${baseUrl}/api/v1/projects/${project}/3d/output/files`;
+
+    const uri = await provider.getModelUriForSignedFiles();
+
     expect(uri).toEqual(expectedUrl);
   });
 });
