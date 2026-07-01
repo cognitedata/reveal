@@ -9,29 +9,24 @@ import type { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { DMSModelFilesBundle } from '../types';
 
 export class LocalModelDataProvider implements ModelDataProvider {
-  async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    if (abortSignal) {
-      Log.warn('Abort signal is not supported for local models');
-    }
-    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  getBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+  async getBinaryFile(
+    baseOrSigned: string,
+    fileNameOrSignal?: string | AbortSignal,
+    _abortSignal?: AbortSignal
+  ): Promise<ArrayBuffer> {
+    Log.warn('Abort signal is not supported for local models');
+    const url = typeof fileNameOrSignal === 'string' ? `${baseOrSigned}/${fileNameOrSignal}` : baseOrSigned;
+    const response = await fetchWithStatusCheck(url);
     return response.arrayBuffer();
   }
 
-  async getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    if (abortSignal) {
-      Log.warn('Abort signal is not supported for local models');
-    }
-    const response = await fetchWithStatusCheck(signedUrl);
-    return response.arrayBuffer();
-  }
-
-  async getSignedJsonFile(signedUrl: string): Promise<unknown> {
-    const response = await fetchWithStatusCheck(signedUrl);
-    return response.json();
-  }
-
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
-    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
+  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
+  getJsonFile<T = unknown>(signedUrl: string): Promise<T>;
+  async getJsonFile<T = unknown>(baseOrSigned: string, fileName?: string): Promise<T> {
+    const url = fileName !== undefined ? `${baseOrSigned}/${fileName}` : baseOrSigned;
+    const response = await fetchWithStatusCheck(url);
     return response.json();
   }
 
@@ -43,14 +38,5 @@ export class LocalModelDataProvider implements ModelDataProvider {
     const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
     const fileData = await response.json();
     return { signedFiles: { items: [] }, fileData };
-  }
-
-  async getDMSJsonFileFromFileName(
-    baseUrl: string,
-    _modelIdentifier: DMModelIdentifier,
-    fileName: string
-  ): Promise<unknown> {
-    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
-    return response.json();
   }
 }
