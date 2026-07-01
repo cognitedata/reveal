@@ -13,8 +13,9 @@ export type {
   BlobOutputMetadata,
   JsonFileProvider,
   BinaryFileProvider,
-  DMSModelFilesBundle,
-  DMSJsonFileResponse,
-  DMSJsonFileItem
+  SignedFileItem,
+  SignedFilesResponse,
+  SignedFilesResponseWithCursor,
+  SignedFilesResponseWithFileData
 } from '../packages/data-providers';
 export { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '../packages/data-providers';

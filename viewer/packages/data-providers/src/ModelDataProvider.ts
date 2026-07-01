@@ -2,21 +2,23 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { DMModelIdentifier } from './model-identifiers/DMModelIdentifier';
-import type { BinaryFileProvider, JsonFileProvider, DMSModelFilesBundle } from './types';
+import type { BinaryFileProvider, JsonFileProvider, SignedFileProvider } from './types';
 
 /**
  * Provides data for 3D models.
  */
-export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
+export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
   /**
-   * Fetches all signed file URLs for a DM model and the parsed content of a specific file.
-   * Retrieves the full signed file list from the endpoint, locates `fileName` within it,
-   * then downloads and parses that file's content via its signed URL.
-   * @param baseUrl         Base URL of the signed files endpoint.
-   * @param modelIdentifier DM identifier containing revision info (required).
-   * @param fileName        Name of the file whose content should be fetched (e.g. 'scene.json').
-   * @returns Bundle with all signed file metadata and the parsed content of the requested file.
+   * Download and parse a JSON file and return the resulting struct.
+   * @param baseUrl     Base URL of the model.
+   * @param fileName    Filename of JSON file.
    */
-  getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle>;
+  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+  /**
+   * Downloads a binary blob.
+   * @param baseUrl     Base URL of the model.
+   * @param fileName    Filename of binary file.
+   * @param abortSignal Optional abort signal that can be used to cancel an in progress fetch.
+   */
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }

@@ -3,8 +3,8 @@
  */
 
 import type { ModelDataProvider } from '../ModelDataProvider';
-import type { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import type { DMSModelFilesBundle } from '../types';
+import type { ModelIdentifier } from '../ModelIdentifier';
+import type { SignedFilesResponse } from '../types';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -23,46 +23,36 @@ export class CachedModelDataProvider implements ModelDataProvider {
     this.cacheManager = new DataFileCacheManager(cacheConfig, cacheStorage);
   }
 
-  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-  getBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-  async getBinaryFile(
-    baseOrSigned: string,
-    fileNameOrAbortSignal?: string | AbortSignal,
-    abortSignal?: AbortSignal
-  ): Promise<ArrayBuffer> {
-    if (typeof fileNameOrAbortSignal === 'string') {
-      const fileName = fileNameOrAbortSignal;
-      return this.fetchWithCache(
-        baseOrSigned,
-        fileName,
-        response => response.arrayBuffer(),
-        () => this.baseProvider.getBinaryFile(baseOrSigned, fileName, abortSignal),
-        data => data,
-        'application/octet-stream'
-      );
+  async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
+    if (!baseUrl) {
+      return this.baseProvider.getBinaryFile('', fileName, abortSignal);
     }
-    const signal = fileNameOrAbortSignal instanceof AbortSignal ? fileNameOrAbortSignal : abortSignal;
-    return this.baseProvider.getBinaryFile(baseOrSigned, signal);
+    return this.fetchWithCache(
+      baseUrl,
+      fileName,
+      response => response.arrayBuffer(),
+      () => this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal),
+      data => data,
+      'application/octet-stream'
+    );
   }
 
-  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
-  getJsonFile<T = unknown>(signedUrl: string): Promise<T>;
-  async getJsonFile<T = unknown>(baseOrSigned: string, fileName?: string): Promise<T> {
-    if (fileName !== undefined) {
-      const convertToArrayBuffer = (data: T): ArrayBuffer => {
-        const jsonString = JSON.stringify(data);
-        return new TextEncoder().encode(jsonString).buffer;
-      };
-      return this.fetchWithCache<T>(
-        baseOrSigned,
-        fileName,
-        response => response.json(),
-        () => this.baseProvider.getJsonFile<T>(baseOrSigned, fileName),
-        convertToArrayBuffer,
-        'application/json'
-      );
+  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+    if (!baseUrl) {
+      return this.baseProvider.getJsonFile('', fileName);
     }
-    return this.baseProvider.getJsonFile<T>(baseOrSigned);
+    const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
+      const jsonString = JSON.stringify(data);
+      return new TextEncoder().encode(jsonString).buffer;
+    };
+    return this.fetchWithCache(
+      baseUrl,
+      fileName,
+      response => response.json(),
+      () => this.baseProvider.getJsonFile(baseUrl, fileName),
+      convertToArrayBuffer,
+      'application/json'
+    );
   }
 
   private async fetchWithCache<T>(
@@ -96,9 +86,12 @@ export class CachedModelDataProvider implements ModelDataProvider {
 
   async getDMSJsonFile(
     baseUrl: string,
-    modelIdentifier: DMModelIdentifier,
+    modelIdentifier: ModelIdentifier,
     fileName: string
-  ): Promise<DMSModelFilesBundle> {
+  ): Promise<SignedFilesResponse> {
+    if (!this.baseProvider.getDMSJsonFile) {
+      throw new Error('Base provider does not support getDMSJsonFile');
+    }
     return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
   }
 
