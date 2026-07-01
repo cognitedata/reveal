@@ -7,8 +7,9 @@ import type { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
 import type { DataModelsSdk } from '../../../../DataModelsSdk';
+import { CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
 
-type DmsSdkQueryResult = Awaited<ReturnType<DataModelsSdk['queryNodesAndEdges']>>;
+type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfImage360CollectionDmQuery>>>;
 
 describe(Cdf360CdmBatchCollectionLoader.name, () => {
   test('should batch multiple collection requests into a single DMS query', async () => {
@@ -161,7 +162,22 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     expect(filesRetrieveMock).not.toHaveBeenCalled();
   });
 
-  function createMockSdk(dmsResponse: DmsSdkQueryResult, dmsError?: Error) {
+  test('uses station name as label', async () => {
+    const collectionIds = ['collection_1'];
+    const dmsResponse = createMockDmsResponse(collectionIds);
+    const { cogniteSdkMock, dmsSdkMock } = createMockSdk(dmsResponse);
+
+    const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
+
+    const results = await batchLoader.getCollectionDescriptors({
+      externalId: 'collection_1',
+      space: 'test_space'
+    });
+
+    expect(results[0].label).toEqual(dmsResponse.stations[0].properties.cdf_cdm['Cognite360ImageStation/v1'].name);
+  });
+
+  function createMockSdk(dmsResponse: QueryResult, dmsError?: Error) {
     const cogniteSdkMock = new Mock<CogniteClient>()
       .setup(instance => instance.getBaseUrl())
       .returns('https://example.com')
@@ -178,14 +194,14 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
         });
     } else {
       dmsSdkMock
-        .setup(instance => instance.queryNodesAndEdges(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(dmsResponse));
+        .setup(instance => instance.queryNodesAndEdges<CdfImage360CollectionDmQuery>(It.IsAny(), It.IsAny()))
+        .returnsAsync(dmsResponse);
     }
 
     return { cogniteSdkMock, dmsSdkMock };
   }
 
-  function createMockDmsResponse(collectionIds: string[]): DmsSdkQueryResult {
+  function createMockDmsResponse(collectionIds: string[]): QueryResult {
     const collections = collectionIds.map(id => ({
       instanceType: 'node' as const,
       version: 1,
@@ -240,7 +256,23 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
     return {
       image_collections: collections,
       images,
-      stations: []
-    };
+      stations: [
+        {
+          externalId: `station_${collectionIds[0]}`,
+          space: 'test_space',
+          createdTime: 0,
+          lastUpdatedTime: 0,
+          version: 1,
+          instanceType: 'node',
+          properties: {
+            cdf_cdm: {
+              'Cognite360ImageStation/v1': {
+                name: 'station-name'
+              }
+            }
+          }
+        }
+      ]
+    } as const;
   }
 });
