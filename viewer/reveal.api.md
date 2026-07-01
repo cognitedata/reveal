@@ -990,6 +990,21 @@ export type DMInstanceRef = {
     space: string;
 };
 
+// @public (undocumented)
+export class DMModelIdentifier extends CdfModelIdentifier {
+    constructor(input: DMModelIdentifierType & ClassicModelIdentifierType);
+    // (undocumented)
+    readonly revealInternalId: symbol;
+    // (undocumented)
+    readonly revisionExternalId: string;
+    // (undocumented)
+    readonly revisionSpace: string;
+    // (undocumented)
+    sourceModelIdentifier(): string;
+    // (undocumented)
+    toString(): string;
+}
+
 // @public
 export type DMModelIdentifierType = {
     revisionExternalId: string;
@@ -1552,7 +1567,7 @@ export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean
 // @public (undocumented)
 export interface JsonFileProvider {
     // (undocumented)
-    getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+    getJsonFile(baseUrl: string, fileName: string): Promise<unknown>;
 }
 
 // @public
@@ -1621,7 +1636,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 }
 
 // @public
-export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
+export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
@@ -2073,6 +2088,35 @@ export type SerializedNodeCollection = {
     token: string;
     state: any;
     options?: any;
+};
+
+// @public (undocumented)
+export type SignedFileItem = {
+    signedUrl: string;
+    fileName: string;
+    subPath: string;
+};
+
+// @public (undocumented)
+export interface SignedFileProvider {
+    // (undocumented)
+    getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
+}
+
+// @public (undocumented)
+export type SignedFilesResponse = {
+    items: SignedFileItem[];
+};
+
+// @public (undocumented)
+export type SignedFilesResponseWithCursor = {
+    items: SignedFileItem[];
+    nextCursor?: string;
+};
+
+// @public (undocumented)
+export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
+    fileData: unknown;
 };
 
 // @public

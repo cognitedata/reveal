@@ -1,8 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
+import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
+import type { SignedFileItem, SignedFilesResponse, SignedFilesResponseWithFileData } from '../types';
+import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
+import type { ModelIdentifier } from '../ModelIdentifier';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
@@ -17,9 +21,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const url = `${baseUrl}/${fileName}`;
+    const url = baseUrl ? `${baseUrl}/${fileName}` : fileName;
     const headers = {
-      ...this.client.getDefaultRequestHeaders(),
+      ...(baseUrl ? this.client.getDefaultRequestHeaders() : {}),
       Accept: '*/*'
     };
 
@@ -31,16 +35,65 @@ export class CdfModelDataProvider implements ModelDataProvider {
       if (e?.name === 'AbortError') {
         throw e;
       }
-      throw Error('Could not download binary file');
+      throw new Error(baseUrl ? 'Could not download binary file' : 'Could not download signed binary file');
     });
     return response.arrayBuffer();
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
-    const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
-      throw Error('Could not download Json file');
+  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+    if (baseUrl) {
+      const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
+        throw Error('Could not download Json file');
+      });
+      return response.data;
+    }
+    const headers = { Accept: 'application/json, */*' };
+    const response = await this.fetchWithRetry(fileName, { headers, method: 'GET' }).catch(() => {
+      throw Error('Could not download signed JSON file');
     });
-    return response.data;
+    if (response.ok === false) {
+      throw new Error(`Signed JSON file request failed with status ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async getDMSJsonFile(
+    baseUrl: string,
+    modelIdentifier: ModelIdentifier,
+    fileName: string
+  ): Promise<SignedFilesResponse> {
+    if (!(modelIdentifier instanceof DMModelIdentifier)) {
+      throw new Error('getDMSJsonFile requires a valid DM model identifier');
+    }
+
+    const items: SignedFileItem[] = [];
+    let cursor: string | undefined = undefined;
+
+    const filter = fileName?.length ? { filter: { paths: [fileName] } } : undefined;
+    do {
+      const payload: HttpRequestOptions = {
+        data: {
+          revision: {
+            instanceId: {
+              space: modelIdentifier.revisionSpace,
+              externalId: modelIdentifier.revisionExternalId
+            }
+          },
+          ...filter,
+          limit: 1000,
+          cursor: cursor
+        }
+      };
+
+      const response = await this.client.post<SignedFilesResponseWithFileData>(`${baseUrl}`, payload);
+      const responseData = response.data;
+      items.push(
+        ...responseData.items.map(item => ({ ...item, signedUrl: stripRestrictedApiGateway(item.signedUrl) }))
+      );
+      cursor = responseData.nextCursor;
+    } while (cursor);
+
+    return { items };
   }
 
   private async fetchWithRetry(input: RequestInfo, options: RequestInit, retries: number = 3) {

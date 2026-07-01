@@ -5,25 +5,49 @@
 import { vi } from 'vitest';
 import { CachedModelDataProvider } from './CachedModelDataProvider';
 import type { ModelDataProvider } from '../ModelDataProvider';
+import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
+
+type GetBinaryFileFn = (
+  baseOrSigned: string,
+  fileNameOrAbortSignal?: string | AbortSignal,
+  abortSignal?: AbortSignal
+) => Promise<ArrayBuffer>;
+type GetJsonFileFn = (baseOrSigned: string, fileName?: string) => Promise<unknown>;
 
 describe(CachedModelDataProvider.name, () => {
   let mockBaseProvider: ModelDataProvider;
   let cachedProvider: CachedModelDataProvider;
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
   let mockCacheStorage: CacheStorage;
+  let getBinaryFileMock = vi.fn<GetBinaryFileFn>();
+  let getJsonFileMock = vi.fn<GetJsonFileFn>();
 
   const TEST_URL = 'https://example.com';
   const TEST_FILENAME = 'test.bin';
+
+  const dmIdentifier = new DMModelIdentifier({
+    modelId: 1,
+    revisionId: 2,
+    revisionExternalId: 'ext-id',
+    revisionSpace: 'my-space'
+  });
 
   beforeEach(() => {
     mockCacheStorageMap = new Map();
     mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
 
+    getBinaryFileMock = vi.fn<GetBinaryFileFn>(async () => new ArrayBuffer(100));
+    getJsonFileMock = vi.fn<GetJsonFileFn>(async () => ({ test: 'data' }));
+
     mockBaseProvider = {
-      getBinaryFile: vi.fn(async () => new ArrayBuffer(100)),
-      getJsonFile: vi.fn(async () => ({ test: 'data' }))
-    };
+      getBinaryFile: getBinaryFileMock,
+      getJsonFile: getJsonFileMock,
+      getDMSJsonFile: vi.fn(async () => ({
+        signedFiles: { items: [] },
+        fileData: {}
+      }))
+    } as Partial<ModelDataProvider> as ModelDataProvider;
 
     cachedProvider = new CachedModelDataProvider(
       mockBaseProvider,
@@ -133,11 +157,40 @@ describe(CachedModelDataProvider.name, () => {
   });
 
   test('should handle base provider errors', async () => {
-    mockBaseProvider.getBinaryFile = vi.fn(async () => {
+    getBinaryFileMock.mockImplementation(async () => {
       throw new Error('Network error');
     });
 
     await expect(cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME)).rejects.toThrow('Network error');
+  });
+
+  test('getDMSJsonFile should delegate to base provider without caching', async () => {
+    await cachedProvider.getDMSJsonFile(TEST_URL, dmIdentifier, 'scene.json');
+    await cachedProvider.getDMSJsonFile(TEST_URL, dmIdentifier, 'scene.json');
+
+    expect(mockBaseProvider.getDMSJsonFile).toHaveBeenCalledTimes(2);
+    expect(mockBaseProvider.getDMSJsonFile).toHaveBeenCalledWith(TEST_URL, dmIdentifier, 'scene.json');
+  });
+
+  test('getBinaryFile with signed URL should delegate to base provider without caching', async () => {
+    const signedUrl = 'https://signed.url/file.glb';
+    const abortController = new AbortController();
+
+    const result = await cachedProvider.getBinaryFile(signedUrl, abortController.signal);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith(signedUrl, abortController.signal);
+    expect(result).toBeInstanceOf(ArrayBuffer);
+
+    await cachedProvider.getBinaryFile(signedUrl);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(2);
+  });
+
+  test('getJsonFile with signed URL should delegate to base provider without caching', async () => {
+    const signedUrl = 'https://signed.url/file.json';
+
+    const result = await cachedProvider.getJsonFile(signedUrl);
+
+    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledWith(signedUrl);
+    expect(result).toEqual({ test: 'data' });
   });
 
   test('should warn on cache storage failures', async () => {

@@ -2,12 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { BinaryFileProvider, JsonFileProvider } from './types';
+import type { BinaryFileProvider, JsonFileProvider, SignedFileProvider } from './types';
 
 /**
  * Provides data for 3D models.
  */
-export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
+export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
   /**
    * Download and parse a JSON file and return the resulting struct.
    * @param baseUrl     Base URL of the model.
