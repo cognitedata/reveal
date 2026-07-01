@@ -9,13 +9,13 @@ import type { SectorMetadata } from '../types';
 import type { CadMetadataWithSignedFiles } from '../types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
 import type { CadSceneRootMetadata } from './types';
-import type { DMSJsonFileItem } from '@reveal/data-providers';
+import type { SignedFileItem } from '@reveal/data-providers';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 
 import SeededRandom from 'random-seed';
 
-function wrapMetadata(fileData: CadSceneRootMetadata, signedFiles: DMSJsonFileItem[] = []): CadMetadataWithSignedFiles {
+function wrapMetadata(fileData: CadSceneRootMetadata, signedFiles: SignedFileItem[] = []): CadMetadataWithSignedFiles {
   return { type: 'cadMetadataWithSignedFiles', signedFiles: { items: signedFiles }, fileData };
 }
 
@@ -199,7 +199,7 @@ describe('CadMetadataParserGltf', () => {
     expectBoxesEqual(rootBoundingBox, expectedBoundingBox);
   });
 
-  test.each<[DMSJsonFileItem[], string | undefined]>([
+  test.each<[SignedFileItem[], string | undefined]>([
     [[{ fileName: '0.glb', signedUrl: 'https://signed.url/sector.glb', subPath: '' }], 'https://signed.url/sector.glb'],
     [[], undefined]
   ])(
