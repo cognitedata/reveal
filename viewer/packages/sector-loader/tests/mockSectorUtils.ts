@@ -55,14 +55,8 @@ export function createModelDataProviderMock(): IMock<ModelDataProvider> {
   return new Mock<ModelDataProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
     .returnsAsync(fileBuffer.buffer)
-    .setup(p => p.getSignedBinaryFile(It.IsAny(), It.IsAny()))
-    .returnsAsync(fileBuffer.buffer)
     .setup(p => p.getJsonFile(It.IsAny(), It.IsAny()))
     .returnsAsync({})
-    .setup(p => p.getSignedJsonFile(It.IsAny()))
-    .returnsAsync({})
     .setup(p => p.getDMSJsonFile(It.IsAny(), It.IsAny(), It.IsAny()))
-    .returnsAsync({ signedFiles: { items: [] }, fileData: {} })
-    .setup(p => p.getDMSJsonFileFromFileName(It.IsAny(), It.IsAny(), It.IsAny()))
-    .returnsAsync({});
+    .returnsAsync({ items: [] });
 }

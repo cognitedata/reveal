@@ -9,7 +9,7 @@ import type { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
 import type { BoundingBox, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
-import type { DMSJsonFileItem } from '@reveal/data-providers';
+import type { SignedFileItem } from '@reveal/data-providers';
 
 export function parseCadMetadataGltf(metadata: CadMetadataWithSignedFiles): SectorScene {
   if (!metadata.fileData.sectors || metadata.fileData.sectors.length === 0) {
@@ -65,7 +65,7 @@ export function toThreeBoundingBox(box: BoundingBox): Box3 {
   return new Box3(new Vector3(box.min.x, box.min.y, box.min.z), new Vector3(box.max.x, box.max.y, box.max.z));
 }
 
-function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: DMSJsonFileItem[]): SectorMetadata {
+function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: SignedFileItem[]): SectorMetadata {
   const metadataBoundingBox = toThreeBoundingBox(metadata.boundingBox);
 
   let geometryBoundingBox: Box3;

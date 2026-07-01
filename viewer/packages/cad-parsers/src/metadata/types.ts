@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { DMSJsonFileItem } from '@reveal/data-providers';
+import type { SignedFileItem } from '@reveal/data-providers';
 import type { Box3 } from 'three';
 import type { CadSceneRootMetadata } from './parsers/types';
 
@@ -25,6 +25,6 @@ export type SectorMetadata = {
 
 export type CadMetadataWithSignedFiles = {
   type: 'cadMetadataWithSignedFiles';
-  readonly signedFiles: { items: DMSJsonFileItem[] };
+  readonly signedFiles: { items: SignedFileItem[] };
   readonly fileData: CadSceneRootMetadata;
 };

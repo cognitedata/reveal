@@ -26,7 +26,7 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
     const modelUri = await modelMetadataProvider.getModelUri(modelIdentifier, gltfOutput);
     type SectorBoundingBox = { min: { x: number; y: number; z: number }; max: { x: number; y: number; z: number } };
     type SceneJson = { maxTreeIndex: number; sectors: { sectorFileName: string; boundingBox: SectorBoundingBox }[] };
-    const sceneJson = await modelDataProvider.getJsonFile<SceneJson>(modelUri, 'scene.json');
+    const sceneJson = (await modelDataProvider.getJsonFile(modelUri, 'scene.json')) as SceneJson;
 
     const materialMap = TestMaterials.getMaterialsMap(sceneJson.maxTreeIndex + 1);
 
@@ -38,9 +38,11 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
     const boundingBox = new Box3(new Vector3(min.x, min.y, min.z), new Vector3(max.x, max.y, max.z));
     boundingBox.applyMatrix4(this.cadFromCdfToThreeMatrix);
 
-    const fileNames = sectors.map(sector => sector.sectorFileName);
+    const fileNames = sectors.map((sector: SceneJson['sectors'][number]) => sector.sectorFileName);
 
-    const blobs = await Promise.all(fileNames.map(fileName => modelDataProvider.getBinaryFile(modelUri, fileName)));
+    const blobs = await Promise.all(
+      fileNames.map((fileName: string) => modelDataProvider.getBinaryFile(modelUri, fileName))
+    );
 
     await this.loadSectors(blobs, loader, materialMap, camera, group);
 

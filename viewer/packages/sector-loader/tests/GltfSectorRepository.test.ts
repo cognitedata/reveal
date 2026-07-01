@@ -358,18 +358,14 @@ describe(GltfSectorRepository.name, () => {
     }
   });
 
-  test('loadSector calls getSignedBinaryFile for DM model and getBinaryFile for classic model', async () => {
+  test('loadSector calls getBinaryFile with empty baseUrl for DM model with signedUrl', async () => {
     const signedUrl = 'https://signed.cdn.example.com/sector.glb';
-    const getSignedBinaryFile = vi.fn<ModelDataProvider['getSignedBinaryFile']>().mockResolvedValue(new ArrayBuffer(0));
     const getBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>().mockResolvedValue(new ArrayBuffer(0));
 
     const provider: ModelDataProvider = {
       getBinaryFile,
-      getSignedBinaryFile,
       getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
-      getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
-      getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
-      getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
+      getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>()
     };
 
     const dmIdentifier = new DMModelIdentifier({
@@ -398,8 +394,7 @@ describe(GltfSectorRepository.name, () => {
     const repo = new GltfSectorRepository(provider);
     await repo.loadSector(dmSector);
 
-    expect(getSignedBinaryFile).toHaveBeenCalledWith(signedUrl, undefined);
-    expect(getBinaryFile).not.toHaveBeenCalled();
+    expect(getBinaryFile).toHaveBeenCalledWith('', signedUrl, undefined);
   });
 
   // Helper functions
