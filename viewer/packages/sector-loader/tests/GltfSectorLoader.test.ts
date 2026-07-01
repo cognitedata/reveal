@@ -15,12 +15,9 @@ import { createModelDataProviderMock, createWantedSectorMock } from './mockSecto
 
 function makeMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
   const base: ModelDataProvider = {
-    getSignedBinaryFile: vi.fn<ModelDataProvider['getSignedBinaryFile']>(),
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
-    getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
-    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
-    getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
+    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>()
   };
   Object.assign(base, overrides);
   return base;
@@ -63,7 +60,7 @@ describe(GltfSectorLoader.name, () => {
     expect(typeSet.size).toBe(numberOfPrimitives);
   });
 
-  test('getSectorByteBuffer calls getSignedBinaryFile for DM model with signedUrl', async () => {
+  test('getSectorByteBuffer calls getBinaryFile with empty baseUrl for DM model with signedUrl', async () => {
     const signedUrl = 'https://signed.cdn.example.com/sector.glb';
     const expectedBuffer = new ArrayBuffer(32);
 
@@ -73,10 +70,10 @@ describe(GltfSectorLoader.name, () => {
       revisionExternalId: 'rev',
       revisionSpace: 'space'
     });
-    const getSignedBinaryFileMock: ViMock<ModelDataProvider['getSignedBinaryFile']> = vi
-      .fn<ModelDataProvider['getSignedBinaryFile']>()
+    const getBinaryFileMock: ViMock<ModelDataProvider['getBinaryFile']> = vi
+      .fn<ModelDataProvider['getBinaryFile']>()
       .mockResolvedValue(expectedBuffer);
-    const mockProvider = makeMockProvider({ getSignedBinaryFile: getSignedBinaryFileMock });
+    const mockProvider = makeMockProvider({ getBinaryFile: getBinaryFileMock });
 
     const dmLoader = new GltfSectorLoader(mockProvider);
 
@@ -98,9 +95,8 @@ describe(GltfSectorLoader.name, () => {
 
     const result = await dmLoader.getSectorByteBuffer(sector);
 
-    expect(getSignedBinaryFileMock).toHaveBeenCalledWith(signedUrl, undefined);
+    expect(getBinaryFileMock).toHaveBeenCalledWith('', signedUrl, undefined);
     expect(result).toBe(expectedBuffer);
-    expect(mockProvider.getBinaryFile).not.toHaveBeenCalled();
   });
 
   test('getSectorByteBuffer calls getBinaryFile for Classic model', async () => {
@@ -133,7 +129,6 @@ describe(GltfSectorLoader.name, () => {
 
     expect(getBinaryFileMock).toHaveBeenCalledWith('https://example.com', 'sector.glb', undefined);
     expect(result).toBe(expectedBuffer);
-    expect(mockProvider.getSignedBinaryFile).not.toHaveBeenCalled();
   });
 
   test('getSectorByteBuffer throws when neither DM+signedUrl nor Classic baseUrl+fileName is available', async () => {

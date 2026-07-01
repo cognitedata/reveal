@@ -116,7 +116,7 @@ export class GltfSectorLoader {
     const { metadata } = sector;
     let sectorByteBuffer: ArrayBuffer;
     if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl) {
-      sectorByteBuffer = await this._sectorFileProvider.getSignedBinaryFile(metadata.signedUrl, abortSignal);
+      sectorByteBuffer = await this._sectorFileProvider.getBinaryFile('', metadata.signedUrl, abortSignal);
     } else if (sector.modelBaseUrl && metadata.sectorFileName) {
       sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
         sector.modelBaseUrl,
