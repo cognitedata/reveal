@@ -17,34 +17,38 @@ import type {
   Image360AnnotationInstanceReference
 } from '@reveal/360-images';
 import type { DMInstanceRef } from '@reveal/utilities';
+import type { ModelIdentifier } from './ModelIdentifier';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']
 ) => boolean;
 
 export interface JsonFileProvider {
-  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
-  getJsonFile<T = unknown>(signedUrl: string): Promise<T>;
+  getJsonFile(baseUrl: string, fileName: string): Promise<unknown>;
 }
 
 export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-  getBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+}
+export interface SignedFileProvider {
+  getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
 }
 
-export type DMSJsonFileItem = {
+export type SignedFileItem = {
   signedUrl: string;
   fileName: string;
   subPath: string;
 };
 
-export type DMSJsonFileResponse = {
-  items: DMSJsonFileItem[];
+export type SignedFilesResponseWithCursor = {
+  items: SignedFileItem[];
   nextCursor?: string;
 };
+export type SignedFilesResponse = {
+  items: SignedFileItem[];
+};
 
-export type DMSModelFilesBundle = {
-  signedFiles: DMSJsonFileResponse;
+export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
   fileData: unknown;
 };
 

@@ -59,6 +59,7 @@ export { Image360ProviderCombiner } from './src/Image360ProviderCombiner';
 export type {
   BinaryFileProvider,
   JsonFileProvider,
+  SignedFileProvider,
   BlobOutputMetadata,
   Image360Descriptor,
   Image360FileProvider,
@@ -70,9 +71,10 @@ export type {
   InstanceReference,
   Image360Id,
   Image360RevisionId,
-  DMSJsonFileItem,
-  DMSJsonFileResponse,
-  DMSModelFilesBundle
+  SignedFileItem,
+  SignedFilesResponse,
+  SignedFilesResponseWithCursor,
+  SignedFilesResponseWithFileData
 } from './src/types';
 export { File3dFormat } from './src/types';
 

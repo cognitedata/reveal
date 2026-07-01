@@ -1011,25 +1011,6 @@ export type DMModelIdentifierType = {
     revisionSpace: string;
 };
 
-// @public (undocumented)
-export type DMSJsonFileItem = {
-    signedUrl: string;
-    fileName: string;
-    subPath: string;
-};
-
-// @public (undocumented)
-export type DMSJsonFileResponse = {
-    items: DMSJsonFileItem[];
-    nextCursor?: string;
-};
-
-// @public (undocumented)
-export type DMSModelFilesBundle = {
-    signedFiles: DMSJsonFileResponse;
-    fileData: unknown;
-};
-
 // @public
 export type EdlOptions = {
     strength: number;
@@ -1586,7 +1567,7 @@ export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean
 // @public (undocumented)
 export interface JsonFileProvider {
     // (undocumented)
-    getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+    getJsonFile(baseUrl: string, fileName: string): Promise<unknown>;
 }
 
 // @public
@@ -1655,13 +1636,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 }
 
 // @public
-export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
+export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-    getDMSJsonFile(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<DMSModelFilesBundle>;
-    getDMSJsonFileFromFileName(baseUrl: string, modelIdentifier: DMModelIdentifier, fileName: string): Promise<unknown>;
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
-    getSignedBinaryFile(signedUrl: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-    getSignedJsonFile(signedUrl: string): Promise<unknown>;
 }
 
 // @public
@@ -2113,6 +2090,35 @@ export type SerializedNodeCollection = {
     token: string;
     state: any;
     options?: any;
+};
+
+// @public (undocumented)
+export type SignedFileItem = {
+    signedUrl: string;
+    fileName: string;
+    subPath: string;
+};
+
+// @public (undocumented)
+export interface SignedFileProvider {
+    // (undocumented)
+    getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
+}
+
+// @public (undocumented)
+export type SignedFilesResponse = {
+    items: SignedFileItem[];
+};
+
+// @public (undocumented)
+export type SignedFilesResponseWithCursor = {
+    items: SignedFileItem[];
+    nextCursor?: string;
+};
+
+// @public (undocumented)
+export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
+    fileData: unknown;
 };
 
 // @public
