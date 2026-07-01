@@ -4,7 +4,8 @@
 
 import type { ConsumedSector, WantedSector, ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
-import type { BinaryFileProvider } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type { ModelDataProvider } from '@reveal/data-providers';
 import type { ParsedGeometry } from '@reveal/sector-parser';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
@@ -14,9 +15,9 @@ import { Log } from '@reveal/logger';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
-  private readonly _sectorFileProvider: BinaryFileProvider;
+  private readonly _sectorFileProvider: ModelDataProvider;
 
-  constructor(sectorFileProvider: BinaryFileProvider) {
+  constructor(sectorFileProvider: ModelDataProvider) {
     this._gltfSectorParser = new GltfSectorParser();
     this._sectorFileProvider = sectorFileProvider;
   }
@@ -24,11 +25,7 @@ export class GltfSectorLoader {
   async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const { metadata } = sector;
     try {
-      const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
-        sector.modelBaseUrl,
-        metadata.sectorFileName!,
-        abortSignal
-      );
+      const sectorByteBuffer = await this.getSectorByteBuffer(sector, abortSignal);
 
       const wholeSectorBoundingBox = sector.metadata.geometryBoundingBox;
 
@@ -113,5 +110,22 @@ export class GltfSectorLoader {
       }
       throw e;
     }
+  }
+
+  async getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
+    const { metadata } = sector;
+    let sectorByteBuffer: ArrayBuffer;
+    if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl) {
+      sectorByteBuffer = await this._sectorFileProvider.getBinaryFile('', metadata.signedUrl, abortSignal);
+    } else if (sector.modelBaseUrl && metadata.sectorFileName) {
+      sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
+        sector.modelBaseUrl,
+        metadata.sectorFileName,
+        abortSignal
+      );
+    } else {
+      throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
+    }
+    return sectorByteBuffer;
   }
 }

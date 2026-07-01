@@ -5,6 +5,9 @@
 import type { Object3D, Vector3 } from 'three';
 import type { PointCloudNode } from './PointCloudNode';
 import type { DataSourceType } from '@reveal/data-providers';
+import type { DMSJsonFileItem } from '@reveal/data-providers/src/types';
+import type { ClassificationInfo } from './potree-three-loader';
+import type { EptJson } from './potree-three-loader/loading/EptJson';
 
 /**
  * ASPRS well known point class types.
@@ -111,4 +114,34 @@ export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
    * Volume metadata, e.g. asset reference
    */
   volumeMetadata?: T['pointCloudVolumeMetadata'];
+};
+
+export type PointCloudMetadataWithSignedFiles = {
+  /**
+   * Type of the file data.
+   */
+  type: 'pointCloudMetadataWithSignedFiles';
+  /**
+   * Signed files metadata.
+   */
+  readonly signedFiles: { items: DMSJsonFileItem[] };
+  /**
+   * Point cloud metadata.
+   */
+  readonly fileData: EptJson;
+};
+
+export type PointCloudClassificationInfoWithSignedFiles = {
+  /**
+   * Type of the file data.
+   */
+  type: 'pointCloudClassificationInfoWithSignedFiles';
+  /**
+   * Signed files metadata.
+   */
+  readonly signedFiles: { items: DMSJsonFileItem[] };
+  /**
+   * Classification info.
+   */
+  readonly fileData: ClassificationInfo;
 };

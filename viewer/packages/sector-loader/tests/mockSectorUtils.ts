@@ -3,7 +3,7 @@
  */
 import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
-import type { BinaryFileProvider } from '@reveal/data-providers';
+import type { BinaryFileProvider, ModelDataProvider } from '@reveal/data-providers';
 import { LocalModelIdentifier } from '@reveal/data-providers';
 import type { IMock } from 'moq.ts';
 import { Mock, It } from 'moq.ts';
@@ -24,6 +24,8 @@ export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
 
   return new Mock<WantedSector>()
     .setup(p => p.modelBaseUrl)
+    .returns(defaultBaseUrl)
+    .setup(p => p.signedFilesBaseUrl)
     .returns(defaultBaseUrl)
     .setup(p => p.modelIdentifier)
     .returns(modelIdentifier)
@@ -46,4 +48,15 @@ export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
   return new Mock<BinaryFileProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
     .returnsAsync(fileBuffer.buffer);
+}
+
+export function createModelDataProviderMock(): IMock<ModelDataProvider> {
+  const fileBuffer = fs.readFileSync(import.meta.dirname + '/test.glb');
+  return new Mock<ModelDataProvider>()
+    .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
+    .returnsAsync(fileBuffer.buffer)
+    .setup(p => p.getJsonFile(It.IsAny(), It.IsAny()))
+    .returnsAsync({})
+    .setup(p => p.getDMSJsonFile(It.IsAny(), It.IsAny(), It.IsAny()))
+    .returnsAsync({ items: [] });
 }
