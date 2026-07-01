@@ -285,21 +285,34 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
       if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
         const fileItem = this._eptMetadata.signedFiles.items.find(
-          item => item.fileName === filePath || item.fileName.endsWith('/' + filePath)
+          item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
         );
         if (fileItem) {
-          return this._dataLoader.getSignedJsonFile(fileItem.signedUrl) as Promise<{ [key: string]: number }>;
+          const data = await this._dataLoader.getJsonFile('', fileItem.signedUrl);
+          return data as { [key: string]: number };
         }
       }
 
-      return this._dataLoader.getDMSJsonFileFromFileName(
+      if (!this._dataLoader.getDMSJsonFile) {
+        throw new Error('Model data provider does not support signed file fetching');
+      }
+      const signedFilesList = await this._dataLoader.getDMSJsonFile(
         this.signedFilesBaseUrl,
         this._modelIdentifier,
         filePath
-      ) as Promise<{ [key: string]: number }>;
+      );
+      const found = signedFilesList.items.find(
+        item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
+      );
+      if (!found) {
+        throw new Error(`File "${filePath}" not found in signed files response`);
+      }
+      const data = await this._dataLoader.getJsonFile('', found.signedUrl);
+      return data as { [key: string]: number };
     } else {
       const baseUrl = `${this.ept.url}ept-hierarchy`;
-      return this._dataLoader.getJsonFile(baseUrl, fileName).then((result: { [key: string]: number }) => result);
+      const result = await this._dataLoader.getJsonFile(baseUrl, fileName);
+      return result as { [key: string]: number };
     }
   }
 
@@ -309,7 +322,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
     const fileName = `${this.fileName()}.json`;
 
-    const hier = await this._dataLoader.getJsonFile<{ [key: string]: number }>(baseUrl, fileName);
+    const hier = await this.getHierarchy(fileName);
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.

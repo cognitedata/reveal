@@ -5,7 +5,7 @@
 import { vi } from 'vitest';
 import { Matrix4 } from 'three';
 import { UrlPointClassificationsProvider } from './UrlPointClassificationsProvider';
-import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier, SignedFilesResponse } from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
 
@@ -13,10 +13,7 @@ function createMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDa
   const base: ModelDataProvider = {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
-    getSignedBinaryFile: vi.fn<ModelDataProvider['getSignedBinaryFile']>(),
-    getSignedJsonFile: vi.fn<ModelDataProvider['getSignedJsonFile']>(),
-    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
-    getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>()
+    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>()
   };
   Object.assign(base, overrides);
   return base;
@@ -42,20 +39,27 @@ const dmIdentifier = new DMModelIdentifier({
 });
 
 const classificationData = { classificationSets: [{ name: 'Default', classes: [] }] };
+const classificationSignedUrl = 'https://cdn.example.com/classificationSets.json';
 
 describe(UrlPointClassificationsProvider.name, () => {
-  test('DM model calls getDMSJsonFileFromFileName; classic model calls getJsonFile', async () => {
+  test('DM model calls getDMSJsonFile+getJsonFile; classic model calls getJsonFile directly', async () => {
     const dmProvider = createMockProvider({
-      getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(async () => classificationData)
+      getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(
+        async (): Promise<SignedFilesResponse> => ({
+          items: [{ fileName: 'classificationSets.json', signedUrl: classificationSignedUrl, subPath: '' }]
+        })
+      ),
+      getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => classificationData)
     });
     const dmResult = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
       createMetadata(dmIdentifier)
     );
-    expect(dmProvider.getDMSJsonFileFromFileName).toHaveBeenCalledWith(
+    expect(dmProvider.getDMSJsonFile).toHaveBeenCalledWith(
       'https://signed-files.example.com',
       dmIdentifier,
       'classificationSets.json'
     );
+    expect(dmProvider.getJsonFile).toHaveBeenCalledWith('', classificationSignedUrl);
     expect(dmResult.fileData).toBe(classificationData);
 
     const classicProvider = createMockProvider({
@@ -73,7 +77,7 @@ describe(UrlPointClassificationsProvider.name, () => {
       'DM',
       dmIdentifier,
       {
-        getDMSJsonFileFromFileName: vi.fn<ModelDataProvider['getDMSJsonFileFromFileName']>(async () => {
+        getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(async () => {
           throw new Error();
         })
       }

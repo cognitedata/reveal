@@ -25,18 +25,28 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
 
   async getClassifications(modelMetadata: PointCloudMetadata): Promise<PointCloudClassificationInfoWithSignedFiles> {
     if (modelMetadata.modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelMetadata.modelIdentifier)) {
-      return this._dataProvider
-        .getDMSJsonFileFromFileName(
+      if (!this._dataProvider.getDMSJsonFile) return EMPTY_CLASSIFICATION;
+      const signedFilesList = await this._dataProvider
+        .getDMSJsonFile(
           modelMetadata.signedFilesBaseUrl,
           modelMetadata.modelIdentifier,
           DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE
         )
-        .then(json => ({
-          type: 'pointCloudClassificationInfoWithSignedFiles' as const,
-          signedFiles: { items: [] },
-          fileData: json as ClassificationInfo
-        }))
-        .catch(() => EMPTY_CLASSIFICATION);
+        .catch(() => null);
+      if (!signedFilesList) return EMPTY_CLASSIFICATION;
+      const found = signedFilesList.items.find(
+        item =>
+          item.fileName === DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE ||
+          item.fileName.endsWith('/' + DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
+      );
+      if (!found) return EMPTY_CLASSIFICATION;
+      const json = await this._dataProvider.getJsonFile('', found.signedUrl).catch(() => null);
+      if (!json) return EMPTY_CLASSIFICATION;
+      return {
+        type: 'pointCloudClassificationInfoWithSignedFiles' as const,
+        signedFiles: signedFilesList,
+        fileData: json as ClassificationInfo
+      };
     }
     return this._dataProvider
       .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)

@@ -46,11 +46,37 @@ export class EptBinaryLoader implements ILoader {
   }
 
   async getBinaryFile(node: PointCloudEptGeometryNode): Promise<ArrayBuffer> {
-    if (node.modelIdentifier instanceof DMModelIdentifier && node.signedUrl) {
-      return this._dataLoader.getSignedBinaryFile(node.signedUrl);
+    if (node.modelIdentifier instanceof DMModelIdentifier) {
+      const signedUrl = await this.resolveSignedUrl(node);
+      if (signedUrl) {
+        return this._dataLoader.getBinaryFile('', signedUrl);
+      }
     }
     const fullFileName = node.fileName() + this.extension();
     return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+  }
+
+  private async resolveSignedUrl(node: PointCloudEptGeometryNode): Promise<string | undefined> {
+    if (node.signedUrl) {
+      return node.signedUrl;
+    }
+    if (!node.signedFilesBaseUrl || !this._dataLoader.getDMSJsonFile) {
+      return undefined;
+    }
+    const fileName = node.fileName() + this.extension();
+    const filePath = `ept-data/${fileName}`;
+    const signedFilesList = await this._dataLoader.getDMSJsonFile(
+      node.signedFilesBaseUrl,
+      node.modelIdentifier,
+      filePath
+    );
+    const found = signedFilesList.items.find(
+      item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + fileName)
+    );
+    if (found) {
+      node.signedUrl = found.signedUrl;
+    }
+    return found?.signedUrl;
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
