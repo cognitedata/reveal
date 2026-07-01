@@ -20,6 +20,7 @@ import type {
 } from '@reveal/data-providers';
 import { File3dFormat, isDMIdentifier, DMModelIdentifier } from '@reveal/data-providers';
 import type { CadMetadataWithSignedFiles } from './types';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -41,7 +42,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   async loadData(modelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
     const cadOutput = await this.getSupportedOutput(modelIdentifier, outputFormat);
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
-    const signedFilesBaseUrlPromise = this._modelMetadataProvider.getModelUriForSignedFiles();
+    const signedFilesBaseUrlPromise = this._modelMetadataProvider.getModelUriForSignedFiles?.() ?? Promise.resolve('');
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
@@ -75,11 +76,20 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     fileName: string
   ): Promise<CadMetadataWithSignedFiles> {
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
-      const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
+      if (!this._modelDataProvider.getDMSJsonFile) {
+        throw new Error('Model data provider does not support signed file fetching');
+      }
+      const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, '');
+      const found = jsonData.items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+
+      if (!found) {
+        throw new Error(`File "${fileName}" not found in signed files response`);
+      }
+      const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
       return {
         type: 'cadMetadataWithSignedFiles',
-        signedFiles: jsonData.signedFiles,
-        fileData: jsonData.fileData as CadMetadataWithSignedFiles['fileData']
+        signedFiles: jsonData,
+        fileData: fileData as CadSceneRootMetadata
       };
     }
     if (baseUrl) {
@@ -87,7 +97,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       return {
         type: 'cadMetadataWithSignedFiles',
         signedFiles: { items: [] },
-        fileData: jsonData
+        fileData: jsonData as CadSceneRootMetadata
       };
     }
     throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
