@@ -98,7 +98,7 @@ describe(CdfModelDataProvider.name, () => {
     expect(result).toBe(mockData);
   });
 
-  test('getSignedBinaryFile() returns ArrayBuffer without auth headers', async () => {
+  test('getBinaryFile() with signed URL returns ArrayBuffer without auth headers', async () => {
     const response = '0123456789';
     const fetchMock = vi
       .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
@@ -106,7 +106,7 @@ describe(CdfModelDataProvider.name, () => {
     vi.stubGlobal('fetch', fetchMock);
     const getHeadersSpy = vi.spyOn(client, 'getDefaultRequestHeaders');
 
-    const result = await clientExt.getSignedBinaryFile('https://signed.url/file.glb');
+    const result = await clientExt.getBinaryFile('https://signed.url/file.glb');
 
     expect(result).toBeInstanceOf(ArrayBuffer);
     expect(getHeadersSpy).not.toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe(CdfModelDataProvider.name, () => {
     expect(requestInit!.headers).toEqual({ Accept: '*/*' });
   });
 
-  test('getSignedJsonFile() parses JSON response without auth headers', async () => {
+  test('getJsonFile() with signed URL parses JSON response without auth headers', async () => {
     const jsonData = { version: 9, sectors: [] };
     const fetchMock = vi
       .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
@@ -125,7 +125,7 @@ describe(CdfModelDataProvider.name, () => {
     vi.stubGlobal('fetch', fetchMock);
     const getHeadersSpy = vi.spyOn(client, 'getDefaultRequestHeaders');
 
-    const result = await clientExt.getSignedJsonFile('https://signed.url/scene.json');
+    const result = await clientExt.getJsonFile('https://signed.url/scene.json');
 
     expect(result).toEqual(jsonData);
     expect(getHeadersSpy).not.toHaveBeenCalled();

@@ -12,7 +12,7 @@ export class EptLoader {
     modelIdentifier: ModelIdentifier,
     stylableObjects: StylableObject[]
   ): Promise<PointCloudEptGeometry> {
-    const eptJsonPromise = modelDataProvider.getJsonFile(baseUrl, fileName);
+    const eptJsonPromise = modelDataProvider.getJsonFile<EptJson>(baseUrl, fileName);
 
     return eptJsonPromise.then(async (json: EptJson) => {
       const url = baseUrl + '/';
