@@ -40,9 +40,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.arrayBuffer();
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+  async getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T> {
     if (baseUrl) {
-      const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
+      const response = await this.client.get<T>(`${baseUrl}/${fileName}`).catch(_err => {
         throw Error('Could not download Json file');
       });
       return response.data;

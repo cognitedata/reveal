@@ -16,7 +16,7 @@ export class LocalModelDataProvider implements ModelDataProvider {
     return response.arrayBuffer();
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+  async getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T> {
     const url = baseUrl ? `${baseUrl}/${fileName}` : fileName;
     const response = await fetchWithStatusCheck(url);
     return response.json();

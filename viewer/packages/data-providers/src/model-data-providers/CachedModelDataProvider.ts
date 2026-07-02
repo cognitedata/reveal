@@ -37,19 +37,19 @@ export class CachedModelDataProvider implements ModelDataProvider {
     );
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+  async getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T> {
     if (!baseUrl) {
-      return this.baseProvider.getJsonFile('', fileName);
+      return this.baseProvider.getJsonFile<T>('', fileName);
     }
-    const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
+    const convertToArrayBuffer = (data: T): ArrayBuffer => {
       const jsonString = JSON.stringify(data);
       return new TextEncoder().encode(jsonString).buffer;
     };
-    return this.fetchWithCache(
+    return this.fetchWithCache<T>(
       baseUrl,
       fileName,
       response => response.json(),
-      () => this.baseProvider.getJsonFile(baseUrl, fileName),
+      () => this.baseProvider.getJsonFile<T>(baseUrl, fileName),
       convertToArrayBuffer,
       'application/json'
     );
