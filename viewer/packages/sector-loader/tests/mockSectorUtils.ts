@@ -56,7 +56,5 @@ export function createModelDataProviderMock(): IMock<ModelDataProvider> {
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
     .returnsAsync(fileBuffer.buffer)
     .setup(p => p.getJsonFile(It.IsAny(), It.IsAny()))
-    .returnsAsync({})
-    .setup(p => p.getDMSJsonFile(It.IsAny(), It.IsAny(), It.IsAny()))
-    .returnsAsync({ items: [] });
+    .returnsAsync({});
 }

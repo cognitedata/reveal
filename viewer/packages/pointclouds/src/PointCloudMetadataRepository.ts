@@ -34,7 +34,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
-    const signedFilesBaseUrlPromise = this._modelMetadataProvider.getModelUriForSignedFiles();
+    const signedFilesBaseUrlPromise = this._modelMetadataProvider.getModelUriForSignedFiles?.() ?? Promise.resolve('');
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
@@ -63,18 +63,28 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     fileName: string
   ): Promise<PointCloudMetadataWithSignedFiles> {
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
-      const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, fileName);
+      if (!this._modelDataProvider.getDMSJsonFile) {
+        throw new Error('Model data provider does not support signed file fetching');
+      }
+      const signedFilesList = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, '');
+      const found = signedFilesList.items.find(
+        item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
+      );
+      if (!found) {
+        throw new Error(`File "${fileName}" not found in signed files response`);
+      }
+      const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
       return {
         type: 'pointCloudMetadataWithSignedFiles',
-        signedFiles: jsonData.signedFiles,
-        fileData: jsonData.fileData as PointCloudMetadataWithSignedFiles['fileData']
+        signedFiles: signedFilesList,
+        fileData: fileData as PointCloudMetadataWithSignedFiles['fileData']
       };
     }
     const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
       type: 'pointCloudMetadataWithSignedFiles',
       signedFiles: { items: [] },
-      fileData: jsonData
+      fileData: jsonData as PointCloudMetadataWithSignedFiles['fileData']
     };
   }
 

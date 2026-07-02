@@ -30,10 +30,6 @@ export interface JsonFileProvider {
 export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
-export interface SignedFileProvider {
-  getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
-}
-
 export type SignedFileItem = {
   signedUrl: string;
   fileName: string;
@@ -51,6 +47,10 @@ export type SignedFilesResponse = {
 export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
   fileData: unknown;
 };
+
+export interface SignedFileProvider {
+  getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
+}
 
 /**
  * An ID identifiying a single Image360 entity within a collection
