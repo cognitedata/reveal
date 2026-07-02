@@ -66,16 +66,14 @@ describe(CadModelMetadataRepository.name, () => {
       })
     );
 
-    const getJsonFileMock = vi.fn(
-      async (_baseUrl: string, _fileName: string): Promise<unknown> => v9SceneSectorMetadata
-    );
+    const getJsonFileMock = vi.fn(async () => v9SceneSectorMetadata);
 
     const mockedMetadataProvider = createMockedMetadataProvider([v9BlobOutputMetadata], signedFilesBaseUrl);
-    const mockedModelDataProvider: ModelDataProvider = {
+    const mockedModelDataProvider = {
       ...createMockedModelDataProvider(),
       getDMSJsonFile: getDMSJsonFileMock,
       getJsonFile: getJsonFileMock
-    };
+    } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const repo = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
     const result = await repo.loadData(dmIdentifier);
