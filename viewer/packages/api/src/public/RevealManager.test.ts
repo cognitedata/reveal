@@ -17,7 +17,8 @@ import type {
 import { CdfModelIdentifier, DMModelIdentifier } from '@reveal/data-providers';
 import type { CadManager, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
-import { LocalPointClassificationsProvider, PointCloudManager } from '@reveal/pointclouds';
+import type { PointCloudManager } from '@reveal/pointclouds';
+import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import type { SetPropertyExpression } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import type { CameraManager } from '@reveal/camera-manager';
