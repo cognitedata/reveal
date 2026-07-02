@@ -4,7 +4,7 @@
 
 import type { ModelDataProvider } from '../ModelDataProvider';
 import type { ModelIdentifier } from '../ModelIdentifier';
-import type { SignedFilesResponse } from '../types';
+import type { SignedFileItem } from '../types';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -84,15 +84,15 @@ export class CachedModelDataProvider implements ModelDataProvider {
     return data;
   }
 
-  async getDMSJsonFile(
+  async getFileUrlsForModel(
     baseUrl: string,
     modelIdentifier: ModelIdentifier,
-    fileName: string
-  ): Promise<SignedFilesResponse> {
-    if (!this.baseProvider.getDMSJsonFile) {
-      throw new Error('Base provider does not support getDMSJsonFile');
+    fileName?: string
+  ): Promise<SignedFileItem[]> {
+    if (!this.baseProvider.getFileUrlsForModel) {
+      throw new Error('Base provider does not support getFileUrlsForModel');
     }
-    return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
+    return this.baseProvider.getFileUrlsForModel(baseUrl, modelIdentifier, fileName);
   }
 
   /**

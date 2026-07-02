@@ -43,9 +43,7 @@ describe(CachedModelDataProvider.name, () => {
     mockBaseProvider = {
       getBinaryFile: getBinaryFileMock,
       getJsonFile: getJsonFileMock,
-      getDMSJsonFile: vi.fn(async () => ({
-        items: [] as never[]
-      }))
+      getFileUrlsForModel: vi.fn(async () => [] as never[])
     } as Partial<ModelDataProvider> as ModelDataProvider;
 
     cachedProvider = new CachedModelDataProvider(
@@ -163,12 +161,12 @@ describe(CachedModelDataProvider.name, () => {
     await expect(cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME)).rejects.toThrow('Network error');
   });
 
-  test('getDMSJsonFile should delegate to base provider without caching', async () => {
-    await cachedProvider.getDMSJsonFile(TEST_URL, dmIdentifier, 'scene.json');
-    await cachedProvider.getDMSJsonFile(TEST_URL, dmIdentifier, 'scene.json');
+  test('getFileUrlsForModel should delegate to base provider without caching', async () => {
+    await cachedProvider.getFileUrlsForModel(TEST_URL, dmIdentifier, 'scene.json');
+    await cachedProvider.getFileUrlsForModel(TEST_URL, dmIdentifier, 'scene.json');
 
-    expect(mockBaseProvider.getDMSJsonFile).toHaveBeenCalledTimes(2);
-    expect(mockBaseProvider.getDMSJsonFile).toHaveBeenCalledWith(TEST_URL, dmIdentifier, 'scene.json');
+    expect(mockBaseProvider.getFileUrlsForModel).toHaveBeenCalledTimes(2);
+    expect(mockBaseProvider.getFileUrlsForModel).toHaveBeenCalledWith(TEST_URL, dmIdentifier, 'scene.json');
   });
 
   test('getBinaryFile with signed URL should delegate to base provider without caching', async () => {

@@ -4,7 +4,7 @@
 import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import type { SignedFileItem, SignedFilesResponse, SignedFilesResponseWithFileData } from '../types';
+import type { SignedFileItem } from '../types';
 import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
 import type { ModelIdentifier } from '../ModelIdentifier';
 
@@ -21,9 +21,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const url = baseUrl ? `${baseUrl}/${fileName}` : fileName;
+    const url = baseUrl !== '' ? `${baseUrl}/${fileName}` : fileName;
     const headers = {
-      ...(baseUrl ? this.client.getDefaultRequestHeaders() : {}),
+      ...(baseUrl !== '' ? this.client.getDefaultRequestHeaders() : {}),
       Accept: '*/*'
     };
 
@@ -35,13 +35,13 @@ export class CdfModelDataProvider implements ModelDataProvider {
       if (e?.name === 'AbortError') {
         throw e;
       }
-      throw new Error(baseUrl ? 'Could not download binary file' : 'Could not download signed binary file');
+      throw new Error('Could not download binary file');
     });
     return response.arrayBuffer();
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
-    if (baseUrl) {
+    if (baseUrl !== '') {
       const response = await this.client.get(`${baseUrl}/${fileName}`).catch(_err => {
         throw Error('Could not download Json file');
       });
@@ -57,13 +57,13 @@ export class CdfModelDataProvider implements ModelDataProvider {
     return response.json();
   }
 
-  async getDMSJsonFile(
+  async getFileUrlsForModel(
     baseUrl: string,
     modelIdentifier: ModelIdentifier,
-    fileName: string
-  ): Promise<SignedFilesResponse> {
+    fileName?: string
+  ): Promise<SignedFileItem[]> {
     if (!(modelIdentifier instanceof DMModelIdentifier)) {
-      throw new Error('getDMSJsonFile requires a valid DM model identifier');
+      throw new Error('getFileUrlsForModel requires a valid DM model identifier');
     }
 
     const items: SignedFileItem[] = [];
@@ -81,19 +81,20 @@ export class CdfModelDataProvider implements ModelDataProvider {
           },
           ...filter,
           limit: 1000,
-          cursor: cursor
+          cursor
         }
       };
 
-      const response = await this.client.post<SignedFilesResponseWithFileData>(`${baseUrl}`, payload);
+      const response = await this.client.post<{ items: SignedFileItem[]; nextCursor?: string }>(baseUrl, payload);
       const responseData = response.data;
       items.push(
+        // Strip restricted-api gateway prefix so the signed URL works from the browser directly
         ...responseData.items.map(item => ({ ...item, signedUrl: stripRestrictedApiGateway(item.signedUrl) }))
       );
       cursor = responseData.nextCursor;
     } while (cursor);
 
-    return { items };
+    return items;
   }
 
   private async fetchWithRetry(input: RequestInfo, options: RequestInit, retries: number = 3) {

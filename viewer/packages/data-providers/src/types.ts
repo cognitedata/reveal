@@ -31,7 +31,7 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 export interface SignedFileProvider {
-  getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
+  getFileUrlsForModel?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName?: string): Promise<SignedFileItem[]>;
 }
 
 export type SignedFileItem = {
@@ -43,13 +43,6 @@ export type SignedFileItem = {
 export type SignedFilesResponseWithCursor = {
   items: SignedFileItem[];
   nextCursor?: string;
-};
-export type SignedFilesResponse = {
-  items: SignedFileItem[];
-};
-
-export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
-  fileData: unknown;
 };
 
 /**
