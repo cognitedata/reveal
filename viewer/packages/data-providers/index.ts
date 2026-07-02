@@ -71,10 +71,7 @@ export type {
   InstanceReference,
   Image360Id,
   Image360RevisionId,
-  SignedFileItem,
-  SignedFilesResponse,
-  SignedFilesResponseWithCursor,
-  SignedFilesResponseWithFileData
+  SignedFileItem
 } from './src/types';
 export { File3dFormat } from './src/types';
 

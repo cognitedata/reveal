@@ -24,14 +24,35 @@ export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
 ) => boolean;
 
 export interface JsonFileProvider {
-  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
+  /**
+   * Download and parse a JSON file and return the resulting struct.
+   * @param baseUrl     Base URL of the model. Pass empty string to treat fileName as a full signed URL.
+   * @param fileName    Filename of JSON file, or a full signed URL when baseUrl is empty.
+   */
+  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
 export interface BinaryFileProvider {
+  /**
+   * Downloads a binary blob.
+   * @param baseUrl     Base URL of the model. Pass empty string to treat fileName as a full signed URL.
+   * @param fileName    Filename of binary file, or a full signed URL when baseUrl is empty.
+   * @param abortSignal Optional abort signal that can be used to cancel an in progress fetch.
+   */
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 export interface SignedFileProvider {
-  getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
+  /**
+   * Retrieves signed URLs for files belonging to a model revision.
+   * @param baseUrl          Base URL of the signed files endpoint.
+   * @param modelIdentifier  Identifier of the model revision to fetch URLs for.
+   * @param fileNameFilter   Optional filename to filter results to a single file.
+   */
+  getFileUrlsForModel?(
+    baseUrl: string,
+    modelIdentifier: ModelIdentifier,
+    fileNameFilter?: string
+  ): Promise<SignedFileItem[]>;
 }
 
 export type SignedFileItem = {
@@ -43,13 +64,6 @@ export type SignedFileItem = {
 export type SignedFilesResponseWithCursor = {
   items: SignedFileItem[];
   nextCursor?: string;
-};
-export type SignedFilesResponse = {
-  items: SignedFileItem[];
-};
-
-export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
-  fileData: unknown;
 };
 
 /**

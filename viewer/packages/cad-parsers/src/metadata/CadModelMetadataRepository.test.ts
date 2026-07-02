@@ -136,6 +136,6 @@ function createMockedModelDataProvider(): ModelDataProvider {
     getBinaryFile: async () => {
       return new ArrayBuffer(1);
     },
-    getDMSJsonFile: async () => ({ items: [] })
-  } as Partial<ModelDataProvider> as ModelDataProvider;
+    getFileUrlsForModel: async () => []
+  };
 }
