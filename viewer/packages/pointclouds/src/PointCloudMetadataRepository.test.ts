@@ -5,13 +5,7 @@
 import { vi } from 'vitest';
 import { Matrix4, Vector3 } from 'three';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
-import type {
-  BlobOutputMetadata,
-  ModelDataProvider,
-  ModelIdentifier,
-  ModelMetadataProvider,
-  SignedFilesResponse
-} from '@reveal/data-providers';
+import type { BlobOutputMetadata, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { EptJson } from './potree-three-loader/loading/EptJson';
 
@@ -55,9 +49,7 @@ function createMockedModelDataProvider(): ModelDataProvider {
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(async () => minimalEptJson),
-    getDMSJsonFile: vi.fn<
-      (baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>
-    >(async (): Promise<SignedFilesResponse> => ({ items: [] }))
+    getFileUrlsForModel: vi.fn(async () => [])
   } as Partial<ModelDataProvider> as ModelDataProvider;
 }
 
@@ -70,27 +62,25 @@ describe(PointCloudMetadataRepository.name, () => {
     const result = await repo.loadData(classicIdentifier);
 
     expect(dataProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model', 'ept.json');
-    expect(dataProvider.getDMSJsonFile).not.toHaveBeenCalled();
+    expect(dataProvider.getFileUrlsForModel).not.toHaveBeenCalled();
     expect(result.signedFiles?.items).toEqual([]);
   });
 
-  test('DM model calls getDMSJsonFile and populates signedFiles and signedFilesBaseUrl', async () => {
+  test('DM model calls getFileUrlsForModel and populates signedFiles and signedFilesBaseUrl', async () => {
     const signedFilesBaseUrl = 'https://api.example.com/3d/output/files';
     const eptJsonSignedUrl = 'https://cdn.example.com/ept.json';
     const eptJsonItem = { signedUrl: eptJsonSignedUrl, fileName: 'ept.json', subPath: '' };
     const signedItem = { signedUrl: 'https://cdn.example.com/0-0-0-0.bin', fileName: '0-0-0-0.bin', subPath: '' };
     const dataProvider: ModelDataProvider = {
       ...createMockedModelDataProvider(),
-      getDMSJsonFile: vi.fn<
-        (baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>
-      >(async (): Promise<SignedFilesResponse> => ({ items: [eptJsonItem, signedItem] })),
+      getFileUrlsForModel: vi.fn(async () => [eptJsonItem, signedItem]),
       getJsonFile: vi.fn(async () => minimalEptJson)
     } as Partial<ModelDataProvider> as ModelDataProvider;
     const repo = new PointCloudMetadataRepository(createMockedMetadataProvider(signedFilesBaseUrl), dataProvider);
 
     const result = await repo.loadData(dmIdentifier);
 
-    expect(dataProvider.getDMSJsonFile).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, '');
+    expect(dataProvider.getFileUrlsForModel).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier);
     expect(dataProvider.getJsonFile).toHaveBeenCalledWith('', eptJsonSignedUrl);
     expect(result.signedFiles?.items).toContainEqual(signedItem);
     expect(result.signedFilesBaseUrl).toBe(signedFilesBaseUrl);

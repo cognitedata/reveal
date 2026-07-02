@@ -8,7 +8,7 @@ import { createModelDataProviderMock, createWantedSectorMock } from './mockSecto
 import type { IMock } from 'moq.ts';
 import { Mock, It } from 'moq.ts';
 
-import type { ModelDataProvider, ModelIdentifier, SignedFilesResponse } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { DMModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
 import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
@@ -365,8 +365,7 @@ describe(GltfSectorRepository.name, () => {
     const provider: ModelDataProvider = {
       getBinaryFile,
       getJsonFile: vi.fn(),
-      getDMSJsonFile:
-        vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>()
+      getFileUrlsForModel: vi.fn(async () => [])
     } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const dmIdentifier = new DMModelIdentifier({

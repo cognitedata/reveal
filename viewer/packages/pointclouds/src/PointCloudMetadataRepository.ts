@@ -63,20 +63,18 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     fileName: string
   ): Promise<PointCloudMetadataWithSignedFiles> {
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
-      if (!this._modelDataProvider.getDMSJsonFile) {
+      if (!this._modelDataProvider.getFileUrlsForModel) {
         throw new Error('Model data provider does not support signed file fetching');
       }
-      const signedFilesList = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, '');
-      const found = signedFilesList.items.find(
-        item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
-      );
+      const items = await this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
+      const found = items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
       if (!found) {
         throw new Error(`File "${fileName}" not found in signed files response`);
       }
       const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
       return {
         type: 'pointCloudMetadataWithSignedFiles',
-        signedFiles: signedFilesList,
+        signedFiles: { items },
         fileData: fileData as PointCloudMetadataWithSignedFiles['fileData']
       };
     }
