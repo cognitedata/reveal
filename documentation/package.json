@@ -63,7 +63,7 @@
     ]
   },
   "resolutions": {
-    "webpack": "5.108.0",
+    "webpack": "5.108.1",
     "serialize-javascript": "^7.0.3",
     "replace/minimatch": "^10.0.0",
     "@chevrotain/cst-dts-gen/lodash": "^4.18.1",
