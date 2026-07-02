@@ -1567,7 +1567,7 @@ export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean
 // @public (undocumented)
 export interface JsonFileProvider {
     // (undocumented)
-    getJsonFile(baseUrl: string, fileName: string): Promise<unknown>;
+    getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
 }
 
 // @public
@@ -1638,7 +1638,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 // @public
 export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-    getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+    getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
 }
 
 // @public
