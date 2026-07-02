@@ -44,7 +44,7 @@ describe(CachedModelDataProvider.name, () => {
       getBinaryFile: getBinaryFileMock,
       getJsonFile: getJsonFileMock,
       getFileUrlsForModel: vi.fn(async () => [])
-    } as Partial<ModelDataProvider> as ModelDataProvider;
+    };
 
     cachedProvider = new CachedModelDataProvider(
       mockBaseProvider,
