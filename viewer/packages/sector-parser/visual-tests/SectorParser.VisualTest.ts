@@ -41,7 +41,7 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
     const boundingBox = new Box3(new Vector3(min.x, min.y, min.z), new Vector3(max.x, max.y, max.z));
     boundingBox.applyMatrix4(this.cadFromCdfToThreeMatrix);
 
-    const fileNames = sectors.map((sector: SceneJson['sectors'][number]) => sector.sectorFileName);
+    const fileNames = sectors.map(sector => sector.sectorFileName);
 
     const blobs = await Promise.all(
       fileNames.map((fileName: string) => modelDataProvider.getBinaryFile(modelUri, fileName))
