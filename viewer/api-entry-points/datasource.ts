@@ -13,6 +13,7 @@ export type {
   BlobOutputMetadata,
   JsonFileProvider,
   BinaryFileProvider,
+  SignedFileProvider,
   SignedFileItem,
   SignedFilesResponse,
   SignedFilesResponseWithCursor,

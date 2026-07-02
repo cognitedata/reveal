@@ -9,16 +9,17 @@ import type { IMock } from 'moq.ts';
 import { Mock } from 'moq.ts';
 import type { WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import type { ModelDataProvider } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier, SignedFilesResponse } from '@reveal/data-providers';
 import { DMModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
 import { createModelDataProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
 function makeMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
-  const base: ModelDataProvider = {
+  const base = {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
-    getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
-    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>()
-  };
+    getJsonFile: vi.fn(),
+    getDMSJsonFile:
+      vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>()
+  } as Partial<ModelDataProvider> as ModelDataProvider;
   Object.assign(base, overrides);
   return base;
 }
