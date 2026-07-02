@@ -293,15 +293,15 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
         }
       }
 
-      if (!this._dataLoader.getDMSJsonFile) {
+      if (!this._dataLoader.getFileUrlsForModel) {
         throw new Error('Model data provider does not support signed file fetching');
       }
-      const signedFilesList = await this._dataLoader.getDMSJsonFile(
+      const items = await this._dataLoader.getFileUrlsForModel(
         this.signedFilesBaseUrl,
         this._modelIdentifier,
         filePath
       );
-      const found = signedFilesList.items.find(
+      const found = items.find(
         item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
       );
       if (!found) {

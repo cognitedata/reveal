@@ -221,7 +221,6 @@ export type BeforeSceneRenderedDelegate = (event: {
 
 // @public (undocumented)
 export interface BinaryFileProvider {
-    // (undocumented)
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
@@ -990,21 +989,6 @@ export type DMInstanceRef = {
     space: string;
 };
 
-// @public (undocumented)
-export class DMModelIdentifier extends CdfModelIdentifier {
-    constructor(input: DMModelIdentifierType & ClassicModelIdentifierType);
-    // (undocumented)
-    readonly revealInternalId: symbol;
-    // (undocumented)
-    readonly revisionExternalId: string;
-    // (undocumented)
-    readonly revisionSpace: string;
-    // (undocumented)
-    sourceModelIdentifier(): string;
-    // (undocumented)
-    toString(): string;
-}
-
 // @public
 export type DMModelIdentifierType = {
     revisionExternalId: string;
@@ -1566,8 +1550,7 @@ export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean
 
 // @public (undocumented)
 export interface JsonFileProvider {
-    // (undocumented)
-    getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
+    getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
 // @public
@@ -1637,8 +1620,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
 // @public
 export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
-    getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-    getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
 }
 
 // @public
@@ -2101,25 +2082,8 @@ export type SignedFileItem = {
 
 // @public (undocumented)
 export interface SignedFileProvider {
-    // (undocumented)
-    getDMSJsonFile?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): Promise<SignedFilesResponse>;
+    getFileUrlsForModel?(baseUrl: string, modelIdentifier: ModelIdentifier, fileNameFilter?: string): Promise<SignedFileItem[]>;
 }
-
-// @public (undocumented)
-export type SignedFilesResponse = {
-    items: SignedFileItem[];
-};
-
-// @public (undocumented)
-export type SignedFilesResponseWithCursor = {
-    items: SignedFileItem[];
-    nextCursor?: string;
-};
-
-// @public (undocumented)
-export type SignedFilesResponseWithFileData = SignedFilesResponseWithCursor & {
-    fileData: unknown;
-};
 
 // @public
 export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {

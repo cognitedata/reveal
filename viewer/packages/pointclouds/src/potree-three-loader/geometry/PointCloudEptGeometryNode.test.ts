@@ -36,7 +36,7 @@ function createMockDataProvider(overrides: Partial<ModelDataProvider> = {}): Mod
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(async () => ({})),
-    getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(),
+    getFileUrlsForModel: vi.fn(async () => []),
     ...overrides
   } as ModelDataProvider;
 }
@@ -120,9 +120,9 @@ describe(PointCloudEptGeometryNode.name, () => {
       expect(dataProviderHit.getJsonFile).toHaveBeenCalledWith('', hierarchySignedUrl);
 
       const dataProviderMiss = createMockDataProvider({
-        getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(async () => ({
-          items: [{ fileName: filePath, signedUrl: hierarchySignedUrl, subPath: '' }]
-        })),
+        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
+          { fileName: filePath, signedUrl: hierarchySignedUrl, subPath: '' }
+        ]),
         getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const nodeMiss = new PointCloudEptGeometryNode(
@@ -133,7 +133,7 @@ describe(PointCloudEptGeometryNode.name, () => {
         signedFilesBaseUrl
       );
       await nodeMiss.getHierarchy('0-0-0-0.json');
-      expect(dataProviderMiss.getDMSJsonFile).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, filePath);
+      expect(dataProviderMiss.getFileUrlsForModel).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, filePath);
       expect(dataProviderMiss.getJsonFile).toHaveBeenCalledWith('', hierarchySignedUrl);
     });
 

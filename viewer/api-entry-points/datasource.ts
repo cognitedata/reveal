@@ -14,9 +14,6 @@ export type {
   JsonFileProvider,
   BinaryFileProvider,
   SignedFileProvider,
-  SignedFileItem,
-  SignedFilesResponse,
-  SignedFilesResponseWithCursor,
-  SignedFilesResponseWithFileData
+  SignedFileItem
 } from '../packages/data-providers';
-export { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '../packages/data-providers';
+export { CdfModelIdentifier, File3dFormat } from '../packages/data-providers';
