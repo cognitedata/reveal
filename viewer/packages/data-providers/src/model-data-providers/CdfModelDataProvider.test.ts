@@ -106,7 +106,7 @@ describe(CdfModelDataProvider.name, () => {
     vi.stubGlobal('fetch', fetchMock);
     const getHeadersSpy = vi.spyOn(client, 'getDefaultRequestHeaders');
 
-    const result = await clientExt.getBinaryFile('https://signed.url/file.glb');
+    const result = await clientExt.getBinaryFile('', 'https://signed.url/file.glb');
 
     expect(result).toBeInstanceOf(ArrayBuffer);
     expect(getHeadersSpy).not.toHaveBeenCalled();
@@ -125,7 +125,7 @@ describe(CdfModelDataProvider.name, () => {
     vi.stubGlobal('fetch', fetchMock);
     const getHeadersSpy = vi.spyOn(client, 'getDefaultRequestHeaders');
 
-    const result = await clientExt.getJsonFile('https://signed.url/scene.json');
+    const result = await clientExt.getJsonFile('', 'https://signed.url/scene.json');
 
     expect(result).toEqual(jsonData);
     expect(getHeadersSpy).not.toHaveBeenCalled();
@@ -140,50 +140,30 @@ describe(CdfModelDataProvider.name, () => {
       { signedUrl: 'https://signed/2.glb', fileName: '2.glb', subPath: '' },
       { signedUrl: 'https://signed/scene.json', fileName: 'scene.json', subPath: '' }
     ];
-    const sceneData = { version: 9, sectors: [] };
 
     const postSpy = vi
       .spyOn(client, 'post')
       .mockResolvedValueOnce({ data: { items: page1Items, nextCursor: 'cursor-abc' }, headers: {}, status: 200 } as any)
       .mockResolvedValueOnce({ data: { items: page2Items, nextCursor: undefined }, headers: {}, status: 200 } as any);
 
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
-        .mockResolvedValueOnce(
-          new Response(JSON.stringify(sceneData), { status: 200, headers: { 'content-type': 'application/json' } })
-        )
-    );
-
     const result = await clientExt.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
 
     expect(postSpy).toHaveBeenCalledTimes(2);
-    expect(result.signedFiles.items).toEqual([...page1Items, ...page2Items]);
+    expect(result.items).toEqual([...page1Items, ...page2Items]);
     const secondCallData = (postSpy.mock.calls[1][1] as any).data;
     expect(secondCallData.cursor).toBe('cursor-abc');
   });
 
-  test('getDMSJsonFile() returns combined signedFiles and fileData', async () => {
+  test('getDMSJsonFile() returns signed URL list for all model files', async () => {
     const mockFiles = {
       items: [{ signedUrl: 'https://s/scene.json', fileName: 'scene.json', subPath: '' }],
       nextCursor: undefined
     };
-    const mockData = { version: 9 };
 
     vi.spyOn(client, 'post').mockResolvedValueOnce({ data: mockFiles, headers: {}, status: 200 } as any);
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
-        .mockResolvedValueOnce(
-          new Response(JSON.stringify(mockData), { status: 200, headers: { 'content-type': 'application/json' } })
-        )
-    );
 
     const result = await clientExt.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
 
-    expect(result.signedFiles).toEqual(mockFiles);
-    expect(result.fileData).toEqual(mockData);
+    expect(result).toEqual({ items: mockFiles.items });
   });
 });

@@ -24,7 +24,7 @@ export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
 ) => boolean;
 
 export interface JsonFileProvider {
-  getJsonFile(baseUrl: string, fileName: string): Promise<unknown>;
+  getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T>;
 }
 
 export interface BinaryFileProvider {

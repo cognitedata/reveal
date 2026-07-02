@@ -44,8 +44,7 @@ describe(CachedModelDataProvider.name, () => {
       getBinaryFile: getBinaryFileMock,
       getJsonFile: getJsonFileMock,
       getDMSJsonFile: vi.fn(async () => ({
-        signedFiles: { items: [] },
-        fileData: {}
+        items: [] as never[]
       }))
     } as Partial<ModelDataProvider> as ModelDataProvider;
 
@@ -176,20 +175,20 @@ describe(CachedModelDataProvider.name, () => {
     const signedUrl = 'https://signed.url/file.glb';
     const abortController = new AbortController();
 
-    const result = await cachedProvider.getBinaryFile(signedUrl, abortController.signal);
-    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith(signedUrl, abortController.signal);
+    const result = await cachedProvider.getBinaryFile('', signedUrl, abortController.signal);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledWith('', signedUrl, abortController.signal);
     expect(result).toBeInstanceOf(ArrayBuffer);
 
-    await cachedProvider.getBinaryFile(signedUrl);
+    await cachedProvider.getBinaryFile('', signedUrl);
     expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(2);
   });
 
   test('getJsonFile with signed URL should delegate to base provider without caching', async () => {
     const signedUrl = 'https://signed.url/file.json';
 
-    const result = await cachedProvider.getJsonFile(signedUrl);
+    const result = await cachedProvider.getJsonFile('', signedUrl);
 
-    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledWith(signedUrl);
+    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledWith('', signedUrl);
     expect(result).toEqual({ test: 'data' });
   });
 

@@ -26,7 +26,7 @@ describe(LocalModelDataProvider.name, () => {
       'fetch',
       vi.fn<() => Promise<Response>>().mockResolvedValue(new Response('binary-data', { status: 200 }))
     );
-    const result = await provider.getBinaryFile('https://cdn.example.com/sector.glb');
+    const result = await provider.getBinaryFile('', 'https://cdn.example.com/sector.glb');
     expect(fetch).toHaveBeenCalledWith('https://cdn.example.com/sector.glb');
     expect(result).toBeInstanceOf(ArrayBuffer);
   });
@@ -37,19 +37,15 @@ describe(LocalModelDataProvider.name, () => {
       'fetch',
       vi.fn<() => Promise<Response>>().mockResolvedValueOnce(new Response(JSON.stringify(data), { status: 200 }))
     );
-    const result = await provider.getJsonFile('https://cdn.example.com/scene.json');
+    const result = await provider.getJsonFile('', 'https://cdn.example.com/scene.json');
     expect(fetch).toHaveBeenCalledWith('https://cdn.example.com/scene.json');
     expect(result).toEqual(data);
   });
 
-  test('getDMSJsonFile() constructs URL from baseUrl and fileName and returns bundle', async () => {
-    const data = { sectors: [] };
-    vi.stubGlobal(
-      'fetch',
-      vi.fn<() => Promise<Response>>().mockResolvedValueOnce(new Response(JSON.stringify(data), { status: 200 }))
-    );
+  test('getDMSJsonFile() constructs URL from baseUrl and fileName and returns signed URL list', async () => {
     const result = await provider.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
-    expect(fetch).toHaveBeenCalledWith(`${baseUrl}/scene.json`);
-    expect(result).toEqual({ signedFiles: { items: [] }, fileData: data });
+    expect(result).toEqual({
+      items: [{ signedUrl: `${baseUrl}/scene.json`, fileName: 'scene.json', subPath: '' }]
+    });
   });
 });
