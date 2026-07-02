@@ -76,11 +76,11 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     fileName: string
   ): Promise<CadMetadataWithSignedFiles> {
     if (modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelIdentifier) && signedFilesBaseUrl) {
-      if (!this._modelDataProvider.getDMSJsonFile) {
+      if (!this._modelDataProvider.getFileUrlsForModel) {
         throw new Error('Model data provider does not support signed file fetching');
       }
-      const jsonData = await this._modelDataProvider.getDMSJsonFile(signedFilesBaseUrl, modelIdentifier, '');
-      const found = jsonData.items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+      const items = await this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
+      const found = items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
 
       if (!found) {
         throw new Error(`File "${fileName}" not found in signed files response`);
@@ -88,7 +88,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
       return {
         type: 'cadMetadataWithSignedFiles',
-        signedFiles: jsonData,
+        signedFiles: { items },
         fileData: fileData as CadSceneRootMetadata
       };
     }

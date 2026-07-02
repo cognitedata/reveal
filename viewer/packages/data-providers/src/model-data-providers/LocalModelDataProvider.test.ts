@@ -4,17 +4,9 @@
 
 import { vi } from 'vitest';
 import { LocalModelDataProvider } from './LocalModelDataProvider';
-import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 
 describe(LocalModelDataProvider.name, () => {
   const provider = new LocalModelDataProvider();
-  const baseUrl = 'http://localhost/model';
-  const dmIdentifier = new DMModelIdentifier({
-    modelId: 1,
-    revisionId: 2,
-    revisionExternalId: 'ext-id',
-    revisionSpace: 'my-space'
-  });
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -40,12 +32,5 @@ describe(LocalModelDataProvider.name, () => {
     const result = await provider.getJsonFile('', 'https://cdn.example.com/scene.json');
     expect(fetch).toHaveBeenCalledWith('https://cdn.example.com/scene.json');
     expect(result).toEqual(data);
-  });
-
-  test('getDMSJsonFile() constructs URL from baseUrl and fileName and returns signed URL list', async () => {
-    const result = await provider.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
-    expect(result).toEqual({
-      items: [{ signedUrl: `${baseUrl}/scene.json`, fileName: 'scene.json', subPath: '' }]
-    });
   });
 });

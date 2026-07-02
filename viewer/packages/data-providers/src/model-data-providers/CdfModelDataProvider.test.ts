@@ -134,7 +134,7 @@ describe(CdfModelDataProvider.name, () => {
     expect(requestInit!.headers).toEqual({ Accept: 'application/json, */*' });
   });
 
-  test('getDMSJsonFile() paginates through multiple cursor pages to collect all signedFiles', async () => {
+  test('getFileUrlsForModel() paginates through multiple cursor pages to collect all signedFiles', async () => {
     const page1Items = [{ signedUrl: 'https://signed/1.glb', fileName: '1.glb', subPath: '' }];
     const page2Items = [
       { signedUrl: 'https://signed/2.glb', fileName: '2.glb', subPath: '' },
@@ -146,15 +146,15 @@ describe(CdfModelDataProvider.name, () => {
       .mockResolvedValueOnce({ data: { items: page1Items, nextCursor: 'cursor-abc' }, headers: {}, status: 200 } as any)
       .mockResolvedValueOnce({ data: { items: page2Items, nextCursor: undefined }, headers: {}, status: 200 } as any);
 
-    const result = await clientExt.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
+    const result = await clientExt.getFileUrlsForModel(baseUrl, dmIdentifier, 'scene.json');
 
     expect(postSpy).toHaveBeenCalledTimes(2);
-    expect(result.items).toEqual([...page1Items, ...page2Items]);
+    expect(result).toEqual([...page1Items, ...page2Items]);
     const secondCallData = (postSpy.mock.calls[1][1] as any).data;
     expect(secondCallData.cursor).toBe('cursor-abc');
   });
 
-  test('getDMSJsonFile() returns signed URL list for all model files', async () => {
+  test('getFileUrlsForModel() returns signed URL list for all model files', async () => {
     const mockFiles = {
       items: [{ signedUrl: 'https://s/scene.json', fileName: 'scene.json', subPath: '' }],
       nextCursor: undefined
@@ -162,8 +162,8 @@ describe(CdfModelDataProvider.name, () => {
 
     vi.spyOn(client, 'post').mockResolvedValueOnce({ data: mockFiles, headers: {}, status: 200 } as any);
 
-    const result = await clientExt.getDMSJsonFile(baseUrl, dmIdentifier, 'scene.json');
+    const result = await clientExt.getFileUrlsForModel(baseUrl, dmIdentifier, 'scene.json');
 
-    expect(result).toEqual({ items: mockFiles.items });
+    expect(result).toEqual(mockFiles.items);
   });
 });

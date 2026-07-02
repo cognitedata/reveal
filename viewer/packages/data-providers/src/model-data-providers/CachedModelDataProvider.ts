@@ -4,7 +4,7 @@
 
 import type { ModelDataProvider } from '../ModelDataProvider';
 import type { ModelIdentifier } from '../ModelIdentifier';
-import type { SignedFilesResponse } from '../types';
+import type { SignedFileItem } from '../types';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -37,19 +37,19 @@ export class CachedModelDataProvider implements ModelDataProvider {
     );
   }
 
-  async getJsonFile<T = unknown>(baseUrl: string, fileName: string): Promise<T> {
+  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     if (!baseUrl) {
-      return this.baseProvider.getJsonFile<T>('', fileName);
+      return this.baseProvider.getJsonFile('', fileName);
     }
-    const convertToArrayBuffer = (data: T): ArrayBuffer => {
+    const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
       const jsonString = JSON.stringify(data);
       return new TextEncoder().encode(jsonString).buffer;
     };
-    return this.fetchWithCache<T>(
+    return this.fetchWithCache(
       baseUrl,
       fileName,
       response => response.json(),
-      () => this.baseProvider.getJsonFile<T>(baseUrl, fileName),
+      () => this.baseProvider.getJsonFile(baseUrl, fileName),
       convertToArrayBuffer,
       'application/json'
     );
@@ -84,15 +84,15 @@ export class CachedModelDataProvider implements ModelDataProvider {
     return data;
   }
 
-  async getDMSJsonFile(
+  async getFileUrlsForModel(
     baseUrl: string,
     modelIdentifier: ModelIdentifier,
-    fileName: string
-  ): Promise<SignedFilesResponse> {
-    if (!this.baseProvider.getDMSJsonFile) {
-      throw new Error('Base provider does not support getDMSJsonFile');
+    fileNameFilter?: string
+  ): Promise<SignedFileItem[]> {
+    if (!this.baseProvider.getFileUrlsForModel) {
+      throw new Error('Base provider does not support getFileUrlsForModel');
     }
-    return this.baseProvider.getDMSJsonFile(baseUrl, modelIdentifier, fileName);
+    return this.baseProvider.getFileUrlsForModel(baseUrl, modelIdentifier, fileNameFilter);
   }
 
   /**
