@@ -221,7 +221,6 @@ export type BeforeSceneRenderedDelegate = (event: {
 
 // @public (undocumented)
 export interface BinaryFileProvider {
-    // (undocumented)
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
@@ -1551,7 +1550,6 @@ export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean
 
 // @public (undocumented)
 export interface JsonFileProvider {
-    // (undocumented)
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
@@ -2082,7 +2080,6 @@ export type SignedFileItem = {
 
 // @public (undocumented)
 export interface SignedFileProvider {
-    // (undocumented)
     getFileUrlsForModel?(baseUrl: string, modelIdentifier: ModelIdentifier, fileNameFilter?: string): Promise<SignedFileItem[]>;
 }
 
