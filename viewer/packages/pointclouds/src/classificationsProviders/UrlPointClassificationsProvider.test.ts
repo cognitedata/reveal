@@ -5,7 +5,7 @@
 import { vi } from 'vitest';
 import { Matrix4 } from 'three';
 import { UrlPointClassificationsProvider } from './UrlPointClassificationsProvider';
-import type { ModelDataProvider, ModelIdentifier, SignedFilesResponse } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
 
@@ -13,7 +13,7 @@ function createMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDa
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(),
-    getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(),
+    getFileUrlsForModel: vi.fn(async () => []),
     ...overrides
   } as ModelDataProvider;
 }
@@ -41,19 +41,17 @@ const classificationData = { classificationSets: [{ name: 'Default', classes: []
 const classificationSignedUrl = 'https://cdn.example.com/classificationSets.json';
 
 describe(UrlPointClassificationsProvider.name, () => {
-  test('DM model calls getDMSJsonFile+getJsonFile; classic model calls getJsonFile directly', async () => {
+  test('DM model calls getFileUrlsForModel+getJsonFile; classic model calls getJsonFile directly', async () => {
     const dmProvider = createMockProvider({
-      getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(
-        async (): Promise<SignedFilesResponse> => ({
-          items: [{ fileName: 'classificationSets.json', signedUrl: classificationSignedUrl, subPath: '' }]
-        })
-      ),
+      getFileUrlsForModel: vi.fn(async () => [
+        { fileName: 'classificationSets.json', signedUrl: classificationSignedUrl, subPath: '' }
+      ]),
       getJsonFile: vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile']
     });
     const dmResult = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
       createMetadata(dmIdentifier)
     );
-    expect(dmProvider.getDMSJsonFile).toHaveBeenCalledWith(
+    expect(dmProvider.getFileUrlsForModel).toHaveBeenCalledWith(
       'https://signed-files.example.com',
       dmIdentifier,
       'classificationSets.json'
@@ -76,7 +74,7 @@ describe(UrlPointClassificationsProvider.name, () => {
       'DM',
       dmIdentifier,
       {
-        getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(async () => {
+        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => {
           throw new Error();
         })
       }

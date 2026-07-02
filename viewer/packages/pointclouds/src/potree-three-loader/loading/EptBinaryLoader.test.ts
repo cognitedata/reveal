@@ -22,7 +22,7 @@ function createMockDataProvider(overrides: Partial<ModelDataProvider> = {}): Mod
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(async () => new ArrayBuffer(8)),
     getJsonFile: vi.fn(),
-    getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(),
+    getFileUrlsForModel: vi.fn(async () => []),
     ...overrides
   } as ModelDataProvider;
 }

@@ -25,16 +25,16 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
 
   async getClassifications(modelMetadata: PointCloudMetadata): Promise<PointCloudClassificationInfoWithSignedFiles> {
     if (modelMetadata.modelIdentifier instanceof DMModelIdentifier && isDMIdentifier(modelMetadata.modelIdentifier)) {
-      if (!this._dataProvider.getDMSJsonFile) return EMPTY_CLASSIFICATION;
-      const signedFilesList = await this._dataProvider
-        .getDMSJsonFile(
+      if (!this._dataProvider.getFileUrlsForModel) return EMPTY_CLASSIFICATION;
+      const items = await this._dataProvider
+        .getFileUrlsForModel(
           modelMetadata.signedFilesBaseUrl,
           modelMetadata.modelIdentifier,
           DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE
         )
         .catch(() => null);
-      if (!signedFilesList) return EMPTY_CLASSIFICATION;
-      const found = signedFilesList.items.find(
+      if (!items) return EMPTY_CLASSIFICATION;
+      const found = items.find(
         item =>
           item.fileName === DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE ||
           item.fileName.endsWith('/' + DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
@@ -44,7 +44,7 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
       if (!json) return EMPTY_CLASSIFICATION;
       return {
         type: 'pointCloudClassificationInfoWithSignedFiles' as const,
-        signedFiles: signedFilesList,
+        signedFiles: { items },
         fileData: json as ClassificationInfo
       };
     }

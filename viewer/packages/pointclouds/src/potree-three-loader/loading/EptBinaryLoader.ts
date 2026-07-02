@@ -60,17 +60,13 @@ export class EptBinaryLoader implements ILoader {
     if (node.signedUrl) {
       return node.signedUrl;
     }
-    if (!node.signedFilesBaseUrl || !this._dataLoader.getDMSJsonFile) {
+    if (!node.signedFilesBaseUrl || !this._dataLoader.getFileUrlsForModel) {
       return undefined;
     }
     const fileName = node.fileName() + this.extension();
     const filePath = `ept-data/${fileName}`;
-    const signedFilesList = await this._dataLoader.getDMSJsonFile(
-      node.signedFilesBaseUrl,
-      node.modelIdentifier,
-      filePath
-    );
-    const found = signedFilesList.items.find(
+    const items = await this._dataLoader.getFileUrlsForModel(node.signedFilesBaseUrl, node.modelIdentifier, filePath);
+    const found = items.find(
       item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + fileName)
     );
     if (found) {
