@@ -17,7 +17,8 @@ function makeMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelData
   const base = {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(),
-    getDMSJsonFile: vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>()
+    getDMSJsonFile:
+      vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>()
   } as Partial<ModelDataProvider> as ModelDataProvider;
   Object.assign(base, overrides);
   return base;

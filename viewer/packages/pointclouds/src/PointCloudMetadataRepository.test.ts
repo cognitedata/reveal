@@ -5,7 +5,13 @@
 import { vi } from 'vitest';
 import { Matrix4, Vector3 } from 'three';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
-import type { BlobOutputMetadata, ModelDataProvider, ModelIdentifier, ModelMetadataProvider, SignedFilesResponse } from '@reveal/data-providers';
+import type {
+  BlobOutputMetadata,
+  ModelDataProvider,
+  ModelIdentifier,
+  ModelMetadataProvider,
+  SignedFilesResponse
+} from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { EptJson } from './potree-three-loader/loading/EptJson';
 
@@ -39,7 +45,9 @@ function createMockedMetadataProvider(signedFilesBaseUrl = ''): ModelMetadataPro
       position: new Vector3(),
       target: new Vector3()
     })),
-    getModelUriForSignedFiles: vi.fn<NonNullable<ModelMetadataProvider['getModelUriForSignedFiles']>>(async () => signedFilesBaseUrl)
+    getModelUriForSignedFiles: vi.fn<NonNullable<ModelMetadataProvider['getModelUriForSignedFiles']>>(
+      async () => signedFilesBaseUrl
+    )
   };
 }
 
@@ -47,9 +55,9 @@ function createMockedModelDataProvider(): ModelDataProvider {
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(async () => minimalEptJson),
-    getDMSJsonFile: vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>(
-      async (): Promise<SignedFilesResponse> => ({ items: [] })
-    )
+    getDMSJsonFile: vi.fn<
+      (baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>
+    >(async (): Promise<SignedFilesResponse> => ({ items: [] }))
   } as Partial<ModelDataProvider> as ModelDataProvider;
 }
 
@@ -73,9 +81,9 @@ describe(PointCloudMetadataRepository.name, () => {
     const signedItem = { signedUrl: 'https://cdn.example.com/0-0-0-0.bin', fileName: '0-0-0-0.bin', subPath: '' };
     const dataProvider: ModelDataProvider = {
       ...createMockedModelDataProvider(),
-      getDMSJsonFile: vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>(
-        async (): Promise<SignedFilesResponse> => ({ items: [eptJsonItem, signedItem] })
-      ),
+      getDMSJsonFile: vi.fn<
+        (baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>
+      >(async (): Promise<SignedFilesResponse> => ({ items: [eptJsonItem, signedItem] })),
       getJsonFile: vi.fn(async () => minimalEptJson)
     } as Partial<ModelDataProvider> as ModelDataProvider;
     const repo = new PointCloudMetadataRepository(createMockedMetadataProvider(signedFilesBaseUrl), dataProvider);

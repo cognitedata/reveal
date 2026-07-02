@@ -365,7 +365,8 @@ describe(GltfSectorRepository.name, () => {
     const provider: ModelDataProvider = {
       getBinaryFile,
       getJsonFile: vi.fn(),
-      getDMSJsonFile: vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>()
+      getDMSJsonFile:
+        vi.fn<(baseUrl: string, modelIdentifier: ModelIdentifier, fileName: string) => Promise<SignedFilesResponse>>()
     } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const dmIdentifier = new DMModelIdentifier({
