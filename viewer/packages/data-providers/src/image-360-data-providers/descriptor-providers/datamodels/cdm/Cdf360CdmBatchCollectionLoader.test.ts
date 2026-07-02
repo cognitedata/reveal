@@ -148,8 +148,8 @@ describe(Cdf360CdmBatchCollectionLoader.name, () => {
       .returns(filesApiMock.object());
 
     const dmsSdkMock = new Mock<DataModelsSdk>()
-      .setup(instance => instance.queryNodesAndEdges(It.IsAny(), It.IsAny()))
-      .returns(Promise.resolve(dmsResponse));
+      .setup(instance => instance.queryNodesAndEdges<CdfImage360CollectionDmQuery>(It.IsAny(), It.IsAny()))
+      .returnsAsync(dmsResponse);
 
     const batchLoader = new Cdf360CdmBatchCollectionLoader(dmsSdkMock.object(), cogniteSdkMock.object());
 
