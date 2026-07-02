@@ -87,12 +87,12 @@ export class CachedModelDataProvider implements ModelDataProvider {
   async getFileUrlsForModel(
     baseUrl: string,
     modelIdentifier: ModelIdentifier,
-    fileName?: string
+    fileNameFilter?: string
   ): Promise<SignedFileItem[]> {
     if (!this.baseProvider.getFileUrlsForModel) {
       throw new Error('Base provider does not support getFileUrlsForModel');
     }
-    return this.baseProvider.getFileUrlsForModel(baseUrl, modelIdentifier, fileName);
+    return this.baseProvider.getFileUrlsForModel(baseUrl, modelIdentifier, fileNameFilter);
   }
 
   /**

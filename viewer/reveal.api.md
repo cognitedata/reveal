@@ -2083,7 +2083,7 @@ export type SignedFileItem = {
 // @public (undocumented)
 export interface SignedFileProvider {
     // (undocumented)
-    getFileUrlsForModel?(baseUrl: string, modelIdentifier: ModelIdentifier, fileName?: string): Promise<SignedFileItem[]>;
+    getFileUrlsForModel?(baseUrl: string, modelIdentifier: ModelIdentifier, fileNameFilter?: string): Promise<SignedFileItem[]>;
 }
 
 // @public

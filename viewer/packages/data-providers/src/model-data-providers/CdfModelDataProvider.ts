@@ -21,10 +21,10 @@ export class CdfModelDataProvider implements ModelDataProvider {
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const isBaseUrlEmpty = baseUrl === '' ? true : false;
+    const isBaseUrlEmpty = baseUrl === '';
     const url = isBaseUrlEmpty ? fileName : `${baseUrl}/${fileName}`;
     const headers = {
-      ...(baseUrl !== '' ? this.client.getDefaultRequestHeaders() : {}),
+      ...(!isBaseUrlEmpty ? this.client.getDefaultRequestHeaders() : {}),
       Accept: '*/*'
     };
 
@@ -61,7 +61,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
   async getFileUrlsForModel(
     baseUrl: string,
     modelIdentifier: ModelIdentifier,
-    fileName?: string
+    fileNameFilter?: string
   ): Promise<SignedFileItem[]> {
     if (!(modelIdentifier instanceof DMModelIdentifier)) {
       throw new Error('getFileUrlsForModel requires a valid DM model identifier');
@@ -70,7 +70,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const items: SignedFileItem[] = [];
     let cursor: string | undefined = undefined;
 
-    const filter = fileName?.length ? { filter: { paths: [fileName] } } : undefined;
+    const filter = fileNameFilter === undefined ? {} : { filter: { paths: [fileNameFilter] } };
     do {
       const payload: HttpRequestOptions = {
         data: {
