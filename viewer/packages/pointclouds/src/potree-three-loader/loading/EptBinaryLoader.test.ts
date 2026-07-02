@@ -21,10 +21,10 @@ vi.mock('../workers/eptBinaryDecoder.worker?worker&inline', () => ({
 function createMockDataProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(async () => new ArrayBuffer(8)),
-    getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(),
-    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
+    getJsonFile: vi.fn(),
+    getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(),
     ...overrides
-  };
+  } as ModelDataProvider;
 }
 
 function createMockNode(options: {

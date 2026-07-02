@@ -35,10 +35,10 @@ function createMockEpt(url = 'https://example.com/model/'): PointCloudEptGeometr
 function createMockDataProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
   return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
-    getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({})),
-    getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(),
+    getJsonFile: vi.fn(async () => ({})),
+    getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(),
     ...overrides
-  };
+  } as ModelDataProvider;
 }
 
 const dmIdentifier = new DMModelIdentifier({
@@ -107,7 +107,7 @@ describe(PointCloudEptGeometryNode.name, () => {
       const filePath = 'ept-hierarchy/0-0-0-0.json';
 
       const dataProviderHit = createMockDataProvider({
-        getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({}))
+        getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const nodeHit = new PointCloudEptGeometryNode(
         createMockEpt(),
@@ -120,10 +120,10 @@ describe(PointCloudEptGeometryNode.name, () => {
       expect(dataProviderHit.getJsonFile).toHaveBeenCalledWith('', hierarchySignedUrl);
 
       const dataProviderMiss = createMockDataProvider({
-        getDMSJsonFile: vi.fn<ModelDataProvider['getDMSJsonFile']>(async () => ({
+        getDMSJsonFile: vi.fn<NonNullable<ModelDataProvider['getDMSJsonFile']>>(async () => ({
           items: [{ fileName: filePath, signedUrl: hierarchySignedUrl, subPath: '' }]
         })),
-        getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({}))
+        getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const nodeMiss = new PointCloudEptGeometryNode(
         createMockEpt(),
@@ -139,7 +139,7 @@ describe(PointCloudEptGeometryNode.name, () => {
 
     test('classic model uses getJsonFile with ept-hierarchy base URL', async () => {
       const dataProvider = createMockDataProvider({
-        getJsonFile: vi.fn<ModelDataProvider['getJsonFile']>(async () => ({}))
+        getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const node = new PointCloudEptGeometryNode(
         createMockEpt(),
