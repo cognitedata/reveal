@@ -46,7 +46,7 @@ importers:
         version: 0.11.3
       sparse-octree:
         specifier: ^7.1.8
-        version: 7.1.8(three@0.184.0)
+        version: 7.2.0(three@0.184.0)
     devDependencies:
       '@azure/msal-browser':
         specifier: ^5.0.0
@@ -1887,9 +1887,8 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
-  sparse-octree@7.1.8:
-    resolution: {integrity: sha512-U6ofl/n48VKqvAKwS8YCtgU67PoUZaDZkaT1Or0KD6scFz6EqEE0rC6wjHaTDh3PG9NarnwctGnZL+Z/k3lbuA==}
-    engines: {node: '>= 0.14.0'}
+  sparse-octree@7.2.0:
+    resolution: {integrity: sha512-p7pqHKT8xOAjC8Ax5A8BcTFriBFl4sZKI7wvYjIkOfv8m0tfY5QrfAsrQs8Yw4MwwmksPeSH4GLEU5ZEgGUB0g==}
     peerDependencies:
       three: 0.x.x
 
@@ -3568,7 +3567,7 @@ snapshots:
 
   source-map@0.6.1: {}
 
-  sparse-octree@7.1.8(three@0.184.0):
+  sparse-octree@7.2.0(three@0.184.0):
     dependencies:
       three: 0.184.0
 
