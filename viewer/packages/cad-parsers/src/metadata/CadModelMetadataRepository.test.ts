@@ -7,8 +7,7 @@ import type {
   BlobOutputMetadata,
   ModelDataProvider,
   ModelIdentifier,
-  ModelMetadataProvider,
-  SignedFilesResponse
+  ModelMetadataProvider
 } from '@reveal/data-providers';
 import { File3dFormat, LocalModelIdentifier, DMModelIdentifier } from '@reveal/data-providers';
 
@@ -45,7 +44,7 @@ describe(CadModelMetadataRepository.name, () => {
     expect(result.scene.root.signedUrl).toBeUndefined();
   });
 
-  test('DM model calls getDMSJsonFile and populates sector signedUrl from signedFiles', async () => {
+  test('DM model calls getFileUrlsForModel and populates sector signedUrl from signedFiles', async () => {
     const signedFilesBaseUrl = 'https://api.cognitedata.com/api/v1/projects/myproj/3d/output/files';
     const sectorSignedUrl = 'https://cdn.example.com/0_textured.glb';
     const sceneJsonSignedUrl = 'https://cdn.example.com/scene.json';
@@ -57,28 +56,24 @@ describe(CadModelMetadataRepository.name, () => {
       revisionSpace: 'my-space'
     });
 
-    const getDMSJsonFileMock = vi.fn(
-      async (_baseUrl: string, _id: ModelIdentifier, _file: string): Promise<SignedFilesResponse> => ({
-        items: [
-          { signedUrl: sceneJsonSignedUrl, fileName: 'scene.json', subPath: '' },
-          { signedUrl: sectorSignedUrl, fileName: '0.glb', subPath: '' }
-        ]
-      })
-    );
+    const getFileUrlsForModelMock = vi.fn(async (_baseUrl: string, _id: ModelIdentifier) => [
+      { signedUrl: sceneJsonSignedUrl, fileName: 'scene.json', subPath: '' },
+      { signedUrl: sectorSignedUrl, fileName: '0.glb', subPath: '' }
+    ]);
 
     const getJsonFileMock = vi.fn(async () => v9SceneSectorMetadata);
 
     const mockedMetadataProvider = createMockedMetadataProvider([v9BlobOutputMetadata], signedFilesBaseUrl);
     const mockedModelDataProvider = {
       ...createMockedModelDataProvider(),
-      getDMSJsonFile: getDMSJsonFileMock,
+      getFileUrlsForModel: getFileUrlsForModelMock,
       getJsonFile: getJsonFileMock
     } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const repo = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
     const result = await repo.loadData(dmIdentifier);
 
-    expect(getDMSJsonFileMock).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, '');
+    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier);
     expect(getJsonFileMock).toHaveBeenCalledWith('', sceneJsonSignedUrl);
     expect(result.scene.root.signedUrl).toBe(sectorSignedUrl);
   });
