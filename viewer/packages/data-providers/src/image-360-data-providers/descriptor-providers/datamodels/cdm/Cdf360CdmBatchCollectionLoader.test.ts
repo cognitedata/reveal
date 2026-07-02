@@ -7,7 +7,7 @@ import type { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { Cdf360CdmBatchCollectionLoader } from './Cdf360CdmBatchCollectionLoader';
 import type { DataModelsSdk } from '../../../../DataModelsSdk';
-import { CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
+import type { CdfImage360CollectionDmQuery } from './get360CdmCollectionsQuery';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfImage360CollectionDmQuery>>>;
 
