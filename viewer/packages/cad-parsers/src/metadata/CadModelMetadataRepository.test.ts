@@ -128,13 +128,16 @@ function createMockedMetadataProvider(
 
 function createMockedModelDataProvider(): ModelDataProvider {
   return {
-    getJsonFile: async (url: string) => {
-      const isGltf = url === urlFromBlobId(v9BlobOutputMetadata.blobId);
+    getJsonFile: async (baseUrl: string, _fileName: string) => {
+      const isGltf = baseUrl === urlFromBlobId(v9BlobOutputMetadata.blobId);
       if (isGltf) {
         return v9SceneSectorMetadata;
       }
+      return undefined;
     },
-    getBinaryFile: async () => new ArrayBuffer(1),
-    getDMSJsonFile: async (): Promise<SignedFilesResponse> => ({ items: [] })
-  };
+    getBinaryFile: async () => {
+      return new ArrayBuffer(1);
+    },
+    getDMSJsonFile: async () => ({ items: [] })
+  } as Partial<ModelDataProvider> as ModelDataProvider;
 }
