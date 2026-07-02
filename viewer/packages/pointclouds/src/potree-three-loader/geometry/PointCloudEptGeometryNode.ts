@@ -249,7 +249,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     const baseUrl = `${this.ept.url}ept-hierarchy`;
     const fileName = `${this.fileName()}.json`;
 
-    const hier = await this._dataLoader.getJsonFile<{ [key: string]: number }>(baseUrl, fileName);
+    const hier = await this._dataLoader.getJsonFile(baseUrl, fileName);
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.

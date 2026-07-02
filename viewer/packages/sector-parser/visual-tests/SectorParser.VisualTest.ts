@@ -24,13 +24,16 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
       output => output.format === 'gltf-directory'
     )!;
     const modelUri = await modelMetadataProvider.getModelUri(modelIdentifier, gltfOutput);
-    type SectorBoundingBox = { min: { x: number; y: number; z: number }; max: { x: number; y: number; z: number } };
-    type SceneJson = { maxTreeIndex: number; sectors: { sectorFileName: string; boundingBox: SectorBoundingBox }[] };
-    const sceneJson = await modelDataProvider.getJsonFile<SceneJson>(modelUri, 'scene.json');
+    const sceneJson = await modelDataProvider.getJsonFile(modelUri, 'scene.json');
 
-    const materialMap = TestMaterials.getMaterialsMap(sceneJson.maxTreeIndex + 1);
+    const materialMap = TestMaterials.getMaterialsMap((sceneJson.maxTreeIndex as number) + 1);
 
-    const sectors = sceneJson.sectors;
+    const sectors = sceneJson.sectors as [
+      {
+        sectorFileName: string;
+        boundingBox: { min: { x: number; y: number; z: number }; max: { x: number; y: number; z: number } };
+      }
+    ];
 
     const min = sectors[0].boundingBox.min;
     const max = sectors[0].boundingBox.max;
