@@ -24,7 +24,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const isBaseUrlEmpty = baseUrl === '';
     const url = isBaseUrlEmpty ? fileName : `${baseUrl}/${fileName}`;
     const headers = {
-      ...(!isBaseUrlEmpty ? this.client.getDefaultRequestHeaders() : {}),
+      ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
 
