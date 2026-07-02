@@ -21,7 +21,8 @@ export class CdfModelDataProvider implements ModelDataProvider {
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const url = baseUrl !== '' ? `${baseUrl}/${fileName}` : fileName;
+    const isBaseUrlEmpty = baseUrl === '' ? true : false;
+    const url = isBaseUrlEmpty ? fileName : `${baseUrl}/${fileName}`;
     const headers = {
       ...(baseUrl !== '' ? this.client.getDefaultRequestHeaders() : {}),
       Accept: '*/*'
