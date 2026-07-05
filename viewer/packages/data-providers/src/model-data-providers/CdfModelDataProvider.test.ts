@@ -3,6 +3,7 @@
  */
 
 import { vi } from 'vitest';
+import { gzipSync } from 'node:zlib';
 import { CdfModelDataProvider } from './CdfModelDataProvider';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -132,6 +133,19 @@ describe(CdfModelDataProvider.name, () => {
     const [url, requestInit] = fetchMock.mock.calls[0];
     expect(url).toBe('https://signed.url/scene.json');
     expect(requestInit!.headers).toEqual({ Accept: 'application/json, */*' });
+  });
+
+  test('getJsonFile() with signed URL decompresses a gzip body missing the Content-Encoding header', async () => {
+    const jsonData = { version: 9, sectors: [{ id: 1 }] };
+    const gzipped = gzipSync(Buffer.from(JSON.stringify(jsonData)));
+    const fetchMock = vi
+      .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+      .mockResolvedValueOnce(new Response(gzipped, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await clientExt.getJsonFile('', 'https://signed.url/scene.json');
+
+    expect(result).toEqual(jsonData);
   });
 
   test('getFileUrlsForModel() paginates through multiple cursor pages to collect all signedFiles', async () => {
