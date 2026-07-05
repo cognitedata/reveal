@@ -24,12 +24,12 @@ export class CachedModelDataProvider implements ModelDataProvider {
   }
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    if (!baseUrl) {
-      return this.baseProvider.getBinaryFile('', fileName, abortSignal);
+    const key = this.resolveCacheKey(baseUrl, fileName);
+    if (!key) {
+      return this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal);
     }
     return this.fetchWithCache(
-      baseUrl,
-      fileName,
+      key,
       response => response.arrayBuffer(),
       () => this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal),
       data => data,
@@ -38,16 +38,16 @@ export class CachedModelDataProvider implements ModelDataProvider {
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
-    if (!baseUrl) {
-      return this.baseProvider.getJsonFile('', fileName);
+    const key = this.resolveCacheKey(baseUrl, fileName);
+    if (!key) {
+      return this.baseProvider.getJsonFile(baseUrl, fileName);
     }
     const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
       const jsonString = JSON.stringify(data);
       return new TextEncoder().encode(jsonString).buffer;
     };
     return this.fetchWithCache(
-      baseUrl,
-      fileName,
+      key,
       response => response.json(),
       () => this.baseProvider.getJsonFile(baseUrl, fileName),
       convertToArrayBuffer,
@@ -55,31 +55,46 @@ export class CachedModelDataProvider implements ModelDataProvider {
     );
   }
 
+  /**
+   * Resolves the Cache API key for a request. For classic requests, baseUrl+fileName is
+   * already stable. For signed URLs (baseUrl empty), the URL itself changes between
+   * issuances (fresh SAS token), so the query string is stripped, leaving the stable
+   * blob path as the key.
+   */
+  private resolveCacheKey(baseUrl: string, fileName: string): string | undefined {
+    if (baseUrl) {
+      return `${baseUrl}/${fileName}`;
+    }
+    try {
+      return this.buildSignedFileCacheKey(fileName);
+    } catch (error) {
+      console.warn(`[CachedModelDataProvider] Could not derive cache key from signed URL ${fileName}:`, error);
+      return undefined;
+    }
+  }
+
   private async fetchWithCache<T>(
-    baseUrl: string,
-    fileName: string,
+    key: string,
     extractFromCache: (response: Response) => Promise<T>,
     fetchFromProvider: () => Promise<T>,
     convertToArrayBuffer: (data: T) => ArrayBuffer,
     contentType: string
   ): Promise<T> {
-    const url = `${baseUrl}/${fileName}`;
-
     try {
-      const cached = await this.cacheManager.getCachedResponse(url);
+      const cached = await this.cacheManager.getCachedResponse(key);
       if (cached) {
         return await extractFromCache(cached);
       }
     } catch (error) {
-      console.warn(`[CachedModelDataProvider] Cache read for ${url} failed, falling back to network.`, error);
+      console.warn(`[CachedModelDataProvider] Cache read for ${key} failed, falling back to network.`, error);
     }
 
     const data = await fetchFromProvider();
 
     const arrayBuffer = convertToArrayBuffer(data);
     await this.cacheManager
-      .storeResponse(url, arrayBuffer, contentType)
-      .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
+      .storeResponse(key, arrayBuffer, contentType)
+      .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${key}:`, err));
 
     return data;
   }
@@ -115,5 +130,13 @@ export class CachedModelDataProvider implements ModelDataProvider {
    */
   async clearCache(): Promise<void> {
     await this.cacheManager.clear();
+  }
+
+  /*
+   * Build a cache key for a signed URL. This is used to store and retrieve cached responses
+   */
+  private buildSignedFileCacheKey(signedUrl: string): string {
+    const url = new URL(signedUrl);
+    return `${url.origin}${url.pathname}`;
   }
 }
