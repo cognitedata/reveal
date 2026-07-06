@@ -29,9 +29,9 @@ export interface CadModelMetadata {
    */
   readonly modelBaseUrl: string;
   /**
-   * Base URL of the signed files.
+   * Base URL of the signed files, if the model supports signed files.
    */
-  readonly signedFilesBaseUrl: string;
+  readonly signedFilesBaseUrl: string | undefined;
   /**
    * If not null, geometry outside this box might be clipped
    * away to avoid representing unused geometry. Will typically

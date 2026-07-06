@@ -26,7 +26,7 @@ export function parseCadMetadataGltf(metadata: CadMetadataWithSignedFiles): Sect
   }
 
   metadata.fileData.sectors.forEach(s => {
-    const sector = createSectorMetadata(s, metadata.signedFiles.items);
+    const sector = createSectorMetadata(s, metadata.signedFiles?.items);
     sectorsById.set(s.id, sector);
     parentIds[s.id] = s.parentId ?? -1;
   });
@@ -65,7 +65,10 @@ export function toThreeBoundingBox(box: BoundingBox): Box3 {
   return new Box3(new Vector3(box.min.x, box.min.y, box.min.z), new Vector3(box.max.x, box.max.y, box.max.z));
 }
 
-function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: SignedFileItem[]): SectorMetadata {
+function createSectorMetadata(
+  metadata: SceneSectorMetadata,
+  signedFiles: SignedFileItem[] | undefined
+): SectorMetadata {
   const metadataBoundingBox = toThreeBoundingBox(metadata.boundingBox);
 
   let geometryBoundingBox: Box3;
@@ -83,12 +86,9 @@ function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: Signed
     subtreeBoundingBox = new Box3();
   }
 
-  let signedUrl: string | undefined = metadata.signedUrl;
-  if (signedFiles.length > 0) {
-    const sectorFileName = metadata.sectorFileName;
-    const found = signedFiles.find(f => f.fileName === sectorFileName || f.fileName.endsWith('/' + sectorFileName));
-    if (found !== undefined) signedUrl = found.signedUrl;
-  }
+  const signedUrlItem = signedFiles?.find(
+    f => f.fileName === metadata.sectorFileName || f.fileName.endsWith('/' + metadata.sectorFileName)
+  );
 
   return {
     id: metadata.id,
@@ -102,7 +102,7 @@ function createSectorMetadata(metadata: SceneSectorMetadata, signedFiles: Signed
     maxDiagonalLength: metadata.maxDiagonalLength || 0,
     minDiagonalLength: metadata.minDiagonalLength || 0,
     sectorFileName: metadata.texturedFileName ?? metadata.sectorFileName,
-    signedUrl: signedUrl,
+    signedUrl: signedUrlItem?.signedUrl,
     // Populated later
     children: []
   };

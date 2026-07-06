@@ -68,7 +68,7 @@ describe(CadModelMetadataRepository.name, () => {
       ...createMockedModelDataProvider(),
       getFileUrlsForModel: getFileUrlsForModelMock,
       getJsonFile: getJsonFileMock
-    } as Partial<ModelDataProvider> as ModelDataProvider;
+    };
 
     const repo = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
     const result = await repo.loadData(dmIdentifier);
@@ -113,7 +113,7 @@ function createMockedMetadataProvider(
     getModelMatrix: async () => {
       return new Matrix4();
     },
-    getModelUriForSignedFiles: async () => {
+    getModelUriForSignedFiles: () => {
       return signedFilesBaseUrl ?? '';
     }
   };
