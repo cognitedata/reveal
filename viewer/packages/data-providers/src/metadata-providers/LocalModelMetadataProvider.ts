@@ -23,10 +23,6 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
     return Promise.resolve(`${location.origin}/${modelIdentifier.localPath}`);
   }
 
-  getModelUriForSignedFiles(): Promise<string> {
-    return Promise.resolve('');
-  }
-
   async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<Matrix4> {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);

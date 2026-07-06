@@ -40,7 +40,7 @@ describe(CdfModelMetadataProvider.name, () => {
   test('getModelUriForSignedFiles returns correct signed files endpoint URL', async () => {
     const expectedUrl = `${baseUrl}/api/v1/projects/${project}/3d/output/files`;
 
-    const uri = await provider.getModelUriForSignedFiles();
+    const uri = provider.getModelUriForSignedFiles();
 
     expect(uri).toEqual(expectedUrl);
   });

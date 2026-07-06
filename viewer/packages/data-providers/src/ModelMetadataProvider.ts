@@ -11,7 +11,7 @@ import type { BlobOutputMetadata, File3dFormat } from './types';
 export interface ModelMetadataProvider {
   getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
   getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string>;
-  getModelUriForSignedFiles?(): Promise<string>;
+  getModelUriForSignedFiles?(): string;
   getModelCamera(identifier: ModelIdentifier): Promise<{ position: Vector3; target: Vector3 } | undefined>;
   getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<Matrix4>;
 }

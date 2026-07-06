@@ -62,8 +62,9 @@ export class CachedModelDataProvider implements ModelDataProvider {
    * blob path as the key.
    */
   private resolveCacheKey(baseUrl: string, fileName: string): string | undefined {
-    if (baseUrl) {
-      return `${baseUrl}/${fileName}`;
+    const nullableBaseUrl = baseUrl === '' ? undefined : baseUrl;
+    if (nullableBaseUrl !== undefined) {
+      return `${nullableBaseUrl}/${fileName}`;
     }
     try {
       return this.buildSignedFileCacheKey(fileName);
@@ -132,8 +133,8 @@ export class CachedModelDataProvider implements ModelDataProvider {
     await this.cacheManager.clear();
   }
 
-  /*
-   * Build a cache key for a signed URL. This is used to store and retrieve cached responses
+  /**
+   * Strips the query string off the signed URL and keeping only `origin + pathname` as the cache key.
    */
   private buildSignedFileCacheKey(signedUrl: string): string {
     const url = new URL(signedUrl);

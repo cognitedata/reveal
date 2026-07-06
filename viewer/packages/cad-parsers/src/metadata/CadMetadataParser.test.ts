@@ -4,24 +4,23 @@
 
 import { CadMetadataParser } from './CadMetadataParser';
 import type { CadMetadataWithSignedFiles } from './types';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 describe('CadMetadataParser', () => {
   const parser = new CadMetadataParser();
 
   test('No version field, throws', () => {
     const input: CadMetadataWithSignedFiles = {
-      type: 'cadMetadataWithSignedFiles',
       signedFiles: { items: [] },
-      fileData: {} as any
+      fileData: {} as Partial<CadSceneRootMetadata> as CadSceneRootMetadata
     };
     expect(() => parser.parse(input)).toThrow();
   });
 
   test('Version 7 is not supported', () => {
     const input: CadMetadataWithSignedFiles = {
-      type: 'cadMetadataWithSignedFiles',
       signedFiles: { items: [] },
-      fileData: { version: 7 } as any
+      fileData: { version: 7 } as Partial<CadSceneRootMetadata> as CadSceneRootMetadata
     };
     expect(() => parser.parse(input)).toThrow();
   });
