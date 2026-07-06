@@ -12,6 +12,8 @@ export type {
   ModelDataProvider,
   BlobOutputMetadata,
   JsonFileProvider,
-  BinaryFileProvider
+  BinaryFileProvider,
+  SignedFileProvider,
+  SignedFileItem
 } from '../packages/data-providers';
 export { CdfModelIdentifier, File3dFormat } from '../packages/data-providers';

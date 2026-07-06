@@ -32,6 +32,7 @@ export {
 export type { CoreDmImage360Annotation } from './src/image-360-data-providers/cdm/types';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
+export { DMModelIdentifier } from './src/model-identifiers/DMModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
 export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
 export type { ModelIdentifier } from './src/ModelIdentifier';
@@ -58,6 +59,7 @@ export { Image360ProviderCombiner } from './src/Image360ProviderCombiner';
 export type {
   BinaryFileProvider,
   JsonFileProvider,
+  SignedFileProvider,
   BlobOutputMetadata,
   Image360Descriptor,
   Image360FileProvider,
@@ -68,7 +70,8 @@ export type {
   ImageInstanceLinkAnnotationInfo,
   InstanceReference,
   Image360Id,
-  Image360RevisionId
+  Image360RevisionId,
+  SignedFileItem
 } from './src/types';
 export { File3dFormat } from './src/types';
 

@@ -221,7 +221,6 @@ export type BeforeSceneRenderedDelegate = (event: {
 
 // @public (undocumented)
 export interface BinaryFileProvider {
-    // (undocumented)
     getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
@@ -1551,7 +1550,6 @@ export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean
 
 // @public (undocumented)
 export interface JsonFileProvider {
-    // (undocumented)
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
@@ -1621,9 +1619,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 }
 
 // @public
-export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
-    getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-    getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider, SignedFileProvider {
 }
 
 // @public
@@ -2074,6 +2070,18 @@ export type SerializedNodeCollection = {
     state: any;
     options?: any;
 };
+
+// @public (undocumented)
+export type SignedFileItem = {
+    signedUrl: string;
+    fileName: string;
+    subPath: string;
+};
+
+// @public (undocumented)
+export interface SignedFileProvider {
+    getFileUrlsForModel?(baseUrl: string, modelIdentifier: ModelIdentifier, fileNameFilter?: string): Promise<SignedFileItem[]>;
+}
 
 // @public
 export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {

@@ -3,6 +3,8 @@
  */
 
 import type { ModelDataProvider } from '../ModelDataProvider';
+import type { ModelIdentifier } from '../ModelIdentifier';
+import type { SignedFileItem } from '../types';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -22,24 +24,27 @@ export class CachedModelDataProvider implements ModelDataProvider {
   }
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
-    const convertToArrayBuffer = (data: ArrayBuffer): ArrayBuffer => data;
-
+    if (!baseUrl) {
+      return this.baseProvider.getBinaryFile('', fileName, abortSignal);
+    }
     return this.fetchWithCache(
       baseUrl,
       fileName,
       response => response.arrayBuffer(),
       () => this.baseProvider.getBinaryFile(baseUrl, fileName, abortSignal),
-      convertToArrayBuffer,
+      data => data,
       'application/octet-stream'
     );
   }
 
-  async getJsonFile(baseUrl: string, fileName: string): Promise<unknown> {
+  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
+    if (!baseUrl) {
+      return this.baseProvider.getJsonFile('', fileName);
+    }
     const convertToArrayBuffer = (data: unknown): ArrayBuffer => {
       const jsonString = JSON.stringify(data);
       return new TextEncoder().encode(jsonString).buffer;
     };
-
     return this.fetchWithCache(
       baseUrl,
       fileName,
@@ -77,6 +82,17 @@ export class CachedModelDataProvider implements ModelDataProvider {
       .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${url}:`, err));
 
     return data;
+  }
+
+  async getFileUrlsForModel(
+    baseUrl: string,
+    modelIdentifier: ModelIdentifier,
+    fileNameFilter?: string
+  ): Promise<SignedFileItem[]> {
+    if (!this.baseProvider.getFileUrlsForModel) {
+      throw new Error('Base provider does not support getFileUrlsForModel');
+    }
+    return this.baseProvider.getFileUrlsForModel(baseUrl, modelIdentifier, fileNameFilter);
   }
 
   /**

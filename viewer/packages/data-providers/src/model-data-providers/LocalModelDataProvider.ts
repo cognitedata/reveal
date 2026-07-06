@@ -11,12 +11,14 @@ export class LocalModelDataProvider implements ModelDataProvider {
     if (abortSignal) {
       Log.warn('Abort signal is not supported for local models');
     }
-    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
+    const url = baseUrl !== '' ? `${baseUrl}/${fileName}` : fileName;
+    const response = await fetchWithStatusCheck(url);
     return response.arrayBuffer();
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
-    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
+    const url = baseUrl !== '' ? `${baseUrl}/${fileName}` : fileName;
+    const response = await fetchWithStatusCheck(url);
     return response.json();
   }
 }
