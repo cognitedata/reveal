@@ -75,9 +75,7 @@ describe(DataModelsSdk.name, () => {
 
     // Test that the resulting property types are correct
     type QueryResultProp = QueryResult['b'][number]['properties']['TestSpaceB']['bExternalIdOne/1']['bPropOne'] extends
-      | string
-      | number
-      | DMInstanceRef
+      string | number | DMInstanceRef
       ? true
       : false;
     expect<QueryResultProp>(true).toBeTruthy();
