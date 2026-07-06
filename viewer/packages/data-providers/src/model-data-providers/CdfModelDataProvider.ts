@@ -87,7 +87,11 @@ export class CdfModelDataProvider implements ModelDataProvider {
         }
       };
 
-      const response = await this.client.post<{ items: SignedFileItem[]; nextCursor?: string }>(baseUrl, payload);
+      const response = await this.client
+        .post<{ items: SignedFileItem[]; nextCursor?: string }>(baseUrl, payload)
+        .catch(_err => {
+          throw new Error('Could not fetch signed file URLs for model');
+        });
       const responseData = response.data;
       items.push(
         // Strip restricted-api gateway prefix so the signed URL works from the browser directly
