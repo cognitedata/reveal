@@ -7,6 +7,7 @@ import { EptBinaryLoader } from './EptBinaryLoader';
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier } from '@reveal/data-providers';
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
+import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
 
 vi.mock('../workers/eptBinaryDecoder.worker?worker&inline', () => ({
   default: class MockWorker extends EventTarget {
@@ -17,15 +18,6 @@ vi.mock('../workers/eptBinaryDecoder.worker?worker&inline', () => ({
     onerror = null;
   }
 }));
-
-function createMockDataProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
-  return {
-    getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(async () => new ArrayBuffer(8)),
-    getJsonFile: vi.fn(),
-    getFileUrlsForModel: vi.fn(async () => []),
-    ...overrides
-  } as ModelDataProvider;
-}
 
 function createMockNode(options: {
   modelIdentifier?: InstanceType<typeof CdfModelIdentifier>;
@@ -52,10 +44,10 @@ const dmIdentifier = new DMModelIdentifier({
 });
 
 describe(EptBinaryLoader.name, () => {
-  test('DM model with signedUrl calls getBinaryFile with empty baseUrl; classic model calls getBinaryFile with baseUrl', async () => {
+  test('DM model with signedUrl calls getBinaryFile with empty baseUrl; classic model and DM without signedUrl call getBinaryFile with baseUrl', async () => {
     const signedUrl = 'https://cdn.example.com/0-0-0-0.bin';
     const getBinaryFileMock = vi.fn<ModelDataProvider['getBinaryFile']>(async () => new ArrayBuffer(16));
-    const dataProvider = createMockDataProvider({ getBinaryFile: getBinaryFileMock });
+    const dataProvider = createMockModelDataProvider({ getBinaryFile: getBinaryFileMock });
     const loader = new EptBinaryLoader(dataProvider, []);
 
     await loader.getBinaryFile(createMockNode({ modelIdentifier: dmIdentifier, signedUrl }));
@@ -71,16 +63,12 @@ describe(EptBinaryLoader.name, () => {
       })
     );
     expect(getBinaryFileMock).toHaveBeenCalledWith('https://example.com/ept-data', '1-1-0-0.bin');
-  });
 
-  test('DM model without signedUrl falls back to getBinaryFile with baseUrl', async () => {
-    const dataProvider = createMockDataProvider();
-    const loader = new EptBinaryLoader(dataProvider, []);
+    vi.clearAllMocks();
 
     await loader.getBinaryFile(
       createMockNode({ modelIdentifier: dmIdentifier, signedUrl: undefined, nodeFileName: '0-0-0-0' })
     );
-
-    expect(dataProvider.getBinaryFile).toHaveBeenCalledWith(expect.any(String), '0-0-0-0.bin');
+    expect(getBinaryFileMock).toHaveBeenCalledWith(expect.any(String), '0-0-0-0.bin');
   });
 });

@@ -8,15 +8,7 @@ import { UrlPointClassificationsProvider } from './UrlPointClassificationsProvid
 import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { CdfModelIdentifier, DMModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
-
-function createMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
-  return {
-    getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
-    getJsonFile: vi.fn(),
-    getFileUrlsForModel: vi.fn(async () => []),
-    ...overrides
-  } as ModelDataProvider;
-}
+import { createMockModelDataProvider } from '../../../../test-utilities/src/createMockModelDataProvider';
 
 function createMetadata(modelIdentifier: ModelIdentifier): PointCloudMetadata {
   return {
@@ -42,7 +34,7 @@ const classificationSignedUrl = 'https://cdn.example.com/classificationSets.json
 
 describe(UrlPointClassificationsProvider.name, () => {
   test('DM model calls getFileUrlsForModel+getJsonFile; classic model calls getJsonFile directly', async () => {
-    const dmProvider = createMockProvider({
+    const dmProvider = createMockModelDataProvider({
       getFileUrlsForModel: vi.fn(async () => [
         { fileName: 'classificationSets.json', signedUrl: classificationSignedUrl, subPath: '' }
       ]),
@@ -59,7 +51,7 @@ describe(UrlPointClassificationsProvider.name, () => {
     expect(dmProvider.getJsonFile).toHaveBeenCalledWith('', classificationSignedUrl);
     expect(dmResult.fileData).toBe(classificationData);
 
-    const classicProvider = createMockProvider({
+    const classicProvider = createMockModelDataProvider({
       getJsonFile: vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile']
     });
     const classicResult = await new UrlPointClassificationsProvider(classicProvider).getClassifications(
@@ -89,7 +81,7 @@ describe(UrlPointClassificationsProvider.name, () => {
       }
     ]
   ])('%s returns EMPTY_CLASSIFICATION when provider throws', async (_, identifier, override) => {
-    const result = await new UrlPointClassificationsProvider(createMockProvider(override)).getClassifications(
+    const result = await new UrlPointClassificationsProvider(createMockModelDataProvider(override)).getClassifications(
       createMetadata(identifier)
     );
 
