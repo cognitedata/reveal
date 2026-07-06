@@ -11,10 +11,10 @@ import type { LoadingStateChangeListener } from './RevealManager';
 import type {
   DMDataSourceType,
   ModelDataProvider,
+  ModelIdentifier,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
 } from '@reveal/data-providers';
-import { CdfModelIdentifier, DMModelIdentifier } from '@reveal/data-providers';
 import type { CadManager, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
 import type { PointCloudManager } from '@reveal/pointclouds';
@@ -158,7 +158,19 @@ describe('RevealManager', () => {
   });
 
   test('addModel routes DM and Classic CAD models to correct identifier types', async () => {
-    const addModelMock = vi.fn<CadManager['addModel']>().mockResolvedValue({} as Partial<CadNode> as CadNode);
+    let dmIdentifier: ModelIdentifier | undefined;
+    let classicIdentifier: ModelIdentifier | undefined;
+    const cadNodeStub = {} as Partial<CadNode> as CadNode;
+    const addModelMock = vi
+      .fn<CadManager['addModel']>()
+      .mockImplementationOnce(async identifier => {
+        dmIdentifier = identifier;
+        return cadNodeStub;
+      })
+      .mockImplementationOnce(async identifier => {
+        classicIdentifier = identifier;
+        return cadNodeStub;
+      });
     const rm = new RevealManager(
       { on: vi.fn(), off: vi.fn(), addModel: addModelMock } as Partial<CadManager> as CadManager,
       { getLoadingStateObserver: () => NEVER } as Partial<PointCloudManager> as PointCloudManager,
@@ -173,13 +185,17 @@ describe('RevealManager', () => {
       revisionSpace: 'space',
       classicModelRevisionId: { modelId: 1, revisionId: 2 }
     });
-    const dmId = addModelMock.mock.calls[0][0] as DMModelIdentifier;
-    expect(dmId).toBeInstanceOf(DMModelIdentifier);
-    expect(dmId.modelId).toBe(1);
-    expect(dmId.revisionId).toBe(2);
-
-    addModelMock.mockClear();
     await rm.addModel('cad', { modelId: 10, revisionId: 20, classicModelRevisionId: { modelId: 10, revisionId: 20 } });
-    expect(addModelMock.mock.calls[0][0]).toBeInstanceOf(CdfModelIdentifier);
+
+    expect(dmIdentifier).toMatchObject({
+      modelId: 1,
+      revisionId: 2,
+      revisionExternalId: 'ext',
+      revisionSpace: 'space'
+    });
+
+    expect(classicIdentifier).toMatchObject({ modelId: 10, revisionId: 20 });
+    expect(classicIdentifier).not.toHaveProperty('revisionExternalId');
+    expect(classicIdentifier).not.toHaveProperty('revisionSpace');
   });
 });

@@ -5,10 +5,11 @@
 import { vi } from 'vitest';
 import { CdfModelDataProvider } from './CdfModelDataProvider';
 
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, type HttpResponse } from '@cognite/sdk';
 
 import { mockClientAuthentication } from '../../../../test-utilities/src/cogniteClientAuth';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
+import type { SignedFilesResponseWithCursor } from '../types';
 
 describe(CdfModelDataProvider.name, () => {
   const appId = 'reveal-CdfModelDataClient-test';
@@ -91,7 +92,8 @@ describe(CdfModelDataProvider.name, () => {
 
   test('getJsonFile() returns raw response data', async () => {
     const mockData = { version: 9, sectors: [] };
-    vi.spyOn(client, 'get').mockResolvedValueOnce({ data: mockData, headers: {}, status: 200 } as any);
+    const mockResponse: HttpResponse<typeof mockData> = { data: mockData, headers: {}, status: 200 };
+    vi.spyOn(client, 'get').mockResolvedValueOnce(mockResponse);
 
     const result = await clientExt.getJsonFile(baseUrl, 'scene.json');
 
@@ -110,9 +112,10 @@ describe(CdfModelDataProvider.name, () => {
 
     expect(result).toBeInstanceOf(ArrayBuffer);
     expect(getHeadersSpy).not.toHaveBeenCalled();
-    const [url, requestInit] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://signed.url/file.glb');
-    expect(requestInit!.headers).toEqual({ Accept: '*/*' });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://signed.url/file.glb',
+      expect.objectContaining({ headers: { Accept: '*/*' } })
+    );
   });
 
   test('getJsonFile() with signed URL parses JSON response without auth headers', async () => {
@@ -129,9 +132,10 @@ describe(CdfModelDataProvider.name, () => {
 
     expect(result).toEqual(jsonData);
     expect(getHeadersSpy).not.toHaveBeenCalled();
-    const [url, requestInit] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://signed.url/scene.json');
-    expect(requestInit!.headers).toEqual({ Accept: 'application/json, */*' });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://signed.url/scene.json',
+      expect.objectContaining({ headers: { Accept: 'application/json, */*' } })
+    );
   });
 
   test('getFileUrlsForModel() paginates through multiple cursor pages to collect all signedFiles', async () => {
@@ -140,27 +144,50 @@ describe(CdfModelDataProvider.name, () => {
       { signedUrl: 'https://signed/2.glb', fileName: '2.glb', subPath: '' },
       { signedUrl: 'https://signed/scene.json', fileName: 'scene.json', subPath: '' }
     ];
+    const page1Response: HttpResponse<SignedFilesResponseWithCursor> = {
+      data: { items: page1Items, nextCursor: 'cursor-abc' },
+      headers: {},
+      status: 200
+    };
+    const page2Response: HttpResponse<SignedFilesResponseWithCursor> = {
+      data: { items: page2Items, nextCursor: undefined },
+      headers: {},
+      status: 200
+    };
 
-    const postSpy = vi
-      .spyOn(client, 'post')
-      .mockResolvedValueOnce({ data: { items: page1Items, nextCursor: 'cursor-abc' }, headers: {}, status: 200 } as any)
-      .mockResolvedValueOnce({ data: { items: page2Items, nextCursor: undefined }, headers: {}, status: 200 } as any);
+    const postSpy = vi.spyOn(client, 'post').mockResolvedValueOnce(page1Response).mockResolvedValueOnce(page2Response);
 
     const result = await clientExt.getFileUrlsForModel(baseUrl, dmIdentifier, 'scene.json');
 
     expect(postSpy).toHaveBeenCalledTimes(2);
     expect(result).toEqual([...page1Items, ...page2Items]);
-    const secondCallData = (postSpy.mock.calls[1][1] as any).data;
-    expect(secondCallData.cursor).toBe('cursor-abc');
+    expect(postSpy).toHaveBeenNthCalledWith(
+      2,
+      baseUrl,
+      expect.objectContaining({ data: expect.objectContaining({ cursor: 'cursor-abc' }) })
+    );
+  });
+
+  test('getFileUrlsForModel() throws a generic error when the request fails', async () => {
+    vi.spyOn(client, 'post').mockRejectedValueOnce(new Error('CDF raw error: 500 internal server error'));
+
+    await expect(clientExt.getFileUrlsForModel(baseUrl, dmIdentifier, 'scene.json')).rejects.toThrow(
+      'Could not fetch signed file URLs for model'
+    );
   });
 
   test('getFileUrlsForModel() returns signed URL list for all model files', async () => {
-    const mockFiles = {
+    const mockFiles: SignedFilesResponseWithCursor = {
       items: [{ signedUrl: 'https://s/scene.json', fileName: 'scene.json', subPath: '' }],
       nextCursor: undefined
     };
+    const mockResponse: HttpResponse<SignedFilesResponseWithCursor> = {
+      data: mockFiles,
+      headers: {},
+      status: 200
+    };
 
-    vi.spyOn(client, 'post').mockResolvedValueOnce({ data: mockFiles, headers: {}, status: 200 } as any);
+    vi.spyOn(client, 'post').mockResolvedValueOnce(mockResponse);
 
     const result = await clientExt.getFileUrlsForModel(baseUrl, dmIdentifier, 'scene.json');
 
