@@ -3,15 +3,8 @@
  */
 
 import init, { assign_points } from './pkg/pointclouds_wasm';
-import wasmUrl from './pkg/pointclouds_wasm_bg.wasm?url';
 
 import type { AABB, Vec3 } from '@reveal/utilities';
-
-function getWasmInitPromise(): Promise<void> {
-  return typeof init === 'function'
-    ? (init as (input: { module_or_path: unknown }) => Promise<unknown>)({ module_or_path: wasmUrl }).then(() => {})
-    : Promise.resolve();
-}
 
 // Sadly, I was unable to generate these types automatically with wasm-bindgen,
 // see https://github.com/rustwasm/wasm-bindgen/issues/111
@@ -37,8 +30,7 @@ export async function assignPoints(
   input_bounding_box: AABB,
   input_point_offset: Vec3
 ): Promise<Uint16Array<ArrayBuffer>> {
-  const wasm_init = getWasmInitPromise();
-  return wasm_init.then(
+  return init().then(
     () =>
       assign_points(
         input_shapes,
