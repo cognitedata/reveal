@@ -19,13 +19,13 @@ import {
 } from '../loading/globalLoadingCounter';
 import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { DMModelIdentifier } from '@reveal/data-providers';
-import type { PointCloudMetadataWithSignedFiles } from '../../types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
   private readonly _ept: PointCloudEptGeometry;
-  private readonly _eptMetadata: PointCloudMetadataWithSignedFiles | { fileData: EptJson };
+  private readonly _eptMetadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson };
   private readonly _key: EptKey;
 
   private readonly _dataLoader: ModelDataProvider;
@@ -150,7 +150,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     ept: PointCloudEptGeometry,
     modelDataProvider: ModelDataProvider,
     modelIdentifier: ModelIdentifier,
-    eptMetadata: PointCloudMetadataWithSignedFiles | { fileData: EptJson },
+    eptMetadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson },
     signedFilesBaseUrl: string | undefined,
     b?: Box3,
     d?: number,
@@ -164,7 +164,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
     const nodeFileName = this._key.name() + this._ept.loader.extension();
     if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-      const found = this._eptMetadata.signedFiles.items.find(
+      const found = this._eptMetadata.signedFiles?.items.find(
         file => file.fileName === nodeFileName || file.fileName.endsWith('/' + nodeFileName)
       );
       this._signedUrl = found?.signedUrl;
@@ -284,7 +284,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       const filePath = `ept-hierarchy/${fileName}`;
 
       if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-        const fileItem = this._eptMetadata.signedFiles.items.find(
+        const fileItem = this._eptMetadata.signedFiles?.items.find(
           item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
         );
         if (fileItem) {

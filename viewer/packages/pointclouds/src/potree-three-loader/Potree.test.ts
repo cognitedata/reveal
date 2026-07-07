@@ -9,7 +9,8 @@ import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers'
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { PointCloudMaterial, PointCloudMaterialManager } from '@reveal/rendering';
 import { MAX_NUM_NODES_LOADING } from '@reveal/rendering';
-import type { PointCloudMetadataWithSignedFiles } from '../types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { EptJson } from './loading/EptJson';
 import { createMockEptGeometry } from '../../../../test-utilities/src/createMockEptGeometry';
 import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities/src/mockModelIdentifiers';
 
@@ -21,12 +22,9 @@ const mockMaterialManager = new Mock<PointCloudMaterialManager>()
   .returns(new Mock<PointCloudMaterial>().object())
   .object();
 
-const preloadedEptData: PointCloudMetadataWithSignedFiles = {
-  type: 'pointCloudMetadataWithSignedFiles',
+const preloadedEptData: MetadataWithSignedFiles<EptJson> = {
   signedFiles: { items: [] },
-  fileData: {} as Partial<
-    PointCloudMetadataWithSignedFiles['fileData']
-  > as PointCloudMetadataWithSignedFiles['fileData']
+  fileData: {} as Partial<EptJson> as EptJson
 };
 
 describe(Potree.name, () => {
@@ -67,7 +65,7 @@ describe(Potree.name, () => {
     expect(potreeInstance.lru.pointBudget).toBe(newBudget);
   });
 
-  test.each<[string, ModelIdentifier, PointCloudMetadataWithSignedFiles | undefined, 'load' | 'dmsLoad']>([
+  test.each<[string, ModelIdentifier, MetadataWithSignedFiles<EptJson> | undefined, 'load' | 'dmsLoad']>([
     ['DM model with preloaded data uses dmsLoad', dmIdentifier, preloadedEptData, 'dmsLoad'],
     ['DM model without preloaded data uses load', dmIdentifier, undefined, 'load'],
     ['classic model with preloaded data still uses load', new CdfModelIdentifier(10, 20), preloadedEptData, 'load']
@@ -79,10 +77,10 @@ describe(Potree.name, () => {
 
     const octree = await potreeInstance.loadPointCloud(
       'https://base',
-      'https://signed',
       'ept.json',
       [],
       modelIdentifier,
+      'https://signed',
       data
     );
 

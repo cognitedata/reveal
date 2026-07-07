@@ -22,10 +22,11 @@ import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
 import { DMModelIdentifier } from '@reveal/data-providers';
 import type { ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
-import type { PointCloudMetadataWithSignedFiles } from '../types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import { throttle } from 'lodash-es';
 import { createVisibilityTextureData } from './utils/utils';
 import type { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
+import type { EptJson } from './loading/EptJson';
 
 const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view
 
@@ -95,14 +96,14 @@ export class Potree implements IPotree {
 
   async loadPointCloud(
     baseUrl: string,
-    signedFilesBaseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
     modelIdentifier: ModelIdentifier,
-    preloadedEptData?: PointCloudMetadataWithSignedFiles
+    signedFilesBaseUrl?: string,
+    preloadedEptData?: MetadataWithSignedFiles<EptJson>
   ): Promise<PointCloudOctree> {
     let geometry: PointCloudEptGeometry;
-    if (modelIdentifier instanceof DMModelIdentifier && preloadedEptData) {
+    if (modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl && preloadedEptData) {
       geometry = await EptLoader.dmsLoad(
         signedFilesBaseUrl,
         this._modelDataProvider,

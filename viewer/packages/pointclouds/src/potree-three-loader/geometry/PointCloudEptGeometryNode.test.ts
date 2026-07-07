@@ -6,15 +6,14 @@ import { vi } from 'vitest';
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
-import type { PointCloudMetadataWithSignedFiles } from '../../types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from '../loading/EptJson';
 import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
 import { createMockEptGeometry as createMockEpt } from '../../../../../test-utilities/src/createMockEptGeometry';
 import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
 
-function makeMetadata(items: { fileName: string; signedUrl: string }[]): PointCloudMetadataWithSignedFiles {
+function makeMetadata(items: { fileName: string; signedUrl: string }[]): MetadataWithSignedFiles<EptJson> {
   return {
-    type: 'pointCloudMetadataWithSignedFiles',
     signedFiles: { items: items.map(i => ({ ...i, subPath: '' })) },
     fileData: {} as Partial<EptJson> as EptJson
   };

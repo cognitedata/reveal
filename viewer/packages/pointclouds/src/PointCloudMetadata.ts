@@ -12,7 +12,7 @@ export interface PointCloudMetadata {
   readonly formatVersion: number;
 
   readonly modelBaseUrl: string;
-  readonly signedFilesBaseUrl: string;
+  readonly signedFilesBaseUrl?: string;
   readonly modelIdentifier: ModelIdentifier;
   readonly modelMatrix: Matrix4;
   readonly cameraConfiguration?: CameraConfiguration;

@@ -4,12 +4,10 @@
 
 import type { IPointClassificationsProvider } from './IPointClassificationsProvider';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
-import type { ClassificationInfo } from '../potree-three-loader';
+import type { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
 
 export class LocalPointClassificationsProvider implements IPointClassificationsProvider {
   async getClassifications(_modelMetadata: PointCloudMetadata): Promise<ClassificationInfo> {
-    return {
-      classificationSets: []
-    };
+    return { classificationSets: [] };
   }
 }

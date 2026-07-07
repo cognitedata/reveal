@@ -2,7 +2,7 @@ import type { DMModelIdentifier, ModelDataProvider, ModelIdentifier, StylableObj
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import type { EptJson } from './EptJson';
-import type { PointCloudMetadataWithSignedFiles } from '../../types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
 export class EptLoader {
   static async load(
@@ -37,7 +37,7 @@ export class EptLoader {
     modelDataProvider: ModelDataProvider,
     stylableObjects: StylableObject[],
     modelIdentifier: DMModelIdentifier,
-    preloadedData: PointCloudMetadataWithSignedFiles
+    preloadedData: MetadataWithSignedFiles<EptJson>
   ): Promise<PointCloudEptGeometry> {
     const url = signedFilesBaseUrl + '/';
 

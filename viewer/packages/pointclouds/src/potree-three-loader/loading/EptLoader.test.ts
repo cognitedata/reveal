@@ -8,7 +8,7 @@ import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './EptJson';
-import type { PointCloudMetadataWithSignedFiles } from '../../types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
 import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
 
@@ -51,8 +51,7 @@ describe(EptLoader.name, () => {
 
   test('dmsLoad() builds geometry from preloaded data and resolves signedUrl without fetching JSON', async () => {
     const dataProvider = createMockModelDataProvider();
-    const preloadedData: PointCloudMetadataWithSignedFiles = {
-      type: 'pointCloudMetadataWithSignedFiles',
+    const preloadedData: MetadataWithSignedFiles<EptJson> = {
       signedFiles: {
         items: [{ fileName: '0-0-0-0.bin', signedUrl: 'https://cdn.example.com/0-0-0-0.bin', subPath: '' }]
       },
