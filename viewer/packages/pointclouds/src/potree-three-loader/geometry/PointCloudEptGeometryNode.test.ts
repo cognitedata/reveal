@@ -3,42 +3,14 @@
  */
 
 import { vi } from 'vitest';
-import { Box3, Vector3 } from 'three';
-import { Mock } from 'moq.ts';
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
-import type { PointCloudEptGeometry } from './PointCloudEptGeometry';
-import type { EptBinaryLoader } from '../loading/EptBinaryLoader';
 import type { ModelDataProvider } from '@reveal/data-providers';
-import { CdfModelIdentifier, DMModelIdentifier } from '@reveal/data-providers';
+import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { PointCloudMetadataWithSignedFiles } from '../../types';
 import type { EptJson } from '../loading/EptJson';
 import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
-
-const TEST_BOX = new Box3(new Vector3(0, 0, 0), new Vector3(100, 100, 100));
-
-function createMockEpt(url = 'https://example.com/model/'): PointCloudEptGeometry {
-  const mockLoader = new Mock<EptBinaryLoader>()
-    .setup(l => l.extension())
-    .returns('.bin')
-    .object();
-  return new Mock<PointCloudEptGeometry>()
-    .setup(e => e.boundingBox)
-    .returns(TEST_BOX)
-    .setup(e => e.loader)
-    .returns(mockLoader)
-    .setup(e => e.spacing)
-    .returns(1)
-    .setup(e => e.url)
-    .returns(url)
-    .object();
-}
-
-const dmIdentifier = new DMModelIdentifier({
-  modelId: 1,
-  revisionId: 2,
-  revisionExternalId: 'ext-id',
-  revisionSpace: 'my-space'
-});
+import { createMockEptGeometry as createMockEpt } from '../../../../../test-utilities/src/createMockEptGeometry';
+import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
 
 function makeMetadata(items: { fileName: string; signedUrl: string }[]): PointCloudMetadataWithSignedFiles {
   return {
@@ -144,6 +116,46 @@ describe(PointCloudEptGeometryNode.name, () => {
       await node.getHierarchy('0-0-0-0.json');
 
       expect(dataProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model/ept-hierarchy', '0-0-0-0.json');
+    });
+
+    test.each<[string, Partial<ModelDataProvider>, string]>([
+      ['provider does not support getFileUrlsForModel', { getFileUrlsForModel: undefined }, 'does not support'],
+      [
+        'file is missing from the signed files response',
+        { getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => []) },
+        'not found in signed files response'
+      ]
+    ])('DM model on cache miss throws when %s', async (_, override, expectedMessage) => {
+      const node = new PointCloudEptGeometryNode(
+        createMockEpt(),
+        createMockModelDataProvider(override),
+        dmIdentifier,
+        makeMetadata([]),
+        'https://signed.example.com'
+      );
+
+      await expect(node.getHierarchy('0-0-0-0.json')).rejects.toThrow(expectedMessage);
+    });
+  });
+
+  describe('loadHierarchy', () => {
+    test('builds child nodes from the hierarchy response, keyed by depth/coordinates', async () => {
+      const hierarchy = { '0-0-0-0': 100, '1-0-0-0': 10, '1-1-0-0': 5 };
+      const dataProvider = createMockModelDataProvider({
+        getJsonFile: vi.fn(async () => hierarchy) as ModelDataProvider['getJsonFile']
+      });
+      const node = new PointCloudEptGeometryNode(
+        createMockEpt(),
+        dataProvider,
+        new CdfModelIdentifier(10, 20),
+        { fileData: {} as Partial<EptJson> as EptJson },
+        undefined
+      );
+
+      await node.loadHierarchy();
+
+      const children = node.getChildren();
+      expect(children.map(c => c.numPoints).sort((a, b) => a - b)).toEqual([5, 10]);
     });
   });
 });
