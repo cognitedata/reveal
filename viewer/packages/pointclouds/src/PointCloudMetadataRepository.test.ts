@@ -40,7 +40,7 @@ function createMockedMetadataProvider(signedFilesBaseUrl = ''): ModelMetadataPro
       target: new Vector3()
     })),
     getModelUriForSignedFiles: vi.fn<NonNullable<ModelMetadataProvider['getModelUriForSignedFiles']>>(
-      async () => signedFilesBaseUrl
+      () => signedFilesBaseUrl
     )
   };
 }
