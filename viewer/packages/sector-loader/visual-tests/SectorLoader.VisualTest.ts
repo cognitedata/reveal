@@ -86,6 +86,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
         const threeBoundingBox = toThreeBox(sector.boundingBox);
         const consumedSector = await sectorRepository.loadSector({
           modelBaseUrl: modelUri,
+          signedFilesBaseUrl: undefined,
           modelIdentifier: modelIdentifier,
           signedFilesBaseUrl: undefined,
           metadata: {
