@@ -3,7 +3,12 @@
  */
 import type { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
-import { isCoreDmImage360CollectionFilter } from './queryFilters';
+import {
+  isCoreDmImage360CollectionFilter,
+  isCoreDmImage360Filter,
+  isCoreDmObject3DFilter,
+  isCoreDmVisualizableFilter
+} from './queryFilters';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
 import {
   ASSET_SIMPLE_PROPERTIES_LIST,
@@ -12,6 +17,7 @@ import {
 } from './queryProperties';
 import {
   COGNITE_ASSET_VIEW_REFERENCE,
+  COGNITE_VISUALIZABLE_VIEW_REFERENCE,
   CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE,
   CORE_DM_IMAGE_360_VIEW_REFERENCE
 } from './sources';
@@ -56,7 +62,8 @@ function getImage360AnnotationsQuery(collectionReference: DMInstanceRef) {
               getNodeSpaceEqualsFilter(collectionReference.space)
             ]
           }
-        }
+        },
+        limit: 1
       },
       images: {
         nodes: {
@@ -65,27 +72,22 @@ function getImage360AnnotationsQuery(collectionReference: DMInstanceRef) {
             view: CORE_DM_IMAGE_360_VIEW_REFERENCE,
             identifier: 'collection360'
           },
-          direction: 'inwards'
+          direction: 'inwards',
+          filter: isCoreDmImage360Filter
         },
         limit: 10000
       },
       annotations: {
         edges: {
           from: 'images',
-          direction: 'inwards',
-          filter: {
-            and: [
-              {
-                hasData: [CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE]
-              }
-            ]
-          }
+          direction: 'inwards'
         },
         limit: 10000
       },
       object3d: {
         nodes: {
-          from: 'annotations'
+          from: 'annotations',
+          filter: isCoreDmObject3DFilter
         },
         limit: 10000
       },
@@ -93,9 +95,10 @@ function getImage360AnnotationsQuery(collectionReference: DMInstanceRef) {
         nodes: {
           from: 'object3d',
           through: {
-            view: COGNITE_ASSET_VIEW_REFERENCE,
+            view: COGNITE_VISUALIZABLE_VIEW_REFERENCE,
             identifier: 'object3D'
-          }
+          },
+          filter: isCoreDmVisualizableFilter
         },
         limit: 10000
       }

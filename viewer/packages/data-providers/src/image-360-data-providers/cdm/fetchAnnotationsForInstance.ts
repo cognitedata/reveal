@@ -8,6 +8,7 @@ import type { Image360AnnotationViewReferenceAndProperties } from './types';
 import { CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE, CORE_DM_IMAGE_360_VIEW_REFERENCE } from './sources';
 import { COGNITE_VISUALIZABLE_SOURCE } from '../../utilities/constants';
 import { CORE_DM_IMAGE_360_ANNOTATIONS_PROPERTIES_LIST, CORE_DM_IMAGE_360_PROPERTIES_LIST } from './queryProperties';
+import { isCoreDmObject3DFilter } from './queryFilters';
 
 export type Image360AnnotationsForInstanceResult = {
   annotationIds: DMInstanceRef[];
@@ -61,16 +62,14 @@ function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef) {
         nodes: {
           from: 'instance_object',
           through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' },
-          direction: 'outwards'
+          direction: 'outwards',
+          filter: isCoreDmObject3DFilter
         }
       },
       annotation_edges: {
         edges: {
           from: 'object3ds',
-          direction: 'outwards',
-          filter: {
-            hasData: [CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE]
-          }
+          direction: 'outwards'
         },
         limit: 10000
       },
