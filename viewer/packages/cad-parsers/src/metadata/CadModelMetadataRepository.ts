@@ -20,7 +20,7 @@ import type {
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
 import type { CadSceneRootMetadata } from './parsers/types';
-import { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -92,7 +92,10 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     };
   }
 
-  private async loadCadMetadataFromBaseUrl(baseUrl: string, fileName: string): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
+  private async loadCadMetadataFromBaseUrl(
+    baseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
     const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
       signedFiles: undefined,

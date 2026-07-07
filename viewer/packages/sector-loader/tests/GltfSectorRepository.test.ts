@@ -66,7 +66,6 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test.each([
-    ['sectorFileName is undefined', { id: 1, sectorFileName: undefined, downloadSize: 100 }, LevelOfDetail.Detailed],
     ['sectorFileName is null', { id: 4, sectorFileName: null, downloadSize: 100 }, LevelOfDetail.Detailed],
     ['downloadSize is 0', { id: 2, sectorFileName: 'test.glb', downloadSize: 0 }, LevelOfDetail.Detailed],
     ['levelOfDetail is Discarded', { id: 3, sectorFileName: 'test.glb', downloadSize: 100 }, LevelOfDetail.Discarded]

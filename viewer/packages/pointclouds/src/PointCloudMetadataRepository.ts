@@ -14,8 +14,8 @@ import type {
   BlobOutputMetadata
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
-import { EptJson } from './potree-three-loader/loading/EptJson';
-import { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { EptJson } from './potree-three-loader/loading/EptJson';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;

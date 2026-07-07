@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
-import { CadSceneRootMetadata } from './parsers/types';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export class CadMetadataParser {
   public parse(parsedJson: MetadataWithSignedFiles<CadSceneRootMetadata>): SectorScene {

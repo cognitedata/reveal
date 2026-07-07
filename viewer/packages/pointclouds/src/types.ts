@@ -5,9 +5,6 @@
 import type { Object3D, Vector3 } from 'three';
 import type { PointCloudNode } from './PointCloudNode';
 import type { DataSourceType } from '@reveal/data-providers';
-import type { SignedFileItem } from '@reveal/data-providers';
-import type { ClassificationInfo } from './potree-three-loader';
-import type { EptJson } from './potree-three-loader/loading/EptJson';
 
 /**
  * ASPRS well known point class types.

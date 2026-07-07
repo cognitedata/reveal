@@ -2,9 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { SignedFileItem } from '@reveal/data-providers';
 import type { Box3 } from 'three';
-import type { CadSceneRootMetadata } from './parsers/types';
 
 export type SectorMetadata = {
   readonly id: number;

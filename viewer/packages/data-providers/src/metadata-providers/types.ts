@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { SignedFileItem } from "../types";
+import type { SignedFileItem } from '../types';
 
 export type MetadataWithSignedFiles<T> = {
   /**
