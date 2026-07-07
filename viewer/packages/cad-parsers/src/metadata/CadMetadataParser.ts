@@ -4,14 +4,11 @@
 
 import type { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
-
-interface VersionHeader {
-  readonly version: number;
-}
+import type { CadMetadataWithSignedFiles } from './types';
 
 export class CadMetadataParser {
-  public parse(parsedJson: any): SectorScene {
-    const version = (parsedJson as VersionHeader).version;
+  public parse(parsedJson: CadMetadataWithSignedFiles): SectorScene {
+    const version = parsedJson.fileData.version;
     switch (version) {
       case 9:
         return parseCadMetadataGltf(parsedJson);

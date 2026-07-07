@@ -72,6 +72,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
+
     return `${this._client.getBaseUrl()}${this.getRequestPath(formatMetadata.blobId)}`;
   }
 
@@ -95,7 +96,15 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
+  public getModelUriForSignedFiles(): string {
+    return `${this._client.getBaseUrl()}${this.getRequestPathForSignedFiles()}`;
+  }
+
   private getRequestPath(directoryId: number): string {
     return `/api/v1/projects/${this._client.project}/3d/files/${directoryId}`;
+  }
+
+  private getRequestPathForSignedFiles(): string {
+    return `/api/v1/projects/${this._client.project}/3d/output/files`;
   }
 }

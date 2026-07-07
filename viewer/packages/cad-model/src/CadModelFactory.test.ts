@@ -55,7 +55,9 @@ describe(CadModelFactory.name, () => {
       .setup(p => p.getModelMatrix(mockIdentifier, testOutput.format))
       .returns(Promise.resolve(new Matrix4()))
       .setup(p => p.getModelCamera(mockIdentifier))
-      .returns(Promise.resolve({ position: new Vector3(), target: new Vector3(0, 0, 1) }));
+      .returns(Promise.resolve({ position: new Vector3(), target: new Vector3(0, 0, 1) }))
+      .setup(p => p.getModelUriForSignedFiles!())
+      .returns('');
 
     const mock = new Mock<ModelDataProvider>()
       .setup(p => p.getJsonFile(testBaseUrl, It.IsAny<string>()))

@@ -67,9 +67,28 @@ function createMockResponse(entry: CacheEntry, url: string): Response {
   return response;
 }
 
+// Real Cache API implementations only accept http(s) URLs as keys - e.g. Chrome throws
+// "Failed to execute 'put' on 'Cache': Request scheme '...' is unsupported" for anything
+// else. Enforcing the same restriction here catches cache-key bugs (like a key built from
+// a non-URL string) in tests instead of only surfacing them in a real browser.
+function assertValidCacheUrl(key: string): void {
+  let url: URL;
+  try {
+    url = new URL(key);
+  } catch {
+    throw new TypeError(`Failed to execute 'put' on 'Cache': '${key}' is not a valid URL`);
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new TypeError(
+      `Failed to execute 'put' on 'Cache': Request scheme '${url.protocol.replace(':', '')}' is unsupported`
+    );
+  }
+}
+
 export function createMockCache(storage: Map<string, Response>): Cache {
   return {
     match: async (key: string) => {
+      assertValidCacheUrl(key);
       const stored = storage.get(key);
       return stored ? stored.clone() : undefined;
     },
@@ -77,6 +96,7 @@ export function createMockCache(storage: Map<string, Response>): Cache {
       return Array.from(storage.values()).map(r => r.clone());
     },
     put: async (key: string, response: Response) => {
+      assertValidCacheUrl(key);
       // Read body as native ArrayBuffer, then copy into VM-context Uint8Array to avoid
       // cross-realm instanceof issues when the data is later returned via arrayBuffer().
       const nativeBuf = await response.arrayBuffer();
