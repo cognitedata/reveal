@@ -2,8 +2,8 @@
  * Copyright 2026 Cognite AS
  */
 
-import { gzipSync } from 'node:zlib';
 import { parseJsonResponseBody } from './gzipUtils';
+import { gzipEncode } from '../../../../test-utilities/src/gzipEncode';
 
 describe(parseJsonResponseBody.name, () => {
   test('parses a plain (non gzip) JSON body', async () => {
@@ -17,7 +17,7 @@ describe(parseJsonResponseBody.name, () => {
 
   test('decompresses a gzip body even without a Content-Encoding header', async () => {
     const data = { version: 9, sectors: [{ id: 1 }, { id: 2 }] };
-    const gzipped = gzipSync(Buffer.from(JSON.stringify(data)));
+    const gzipped = await gzipEncode(JSON.stringify(data));
     const response = new Response(gzipped);
 
     const result = await parseJsonResponseBody(response);
