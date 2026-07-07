@@ -64,7 +64,7 @@ export class PointCloudFactory {
 
     const [annotationInfo, classSchemaData] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
 
-    const classSchema = hasFileData(classSchemaData) ? classSchemaData.fileData : { classificationSets: [] };
+    const classSchema = hasFileData(classSchemaData) ? classSchemaData : { classificationSets: [] };
 
     const stylableObject = annotationInfo.map(obj => obj.stylableObject);
 

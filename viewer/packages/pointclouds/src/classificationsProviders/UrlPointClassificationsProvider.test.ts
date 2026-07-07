@@ -43,7 +43,7 @@ describe(UrlPointClassificationsProvider.name, () => {
       'classificationSets.json'
     );
     expect(dmProvider.getJsonFile).toHaveBeenCalledWith('', classificationSignedUrl);
-    expect(dmResult.fileData).toBe(classificationData);
+    expect(dmResult).toBe(classificationData);
 
     const classicProvider = createMockModelDataProvider({
       getJsonFile: vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile']
@@ -52,7 +52,7 @@ describe(UrlPointClassificationsProvider.name, () => {
       createMetadata(new CdfModelIdentifier(10, 20))
     );
     expect(classicProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model', 'classificationSets.json');
-    expect(classicResult.fileData).toBe(classificationData);
+    expect(classicResult).toBe(classificationData);
   });
 
   test.each<[string, ModelIdentifier, Partial<ModelDataProvider>]>([
@@ -97,8 +97,7 @@ describe(UrlPointClassificationsProvider.name, () => {
       createMetadata(identifier)
     );
 
-    expect(result.fileData.classificationSets).toEqual([]);
-    expect(result.signedFiles.items).toEqual([]);
+    expect(result.classificationSets).toEqual([]);
   });
 
   test('DM model matches classification file by subPath suffix', async () => {
@@ -113,6 +112,6 @@ describe(UrlPointClassificationsProvider.name, () => {
       createMetadata(dmIdentifier)
     );
 
-    expect(result.fileData).toBe(classificationData);
+    expect(result).toBe(classificationData);
   });
 });
