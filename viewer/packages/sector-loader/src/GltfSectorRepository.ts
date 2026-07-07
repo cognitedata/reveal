@@ -54,7 +54,7 @@ export class GltfSectorRepository implements SectorRepository {
   async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const metadata = sector.metadata as SectorMetadata;
 
-    if (metadata.sectorFileName == null || metadata.downloadSize === 0) {
+    if (metadata.sectorFileName === null || metadata.downloadSize === 0) {
       return this.getEmptyDetailedSector(sector.modelIdentifier, metadata);
     }
 

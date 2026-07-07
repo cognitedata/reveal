@@ -88,7 +88,6 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
           modelBaseUrl: modelUri,
           signedFilesBaseUrl: undefined,
           modelIdentifier: modelIdentifier,
-          signedFilesBaseUrl: undefined,
           metadata: {
             ...sector,
             subtreeBoundingBox: threeBoundingBox,

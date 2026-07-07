@@ -19,8 +19,8 @@ import type {
   BlobOutputMetadata
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
-import type { CadMetadataWithSignedFiles } from './types';
 import type { CadSceneRootMetadata } from './parsers/types';
+import { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -75,7 +75,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     modelIdentifier: DMModelIdentifier,
     signedFilesBaseUrl: string,
     fileName: string
-  ): Promise<CadMetadataWithSignedFiles> {
+  ): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
     if (this._modelDataProvider.getFileUrlsForModel === undefined) {
       throw new Error('Model data provider does not support signed file fetching');
     }
@@ -92,7 +92,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     };
   }
 
-  private async loadCadMetadataFromBaseUrl(baseUrl: string, fileName: string): Promise<CadMetadataWithSignedFiles> {
+  private async loadCadMetadataFromBaseUrl(baseUrl: string, fileName: string): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
     const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
       signedFiles: undefined,

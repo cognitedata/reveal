@@ -35,4 +35,12 @@ describe(parseJsonResponseBody.name, () => {
 
     expect(result).toEqual(data);
   });
+
+  test('falls back to raw bytes when gzip magic bytes appear but the body is not valid gzip', async () => {
+    const payload = new Uint8Array([0x1f, 0x8b, 0x22, 0x68, 0x69, 0x22]); // gzip magic + `"hi"`
+    const response = new Response(payload);
+
+    // SyntaxError (not DecompressionStream error) proves the fallback to raw bytes ran.
+    await expect(parseJsonResponseBody(response)).rejects.toThrow(SyntaxError);
+  });
 });

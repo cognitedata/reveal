@@ -50,7 +50,7 @@ function createMockedModelDataProvider(): ModelDataProvider {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(async () => minimalEptJson),
     getFileUrlsForModel: vi.fn(async () => [])
-  } as Partial<ModelDataProvider> as ModelDataProvider;
+  };
 }
 
 describe(PointCloudMetadataRepository.name, () => {
@@ -75,7 +75,8 @@ describe(PointCloudMetadataRepository.name, () => {
       ...createMockedModelDataProvider(),
       getFileUrlsForModel: vi.fn(async () => [eptJsonItem, signedItem]),
       getJsonFile: vi.fn(async () => minimalEptJson)
-    } as Partial<ModelDataProvider> as ModelDataProvider;
+    };
+
     const repo = new PointCloudMetadataRepository(createMockedMetadataProvider(signedFilesBaseUrl), dataProvider);
 
     const result = await repo.loadData(dmIdentifier);

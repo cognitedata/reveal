@@ -4,7 +4,6 @@
 import { GltfSectorLoader } from '../src/GltfSectorLoader';
 
 import { vi } from 'vitest';
-import type { Mock as ViMock } from 'vitest';
 import type { IMock } from 'moq.ts';
 import { Mock } from 'moq.ts';
 import type { WantedSector, SectorMetadata } from '@reveal/cad-parsers';
@@ -14,13 +13,46 @@ import { DMModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers'
 import { createModelDataProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
 function makeMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
-  const base = {
+  return {
     getBinaryFile: vi.fn<ModelDataProvider['getBinaryFile']>(),
     getJsonFile: vi.fn(),
-    getFileUrlsForModel: vi.fn(async () => [])
-  } as Partial<ModelDataProvider> as ModelDataProvider;
-  Object.assign(base, overrides);
-  return base;
+    getFileUrlsForModel: vi.fn(async () => []),
+    ...overrides
+  };
+}
+
+const MODEL_BASE_URL = 'https://example.com';
+const DM_IDENTIFIER = new DMModelIdentifier({
+  modelId: 1,
+  revisionId: 1,
+  revisionExternalId: 'rev',
+  revisionSpace: 'space'
+});
+const CLASSIC_IDENTIFIER = new LocalModelIdentifier('classic-model');
+
+function buildMetadataMock(overrides: { signedUrl?: string; sectorFileName: string | null }): SectorMetadata {
+  return new Mock<SectorMetadata>()
+    .setup(p => p.signedUrl)
+    .returns(overrides.signedUrl)
+    .setup(p => p.sectorFileName)
+    .returns(overrides.sectorFileName)
+    .object();
+}
+
+function buildSectorMock(overrides: {
+  modelIdentifier: WantedSector['modelIdentifier'];
+  metadata: SectorMetadata;
+  modelBaseUrl?: string;
+}): WantedSector {
+  const mock = new Mock<WantedSector>()
+    .setup(p => p.modelIdentifier)
+    .returns(overrides.modelIdentifier)
+    .setup(p => p.metadata)
+    .returns(overrides.metadata);
+  if (overrides.modelBaseUrl !== undefined) {
+    mock.setup(p => p.modelBaseUrl).returns(overrides.modelBaseUrl);
+  }
+  return mock.object();
 }
 
 describe(GltfSectorLoader.name, () => {
@@ -63,35 +95,14 @@ describe(GltfSectorLoader.name, () => {
   test('getSectorByteBuffer calls getBinaryFile with empty baseUrl for DM model with signedUrl', async () => {
     const signedUrl = 'https://signed.cdn.example.com/sector.glb';
     const expectedBuffer = new ArrayBuffer(32);
+    const getBinaryFileMock = vi.fn<ModelDataProvider['getBinaryFile']>().mockResolvedValue(expectedBuffer);
+    const dmLoader = new GltfSectorLoader(makeMockProvider({ getBinaryFile: getBinaryFileMock }));
 
-    const dmIdentifier = new DMModelIdentifier({
-      modelId: 1,
-      revisionId: 1,
-      revisionExternalId: 'rev',
-      revisionSpace: 'space'
+    const sector = buildSectorMock({
+      modelIdentifier: DM_IDENTIFIER,
+      metadata: buildMetadataMock({ signedUrl, sectorFileName: 'sector.glb' }),
+      modelBaseUrl: MODEL_BASE_URL
     });
-    const getBinaryFileMock: ViMock<ModelDataProvider['getBinaryFile']> = vi
-      .fn<ModelDataProvider['getBinaryFile']>()
-      .mockResolvedValue(expectedBuffer);
-    const mockProvider = makeMockProvider({ getBinaryFile: getBinaryFileMock });
-
-    const dmLoader = new GltfSectorLoader(mockProvider);
-
-    const metadata = new Mock<SectorMetadata>()
-      .setup(p => p.signedUrl)
-      .returns(signedUrl)
-      .setup(p => p.sectorFileName)
-      .returns('sector.glb')
-      .object();
-
-    const sector = new Mock<WantedSector>()
-      .setup(p => p.modelIdentifier)
-      .returns(dmIdentifier)
-      .setup(p => p.metadata)
-      .returns(metadata)
-      .setup(p => p.modelBaseUrl)
-      .returns('https://example.com')
-      .object();
 
     const result = await dmLoader.getSectorByteBuffer(sector);
 
@@ -101,55 +112,28 @@ describe(GltfSectorLoader.name, () => {
 
   test('getSectorByteBuffer calls getBinaryFile for Classic model', async () => {
     const expectedBuffer = new ArrayBuffer(64);
-    const classicIdentifier = new LocalModelIdentifier('classic-model');
-    const getBinaryFileMock: ViMock<ModelDataProvider['getBinaryFile']> = vi
-      .fn<ModelDataProvider['getBinaryFile']>()
-      .mockResolvedValue(expectedBuffer);
-    const mockProvider = makeMockProvider({ getBinaryFile: getBinaryFileMock });
+    const getBinaryFileMock = vi.fn<ModelDataProvider['getBinaryFile']>().mockResolvedValue(expectedBuffer);
+    const classicLoader = new GltfSectorLoader(makeMockProvider({ getBinaryFile: getBinaryFileMock }));
 
-    const classicLoader = new GltfSectorLoader(mockProvider);
-
-    const metadata = new Mock<SectorMetadata>()
-      .setup(p => p.signedUrl)
-      .returns(undefined)
-      .setup(p => p.sectorFileName)
-      .returns('sector.glb')
-      .object();
-
-    const sector = new Mock<WantedSector>()
-      .setup(p => p.modelIdentifier)
-      .returns(classicIdentifier)
-      .setup(p => p.metadata)
-      .returns(metadata)
-      .setup(p => p.modelBaseUrl)
-      .returns('https://example.com')
-      .object();
+    const sector = buildSectorMock({
+      modelIdentifier: CLASSIC_IDENTIFIER,
+      metadata: buildMetadataMock({ sectorFileName: 'sector.glb' }),
+      modelBaseUrl: MODEL_BASE_URL
+    });
 
     const result = await classicLoader.getSectorByteBuffer(sector);
 
-    expect(getBinaryFileMock).toHaveBeenCalledWith('https://example.com', 'sector.glb', undefined);
+    expect(getBinaryFileMock).toHaveBeenCalledWith(MODEL_BASE_URL, 'sector.glb', undefined);
     expect(result).toBe(expectedBuffer);
   });
 
   test('getSectorByteBuffer throws when neither DM+signedUrl nor Classic baseUrl+fileName is available', async () => {
-    const classicIdentifier = new LocalModelIdentifier('classic-model');
-    const mockProvider = makeMockProvider();
+    const noFileLoader = new GltfSectorLoader(makeMockProvider());
 
-    const noFileLoader = new GltfSectorLoader(mockProvider);
-
-    const metadata = new Mock<SectorMetadata>()
-      .setup(p => p.signedUrl)
-      .returns(undefined)
-      .setup(p => p.sectorFileName)
-      .returns(null)
-      .object();
-
-    const sector = new Mock<WantedSector>()
-      .setup(p => p.modelIdentifier)
-      .returns(classicIdentifier)
-      .setup(p => p.metadata)
-      .returns(metadata)
-      .object();
+    const sector = buildSectorMock({
+      modelIdentifier: CLASSIC_IDENTIFIER,
+      metadata: buildMetadataMock({ sectorFileName: null })
+    });
 
     await expect(noFileLoader.getSectorByteBuffer(sector)).rejects.toThrow('Model must be a DM model');
   });

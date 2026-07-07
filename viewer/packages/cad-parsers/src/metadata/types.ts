@@ -22,8 +22,3 @@ export type SectorMetadata = {
   readonly geometryBoundingBox: Box3;
   readonly signedUrl?: string;
 };
-
-export type CadMetadataWithSignedFiles = {
-  readonly signedFiles: { items: SignedFileItem[] } | undefined;
-  readonly fileData: CadSceneRootMetadata;
-};

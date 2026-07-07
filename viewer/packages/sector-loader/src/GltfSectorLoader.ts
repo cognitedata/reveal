@@ -116,9 +116,9 @@ export class GltfSectorLoader {
     const { metadata } = sector;
     let sectorByteBuffer: ArrayBuffer;
     if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl) {
-      sectorByteBuffer = await this._sectorFileProvider.getBinaryFile('', metadata.signedUrl, abortSignal);
+      return await this._sectorFileProvider.getBinaryFile('', metadata.signedUrl, abortSignal);
     } else if (sector.modelBaseUrl && metadata.sectorFileName) {
-      sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
+      return await this._sectorFileProvider.getBinaryFile(
         sector.modelBaseUrl,
         metadata.sectorFileName,
         abortSignal
@@ -126,6 +126,5 @@ export class GltfSectorLoader {
     } else {
       throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
     }
-    return sectorByteBuffer;
   }
 }

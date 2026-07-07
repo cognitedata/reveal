@@ -115,33 +115,3 @@ export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
    */
   volumeMetadata?: T['pointCloudVolumeMetadata'];
 };
-
-export type PointCloudMetadataWithSignedFiles = {
-  /**
-   * Type of the file data.
-   */
-  type: 'pointCloudMetadataWithSignedFiles';
-  /**
-   * Signed files metadata.
-   */
-  readonly signedFiles: { items: SignedFileItem[] };
-  /**
-   * Point cloud metadata.
-   */
-  readonly fileData: EptJson;
-};
-
-export type PointCloudClassificationInfoWithSignedFiles = {
-  /**
-   * Type of the file data.
-   */
-  type: 'pointCloudClassificationInfoWithSignedFiles';
-  /**
-   * Signed files metadata.
-   */
-  readonly signedFiles: { items: SignedFileItem[] };
-  /**
-   * Classification info.
-   */
-  readonly fileData: ClassificationInfo;
-};
