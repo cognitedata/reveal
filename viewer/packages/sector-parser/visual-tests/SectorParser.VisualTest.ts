@@ -43,7 +43,9 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
 
     const fileNames = sectors.map(sector => sector.sectorFileName);
 
-    const blobs = await Promise.all(fileNames.map(fileName => modelDataProvider.getBinaryFile(modelUri, fileName)));
+    const blobs = await Promise.all(
+      fileNames.map((fileName: string) => modelDataProvider.getBinaryFile(modelUri, fileName))
+    );
 
     await this.loadSectors(blobs, loader, materialMap, camera, group);
 

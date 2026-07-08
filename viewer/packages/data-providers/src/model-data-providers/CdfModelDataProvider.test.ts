@@ -10,6 +10,7 @@ import { CogniteClient, type HttpResponse } from '@cognite/sdk';
 import { mockClientAuthentication } from '../../../../test-utilities/src/cogniteClientAuth';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { SignedFilesResponseWithCursor } from '../types';
+import { gzipEncode } from '../../../../test-utilities/src/gzipEncode';
 
 describe(CdfModelDataProvider.name, () => {
   const appId = 'reveal-CdfModelDataClient-test';
@@ -136,6 +137,19 @@ describe(CdfModelDataProvider.name, () => {
       'https://signed.url/scene.json',
       expect.objectContaining({ headers: { Accept: 'application/json, */*' } })
     );
+  });
+
+  test('getJsonFile() with signed URL decompresses a gzip body missing the Content-Encoding header', async () => {
+    const jsonData = { version: 9, sectors: [{ id: 1 }] };
+    const gzipped = await gzipEncode(JSON.stringify(jsonData));
+    const fetchMock = vi
+      .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+      .mockResolvedValueOnce(new Response(gzipped, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await clientExt.getJsonFile('', 'https://signed.url/scene.json');
+
+    expect(result).toEqual(jsonData);
   });
 
   test('getFileUrlsForModel() paginates through multiple cursor pages to collect all signedFiles', async () => {

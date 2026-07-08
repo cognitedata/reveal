@@ -1,0 +1,53 @@
+/*!
+ * Copyright 2026 Cognite AS
+ */
+
+import { vi } from 'vitest';
+import { parseJsonResponseBody } from './gzipUtils';
+import { gzipEncode } from '../../../../test-utilities/src/gzipEncode';
+
+describe(parseJsonResponseBody.name, () => {
+  test('parses a plain (non gzip) JSON body', async () => {
+    const data = { version: 9, sectors: [] };
+    const response = new Response(JSON.stringify(data));
+
+    const result = await parseJsonResponseBody(response);
+
+    expect(result).toEqual(data);
+  });
+
+  test('decompresses a gzip body even without a Content-Encoding header', async () => {
+    const data = { version: 9, sectors: [{ id: 1 }, { id: 2 }] };
+    const gzipped = await gzipEncode(JSON.stringify(data));
+    const response = new Response(gzipped);
+
+    const result = await parseJsonResponseBody(response);
+
+    expect(result).toEqual(data);
+  });
+
+  test('ignores the Content-Encoding header and relies on the actual body bytes', async () => {
+    // Simulates fetch having already auto-decompressed the body because the header was
+    // present and correct - the plain-text bytes should be parsed as-is, header notwithstanding.
+    const data = { version: 9, sectors: [] };
+    const response = new Response(JSON.stringify(data), { headers: { 'content-encoding': 'gzip' } });
+
+    const result = await parseJsonResponseBody(response);
+
+    expect(result).toEqual(data);
+  });
+
+  test('falls back to raw bytes when gzip magic bytes appear but the body is not valid gzip', async () => {
+    const payload = new Uint8Array([0x1f, 0x8b, 0x22, 0x68, 0x69, 0x22]); // gzip magic + `"hi"`
+    const response = new Response(payload);
+    const rawDecoded = new TextDecoder().decode(payload);
+    const parseSpy = vi.spyOn(JSON, 'parse');
+
+    await expect(parseJsonResponseBody(response)).rejects.toThrow(SyntaxError);
+
+    // Proves the fallback ran: JSON.parse was called with the untouched raw bytes,
+    // not with decompressed output.
+    expect(parseSpy).toHaveBeenCalledWith(rawDecoded);
+    parseSpy.mockRestore();
+  });
+});

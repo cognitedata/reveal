@@ -6,16 +6,18 @@ import { Box3, Vector3 } from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import type { SectorMetadata } from '../types';
-import type { CadMetadataWithSignedFiles } from '../types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
 import type { CadSceneRootMetadata } from './types';
-import type { SignedFileItem } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles, SignedFileItem } from '@reveal/data-providers';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 
 import SeededRandom from 'random-seed';
 
-function wrapMetadata(fileData: CadSceneRootMetadata, signedFiles: SignedFileItem[] = []): CadMetadataWithSignedFiles {
+function wrapMetadata(
+  fileData: CadSceneRootMetadata,
+  signedFiles: SignedFileItem[] = []
+): MetadataWithSignedFiles<CadSceneRootMetadata> {
   return { signedFiles: { items: signedFiles }, fileData };
 }
 

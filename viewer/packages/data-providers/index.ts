@@ -104,3 +104,5 @@ export type {
   InternalAddModelOptions,
   AddModelOptionsWithModelRevisionId
 } from './src/utilities/internalAddModelOptions';
+
+export type { MetadataWithSignedFiles } from './src/metadata-providers/types';

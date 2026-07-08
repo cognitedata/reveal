@@ -11,9 +11,11 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  MetadataWithSignedFiles
 } from '@reveal/data-providers';
-import { File3dFormat } from '@reveal/data-providers';
+import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
+import type { EptJson } from './potree-three-loader/loading/EptJson';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -33,20 +35,59 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
+    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
-    const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
+    const jsonData =
+      modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl !== undefined
+        ? await this.loadPointCloudMetadataFromSignedFiles(modelIdentifier, signedFilesBaseUrl, this._blobFileName)
+        : await this.loadPointCloudMetadataFromBaseUrl(modelBaseUrl, this._blobFileName);
+    const scene = jsonData.fileData;
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       modelIdentifier: modelIdentifier,
       format: output.format as File3dFormat,
       formatVersion: output.version,
       modelBaseUrl,
+      signedFilesBaseUrl,
       modelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
-      scene
+      scene,
+      signedFiles: jsonData.signedFiles
+    };
+  }
+
+  private async loadPointCloudMetadataFromSignedFiles(
+    modelIdentifier: DMModelIdentifier,
+    signedFilesBaseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<EptJson>> {
+    if (this._modelDataProvider.getFileUrlsForModel === undefined) {
+      throw new Error('Model data provider does not support signed file fetching');
+    }
+    const items = await this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
+    const found = items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+
+    if (found === undefined) {
+      throw new Error(`File "${fileName}" not found in signed files response`);
+    }
+    const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
+    return {
+      signedFiles: { items },
+      fileData: fileData as MetadataWithSignedFiles<EptJson>['fileData']
+    };
+  }
+
+  private async loadPointCloudMetadataFromBaseUrl(
+    baseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<EptJson>> {
+    const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    return {
+      signedFiles: { items: [] },
+      fileData: jsonData as EptJson
     };
   }
 
