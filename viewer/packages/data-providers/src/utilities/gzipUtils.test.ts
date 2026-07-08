@@ -2,6 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
+import { vi } from 'vitest';
 import { parseJsonResponseBody } from './gzipUtils';
 import { gzipEncode } from '../../../../test-utilities/src/gzipEncode';
 
@@ -39,8 +40,14 @@ describe(parseJsonResponseBody.name, () => {
   test('falls back to raw bytes when gzip magic bytes appear but the body is not valid gzip', async () => {
     const payload = new Uint8Array([0x1f, 0x8b, 0x22, 0x68, 0x69, 0x22]); // gzip magic + `"hi"`
     const response = new Response(payload);
+    const rawDecoded = new TextDecoder().decode(payload);
+    const parseSpy = vi.spyOn(JSON, 'parse');
 
-    // SyntaxError (not DecompressionStream error) proves the fallback to raw bytes ran.
     await expect(parseJsonResponseBody(response)).rejects.toThrow(SyntaxError);
+
+    // Proves the fallback ran: JSON.parse was called with the untouched raw bytes,
+    // not with decompressed output.
+    expect(parseSpy).toHaveBeenCalledWith(rawDecoded);
+    parseSpy.mockRestore();
   });
 });

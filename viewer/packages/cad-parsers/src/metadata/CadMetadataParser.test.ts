@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import type { MetadataWithSignedFiles } from '@reveal/data-providers';
 import { CadMetadataParser } from './CadMetadataParser';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { CadSceneRootMetadata } from './parsers/types';
 
 describe('CadMetadataParser', () => {
