@@ -127,7 +127,7 @@ describe(GltfSectorLoader.name, () => {
     expect(result).toBe(expectedBuffer);
   });
 
-  test('getSectorByteBuffer throws when neither DM+signedUrl nor Classic baseUrl+fileName is available', async () => {
+  test('getSectorByteBuffer throws when neither DM+signedUrl nor Classic baseUrl+fileName is available', () => {
     const noFileLoader = new GltfSectorLoader(makeMockProvider());
 
     const sector = buildSectorMock({
@@ -135,6 +135,6 @@ describe(GltfSectorLoader.name, () => {
       metadata: buildMetadataMock({ sectorFileName: null })
     });
 
-    await expect(noFileLoader.getSectorByteBuffer(sector)).rejects.toThrow('Model must be a DM model');
+    expect(() => noFileLoader.getSectorByteBuffer(sector)).toThrow('Model must be a DM model');
   });
 });

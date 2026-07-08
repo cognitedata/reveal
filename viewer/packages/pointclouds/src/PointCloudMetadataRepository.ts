@@ -11,11 +11,11 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  MetadataWithSignedFiles
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './potree-three-loader/loading/EptJson';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -35,7 +35,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
-    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.() ?? undefined;
+    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
@@ -76,7 +76,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
     return {
       signedFiles: { items },
-      fileData: fileData as MetadataWithSignedFiles<EptJson>['fileData']
+      fileData: fileData as EptJson
     };
   }
 
@@ -84,10 +84,10 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     baseUrl: string,
     fileName: string
   ): Promise<MetadataWithSignedFiles<EptJson>> {
-    const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    const fileData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
       signedFiles: { items: [] },
-      fileData: jsonData as MetadataWithSignedFiles<EptJson>['fileData']
+      fileData: fileData as EptJson
     };
   }
 

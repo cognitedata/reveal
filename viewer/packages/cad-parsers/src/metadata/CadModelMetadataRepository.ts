@@ -16,7 +16,8 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  MetadataWithSignedFiles
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
 import type { CadSceneRootMetadata } from './parsers/types';
@@ -44,7 +45,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.() ?? undefined;
+    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
 
     const blobBaseUrl = await blobBaseUrlPromise;
     const json =

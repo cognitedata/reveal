@@ -6,10 +6,9 @@ import { Box3, Vector3 } from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import type { SectorMetadata } from '../types';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
 import type { CadSceneRootMetadata } from './types';
-import type { SignedFileItem } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles, SignedFileItem } from '@reveal/data-providers';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 

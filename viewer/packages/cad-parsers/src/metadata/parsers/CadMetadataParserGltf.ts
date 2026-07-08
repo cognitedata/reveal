@@ -8,8 +8,7 @@ import type { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
 import type { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
-import type { SignedFileItem } from '@reveal/data-providers';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { MetadataWithSignedFiles, SignedFileItem } from '@reveal/data-providers';
 import type { SectorMetadata } from '../types';
 
 export function parseCadMetadataGltf(metadata: MetadataWithSignedFiles<CadSceneRootMetadata>): SectorScene {
