@@ -14,11 +14,13 @@ import {
   CORE_DM_IMAGE_360_STATION_CONTAINER_REFERENCE
 } from './sources';
 
+export const isCoreDm3DRevisionFilter = {
+  hasData: [CORE_DM_3D_REVISION_CONTAINER_REFERENCE]
+} as const satisfies HasExistingDataFilterV3;
+
 export const isCoreDmImage360CollectionFilter = {
   and: [
-    {
-      hasData: [CORE_DM_3D_REVISION_CONTAINER_REFERENCE]
-    } satisfies HasExistingDataFilterV3,
+    isCoreDm3DRevisionFilter,
     {
       equals: {
         property: [CORE_DM_3D_CONTAINER_SPACE, 'Cognite3DRevision', 'type'],
@@ -27,10 +29,6 @@ export const isCoreDmImage360CollectionFilter = {
     }
   ]
 } as const satisfies TableExpressionDataModelsBoolFilter;
-
-export const isCoreDm3DRevisionFilter = {
-  hasData: [CORE_DM_3D_REVISION_CONTAINER_REFERENCE]
-} as const satisfies HasExistingDataFilterV3;
 
 export const isCoreDmImage360Filter = {
   hasData: [CORE_DM_IMAGE_360_CONTAINER_REFERENCE]
