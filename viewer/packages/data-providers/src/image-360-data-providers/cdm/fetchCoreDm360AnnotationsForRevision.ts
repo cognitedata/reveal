@@ -13,7 +13,12 @@ import {
   CORE_DM_IMAGE_360_ANNOTATIONS_PROPERTIES_LIST,
   CORE_DM_IMAGE_360_PROPERTIES_LIST
 } from './queryProperties';
-import { isCoreDmImage360Filter, isCoreDmObject3DFilter, isCoreDmVisualizableFilter } from './queryFilters';
+import {
+  isCoreDmImage360AnnotationFilter,
+  isCoreDmImage360Filter,
+  isCoreDmObject3DFilter,
+  isCoreDmVisualizableFilter
+} from './queryFilters';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
 import type { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
@@ -59,7 +64,8 @@ function getImage360AnnotationsByRevisionQuery(revisionReference: DMInstanceRef)
       annotations: {
         edges: {
           from: 'images',
-          direction: 'inwards'
+          direction: 'inwards',
+          filter: isCoreDmImage360AnnotationFilter
         },
         limit: 10000
       },

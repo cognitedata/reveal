@@ -4,6 +4,7 @@
 import type { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import {
+  isCoreDmImage360AnnotationFilter,
   isCoreDmImage360CollectionFilter,
   isCoreDmImage360Filter,
   isCoreDmObject3DFilter,
@@ -80,7 +81,8 @@ function getImage360AnnotationsQuery(collectionReference: DMInstanceRef) {
       annotations: {
         edges: {
           from: 'images',
-          direction: 'inwards'
+          direction: 'inwards',
+          filter: isCoreDmImage360AnnotationFilter
         },
         limit: 10000
       },
