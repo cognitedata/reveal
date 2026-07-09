@@ -53,7 +53,7 @@ describe(EptLoader.name, () => {
     const dataProvider = createMockModelDataProvider();
     const preloadedData: MetadataWithSignedFiles<EptJson> = {
       signedFiles: {
-        items: [{ fileName: '0-0-0-0.bin', signedUrl: 'https://cdn.example.com/0-0-0-0.bin', subPath: '' }]
+        items: [{ fileName: '0-0-0-0.bin', signedUrl: 'https://cognite.example.com/0-0-0-0.bin', subPath: '' }]
       },
       fileData: eptJson
     };
@@ -68,7 +68,7 @@ describe(EptLoader.name, () => {
 
     expect(dataProvider.getJsonFile).not.toHaveBeenCalled();
     expect(geometry.url).toBe('https://signed.example.com/');
-    expect(geometry.root?.signedUrl).toBe('https://cdn.example.com/0-0-0-0.bin');
+    expect(geometry.root?.signedUrl).toBe('https://cognite.example.com/0-0-0-0.bin');
     expect(geometry.root?.signedFilesBaseUrl).toBe('https://signed.example.com');
   });
 });
