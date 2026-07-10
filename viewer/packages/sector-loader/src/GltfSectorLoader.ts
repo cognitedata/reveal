@@ -112,7 +112,7 @@ export class GltfSectorLoader {
     }
   }
 
-  async getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
+  getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const { metadata } = sector;
     if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl) {
       return this._sectorFileProvider.getBinaryFile('', metadata.signedUrl, abortSignal);
