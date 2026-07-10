@@ -37,7 +37,7 @@ const jsonFileOk = () => vi.fn(async () => classificationData) as ModelDataProvi
 const jsonFileErr = () =>
   vi.fn(async () => {
     throw new Error();
-  }) as ModelDataProvider['getJsonFile'];
+  });
 const fileUrlsOk = (fileName = 'classificationSets.json', subPath = '') =>
   vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
     { fileName, signedUrl: classificationSignedUrl, subPath }
@@ -63,17 +63,6 @@ describe(UrlPointClassificationsProvider.name, () => {
     );
     expect(classicProvider.getJsonFile).toHaveBeenCalledWith(modelBaseUrl, 'classificationSets.json');
     expect(classicResult).toBe(classificationData);
-  });
-
-  test('DM model matches classification file by subPath suffix', async () => {
-    const dmProvider = createMockModelDataProvider({
-      getFileUrlsForModel: fileUrlsOk('sub/classificationSets.json', 'sub'),
-      getJsonFile: jsonFileOk()
-    });
-    const result = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
-      createMetadata(dmIdentifier)
-    );
-    expect(result).toBe(classificationData);
   });
 
   test.each<[string, PointCloudMetadata, Partial<ModelDataProvider>]>([

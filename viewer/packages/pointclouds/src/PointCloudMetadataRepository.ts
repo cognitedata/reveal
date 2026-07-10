@@ -99,9 +99,6 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
       item => item.fileName === rootHierarchyPath || item.fileName.endsWith('/' + rootHierarchyPath)
     );
 
-    // Warm the CachedModelDataProvider with the root hierarchy body in parallel with the
-    // ept.json body fetch, so root.loadHierarchy()'s `getJsonFile('', signedUrl)` hits
-    // cache and the root binary can start decoding without an extra round-trip.
     const rootHierarchyWarmPromise: Promise<unknown> = rootHierarchyItem
       ? this._modelDataProvider.getJsonFile('', rootHierarchyItem.signedUrl).catch(() => undefined)
       : Promise.resolve(undefined);
