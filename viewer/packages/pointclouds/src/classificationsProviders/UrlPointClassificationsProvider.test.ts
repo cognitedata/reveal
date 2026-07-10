@@ -11,116 +11,98 @@ import type { PointCloudMetadata } from '../PointCloudMetadata';
 import { createMockModelDataProvider } from '../../../../test-utilities/src/createMockModelDataProvider';
 import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities/src/mockModelIdentifiers';
 
-function createMetadata(modelIdentifier: ModelIdentifier): PointCloudMetadata {
+const classificationData = { classificationSets: [{ name: 'Default', classes: [] }] };
+const classificationSignedUrl = 'https://cdn.example.com/classificationSets.json';
+const classicIdentifier = new CdfModelIdentifier(10, 20);
+const signedFilesBaseUrl = 'https://signed-files.example.com';
+const modelBaseUrl = 'https://example.com/model';
+
+function createMetadata(
+  modelIdentifier: ModelIdentifier,
+  overrides: Partial<PointCloudMetadata> = {}
+): PointCloudMetadata {
   return {
     format: File3dFormat.EptPointCloud,
     formatVersion: 1,
-    modelBaseUrl: 'https://example.com/model',
-    signedFilesBaseUrl: 'https://signed-files.example.com',
+    modelBaseUrl,
+    signedFilesBaseUrl,
     modelIdentifier,
     modelMatrix: new Matrix4(),
-    scene: {}
+    scene: {},
+    ...overrides
   };
 }
 
-const classificationData = { classificationSets: [{ name: 'Default', classes: [] }] };
-const classificationSignedUrl = 'https://cdn.example.com/classificationSets.json';
+const jsonFileOk = () => vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile'];
+const jsonFileErr = () =>
+  vi.fn(async () => {
+    throw new Error();
+  }) as ModelDataProvider['getJsonFile'];
+const fileUrlsOk = (fileName = 'classificationSets.json', subPath = '') =>
+  vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
+    { fileName, signedUrl: classificationSignedUrl, subPath }
+  ]);
 
 describe(UrlPointClassificationsProvider.name, () => {
   test('DM model calls getFileUrlsForModel+getJsonFile; classic model calls getJsonFile directly', async () => {
-    const dmProvider = createMockModelDataProvider({
-      getFileUrlsForModel: vi.fn(async () => [
-        { fileName: 'classificationSets.json', signedUrl: classificationSignedUrl, subPath: '' }
-      ]),
-      getJsonFile: vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile']
-    });
+    const dmProvider = createMockModelDataProvider({ getFileUrlsForModel: fileUrlsOk(), getJsonFile: jsonFileOk() });
     const dmResult = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
       createMetadata(dmIdentifier)
     );
     expect(dmProvider.getFileUrlsForModel).toHaveBeenCalledWith(
-      'https://signed-files.example.com',
+      signedFilesBaseUrl,
       dmIdentifier,
       'classificationSets.json'
     );
     expect(dmProvider.getJsonFile).toHaveBeenCalledWith('', classificationSignedUrl);
     expect(dmResult).toBe(classificationData);
 
-    const classicProvider = createMockModelDataProvider({
-      getJsonFile: vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile']
-    });
+    const classicProvider = createMockModelDataProvider({ getJsonFile: jsonFileOk() });
     const classicResult = await new UrlPointClassificationsProvider(classicProvider).getClassifications(
-      createMetadata(new CdfModelIdentifier(10, 20))
+      createMetadata(classicIdentifier)
     );
-    expect(classicProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model', 'classificationSets.json');
+    expect(classicProvider.getJsonFile).toHaveBeenCalledWith(modelBaseUrl, 'classificationSets.json');
     expect(classicResult).toBe(classificationData);
   });
 
-  test.each<[string, ModelIdentifier, Partial<ModelDataProvider>]>([
+  test('DM model matches classification file by subPath suffix', async () => {
+    const dmProvider = createMockModelDataProvider({
+      getFileUrlsForModel: fileUrlsOk('sub/classificationSets.json', 'sub'),
+      getJsonFile: jsonFileOk()
+    });
+    const result = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
+      createMetadata(dmIdentifier)
+    );
+    expect(result).toBe(classificationData);
+  });
+
+  test.each<[string, PointCloudMetadata, Partial<ModelDataProvider>]>([
     [
       'DM throws in getFileUrlsForModel',
-      dmIdentifier,
+      createMetadata(dmIdentifier),
       {
         getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => {
           throw new Error();
         })
       }
     ],
-    ['DM has no getFileUrlsForModel support', dmIdentifier, { getFileUrlsForModel: undefined }],
+    ['DM has no getFileUrlsForModel support', createMetadata(dmIdentifier), { getFileUrlsForModel: undefined }],
     [
-      'DM finds no matching file in signed files response',
-      dmIdentifier,
+      'DM finds no matching file',
+      createMetadata(dmIdentifier),
       { getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => []) }
     ],
     [
-      'DM throws in getJsonFile after finding the file',
-      dmIdentifier,
-      {
-        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
-          { fileName: 'classificationSets.json', signedUrl: classificationSignedUrl, subPath: '' }
-        ]),
-        getJsonFile: vi.fn(async () => {
-          throw new Error();
-        }) as ModelDataProvider['getJsonFile']
-      }
+      'DM throws in getJsonFile after finding file',
+      createMetadata(dmIdentifier),
+      { getFileUrlsForModel: fileUrlsOk(), getJsonFile: jsonFileErr() }
     ],
-    [
-      'Classic throws in getJsonFile',
-      new CdfModelIdentifier(10, 20),
-      {
-        getJsonFile: vi.fn(async () => {
-          throw new Error();
-        }) as ModelDataProvider['getJsonFile']
-      }
-    ]
-  ])('%s returns EMPTY_CLASSIFICATION', async (_, identifier, override) => {
+    ['DM missing signedFilesBaseUrl', createMetadata(dmIdentifier, { signedFilesBaseUrl: undefined }), {}],
+    ['Classic throws in getJsonFile', createMetadata(classicIdentifier), { getJsonFile: jsonFileErr() }]
+  ])('%s returns EMPTY_CLASSIFICATION', async (_, metadata, override) => {
     const result = await new UrlPointClassificationsProvider(createMockModelDataProvider(override)).getClassifications(
-      createMetadata(identifier)
+      metadata
     );
-
     expect(result.classificationSets).toEqual([]);
-  });
-
-  test('DM model returns EMPTY_CLASSIFICATION when signedFilesBaseUrl is missing', async () => {
-    const result = await new UrlPointClassificationsProvider(createMockModelDataProvider()).getClassifications({
-      ...createMetadata(dmIdentifier),
-      signedFilesBaseUrl: undefined
-    });
-
-    expect(result.classificationSets).toEqual([]);
-  });
-
-  test('DM model matches classification file by subPath suffix', async () => {
-    const dmProvider = createMockModelDataProvider({
-      getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
-        { fileName: 'sub/classificationSets.json', signedUrl: classificationSignedUrl, subPath: 'sub' }
-      ]),
-      getJsonFile: vi.fn(async () => classificationData) as ModelDataProvider['getJsonFile']
-    });
-
-    const result = await new UrlPointClassificationsProvider(dmProvider).getClassifications(
-      createMetadata(dmIdentifier)
-    );
-
-    expect(result).toBe(classificationData);
   });
 });

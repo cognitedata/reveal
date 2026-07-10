@@ -79,13 +79,29 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     if (this._modelDataProvider.getFileUrlsForModel === undefined) {
       throw new Error('Model data provider does not support signed file fetching');
     }
-    const items = await this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
-    const found = items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+    // We know the exact scene.json name up front, so ask the backend to filter its response
+    // rather than paginating the entire signed-files list looking for it - which can be huge
+    // and delays the first render. The full unfiltered list is still needed downstream to
+    // resolve signed URLs for individual sector binaries, so we request it in parallel.
+    const filteredSceneItemsPromise = this._modelDataProvider.getFileUrlsForModel(
+      signedFilesBaseUrl,
+      modelIdentifier,
+      fileName
+    );
+    const allItemsPromise = this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
 
-    if (found === undefined) {
+    const filteredSceneItems = await filteredSceneItemsPromise;
+    const sceneItem = filteredSceneItems.find(
+      item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
+    );
+
+    if (sceneItem === undefined) {
       throw new Error(`File "${fileName}" not found in signed files response`);
     }
-    const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
+    const [fileData, items] = await Promise.all([
+      this._modelDataProvider.getJsonFile('', sceneItem.signedUrl),
+      allItemsPromise
+    ]);
     return {
       signedFiles: { items },
       fileData: fileData as CadSceneRootMetadata

@@ -133,9 +133,6 @@ export class CachedModelDataProvider implements ModelDataProvider {
     await this.cacheManager.clear();
   }
 
-  /**
-   * Strips the query string off the signed URL and keeping only `origin + pathname` as the cache key.
-   */
   private buildSignedFileCacheKey(signedUrl: string): string {
     const url = new URL(signedUrl);
     return `${url.origin}${url.pathname}`;

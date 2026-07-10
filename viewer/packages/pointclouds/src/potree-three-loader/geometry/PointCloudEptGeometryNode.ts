@@ -162,13 +162,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._eptMetadata = eptMetadata;
     this._key = new EptKey(this._ept, b || this._ept.boundingBox, d || 0, x, y, z);
 
-    const nodeFileName = this._key.name() + this._ept.loader.extension();
-    if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-      const found = this._eptMetadata.signedFiles?.items.find(
-        file => file.fileName === nodeFileName || file.fileName.endsWith('/' + nodeFileName)
-      );
-      this._signedUrl = found?.signedUrl;
-    }
+    this._signedUrl = this.findBinarySignedUrlInPreload();
 
     this._dataLoader = modelDataProvider;
     this._modelIdentifier = modelIdentifier;
@@ -277,6 +271,15 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   async loadPoints(): Promise<void> {
     return this._ept.loader.load(this);
+  }
+
+  findBinarySignedUrlInPreload(): string | undefined {
+    if (!this._eptMetadata || !('signedFiles' in this._eptMetadata)) return undefined;
+    const nodeFileName = this._key.name() + this._ept.loader.extension();
+    const found = this._eptMetadata.signedFiles?.items.find(
+      file => file.fileName === nodeFileName || file.fileName.endsWith('/' + nodeFileName)
+    );
+    return found?.signedUrl;
   }
 
   async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {

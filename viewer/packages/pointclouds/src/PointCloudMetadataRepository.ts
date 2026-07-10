@@ -11,12 +11,14 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  SignedFileItem
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './potree-three-loader/loading/EptJson';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
+const ROOT_NODE_KEY = '0-0-0-0';
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataProvider: ModelDataProvider;
@@ -67,15 +69,49 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     if (this._modelDataProvider.getFileUrlsForModel === undefined) {
       throw new Error('Model data provider does not support signed file fetching');
     }
-    const items = await this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
-    const found = items.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
 
-    if (found === undefined) {
+    const rootHierarchyPath = `ept-hierarchy/${ROOT_NODE_KEY}.json`;
+    const eptItemsPromise = this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier, fileName);
+    const rootHierarchyItemsPromise = this._modelDataProvider.getFileUrlsForModel(
+      signedFilesBaseUrl,
+      modelIdentifier,
+      rootHierarchyPath
+    );
+
+    const signedFilesItems: SignedFileItem[] = [];
+    void this._modelDataProvider
+      .getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier)
+      .then(items => {
+        signedFilesItems.push(...items);
+      })
+      .catch(error => {
+        console.warn(
+          `[PointCloudMetadataRepository] Background preload of signed-files list failed; nodes will resolve signed URLs on demand via filter. ${(error as Error).message}`
+        );
+      });
+
+    const [eptItems, rootHierarchyItems] = await Promise.all([eptItemsPromise, rootHierarchyItemsPromise]);
+    const eptItem = eptItems.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+    if (eptItem === undefined) {
       throw new Error(`File "${fileName}" not found in signed files response`);
     }
-    const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
+    const rootHierarchyItem = rootHierarchyItems.find(
+      item => item.fileName === rootHierarchyPath || item.fileName.endsWith('/' + rootHierarchyPath)
+    );
+
+    // Warm the CachedModelDataProvider with the root hierarchy body in parallel with the
+    // ept.json body fetch, so root.loadHierarchy()'s `getJsonFile('', signedUrl)` hits
+    // cache and the root binary can start decoding without an extra round-trip.
+    const rootHierarchyWarmPromise: Promise<unknown> = rootHierarchyItem
+      ? this._modelDataProvider.getJsonFile('', rootHierarchyItem.signedUrl).catch(() => undefined)
+      : Promise.resolve(undefined);
+    const [fileData] = await Promise.all([
+      this._modelDataProvider.getJsonFile('', eptItem.signedUrl),
+      rootHierarchyWarmPromise
+    ]);
+
     return {
-      signedFiles: { items },
+      signedFiles: { items: signedFilesItems },
       fileData: fileData as MetadataWithSignedFiles<EptJson>['fileData']
     };
   }

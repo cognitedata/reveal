@@ -119,6 +119,35 @@ describe(CdfModelDataProvider.name, () => {
     );
   });
 
+  test('getBinaryFile() with signed URL decompresses a gzip body missing the Content-Encoding header', async () => {
+    const originalBinary = new Uint8Array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
+    const gzipped = new Uint8Array(await gzipEncode(String.fromCharCode(...originalBinary)));
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+        .mockResolvedValueOnce(new Response(gzipped, { status: 200 }))
+    );
+
+    const result = await clientExt.getBinaryFile('', 'https://signed.url/0-0-0-0.bin');
+
+    expect(new TextDecoder().decode(new Uint8Array(result))).toEqual(String.fromCharCode(...originalBinary));
+  });
+
+  test('getBinaryFile() with non-empty baseUrl (classic path) keeps returning raw bytes', async () => {
+    const rawBinary = new Uint8Array([0x1f, 0x8b, 0x03, 0x04, 0x05]);
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+        .mockResolvedValueOnce(new Response(rawBinary, { status: 200 }))
+    );
+
+    const result = await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
+
+    expect(new Uint8Array(result)).toEqual(rawBinary);
+  });
+
   test('getJsonFile() with signed URL parses JSON response without auth headers', async () => {
     const jsonData = { version: 9, sectors: [] };
     const fetchMock = vi

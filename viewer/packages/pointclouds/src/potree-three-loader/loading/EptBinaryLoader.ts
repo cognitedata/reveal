@@ -60,6 +60,13 @@ export class EptBinaryLoader implements ILoader {
     if (node.signedUrl) {
       return node.signedUrl;
     }
+    // Re-check the preloaded signed-files list in case it was populated in the background
+    // after node construction.
+    const preloadUrl = node.findBinarySignedUrlInPreload();
+    if (preloadUrl) {
+      node.signedUrl = preloadUrl;
+      return preloadUrl;
+    }
     if (!node.signedFilesBaseUrl || !this._dataLoader.getFileUrlsForModel) {
       return undefined;
     }
