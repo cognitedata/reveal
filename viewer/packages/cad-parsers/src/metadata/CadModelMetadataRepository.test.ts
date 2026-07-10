@@ -56,11 +56,10 @@ describe(CadModelMetadataRepository.name, () => {
       revisionSpace: 'my-space'
     });
 
-    const sceneJsonItem = { signedUrl: sceneJsonSignedUrl, fileName: 'scene.json', subPath: '' };
-    const sectorItem = { signedUrl: sectorSignedUrl, fileName: '0.glb', subPath: '' };
-    const getFileUrlsForModelMock = vi.fn(async (_baseUrl: string, _id: ModelIdentifier, fileNameFilter?: string) =>
-      fileNameFilter === 'scene.json' ? [sceneJsonItem] : [sceneJsonItem, sectorItem]
-    );
+    const getFileUrlsForModelMock = vi.fn(async (_baseUrl: string, _id: ModelIdentifier) => [
+      { signedUrl: sceneJsonSignedUrl, fileName: 'scene.json', subPath: '' },
+      { signedUrl: sectorSignedUrl, fileName: '0.glb', subPath: '' }
+    ]);
 
     const getJsonFileMock = vi.fn(async () => v9SceneSectorMetadata);
 
@@ -74,62 +73,8 @@ describe(CadModelMetadataRepository.name, () => {
     const repo = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
     const result = await repo.loadData(dmIdentifier);
 
-    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, 'scene.json');
     expect(getFileUrlsForModelMock).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier);
     expect(getJsonFileMock).toHaveBeenCalledWith('', sceneJsonSignedUrl);
-    expect(result.scene.root.signedUrl).toBe(sectorSignedUrl);
-  });
-
-  test('DM model requests scene.json via filter in parallel with the full signed-files list', async () => {
-    const signedFilesBaseUrl = 'https://api.cognitedata.com/api/v1/projects/myproj/3d/output/files';
-    const sectorSignedUrl = 'https://cdn.example.com/0_textured.glb';
-    const sceneJsonSignedUrl = 'https://cdn.example.com/scene.json';
-    const sceneJsonItem = { signedUrl: sceneJsonSignedUrl, fileName: 'scene.json', subPath: '' };
-    const sectorItem = { signedUrl: sectorSignedUrl, fileName: '0.glb', subPath: '' };
-
-    const dmIdentifier = new DMModelIdentifier({
-      modelId: 1,
-      revisionId: 1,
-      revisionExternalId: 'my-revision',
-      revisionSpace: 'my-space'
-    });
-
-    let releaseFilteredCall!: () => void;
-    let releaseFullCall!: () => void;
-    const filteredCallStarted = vi.fn();
-    const fullCallStarted = vi.fn();
-    const getFileUrlsForModelMock = vi.fn(async (_baseUrl: string, _id: ModelIdentifier, fileNameFilter?: string) => {
-      if (fileNameFilter === 'scene.json') {
-        filteredCallStarted();
-        await new Promise<void>(resolve => (releaseFilteredCall = resolve));
-        return [sceneJsonItem];
-      }
-      fullCallStarted();
-      await new Promise<void>(resolve => (releaseFullCall = resolve));
-      return [sceneJsonItem, sectorItem];
-    });
-
-    const mockedModelDataProvider = {
-      ...createMockedModelDataProvider(),
-      getFileUrlsForModel: getFileUrlsForModelMock,
-      getJsonFile: vi.fn(async () => v9SceneSectorMetadata)
-    };
-
-    const repo = new CadModelMetadataRepository(
-      createMockedMetadataProvider([v9BlobOutputMetadata], signedFilesBaseUrl),
-      mockedModelDataProvider
-    );
-    const loadPromise = repo.loadData(dmIdentifier);
-
-    // Yield to let both getFileUrlsForModel invocations register before either resolves.
-    await new Promise(resolve => setImmediate(resolve));
-    expect(filteredCallStarted).toHaveBeenCalledTimes(1);
-    expect(fullCallStarted).toHaveBeenCalledTimes(1);
-
-    releaseFilteredCall();
-    releaseFullCall();
-    const result = await loadPromise;
-
     expect(result.scene.root.signedUrl).toBe(sectorSignedUrl);
   });
 });
