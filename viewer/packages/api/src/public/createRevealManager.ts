@@ -33,7 +33,8 @@ import {
 } from '@reveal/data-providers';
 
 import type { CogniteClient } from '@cognite/sdk';
-import { BINARY_FILES_CACHE_NAME, DataFileCacheManager, type SceneHandler } from '@reveal/utilities';
+import type { SceneHandler } from '@reveal/utilities';
+import { BINARY_FILES_CACHE_NAME, DataFileCacheManager } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
 import type { IPointClassificationsProvider } from '@reveal/pointclouds';
 import { LocalPointClassificationsProvider, UrlPointClassificationsProvider } from '@reveal/pointclouds';
