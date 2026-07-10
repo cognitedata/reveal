@@ -79,10 +79,6 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     if (this._modelDataProvider.getFileUrlsForModel === undefined) {
       throw new Error('Model data provider does not support signed file fetching');
     }
-    // We know the exact scene.json name up front, so ask the backend to filter its response
-    // rather than paginating the entire signed-files list looking for it - which can be huge
-    // and delays the first render. The full unfiltered list is still needed downstream to
-    // resolve signed URLs for individual sector binaries, so we request it in parallel.
     const filteredSceneItemsPromise = this._modelDataProvider.getFileUrlsForModel(
       signedFilesBaseUrl,
       modelIdentifier,

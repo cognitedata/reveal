@@ -77,7 +77,7 @@ function createDMDataProvider(options: {
 }): ModelDataProvider {
   const filtered = options.filteredResponses ?? {};
   return {
-    getBinaryFile: vi.fn(),
+    getBinaryFile: vi.fn(async () => new ArrayBuffer(16)),
     getJsonFile: vi.fn(async () => minimalEptJson),
     getFileUrlsForModel: vi.fn(async (_baseUrl: string, _id: unknown, fileNameFilter?: string) => {
       if (fileNameFilter !== undefined) return filtered[fileNameFilter] ?? [];

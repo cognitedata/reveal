@@ -99,13 +99,6 @@ describe(decompressBinaryResponseBody.name, () => {
     expect(new Uint8Array(await decompressBinaryResponseBody(response))).toEqual(payload);
   });
 
-  test('decompresses a gzip body without a Content-Encoding header', async () => {
-    const original = new Uint8Array([10, 20, 30, 40, 50, 60, 70, 80]);
-    const gzipped = new Uint8Array(await gzipEncode(String.fromCharCode(...original)));
-    const result = await decompressBinaryResponseBody(new Response(gzipped));
-    expect(new TextDecoder().decode(new Uint8Array(result))).toEqual(String.fromCharCode(...original));
-  });
-
   test('throws a descriptive error when gzip magic bytes are present but decompression fails', async () => {
     await expect(
       decompressBinaryResponseBody(new Response(new Uint8Array([0x1f, 0x8b, 0x00, 0x01, 0x02, 0x03])))

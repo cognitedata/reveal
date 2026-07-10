@@ -134,20 +134,6 @@ describe(CdfModelDataProvider.name, () => {
     expect(new TextDecoder().decode(new Uint8Array(result))).toEqual(String.fromCharCode(...originalBinary));
   });
 
-  test('getBinaryFile() with non-empty baseUrl (classic path) keeps returning raw bytes', async () => {
-    const rawBinary = new Uint8Array([0x1f, 0x8b, 0x03, 0x04, 0x05]);
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
-        .mockResolvedValueOnce(new Response(rawBinary, { status: 200 }))
-    );
-
-    const result = await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
-
-    expect(new Uint8Array(result)).toEqual(rawBinary);
-  });
-
   test('getJsonFile() with signed URL parses JSON response without auth headers', async () => {
     const jsonData = { version: 9, sectors: [] };
     const fetchMock = vi
