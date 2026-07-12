@@ -9,8 +9,7 @@ import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './EptJson';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
-import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
-import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
+import { createMockModelDataProvider, mockDMModelIdentifier } from '../../../../../test-utilities';
 
 const eptJson: EptJson = {
   schema: [
@@ -53,7 +52,7 @@ describe(EptLoader.name, () => {
     const dataProvider = createMockModelDataProvider();
     const preloadedData: MetadataWithSignedFiles<EptJson> = {
       signedFiles: {
-        items: [{ fileName: '0-0-0-0.bin', signedUrl: 'https://cdn.example.com/0-0-0-0.bin', subPath: '' }]
+        items: [{ fileName: '0-0-0-0.bin', signedUrl: 'https://cognite.example.com/0-0-0-0.bin', subPath: '' }]
       },
       fileData: eptJson
     };
@@ -62,13 +61,13 @@ describe(EptLoader.name, () => {
       'https://signed.example.com',
       dataProvider,
       [],
-      dmIdentifier,
+      mockDMModelIdentifier,
       preloadedData
     );
 
     expect(dataProvider.getJsonFile).not.toHaveBeenCalled();
     expect(geometry.url).toBe('https://signed.example.com/');
-    expect(geometry.root?.signedUrl).toBe('https://cdn.example.com/0-0-0-0.bin');
+    expect(geometry.root?.signedUrl).toBe('https://cognite.example.com/0-0-0-0.bin');
     expect(geometry.root?.signedFilesBaseUrl).toBe('https://signed.example.com');
   });
 });

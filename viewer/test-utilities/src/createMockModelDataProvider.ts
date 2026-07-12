@@ -11,5 +11,5 @@ export function createMockModelDataProvider(overrides: Partial<ModelDataProvider
     getJsonFile: vi.fn(async () => ({})),
     getFileUrlsForModel: vi.fn(async () => []),
     ...overrides
-  } as ModelDataProvider;
+  };
 }

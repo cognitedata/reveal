@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import { DMModelIdentifier } from '../../packages/data-providers';
+import { CdfModelIdentifier, DMModelIdentifier } from '../../packages/data-providers';
 
 export const mockDMModelIdentifier = new DMModelIdentifier({
   modelId: 1,
@@ -10,3 +10,5 @@ export const mockDMModelIdentifier = new DMModelIdentifier({
   revisionExternalId: 'ext-id',
   revisionSpace: 'my-space'
 });
+
+export const mockClassicModelIdentifier = new CdfModelIdentifier(3, 4);
