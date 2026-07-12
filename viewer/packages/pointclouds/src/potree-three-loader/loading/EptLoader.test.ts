@@ -9,8 +9,7 @@ import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './EptJson';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
-import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
-import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
+import { createMockModelDataProvider, mockDMModelIdentifier } from '../../../../../test-utilities';
 
 const eptJson: EptJson = {
   schema: [
@@ -62,7 +61,7 @@ describe(EptLoader.name, () => {
       'https://signed.example.com',
       dataProvider,
       [],
-      dmIdentifier,
+      mockDMModelIdentifier,
       preloadedData
     );
 
