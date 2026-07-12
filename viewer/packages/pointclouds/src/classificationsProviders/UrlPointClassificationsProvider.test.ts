@@ -9,7 +9,7 @@ import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers'
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
 import { createMockModelDataProvider } from '../../../../test-utilities/src/createMockModelDataProvider';
-import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities/src/mockModelIdentifiers';
+import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities';
 
 const classificationData = { classificationSets: [{ name: 'Default', classes: [] }] };
 const classificationSignedUrl = 'https://cdn.example.com/classificationSets.json';
