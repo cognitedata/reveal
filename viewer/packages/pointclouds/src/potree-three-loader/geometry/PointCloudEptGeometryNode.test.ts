@@ -8,9 +8,11 @@ import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from '../loading/EptJson';
-import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
-import { createMockEptGeometry as createMockEpt } from '../../../../../test-utilities/src/createMockEptGeometry';
-import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
+import {
+  createMockEptGeometry,
+  createMockModelDataProvider,
+  mockDMModelIdentifier
+} from '../../../../../test-utilities';
 
 function makeMetadata(items: { fileName: string; signedUrl: string }[]): MetadataWithSignedFiles<EptJson> {
   return {
@@ -21,45 +23,40 @@ function makeMetadata(items: { fileName: string; signedUrl: string }[]): Metadat
 
 describe(PointCloudEptGeometryNode.name, () => {
   describe('constructor — signedUrl resolution from eptMetadata', () => {
-    test('resolves signedUrl by exact match, subPath match, missing, and no metadata', () => {
-      const exactUrl = 'https://cdn.example.com/0-0-0-0.bin';
-      const subPathUrl = 'https://cdn.example.com/sub/0-0-0-0.bin';
+    const exactUrl = 'https://cdn.example.com/0-0-0-0.bin';
+    const subPathUrl = 'https://cdn.example.com/sub/0-0-0-0.bin';
 
-      const nodeExact = new PointCloudEptGeometryNode(
-        createMockEpt(),
-        createMockModelDataProvider(),
-        dmIdentifier,
+    test.each<
+      [string, MetadataWithSignedFiles<EptJson> | { fileData: EptJson }, string | undefined, string | undefined]
+    >([
+      [
+        'exact match',
         makeMetadata([{ fileName: '0-0-0-0.bin', signedUrl: exactUrl }]),
-        'https://signed.example.com'
-      );
-      expect(nodeExact.signedUrl).toBe(exactUrl);
-
-      const nodeSubPath = new PointCloudEptGeometryNode(
-        createMockEpt(),
-        createMockModelDataProvider(),
-        dmIdentifier,
+        'https://signed.example.com',
+        exactUrl
+      ],
+      [
+        'subPath match',
         makeMetadata([{ fileName: 'sub/0-0-0-0.bin', signedUrl: subPathUrl }]),
-        'https://signed.example.com'
-      );
-      expect(nodeSubPath.signedUrl).toBe(subPathUrl);
-
-      const nodeMissing = new PointCloudEptGeometryNode(
-        createMockEpt(),
-        createMockModelDataProvider(),
-        dmIdentifier,
+        'https://signed.example.com',
+        subPathUrl
+      ],
+      [
+        'missing from signed files',
         makeMetadata([{ fileName: 'other.bin', signedUrl: 'https://cdn.example.com/other.bin' }]),
-        'https://signed.example.com'
-      );
-      expect(nodeMissing.signedUrl).toBeUndefined();
-
-      const nodeNoMetadata = new PointCloudEptGeometryNode(
-        createMockEpt(),
-        createMockModelDataProvider(),
-        dmIdentifier,
-        { fileData: {} as Partial<EptJson> as EptJson },
+        'https://signed.example.com',
         undefined
+      ],
+      ['no metadata', { fileData: {} as Partial<EptJson> as EptJson }, undefined, undefined]
+    ])('resolves signedUrl by %s', (_, eptMetadata, signedFilesBaseUrl, expectedUrl) => {
+      const node = new PointCloudEptGeometryNode(
+        createMockEptGeometry(),
+        createMockModelDataProvider(),
+        mockDMModelIdentifier,
+        eptMetadata,
+        signedFilesBaseUrl
       );
-      expect(nodeNoMetadata.signedUrl).toBeUndefined();
+      expect(node.signedUrl).toBe(expectedUrl);
     });
   });
 
@@ -73,9 +70,9 @@ describe(PointCloudEptGeometryNode.name, () => {
         getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const nodeHit = new PointCloudEptGeometryNode(
-        createMockEpt(),
+        createMockEptGeometry(),
         dataProviderHit,
-        dmIdentifier,
+        mockDMModelIdentifier,
         makeMetadata([{ fileName: filePath, signedUrl: hierarchySignedUrl }]),
         signedFilesBaseUrl
       );
@@ -89,14 +86,18 @@ describe(PointCloudEptGeometryNode.name, () => {
         getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const nodeMiss = new PointCloudEptGeometryNode(
-        createMockEpt(),
+        createMockEptGeometry(),
         dataProviderMiss,
-        dmIdentifier,
+        mockDMModelIdentifier,
         makeMetadata([]),
         signedFilesBaseUrl
       );
       await nodeMiss.getHierarchy('0-0-0-0.json');
-      expect(dataProviderMiss.getFileUrlsForModel).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, filePath);
+      expect(dataProviderMiss.getFileUrlsForModel).toHaveBeenCalledWith(
+        signedFilesBaseUrl,
+        mockDMModelIdentifier,
+        filePath
+      );
       expect(dataProviderMiss.getJsonFile).toHaveBeenCalledWith('', hierarchySignedUrl);
     });
 
@@ -105,7 +106,7 @@ describe(PointCloudEptGeometryNode.name, () => {
         getJsonFile: vi.fn(async () => ({})) as ModelDataProvider['getJsonFile']
       });
       const node = new PointCloudEptGeometryNode(
-        createMockEpt(),
+        createMockEptGeometry(),
         dataProvider,
         new CdfModelIdentifier(10, 20),
         { fileData: {} as Partial<EptJson> as EptJson },
@@ -126,9 +127,9 @@ describe(PointCloudEptGeometryNode.name, () => {
       ]
     ])('DM model on cache miss throws when %s', async (_, override, expectedMessage) => {
       const node = new PointCloudEptGeometryNode(
-        createMockEpt(),
+        createMockEptGeometry(),
         createMockModelDataProvider(override),
-        dmIdentifier,
+        mockDMModelIdentifier,
         makeMetadata([]),
         'https://signed.example.com'
       );
@@ -144,7 +145,7 @@ describe(PointCloudEptGeometryNode.name, () => {
         getJsonFile: vi.fn(async () => hierarchy) as ModelDataProvider['getJsonFile']
       });
       const node = new PointCloudEptGeometryNode(
-        createMockEpt(),
+        createMockEptGeometry(),
         dataProvider,
         new CdfModelIdentifier(10, 20),
         { fileData: {} as Partial<EptJson> as EptJson },

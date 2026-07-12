@@ -57,6 +57,28 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   static IDCount: number = 0;
 
+  private static readonly _signedFilesCache = new WeakMap<object, Map<string, string>>();
+
+  private static getSignedUrlMap(
+    metadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson }
+  ): Map<string, string> {
+    let cache = PointCloudEptGeometryNode._signedFilesCache.get(metadata);
+    if (cache === undefined) {
+      cache = new Map<string, string>();
+      if ('signedFiles' in metadata && metadata.signedFiles?.items) {
+        for (const item of metadata.signedFiles.items) {
+          cache.set(item.fileName, item.signedUrl);
+          const lastSlash = item.fileName.lastIndexOf('/');
+          if (lastSlash !== -1) {
+            cache.set(item.fileName.substring(lastSlash + 1), item.signedUrl);
+          }
+        }
+      }
+      PointCloudEptGeometryNode._signedFilesCache.set(metadata, cache);
+    }
+    return cache;
+  }
+
   get id(): number {
     return this._id;
   }
@@ -164,10 +186,8 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
     const nodeFileName = this._key.name() + this._ept.loader.extension();
     if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-      const found = this._eptMetadata.signedFiles?.items.find(
-        file => file.fileName === nodeFileName || file.fileName.endsWith('/' + nodeFileName)
-      );
-      this._signedUrl = found?.signedUrl;
+      const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
+      this._signedUrl = map.get(nodeFileName);
     }
 
     this._dataLoader = modelDataProvider;
@@ -284,11 +304,10 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       const filePath = `ept-hierarchy/${fileName}`;
 
       if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-        const fileItem = this._eptMetadata.signedFiles?.items.find(
-          item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
-        );
-        if (fileItem) {
-          const data = await this._dataLoader.getJsonFile('', fileItem.signedUrl);
+        const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
+        const signedUrl = map.get(filePath) ?? map.get(fileName);
+        if (signedUrl) {
+          const data = await this._dataLoader.getJsonFile('', signedUrl);
           return data as { [key: string]: number };
         }
       }

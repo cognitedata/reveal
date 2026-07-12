@@ -12,9 +12,9 @@ import { MAX_NUM_NODES_LOADING } from '@reveal/rendering';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from './loading/EptJson';
 import { createMockEptGeometry } from '../../../../test-utilities/src/createMockEptGeometry';
-import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities/src/mockModelIdentifiers';
 
 import { It, Mock } from 'moq.ts';
+import { mockDMModelIdentifier } from '../../../../test-utilities';
 
 const mockModelDataProvider = new Mock<ModelDataProvider>().object();
 const mockMaterialManager = new Mock<PointCloudMaterialManager>()
@@ -22,10 +22,14 @@ const mockMaterialManager = new Mock<PointCloudMaterialManager>()
   .returns(new Mock<PointCloudMaterial>().object())
   .object();
 
-const preloadedEptData: MetadataWithSignedFiles<EptJson> = {
-  signedFiles: { items: [] },
-  fileData: {} as Partial<EptJson> as EptJson
-};
+const mockFileData = new Mock<EptJson>().object();
+
+const mockPreloadedEptData = new Mock<MetadataWithSignedFiles<EptJson>>()
+  .setup(p => p.fileData)
+  .returns(mockFileData)
+  .setup(p => p.signedFiles)
+  .returns({ items: [] })
+  .object();
 
 describe(Potree.name, () => {
   afterEach(() => {
@@ -66,9 +70,9 @@ describe(Potree.name, () => {
   });
 
   test.each<[string, ModelIdentifier, MetadataWithSignedFiles<EptJson> | undefined, 'load' | 'dmsLoad']>([
-    ['DM model with preloaded data uses dmsLoad', dmIdentifier, preloadedEptData, 'dmsLoad'],
-    ['DM model without preloaded data uses load', dmIdentifier, undefined, 'load'],
-    ['classic model with preloaded data still uses load', new CdfModelIdentifier(10, 20), preloadedEptData, 'load']
+    ['DM model with preloaded data uses dmsLoad', mockDMModelIdentifier, mockPreloadedEptData, 'dmsLoad'],
+    ['DM model without preloaded data uses load', mockDMModelIdentifier, undefined, 'load'],
+    ['classic model with preloaded data still uses load', new CdfModelIdentifier(10, 20), mockPreloadedEptData, 'load']
   ])('loadPointCloud(): %s', async (_, modelIdentifier, data, expectedMethod) => {
     const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
     const geometry = createMockEptGeometry();

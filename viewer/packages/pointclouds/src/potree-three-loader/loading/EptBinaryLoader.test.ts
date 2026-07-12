@@ -8,9 +8,11 @@ import type { EptJson } from './EptJson';
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import { createMockModelDataProvider } from '../../../../../test-utilities/src/createMockModelDataProvider';
-import { createMockEptGeometry } from '../../../../../test-utilities/src/createMockEptGeometry';
-import { mockDMModelIdentifier as dmIdentifier } from '../../../../../test-utilities/src/mockModelIdentifiers';
+import {
+  createMockEptGeometry,
+  createMockModelDataProvider,
+  mockDMModelIdentifier
+} from '../../../../../test-utilities';
 
 const EPT_URL = 'https://example.com/';
 
@@ -38,31 +40,29 @@ function createMockNode(options: {
 }
 
 describe(EptBinaryLoader.name, () => {
-  test('DM model with signedUrl calls getBinaryFile with empty baseUrl; classic model and DM without signedUrl call getBinaryFile with baseUrl', async () => {
-    const signedUrl = 'https://cdn.example.com/0-0-0-0.bin';
+  const BASE_URL = 'https://example.com/ept-data';
+  const SIGNED_URL = 'https://cdn.example.com/0-0-0-0.bin';
+
+  test.each<[string, Parameters<typeof createMockNode>[0], [string, string]]>([
+    ['DM model with signedUrl', { modelIdentifier: mockDMModelIdentifier, signedUrl: SIGNED_URL }, ['', SIGNED_URL]],
+    [
+      'classic model without signedUrl',
+      { modelIdentifier: new CdfModelIdentifier(10, 20), nodeFileName: '1-1-0-0' },
+      [BASE_URL, '1-1-0-0.bin']
+    ],
+    [
+      'DM model without signedUrl',
+      { modelIdentifier: mockDMModelIdentifier, nodeFileName: '2-2-0-0' },
+      [BASE_URL, '2-2-0-0.bin']
+    ]
+  ])('%s calls getBinaryFile with the expected base URL and file name', async (_, nodeOptions, expectedArgs) => {
     const getBinaryFileMock = vi.fn<ModelDataProvider['getBinaryFile']>(async () => new ArrayBuffer(16));
     const dataProvider = createMockModelDataProvider({ getBinaryFile: getBinaryFileMock });
     const loader = new EptBinaryLoader(dataProvider, []);
 
-    await loader.getBinaryFile(createMockNode({ modelIdentifier: dmIdentifier, signedUrl }));
-    expect(getBinaryFileMock).toHaveBeenCalledWith('', signedUrl);
+    await loader.getBinaryFile(createMockNode(nodeOptions));
 
-    vi.clearAllMocks();
-
-    await loader.getBinaryFile(
-      createMockNode({
-        modelIdentifier: new CdfModelIdentifier(10, 20),
-        nodeFileName: '1-1-0-0'
-      })
-    );
-    expect(getBinaryFileMock).toHaveBeenCalledWith('https://example.com/ept-data', '1-1-0-0.bin');
-
-    vi.clearAllMocks();
-
-    await loader.getBinaryFile(
-      createMockNode({ modelIdentifier: dmIdentifier, signedUrl: undefined, nodeFileName: '0-0-0-0' })
-    );
-    expect(getBinaryFileMock).toHaveBeenCalledWith(expect.any(String), '0-0-0-0.bin');
+    expect(getBinaryFileMock).toHaveBeenCalledWith(...expectedArgs);
   });
 
   test('DM model without cached signedUrl resolves it via getFileUrlsForModel, and caches it on the node', async () => {
@@ -77,11 +77,19 @@ describe(EptBinaryLoader.name, () => {
       getBinaryFile: getBinaryFileMock
     });
     const loader = new EptBinaryLoader(dataProvider, []);
-    const node = createMockNode({ modelIdentifier: dmIdentifier, signedFilesBaseUrl, nodeFileName: '0-0-0-0' });
+    const node = createMockNode({
+      modelIdentifier: mockDMModelIdentifier,
+      signedFilesBaseUrl,
+      nodeFileName: '0-0-0-0'
+    });
 
     await loader.getBinaryFile(node);
 
-    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(signedFilesBaseUrl, dmIdentifier, 'ept-data/0-0-0-0.bin');
+    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(
+      signedFilesBaseUrl,
+      mockDMModelIdentifier,
+      'ept-data/0-0-0-0.bin'
+    );
     expect(getBinaryFileMock).toHaveBeenCalledWith('', resolvedSignedUrl);
     expect(node.signedUrl).toBe(resolvedSignedUrl);
   });
@@ -94,7 +102,7 @@ describe(EptBinaryLoader.name, () => {
     });
     const loader = new EptBinaryLoader(dataProvider, []);
     const node = createMockNode({
-      modelIdentifier: dmIdentifier,
+      modelIdentifier: mockDMModelIdentifier,
       signedFilesBaseUrl: 'https://signed.example.com',
       nodeFileName: '0-0-0-0'
     });
