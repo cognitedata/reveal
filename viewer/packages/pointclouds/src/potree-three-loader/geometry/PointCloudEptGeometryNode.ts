@@ -57,26 +57,29 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   static IDCount: number = 0;
 
-  private static readonly _signedFilesCache = new WeakMap<object, Map<string, string>>();
+  private static readonly _signedFilesCache = new WeakMap<object, { length: number; map: Map<string, string> }>();
 
   private static getSignedUrlMap(
     metadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson }
   ): Map<string, string> {
-    let cache = PointCloudEptGeometryNode._signedFilesCache.get(metadata);
-    if (cache === undefined) {
-      cache = new Map<string, string>();
-      if ('signedFiles' in metadata && metadata.signedFiles?.items) {
-        for (const item of metadata.signedFiles.items) {
-          cache.set(item.fileName, item.signedUrl);
-          const lastSlash = item.fileName.lastIndexOf('/');
-          if (lastSlash !== -1) {
-            cache.set(item.fileName.substring(lastSlash + 1), item.signedUrl);
-          }
+    const items = 'signedFiles' in metadata ? metadata.signedFiles?.items : undefined;
+    const currentLength = items?.length ?? 0;
+    const cached = PointCloudEptGeometryNode._signedFilesCache.get(metadata);
+    if (cached !== undefined && cached.length === currentLength) {
+      return cached.map;
+    }
+    const map = new Map<string, string>();
+    if (items !== undefined) {
+      for (const item of items) {
+        map.set(item.fileName, item.signedUrl);
+        const lastSlash = item.fileName.lastIndexOf('/');
+        if (lastSlash !== -1) {
+          map.set(item.fileName.substring(lastSlash + 1), item.signedUrl);
         }
       }
-      PointCloudEptGeometryNode._signedFilesCache.set(metadata, cache);
     }
-    return cache;
+    PointCloudEptGeometryNode._signedFilesCache.set(metadata, { length: currentLength, map });
+    return map;
   }
 
   get id(): number {

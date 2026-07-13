@@ -44,7 +44,7 @@ describe(parseJsonResponseBody.name, () => {
     ],
     ['plain JSON with leading whitespace', new Response('\n  ' + JSON.stringify(data))]
   ])('parses %s without invoking DecompressionStream', async (_label, response) => {
-    const tracker = { formats: [] as string[] };
+    const tracker = { formats: [] };
     stubDecompressionStream({ kind: 'throw' }, tracker);
     expect(await parseJsonResponseBody(response)).toEqual(data);
     expect(tracker.formats).toEqual([]);
@@ -55,7 +55,7 @@ describe(parseJsonResponseBody.name, () => {
   });
 
   test('routes non-JSON, non-gzip bodies through the brotli decoder even when input starts with a JSON structural byte', async () => {
-    const tracker = { formats: [] as string[] };
+    const tracker = { formats: [] };
     stubDecompressionStream({ kind: 'emit', chunks: [new TextEncoder().encode(JSON.stringify(data))] }, tracker);
     const result = await parseJsonResponseBody(new Response(new Uint8Array([0x5b, 0xde, 0xad, 0xbe, 0xef])));
     expect(tracker.formats).toEqual(['br']);
