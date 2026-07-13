@@ -318,7 +318,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
         }
       }
 
-      if (!this._dataLoader.getFileUrlsForModel) {
+      if (this._dataLoader.getFileUrlsForModel === undefined) {
         throw new Error('Model data provider does not support signed file fetching');
       }
       const items = await this._dataLoader.getFileUrlsForModel(
@@ -329,15 +329,13 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       const found = items.find(
         item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
       );
-      if (!found) {
+      if (found === undefined) {
         throw new Error(`File "${filePath}" not found in signed files response`);
       }
-      const data = await this._dataLoader.getJsonFile('', found.signedUrl);
-      return data as { [key: string]: number };
+      return this._dataLoader.getJsonFile('', found.signedUrl);
     } else {
       const baseUrl = `${this.ept.url}ept-hierarchy`;
-      const result = await this._dataLoader.getJsonFile(baseUrl, fileName);
-      return result as { [key: string]: number };
+      return this._dataLoader.getJsonFile(baseUrl, fileName);
     }
   }
 
