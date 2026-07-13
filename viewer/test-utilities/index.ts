@@ -26,3 +26,7 @@ export { createRandomBox } from './src/createBoxes';
 export type { Mutable } from './src/reflection';
 export { mockViewer, mockViewerComponents, fakeGetBoundingClientRect } from './src/viewerMock';
 export { autoMockWebGLRenderer } from './src/autoMockWebGLRenderer';
+
+export { createMockModelDataProvider } from './src/createMockModelDataProvider';
+export { mockDMModelIdentifier, mockClassicModelIdentifier } from './src/createMockModelIdentifiers';
+export { createMockEptGeometry } from './src/createMockEptGeometry';

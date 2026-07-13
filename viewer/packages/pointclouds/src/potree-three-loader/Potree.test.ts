@@ -2,17 +2,40 @@
  * Copyright 2022 Cognite AS
  */
 
+import { vi } from 'vitest';
 import { Potree } from './Potree';
-import type { ModelDataProvider } from '@reveal/data-providers';
-import type { PointCloudMaterialManager } from '@reveal/rendering';
+import { EptLoader } from './loading/EptLoader';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { CdfModelIdentifier } from '@reveal/data-providers';
+import type { PointCloudMaterial, PointCloudMaterialManager } from '@reveal/rendering';
 import { MAX_NUM_NODES_LOADING } from '@reveal/rendering';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { EptJson } from './loading/EptJson';
+import { createMockEptGeometry } from '../../../../test-utilities/src/createMockEptGeometry';
 
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
+import { mockDMModelIdentifier } from '../../../../test-utilities';
 
 const mockModelDataProvider = new Mock<ModelDataProvider>().object();
-const mockMaterialManager = new Mock<PointCloudMaterialManager>().object();
+const mockMaterialManager = new Mock<PointCloudMaterialManager>()
+  .setup(p => p.getModelMaterial(It.IsAny()))
+  .returns(new Mock<PointCloudMaterial>().object())
+  .object();
+
+const mockFileData = new Mock<EptJson>().object();
+
+const mockPreloadedEptData = new Mock<MetadataWithSignedFiles<EptJson>>()
+  .setup(p => p.fileData)
+  .returns(mockFileData)
+  .setup(p => p.signedFiles)
+  .returns({ items: [] })
+  .object();
 
 describe(Potree.name, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test('Setting and getting point budget works', () => {
     const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
 
@@ -44,5 +67,30 @@ describe(Potree.name, () => {
     potreeInstance.pointBudget = newBudget;
 
     expect(potreeInstance.lru.pointBudget).toBe(newBudget);
+  });
+
+  test.each<[string, ModelIdentifier, MetadataWithSignedFiles<EptJson> | undefined, 'load' | 'dmsLoad']>([
+    ['DM model with preloaded data uses dmsLoad', mockDMModelIdentifier, mockPreloadedEptData, 'dmsLoad'],
+    ['DM model without preloaded data uses load', mockDMModelIdentifier, undefined, 'load'],
+    ['classic model with preloaded data still uses load', new CdfModelIdentifier(10, 20), mockPreloadedEptData, 'load']
+  ])('loadPointCloud(): %s', async (_, modelIdentifier, data, expectedMethod) => {
+    const potreeInstance = new Potree(mockModelDataProvider, mockMaterialManager);
+    const geometry = createMockEptGeometry();
+    const loadSpy = vi.spyOn(EptLoader, 'load').mockResolvedValue(geometry);
+    const dmsLoadSpy = vi.spyOn(EptLoader, 'dmsLoad').mockResolvedValue(geometry);
+
+    const octree = await potreeInstance.loadPointCloud(
+      'https://base',
+      'ept.json',
+      [],
+      modelIdentifier,
+      'https://signed',
+      data
+    );
+
+    const [usedSpy, unusedSpy] = expectedMethod === 'dmsLoad' ? [dmsLoadSpy, loadSpy] : [loadSpy, dmsLoadSpy];
+    expect(usedSpy).toHaveBeenCalledTimes(1);
+    expect(unusedSpy).not.toHaveBeenCalled();
+    expect(octree.pcoGeometry).toBe(geometry);
   });
 });

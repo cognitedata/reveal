@@ -17,19 +17,26 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import type { ModelDataProvider } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;
   private readonly _ept: PointCloudEptGeometry;
+  private readonly _eptMetadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson };
   private readonly _key: EptKey;
 
   private readonly _dataLoader: ModelDataProvider;
-
+  private readonly _modelIdentifier: ModelIdentifier;
   private readonly _boundingBox: Box3;
 
   private readonly _boundingSphere: Sphere;
   private readonly _spacing: number;
+
+  private _signedUrl: string | undefined;
+  private readonly _signedFilesBaseUrl: string | undefined;
   private _level: number;
   private _numPoints: number;
 
@@ -50,6 +57,28 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   static IDCount: number = 0;
 
+  private static readonly _signedFilesCache = new WeakMap<object, Map<string, string>>();
+
+  private static getSignedUrlMap(
+    metadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson }
+  ): Map<string, string> {
+    let cache = PointCloudEptGeometryNode._signedFilesCache.get(metadata);
+    if (cache === undefined) {
+      cache = new Map<string, string>();
+      if ('signedFiles' in metadata && metadata.signedFiles?.items) {
+        for (const item of metadata.signedFiles.items) {
+          cache.set(item.fileName, item.signedUrl);
+          const lastSlash = item.fileName.lastIndexOf('/');
+          if (lastSlash !== -1) {
+            cache.set(item.fileName.substring(lastSlash + 1), item.signedUrl);
+          }
+        }
+      }
+      PointCloudEptGeometryNode._signedFilesCache.set(metadata, cache);
+    }
+    return cache;
+  }
+
   get id(): number {
     return this._id;
   }
@@ -64,6 +93,22 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   get spacing(): number {
     return this._spacing;
+  }
+
+  get signedUrl(): string | undefined {
+    return this._signedUrl;
+  }
+
+  set signedUrl(signedUrl: string | undefined) {
+    this._signedUrl = signedUrl;
+  }
+
+  get signedFilesBaseUrl(): string | undefined {
+    return this._signedFilesBaseUrl;
+  }
+
+  get modelIdentifier(): ModelIdentifier {
+    return this._modelIdentifier;
   }
 
   get boundingBox(): Box3 {
@@ -126,6 +171,9 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   constructor(
     ept: PointCloudEptGeometry,
     modelDataProvider: ModelDataProvider,
+    modelIdentifier: ModelIdentifier,
+    eptMetadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson },
+    signedFilesBaseUrl: string | undefined,
     b?: Box3,
     d?: number,
     x?: number,
@@ -133,9 +181,18 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     z?: number
   ) {
     this._ept = ept;
+    this._eptMetadata = eptMetadata;
     this._key = new EptKey(this._ept, b || this._ept.boundingBox, d || 0, x, y, z);
 
+    const nodeFileName = this._key.name() + this._ept.loader.extension();
+    if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
+      const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
+      this._signedUrl = map.get(nodeFileName);
+    }
+
     this._dataLoader = modelDataProvider;
+    this._modelIdentifier = modelIdentifier;
+    this._signedFilesBaseUrl = signedFilesBaseUrl;
 
     this._isLeafNode = false;
 
@@ -242,14 +299,49 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._ept.loader.load(this);
   }
 
+  async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
+    if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
+      const filePath = `ept-hierarchy/${fileName}`;
+
+      if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
+        const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
+        const signedUrl = map.get(filePath) ?? map.get(fileName);
+        if (signedUrl) {
+          const data = await this._dataLoader.getJsonFile('', signedUrl);
+          return data as { [key: string]: number };
+        }
+      }
+
+      if (!this._dataLoader.getFileUrlsForModel) {
+        throw new Error('Model data provider does not support signed file fetching');
+      }
+      const items = await this._dataLoader.getFileUrlsForModel(
+        this.signedFilesBaseUrl,
+        this._modelIdentifier,
+        filePath
+      );
+      const found = items.find(
+        item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
+      );
+      if (!found) {
+        throw new Error(`File "${filePath}" not found in signed files response`);
+      }
+      const data = await this._dataLoader.getJsonFile('', found.signedUrl);
+      return data as { [key: string]: number };
+    } else {
+      const baseUrl = `${this.ept.url}ept-hierarchy`;
+      const result = await this._dataLoader.getJsonFile(baseUrl, fileName);
+      return result as { [key: string]: number };
+    }
+  }
+
   async loadHierarchy(): Promise<void> {
     const nodes: { [key: string]: PointCloudEptGeometryNode } = {};
     nodes[this.fileName()] = this;
 
-    const baseUrl = `${this.ept.url}ept-hierarchy`;
     const fileName = `${this.fileName()}.json`;
 
-    const hier = await this._dataLoader.getJsonFile(baseUrl, fileName);
+    const hier = await this.getHierarchy(fileName);
 
     // Since we want to traverse top-down, and 10 comes
     // lexicographically before 9 (for example), do a deep sort.
@@ -279,7 +371,18 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
       const key = parentNode.key.step(a, b, c);
 
-      const node = new PointCloudEptGeometryNode(this.ept, this._dataLoader, key.b, key.d, key.x, key.y, key.z);
+      const node = new PointCloudEptGeometryNode(
+        this.ept,
+        this._dataLoader,
+        this._modelIdentifier,
+        this._eptMetadata,
+        this._signedFilesBaseUrl,
+        key.b,
+        key.d,
+        key.x,
+        key.y,
+        key.z
+      );
 
       node._level = d;
       node._numPoints = hier[v];

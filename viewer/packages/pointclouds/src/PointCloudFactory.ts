@@ -74,7 +74,7 @@ export class PointCloudFactory {
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       stylableObject,
-      modelIdentifier.revealInternalId
+      modelIdentifier
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;

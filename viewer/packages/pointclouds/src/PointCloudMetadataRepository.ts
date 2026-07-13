@@ -76,7 +76,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const fileData = await this._modelDataProvider.getJsonFile('', found.signedUrl);
     return {
       signedFiles: { items },
-      fileData: fileData as MetadataWithSignedFiles<EptJson>['fileData']
+      fileData: fileData as EptJson
     };
   }
 
@@ -84,10 +84,10 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     baseUrl: string,
     fileName: string
   ): Promise<MetadataWithSignedFiles<EptJson>> {
-    const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    const fileData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
       signedFiles: { items: [] },
-      fileData: jsonData as EptJson
+      fileData: fileData as EptJson
     };
   }
 

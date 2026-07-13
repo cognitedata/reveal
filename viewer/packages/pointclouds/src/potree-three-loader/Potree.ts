@@ -20,9 +20,13 @@ import type { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
 import type { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
-import type { ModelDataProvider, StylableObject } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import { throttle } from 'lodash-es';
 import { createVisibilityTextureData } from './utils/utils';
+import type { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
+import type { EptJson } from './loading/EptJson';
 
 const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view
 
@@ -94,10 +98,27 @@ export class Potree implements IPotree {
     baseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
-    modelIdentifier: symbol
+    modelIdentifier: ModelIdentifier,
+    signedFilesBaseUrl?: string,
+    preloadedEptData?: MetadataWithSignedFiles<EptJson>
   ): Promise<PointCloudOctree> {
-    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObject);
-    return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
+    let geometry: PointCloudEptGeometry;
+    if (modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl && preloadedEptData) {
+      geometry = await EptLoader.dmsLoad(
+        signedFilesBaseUrl,
+        this._modelDataProvider,
+        stylableObject,
+        modelIdentifier,
+        preloadedEptData
+      );
+    } else {
+      geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, modelIdentifier, stylableObject);
+    }
+    return new PointCloudOctree(
+      this,
+      geometry,
+      this._materialManager.getModelMaterial(modelIdentifier.revealInternalId)
+    );
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {
