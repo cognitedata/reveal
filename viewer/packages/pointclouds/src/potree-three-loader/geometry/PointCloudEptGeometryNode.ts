@@ -57,26 +57,29 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   static IDCount: number = 0;
 
-  private static readonly _signedFilesCache = new WeakMap<object, Map<string, string>>();
+  private static readonly _signedFilesCache = new WeakMap<object, { length: number; map: Map<string, string> }>();
 
   private static getSignedUrlMap(
     metadata: MetadataWithSignedFiles<EptJson> | { fileData: EptJson }
   ): Map<string, string> {
-    let cache = PointCloudEptGeometryNode._signedFilesCache.get(metadata);
-    if (cache === undefined) {
-      cache = new Map<string, string>();
-      if ('signedFiles' in metadata && metadata.signedFiles?.items) {
-        for (const item of metadata.signedFiles.items) {
-          cache.set(item.fileName, item.signedUrl);
-          const lastSlash = item.fileName.lastIndexOf('/');
-          if (lastSlash !== -1) {
-            cache.set(item.fileName.substring(lastSlash + 1), item.signedUrl);
-          }
+    const items = 'signedFiles' in metadata ? metadata.signedFiles?.items : undefined;
+    const currentLength = items?.length ?? 0;
+    const cached = PointCloudEptGeometryNode._signedFilesCache.get(metadata);
+    if (cached !== undefined && cached.length === currentLength) {
+      return cached.map;
+    }
+    const map = new Map<string, string>();
+    if (items !== undefined) {
+      for (const item of items) {
+        map.set(item.fileName, item.signedUrl);
+        const lastSlash = item.fileName.lastIndexOf('/');
+        if (lastSlash !== -1) {
+          map.set(item.fileName.substring(lastSlash + 1), item.signedUrl);
         }
       }
-      PointCloudEptGeometryNode._signedFilesCache.set(metadata, cache);
     }
-    return cache;
+    PointCloudEptGeometryNode._signedFilesCache.set(metadata, { length: currentLength, map });
+    return map;
   }
 
   get id(): number {
@@ -184,11 +187,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._eptMetadata = eptMetadata;
     this._key = new EptKey(this._ept, b || this._ept.boundingBox, d || 0, x, y, z);
 
-    const nodeFileName = this._key.name() + this._ept.loader.extension();
-    if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-      const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
-      this._signedUrl = map.get(nodeFileName);
-    }
+    this._signedUrl = this.findBinarySignedUrlInPreload();
 
     this._dataLoader = modelDataProvider;
     this._modelIdentifier = modelIdentifier;
@@ -299,6 +298,13 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._ept.loader.load(this);
   }
 
+  findBinarySignedUrlInPreload(): string | undefined {
+    if (this._eptMetadata === undefined || 'signedFiles' in this._eptMetadata === false) return undefined;
+    const nodeFileName = this._key.name() + this._ept.loader.extension();
+    const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
+    return map.get(nodeFileName);
+  }
+
   async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
     if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
       const filePath = `ept-hierarchy/${fileName}`;
@@ -312,7 +318,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
         }
       }
 
-      if (!this._dataLoader.getFileUrlsForModel) {
+      if (this._dataLoader.getFileUrlsForModel === undefined) {
         throw new Error('Model data provider does not support signed file fetching');
       }
       const items = await this._dataLoader.getFileUrlsForModel(
@@ -323,15 +329,13 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       const found = items.find(
         item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
       );
-      if (!found) {
+      if (found === undefined) {
         throw new Error(`File "${filePath}" not found in signed files response`);
       }
-      const data = await this._dataLoader.getJsonFile('', found.signedUrl);
-      return data as { [key: string]: number };
+      return this._dataLoader.getJsonFile('', found.signedUrl);
     } else {
       const baseUrl = `${this.ept.url}ept-hierarchy`;
-      const result = await this._dataLoader.getJsonFile(baseUrl, fileName);
-      return result as { [key: string]: number };
+      return this._dataLoader.getJsonFile(baseUrl, fileName);
     }
   }
 

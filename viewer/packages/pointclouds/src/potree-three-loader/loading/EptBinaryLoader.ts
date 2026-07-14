@@ -48,7 +48,7 @@ export class EptBinaryLoader implements ILoader {
   async getBinaryFile(node: PointCloudEptGeometryNode): Promise<ArrayBuffer> {
     if (node.modelIdentifier instanceof DMModelIdentifier) {
       const signedUrl = await this.resolveSignedUrl(node);
-      if (signedUrl) {
+      if (signedUrl !== undefined) {
         return this._dataLoader.getBinaryFile('', signedUrl);
       }
     }
@@ -57,8 +57,15 @@ export class EptBinaryLoader implements ILoader {
   }
 
   private async resolveSignedUrl(node: PointCloudEptGeometryNode): Promise<string | undefined> {
-    if (node.signedUrl) {
+    if (node.signedUrl !== undefined) {
       return node.signedUrl;
+    }
+    // Re-check the preloaded signed-files list in case it was populated in the background
+    // after node construction.
+    const preloadUrl = node.findBinarySignedUrlInPreload();
+    if (preloadUrl !== undefined) {
+      node.signedUrl = preloadUrl;
+      return preloadUrl;
     }
     if (!node.signedFilesBaseUrl || !this._dataLoader.getFileUrlsForModel) {
       return undefined;
@@ -69,7 +76,7 @@ export class EptBinaryLoader implements ILoader {
     const found = items.find(
       item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + fileName)
     );
-    if (found) {
+    if (found !== undefined) {
       node.signedUrl = found.signedUrl;
     }
     return found?.signedUrl;
