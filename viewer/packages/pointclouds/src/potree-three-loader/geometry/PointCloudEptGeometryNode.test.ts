@@ -21,10 +21,15 @@ function makeMetadata(items: { fileName: string; signedUrl: string }[]): Metadat
   };
 }
 
+const SIGNED_FILES_BASE_URL = 'https://signed.example.com';
+const ROOT_BINARY_NAME = '0-0-0-0';
+const ROOT_BINARY_DOMAIN_URL = 'https://cognite.example.com';
+const EPT_HIERARCHY_BASE = 'ept-hierarchy';
+
 describe(PointCloudEptGeometryNode.name, () => {
   describe('constructor — signedUrl resolution from eptMetadata', () => {
-    const exactUrl = 'https://cdn.example.com/0-0-0-0.bin';
-    const subPathUrl = 'https://cdn.example.com/sub/0-0-0-0.bin';
+    const exactUrl = `${ROOT_BINARY_DOMAIN_URL}/${ROOT_BINARY_NAME}.bin`;
+    const subPathUrl = `${ROOT_BINARY_DOMAIN_URL}/sub/${ROOT_BINARY_NAME}.bin`;
 
     test.each<
       [string, MetadataWithSignedFiles<EptJson> | { fileData: EptJson }, string | undefined, string | undefined]
@@ -32,19 +37,19 @@ describe(PointCloudEptGeometryNode.name, () => {
       [
         'exact match',
         makeMetadata([{ fileName: '0-0-0-0.bin', signedUrl: exactUrl }]),
-        'https://signed.example.com',
+        SIGNED_FILES_BASE_URL,
         exactUrl
       ],
       [
         'subPath match',
         makeMetadata([{ fileName: 'sub/0-0-0-0.bin', signedUrl: subPathUrl }]),
-        'https://signed.example.com',
+        SIGNED_FILES_BASE_URL,
         subPathUrl
       ],
       [
         'missing from signed files',
-        makeMetadata([{ fileName: 'other.bin', signedUrl: 'https://cdn.example.com/other.bin' }]),
-        'https://signed.example.com',
+        makeMetadata([{ fileName: 'other.bin', signedUrl: `${ROOT_BINARY_DOMAIN_URL}/other.bin` }]),
+        SIGNED_FILES_BASE_URL,
         undefined
       ],
       ['no metadata', { fileData: {} as Partial<EptJson> as EptJson }, undefined, undefined]
@@ -61,10 +66,9 @@ describe(PointCloudEptGeometryNode.name, () => {
   });
 
   describe('getHierarchy', () => {
-    const signedFilesBaseUrl = 'https://signed.example.com';
-    const hierarchySignedUrl = 'https://cdn.example.com/ept-hierarchy/0-0-0-0.json';
-    const fileName = '0-0-0-0.json';
-    const filePath = 'ept-hierarchy/' + fileName;
+    const hierarchySignedUrl = `${ROOT_BINARY_DOMAIN_URL}/${EPT_HIERARCHY_BASE}/${ROOT_BINARY_NAME}.json`;
+    const fileName = `${ROOT_BINARY_NAME}.json`;
+    const filePath = `${EPT_HIERARCHY_BASE}/${fileName}`;
 
     test('DM model uses getJsonFile with empty baseUrl on cache hit', async () => {
       const dataProvider = createMockModelDataProvider({
@@ -75,7 +79,7 @@ describe(PointCloudEptGeometryNode.name, () => {
         dataProvider,
         mockDMModelIdentifier,
         makeMetadata([{ fileName: filePath, signedUrl: hierarchySignedUrl }]),
-        signedFilesBaseUrl
+        SIGNED_FILES_BASE_URL
       );
 
       await node.getHierarchy(fileName);
@@ -95,13 +99,13 @@ describe(PointCloudEptGeometryNode.name, () => {
         dataProvider,
         mockDMModelIdentifier,
         makeMetadata([]),
-        signedFilesBaseUrl
+        SIGNED_FILES_BASE_URL
       );
 
       await node.getHierarchy(fileName);
 
       expect(dataProvider.getFileUrlsForModel).toHaveBeenCalledWith(
-        signedFilesBaseUrl,
+        SIGNED_FILES_BASE_URL,
         mockDMModelIdentifier,
         filePath
       );
@@ -122,7 +126,10 @@ describe(PointCloudEptGeometryNode.name, () => {
 
       await node.getHierarchy(fileName);
 
-      expect(dataProvider.getJsonFile).toHaveBeenCalledWith('https://example.com/model/ept-hierarchy', '0-0-0-0.json');
+      expect(dataProvider.getJsonFile).toHaveBeenCalledWith(
+        `https://example.com/model/${EPT_HIERARCHY_BASE}`,
+        `${ROOT_BINARY_NAME}.json`
+      );
     });
 
     test.each<[string, Partial<ModelDataProvider>, string]>([
@@ -138,10 +145,38 @@ describe(PointCloudEptGeometryNode.name, () => {
         createMockModelDataProvider(override),
         mockDMModelIdentifier,
         makeMetadata([]),
-        signedFilesBaseUrl
+        SIGNED_FILES_BASE_URL
       );
 
       await expect(node.getHierarchy(fileName)).rejects.toThrow(expectedMessage);
+    });
+  });
+
+  describe('findBinarySignedUrlInPreload: cache invalidation by items.length', () => {
+    const rootBinaryUrl = `${ROOT_BINARY_DOMAIN_URL}/${ROOT_BINARY_NAME}.bin`;
+
+    function createNode(metadata: MetadataWithSignedFiles<EptJson>) {
+      return new PointCloudEptGeometryNode(
+        createMockEptGeometry(),
+        createMockModelDataProvider(),
+        mockDMModelIdentifier,
+        metadata,
+        SIGNED_FILES_BASE_URL
+      );
+    }
+
+    test.each<[string, { fileName: string; signedUrl: string }[]]>([
+      ['empty', []],
+      ['partial (root binary missing)', [{ fileName: 'other.bin', signedUrl: `${ROOT_BINARY_DOMAIN_URL}/other.bin` }]]
+    ])('rebuilds the map when items grow after construction (starting %s)', (_, initialItems) => {
+      const metadata = makeMetadata(initialItems);
+      const node = createNode(metadata);
+
+      expect(node.findBinarySignedUrlInPreload()).toBeUndefined();
+
+      metadata.signedFiles!.items.push({ fileName: `${ROOT_BINARY_NAME}.bin`, signedUrl: rootBinaryUrl, subPath: '' });
+
+      expect(node.findBinarySignedUrlInPreload()).toBe(rootBinaryUrl);
     });
   });
 

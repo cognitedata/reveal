@@ -10,15 +10,16 @@ import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { PointCloudMetadata } from '../PointCloudMetadata';
 import { createMockModelDataProvider } from '../../../../test-utilities/src/createMockModelDataProvider';
 import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities';
+import type { PointClass } from '../potree-three-loader';
 
 type ClassificationData = {
-  classificationSets: { name: string; classes: unknown[] }[];
+  classificationSets: { name: string; classificationSet: PointClass[] }[];
 };
 
 type ExpectedCall = { mock: 'getFileUrlsForModel' | 'getJsonFile'; args: unknown[] };
 
 const CLASSIFICATION_DEFINITION_FILE = 'classificationSets.json';
-const CLASSIFICATION_DATA: ClassificationData = { classificationSets: [{ name: 'Default', classes: [] }] };
+const CLASSIFICATION_DATA: ClassificationData = { classificationSets: [{ name: 'Default', classificationSet: [] }] };
 const CLASSIFICATION_SIGNED_URL = 'https://cdn.example.com/classificationSets.json';
 const CLASSIC_IDENTIFIER = new CdfModelIdentifier(10, 20);
 const SIGNED_FILES_BASE_URL = 'https://signed-files.example.com';
@@ -76,22 +77,69 @@ describe(UrlPointClassificationsProvider.name, () => {
     expect(result).toBe(CLASSIFICATION_DATA);
   });
 
-  test.each<[string, PointCloudMetadata, Partial<ModelDataProvider>, Array<'getFileUrlsForModel' | 'getJsonFile'>]>([
+  test.each<[string, PointCloudMetadata, Partial<ModelDataProvider>]>([
     [
       'DM throws in getFileUrlsForModel',
       createMetadata(dmIdentifier),
       {
         getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => {
           throw new Error();
-        })
-      },
-      []
+        }),
+        getJsonFile: jsonFileOk()
+      }
     ],
-    ['DM has no getFileUrlsForModel support', createMetadata(dmIdentifier), { getFileUrlsForModel: undefined }, []],
+    [
+      'DM has no getFileUrlsForModel support',
+      createMetadata(dmIdentifier),
+      { getFileUrlsForModel: undefined, getJsonFile: jsonFileOk() }
+    ],
     [
       'DM finds no matching file',
       createMetadata(dmIdentifier),
-      { getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => []) },
+      {
+        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => []),
+        getJsonFile: jsonFileOk()
+      }
+    ],
+    [
+      'DM missing signedFilesBaseUrl',
+      createMetadata(dmIdentifier, { signedFilesBaseUrl: undefined }),
+      { getJsonFile: jsonFileOk() }
+    ]
+  ])('%s falls back to classic classification', async (_, metadata, override) => {
+    const provider = createMockModelDataProvider(override);
+
+    const result = await new UrlPointClassificationsProvider(provider).getClassifications(metadata);
+
+    expect(provider.getJsonFile).toHaveBeenCalledWith(MODEL_BASE_URL, CLASSIFICATION_DEFINITION_FILE);
+    expect(result).toBe(CLASSIFICATION_DATA);
+  });
+
+  test.each<[string, PointCloudMetadata, Partial<ModelDataProvider>, Array<'getFileUrlsForModel' | 'getJsonFile'>]>([
+    [
+      'DM throws in getFileUrlsForModel, and classic fallback also fails',
+      createMetadata(dmIdentifier),
+      {
+        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => {
+          throw new Error();
+        }),
+        getJsonFile: jsonFileErr()
+      },
+      []
+    ],
+    [
+      'DM has no getFileUrlsForModel support, and classic fallback also fails',
+      createMetadata(dmIdentifier),
+      { getFileUrlsForModel: undefined, getJsonFile: jsonFileErr() },
+      []
+    ],
+    [
+      'DM finds no matching file, and classic fallback also fails',
+      createMetadata(dmIdentifier),
+      {
+        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => []),
+        getJsonFile: jsonFileErr()
+      },
       []
     ],
     [
@@ -101,10 +149,10 @@ describe(UrlPointClassificationsProvider.name, () => {
       []
     ],
     [
-      'DM missing signedFilesBaseUrl',
+      'DM missing signedFilesBaseUrl, and classic fallback also fails',
       createMetadata(dmIdentifier, { signedFilesBaseUrl: undefined }),
-      {},
-      ['getFileUrlsForModel', 'getJsonFile']
+      { getJsonFile: jsonFileErr() },
+      ['getFileUrlsForModel']
     ],
     ['Classic throws in getJsonFile', createMetadata(CLASSIC_IDENTIFIER), { getJsonFile: jsonFileErr() }, []]
   ])('%s returns EMPTY_CLASSIFICATION', async (_, metadata, override, notCalled) => {
@@ -114,5 +162,13 @@ describe(UrlPointClassificationsProvider.name, () => {
 
     expect(result.classificationSets).toEqual([]);
     notCalled.forEach(mock => expect(provider[mock]).not.toHaveBeenCalled());
+  });
+
+  test('DM throws in getJsonFile after finding file does not fall back to classic classification', async () => {
+    const provider = createMockModelDataProvider({ getFileUrlsForModel: fileUrlsOk(), getJsonFile: jsonFileErr() });
+
+    await new UrlPointClassificationsProvider(provider).getClassifications(createMetadata(dmIdentifier));
+
+    expect(provider.getJsonFile).toHaveBeenCalledTimes(1);
   });
 });
