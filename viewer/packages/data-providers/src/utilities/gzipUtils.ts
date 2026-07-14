@@ -26,7 +26,8 @@ type SupportedCompressionFormat = CompressionFormat | 'br';
 
 function createNativeBrotliStream(): DecompressionStream | undefined {
   try {
-    return new DecompressionStream('br' as SupportedCompressionFormat as CompressionFormat);
+    const format: SupportedCompressionFormat = 'br';
+    return new DecompressionStream(format as CompressionFormat);
   } catch {
     // Firefox < 127, Safari < 17.4, Chromium < 124 throw on unsupported format.
     return undefined;

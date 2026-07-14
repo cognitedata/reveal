@@ -12,7 +12,7 @@ import { createMockModelDataProvider } from '../../../../test-utilities/src/crea
 import { mockDMModelIdentifier as dmIdentifier } from '../../../../test-utilities';
 
 type ClassificationData = {
-  classificationSets: { name: string; classes: any[] }[];
+  classificationSets: { name: string; classes: unknown[] }[];
 };
 
 type ExpectedCall = { mock: 'getFileUrlsForModel' | 'getJsonFile'; args: unknown[] };
