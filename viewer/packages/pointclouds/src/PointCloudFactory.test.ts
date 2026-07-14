@@ -7,12 +7,17 @@ import { Matrix4 } from 'three';
 import { PointCloudFactory } from './PointCloudFactory';
 import type { ClassificationInfo, Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
-import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
-import type { PointCloudStylableObjectProvider } from '@reveal/data-providers';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  PointCloudStylableObjectProvider
+} from '@reveal/data-providers';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 import type { PointCloudMetadata } from './PointCloudMetadata';
 import { createPointCloudNode } from '../../../test-utilities';
+import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 const modelIdentifier = new CdfModelIdentifier(1, 2);
 const modelBaseUrl = 'https://example.com/model';
@@ -20,9 +25,15 @@ const signedFilesBaseUrl = 'https://signed-files.example.com';
 const classifications: ClassificationInfo = {
   classificationSets: [{ name: 'Default', classificationSet: [{ name: 'Custom', code: 5, rgb: '#ff0000' }] }]
 };
-const emptyStylableProvider = {
-  getPointCloudObjects: vi.fn(async () => [])
-} as Partial<PointCloudStylableObjectProvider<any>> as PointCloudStylableObjectProvider<any>;
+function createEmptyStylableProvider<T extends DataSourceType>(): PointCloudStylableObjectProvider<T> {
+  const partial: Partial<PointCloudStylableObjectProvider<T>> = {
+    getPointCloudObjects: vi.fn(async () => [])
+  };
+  return partial as PointCloudStylableObjectProvider<T>;
+}
+
+const emptyClassicProvider = createEmptyStylableProvider<ClassicDataSourceType>();
+const emptyDMProvider = createEmptyStylableProvider<DMDataSourceType>();
 
 function createMetadata(overrides: Partial<PointCloudMetadata> = {}): PointCloudMetadata {
   return {
@@ -39,13 +50,15 @@ function createMetadata(overrides: Partial<PointCloudMetadata> = {}): PointCloud
 
 function createFactory() {
   const loadPointCloud = vi.fn<Potree['loadPointCloud']>(async () => createPointCloudNode().octree);
+  const potreePartial: Partial<Potree> = { loadPointCloud };
+  const classificationsProviderPartial: Partial<IPointClassificationsProvider> = {
+    getClassifications: vi.fn(async () => classifications)
+  };
   const factory = new PointCloudFactory(
-    { loadPointCloud } as Partial<Potree> as Potree,
-    emptyStylableProvider,
-    emptyStylableProvider,
-    {
-      getClassifications: vi.fn(async () => classifications)
-    } as Partial<IPointClassificationsProvider> as IPointClassificationsProvider,
+    potreePartial as Potree,
+    emptyClassicProvider,
+    emptyDMProvider,
+    classificationsProviderPartial as IPointClassificationsProvider,
     new PointCloudMaterialManager()
   );
   return { factory, loadPointCloud };

@@ -85,8 +85,9 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
         signedFilesItems.push(...items);
       })
       .catch(error => {
+        const message = error instanceof Error ? error.message : String(error);
         console.warn(
-          `[PointCloudMetadataRepository] Background preload of signed-files list failed; nodes will resolve signed URLs on demand via filter. ${(error as Error).message}`
+          `[PointCloudMetadataRepository] Background preload of signed-files list failed; nodes will resolve signed URLs on demand via filter. ${message}`
         );
       });
 
