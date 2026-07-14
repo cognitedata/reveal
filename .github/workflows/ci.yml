@@ -26,7 +26,7 @@ jobs:
           version: 11.9.0
 
       - name: Cache NPM packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: npm_cache
         with:
           path: "**/node_modules"
@@ -38,7 +38,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Cache cargo registry
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -62,14 +62,14 @@ jobs:
           version: 11.9.0
 
       - name: Cache NPM packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -129,14 +129,14 @@ jobs:
         with:
           version: 11.9.0
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -175,14 +175,14 @@ jobs:
         with:
           version: 11.9.0
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -234,14 +234,14 @@ jobs:
           name: viewer
           path: viewer/dist/
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('examples/**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -283,14 +283,14 @@ jobs:
         with:
           version: 11.9.0
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
