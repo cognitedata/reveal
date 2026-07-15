@@ -93,6 +93,16 @@ describe(Image360RevisionEntity.name, () => {
     expect(annotation).toEqual(retrievedAnnotation);
   });
 
+  test('Intersect intersects polygon annotation', async () => {
+    const revision = createRevisionWithAnnotations([annotationFixture1]);
+
+    // Ensure annotations are loaded
+    await revision.getAnnotations();
+
+    const intersectedAnnotation = revision.intersectAnnotations(raycaster);
+    expect((intersectedAnnotation!.annotation.data as AnnotationsObjectDetection).label).toBe('smaller annotation');
+  });
+
   test('Intersect intersects box annotation', async () => {
     const revision = createRevisionWithAnnotations([annotationFixture0]);
 
