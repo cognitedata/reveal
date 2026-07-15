@@ -85,6 +85,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       fileName
     );
     const allItemsPromise = this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
+    allItemsPromise.catch(() => {});
 
     const filteredSceneItems = await filteredSceneItemsPromise;
     const sceneItem = filteredSceneItems.find(
