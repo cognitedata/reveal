@@ -11,10 +11,14 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  MetadataWithSignedFiles,
+  SignedFileItem
 } from '@reveal/data-providers';
-import { File3dFormat } from '@reveal/data-providers';
+import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
+import type { EptJson } from './potree-three-loader/loading/EptJson';
 
+const ROOT_NODE_KEY = '0-0-0-0';
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataProvider: ModelDataProvider;
@@ -33,20 +37,91 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
+    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
-    const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
+    const jsonData =
+      modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl !== undefined
+        ? await this.loadPointCloudMetadataFromSignedFiles(modelIdentifier, signedFilesBaseUrl, this._blobFileName)
+        : await this.loadPointCloudMetadataFromBaseUrl(modelBaseUrl, this._blobFileName);
+    const scene = jsonData.fileData;
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       modelIdentifier: modelIdentifier,
       format: output.format as File3dFormat,
       formatVersion: output.version,
       modelBaseUrl,
+      signedFilesBaseUrl,
       modelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
-      scene
+      scene,
+      signedFiles: jsonData.signedFiles
+    };
+  }
+
+  private async loadPointCloudMetadataFromSignedFiles(
+    modelIdentifier: DMModelIdentifier,
+    signedFilesBaseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<EptJson>> {
+    if (this._modelDataProvider.getFileUrlsForModel === undefined) {
+      throw new Error('Model data provider does not support signed file fetching');
+    }
+
+    const rootHierarchyPath = `ept-hierarchy/${ROOT_NODE_KEY}.json`;
+    const eptItemsPromise = this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier, fileName);
+    const rootHierarchyItemsPromise = this._modelDataProvider.getFileUrlsForModel(
+      signedFilesBaseUrl,
+      modelIdentifier,
+      rootHierarchyPath
+    );
+
+    const signedFilesItems: SignedFileItem[] = [];
+    void this._modelDataProvider
+      .getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier)
+      .then(items => {
+        signedFilesItems.push(...items);
+      })
+      .catch(error => {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn(
+          `[PointCloudMetadataRepository] Background preload of signed-files list failed; nodes will resolve signed URLs on demand via filter. ${message}`
+        );
+      });
+
+    const [eptItems, rootHierarchyItems] = await Promise.all([eptItemsPromise, rootHierarchyItemsPromise]);
+    const eptItem = eptItems.find(item => item.fileName === fileName || item.fileName.endsWith('/' + fileName));
+    if (eptItem === undefined) {
+      throw new Error(`File "${fileName}" not found in signed files response`);
+    }
+    const rootHierarchyItem = rootHierarchyItems.find(
+      item => item.fileName === rootHierarchyPath || item.fileName.endsWith('/' + rootHierarchyPath)
+    );
+
+    const rootHierarchyWarmPromise: Promise<unknown> = rootHierarchyItem
+      ? this._modelDataProvider.getJsonFile('', rootHierarchyItem.signedUrl).catch(() => undefined)
+      : Promise.resolve(undefined);
+    const [fileData] = await Promise.all([
+      this._modelDataProvider.getJsonFile('', eptItem.signedUrl),
+      rootHierarchyWarmPromise
+    ]);
+
+    return {
+      signedFiles: { items: signedFilesItems },
+      fileData: fileData as EptJson
+    };
+  }
+
+  private async loadPointCloudMetadataFromBaseUrl(
+    baseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<EptJson>> {
+    const fileData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    return {
+      signedFiles: { items: [] },
+      fileData: fileData as EptJson
     };
   }
 

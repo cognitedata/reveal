@@ -4,14 +4,14 @@
 
 import { Box3, Vector3 } from 'three';
 
-import type { CadMetadataWithSignedFiles, SectorMetadata } from '../types';
 import type { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import type { BoundingBox, SceneSectorMetadata } from './types';
+import type { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
 import { MetricsLogger } from '@reveal/metrics';
-import type { SignedFileItem } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles, SignedFileItem } from '@reveal/data-providers';
+import type { SectorMetadata } from '../types';
 
-export function parseCadMetadataGltf(metadata: CadMetadataWithSignedFiles): SectorScene {
+export function parseCadMetadataGltf(metadata: MetadataWithSignedFiles<CadSceneRootMetadata>): SectorScene {
   if (!metadata.fileData.sectors || metadata.fileData.sectors.length === 0) {
     throw new Error('No sectors found in scene JSON file');
   }

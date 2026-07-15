@@ -10,6 +10,7 @@ import { Box3, BufferAttribute, BufferGeometry, Vector3 } from 'three';
 import { WorkerPool } from '../utils/WorkerPool';
 import type { ILoader } from './ILoader';
 import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker?worker&inline';
 
@@ -44,15 +45,51 @@ export class EptBinaryLoader implements ILoader {
     });
   }
 
+  async getBinaryFile(node: PointCloudEptGeometryNode): Promise<ArrayBuffer> {
+    if (node.modelIdentifier instanceof DMModelIdentifier) {
+      const signedUrl = await this.resolveSignedUrl(node);
+      if (signedUrl !== undefined) {
+        return this._dataLoader.getBinaryFile('', signedUrl);
+      }
+    }
+    const fullFileName = node.fileName() + this.extension();
+    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+  }
+
+  private async resolveSignedUrl(node: PointCloudEptGeometryNode): Promise<string | undefined> {
+    if (node.signedUrl !== undefined) {
+      return node.signedUrl;
+    }
+    // Re-check the preloaded signed-files list in case it was populated in the background
+    // after node construction.
+    const preloadUrl = node.findBinarySignedUrlInPreload();
+    if (preloadUrl !== undefined) {
+      node.signedUrl = preloadUrl;
+      return preloadUrl;
+    }
+    if (!node.signedFilesBaseUrl || !this._dataLoader.getFileUrlsForModel) {
+      return undefined;
+    }
+    const fileName = node.fileName() + this.extension();
+    const filePath = `ept-data/${fileName}`;
+    const items = await this._dataLoader.getFileUrlsForModel(node.signedFilesBaseUrl, node.modelIdentifier, filePath);
+    const found = items.find(
+      item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + fileName)
+    );
+    if (found !== undefined) {
+      node.signedUrl = found.signedUrl;
+    }
+    return found?.signedUrl;
+  }
+
   async load(node: PointCloudEptGeometryNode): Promise<void> {
     if (node.loaded) return;
 
     let data: ArrayBuffer = new ArrayBuffer(0);
     // Skip loading sectors if number of points is zero.
     if (node.getNumPoints() !== 0) {
-      const fullFileName = node.fileName() + this.extension();
       try {
-        data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+        data = await this.getBinaryFile(node);
       } catch (error) {
         MetricsLogger.trackError(error as Error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
         node.markAsNotLoading();

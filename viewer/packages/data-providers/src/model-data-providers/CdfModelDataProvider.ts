@@ -6,6 +6,7 @@ import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { SignedFileItem } from '../types';
 import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
+import { decompressBinaryResponseBody, parseJsonResponseBody } from '../utilities/gzipUtils';
 import type { ModelIdentifier } from '../ModelIdentifier';
 
 /**
@@ -38,6 +39,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
       }
       throw new Error('Could not download binary file');
     });
+    if (isBaseUrlEmpty) {
+      return decompressBinaryResponseBody(response);
+    }
     return response.arrayBuffer();
   }
 
@@ -55,7 +59,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     if (response.ok === false) {
       throw new Error(`Signed JSON file request failed with status ${response.status}`);
     }
-    return response.json();
+    return parseJsonResponseBody(response);
   }
 
   async getFileUrlsForModel(

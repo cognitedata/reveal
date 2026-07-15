@@ -16,10 +16,10 @@ import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  MetadataWithSignedFiles
 } from '@reveal/data-providers';
 import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
-import type { CadMetadataWithSignedFiles } from './types';
 import type { CadSceneRootMetadata } from './parsers/types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
@@ -44,7 +44,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.() ?? undefined;
+    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
 
     const blobBaseUrl = await blobBaseUrlPromise;
     const json =
@@ -75,7 +75,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     modelIdentifier: DMModelIdentifier,
     signedFilesBaseUrl: string,
     fileName: string
-  ): Promise<CadMetadataWithSignedFiles> {
+  ): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
     if (this._modelDataProvider.getFileUrlsForModel === undefined) {
       throw new Error('Model data provider does not support signed file fetching');
     }
@@ -92,7 +92,10 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     };
   }
 
-  private async loadCadMetadataFromBaseUrl(baseUrl: string, fileName: string): Promise<CadMetadataWithSignedFiles> {
+  private async loadCadMetadataFromBaseUrl(
+    baseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
     const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
     return {
       signedFiles: undefined,

@@ -10,6 +10,7 @@ import { CogniteClient, type HttpResponse } from '@cognite/sdk';
 import { mockClientAuthentication } from '../../../../test-utilities/src/cogniteClientAuth';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { SignedFilesResponseWithCursor } from '../types';
+import { gzipEncode } from '../../../../test-utilities/src/gzipEncode';
 
 describe(CdfModelDataProvider.name, () => {
   const appId = 'reveal-CdfModelDataClient-test';
@@ -118,6 +119,21 @@ describe(CdfModelDataProvider.name, () => {
     );
   });
 
+  test('getBinaryFile() with signed URL decompresses a gzip body missing the Content-Encoding header', async () => {
+    const originalBinary = new Uint8Array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
+    const gzipped = new Uint8Array(await gzipEncode(String.fromCharCode(...originalBinary)));
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+        .mockResolvedValueOnce(new Response(gzipped, { status: 200 }))
+    );
+
+    const result = await clientExt.getBinaryFile('', 'https://signed.url/0-0-0-0.bin');
+
+    expect(new TextDecoder().decode(new Uint8Array(result))).toEqual(String.fromCharCode(...originalBinary));
+  });
+
   test('getJsonFile() with signed URL parses JSON response without auth headers', async () => {
     const jsonData = { version: 9, sectors: [] };
     const fetchMock = vi
@@ -136,6 +152,19 @@ describe(CdfModelDataProvider.name, () => {
       'https://signed.url/scene.json',
       expect.objectContaining({ headers: { Accept: 'application/json, */*' } })
     );
+  });
+
+  test('getJsonFile() with signed URL decompresses a gzip body missing the Content-Encoding header', async () => {
+    const jsonData = { version: 9, sectors: [{ id: 1 }] };
+    const gzipped = await gzipEncode(JSON.stringify(jsonData));
+    const fetchMock = vi
+      .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+      .mockResolvedValueOnce(new Response(gzipped, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await clientExt.getJsonFile('', 'https://signed.url/scene.json');
+
+    expect(result).toEqual(jsonData);
   });
 
   test('getFileUrlsForModel() paginates through multiple cursor pages to collect all signedFiles', async () => {
