@@ -3,11 +3,8 @@
  */
 
 import type { QueryRequest } from '@cognite/sdk';
-import {
-  pointCloudVolumeFilter,
-  POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
-  ASSET_PROPERTIES_LIST
-} from './types';
+import { POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST, ASSET_PROPERTIES_LIST } from './types';
+import { isCoreDmObject3DFilter, isCoreDmPointCloudVolumeFilter, isCoreDmVisualizableFilter } from './queryFilters';
 import { getRevisionContainsAnyFilter } from './utils';
 import {
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
@@ -22,7 +19,7 @@ const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
       pointCloudVolumes: {
         nodes: {
           filter: {
-            and: [pointCloudVolumeFilter, getRevisionContainsAnyFilter([revisionRef])]
+            and: [isCoreDmPointCloudVolumeFilter, getRevisionContainsAnyFilter([revisionRef])]
           }
         },
         limit: 1000
@@ -34,7 +31,8 @@ const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
             view: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
             identifier: 'object3D'
           },
-          direction: 'outwards'
+          direction: 'outwards',
+          filter: isCoreDmObject3DFilter
         },
         limit: 1000
       },
@@ -44,7 +42,8 @@ const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
           through: {
             view: COGNITE_VISUALIZABLE_SOURCE,
             identifier: 'object3D'
-          }
+          },
+          filter: isCoreDmVisualizableFilter
         },
         limit: 1000
       }

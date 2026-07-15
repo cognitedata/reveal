@@ -2,10 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import type { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { DataModelsSdk } from '../DataModelsSdk';
 import { COGNITE_3D_REVISION_SOURCE } from '../utilities/constants';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../utilities/utils';
+import { isCoreDm3DRevisionFilter } from '../image-360-data-providers/cdm/queryFilters';
 
 type Cognite3DRevisionProperties = {
   model3D: { externalId: string; space: string };
@@ -56,7 +57,11 @@ function getModelIdQuery(revisionExternalId: string, space: string) {
       revision: {
         nodes: {
           filter: {
-            and: [getNodeExternalIdEqualsFilter(revisionExternalId), getNodeSpaceEqualsFilter(space)]
+            and: [
+              isCoreDm3DRevisionFilter,
+              getNodeExternalIdEqualsFilter(revisionExternalId),
+              getNodeSpaceEqualsFilter(space)
+            ]
           }
         },
         limit: 1
@@ -72,5 +77,5 @@ function getModelIdQuery(revisionExternalId: string, space: string) {
         ]
       }
     }
-  };
+  } as const satisfies QueryRequest;
 }
