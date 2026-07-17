@@ -48,7 +48,9 @@ describe(CdfModelMetadataProvider.name, () => {
   });
 
   test('getModelUriForSignedFiles returns the endpoint URL when the backend accepts the probe request', async () => {
-    const clientMock = createClientMock().setup(c => c.post(It.IsAny(), It.IsAny())).returnsAsync({} as any);
+    const clientMock = createClientMock()
+      .setup(c => c.post(It.IsAny(), It.IsAny()))
+      .returnsAsync({} as any);
     const provider = new CdfModelMetadataProvider(clientMock.object());
 
     const uri = await provider.getModelUriForSignedFiles(dmModelIdentifier);
@@ -68,7 +70,9 @@ describe(CdfModelMetadataProvider.name, () => {
   });
 
   test('getModelUriForSignedFiles only probes the backend once and caches the result', async () => {
-    const clientMock = createClientMock().setup(c => c.post(It.IsAny(), It.IsAny())).returnsAsync({} as any);
+    const clientMock = createClientMock()
+      .setup(c => c.post(It.IsAny(), It.IsAny()))
+      .returnsAsync({} as any);
     const provider = new CdfModelMetadataProvider(clientMock.object());
 
     await provider.getModelUriForSignedFiles(dmModelIdentifier);
