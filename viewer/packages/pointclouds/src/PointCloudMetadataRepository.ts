@@ -37,11 +37,19 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
-    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
+
+    const signedFilesBaseUrlPromise =
+      modelIdentifier instanceof DMModelIdentifier
+        ? this._modelMetadataProvider.getModelUriForSignedFiles?.(modelIdentifier)
+        : Promise.resolve(undefined);
+
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-    const modelBaseUrl = await baseUrlPromise;
-    const modelMatrix = await modelMatrixPromise;
+    const [modelBaseUrl, signedFilesBaseUrl, modelMatrix] = await Promise.all([
+      baseUrlPromise,
+      signedFilesBaseUrlPromise,
+      modelMatrixPromise
+    ]);
     const jsonData =
       modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl !== undefined
         ? await this.loadPointCloudMetadataFromSignedFiles(modelIdentifier, signedFilesBaseUrl, this._blobFileName)

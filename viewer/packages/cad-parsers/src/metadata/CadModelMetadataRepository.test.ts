@@ -168,8 +168,8 @@ function createMockedMetadataProvider(
     getModelMatrix: async () => {
       return new Matrix4();
     },
-    getModelUriForSignedFiles: () => {
-      return signedFilesBaseUrl ?? '';
+    getModelUriForSignedFiles: async () => {
+      return signedFilesBaseUrl;
     }
   };
 }

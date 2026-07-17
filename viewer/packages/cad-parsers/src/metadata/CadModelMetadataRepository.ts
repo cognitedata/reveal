@@ -44,9 +44,12 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
+    const signedFilesBaseUrlPromise =
+      modelIdentifier instanceof DMModelIdentifier
+        ? this._modelMetadataProvider.getModelUriForSignedFiles?.(modelIdentifier)
+        : Promise.resolve(undefined);
 
-    const blobBaseUrl = await blobBaseUrlPromise;
+    const [blobBaseUrl, signedFilesBaseUrl] = await Promise.all([blobBaseUrlPromise, signedFilesBaseUrlPromise]);
     const json =
       modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl !== undefined
         ? await this.loadCadMetadataFromSignedFiles(modelIdentifier, signedFilesBaseUrl, this._blobFileName)

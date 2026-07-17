@@ -8,14 +8,16 @@ import type { ModelMetadataProvider } from '../ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 
-import type { CogniteClient, ItemsResponse } from '@cognite/sdk';
+import type { CogniteClient, HttpRequestOptions, ItemsResponse } from '@cognite/sdk';
 import type { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
+import type { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
 export class CdfModelMetadataProvider implements ModelMetadataProvider {
   private readonly _client: CogniteClient;
+  private _signedFilesUriPromise: Promise<string | undefined> | undefined;
 
   constructor(client: CogniteClient) {
     this._client = client;
@@ -96,8 +98,33 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
-  public getModelUriForSignedFiles(): string {
-    return `${this._client.getBaseUrl()}${this.getRequestPathForSignedFiles()}`;
+  public getModelUriForSignedFiles(modelIdentifier: DMModelIdentifier): Promise<string | undefined> {
+    if (this._signedFilesUriPromise === undefined) {
+      this._signedFilesUriPromise = this.probeSignedFilesUri(modelIdentifier);
+    }
+    return this._signedFilesUriPromise;
+  }
+
+  private async probeSignedFilesUri(modelIdentifier: DMModelIdentifier): Promise<string | undefined> {
+    const path = this.getRequestPathForSignedFiles();
+    const payload: HttpRequestOptions = {
+      data: {
+        revision: {
+          instanceId: {
+            space: modelIdentifier.revisionSpace,
+            externalId: modelIdentifier.revisionExternalId
+          }
+        },
+        limit: 1
+      }
+    };
+    try {
+      await this._client.post(path, payload);
+      return `${this._client.getBaseUrl()}${path}`;
+    } catch (error) {
+      console.warn(`Could not fetch signed file URLs for model: ${error}. Using fallback to unsigned URLs`);
+    }
+    return undefined;
   }
 
   private getRequestPath(directoryId: number): string {
