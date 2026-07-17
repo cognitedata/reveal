@@ -38,22 +38,15 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
 
-    const signedFilesBaseUrlPromise =
-      modelIdentifier instanceof DMModelIdentifier
-        ? this._modelMetadataProvider.getModelUriForSignedFiles?.(modelIdentifier)
-        : Promise.resolve(undefined);
-
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, File3dFormat.EptPointCloud);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-    const [modelBaseUrl, signedFilesBaseUrl, modelMatrix] = await Promise.all([
-      baseUrlPromise,
-      signedFilesBaseUrlPromise,
-      modelMatrixPromise
-    ]);
-    const jsonData =
-      modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl !== undefined
-        ? await this.loadPointCloudMetadataFromSignedFiles(modelIdentifier, signedFilesBaseUrl, this._blobFileName)
-        : await this.loadPointCloudMetadataFromBaseUrl(modelBaseUrl, this._blobFileName);
+    const [modelBaseUrl, modelMatrix] = await Promise.all([baseUrlPromise, modelMatrixPromise]);
+
+    const { jsonData, signedFilesBaseUrl } = await this.getJsonDataWithSignedFilesBaseUrl(
+      modelIdentifier,
+      modelBaseUrl
+    );
+
     const scene = jsonData.fileData;
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
@@ -67,6 +60,32 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
       scene,
       signedFiles: jsonData.signedFiles
     };
+  }
+
+  private async getJsonDataWithSignedFilesBaseUrl(
+    modelIdentifier: ModelIdentifier,
+    blobBaseUrl: string
+  ): Promise<{
+    jsonData: MetadataWithSignedFiles<EptJson>;
+    signedFilesBaseUrl: string | undefined;
+  }> {
+    const baseLinkForSignedFiles = this._modelMetadataProvider.getModelUriForSignedFiles?.();
+    if (modelIdentifier instanceof DMModelIdentifier && baseLinkForSignedFiles !== undefined) {
+      try {
+        const jsonData = await this.loadPointCloudMetadataFromSignedFiles(
+          modelIdentifier,
+          baseLinkForSignedFiles,
+          this._blobFileName
+        );
+        return { jsonData, signedFilesBaseUrl: baseLinkForSignedFiles };
+      } catch (error) {
+        console.warn(
+          `Failed to load point cloud metadata from signed files: ${error}. Using fallback to base URL fetching.`
+        );
+      }
+    }
+    const jsonData = await this.loadPointCloudMetadataFromBaseUrl(blobBaseUrl, this._blobFileName);
+    return { jsonData, signedFilesBaseUrl: undefined };
   }
 
   private async loadPointCloudMetadataFromSignedFiles(

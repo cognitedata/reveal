@@ -132,6 +132,34 @@ describe(CadModelMetadataRepository.name, () => {
 
     expect(result.scene.root.signedUrl).toBe(sectorSignedUrl);
   });
+
+  test('DM model falls back to base URL fetching when loading via signed files fails', async () => {
+    const signedFilesBaseUrl = 'https://api.cognitedata.com/api/v1/projects/myproj/3d/output/files';
+    const dmIdentifier = new DMModelIdentifier({
+      modelId: 1,
+      revisionId: 1,
+      revisionExternalId: 'my-revision',
+      revisionSpace: 'my-space'
+    });
+
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const mockedMetadataProvider = createMockedMetadataProvider([v9BlobOutputMetadata], signedFilesBaseUrl);
+    const mockedModelDataProvider = {
+      ...createMockedModelDataProvider(),
+      getFileUrlsForModel: vi.fn(async () => {
+        throw new Error('signed files endpoint unavailable');
+      })
+    };
+
+    const repo = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
+    const result = await repo.loadData(dmIdentifier);
+
+    expect(result.signedFilesBaseUrl).toBeUndefined();
+    expect(result.scene.root.signedUrl).toBeUndefined();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to load CAD metadata from signed files'));
+
+    warnSpy.mockRestore();
+  });
 });
 
 function urlFromBlobId(blobId: number) {
@@ -168,8 +196,8 @@ function createMockedMetadataProvider(
     getModelMatrix: async () => {
       return new Matrix4();
     },
-    getModelUriForSignedFiles: async () => {
-      return signedFilesBaseUrl;
+    getModelUriForSignedFiles: () => {
+      return signedFilesBaseUrl ?? '';
     }
   };
 }
