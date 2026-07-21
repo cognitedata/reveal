@@ -882,7 +882,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection<DataSourceT & ClassicDataSourceType>>;
 
-  /* eslint-disable jsdoc/require-jsdoc */
   async add360ImageSet(
     datasource: 'events' | 'datamodels',
     sourceParameters: { [key: string]: string } | Image360DataModelIdentifier,
