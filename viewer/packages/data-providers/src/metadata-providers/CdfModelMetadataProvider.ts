@@ -97,7 +97,8 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
   }
 
   public getModelUriForSignedFiles(): string {
-    return `${this._client.getBaseUrl()}${this.getRequestPathForSignedFiles()}`;
+    const path = this.getRequestPathForSignedFiles();
+    return `${this._client.getBaseUrl()}${path}`;
   }
 
   private getRequestPath(directoryId: number): string {

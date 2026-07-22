@@ -170,4 +170,27 @@ describe(PointCloudMetadataRepository.name, () => {
     }
     warnSpy.mockRestore();
   });
+
+  test('DM model falls back to base URL fetching when loading via signed files fails', async () => {
+    const signedFilesBaseUrl = 'https://api.example.com/3d/output/files';
+    const dataProvider: ModelDataProvider = {
+      ...createDMDataProvider({}),
+      getFileUrlsForModel: vi.fn(async () => {
+        throw new Error('signed files endpoint unavailable');
+      })
+    };
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const repo = new PointCloudMetadataRepository(createMockedMetadataProvider(signedFilesBaseUrl), dataProvider);
+    const result = await repo.loadData(dmIdentifier);
+
+    expect(result.signedFilesBaseUrl).toBeUndefined();
+    expect(result.signedFiles?.items).toEqual([]);
+    expect(result.scene).toEqual(minimalEptJson);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to load point cloud metadata from signed files')
+    );
+
+    warnSpy.mockRestore();
+  });
 });

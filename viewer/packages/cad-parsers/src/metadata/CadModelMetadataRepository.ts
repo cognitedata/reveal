@@ -44,14 +44,11 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
-    const signedFilesBaseUrl = this._modelMetadataProvider.getModelUriForSignedFiles?.();
 
     const blobBaseUrl = await blobBaseUrlPromise;
-    const json =
-      modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl !== undefined
-        ? await this.loadCadMetadataFromSignedFiles(modelIdentifier, signedFilesBaseUrl, this._blobFileName)
-        : await this.loadCadMetadataFromBaseUrl(blobBaseUrl, this._blobFileName);
-    const scene: SectorScene = this._cadSceneParser.parse(json);
+    const { jsonData, signedFilesBaseUrl } = await this.getJsonDataWithSignedFilesBaseUrl(modelIdentifier, blobBaseUrl);
+
+    const scene: SectorScene = this._cadSceneParser.parse(jsonData);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
@@ -69,6 +66,30 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
+  }
+
+  private async getJsonDataWithSignedFilesBaseUrl(
+    modelIdentifier: ModelIdentifier,
+    blobBaseUrl: string
+  ): Promise<{
+    jsonData: MetadataWithSignedFiles<CadSceneRootMetadata>;
+    signedFilesBaseUrl: string | undefined;
+  }> {
+    const baseLinkForSignedFiles = this._modelMetadataProvider.getModelUriForSignedFiles?.();
+    if (modelIdentifier instanceof DMModelIdentifier && baseLinkForSignedFiles !== undefined) {
+      try {
+        const jsonData = await this.loadCadMetadataFromSignedFiles(
+          modelIdentifier,
+          baseLinkForSignedFiles,
+          this._blobFileName
+        );
+        return { jsonData, signedFilesBaseUrl: baseLinkForSignedFiles };
+      } catch (error) {
+        console.warn(`Failed to load CAD metadata from signed files: ${error}. Using fallback to base URL fetching.`);
+      }
+    }
+    const jsonData = await this.loadCadMetadataFromBaseUrl(blobBaseUrl, this._blobFileName);
+    return { jsonData, signedFilesBaseUrl: undefined };
   }
 
   private async loadCadMetadataFromSignedFiles(
