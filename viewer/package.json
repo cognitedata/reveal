@@ -117,5 +117,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "pnpm@11.9.0"
+  "packageManager": "pnpm@11.15.0"
 }
