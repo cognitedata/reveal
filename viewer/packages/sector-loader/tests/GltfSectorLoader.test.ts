@@ -10,6 +10,7 @@ import type { WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { DMModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
+import { HttpError } from '@cognite/sdk';
 import { createModelDataProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
 function makeMockProvider(overrides: Partial<ModelDataProvider> = {}): ModelDataProvider {
@@ -43,12 +44,15 @@ function buildSectorMock(overrides: {
   modelIdentifier: WantedSector['modelIdentifier'];
   metadata: SectorMetadata;
   modelBaseUrl?: string;
+  signedFilesBaseUrl?: string;
 }): WantedSector {
   const mock = new Mock<WantedSector>()
     .setup(p => p.modelIdentifier)
     .returns(overrides.modelIdentifier)
     .setup(p => p.metadata)
-    .returns(overrides.metadata);
+    .returns(overrides.metadata)
+    .setup(p => p.signedFilesBaseUrl)
+    .returns(overrides.signedFilesBaseUrl);
   if (overrides.modelBaseUrl !== undefined) {
     mock.setup(p => p.modelBaseUrl).returns(overrides.modelBaseUrl);
   }
@@ -125,6 +129,36 @@ describe(GltfSectorLoader.name, () => {
 
     expect(getBinaryFileMock).toHaveBeenCalledWith(MODEL_BASE_URL, 'sector.glb', undefined);
     expect(result).toBe(expectedBuffer);
+  });
+
+  test('getSectorByteBuffer refreshes and retries after a 403, then reuses the refreshed URL on a later call', async () => {
+    const staleSignedUrl = 'https://signed.cdn.example.com/sector.glb';
+    const freshSignedUrl = 'https://signed.cdn.example.com/sector-fresh.glb';
+    const expectedBuffer = new ArrayBuffer(32);
+    const getBinaryFileMock = vi
+      .fn<ModelDataProvider['getBinaryFile']>()
+      .mockRejectedValueOnce(new HttpError(403, { error: { code: 403, message: 'Forbidden' } }, {}))
+      .mockResolvedValue(expectedBuffer);
+    const getFileUrlsForModelMock = vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
+      { fileName: 'sector.glb', signedUrl: freshSignedUrl, subPath: '' }
+    ]);
+    const dmLoader = new GltfSectorLoader(
+      makeMockProvider({ getBinaryFile: getBinaryFileMock, getFileUrlsForModel: getFileUrlsForModelMock })
+    );
+    const sector = buildSectorMock({
+      modelIdentifier: DM_IDENTIFIER,
+      metadata: buildMetadataMock({ signedUrl: staleSignedUrl, sectorFileName: 'sector.glb' }),
+      modelBaseUrl: MODEL_BASE_URL,
+      signedFilesBaseUrl: 'https://signed-files.example.com'
+    });
+
+    const result = await dmLoader.getSectorByteBuffer(sector);
+
+    expect(result).toBe(expectedBuffer);
+    expect(getBinaryFileMock).toHaveBeenLastCalledWith('', freshSignedUrl, undefined);
+
+    await dmLoader.getSectorByteBuffer(sector);
+    expect(getFileUrlsForModelMock).toHaveBeenCalledTimes(1);
   });
 
   test('getSectorByteBuffer throws when neither DM+signedUrl nor Classic baseUrl+fileName is available', () => {
