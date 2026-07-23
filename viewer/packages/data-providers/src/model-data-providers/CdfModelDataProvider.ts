@@ -39,8 +39,8 @@ export class CdfModelDataProvider implements ModelDataProvider {
       }
       throw new Error('Could not download binary file');
     });
-    if (isBaseUrlEmpty === true) {
-      if (response.ok === false) {
+    if (isBaseUrlEmpty) {
+      if (!response.ok) {
         throw createHttpErrorFromResponse(response);
       }
       return decompressBinaryResponseBody(response);
@@ -59,7 +59,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const response = await this.fetchWithRetry(fileName, { headers, method: 'GET' }).catch(() => {
       throw Error('Could not download signed JSON file');
     });
-    if (response.ok === false) {
+    if (!response.ok) {
       throw createHttpErrorFromResponse(response);
     }
     return parseJsonResponseBody(response);
