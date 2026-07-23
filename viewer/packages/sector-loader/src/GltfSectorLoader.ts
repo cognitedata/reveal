@@ -4,9 +4,7 @@
 
 import type { ConsumedSector, WantedSector, ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
-import { DMModelIdentifier } from '@reveal/data-providers';
 import type { ModelDataProvider } from '@reveal/data-providers';
-import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { ParsedGeometry } from '@reveal/sector-parser';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
@@ -17,13 +15,11 @@ import { Log } from '@reveal/logger';
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
   private readonly _dataFileProvider: ModelDataProvider;
-  private readonly _signedUrlRefresher: SignedUrlRefresher;
   private readonly _refreshedSignedUrls = new Map<number, string>();
 
   constructor(sectorFileProvider: ModelDataProvider) {
     this._gltfSectorParser = new GltfSectorParser();
     this._dataFileProvider = sectorFileProvider;
-    this._signedUrlRefresher = new SignedUrlRefresher(sectorFileProvider);
   }
 
   async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
@@ -118,20 +114,26 @@ export class GltfSectorLoader {
 
   getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const { metadata } = sector;
-    const currentSignedUrl = this._refreshedSignedUrls.get(metadata.id) ?? metadata.signedUrl;
-    if (sector.modelIdentifier instanceof DMModelIdentifier && currentSignedUrl !== undefined) {
-      return this._signedUrlRefresher.fetchWithRefresh({
-        currentSignedUrl,
-        signedFilesBaseUrl: sector.signedFilesBaseUrl,
+    const classicFallback =
+      sector.modelBaseUrl && metadata.sectorFileName
+        ? { baseUrl: sector.modelBaseUrl, fileName: metadata.sectorFileName }
+        : undefined;
+
+    if (this._dataFileProvider.getBinaryFileWithRefresher) {
+      return this._dataFileProvider.getBinaryFileWithRefresher({
         modelIdentifier: sector.modelIdentifier,
+        currentSignedUrl: this._refreshedSignedUrls.get(metadata.id) ?? metadata.signedUrl,
+        signedFilesBaseUrl: sector.signedFilesBaseUrl,
         candidates: metadata.sectorFileName ? [metadata.sectorFileName] : [],
-        fetchFn: url => this._dataFileProvider.getBinaryFile('', url, abortSignal),
-        onUrlRefreshed: item => this._refreshedSignedUrls.set(metadata.id, item.signedUrl)
+        classicFallback,
+        requireExistingSignedUrl: true,
+        onUrlRefreshed: item => this._refreshedSignedUrls.set(metadata.id, item.signedUrl),
+        abortSignal
       });
-    } else if (sector.modelBaseUrl && metadata.sectorFileName) {
-      return this._dataFileProvider.getBinaryFile(sector.modelBaseUrl, metadata.sectorFileName, abortSignal);
-    } else {
-      throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
     }
+    if (classicFallback !== undefined) {
+      return this._dataFileProvider.getBinaryFile(classicFallback.baseUrl, classicFallback.fileName, abortSignal);
+    }
+    throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
   }
 }

@@ -18,9 +18,7 @@ import {
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
 import type { ModelDataProvider, ModelIdentifier, SignedFileItem } from '@reveal/data-providers';
-import { DMModelIdentifier } from '@reveal/data-providers';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
-import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
@@ -38,7 +36,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   private _signedUrl: string | undefined;
   private readonly _signedFilesBaseUrl: string | undefined;
-  private readonly _signedUrlRefresher: SignedUrlRefresher;
   private _level: number;
   private _numPoints: number;
 
@@ -192,7 +189,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._signedUrl = this.findBinarySignedUrlInPreload();
 
     this._dataLoader = modelDataProvider;
-    this._signedUrlRefresher = new SignedUrlRefresher(modelDataProvider);
     this._modelIdentifier = modelIdentifier;
     this._signedFilesBaseUrl = signedFilesBaseUrl;
 
@@ -321,27 +317,27 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   }
 
   async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
-    if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
-      const filePath = `ept-hierarchy/${fileName}`;
+    const classicBaseUrl = `${this.ept.url}ept-hierarchy`;
 
+    if (this._dataLoader.getJsonFileWithRefresher) {
+      const filePath = `ept-hierarchy/${fileName}`;
       const map =
         this._eptMetadata && 'signedFiles' in this._eptMetadata
           ? PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata)
           : undefined;
-      const currentSignedUrl = map?.get(filePath) ?? map?.get(fileName);
 
-      return this._signedUrlRefresher.fetchWithRefresh({
-        currentSignedUrl,
-        signedFilesBaseUrl: this.signedFilesBaseUrl,
+      const data = await this._dataLoader.getJsonFileWithRefresher({
         modelIdentifier: this._modelIdentifier,
+        currentSignedUrl: map?.get(filePath) ?? map?.get(fileName),
+        signedFilesBaseUrl: this.signedFilesBaseUrl,
         candidates: [filePath, fileName],
-        fetchFn: url => this._dataLoader.getJsonFile('', url),
+        classicFallback: { baseUrl: classicBaseUrl, fileName },
+        requireExistingSignedUrl: false,
         onUrlRefreshed: item => this.updateSignedFileItem(item)
       });
-    } else {
-      const baseUrl = `${this.ept.url}ept-hierarchy`;
-      return this._dataLoader.getJsonFile(baseUrl, fileName);
+      return data as { [key: string]: number };
     }
+    return this._dataLoader.getJsonFile(classicBaseUrl, fileName);
   }
 
   async loadHierarchy(): Promise<void> {

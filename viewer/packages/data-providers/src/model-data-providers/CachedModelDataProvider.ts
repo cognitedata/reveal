@@ -4,7 +4,8 @@
 
 import type { ModelDataProvider } from '../ModelDataProvider';
 import type { ModelIdentifier } from '../ModelIdentifier';
-import type { SignedFileItem } from '../types';
+import type { FetchSignedOrClassicOptions, SignedFileItem } from '../types';
+import { SignedUrlRefresher } from '../utilities/signedUrlRefresh';
 import type { CacheConfig } from '@reveal/utilities';
 import { DataFileCacheManager } from '@reveal/utilities';
 
@@ -17,10 +18,21 @@ import { DataFileCacheManager } from '@reveal/utilities';
 export class CachedModelDataProvider implements ModelDataProvider {
   private readonly baseProvider: ModelDataProvider;
   private readonly cacheManager: DataFileCacheManager;
+  private readonly signedUrlRefresher = new SignedUrlRefresher(this);
 
   constructor(baseProvider: ModelDataProvider, cacheConfig?: CacheConfig, cacheStorage?: CacheStorage) {
     this.baseProvider = baseProvider;
     this.cacheManager = new DataFileCacheManager(cacheConfig, cacheStorage);
+  }
+
+  async getBinaryFileWithRefresher(
+    options: FetchSignedOrClassicOptions & { abortSignal?: AbortSignal }
+  ): Promise<ArrayBuffer> {
+    return this.signedUrlRefresher.getBinaryFileWithRefresher(options);
+  }
+
+  async getJsonFileWithRefresher(options: FetchSignedOrClassicOptions): Promise<unknown> {
+    return this.signedUrlRefresher.getJsonFileWithRefresher(options);
   }
 
   async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
