@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type { CogniteClient, HttpRequestOptions } from '@cognite/sdk';
+import { HttpError, type CogniteClient, type HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import type { SignedFileItem } from '../types';
@@ -40,6 +40,9 @@ export class CdfModelDataProvider implements ModelDataProvider {
       throw new Error('Could not download binary file');
     });
     if (isBaseUrlEmpty) {
+      if (!response.ok) {
+        throw createHttpErrorFromResponse(response);
+      }
       return decompressBinaryResponseBody(response);
     }
     return response.arrayBuffer();
@@ -56,8 +59,8 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const response = await this.fetchWithRetry(fileName, { headers, method: 'GET' }).catch(() => {
       throw Error('Could not download signed JSON file');
     });
-    if (response.ok === false) {
-      throw new Error(`Signed JSON file request failed with status ${response.status}`);
+    if (!response.ok) {
+      throw createHttpErrorFromResponse(response);
     }
     return parseJsonResponseBody(response);
   }
@@ -135,4 +138,16 @@ export class CdfModelDataProvider implements ModelDataProvider {
     }
     throw error;
   }
+}
+
+function createHttpErrorFromResponse(response: Response): HttpError {
+  const headers: { [key: string]: string } = {};
+  response.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+  return new HttpError(
+    response.status,
+    { error: { code: response.status, message: response.statusText || 'Signed URL request failed' } },
+    headers
+  );
 }

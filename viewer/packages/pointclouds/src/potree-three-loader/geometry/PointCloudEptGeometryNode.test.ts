@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
+import { HttpError } from '@cognite/sdk';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from '../loading/EptJson';
 import {
@@ -110,6 +111,38 @@ describe(PointCloudEptGeometryNode.name, () => {
         filePath
       );
       expect(dataProvider.getJsonFile).toHaveBeenCalledWith('', hierarchySignedUrl);
+    });
+
+    test('DM model with an expired cached signedUrl refreshes, retries, and updates the shared signedFiles list', async () => {
+      const freshUrl = `${ROOT_BINARY_DOMAIN_URL}/${EPT_HIERARCHY_BASE}/${ROOT_BINARY_NAME}-fresh.json`;
+      const metadata = makeMetadata([{ fileName: filePath, signedUrl: hierarchySignedUrl }]);
+      const getJsonFileMock = vi
+        .fn<ModelDataProvider['getJsonFile']>()
+        .mockRejectedValueOnce(new HttpError(403, { error: { code: 403, message: 'Forbidden' } }, {}))
+        .mockResolvedValueOnce({});
+      const dataProvider = createMockModelDataProvider({
+        getJsonFile: getJsonFileMock,
+        getFileUrlsForModel: vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
+          { fileName: filePath, signedUrl: freshUrl, subPath: '' }
+        ])
+      });
+      const node = new PointCloudEptGeometryNode(
+        createMockEptGeometry(),
+        dataProvider,
+        mockDMModelIdentifier,
+        metadata,
+        SIGNED_FILES_BASE_URL
+      );
+
+      await node.getHierarchy(fileName);
+
+      expect(getJsonFileMock).toHaveBeenLastCalledWith('', freshUrl);
+      expect(dataProvider.getFileUrlsForModel).toHaveBeenCalledWith(
+        SIGNED_FILES_BASE_URL,
+        mockDMModelIdentifier,
+        filePath
+      );
+      expect(metadata.signedFiles?.items.find(i => i.fileName === filePath)?.signedUrl).toBe(freshUrl);
     });
 
     test('classic model uses getJsonFile with ept-hierarchy base URL', async () => {

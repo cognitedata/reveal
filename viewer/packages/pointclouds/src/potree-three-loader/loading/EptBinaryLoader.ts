@@ -11,6 +11,7 @@ import { WorkerPool } from '../utils/WorkerPool';
 import type { ILoader } from './ILoader';
 import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
 import { DMModelIdentifier } from '@reveal/data-providers';
+import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker?worker&inline';
 
@@ -25,8 +26,9 @@ import { MetricsLogger } from '@reveal/metrics';
 import type { EptBinaryDecoderWorker } from '../workers/eptBinaryDecoder.worker';
 
 export class EptBinaryLoader implements ILoader {
-  private readonly _dataLoader: ModelDataProvider;
+  private readonly _dataFileProvider: ModelDataProvider;
   private readonly _stylableObjectsWithBox: [SerializableStylableObject, Box3][];
+  readonly signedUrlRefresher: SignedUrlRefresher;
 
   static readonly WORKER_POOL: WorkerPool<Worker> = new WorkerPool(8, EptDecoderWorker);
 
@@ -35,7 +37,8 @@ export class EptBinaryLoader implements ILoader {
   }
 
   constructor(dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
-    this._dataLoader = dataLoader;
+    this._dataFileProvider = dataLoader;
+    this.signedUrlRefresher = new SignedUrlRefresher(dataLoader);
     this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => {
       const serializableShape = obj.shape.getSerializableShape();
 
@@ -49,11 +52,22 @@ export class EptBinaryLoader implements ILoader {
     if (node.modelIdentifier instanceof DMModelIdentifier) {
       const signedUrl = await this.resolveSignedUrl(node);
       if (signedUrl !== undefined) {
-        return this._dataLoader.getBinaryFile('', signedUrl);
+        const filePath = `ept-data/${node.fileName()}${this.extension()}`;
+        return this.signedUrlRefresher.fetchWithRefresh({
+          currentSignedUrl: signedUrl,
+          signedFilesBaseUrl: node.signedFilesBaseUrl,
+          modelIdentifier: node.modelIdentifier,
+          fileName: filePath,
+          fetchFn: url => this._dataFileProvider.getBinaryFile('', url),
+          onUrlRefreshed: item => {
+            node.signedUrl = item.signedUrl;
+            node.updateSignedFileItem(item);
+          }
+        });
       }
     }
     const fullFileName = node.fileName() + this.extension();
-    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+    return this._dataFileProvider.getBinaryFile(node.baseUrl(), fullFileName);
   }
 
   private async resolveSignedUrl(node: PointCloudEptGeometryNode): Promise<string | undefined> {
@@ -67,12 +81,16 @@ export class EptBinaryLoader implements ILoader {
       node.signedUrl = preloadUrl;
       return preloadUrl;
     }
-    if (!node.signedFilesBaseUrl || !this._dataLoader.getFileUrlsForModel) {
+    if (!node.signedFilesBaseUrl || !this._dataFileProvider.getFileUrlsForModel) {
       return undefined;
     }
     const fileName = node.fileName() + this.extension();
     const filePath = `ept-data/${fileName}`;
-    const items = await this._dataLoader.getFileUrlsForModel(node.signedFilesBaseUrl, node.modelIdentifier, filePath);
+    const items = await this._dataFileProvider.getFileUrlsForModel(
+      node.signedFilesBaseUrl,
+      node.modelIdentifier,
+      filePath
+    );
     const found = items.find(
       item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + fileName)
     );

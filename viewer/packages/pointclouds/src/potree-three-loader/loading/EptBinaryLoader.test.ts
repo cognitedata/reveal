@@ -7,6 +7,7 @@ import { EptBinaryLoader } from './EptBinaryLoader';
 import type { EptJson } from './EptJson';
 import type { ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
+import { HttpError } from '@cognite/sdk';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import {
   createMockEptGeometry,
@@ -92,6 +93,39 @@ describe(EptBinaryLoader.name, () => {
     );
     expect(getBinaryFileMock).toHaveBeenCalledWith('', resolvedSignedUrl);
     expect(node.signedUrl).toBe(resolvedSignedUrl);
+  });
+
+  test('DM model with an expired cached signedUrl refreshes and retries, updating node.signedUrl', async () => {
+    const freshUrl = 'https://cdn.example.com/0-0-0-0-fresh.bin';
+    const expectedBuffer = new ArrayBuffer(16);
+    const getBinaryFileMock = vi
+      .fn<ModelDataProvider['getBinaryFile']>()
+      .mockRejectedValueOnce(new HttpError(403, { error: { code: 403, message: 'Forbidden' } }, {}))
+      .mockResolvedValueOnce(expectedBuffer);
+    const getFileUrlsForModelMock = vi.fn<NonNullable<ModelDataProvider['getFileUrlsForModel']>>(async () => [
+      { fileName: 'ept-data/0-0-0-0.bin', signedUrl: freshUrl, subPath: '' }
+    ]);
+    const dataProvider = createMockModelDataProvider({
+      getBinaryFile: getBinaryFileMock,
+      getFileUrlsForModel: getFileUrlsForModelMock
+    });
+    const loader = new EptBinaryLoader(dataProvider, []);
+    const node = createMockNode({
+      modelIdentifier: mockDMModelIdentifier,
+      signedUrl: SIGNED_URL,
+      signedFilesBaseUrl: 'https://signed.example.com'
+    });
+
+    const result = await loader.getBinaryFile(node);
+
+    expect(result).toBe(expectedBuffer);
+    expect(getBinaryFileMock).toHaveBeenLastCalledWith('', freshUrl);
+    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(
+      'https://signed.example.com',
+      mockDMModelIdentifier,
+      'ept-data/0-0-0-0.bin'
+    );
+    expect(node.signedUrl).toBe(freshUrl);
   });
 
   test('DM model falls back to baseUrl when getFileUrlsForModel finds no matching item', async () => {

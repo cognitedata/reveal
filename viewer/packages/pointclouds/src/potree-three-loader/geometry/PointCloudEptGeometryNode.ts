@@ -17,9 +17,10 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier, SignedFileItem } from '@reveal/data-providers';
 import { DMModelIdentifier } from '@reveal/data-providers';
 import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
@@ -37,6 +38,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
 
   private _signedUrl: string | undefined;
   private readonly _signedFilesBaseUrl: string | undefined;
+  private readonly _signedUrlRefresher: SignedUrlRefresher;
   private _level: number;
   private _numPoints: number;
 
@@ -190,6 +192,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._signedUrl = this.findBinarySignedUrlInPreload();
 
     this._dataLoader = modelDataProvider;
+    this._signedUrlRefresher = new SignedUrlRefresher(modelDataProvider);
     this._modelIdentifier = modelIdentifier;
     this._signedFilesBaseUrl = signedFilesBaseUrl;
 
@@ -305,34 +308,36 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return map.get(nodeFileName);
   }
 
+  updateSignedFileItem(item: SignedFileItem): void {
+    if (!('signedFiles' in this._eptMetadata) || this._eptMetadata.signedFiles === undefined) return;
+    const items = this._eptMetadata.signedFiles.items;
+    const existingIndex = items.findIndex(existing => existing.fileName === item.fileName);
+    if (existingIndex !== -1) {
+      items[existingIndex] = item;
+    } else {
+      items.push(item);
+    }
+    PointCloudEptGeometryNode._signedFilesCache.delete(this._eptMetadata);
+  }
+
   async getHierarchy(fileName: string): Promise<{ [key: string]: number }> {
     if (this._modelIdentifier instanceof DMModelIdentifier && this.signedFilesBaseUrl) {
       const filePath = `ept-hierarchy/${fileName}`;
 
-      if (this._eptMetadata && 'signedFiles' in this._eptMetadata) {
-        const map = PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata);
-        const signedUrl = map.get(filePath) ?? map.get(fileName);
-        if (signedUrl) {
-          const data = await this._dataLoader.getJsonFile('', signedUrl);
-          return data as { [key: string]: number };
-        }
-      }
+      const map =
+        this._eptMetadata && 'signedFiles' in this._eptMetadata
+          ? PointCloudEptGeometryNode.getSignedUrlMap(this._eptMetadata)
+          : undefined;
+      const currentSignedUrl = map?.get(filePath) ?? map?.get(fileName);
 
-      if (this._dataLoader.getFileUrlsForModel === undefined) {
-        throw new Error('Model data provider does not support signed file fetching');
-      }
-      const items = await this._dataLoader.getFileUrlsForModel(
-        this.signedFilesBaseUrl,
-        this._modelIdentifier,
-        filePath
-      );
-      const found = items.find(
-        item => item.fileName === fileName || item.fileName === filePath || item.fileName.endsWith('/' + filePath)
-      );
-      if (found === undefined) {
-        throw new Error(`File "${filePath}" not found in signed files response`);
-      }
-      return this._dataLoader.getJsonFile('', found.signedUrl);
+      return this._signedUrlRefresher.fetchWithRefresh({
+        currentSignedUrl,
+        signedFilesBaseUrl: this.signedFilesBaseUrl,
+        modelIdentifier: this._modelIdentifier,
+        fileName: filePath,
+        fetchFn: url => this._dataLoader.getJsonFile('', url),
+        onUrlRefreshed: item => this.updateSignedFileItem(item)
+      });
     } else {
       const baseUrl = `${this.ept.url}ept-hierarchy`;
       return this._dataLoader.getJsonFile(baseUrl, fileName);
