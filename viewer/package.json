@@ -102,7 +102,7 @@
     "shx": "^0.4.0",
     "stats.js": "^0.17.0",
     "three": "0.184.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.0",
     "unplugin-dts": "^1.0.2",
     "vite": "^8.1.0",
     "vite-plugin-glsl": "^1.6.0",
