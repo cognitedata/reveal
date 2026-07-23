@@ -156,6 +156,11 @@ describe(GltfSectorLoader.name, () => {
 
     expect(result).toBe(expectedBuffer);
     expect(getBinaryFileMock).toHaveBeenLastCalledWith('', freshSignedUrl, undefined);
+    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(
+      'https://signed-files.example.com',
+      DM_IDENTIFIER,
+      'sector.glb'
+    );
 
     await dmLoader.getSectorByteBuffer(sector);
     expect(getFileUrlsForModelMock).toHaveBeenCalledTimes(1);

@@ -120,6 +120,11 @@ describe(EptBinaryLoader.name, () => {
 
     expect(result).toBe(expectedBuffer);
     expect(getBinaryFileMock).toHaveBeenLastCalledWith('', freshUrl);
+    expect(getFileUrlsForModelMock).toHaveBeenCalledWith(
+      'https://signed.example.com',
+      mockDMModelIdentifier,
+      'ept-data/0-0-0-0.bin'
+    );
     expect(node.signedUrl).toBe(freshUrl);
   });
 

@@ -14,9 +14,19 @@ function isExpiredOrInvalidSignedUrlError(error: unknown): boolean {
   return error instanceof HttpError && EXPIRED_OR_INVALID_SIGNED_URL_STATUSES.includes(error.status);
 }
 
-function findSignedFileItem(items: SignedFileItem[], candidates: string[]): SignedFileItem | undefined {
-  return items.find(item =>
-    candidates.some(candidate => item.fileName === candidate || item.fileName.endsWith('/' + candidate))
+function baseName(fileName: string): string {
+  const lastSlash = fileName.lastIndexOf('/');
+  return lastSlash === -1 ? fileName : fileName.substring(lastSlash + 1);
+}
+
+function findSignedFileItem(items: SignedFileItem[], fileName: string): SignedFileItem | undefined {
+  const fileBaseName = baseName(fileName);
+  return items.find(
+    item =>
+      item.fileName === fileName ||
+      item.fileName === fileBaseName ||
+      item.fileName.endsWith('/' + fileName) ||
+      item.fileName.endsWith('/' + fileBaseName)
   );
 }
 
@@ -24,7 +34,7 @@ type FetchWithRefreshOptions<T> = {
   currentSignedUrl: string | undefined;
   signedFilesBaseUrl: string | undefined;
   modelIdentifier: ModelIdentifier;
-  candidates: string[];
+  fileName: string;
   fetchFn: (signedUrl: string) => Promise<T>;
   onUrlRefreshed?: (item: SignedFileItem) => void;
 };
@@ -32,18 +42,27 @@ type FetchWithRefreshOptions<T> = {
 /**
  * Fetches a resource through a signed URL, transparently refreshing the URL and retrying once
  * if the current URL has expired or is otherwise invalid (HTTP 401/403/404). Concurrent refresh
- * requests for the same file are de-duplicated.
+ * requests for the same file are de-duplicated. Successfully refreshed URLs are cached and
+ * preferred over the originally supplied `currentSignedUrl` on later calls.
  */
 export class SignedUrlRefresher {
   private readonly _dataProvider: ModelDataProvider;
   private readonly _inFlightRefreshes = new Map<string, Promise<SignedFileItem | undefined>>();
+  private readonly _refreshedSignedUrls = new Map<string, string>();
 
   constructor(dataProvider: ModelDataProvider) {
     this._dataProvider = dataProvider;
   }
 
   async fetchWithRefresh<T>(options: FetchWithRefreshOptions<T>): Promise<T> {
-    const { currentSignedUrl, signedFilesBaseUrl, modelIdentifier, candidates, fetchFn, onUrlRefreshed } = options;
+    const { signedFilesBaseUrl, modelIdentifier, fileName, fetchFn, onUrlRefreshed } = options;
+
+    const { cacheKey, currentSignedUrl } = this.resolveCurrentSignedUrl(
+      signedFilesBaseUrl,
+      modelIdentifier,
+      fileName,
+      options.currentSignedUrl
+    );
 
     if (currentSignedUrl !== undefined) {
       try {
@@ -59,7 +78,7 @@ export class SignedUrlRefresher {
       const found = await this.refresh(
         signedFilesBaseUrl,
         modelIdentifier,
-        candidates,
+        fileName,
         (signedFilesBaseUrl: string, modelIdentifier: ModelIdentifier, fileName: string | undefined) => {
           assert(
             this._dataProvider.getFileUrlsForModel !== undefined,
@@ -69,30 +88,52 @@ export class SignedUrlRefresher {
         }
       );
       if (found === undefined) {
-        throw new Error(`File "${candidates[0]}" not found in signed files response`);
+        throw new Error(`File "${fileName}" not found in signed files response`);
       }
 
+      if (cacheKey !== undefined) {
+        this._refreshedSignedUrls.set(cacheKey, found.signedUrl);
+      }
       onUrlRefreshed?.(found);
       return fetchFn(found.signedUrl);
     }
     throw new Error('Model data provider does not support signed file fetching');
   }
 
+  private resolveCurrentSignedUrl(
+    signedFilesBaseUrl: string | undefined,
+    modelIdentifier: ModelIdentifier,
+    fileName: string,
+    fallbackSignedUrl: string | undefined
+  ): { cacheKey: string | undefined; currentSignedUrl: string | undefined } {
+    const cacheKey =
+      signedFilesBaseUrl !== undefined && fileName !== ''
+        ? this.cacheKey(signedFilesBaseUrl, modelIdentifier, fileName)
+        : undefined;
+    const currentSignedUrl =
+      (cacheKey !== undefined ? this._refreshedSignedUrls.get(cacheKey) : undefined) ?? fallbackSignedUrl;
+    return { cacheKey, currentSignedUrl };
+  }
+
+  private cacheKey(signedFilesBaseUrl: string, modelIdentifier: ModelIdentifier, fileName: string): string {
+    return `${signedFilesBaseUrl}|${modelIdentifier.sourceModelIdentifier()}|${fileName}`;
+  }
+
   private async refresh(
     signedFilesBaseUrl: string,
     modelIdentifier: ModelIdentifier,
-    candidates: string[],
+    fileName: string,
     getFilesFn: (
       signedFilesBaseUrl: string,
       modelIdentifier: ModelIdentifier,
       fileName: string | undefined
     ) => Promise<SignedFileItem[]>
   ): Promise<SignedFileItem | undefined> {
-    const key = `${signedFilesBaseUrl}|${modelIdentifier.sourceModelIdentifier()}|${candidates[0]}`;
+    const key = this.cacheKey(signedFilesBaseUrl, modelIdentifier, fileName);
     let promise = this._inFlightRefreshes.get(key);
     if (promise === undefined) {
-      promise = getFilesFn(signedFilesBaseUrl, modelIdentifier, candidates[0])
-        .then(items => findSignedFileItem(items, candidates))
+      promise = getFilesFn(signedFilesBaseUrl, modelIdentifier, fileName)
+        .then(items => findSignedFileItem(items, fileName))
         .finally(() => this._inFlightRefreshes.delete(key));
       this._inFlightRefreshes.set(key, promise);
     }

@@ -309,7 +309,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   }
 
   updateSignedFileItem(item: SignedFileItem): void {
-    if ('signedFiles' in this._eptMetadata === false || this._eptMetadata.signedFiles === undefined) return;
+    if (!('signedFiles' in this._eptMetadata) || this._eptMetadata.signedFiles === undefined) return;
     const items = this._eptMetadata.signedFiles.items;
     const existingIndex = items.findIndex(existing => existing.fileName === item.fileName);
     if (existingIndex !== -1) {
@@ -334,7 +334,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
         currentSignedUrl,
         signedFilesBaseUrl: this.signedFilesBaseUrl,
         modelIdentifier: this._modelIdentifier,
-        candidates: [filePath, fileName],
+        fileName: filePath,
         fetchFn: url => this._dataLoader.getJsonFile('', url),
         onUrlRefreshed: item => this.updateSignedFileItem(item)
       });

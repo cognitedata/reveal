@@ -52,13 +52,12 @@ export class EptBinaryLoader implements ILoader {
     if (node.modelIdentifier instanceof DMModelIdentifier) {
       const signedUrl = await this.resolveSignedUrl(node);
       if (signedUrl !== undefined) {
-        const fileName = node.fileName() + this.extension();
-        const filePath = `ept-data/${fileName}`;
+        const filePath = `ept-data/${node.fileName()}${this.extension()}`;
         return this.signedUrlRefresher.fetchWithRefresh({
           currentSignedUrl: signedUrl,
           signedFilesBaseUrl: node.signedFilesBaseUrl,
           modelIdentifier: node.modelIdentifier,
-          candidates: [filePath, fileName],
+          fileName: filePath,
           fetchFn: url => this._dataFileProvider.getBinaryFile('', url),
           onUrlRefreshed: item => {
             node.signedUrl = item.signedUrl;

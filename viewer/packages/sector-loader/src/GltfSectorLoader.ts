@@ -18,7 +18,6 @@ export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
   private readonly _dataFileProvider: ModelDataProvider;
   private readonly _signedUrlRefresher: SignedUrlRefresher;
-  private readonly _refreshedSignedUrls = new Map<number, string>();
 
   constructor(sectorFileProvider: ModelDataProvider) {
     this._gltfSectorParser = new GltfSectorParser();
@@ -118,15 +117,13 @@ export class GltfSectorLoader {
 
   getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const { metadata } = sector;
-    const currentSignedUrl = this._refreshedSignedUrls.get(metadata.id) ?? metadata.signedUrl;
-    if (sector.modelIdentifier instanceof DMModelIdentifier && currentSignedUrl !== undefined) {
+    if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl !== undefined) {
       return this._signedUrlRefresher.fetchWithRefresh({
-        currentSignedUrl,
+        currentSignedUrl: metadata.signedUrl,
         signedFilesBaseUrl: sector.signedFilesBaseUrl,
         modelIdentifier: sector.modelIdentifier,
-        candidates: metadata.sectorFileName ? [metadata.sectorFileName] : [],
-        fetchFn: url => this._dataFileProvider.getBinaryFile('', url, abortSignal),
-        onUrlRefreshed: item => this._refreshedSignedUrls.set(metadata.id, item.signedUrl)
+        fileName: metadata.sectorFileName ?? '',
+        fetchFn: url => this._dataFileProvider.getBinaryFile('', url, abortSignal)
       });
     } else if (sector.modelBaseUrl && metadata.sectorFileName) {
       return this._dataFileProvider.getBinaryFile(sector.modelBaseUrl, metadata.sectorFileName, abortSignal);

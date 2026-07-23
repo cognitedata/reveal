@@ -137,7 +137,12 @@ describe(PointCloudEptGeometryNode.name, () => {
       await node.getHierarchy(fileName);
 
       expect(getJsonFileMock).toHaveBeenLastCalledWith('', freshUrl);
-      expect(metadata.signedFiles!.items.find(i => i.fileName === filePath)?.signedUrl).toBe(freshUrl);
+      expect(dataProvider.getFileUrlsForModel).toHaveBeenCalledWith(
+        SIGNED_FILES_BASE_URL,
+        mockDMModelIdentifier,
+        filePath
+      );
+      expect(metadata.signedFiles?.items.find(i => i.fileName === filePath)?.signedUrl).toBe(freshUrl);
     });
 
     test('classic model uses getJsonFile with ept-hierarchy base URL', async () => {
