@@ -53,38 +53,7 @@ export interface SignedFileProvider {
     modelIdentifier: ModelIdentifier,
     fileNameFilter?: string
   ): Promise<SignedFileItem[]>;
-
-  /**
-   * Retrieves a binary file with the refresher, deciding internally whether
-   * to use the signed-URL path or the classic baseUrl+fileName path.
-   * @param options Options including model identifier, signed URL, and classic fallback.
-   */
-  getBinaryFileWithRefresher?(
-    options: FetchSignedOrClassicOptions & { abortSignal?: AbortSignal }
-  ): Promise<ArrayBuffer>;
-
-  /**
-   * Retrieves a JSON file with the refresher, deciding internally whether
-   * to use the signed-URL path or the classic baseUrl+fileName path.
-   * @param options Options including model identifier, signed URL, and classic fallback.
-   */
-  getJsonFileWithRefresher?(options: FetchSignedOrClassicOptions): Promise<unknown>;
 }
-
-export type ClassicFallback = {
-  baseUrl: string;
-  fileName: string;
-};
-
-export type FetchSignedOrClassicOptions = {
-  modelIdentifier: ModelIdentifier;
-  currentSignedUrl: string | undefined;
-  signedFilesBaseUrl: string | undefined;
-  candidates: string[];
-  classicFallback: ClassicFallback | undefined;
-  requireExistingSignedUrl: boolean;
-  onUrlRefreshed?: (item: SignedFileItem) => void;
-};
 
 export type SignedFileItem = {
   signedUrl: string;

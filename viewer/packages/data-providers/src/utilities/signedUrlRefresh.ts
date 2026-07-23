@@ -5,8 +5,7 @@
 import { HttpError } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import type { ModelIdentifier } from '../ModelIdentifier';
-import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import type { FetchSignedOrClassicOptions, SignedFileItem } from '../types';
+import type { SignedFileItem } from '../types';
 
 const EXPIRED_OR_INVALID_SIGNED_URL_STATUSES = [401, 403, 404];
 
@@ -83,45 +82,4 @@ export class SignedUrlRefresher {
     }
     return promise;
   }
-
-  async getBinaryFileWithRefresher(
-    options: FetchSignedOrClassicOptions & { abortSignal?: AbortSignal }
-  ): Promise<ArrayBuffer> {
-    const { classicFallback, abortSignal } = options;
-    if (shouldAttemptSignedFetch(options)) {
-      return this.fetchWithRefresh({
-        ...options,
-        fetchFn: url => this.dataProvider.getBinaryFile('', url, abortSignal)
-      });
-    }
-    if (classicFallback !== undefined) {
-      return this.dataProvider.getBinaryFile(classicFallback.baseUrl, classicFallback.fileName, abortSignal);
-    }
-    throw new Error(NO_SIGNED_OR_CLASSIC_SOURCE_ERROR);
-  }
-
-  async getJsonFileWithRefresher(options: FetchSignedOrClassicOptions): Promise<unknown> {
-    const { classicFallback } = options;
-    if (shouldAttemptSignedFetch(options)) {
-      return this.fetchWithRefresh({
-        ...options,
-        fetchFn: url => this.dataProvider.getJsonFile('', url)
-      });
-    }
-    if (classicFallback !== undefined) {
-      return this.dataProvider.getJsonFile(classicFallback.baseUrl, classicFallback.fileName);
-    }
-    throw new Error(NO_SIGNED_OR_CLASSIC_SOURCE_ERROR);
-  }
-}
-
-const NO_SIGNED_OR_CLASSIC_SOURCE_ERROR =
-  'Model must be a DM model with a signed URL or a CDF model with a base URL and file name provided';
-
-function shouldAttemptSignedFetch(options: FetchSignedOrClassicOptions): boolean {
-  const { modelIdentifier, currentSignedUrl, signedFilesBaseUrl, requireExistingSignedUrl } = options;
-  if (!(modelIdentifier instanceof DMModelIdentifier)) {
-    return false;
-  }
-  return requireExistingSignedUrl ? currentSignedUrl !== undefined : signedFilesBaseUrl !== undefined;
 }

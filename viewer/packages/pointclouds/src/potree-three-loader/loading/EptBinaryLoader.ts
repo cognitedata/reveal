@@ -10,6 +10,8 @@ import { Box3, BufferAttribute, BufferGeometry, Vector3 } from 'three';
 import { WorkerPool } from '../utils/WorkerPool';
 import type { ILoader } from './ILoader';
 import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker?worker&inline';
 
@@ -26,6 +28,7 @@ import type { EptBinaryDecoderWorker } from '../workers/eptBinaryDecoder.worker'
 export class EptBinaryLoader implements ILoader {
   private readonly _dataFileProvider: ModelDataProvider;
   private readonly _stylableObjectsWithBox: [SerializableStylableObject, Box3][];
+  readonly signedUrlRefresher: SignedUrlRefresher;
 
   static readonly WORKER_POOL: WorkerPool<Worker> = new WorkerPool(8, EptDecoderWorker);
 
@@ -35,6 +38,7 @@ export class EptBinaryLoader implements ILoader {
 
   constructor(dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
     this._dataFileProvider = dataLoader;
+    this.signedUrlRefresher = new SignedUrlRefresher(dataLoader);
     this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => {
       const serializableShape = obj.shape.getSerializableShape();
 
@@ -45,24 +49,26 @@ export class EptBinaryLoader implements ILoader {
   }
 
   async getBinaryFile(node: PointCloudEptGeometryNode): Promise<ArrayBuffer> {
-    const fileName = node.fileName() + this.extension();
-
-    if (this._dataFileProvider.getBinaryFileWithRefresher) {
-      const filePath = `ept-data/${fileName}`;
-      return this._dataFileProvider.getBinaryFileWithRefresher({
-        modelIdentifier: node.modelIdentifier,
-        currentSignedUrl: await this.resolveSignedUrl(node),
-        signedFilesBaseUrl: node.signedFilesBaseUrl,
-        candidates: [filePath, fileName],
-        classicFallback: { baseUrl: node.baseUrl(), fileName },
-        requireExistingSignedUrl: true,
-        onUrlRefreshed: item => {
-          node.signedUrl = item.signedUrl;
-          node.updateSignedFileItem(item);
-        }
-      });
+    if (node.modelIdentifier instanceof DMModelIdentifier) {
+      const signedUrl = await this.resolveSignedUrl(node);
+      if (signedUrl !== undefined) {
+        const fileName = node.fileName() + this.extension();
+        const filePath = `ept-data/${fileName}`;
+        return this.signedUrlRefresher.fetchWithRefresh({
+          currentSignedUrl: signedUrl,
+          signedFilesBaseUrl: node.signedFilesBaseUrl,
+          modelIdentifier: node.modelIdentifier,
+          candidates: [filePath, fileName],
+          fetchFn: url => this._dataFileProvider.getBinaryFile('', url),
+          onUrlRefreshed: item => {
+            node.signedUrl = item.signedUrl;
+            node.updateSignedFileItem(item);
+          }
+        });
+      }
     }
-    return this._dataFileProvider.getBinaryFile(node.baseUrl(), fileName);
+    const fullFileName = node.fileName() + this.extension();
+    return this._dataFileProvider.getBinaryFile(node.baseUrl(), fullFileName);
   }
 
   private async resolveSignedUrl(node: PointCloudEptGeometryNode): Promise<string | undefined> {

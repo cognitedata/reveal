@@ -4,10 +4,9 @@
 import { HttpError, type CogniteClient, type HttpRequestOptions } from '@cognite/sdk';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
-import type { FetchSignedOrClassicOptions, SignedFileItem } from '../types';
+import type { SignedFileItem } from '../types';
 import { stripRestrictedApiGateway } from '../utilities/signedUrlUtils';
 import { decompressBinaryResponseBody, parseJsonResponseBody } from '../utilities/gzipUtils';
-import { SignedUrlRefresher } from '../utilities/signedUrlRefresh';
 import type { ModelIdentifier } from '../ModelIdentifier';
 
 /**
@@ -16,21 +15,10 @@ import type { ModelIdentifier } from '../ModelIdentifier';
 export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
   private authenticationPromise: Promise<string | undefined>;
-  private readonly signedUrlRefresher = new SignedUrlRefresher(this);
 
   constructor(client: CogniteClient) {
     this.client = client;
     this.authenticationPromise = client.authenticate();
-  }
-
-  async getBinaryFileWithRefresher(
-    options: FetchSignedOrClassicOptions & { abortSignal?: AbortSignal }
-  ): Promise<ArrayBuffer> {
-    return this.signedUrlRefresher.getBinaryFileWithRefresher(options);
-  }
-
-  async getJsonFileWithRefresher(options: FetchSignedOrClassicOptions): Promise<unknown> {
-    return this.signedUrlRefresher.getJsonFileWithRefresher(options);
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
