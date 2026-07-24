@@ -4,9 +4,8 @@
 
 import type { ConsumedSector, WantedSector, ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
-import { DMModelIdentifier } from '@reveal/data-providers';
+import { DMModelIdentifier, SignedUrlRefresher } from '@reveal/data-providers';
 import type { ModelDataProvider } from '@reveal/data-providers';
-import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { ParsedGeometry } from '@reveal/sector-parser';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';

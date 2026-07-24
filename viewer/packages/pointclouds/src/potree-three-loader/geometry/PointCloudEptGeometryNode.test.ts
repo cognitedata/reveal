@@ -4,10 +4,9 @@
 
 import { vi } from 'vitest';
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
-import type { ModelDataProvider } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles, ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import { HttpError } from '@cognite/sdk';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from '../loading/EptJson';
 import {
   createMockEptGeometry,

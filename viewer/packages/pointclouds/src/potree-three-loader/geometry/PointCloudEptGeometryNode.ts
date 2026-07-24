@@ -17,10 +17,14 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import type { ModelDataProvider, ModelIdentifier, SignedFileItem } from '@reveal/data-providers';
+import type {
+  MetadataWithSignedFiles,
+  ModelDataProvider,
+  ModelIdentifier,
+  SignedFileItem
+} from '@reveal/data-providers';
+import { SignedUrlRefresher } from '@reveal/data-providers';
 import { DMModelIdentifier } from '@reveal/data-providers';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
-import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
 import type { EptJson } from '../loading/EptJson';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {

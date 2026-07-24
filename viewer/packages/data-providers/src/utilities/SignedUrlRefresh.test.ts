@@ -4,9 +4,9 @@
 
 import { vi } from 'vitest';
 import { HttpError } from '@cognite/sdk';
-import { SignedUrlRefresher } from './signedUrlRefresh';
 import type { ModelDataProvider } from '../ModelDataProvider';
 import { createMockModelDataProvider, mockDMModelIdentifier } from '../../../../test-utilities';
+import { SignedUrlRefresher } from './SignedUrlRefresh';
 
 const SIGNED_FILES_BASE_URL = 'https://signed-files.example.com';
 const CURRENT_SIGNED_URL = 'https://signed.example.com/file.bin';

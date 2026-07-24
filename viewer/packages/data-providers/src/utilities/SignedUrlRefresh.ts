@@ -30,7 +30,7 @@ function findSignedFileItem(items: SignedFileItem[], fileName: string): SignedFi
   );
 }
 
-type FetchWithRefreshOptions<T> = {
+export type FetchWithRefreshOptions<T> = {
   currentSignedUrl: string | undefined;
   signedFilesBaseUrl: string | undefined;
   modelIdentifier: ModelIdentifier;
@@ -74,30 +74,7 @@ export class SignedUrlRefresher {
       }
     }
 
-    if (signedFilesBaseUrl !== undefined && this._dataProvider.getFileUrlsForModel !== undefined) {
-      const found = await this.refresh(
-        signedFilesBaseUrl,
-        modelIdentifier,
-        fileName,
-        (signedFilesBaseUrl: string, modelIdentifier: ModelIdentifier, fileName: string | undefined) => {
-          assert(
-            this._dataProvider.getFileUrlsForModel !== undefined,
-            'Model data provider does not support signed file fetching'
-          );
-          return this._dataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier, fileName);
-        }
-      );
-      if (found === undefined) {
-        throw new Error(`File "${fileName}" not found in signed files response`);
-      }
-
-      if (cacheKey !== undefined) {
-        this._refreshedSignedUrls.set(cacheKey, found.signedUrl);
-      }
-      onUrlRefreshed?.(found);
-      return fetchFn(found.signedUrl);
-    }
-    throw new Error('Model data provider does not support signed file fetching');
+    return this.tryRefresh(signedFilesBaseUrl, modelIdentifier, fileName, cacheKey, fetchFn, onUrlRefreshed);
   }
 
   private resolveCurrentSignedUrl(
@@ -119,24 +96,39 @@ export class SignedUrlRefresher {
     return `${signedFilesBaseUrl}|${modelIdentifier.sourceModelIdentifier()}|${fileName}`;
   }
 
-  private async refresh(
-    signedFilesBaseUrl: string,
+  private async tryRefresh<T>(
+    signedFilesBaseUrl: string | undefined,
     modelIdentifier: ModelIdentifier,
     fileName: string,
-    getFilesFn: (
-      signedFilesBaseUrl: string,
-      modelIdentifier: ModelIdentifier,
-      fileName: string | undefined
-    ) => Promise<SignedFileItem[]>
-  ): Promise<SignedFileItem | undefined> {
-    const key = this.cacheKey(signedFilesBaseUrl, modelIdentifier, fileName);
-    let promise = this._inFlightRefreshes.get(key);
-    if (promise === undefined) {
-      promise = getFilesFn(signedFilesBaseUrl, modelIdentifier, fileName)
-        .then(items => findSignedFileItem(items, fileName))
-        .finally(() => this._inFlightRefreshes.delete(key));
-      this._inFlightRefreshes.set(key, promise);
+    cacheKey: string | undefined,
+    fetchFn: (signedUrl: string) => Promise<T>,
+    onUrlRefreshed?: (item: SignedFileItem) => void
+  ): Promise<T> {
+    if (signedFilesBaseUrl !== undefined && this._dataProvider.getFileUrlsForModel !== undefined) {
+      const key = this.cacheKey(signedFilesBaseUrl, modelIdentifier, fileName);
+      let promiseFound = this._inFlightRefreshes.get(key);
+      if (promiseFound === undefined) {
+        assert(
+          this._dataProvider.getFileUrlsForModel !== undefined,
+          'Model data provider does not support signed file fetching'
+        );
+        promiseFound = this._dataProvider
+          .getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier, fileName)
+          .then(items => findSignedFileItem(items, fileName))
+          .finally(() => this._inFlightRefreshes.delete(key));
+        this._inFlightRefreshes.set(key, promiseFound);
+      }
+      const found = await promiseFound;
+      if (found === undefined) {
+        throw new Error(`File "${fileName}" not found in signed files response`);
+      }
+
+      if (cacheKey !== undefined) {
+        this._refreshedSignedUrls.set(cacheKey, found.signedUrl);
+      }
+      onUrlRefreshed?.(found);
+      return fetchFn(found.signedUrl);
     }
-    return promise;
+    throw new Error('Model data provider does not support signed file fetching');
   }
 }

@@ -9,9 +9,13 @@ import { Box3, BufferAttribute, BufferGeometry, Vector3 } from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import type { ILoader } from './ILoader';
-import type { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
-import { DMModelIdentifier } from '@reveal/data-providers';
-import { SignedUrlRefresher } from '@reveal/data-providers/src/utilities/signedUrlRefresh';
+import type {
+  ModelDataProvider,
+  SerializableStylableObject,
+  SignedFileItem,
+  StylableObject
+} from '@reveal/data-providers';
+import { DMModelIdentifier, SignedUrlRefresher } from '@reveal/data-providers';
 import type { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker?worker&inline';
 
@@ -58,8 +62,8 @@ export class EptBinaryLoader implements ILoader {
           signedFilesBaseUrl: node.signedFilesBaseUrl,
           modelIdentifier: node.modelIdentifier,
           fileName: filePath,
-          fetchFn: url => this._dataFileProvider.getBinaryFile('', url),
-          onUrlRefreshed: item => {
+          fetchFn: (url: string) => this._dataFileProvider.getBinaryFile('', url),
+          onUrlRefreshed: (item: SignedFileItem) => {
             node.signedUrl = item.signedUrl;
             node.updateSignedFileItem(item);
           }
