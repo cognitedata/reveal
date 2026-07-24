@@ -1729,7 +1729,7 @@ __metadata:
     react-dom: 19.2.7
     replace: 1.2.2
     rimraf: 6.1.3
-    styled-components: 6.4.3
+    styled-components: 6.4.4
     typedoc: 0.28.20
     typedoc-plugin-markdown: 4.12.0
     typedoc-plugin-no-inherit: 1.6.1
@@ -13827,9 +13827,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:6.4.3":
-  version: 6.4.3
-  resolution: "styled-components@npm:6.4.3"
+"styled-components@npm:6.4.4":
+  version: 6.4.4
+  resolution: "styled-components@npm:6.4.4"
   dependencies:
     "@emotion/is-prop-valid": 1.4.0
     css-to-react-native: 3.2.0
@@ -13847,7 +13847,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: ce64570a54346d4da47207f87f7af0a54964dc5a612a72d09c0e50ee7fad7764a0b40165773201be23bffff48bc697b3a5959ded129619e9971cd47fb8c77f89
+  checksum: b1e311ff524d7c7dbeb9311723dcd7397cb4f1e3391230867290d055f462e1ffa8fe599ee0a8f610ded6e09a74249ef3c432f569ed6f0532fa0290d30479bf28
   languageName: node
   linkType: hard
 
