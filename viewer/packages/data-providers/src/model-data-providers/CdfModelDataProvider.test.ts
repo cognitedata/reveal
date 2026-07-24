@@ -167,6 +167,20 @@ describe(CdfModelDataProvider.name, () => {
     expect(result).toEqual(jsonData);
   });
 
+  test.each<[string, () => Promise<unknown>]>([
+    ['getBinaryFile', () => clientExt.getBinaryFile('', 'https://signed.url/file.glb')],
+    ['getJsonFile', () => clientExt.getJsonFile('', 'https://signed.url/scene.json')]
+  ])('%s() with signed URL throws with status on non-ok response', async (_, callSignedFetch) => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+        .mockResolvedValueOnce(new Response('Forbidden', { status: 403 }))
+    );
+
+    await expect(callSignedFetch()).rejects.toMatchObject({ status: 403 });
+  });
+
   test('getFileUrlsForModel() paginates through multiple cursor pages to collect all signedFiles', async () => {
     const page1Items = [{ signedUrl: 'https://signed/1.glb', fileName: '1.glb', subPath: '' }];
     const page2Items = [

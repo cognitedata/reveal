@@ -1,8 +1,7 @@
 import type { Camera, WebGLRenderer } from 'three';
 import type { LRU } from '../utils/lru';
 import type { PointCloudOctree } from '../tree/PointCloudOctree';
-import type { ModelIdentifier, StylableObject } from '@reveal/data-providers';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type { MetadataWithSignedFiles, ModelIdentifier, StylableObject } from '@reveal/data-providers';
 import type { EptJson } from '../loading/EptJson';
 
 export interface IPotree {

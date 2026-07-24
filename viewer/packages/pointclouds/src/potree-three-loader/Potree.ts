@@ -21,8 +21,12 @@ import type { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeom
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
 import { DMModelIdentifier } from '@reveal/data-providers';
-import type { ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
+import type {
+  MetadataWithSignedFiles,
+  ModelDataProvider,
+  ModelIdentifier,
+  StylableObject
+} from '@reveal/data-providers';
 import { throttle } from 'lodash-es';
 import { createVisibilityTextureData } from './utils/utils';
 import type { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';

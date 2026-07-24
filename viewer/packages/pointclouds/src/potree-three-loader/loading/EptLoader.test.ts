@@ -5,10 +5,9 @@
 import { vi } from 'vitest';
 import { EptLoader } from './EptLoader';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import type { ModelDataProvider } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles, ModelDataProvider } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './EptJson';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import { createMockModelDataProvider, mockDMModelIdentifier } from '../../../../../test-utilities';
 
 const eptJson: EptJson = {

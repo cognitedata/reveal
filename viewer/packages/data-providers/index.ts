@@ -106,3 +106,5 @@ export type {
 } from './src/utilities/internalAddModelOptions';
 
 export type { MetadataWithSignedFiles } from './src/metadata-providers/types';
+
+export { SignedUrlRefresher, type FetchWithRefreshOptions } from './src/utilities/SignedUrlRefresh';

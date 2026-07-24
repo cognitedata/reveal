@@ -5,11 +5,10 @@
 import { vi } from 'vitest';
 import { Potree } from './Potree';
 import { EptLoader } from './loading/EptLoader';
-import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import type { MetadataWithSignedFiles, ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { PointCloudMaterial, PointCloudMaterialManager } from '@reveal/rendering';
 import { MAX_NUM_NODES_LOADING } from '@reveal/rendering';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 import type { EptJson } from './loading/EptJson';
 import { createMockEptGeometry } from '../../../../test-utilities/src/createMockEptGeometry';
 

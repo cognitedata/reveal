@@ -1,8 +1,13 @@
-import type { DMModelIdentifier, ModelDataProvider, ModelIdentifier, StylableObject } from '@reveal/data-providers';
+import type {
+  DMModelIdentifier,
+  MetadataWithSignedFiles,
+  ModelDataProvider,
+  ModelIdentifier,
+  StylableObject
+} from '@reveal/data-providers';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import type { EptJson } from './EptJson';
-import type { MetadataWithSignedFiles } from '@reveal/data-providers/src/metadata-providers/types';
 
 export class EptLoader {
   static async load(
