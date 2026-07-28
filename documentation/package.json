@@ -34,8 +34,8 @@
     "clsx": "2.1.1",
     "cross-env": "10.1.0",
     "ieee754": "1.2.1",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "styled-components": "6.4.4"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     ]
   },
   "resolutions": {
-    "webpack": "5.108.4",
+    "webpack": "5.109.0",
     "serialize-javascript": "^7.0.3",
     "replace/minimatch": "^10.0.0",
     "@chevrotain/cst-dts-gen/lodash": "^4.18.1",
