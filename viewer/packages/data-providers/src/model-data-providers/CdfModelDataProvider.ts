@@ -88,7 +88,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
             }
           },
           ...filter,
-          limit: 1000,
+          limit: 100,
           cursor
         }
       };
