@@ -33,8 +33,8 @@
   "devDependencies": {
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
-    "@types/react": "19.2.17",
-    "@types/react-dom": "19.2.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
     "@types/stats.js": "^0.17.0",
     "@types/three": "^0.184.0",
     "css-loader": "^7.0.0",
@@ -64,7 +64,7 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "yarn@4.17.1",
+  "packageManager": "yarn@4.18.0",
   "resolutions": {
     "tar": "^7.5.11",
     "serialize-javascript": "^7.0.3"
