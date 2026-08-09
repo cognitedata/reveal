@@ -6,18 +6,18 @@ __metadata:
   cacheKey: 10
 
 "@azure/msal-browser@npm:^5.0.0":
-  version: 5.17.3
-  resolution: "@azure/msal-browser@npm:5.17.3"
+  version: 5.18.0
+  resolution: "@azure/msal-browser@npm:5.18.0"
   dependencies:
-    "@azure/msal-common": "npm:16.11.3"
-  checksum: 10/270729efc66b4ebd38cf28cab31bf798144ab79a31bbf03f807ad82c2813581a81103ead784f081659dab9e28fb33b0d572357b444f44c8b6099245ce30afd09
+    "@azure/msal-common": "npm:16.12.0"
+  checksum: 10/41a54cef70605b9d8e2efcfe5426d8955870f9d8c4e79eb8cfa1c0a1b68f8a82ea17b5511d0673b7b2a178bd71c434c25024942d77c43597de89404b4f07cb60
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:16.11.3":
-  version: 16.11.3
-  resolution: "@azure/msal-common@npm:16.11.3"
-  checksum: 10/ff1b02b08c5141d6f5ba768ef00a6fc92a8e714b97cbea5ec741108e59f2b08c4746c664cd77fe1925f4a39f861f502ad38155d8dbbff219966ee333714f5ec5
+"@azure/msal-common@npm:16.12.0":
+  version: 16.12.0
+  resolution: "@azure/msal-common@npm:16.12.0"
+  checksum: 10/08e231e9352a60d5bfe690e5260d5a721848de5d7e9797c0c41cf25a156ba9f72df067930034d7804e087dc277cbc66debd7a7db1689155be5cd8ad9ed82d8b2
   languageName: node
   linkType: hard
 
@@ -44,7 +44,7 @@ __metadata:
     react: "npm:19.2.8"
     react-dom: "npm:19.2.8"
     stats.js: "npm:0.17.0"
-    styled-components: "npm:6.4.4"
+    styled-components: "npm:6.5.0"
     three: "npm:0.184.0"
     ts-loader: "npm:9.6.2"
     typescript: "npm:^6.0.0"
@@ -76,25 +76,25 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@cognite/sdk-core@npm:^5.2.3":
-  version: 5.2.3
-  resolution: "@cognite/sdk-core@npm:5.2.3"
+"@cognite/sdk-core@npm:^5.2.4":
+  version: 5.2.4
+  resolution: "@cognite/sdk-core@npm:5.2.4"
   dependencies:
     cross-fetch: "npm:^3.1.8"
     lodash: "npm:^4.17.21"
-  checksum: 10/e04e8f43c2c2f64100e19e2580f0b7abcc7de6d163a5491b62b026e98906d222399a59d8fee2cdfec79a2854920aa6bee3aca48c019c37a87835f06ab84e08e7
+  checksum: 10/c9d96eb413134916df21f65a079464aef9a3721508f447d6b2cf18c3b359c186360d590cd7df14731ef7a253c04d2ee6a999db30f3c4f3e7aabd759d7f5ab8d2
   languageName: node
   linkType: hard
 
 "@cognite/sdk@npm:^10.1.3":
-  version: 10.12.1
-  resolution: "@cognite/sdk@npm:10.12.1"
+  version: 10.13.0
+  resolution: "@cognite/sdk@npm:10.13.0"
   dependencies:
-    "@cognite/sdk-core": "npm:^5.2.3"
+    "@cognite/sdk-core": "npm:^5.2.4"
     "@types/geojson": "npm:^7946.0.14"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.21"
-  checksum: 10/3e167e102e719fbaf2d9f86fff67cd0581070fb9e8af4b0b63ec19b04fe3435f548dfc0ad31c9d84348ea85d28d7056373522166a8e69012f2548392babf92f1
+  checksum: 10/b1db22068ede3ef3cc2bad926dbb9a385847dc8dd4c8cb408972fca867103560694599de62255b36cd3ed74740c519fdb938de6988065c1a2abdf34eb98d2cf9
   languageName: node
   linkType: hard
 
@@ -4067,9 +4067,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:6.4.4":
-  version: 6.4.4
-  resolution: "styled-components@npm:6.4.4"
+"styled-components@npm:6.5.0":
+  version: 6.5.0
+  resolution: "styled-components@npm:6.5.0"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.4.0"
     css-to-react-native: "npm:3.2.0"
@@ -4087,7 +4087,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10/3188c2946740a025dc202d560ec1112318c3be9b14480f4de0832961c556468504677a4dfc458813e234d58a41efab8f209f75bea62a4dd55e5a66ced5dbc1fa
+  checksum: 10/3e502161bd06a54d861c23c2222d5bba63e0deaa97042c761ed8041d8ba3ac841649fe4090f86b65055aedadf93686129466acbe3ca2b2967b711b92c3c61893
   languageName: node
   linkType: hard
 
