@@ -44,7 +44,7 @@ __metadata:
     react: "npm:19.2.8"
     react-dom: "npm:19.2.8"
     stats.js: "npm:0.17.0"
-    styled-components: "npm:6.5.0"
+    styled-components: "npm:6.5.1"
     three: "npm:0.184.0"
     ts-loader: "npm:9.6.2"
     typescript: "npm:^6.0.0"
@@ -4065,9 +4065,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:6.5.0":
-  version: 6.5.0
-  resolution: "styled-components@npm:6.5.0"
+"styled-components@npm:6.5.1":
+  version: 6.5.1
+  resolution: "styled-components@npm:6.5.1"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.4.0"
     css-to-react-native: "npm:3.2.0"
@@ -4085,7 +4085,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10/3e502161bd06a54d861c23c2222d5bba63e0deaa97042c761ed8041d8ba3ac841649fe4090f86b65055aedadf93686129466acbe3ca2b2967b711b92c3c61893
+  checksum: 10/f1c4c5f68728e292912b302efb64957bf89e60726f39cf970951a6f8d8aaa64ddd7c4112fec3afcfa073e8ade735971b00f8209cfcbf6d647d9bb09067e9ba89
   languageName: node
   linkType: hard
 
