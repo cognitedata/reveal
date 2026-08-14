@@ -1809,6 +1809,7 @@ export type Overlay3DCollectionOptions = {
     overlayTexture?: Texture;
     overlayTextureMask?: Texture;
     maxPointSize?: number;
+    minPointSize?: number;
     defaultOverlayColor?: Color;
 };
 
