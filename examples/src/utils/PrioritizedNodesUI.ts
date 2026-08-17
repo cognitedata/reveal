@@ -33,6 +33,7 @@ export class PrioritizedNodesUI {
   private _overlayModel: CogniteCadModel | undefined;
   private _isReplaced: boolean = false;
   private _overlayLoadGeneration: number = 0;
+  private _lockLoadGeneration: number = 0;
 
   constructor(
     uiFolder: dat.GUI,
@@ -186,9 +187,17 @@ export class PrioritizedNodesUI {
           updateStatus('Error: enter node IDs first');
           return;
         }
+        const generation = ++this._lockLoadGeneration;
         try {
           const nodeCollection = new NodeIdNodeCollection(this._client, this._mainModel);
           await nodeCollection.executeFilter(nodeIds);
+
+          if (generation !== this._lockLoadGeneration) {
+            // A newer `lock` call started while we were awaiting — discard this result so an
+            // older, slower-resolving request can't overwrite a newer one's state.
+            return;
+          }
+
           const treeIndices = nodeCollection.getIndexSet().toIndexArray();
 
           if (treeIndices.length === 0) {
@@ -196,9 +205,8 @@ export class PrioritizedNodesUI {
             return;
           }
 
-          // Release any previously locked set right before applying the new one (not before the
-          // `await` above) so that if `lock` is called again before this resolves, whichever call
-          // resolves last always wins instead of both accumulating.
+          // Release any previously locked set right before applying the new one, so a stale
+          // (superseded) call - already discarded above - can never accumulate locks/styles.
           this._mainModel.unlockAllTreeIndices();
           this._mainModel.removeAllStyledNodeCollections();
 
@@ -212,6 +220,8 @@ export class PrioritizedNodesUI {
       },
 
       unlock: () => {
+        // Invalidate any in-flight `lock` call so it can't re-apply after this clears state.
+        ++this._lockLoadGeneration;
         this._mainModel.unlockAllTreeIndices();
         this._mainModel.removeAllStyledNodeCollections();
         updateStatus('No locks');
@@ -261,6 +271,8 @@ export class PrioritizedNodesUI {
   }
 
   private removeOverlay(): void {
+    // Invalidate any in-flight loadOverlayView call so it can't re-apply after this clears state.
+    ++this._overlayLoadGeneration;
     if (this._overlayModel) {
       this._viewer.removeModel(this._overlayModel);
       this._overlayModel = undefined;
