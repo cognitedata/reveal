@@ -187,11 +187,6 @@ export class PrioritizedNodesUI {
           return;
         }
         try {
-          // Release any previously locked set first, otherwise locks and styled
-          // collections accumulate every time this is called with a new set of nodes.
-          this._mainModel.unlockAllTreeIndices();
-          this._mainModel.removeAllStyledNodeCollections();
-
           const nodeCollection = new NodeIdNodeCollection(this._client, this._mainModel);
           await nodeCollection.executeFilter(nodeIds);
           const treeIndices = nodeCollection.getIndexSet().toIndexArray();
@@ -200,6 +195,12 @@ export class PrioritizedNodesUI {
             updateStatus(`Error: no tree indices found for node IDs [${nodeIds.join(', ')}]`);
             return;
           }
+
+          // Release any previously locked set right before applying the new one (not before the
+          // `await` above) so that if `lock` is called again before this resolves, whichever call
+          // resolves last always wins instead of both accumulating.
+          this._mainModel.unlockAllTreeIndices();
+          this._mainModel.removeAllStyledNodeCollections();
 
           this._mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
           this._mainModel.lockTreeIndices(treeIndices);

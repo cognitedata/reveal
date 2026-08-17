@@ -160,19 +160,16 @@ Prevent specific nodes' sectors from being evicted when the CAD render budget is
 
 Node locking uses **tree indices**, not node IDs. Use `NodeIdNodeCollection` to resolve node IDs to tree indices first:
 
-:::caution Unlock the previous set before locking a new one
+:::caution Unlock the previous set right before locking a new one — not before resolving node IDs
 Locking a new set of nodes does not automatically release a previously locked set. If your application locks a different set of nodes over time (e.g. as the user changes selection), call `mainModel.unlockAllTreeIndices()` and `mainModel.removeAllStyledNodeCollections()` before locking the new set — otherwise locked tree indices and styled collections accumulate across every switch, and locked sectors are never evicted (see [Limitations](#limitations)), so the render budget consumed by locking keeps growing.
+
+Place this cleanup **after** resolving `nodeIds` to tree indices (i.e. after `await nodeCollection.executeFilter(...)`), immediately before `assignStyledNodeCollection`/`lockTreeIndices`, not before it. If `lockNodes` can be called again before a previous call resolves (e.g. rapid selection changes), cleaning up before the `await` lets both calls clear the old state first and then each append their own result once resolved — reproducing the exact accumulation this is meant to prevent. Placing cleanup and locking together after the `await`, with no `await` in between, ensures whichever call resolves last atomically clears anything applied by an earlier call before applying its own.
 :::
 
 ```js
 // import { NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
 
 async function lockNodes(nodeIds) {
-  // Release any previously locked set first, otherwise locks and styled
-  // collections accumulate every time this is called with a new set of nodes.
-  mainModel.unlockAllTreeIndices();
-  mainModel.removeAllStyledNodeCollections();
-
   const nodeCollection = new NodeIdNodeCollection(client, mainModel);
   await nodeCollection.executeFilter(nodeIds);
 
@@ -182,6 +179,12 @@ async function lockNodes(nodeIds) {
     // None of the node IDs exist in this model/revision
     return;
   }
+
+  // Release any previously locked set right before applying the new one (not before the
+  // `await` above) so that if `lockNodes` is called again before this resolves, whichever
+  // call resolves last always wins instead of both accumulating.
+  mainModel.unlockAllTreeIndices();
+  mainModel.removeAllStyledNodeCollections();
 
   // Style and lock
   mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
