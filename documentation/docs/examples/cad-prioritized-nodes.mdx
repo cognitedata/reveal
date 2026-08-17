@@ -44,6 +44,18 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.assignStyledNodeCollection(nodeSet, { ...DefaultNodeAppearance.Highlighted, prioritizedForLoadingHint: 5 });
 ```
 
+:::caution Unassign the previous collection before prioritizing a new one
+A node collection assigned with `prioritizedForLoadingHint` keeps contributing to load prioritization until it is explicitly unassigned. If your application changes which nodes are prioritized over time — for example, a different set of nodes per navigation step, sequence step, or user selection — you must call `model.unassignStyledNodeCollection(nodeSet)` (or `model.removeAllStyledNodeCollections()`) for the previous collection before assigning a new one:
+
+```js
+// When switching to a new set of prioritized nodes:
+model.unassignStyledNodeCollection(previousNodeSet);
+model.assignStyledNodeCollection(newNodeSet, { ...DefaultNodeAppearance.Highlighted, prioritizedForLoadingHint: 5 });
+```
+
+Failing to unassign previous collections causes prioritized sets to accumulate indefinitely. Since every accumulated collection is still evaluated during sector load prioritization, this can severely degrade performance over time — even if each individual set was small enough to be a reasonable prioritization hint on its own.
+:::
+
 ---
 
 ## High-detail output for a pre-computed node subset
@@ -89,39 +101,52 @@ const standardModel = await viewer.addCadModel({ modelId, revisionId });
 
 Load the prioritized output as a second model on top of the original, then use styling to ghost the background and show only the selected nodes at full detail. This keeps the surrounding model visible as context.
 
+:::caution Always remove the previous overlay before loading a new one
+If your application changes the overlaid node set over time (e.g. a different selection per navigation step), you **must** remove the existing overlay model and its styled collections before loading the next one. Skipping this causes overlay models and styled node collections to accumulate on every switch, which severely degrades performance — each accumulated overlay keeps loading and rendering geometry, and each accumulated styled collection keeps being evaluated. Structure the load function so cleanup always runs first, as shown below.
+:::
+
 ```js
 // import { File3dFormat, NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
 
-const nodeIds = [/* ... */];
+let overlayModel; // keep a reference so it can be removed later
 
-// Load prioritized output as overlay
-const overlayModel = await viewer.addCadModel({
-  modelId,
-  revisionId,
-  outputFormat: File3dFormat.GltfPrioritizedNodes
-});
+function removeOverlay() {
+  if (overlayModel) {
+    viewer.removeModel(overlayModel);
+    overlayModel = undefined;
+  }
+  mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+  mainModel.removeAllStyledNodeCollections();
+}
 
-// Ghost the original model and hide the selected nodes within it
-// (they will be shown at full detail by the overlay instead)
-mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-const mainNodeSet = new NodeIdNodeCollection(client, mainModel);
-await mainNodeSet.executeFilter(nodeIds);
-mainModel.assignStyledNodeCollection(mainNodeSet, { visible: false });
+async function loadOverlayView(nodeIds) {
+  // Always clean up any previous overlay first, otherwise overlay models and
+  // styled collections accumulate every time this is called with a new set of nodes.
+  removeOverlay();
 
-// In the overlay, hide everything except the selected nodes
-overlayModel.setDefaultNodeAppearance({ visible: false });
-const overlayNodeSet = new NodeIdNodeCollection(client, overlayModel);
-await overlayNodeSet.executeFilter(nodeIds);
-overlayModel.assignStyledNodeCollection(overlayNodeSet, DefaultNodeAppearance.Default);
+  // Load prioritized output as overlay
+  overlayModel = await viewer.addCadModel({
+    modelId,
+    revisionId,
+    outputFormat: File3dFormat.GltfPrioritizedNodes
+  });
+
+  // Ghost the original model and hide the selected nodes within it
+  // (they will be shown at full detail by the overlay instead)
+  mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+  const mainNodeSet = new NodeIdNodeCollection(client, mainModel);
+  await mainNodeSet.executeFilter(nodeIds);
+  mainModel.assignStyledNodeCollection(mainNodeSet, { visible: false });
+
+  // In the overlay, hide everything except the selected nodes
+  overlayModel.setDefaultNodeAppearance({ visible: false });
+  const overlayNodeSet = new NodeIdNodeCollection(client, overlayModel);
+  await overlayNodeSet.executeFilter(nodeIds);
+  overlayModel.assignStyledNodeCollection(overlayNodeSet, DefaultNodeAppearance.Default);
+}
 ```
 
-To remove the overlay and restore the original appearance:
-
-```js
-viewer.removeModel(overlayModel);
-mainModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-mainModel.removeAllStyledNodeCollections();
-```
+Call `removeOverlay()` on its own to remove the overlay and restore the original appearance without loading a new one.
 
 :::note
 If any of the supplied `nodeIds` do not exist in the model/revision, `NodeIdNodeCollection.executeFilter` will silently return an empty set for those IDs. Check that the resolved `IndexSet` is non-empty before proceeding.
@@ -135,24 +160,33 @@ Prevent specific nodes' sectors from being evicted when the CAD render budget is
 
 Node locking uses **tree indices**, not node IDs. Use `NodeIdNodeCollection` to resolve node IDs to tree indices first:
 
+:::caution Unlock the previous set before locking a new one
+Locking a new set of nodes does not automatically release a previously locked set. If your application locks a different set of nodes over time (e.g. as the user changes selection), call `mainModel.unlockAllTreeIndices()` and `mainModel.removeAllStyledNodeCollections()` before locking the new set — otherwise locked tree indices and styled collections accumulate across every switch, and locked sectors are never evicted (see [Limitations](#limitations)), so the render budget consumed by locking keeps growing.
+:::
+
 ```js
 // import { NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
 
-const nodeIds = [/* ... */];
+async function lockNodes(nodeIds) {
+  // Release any previously locked set first, otherwise locks and styled
+  // collections accumulate every time this is called with a new set of nodes.
+  mainModel.unlockAllTreeIndices();
+  mainModel.removeAllStyledNodeCollections();
 
-const nodeCollection = new NodeIdNodeCollection(client, mainModel);
-await nodeCollection.executeFilter(nodeIds);
+  const nodeCollection = new NodeIdNodeCollection(client, mainModel);
+  await nodeCollection.executeFilter(nodeIds);
 
-const treeIndices = nodeCollection.getIndexSet().toIndexArray();
+  const treeIndices = nodeCollection.getIndexSet().toIndexArray();
 
-if (treeIndices.length === 0) {
-  // None of the node IDs exist in this model/revision
-  return;
+  if (treeIndices.length === 0) {
+    // None of the node IDs exist in this model/revision
+    return;
+  }
+
+  // Style and lock
+  mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
+  mainModel.lockTreeIndices(treeIndices);
 }
-
-// Style and lock
-mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
-mainModel.lockTreeIndices(treeIndices);
 ```
 
 Locking is **reactive**: if a locked tree index's geometry is discovered in a new sector during loading, that sector is automatically locked as well.

@@ -187,6 +187,11 @@ export class PrioritizedNodesUI {
           return;
         }
         try {
+          // Release any previously locked set first, otherwise locks and styled
+          // collections accumulate every time this is called with a new set of nodes.
+          this._mainModel.unlockAllTreeIndices();
+          this._mainModel.removeAllStyledNodeCollections();
+
           const nodeCollection = new NodeIdNodeCollection(this._client, this._mainModel);
           await nodeCollection.executeFilter(nodeIds);
           const treeIndices = nodeCollection.getIndexSet().toIndexArray();
