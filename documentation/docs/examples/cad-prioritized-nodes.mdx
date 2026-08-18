@@ -95,27 +95,22 @@ viewer.removeModel(prioritizedModel);
 const standardModel = await viewer.addCadModel({ modelId, revisionId });
 ```
 
+:::caution Guard against overlapping calls
+`addCadModel` is a network request. If the load-prioritized/revert action can be triggered again before a previous call resolves (e.g. double clicks), calls can resolve out of order and leave the wrong model (or two models) loaded. See [`examples/src/utils/PrioritizedNodesUI.ts`](https://github.com/cognitedata/reveal/blob/master/examples/src/utils/PrioritizedNodesUI.ts) for a version of this pattern hardened against overlapping calls.
+:::
+
 ---
 
 ### Option 2 — Overlay specific nodes
 
 Load the prioritized output as a second model on top of the original, then use styling to ghost the background and show only the selected nodes at full detail. This keeps the surrounding model visible as context.
 
-:::caution Remove the previous overlay before loading a new one, and guard against overlapping calls
-If your application changes the overlaid node set over time (e.g. a different selection per navigation step), you **must** remove the existing overlay model and its styled collections before loading the next one. Skipping this causes overlay models and styled node collections to accumulate on every switch, which severely degrades performance — each accumulated overlay keeps loading and rendering geometry, and each accumulated styled collection keeps being evaluated.
-
-This alone is not sufficient if `loadOverlayView` can be called again before a previous call finishes `await`ing (e.g. rapid selection changes): since network requests can resolve out of call order, an older, slower call could finish last and overwrite a newer call's result. Use a generation counter to discard the result of any call that has since been superseded, as shown below.
-:::
-
 ```js
 // import { File3dFormat, NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
 
 let overlayModel; // keep a reference so it can be removed later
-let overlayLoadGeneration = 0;
 
 function removeOverlay() {
-  // Invalidate any in-flight loadOverlayView() call so it can't re-apply after this clears state.
-  ++overlayLoadGeneration;
   if (overlayModel) {
     viewer.removeModel(overlayModel);
     overlayModel = undefined;
@@ -129,22 +124,12 @@ async function loadOverlayView(nodeIds) {
   // styled collections accumulate every time this is called with a new set of nodes.
   removeOverlay();
 
-  const generation = overlayLoadGeneration;
-
   // Load prioritized output as overlay
-  const newOverlayModel = await viewer.addCadModel({
+  overlayModel = await viewer.addCadModel({
     modelId,
     revisionId,
     outputFormat: File3dFormat.GltfPrioritizedNodes
   });
-
-  if (generation !== overlayLoadGeneration) {
-    // A newer loadOverlayView() call started while we were awaiting — discard this model so an
-    // older, slower-resolving request can't overwrite a newer one's state.
-    viewer.removeModel(newOverlayModel);
-    return;
-  }
-  overlayModel = newOverlayModel;
 
   // Ghost the original model and hide the selected nodes within it
   // (they will be shown at full detail by the overlay instead)
@@ -163,6 +148,14 @@ async function loadOverlayView(nodeIds) {
 
 Call `removeOverlay()` on its own to remove the overlay and restore the original appearance without loading a new one.
 
+:::caution Must remove the previous overlay before loading a new one — and guard against overlapping calls
+If your application changes the overlaid node set over time (e.g. a different selection per navigation step), you **must** remove the existing overlay model and its styled collections before loading the next one, as shown above. Skipping this causes overlay models and styled node collections to accumulate on every switch, which severely degrades performance.
+
+The sample above is simplified for readability and is **not safe against overlapping calls**: `addCadModel` and `executeFilter` are network requests and can resolve out of the order they were started. If `loadOverlayView` can be called again before a previous call finishes (rapid selection changes, double clicks), a stale, superseded call can still resolve afterwards and apply its (now outdated) result, overwrite a newer call's state, orphan a model, or surface a stale error — since none of that is guarded here.
+
+**Do not hand-roll this from the snippet above for production use.** Reuse the `LatestCallGuard` pattern from the fully worked, race-condition-hardened reference implementation instead: [`examples/src/utils/PrioritizedNodesUI.ts`](https://github.com/cognitedata/reveal/blob/master/examples/src/utils/PrioritizedNodesUI.ts) in this repository, which applies the same guard consistently to all three options on this page (Replace, Overlay, Lock).
+:::
+
 :::note
 If any of the supplied `nodeIds` do not exist in the model/revision, `NodeIdNodeCollection.executeFilter` will silently return an empty set for those IDs. Check that the resolved `IndexSet` is non-empty before proceeding.
 :::
@@ -175,30 +168,12 @@ Prevent specific nodes' sectors from being evicted when the CAD render budget is
 
 Node locking uses **tree indices**, not node IDs. Use `NodeIdNodeCollection` to resolve node IDs to tree indices first:
 
-:::caution Guard against overlapping calls with a generation counter
-Locking a new set of nodes does not automatically release a previously locked set. If your application locks a different set of nodes over time (e.g. as the user changes selection), you must release the old lock before applying the new one — otherwise locked tree indices and styled collections accumulate across every switch, and locked sectors are never evicted (see [Limitations](#limitations)), so the render budget consumed by locking keeps growing.
-
-Simply placing the cleanup right before `assignStyledNodeCollection`/`lockTreeIndices` is not enough on its own: since `executeFilter` is asynchronous, two overlapping calls can resolve **out of call order** (e.g. a later call's network request finishes faster than an earlier, slower one). Whichever call happens to resolve *last* would then win, even if it was actually the *older*, now-stale request — leaving the UI showing outdated locked nodes instead of the user's latest selection.
-
-The robust fix is a generation counter: increment it on every call, capture the value before the `await`, and after the `await` discard the result if a newer call has since started. This guarantees only the most recently *initiated* request's result is ever applied, regardless of resolution order.
-:::
-
 ```js
 // import { NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal'
 
-let lockGeneration = 0;
-
 async function lockNodes(nodeIds) {
-  const generation = ++lockGeneration;
-
   const nodeCollection = new NodeIdNodeCollection(client, mainModel);
   await nodeCollection.executeFilter(nodeIds);
-
-  if (generation !== lockGeneration) {
-    // A newer lockNodes() call started while we were awaiting — discard this result so an
-    // older, slower-resolving request can't overwrite a newer one's state.
-    return;
-  }
 
   const treeIndices = nodeCollection.getIndexSet().toIndexArray();
 
@@ -207,8 +182,8 @@ async function lockNodes(nodeIds) {
     return;
   }
 
-  // Release any previously locked set right before applying the new one. A stale
-  // (superseded) call was already discarded above, so this can never accumulate.
+  // Release any previously locked set right before applying the new one, otherwise locked
+  // tree indices and styled collections accumulate every time this is called with a new set.
   mainModel.unlockAllTreeIndices();
   mainModel.removeAllStyledNodeCollections();
 
@@ -216,14 +191,15 @@ async function lockNodes(nodeIds) {
   mainModel.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Default);
   mainModel.lockTreeIndices(treeIndices);
 }
-
-function unlockNodes() {
-  // Invalidate any in-flight lockNodes() call so it can't re-apply after this clears state.
-  ++lockGeneration;
-  mainModel.unlockAllTreeIndices();
-  mainModel.removeAllStyledNodeCollections();
-}
 ```
+
+:::caution Must release the previous lock before locking a new set — and guard against overlapping calls
+Locking a new set of nodes does not automatically release a previously locked set, as shown above — otherwise locked tree indices and styled collections accumulate across every switch, and locked sectors are never evicted (see [Limitations](#limitations)), so the render budget consumed by locking keeps growing.
+
+The sample above is simplified for readability and is **not safe against overlapping calls**: `executeFilter` is a network request and can resolve out of the order it was started. If `lockNodes` can be called again before a previous call finishes (rapid selection changes), a stale, superseded call can still resolve afterwards and apply its now-outdated lock, overwrite a newer call's state, or surface a stale error — none of that is guarded here.
+
+**Do not hand-roll this from the snippet above for production use.** Reuse the `LatestCallGuard` pattern from the fully worked, race-condition-hardened reference implementation instead: [`examples/src/utils/PrioritizedNodesUI.ts`](https://github.com/cognitedata/reveal/blob/master/examples/src/utils/PrioritizedNodesUI.ts) in this repository, which applies the same guard consistently to all three options on this page (Replace, Overlay, Lock).
+:::
 
 Locking is **reactive**: if a locked tree index's geometry is discovered in a new sector during loading, that sector is automatically locked as well.
 
