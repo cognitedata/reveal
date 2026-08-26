@@ -48,7 +48,7 @@ __metadata:
     three: "npm:0.185.1"
     ts-loader: "npm:9.6.2"
     typescript: "npm:^6.0.0"
-    webpack: "npm:^5.76.0"
+    webpack: "npm:^5.101.0"
     webpack-cli: "npm:^7.0.0"
     webpack-dev-server: "npm:^6.0.0"
     webpack-log: "npm:^3.0.2"
@@ -4048,7 +4048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.76.0":
+"webpack@npm:^5.101.0":
   version: 5.109.2
   resolution: "webpack@npm:5.109.2"
   dependencies:
