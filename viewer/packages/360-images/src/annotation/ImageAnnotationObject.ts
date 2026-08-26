@@ -164,6 +164,7 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._objectGroup.matrix = transformation;
     this._objectGroup.matrixAutoUpdate = false;
+    this._objectGroup.matrixWorldNeedsUpdate = true;
     this._objectGroup.updateWorldMatrix(false, true);
   }
 
