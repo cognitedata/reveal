@@ -162,10 +162,11 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     const rotationMatrix = face === undefined ? new Matrix4().identity() : this.getRotationFromFace(face);
 
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
-    this._objectGroup.matrix = transformation;
+    this._objectGroup.matrix.copy(transformation);
     this._objectGroup.matrixAutoUpdate = false;
     this._objectGroup.matrixWorldNeedsUpdate = true;
     this._objectGroup.updateWorldMatrix(false, true);
+    this._objectGroup.matrixWorldNeedsUpdate = true;
   }
 
   public getObject(): Object3D {
