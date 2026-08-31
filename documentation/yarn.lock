@@ -1731,7 +1731,7 @@ __metadata:
     rimraf: 6.1.3
     styled-components: 6.5.3
     typedoc: 0.28.20
-    typedoc-plugin-markdown: 4.12.0
+    typedoc-plugin-markdown: 4.13.0
     typedoc-plugin-no-inherit: 1.6.1
     typescript: 6.0.3
   languageName: unknown
@@ -3308,7 +3308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/trace-mapping@npm:^0.3.18, @jridgewell/trace-mapping@npm:^0.3.24, @jridgewell/trace-mapping@npm:^0.3.25, @jridgewell/trace-mapping@npm:^0.3.28":
+"@jridgewell/trace-mapping@npm:^0.3.18, @jridgewell/trace-mapping@npm:^0.3.24, @jridgewell/trace-mapping@npm:^0.3.25, @jridgewell/trace-mapping@npm:^0.3.28, @jridgewell/trace-mapping@npm:^0.3.31":
   version: 0.3.31
   resolution: "@jridgewell/trace-mapping@npm:0.3.31"
   dependencies:
@@ -7317,16 +7317,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-scope@npm:5.1.1":
-  version: 5.1.1
-  resolution: "eslint-scope@npm:5.1.1"
-  dependencies:
-    esrecurse: ^4.3.0
-    estraverse: ^4.1.1
-  checksum: 47e4b6a3f0cc29c7feedee6c67b225a2da7e155802c6ea13bbef4ac6b9e10c66cd2dcb987867ef176292bf4e64eccc680a49e35e9e9c669f4a02bac17e86abdb
-  languageName: node
-  linkType: hard
-
 "esprima@npm:^4.0.1":
   version: 4.0.1
   resolution: "esprima@npm:4.0.1"
@@ -7334,22 +7324,6 @@ __metadata:
     esparse: ./bin/esparse.js
     esvalidate: ./bin/esvalidate.js
   checksum: b45bc805a613dbea2835278c306b91aff6173c8d034223fa81498c77dcbce3b2931bf6006db816f62eacd9fd4ea975dfd85a5b7f3c6402cfd050d4ca3c13a628
-  languageName: node
-  linkType: hard
-
-"esrecurse@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "esrecurse@npm:4.3.0"
-  dependencies:
-    estraverse: ^5.2.0
-  checksum: ebc17b1a33c51cef46fdc28b958994b1dc43cd2e86237515cbc3b4e5d2be6a811b2315d0a1a4d9d340b6d2308b15322f5c8291059521cc5f4802f65e7ec32837
-  languageName: node
-  linkType: hard
-
-"estraverse@npm:^4.1.1":
-  version: 4.3.0
-  resolution: "estraverse@npm:4.3.0"
-  checksum: a6299491f9940bb246124a8d44b7b7a413a8336f5436f9837aaa9330209bd9ee8af7e91a654a3545aee9c54b3308e78ee360cef1d777d37cfef77d2fa33b5827
   languageName: node
   linkType: hard
 
@@ -10593,14 +10567,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimizer-webpack-plugin@npm:^5.6.1":
-  version: 5.6.1
-  resolution: "minimizer-webpack-plugin@npm:5.6.1"
+"minimizer-webpack-plugin@npm:^5.7.0":
+  version: 5.8.0
+  resolution: "minimizer-webpack-plugin@npm:5.8.0"
   dependencies:
-    "@jridgewell/trace-mapping": ^0.3.25
+    "@jridgewell/trace-mapping": ^0.3.31
     jest-worker: ^27.4.5
-    schema-utils: ^4.3.0
-    terser: ^5.31.1
+    schema-utils: ^4.3.3
+    terser: ^5.51.0
   peerDependencies:
     webpack: ^5.1.0
   peerDependenciesMeta:
@@ -10628,7 +10602,7 @@ __metadata:
       optional: true
     uglify-js:
       optional: true
-  checksum: ea53641ef5e5245c0a4220b807e7f747f88366704466fe5708e3a33f5cca3152ffcfe97420971e3b39baf04c2a88b2e9b578324c20992e44e301087cafeefd76
+  checksum: 58af8d88ccc098e1f6c264321be97dfdb578adb63322432d069151e4c76e907533785f29e8eeddd98729a4e3074a568bf67717dd8070480ece3059bbb7b06f6b
   languageName: node
   linkType: hard
 
@@ -13983,6 +13957,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"terser@npm:^5.51.0":
+  version: 5.51.2
+  resolution: "terser@npm:5.51.2"
+  dependencies:
+    "@jridgewell/source-map": ^0.3.3
+    acorn: ^8.15.0
+    commander: ^2.20.0
+    source-map-support: ~0.5.20
+  bin:
+    terser: bin/terser
+  checksum: 1d3c6b2aa6e5d346d2e4af978eafc5dd955f1544d1e7c57cf11c8d1101bd30cd532a817b47fde1cb272f3993472ddb64d9d983782d80584404bc01fb7a77880d
+  languageName: node
+  linkType: hard
+
 "text-segmentation@npm:^1.0.3":
   version: 1.0.3
   resolution: "text-segmentation@npm:1.0.3"
@@ -14246,12 +14234,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:4.12.0":
-  version: 4.12.0
-  resolution: "typedoc-plugin-markdown@npm:4.12.0"
+"typedoc-plugin-markdown@npm:4.13.0":
+  version: 4.13.0
+  resolution: "typedoc-plugin-markdown@npm:4.13.0"
   peerDependencies:
     typedoc: 0.28.x
-  checksum: f98a25f5e5a59bbb78f26164de2b9349a78a61829402fefb5ad081c72bd60a5090fb000a3a86bd283d7e3271342517716ff53320088ba57f9c5e03a69b708d84
+  checksum: e4e632c294e31a1aaef7bcd4303bfae7a184b9fe0a8022c3382bacfb526e61e08c6bea3959492f885c2dea7262e7efd0d4440f755df66deeb60501f9864684a5
   languageName: node
   linkType: hard
 
@@ -14791,9 +14779,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.109.2":
-  version: 5.109.2
-  resolution: "webpack@npm:5.109.2"
+"webpack@npm:5.110.1":
+  version: 5.110.1
+  resolution: "webpack@npm:5.110.1"
   dependencies:
     "@types/estree": ^1.0.8
     "@types/json-schema": ^7.0.15
@@ -14805,11 +14793,10 @@ __metadata:
     chrome-trace-event: ^1.0.2
     enhanced-resolve: ^5.24.4
     es-module-lexer: ^2.1.0
-    eslint-scope: 5.1.1
     events: ^3.2.0
     graceful-fs: ^4.2.11
     mime-db: ^1.54.0
-    minimizer-webpack-plugin: ^5.6.1
+    minimizer-webpack-plugin: ^5.7.0
     neo-async: ^2.6.2
     schema-utils: ^4.3.3
     tapable: ^2.3.0
@@ -14820,7 +14807,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 108a974320b3c8f592eac5fdcaa3916da2a9894026b1df3612c9dd51b0ed5597d8993d163f1252e339f8a2b41f22d49f1df33a17d7e061da63e79b58bc8958bc
+  checksum: 21995dab240d7df9955746631f343df7094294fe53f328ea22802f7a6ef967122e8c5ac89cdbe89bdb0e5a781bb2840a5969f48342412fcff8e63c277396db95
   languageName: node
   linkType: hard
 
