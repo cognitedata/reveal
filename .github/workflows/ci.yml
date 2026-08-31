@@ -19,14 +19,14 @@ jobs:
     name: Update NPM and Cargo caches
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.24.0
 
       - name: Cache NPM packages
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
@@ -38,7 +38,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Cache cargo registry
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -55,21 +55,21 @@ jobs:
     name: Build Reveal
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.24.0
 
       - name: Cache NPM packages
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -113,7 +113,7 @@ jobs:
           npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
       - name: Upload dist/ artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: viewer
           path: viewer/dist/
@@ -123,20 +123,20 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.24.0
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -159,7 +159,7 @@ jobs:
         run: pnpm run typecheck:tests
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: viewer
@@ -169,20 +169,20 @@ jobs:
     name: Visual Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.24.0
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -200,7 +200,7 @@ jobs:
 
       - name: Check for failed visual test diffs
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: savokr/comment-on-pr@v1.3.2
+        uses: savokr/comment-on-pr@62302a5bfe3fcda4998aa7a0a3ccb1200edecfeb # v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -210,7 +210,7 @@ jobs:
 
       - name: Upload image diffs for failed visual tests
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: image-diffs-${{ github.sha }}
           path: viewer/visual-tests/__diff_output__/*
@@ -226,22 +226,22 @@ jobs:
     name: Examples
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Download viewer build artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: viewer
           path: viewer/dist/
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('examples/**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -268,7 +268,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v7 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
       - name: Initialize variables
         run: |
@@ -279,18 +279,18 @@ jobs:
           echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.24.0
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -306,14 +306,14 @@ jobs:
         run: yarn install --immutable
 
       - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@v3
+        uses: jacobtomlinson/gha-find-replace@2ff30f644d2e0078fc028beb9193f5ff0dcad39e # v3
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
           include: "documentation/docusaurus.config.js"
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@v3
+        uses: jacobtomlinson/gha-find-replace@2ff30f644d2e0078fc028beb9193f5ff0dcad39e # v3
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${{ env.PR_TIMESTAMP }})',"
@@ -326,7 +326,7 @@ jobs:
 
       - name: Upload documentation artifact
         if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: preview-docs
           path: documentation/build/
@@ -345,14 +345,14 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Download documentation artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         if:
         with:
           name: preview-docs
           path: documentation/
 
       - name: Deploy documentation preview 🚀
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs-preview
@@ -362,7 +362,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: savokr/comment-on-pr@v1.3.2
+        uses: savokr/comment-on-pr@62302a5bfe3fcda4998aa7a0a3ccb1200edecfeb # v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -380,7 +380,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v6
+      - uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6
         with:
           name: |
             viewer
