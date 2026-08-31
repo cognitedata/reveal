@@ -65,6 +65,15 @@ export class PointCloudManager {
     this._budgetSubject.next(this._potreeInstance.pointBudget);
 
     this._renderer = renderer;
+
+    // Register a debug hook so we can inspect the Potree LRU from the browser
+    // console via window.__revealDebug.pointCloudLru(). Ad-hoc memory-leak
+    // investigations only: zero cost when not called.
+    if (typeof globalThis !== 'undefined') {
+      const debugNs = ((globalThis as { __revealDebug?: Record<string, unknown> }).__revealDebug ??= {});
+      debugNs.pointCloudLru = () => this._potreeInstance.lru.getMemStats();
+      debugNs.pointCloudModelsCount = () => this._pointCloudNodes.length;
+    }
   }
 
   requestRedraw(): void {

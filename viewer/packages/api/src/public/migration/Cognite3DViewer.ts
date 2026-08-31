@@ -401,6 +401,70 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         customDataSource: options.customDataSource ? true : false
       }
     });
+
+    this.registerMemoryDebugHooks();
+  }
+
+  /**
+   * Registers debug helpers on the window under `__revealDebug` so they can be
+   * called from the browser console during memory-leak investigations:
+   *   window.__revealDebug.summary()          // prints a table with everything
+   *   window.__revealDebug.pointCloudLru()    // { budget, threshold, numPoints, nodes }
+   *   window.__revealDebug.image360Cache()    // { cachedCount, imageCacheSize, ... }
+   *   window.__revealDebug.enableVerbose()    // sets window.__revealMemDebug = true
+   *   window.__revealDebug.disableVerbose()   // sets it to false
+   *
+   * The individual `pointCloudLru` and `image360Cache` entries are registered
+   * from PointCloudManager and Image360ApiHelper respectively when they get
+   * constructed. Here we add a top-level `summary()` and toggles that don't
+   * depend on any particular subsystem being alive.
+   */
+  private registerMemoryDebugHooks(): void {
+    if (typeof globalThis === 'undefined') return;
+    const debugNs = ((globalThis as { __revealDebug?: Record<string, unknown> }).__revealDebug ??= {});
+
+    debugNs.enableVerbose = () => {
+      (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug = true;
+      // eslint-disable-next-line no-console
+      console.log('[reveal-mem] verbose logging enabled - filter console by [reveal-mem]');
+    };
+    debugNs.disableVerbose = () => {
+      (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug = false;
+      // eslint-disable-next-line no-console
+      console.log('[reveal-mem] verbose logging disabled');
+    };
+
+    debugNs.summary = () => {
+      const ns = debugNs as {
+        pointCloudLru?: () => unknown;
+        pointCloudModelsCount?: () => number;
+        image360Cache?: () => unknown;
+      };
+      const rendererInfo = this.renderer.info;
+      const summary = {
+        renderer: {
+          geometries: rendererInfo.memory.geometries,
+          textures: rendererInfo.memory.textures,
+          programs: rendererInfo.programs?.length ?? 0,
+          drawCalls: rendererInfo.render.calls,
+          triangles: rendererInfo.render.triangles
+        },
+        pointCloud: ns.pointCloudLru
+          ? { modelsCount: ns.pointCloudModelsCount?.() ?? 0, lru: ns.pointCloudLru() }
+          : 'no point cloud loaded yet',
+        image360: ns.image360Cache ? ns.image360Cache() : 'no image360 loaded yet',
+        models: this._models.length
+      };
+      // eslint-disable-next-line no-console
+      console.log('[reveal-mem] summary', summary);
+      return summary;
+    };
+
+    // eslint-disable-next-line no-console
+    console.log(
+      '%c[reveal-mem] Debug hooks registered. Try: window.__revealDebug.summary()',
+      'color:#4caf50;font-weight:bold'
+    );
   }
 
   /**

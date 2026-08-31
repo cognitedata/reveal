@@ -2,6 +2,41 @@ import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export type Node = IPointCloudTreeNodeBase;
 
+// DEBUGGING
+/**
+ * Build fingerprint. This is a top-level log that runs once when the LRU module
+ * is imported (which happens on the very first PointCloud interaction).
+ * This is only for debugging purposes. It will be removed in prod builds.
+ */
+const REVEAL_MEM_BUILD_TAG = 'webgl-context-lost-fix @ 2026-08-30';
+// eslint-disable-next-line no-console
+console.log(
+  `%c[reveal-mem] Potree LRU module loaded - build: ${REVEAL_MEM_BUILD_TAG}. ` +
+    `Enable verbose logs with: window.__revealMemDebug = true`,
+  'color:#4caf50;font-weight:bold'
+);
+
+/**
+ * Debug logging for the LRU. Enable at runtime from the browser console:
+ * window.__revealMemDebug = true
+ * Disable with:
+ * window.__revealMemDebug = false
+ */
+function memDebugEnabled(): boolean {
+  return typeof globalThis !== 'undefined' && (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug === true;
+}
+function memLog(...args: unknown[]): void {
+  if (memDebugEnabled()) {
+    // eslint-disable-next-line no-console
+    console.log('[reveal-mem][LRU]', ...args);
+  }
+}
+
+/**
+ * Multiplier applied to `pointBudget` to determine when the LRU should start
+ * freeing nodes, reducing the memory footprint and the pressure on GPU memory.
+ */
+const LRU_OVERSHOOT_FACTOR = 1.2;
 export class LRUItem {
   next: LRUItem | null = null;
   previous: LRUItem | null = null;
@@ -21,6 +56,22 @@ export class LRU {
   private readonly items = new Map<number, LRUItem>();
 
   constructor(public pointBudget: number = 1_000_000) {}
+
+  /**
+   * Debug snapshot of the current LRU state. Call from the browser console:
+   * viewer.__potreeInstance?.lru?.getMemStats?.() // if exposed
+   * Or, more portably, enable window.__revealMemDebug and read the periodic
+   * logs emitted by freeMemory().
+   */
+  getMemStats(): { budget: number; overshootFactor: number; threshold: number; numPoints: number; nodes: number } {
+    return {
+      budget: this.pointBudget,
+      overshootFactor: LRU_OVERSHOOT_FACTOR,
+      threshold: Math.round(this.pointBudget * LRU_OVERSHOOT_FACTOR),
+      numPoints: this.numPoints,
+      nodes: this.items.size
+    };
+  }
 
   get size(): number {
     return this.items.size;
@@ -132,12 +183,35 @@ export class LRU {
       return;
     }
 
-    while (this.numPoints > this.pointBudget * 2) {
+    const threshold = this.pointBudget * LRU_OVERSHOOT_FACTOR;
+    if (this.numPoints <= threshold) {
+      return;
+    }
+
+    const startPoints = this.numPoints;
+    const startSize = this.items.size;
+    memLog(
+      `freeMemory: over threshold - numPoints=${startPoints.toLocaleString()} ` +
+        `threshold=${Math.round(threshold).toLocaleString()} ` +
+        `(budget=${this.pointBudget.toLocaleString()} × ${LRU_OVERSHOOT_FACTOR}) ` +
+        `nodes=${startSize}`
+    );
+
+    let subtreesDisposed = 0;
+    while (this.numPoints > threshold) {
       const node = this.getLRUItem();
       if (node) {
         this.disposeSubtree(node);
+        subtreesDisposed++;
       }
     }
+
+    memLog(
+      `freeMemory: done - freed points=${(startPoints - this.numPoints).toLocaleString()} ` +
+        `freed nodes=${startSize - this.items.size} ` +
+        `subtreesDisposed=${subtreesDisposed} ` +
+        `remaining points=${this.numPoints.toLocaleString()} nodes=${this.items.size}`
+    );
   }
 
   disposeSubtree(node: Node): void {

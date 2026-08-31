@@ -146,4 +146,15 @@ export class PointCloudObjectAppearanceTexture {
   get objectStyleTexture(): DataTexture {
     return this._objectStyleTexture;
   }
+
+  dispose(): void {
+    if (typeof globalThis !== 'undefined' && (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug === true) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[reveal-mem][ObjectAppearanceTex] dispose - size=${this._width}x${this._height} ` +
+          `styledSets=${this._styledObjectSets.length}`
+      );
+    }
+    this._objectStyleTexture.dispose();
+  }
 }

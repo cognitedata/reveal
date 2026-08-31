@@ -7,6 +7,23 @@ import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import { pull, findLast, find, remove } from 'lodash-es';
 import type { DataSourceType } from '@reveal/data-providers';
 
+// DEBUGGING
+/**
+ * Build fingerprint. See also lru.ts and PointCloudMaterial.ts.
+ */
+// eslint-disable-next-line no-console
+console.log(
+  '%c[reveal-mem] Image360LoadingCache module loaded - build: webgl-context-lost-fix @ 2026-08-30 (with 360 annotation disposal)',
+  'color:#4caf50;font-weight:bold'
+);
+
+function memLog(...args: unknown[]): void {
+  if (typeof globalThis !== 'undefined' && (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug === true) {
+    // eslint-disable-next-line no-console
+    console.log('[reveal-mem][Image360Cache]', ...args);
+  }
+}
+
 export type DownloadRequest<T extends DataSourceType> = {
   entity: Image360Entity<T>;
   revision: Image360RevisionEntity<T>;
@@ -47,6 +64,26 @@ export class Image360LoadingCache<T extends DataSourceType> {
   ) {
     this._loaded360Images = [];
     this._inProgressDownloads = [];
+  }
+
+  /**
+   * Debug snapshot of the current cache state. Call from the browser console:
+   *   window.__revealDebug.image360Cache()
+   */
+  public getMemStats(): {
+    cachedCount: number;
+    imageCacheSize: number;
+    inProgressDownloads: number;
+    downloadCacheSize: number;
+    lockedDownload: boolean;
+  } {
+    return {
+      cachedCount: this._loaded360Images.length,
+      imageCacheSize: this._imageCacheSize,
+      inProgressDownloads: this._inProgressDownloads.length,
+      downloadCacheSize: this._downloadCacheSize,
+      lockedDownload: this._lockedDownload !== undefined
+    };
   }
 
   public async cachedPreload(
@@ -124,9 +161,14 @@ export class Image360LoadingCache<T extends DataSourceType> {
       if (imageToPurge === undefined) {
         throw new Error('Unable to purge 360 image from cache due to too many visible instances');
       }
+      memLog(
+        `cache full (size=${this._imageCacheSize}) - evicting one revision to make room, ` +
+          `total cached before=${this._loaded360Images.length}`
+      );
       this.purgeRevision(imageToPurge.entity, imageToPurge.revision);
     }
     this._loaded360Images.unshift({ entity, revision });
+    memLog(`added revision to cache - cached=${this._loaded360Images.length}/${this._imageCacheSize}`);
   }
 
   private abortLastRecentlyReqestedRevision() {
@@ -141,6 +183,11 @@ export class Image360LoadingCache<T extends DataSourceType> {
   }
 
   private purgeRevision(entity: Image360Entity<T>, revision: Image360RevisionEntity<T>) {
+    memLog(
+      `purgeRevision - entity visible=${entity.image360Visualization.visible}, ` +
+        `will unloadImage=${!entity.image360Visualization.visible}`
+    );
+
     // Remove from downloads
     const download = find(this._inProgressDownloads, download => download.revision === revision);
     if (download) {
@@ -153,7 +200,7 @@ export class Image360LoadingCache<T extends DataSourceType> {
       return image.revision === revision;
     });
 
-    // Clean up textures
+    // Clean up textures + annotation objects held by this revision.
     revision.dispose();
     if (!entity.image360Visualization.visible) entity.unloadImage();
   }

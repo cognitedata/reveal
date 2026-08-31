@@ -30,6 +30,29 @@ import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceT
 import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { pointCloudShaders } from '../rendering/shaders';
 
+/**
+ * Second build fingerprint (see also lru.ts). If you don't see the log below
+ * at page load / first point cloud, the browser is running an old bundle.
+ */
+const REVEAL_PCMATERIAL_BUILD_TAG = 'webgl-context-lost-fix @ 2026-08-30';
+// eslint-disable-next-line no-console
+console.log(
+  `%c[reveal-mem] PointCloudMaterial module loaded - build: ${REVEAL_PCMATERIAL_BUILD_TAG}`,
+  'color:#4caf50;font-weight:bold'
+);
+
+/**
+ * Debug logging controlled at runtime by `window.__revealMemDebug = true`.
+ * See lru.ts for the same pattern.
+ */
+function memLog(...args: unknown[]): void {
+  if (typeof globalThis !== 'undefined' && (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug === true) {
+    // eslint-disable-next-line no-console
+    console.log('[reveal-mem][PCMaterial]', ...args);
+  }
+}
+let pointCloudMaterialInstanceCounter = 0;
+
 export interface IPointCloudMaterialParameters {
   size: number;
   minSize: number;
@@ -104,6 +127,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
     OBJECT_STYLING_TEXTURE_WIDTH,
     OBJECT_STYLING_TEXTURE_HEIGHT
   );
+  private _ownsObjectAppearanceTexture: boolean = true;
+  private readonly _memInstanceId: number = ++pointCloudMaterialInstanceCounter;
 
   private _classification: PointClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
@@ -357,6 +382,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
       this._objectAppearanceTexture.setObjectsMaps(parameters.objectsMaps);
     }
 
+    memLog(`#${this._memInstanceId} created`);
     this.updateShaderSource();
   }
 
@@ -378,6 +404,13 @@ export class PointCloudMaterial extends RawShaderMaterial {
     if (this.classificationTexture) {
       this.classificationTexture.dispose();
       this.classificationTexture = undefined;
+    }
+
+    if (this._ownsObjectAppearanceTexture) {
+      memLog(`#${this._memInstanceId} dispose - disposing owned objectAppearanceTexture`);
+      this._objectAppearanceTexture.dispose();
+    } else {
+      memLog(`#${this._memInstanceId} dispose - skipping objectAppearanceTexture (borrowed)`);
     }
   }
 
@@ -443,7 +476,23 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   set objectAppearanceTexture(texture: PointCloudObjectAppearanceTexture) {
+    // Ownership is transferred away from this material - the texture is now shared/borrowed
+    // from another material (e.g. the pick material borrows from the node material). We must
+    // not dispose it on our own dispose(), otherwise we'd tear down a texture still in use.
+    if (this._ownsObjectAppearanceTexture && this._objectAppearanceTexture !== texture) {
+      memLog(
+        `#${this._memInstanceId} setter - releasing previously owned objectAppearanceTexture ` +
+          `before switching to borrowed one`
+      );
+      this._objectAppearanceTexture.dispose();
+    } else {
+      memLog(
+        `#${this._memInstanceId} setter - borrowing objectAppearanceTexture ` +
+          `(previouslyOwned=${this._ownsObjectAppearanceTexture}, same=${this._objectAppearanceTexture === texture})`
+      );
+    }
     this._objectAppearanceTexture = texture;
+    this._ownsObjectAppearanceTexture = false;
     this.uniforms.objectIdLUT = makeUniform('t', this._objectAppearanceTexture.objectStyleTexture);
   }
 

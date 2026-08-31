@@ -274,13 +274,31 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 
   /**
-   * Clear the cached textures used by this revision.
+   * Clear the cached textures and annotation objects (materials, geometries and
+   * outline lines) used by this revision.
    */
   public dispose(): void {
     this._previewTextures.forEach(t => t.texture.dispose());
     this._fullResolutionTextures.forEach(t => t.texture.dispose());
     this._previewTextures = [];
     this._fullResolutionTextures = [];
+
+    if (this._allAnnotations !== undefined) {
+      if (
+        typeof globalThis !== 'undefined' &&
+        (globalThis as { __revealMemDebug?: boolean }).__revealMemDebug === true
+      ) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `[reveal-mem][Image360Revision] dispose - disposing ${this._allAnnotations.length} annotation objects`
+        );
+      }
+      this._allAnnotations.forEach(annotation => annotation.dispose());
+      this._allAnnotations = undefined;
+    }
+    // Also drop the per-key promise map so the next visit rebuilds from scratch
+    // (the annotation objects it held were just disposed above).
+    this._annotationKeyToAnnotationObject.clear();
   }
 
   /**

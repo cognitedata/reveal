@@ -63,6 +63,17 @@ export class Image360Facade<T extends DataSourceType> {
     this._image360Cache = new Image360LoadingCache();
   }
 
+  /**
+   * Debug snapshot of the underlying loading cache. See Image360LoadingCache.
+   */
+  public getMemStats(): ReturnType<Image360LoadingCache<T>['getMemStats']> & { collections: number; entities: number } {
+    return {
+      ...this._image360Cache.getMemStats(),
+      collections: this._image360Collections.length,
+      entities: this._image360Collections.reduce((n, c) => n + c.image360Entities.length, 0)
+    };
+  }
+
   public async create<Image360CollectionSourceType extends DataSourceType>(
     collectionIdentifier: Image360CollectionSourceType['image360Identifier'],
     annotationFilter: Image360AnnotationFilterOptions = {},

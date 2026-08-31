@@ -202,6 +202,19 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._inputHandler.on('click', this.onClick);
     }
     onBeforeSceneRendered.subscribe(this.updateHoverStateOnRenderHandler);
+
+    // Register a debug hook so we can inspect the 360 image loading cache from the
+    // browser console via window.__revealDebug.image360Cache(). This is meant for
+    // ad-hoc memory-leak investigations and has no cost when not used.
+    if (typeof globalThis !== 'undefined') {
+      const debugNs = ((globalThis as { __revealDebug?: Record<string, unknown> }).__revealDebug ??= {});
+      debugNs.image360Cache = () => this._image360Facade.getMemStats();
+    }
+  }
+
+  /** Debug snapshot of the underlying 360 image loading cache. */
+  public getImage360CacheMemStats(): ReturnType<Image360Facade<DataSourceT>['getMemStats']> {
+    return this._image360Facade.getMemStats();
   }
 
   get needsRedraw(): boolean {
