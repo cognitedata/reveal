@@ -39,6 +39,7 @@ export type { ModelIdentifier } from './src/ModelIdentifier';
 export { createModelIdentifier } from './src/ModelIdentifier';
 export type { ModelMetadataProvider } from './src/ModelMetadataProvider';
 export type { ModelDataProvider } from './src/ModelDataProvider';
+export type { GeometryFilter } from './src/GeometryFilter';
 
 export type { PointCloudObjectMetadata, PointCloudObject } from './src/pointcloud-stylable-object-providers/types';
 export type { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';

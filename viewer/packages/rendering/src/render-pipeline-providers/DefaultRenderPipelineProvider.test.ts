@@ -10,13 +10,12 @@ import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import { IndexSet, SceneHandler } from '@reveal/utilities';
 import { defaultRenderOptions } from '../rendering/types';
-import type { CadNode } from '@reveal/cad-model';
 import { createCadModel, createPointCloudModel } from '../../../../test-utilities';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 describe(DefaultRenderPipelineProvider.name, () => {
   let rendererMock: IMock<WebGLRenderer>;
-  let cadNodeMock: CadNode;
+  let cadNodeMock: ReturnType<typeof createCadModel>['cadNode'];
   let pointCloudNodeMock: Object3D & { modelIdentifier: symbol };
 
   const modelIdentifierSymbol = Symbol('0');

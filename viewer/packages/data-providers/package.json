@@ -8,8 +8,6 @@
   },
   "dependencies": {
     "@reveal/360-images": "workspace:*",
-    "@reveal/cad-model": "workspace:*",
-    "@reveal/data-providers": "workspace:*",
     "@reveal/logger": "workspace:*",
     "@reveal/pointcloud-styling": "workspace:*",
     "@reveal/utilities": "workspace:*",
