@@ -43,7 +43,7 @@
     "prettier": "^3.0.0",
     "three": "0.185.1",
     "ts-loader": "9.6.2",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.0",
     "webpack": "^5.101.0",
     "webpack-cli": "^7.0.0",
     "webpack-dev-server": "^6.0.0",
