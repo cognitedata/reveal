@@ -11,9 +11,9 @@ import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
-  Image360Descriptor,
-  Image360Provider
+  Image360Descriptor
 } from '@reveal/data-providers';
+import type { Image360Provider } from '../src/providers/Image360Provider';
 import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox';
 import { SceneHandler } from '@reveal/utilities';
 

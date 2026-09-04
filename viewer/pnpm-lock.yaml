@@ -330,21 +330,9 @@ importers:
 
   packages/data-providers:
     dependencies:
-      '@reveal/360-images':
-        specifier: workspace:*
-        version: link:../360-images
-      '@reveal/cad-model':
-        specifier: workspace:*
-        version: link:../cad-model
-      '@reveal/data-providers':
-        specifier: workspace:*
-        version: 'link:'
       '@reveal/logger':
         specifier: workspace:*
         version: link:../logger
-      '@reveal/pointcloud-styling':
-        specifier: workspace:*
-        version: link:../pointcloud-styling
       '@reveal/utilities':
         specifier: workspace:*
         version: link:../utilities
@@ -419,9 +407,6 @@ importers:
 
   packages/rendering:
     dependencies:
-      '@reveal/cad-model':
-        specifier: workspace:*
-        version: link:../cad-model
       '@reveal/cad-parsers':
         specifier: workspace:*
         version: link:../cad-parsers
@@ -474,10 +459,6 @@ importers:
       '@reveal/utilities':
         specifier: workspace:*
         version: link:../utilities
-    devDependencies:
-      '@reveal/rendering':
-        specifier: workspace:*
-        version: link:../rendering
 
   packages/tools:
     dependencies:

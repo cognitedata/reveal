@@ -25,12 +25,13 @@ import type {
   DataSourceType,
   DMDataSourceType,
   Image360FileDescriptor,
-  Image360Provider
+  InstanceReference
 } from '@reveal/data-providers';
+import type { Image360Provider } from '../providers/Image360Provider';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import type { Matrix4, Ray } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
-import type { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
+import type { Image360AnnotationProvider } from '../providers/Image360AnnotationProvider';
 import { createCollectionIdString } from './createCollectionIdString';
 import { getClassicInstanceRef } from '../annotation/getInstanceId';
 

@@ -9,19 +9,8 @@ import type {
 } from '@cognite/sdk';
 import type { Matrix4, Texture } from 'three';
 import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import type {
-  AssetAnnotationImage360Info,
-  AssetHybridAnnotationImage360Info,
-  DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult,
-  Image360AnnotationInstanceReference
-} from '@reveal/360-images';
 import type { DMInstanceRef } from '@reveal/utilities';
 import type { ModelIdentifier } from './ModelIdentifier';
-
-export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
-  annotation: T['image360AnnotationType']
-) => boolean;
 
 export interface JsonFileProvider {
   /**
@@ -75,67 +64,10 @@ export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
  */
 export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
 
-export type Image360AnnotationSpecifier<T extends DataSourceType> = {
-  revisionId: Image360RevisionId<T>;
-  fileDescriptors: Image360FileDescriptor[];
-};
-
 /**
  * Filter for finding linked annotations in either a classic 360 collection or a new one
  */
 export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
-
-export interface Image360AnnotationProvider<T extends DataSourceType> {
-  getRelevant360ImageAnnotations(
-    annotationSpecifier: Image360AnnotationSpecifier<T>
-  ): Promise<T['image360AnnotationType'][]>;
-
-  /**
-   * Resolves the mapping from internal file IDs (annotatedResourceId) to external IDs.
-   * This is needed to match annotations to face descriptors when descriptors use externalId.
-   * Optional - if not implemented, the caller should build mapping from descriptors only.
-   */
-  resolveFileIdToExternalIdMapping?(
-    annotations: T['image360AnnotationType'][],
-    descriptors: Image360FileDescriptor[]
-  ): Promise<Map<number, string>>;
-
-  findImageAnnotationsForInstance(
-    instanceFilter: Image360AnnotationInstanceReference<T>,
-    collection: DefaultImage360Collection<T>
-  ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
-
-  getAllImage360AnnotationInfos(
-    source: 'assets',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'hybrid',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetHybridAnnotationImage360Info[]>;
-  getAllImage360AnnotationInfos(
-    source: 'cdm',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'all',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'assets' | 'hybrid' | 'cdm' | 'all',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<
-    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
-    | AssetAnnotationImage360Info<DMDataSourceType>[]
-    | AssetAnnotationImage360Info<DataSourceType>[]
-    | AssetHybridAnnotationImage360Info[]
-  >;
-}
 
 export interface Image360DescriptorProvider<T extends DataSourceType> {
   get360ImageDescriptors(

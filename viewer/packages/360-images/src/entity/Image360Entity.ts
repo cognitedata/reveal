@@ -3,7 +3,8 @@
  */
 
 import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import type { DataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { Image360Provider } from '../providers/Image360Provider';
 import type { Image360 } from './Image360';
 import type {
   Historical360ImageSet,

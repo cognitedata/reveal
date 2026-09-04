@@ -4,20 +4,15 @@
 import type { LineBasicMaterial, PerspectiveCamera, WebGLRenderer } from 'three';
 import { Color, LineSegments, Matrix4, Vector2, Vector3 } from 'three';
 
-import type {
-  ClassicDataSourceType,
-  DataSourceType,
-  DMDataSourceType,
-  Image360Provider,
-  Image360ProviderMap
-} from '@reveal/data-providers';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import type { Image360Provider, Image360ProviderMap } from '../src/providers/Image360Provider';
 import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  Cdf360ImageAnnotationProvider,
-  createCdf360ImageAnnotationCache,
-  Local360ImageProvider
+  createCdf360ImageAnnotationCache
 } from '@reveal/data-providers';
+import { Cdf360ImageAnnotationProvider } from '../src/providers/Cdf360ImageAnnotationProvider';
+import { Local360ImageProvider } from '../src/providers/Local360ImageProvider';
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
@@ -33,7 +28,7 @@ import { OctreeHelper } from 'sparse-octree';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import type { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
 import type { Image360CollectionSourceType } from '../src/types';
-import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
+import { Image360ProviderCombiner } from '../src/providers/Image360ProviderCombiner';
 import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/Cdf360ImageFileProvider';
 
 type TestImage360Facade = Image360Facade<DataSourceType>;

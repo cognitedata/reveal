@@ -5,14 +5,11 @@ export { CdfModelDataProvider } from './src/model-data-providers/CdfModelDataPro
 export { CachedModelDataProvider } from './src/model-data-providers/CachedModelDataProvider';
 export { CdfModelIdentifier } from './src/model-identifiers/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/metadata-providers/CdfModelMetadataProvider';
-export { getAnnotationIdKey } from './src/image-360-data-providers/annotations';
-export { Cdf360ImageAnnotationProvider } from './src/image-360-data-providers/Cdf360ImageAnnotationProvider';
 export {
   type Cdf360ImageAnnotationCache,
   createCdf360ImageAnnotationCache
 } from './src/image-360-data-providers/Cdf360ImageAnnotationCache';
 export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/events/Cdf360EventDescriptorProvider';
-export { CoreDm360ImageAnnotationProvider } from './src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
 export { Cdf360CdmDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
 export { Cdf360ImageFileProvider } from './src/image-360-data-providers/Cdf360ImageFileProvider';
 export type {
@@ -34,7 +31,6 @@ export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDat
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { DMModelIdentifier } from './src/model-identifiers/DMModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
-export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
 export type { ModelIdentifier } from './src/ModelIdentifier';
 export { createModelIdentifier } from './src/ModelIdentifier';
 export type { ModelMetadataProvider } from './src/ModelMetadataProvider';
@@ -54,15 +50,13 @@ export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable
 export { CdfPointCloudDMStylableObjectProvider } from './src/pointcloud-stylable-object-providers/pointcloud-volume-data-providers/CdfPointCloudDMStylableObjectProvider';
 export { DummyPointCloudDMStylableObjectProvider } from './src/pointcloud-stylable-object-providers/pointcloud-volume-data-providers/DummyPointCloudDMStylableObjectProvider';
 
-export type { Image360Provider, Image360ProviderMap } from './src/Image360Provider';
-export { getImage360ProviderFromMap } from './src/Image360Provider';
-export { Image360ProviderCombiner } from './src/Image360ProviderCombiner';
 export type {
   BinaryFileProvider,
   JsonFileProvider,
   SignedFileProvider,
   BlobOutputMetadata,
   Image360Descriptor,
+  Image360DescriptorProvider,
   Image360FileProvider,
   Image360Face,
   Image360Texture,
@@ -72,6 +66,8 @@ export type {
   InstanceReference,
   Image360Id,
   Image360RevisionId,
+  Historical360ImageSet,
+  FaceName,
   SignedFileItem
 } from './src/types';
 export { File3dFormat } from './src/types';
@@ -85,6 +81,8 @@ export {
 } from './src/utilities/utils';
 
 export { getExternalIdFromDescriptor } from './src/utilities/getExternalIdFromDescriptor';
+
+export { getInstanceKey } from './src/utilities/instanceIds';
 
 export type {
   DataSourceType,
@@ -109,3 +107,9 @@ export type {
 export type { MetadataWithSignedFiles } from './src/metadata-providers/types';
 
 export { SignedUrlRefresher, type FetchWithRefreshOptions } from './src/utilities/SignedUrlRefresh';
+
+export {
+  PointCloudObjectCollection,
+  PointCloudAnnotationVolumeCollection
+} from './src/point-cloud-collections/PointCloudObjectCollection';
+export { PointCloudDMVolumeCollection } from './src/point-cloud-collections/PointCloudDMVolumeCollection';

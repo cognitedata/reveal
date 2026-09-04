@@ -7,31 +7,32 @@ import { chunk } from 'lodash-es';
 import type { AnnotationModel, IdEither } from '@cognite/sdk';
 import type {
   FaceName,
-  Image360AnnotationFilterDelegate,
-  Image360AnnotationProvider,
-  Image360AnnotationSpecifier,
   Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo,
   ImageInstanceLinkAnnotationInfo,
-  InstanceReference
-} from '../types';
-import { getExternalIdFromDescriptor } from '../utilities/getExternalIdFromDescriptor';
-import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+  InstanceReference,
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType
+} from '@reveal/data-providers';
+import { getExternalIdFromDescriptor } from '@reveal/data-providers';
+import type {
+  Image360AnnotationFilterDelegate,
+  Image360AnnotationProvider,
+  Image360AnnotationSpecifier
+} from './Image360AnnotationProvider';
 import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
-  DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult,
-  Image360Entity,
-  Image360RevisionEntity
-} from '@reveal/360-images';
-import { createCollectionIdString } from '@reveal/360-images';
-import {
-  isImageAssetLinkAnnotation,
-  isImageInstanceLinkAnnotation
-} from '@reveal/360-images/src/annotation/typeGuards';
-import { getInstanceKey } from '../utilities/instanceIds';
-import type { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
+  Image360AnnotationAssetQueryResult
+} from '../collection/Image360Collection';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import { createCollectionIdString } from '../collection/createCollectionIdString';
+import { isImageAssetLinkAnnotation, isImageInstanceLinkAnnotation } from '../annotation/typeGuards';
+import { getInstanceKey } from '@reveal/data-providers';
+import type { Cdf360ImageAnnotationCache } from '@reveal/data-providers';
 import { isDefined } from '@reveal/utilities';
 
 /**

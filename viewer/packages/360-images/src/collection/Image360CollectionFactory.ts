@@ -15,8 +15,8 @@ import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import type { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import type { Image360AnnotationFilterOptions } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import type { Image360ProviderMap } from '@reveal/data-providers/src/Image360Provider';
-import { getImage360ProviderFromMap } from '@reveal/data-providers/src/Image360Provider';
+import type { Image360ProviderMap } from '../providers/Image360Provider';
+import { getImage360ProviderFromMap } from '../providers/Image360Provider';
 
 export class Image360CollectionFactory {
   private readonly _image360ProviderMap: Image360ProviderMap;
