@@ -9,7 +9,8 @@ import type { Image360Provider, Image360ProviderMap } from '../src/providers/Ima
 import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  createCdf360ImageAnnotationCache
+  createCdf360ImageAnnotationCache,
+  Cdf360ImageFileProvider
 } from '@reveal/data-providers';
 import { Cdf360ImageAnnotationProvider } from '../src/providers/Cdf360ImageAnnotationProvider';
 import { Local360ImageProvider } from '../src/providers/Local360ImageProvider';
@@ -29,7 +30,6 @@ import type { Overlay3DIcon } from '@reveal/3d-overlays';
 import type { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
 import type { Image360CollectionSourceType } from '../src/types';
 import { Image360ProviderCombiner } from '../src/providers/Image360ProviderCombiner';
-import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/Cdf360ImageFileProvider';
 
 type TestImage360Facade = Image360Facade<DataSourceType>;
 

@@ -24,8 +24,15 @@ export {
   isCoreDmImage360Identifier,
   isLegacyDM360Identifier,
   isFdm360ImageCollectionIdentifier,
-  isClassicMetadata360Identifier
+  isClassicMetadata360Identifier,
+  isSameImage360RevisionId
 } from './src/image-360-data-providers/shared';
+export { fetchCoreDm360AnnotationsForRevision } from './src/image-360-data-providers/cdm/fetchCoreDm360AnnotationsForRevision';
+export {
+  fetchAnnotationsForInstance,
+  type Image360AnnotationsForInstanceResult
+} from './src/image-360-data-providers/cdm/fetchAnnotationsForInstance';
+export { fetchCoreDm360AnnotationsForCollection } from './src/image-360-data-providers/cdm/fetchCoreDm360AnnotationsForCollection';
 export type { CoreDmImage360Annotation } from './src/image-360-data-providers/cdm/types';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
@@ -95,7 +102,7 @@ export type {
   LocalModelIdentifierType,
   GenericDataSourceType
 } from './src/DataSourceType';
-export { isClassicIdentifier, isDMIdentifier, isLocalIdentifier } from './src/DataSourceType';
+export { isClassicIdentifier, isDMIdentifier, isLocalIdentifier, isSameDMIdentifier } from './src/DataSourceType';
 
 export type {
   LocalAddModelOptions,

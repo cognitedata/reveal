@@ -5,9 +5,16 @@ import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
-  InstanceReference
+  InstanceReference,
+  Image360AnnotationsForInstanceResult
 } from '@reveal/data-providers';
-import { isSameDMIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import {
+  isSameDMIdentifier,
+  isSameImage360RevisionId,
+  fetchCoreDm360AnnotationsForRevision,
+  fetchAnnotationsForInstance,
+  fetchCoreDm360AnnotationsForCollection
+} from '@reveal/data-providers';
 import type {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -21,12 +28,7 @@ import type {
 import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
 import type { Image360Entity } from '../entity/Image360Entity';
 import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
-import { isSameImage360RevisionId } from '@reveal/data-providers/src/image-360-data-providers/shared';
-import { fetchCoreDm360AnnotationsForRevision } from '@reveal/data-providers/src/image-360-data-providers/cdm/fetchCoreDm360AnnotationsForRevision';
 import type { CogniteClient } from '@cognite/sdk';
-import type { Image360AnnotationsForInstanceResult } from '@reveal/data-providers/src/image-360-data-providers/cdm/fetchAnnotationsForInstance';
-import { fetchAnnotationsForInstance } from '@reveal/data-providers/src/image-360-data-providers/cdm/fetchAnnotationsForInstance';
-import { fetchCoreDm360AnnotationsForCollection } from '@reveal/data-providers/src/image-360-data-providers/cdm/fetchCoreDm360AnnotationsForCollection';
 import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey } from '@reveal/utilities';
 

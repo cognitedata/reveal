@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2026 Cognite AS
  */
 import type {
   ClassicDataSourceType,
