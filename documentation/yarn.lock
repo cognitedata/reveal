@@ -7573,9 +7573,9 @@ __metadata:
   linkType: hard
 
 "fast-uri@npm:^3.0.1":
-  version: 3.1.5
-  resolution: "fast-uri@npm:3.1.5"
-  checksum: 8a95af13e0730ac5c3abeb7f3939dee9fa95f2652e0ebac7a072b5597f836200084340c9bc2030f392318cdb49ec04e3fd6f558fa24c58d6d373557b9c01d7fb
+  version: 3.1.7
+  resolution: "fast-uri@npm:3.1.7"
+  checksum: 2095554c1e48b5a772529175dfa8d3c2ca33a1db6c84abe1584f9c4c3337b62d8e4807ed60a806f85bb7635cb7acca6c66c0c642b867efc3ea4e20a0d6c40cbe
   languageName: node
   linkType: hard
 
@@ -14779,9 +14779,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.110.1":
-  version: 5.110.1
-  resolution: "webpack@npm:5.110.1"
+"webpack@npm:5.110.2":
+  version: 5.110.2
+  resolution: "webpack@npm:5.110.2"
   dependencies:
     "@types/estree": ^1.0.8
     "@types/json-schema": ^7.0.15
@@ -14807,7 +14807,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 21995dab240d7df9955746631f343df7094294fe53f328ea22802f7a6ef967122e8c5ac89cdbe89bdb0e5a781bb2840a5969f48342412fcff8e63c277396db95
+  checksum: a0dd8b8aa9ad75773e685e574d0274c326f6a9ba42954d241082e9e6b8a36491ccc98b17cae3d6be0e1fc70addc9c0b65c958ff859a3ecb4789e1395a3d4a748
   languageName: node
   linkType: hard
 
