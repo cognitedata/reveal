@@ -2,10 +2,16 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Image360CollectionSourceType } from '@reveal/360-images';
-import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import type { Image360DescriptorProvider, Image360FileProvider, Image360AnnotationProvider } from './types';
-import { isFdm360ImageCollectionIdentifier } from './image-360-data-providers/shared';
+import type { Image360CollectionSourceType } from '../types';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  Image360DescriptorProvider,
+  Image360FileProvider
+} from '@reveal/data-providers';
+import { isFdm360ImageCollectionIdentifier } from '@reveal/data-providers';
+import type { Image360AnnotationProvider } from './Image360AnnotationProvider';
 
 export type Image360ProviderMap = Map<
   Image360CollectionSourceType,

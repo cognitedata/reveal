@@ -16,7 +16,8 @@ import type {
   Image360AnnotationFilterOptions,
   Image360CollectionSourceType,
   Image360IconIntersectionData,
-  Image360ClusterIntersectionData
+  Image360ClusterIntersectionData,
+  Image360Provider
 } from '@reveal/360-images';
 import {
   Image360Entity,
@@ -26,23 +27,22 @@ import {
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
   Image360Action,
-  HtmlClusterCoordinator
+  HtmlClusterCoordinator,
+  Cdf360ImageAnnotationProvider,
+  CoreDm360ImageAnnotationProvider,
+  Image360ProviderCombiner
 } from '@reveal/360-images';
 import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
-  Image360DataModelIdentifier,
-  Image360Provider
+  Image360DataModelIdentifier
 } from '@reveal/data-providers';
 import {
   Cdf360CdmDescriptorProvider,
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  Cdf360ImageAnnotationProvider,
   Cdf360ImageFileProvider,
-  CoreDm360ImageAnnotationProvider,
-  Image360ProviderCombiner,
   isFdm360ImageCollectionIdentifier,
   createCdf360ImageAnnotationCache
 } from '@reveal/data-providers';

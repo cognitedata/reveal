@@ -1,28 +1,34 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
-import { isSameDMIdentifier } from '../DataSourceType';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  InstanceReference,
+  Image360AnnotationsForInstanceResult
+} from '@reveal/data-providers';
+import {
+  isSameDMIdentifier,
+  isSameImage360RevisionId,
+  fetchCoreDm360AnnotationsForRevision,
+  fetchAnnotationsForInstance,
+  fetchCoreDm360AnnotationsForCollection
+} from '@reveal/data-providers';
 import type {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
-  Image360AnnotationSpecifier,
-  InstanceReference
-} from '../types';
+  Image360AnnotationSpecifier
+} from './Image360AnnotationProvider';
 import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
-  DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult,
-  Image360Entity,
-  Image360RevisionEntity
-} from '@reveal/360-images';
-import { isSameImage360RevisionId } from './shared';
-import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
+  Image360AnnotationAssetQueryResult
+} from '../collection/Image360Collection';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import type { CogniteClient } from '@cognite/sdk';
-import type { Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
-import { fetchAnnotationsForInstance } from './cdm/fetchAnnotationsForInstance';
-import { fetchCoreDm360AnnotationsForCollection } from './cdm/fetchCoreDm360AnnotationsForCollection';
 import type { DMInstanceKey } from '@reveal/utilities';
 import { dmInstanceRefToKey } from '@reveal/utilities';
 

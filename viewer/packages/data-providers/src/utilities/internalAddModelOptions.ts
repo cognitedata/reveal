@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import type { GeometryFilter } from '@reveal/cad-model';
+import type { GeometryFilter } from '../GeometryFilter';
 import type { ClassicModelIdentifierType, InternalDataSourceType, LocalModelIdentifierType } from '../DataSourceType';
 import type { File3dFormat } from '../types';
 

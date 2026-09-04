@@ -7,10 +7,10 @@ import type {
   Image360Descriptor,
   Image360RevisionId,
   Image360Texture,
-  DataSourceType,
-  Image360Provider
+  DataSourceType
 } from '@reveal/data-providers';
 import { getExternalIdFromDescriptor } from '@reveal/data-providers';
+import type { Image360Provider } from '../providers/Image360Provider';
 import type { Image360Revision } from './Image360Revision';
 import type { Image360VisualizationBox } from './Image360VisualizationBox';
 import type { JpegType } from '../utils/JpegDataStreamParser';
@@ -21,7 +21,7 @@ import { minBy } from 'lodash-es';
 import type { Image360AnnotationAppearance } from '../annotation/types';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
-import { getAnnotationIdKey } from '@reveal/data-providers';
+import { getAnnotationIdKey } from '../providers/annotations';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
   private readonly _imageProvider: Image360Provider<T>;

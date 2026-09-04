@@ -9,7 +9,7 @@ import type { RenderOptions } from '../src/rendering/types';
 import { defaultRenderOptions } from '../src/rendering/types';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { NumericRange } from '@reveal/utilities';
-import { CadNode } from '@reveal/cad-model';
+import { CadNode } from '../../cad-model';
 
 export default class BlendingTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {

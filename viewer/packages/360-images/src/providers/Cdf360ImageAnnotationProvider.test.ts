@@ -5,14 +5,15 @@
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 import type { AnnotationModel, InternalId, AnnotationsInstanceRef, FileInfo } from '@cognite/sdk';
-import type { DefaultImage360Collection, Image360Entity, Image360RevisionEntity } from '@reveal/360-images';
-import type { ClassicDataSourceType } from '../DataSourceType';
-import type { Image360Descriptor, Image360FileDescriptor } from '../types';
-import type { ImageAnnotationObject } from '@reveal/360-images/src/annotation/ImageAnnotationObject';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import type { ClassicDataSourceType, Image360Descriptor, Image360FileDescriptor } from '@reveal/data-providers';
+import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { createAnnotationModel, createFileInfo } from '../../../../test-utilities';
 import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
 import { assert } from '@reveal/utilities/assert';
-import type { Cdf360ImageAnnotationCache } from './Cdf360ImageAnnotationCache';
+import type { Cdf360ImageAnnotationCache } from '@reveal/data-providers';
 
 describe(Cdf360ImageAnnotationProvider.name, () => {
   const ARBITRARY_FILE_ID = 10;
