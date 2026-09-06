@@ -5,6 +5,7 @@
 import type { Matrix4, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
 
+/** Shared cluster payload used by GPU sprite rendering and occlusion. */
 export type ClusteredIconData = {
   icon: Overlay3DIcon;
   isCluster: boolean;

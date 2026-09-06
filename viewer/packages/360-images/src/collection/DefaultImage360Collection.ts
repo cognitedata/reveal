@@ -312,8 +312,8 @@ export class DefaultImage360Collection<T extends DataSourceType>
   }
 
   /**
-   * Check if HTML cluster rendering is enabled.
-   * @returns true if HTML clusters are enabled
+   * Check if clustered 360 icon rendering is enabled.
+   * @returns true if cluster sprites are enabled
    */
   public isHtmlClustersEnabled(): boolean {
     return this._icons.isHtmlClustersEnabled();

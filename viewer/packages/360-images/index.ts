@@ -30,6 +30,7 @@ export type { IconsOptions } from './src/icons/IconCollection';
 export type { ClusteredIconData } from './src/icons/clustering/ClusterRenderingStrategy';
 export { HtmlClusterCoordinator } from './src/icons/clustering/HtmlClusterCoordinator';
 export type { HtmlClusterCollection } from './src/icons/clustering/HtmlClusterCoordinator';
+export { SpriteClusterRenderer } from './src/icons/clustering/SpriteClusterRenderer';
 export type {
   Image360ClusterIntersectionData,
   Image360CollectionSourceType,

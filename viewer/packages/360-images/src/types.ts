@@ -46,7 +46,8 @@ export type Image360ClusterIntersectionData<T extends DataSourceType = DataSourc
 };
 
 /**
- * Options for HTML-based cluster rendering of 360 image icons.
+ * Options for GPU sprite cluster rendering of 360 image icons.
+ * Public option names stay `htmlCluster*` for backward compatibility.
  */
 export type HtmlClusterRendererOptions = {
   maxPoolSize?: number;

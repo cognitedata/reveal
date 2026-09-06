@@ -43,7 +43,7 @@ export type RenderParameters = {
 };
 
 /**
- * Configuration for HTML-based cluster rendering of 360 image icons.
+ * Configuration for clustered 360 image icon rendering.
  * Passed via {@link Cognite3DViewerOptions.htmlClusterOptions}.
  * Only takes effect when {@link Cognite3DViewerOptions.enableHtmlClusters} is true.
  * @module @cognite/reveal
@@ -232,18 +232,17 @@ export interface Cognite3DViewerOptions {
   hasEventListeners?: boolean;
 
   /**
-   * Enable HTML-based cluster rendering for 360 image icons.
-   * When enabled, nearby icons are grouped into cluster badges that show a count.
+   * Enable clustered 360 image icons.
+   * Nearby icons are grouped into GPU sprite badges that show a count.
    * Configure appearance and thresholds via htmlClusterOptions.
    * @default false
    */
   enableHtmlClusters?: boolean;
 
   /**
-   * Fine-grained options for HTML cluster rendering.
+   * Fine-grained options for clustered 360 icon rendering.
    * Only applies when enableHtmlClusters is true.
-   * Controls the 3D clustering distance, occlusion fade range,
-   * and advanced DOM rendering settings.
+   * Controls the 3D clustering distance and occlusion fade range.
    * See {@link HtmlClusterOptions}.
    */
   htmlClusterOptions?: HtmlClusterOptions;

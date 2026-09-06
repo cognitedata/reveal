@@ -9,7 +9,7 @@ import type { DefaultOverlay3DContentType } from '@reveal/3d-overlays';
 import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import { clamp } from 'lodash-es';
 import type { PointOctant } from 'sparse-octree';
-import { HtmlClusterRenderer } from './clustering/HtmlClusterRenderer';
+import { SpriteClusterRenderer } from './clustering/SpriteClusterRenderer';
 import type { ClusterRenderParams, ClusterScreenInfo } from './clustering';
 import { FlooredIconManager } from './FlooredIconManager';
 import type { HtmlClusterRendererOptions } from '../types';
@@ -68,9 +68,9 @@ export class IconCollection {
   // Cluster minimum pixel size (same as in the shader)
   private readonly _minClusterPixelSize = IconCollection.MinPixelSize * 2.5;
 
-  // HTML cluster renderer for high-definition cluster display (only created when enabled)
-  private readonly _htmlRenderer: HtmlClusterRenderer | undefined = undefined;
-  // Feature flag: enable HTML cluster rendering with count display
+  // GPU sprite cluster renderer (only created when clustering is enabled)
+  private readonly _spriteRenderer: SpriteClusterRenderer | undefined = undefined;
+  // Feature flag: enable clustered icons with count sprites
   private readonly _enableHtmlClusters: boolean;
 
   // Store camera projection info for accurate cluster intersection radius calculation
@@ -115,11 +115,11 @@ export class IconCollection {
     this._iconCullingScheme = scheme;
     if (this._iconCullingScheme === 'proximity') {
       this._visibleClusteredIcons = [];
-      this._htmlRenderer?.setVisible(false);
+      this._spriteRenderer?.setVisible(false);
       this._activeCullingHandler = this._computeProximityPointsEventHandler;
       this._setNeedsRedraw?.();
     } else {
-      this._htmlRenderer?.setVisible(true);
+      this._spriteRenderer?.setVisible(true);
       this._activeCullingHandler = this._computeClustersEventHandler;
     }
   }
@@ -205,9 +205,13 @@ export class IconCollection {
       maskTexture: sharedTexture
     });
 
-    // Initialize HTML cluster renderer only when enabled
+    // Initialize GPU sprite cluster renderer only when enabled
     if (this._enableHtmlClusters) {
-      this._htmlRenderer = new HtmlClusterRenderer(iconOptions?.htmlClusterOptions);
+      this._spriteRenderer = new SpriteClusterRenderer({
+        ...iconOptions?.htmlClusterOptions,
+        maxClusters: Math.max(points.length, 1)
+      });
+      sceneHandler.addObject3D(this._spriteRenderer.object3D);
     }
 
     this._hoverIconTexture = this.createHoverIconTexture();
@@ -243,6 +247,7 @@ export class IconCollection {
 
   public setTransform(transform: Matrix4): void {
     this._pointsObject.setTransform(transform);
+    this._spriteRenderer?.setTransform(transform);
     this._icons.forEach(icon => icon.setWorldTransform(transform));
   }
 
@@ -252,7 +257,7 @@ export class IconCollection {
 
   /**
    * Intersect a ray with visible clusters. Returns cluster data if a cluster is hit.
-   * Only works when HTML clusters are enabled.
+   * Only works when clustered icons are enabled.
    * @param ray - Ray in model space (ray.origin is camera position in model space)
    * @returns ClusterIntersectionData if a cluster is hit, undefined otherwise
    */
@@ -312,8 +317,8 @@ export class IconCollection {
   public setHoveredClusterIcon(icon: Overlay3DIcon | undefined): void {
     if (!this._enableHtmlClusters) return;
     this._hoveredClusterIcon = icon;
-    if (this._htmlRenderer) {
-      this._htmlRenderer.setHoveredCluster(icon);
+    if (this._spriteRenderer) {
+      this._spriteRenderer.setHoveredCluster(icon);
     }
   }
 
@@ -321,8 +326,8 @@ export class IconCollection {
     if (!this._enableHtmlClusters) return;
     const hadHoveredCluster = this._hoveredClusterIcon !== undefined;
     this._hoveredClusterIcon = undefined;
-    if (this._htmlRenderer) {
-      this._htmlRenderer.setHoveredCluster(undefined);
+    if (this._spriteRenderer) {
+      this._spriteRenderer.setHoveredCluster(undefined);
     }
 
     // Trigger redraw if we cleared a hover state
@@ -332,11 +337,11 @@ export class IconCollection {
   }
 
   public getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[] {
-    return this._htmlRenderer?.getStagedScreenInfos() ?? [];
+    return this._spriteRenderer?.getStagedScreenInfos() ?? [];
   }
 
   public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
-    this._htmlRenderer?.applyWithOcclusion(occludedIcons);
+    this._spriteRenderer?.applyWithOcclusion(occludedIcons);
   }
 
   /**
@@ -475,8 +480,8 @@ export class IconCollection {
     const clusters = visibleClusters.filter(item => item.isCluster);
     const individuals = visibleClusters.filter(item => !item.isCluster);
 
-    if (this._htmlRenderer) {
-      this._htmlRenderer.prepareClusters(clusters, {
+    if (this._spriteRenderer) {
+      this._spriteRenderer.prepareClusters(clusters, {
         renderer: params.renderer,
         camera: params.camera,
         modelTransform: params.modelTransform
@@ -696,7 +701,10 @@ export class IconCollection {
     this._hoverSprite.material.dispose();
     this._hoverIconTexture.dispose();
 
-    this._htmlRenderer?.dispose();
+    if (this._spriteRenderer) {
+      this._sceneHandler.removeObject3D(this._spriteRenderer.object3D);
+      this._spriteRenderer.dispose();
+    }
   }
 
   private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
@@ -779,6 +787,7 @@ export class IconCollection {
 
   public setOpacity(value: number): void {
     this._pointsObject.setOpacity(value);
+    this._spriteRenderer?.setOpacity(value);
     this._floorDiscs.setOpacity(value);
   }
 
@@ -788,6 +797,7 @@ export class IconCollection {
 
   public setOccludedVisible(value: boolean): void {
     this._pointsObject.setBackPointsVisible(value);
+    this._spriteRenderer?.setOccludedVisible(value);
     this._floorDiscs.setOccludedVisible(value);
   }
 
