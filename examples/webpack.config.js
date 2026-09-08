@@ -58,6 +58,13 @@ module.exports = {
     path: path.resolve(__dirname, 'public'),
     publicPath: '/'
   },
+  snapshot: {
+    // node_modules/@cognite/reveal is a link to ../viewer. Webpack treats everything under
+    // node_modules as immutable, so without this it recompiles when the viewer is rebuilt but
+    // keeps serving the cached bundle ("Nothing changed"). Excluding the package makes changes
+    // to viewer/dist - including rebuilt shaders - reach the browser.
+    managedPaths: [/^(.+?[\\/]node_modules[\\/])(?!@cognite[\\/]reveal)/]
+  },
   watchOptions: {
     aggregateTimeout: 2000
   }

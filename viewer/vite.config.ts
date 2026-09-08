@@ -2,16 +2,18 @@
  * Copyright 2026 Cognite AS
  */
 
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import glsl from 'vite-plugin-glsl';
 import pkg from './package.json' with { type: 'json' };
 import dts from 'unplugin-dts/vite';
+import fs from 'fs';
 import path from 'path';
 
 export default defineConfig(({ command }) => {
   return {
     root: '.',
     plugins: [
+      watchShaderIncludes(),
       glsl({ minify: true }),
       dts({
         tsconfigPath: './tsconfig.lib.json',
@@ -30,6 +32,10 @@ export default defineConfig(({ command }) => {
     build: {
       outDir: 'dist',
       target: 'es2019',
+      // The `clean` script empties dist before a build. Leaving it to Vite instead would wipe
+      // dist on every rebuild of `build:watch`, and since declarations are only generated on
+      // the first build, consumers linking to dist would lose their types after one rebuild.
+      emptyOutDir: false,
       sourcemap: command === 'build',
       rolldownOptions: {
         external: [...getDependencyMatchers(pkg.dependencies), ...getDependencyMatchers(pkg.peerDependencies)],
@@ -87,4 +93,43 @@ export default defineConfig(({ command }) => {
 
 function getDependencyMatchers(deps: Record<string, string>) {
   return Object.keys(deps).map(dep => new RegExp(`^${dep}(?:/.+)?$`));
+}
+
+/**
+ * Makes `vite build --watch` rebuild when a shader that is only reachable through an
+ * `#include` changes. vite-plugin-glsl registers included chunks as watch dependencies
+ * itself, but skips that when NODE_ENV is 'production', which it always is during a build.
+ */
+function watchShaderIncludes(): Plugin {
+  return {
+    name: 'watch-shader-includes',
+    enforce: 'pre',
+    transform: {
+      filter: { id: /\.(glsl|vert|frag)$/ },
+      handler(source, id) {
+        for (const include of collectShaderIncludes(source, id, new Set())) {
+          this.addWatchFile(include);
+        }
+        return null;
+      }
+    }
+  };
+}
+
+/** Resolves `#include ./someShader.glsl;` directives to absolute paths, recursively. */
+function collectShaderIncludes(source: string, shaderPath: string, found: Set<string>): Set<string> {
+  const includePattern = /^\s*#include\s+["']?([^"'\s;]+)/gm;
+
+  for (const [, includePath] of source.matchAll(includePattern)) {
+    const resolved = path.resolve(path.dirname(shaderPath), includePath);
+    const file = path.extname(resolved) === '' ? `${resolved}.glsl` : resolved;
+
+    if (found.has(file) || !fs.existsSync(file)) {
+      continue;
+    }
+    found.add(file);
+    collectShaderIncludes(fs.readFileSync(file, 'utf8'), file, found);
+  }
+
+  return found;
 }

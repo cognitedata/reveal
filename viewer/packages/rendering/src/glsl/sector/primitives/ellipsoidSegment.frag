@@ -6,7 +6,9 @@ precision highp float;
 #include ../../base/determineColor.glsl;
 #include ../../base/isClipped.glsl;
 #include ../../treeIndex/treeIndexPacking.glsl;
+#include ./newMatCap.glsl;
 
+uniform mat4 modelViewMatrix;
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
@@ -99,6 +101,7 @@ void main()
 
 #if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
     // Find normal vector in local space
+
     normal = vec3(p - center.xyz) * basis;
     normal.z = normal.z * (hRadius / vRadius) * (hRadius / vRadius);
     // Transform into camera space
@@ -110,4 +113,6 @@ void main()
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+
+    newMatCap(normal, p, modelViewMatrix, matCapTexture);
 }

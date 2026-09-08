@@ -7,11 +7,13 @@ precision highp float;
 #include ../../base/isClipped.glsl;
 #include ../../treeIndex/treeIndexPacking.glsl;
 #include ../../math/constants.glsl;
+#include ./newMatCap.glsl;
 
 // TODO general cylinder and cone are very similar and used
 // the same shader in the old code. Consider de-duplicating
 // parts of this code
 
+uniform mat4 modelViewMatrix;
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
@@ -116,4 +118,6 @@ void main()
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+
+    newMatCap(normal, p, modelViewMatrix, matCapTexture);
 }
