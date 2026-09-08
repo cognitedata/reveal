@@ -40,14 +40,15 @@ void updateFragmentColor(
             vec3 colorRGB = hsv2rgb(hsv);
         #endif
 
-        // PBR shading, using the world-space vectors populated by the fragment
-        // shader (via computeWorldSpaceVectors). Shaders that don't compute them
-        // keep their unlit albedo output. Skipped when usePbr is toggled off, so
-        // colorRGB above stays the original pre-hackathon albedo output.
+        // Single toggle for the hackathon demo: the new PBR pipeline vs. the exact
+        // pre-hackathon rendering. Shaders that don't compute world vectors also
+        // fall back to the original path.
         if (usePbr > 0.5 && g_worldVectorsValid) {
+            // --- New rendering (this branch) ---------------------------------
+            // PBR shading, using the world-space vectors populated by the
+            // fragment shader (via computeWorldSpaceVectors).
             // Placeholder lighting/material parameters - to be wired up properly later.
-            // Lighting is done in Reveal model/sector space, where +Z is up, so the
-            // sun points straight up to keep the horizon level (vertical ground normal).
+            // Lighting is done in Reveal model/sector space, where +Z is up.
             vec3 sunDirection = normalize(vec3(1.0, 0.0, 1.0));
             vec3 sunRadiance = vec3(3.0, 2.9, 2.7);
             float metallic = 0.0;
@@ -66,22 +67,26 @@ void updateFragmentColor(
             // stand-in for a prefiltered environment map / skybox we may add later.
             vec3 ambient = ambientLight(N) * albedo * (1.0 - metallic);
 
-            // HDR linear radiance -> ACES filmic tone map (with cross-talk) -> sRGB encode
-            // for display. This is the final screen color for lit primitives.
+            // HDR linear radiance -> ACES filmic tone map (with cross-talk) -> sRGB encode.
             vec3 hdrColor = lit + ambient;
             colorRGB = LinearTosRGB(acesFitted(hdrColor));
-        }
 
-        // Break up 8-bit quantization banding on smooth gradients with a
-        // sub-LSB triangular dither, applied in the sRGB output space just
-        // before the value is written to the (8-bit) render target. Dithering is
-        // part of the new pipeline, so it follows the PBR toggle - this keeps the
-        // hackathon demo a single switch between the new and the old look.
-        if (usePbr > 0.5) {
+            // Break up 8-bit quantization banding on smooth gradients with a
+            // sub-LSB triangular dither, applied in the sRGB output space just
+            // before the value is written to the (8-bit) render target.
             colorRGB = ditherTriangularNoise(colorRGB, gl_FragCoord.xy, dithering);
-        }
 
-        outputColor = vec4(colorRGB, color.a);
+            outputColor = vec4(colorRGB, color.a);
+        } else {
+            // --- Original pre-hackathon rendering (exactly as on master) ------
+            // Camera-space cosine term + matcap, with no sRGB / tonemapping / dither.
+            float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
+            vec4 albedo = vec4(colorRGB * (0.4 + 0.6 * amplitude), 1.0);
+            vec2 cap = normal.xy * 0.5 + 0.5;
+            vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
+
+            outputColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
+        }
     } else if (renderMode == RenderTypeGhost) {
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         float s = 0.4 + 0.6 * amplitude;
