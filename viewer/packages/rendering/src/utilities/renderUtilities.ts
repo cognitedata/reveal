@@ -10,7 +10,6 @@ import {
   DepthFormat,
   DepthTexture,
   GLSL3,
-  Matrix4,
   Mesh,
   NormalBlending,
   OneMinusSrcAlphaFactor,
@@ -18,7 +17,6 @@ import {
   RawShaderMaterial,
   SrcAlphaFactor,
   UnsignedIntType,
-  Vector4,
   WebGLRenderTarget
 } from 'three';
 import type { WebGLRendererStateHelper } from '@reveal/utilities';
@@ -37,7 +35,6 @@ import type {
 } from '../render-passes/types';
 import { BlitEffect } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
-import { CAD_LIGHT_WORLD } from '../rendering/cadLighting';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
@@ -92,8 +89,18 @@ export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): RawSh
 }
 
 export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
-  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline, contactShadow } =
-    options;
+  const {
+    texture,
+    effect,
+    depthTexture,
+    blendOptions,
+    overrideAlpha,
+    ssaoTexture,
+    edges,
+    outline,
+    cadShadow,
+    cadShadowTexture
+  } = options;
 
   const uniforms: ThreeUniforms = {
     tDiffuse: { value: texture }
@@ -118,11 +125,9 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
     uniforms['tSsao'] = { value: ssaoTexture };
   }
 
-  if ((contactShadow ?? false) && depthTexture !== null) {
-    defines['CONTACT_SHADOW'] = true;
-    uniforms['inverseProjectionMatrix'] = { value: new Matrix4() };
-    uniforms['cadLightDirection'] = { value: CAD_LIGHT_WORLD.clone() };
-    uniforms['cadShadowPlane'] = { value: new Vector4(0, 1, 0, 0) };
+  if ((cadShadow ?? false) && depthTexture !== null) {
+    defines['CAD_SHADOW'] = true;
+    uniforms['tCadShadow'] = { value: cadShadowTexture ?? null };
   }
 
   const initializedBlendOptions = initializeBlendingOptions(blendOptions); // Uses blendDst value if null

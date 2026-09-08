@@ -14,10 +14,12 @@ import type { RenderOptions } from '../rendering/types';
 import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
+import { ShadowMapPass } from '../render-passes/ShadowMapPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
+import type { SectorScene } from '@reveal/cad-parsers';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
@@ -39,6 +41,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
+  private readonly _shadowMapPass: ShadowMapPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
@@ -46,6 +49,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
   private _ssaoSampleSize: number;
   private readonly _cadBounds = new Box3();
+  private readonly _cadModelBounds = new Box3();
   private readonly _cadSize = new Vector3();
 
   set renderOptions(renderOptions: RenderOptions) {
@@ -116,8 +120,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       pointCloudParameters
     );
 
+    this._shadowMapPass = new ShadowMapPass(sceneHandler, materialManager);
+
     this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+      cadShadowMap: this._shadowMapPass,
       edges: edges.enabled,
       pointBlending: pointCloudParameters.pointBlending,
       edlOptions: pointCloudParameters.edlOptions,
@@ -156,6 +163,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     const hasStyling = hasStyledNodes(modelIdentifiers, this._materialManager);
 
     try {
+      // Light-space depth first: the CAD shadow lookup in post processing depends on it.
+      this.updateShadowCasterBounds();
+      if (this._cadModels.length > 0) {
+        yield this._shadowMapPass;
+      }
+
       yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
       renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
@@ -174,7 +187,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
         cad: hasStyling,
         pointCloud: this.shouldRenderPointClouds()
       });
-      this.updateShadowGroundY();
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper!.resetState();
       this._rendererStateHelper!.autoClear = true;
@@ -196,6 +208,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._cadGeometryRenderPipeline.dispose();
     this._pointCloudRenderPipeline.dispose();
     this._postProcessingPass.dispose();
+    this._shadowMapPass.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
 
@@ -232,6 +245,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
+    this._postProcessingPass.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
@@ -247,15 +261,40 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     return this._pointCloudModels.length > 0;
   }
 
-  private updateShadowGroundY(): void {
+  /**
+   * Fits the shadow light frustum and the shadow receiver plane to the CAD geometry.
+   * Deliberately independent of the view camera so shadows do not move while orbiting.
+   */
+  private updateShadowCasterBounds(): void {
     this._cadBounds.makeEmpty();
     for (const { cadNode } of this._cadModels) {
-      this._cadBounds.expandByObject(cadNode);
+      this._cadBounds.union(getCadWorldBounds(cadNode, this._cadModelBounds));
     }
+
+    this._shadowMapPass.setCadBounds(this._cadBounds);
     this._postProcessingPass.setShadowGroundY(
       this._cadBounds.isEmpty()
         ? 0
         : this._cadBounds.min.y - Math.max(0.05, this._cadBounds.getSize(this._cadSize).y * 0.002)
     );
   }
+}
+
+type CadNodeLike = Partial<{ sectorScene: SectorScene; rootSector: Object3D }>;
+
+/**
+ * CAD primitives are drawn as instances of unit-sized template geometry, so their
+ * `BufferGeometry` bounds describe the template and not where the instances end up.
+ * `Box3.expandByObject` therefore collapses to a box around the origin, which is useless
+ * for fitting a light frustum. Sector metadata is the only reliable source of CAD bounds.
+ */
+function getCadWorldBounds(cadNode: Object3D, target: Box3): Box3 {
+  const { sectorScene, rootSector } = cadNode as CadNodeLike;
+  if (sectorScene === undefined || rootSector === undefined) {
+    return target.makeEmpty().expandByObject(cadNode);
+  }
+
+  // The metadata bounds are in model space, while rootSector carries the model transformation.
+  target.copy(sectorScene.getBoundsOfMostGeometry());
+  return target.applyMatrix4(rootSector.matrixWorld);
 }

@@ -53,6 +53,8 @@ import ssaoVert from '../glsl/post-processing/passthrough.vert';
 import blitFrag from '../glsl/post-processing/blit.frag';
 import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
+import cadShadowFrag from '../glsl/post-processing/cad-shadow.frag';
+
 import depthBlendFrag from '../glsl/post-processing/depthBlendBlit.frag';
 import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
@@ -169,6 +171,11 @@ export const ssaoShaders: ShaderPair = {
 
 export const blitShaders: ShaderPair = {
   fragment: blitFrag,
+  vertex: blitVert
+};
+
+export const cadShadowShaders: ShaderPair = {
+  fragment: cadShadowFrag,
   vertex: blitVert
 };
 
