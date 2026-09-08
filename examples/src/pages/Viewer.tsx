@@ -453,7 +453,13 @@ export function Viewer() {
                   point,
                   `took ${(performance.now() - start).toFixed(1)} ms`
                 );
-                inspectNodeUi.inspectNode(intersection.model, treeIndex);
+                // Hackathon: disabled. inspectNode() fetches node ancestors from CDF
+                // (revisions3D.list3DNodeAncestors), which fails with a 401 in the
+                // local/unauthenticated demo. Since clicks are also used to reorient the
+                // camera, the unhandled rejection popped up constantly while navigating.
+                // Not needed for the demo - re-enable when running against a real project.
+                // inspectNodeUi.inspectNode(intersection.model, treeIndex);
+                void inspectNodeUi;
               }
               break;
             case 'pointcloud':
