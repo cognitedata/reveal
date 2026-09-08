@@ -36,7 +36,7 @@ import type {
 import { BlitEffect } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
+import { DEFAULT_EDL_NEIGHBOURS_COUNT, DEFAULT_EDL_SCALE_COUNT } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 export const unitOrthographicCamera: OrthographicCamera = new OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -145,6 +145,7 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
   if (shouldApplyEdl(edlOptions)) {
     defines['use_edl'] = true;
     defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
+    defines['EDL_SCALE_COUNT'] = DEFAULT_EDL_SCALE_COUNT;
 
     uniforms = {
       ...uniforms,

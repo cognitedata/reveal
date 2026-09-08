@@ -15,5 +15,25 @@ export const PERSPECTIVE_CAMERA = 'PerspectiveCamera';
 export const COLOR_BLACK: Color = new Color(0, 0, 0);
 export const COLOR_WHITE: Color = new Color(1, 1, 1);
 export const DEFAULT_EDL_NEIGHBOURS_COUNT = 16;
+/**
+ * Number of radii the EDL post-effect samples its neighbour ring at (radius, 2*radius, ...).
+ * Sampling more than one scale separates large structures at distance in addition to thin
+ * silhouettes, at a cost of DEFAULT_EDL_NEIGHBOURS_COUNT extra texture fetches per extra scale.
+ * A value of 1 reproduces the original single-scale effect exactly.
+ */
+export const DEFAULT_EDL_SCALE_COUNT = 2;
+/**
+ * Number of depth-aware screen-space hole-filling iterations applied to the point cloud render
+ * before compositing. Each iteration closes gaps up to one pixel wider, at the cost of one
+ * full-screen pass. 0 disables the effect entirely (no extra render targets are allocated).
+ */
+export const DEFAULT_POINTCLOUD_HOLE_FILL_ITERATIONS = 0;
+/**
+ * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
+ * fall in the last `band` fraction of the budget render only a stochastically chosen subset of
+ * their points, ramping from all to none, so the deepest visible nodes fade in as the camera
+ * approaches instead of popping in whole. 0 disables dithering (hard budget cutoff, unchanged).
+ */
+export const DEFAULT_POINTCLOUD_LOD_DITHER_BAND = 0;
 export const OBJECT_STYLING_TEXTURE_WIDTH = 256;
 export const OBJECT_STYLING_TEXTURE_HEIGHT = 256;

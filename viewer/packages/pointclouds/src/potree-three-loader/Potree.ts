@@ -3,6 +3,7 @@ import { Frustum, Matrix4, Vector2, Vector3 } from 'three';
 import type { PointCloudMaterialManager } from '@reveal/rendering';
 import {
   DEFAULT_POINT_BUDGET,
+  DEFAULT_POINTCLOUD_LOD_DITHER_BAND,
   MAX_LOADS_TO_GPU,
   MAX_NUM_NODES_LOADING,
   PERSPECTIVE_CAMERA,
@@ -213,7 +214,8 @@ export class Potree implements IPotree {
     node: IPointCloudTreeNodeBase,
     updateInfo: VisibilityUpdateInfo,
     queueItem: QueueItem,
-    sceneParams: VisibilitySceneParameters
+    sceneParams: VisibilitySceneParameters,
+    keepFraction: number = 1
   ): void {
     const pointCloudIndex = queueItem.pointCloudIndex;
     const pointCloud = sceneParams.pointClouds[pointCloudIndex];
@@ -245,7 +247,7 @@ export class Potree implements IPotree {
     }
 
     if (isTreeNode(node)) {
-      this.updateTreeNodeVisibility(pointCloud, node, updateInfo.visibleNodes);
+      this.updateTreeNodeVisibility(pointCloud, node, updateInfo.visibleNodes, keepFraction);
       pointCloud.visibleGeometry.push(node.geometryNode);
     }
 
@@ -312,14 +314,28 @@ export class Potree implements IPotree {
     // even when budget is 0
     this.updateVisibilityForNode(queueItem.node, updateInfo, queueItem, sceneParams);
 
+    const ditherBand = Math.max(0, Math.min(1, DEFAULT_POINTCLOUD_LOD_DITHER_BAND));
+    const softBudgetStart = this.pointBudget * (1 - ditherBand);
+
     while ((queueItem = priorityQueue.pop()) !== undefined) {
       const node = queueItem.node;
 
+      const projectedPoints = updateInfo.numVisiblePoints + node.numPoints;
+
       // If we will end up with too many points, we stop right away.
-      if (updateInfo.numVisiblePoints + node.numPoints > this.pointBudget) {
+      if (projectedPoints > this.pointBudget) {
         break;
       }
-      this.updateVisibilityForNode(node, updateInfo, queueItem, sceneParams);
+
+      // Within the dither band just below the budget, render only a shrinking subset of each
+      // node's points (chosen stochastically in the shader) so the lowest-priority visible
+      // nodes fade in as the camera approaches instead of popping in whole.
+      let keepFraction = 1;
+      if (ditherBand > 0 && projectedPoints > softBudgetStart) {
+        keepFraction = Math.max(0, 1 - (projectedPoints - softBudgetStart) / (this.pointBudget - softBudgetStart));
+      }
+
+      this.updateVisibilityForNode(node, updateInfo, queueItem, sceneParams, keepFraction);
     } // end priority queue loop
 
     const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.notLoadedGeometry.length);
@@ -338,9 +354,12 @@ export class Potree implements IPotree {
   private updateTreeNodeVisibility(
     pointCloud: PointCloudOctree,
     node: IPointCloudTreeNode,
-    visibleNodes: IPointCloudTreeNodeBase[]
+    visibleNodes: IPointCloudTreeNodeBase[],
+    keepFraction: number = 1
   ): void {
     this.lru.touch(node.geometryNode);
+
+    node.keepFraction = keepFraction;
 
     const sceneNode = node.sceneNode;
     sceneNode.visible = true;
