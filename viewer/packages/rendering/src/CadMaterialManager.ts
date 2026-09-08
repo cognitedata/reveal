@@ -55,6 +55,8 @@ export class CadMaterialManager {
   }
 
   private _renderMode: RenderMode = RenderMode.Color;
+  private _ditheringStrength: number = 1.0;
+  private _pbrEnabled: boolean = true;
   private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
@@ -95,6 +97,8 @@ export class CadMaterialManager {
     forEachMaterial(materials, material => {
       material.uniforms.renderMode.value = this._renderMode;
       material.colorWrite = colorWrite;
+      material.uniforms.dithering.value = this._ditheringStrength;
+      material.uniforms.usePbr.value = this._pbrEnabled ? 1.0 : 0.0;
     });
 
     this.updateClippingPlanesForModel(modelIdentifier);
@@ -212,6 +216,38 @@ export class CadMaterialManager {
 
   getRenderMode(): RenderMode {
     return this._renderMode;
+  }
+
+  /**
+   * Strength of the output dither used to hide 8-bit quantization banding,
+   * in LSBs (0 = off, 1 = +/- 1 LSB triangular dither).
+   */
+  set ditheringStrength(strength: number) {
+    this._ditheringStrength = strength;
+    this.applyToAllMaterials(material => {
+      material.uniforms.dithering.value = strength;
+    });
+    this._needsRedraw = true;
+  }
+
+  get ditheringStrength(): number {
+    return this._ditheringStrength;
+  }
+
+  /**
+   * Toggles the new PBR lighting path. When disabled, primitives fall back to
+   * the original pre-hackathon albedo shading for A/B comparison.
+   */
+  set pbrEnabled(enabled: boolean) {
+    this._pbrEnabled = enabled;
+    this.applyToAllMaterials(material => {
+      material.uniforms.usePbr.value = enabled ? 1.0 : 0.0;
+    });
+    this._needsRedraw = true;
+  }
+
+  get pbrEnabled(): boolean {
+    return this._pbrEnabled;
   }
 
   resetRedraw(): void {

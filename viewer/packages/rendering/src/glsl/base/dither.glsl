@@ -21,10 +21,12 @@ float ditherHash12(vec2 p) {
     return fract((p3.x + p3.y) * p3.z);
 }
 
-// Adds +/- 1 LSB triangular-PDF dither to an sRGB-encoded color.
-vec3 ditherTriangularNoise(vec3 color, vec2 fragCoord) {
+// Adds +/- 1 LSB triangular-PDF dither to an sRGB-encoded color. `amount`
+// scales the dither (0 = off, 1 = full +/- 1 LSB) so it can be toggled at
+// runtime via a uniform.
+vec3 ditherTriangularNoise(vec3 color, vec2 fragCoord, float amount) {
     float r1 = ditherHash12(fragCoord);
     float r2 = ditherHash12(fragCoord + vec2(37.0, 17.0));
     float tpdf = r1 + r2 - 1.0; // triangular PDF in [-1, 1]
-    return color + tpdf / 255.0;
+    return color + amount * (tpdf / 255.0);
 }

@@ -15,6 +15,12 @@
 
 #include <packing>
 
+// Runtime toggle/strength for the output dither (see below). 1.0 = on, 0.0 = off.
+uniform float dithering;
+// Runtime toggle between the new PBR lighting path (>0.5) and the original
+// pre-hackathon albedo path (<=0.5), for easy A/B comparison.
+uniform float usePbr;
+
 out vec4 outputColor;
 
 vec3 packNormalToRgb( const in vec3 normal ) {
@@ -36,8 +42,9 @@ void updateFragmentColor(
 
         // PBR shading, using the world-space vectors populated by the fragment
         // shader (via computeWorldSpaceVectors). Shaders that don't compute them
-        // keep their unlit albedo output.
-        if (g_worldVectorsValid) {
+        // keep their unlit albedo output. Skipped when usePbr is toggled off, so
+        // colorRGB above stays the original pre-hackathon albedo output.
+        if (usePbr > 0.5 && g_worldVectorsValid) {
             // Placeholder lighting/material parameters - to be wired up properly later.
             // Lighting is done in Reveal model/sector space, where +Z is up, so the
             // sun points straight up to keep the horizon level (vertical ground normal).
@@ -67,8 +74,12 @@ void updateFragmentColor(
 
         // Break up 8-bit quantization banding on smooth gradients with a
         // sub-LSB triangular dither, applied in the sRGB output space just
-        // before the value is written to the (8-bit) render target.
-        colorRGB = ditherTriangularNoise(colorRGB, gl_FragCoord.xy);
+        // before the value is written to the (8-bit) render target. Dithering is
+        // part of the new pipeline, so it follows the PBR toggle - this keeps the
+        // hackathon demo a single switch between the new and the old look.
+        if (usePbr > 0.5) {
+            colorRGB = ditherTriangularNoise(colorRGB, gl_FragCoord.xy, dithering);
+        }
 
         outputColor = vec4(colorRGB, color.a);
     } else if (renderMode == RenderTypeGhost) {

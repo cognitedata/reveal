@@ -302,6 +302,12 @@ export function initializeDefinesAndUniforms(
       },
       matCapTexture: {
         value: matCapTexture
+      },
+      dithering: {
+        value: 1.0
+      },
+      usePbr: {
+        value: 1.0
       }
     }
   });

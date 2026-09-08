@@ -160,6 +160,8 @@ export function Viewer() {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         edges: urlParams.get('edges') !== 'false',
+        pbr: urlParams.get('pbr') !== 'false',
+        ditheringStrength: parseFloat(urlParams.get('dither') ?? '1'),
         screenshot: {
           includeUI: true,
           resolution: {
@@ -286,19 +288,67 @@ export function Viewer() {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
         });
+      // Toggle post-processing passes at runtime (no page reload / camera reset).
+      // These reach into pipeline internals; fine for the example app.
+      const persistParam = (key: string, value: string) => {
+        urlParams.set(key, value);
+        window.history.replaceState({}, '', url.toString());
+      };
+      const getRenderPipeline = () => (viewer as any).revealManager._renderPipeline;
+
+      const ssaoSampleSizeByQuality: Record<string, number> = {
+        disabled: 0,
+        medium: 32,
+        high: 64,
+        veryhigh: 128
+      };
       renderGui
         .add(guiState, 'ssaoQuality', ['disabled', 'medium', 'high', 'veryhigh'])
         .name('SSAO')
-        .onFinishChange(v => {
-          urlParams.set('ssao', v);
-          window.location.href = url.toString();
+        .onChange(v => {
+          const sampleSize = ssaoSampleSizeByQuality[v] ?? 0;
+          const pipeline = getRenderPipeline();
+          pipeline._ssaoSampleSize = sampleSize;
+          pipeline._ssaoPass.ssaoParameters = { sampleSize, sampleRadius: 1.0, depthCheckBias: 0.0125 };
+          persistParam('ssao', v);
+          viewer.requestRedraw();
         });
       renderGui
         .add(guiState, 'edges')
         .name('Edge detection')
-        .onFinishChange(v => {
-          urlParams.set('edges', v ? 'true' : 'false');
-          window.location.href = url.toString();
+        .onChange(v => {
+          // Back-styling blit is _postProcessingObjects[0]; EDGES is a shader #define.
+          const backBlitMaterial = getRenderPipeline()._postProcessingPass._postProcessingObjects[0].material;
+          if (v) {
+            backBlitMaterial.defines.EDGES = true;
+          } else {
+            delete backBlitMaterial.defines.EDGES;
+          }
+          backBlitMaterial.needsUpdate = true;
+          persistParam('edges', v ? 'true' : 'false');
+          viewer.requestRedraw();
+        });
+      // Toggle between the new PBR lighting and the original pre-hackathon
+      // shading. Tip: set dithering strength to 0 for a faithful "old" look.
+      (viewer as any).revealManager.materialManager.pbrEnabled = guiState.pbr;
+      renderGui
+        .add(guiState, 'pbr')
+        .name('PBR lighting')
+        .onChange(v => {
+          (viewer as any).revealManager.materialManager.pbrEnabled = v;
+          persistParam('pbr', v ? 'true' : 'false');
+          viewer.requestRedraw();
+        });
+      // Apply the initial dithering strength from the URL, then wire the slider.
+      // Strength is in LSBs: 0 = off, 1 = +/- 1 LSB triangular dither.
+      (viewer as any).revealManager.materialManager.ditheringStrength = guiState.ditheringStrength;
+      renderGui
+        .add(guiState, 'ditheringStrength', 0, 4, 0.05)
+        .name('Dithering strength')
+        .onChange(v => {
+          (viewer as any).revealManager.materialManager.ditheringStrength = v;
+          persistParam('dither', String(v));
+          viewer.requestRedraw();
         });
 
       const screenshotGui = gui.addFolder('Screenshot');
