@@ -50,7 +50,14 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
-    symlinks: false
+    symlinks: false,
+    alias: {
+      // Hackathon: the @cognite/sdk bundled with the linked viewer (portal:../viewer)
+      // resolves an older @cognite/sdk-core build that is missing the
+      // `makeAutoPaginationMethods` export, which breaks the webpack compile. Force all
+      // @cognite/sdk-core imports to the hoisted copy that exports it so the app compiles.
+      '@cognite/sdk-core$': path.resolve(__dirname, 'node_modules/@cognite/sdk-core')
+    }
   },
   devtool: 'source-map',
   output: {
