@@ -1,3 +1,6 @@
+// Relies on updateFragmentColor.glsl (included before this file by the fragment
+// shader) to provide `outputColor` and, transitively via worldSpaceVectors.glsl,
+// the world-space lighting helpers (computeWorldSpaceVectors, g_world*).
 
 vec3 matCapFunc(vec3 direction) {
 	vec3 sunlightDirection = normalize(vec3(0.2, 0.5, 1.0));
@@ -15,26 +18,20 @@ vec3 matCapFunc(vec3 direction) {
 
 
 vec3 newMatCap(vec3 normal, vec3 viewPosition, mat4 modelViewMatrix, sampler2D matCapTexture) {
-	mat4 viewToSectorMatrix = inverse(modelViewMatrix);
-	vec3 sectorNormal = (viewToSectorMatrix * vec4(normal, 0.0)).xyz;
-	vec3 sectorPosition = (viewToSectorMatrix * vec4(viewPosition, 1.0)).xyz;
-	vec3 sectorCameraPosition = (viewToSectorMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
-
-	vec3 sectorRayDirection = normalize(sectorPosition - sectorCameraPosition);
-
-	vec3 reflectionRay = reflect(sectorRayDirection, sectorNormal);
-
+	// The world-space vectors are computed in the helper and exposed as globals
+	// (g_worldNormal, g_worldReflection, ...).
+	computeWorldSpaceVectors(normal, viewPosition, modelViewMatrix);
 
 	// Matcap
-        vec2 cap = reflectionRay.xy * 0.5 + 0.5;
-        vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
-	vec3 matCapValue = matCapFunc(sectorNormal);
+	vec2 cap = g_worldReflection.xy * 0.5 + 0.5;
+	vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
+	vec3 matCapValue = matCapFunc(g_worldNormal);
 
-	// outputColor = vec4(max(0.0, reflectionRay.z) * vec3(1.0), 1.0);
+	// outputColor = vec4(max(0.0, g_worldReflection.z) * vec3(1.0), 1.0);
 	outputColor.xyz = matCapValue;
-	// outputColor.xyz = sectorNormal;
+	// outputColor.xyz = g_worldNormal;
 
-	return reflectionRay;
+	return g_worldReflection;
 }
 
 vec3 pbr_ish() { return vec3(0.0); }

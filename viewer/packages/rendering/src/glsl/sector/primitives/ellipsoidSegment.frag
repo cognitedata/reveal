@@ -112,7 +112,11 @@ void main()
 #endif
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 
-    newMatCap(normal, p, modelViewMatrix, matCapTexture);
+    // Populate the world-space lighting vectors (g_world*) for this fragment.
+    // PBR shading is applied inside updateFragmentColor using these globals.
+    // (Replaces the old debug newMatCap() call that overwrote the color.)
+    computeWorldSpaceVectors(normal, p, modelViewMatrix);
+
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }

@@ -14,7 +14,10 @@ export default defineConfig(({ command }) => {
     root: '.',
     plugins: [
       watchShaderIncludes(),
-      glsl({ minify: true }),
+      // removeDuplicatedImports lets shared chunks (constants, pbr, environment,
+      // worldSpaceVectors, ...) be #included from multiple places without emitting
+      // duplicate definitions or "included multiple times" warnings.
+      glsl({ minify: true, removeDuplicatedImports: true }),
       dts({
         tsconfigPath: './tsconfig.lib.json',
         compilerOptions: {
