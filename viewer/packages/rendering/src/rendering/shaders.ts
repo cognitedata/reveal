@@ -55,6 +55,7 @@ import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert
 
 import depthBlendFrag from '../glsl/post-processing/depthBlendBlit.frag';
 import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
+import shadowReceiverFrag from '../glsl/post-processing/shadowReceiver.frag';
 
 type ShaderPair = {
   vertex: string;
@@ -174,5 +175,10 @@ export const blitShaders: ShaderPair = {
 
 export const depthBlendBlitShaders: ShaderPair = {
   fragment: depthBlendFrag,
+  vertex: depthBlendVert
+};
+
+export const shadowReceiverShaders: ShaderPair = {
+  fragment: shadowReceiverFrag,
   vertex: depthBlendVert
 };

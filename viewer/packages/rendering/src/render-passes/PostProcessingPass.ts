@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
-import { Plane, RawShaderMaterial, Vector3, Vector4 } from 'three';
+import type { Camera, DepthTexture, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import { GLSL3, Matrix4, Plane, RawShaderMaterial, Vector3, Vector4 } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -18,6 +18,7 @@ import {
 import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 import { cadLightDirectionView } from '../rendering/cadLighting';
+import { shadowReceiverShaders } from '../rendering/shaders';
 
 /**
  * Single pass that applies post processing effects and
@@ -30,6 +31,7 @@ export class PostProcessingPass implements RenderPass {
   private readonly _postProcessingObjects: Mesh[];
   private readonly _pointcloudBlitMaterial: ShaderMaterial;
   private readonly _backBlitMaterial: RawShaderMaterial;
+  private readonly _shadowReceiverMaterial: RawShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly _cadLightView = new Vector3();
   private readonly _shadowGroundPoint = new Vector3();
@@ -47,7 +49,11 @@ export class PostProcessingPass implements RenderPass {
     this.setBlendFactorByBackVisibility();
   }
 
-  constructor(scene: Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
+  constructor(
+    scene: Scene,
+    postProcessingPipelineOptions: PostProcessingPipelineOptions,
+    shadowReceiverDepth: DepthTexture
+  ) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
 
@@ -121,6 +127,29 @@ export class PostProcessingPass implements RenderPass {
     this._scene.add(inFrontBlitObject);
 
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
+
+    this._shadowReceiverMaterial = new RawShaderMaterial({
+      vertexShader: shadowReceiverShaders.vertex,
+      fragmentShader: shadowReceiverShaders.fragment,
+      glslVersion: GLSL3,
+      transparent: true,
+      // Receiver materials may use polygon offset, so compare depth explicitly
+      // in the shader instead of depth-testing against the final target.
+      depthTest: false,
+      depthWrite: false,
+      uniforms: {
+        tCadDepth: { value: postProcessingPipelineOptions.back.depthTexture },
+        tReceiverDepth: { value: shadowReceiverDepth },
+        inverseProjectionMatrix: { value: new Matrix4() },
+        cadLightDirection: { value: new Vector3() },
+        cadShadowPlane: { value: new Vector4() }
+      }
+    });
+    const shadowObject = createFullScreenTriangleMesh(this._shadowReceiverMaterial);
+    shadowObject.name = 'CAD shadow receiver overlay';
+    shadowObject.renderOrder = 0.5;
+    this._scene.add(shadowObject);
+    this._postProcessingObjects.push(shadowObject);
   }
 
   public setShadowGroundY(y: number): void {
@@ -149,6 +178,10 @@ export class PostProcessingPass implements RenderPass {
         this._shadowWorldPlane.normal.z,
         this._shadowWorldPlane.constant
       );
+
+      this._shadowReceiverMaterial.uniforms.cadLightDirection.value.copy(contactLight.value);
+      this._shadowReceiverMaterial.uniforms.inverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);
+      this._shadowReceiverMaterial.uniforms.cadShadowPlane.value.copy(shadowPlane.value);
     }
 
     renderer.sortObjects = true;
