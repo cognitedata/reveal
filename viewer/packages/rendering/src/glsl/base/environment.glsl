@@ -15,7 +15,8 @@
  *   vec3 reflection = roughEnvironment(reflect(-viewDir, normal), roughness);
  *   vec3 ambient    = ambientLight(normal);
  *
- * Directions are expected in world space (the gradient is oriented along +Y).
+ * Directions are expected in Reveal model/sector space, where +Z is up (the
+ * gradient is oriented along +Z).
  */
 
 // Number of ring samples used to approximate a pre-filtered environment.
@@ -24,16 +25,16 @@
 // Base environment radiance for a direction: a simple sky / horizon / ground
 // gradient. This is the procedural "environment map".
 vec3 surfaceEnvironment(vec3 rd) {
-    float y = clamp(rd.y, -1.0, 1.0);
+    float up = clamp(rd.z, -1.0, 1.0);
 
     vec3 sky = vec3(0.035, 0.075, 0.16);
     vec3 horizon = vec3(0.13, 0.15, 0.18);
     vec3 ground = vec3(0.025, 0.023, 0.022);
 
-    if (y >= 0.0) {
-        return mix(horizon, sky, pow(y, 0.55));
+    if (up >= 0.0) {
+        return mix(horizon, sky, pow(up, 0.55));
     }
-    return mix(ground, horizon, smoothstep(-1.0, 0.0, y));
+    return mix(ground, horizon, smoothstep(-1.0, 0.0, up));
 }
 
 // Environment as seen directly by the camera (i.e. the background), with a
@@ -47,7 +48,7 @@ vec3 backgroundEnvironment(vec3 rd, vec3 sunDirection) {
 
 // Build an orthonormal tangent basis around `n`.
 void envBasis(vec3 n, out vec3 t, out vec3 b) {
-    t = normalize(cross(abs(n.y) < 0.999 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0), n));
+    t = normalize(cross(abs(n.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0), n));
     b = cross(n, t);
 }
 
@@ -79,9 +80,9 @@ vec3 roughEnvironment(vec3 R, float roughness) {
 
 // Hemispheric ambient irradiance for a surface normal `N`.
 vec3 ambientLight(vec3 N) {
-    float up = max(N.y, 0.0);
-    float horizon = 1.0 - abs(N.y);
-    float down = max(-N.y, 0.0);
+    float up = max(N.z, 0.0);
+    float horizon = 1.0 - abs(N.z);
+    float down = max(-N.z, 0.0);
 
     return vec3(0.08, 0.12, 0.20) * up +
            vec3(0.045, 0.050, 0.060) * horizon +

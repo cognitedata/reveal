@@ -53,8 +53,7 @@ void updateFragmentColor(
             // Hemispheric ambient: sky above, horizon band, and a small ground/bounce
             // lift so downward-facing surfaces aren't completely black. This is a cheap
             // stand-in for a prefiltered environment map / skybox we may add later.
-            // environment.glsl uses +Y as up, so remap our +Z-up normal.
-            vec3 ambient = ambientLight(vec3(N.x, N.z, N.y)) * albedo * (1.0 - metallic);
+            vec3 ambient = ambientLight(N) * albedo * (1.0 - metallic);
 
             colorRGB = lit + ambient;
         }
