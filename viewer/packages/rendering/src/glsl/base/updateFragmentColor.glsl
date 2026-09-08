@@ -11,6 +11,7 @@
 #include environment.glsl;
 #include tonemapping.glsl;
 #include ../math/colorSpaceConversion.glsl;
+#include dither.glsl;
 
 #include <packing>
 
@@ -63,6 +64,11 @@ void updateFragmentColor(
             vec3 hdrColor = lit + ambient;
             colorRGB = LinearTosRGB(acesFitted(hdrColor));
         }
+
+        // Break up 8-bit quantization banding on smooth gradients with a
+        // sub-LSB triangular dither, applied in the sRGB output space just
+        // before the value is written to the (8-bit) render target.
+        colorRGB = ditherTriangularNoise(colorRGB, gl_FragCoord.xy);
 
         outputColor = vec4(colorRGB, color.a);
     } else if (renderMode == RenderTypeGhost) {
