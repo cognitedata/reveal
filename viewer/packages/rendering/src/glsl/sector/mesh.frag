@@ -11,6 +11,7 @@ precision highp float;
 
 uniform sampler2D matCapTexture;
 uniform lowp int renderMode;
+uniform mat4 modelViewMatrix;
 
 #if defined(IS_TEXTURED)
 
@@ -48,5 +49,7 @@ void main()
 #endif
 
     vec3 normal = derivateNormal(v_viewPosition);
+    // Populate world-space lighting vectors (g_world*) so updateFragmentColor applies PBR.
+    computeWorldSpaceVectors(normal, v_viewPosition, modelViewMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
 }

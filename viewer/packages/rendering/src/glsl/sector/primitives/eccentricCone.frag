@@ -12,6 +12,7 @@ uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
 uniform lowp int renderMode;
 
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
@@ -142,5 +143,7 @@ void main()
     }
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    // Populate world-space lighting vectors (g_world*) so updateFragmentColor applies PBR.
+    computeWorldSpaceVectors(normal, p, modelViewMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }

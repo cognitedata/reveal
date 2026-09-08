@@ -12,6 +12,7 @@ uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform lowp int renderMode;
+uniform mat4 modelViewMatrix;
 
 in float v_oneMinusThicknessSqr;
 in vec2 v_xy;
@@ -47,5 +48,7 @@ void main()
         discard;
     }
 
+    // Populate world-space lighting vectors (g_world*) so updateFragmentColor applies PBR.
+    computeWorldSpaceVectors(normal, vViewPosition, modelViewMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
 }

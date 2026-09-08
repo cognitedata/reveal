@@ -9,6 +9,8 @@
 #include worldSpaceVectors.glsl;
 #include pbr.glsl;
 #include environment.glsl;
+#include tonemapping.glsl;
+#include ../math/colorSpaceConversion.glsl;
 
 #include <packing>
 
@@ -43,7 +45,8 @@ void updateFragmentColor(
             float metallic = 0.0;
             float roughness = 0.3;
 
-            vec3 albedo = colorRGB;
+            // Shade in linear light: decode the sRGB base color to linear first.
+            vec3 albedo = sRGBToLinear(colorRGB);
             vec3 N = normalize(g_worldNormal);
             vec3 viewDirection = -g_worldRayDirection;
 
@@ -55,7 +58,10 @@ void updateFragmentColor(
             // stand-in for a prefiltered environment map / skybox we may add later.
             vec3 ambient = ambientLight(N) * albedo * (1.0 - metallic);
 
-            colorRGB = lit + ambient;
+            // HDR linear radiance -> ACES filmic tone map (with cross-talk) -> sRGB encode
+            // for display. This is the final screen color for lit primitives.
+            vec3 hdrColor = lit + ambient;
+            colorRGB = LinearTosRGB(acesFitted(hdrColor));
         }
 
         outputColor = vec4(colorRGB, color.a);
