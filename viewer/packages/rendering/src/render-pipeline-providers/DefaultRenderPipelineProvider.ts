@@ -23,6 +23,7 @@ import type { SectorScene } from '@reveal/cad-parsers';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
+import { ShadowReceiverDepthPass } from '../render-passes/ShadowReceiverDepthPass';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _viewerScene: Scene;
@@ -43,6 +44,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _postProcessingPass: PostProcessingPass;
   private readonly _shadowMapPass: ShadowMapPass;
   private readonly _ssaoPass: SSAOPass;
+  private readonly _shadowReceiverDepthPass: ShadowReceiverDepthPass;
+  private readonly _shadowReceiverRenderTarget: WebGLRenderTarget;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
@@ -114,6 +117,9 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       ssaoParameters
     );
 
+    this._shadowReceiverDepthPass = new ShadowReceiverDepthPass(sceneHandler.scene, sceneHandler.customObjects);
+    this._shadowReceiverRenderTarget = createRenderTarget();
+
     this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(
       sceneHandler,
       pointCloudMaterialManager,
@@ -122,15 +128,19 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._shadowMapPass = new ShadowMapPass(sceneHandler, materialManager);
 
-    this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
-      ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-      cadShadowMap: this._shadowMapPass,
-      edges: edges.enabled,
-      pointBlending: pointCloudParameters.pointBlending,
-      edlOptions: pointCloudParameters.edlOptions,
-      ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
-      ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
-    });
+    this._postProcessingPass = new PostProcessingPass(
+      sceneHandler.scene,
+      {
+        ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+        cadShadowMap: this._shadowMapPass,
+        edges: edges.enabled,
+        pointBlending: pointCloudParameters.pointBlending,
+        edlOptions: pointCloudParameters.edlOptions,
+        ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
+        ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
+      },
+      this._shadowReceiverRenderTarget.depthTexture!
+    );
 
     this._blitToScreenMaterial = new RawShaderMaterial({
       vertexShader: blitShaders.vertex,
@@ -183,6 +193,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
         yield* this._pointCloudRenderPipeline.pipeline(renderer);
       }
 
+      renderer.setRenderTarget(this._shadowReceiverRenderTarget);
+      if (this._shadowReceiverDepthPass.hasReceivers) {
+        yield this._shadowReceiverDepthPass;
+      } else {
+        renderer.clear();
+      }
+
       this._postProcessingPass.updateRenderObjectsVisibility({
         cad: hasStyling,
         pointCloud: this.shouldRenderPointClouds()
@@ -209,6 +226,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._pointCloudRenderPipeline.dispose();
     this._postProcessingPass.dispose();
     this._shadowMapPass.dispose();
+    this._shadowReceiverDepthPass.dispose();
+    this._shadowReceiverRenderTarget.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
 
@@ -246,6 +265,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
     this._postProcessingPass.setSize(width, height);
+    this._shadowReceiverRenderTarget.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
