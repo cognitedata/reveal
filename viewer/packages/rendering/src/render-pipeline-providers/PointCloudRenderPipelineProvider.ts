@@ -20,12 +20,10 @@ import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import type { SceneHandler } from '@reveal/utilities';
 import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
-import { PointCloudHoleFillPass } from '../render-passes/PointCloudHoleFillPass';
 import type { PointCloudRenderTargets } from './types';
 import type { PointCloudPassParameters } from '../render-passes/types';
 import type { PointCloudParameters } from '../rendering/types';
 import { PointShape } from '../pointcloud-rendering';
-import { DEFAULT_POINTCLOUD_HOLE_FILL_ITERATIONS } from '../pointcloud-rendering/constants';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import { shouldApplyEdl } from './pointCloudParameterUtils';
 
@@ -39,7 +37,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   private readonly _depthPass: PointCloudEffectsPass;
   private readonly _attributePass: PointCloudEffectsPass;
   private readonly _standardPass: PointCloudEffectsPass;
-  private readonly _holeFillPass: PointCloudHoleFillPass;
   private readonly _sceneHandler: SceneHandler;
 
   private static readonly DepthPassParameters: PointCloudPassParameters = {
@@ -118,10 +115,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
       pointCloudMaterialManager,
       PointCloudRenderPipelineProvider.AttributePassParameters
     );
-    this._holeFillPass = new PointCloudHoleFillPass(
-      this._renderTargetData.output,
-      DEFAULT_POINTCLOUD_HOLE_FILL_ITERATIONS
-    );
   }
 
   get pointCloudRenderTargets(): PointCloudRenderTargets {
@@ -149,10 +142,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
       } else {
         renderer.setRenderTarget(this._renderTargetData.output);
         yield this._standardPass;
-
-        if (this._holeFillPass.iterations > 0) {
-          yield this._holeFillPass;
-        }
       }
     } finally {
       renderer.setClearColor('#FFFFFF', 0.0);
@@ -162,7 +151,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   public dispose(): void {
     this._renderTargetData.logDepthAndDepthOutput.dispose();
     this._renderTargetData.output.dispose();
-    this._holeFillPass.dispose();
   }
 
   private updateRenderTargetSizes(renderer: WebGLRenderer): void {
@@ -179,6 +167,5 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._renderTargetData.currentRenderSize.set(width, height);
     this._renderTargetData.logDepthAndDepthOutput.setSize(width, height);
     this._renderTargetData.output.setSize(width, height);
-    this._holeFillPass.setSize(width, height);
   }
 }

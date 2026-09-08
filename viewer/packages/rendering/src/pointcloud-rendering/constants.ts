@@ -23,11 +23,13 @@ export const DEFAULT_EDL_NEIGHBOURS_COUNT = 16;
  */
 export const DEFAULT_EDL_SCALE_COUNT = 2;
 /**
- * Number of depth-aware screen-space hole-filling iterations applied to the point cloud render
- * before compositing. Each iteration closes gaps up to one pixel wider, at the cost of one
- * full-screen pass. 0 disables the effect entirely (no extra render targets are allocated).
+ * Radius, in pixels, of the depth-aware gap fill applied while compositing the point cloud.
+ * When the camera is close and the point cloud no longer covers every pixel, an empty pixel
+ * with enough covered neighbours within this radius adopts the nearest one, closing the gap
+ * without inflating point sizes. Cost is O(radius^2) texture taps in the normalize shader.
+ * 0 disables it.
  */
-export const DEFAULT_POINTCLOUD_HOLE_FILL_ITERATIONS = 0;
+export const DEFAULT_POINTCLOUD_GAP_FILL_RADIUS = 3;
 /**
  * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
  * fall in the last `band` fraction of the budget render only a stochastically chosen subset of

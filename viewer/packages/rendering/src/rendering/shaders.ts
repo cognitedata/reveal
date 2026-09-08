@@ -47,9 +47,6 @@ import pointCloudNormalizeVert from '../glsl/pointcloud/normalize.vert';
 import pointCloudFrag from '../glsl/pointcloud/pointcloud.frag';
 import pointCloudVert from '../glsl/pointcloud/pointcloud.vert';
 
-import pointCloudHoleFillFrag from '../glsl/pointcloud/hole-fill.frag';
-import pointCloudHoleFillVert from '../glsl/post-processing/passthrough.vert';
-
 import ssaoFrag from '../glsl/post-processing/pure-depth-ssao.frag';
 import ssaoVert from '../glsl/post-processing/passthrough.vert';
 
@@ -149,7 +146,6 @@ export const sectorShaders: SectorShaders = {
 type PointCloudShaders = {
   normalize: ShaderPair;
   pointcloud: ShaderPair;
-  holeFill: ShaderPair;
 };
 
 export const pointCloudShaders: PointCloudShaders = {
@@ -160,10 +156,6 @@ export const pointCloudShaders: PointCloudShaders = {
   pointcloud: {
     fragment: pointCloudFrag,
     vertex: pointCloudVert
-  },
-  holeFill: {
-    fragment: pointCloudHoleFillFrag,
-    vertex: pointCloudHoleFillVert
   }
 };
 

@@ -36,7 +36,11 @@ import type {
 import { BlitEffect } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import { DEFAULT_EDL_NEIGHBOURS_COUNT, DEFAULT_EDL_SCALE_COUNT } from '../pointcloud-rendering/constants';
+import {
+  DEFAULT_EDL_NEIGHBOURS_COUNT,
+  DEFAULT_EDL_SCALE_COUNT,
+  DEFAULT_POINTCLOUD_GAP_FILL_RADIUS
+} from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 export const unitOrthographicCamera: OrthographicCamera = new OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -142,6 +146,18 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines['points_blend'] = true;
   }
 
+  const gapFillRadius = Math.max(0, Math.floor(DEFAULT_POINTCLOUD_GAP_FILL_RADIUS));
+  if (gapFillRadius > 0) {
+    defines['fill_gaps'] = true;
+    defines['FILL_GAPS_RADIUS'] = gapFillRadius;
+    defines['FILL_GAPS_MIN_COVERED'] = Math.max(3, gapFillRadius * 3);
+    uniforms = {
+      ...uniforms,
+      screenWidth: { value: 1 },
+      screenHeight: { value: 1 }
+    };
+  }
+
   if (shouldApplyEdl(edlOptions)) {
     defines['use_edl'] = true;
     defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
@@ -152,7 +168,7 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
       radius: { value: edlOptions.radius },
       edlStrength: { value: edlOptions.strength },
       screenWidth: { value: 1 },
-      screeHeight: { value: 1 },
+      screenHeight: { value: 1 },
       neighbours: { value: getEDLNeighbourPoints(DEFAULT_EDL_NEIGHBOURS_COUNT) }
     };
   }

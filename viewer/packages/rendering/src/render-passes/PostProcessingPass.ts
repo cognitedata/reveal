@@ -15,7 +15,6 @@ import {
   RenderLayer
 } from '../utilities/renderUtilities';
 import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
-import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 /**
  * Single pass that applies post processing effects and
@@ -114,10 +113,10 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
-    if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
-      this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
-      this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
-    }
+    // Both EDL and gap filling need the current render size in the normalize shader. Updating
+    // unconditionally is harmless when neither is enabled (the uniforms are simply unused).
+    this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
+    this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
 
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
