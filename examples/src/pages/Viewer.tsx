@@ -96,6 +96,7 @@ export function Viewer() {
         useFlexibleCameraManager: true,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
+        enableEdges: urlParams.get('edges') !== 'false',
         enableFloorIcons: urlParams.get('floorIcons') === 'true',
         pointCloudEffects: {
           pointBlending: urlParams.get('pointBlending') === 'true',
@@ -158,6 +159,7 @@ export function Viewer() {
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
+        edges: urlParams.get('edges') !== 'false',
         screenshot: {
           includeUI: true,
           resolution: {
@@ -289,6 +291,13 @@ export function Viewer() {
         .name('SSAO')
         .onFinishChange(v => {
           urlParams.set('ssao', v);
+          window.location.href = url.toString();
+        });
+      renderGui
+        .add(guiState, 'edges')
+        .name('Edge detection')
+        .onFinishChange(v => {
+          urlParams.set('edges', v ? 'true' : 'false');
           window.location.href = url.toString();
         });
 
