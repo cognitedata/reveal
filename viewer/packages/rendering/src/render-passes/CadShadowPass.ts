@@ -21,7 +21,7 @@ import { cadShadowShaders } from '../rendering/shaders';
 import { createFullScreenTriangleMesh } from '../utilities/renderUtilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
-const SHADOW_STRENGTH = 0.72;
+const SHADOW_STRENGTH = 0.40;
 
 /**
  * Resolves the CAD shadow map into a screen-space lit factor.
