@@ -45,11 +45,25 @@ out vec4 fragColor;
 #include ../math/toViewZ.glsl;
 #endif
 
+#if defined(CONTACT_SHADOW) && defined(DEPTH_WRITE)
+#include contactShadow.glsl;
+#endif
+
 void main() {
   vec4 diffuse = texture(tDiffuse, vUv);
 
   if(diffuse.a == 0.0){
-    discard;
+    #if defined(CONTACT_SHADOW) && defined(DEPTH_WRITE)
+      float lit = contactShadow(tDepth, vUv);
+      if (lit > 0.97) {
+        discard;
+      }
+      fragColor = vec4(vec3(0.0), (1.0 - lit) * 0.85);
+      gl_FragDepth = 1.0;
+      return;
+    #else
+      discard;
+    #endif
   }
 
 #if defined(FXAA)
@@ -58,6 +72,9 @@ void main() {
   fragColor = diffuse;
   #if defined(SSAO_BLUR)
     fragColor *= gaussianBlur(tSsao, vUv);
+  #endif
+  #if defined(CONTACT_SHADOW) && defined(DEPTH_WRITE)
+    fragColor.rgb *= contactShadow(tDepth, vUv);
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);

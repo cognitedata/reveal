@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { Plane, RawShaderMaterial } from 'three';
-import { SRGBColorSpace, Texture, Vector2, Vector4 } from 'three';
+import type { Camera, Plane, RawShaderMaterial } from 'three';
+import { SRGBColorSpace, Texture, Vector2, Vector3, Vector4 } from 'three';
 
 import type { Materials } from './rendering/materials';
 import { createMaterials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
@@ -20,6 +20,7 @@ import {
 import type { IndexSet } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
+import { cadLightDirectionView, cadUpDirectionView } from './rendering/cadLighting';
 
 import { assert } from '@reveal/utilities/assert';
 
@@ -56,6 +57,8 @@ export class CadMaterialManager {
 
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
+  private readonly _cadLightView = new Vector3();
+  private readonly _cadUpView = new Vector3();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
   private _needsRedraw: boolean = false;
@@ -212,6 +215,25 @@ export class CadMaterialManager {
 
   getRenderMode(): RenderMode {
     return this._renderMode;
+  }
+
+  /**
+   * Transforms the world-space CAD sun into view space so lighting stays fixed while the camera orbits.
+   */
+  updateViewLighting(camera: Camera): void {
+    cadLightDirectionView(camera, this._cadLightView);
+    cadUpDirectionView(camera, this._cadUpView);
+
+    this.applyToAllMaterials(material => {
+      const lightUniform = material.uniforms.cadLightDirection;
+      const upUniform = material.uniforms.cadUpDirection;
+      if (lightUniform !== undefined) {
+        (lightUniform.value as Vector3).copy(this._cadLightView);
+      }
+      if (upUniform !== undefined) {
+        (upUniform.value as Vector3).copy(this._cadUpView);
+      }
+    });
   }
 
   resetRedraw(): void {

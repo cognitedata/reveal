@@ -6,6 +6,7 @@ import type { DataTexture, Texture } from 'three';
 import { DoubleSide, GLSL3, Matrix4, RawShaderMaterial, Vector2, Vector3 } from 'three';
 import { sectorShaders } from './shaders';
 import { RenderMode } from './RenderMode';
+import { CAD_LIGHT_WORLD } from './cadLighting';
 
 export interface Materials {
   // Materials
@@ -302,6 +303,12 @@ export function initializeDefinesAndUniforms(
       },
       matCapTexture: {
         value: matCapTexture
+      },
+      cadLightDirection: {
+        value: CAD_LIGHT_WORLD.clone()
+      },
+      cadUpDirection: {
+        value: new Vector3(0, 1, 0)
       }
     }
   });

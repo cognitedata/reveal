@@ -3,6 +3,7 @@
  */
 
 import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import { Plane, RawShaderMaterial, Vector3, Vector4 } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -16,6 +17,7 @@ import {
 } from '../utilities/renderUtilities';
 import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
+import { cadLightDirectionView } from '../rendering/cadLighting';
 
 /**
  * Single pass that applies post processing effects and
@@ -27,7 +29,13 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: Scene;
   private readonly _postProcessingObjects: Mesh[];
   private readonly _pointcloudBlitMaterial: ShaderMaterial;
+  private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
+  private readonly _cadLightView = new Vector3();
+  private readonly _shadowGroundPoint = new Vector3();
+  private readonly _shadowGroundNormal = new Vector3(0, 1, 0);
+  private readonly _shadowWorldPlane = new Plane();
+  private _shadowGroundY = 0;
   private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
@@ -49,8 +57,10 @@ export class PostProcessingPass implements RenderPass {
       ssaoTexture: postProcessingPipelineOptions.ssaoTexture,
       overrideAlpha: 1.0,
       edges: postProcessingPipelineOptions.edges,
-      outline: true
+      outline: true,
+      contactShadow: true
     });
+    this._backBlitMaterial = backBlitMaterial;
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
@@ -113,10 +123,32 @@ export class PostProcessingPass implements RenderPass {
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
   }
 
+  public setShadowGroundY(y: number): void {
+    this._shadowGroundY = y;
+  }
+
   public render(renderer: WebGLRenderer, camera: Camera): void {
     if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
       this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
       this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
+    }
+
+    const contactLight = this._backBlitMaterial.uniforms.cadLightDirection;
+    const inverseProjection = this._backBlitMaterial.uniforms.inverseProjectionMatrix;
+    const shadowPlane = this._backBlitMaterial.uniforms.cadShadowPlane;
+    if (contactLight !== undefined && inverseProjection !== undefined && shadowPlane !== undefined) {
+      contactLight.value.copy(cadLightDirectionView(camera, this._cadLightView));
+      inverseProjection.value.copy(camera.projectionMatrixInverse);
+
+      this._shadowGroundPoint.set(0, this._shadowGroundY, 0);
+      this._shadowWorldPlane.setFromNormalAndCoplanarPoint(this._shadowGroundNormal, this._shadowGroundPoint);
+      this._shadowWorldPlane.applyMatrix4(camera.matrixWorldInverse);
+      (shadowPlane.value as Vector4).set(
+        this._shadowWorldPlane.normal.x,
+        this._shadowWorldPlane.normal.y,
+        this._shadowWorldPlane.normal.z,
+        this._shadowWorldPlane.constant
+      );
     }
 
     renderer.sortObjects = true;

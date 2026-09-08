@@ -3,7 +3,7 @@
  */
 
 import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
+import { Box3, Color, GLSL3, RawShaderMaterial, Vector2, Vector3 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
@@ -45,6 +45,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
   private _ssaoSampleSize: number;
+  private readonly _cadBounds = new Box3();
+  private readonly _cadSize = new Vector3();
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -172,6 +174,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
         cad: hasStyling,
         pointCloud: this.shouldRenderPointClouds()
       });
+      this.updateShadowGroundY();
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper!.resetState();
       this._rendererStateHelper!.autoClear = true;
@@ -242,5 +245,17 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
   private shouldRenderPointClouds(): boolean {
     return this._pointCloudModels.length > 0;
+  }
+
+  private updateShadowGroundY(): void {
+    this._cadBounds.makeEmpty();
+    for (const { cadNode } of this._cadModels) {
+      this._cadBounds.expandByObject(cadNode);
+    }
+    this._postProcessingPass.setShadowGroundY(
+      this._cadBounds.isEmpty()
+        ? 0
+        : this._cadBounds.min.y - Math.max(0.05, this._cadBounds.getSize(this._cadSize).y * 0.002)
+    );
   }
 }

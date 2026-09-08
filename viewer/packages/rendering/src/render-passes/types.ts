@@ -29,6 +29,7 @@ export type BlitOptions = {
   overrideAlpha?: number;
   edges?: boolean;
   outline?: boolean;
+  contactShadow?: boolean;
 };
 
 export type DepthBlendBlitOptions = {
