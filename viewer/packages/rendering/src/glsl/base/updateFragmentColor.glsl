@@ -9,6 +9,7 @@
 #include worldSpaceVectors.glsl;
 #include pbr.glsl;
 #include environment.glsl;
+#include ibl.glsl;
 #include tonemapping.glsl;
 #include ../math/colorSpaceConversion.glsl;
 #include dither.glsl;
@@ -58,17 +59,23 @@ void updateFragmentColor(
             vec3 albedo = sRGBToLinear(colorRGB);
             vec3 N = normalize(g_worldNormal);
             vec3 viewDirection = -g_worldRayDirection;
+            vec3 reflection = g_worldReflection; // reflect(view ray, N) in model space
 
-            // Direct sun contribution.
-            vec3 lit = pbrDirectLighting(N, viewDirection, sunDirection, sunRadiance, albedo, metallic, roughness);
+            // Ambient / indirect via split-sum image-based lighting (diffuse
+            // irradiance + prefiltered specular). Procedural environment by
+            // default; drop-in textures under ENV_MAP_TEXTURES (environment.glsl).
+            vec3 hdrColor = iblLighting(N, viewDirection, reflection, albedo, metallic, roughness);
 
-            // Hemispheric ambient: sky above, horizon band, and a small ground/bounce
-            // lift so downward-facing surfaces aren't completely black. This is a cheap
-            // stand-in for a prefiltered environment map / skybox we may add later.
-            vec3 ambient = ambientLight(N) * albedo * (1.0 - metallic);
+            // >>> SUN DOUBLE-COUNT TOGGLE: DEFINE ENV_MAP_HAS_SUN WHEN THE <<<
+            // >>> ENVIRONMENT MAP ALREADY CONTAINS THE SUN TO DROP THIS.  <<<
+            // Analytic directional light: a sharp sun highlight the low-resolution
+            // environment can't resolve. Skipped when the environment map already
+            // bakes in the sun (ENV_MAP_HAS_SUN) to avoid double-counting it.
+            #ifndef ENV_MAP_HAS_SUN
+            hdrColor += pbrDirectLighting(N, viewDirection, sunDirection, sunRadiance, albedo, metallic, roughness);
+            #endif
 
             // HDR linear radiance -> ACES filmic tone map (with cross-talk) -> sRGB encode.
-            vec3 hdrColor = lit + ambient;
             colorRGB = LinearTosRGB(acesFitted(hdrColor));
 
             // Break up 8-bit quantization banding on smooth gradients with a
