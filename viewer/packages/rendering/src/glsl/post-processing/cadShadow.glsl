@@ -3,6 +3,7 @@ uniform mat4 cadCameraMatrixWorld;
 uniform mat4 cadShadowMatrix;
 uniform highp sampler2DShadow tCadShadowMap;
 uniform vec4 cadShadowPlane;
+uniform vec3 cadShadowLightDirection;
 uniform float cadShadowTexelWorld;
 uniform float cadShadowDepthRange;
 uniform float cadShadowStrength;
@@ -11,9 +12,10 @@ uniform float cadShadowEnabled;
 const float CAD_SHADOW_EMPTY_DEPTH = 0.999;
 const int CAD_SHADOW_TAPS = 16;
 const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
-// Shapes the penumbra ramp. Above 1.0 the transition lightens while the fully occluded
-// core keeps its weight, which reads softer than lowering the strength for everything.
-const float CAD_SHADOW_EDGE_FALLOFF = 1.75;
+
+// How much of the grazing range is handed back to the diffuse term. Surfaces below this
+// dot product are already darkened by the lighting model and take no shadow at all.
+const float CAD_SHADOW_TERMINATOR_FADE = 0.35;
 
 // Penumbra width and weight are interpolated by how far the blocker sits from the
 // receiver, so a shadow is tight and heavy where it meets its caster and turns wide
@@ -105,6 +107,19 @@ float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRad
     }
 
     return blocked > 1.0e-3 ? clamp(distant / blocked, 0.0, 1.0) : 0.0;
+}
+
+/**
+ * Contrast curve for the penumbra ramp.
+ *
+ * It has to keep 0.5 fixed. A PCF average puts the half occluded point exactly on the
+ * geometric shadow edge, so any curve that moves 0.5 shifts the visible edge by a
+ * fraction of the penumbra width. That width grows with blocker distance, so such a
+ * shift bends an otherwise straight shadow inwards as it stretches away from its caster.
+ * Smoothstep eases both ends of the ramp and leaves the midpoint where it belongs.
+ */
+float cadShadowShapeEdge(float occlusion) {
+    return occlusion * occlusion * (3.0 - 2.0 * occlusion);
 }
 
 // Percentage-closer soft shadows. The kernel is measured in shadow-map texels and sized
@@ -201,6 +216,17 @@ float cadShadowLit(sampler2D depthTexture, vec2 uv) {
         return 1.0;
     }
 
-    float occlusion = pow(cadShadowOcclusion(worldPos, worldNormal), CAD_SHADOW_EDGE_FALLOFF);
-    return 1.0 - occlusion * cadShadowStrength;
+    // A surface turning away from the sun is already darkened by the diffuse term.
+    // Letting the shadow map darken it a second time both doubles up and, on curved
+    // geometry, draws the hard stair stepped terminator that shadow map self occlusion
+    // is known for: the boundary would come from shadow map texels rather than from the
+    // analytic normal. Fading the shadow out across the grazing range hands that
+    // boundary back to the lighting, and skips the filter on every back facing pixel.
+    float facing = smoothstep(0.0, CAD_SHADOW_TERMINATOR_FADE, dot(worldNormal, cadShadowLightDirection));
+    if (facing <= 0.0) {
+        return 1.0;
+    }
+
+    float occlusion = cadShadowShapeEdge(cadShadowOcclusion(worldPos, worldNormal));
+    return 1.0 - occlusion * facing * cadShadowStrength;
 }

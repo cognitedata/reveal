@@ -17,6 +17,7 @@ import {
   Vector4,
   WebGLRenderTarget
 } from 'three';
+import { CAD_LIGHT_WORLD } from '../rendering/cadLighting';
 import { cadShadowShaders } from '../rendering/shaders';
 import { createFullScreenTriangleMesh } from '../utilities/renderUtilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
@@ -64,6 +65,9 @@ export class CadShadowPass {
         cadCameraMatrixWorld: { value: new Matrix4() },
         cadShadowMatrix: { value: new Matrix4() },
         cadShadowPlane: { value: new Vector4(0, 1, 0, 0) },
+        // Same world space sun the CAD materials shade with, so the shadow terminator
+        // and the diffuse terminator land on the same place.
+        cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
         cadShadowTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: SHADOW_STRENGTH },
