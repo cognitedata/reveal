@@ -22,6 +22,7 @@ import { createFullScreenTriangleMesh } from '../utilities/renderUtilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const SHADOW_STRENGTH = 0.4;
+const CAD_TERMINATOR_FADE = 0.35;
 
 /**
  * Resolves the CAD shadow map into a screen-space lit factor.
@@ -38,7 +39,11 @@ export class CadShadowPass {
   private readonly _clearColor = new Color();
   private _groundY = 0;
 
-  constructor(cameraDepthTexture: Texture | null, shadowMap: CadShadowMap) {
+  constructor(
+    cameraDepthTexture: Texture | null,
+    shadowMap: CadShadowMap,
+    terminatorFade: number = CAD_TERMINATOR_FADE
+  ) {
     this._shadowMap = shadowMap;
 
     // A single 8 bit channel: the output is one lit factor in [0, 1] and the blit already
@@ -70,7 +75,8 @@ export class CadShadowPass {
         cadShadowTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: SHADOW_STRENGTH },
-        cadShadowEnabled: { value: 0 }
+        cadShadowEnabled: { value: 0 },
+        cadShadowTerminatorFade: { value: terminatorFade }
       },
       glslVersion: GLSL3,
       depthTest: false,

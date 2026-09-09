@@ -55,7 +55,11 @@ export class PostProcessingPass implements RenderPass {
       postProcessingPipelineOptions.back.depthTexture,
       postProcessingPipelineOptions.cadShadowMap
     );
-    this._shadowReceiverPass = new CadShadowPass(shadowReceiverDepth, postProcessingPipelineOptions.cadShadowMap);
+    this._shadowReceiverPass = new CadShadowPass(
+      shadowReceiverDepth,
+      postProcessingPipelineOptions.cadShadowMap,
+      0
+    );
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,

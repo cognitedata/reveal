@@ -8,14 +8,13 @@ uniform float cadShadowTexelWorld;
 uniform float cadShadowDepthRange;
 uniform float cadShadowStrength;
 uniform float cadShadowEnabled;
+// 0 disables the fade. Receiver meshes are unlit and their depth derivatives are too
+// noisy on large planes for this to be a stable geometric test.
+uniform float cadShadowTerminatorFade;
 
 const float CAD_SHADOW_EMPTY_DEPTH = 0.999;
 const int CAD_SHADOW_TAPS = 16;
 const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
-
-// How much of the grazing range is handed back to the diffuse term. Surfaces below this
-// dot product are already darkened by the lighting model and take no shadow at all.
-const float CAD_SHADOW_TERMINATOR_FADE = 0.35;
 
 // Penumbra width and weight are interpolated by how far the blocker sits from the
 // receiver, so a shadow is tight and heavy where it meets its caster and turns wide
@@ -216,15 +215,18 @@ float cadShadowLit(sampler2D depthTexture, vec2 uv) {
         return 1.0;
     }
 
-    // A surface turning away from the sun is already darkened by the diffuse term.
-    // Letting the shadow map darken it a second time both doubles up and, on curved
-    // geometry, draws the hard stair stepped terminator that shadow map self occlusion
-    // is known for: the boundary would come from shadow map texels rather than from the
-    // analytic normal. Fading the shadow out across the grazing range hands that
-    // boundary back to the lighting, and skips the filter on every back facing pixel.
-    float facing = smoothstep(0.0, CAD_SHADOW_TERMINATOR_FADE, dot(worldNormal, cadShadowLightDirection));
-    if (facing <= 0.0) {
-        return 1.0;
+    // CAD materials already darken as they turn from the sun. Multiplying the shadow
+    // map on top doubles that and, on curved primitives, aliases the terminator to
+    // texel steps. Fading here hands the boundary back to the diffuse term.
+    // Custom receivers (ground planes) are unlit and skip this: their reconstructed
+    // normal comes from screen-space derivatives of a huge flat mesh, which is not
+    // stable enough to drive a hard cutoff.
+    float facing = 1.0;
+    if (cadShadowTerminatorFade > 0.0) {
+        facing = smoothstep(0.0, cadShadowTerminatorFade, dot(worldNormal, cadShadowLightDirection));
+        if (facing <= 0.0) {
+            return 1.0;
+        }
     }
 
     float occlusion = cadShadowShapeEdge(cadShadowOcclusion(worldPos, worldNormal));
