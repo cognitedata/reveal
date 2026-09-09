@@ -6,14 +6,14 @@ import type { Camera, Texture, WebGLRenderer } from 'three';
 import {
   Color,
   GLSL3,
-  HalfFloatType,
   LinearFilter,
   Matrix4,
   Mesh,
   NoColorSpace,
-  RGBAFormat,
   RawShaderMaterial,
+  RedFormat,
   Scene,
+  UnsignedByteType,
   Vector4,
   WebGLRenderTarget
 } from 'three';
@@ -41,11 +41,14 @@ export class CadShadowPass {
   constructor(cameraDepthTexture: Texture | null, shadowMap: CadShadowMap) {
     this._shadowMap = shadowMap;
 
+    // A single 8 bit channel: the output is one lit factor in [0, 1] and the blit already
+    // dithers it against 8 bit banding. Compared to RGBA half float this is an eighth of
+    // the bandwidth, on a target that is written and then read once per pixel per frame.
     this._renderTarget = new WebGLRenderTarget(1, 1, {
       depthBuffer: false,
       stencilBuffer: false,
-      type: HalfFloatType,
-      format: RGBAFormat,
+      type: UnsignedByteType,
+      format: RedFormat,
       magFilter: LinearFilter,
       minFilter: LinearFilter
     });

@@ -40,31 +40,39 @@ vec3 cadShadowWorldFromView(vec3 viewPos) {
     return (cadCameraMatrixWorld * vec4(viewPos, 1.0)).xyz;
 }
 
-vec3 cadShadowViewNormal(sampler2D depthTexture, vec2 uv, float depth) {
-    vec2 texel = 1.0 / vec2(textureSize(depthTexture, 0));
-    vec3 p = cadShadowViewPosFromDepth(depth, uv);
-    vec2 uvx = uv + vec2(texel.x, 0.0);
-    vec2 uvy = uv + vec2(0.0, texel.y);
-    vec3 px = cadShadowViewPosFromDepth(texture(depthTexture, uvx).r, uvx);
-    vec3 py = cadShadowViewPosFromDepth(texture(depthTexture, uvy).r, uvy);
-    vec3 n = normalize(cross(px - p, py - p));
+// The reconstructed view position varies smoothly across a quad, so screen space
+// derivatives give the same geometric normal that sampling neighbouring depths gives,
+// without the extra texture fetches and inverse projections. Must be called in uniform
+// control flow, otherwise the neighbouring lanes hold undefined values.
+vec3 cadShadowViewNormal(vec3 viewPos) {
+    vec3 n = normalize(cross(dFdx(viewPos), dFdy(viewPos)));
     // Depth-derived normals can face away from the camera on silhouettes.
     return dot(n, vec3(0.0, 0.0, 1.0)) < 0.0 ? -n : n;
 }
 
 // Vogel disk: a golden-angle spiral spreads the taps evenly over a round footprint,
 // which avoids the axis-aligned steps a square grid leaves behind.
-vec2 cadShadowDiskTap(int index, float rotation) {
+//
+// The rotation arrives as a cosine/sine pair and is applied as a complex multiply, so
+// the spiral itself folds to literals at compile time and the whole kernel costs one
+// sine and one cosine instead of one pair per tap.
+vec2 cadShadowDiskTap(int index, vec2 rotation) {
     float radius = sqrt((float(index) + 0.5) / float(CAD_SHADOW_TAPS));
-    float theta = float(index) * CAD_SHADOW_GOLDEN_ANGLE + rotation;
-    return vec2(cos(theta), sin(theta)) * radius;
+    float theta = float(index) * CAD_SHADOW_GOLDEN_ANGLE;
+    vec2 spiral = vec2(cos(theta), sin(theta)) * radius;
+
+    return vec2(
+        spiral.x * rotation.x - spiral.y * rotation.y,
+        spiral.x * rotation.y + spiral.y * rotation.x
+    );
 }
 
 // Interleaved gradient noise. Rotating the kernel per pixel turns whatever texel
 // stepping survives filtering into fine noise rather than visible blocks.
-float cadShadowKernelRotation() {
+vec2 cadShadowKernelRotation() {
     float n = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
-    return 6.2831853 * n;
+    float theta = 6.2831853 * n;
+    return vec2(cos(theta), sin(theta));
 }
 
 /**
@@ -82,7 +90,7 @@ float cadShadowKernelRotation() {
  * contact shadow does, and reading that as a near blocker gives the whole penumbra the
  * tight, heavy contact treatment, which draws a dark rim around every shadow.
  */
-float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRadius, float rotation) {
+float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRadius, vec2 rotation) {
     float blocked = 0.0;
     float distant = 0.0;
     float probe = CAD_SHADOW_PROBE_BASE;
@@ -108,28 +116,23 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     // kernel only comes into play deep inside a shadow, where acne cannot be seen.
     vec3 offsetPos = worldPos + worldNormal * (cadShadowTexelWorld * (CAD_SHADOW_CONTACT_TEXELS + 1.0));
 
-    vec4 lightClip = cadShadowMatrix * vec4(offsetPos, 1.0);
-    if (lightClip.w <= 0.0) {
+    // The light camera is always orthographic, so the projection never scales w and the
+    // clip position is already in NDC. One test on the magnitude then covers the frustum
+    // in all three axes, and rejecting here saves the whole filter below.
+    vec3 lightNdc = (cadShadowMatrix * vec4(offsetPos, 1.0)).xyz;
+    if (any(greaterThan(abs(lightNdc), vec3(1.0)))) {
         return 0.0;
     }
 
-    vec3 lightNdc = lightClip.xyz / lightClip.w;
     vec2 shadowUv = lightNdc.xy * 0.5 + 0.5;
-    if (any(lessThan(shadowUv, vec2(0.0))) || any(greaterThan(shadowUv, vec2(1.0)))) {
-        return 0.0;
-    }
-
     float referenceDepth = lightNdc.z * 0.5 + 0.5;
-    if (referenceDepth <= 0.0 || referenceDepth >= 1.0) {
-        return 0.0;
-    }
 
     // Reconstructing the receiver from the camera depth buffer has an error that does not
     // shrink with shadow map resolution, hence the floor on top of the texel sized term.
     float depthBias = max((cadShadowTexelWorld * 2.5) / cadShadowDepthRange, 2.0e-4);
     float compareDepth = referenceDepth - depthBias;
     vec2 texel = 1.0 / vec2(textureSize(tCadShadowMap, 0));
-    float rotation = cadShadowKernelRotation();
+    vec2 rotation = cadShadowKernelRotation();
 
     float blockerDistance = cadShadowBlockerDistance(
         shadowUv,
@@ -156,7 +159,8 @@ bool cadShadowGroundHit(vec2 uv, out vec3 worldPos) {
     vec3 viewDir = normalize(view.xyz / view.w);
 
     vec3 worldOrigin = cadCameraMatrixWorld[3].xyz;
-    vec3 worldDir = normalize(mat3(cadCameraMatrixWorld) * viewDir);
+    // A camera world matrix is rigid, so rotating a unit vector keeps it unit.
+    vec3 worldDir = mat3(cadCameraMatrixWorld) * viewDir;
 
     float denom = dot(worldDir, cadShadowPlane.xyz);
     if (abs(denom) < 1e-4) {
@@ -179,13 +183,18 @@ float cadShadowLit(sampler2D depthTexture, vec2 uv) {
     }
 
     float depth = texture(depthTexture, uv).r;
+
+    // Reconstructed unconditionally so the derivatives in cadShadowViewNormal see the
+    // whole quad. Branching first would leave neighbouring lanes undefined.
+    vec3 viewPos = cadShadowViewPosFromDepth(depth, uv);
+    vec3 viewNormal = cadShadowViewNormal(viewPos);
+
     vec3 worldPos;
     vec3 worldNormal;
 
     if (depth < CAD_SHADOW_EMPTY_DEPTH) {
-        vec3 viewPos = cadShadowViewPosFromDepth(depth, uv);
         worldPos = cadShadowWorldFromView(viewPos);
-        worldNormal = normalize(mat3(cadCameraMatrixWorld) * cadShadowViewNormal(depthTexture, uv, depth));
+        worldNormal = mat3(cadCameraMatrixWorld) * viewNormal;
     } else if (cadShadowGroundHit(uv, worldPos)) {
         worldNormal = cadShadowPlane.xyz;
     } else {
