@@ -138,7 +138,14 @@ void main()
     normal = normalize(cross(A, B));
 #endif
 
-    if (dot(normal, vec3(0.0, 0.0, 1.0)) < 0.0) {
+    // Orient the normal to face the incoming view ray. The cross-product
+    // construction of the eccentric-cone normal has an inconsistent sign across
+    // the axis-plane seam; the first surface a ray hits has its outward normal
+    // facing the camera, so orient against the actual ray direction. This is
+    // more correct than a constant +Z (which only approximates the view ray and
+    // leaves the two halves inconsistent when the normal is used in world/model
+    // space, e.g. for lighting).
+    if (dot(normal, rayDirection) > 0.0) {
       normal *= -1.0;
     }
 
