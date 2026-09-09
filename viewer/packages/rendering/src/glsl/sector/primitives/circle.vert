@@ -49,9 +49,6 @@ void main() {
     );
 
     vec3 transformed = (a_instanceMatrix * vec4(position, 1.0)).xyz;
-    vec3 sectorLocalCoordinates = treeIndexWorldTransform * vec4(transformed, 1.0);
-    vec3 sectorLocalCameraPosition = inverse(modelViewMatrix) * vec4(0.0, 0.0, 0.0, 1.0);
-
     vec4 mvPosition = modelViewMatrix * treeIndexWorldTransform * vec4( transformed, 1.0 );
     v_color = a_color;
 
