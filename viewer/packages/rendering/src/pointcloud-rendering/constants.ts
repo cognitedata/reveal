@@ -28,7 +28,7 @@ export const DEFAULT_EDL_SCALE_COUNT = 2;
  * without inflating point sizes. Cost is O(radius^2) texture taps per empty pixel per step.
  * 0 disables it.
  */
-export const DEFAULT_POINTCLOUD_GAP_FILL_RADIUS = 3;
+export const DEFAULT_POINTCLOUD_GAP_FILL_RADIUS = 2;
 /**
  * Number of strided search widths the gap fill tries per empty pixel: step 1px, 2px, 4px, ...
  * The tight step closes fine gaps seen from a distance; wider steps bridge the large gaps that
@@ -54,6 +54,15 @@ export const DEFAULT_POINTCLOUD_GAP_FILL_DEPTH_TOLERANCE = 0.02;
  * steepest grazing angle still treated as a fillable surface (3 ~= 72 degrees).
  */
 export const DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE = 3.0;
+/**
+ * Coverage-weight threshold, under point blending, below which a pixel is treated as a gap even
+ * though the depth pre-pass gave it valid depth. The depth pre-pass writes full opaque depth for
+ * any pixel inside a point's circular footprint, including one right at the sprite's edge that
+ * the separate weighted colour pass only gave a sliver of coverage (color.w near 0) - visually a
+ * gap, but invisible to a depth>=1 check alone. 0 disables this (only literal depth>=1 gaps are
+ * filled).
+ */
+export const DEFAULT_POINTCLOUD_GAP_FILL_MIN_COVERAGE_WEIGHT = 0.2;
 /**
  * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
  * fall in the last `band` fraction of the budget render only a stochastically chosen subset of
