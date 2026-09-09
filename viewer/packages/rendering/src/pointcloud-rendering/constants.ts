@@ -23,13 +23,18 @@ export const DEFAULT_EDL_NEIGHBOURS_COUNT = 16;
  */
 export const DEFAULT_EDL_SCALE_COUNT = 2;
 /**
- * Radius, in pixels, of the depth-aware gap fill applied while compositing the point cloud.
- * When the camera is close and the point cloud no longer covers every pixel, an empty pixel
- * with enough covered neighbours within this radius adopts the nearest one, closing the gap
- * without inflating point sizes. Cost is O(radius^2) texture taps in the normalize shader.
+ * Half-width, in samples, of the depth-aware gap fill applied while compositing the point
+ * cloud. An empty pixel with enough covered neighbours adopts the nearest one, closing the gap
+ * without inflating point sizes. Cost is O(radius^2) texture taps per empty pixel per step.
  * 0 disables it.
  */
 export const DEFAULT_POINTCLOUD_GAP_FILL_RADIUS = 3;
+/**
+ * Number of strided search widths the gap fill tries per empty pixel: step 1px, 2px, 4px, ...
+ * The tight step closes fine gaps seen from a distance; wider steps bridge the large gaps that
+ * open up with the camera close. Reaches ~GAP_FILL_RADIUS * 2^(steps-1) pixels.
+ */
+export const DEFAULT_POINTCLOUD_GAP_FILL_STEPS = 4;
 /**
  * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
  * fall in the last `band` fraction of the budget render only a stochastically chosen subset of

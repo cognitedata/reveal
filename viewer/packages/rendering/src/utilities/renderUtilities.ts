@@ -39,7 +39,8 @@ import { NodeOutlineColor } from '@reveal/cad-styling';
 import {
   DEFAULT_EDL_NEIGHBOURS_COUNT,
   DEFAULT_EDL_SCALE_COUNT,
-  DEFAULT_POINTCLOUD_GAP_FILL_RADIUS
+  DEFAULT_POINTCLOUD_GAP_FILL_RADIUS,
+  DEFAULT_POINTCLOUD_GAP_FILL_STEPS
 } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
@@ -150,7 +151,10 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
   if (gapFillRadius > 0) {
     defines['fill_gaps'] = true;
     defines['FILL_GAPS_RADIUS'] = gapFillRadius;
-    defines['FILL_GAPS_MIN_COVERED'] = Math.max(3, gapFillRadius * 3);
+    defines['FILL_GAPS_MIN_COVERED'] = Math.max(2, gapFillRadius);
+    // Number of strided search widths tried per empty pixel: 1px, 2px, 4px, ... The last step
+    // reaches ~gapFillRadius * 2^(steps-1) pixels, enough to bridge the big gaps seen up close.
+    defines['FILL_GAPS_STEPS'] = DEFAULT_POINTCLOUD_GAP_FILL_STEPS;
     uniforms = {
       ...uniforms,
       screenWidth: { value: 1 },

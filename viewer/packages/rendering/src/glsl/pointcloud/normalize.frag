@@ -40,35 +40,67 @@ void main() {
 	gl_FragDepth = depth;
 
 	#if defined(fill_gaps)
-		// Close small gaps that open up when the camera is near the point cloud: an empty pixel
-		// with enough covered neighbours adopts the nearest one, so the surface reads as
-		// continuous without inflating point sizes. Picking the nearest neighbour keeps a near
-		// surface's gap from being filled by a farther surface seen through it.
+		// Fill the gaps that open between points: an empty pixel adopts its nearest covered
+		// neighbour so the surface reads as continuous without inflating point sizes. Picking
+		// the nearest neighbour keeps a near surface's gap from being filled by a farther
+		// surface seen through it.
+		//
+		// The search widens in strided steps (1px, 2px, 4px, ...). The tight step closes the
+		// fine gaps visible from a distance; the wider steps reach across the large gaps you
+		// get with the camera close, where a dense scan would never touch the far rim.
 		if (depth >= 1.0) {
 			vec2 texel = 1.0 / vec2(screenWidth, screenHeight);
 			float filledDepth = 1.0;
 			vec2 filledUv = vUv;
-			int covered = 0;
+			bool filled = false;
 
-			for (int y = -FILL_GAPS_RADIUS; y <= FILL_GAPS_RADIUS; y++) {
-				for (int x = -FILL_GAPS_RADIUS; x <= FILL_GAPS_RADIUS; x++) {
-					vec2 uvNeighbour = vUv + vec2(float(x), float(y)) * texel;
-					float neighbourDepth = texture(tDepth, uvNeighbour).r;
+			for (int stepIndex = 0; stepIndex < FILL_GAPS_STEPS; stepIndex++) {
+				int step = 1 << stepIndex;
+				float bestDepth = 1.0;
+				vec2 bestUv = vUv;
+				int covered = 0;
+				// Coverage per side, so we only fill a pixel the surface actually surrounds -
+				// otherwise the silhouette against the background would bleed outward.
+				int coveredNegX = 0;
+				int coveredPosX = 0;
+				int coveredNegY = 0;
+				int coveredPosY = 0;
 
-					if (neighbourDepth >= 1.0) {
-						continue;
+				for (int y = -FILL_GAPS_RADIUS; y <= FILL_GAPS_RADIUS; y++) {
+					for (int x = -FILL_GAPS_RADIUS; x <= FILL_GAPS_RADIUS; x++) {
+						if (x == 0 && y == 0) {
+							continue;
+						}
+
+						vec2 uvNeighbour = vUv + vec2(float(x * step), float(y * step)) * texel;
+						float neighbourDepth = texture(tDepth, uvNeighbour).r;
+
+						if (neighbourDepth >= 1.0) {
+							continue;
+						}
+
+						covered++;
+						if (x < 0) { coveredNegX++; } else if (x > 0) { coveredPosX++; }
+						if (y < 0) { coveredNegY++; } else if (y > 0) { coveredPosY++; }
+
+						if (neighbourDepth < bestDepth) {
+							bestDepth = neighbourDepth;
+							bestUv = uvNeighbour;
+						}
 					}
+				}
 
-					covered++;
+				bool surrounded = (coveredNegX > 0 && coveredPosX > 0) || (coveredNegY > 0 && coveredPosY > 0);
 
-					if (neighbourDepth < filledDepth) {
-						filledDepth = neighbourDepth;
-						filledUv = uvNeighbour;
-					}
+				if (covered >= FILL_GAPS_MIN_COVERED && surrounded) {
+					filledDepth = bestDepth;
+					filledUv = bestUv;
+					filled = true;
+					break;
 				}
 			}
 
-			if (covered >= FILL_GAPS_MIN_COVERED) {
+			if (filled) {
 				depth = filledDepth;
 				color = texture(tDiffuse, filledUv);
 				#if defined(points_blend)
