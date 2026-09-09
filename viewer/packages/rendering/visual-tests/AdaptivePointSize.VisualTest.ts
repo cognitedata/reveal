@@ -28,7 +28,7 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
     this._geometry.setAttribute('objectId', new Float32BufferAttribute([0], 1));
     this._materials[2].pointSizeType = PointSizeType.Fixed;
 
-    const depths = [8, 4, 2, 0.5];
+    const depths = [8, 3, 2, 1];
     const slope = Math.tan((camera.fov * Math.PI) / 360);
     for (const [row, material] of this._materials.entries()) {
       material.shape = PointShape.Square;
@@ -55,6 +55,18 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
     // Rows compare Adaptive, the old cap, and Fixed; columns bring the same point spacing closer.
     const { width, height } = renderer.domElement;
     const target = new WebGLRenderTarget(width, height);
+    const readWidth = async (row: number, column: number) => {
+      const pixels = new Uint8Array(64 * 4);
+      await renderer.readRenderTargetPixelsAsync(
+        target,
+        Math.round(((column + 0.5) * width) / 4) - 32,
+        Math.round((0.75 - row / 4) * height),
+        64,
+        1,
+        pixels
+      );
+      return pixels.filter((value, index) => index % 4 === 0 && value > 0).length;
+    };
     try {
       renderer.setRenderTarget(target);
       renderer.render(scene, camera);
@@ -62,16 +74,7 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
       for (let row = 0; row < 3; row++) {
         const rowWidths: number[] = [];
         for (let column = 0; column < depths.length; column++) {
-          const pixels = new Uint8Array(64 * 4);
-          await renderer.readRenderTargetPixelsAsync(
-            target,
-            Math.round(((column + 0.5) * width) / 4) - 32,
-            Math.round((0.75 - row / 4) * height),
-            64,
-            1,
-            pixels
-          );
-          rowWidths.push(pixels.filter((value, index) => index % 4 === 0 && value > 0).length);
+          rowWidths.push(await readWidth(row, column));
         }
         widths.push(rowWidths);
       }
@@ -86,7 +89,23 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
         widths[2].every(width => width === widths[2][0]),
         'Fixed sizes must not depend on distance'
       );
+      this._materials[0].spacing = 0.1;
+      renderer.render(scene, camera);
+      for (const [column, cap] of [10, 10, 21, 32].entries()) {
+        assert(
+          Math.abs((await readWidth(0, column)) - (cap * height) / 1080) <= 1,
+          'Coarse Adaptive points must follow the distance-dependent cap, including its midpoint'
+        );
+      }
+      this._materials[0].minSize = 20;
+      renderer.render(scene, camera);
+      assert(
+        Math.abs((await readWidth(0, 0)) - (20 * height) / 1080) <= 1,
+        'The distance-dependent cap must respect an explicit minimum'
+      );
     } finally {
+      this._materials[0].spacing = 0.01;
+      this._materials[0].minSize = 1;
       renderer.setRenderTarget(null);
       target.dispose();
     }

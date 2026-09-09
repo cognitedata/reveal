@@ -243,6 +243,10 @@ void main() {
 	#elif defined adaptive_point_size
 		float worldSpaceSize = 2.0 * size * spacing / getPointSizeAttenuation();
 		pointSize = worldSpaceSize * projFactor;
+		// Allow the higher cap only up close, not for distant points with coarse LOD spacing.
+		float legacyCap = 10.0 * screenHeight * point_size_relative_to_screen_height;
+		float proximity = 1.0 - smoothstep(1.0, 3.0, -mvPosition.z);
+		pointSize = min(pointSize, mix(min(legacyCap, maxSize), maxSize, proximity));
 	#endif
 
 	pointSize = max(minSize, pointSize);
