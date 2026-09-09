@@ -10,11 +10,24 @@ uniform float cadShadowEnabled;
 
 const float CAD_SHADOW_EMPTY_DEPTH = 0.999;
 const int CAD_SHADOW_TAPS = 16;
-const float CAD_SHADOW_PENUMBRA_TEXELS = 3.0;
 const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
 // Shapes the penumbra ramp. Above 1.0 the transition lightens while the fully occluded
 // core keeps its weight, which reads softer than lowering the strength for everything.
 const float CAD_SHADOW_EDGE_FALLOFF = 1.75;
+
+// Penumbra width and weight are interpolated by how far the blocker sits from the
+// receiver, so a shadow is tight and heavy where it meets its caster and turns wide
+// and thin as it stretches away.
+const float CAD_SHADOW_CONTACT_TEXELS = 1.25;
+const float CAD_SHADOW_DISTANT_TEXELS = 8.0;
+const float CAD_SHADOW_CONTACT_GAIN = 1.1;
+const float CAD_SHADOW_DISTANT_GAIN = 0.75;
+
+// Ladder of receiver to blocker distances used to classify the blocker, as a fraction
+// of the light depth range. With a plant sized model this spans roughly 1 m to 20 m.
+const int CAD_SHADOW_PROBES = 4;
+const float CAD_SHADOW_PROBE_BASE = 0.01;
+const float CAD_SHADOW_PROBE_GROWTH = 3.0;
 
 vec3 cadShadowViewPosFromDepth(float depth, vec2 uv) {
     float z = depth * 2.0 - 1.0;
@@ -54,13 +67,46 @@ float cadShadowKernelRotation() {
     return 6.2831853 * n;
 }
 
-// Percentage-closer filtering in light space. The kernel is measured in shadow-map
-// texels, so the penumbra width is a property of the light, not of the screen.
+/**
+ * Estimates how far in front of the receiver the blocker sits, normalised to [0, 1].
+ *
+ * A hardware shadow sampler only reports the comparison, never the stored depth, so
+ * there is no blocker depth to read. Instead each probe pushes the reference towards
+ * the light by a known distance and asks whether anything still blocks it: a probe
+ * only fails once the blocker is farther away than that distance. Orthographic light
+ * depth is linear, so a probe expressed as a fraction of the depth range is a fixed
+ * distance in metres.
+ *
+ * The result must be conditional on being blocked at all, hence the division by
+ * coverage. A partially covered penumbra blocks few probes for the same reason a
+ * contact shadow does, and reading that as a near blocker gives the whole penumbra the
+ * tight, heavy contact treatment, which draws a dark rim around every shadow.
+ */
+float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRadius, float rotation) {
+    float blocked = 0.0;
+    float distant = 0.0;
+    float probe = CAD_SHADOW_PROBE_BASE;
+
+    for (int i = 0; i < CAD_SHADOW_PROBES; i++) {
+        // The search has to span the widest penumbra, otherwise a receiver just outside
+        // a distant shadow never learns about the blocker and the soft edge gets cut off.
+        vec2 tap = shadowUv + cadShadowDiskTap(i, rotation) * searchRadius;
+        blocked += 1.0 - texture(tCadShadowMap, vec3(tap, compareDepth));
+        distant += 1.0 - texture(tCadShadowMap, vec3(tap, compareDepth - probe));
+        probe *= CAD_SHADOW_PROBE_GROWTH;
+    }
+
+    return blocked > 1.0e-3 ? clamp(distant / blocked, 0.0, 1.0) : 0.0;
+}
+
+// Percentage-closer soft shadows. The kernel is measured in shadow-map texels and sized
+// by blocker distance, so the penumbra is a property of the light and of the geometry,
+// never of the screen: orbiting the camera cannot change it.
 float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     // Normal offset bias: move the lookup off the surface instead of biasing depth only.
-    // It has to clear the whole filter footprint, otherwise the kernel samples the
-    // receiver itself and slanted faces get acne.
-    vec3 offsetPos = worldPos + worldNormal * (cadShadowTexelWorld * (CAD_SHADOW_PENUMBRA_TEXELS + 1.0));
+    // Sized for the contact footprint rather than the widest one, because the wide
+    // kernel only comes into play deep inside a shadow, where acne cannot be seen.
+    vec3 offsetPos = worldPos + worldNormal * (cadShadowTexelWorld * (CAD_SHADOW_CONTACT_TEXELS + 1.0));
 
     vec4 lightClip = cadShadowMatrix * vec4(offsetPos, 1.0);
     if (lightClip.w <= 0.0) {
@@ -82,8 +128,16 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     // shrink with shadow map resolution, hence the floor on top of the texel sized term.
     float depthBias = max((cadShadowTexelWorld * 2.5) / cadShadowDepthRange, 2.0e-4);
     float compareDepth = referenceDepth - depthBias;
-    vec2 penumbra = CAD_SHADOW_PENUMBRA_TEXELS / vec2(textureSize(tCadShadowMap, 0));
+    vec2 texel = 1.0 / vec2(textureSize(tCadShadowMap, 0));
     float rotation = cadShadowKernelRotation();
+
+    float blockerDistance = cadShadowBlockerDistance(
+        shadowUv,
+        compareDepth,
+        texel * CAD_SHADOW_DISTANT_TEXELS,
+        rotation
+    );
+    vec2 penumbra = texel * mix(CAD_SHADOW_CONTACT_TEXELS, CAD_SHADOW_DISTANT_TEXELS, blockerDistance);
 
     float visibility = 0.0;
     for (int i = 0; i < CAD_SHADOW_TAPS; i++) {
@@ -91,7 +145,9 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
         visibility += texture(tCadShadowMap, vec3(tap, compareDepth));
     }
 
-    return 1.0 - visibility / float(CAD_SHADOW_TAPS);
+    float occlusion = 1.0 - visibility / float(CAD_SHADOW_TAPS);
+    float gain = mix(CAD_SHADOW_CONTACT_GAIN, CAD_SHADOW_DISTANT_GAIN, blockerDistance);
+    return clamp(occlusion * gain, 0.0, 1.0);
 }
 
 bool cadShadowGroundHit(vec2 uv, out vec3 worldPos) {
