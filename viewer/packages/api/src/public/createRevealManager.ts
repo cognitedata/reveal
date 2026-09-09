@@ -151,7 +151,8 @@ export function createRevealManager(
     pointCloudMaterialManager,
     sceneHandler,
     renderOptions,
-    revealOptions.outputRenderTarget
+    revealOptions.outputRenderTarget,
+    revealOptions.enableShadows
   );
   const resizeHandler = new ResizeHandler(renderer, cameraManager, {
     renderResolutionThreshold: revealOptions.rendererResolutionThreshold

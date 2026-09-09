@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Matrix4, Texture, Vector2, WebGLRenderTarget } from 'three';
+import type { DepthTexture, Matrix4, Texture, Vector2, WebGLRenderTarget } from 'three';
 import type { EdlOptions } from '../rendering/types';
 
 /** Light-space CAD depth used to project view independent shadows. */
@@ -36,7 +36,10 @@ export type PointCloudRenderTargets = {
 export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
   PointCloudRenderTargets & {
     ssaoTexture: Texture;
-    cadShadowMap: CadShadowMap;
+    cadShadow?: {
+      map: CadShadowMap;
+      receiverDepth: DepthTexture;
+    };
     edges: boolean;
     pointBlending?: boolean;
     edlOptions: EdlOptions;

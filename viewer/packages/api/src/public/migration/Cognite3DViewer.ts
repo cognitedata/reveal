@@ -2173,6 +2173,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
 
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
+    enableShadows: viewerOptions.enableShadows ?? false,
     outputRenderTarget,
     rendererResolutionThreshold: resolutionCap,
     internal: {}

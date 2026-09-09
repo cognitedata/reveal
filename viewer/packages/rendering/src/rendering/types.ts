@@ -74,9 +74,8 @@ export enum SsaoSampleQuality {
 export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
   multiSampleCountHint: 1,
-  // SSAO + CAD edge darkening off while evaluating directional/contact shadows.
-  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.None, sampleRadius: 1.0, depthCheckBias: 0.0125 },
-  edgeDetectionParameters: { enabled: false },
+  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
+  edgeDetectionParameters: { enabled: true },
   pointCloudParameters: { pointBlending: false, edlOptions: { strength: 0.5, radius: 2.2 } }
 };
 

@@ -42,18 +42,18 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
-  private readonly _shadowMapPass: ShadowMapPass;
+  private readonly _shadowMapPass: ShadowMapPass | undefined;
   private readonly _ssaoPass: SSAOPass;
-  private readonly _shadowReceiverDepthPass: ShadowReceiverDepthPass;
-  private readonly _shadowReceiverRenderTarget: WebGLRenderTarget;
+  private readonly _shadowReceiverDepthPass: ShadowReceiverDepthPass | undefined;
+  private readonly _shadowReceiverRenderTarget: WebGLRenderTarget | undefined;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
   private _ssaoSampleSize: number;
-  private readonly _cadBounds = new Box3();
-  private readonly _cadModelBounds = new Box3();
-  private readonly _cadSize = new Vector3();
+  private readonly _cadBounds: Box3 | undefined;
+  private readonly _cadModelBounds: Box3 | undefined;
+  private readonly _cadSize: Vector3 | undefined;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -86,7 +86,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     outputRenderTarget?: {
       target: WebGLRenderTarget;
       autoSize?: boolean;
-    }
+    },
+    enableShadows: boolean = false
   ) {
     this._materialManager = materialManager;
     this._viewerScene = sceneHandler.scene;
@@ -117,8 +118,10 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       ssaoParameters
     );
 
-    this._shadowReceiverDepthPass = new ShadowReceiverDepthPass(sceneHandler.scene, sceneHandler.customObjects);
-    this._shadowReceiverRenderTarget = createRenderTarget();
+    this._shadowReceiverDepthPass = enableShadows
+      ? new ShadowReceiverDepthPass(sceneHandler.scene, sceneHandler.customObjects)
+      : undefined;
+    this._shadowReceiverRenderTarget = enableShadows ? createRenderTarget() : undefined;
 
     this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(
       sceneHandler,
@@ -126,21 +129,27 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       pointCloudParameters
     );
 
-    this._shadowMapPass = new ShadowMapPass(sceneHandler, materialManager);
+    this._shadowMapPass = enableShadows ? new ShadowMapPass(sceneHandler, materialManager) : undefined;
+    this._cadBounds = enableShadows ? new Box3() : undefined;
+    this._cadModelBounds = enableShadows ? new Box3() : undefined;
+    this._cadSize = enableShadows ? new Vector3() : undefined;
 
-    this._postProcessingPass = new PostProcessingPass(
-      sceneHandler.scene,
-      {
-        ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-        cadShadowMap: this._shadowMapPass,
-        edges: edges.enabled,
-        pointBlending: pointCloudParameters.pointBlending,
-        edlOptions: pointCloudParameters.edlOptions,
-        ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
-        ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
-      },
-      this._shadowReceiverRenderTarget.depthTexture!
-    );
+    const cadShadow =
+      this._shadowMapPass !== undefined && this._shadowReceiverRenderTarget !== undefined
+        ? {
+            map: this._shadowMapPass,
+            receiverDepth: this._shadowReceiverRenderTarget.depthTexture!
+          }
+        : undefined;
+    this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
+      ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+      cadShadow,
+      edges: edges.enabled,
+      pointBlending: pointCloudParameters.pointBlending,
+      edlOptions: pointCloudParameters.edlOptions,
+      ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
+      ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
+    });
 
     this._blitToScreenMaterial = new RawShaderMaterial({
       vertexShader: blitShaders.vertex,
@@ -174,9 +183,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     try {
       // Light-space depth first: the CAD shadow lookup in post processing depends on it.
-      this.updateShadowCasterBounds();
-      if (this._cadModels.length > 0) {
-        yield this._shadowMapPass;
+      if (this._shadowMapPass !== undefined) {
+        this.updateShadowCasterBounds();
+        if (this._cadModels.length > 0) {
+          yield this._shadowMapPass;
+        }
       }
 
       yield* this._cadGeometryRenderPipeline.pipeline(renderer);
@@ -193,11 +204,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
         yield* this._pointCloudRenderPipeline.pipeline(renderer);
       }
 
-      renderer.setRenderTarget(this._shadowReceiverRenderTarget);
-      if (this._shadowReceiverDepthPass.hasReceivers) {
-        yield this._shadowReceiverDepthPass;
-      } else {
-        renderer.clear();
+      if (this._shadowReceiverRenderTarget !== undefined && this._shadowReceiverDepthPass !== undefined) {
+        renderer.setRenderTarget(this._shadowReceiverRenderTarget);
+        if (this._shadowReceiverDepthPass.hasReceivers) {
+          yield this._shadowReceiverDepthPass;
+        } else {
+          renderer.clear();
+        }
       }
 
       this._postProcessingPass.updateRenderObjectsVisibility({
@@ -225,9 +238,9 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._cadGeometryRenderPipeline.dispose();
     this._pointCloudRenderPipeline.dispose();
     this._postProcessingPass.dispose();
-    this._shadowMapPass.dispose();
-    this._shadowReceiverDepthPass.dispose();
-    this._shadowReceiverRenderTarget.dispose();
+    this._shadowMapPass?.dispose();
+    this._shadowReceiverDepthPass?.dispose();
+    this._shadowReceiverRenderTarget?.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
 
@@ -265,7 +278,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
     this._postProcessingPass.setSize(width, height);
-    this._shadowReceiverRenderTarget.setSize(width, height);
+    this._shadowReceiverRenderTarget?.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
@@ -286,16 +299,27 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
    * Deliberately independent of the view camera so shadows do not move while orbiting.
    */
   private updateShadowCasterBounds(): void {
-    this._cadBounds.makeEmpty();
-    for (const { cadNode } of this._cadModels) {
-      this._cadBounds.union(getCadWorldBounds(cadNode, this._cadModelBounds));
+    const cadBounds = this._cadBounds;
+    const cadModelBounds = this._cadModelBounds;
+    const cadSize = this._cadSize;
+    const shadowMapPass = this._shadowMapPass;
+    if (
+      cadBounds === undefined ||
+      cadModelBounds === undefined ||
+      cadSize === undefined ||
+      shadowMapPass === undefined
+    ) {
+      return;
     }
 
-    this._shadowMapPass.setCadBounds(this._cadBounds);
+    cadBounds.makeEmpty();
+    for (const { cadNode } of this._cadModels) {
+      cadBounds.union(getCadWorldBounds(cadNode, cadModelBounds));
+    }
+
+    shadowMapPass.setCadBounds(cadBounds);
     this._postProcessingPass.setShadowGroundY(
-      this._cadBounds.isEmpty()
-        ? 0
-        : this._cadBounds.min.y - Math.max(0.05, this._cadBounds.getSize(this._cadSize).y * 0.002)
+      cadBounds.isEmpty() ? 0 : cadBounds.min.y - Math.max(0.05, cadBounds.getSize(cadSize).y * 0.002)
     );
   }
 }
