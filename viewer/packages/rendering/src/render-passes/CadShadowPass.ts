@@ -2,14 +2,13 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Camera, Texture, WebGLRenderer } from 'three';
+import type { Camera, Texture, WebGLRenderer, Mesh } from 'three';
 import {
   Color,
   GLSL3,
   HalfFloatType,
   LinearFilter,
   Matrix4,
-  Mesh,
   NoColorSpace,
   RGBAFormat,
   RawShaderMaterial,
@@ -21,7 +20,7 @@ import { cadShadowShaders } from '../rendering/shaders';
 import { createFullScreenTriangleMesh } from '../utilities/renderUtilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
-const SHADOW_STRENGTH = 0.40;
+const SHADOW_STRENGTH = 0.4;
 
 /**
  * Resolves the CAD shadow map into a screen-space lit factor.

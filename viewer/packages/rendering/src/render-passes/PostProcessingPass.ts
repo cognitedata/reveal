@@ -3,7 +3,7 @@
  */
 
 import type { Camera, DepthTexture, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
-import { GLSL3, Matrix4, Plane, RawShaderMaterial, Vector3, Vector4 } from 'three';
+import { GLSL3, RawShaderMaterial } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -17,8 +17,8 @@ import {
 } from '../utilities/renderUtilities';
 import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
-import { cadLightDirectionView } from '../rendering/cadLighting';
 import { shadowReceiverShaders } from '../rendering/shaders';
+import { CadShadowPass } from './CadShadowPass';
 
 /**
  * Single pass that applies post processing effects and
@@ -30,10 +30,9 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: Scene;
   private readonly _postProcessingObjects: Mesh[];
   private readonly _pointcloudBlitMaterial: ShaderMaterial;
-  private readonly _backBlitMaterial: RawShaderMaterial;
-  private readonly _shadowReceiverMaterial: RawShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly _cadShadowPass: CadShadowPass;
+  private readonly _shadowReceiverPass: CadShadowPass;
   private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
@@ -56,6 +55,7 @@ export class PostProcessingPass implements RenderPass {
       postProcessingPipelineOptions.back.depthTexture,
       postProcessingPipelineOptions.cadShadowMap
     );
+    this._shadowReceiverPass = new CadShadowPass(shadowReceiverDepth, postProcessingPipelineOptions.cadShadowMap);
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -128,7 +128,7 @@ export class PostProcessingPass implements RenderPass {
 
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
 
-    this._shadowReceiverMaterial = new RawShaderMaterial({
+    const shadowReceiverMaterial = new RawShaderMaterial({
       vertexShader: shadowReceiverShaders.vertex,
       fragmentShader: shadowReceiverShaders.fragment,
       glslVersion: GLSL3,
@@ -140,12 +140,10 @@ export class PostProcessingPass implements RenderPass {
       uniforms: {
         tCadDepth: { value: postProcessingPipelineOptions.back.depthTexture },
         tReceiverDepth: { value: shadowReceiverDepth },
-        inverseProjectionMatrix: { value: new Matrix4() },
-        cadLightDirection: { value: new Vector3() },
-        cadShadowPlane: { value: new Vector4() }
+        tReceiverShadow: { value: this._shadowReceiverPass.texture }
       }
     });
-    const shadowObject = createFullScreenTriangleMesh(this._shadowReceiverMaterial);
+    const shadowObject = createFullScreenTriangleMesh(shadowReceiverMaterial);
     shadowObject.name = 'CAD shadow receiver overlay';
     shadowObject.renderOrder = 0.5;
     this._scene.add(shadowObject);
@@ -154,10 +152,12 @@ export class PostProcessingPass implements RenderPass {
 
   public setShadowGroundY(y: number): void {
     this._cadShadowPass.setShadowGroundY(y);
+    this._shadowReceiverPass.setShadowGroundY(y);
   }
 
   public setSize(width: number, height: number): void {
     this._cadShadowPass.setSize(width, height);
+    this._shadowReceiverPass.setSize(width, height);
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
@@ -166,36 +166,16 @@ export class PostProcessingPass implements RenderPass {
       this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
     }
 
-    const contactLight = this._backBlitMaterial.uniforms.cadLightDirection;
-    const inverseProjection = this._backBlitMaterial.uniforms.inverseProjectionMatrix;
-    const shadowPlane = this._backBlitMaterial.uniforms.cadShadowPlane;
-    if (contactLight !== undefined && inverseProjection !== undefined && shadowPlane !== undefined) {
-      contactLight.value.copy(cadLightDirectionView(camera, this._cadLightView));
-      inverseProjection.value.copy(camera.projectionMatrixInverse);
-
-      this._shadowGroundPoint.set(0, this._shadowGroundY, 0);
-      this._shadowWorldPlane.setFromNormalAndCoplanarPoint(this._shadowGroundNormal, this._shadowGroundPoint);
-      this._shadowWorldPlane.applyMatrix4(camera.matrixWorldInverse);
-      (shadowPlane.value as Vector4).set(
-        this._shadowWorldPlane.normal.x,
-        this._shadowWorldPlane.normal.y,
-        this._shadowWorldPlane.normal.z,
-        this._shadowWorldPlane.constant
-      );
-
-      this._shadowReceiverMaterial.uniforms.cadLightDirection.value.copy(contactLight.value);
-      this._shadowReceiverMaterial.uniforms.inverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);
-      this._shadowReceiverMaterial.uniforms.cadShadowPlane.value.copy(shadowPlane.value);
-    }
-
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
     this._cadShadowPass.render(renderer, camera);
+    this._shadowReceiverPass.render(renderer, camera);
     renderer.render(this._scene, camera);
   }
 
   public dispose(): void {
     this._cadShadowPass.dispose();
+    this._shadowReceiverPass.dispose();
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       (postProcessingObject.material as Material).dispose();
