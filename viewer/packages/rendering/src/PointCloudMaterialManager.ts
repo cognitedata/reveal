@@ -3,16 +3,12 @@
  */
 
 import type { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
-import { PointCloudMaterial, PointSizeType } from './pointcloud-rendering';
+import { PointCloudMaterial } from './pointcloud-rendering';
 import type { PointCloudMaterialParameters } from './render-passes/types';
 import type { Plane } from 'three';
 
 export class PointCloudMaterialManager {
   private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
-
-  get hasAdaptivePointSize(): boolean {
-    return [...this._modelsMaterialsMap.values()].some(material => material.pointSizeType === PointSizeType.Adaptive);
-  }
 
   addModelMaterial(modelIdentifier: symbol, objectIdMaps: PointCloudObjectIdMaps): void {
     this._modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial({ objectsMaps: objectIdMaps }));

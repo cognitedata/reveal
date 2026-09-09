@@ -208,7 +208,6 @@ export class PointCloudOctreePickerHelper {
     pickMaterial.size = nodeMaterial.size;
     pickMaterial.minSize = nodeMaterial.minSize;
     pickMaterial.maxSize = nodeMaterial.maxSize;
-    pickMaterial.edgeDepthTexture = nodeMaterial.edgeDepthTexture;
     pickMaterial.classification = nodeMaterial.classification;
     pickMaterial.objectAppearanceTexture = nodeMaterial.objectAppearanceTexture;
 

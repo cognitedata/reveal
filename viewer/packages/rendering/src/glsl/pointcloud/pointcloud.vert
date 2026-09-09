@@ -33,8 +33,6 @@ uniform float level;
 uniform float vnStart;
 uniform bool isLeafNode;
 
-#include edgeAwarePointSize.glsl;
-
 uniform vec2 intensityRange;
 uniform float intensityGamma;
 uniform float intensityContrast;
@@ -249,10 +247,6 @@ void main() {
 
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
-
-	#if defined(adaptive_point_size)
-		pointSize = edgeAwarePointSize(pointSize, minSize, gl_Position, mvPosition);
-	#endif
 
 	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;

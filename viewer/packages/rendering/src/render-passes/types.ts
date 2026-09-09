@@ -61,7 +61,6 @@ export type ThreeUniforms = {
 };
 
 export type PointCloudMaterialParameters = {
-  edgeDepthTexture?: Texture | null;
   weighted?: boolean;
   shape?: PointShape;
   useEDL?: boolean;
