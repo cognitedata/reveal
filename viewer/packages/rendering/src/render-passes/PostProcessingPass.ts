@@ -30,6 +30,30 @@ export class PostProcessingPass implements RenderPass {
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly setBlendFactorByBackVisibility: () => void;
 
+  /**
+   * Toggle how the (back-styling) blit combines the SSAO buffer. When enabled the
+   * AO is assumed pre-blurred and is applied in linear light (single tap); when
+   * disabled the original fused Gaussian blur + gamma-space multiply is used.
+   * Flips a shader #define, so the material is recompiled.
+   */
+  public set improvedSsaoCombine(value: boolean) {
+    const backBlitMaterial = this._postProcessingObjects[0].material as ShaderMaterial;
+    // Only meaningful when the back blit actually samples the SSAO buffer.
+    if ((backBlitMaterial.defines.SSAO_BLUR ?? false) !== true) {
+      return;
+    }
+    const isImproved = (backBlitMaterial.defines.IMPROVED_SSAO_COMBINE ?? false) === true;
+    if (value === isImproved) {
+      return;
+    }
+    if (value) {
+      backBlitMaterial.defines.IMPROVED_SSAO_COMBINE = true;
+    } else {
+      delete backBlitMaterial.defines.IMPROVED_SSAO_COMBINE;
+    }
+    backBlitMaterial.needsUpdate = true;
+  }
+
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
     this._postProcessingObjects[1].visible = visibilityParameters.cad.ghost;

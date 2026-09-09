@@ -8,6 +8,10 @@ import type { EdlOptions } from '../rendering/types';
 export type RenderTargetData = {
   currentRenderSize: Vector2;
   ssaoRenderTarget: WebGLRenderTarget;
+  // Ping-pong target for the separable (bilateral) SSAO blur used by the improved
+  // SSAO path. The horizontal pass writes here; the vertical pass writes back into
+  // ssaoRenderTarget.
+  ssaoBlurRenderTarget: WebGLRenderTarget;
   postProcessingRenderTarget: WebGLRenderTarget;
 };
 

@@ -3,19 +3,24 @@
  */
 
 import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
+import { Color, GLSL3, Matrix4, RawShaderMaterial, Vector2 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
+import {
+  createFullScreenTriangleMesh,
+  createRenderTarget,
+  hasStyledNodes,
+  unitOrthographicCamera
+} from '../utilities/renderUtilities';
 import type { RenderTargetData } from './types';
 import type { RenderOptions } from '../rendering/types';
 import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
-import { blitShaders } from '../rendering/shaders';
+import { blitShaders, ssaoBlurShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
@@ -40,11 +45,17 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
+  private readonly _ssaoBlurMaterial: RawShaderMaterial;
+  private readonly _ssaoBlurMesh: Mesh;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
   private _ssaoSampleSize: number;
+  // When true, use the improved SSAO path: Alchemy/SAO sampling, a separable
+  // bilateral blur, and AO applied in linear light. When false, the original
+  // hemisphere-kernel SSAO with a fused gamma-space Gaussian blur is used.
+  private _improvedSsao: boolean = true;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -69,6 +80,23 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._blitToScreenMaterial.needsUpdate = true;
   }
 
+  /**
+   * Toggle the improved SSAO path (Alchemy/SAO sampling + interleaved-gradient
+   * noise, separable bilateral blur, linear-light AO combine) versus the original
+   * hemisphere-kernel SSAO with a fused gamma-space Gaussian blur. Coordinates the
+   * three places the change lives: the SSAO pass, the extra blur passes yielded by
+   * `pipeline`, and the back-blit combine.
+   */
+  public set improvedSsao(value: boolean) {
+    this._improvedSsao = value;
+    this._ssaoPass.improved = value;
+    this._postProcessingPass.improvedSsaoCombine = value;
+  }
+
+  public get improvedSsao(): boolean {
+    return this._improvedSsao;
+  }
+
   constructor(
     materialManager: CadMaterialManager,
     pointCloudMaterialManager: PointCloudMaterialManager,
@@ -87,6 +115,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._renderTargetData = {
       currentRenderSize: new Vector2(1, 1),
       ssaoRenderTarget: createRenderTarget(),
+      ssaoBlurRenderTarget: createRenderTarget(),
       postProcessingRenderTarget: createRenderTarget()
     };
     this._cadModels = sceneHandler.cadModels;
@@ -139,7 +168,28 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._blitToScreenMesh = createFullScreenTriangleMesh(this._blitToScreenMaterial);
 
+    // Separable bilateral blur for the improved SSAO path. A single material is
+    // rendered twice (horizontal then vertical) by `pipeline`, ping-ponging
+    // between the SSAO target and its blur target.
+    this._ssaoBlurMaterial = new RawShaderMaterial({
+      vertexShader: ssaoBlurShaders.vertex,
+      fragmentShader: ssaoBlurShaders.fragment,
+      uniforms: {
+        tSsao: { value: this._renderTargetData.ssaoRenderTarget.texture },
+        tDepth: { value: this._cadGeometryRenderPipeline.cadGeometryRenderTargets.back.depthTexture },
+        inverseProjectionMatrix: { value: new Matrix4() },
+        direction: { value: new Vector2(1, 0) }
+      },
+      glslVersion: GLSL3,
+      depthTest: false,
+      depthWrite: false
+    });
+    this._ssaoBlurMesh = createFullScreenTriangleMesh(this._ssaoBlurMaterial);
+
     this.renderOptions = cloneDeep(renderOptions);
+
+    // Apply the initial improved-SSAO state to the passes/materials.
+    this.improvedSsao = this._improvedSsao;
   }
 
   public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
@@ -162,6 +212,31 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
       if (this.shouldRenderSsao(hasStyling.back)) {
         yield this._ssaoPass;
+
+        if (this._improvedSsao) {
+          // Separable bilateral blur of the AO buffer (improved path only).
+          // Horizontal: ssaoRenderTarget -> ssaoBlurRenderTarget.
+          this._ssaoBlurMaterial.uniforms.tSsao.value = this._renderTargetData.ssaoRenderTarget.texture;
+          this._ssaoBlurMaterial.uniforms.direction.value.set(1, 0);
+          renderer.setRenderTarget(this._renderTargetData.ssaoBlurRenderTarget);
+          yield {
+            render: (renderer, camera) => {
+              this._ssaoBlurMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
+              renderer.render(this._ssaoBlurMesh, unitOrthographicCamera);
+            }
+          };
+
+          // Vertical: ssaoBlurRenderTarget -> ssaoRenderTarget (final AO buffer).
+          this._ssaoBlurMaterial.uniforms.tSsao.value = this._renderTargetData.ssaoBlurRenderTarget.texture;
+          this._ssaoBlurMaterial.uniforms.direction.value.set(0, 1);
+          renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
+          yield {
+            render: (renderer, camera) => {
+              this._ssaoBlurMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
+              renderer.render(this._ssaoBlurMesh, unitOrthographicCamera);
+            }
+          };
+        }
       }
 
       if (this.shouldRenderPointClouds()) {
@@ -195,6 +270,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._postProcessingPass.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
+    this._renderTargetData.ssaoRenderTarget.dispose();
+    this._renderTargetData.ssaoBlurRenderTarget.dispose();
+
+    this._ssaoBlurMesh.geometry.dispose();
+    (this._ssaoBlurMesh.material as Material).dispose();
 
     this._blitToScreenMesh.geometry.dispose();
     (this._blitToScreenMesh.material as Material).dispose();
@@ -229,6 +309,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
+    this._renderTargetData.ssaoBlurRenderTarget.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {

@@ -30,6 +30,24 @@ export class SSAOPass implements RenderPass {
     this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
+  /**
+   * Toggle between the original hemisphere-kernel SSAO (false) and the improved
+   * Alchemy/SAO spiral SSAO with interleaved-gradient-noise rotation (true).
+   * Switching flips a shader #define, so the material is recompiled.
+   */
+  set improved(value: boolean) {
+    const isImproved = (this._ssaoShaderMaterial.defines.IMPROVED_SSAO ?? false) === true;
+    if (value === isImproved) {
+      return;
+    }
+    if (value) {
+      this._ssaoShaderMaterial.defines.IMPROVED_SSAO = true;
+    } else {
+      delete this._ssaoShaderMaterial.defines.IMPROVED_SSAO;
+    }
+    this._ssaoShaderMaterial.needsUpdate = true;
+  }
+
   constructor(depthTexture: Texture | null, ssaoParameters: SsaoParameters) {
     const { sampleSize, depthCheckBias, sampleRadius } = ssaoParameters;
 

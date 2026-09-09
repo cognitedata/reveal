@@ -159,6 +159,7 @@ export function Viewer() {
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
+        ssaoImproved: urlParams.get('ssaoImproved') !== 'false',
         edges: urlParams.get('edges') !== 'false',
         pbr: urlParams.get('pbr') !== 'false',
         ditheringStrength: parseFloat(urlParams.get('dither') ?? '1'),
@@ -311,6 +312,17 @@ export function Viewer() {
           pipeline._ssaoSampleSize = sampleSize;
           pipeline._ssaoPass.ssaoParameters = { sampleSize, sampleRadius: 1.0, depthCheckBias: 0.0125 };
           persistParam('ssao', v);
+          viewer.requestRedraw();
+        });
+      // Toggle between the improved SSAO (Alchemy/SAO sampling + IGN noise,
+      // separable bilateral blur, linear-light AO) and the original SSAO.
+      getRenderPipeline().improvedSsao = guiState.ssaoImproved;
+      renderGui
+        .add(guiState, 'ssaoImproved')
+        .name('SSAO: improved')
+        .onChange(v => {
+          getRenderPipeline().improvedSsao = v;
+          persistParam('ssaoImproved', v ? 'true' : 'false');
           viewer.requestRedraw();
         });
       renderGui

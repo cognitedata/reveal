@@ -27,6 +27,7 @@ out vec4 fragColor;
 
 #if defined(SSAO_BLUR)
 #include gaussian-blur.glsl;
+#include ../math/colorSpaceConversion.glsl;
 #endif
 
 #if defined(FXAA)
@@ -57,7 +58,20 @@ void main() {
 #else
   fragColor = diffuse;
   #if defined(SSAO_BLUR)
-    fragColor *= gaussianBlur(tSsao, vUv);
+    #if defined(IMPROVED_SSAO_COMBINE)
+      // Improved path: the AO buffer has already been blurred upstream (separable
+      // bilateral), so a single tap suffices. Ambient occlusion is a light
+      // attenuation and must be applied in linear light - multiplying the sRGB-
+      // encoded colour (as the old path does) over-darkens non-linearly. Decode
+      // to linear, attenuate, and re-encode.
+      float ao = texture(tSsao, vUv).r;
+      vec3 linear = sRGBToLinear(fragColor.rgb);
+      fragColor.rgb = LinearTosRGB(linear * ao);
+    #else
+      // Original path: unblurred AO smoothed with a fused Gaussian, multiplied in
+      // (gamma) display space.
+      fragColor *= gaussianBlur(tSsao, vUv);
+    #endif
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);

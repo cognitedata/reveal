@@ -63,6 +63,72 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
 
 float LARGE_DISTANCE_SAMPLE_FACTOR = 0.05;
 
+#if defined(IMPROVED_SSAO)
+
+// -----------------------------------------------------------------------------
+// Improved SSAO: Alchemy / "Scalable Ambient Obscurance" (McGuire et al. 2011-12)
+//
+// Depth-only, but instead of a fixed hemisphere kernel rotated by a noisy TBN we
+// walk a single spiral of samples whose start angle is randomised per pixel with
+// interleaved gradient noise (far better distributed than the old sin hash). The
+// sampling radius is a *world-space* radius projected to screen space, so the AO
+// footprint is consistent in world units and scales correctly with distance.
+// The obscurance estimator is the Alchemy falloff, which gives smoother, less
+// haloed occlusion than a hard depth-range test.
+// -----------------------------------------------------------------------------
+
+#ifndef PI
+#define PI 3.1415926535897932
+#endif
+
+void main(){
+  float d = texture(tDepth, vUv).r;
+
+  ivec2 texSize = textureSize(tDepth, 0);
+  vec2 resolution = vec2(float(texSize.x), float(texSize.y));
+
+  vec3 viewNormal = computeWorldNormalFromDepth(tDepth, resolution, vUv, d);
+  vec3 viewPosition = viewPosFromDepth(d, vUv);
+
+  // World-space AO radius -> screen-space (UV) radius at this depth. projMatrix
+  // diagonal holds the focal scales (m00 = f/aspect, m11 = f). The 0.5 maps NDC
+  // to UV. Clamp to avoid huge taps for geometry very close to the camera.
+  float invViewZ = 1.0 / max(-viewPosition.z, 1e-4);
+  vec2 screenRadius = 0.5 * sampleRadius * invViewZ * vec2(projMatrix[0][0], projMatrix[1][1]);
+  screenRadius = min(screenRadius, vec2(0.1));
+
+  float angleOffset = interleavedGradientNoise(gl_FragCoord.xy) * 2.0 * PI;
+
+  const float SPIRAL_TURNS = 7.0;
+  const float INTENSITY = 1.2;
+  float radiusWorldSqr = sampleRadius * sampleRadius;
+
+  float occlusion = 0.0;
+  for (int i = 0; i < MAX_KERNEL_SIZE; i++) {
+    float t = (float(i) + 0.5) / float(MAX_KERNEL_SIZE);
+    float angle = t * SPIRAL_TURNS * 2.0 * PI + angleOffset;
+    vec2 sampleUv = vUv + vec2(cos(angle), sin(angle)) * screenRadius * t;
+
+    float sampleDepth = texture(tDepth, sampleUv).r;
+    vec3 samplePos = viewPosFromDepth(sampleDepth, sampleUv);
+
+    vec3 v = samplePos - viewPosition;
+    float vv = dot(v, v);
+    float vn = dot(v, viewNormal);
+
+    // Smooth radial cutoff so samples fade out at the edge of the AO sphere.
+    float falloff = max(0.0, 1.0 - vv / radiusWorldSqr);
+    occlusion += falloff * max(vn - bias, 0.0) / (vv + 1e-4);
+  }
+
+  float ao = max(0.0, 1.0 - (2.0 * INTENSITY / float(MAX_KERNEL_SIZE)) * occlusion);
+  ao = pow(ao, 1.5);
+
+  outputColor = vec4(ao);
+}
+
+#else
+
 void main(){
   float d = texture(tDepth, vUv).r;
 
@@ -104,3 +170,5 @@ void main(){
 
   outputColor = vec4(occlusionFactor);
 }
+
+#endif

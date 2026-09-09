@@ -50,6 +50,8 @@ import pointCloudVert from '../glsl/pointcloud/pointcloud.vert';
 import ssaoFrag from '../glsl/post-processing/pure-depth-ssao.frag';
 import ssaoVert from '../glsl/post-processing/passthrough.vert';
 
+import ssaoBlurFrag from '../glsl/post-processing/ssaoBlur.frag';
+
 import blitFrag from '../glsl/post-processing/blit.frag';
 import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
@@ -164,6 +166,15 @@ export const pointCloudShaders: PointCloudShaders = {
  */
 export const ssaoShaders: ShaderPair = {
   fragment: ssaoFrag,
+  vertex: ssaoVert
+};
+
+/**
+ * Separable, depth-aware (bilateral) blur applied to the SSAO buffer. Shares the
+ * passthrough vertex shader with the SSAO pass.
+ */
+export const ssaoBlurShaders: ShaderPair = {
+  fragment: ssaoBlurFrag,
   vertex: ssaoVert
 };
 
