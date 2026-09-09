@@ -6,16 +6,17 @@ import type { Camera, Texture, WebGLRenderer, Mesh } from 'three';
 import {
   Color,
   GLSL3,
-  HalfFloatType,
   LinearFilter,
   Matrix4,
   NoColorSpace,
-  RGBAFormat,
   RawShaderMaterial,
+  RedFormat,
   Scene,
+  UnsignedByteType,
   Vector4,
   WebGLRenderTarget
 } from 'three';
+import { CAD_LIGHT_WORLD } from '../rendering/cadLighting';
 import { cadShadowShaders } from '../rendering/shaders';
 import { createFullScreenTriangleMesh } from '../utilities/renderUtilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
@@ -40,11 +41,14 @@ export class CadShadowPass {
   constructor(cameraDepthTexture: Texture | null, shadowMap: CadShadowMap) {
     this._shadowMap = shadowMap;
 
+    // A single 8 bit channel: the output is one lit factor in [0, 1] and the blit already
+    // dithers it against 8 bit banding. Compared to RGBA half float this is an eighth of
+    // the bandwidth, on a target that is written and then read once per pixel per frame.
     this._renderTarget = new WebGLRenderTarget(1, 1, {
       depthBuffer: false,
       stencilBuffer: false,
-      type: HalfFloatType,
-      format: RGBAFormat,
+      type: UnsignedByteType,
+      format: RedFormat,
       magFilter: LinearFilter,
       minFilter: LinearFilter
     });
@@ -60,6 +64,9 @@ export class CadShadowPass {
         cadCameraMatrixWorld: { value: new Matrix4() },
         cadShadowMatrix: { value: new Matrix4() },
         cadShadowPlane: { value: new Vector4(0, 1, 0, 0) },
+        // Same world space sun the CAD materials shade with, so the shadow terminator
+        // and the diffuse terminator land on the same place.
+        cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
         cadShadowTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: SHADOW_STRENGTH },

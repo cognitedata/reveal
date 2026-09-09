@@ -33,6 +33,21 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
  * so raising the resolution costs far less than adding screen-space filtering passes.
  */
 const SHADOW_MAP_RESOLUTION = 4096;
+
+/**
+ * How far back the light camera sits, in bounding sphere radii.
+ *
+ * The projection is orthographic, but the ray marched CAD primitives intersect against
+ * rays that converge on the camera origin, and their vertex shaders orient the billboard
+ * towards `cameraPosition`. Close to the model those rays fan out by tens of degrees, so
+ * the shadow map records a point light silhouette while the lookup decodes it as a
+ * parallel one, and shadows of curved primitives bend away from the light direction.
+ *
+ * Pulling the camera back makes the perspective assumption true to within atan(1 / this).
+ * It costs nothing in depth precision: an orthographic depth range is far minus near,
+ * which stays at twice the radius no matter how far back the camera goes.
+ */
+const LIGHT_DISTANCE_IN_RADII = 200;
 const WORLD_UP = new Vector3(0, 1, 0);
 const WORLD_UP_ALTERNATIVE = new Vector3(0, 0, 1);
 
@@ -122,7 +137,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
     bounds.getCenter(this._center);
     const radius = Math.max(bounds.getBoundingSphere(this._boundingSphere).radius, 0.5);
 
-    this._lightCamera.position.copy(this._center).addScaledVector(CAD_LIGHT_WORLD, radius * 2);
+    this._lightCamera.position.copy(this._center).addScaledVector(CAD_LIGHT_WORLD, radius * LIGHT_DISTANCE_IN_RADII);
     this._lightCamera.up.copy(Math.abs(CAD_LIGHT_WORLD.y) > 0.95 ? WORLD_UP_ALTERNATIVE : WORLD_UP);
     this._lightCamera.lookAt(this._center);
     this._lightCamera.updateMatrixWorld(true);
