@@ -250,7 +250,8 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
 
   /**
    * Set the point size type for the point cloud.
-   * The point size type can be either Fixed or Adaptive.
+   * Adaptive sizing grows points as the camera approaches, up to a bounded screen-relative size,
+   * to reduce gaps at close range. Fixed sizing remains independent of camera distance.
    * @default `PointSizeType.Adaptive`
    */
   set pointSizeType(type: PointSizeType) {
