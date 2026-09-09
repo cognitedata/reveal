@@ -9,6 +9,12 @@ uniform float cadShadowStrength;
 uniform float cadShadowEnabled;
 
 const float CAD_SHADOW_EMPTY_DEPTH = 0.999;
+const int CAD_SHADOW_TAPS = 16;
+const float CAD_SHADOW_PENUMBRA_TEXELS = 3.0;
+const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
+// Shapes the penumbra ramp. Above 1.0 the transition lightens while the fully occluded
+// core keeps its weight, which reads softer than lowering the strength for everything.
+const float CAD_SHADOW_EDGE_FALLOFF = 1.75;
 
 vec3 cadShadowViewPosFromDepth(float depth, vec2 uv) {
     float z = depth * 2.0 - 1.0;
@@ -32,13 +38,6 @@ vec3 cadShadowViewNormal(sampler2D depthTexture, vec2 uv, float depth) {
     // Depth-derived normals can face away from the camera on silhouettes.
     return dot(n, vec3(0.0, 0.0, 1.0)) < 0.0 ? -n : n;
 }
-
-const int CAD_SHADOW_TAPS = 16;
-const float CAD_SHADOW_PENUMBRA_TEXELS = 3.0;
-const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
-// Shapes the penumbra ramp. Above 1.0 the transition lightens while the fully occluded
-// core keeps its weight, which reads softer than lowering the strength for everything.
-const float CAD_SHADOW_EDGE_FALLOFF = 1.75;
 
 // Vogel disk: a golden-angle spiral spreads the taps evenly over a round footprint,
 // which avoids the axis-aligned steps a square grid leaves behind.
