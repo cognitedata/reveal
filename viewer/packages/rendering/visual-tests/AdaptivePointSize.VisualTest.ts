@@ -28,7 +28,7 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
     this._geometry.setAttribute('objectId', new Float32BufferAttribute([0], 1));
     this._materials[2].pointSizeType = PointSizeType.Fixed;
 
-    const depths = [8, 3, 2, 1];
+    const depths = [8, 3, 1.75, 0.5];
     const slope = Math.tan((camera.fov * Math.PI) / 360);
     for (const [row, material] of this._materials.entries()) {
       material.shape = PointShape.Square;
@@ -52,7 +52,7 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
       }
     }
 
-    // Rows compare Adaptive, the old cap, and Fixed; columns bring the same point spacing closer.
+    // Rows compare Adaptive, an explicit maximum of 10, and Fixed as the same point spacing approaches.
     const { width, height } = renderer.domElement;
     const target = new WebGLRenderTarget(width, height);
     const readWidth = async (row: number, column: number) => {
@@ -79,7 +79,10 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
         widths.push(rowWidths);
       }
       assert(widths[0][0] > 0, 'The point-size fixture must render visible points');
-      assert(widths[0][0] === widths[1][0] && widths[0][1] === widths[1][1], 'Distant sizes must stay unchanged');
+      assert(
+        widths[0][0] === widths[1][0] && widths[0][1] === widths[1][1],
+        'Explicit maximum sizes must not enlarge distant points'
+      );
       assert(
         widths[0][2] > widths[1][2] && widths[0][3] > widths[0][2],
         'Nearby Adaptive points must grow beyond the old cap'
@@ -91,7 +94,7 @@ export default class AdaptivePointSizeVisualTest extends SimpleVisualTestFixture
       );
       this._materials[0].spacing = 0.1;
       renderer.render(scene, camera);
-      for (const [column, cap] of [10, 10, 21, 32].entries()) {
+      for (const [column, cap] of [6, 6, 19, 32].entries()) {
         assert(
           Math.abs((await readWidth(0, column)) - (cap * height) / 1080) <= 1,
           'Coarse Adaptive points must follow the distance-dependent cap, including its midpoint'

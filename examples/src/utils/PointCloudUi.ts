@@ -11,7 +11,7 @@ import * as dat from 'dat.gui';
 export class PointCloudUi {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _params = {
-    pointSize: 1.0,
+    pointSize: 1.2,
     pointSizeType: PointSizeType.Adaptive,
     budget: 3_000_000,
     pointColorType: PointColorType.Rgb,
