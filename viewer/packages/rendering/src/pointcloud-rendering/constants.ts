@@ -34,14 +34,26 @@ export const DEFAULT_POINTCLOUD_GAP_FILL_RADIUS = 3;
  * The tight step closes fine gaps seen from a distance; wider steps bridge the large gaps that
  * open up with the camera close. Reaches ~GAP_FILL_RADIUS * 2^(steps-1) pixels.
  */
-export const DEFAULT_POINTCLOUD_GAP_FILL_STEPS = 4;
+export const DEFAULT_POINTCLOUD_GAP_FILL_STEPS = 5;
 /**
- * Largest gap the fill is allowed to bridge, measured in world units (scene metres) at the
- * depth of the surrounding surface - not pixels. A wide pixel search is only accepted when it
- * corresponds to a gap this small in the world, so a hole within a nearby surface is closed
- * while the empty space between separate structures seen from a distance is left alone.
+ * Largest hole the fill will bridge, in world units (scene metres) at the surrounding
+ * surface's depth - NOT pixels. This is what makes the fill camera-distance aware: 0.3 m of
+ * surface projects to many pixels up close (big on-screen gaps get filled) but only a few
+ * pixels from far away (the model keeps its true silhouette). Independent of the depth checks.
  */
-export const DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP = 0.25;
+export const DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP = 0.3;
+/**
+ * Depth spread a gap fill tolerates as "one surface", as a fraction of the surface's view-space
+ * distance. Covers curvature and noise. Lower = fills only very flat patches, less bleeding
+ * across silhouettes; higher = fills more aggressively.
+ */
+export const DEFAULT_POINTCLOUD_GAP_FILL_DEPTH_TOLERANCE = 0.02;
+/**
+ * Extra depth spread tolerated per world unit of search-window width, to allow steeply grazing
+ * surfaces (a floor seen edge-on) whose depth changes fast across the screen. ~tan of the
+ * steepest grazing angle still treated as a fillable surface (3 ~= 72 degrees).
+ */
+export const DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE = 3.0;
 /**
  * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
  * fall in the last `band` fraction of the budget render only a stochastically chosen subset of

@@ -39,6 +39,8 @@ import { NodeOutlineColor } from '@reveal/cad-styling';
 import {
   DEFAULT_EDL_NEIGHBOURS_COUNT,
   DEFAULT_EDL_SCALE_COUNT,
+  DEFAULT_POINTCLOUD_GAP_FILL_DEPTH_TOLERANCE,
+  DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE,
   DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP,
   DEFAULT_POINTCLOUD_GAP_FILL_RADIUS,
   DEFAULT_POINTCLOUD_GAP_FILL_STEPS
@@ -156,17 +158,17 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     // Number of strided search widths tried per empty pixel: 1px, 2px, 4px, ... The last step
     // reaches ~gapFillRadius * 2^(steps-1) pixels, enough to bridge the big gaps seen up close.
     defines['FILL_GAPS_STEPS'] = DEFAULT_POINTCLOUD_GAP_FILL_STEPS;
+    defines['FILL_GAPS_MAX_WORLD_GAP'] = DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP;
+    defines['FILL_GAPS_DEPTH_TOL'] = DEFAULT_POINTCLOUD_GAP_FILL_DEPTH_TOLERANCE;
+    defines['FILL_GAPS_GRAZE_TOL'] = DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE;
     uniforms = {
       ...uniforms,
       screenWidth: { value: 1 },
       screenHeight: { value: 1 },
-      // Distance gate: a wide pixel search is only accepted if it maps to a world-space gap
-      // no larger than this at the surrounding surface's depth (see normalize.frag).
-      gapFillMaxWorldGap: { value: DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP },
       cameraNear: { value: 0.1 },
       cameraFar: { value: 1000 },
       // World units per screen pixel at one unit of eye depth (perspective); 0 for an
-      // orthographic camera, which disables the distance gate.
+      // orthographic camera. Used to size the grazing-surface depth tolerance.
       worldPerPixelUnitDepth: { value: 0 }
     };
   }

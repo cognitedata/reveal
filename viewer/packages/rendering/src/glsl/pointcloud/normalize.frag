@@ -11,7 +11,6 @@ uniform sampler2D tDiffuse;
 #if defined(fill_gaps)
 	uniform float cameraNear;
 	uniform float cameraFar;
-	uniform float gapFillMaxWorldGap;
 	uniform float worldPerPixelUnitDepth; // world units per screen pixel at eye depth 1; 0 = orthographic
 #endif
 
@@ -21,10 +20,26 @@ uniform sampler2D tDiffuse;
 	uniform vec2 neighbours[NEIGHBOUR_COUNT];
 	uniform float edlStrength;
 	uniform float radius;
+#endif
 
-	#if defined(points_blend)
-		uniform sampler2D tLogDepth;
-	#endif
+#if defined(use_edl) && defined(points_blend)
+	uniform sampler2D tLogDepth;
+#endif
+
+#if defined(fill_gaps)
+	// View-space distance at a pixel. The point shader writes log2(viewDist)/10 into an alpha
+	// channel for EDL; reusing it keeps this stable at all ranges, unlike the hardware depth
+	// buffer whose precision collapses far from the camera.
+	float gapFillEyeDistance(vec2 uv, float windowDepth) {
+		#if defined(use_edl) && defined(points_blend)
+			return exp2(texture(tLogDepth, uv).a * 10.0);
+		#elif defined(use_edl)
+			return exp2(texture(tDiffuse, uv).a * 10.0);
+		#else
+			float ndcZ = windowDepth * 2.0 - 1.0;
+			return (2.0 * cameraNear * cameraFar) / (cameraFar + cameraNear - ndcZ * (cameraFar - cameraNear));
+		#endif
+	}
 #endif
 
 #define EDL_STRENGTH_FACTOR 400.0
@@ -48,30 +63,28 @@ void main() {
 
 	#if defined(fill_gaps)
 		// Fill the gaps that open between points: an empty pixel adopts its nearest covered
-		// neighbour so the surface reads as continuous without inflating point sizes. Picking
-		// the nearest neighbour keeps a near surface's gap from being filled by a farther
-		// surface seen through it.
+		// neighbour so the surface reads as continuous without inflating point sizes.
 		//
-		// The search widens in strided steps (1px, 2px, 4px, ...). The tight step closes the
-		// fine gaps visible from a distance; the wider steps reach across the large gaps you
-		// get with the camera close, where a dense scan would never touch the far rim.
+		// The search widens in strided steps (1px, 2px, 4px, ...): the tight step closes the
+		// fine gaps seen from a distance, the wider steps reach across the large gaps you get
+		// with the camera close.
 		//
-		// A wide step is only accepted when its reach maps to a small gap in WORLD space at the
-		// surrounding surface's depth - so a hole within a nearby surface is closed, while the
-		// empty space between separate structures seen from a distance is left alone.
+		// A step only fills if the covered neighbours it found look like ONE surface - their
+		// view-space distances stay within a spread a real (even steeply grazing) surface could
+		// have over that window. A sudden jump means the gap straddles a depth discontinuity
+		// (a silhouette against what is behind it), so it is left alone.
 		if (depth >= 1.0) {
 			vec2 texel = 1.0 / vec2(screenWidth, screenHeight);
-			float filledDepth = 1.0;
 			vec2 filledUv = vUv;
 			bool filled = false;
 
 			for (int stepIndex = 0; stepIndex < FILL_GAPS_STEPS; stepIndex++) {
 				int step = 1 << stepIndex;
-				float bestDepth = 1.0;
 				vec2 bestUv = vUv;
+				float nearEye = 1.0e30;
+				float farEye = 0.0;
 				int covered = 0;
-				// Coverage per side, so we only fill a pixel the surface actually surrounds -
-				// otherwise the silhouette against the background would bleed outward.
+				// Coverage per side, so we only fill a pixel the surface actually surrounds.
 				int coveredNegX = 0;
 				int coveredPosX = 0;
 				int coveredNegY = 0;
@@ -90,12 +103,15 @@ void main() {
 							continue;
 						}
 
+						float neighbourEye = gapFillEyeDistance(uvNeighbour, neighbourDepth);
+
 						covered++;
 						if (x < 0) { coveredNegX++; } else if (x > 0) { coveredPosX++; }
 						if (y < 0) { coveredNegY++; } else if (y > 0) { coveredPosY++; }
 
-						if (neighbourDepth < bestDepth) {
-							bestDepth = neighbourDepth;
+						farEye = max(farEye, neighbourEye);
+						if (neighbourEye < nearEye) {
+							nearEye = neighbourEye;
 							bestUv = uvNeighbour;
 						}
 					}
@@ -104,34 +120,33 @@ void main() {
 				bool surrounded = (coveredNegX > 0 && coveredPosX > 0) || (coveredNegY > 0 && coveredPosY > 0);
 
 				if (covered >= FILL_GAPS_MIN_COVERED && surrounded) {
-					// Distance gate: how big is this pixel reach in world units at the found
-					// surface's depth? The tightest step is always allowed; wider steps must
-					// stay under gapFillMaxWorldGap.
-					bool gatePassed = stepIndex == 0 || worldPerPixelUnitDepth <= 0.0;
-					if (!gatePassed) {
-						float ndcZ = bestDepth * 2.0 - 1.0;
-						float eyeDist = (2.0 * cameraNear * cameraFar) /
-							(cameraFar + cameraNear - ndcZ * (cameraFar - cameraNear));
-						float worldReach = float(step * FILL_GAPS_RADIUS) * worldPerPixelUnitDepth * eyeDist;
-						gatePassed = worldReach <= gapFillMaxWorldGap;
-					}
+					float reachPixels = float(step * FILL_GAPS_RADIUS);
+					float worldWindow = max(worldPerPixelUnitDepth, 0.0) * nearEye * reachPixels;
 
-					if (gatePassed) {
-						filledDepth = bestDepth;
+					// 1. Camera-distance gate: only bridge a hole up to this size in the WORLD.
+					//    A fixed world size projects to many pixels up close, few from far away.
+					bool withinWorldGap = worldPerPixelUnitDepth <= 0.0 || worldWindow <= float(FILL_GAPS_MAX_WORLD_GAP);
+
+					// 2. Surface check: the covered neighbours must look like one surface - depth
+					//    spread within what curvature/noise plus a grazing angle could produce.
+					float allowedSpread = nearEye * float(FILL_GAPS_DEPTH_TOL) + float(FILL_GAPS_GRAZE_TOL) * worldWindow;
+					bool oneSurface = farEye - nearEye <= allowedSpread;
+
+					if (withinWorldGap && oneSurface) {
 						filledUv = bestUv;
 						filled = true;
 					}
-					// Wider steps only reach further, so stop here either way.
+					// Surrounded already - wider steps only reach further, so stop either way.
 					break;
 				}
 			}
 
 			if (filled) {
-				depth = filledDepth;
 				color = texture(tDiffuse, filledUv);
 				#if defined(points_blend)
 					color = color / color.w;
 				#endif
+				depth = texture(tDepth, filledUv).r;
 				shouldDiscard = false;
 				outputColor = vec4(color.rgb, 1.0);
 				gl_FragDepth = depth;
