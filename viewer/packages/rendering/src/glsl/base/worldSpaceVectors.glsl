@@ -35,11 +35,43 @@ bool g_worldVectorsValid = false;
 void computeWorldSpaceVectors(vec3 normal, vec3 viewPosition, mat4 modelViewMatrix) {
     mat4 viewToSectorMatrix = inverse(modelViewMatrix);
 
-    g_worldNormal = (viewToSectorMatrix * vec4(normal, 0.0)).xyz;
+    // Guard against degenerate / NaN analytic normals. Cone and eccentric-cone
+    // normals come from cross products that collapse to zero along a seam
+    // (normalize(0) -> NaN); without this guard those NaNs propagate through the
+    // lighting and show up as a harsh black edge. `!(x > 0.0)` also catches NaN.
+    vec3 viewNormal = normal;
+    if (!(dot(viewNormal, viewNormal) > 0.0)) {
+        viewNormal = vec3(0.0, 0.0, 1.0);
+    }
+
+    // Normals must be transformed by the inverse-transpose of the position
+    // transform. Going view -> sector the position transform is
+    // inverse(modelViewMatrix), whose inverse-transpose is
+    // transpose(mat3(modelViewMatrix)). Using inverse(modelViewMatrix) directly
+    // (as for a position/direction) skews normals under non-uniform scaling.
+    mat3 normalViewToSector = transpose(mat3(modelViewMatrix));
+
+    g_worldNormal = normalize(normalViewToSector * viewNormal);
     g_worldPosition = (viewToSectorMatrix * vec4(viewPosition, 1.0)).xyz;
     g_worldCameraPosition = (viewToSectorMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 
     g_worldRayDirection = normalize(g_worldPosition - g_worldCameraPosition);
+
+    // Orient the lighting normal to face the camera along the actual view ray.
+    // The analytic primitive normals - especially the cone / eccentric-cone
+    // cross products - can have an inconsistent sign across the surface (their
+    // sign flips across the axis-plane seam). Each primitive then force-flips the
+    // normal to face the camera in *view* space, which hides the inconsistency
+    // for the camera-relative matcap but leaves the two halves with opposite
+    // normals in world space - so world-space lighting shows one half "flipped".
+    // For these convex, outward-facing surfaces the camera-facing normal is the
+    // correct outward normal, so re-derive the orientation here from the real
+    // view ray. (Only affects g_worldNormal used for lighting, not the view-space
+    // `normal` the legacy matcap path still uses.)
+    if (dot(g_worldNormal, g_worldRayDirection) > 0.0) {
+        g_worldNormal = -g_worldNormal;
+    }
+
     g_worldReflection = reflect(g_worldRayDirection, g_worldNormal);
 
     g_worldVectorsValid = true;
