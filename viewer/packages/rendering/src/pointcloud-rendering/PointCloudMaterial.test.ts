@@ -5,6 +5,7 @@
 import { PointCloudMaterial } from './PointCloudMaterial';
 import { DEFAULT_MAX_ADAPTIVE_POINT_SIZE, DEFAULT_MAX_POINT_SIZE } from './constants';
 import { PointSizeType } from './enums';
+import { DepthTexture } from 'three';
 
 describe('PointCloudMaterial point size limits', () => {
   let material: PointCloudMaterial;
@@ -22,6 +23,19 @@ describe('PointCloudMaterial point size limits', () => {
     expect(material.maxSize).toBe(DEFAULT_MAX_ADAPTIVE_POINT_SIZE);
     expect(material.maxSize).toBeGreaterThan(DEFAULT_MAX_POINT_SIZE);
     expect(material.uniforms.maxSize.value).toBe(material.maxSize);
+  });
+
+  test('edge sizing is enabled only while a reference depth texture is available', () => {
+    expect(material.edgeDepthTexture).toBeNull();
+    expect(material.uniforms.edgeSizingEnabled.value).toBe(false);
+    const texture = new DepthTexture(16, 16);
+    material.edgeDepthTexture = texture;
+    expect(material.uniforms.edgeDepthTexture.value).toBe(texture);
+    expect(material.uniforms.edgeSizingEnabled.value).toBe(true);
+    material.edgeDepthTexture = null;
+    expect(material.uniforms.edgeDepthTexture.value).toBeNull();
+    expect(material.uniforms.edgeSizingEnabled.value).toBe(false);
+    texture.dispose();
   });
 
   test.each([PointSizeType.Fixed, PointSizeType.Attenuated])('switching to %s restores its original cap', type => {

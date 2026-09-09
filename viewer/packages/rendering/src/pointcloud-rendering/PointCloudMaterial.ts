@@ -40,6 +40,8 @@ export interface IPointCloudMaterialParameters {
 
 export interface IPointCloudMaterialUniforms {
   classificationLUT: IUniform<Texture>;
+  edgeDepthTexture: IUniform<Texture | null>;
+  edgeSizingEnabled: IUniform<boolean>;
   fov: IUniform<number>;
   gradient: IUniform<Texture>;
   heightMax: IUniform<number>;
@@ -111,6 +113,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   uniforms: IPointCloudMaterialUniforms & Record<string, IUniform<any>> = {
     classificationLUT: makeUniform('t', this.classificationTexture || new Texture()),
+    edgeDepthTexture: makeUniform<Texture | null>('t', null),
+    edgeSizingEnabled: makeUniform('b', false),
     fov: makeUniform('f', 1.0),
     gradient: makeUniform('t', this.gradientTexture || new Texture()),
     heightMax: makeUniform('f', 1.0),
@@ -134,6 +138,15 @@ export class PointCloudMaterial extends RawShaderMaterial {
     visibleNodes: makeUniform('t', this.visibleNodesTexture || new Texture()),
     vnStart: makeUniform('f', 0.0)
   };
+
+  get edgeDepthTexture(): Texture | null {
+    return this.getUniform('edgeDepthTexture');
+  }
+
+  set edgeDepthTexture(value: Texture | null) {
+    this.setUniform('edgeDepthTexture', value);
+    this.setUniform('edgeSizingEnabled', value !== null);
+  }
 
   get fov(): number {
     return this.getUniform('fov');

@@ -32,12 +32,15 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     currentRenderSize: Vector2;
     logDepthAndDepthOutput: WebGLRenderTarget;
     output: WebGLRenderTarget;
+    edgeDepth: WebGLRenderTarget;
   };
   private readonly _renderParameters: PointCloudParameters;
   private readonly _depthPass: PointCloudEffectsPass;
   private readonly _attributePass: PointCloudEffectsPass;
   private readonly _standardPass: PointCloudEffectsPass;
   private readonly _sceneHandler: SceneHandler;
+  private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
+  private readonly _edgeDepthPass: PointCloudEffectsPass;
 
   private static readonly DepthPassParameters: PointCloudPassParameters = {
     material: {
@@ -86,15 +89,32 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
         format: RGBAFormat,
         type: FloatType,
         depthTexture: depthTexture
+      }),
+      edgeDepth: new WebGLRenderTarget(1, 1, {
+        minFilter: NearestFilter,
+        magFilter: NearestFilter,
+        depthTexture: new DepthTexture(1, 1, UnsignedIntType)
       })
     };
 
     this._sceneHandler = sceneHandler;
     this._renderParameters = renderParameters;
+    this._pointCloudMaterialManager = pointCloudMaterialManager;
+    this._edgeDepthPass = new PointCloudEffectsPass(sceneHandler.scene, pointCloudMaterialManager, {
+      material: {
+        edgeDepthTexture: null,
+        weighted: false,
+        hqDepthPass: false,
+        depthWrite: true,
+        blending: NoBlending,
+        colorWrite: false
+      }
+    });
 
     const standardPassParameters: PointCloudPassParameters = {
       material: {
-        useEDL: shouldApplyEdl(renderParameters.edlOptions)
+        useEDL: shouldApplyEdl(renderParameters.edlOptions),
+        colorWrite: true
       }
     };
 
@@ -131,6 +151,17 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._sceneHandler.pointCloudModels.forEach(model => model.pointCloudNode.updateMatrixWorld(true));
 
     try {
+      if (this._pointCloudMaterialManager.hasAdaptivePointSize) {
+        // The reference must be separate from both output targets to avoid texture feedback.
+        renderer.setRenderTarget(this._renderTargetData.edgeDepth);
+        yield this._edgeDepthPass;
+        this._pointCloudMaterialManager.setModelsMaterialParameters({
+          edgeDepthTexture: this._renderTargetData.edgeDepth.depthTexture
+        });
+      } else {
+        this._pointCloudMaterialManager.setModelsMaterialParameters({ edgeDepthTexture: null });
+      }
+
       if (this._renderParameters.pointBlending) {
         renderer.setRenderTarget(this._renderTargetData.logDepthAndDepthOutput);
         yield this._depthPass;
@@ -149,6 +180,8 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   }
 
   public dispose(): void {
+    this._pointCloudMaterialManager.setModelsMaterialParameters({ edgeDepthTexture: null });
+    this._renderTargetData.edgeDepth.dispose();
     this._renderTargetData.logDepthAndDepthOutput.dispose();
     this._renderTargetData.output.dispose();
   }
@@ -167,5 +200,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._renderTargetData.currentRenderSize.set(width, height);
     this._renderTargetData.logDepthAndDepthOutput.setSize(width, height);
     this._renderTargetData.output.setSize(width, height);
+    this._renderTargetData.edgeDepth.setSize(width, height);
   }
 }

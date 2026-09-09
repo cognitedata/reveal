@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import type { WebGLRenderTarget, WebGLRenderer } from 'three';
-import { PerspectiveCamera, Vector3 } from 'three';
+import { DepthTexture, PerspectiveCamera, Vector3 } from 'three';
 import type { RenderedNode } from './PointCloudOctreePickerHelper';
 import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 
@@ -12,6 +12,23 @@ import { vi } from 'vitest';
 import { PointCloudMaterial, PointSizeType } from '@reveal/rendering';
 
 describe('PointCloudOctreePickerHelper', () => {
+  test('picking uses the same edge depth reference as rendering and clears stale references', () => {
+    const nodeMaterial = new PointCloudMaterial();
+    const pickMaterial = new PointCloudMaterial();
+    const reference = new DepthTexture(16, 16);
+    nodeMaterial.edgeDepthTexture = reference;
+    PointCloudOctreePickerHelper['updatePickMaterial'](pickMaterial, nodeMaterial);
+    expect(pickMaterial.edgeDepthTexture).toBe(reference);
+    expect(pickMaterial.uniforms.edgeSizingEnabled.value).toBe(true);
+    nodeMaterial.edgeDepthTexture = null;
+    PointCloudOctreePickerHelper['updatePickMaterial'](pickMaterial, nodeMaterial);
+    expect(pickMaterial.edgeDepthTexture).toBeNull();
+    expect(pickMaterial.uniforms.edgeSizingEnabled.value).toBe(false);
+    nodeMaterial.dispose();
+    pickMaterial.dispose();
+    reference.dispose();
+  });
+
   test('pick material follows effective size limits across models and mode changes', () => {
     const nodeMaterial = new PointCloudMaterial();
     const pickMaterial = new PointCloudMaterial();
