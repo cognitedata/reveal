@@ -48,7 +48,16 @@ void main()
         discard;
     }
 
+    // This is a flat, double-sided primitive (an annulus/ring endcap) with a single
+    // authored normal. Orient it to the side actually being viewed so PBR lighting
+    // shades the visible face rather than the hidden one. gl_FrontFacing is constant
+    // across a planar primitive, so - unlike flipping against the per-fragment view
+    // ray - this does not create a hard lit/dark seam at grazing angles. Only the
+    // world-space (PBR) normal is flipped; the raw `normal` passed on keeps the legacy
+    // matcap path and the normal/debug render modes identical to before.
+    vec3 shadingNormal = gl_FrontFacing ? normal : -normal;
+
     // Populate world-space lighting vectors (g_world*) so updateFragmentColor applies PBR.
-    computeWorldSpaceVectors(normal, vViewPosition, modelViewMatrix);
+    computeWorldSpaceVectors(shadingNormal, vViewPosition, modelViewMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
 }
