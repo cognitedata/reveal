@@ -39,6 +39,7 @@ import { NodeOutlineColor } from '@reveal/cad-styling';
 import {
   DEFAULT_EDL_NEIGHBOURS_COUNT,
   DEFAULT_EDL_SCALE_COUNT,
+  DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP,
   DEFAULT_POINTCLOUD_GAP_FILL_RADIUS,
   DEFAULT_POINTCLOUD_GAP_FILL_STEPS
 } from '../pointcloud-rendering/constants';
@@ -158,7 +159,15 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     uniforms = {
       ...uniforms,
       screenWidth: { value: 1 },
-      screenHeight: { value: 1 }
+      screenHeight: { value: 1 },
+      // Distance gate: a wide pixel search is only accepted if it maps to a world-space gap
+      // no larger than this at the surrounding surface's depth (see normalize.frag).
+      gapFillMaxWorldGap: { value: DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP },
+      cameraNear: { value: 0.1 },
+      cameraFar: { value: 1000 },
+      // World units per screen pixel at one unit of eye depth (perspective); 0 for an
+      // orthographic camera, which disables the distance gate.
+      worldPerPixelUnitDepth: { value: 0 }
     };
   }
 

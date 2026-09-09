@@ -8,6 +8,13 @@ uniform sampler2D tDiffuse;
 	uniform float screenHeight;
 #endif
 
+#if defined(fill_gaps)
+	uniform float cameraNear;
+	uniform float cameraFar;
+	uniform float gapFillMaxWorldGap;
+	uniform float worldPerPixelUnitDepth; // world units per screen pixel at eye depth 1; 0 = orthographic
+#endif
+
 #if defined(use_edl)
 	#include edl.glsl;
 
@@ -48,6 +55,10 @@ void main() {
 		// The search widens in strided steps (1px, 2px, 4px, ...). The tight step closes the
 		// fine gaps visible from a distance; the wider steps reach across the large gaps you
 		// get with the camera close, where a dense scan would never touch the far rim.
+		//
+		// A wide step is only accepted when its reach maps to a small gap in WORLD space at the
+		// surrounding surface's depth - so a hole within a nearby surface is closed, while the
+		// empty space between separate structures seen from a distance is left alone.
 		if (depth >= 1.0) {
 			vec2 texel = 1.0 / vec2(screenWidth, screenHeight);
 			float filledDepth = 1.0;
@@ -93,9 +104,24 @@ void main() {
 				bool surrounded = (coveredNegX > 0 && coveredPosX > 0) || (coveredNegY > 0 && coveredPosY > 0);
 
 				if (covered >= FILL_GAPS_MIN_COVERED && surrounded) {
-					filledDepth = bestDepth;
-					filledUv = bestUv;
-					filled = true;
+					// Distance gate: how big is this pixel reach in world units at the found
+					// surface's depth? The tightest step is always allowed; wider steps must
+					// stay under gapFillMaxWorldGap.
+					bool gatePassed = stepIndex == 0 || worldPerPixelUnitDepth <= 0.0;
+					if (!gatePassed) {
+						float ndcZ = bestDepth * 2.0 - 1.0;
+						float eyeDist = (2.0 * cameraNear * cameraFar) /
+							(cameraFar + cameraNear - ndcZ * (cameraFar - cameraNear));
+						float worldReach = float(step * FILL_GAPS_RADIUS) * worldPerPixelUnitDepth * eyeDist;
+						gatePassed = worldReach <= gapFillMaxWorldGap;
+					}
+
+					if (gatePassed) {
+						filledDepth = bestDepth;
+						filledUv = bestUv;
+						filled = true;
+					}
+					// Wider steps only reach further, so stop here either way.
 					break;
 				}
 			}

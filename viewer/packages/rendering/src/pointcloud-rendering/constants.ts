@@ -36,6 +36,13 @@ export const DEFAULT_POINTCLOUD_GAP_FILL_RADIUS = 3;
  */
 export const DEFAULT_POINTCLOUD_GAP_FILL_STEPS = 4;
 /**
+ * Largest gap the fill is allowed to bridge, measured in world units (scene metres) at the
+ * depth of the surrounding surface - not pixels. A wide pixel search is only accepted when it
+ * corresponds to a gap this small in the world, so a hole within a nearby surface is closed
+ * while the empty space between separate structures seen from a distance is left alone.
+ */
+export const DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP = 0.25;
+/**
  * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
  * fall in the last `band` fraction of the budget render only a stochastically chosen subset of
  * their points, ramping from all to none, so the deepest visible nodes fade in as the camera
