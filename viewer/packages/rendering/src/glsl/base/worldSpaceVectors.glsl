@@ -44,6 +44,23 @@ void computeWorldSpaceVectors(vec3 normal, vec3 viewPosition, mat4 modelViewMatr
         viewNormal = vec3(0.0, 0.0, 1.0);
     }
 
+    // NOTE: no orientation flip is applied here. Each primitive is responsible
+    // for handing us a correctly oriented, camera-facing normal:
+    //   - cone / eccentric-cone / ellipsoid orient against the per-fragment view
+    //     ray in their own shader (the correct choice for a curved surface whose
+    //     analytic cross-product normal has an inconsistent sign),
+    //   - the general cylinder orients via its intersection `normalFactor`,
+    //   - flat primitives (disc / ring / trapezium) and meshes/tori supply an
+    //     authored, outward geometric normal.
+    // A flip in this shared helper cannot be correct for all of them at once:
+    //   - flipping against the per-fragment view ray couples a flat disc's
+    //     shading to which side it is viewed from, snapping it lit<->dark at the
+    //     edge-on angle (a hard "clip"),
+    //   - flipping against the view axis (viewNormal.z) wrongly inverts the
+    //     silhouette bands of a curved surface whose outward normal tilts past
+    //     the axis, and pops flat polygonal faces as they cross it.
+    // Trusting the per-primitive normal avoids both.
+
     // Normals must be transformed by the inverse-transpose of the position
     // transform. Going view -> sector the position transform is
     // inverse(modelViewMatrix), whose inverse-transpose is
@@ -56,22 +73,6 @@ void computeWorldSpaceVectors(vec3 normal, vec3 viewPosition, mat4 modelViewMatr
     g_worldCameraPosition = (viewToSectorMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 
     g_worldRayDirection = normalize(g_worldPosition - g_worldCameraPosition);
-
-    // Orient the lighting normal to face the camera along the actual view ray.
-    // The analytic primitive normals - especially the cone / eccentric-cone
-    // cross products - can have an inconsistent sign across the surface (their
-    // sign flips across the axis-plane seam). Each primitive then force-flips the
-    // normal to face the camera in *view* space, which hides the inconsistency
-    // for the camera-relative matcap but leaves the two halves with opposite
-    // normals in world space - so world-space lighting shows one half "flipped".
-    // For these convex, outward-facing surfaces the camera-facing normal is the
-    // correct outward normal, so re-derive the orientation here from the real
-    // view ray. (Only affects g_worldNormal used for lighting, not the view-space
-    // `normal` the legacy matcap path still uses.)
-    if (dot(g_worldNormal, g_worldRayDirection) > 0.0) {
-        g_worldNormal = -g_worldNormal;
-    }
-
     g_worldReflection = reflect(g_worldRayDirection, g_worldNormal);
 
     g_worldVectorsValid = true;
