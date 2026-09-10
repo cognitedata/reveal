@@ -685,11 +685,8 @@ export class IconCollection {
 
   public dispose(): void {
     this._sceneHandler.removeObject3D(this._pointsObject);
-    this._sceneHandler.removeObject3D(this._hoverSprite);
     this._icons.forEach(icon => icon.dispose());
     this._icons.splice(0, this._icons.length);
-    this._hoverSprite.material.dispose();
-    this._hoverSprite.material.map?.dispose();
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
 
@@ -697,6 +694,7 @@ export class IconCollection {
 
     this._sceneHandler.removeObject3D(this._hoverSprite);
     this._hoverSprite.material.dispose();
+    this._hoverSprite.material.map?.dispose();
     this._hoverIconTexture.dispose();
 
     this._htmlRenderer?.dispose();
