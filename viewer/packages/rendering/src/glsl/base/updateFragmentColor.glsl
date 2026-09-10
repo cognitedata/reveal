@@ -13,11 +13,13 @@
 #include tonemapping.glsl;
 #include ../math/colorSpaceConversion.glsl;
 #include dither.glsl;
+#include ../sector/primitives/newMatCap.glsl
 
 #include <packing>
 
 // Runtime toggle/strength for the output dither (see below). 1.0 = on, 0.0 = off.
 uniform float dithering;
+
 // Runtime toggle between the new PBR lighting path (>0.5) and the original
 // pre-hackathon albedo path (<=0.5), for easy A/B comparison.
 uniform float usePbr;

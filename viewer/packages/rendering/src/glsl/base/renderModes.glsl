@@ -8,3 +8,4 @@ const int RenderTypeGhost = 7;
 const int RenderTypeLOD = 8;
 const int RenderTypeDepthBufferOnly = 9;
 const int RenderTypeGeometryType = 10;
+const int RenderTypeBillboardsOnly = 11;

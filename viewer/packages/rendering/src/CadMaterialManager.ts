@@ -20,6 +20,7 @@ import {
 import type { IndexSet } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
+import { createLowPassFilteredTexture } from './utilities/lowPassFilterTexture';
 
 import { assert } from '@reveal/utilities/assert';
 
@@ -30,6 +31,8 @@ export type CadMaterial = {
   nodeAppearanceTextureBuilder: NodeAppearanceTextureBuilder;
   nodeTransformTextureBuilder: NodeTransformTextureBuilder;
   matCapTexture: Texture;
+  skyBoxTexture?: Texture; // Equirectangular
+  skyBoxLowPassTexture?: Texture; // Low-pass filtered copy of skyBoxTexture
   clippingPlanesProvider: ClippingPlanesProvider;
 };
 
@@ -54,6 +57,15 @@ export class CadMaterialManager {
     return this._needsRedraw;
   }
 
+  /**
+   * A cheaply blurred, low-pass filtered copy of the skybox texture, regenerated whenever
+   * {@link setSkyBoxTexture} is called. Intended for e.g. rough/diffuse-looking reflections
+   * that shouldn't pick up the sharp detail of the source skybox.
+   */
+  get skyBoxLowPassTexture(): Texture | undefined {
+    return this._skyboxLowPassTexture;
+  }
+
   private _renderMode: RenderMode = RenderMode.Color;
   private _ditheringStrength: number = 1.0;
   private _pbrEnabled: boolean = true;
@@ -61,32 +73,24 @@ export class CadMaterialManager {
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
   private _needsRedraw: boolean = false;
+  private _skyboxTexture: Texture | undefined;
+  private _skyboxLowPassTexture: Texture | undefined;
 
   addModelMaterials(modelIdentifier: symbol, cadMaterial: CadMaterial): void {
-    const {
-      materials,
-      matCapTexture,
-      nodeAppearanceProvider,
-      nodeAppearanceTextureBuilder,
-      nodeTransformProvider,
-      nodeTransformTextureBuilder,
-      clippingPlanesProvider
-    } = cadMaterial;
+    const { materials, nodeTransformProvider, clippingPlanesProvider } = cadMaterial;
 
     const updateTransformsCallback = () => this.updateTransforms(modelIdentifier);
 
     nodeTransformProvider.on('changed', updateTransformsCallback);
 
-    this.materialsMap.set(modelIdentifier, {
-      materials,
-      nodeAppearanceProvider,
-      nodeTransformProvider,
-      nodeAppearanceTextureBuilder,
-      nodeTransformTextureBuilder,
-      updateTransformsCallback,
-      matCapTexture,
-      clippingPlanesProvider
-    });
+    // Mutate and reuse the same object the caller holds onto (e.g. CadMeshManager/CadNode) instead of
+    // spreading its fields into a fresh object. This way, later calls to setSkyBoxTexture() stay visible
+    // to whoever kept a reference to `cadMaterial`, instead of only updating a disconnected copy.
+    cadMaterial.skyBoxTexture = this._skyboxTexture;
+    cadMaterial.skyBoxLowPassTexture = this._skyboxLowPassTexture;
+    const wrapper: MaterialsWrapper = Object.assign(cadMaterial, { updateTransformsCallback });
+
+    this.materialsMap.set(modelIdentifier, wrapper);
 
     clippingPlanesProvider.on('changed', () => {
       this.updateClippingPlanesForModel(modelIdentifier);
@@ -96,6 +100,8 @@ export class CadMaterialManager {
     const colorWrite = this._renderMode !== RenderMode.DepthBufferOnly;
     forEachMaterial(materials, material => {
       material.uniforms.renderMode.value = this._renderMode;
+      material.uniforms.skyboxTexture.value = this._skyboxTexture;
+      material.uniforms.skyboxLowPassTexture.value = this._skyboxLowPassTexture;
       material.colorWrite = colorWrite;
       material.uniforms.dithering.value = this._ditheringStrength;
       material.uniforms.usePbr.value = this._pbrEnabled ? 1.0 : 0.0;
@@ -205,6 +211,10 @@ export class CadMaterialManager {
     return wrapper.nodeAppearanceTextureBuilder.visibleNodeTreeIndices;
   }
 
+  getRenderMode(): RenderMode {
+    return this._renderMode;
+  }
+
   setRenderMode(mode: RenderMode): void {
     this._renderMode = mode;
     const colorWrite = mode !== RenderMode.DepthBufferOnly;
@@ -214,7 +224,7 @@ export class CadMaterialManager {
     });
   }
 
-  getRenderMode(): RenderMode {
+  RenderMode(): RenderMode {
     return this._renderMode;
   }
 
@@ -260,6 +270,7 @@ export class CadMaterialManager {
       wrapper.nodeTransformTextureBuilder.dispose();
       wrapper.nodeAppearanceProvider.dispose();
     }
+    this._skyboxLowPassTexture?.dispose();
   }
 
   private updateClippingPlanesForModel(modelIdentifier: symbol) {
@@ -346,8 +357,27 @@ export class CadMaterialManager {
       materialData.nodeTransformTextureBuilder.overrideTransformIndexTexture,
       materialData.nodeTransformTextureBuilder.transformLookupTexture,
       materialData.matCapTexture,
+      this._skyboxTexture,
+      this._skyboxLowPassTexture,
       this._renderMode
     );
+  }
+
+  public setSkyBoxTexture(texture: Texture | undefined): void {
+    this._skyboxTexture = texture;
+
+    this._skyboxLowPassTexture?.dispose();
+    this._skyboxLowPassTexture = texture !== undefined ? createLowPassFilteredTexture(texture) : undefined;
+
+    for (const wrapper of this.materialsMap.values()) {
+      wrapper.skyBoxTexture = texture;
+      wrapper.skyBoxLowPassTexture = this._skyboxLowPassTexture;
+    }
+    this.applyToAllMaterials(material => {
+      material.uniforms.skyboxTexture.value = texture;
+      material.uniforms.skyboxLowPassTexture.value = this._skyboxLowPassTexture;
+    });
+    this._needsRedraw = true;
   }
 }
 

@@ -1,6 +1,29 @@
-// Relies on updateFragmentColor.glsl (included before this file by the fragment
-// shader) to provide `outputColor` and, transitively via worldSpaceVectors.glsl,
-// the world-space lighting helpers (computeWorldSpaceVectors, g_world*).
+
+// uniform sampler2D skyboxTexture;
+// uniform sampler2D skyboxLowPassTexture;
+
+vec2 equirectangularUV(vec3 direction) {
+	// float PI = 3.1415;
+	float equirectangularU = atan(direction.y, direction.x) / (2.0 * PI) + 0.5;
+	float equirectangularV = asin(direction.z) / PI + 0.5;
+	return vec2(equirectangularU, equirectangularV);
+}
+
+
+vec3 sampleDirection(sampler2D tex, vec3 direction) {
+	vec3 sectorNormal = g_worldNormal;
+	vec3 sectorPosition = g_worldPosition;
+	vec3 sectorCameraPosition = g_worldCameraPosition;
+
+	vec3 sectorRayDirection = normalize(sectorPosition - sectorCameraPosition);
+
+	vec3 reflectionRay = reflect(sectorRayDirection, sectorNormal);
+
+	vec2 specularEquiUv = equirectangularUV(reflectionRay);
+	vec2 diffuseEquiUv = equirectangularUV(sectorNormal);
+
+	return texture(tex, specularEquiUv).rgb;
+}
 
 vec3 matCapFunc(vec3 direction) {
 	vec3 sunlightDirection = normalize(vec3(0.2, 0.5, 1.0));
@@ -17,21 +40,36 @@ vec3 matCapFunc(vec3 direction) {
 }
 
 
-vec3 newMatCap(vec3 normal, vec3 viewPosition, mat4 modelViewMatrix, sampler2D matCapTexture) {
-	// The world-space vectors are computed in the helper and exposed as globals
-	// (g_worldNormal, g_worldReflection, ...).
-	computeWorldSpaceVectors(normal, viewPosition, modelViewMatrix);
+vec3 newMatCap(vec3 normal, vec3 viewPosition, sampler2D matCapTexture) {
+	vec3 sectorNormal = g_worldNormal;
+	vec3 sectorPosition = g_worldPosition;
+	vec3 sectorCameraPosition = g_worldCameraPosition;
 
-	// Matcap
-	vec2 cap = g_worldReflection.xy * 0.5 + 0.5;
-	vec4 mc = vec4(texture(matCapTexture, cap).rgb, 1.0);
-	vec3 matCapValue = matCapFunc(g_worldNormal);
+	vec3 sectorRayDirection = normalize(sectorPosition - sectorCameraPosition);
 
-	// outputColor = vec4(max(0.0, g_worldReflection.z) * vec3(1.0), 1.0);
-	outputColor.xyz = matCapValue;
-	// outputColor.xyz = g_worldNormal;
+	vec3 reflectionRay = reflect(sectorRayDirection, sectorNormal);
 
-	return g_worldReflection;
+	vec2 specularEquiUv = equirectangularUV(reflectionRay);
+	vec2 diffuseEquiUv = equirectangularUV(sectorNormal);
+
+	vec4 skyboxSpecularSample = texture(skyboxTexture, specularEquiUv);
+	vec4 skyboxDiffuseSample = texture(skyboxLowPassTexture, diffuseEquiUv);
+
+	float specularStrength = 0.3;
+
+	vec4 result = skyboxSpecularSample * specularStrength + skyboxDiffuseSample * (1.0 - specularStrength);
+
+	if (result == vec4(0.0)) {
+		// Matcap
+		vec2 cap = reflectionRay.xy * 0.5 + 0.5;
+		vec4 matcapTextureValue = texture(matCapTexture, cap);
+		// vec3 matCapValue = matCapFunc(reflectionRay);
+
+		// outputColor = vec4(max(0.0, reflectionRay.z) * vec3(1.0), 1.0);
+		result = matcapTextureValue;
+		// outputColor.xyz = matCapValue;
+	}
+	// outputColor.xyz = sectorNormal;
+
+	return result.rgb;
 }
-
-vec3 pbr_ish() { return vec3(0.0); }

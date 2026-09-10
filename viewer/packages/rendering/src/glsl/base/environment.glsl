@@ -50,11 +50,16 @@
 // the analytic directional light is dropped (see updateFragmentColor.glsl) to
 // avoid double-counting it.
 // ---------------------------------------------------------------------------
+#define ENV_MAP_TEXTURES
+
 #ifdef ENV_MAP_TEXTURES
-uniform sampler2D tEnvSpecular;
-uniform sampler2D tEnvIrradiance;
+uniform sampler2D skyboxTexture;
+uniform sampler2D skyboxLowPassTexture;
 uniform float envMapIntensity;
 uniform float envLdrToHdr;
+
+
+#include ../sector/primitives/newMatCap.glsl;
 
 // >>> ADJUST HERE: EQUIRECTANGULAR MAPPING CONVENTION <<<
 // Equirectangular UV for a direction in model/sector space (+Z up). ADJUST TO
@@ -62,7 +67,7 @@ uniform float envLdrToHdr;
 vec2 equirectUv(vec3 dir) {
     vec3 d = normalize(dir);
     float u = atan(d.y, d.x) / PI2 + 0.5;
-    float v = acos(clamp(d.z, -1.0, 1.0)) / PI;
+    float v = asin(clamp(d.z, -1.0, 1.0)) / PI + 0.5;
     return vec2(u, v);
 }
 
@@ -76,6 +81,9 @@ vec3 envLdrToHdrExpand(vec3 c) {
 
 // >>> DROP-IN: THIS IS THE FUNCTION THAT ACTUALLY SAMPLES THE IBL TEXTURES <<<
 vec3 sampleEnvMap(sampler2D tex, vec3 dir) {
+	return sampleDirection(tex, dir);
+
+	// return texture(tex, equirectUv(dir)).rgb;
     vec3 c = texture(tex, equirectUv(dir)).rgb;
     if (envLdrToHdr > 0.0) {
         c = envLdrToHdrExpand(c);
@@ -106,7 +114,7 @@ vec3 surfaceEnvironment(vec3 rd) {
 // roughness blur below is layered on top of it.
 vec3 envRadiance(vec3 rd) {
 #ifdef ENV_MAP_TEXTURES
-    return sampleEnvMap(tEnvSpecular, rd);
+    return sampleEnvMap(skyboxTexture, rd);
 #else
     return surfaceEnvironment(rd);
 #endif
@@ -132,7 +140,7 @@ void envBasis(vec3 n, out vec3 t, out vec3 b) {
 // Works on whichever radiance source `envRadiance` provides (procedural sky or
 // the specular texture). NOTE: this in-shader ring blur is a stand-in for a
 // proper prefiltered mip chain - once a mip chain is available, replace the body
-// with a single textureLod(tEnvSpecular, ..., roughness * maxMip).
+// with a single textureLod(skyboxTexture, ..., roughness * maxMip).
 vec3 roughEnvironment(vec3 R, float roughness) {
     if (roughness <= 0.02) {
         return envRadiance(R);
@@ -180,7 +188,7 @@ vec3 ambientLight(vec3 N) {
 // Procedural hemisphere by default; the irradiance texture when available.
 vec3 environmentIrradiance(vec3 N) {
 #ifdef ENV_MAP_TEXTURES
-    return sampleEnvMap(tEnvIrradiance, N);
+    return sampleEnvMap(skyboxLowPassTexture, N);
 #else
     return ambientLight(N);
 #endif
@@ -191,7 +199,7 @@ vec3 environmentIrradiance(vec3 N) {
 // roughness. With no prefiltered mip chain yet, the roughness blur is
 // approximated in-shader (roughEnvironment). WHEN A PREFILTERED MIP CHAIN
 // EXISTS, REPLACE THE BODY WITH e.g.:
-//     return textureLod(tEnvSpecular, equirectUv(R), roughness * MAX_ENV_MIP).rgb * envMapIntensity;
+//     return textureLod(skyboxTexture, equirectUv(R), roughness * MAX_ENV_MIP).rgb * envMapIntensity;
 vec3 environmentSpecular(vec3 R, float roughness) {
     return roughEnvironment(R, roughness);
 }

@@ -129,6 +129,11 @@ export function Viewer() {
 
       // Prepare viewer
       viewer = new Cognite3DViewer<DataSourceType>(viewerOptions);
+
+      const loader = new THREE.TextureLoader();
+      const skyboxTexture = await loader.loadAsync('/skybox_to_equirect_2.png');
+
+      viewer.setSkyBoxEquirectangularTexture(skyboxTexture);
       (window as any).viewer = viewer;
 
       // Add Stats.js overlay with FPS etc

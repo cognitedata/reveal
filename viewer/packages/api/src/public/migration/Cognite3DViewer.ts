@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type { Object3D, PerspectiveCamera, Plane } from 'three';
+import type { Object3D, PerspectiveCamera, Plane, Texture } from 'three';
 import { Box3, Clock, Color, Matrix4, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
@@ -2112,6 +2112,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         break;
       }
     }
+  }
+
+  public setSkyBoxEquirectangularTexture(texture: Texture) {
+    this._revealManagerHelper.revealManager.materialManager.setSkyBoxTexture(texture);
   }
 
   /** @private */

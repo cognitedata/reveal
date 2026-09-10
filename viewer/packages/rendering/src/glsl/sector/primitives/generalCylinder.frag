@@ -7,7 +7,7 @@ precision highp float;
 #include ../../base/isClipped.glsl;
 #include ../../treeIndex/treeIndexPacking.glsl;
 #include ../../math/constants.glsl;
-#include ./newMatCap.glsl;
+// #include ./newMatCap.glsl;
 
 // TODO general cylinder and cone are very similar and used
 // the same shader in the old code. Consider de-duplicating

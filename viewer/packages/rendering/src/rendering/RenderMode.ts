@@ -12,5 +12,6 @@ export enum RenderMode {
   Ghost,
   LOD,
   DepthBufferOnly,
-  GeometryType
+  GeometryType,
+  BillboardsOnly = 11
 }

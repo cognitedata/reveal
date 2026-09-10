@@ -250,6 +250,8 @@ export function createMaterials(
       transformOverrideIndexTexture,
       transformOverrideLookupTexture,
       matCapTexture,
+      undefined,
+      undefined,
       RenderMode.Color
     )
   );
@@ -265,6 +267,8 @@ export function initializeDefinesAndUniforms(
   transformOverrideIndexTexture: DataTexture,
   transformOverrideTexture: DataTexture,
   matCapTexture: Texture,
+  skyboxTexture: Texture | undefined,
+  skyboxLowPassTexture: Texture | undefined,
   renderMode: RenderMode
 ): void {
   const treeIndexTextureSize = new Vector2(
@@ -308,6 +312,12 @@ export function initializeDefinesAndUniforms(
       },
       usePbr: {
         value: 1.0
+      },
+      skyboxTexture: {
+        value: skyboxTexture
+      },
+      skyboxLowPassTexture: {
+        value: skyboxLowPassTexture
       }
     }
   });

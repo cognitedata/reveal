@@ -95,6 +95,8 @@ export class CadMeshManager {
       cadMaterial.nodeTransformTextureBuilder.overrideTransformIndexTexture,
       cadMaterial.nodeTransformTextureBuilder.transformLookupTexture,
       cadMaterial.matCapTexture,
+      cadMaterial.skyBoxTexture,
+      cadMaterial.skyBoxLowPassTexture,
       RenderMode.Color
     );
 
