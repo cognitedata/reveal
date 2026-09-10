@@ -1,10 +1,9 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
-const logger = require('webpack-log')('example');
 require('dotenv').config({ path: './.env' });
 
-logger.info(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS);
+console.log(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS);
 
 module.exports = {
   entry: './src/index.tsx',
