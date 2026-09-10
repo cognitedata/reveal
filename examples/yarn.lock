@@ -6,11 +6,11 @@ __metadata:
   cacheKey: 10
 
 "@azure/msal-browser@npm:^5.0.0":
-  version: 5.20.0
-  resolution: "@azure/msal-browser@npm:5.20.0"
+  version: 5.21.0
+  resolution: "@azure/msal-browser@npm:5.21.0"
   dependencies:
     "@azure/msal-common": "npm:16.14.0"
-  checksum: 10/40333d0c247bc45b4eb86c8d13bdc8b16c980840ce5e70c124f5e6d0215a14efb8a159217d470ce09ce5fad07d661b00ea06b4bb1de8726db673a0ad54095ceb
+  checksum: 10/0fef1fed0ccb2bac90aa858e089b11171bf7733fd5c16732c58b03b5afac9b99a5ae876c3e0cd8511ff62e50b8e8833c80435e154b1b85f236d03202ac50fa8d
   languageName: node
   linkType: hard
 
@@ -31,7 +31,7 @@ __metadata:
     "@types/dat.gui": "npm:^0.7.5"
     "@types/lodash": "npm:^4.14.190"
     "@types/react": "npm:19.2.18"
-    "@types/react-dom": "npm:19.2.5"
+    "@types/react-dom": "npm:19.2.7"
     "@types/stats.js": "npm:^0.17.0"
     "@types/three": "npm:^0.185.0"
     buffer: "npm:^6.0.3"
@@ -76,25 +76,25 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@cognite/sdk-core@npm:^5.2.4":
-  version: 5.2.4
-  resolution: "@cognite/sdk-core@npm:5.2.4"
+"@cognite/sdk-core@npm:^5.2.5":
+  version: 5.2.5
+  resolution: "@cognite/sdk-core@npm:5.2.5"
   dependencies:
     cross-fetch: "npm:^3.1.8"
     lodash: "npm:^4.17.21"
-  checksum: 10/c9d96eb413134916df21f65a079464aef9a3721508f447d6b2cf18c3b359c186360d590cd7df14731ef7a253c04d2ee6a999db30f3c4f3e7aabd759d7f5ab8d2
+  checksum: 10/ebe23d937ad7821d4e11368f50882a2e0e86fbdeb911b9dd9838ce10dd95e35ca94850d3bb8f9044cc20710892f1d9eacf81786048b699f8c47791352f24d7a6
   languageName: node
   linkType: hard
 
 "@cognite/sdk@npm:^10.1.3":
-  version: 10.13.0
-  resolution: "@cognite/sdk@npm:10.13.0"
+  version: 10.14.0
+  resolution: "@cognite/sdk@npm:10.14.0"
   dependencies:
-    "@cognite/sdk-core": "npm:^5.2.4"
+    "@cognite/sdk-core": "npm:^5.2.5"
     "@types/geojson": "npm:^7946.0.14"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.21"
-  checksum: 10/b1db22068ede3ef3cc2bad926dbb9a385847dc8dd4c8cb408972fca867103560694599de62255b36cd3ed74740c519fdb938de6988065c1a2abdf34eb98d2cf9
+  checksum: 10/5e3e170298e4c34f7a41a25046a362f00b65f716d51554eebcbea1c7c8ad37ccc3642bb4d99ed99580655941055cd09117bcbd720171055173689777fd7b7bc3
   languageName: node
   linkType: hard
 
@@ -807,12 +807,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.2.5":
-  version: 19.2.5
-  resolution: "@types/react-dom@npm:19.2.5"
+"@types/react-dom@npm:19.2.7":
+  version: 19.2.7
+  resolution: "@types/react-dom@npm:19.2.7"
   peerDependencies:
     "@types/react": ^19.2.0
-  checksum: 10/e6b752ad923b70638a44bb537d2866bed98f08bba973bc2199365875c003abe1e5f0e5a6d73ba8778e97f13eca36fdb2ab47f530793238eff92e4df04df18f70
+  checksum: 10/84079ed3b5470b7fafe4478c9180c2b0f19f8c5aebe666091e1ee5bc15464acb248909553769bd338de5f508afe96fec353997aed0457bb0d3a1e6246bcafcb8
   languageName: node
   linkType: hard
 
