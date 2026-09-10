@@ -694,7 +694,6 @@ export class IconCollection {
 
     this._sceneHandler.removeObject3D(this._hoverSprite);
     this._hoverSprite.material.dispose();
-    this._hoverSprite.material.map?.dispose();
     this._hoverIconTexture.dispose();
 
     this._htmlRenderer?.dispose();
