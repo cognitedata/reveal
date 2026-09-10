@@ -2,24 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  CanvasTexture,
-  Color,
-  Texture,
-  Object3D,
-  Camera,
-  Vector2,
-  Raycaster,
-  WebGLRenderer,
-  Scene,
-  PerspectiveCamera
-} from 'three';
+import type { Texture, Camera, WebGLRenderer, Scene } from 'three';
+import { CanvasTexture, Color, Object3D, Vector2, Raycaster, PerspectiveCamera } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
-import { Overlay3D } from './Overlay3D';
+import type { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
-import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
-import minBy from 'lodash/minBy';
+import type { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
+import { minBy } from 'lodash-es';
 import { CameraChangeThrottler } from './CameraChangeThrottler';
 
 /**
@@ -38,6 +28,10 @@ export type Overlay3DCollectionOptions = {
    * The maximum display size of each icon in pixels
    */
   maxPointSize?: number;
+  /**
+   * The minimum display size of each icon in pixels
+   */
+  minPointSize?: number;
   /**
    * The default color to apply to overlay icons without a color on their own
    */
@@ -92,7 +86,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       {
         spriteTexture: this._sharedTextures.color,
         maskTexture: this._sharedTextures.mask,
-        minPixelSize: this.MinPixelSize,
+        minPixelSize: options?.minPointSize ?? this.MinPixelSize,
         maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
         radius: this._iconRadius
       },

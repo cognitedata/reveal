@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { Keyframe } from './Keyframe';
+import type { Keyframe } from './Keyframe';
 /**
  * Delegate for Timeline Date update
  */

@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Color, Vector3 } from 'three';
+import type { Color, Vector3 } from 'three';
 
 /**
  * Represents one 3d overlay

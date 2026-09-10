@@ -2,13 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
 
-import { AutoDisposeGroup } from '@reveal/utilities';
-
-import { SectorMetadata } from '../metadata/types';
-import { LevelOfDetail } from './LevelOfDetail';
-import { ParsedGeometry } from '@reveal/sector-parser';
+import type { SectorMetadata } from '../metadata/types';
+import type { LevelOfDetail } from './LevelOfDetail';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import type { ModelIdentifier } from '@reveal/data-providers';
 
 export type TriangleMesh = {
   readonly fileId: number;
@@ -35,18 +34,23 @@ export type InstancedMesh = {
 };
 
 export interface ConsumedSector {
-  modelIdentifier: string;
+  modelIdentifier: ModelIdentifier;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
-  group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
   geometryBatchingQueue?: ParsedGeometry[];
+  parsedMeshGeometries?: ParsedMeshGeometry[];
 }
 
 export interface WantedSector {
-  modelIdentifier: string;
+  modelIdentifier: ModelIdentifier;
   modelBaseUrl: string;
-  geometryClipBox: THREE.Box3 | null;
+  signedFilesBaseUrl: string | undefined;
+  geometryClipBox: Box3 | null;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }
+
+export type ParsedMeshGeometry = ParsedGeometry & {
+  wholeSectorBoundingBox: Box3;
+};

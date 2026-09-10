@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ClassicModelIdentifierType, DMModelIdentifierType } from '../DataSourceType';
+import type { ClassicModelIdentifierType, DMModelIdentifierType } from '../DataSourceType';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 export class DMModelIdentifier extends CdfModelIdentifier {
@@ -24,5 +24,9 @@ export class DMModelIdentifier extends CdfModelIdentifier {
 
   public toString(): string {
     return `${DMModelIdentifier.name} (${String(this.revealInternalId)})`;
+  }
+
+  public sourceModelIdentifier(): string {
+    return `cdf-dm: ${this.revisionSpace}/${this.revisionExternalId}`;
   }
 }

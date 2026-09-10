@@ -2,7 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Raycaster, Vector3, Scene, Ray, Spherical, Vector2 } from 'three';
+import type { PerspectiveCamera, Scene, Ray, Vector2 } from 'three';
+import { Box3, Raycaster, Vector3, Spherical } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -17,15 +18,15 @@ import {
   getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
-import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
+import type { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
 import { CameraManagerHelper } from './../CameraManagerHelper';
-import { CameraManager } from './../CameraManager';
+import type { CameraManager } from './../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraPositionAndTargetTo } from './moveCamera';
-import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
-import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
+import type { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
+import type { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 

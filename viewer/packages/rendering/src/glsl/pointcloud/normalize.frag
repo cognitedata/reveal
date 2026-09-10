@@ -4,7 +4,7 @@ uniform sampler2D tDepth;
 uniform sampler2D tDiffuse;
 
 #if defined(use_edl)
-	#pragma glslify: import('./edl.glsl');
+	#include edl.glsl;
 
 	uniform float screenWidth;
 	uniform float screenHeight;
@@ -17,7 +17,7 @@ uniform sampler2D tDiffuse;
 	#endif
 #endif
 
-#define EDL_STRENGTH_FACTOR 300.0
+#define EDL_STRENGTH_FACTOR 400.0
 
 in vec2 vUv;
 

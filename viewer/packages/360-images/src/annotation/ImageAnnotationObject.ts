@@ -2,24 +2,34 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationsObjectDetection, AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
-import { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
+import type {
+  AnnotationsObjectDetection,
+  AnnotationsTypesImagesAssetLink,
+  AnnotationsTypesImagesInstanceLink,
+  AnnotationsTypesPrimitivesGeometry2DGeometry
+} from '@cognite/sdk';
+import type { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
 
-import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D, Group, Raycaster } from 'three';
-import { ImageAnnotationObjectGeometryData } from './geometry/ImageAnnotationGeometryData';
+import type { Object3D, Raycaster } from 'three';
+import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Group } from 'three';
+import type { ImageAnnotationObjectGeometryData } from './geometry/ImageAnnotationGeometryData';
 import { BoxAnnotationGeometryData } from './geometry/BoxAnnotationGeometryData';
 import { PolygonAnnotationGeometryData } from './geometry/PolygonAnnotationGeometryData';
-import { Image360Annotation } from './Image360Annotation';
-import { Image360AnnotationAppearance } from './types';
+import type { Image360Annotation } from './Image360Annotation';
+import type { Image360AnnotationAppearance } from './types';
 
 type FaceType = Image360FileDescriptor['face'];
 
 import { VariableWidthLine } from '@reveal/utilities';
 import { DmMesh3dAnnotationGeometryData } from './geometry/DmMesh3dAnnotationGeometryData';
-import { isAnnotationAssetLink, isAnnotationsObjectDetection, isCoreDmImage360Annotation } from './typeGuards';
+import {
+  isAnnotationsObjectDetection,
+  isCoreDmImage360Annotation,
+  isImageAssetLinkAnnotation,
+  isImageInstanceLinkAnnotation
+} from './typeGuards';
 
 const DEFAULT_ANNOTATION_COLOR = new Color(0.8, 0.8, 0.3);
-
 export class ImageAnnotationObject<T extends DataSourceType> implements Image360Annotation<T> {
   private readonly _annotation: T['image360AnnotationType'];
 
@@ -58,19 +68,20 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     }
 
     const annotationType = annotation.annotationType;
-    const detection = annotation.data;
 
-    if (isAnnotationsObjectDetection(annotationType, detection)) {
-      return this.createObjectDetectionAnnotationGeometry(detection);
-    } else if (isAnnotationAssetLink(annotationType, detection)) {
-      return this.createAssetLinkAnnotationData(detection);
+    if (isAnnotationsObjectDetection(annotationType, annotation.data)) {
+      return this.createObjectDetectionAnnotationGeometry(annotation.data);
+    } else if (isImageAssetLinkAnnotation(annotation)) {
+      return this.createAssetLinkAnnotationData(annotation.data);
+    } else if (isImageInstanceLinkAnnotation(annotation)) {
+      return this.createInstanceLinkAnnotationData(annotation.data);
     } else {
       return undefined;
     }
   }
 
   private static createObjectDetectionAnnotationGeometry(
-    detection: AnnotationsObjectDetection
+    detection: AnnotationsObjectDetection | AnnotationsTypesPrimitivesGeometry2DGeometry
   ): ImageAnnotationObjectGeometryData | undefined {
     if (detection.polygon !== undefined) {
       return new PolygonAnnotationGeometryData(detection.polygon);
@@ -89,13 +100,17 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
       return new BoxAnnotationGeometryData(assetLink.textRegion);
     }
 
-    if (objectRegion.polygon !== undefined) {
-      return new PolygonAnnotationGeometryData(objectRegion.polygon);
-    } else if (objectRegion.boundingBox !== undefined) {
-      return new BoxAnnotationGeometryData(objectRegion.boundingBox);
-    } else {
-      return undefined;
+    return this.createObjectDetectionAnnotationGeometry(objectRegion);
+  }
+
+  private static createInstanceLinkAnnotationData(
+    instanceLink: AnnotationsTypesImagesInstanceLink
+  ): ImageAnnotationObjectGeometryData | undefined {
+    const objectRegion = instanceLink.objectRegion;
+    if (objectRegion === undefined) {
+      return new BoxAnnotationGeometryData(instanceLink.textRegion);
     }
+    return this.createObjectDetectionAnnotationGeometry(objectRegion);
   }
 
   private static createFdmAnnotationData(
@@ -147,9 +162,11 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     const rotationMatrix = face === undefined ? new Matrix4().identity() : this.getRotationFromFace(face);
 
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
-    this._objectGroup.matrix = transformation;
+    this._objectGroup.matrix.copy(transformation);
     this._objectGroup.matrixAutoUpdate = false;
+    this._objectGroup.matrixWorldNeedsUpdate = true;
     this._objectGroup.updateWorldMatrix(false, true);
+    this._objectGroup.matrixWorldNeedsUpdate = true;
   }
 
   public getObject(): Object3D {

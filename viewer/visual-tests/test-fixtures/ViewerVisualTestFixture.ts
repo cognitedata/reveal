@@ -1,13 +1,13 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Cognite3DViewer, CogniteModel } from '../../packages/api';
-import { VisualTestFixture } from './VisualTestFixture';
+import type { Cognite3DViewer, CogniteModel } from '../../packages/api';
+import type { VisualTestFixture } from './VisualTestFixture';
 import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
 import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
-import * as THREE from 'three';
+import { WebGLRenderer } from 'three';
 
 export type ViewerTestFixtureComponents = {
   viewer: Cognite3DViewer;
@@ -17,11 +17,11 @@ export type ViewerTestFixtureComponents = {
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   private readonly _localModelUrls: string[];
   private _viewer!: Cognite3DViewer;
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
 
   constructor(...localModelUrls: string[]) {
     this._localModelUrls = localModelUrls.length > 0 ? localModelUrls : ['primitives'];
-    this._renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
+    this._renderer = new WebGLRenderer({ powerPreference: 'high-performance' });
     this._renderer.setPixelRatio(window.devicePixelRatio);
   }
 
@@ -34,9 +34,9 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
     const models = await addModels(this._viewer, this._localModelUrls);
     new AxisViewTool(this._viewer);
 
-    this._viewer.fitCameraToModel(models[0]);
+    this._viewer.fitCameraToModel(models[0], 0);
 
-    await this.modelLoaded(models[0], modelLoadedPromise);
+    await Promise.all(models.map(model => this.modelLoaded(model, modelLoadedPromise)));
 
     await this.setup({ viewer: this._viewer, models });
 

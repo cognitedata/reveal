@@ -9,7 +9,7 @@ describe('PromiseUtils', () => {
   describe('raceUntilAllCompleted', () => {
     test('Empty list, returns no elements', async () => {
       const results = await asyncIteratorToArray(PromiseUtils.raceUntilAllCompleted<number>([]));
-      expect(results).toBeEmpty();
+      expect(results).toHaveLength(0);
     });
 
     test('Single item list', async () => {

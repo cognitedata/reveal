@@ -2,11 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
+import type { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
 
 import { WellKnownAsprsPointClassCodes } from './types';
 
-import { PointCloudMaterial, PointClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
+import type { PointCloudMaterial, PointClassification } from '@reveal/rendering';
+import { DEFAULT_CLASSIFICATION } from '@reveal/rendering';
 import { createDistinctColors } from '@reveal/utilities';
 
 import { Color, Vector4 } from 'three';

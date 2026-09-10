@@ -1,21 +1,21 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Plane, Vector3 } from 'three';
 
 import { CogniteCadModel } from '@reveal/cad-model';
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+import type { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import {
   fromSerializableNodeAppearance,
   NodeCollectionDeserializer,
   toSerializableNodeAppearance
 } from '@reveal/cad-styling';
 
-import { CameraManager } from '@reveal/camera-manager';
+import type { CameraManager } from '@reveal/camera-manager';
 
-import { CogniteClient } from '@cognite/sdk';
-import { SerializableNodeAppearance } from '@reveal/cad-styling/src/NodeAppearance';
-import { DataSourceType } from '@reveal/data-providers';
+import type { CogniteClient } from '@cognite/sdk';
+import type { SerializableNodeAppearance } from '@reveal/cad-styling/src/NodeAppearance';
+import type { DataSourceType } from '@reveal/data-providers';
 
 export type ViewerState = {
   camera?: {
@@ -121,8 +121,8 @@ export class ViewStateHelper<T extends DataSourceType> {
     const camTarget = cameraState.target;
 
     this._cameraManager.setCameraState({
-      position: new THREE.Vector3(camPos.x, camPos.y, camPos.z),
-      target: new THREE.Vector3(camTarget.x, camTarget.y, camTarget.z)
+      position: new Vector3(camPos.x, camPos.y, camPos.z),
+      target: new Vector3(camTarget.x, camTarget.y, camTarget.z)
     });
   }
 
@@ -163,7 +163,7 @@ export class ViewStateHelper<T extends DataSourceType> {
   }
 
   private setClippingPlanesState(clippingPlanes: ClippingPlanesState[]) {
-    const planes = clippingPlanes.map(p => new THREE.Plane().setComponents(p.nx, p.ny, p.nz, p.constant));
+    const planes = clippingPlanes.map(p => new Plane().setComponents(p.nx, p.ny, p.nz, p.constant));
     this._viewer.setGlobalClippingPlanes(planes);
   }
 }

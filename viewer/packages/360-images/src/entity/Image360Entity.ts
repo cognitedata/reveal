@@ -2,23 +2,25 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { DataSourceType, Image360Provider } from '@reveal/data-providers';
-import { Image360 } from './Image360';
-import {
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { Image360Provider } from '../providers/Image360Provider';
+import type { Image360 } from './Image360';
+import type {
   Historical360ImageSet,
   Image360RevisionDescriptor,
   Image360RevisionId
 } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
-import minBy from 'lodash/minBy';
+import { minBy } from 'lodash-es';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Color, Matrix4, type Raycaster } from 'three';
+import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { Color, Matrix4 } from 'three';
+import { type Raycaster } from 'three';
 
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash-es';
 
 export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   private readonly _revisions: Image360RevisionEntity<T>[];
@@ -79,14 +81,20 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
     annotationFilterer: Image360AnnotationFilter,
     transform: Matrix4,
     icon: Overlay3DIcon,
-    device: DeviceDescriptor
+    device: DeviceDescriptor,
+    requestRedraw: () => void = () => {}
   ) {
     this._modelTransform = transform;
     this._worldTransform = transform.clone();
     this._image360Icon = icon;
     this._imageMetadata = image360Metadata;
 
-    this._image360VisualizationBox = new Image360VisualizationBox(this._modelTransform, sceneHandler, device);
+    this._image360VisualizationBox = new Image360VisualizationBox(
+      this._modelTransform,
+      sceneHandler,
+      device,
+      requestRedraw
+    );
     this._image360VisualizationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(

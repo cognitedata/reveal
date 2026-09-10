@@ -3,12 +3,11 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:serve --env testFixture=Rendering.VisualTest.ts",
-    "test": "yarn ws:test --config ./../../jest.config.js",
-    "lint": "yarn ws:lint"
+    "start": "pnpm -w run ws:serve",
+    "test": "vitest run --config ./../../vitest.config.ts",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
-    "@reveal/cad-model": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
@@ -17,10 +16,5 @@
     "@reveal/pointcloud-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },
-  "sideEffects": false,
-  "glslify": {
-    "transform": [
-      "glslify-import"
-    ]
-  }
+  "sideEffects": false
 }

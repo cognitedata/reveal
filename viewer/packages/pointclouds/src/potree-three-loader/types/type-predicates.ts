@@ -1,6 +1,6 @@
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
-import { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
+import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import type { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
 
 export function isGeometryNode(node?: any): node is IPointCloudTreeGeometryNode {
   return node !== undefined && node !== null && node.isGeometryNode;

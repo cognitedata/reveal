@@ -2,15 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
 
-import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
+import type { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { HttpError } from '@cognite/sdk';
 import { toThreeBox3 } from '@reveal/utilities';
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
-import { NodesApiClient } from './NodesApiClient';
-import { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';
+import type { NodesApiClient } from './NodesApiClient';
+import type { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';
 
 export class NodesCdfClient implements NodesApiClient {
   private static readonly MaxItemsPerRequest = 1000;
@@ -83,7 +84,7 @@ export class NodesCdfClient implements NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<THREE.Box3[]> {
+  ): Promise<Box3[]> {
     const chunks = chunkInputItems(nodeIds, NodesCdfClient.MaxItemsPerRequest);
     const mappedBoundingBoxPromises = [...chunks].map(async chunk => {
       return this._client.revisions3D.retrieve3DNodes(

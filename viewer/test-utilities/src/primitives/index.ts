@@ -2,8 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export {
-  PrimitiveName,
+export type {
   CommonAttributes,
   Box,
   Circle,
@@ -16,9 +15,9 @@ export {
   Torus,
   Trapezium,
   Nut,
-  Primitive,
-  getCollectionType
+  Primitive
 } from './internal/types';
+export { PrimitiveName, getCollectionType } from './internal/types';
 
 export {
   createPrimitiveInterleavedGeometriesSharingBuffer,

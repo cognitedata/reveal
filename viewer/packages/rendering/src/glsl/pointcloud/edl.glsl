@@ -4,7 +4,7 @@
 
 #define MAX_FLOAT 3.402823466e+38
 
-#pragma glslify: import('../base/pointSizeRelativeToScreen.glsl');
+#include ../base/pointSizeRelativeToScreen.glsl;
 
 vec2 calculateObscurance(float depth, float screenWidth, float screenHeight, vec2 neighbours[NEIGHBOUR_COUNT],
 	float radius, vec2 vUv, sampler2D depthTexture, sampler2D logDepthTexture) {

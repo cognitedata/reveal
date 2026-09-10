@@ -1,6 +1,6 @@
 precision highp float;
 
-#pragma glslify: import('../math/rand2d.glsl')
+#include ../math/rand2d.glsl;
 
 uniform mat4 projMatrix;
 uniform mat4 inverseProjectionMatrix;
@@ -32,7 +32,7 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
   float dy = 1.0 / resolution.y;
 
   vec2 uv1 = uv + vec2(dx, 0.0); // right
-  float d1 = texture(depthTexture, uv1).r; 
+  float d1 = texture(depthTexture, uv1).r;
 
   vec2 uv2 = uv + vec2(0.0, dy);  // up
   float d2 = texture(depthTexture, uv2).r;

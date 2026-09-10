@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
+import { PointCloudAnnotationVolumeCollection } from '@reveal/data-providers';
 
 /**
  * A simple PointCloudAnnotationVolumeCollection that consists of an explicitly provided list of annotation IDs

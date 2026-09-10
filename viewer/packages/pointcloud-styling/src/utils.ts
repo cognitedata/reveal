@@ -2,8 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PointCloudDMVolumeCollection } from './PointCloudDMVolumeCollection';
-import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
+import type { PointCloudDMVolumeCollection, PointCloudAnnotationVolumeCollection } from '@reveal/data-providers';
 
 export function isPointCloudObjectCollection(
   collection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection

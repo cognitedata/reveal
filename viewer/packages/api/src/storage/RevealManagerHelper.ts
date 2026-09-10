@@ -1,28 +1,28 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
 
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
-import { RevealManager } from '../public/RevealManager';
-import { RevealOptions } from '../public/RevealOptions';
+import type { RevealManager } from '../public/RevealManager';
+import type { RevealOptions } from '../public/RevealOptions';
 
-import {
-  DummyPointCloudStylableObjectProvider,
-  DummyPointCloudDMStylableObjectProvider,
+import type {
   InternalDataSourceType,
   LocalDataSourceType,
   DataSourceType,
   AddModelOptionsWithModelRevisionId,
   LocalAddModelOptions
 } from '@reveal/data-providers';
-import { DataSource } from '@reveal/data-source';
-import { SceneHandler } from '@reveal/utilities';
+import { DummyPointCloudStylableObjectProvider, DummyPointCloudDMStylableObjectProvider } from '@reveal/data-providers';
+import type { DataSource } from '@reveal/data-source';
+import type { SceneHandler } from '@reveal/utilities';
 
-import { CadNode } from '@reveal/cad-model';
-import { CogniteClient } from '@cognite/sdk';
-import { PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
-import { CameraManager } from '@reveal/camera-manager';
+import type { CadNode } from '@reveal/cad-model';
+import type { CogniteClient } from '@cognite/sdk';
+import type { PointCloudNode } from '@reveal/pointclouds';
+import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
+import type { CameraManager } from '@reveal/camera-manager';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -74,7 +74,7 @@ export class RevealManagerHelper {
    * @param revealOptions
    */
   static createLocalHelper(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions
@@ -92,7 +92,7 @@ export class RevealManagerHelper {
    * @param sdkClient
    */
   static createCdfHelper(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions,
@@ -103,7 +103,7 @@ export class RevealManagerHelper {
   }
 
   static createCustomDataSourceHelper(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions,
@@ -140,7 +140,10 @@ export class RevealManagerHelper {
     model: AddModelOptionsWithModelRevisionId<LocalDataSourceType>,
     revealManager: RevealManager
   ): Promise<CadNode> {
-    return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
+    return revealManager.addModel('cad', model, {
+      geometryFilter: model.geometryFilter,
+      outputFormat: model.outputFormat
+    });
   }
 
   /**
@@ -152,7 +155,10 @@ export class RevealManagerHelper {
     model: AddModelOptionsWithModelRevisionId<T>,
     revealManager: RevealManager
   ): Promise<CadNode> {
-    return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
+    return revealManager.addModel('cad', model, {
+      geometryFilter: model.geometryFilter,
+      outputFormat: model.outputFormat
+    });
   }
 
   private static addLocalPointCloudModel<T extends DataSourceType>(

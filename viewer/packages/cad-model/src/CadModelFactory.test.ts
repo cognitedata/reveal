@@ -1,28 +1,32 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/data-providers';
+import type {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  BlobOutputMetadata
+} from '@reveal/data-providers';
+import { LocalModelIdentifier } from '@reveal/data-providers';
 
 import { It, Mock } from 'moq.ts';
-import { GeometryFilter } from './types';
+import type { GeometryFilter } from './types';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
-describe('CadModelFactory', () => {
+describe(CadModelFactory.name, () => {
   let materialManager: CadMaterialManager;
   let factory: CadModelFactory;
-  let mockIdentifierObject: ModelIdentifier;
+  let mockIdentifier: ModelIdentifier;
 
   beforeEach(() => {
     materialManager = new CadMaterialManager();
-
-    const mockIdentifier = new Mock<ModelIdentifier>().setup(p => p.revealInternalId).returns(Symbol('test'));
-    mockIdentifierObject = mockIdentifier.object();
+    mockIdentifier = new LocalModelIdentifier('test-model');
 
     const testOutput: BlobOutputMetadata = { blobId: 1, format: 'gltf-directory', version: 9 };
     const testBaseUrl = 'https://test-base-url';
@@ -44,14 +48,16 @@ describe('CadModelFactory', () => {
     };
 
     const modelMetadataProviderMock = new Mock<ModelMetadataProvider>()
-      .setup(p => p.getModelOutputs(mockIdentifierObject))
+      .setup(p => p.getModelOutputs(mockIdentifier))
       .returns(Promise.resolve([testOutput]))
-      .setup(p => p.getModelUri(mockIdentifierObject, testOutput))
+      .setup(p => p.getModelUri(mockIdentifier, testOutput))
       .returns(Promise.resolve(testBaseUrl))
-      .setup(p => p.getModelMatrix(mockIdentifierObject, testOutput.format))
-      .returns(Promise.resolve(new THREE.Matrix4()))
-      .setup(p => p.getModelCamera(mockIdentifierObject))
-      .returns(Promise.resolve({ position: new THREE.Vector3(), target: new THREE.Vector3(0, 0, 1) }));
+      .setup(p => p.getModelMatrix(mockIdentifier, testOutput.format))
+      .returns(Promise.resolve(new Matrix4()))
+      .setup(p => p.getModelCamera(mockIdentifier))
+      .returns(Promise.resolve({ position: new Vector3(), target: new Vector3(0, 0, 1) }))
+      .setup(p => p.getModelUriForSignedFiles!())
+      .returns('');
 
     const mock = new Mock<ModelDataProvider>()
       .setup(p => p.getJsonFile(testBaseUrl, It.IsAny<string>()))
@@ -61,26 +67,23 @@ describe('CadModelFactory', () => {
   });
 
   test('createModel() initializes model materials', async () => {
-    const addModelMaterialsSpy = jest.spyOn(materialManager, 'addModelMaterials');
-    const modelMetadata = await factory.loadModelMetadata(mockIdentifierObject);
-    const node = await factory.createModel(modelMetadata);
+    const addModelMaterialsSpy = vi.spyOn(materialManager, 'addModelMaterials');
+    const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
+    const node = factory.createModel(modelMetadata);
 
     expect(node).toBeTruthy();
-    expect(addModelMaterialsSpy).toBeCalledTimes(1);
+    expect(addModelMaterialsSpy).toHaveBeenCalledTimes(1);
   });
 
   test('createModel() sets model clipping planes when a clip box is set', async () => {
-    const setModelClippingPlanesSpy = jest.spyOn(materialManager, 'setModelClippingPlanes');
-
     const geometryFilter: GeometryFilter = {
-      boundingBox: new THREE.Box3(new THREE.Vector3(-1, -2, -3), new THREE.Vector3(4, 5, 6)),
+      boundingBox: new Box3(new Vector3(-1, -2, -3), new Vector3(4, 5, 6)),
       isBoundingBoxInModelCoordinates: true
     };
 
-    const modelMetadata = await factory.loadModelMetadata(mockIdentifierObject);
-    await factory.createModel(modelMetadata, geometryFilter);
+    const modelMetadata = await factory.loadModelMetadata(mockIdentifier);
+    const cadNode = factory.createModel(modelMetadata, geometryFilter);
 
-    expect(setModelClippingPlanesSpy).toBeCalledTimes(1);
-    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeString(), expect.toBeArrayOfSize(6));
+    expect(cadNode.clippingPlanes.length).equals(6);
   });
 });

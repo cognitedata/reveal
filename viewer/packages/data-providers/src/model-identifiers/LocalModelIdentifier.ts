@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ModelIdentifier } from '../ModelIdentifier';
+import type { ModelIdentifier } from '../ModelIdentifier';
 
 /**
  * Identifies a 3D model by a URL. This implementation is used for testing
@@ -19,5 +19,9 @@ export class LocalModelIdentifier implements ModelIdentifier {
 
   public toString(): string {
     return `${LocalModelIdentifier.name} (${this.localPath})`;
+  }
+
+  public sourceModelIdentifier(): string {
+    return `local: ${this.localPath}`;
   }
 }

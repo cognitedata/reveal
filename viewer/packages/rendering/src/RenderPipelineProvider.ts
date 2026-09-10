@@ -3,7 +3,7 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { RenderPass } from './RenderPass';
+import type { RenderPass } from './RenderPass';
 
 /**
  * Defines a provider that provides a set of renderpasses

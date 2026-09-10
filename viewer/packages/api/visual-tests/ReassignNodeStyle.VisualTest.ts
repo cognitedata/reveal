@@ -1,15 +1,13 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Euler, Matrix4 } from 'three';
 
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet } from '@reveal/utilities';
 import { CogniteCadModel } from '..';
-import {
-  ViewerTestFixtureComponents,
-  ViewerVisualTestFixture
-} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import type { ViewerTestFixtureComponents } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 function createAlternatingIndexSet(nodeCount: number): IndexSet {
   const indexSet = new IndexSet();
@@ -40,7 +38,7 @@ export default class ReassignNodeStyleVisualTest extends ViewerVisualTestFixture
       return Promise.resolve();
     }
 
-    const matrix = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 4, 0, 0));
+    const matrix = new Matrix4().makeRotationFromEuler(new Euler(Math.PI / 4, 0, 0));
     model.setModelTransformation(matrix);
 
     const alternatingIndexSet = createAlternatingIndexSet(model.nodeCount);

@@ -2,18 +2,20 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StylableObject } from './StylableObject';
-import { DMInstanceRef, IShape } from '@reveal/utilities';
+import type { StylableObject } from './StylableObject';
+import type { DMInstanceRef, IShape } from '@reveal/utilities';
 
-import { Box3 } from 'three';
-import { AnnotationsAssetRef } from '@cognite/sdk';
-import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
+import type { Box3 } from 'three';
+import type { AnnotationsAssetRef } from '@cognite/sdk';
+import type { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
 
-type VolumeAnnotation = {
+export type VolumeAnnotation = {
   annotationId: number;
   asset?: AnnotationsAssetRef;
+  assetInstanceRef?: DMInstanceRef;
 };
-type VolumeDMReference = {
+
+export type VolumeDMReference = {
   instanceRef: DMInstanceRef;
   asset?: DMInstanceRef;
 };

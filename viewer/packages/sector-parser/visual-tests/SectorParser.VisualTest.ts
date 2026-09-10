@@ -2,11 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Matrix4, PerspectiveCamera, RawShaderMaterial, Scene } from 'three';
+import { Box3, Group, Mesh, Vector3 } from 'three';
 
-import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
+import type { SimpleTestFixtureComponents } from '../../../visual-tests';
+import { SimpleVisualTestFixture } from '../../../visual-tests';
 import { GltfSectorParser } from '../src/GltfSectorParser';
-import { RevealGeometryCollectionType } from '../src/types';
+import type { RevealGeometryCollectionType } from '../src/types';
 import * as TestMaterials from './testMaterials';
 
 export default class SectorParserVisualTestFixture extends SimpleVisualTestFixture {
@@ -36,12 +38,14 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
     const min = sectors[0].boundingBox.min;
     const max = sectors[0].boundingBox.max;
 
-    const boundingBox = new THREE.Box3(new THREE.Vector3(min.x, min.y, min.z), new THREE.Vector3(max.x, max.y, max.z));
+    const boundingBox = new Box3(new Vector3(min.x, min.y, min.z), new Vector3(max.x, max.y, max.z));
     boundingBox.applyMatrix4(this.cadFromCdfToThreeMatrix);
 
     const fileNames = sectors.map(sector => sector.sectorFileName);
 
-    const blobs = await Promise.all(fileNames.map(fileName => modelDataProvider.getBinaryFile(modelUri, fileName)));
+    const blobs = await Promise.all(
+      fileNames.map((fileName: string) => modelDataProvider.getBinaryFile(modelUri, fileName))
+    );
 
     await this.loadSectors(blobs, loader, materialMap, camera, group);
 
@@ -53,20 +57,20 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
   private async loadSectors(
     blobs: ArrayBuffer[],
     loader: GltfSectorParser,
-    materialMap: Map<RevealGeometryCollectionType, THREE.RawShaderMaterial>,
-    camera: THREE.PerspectiveCamera,
-    group: THREE.Group
+    materialMap: Map<RevealGeometryCollectionType, RawShaderMaterial>,
+    camera: PerspectiveCamera,
+    group: Group
   ) {
     return Promise.all(
       blobs.map(async element => {
         const geometries = await loader.parseSector(element);
         geometries.forEach(result => {
           const material = materialMap.get(result.type)!;
-          const mesh = new THREE.Mesh(result.geometryBuffer, material);
+          const mesh = new Mesh(result.geometryBuffer, material);
           mesh.frustumCulled = false;
           mesh.onBeforeRender = () => {
-            (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-            (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+            (material.uniforms.inverseModelMatrix?.value as Matrix4)?.copy(mesh.matrixWorld).invert();
+            (material.uniforms.cameraPosition?.value as Vector3)?.copy(camera.position);
           };
           group.add(mesh);
         });
@@ -74,8 +78,8 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
     );
   }
 
-  private initializeGroup(scene: THREE.Scene) {
-    const group = new THREE.Group();
+  private initializeGroup(scene: Scene) {
+    const group = new Group();
     group.frustumCulled = false;
     group.applyMatrix4(this.cadFromCdfToThreeMatrix);
     scene.add(group);

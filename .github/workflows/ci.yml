@@ -15,47 +15,30 @@ on:
       - "**"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
-    steps:
-      # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v3
-        id: filter
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          filters: |
-            should-run:
-              - '.github/**'
-              - 'viewer/**'
-              - 'documentation/**'
-              - 'examples/**'
-
   populate-caches:
-    needs: changes
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Update NPM and Cargo caches
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.1.0
 
       - name: Cache NPM packages
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Install NPM dependencies
         if: steps.npm_cache.outputs.cache-hit != 'true'
         working-directory: viewer
-        run: yarn install --immutable
+        run: pnpm install --frozen-lockfile
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -65,34 +48,37 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --workspace --locked
+        run: cargo update --locked
 
   build-viewer:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Build Reveal
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.1.0
 
       - name: Cache NPM packages
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
-      - name: Check that yarn.lock is up to date
+      - name: Check that pnpm-lock.yaml is up to date
         working-directory: viewer
         continue-on-error: false
-        run: yarn install --immutable
+        run: pnpm install --frozen-lockfile
 
       - name: Check that Cargo.lock is up to date
         working-directory: viewer
@@ -102,7 +88,7 @@ jobs:
       - name: Lint
         working-directory: viewer
         continue-on-error: false
-        run: yarn run lint
+        run: pnpm run lint
 
       - name: Rust fmt
         working-directory: viewer
@@ -113,7 +99,11 @@ jobs:
 
       - name: Build development version
         working-directory: viewer
-        run: yarn run build
+        run: pnpm run build
+
+      - name: Typecheck lib
+        working-directory: viewer
+        run: pnpm run typecheck:lib
 
       - name: Check for API changes
         working-directory: viewer
@@ -123,27 +113,30 @@ jobs:
           npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
       - name: Upload dist/ artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: viewer
           path: viewer/dist/
 
   run-coverage-tests:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/cache@v4
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.1.0
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -159,44 +152,55 @@ jobs:
       - name: Run coverage tests
         working-directory: viewer
         run: |
-          xvfb-run yarn run coverage
+          xvfb-run pnpm run coverage
+
+      - name: Typecheck tests
+        working-directory: viewer
+        run: pnpm run typecheck:tests
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: viewer
 
   run-visual-tests:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Visual Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/cache@v4
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.1.0
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
+      - name: Install Playwright Browsers
+        working-directory: viewer
+        run: pnpm exec playwright install
+
       - name: Execute visual tests
         id: viewerVisualTests
         working-directory: viewer
-        run: "yarn test:visual"
+        run: "pnpm test:visual"
         continue-on-error: true
 
       - name: Check for failed visual test diffs
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: savokr/comment-on-pr@v1.3.2
+        uses: savokr/comment-on-pr@62302a5bfe3fcda4998aa7a0a3ccb1200edecfeb # v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -206,7 +210,7 @@ jobs:
 
       - name: Upload image diffs for failed visual tests
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: image-diffs-${{ github.sha }}
           path: viewer/visual-tests/__diff_output__/*
@@ -218,27 +222,26 @@ jobs:
           exit 1
 
   ci-examples:
-    needs: [changes, build-viewer]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: build-viewer
     name: Examples
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Download viewer build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: viewer
           path: viewer/dist/
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('examples/**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -260,13 +263,12 @@ jobs:
         run: yarn build
 
   build-preview-documentation:
-    needs: [changes, populate-caches]
-    if: ${{ needs.changes.outputs.should-run == 'true' }}
+    needs: populate-caches
     name: Build preview documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v4 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
       - name: Initialize variables
         run: |
@@ -277,14 +279,18 @@ jobs:
           echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.1.0
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: npm_cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('viewer/pnpm-lock.yaml') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -292,7 +298,7 @@ jobs:
 
       - name: Build production version
         working-directory: viewer
-        run: yarn run build:prod
+        run: pnpm run build:prod
 
       - name: Install NPM documentation dependencies
         # if: steps.npm_cache.outputs.cache-hit != 'true' # Broken
@@ -300,14 +306,14 @@ jobs:
         run: yarn install --immutable
 
       - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@v3
+        uses: jacobtomlinson/gha-find-replace@2ff30f644d2e0078fc028beb9193f5ff0dcad39e # v3
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
           include: "documentation/docusaurus.config.js"
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@v3
+        uses: jacobtomlinson/gha-find-replace@2ff30f644d2e0078fc028beb9193f5ff0dcad39e # v3
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${{ env.PR_TIMESTAMP }})',"
@@ -320,14 +326,14 @@ jobs:
 
       - name: Upload documentation artifact
         if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: preview-docs
           path: documentation/build/
 
   deploy-preview-documentation:
-    needs: [changes, build-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' && contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
+    needs: build-preview-documentation
+    if: "${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}"
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
     # across all ongoing Github Action executions
@@ -339,14 +345,14 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Download documentation artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         if:
         with:
           name: preview-docs
           path: documentation/
 
       - name: Deploy documentation preview 🚀
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs-preview
@@ -356,7 +362,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: savokr/comment-on-pr@v1.3.2
+        uses: savokr/comment-on-pr@62302a5bfe3fcda4998aa7a0a3ccb1200edecfeb # v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -369,12 +375,12 @@ jobs:
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
   cleanup:
-    needs: [changes, ci-examples, build-viewer, deploy-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' && always() }}
+    needs: [ci-examples, build-viewer, deploy-preview-documentation]
+    if: always()
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6
         with:
           name: |
             viewer

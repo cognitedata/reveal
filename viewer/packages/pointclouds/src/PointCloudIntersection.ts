@@ -1,10 +1,10 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { AnnotationsAssetRef } from '@cognite/sdk';
-import { CognitePointCloudModel } from './CognitePointCloudModel';
+import type { AnnotationsAssetRef } from '@cognite/sdk';
+import type { CognitePointCloudModel } from './CognitePointCloudModel';
 import type { Vector3 } from 'three';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
 /**
  * An intersection with a point cloud model. Contains metadata of the first intersected volume, if any

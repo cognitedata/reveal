@@ -1,21 +1,21 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Color } from 'three';
 
 /**
  * Utility class for creating reasonable visible colors. Mainly meant for use
  * in debugging.
  */
 export class RandomColors {
-  private static readonly _colors: Map<number, THREE.Color> = new Map();
+  private static readonly _colors: Map<number, Color> = new Map();
 
   /**
-   * Returns a color as a THREE.Color.
+   * Returns a color as a Color.
    * @param colorIndex
    * @returns
    */
-  static color(colorIndex: number): THREE.Color {
+  static color(colorIndex: number): Color {
     const color = RandomColors._colors.get(colorIndex);
     if (color !== undefined) {
       return color;
@@ -50,10 +50,10 @@ export class RandomColors {
    * Returns a random color with reasonable lightness and saturation
    * to make the color easily distinguishable from other colors.
    */
-  static generateRandomColor(): THREE.Color {
+  static generateRandomColor(): Color {
     const hue = Math.random();
     const saturation = 0.4 + Math.random() * 0.6;
     const lightness = 0.3 + 0.4 * Math.random();
-    return new THREE.Color().setHSL(hue, saturation, lightness);
+    return new Color().setHSL(hue, saturation, lightness);
   }
 }

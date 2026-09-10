@@ -3,7 +3,17 @@
  */
 
 import { assertNever } from '@reveal/utilities';
-import * as THREE from 'three';
+import type { BufferGeometry, InterleavedBufferAttribute } from 'three';
+import {
+  Box3,
+  BoxGeometry,
+  BufferAttribute,
+  CylinderGeometry,
+  Float32BufferAttribute,
+  Matrix4,
+  PlaneGeometry,
+  Uint16BufferAttribute
+} from 'three';
 import { RevealGeometryCollectionType } from '../types';
 
 /**
@@ -43,13 +53,13 @@ function generatePlane3D(
   }
 
   return {
-    index: new THREE.Uint16BufferAttribute(indices, 1),
-    position: new THREE.Float32BufferAttribute(vertices, 3)
+    index: new Uint16BufferAttribute(indices, 1),
+    position: new Float32BufferAttribute(vertices, 3)
   };
 }
 
-export function setBoxGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
-  const boxGeometry = new THREE.BoxGeometry(1, 1, 1, 1, 1, 1);
+export function setBoxGeometry(geometry: BufferGeometry): Box3 {
+  const boxGeometry = new BoxGeometry(1, 1, 1, 1, 1, 1);
 
   geometry.setIndex(boxGeometry.getIndex());
   geometry.setAttribute('position', boxGeometry.getAttribute('position'));
@@ -60,8 +70,8 @@ export function setBoxGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   return geometry.boundingBox!;
 }
 
-export function setQuadGeometry(geometry: THREE.BufferGeometry, includeNormal = true): THREE.Box3 {
-  const quadGeometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+export function setQuadGeometry(geometry: BufferGeometry, includeNormal = true): Box3 {
+  const quadGeometry = new PlaneGeometry(1, 1, 1, 1);
 
   geometry.setIndex(quadGeometry.getIndex());
   geometry.setAttribute('position', quadGeometry.getAttribute('position'));
@@ -73,17 +83,17 @@ export function setQuadGeometry(geometry: THREE.BufferGeometry, includeNormal = 
   return geometry.boundingBox!;
 }
 
-export function setTrapeziumGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
+export function setTrapeziumGeometry(geometry: BufferGeometry): Box3 {
   const index = [0, 1, 3, 0, 3, 2];
   const position = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3];
 
-  geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(index), 1));
-  geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(position), 3));
+  geometry.setIndex(new BufferAttribute(new Uint16Array(index), 1));
+  geometry.setAttribute('position', new BufferAttribute(new Float32Array(position), 3));
 
-  return new THREE.Box3().setFromArray(position);
+  return new Box3().setFromArray(position);
 }
 
-export function setConeGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
+export function setConeGeometry(geometry: BufferGeometry): Box3 {
   const positions = [];
   positions.push(-1, 1, -1);
   positions.push(-1, -1, -1);
@@ -94,12 +104,12 @@ export function setConeGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
 
   const indices = new Uint16Array([1, 2, 0, 1, 3, 2, 3, 4, 2, 3, 5, 4]);
 
-  geometry.setIndex(new THREE.BufferAttribute(indices, 1));
-  geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-  return new THREE.Box3().setFromArray(positions);
+  geometry.setIndex(new BufferAttribute(indices, 1));
+  geometry.setAttribute('position', new BufferAttribute(new Float32Array(positions), 3));
+  return new Box3().setFromArray(positions);
 }
 
-export function setTorusGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
+export function setTorusGeometry(geometry: BufferGeometry): Box3 {
   const lods = [
     { tubularSegments: 9, radialSegments: 18 },
     { tubularSegments: 5, radialSegments: 12 },
@@ -112,25 +122,23 @@ export function setTorusGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   geometry.setIndex(torusGeometry.index);
   geometry.setAttribute('position', torusGeometry.position);
 
-  return new THREE.Box3().setFromArray(torusGeometry.position.array);
+  return new Box3().setFromArray(torusGeometry.position.array);
 }
 
-export function setNutGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
-  const nutGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 6);
-  nutGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
+export function setNutGeometry(geometry: BufferGeometry): Box3 {
+  const nutGeometry = new CylinderGeometry(0.5, 0.5, 1, 6);
+  nutGeometry.applyMatrix4(new Matrix4().makeRotationX(-Math.PI / 2));
 
   geometry.setIndex(nutGeometry.getIndex());
   geometry.setAttribute('position', nutGeometry.getAttribute('position'));
   geometry.setAttribute('normal', nutGeometry.getAttribute('normal'));
 
-  return new THREE.Box3().setFromArray(
-    (nutGeometry.getAttribute('position') as THREE.InterleavedBufferAttribute).array
-  );
+  return new Box3().setFromArray((nutGeometry.getAttribute('position') as InterleavedBufferAttribute).array);
 }
 
 export function setPrimitiveTopology(
   primitiveCollectionName: RevealGeometryCollectionType,
-  geometry: THREE.BufferGeometry
+  geometry: BufferGeometry
 ): void {
   switch (primitiveCollectionName) {
     case RevealGeometryCollectionType.BoxCollection:

@@ -1,4 +1,5 @@
-import { Box3, BufferAttribute, BufferGeometry, Color, LineBasicMaterial, LineSegments } from 'three';
+import type { Box3 } from 'three';
+import { BufferAttribute, BufferGeometry, Color, LineBasicMaterial, LineSegments } from 'three';
 
 /**
  *

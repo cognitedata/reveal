@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { DMInstanceRef } from '@reveal/utilities';
+import type { DMInstanceRef } from '@reveal/utilities';
 import { DataModelsSdk } from './DataModelsSdk';
 
 describe(DataModelsSdk.name, () => {
@@ -75,25 +75,23 @@ describe(DataModelsSdk.name, () => {
 
     // Test that the resulting property types are correct
     type QueryResultProp = QueryResult['b'][number]['properties']['TestSpaceB']['bExternalIdOne/1']['bPropOne'] extends
-      | string
-      | number
-      | DMInstanceRef
+      string | number | DMInstanceRef
       ? true
       : false;
-    expect<QueryResultProp>(true).toBeTrue();
+    expect<QueryResultProp>(true).toBeTruthy();
 
     // Test that the select keys are correct
     type SelectParams = Exclude<keyof QueryResult, 'a' | 'b' | 'c' | 'nextCursor'> extends never ? true : false;
-    expect<SelectParams>(true).toBeTrue();
+    expect<SelectParams>(true).toBeTruthy();
 
     // Test that spaces from different select sources are not mixed
     // @ts-expect-error
     type QueryResultPropFromInvalidSpace = QueryResult['b'][number]['properties']['TestSpaceA'];
-    expect<QueryResultPropFromInvalidSpace>(true).toBeTrue();
+    expect<QueryResultPropFromInvalidSpace>(true).toBeTruthy();
 
     // Test that properties from a different source does not spill over in the result type
     // @ts-expect-error
     type QueryResultPropFromWrongSource = QueryResult['b'][number]['properties']['TestSpaceB']['bExternalIdTwo/v1'];
-    expect<QueryResultPropFromWrongSource>(true).toBeTrue();
+    expect<QueryResultPropFromWrongSource>(true).toBeTruthy();
   }, 10000);
 });

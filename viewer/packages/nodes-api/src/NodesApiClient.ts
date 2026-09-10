@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
 
-import { CogniteInternalId } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 
 /**
  * Client for retrieving metadata information about CAD nodes.
@@ -68,5 +68,5 @@ export interface NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<THREE.Box3[]>;
+  ): Promise<Box3[]>;
 }

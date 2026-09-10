@@ -2,13 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
-import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
-import {
+import { cdfAnnotationsToObjects } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
+import type {
   ClassicDataSourceType,
   ClassicModelIdentifierType,
   DMDataSourceType,
@@ -25,22 +23,20 @@ import {
   StyledPointCloudVolumeCollection
 } from '../../pointcloud-styling';
 
-import assert from 'assert';
-import * as THREE from 'three';
+import { assert } from '@reveal/utilities/assert';
+import { Color, PerspectiveCamera, Vector3 } from 'three';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 import { PointColorType } from '@reveal/rendering';
-import { Color } from 'three';
-
 class CustomAnnotationProvider implements PointCloudStylableObjectProvider<ClassicDataSourceType> {
   async getPointCloudObjects(_modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const cdfAnnotations = [
       {
         volumeMetadata: { annotationId: 123 },
-        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
+        region: [new Cylinder(new Vector3(-0.03, 0.1, -1000), new Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
 
-    return cdfAnnotationsToObjectInfo(cdfAnnotations);
+    return cdfAnnotationsToObjects(cdfAnnotations);
   }
 }
 
@@ -51,11 +47,11 @@ class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceT
     const cdfAnnotations = [
       {
         volumeMetadata: { instanceRef: { externalId: '123', space: 'space' } },
-        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
+        region: [new Cylinder(new Vector3(-0.03, 0.1, -1000), new Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
 
-    return cdfAnnotationsToObjectInfo(cdfAnnotations);
+    return cdfAnnotationsToObjects(cdfAnnotations);
   }
 }
 
@@ -74,8 +70,8 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     );
   }
 
-  override createCamera(): THREE.PerspectiveCamera {
-    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
+  override createCamera(): PerspectiveCamera {
+    return new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
   }
 
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {

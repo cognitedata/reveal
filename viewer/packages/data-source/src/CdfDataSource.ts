@@ -1,17 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
-import { DataSource } from './DataSource';
+import type { DataSource } from './DataSource';
 
-import { NodesApiClient, NodesCdfClient } from '@reveal/nodes-api';
-import {
-  CdfModelMetadataProvider,
-  ModelDataProvider,
-  ModelMetadataProvider,
-  CdfModelDataProvider
-} from '@reveal/data-providers';
+import type { NodesApiClient } from '@reveal/nodes-api';
+import { NodesCdfClient } from '@reveal/nodes-api';
+import type { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import { CdfModelMetadataProvider, CdfModelDataProvider } from '@reveal/data-providers';
 
 /**
  * Data source for Cognite Data Fusion.

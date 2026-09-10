@@ -1,8 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import throttle from 'lodash/throttle';
-import { Camera, Matrix4 } from 'three';
+import { throttle } from 'lodash-es';
+import type { Camera } from 'three';
+import { Matrix4 } from 'three';
 
 export type Callback = () => void;
 

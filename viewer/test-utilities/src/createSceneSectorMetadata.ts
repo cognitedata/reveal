@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SceneSectorMetadata } from '../../packages/cad-parsers/src/metadata/parsers/types';
+import type { SceneSectorMetadata } from '../../packages/cad-parsers/src/metadata/parsers/types';
 
 export type BoundingBox = {
   min: {

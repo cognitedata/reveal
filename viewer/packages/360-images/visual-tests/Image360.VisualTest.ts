@@ -1,41 +1,35 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import type { LineBasicMaterial, PerspectiveCamera, WebGLRenderer } from 'three';
+import { Color, LineSegments, Matrix4, Vector2, Vector3 } from 'three';
 
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import type { Image360Provider, Image360ProviderMap } from '../src/providers/Image360Provider';
 import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  Cdf360ImageAnnotationProvider,
-  ClassicDataSourceType,
-  DataSourceType,
-  DMDataSourceType,
-  Image360Provider,
-  Image360ProviderMap,
-  Local360ImageProvider
+  createCdf360ImageAnnotationCache,
+  Cdf360ImageFileProvider
 } from '@reveal/data-providers';
-import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { Cdf360ImageAnnotationProvider } from '../src/providers/Cdf360ImageAnnotationProvider';
+import { Local360ImageProvider } from '../src/providers/Local360ImageProvider';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
-import {
-  BeforeSceneRenderedDelegate,
-  DeviceDescriptor,
-  EventTrigger,
-  getNormalizedPixelCoordinates,
-  SceneHandler
-} from '@reveal/utilities';
-import { CogniteClient } from '@cognite/sdk';
-import { Image360Entity } from '../src/entity/Image360Entity';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import type { CogniteClient } from '@cognite/sdk';
+import type { Image360Entity } from '../src/entity/Image360Entity';
 import TWEEN from '@tweenjs/tween.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
-import { Image360CollectionSourceType } from '../src/types';
-import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
-import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/Cdf360ImageFileProvider';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
+import type { Image360CollectionSourceType } from '../src/types';
+import { Image360ProviderCombiner } from '../src/providers/Image360ProviderCombiner';
 
 type TestImage360Facade = Image360Facade<DataSourceType>;
 
@@ -51,17 +45,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
-    const { facade, collection } = await this.setup360Images(
-      cogniteClient,
-      sceneHandler,
-      onBeforeRender,
-      desktopDevice
-    );
-    collection.image360Entities[1].setIconColor(new THREE.Color(1.0, 0.0, 1.0));
+    const { facade, collection } = await this.setup360Images(cogniteClient, sceneHandler, desktopDevice);
+    onBeforeRender.subscribe(params => collection.updateIcons(params));
+    collection.image360Entities[1].setIconColor(new Color(1.0, 0.0, 1.0));
 
-    const collectionTransform = new THREE.Matrix4()
+    const collectionTransform = new Matrix4()
       .makeTranslation(10, -5, -7)
-      .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 4));
+      .multiply(new Matrix4().makeRotationX(Math.PI / 4));
 
     collection.setModelTransformation(collectionTransform);
 
@@ -86,8 +76,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     let seed = 70;
     octreeVisualization.traverse(obj => {
-      if (obj instanceof THREE.LineSegments) {
-        (obj.material as THREE.LineBasicMaterial).color = new THREE.Color(0xffffff * random(seed));
+      if (obj instanceof LineSegments) {
+        (obj.material as LineBasicMaterial).color = new Color(0xffffff * random(seed));
       }
       seed++;
     });
@@ -101,16 +91,16 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   }
 
   private setupMouseClickEventHandler(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     facade: TestImage360Facade,
-    camera: THREE.PerspectiveCamera,
+    camera: PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
     let lastClicked: Image360Entity<DataSourceType> | undefined;
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
-      const intersection = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const intersection = facade.intersect(new Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
       if (intersection === undefined) {
         this.render();
@@ -130,9 +120,9 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       }
 
       const transform = entity.transform.toArray();
-      const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
+      const image360Translation = new Vector3(transform[12], transform[13], transform[14]);
       camera.position.copy(image360Translation);
-      const cameraForward = camera.getWorldDirection(new THREE.Vector3());
+      const cameraForward = camera.getWorldDirection(new Vector3());
       cameraControls.target.copy(image360Translation.clone().add(cameraForward.multiplyScalar(0.001)));
       cameraControls.update();
       lastClicked = entity;
@@ -143,22 +133,22 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   private transition360Image(
     lastClicked: Image360Entity<DataSourceType>,
     entity: Image360Entity<DataSourceType>,
-    camera: THREE.PerspectiveCamera,
+    camera: PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
     lastClicked.image360Visualization.renderOrder = 1;
     entity.image360Visualization.renderOrder = 0;
 
     const transformTo = entity.transform.toArray();
-    const translationTo = new THREE.Vector3(transformTo[12], transformTo[13], transformTo[14]);
+    const translationTo = new Vector3(transformTo[12], transformTo[13], transformTo[14]);
 
     const transformFrom = lastClicked.transform.toArray();
-    const translationFrom = new THREE.Vector3(transformFrom[12], transformFrom[13], transformFrom[14]);
+    const translationFrom = new Vector3(transformFrom[12], transformFrom[13], transformFrom[14]);
 
-    const length = new THREE.Vector3().subVectors(translationTo, translationFrom).length();
+    const length = new Vector3().subVectors(translationTo, translationFrom).length();
 
-    lastClicked.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-    entity.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+    lastClicked.image360Visualization.scale = new Vector3(length * 2, length * 2, length * 2);
+    entity.image360Visualization.scale = new Vector3(length * 2, length * 2, length * 2);
 
     const renderTrigger = setInterval(() => this.render(), 16);
 
@@ -170,7 +160,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       const tween = new TWEEN.Tween(from)
         .to(to, 1000)
         .onUpdate(() => {
-          const animatedPosition = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
+          const animatedPosition = new Vector3().lerpVectors(translationFrom, translationTo, from.t);
           camera.position.copy(animatedPosition);
           lastClicked!.image360Visualization.opacity = 1 - from.t;
         })
@@ -182,7 +172,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         tween.stop();
         clearInterval(renderTrigger);
         camera.position.copy(translationTo);
-        const cameraForward = camera.getWorldDirection(new THREE.Vector3());
+        const cameraForward = camera.getWorldDirection(new Vector3());
         cameraControls.target.copy(translationTo.clone().add(cameraForward.multiplyScalar(0.001)));
         cameraControls.update();
         lastClicked = entity;
@@ -190,15 +180,11 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }
   }
 
-  private setupMouseMoveEventHandler(
-    renderer: THREE.WebGLRenderer,
-    facade: TestImage360Facade,
-    camera: THREE.PerspectiveCamera
-  ) {
+  private setupMouseMoveEventHandler(renderer: WebGLRenderer, facade: TestImage360Facade, camera: PerspectiveCamera) {
     renderer.domElement.addEventListener('mousemove', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
-      const intersection = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const intersection = facade.intersect(new Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
       if (intersection === undefined) {
         this.render();
         return;
@@ -224,14 +210,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   private setup360Images(
     cogniteClient: CogniteClient | undefined,
     sceneHandler: SceneHandler,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
   ): Promise<{
     facade: TestImage360Facade;
     collection: DefaultImage360Collection<DataSourceType>;
   }> {
     if (cogniteClient === undefined) {
-      return this.setupLocal(sceneHandler, onBeforeRender, device);
+      return this.setupLocal(sceneHandler, device);
     }
 
     const queryString = window.location.search;
@@ -242,7 +227,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const space = urlParams.get('space');
 
     const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
-    const cdf360AnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
+    const cdf360AnnotationProvider = new Cdf360ImageAnnotationProvider(createCdf360ImageAnnotationCache(cogniteClient));
 
     const cdf360DMDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
 
@@ -264,20 +249,14 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       return getEvents360ImageCollection(providerMap, siteId);
     }
 
-    return this.setupLocal(sceneHandler, onBeforeRender, device);
+    return this.setupLocal(sceneHandler, device);
 
     async function getDM360ImageCollection(
       providerMap: Image360ProviderMap,
       externalId: string,
       space: string
     ): Promise<{ facade: TestImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
-      const image360Factory = new Image360CollectionFactory(
-        providerMap,
-        sceneHandler,
-        onBeforeRender,
-        () => {},
-        device
-      );
+      const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
       const image360Facade = new Image360Facade(image360Factory);
       const collection = await image360Facade.create({ image360CollectionExternalId: externalId, space: space });
 
@@ -288,13 +267,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       providerMap: Image360ProviderMap,
       siteId: string
     ): Promise<{ facade: TestImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
-      const image360Factory = new Image360CollectionFactory(
-        providerMap,
-        sceneHandler,
-        onBeforeRender,
-        () => {},
-        device
-      );
+      const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
       const image360Facade = new Image360Facade(image360Factory);
       const collection = await image360Facade.create({ siteId: siteId });
 
@@ -304,7 +277,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private async setupLocal(
     sceneHandler: SceneHandler,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<any>;
@@ -317,7 +289,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const providerMap = new Map<Image360CollectionSourceType, Image360Provider<ClassicDataSourceType>>([
       ['event', dataProvider]
     ]);
-    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, onBeforeRender, () => {}, device);
+    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, () => {}, device);
     const image360Facade = new Image360Facade(image360Factory);
     const collection = await image360Facade.create({});
 

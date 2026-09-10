@@ -1,8 +1,9 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { PrioritizedWantedSector, SectorCost, SectorLoadingSpent } from '../types';
-import { CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import type { PrioritizedWantedSector, SectorCost, SectorLoadingSpent } from '../types';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 export abstract class TakenSectorMapBase {
   protected abstract get modelsMetadata(): CadModelMetadata[];

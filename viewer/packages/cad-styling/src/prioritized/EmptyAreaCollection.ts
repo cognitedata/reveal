@@ -3,7 +3,7 @@
  */
 
 import type { Box3 } from 'three';
-import { AreaCollection } from './AreaCollection';
+import type { AreaCollection } from './AreaCollection';
 
 /**
  * Convenience implementation to represent an empty collection of areas.

@@ -6,8 +6,9 @@ export { traverseDepthFirst } from './src/objectTraversal';
 export { transformCameraConfiguration } from './src/transformCameraConfiguration';
 
 export { RandomColors } from './src/RandomColors';
-export { CameraConfiguration } from './src/CameraConfiguration';
+export type { CameraConfiguration } from './src/CameraConfiguration';
 
+export type { EventListener } from './src/events/EventTrigger';
 export { EventTrigger } from './src/events/EventTrigger';
 export { InputHandler } from './src/events/InputHandler';
 export { PointerEvents } from './src/events/PointerEvents';
@@ -15,7 +16,7 @@ export { PointerEventsTarget } from './src/events/PointerEventsTarget';
 export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
 export { getPixelCoordinatesFromEvent } from './src/events/getPixelCoordinatesFromEvent';
 export { getWheelEventDelta } from './src/events/getWheelEventDelta';
-export {
+export type {
   DisposedDelegate,
   BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
@@ -29,14 +30,16 @@ export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensio
 export { IndexSet } from './src/IndexSet';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
 export { AttributeDataAccessor } from './src/three/AttributeDataAccessor';
-export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { toThreeBox3 } from './src/three/toThreeBox3';
 export { fromThreeVector3 } from './src/three/fromThreeVector3';
 export { unionBoxes } from './src/three/unionBoxes';
-export { determineCurrentDevice, DeviceDescriptor } from './src/device';
+export type { DeviceDescriptor } from './src/device';
+export { determineCurrentDevice } from './src/device';
 export { createRenderTriangle } from './src/three/createFullScreenTriangleGeometry';
 export { VariableWidthLine } from './src/three/VariableWidthLine';
 
+export type { BatchedDebounce } from './src/batchedDebounce';
+export { batchedDebounce } from './src/batchedDebounce';
 export { fitCameraToBoundingBox } from './src/three/fitCameraToBoundingBox';
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
@@ -44,10 +47,14 @@ export { createDistinctColors } from './src/three/createDistinctColors';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
 
-export { TypedArray, TypedArrayConstructor } from './src/types';
+export type { TypedArray, TypedArrayConstructor } from './src/types';
 
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
+
+export { DataFileCacheManager } from './src/cache/DataFileCacheManager';
+export type { CacheConfig } from './src/cache/types';
+export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
 
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
@@ -72,9 +79,9 @@ export { DeferredPromise } from './src/DeferredPromise';
 export { SceneHandler } from './src/SceneHandler';
 
 export { CustomObject } from './src/customObject/CustomObject';
-export { ICustomObject } from './src/customObject/ICustomObject';
+export type { ICustomObject } from './src/customObject/ICustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
-export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
+export type { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
 export { Vector3Pool } from './src/three/Vector3Pool';
 export { ClosestGeometryFinder } from './src/ClosestGeometryFinder';
 
@@ -84,10 +91,11 @@ export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
 export { createUint8View } from './src/createUint8View';
 
-export * from './src/workers/workerize-transferable';
+export { isDefined } from './src/isDefined';
 
 export * from './src/fdm';
 export * from './src/assetMappings';
 
 export * from './src/shapes';
-export * from './src/linalg';
+export type * from './src/linalg';
+export { WaitCursor } from './src/WaitCursor';

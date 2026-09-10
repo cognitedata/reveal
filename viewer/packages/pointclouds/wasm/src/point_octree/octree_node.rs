@@ -20,7 +20,7 @@ pub struct OctreeNode<'a> {
 }
 
 impl<'a> OctreeNode<'a> {
-    pub fn new(bounding_box: BoundingBox, points: &'a mut [Vec3WithIndex]) -> OctreeNode {
+    pub fn new(bounding_box: BoundingBox, points: &'a mut [Vec3WithIndex]) -> OctreeNode<'a> {
         if points.len() <= MAX_POINTS_PER_NODE
             || bounding_box.max.x - bounding_box.min.x < MIN_OCTREE_NODE_SIZE
         {

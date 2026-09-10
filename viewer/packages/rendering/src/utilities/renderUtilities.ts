@@ -2,46 +2,64 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { createRenderTriangle, WebGLRendererStateHelper, createUint8View } from '@reveal/utilities';
-import { CadMaterialManager } from '../CadMaterialManager';
-import { RenderMode } from '../rendering/RenderMode';
-import { CogniteColors, RevealColors, StyledTreeIndexSets } from './types';
+import type { Color, Object3D } from 'three';
 import {
+  AlwaysDepth,
+  CustomBlending,
+  DataTexture,
+  DepthFormat,
+  DepthTexture,
+  GLSL3,
+  Mesh,
+  NormalBlending,
+  OneMinusSrcAlphaFactor,
+  OrthographicCamera,
+  RawShaderMaterial,
+  SrcAlphaFactor,
+  UnsignedIntType,
+  WebGLRenderTarget
+} from 'three';
+import type { WebGLRendererStateHelper } from '@reveal/utilities';
+import { createRenderTriangle, createUint8View } from '@reveal/utilities';
+import type { CadMaterialManager } from '../CadMaterialManager';
+import { RenderMode } from '../rendering/RenderMode';
+import type { StyledTreeIndexSets } from './types';
+import { CogniteColors, RevealColors } from './types';
+import type {
   BlendOptions,
-  BlitEffect,
   BlitOptions,
   DepthBlendBlitOptions,
   PointCloudPassParameters,
   PointCloudPostProcessingOptions,
   ThreeUniforms
 } from '../render-passes/types';
+import { BlitEffect } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
-export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
+export const unitOrthographicCamera: OrthographicCamera = new OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
-export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMaterial): THREE.Mesh {
+export function createFullScreenTriangleMesh(shaderMaterial: RawShaderMaterial): Mesh {
   const renderTriangle = createRenderTriangle();
-  const mesh = new THREE.Mesh(renderTriangle, shaderMaterial);
+  const mesh = new Mesh(renderTriangle, shaderMaterial);
   mesh.frustumCulled = false;
   return mesh;
 }
 
-export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): THREE.WebGLRenderTarget {
-  const renderTarget = new THREE.WebGLRenderTarget(width, height);
+export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): WebGLRenderTarget {
+  const renderTarget = new WebGLRenderTarget(width, height);
   renderTarget.samples = multiSampleCount > 1 ? multiSampleCount : 0;
 
-  renderTarget.depthTexture = new THREE.DepthTexture(width, height);
-  renderTarget.depthTexture.format = THREE.DepthFormat;
-  renderTarget.depthTexture.type = THREE.UnsignedIntType;
+  renderTarget.depthTexture = new DepthTexture(width, height);
+  renderTarget.depthTexture.format = DepthFormat;
+  renderTarget.depthTexture.type = UnsignedIntType;
 
   return renderTarget;
 }
 
-export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): THREE.RawShaderMaterial {
+export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): RawShaderMaterial {
   const { texture, depthTexture, blendTexture, blendDepthTexture, blendFactor, outline, overrideAlpha } = options;
 
   const uniforms: ThreeUniforms = {
@@ -60,17 +78,17 @@ export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): THREE
     uniforms['tOutlineColors'] = { value: createOutlineColorTexture() };
   }
 
-  return new THREE.RawShaderMaterial({
+  return new RawShaderMaterial({
     vertexShader: depthBlendBlitShaders.vertex,
     fragmentShader: depthBlendBlitShaders.fragment,
     uniforms,
-    glslVersion: THREE.GLSL3,
+    glslVersion: GLSL3,
     defines,
-    depthFunc: THREE.AlwaysDepth
+    depthFunc: AlwaysDepth
   });
 }
 
-export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
+export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
   const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline } = options;
 
   const uniforms: ThreeUniforms = {
@@ -98,18 +116,18 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
 
   const initializedBlendOptions = initializeBlendingOptions(blendOptions); // Uses blendDst value if null
 
-  return new THREE.RawShaderMaterial({
+  return new RawShaderMaterial({
     vertexShader: blitShaders.vertex,
     fragmentShader: blitShaders.fragment,
     uniforms,
-    glslVersion: THREE.GLSL3,
+    glslVersion: GLSL3,
     defines,
     depthTest,
     ...initializedBlendOptions
   });
 }
 
-export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
+export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): RawShaderMaterial {
   const { logDepthTexture, texture, depthTexture, pointBlending, edlOptions } = options;
 
   let uniforms: ThreeUniforms = {
@@ -138,12 +156,12 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     };
   }
 
-  return new THREE.RawShaderMaterial({
+  return new RawShaderMaterial({
     vertexShader: pointCloudShaders.normalize.vertex,
     fragmentShader: pointCloudShaders.normalize.fragment,
     uniforms,
     defines,
-    glslVersion: THREE.GLSL3
+    glslVersion: GLSL3
   });
 }
 
@@ -156,10 +174,12 @@ function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
   return neighbours;
 }
 
-function createOutlineColorTexture(): THREE.DataTexture {
+function createOutlineColorTexture(): DataTexture {
   const outlineColorBuffer = new Uint8Array(8 * 4);
-  const outlineColorTexture = new THREE.DataTexture(outlineColorBuffer, 8, 1);
-  const colorTextureView = createUint8View(outlineColorTexture.image.data);
+  const outlineColorTexture = new DataTexture(outlineColorBuffer, 8, 1);
+  const rawData = outlineColorTexture.image.data;
+  if (!rawData) return outlineColorTexture;
+  const colorTextureView = createUint8View(rawData);
   setOutlineColor(colorTextureView, NodeOutlineColor.Black, CogniteColors.Black);
   setOutlineColor(colorTextureView, NodeOutlineColor.White, CogniteColors.White);
   setOutlineColor(colorTextureView, NodeOutlineColor.Cyan, CogniteColors.Cyan);
@@ -171,14 +191,14 @@ function createOutlineColorTexture(): THREE.DataTexture {
   return outlineColorTexture;
 }
 
-function setOutlineColor(outlineTextureData: Uint8Array | Uint8ClampedArray, colorIndex: number, color: THREE.Color) {
+function setOutlineColor(outlineTextureData: Uint8Array | Uint8ClampedArray, colorIndex: number, color: Color) {
   outlineTextureData[4 * colorIndex + 0] = Math.floor(255 * color.r);
   outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
   outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);
   outlineTextureData[4 * colorIndex + 3] = 255;
 }
 
-function setDepthTestOptions(depthTexture: THREE.DepthTexture | null, uniforms: ThreeUniforms, defines: any) {
+function setDepthTestOptions(depthTexture: DepthTexture | null, uniforms: ThreeUniforms, defines: any) {
   if (depthTexture === null) {
     return false;
   }
@@ -207,19 +227,17 @@ function setBlitEffect(effect: BlitEffect | undefined, defines: any) {
 }
 
 function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
-  const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
-  const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
-  const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
+  const blending = blendOptions !== undefined ? CustomBlending : NormalBlending;
+  const blendDst = blendOptions?.blendDestination ?? OneMinusSrcAlphaFactor;
+  const blendSrc = blendOptions?.blendSource ?? SrcAlphaFactor;
   const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if undefined
   const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if undefined
   return {
     blending,
     blendDst,
     blendSrc,
-    // TODO 2022-05-28 larsmoa: @types/three@0.140.0 wrongly defines these as type 'number | undefined', while
-    // the correct type is 'number | null' (https://threejs.org/docs/index.html?q=Material#api/en/materials/Material.blendSrcAlpha)
-    blendSrcAlpha: blendSrcAlpha as number | undefined,
-    blendDstAlpha: blendDstAlpha as number | undefined
+    blendSrcAlpha: blendSrcAlpha,
+    blendDstAlpha: blendDstAlpha
   };
 }
 
@@ -236,7 +254,7 @@ export function getLayerMask(renderLayer: number): number {
 }
 
 export function hasStyledNodes(
-  modelIdentifiers: string[],
+  modelIdentifiers: symbol[],
   materialManager: CadMaterialManager
 ): { back: boolean; inFront: boolean; ghost: boolean } {
   const totalBackIndices = modelIdentifiers.reduce(
@@ -257,7 +275,7 @@ export function hasStyledNodes(
   return { back: totalBackIndices > 0, ghost: totalGhostIndices > 0, inFront: totalInFrontIndices > 0 };
 }
 
-export function setModelRenderLayers(rootNode: THREE.Object3D, stylingSets: StyledTreeIndexSets): void {
+export function setModelRenderLayers(rootNode: Object3D, stylingSets: StyledTreeIndexSets): void {
   const { back, ghost, inFront, visible } = stylingSets;
   rootNode.traverse(node => {
     node.layers.disableAll();

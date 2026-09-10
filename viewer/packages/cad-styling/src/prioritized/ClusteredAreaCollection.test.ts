@@ -8,17 +8,17 @@ import { createRandomBoxes } from '../../../../test-utilities/src/createBoxes';
 
 import SeededRandom from 'random-seed';
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 describe('ClusteredAreaCollection', () => {
   test('empty set is empty', () => {
     const areaCollection = new ClusteredAreaCollection();
 
-    expect(areaCollection.isEmpty).toBeTrue();
+    expect(areaCollection.isEmpty).toBeTruthy();
 
-    areaCollection.addAreas([new THREE.Box3().setFromArray([1, 2, 3, 4, 5, 6])]);
+    areaCollection.addAreas([new Box3().setFromArray([1, 2, 3, 4, 5, 6])]);
 
-    expect(areaCollection.isEmpty).toBeFalse();
+    expect(areaCollection.isEmpty).toBeFalsy();
   });
 
   test('does not store just one box and not every box either', () => {
@@ -46,7 +46,7 @@ describe('ClusteredAreaCollection', () => {
     areaCollection.addAreas(boxes);
 
     for (const box of boxes) {
-      expect(areaCollection.intersectsBox(box)).toBeTrue();
+      expect(areaCollection.intersectsBox(box)).toBeTruthy();
     }
   });
 
@@ -58,7 +58,7 @@ describe('ClusteredAreaCollection', () => {
     areaCollection.addAreas(boxes);
 
     for (const box of boxes) {
-      expect(areaCollection.intersectsBox(box)).toBeTrue();
+      expect(areaCollection.intersectsBox(box)).toBeTruthy();
     }
   });
 
@@ -90,7 +90,7 @@ describe('ClusteredAreaCollection', () => {
         }
       }
 
-      expect(containedInSomeArea).toBeTrue();
+      expect(containedInSomeArea).toBeTruthy();
     }
   });
 });

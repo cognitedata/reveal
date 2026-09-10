@@ -1,0 +1,119 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import type { Image360Provider } from './Image360Provider';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  Historical360ImageSet,
+  Image360DescriptorProvider,
+  Image360Face,
+  Image360FileDescriptor,
+  Image360FileProvider
+} from '@reveal/data-providers';
+import type {
+  Image360AnnotationFilterDelegate,
+  Image360AnnotationProvider,
+  Image360AnnotationSpecifier
+} from './Image360AnnotationProvider';
+import type {
+  AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
+  Image360AnnotationAssetQueryResult
+} from '../collection/Image360Collection';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+import type { Image360AnnotationInstanceReference } from '../annotation/types';
+
+export class Image360ProviderCombiner<T extends DataSourceType> implements Image360Provider<T> {
+  private readonly _descriptorProvider: Image360DescriptorProvider<T>;
+  private readonly _fileProvider: Image360FileProvider;
+  private readonly _annotationProvider: Image360AnnotationProvider<T>;
+
+  constructor(
+    descriptorProvider: Image360DescriptorProvider<T>,
+    fileProvider: Image360FileProvider,
+    annotationProvider: Image360AnnotationProvider<T>
+  ) {
+    this._descriptorProvider = descriptorProvider;
+    this._fileProvider = fileProvider;
+    this._annotationProvider = annotationProvider;
+  }
+
+  get360ImageDescriptors(
+    metadataFilter: T['image360Identifier'],
+    preMultipliedRotation: boolean
+  ): Promise<Historical360ImageSet<T>[]> {
+    return this._descriptorProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);
+  }
+
+  get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    return this._fileProvider.get360ImageFiles(image360FaceDescriptors, abortSignal);
+  }
+
+  getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    return this._fileProvider.getLowResolution360ImageFiles(image360FaceDescriptors, abortSignal);
+  }
+
+  getRelevant360ImageAnnotations(
+    annotationSpecifier: Image360AnnotationSpecifier<T>
+  ): Promise<T['image360AnnotationType'][]> {
+    return this._annotationProvider.getRelevant360ImageAnnotations(annotationSpecifier);
+  }
+
+  resolveFileIdToExternalIdMapping(
+    annotations: T['image360AnnotationType'][],
+    descriptors: Image360FileDescriptor[]
+  ): Promise<Map<number, string>> {
+    if (this._annotationProvider.resolveFileIdToExternalIdMapping) {
+      return this._annotationProvider.resolveFileIdToExternalIdMapping(annotations, descriptors);
+    }
+    return Promise.resolve(new Map());
+  }
+
+  findImageAnnotationsForInstance(
+    instanceFilter: Image360AnnotationInstanceReference<T>,
+    collection: DefaultImage360Collection<T>
+  ): Promise<Image360AnnotationAssetQueryResult<T>[]> {
+    return this._annotationProvider.findImageAnnotationsForInstance(instanceFilter, collection);
+  }
+
+  getAllImage360AnnotationInfos(
+    source: 'assets',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
+  getAllImage360AnnotationInfos(
+    source: 'cdm',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all' | 'assets' | 'hybrid' | 'cdm',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
+  > {
+    return this._annotationProvider.getAllImage360AnnotationInfos(source, collection, annotationFilter);
+  }
+}

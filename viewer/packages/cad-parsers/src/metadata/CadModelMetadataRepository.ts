@@ -2,29 +2,31 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
 
-import { getDistanceToMeterConversionFactor, SectorScene } from '../utilities/types';
-import { CadModelMetadata } from './CadModelMetadata';
-import { MetadataRepository } from '@reveal/model-base';
+import type { SectorScene } from '../utilities/types';
+import { getDistanceToMeterConversionFactor } from '../utilities/types';
+import type { CadModelMetadata } from './CadModelMetadata';
+import type { MetadataRepository } from '@reveal/model-base';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import {
+import type {
   ModelDataProvider,
   ModelMetadataProvider,
   ModelIdentifier,
-  File3dFormat,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  MetadataWithSignedFiles
 } from '@reveal/data-providers';
+import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
-  private _currentModelIdentifier = 0;
 
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
@@ -37,22 +39,24 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     this._blobFileName = blobFileName;
   }
 
-  async loadData(modelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    const cadOutput = await this.getSupportedOutput(modelIdentifier);
+  async loadData(modelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
+    const cadOutput = await this.getSupportedOutput(modelIdentifier, outputFormat);
     const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
-    const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
-    const scene: SectorScene = this._cadSceneParser.parse(json);
+    const { jsonData, signedFilesBaseUrl } = await this.getJsonDataWithSignedFilesBaseUrl(modelIdentifier, blobBaseUrl);
+
+    const scene: SectorScene = this._cadSceneParser.parse(jsonData);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
-    const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
+    const inverseModelMatrix = new Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
     return {
-      modelIdentifier: `${this._currentModelIdentifier++}`, // TODO 2021-10-03 larsmoa: Change to ModelIdentifier
+      modelIdentifier,
       modelBaseUrl: blobBaseUrl,
+      signedFilesBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
       format: cadOutput.format as File3dFormat,
@@ -64,20 +68,89 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     };
   }
 
-  private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
-    const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
-    // Supported output formats in order of preference (first format is most preferred)
-    const gltfOutput = { format: File3dFormat.GltfCadModel, version: 9 };
+  private async getJsonDataWithSignedFilesBaseUrl(
+    modelIdentifier: ModelIdentifier,
+    blobBaseUrl: string
+  ): Promise<{
+    jsonData: MetadataWithSignedFiles<CadSceneRootMetadata>;
+    signedFilesBaseUrl: string | undefined;
+  }> {
+    const baseLinkForSignedFiles = this._modelMetadataProvider.getModelUriForSignedFiles?.();
+    if (modelIdentifier instanceof DMModelIdentifier && baseLinkForSignedFiles !== undefined) {
+      try {
+        const jsonData = await this.loadCadMetadataFromSignedFiles(
+          modelIdentifier,
+          baseLinkForSignedFiles,
+          this._blobFileName
+        );
+        return { jsonData, signedFilesBaseUrl: baseLinkForSignedFiles };
+      } catch (error) {
+        console.warn(`Failed to load CAD metadata from signed files: ${error}. Using fallback to base URL fetching.`);
+      }
+    }
+    const jsonData = await this.loadCadMetadataFromBaseUrl(blobBaseUrl, this._blobFileName);
+    return { jsonData, signedFilesBaseUrl: undefined };
+  }
 
-    const supportedOutput = outputs.find(
-      supportedOutput => supportedOutput.format === gltfOutput.format && supportedOutput.version === gltfOutput.version
+  private async loadCadMetadataFromSignedFiles(
+    modelIdentifier: DMModelIdentifier,
+    signedFilesBaseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
+    if (this._modelDataProvider.getFileUrlsForModel === undefined) {
+      throw new Error('Model data provider does not support signed file fetching');
+    }
+    const filteredSceneItemsPromise = this._modelDataProvider.getFileUrlsForModel(
+      signedFilesBaseUrl,
+      modelIdentifier,
+      fileName
     );
+    const allItemsPromise = this._modelDataProvider.getFileUrlsForModel(signedFilesBaseUrl, modelIdentifier);
+    allItemsPromise.catch(() => {});
+
+    const filteredSceneItems = await filteredSceneItemsPromise;
+    const sceneItem = filteredSceneItems.find(
+      item => item.fileName === fileName || item.fileName.endsWith('/' + fileName)
+    );
+
+    if (sceneItem === undefined) {
+      throw new Error(`File "${fileName}" not found in signed files response`);
+    }
+    const [fileData, items] = await Promise.all([
+      this._modelDataProvider.getJsonFile('', sceneItem.signedUrl),
+      allItemsPromise
+    ]);
+    return {
+      signedFiles: { items },
+      fileData: fileData as CadSceneRootMetadata
+    };
+  }
+
+  private async loadCadMetadataFromBaseUrl(
+    baseUrl: string,
+    fileName: string
+  ): Promise<MetadataWithSignedFiles<CadSceneRootMetadata>> {
+    const jsonData = await this._modelDataProvider.getJsonFile(baseUrl, fileName);
+    return {
+      signedFiles: undefined,
+      fileData: jsonData as CadSceneRootMetadata
+    };
+  }
+
+  private async getSupportedOutput(
+    modelIdentifier: ModelIdentifier,
+    outputFormat?: File3dFormat
+  ): Promise<BlobOutputMetadata> {
+    const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
+
+    const targetFormat = outputFormat ?? File3dFormat.GltfCadModel;
+
+    const supportedOutput = outputs.find(output => output.format === targetFormat && output.version === 9);
 
     if (supportedOutput === undefined) {
       const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
-      const supportedOutputsString = `${gltfOutput.format} v${gltfOutput.version}`;
       throw new Error(
-        `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
+        `Model does not contain output of format '${targetFormat}', available outputs: [${cadModelOutputsString}]`
       );
     }
 
@@ -85,11 +158,11 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   }
 }
 
-function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4): THREE.Matrix4 {
+function createScaleToMetersModelMatrix(unit: string, modelMatrix: Matrix4): Matrix4 {
   const conversionFactor = getDistanceToMeterConversionFactor(unit) ?? 1;
   if (conversionFactor === undefined) {
     throw new Error(`Unknown model unit '${unit}'`);
   }
-  const scaledModelMatrix = new THREE.Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
+  const scaledModelMatrix = new Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
   return scaledModelMatrix.multiply(modelMatrix);
 }

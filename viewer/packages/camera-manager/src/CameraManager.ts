@@ -1,8 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Box3, PerspectiveCamera } from 'three';
-import {
+import type { Box3, PerspectiveCamera } from 'three';
+import type {
   CameraState,
   CameraChangeDelegate,
   CameraStopDelegate,

@@ -2,19 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
-import { defaultRenderOptions, RenderOptions } from '../src/rendering/types';
+import type { RenderOptions } from '../src/rendering/types';
+import { defaultRenderOptions } from '../src/rendering/types';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { NumericRange } from '@reveal/utilities';
+import { CadNode } from '../../cad-model';
 
 export default class BlendingTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { cadMaterialManager, pcMaterialManager, sceneHandler, model } = testFixtureComponents;
 
     if (model.geometryNode.type !== 'CadNode') {
-      return Promise.resolve();
+      return;
     }
 
     const renderOptions = { ...defaultRenderOptions, multiSampleCountHint: 4 } as RenderOptions;
@@ -27,7 +29,12 @@ export default class BlendingTestFixture extends StreamingVisualTestFixture {
 
     this.render();
 
-    const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider('0');
+    if (!(model.geometryNode instanceof CadNode)) {
+      return;
+    }
+    const nodeAppearanceProvider = cadMaterialManager.getModelNodeAppearanceProvider(
+      model.geometryNode.cadModelIdentifier
+    );
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 100)),
       DefaultNodeAppearance.Ghosted

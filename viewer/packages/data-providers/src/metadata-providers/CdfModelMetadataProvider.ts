@@ -1,14 +1,15 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
-import { BlobOutputMetadata, File3dFormat } from '../types';
-import { ModelMetadataProvider } from '../ModelMetadataProvider';
+import { Euler, Matrix4, Vector3 } from 'three';
+import type { BlobOutputMetadata } from '../types';
+import { File3dFormat } from '../types';
+import type { ModelMetadataProvider } from '../ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 
-import { CogniteClient, ItemsResponse } from '@cognite/sdk';
-import { ModelIdentifier } from '../ModelIdentifier';
+import type { CogniteClient, ItemsResponse } from '@cognite/sdk';
+import type { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
@@ -20,7 +21,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     this._client = client;
   }
 
-  public async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<THREE.Matrix4> {
+  public async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<Matrix4> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
@@ -28,19 +29,19 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     const { modelId, revisionId } = modelIdentifier;
     const model = await this._client.revisions3D.retrieve(modelId, revisionId);
 
-    const modelMatrix = new THREE.Matrix4();
+    const modelMatrix = new Matrix4();
 
     if (model.rotation) {
-      modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
+      modelMatrix.makeRotationFromEuler(new Euler(...model.rotation));
     }
     if (model.scale) {
-      const scale = new THREE.Vector3().fromArray(model.scale);
-      const scaleMatrix = new THREE.Matrix4().makeScale(...scale.toArray());
+      const scale = new Vector3().fromArray(model.scale);
+      const scaleMatrix = new Matrix4().makeScale(...scale.toArray());
       modelMatrix.multiply(scaleMatrix);
     }
     if (model.translation) {
-      const translation = new THREE.Vector3().fromArray(model.translation);
-      const translationMatrix = new THREE.Matrix4().makeTranslation(...translation.toArray());
+      const translation = new Vector3().fromArray(model.translation);
+      const translationMatrix = new Matrix4().makeTranslation(...translation.toArray());
       modelMatrix.premultiply(translationMatrix);
     }
 
@@ -50,7 +51,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
 
   public async getModelCamera(
     modelIdentifier: ModelIdentifier
-  ): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
+  ): Promise<{ position: Vector3; target: Vector3 } | undefined> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
@@ -60,8 +61,8 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     if (model.camera && model.camera.position && model.camera.target) {
       const { position, target } = model.camera;
       return {
-        position: new THREE.Vector3(position[0], position[1], position[2]),
-        target: new THREE.Vector3(target[0], target[1], target[2])
+        position: new Vector3(position[0], position[1], position[2]),
+        target: new Vector3(target[0], target[1], target[2])
       };
     }
     return undefined;
@@ -71,6 +72,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
+
     return `${this._client.getBaseUrl()}${this.getRequestPath(formatMetadata.blobId)}`;
   }
 
@@ -94,7 +96,16 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
+  public getModelUriForSignedFiles(): string {
+    const path = this.getRequestPathForSignedFiles();
+    return `${this._client.getBaseUrl()}${path}`;
+  }
+
   private getRequestPath(directoryId: number): string {
     return `/api/v1/projects/${this._client.project}/3d/files/${directoryId}`;
+  }
+
+  private getRequestPathForSignedFiles(): string {
+    return `/api/v1/projects/${this._client.project}/3d/output/files`;
   }
 }

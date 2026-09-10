@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base", ":disablePeerDependencies"],
+  "extends": ["local>cognitedata/renovate-config-public", ":disablePeerDependencies"],
   "timezone": "Europe/Oslo",
   "labels": ["dependencies"],
   "ignorePaths": [
@@ -13,8 +13,7 @@
     {
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
-      "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["three", "@types/three", "ts-jest"],
+      "matchPackageNames": ["!three", "!@types/three"],
       "automerge": true,
       "stabilityDays": 3,
       "internalChecksFilter": "strict",
@@ -23,8 +22,7 @@
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["three", "@types/three"],
+      "matchPackageNames": ["!three", "!@types/three"],
       "addLabels": ["slack"],
       "automerge": false,
       "stabilityDays": 10,
@@ -39,8 +37,7 @@
         "@types/three"
       ],
       "matchPaths": [
-        "documentation/versioned_docs/*/package.json",
-        "react-components/package.json"
+        "documentation/versioned_docs/*/package.json"
       ],
       "enabled": false
     },
@@ -55,7 +52,13 @@
       "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
     }
   ],
-  "postUpdateOptions": ["yarnDedupeHighest"],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "stabilityDays": 0,
+    "automerge": false
+  },
+  "postUpdateOptions": ["pnpmDedupe"],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,

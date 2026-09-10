@@ -2,10 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 // TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import { getPixelCoordinatesFromEvent, getWheelEventDelta } from '@reveal/utilities';
-import remove from 'lodash/remove';
+import { remove, clamp } from 'lodash-es';
 import {
   EventDispatcher,
   MathUtils,
@@ -19,8 +18,8 @@ import {
   Vector3
 } from 'three';
 import Keyboard from './Keyboard';
-import clamp from 'lodash/clamp';
-import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
+import type { ComboControlsOptions } from './ComboControlsOptions';
+import { CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 const TARGET_FPS = 30;
@@ -139,18 +138,21 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._scrollTarget.clone();
   };
 
-  public getState = () => {
+  public getState = (): {
+    target: Vector3;
+    position: Vector3;
+  } => {
     return {
       target: this._target.clone(),
       position: this._camera.position.clone()
     };
   };
 
-  public setScrollTarget = (target: Vector3) => {
+  public setScrollTarget = (target: Vector3): void => {
     this._scrollTarget.copy(target);
   };
 
-  public setState = (position: Vector3, target: Vector3) => {
+  public setState = (position: Vector3, target: Vector3): void => {
     const offset = position.clone().sub(target);
     this._targetEnd.copy(target);
     this._sphericalEnd.setFromVector3(offset);
@@ -161,7 +163,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this.triggerCameraChangeEvent();
   };
 
-  public setViewTarget = (target: Vector3) => {
+  public setViewTarget = (target: Vector3): void => {
     this._viewTarget.copy(target);
     this.triggerCameraChangeEvent();
   };
@@ -257,7 +259,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return changed;
   };
 
-  public triggerCameraChangeEvent = () => {
+  public triggerCameraChangeEvent = (): void => {
     this.dispatchEvent({
       type: 'cameraChange',
       camera: {

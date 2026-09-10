@@ -2,13 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Mesh, MeshBasicMaterial, SphereGeometry } from 'three';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '..';
 
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 
 export default class CustomWithStylingVisualTest extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -28,8 +26,8 @@ export default class CustomWithStylingVisualTest extends StreamingVisualTestFixt
       .getModelNodeAppearanceProvider(modelIdentifier)
       .assignStyledNodeCollection(ghostedNodes, DefaultNodeAppearance.Ghosted);
 
-    const sphere = new THREE.SphereGeometry(5, 32, 16);
-    const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 'red' }));
+    const sphere = new SphereGeometry(5, 32, 16);
+    const sphereMesh = new Mesh(sphere, new MeshBasicMaterial({ color: 'red' }));
     sphereMesh.position.set(12, -3, -2);
     sceneHandler.addObject3D(sphereMesh);
 

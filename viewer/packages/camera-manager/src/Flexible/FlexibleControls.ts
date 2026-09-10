@@ -2,17 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import remove from 'lodash/remove';
-import {
-  MathUtils,
-  OrthographicCamera,
-  PerspectiveCamera,
-  Quaternion,
-  Raycaster,
-  Spherical,
-  Vector2,
-  Vector3
-} from 'three';
+import { remove } from 'lodash-es';
+import type { Spherical } from 'three';
+import { MathUtils, OrthographicCamera, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import Keyboard from '../Keyboard';
 import {
   Vector3Pool,
@@ -21,11 +13,11 @@ import {
   getWheelEventDelta
 } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+import type { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
-import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
+import type { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
 import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
@@ -441,7 +433,14 @@ export class FlexibleControls {
       // Pan left, right, up or down
       if (!translator) {
         translator = new FlexibleControlsTranslator(this);
+        // Store the translator immediately before awaiting so concurrent drag events
+        // find a non-null translator and fall through to the simple-pan fallback
+        // instead of each triggering their own intersectPointClouds GPU readback.
+        this._mouseDragInfo.update(position, translator);
         await translator.initialize(position);
+      }
+      if (!this._mouseDragInfo) {
+        return;
       }
       if (!translator.translate(position)) {
         // If not, translate in a simpler way

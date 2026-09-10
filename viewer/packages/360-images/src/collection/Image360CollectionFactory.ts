@@ -2,25 +2,25 @@
  * Copyright 2023 Cognite AS
  */
 
-import assert from 'assert';
-import zip from 'lodash/zip';
-import uniqBy from 'lodash/uniqBy';
-import { DataSourceType } from '@reveal/data-providers';
-import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
+import { assert } from '@reveal/utilities/assert';
+import { zip, uniqBy } from 'lodash-es';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { IconCollection, IconsOptions } from '../icons/IconCollection';
+import type { IconsOptions } from '../icons/IconCollection';
+import { IconCollection } from '../icons/IconCollection';
 import { Vector3, type Matrix4 } from 'three';
-import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { Historical360ImageSet } from '@reveal/data-providers/src/types';
-import { Image360AnnotationFilterOptions } from '../annotation/types';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import type { Image360AnnotationFilterOptions } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { getImage360ProviderFromMap, Image360ProviderMap } from '@reveal/data-providers/src/Image360Provider';
+import type { Image360ProviderMap } from '../providers/Image360Provider';
+import { getImage360ProviderFromMap } from '../providers/Image360Provider';
 
 export class Image360CollectionFactory {
   private readonly _image360ProviderMap: Image360ProviderMap;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconsOptions: IconsOptions | undefined;
   private readonly _device: DeviceDescriptor;
   private readonly _setNeedsRedraw: () => void;
@@ -28,14 +28,12 @@ export class Image360CollectionFactory {
   constructor(
     image360ProviderMap: Image360ProviderMap,
     sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     setNeedsRedraw: () => void,
     device: DeviceDescriptor,
     iconsOptions?: IconsOptions
   ) {
     this._image360ProviderMap = image360ProviderMap;
     this._sceneHandler = sceneHandler;
-    this._onBeforeSceneRendered = onBeforeSceneRendered;
     this._iconsOptions = iconsOptions;
     this._device = device;
     this._setNeedsRedraw = setNeedsRedraw;
@@ -56,12 +54,7 @@ export class Image360CollectionFactory {
     historicalDescriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = historicalDescriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new IconCollection(
-      points,
-      this._sceneHandler,
-      this._onBeforeSceneRendered,
-      this._iconsOptions
-    );
+    const collectionIcons = new IconCollection(points, this._sceneHandler, this._iconsOptions, this._setNeedsRedraw);
     const icons = collectionIcons.icons;
 
     const annotationFilterer = new Image360AnnotationFilter(annotationFilter);
@@ -76,7 +69,8 @@ export class Image360CollectionFactory {
           annotationFilterer,
           descriptor.transform,
           icon,
-          this._device
+          this._device,
+          this._setNeedsRedraw
         );
       });
 

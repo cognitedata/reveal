@@ -1,16 +1,19 @@
-import { Box3, Camera, Object3D, Plane, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
-import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
-import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
+import type { Camera, Object3D, Plane, Ray, WebGLRenderer } from 'three';
+import { Box3, Points, Sphere, Vector3 } from 'three';
+import type { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
+import type { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { PointCloudOctreeNode } from './PointCloudOctreeNode';
-import { PickParams, PointCloudOctreePicker } from './PointCloudOctreePicker';
+import type { PickParams } from './PointCloudOctreePicker';
+import { PointCloudOctreePicker } from './PointCloudOctreePicker';
 import { PointCloudTree } from './PointCloudTree';
-import { PickPoint } from '../types/types';
-import { IPotree } from '../types/IPotree';
-import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
-import { IPointCloudTreeNode } from './IPointCloudTreeNode';
+import type { PickPoint } from '../types/types';
+import type { IPotree } from '../types/IPotree';
+import type { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
+import type { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
 
-import { RenderLayer, PointCloudMaterial, PointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
+import type { PointCloudMaterial, PointSizeType } from '@reveal/rendering';
+import { RenderLayer, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
 import { makeOnBeforeRender } from '../utils/utils';
 
 export class PointCloudOctree extends PointCloudTree {
@@ -205,7 +208,7 @@ export class PointCloudOctree extends PointCloudTree {
     return this.visibleBounds.applyMatrix4(this.matrixWorld);
   }
 
-  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray, params: Partial<PickParams> = {}): PickPoint | null {
+  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray, params: Partial<PickParams> = {}): Promise<PickPoint | null> {
     this.picker = this.picker || new PointCloudOctreePicker(renderer);
     return this.picker.pick(camera, ray, [this], params);
   }

@@ -1,9 +1,9 @@
-import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
-import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
+import type { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 
-import * as THREE from 'three';
+import type { Points } from 'three';
 
 export interface IPointCloudTreeNode extends IPointCloudTreeNodeBase {
-  sceneNode: THREE.Points;
+  sceneNode: Points;
   geometryNode: IPointCloudTreeGeometryNode;
 }

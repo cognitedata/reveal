@@ -7,19 +7,19 @@ import { createRandomBox } from '../../../../test-utilities/src/createBoxes';
 import SeededRandom from 'random-seed';
 import { unionBoxes } from './unionBoxes';
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 
 describe('computeSceneBoundingBox', () => {
-  let boxes: THREE.Box3[];
+  let boxes: Box3[];
 
   beforeEach(() => {
     const rand = SeededRandom.create('some_seed');
 
     const numSectors = 30;
-    boxes = new Array<THREE.Box3>(numSectors);
+    boxes = new Array<Box3>(numSectors);
 
     for (let i = 0; i < numSectors; i++) {
-      const box: THREE.Box3 = createRandomBox(20, 100, rand);
+      const box: Box3 = createRandomBox(20, 100, rand);
       boxes[i] = box;
     }
   });
@@ -30,7 +30,7 @@ describe('computeSceneBoundingBox', () => {
     expect(boxes.length).toBeGreaterThan(0);
 
     for (const box of boxes) {
-      expect(fullBoundingBox.containsBox(box)).toBeTrue();
+      expect(fullBoundingBox.containsBox(box)).toBeTruthy();
     }
   });
 
@@ -43,8 +43,8 @@ describe('computeSceneBoundingBox', () => {
       maxX = Math.max(maxX, box.max.x);
     }
 
-    const boxOutside = new THREE.Box3(new THREE.Vector3(maxX, 0, 0), new THREE.Vector3(maxX + 1, 1, 1));
+    const boxOutside = new Box3(new Vector3(maxX, 0, 0), new Vector3(maxX + 1, 1, 1));
 
-    expect(fullBoundingBox.containsBox(boxOutside)).toBeFalse();
+    expect(fullBoundingBox.containsBox(boxOutside)).toBeFalsy();
   });
 });

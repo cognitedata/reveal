@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { WantedSector } from '@reveal/cad-parsers';
-import { DetermineSectorsInput, SectorLoadingSpent } from './types';
+import type { WantedSector } from '@reveal/cad-parsers';
+import type { DetermineSectorsInput, SectorLoadingSpent } from './types';
 
 /**
  * Interface for implementations that are responsible for determining

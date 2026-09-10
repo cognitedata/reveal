@@ -3,8 +3,8 @@
  */
 
 import { ShapeType } from './ISerializableShape';
-import { IShape } from './IShape';
-import { SerializableCompositeShape } from './SerializableCompositeShape';
+import type { IShape } from './IShape';
+import type { SerializableCompositeShape } from './SerializableCompositeShape';
 
 import { Box3 } from 'three';
 

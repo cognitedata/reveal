@@ -1,22 +1,25 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
-import { CogniteInternalId } from '@cognite/sdk';
-import sortBy from 'lodash/sortBy';
+import type { Matrix4, Plane } from 'three';
+import { Box3, Vector3 } from 'three';
+import type { CogniteInternalId } from '@cognite/sdk';
+import { sortBy } from 'lodash-es';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { NodesApiClient } from '@reveal/nodes-api';
-import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
-import { NumericRange, CameraConfiguration } from '@reveal/utilities';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { NodesApiClient } from '@reveal/nodes-api';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
+import type { CameraConfiguration } from '@reveal/utilities';
+import { NumericRange } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { NodeTransformProvider } from '@reveal/rendering';
-import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
+import type { NodeTransformProvider } from '@reveal/cad-styling';
+import type { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
 import { NodeIdAndTreeIndexMaps } from '../utilities/NodeIdAndTreeIndexMaps';
-import { CadNode } from './CadNode';
-import { WellKnownUnit } from '../types';
+import type { CadNode } from './CadNode';
+import type { WellKnownUnit } from '../types';
 import { CustomSectorBounds } from '../utilities/CustomSectorBounds';
 
 /**
@@ -112,6 +115,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
       if (this.customSectorBounds.isRegistered(treeIndex)) {
         this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
       }
+      this.cadNode.onTreeIndexSectorDiscovered(treeIndex, newSectorId);
     };
     const cdfToWorldTransform = this.getModelTransformation()
       .clone()
@@ -212,6 +216,35 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * Locks the sectors containing the given tree indices so they are never
+   * evicted when the CAD budget is reduced. The lock is reactive: if a
+   * tree index's geometry is later discovered in a new sector (when that
+   * sector loads), the new sector is automatically locked as well.
+   *
+   * @param treeIndices Tree indices of nodes whose sectors should be locked.
+   */
+  lockTreeIndices(treeIndices: number[]): void {
+    this.cadNode.lockTreeIndices(treeIndices);
+  }
+
+  /**
+   * Removes the lock for the given tree indices. Sectors that were only
+   * locked because of these tree indices will become eligible for eviction.
+   *
+   * @param treeIndices Tree indices to unlock.
+   */
+  unlockTreeIndices(treeIndices: number[]): void {
+    this.cadNode.unlockTreeIndices(treeIndices);
+  }
+
+  /**
+   * Removes all tree-index-based sector locks on this model.
+   */
+  unlockAllTreeIndices(): void {
+    this.cadNode.unlockAllTreeIndices();
+  }
+
+  /**
    * Apply a transformation matrix to the tree indices given, changing
    * rotation, scale and/or position.
    *
@@ -224,8 +257,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    */
   setNodeTransform(
     treeIndices: NumericRange,
-    transformMatrix: THREE.Matrix4,
-    boundingBox?: THREE.Box3,
+    transformMatrix: Matrix4,
+    boundingBox?: Box3,
     space: 'model' | 'world' = 'world'
   ): void {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
@@ -242,7 +275,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToWorldTransform);
 
     // Transform bounding box to CDF space, if given
-    let nodeBoundingBox: THREE.Box3 | undefined;
+    let nodeBoundingBox: Box3 | undefined;
     if (boundingBox) {
       nodeBoundingBox = boundingBox.clone();
       nodeBoundingBox.applyMatrix4(modelToCdfTransform);
@@ -278,7 +311,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    */
   async setNodeTransformByTreeIndex(
     treeIndex: number,
-    transform: THREE.Matrix4,
+    transform: Matrix4,
     applyToChildren = true,
     space: 'model' | 'world' = 'world'
   ): Promise<number> {
@@ -360,7 +393,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    *
    * @example
    * ```js
-   * const boundingBox = new THREE.Box3()
+   * const boundingBox = new Box3()
    * model.getModelBoundingBox(boundingBox);
    * // boundingBox now has the bounding box
    * ```
@@ -369,12 +402,12 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const boundingBox = model.getModelBoundingBox();
    * ```
    */
-  getModelBoundingBox(outBoundingBox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
+  getModelBoundingBox(outBoundingBox?: Box3, restrictToMostGeometry?: boolean): Box3 {
     const bounds = restrictToMostGeometry
       ? this.cadModel.scene.getBoundsOfMostGeometry()
       : this.cadModel.scene.root.subtreeBoundingBox;
 
-    outBoundingBox = outBoundingBox || new THREE.Box3();
+    outBoundingBox = outBoundingBox || new Box3();
     outBoundingBox.copy(bounds);
     outBoundingBox.applyMatrix4(this.cadModel.modelMatrix);
     return outBoundingBox;
@@ -393,7 +426,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * Sets transformation matrix of the model. This overrides the current transformation.
    * @param matrix Transformation matrix.
    */
-  setModelTransformation(matrix: THREE.Matrix4): void {
+  setModelTransformation(matrix: Matrix4): void {
     this.cadNode.setModelTransformation(matrix);
     const cdfToWorldTransform = matrix.clone().multiply(this.getCdfToDefaultModelTransformation());
     this.nodeTransformProvider.setCdfToWorldTransform(cdfToWorldTransform);
@@ -401,9 +434,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Gets transformation matrix that has previously been set with {@link CogniteCadModel.setModelTransformation}.
-   * @param out Preallocated `THREE.Matrix4` (optional).
+   * @param out Preallocated `Matrix4` (optional).
    */
-  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+  getModelTransformation(out?: Matrix4): Matrix4 {
     return this.cadNode.getModelTransformation(out);
   }
 
@@ -411,14 +444,14 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * Sets the clipping planes for this model. They will be combined with the
    * global clipping planes.
    */
-  setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setModelClippingPlanes(clippingPlanes: Plane[]): void {
     this.cadNode.clippingPlanes = clippingPlanes;
   }
 
   /**
    * Get the clipping planes for this model.
    */
-  getModelClippingPlanes(): THREE.Plane[] {
+  getModelClippingPlanes(): Plane[] {
     return [...this.cadNode.clippingPlanes];
   }
 
@@ -426,9 +459,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
    * Does not include any custom transformations set by {@link CogniteCadModel.setModelTransformation}
-   * @param out Preallocated `THREE.Matrix4` (optional)
+   * @param out Preallocated `Matrix4` (optional)
    */
-  getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+  getCdfToDefaultModelTransformation(out?: Matrix4): Matrix4 {
     return this.cadNode.getCdfToDefaultModelTransformation(out);
   }
 
@@ -437,7 +470,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param point Point to compute transformation from
    * @param out Optional pre-allocated point
    */
-  mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out: THREE.Vector3 = new THREE.Vector3()): THREE.Vector3 {
+  mapPointFromCdfToModelCoordinates(point: Vector3, out: Vector3 = new Vector3()): Vector3 {
     const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
     return out.copy(point).applyMatrix4(cdfToModelTransformation);
   }
@@ -447,7 +480,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param box Box to compute transformation from
    * @param out Optional pre-allocated box
    */
-  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
+  mapBoxFromCdfToModelCoordinates(box: Box3, out: Box3 = new Box3()): Box3 {
     const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
     return out.copy(box).applyMatrix4(cdfToModelTransformation);
   }
@@ -458,7 +491,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param box Optional. Used to write result to.
    * @example
    * ```js
-   * const box = new THREE.Box3()
+   * const box = new Box3()
    * const nodeId = 100500;
    * await model.getBoundingBoxByNodeId(nodeId, box);
    * // box now has the bounding box
@@ -468,9 +501,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const box = await model.getBoundingBoxByNodeId(nodeId);
    * ```
    */
-  async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxByNodeId(nodeId: number, box?: Box3): Promise<Box3> {
     const boxList = await this.getBoundingBoxesByNodeIds([nodeId]);
-    const outBox = box ?? new THREE.Box3();
+    const outBox = box ?? new Box3();
     outBox.copy(boxList[0]);
     return outBox;
   }
@@ -483,7 +516,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const box = await model.getBoundingBoxByNodeIds([158239, 192837]);
    * ```
    */
-  async getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE.Box3[]> {
+  async getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<Box3[]> {
     try {
       const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, nodeIds);
       const boxesWorldSpace = boxesResponse.map(box => box.applyMatrix4(this.cadModel.modelMatrix));
@@ -504,7 +537,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param box Optional preallocated container to hold the bounding box.
    * @example
    * ```js
-   * const box = new THREE.Box3()
+   * const box = new Box3()
    * const treeIndex = 42;
    * await model.getBoundingBoxByTreeIndex(treeIndex, box);
    * // box now has the bounding box
@@ -514,7 +547,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const box = await model.getBoundingBoxByTreeIndex(treeIndex);
    * ```
    */
-  async getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxByTreeIndex(treeIndex: number, box?: Box3): Promise<Box3> {
     const nodeId = await this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
     return this.getBoundingBoxByNodeId(nodeId, box);
   }

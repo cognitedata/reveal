@@ -2,8 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationStatus } from '@cognite/sdk';
-import { Color } from 'three';
+import type { AnnotationStatus } from '@cognite/sdk';
+import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  InstanceReference
+} from '@reveal/data-providers';
+import type { Color } from 'three';
 
 /**
  * The appearance of a 360 image annotation
@@ -30,3 +36,10 @@ export type Image360AnnotationFilterOptions = {
    */
   status?: 'all' | AnnotationStatus | AnnotationStatus[];
 };
+
+/**
+ * Instance reference type for image 360 annotations
+ */
+export type Image360AnnotationInstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType
+  ? InstanceReference<ClassicDataSourceType | DMDataSourceType>
+  : InstanceReference<DMDataSourceType>;

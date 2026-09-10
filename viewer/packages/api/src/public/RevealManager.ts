@@ -2,18 +2,20 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera, Plane, Vector3, WebGLRenderTarget } from 'three';
 
-import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
-import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-import { PointCloudBudget } from './types';
+import { isEqual } from 'lodash-es';
 
-import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
-import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
-import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
-import { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
-import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import {
+import type { Subscription } from 'rxjs';
+import { combineLatest, fromEventPattern } from 'rxjs';
+import type { PointCloudBudget } from './types';
+
+import type { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
+import type { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
+import type { SupportedModelTypes, LoadingState } from '@reveal/model-base';
+import type { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
+import type { NodeAppearanceProvider } from '@reveal/cad-styling';
+import type {
   RenderMode,
   RenderPipelineExecutor,
   CadMaterialManager,
@@ -21,24 +23,19 @@ import {
   ResizeHandler,
   SettableRenderTarget
 } from '@reveal/rendering';
-import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import { CameraManager } from '@reveal/camera-manager';
+import type { CameraManager } from '@reveal/camera-manager';
 
-import {
-  ClassicModelIdentifierType,
-  DataSourceType,
-  InternalDataSourceType,
-  LocalModelIdentifierType
-} from '@reveal/data-providers';
+import type { DataSourceType, File3dFormat, InternalDataSourceType } from '@reveal/data-providers';
 import { createModelIdentifier } from '@reveal/data-providers';
-import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
+import type { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
 export type AddCadModelOptions = {
   nodeAppearanceProvider?: NodeAppearanceProvider;
   geometryFilter?: GeometryFilter;
+  outputFormat?: File3dFormat;
 };
 
 /**
@@ -56,15 +53,14 @@ export class RevealManager {
   private _cameraInMotion: boolean = false;
 
   private _isDisposed = false;
-  private readonly _subscriptions = new Subscription();
+  private readonly _subscriptions;
   private readonly _events = {
     loadingStateChanged: new EventTrigger<LoadingStateChangeListener>()
   };
 
-  private readonly _updateSubject: Subject<void>;
   private readonly _cameraManager: CameraManager;
 
-  private readonly _onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void;
+  private readonly _onCameraChange: (position: Vector3, target: Vector3) => void;
   private readonly _onCameraStop: () => void;
 
   constructor(
@@ -80,23 +76,13 @@ export class RevealManager {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this._resizeHandler = resizeHandler;
-    this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
+    this._subscriptions = this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
-    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => (this._cameraInMotion = true);
+    this._onCameraChange = (_position: Vector3, _target: Vector3) => (this._cameraInMotion = true);
     this._onCameraStop = () => (this._cameraInMotion = false);
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
-
-    this._updateSubject = new Subject();
-    this._updateSubject
-      .pipe(
-        auditTime(5000),
-        tap(() => {
-          MetricsLogger.trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
-        })
-      )
-      .subscribe();
   }
 
   public dispose(): void {
@@ -108,7 +94,6 @@ export class RevealManager {
     this._pipelineExecutor.dispose();
     this._renderPipeline.dispose();
     this._resizeHandler.dispose();
-    this._updateSubject.unsubscribe();
     this._subscriptions.unsubscribe();
     this._isDisposed = true;
 
@@ -127,7 +112,7 @@ export class RevealManager {
     this._resizeHandler.resetRedraw();
   }
 
-  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
+  public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
     this._renderPipeline.setOutputRenderTarget(target, autoSizeRenderTarget);
   }
 
@@ -139,12 +124,11 @@ export class RevealManager {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw || this._resizeHandler.needsRedraw;
   }
 
-  public update(camera: THREE.PerspectiveCamera): void {
+  public update(camera: PerspectiveCamera): void {
     this._cadManager.updateCamera(camera, this._cameraInMotion);
 
     if (this._cameraInMotion) {
       this._pointCloudManager.updateCamera(camera);
-      this._updateSubject.next();
     }
   }
 
@@ -176,12 +160,12 @@ export class RevealManager {
     this._pointCloudManager.pointBudget = budget.numberOfPoints;
   }
 
-  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+  public set clippingPlanes(clippingPlanes: Plane[]) {
     this._cadManager.clippingPlanes = clippingPlanes;
     this._pointCloudManager.clippingPlanes = clippingPlanes;
   }
 
-  public get clippingPlanes(): THREE.Plane[] {
+  public get clippingPlanes(): Plane[] {
     return this._cadManager.clippingPlanes;
   }
 
@@ -225,7 +209,7 @@ export class RevealManager {
     this.requestRedraw();
   }
 
-  public render(camera: THREE.PerspectiveCamera): void {
+  public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
@@ -248,8 +232,12 @@ export class RevealManager {
     switch (type) {
       case 'cad': {
         return this._cadManager.addModel(
-          createModelIdentifier(modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType),
-          (options as AddCadModelOptions).geometryFilter
+          createModelIdentifier(
+            { ...modelIdentifier, ...modelIdentifier.classicModelRevisionId },
+            options?.outputFormat
+          ),
+          options?.geometryFilter,
+          options?.outputFormat
         );
       }
 
@@ -282,33 +270,29 @@ export class RevealManager {
     }
   }
 
-  private notifyLoadingStateChanged(loadingState: LoadingState) {
-    this._events.loadingStateChanged.fire(loadingState);
-  }
+  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager): Subscription {
+    let lastLoadingState: LoadingState | undefined;
 
-  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager) {
-    this._subscriptions.add(
-      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
-        .pipe(
-          observeOn(asyncScheduler),
-          subscribeOn(asyncScheduler),
-          map(([cadLoadingState, pointCloudLoadingState]) => {
-            const state: LoadingState = {
-              isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
-              itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
-              itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
-              itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
-            };
-            return state;
-          }),
-          distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
-        )
-        .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
-          MetricsLogger.trackError(error, {
-            moduleName: 'RevealManager',
-            methodName: 'constructor'
-          })
-        )
-    );
+    return combineLatest([
+      fromEventPattern<LoadingState>(
+        eventHandler => cadManager.on('loadingStateChanged', eventHandler),
+        eventHandler => cadManager.off('loadingStateChanged', eventHandler)
+      ),
+      pointCloudManager.getLoadingStateObserver()
+    ]).subscribe(([cadLoadingState, pointCloudLoadingState]) => {
+      const state: LoadingState = {
+        isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+        itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+        itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
+        itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
+      };
+
+      if (isEqual(state, lastLoadingState)) {
+        return;
+      }
+
+      lastLoadingState = state;
+      this._events.loadingStateChanged.fire(state);
+    });
   }
 }

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Vector3, Plane } from 'three';
+import type { Vector3, Plane } from 'three';
 
 /**
  * Determines if a point is visible by a set of planes.

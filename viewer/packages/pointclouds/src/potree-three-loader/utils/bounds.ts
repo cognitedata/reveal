@@ -1,4 +1,5 @@
-import { Box3, Matrix4, Vector3 } from 'three';
+import type { Matrix4 } from 'three';
+import { Box3, Vector3 } from 'three';
 
 /**
  * adapted from mhluska at https://github.com/mrdoob/three.js/issues/1561

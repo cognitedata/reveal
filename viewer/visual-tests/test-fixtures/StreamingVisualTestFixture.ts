@@ -1,12 +1,14 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import type { Box3 } from 'three';
+import { Matrix4, PerspectiveCamera, WebGLRenderer } from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
+import type { RenderPipelineExecutor, RenderPipelineProvider } from '../../packages/rendering';
 import {
   BasicPipelineExecutor,
   CadGeometryRenderModePipelineProvider,
@@ -14,30 +16,25 @@ import {
   defaultRenderOptions,
   DefaultRenderPipelineProvider,
   RenderMode,
-  RenderPipelineExecutor,
-  RenderPipelineProvider,
   PointCloudMaterialManager
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
-import { VisualTestFixture } from './VisualTestFixture';
-import {
-  BeforeSceneRenderedDelegate,
-  DeferredPromise,
-  EventTrigger,
-  fitCameraToBoundingBox,
-  SceneHandler
-} from '../../packages/utilities';
+import type { VisualTestFixture } from './VisualTestFixture';
+import type { BeforeSceneRenderedDelegate } from '../../packages/utilities';
+import { DeferredPromise, EventTrigger, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 
-import {
+import type {
   ModelIdentifier,
   ModelMetadataProvider,
-  DummyPointCloudStylableObjectProvider,
   ModelDataProvider,
-  DummyPointCloudDMStylableObjectProvider,
   AddModelOptionsWithModelRevisionId,
   DataSourceType
 } from '../../packages/data-providers';
-import { LoadingState } from '../../packages/model-base';
+import {
+  DummyPointCloudStylableObjectProvider,
+  DummyPointCloudDMStylableObjectProvider
+} from '../../packages/data-providers';
+import type { LoadingState } from '../../packages/model-base';
 
 import { LocalPointClassificationsProvider, PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
 
@@ -48,17 +45,17 @@ import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFact
 import dat from 'dat.gui';
 import Stats from 'stats.js';
 import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { getDistanceToMeterConversionFactor } from '../../packages/cad-parsers';
 
 export type StreamingTestFixtureComponents = {
-  renderer: THREE.WebGLRenderer;
+  renderer: WebGLRenderer;
   sceneHandler: SceneHandler;
   model: {
     geometryNode: CadNode | PointCloudNode;
-    boundingBox: THREE.Box3;
+    boundingBox: Box3;
   };
-  camera: THREE.PerspectiveCamera;
+  camera: PerspectiveCamera;
   cameraControls: OrbitControls;
   cadMaterialManager: CadMaterialManager;
   pcMaterialManager: PointCloudMaterialManager;
@@ -69,9 +66,9 @@ export type StreamingTestFixtureComponents = {
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
-  private readonly _perspectiveCamera: THREE.PerspectiveCamera;
+  private readonly _perspectiveCamera: PerspectiveCamera;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
   protected readonly _pcMaterialManager: PointCloudMaterialManager;
@@ -142,8 +139,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     );
   }
 
-  createCamera(): THREE.PerspectiveCamera {
-    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+  createCamera(): PerspectiveCamera {
+    return new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
   }
 
   createDefaultRenderPipelineProvider(
@@ -165,7 +162,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._cadNodes = new Array<CadNode>();
     this._sceneHandler = new SceneHandler();
 
-    this._renderer = new THREE.WebGLRenderer();
+    this._renderer = new WebGLRenderer();
     this._renderer.setPixelRatio(window.devicePixelRatio);
     this._renderer.localClippingEnabled = true;
 
@@ -339,8 +336,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     const modelLoadedPromise = new DeferredPromise<void>();
 
     if (model instanceof CadNode) {
-      const subscriber = cadManager.getLoadingStateObserver().subscribe(onLoadingStateChange);
-      modelLoadedPromise.then(() => subscriber.unsubscribe());
+      cadManager.on('loadingStateChanged', onLoadingStateChange);
+      modelLoadedPromise.then(() => cadManager.off('loadingStateChanged', onLoadingStateChange));
     } else if (model instanceof PointCloudNode) {
       const subscriber = pointCloudManager.getLoadingStateObserver().subscribe(onLoadingStateChange);
       modelLoadedPromise.then(() => subscriber.unsubscribe());
@@ -359,10 +356,10 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     }
   }
 
-  private getModelBoundingBox(model: CadNode | PointCloudNode): THREE.Box3 {
+  private getModelBoundingBox(model: CadNode | PointCloudNode): Box3 {
     if (model instanceof CadNode) {
       const boundingBox = model.sectorScene.getBoundsOfMostGeometry();
-      const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
+      const cadFromCdfToThreeMatrix = new Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
       boundingBox.applyMatrix4(cadFromCdfToThreeMatrix);
       const unit = model.cadModelMetadata.scene.unit;
       const scaleFactor = getDistanceToMeterConversionFactor(unit);

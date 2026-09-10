@@ -2,16 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera, WebGLRenderer } from 'three';
 import { It, Mock, Times } from 'moq.ts';
-import { RenderPass } from '../RenderPass';
+import type { RenderPass } from '../RenderPass';
 import { StepPipelineExecutor } from './StepPipelineExecutor';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 
 describe(StepPipelineExecutor.name, () => {
   let stepPipelineExecutor: StepPipelineExecutor;
   beforeEach(() => {
-    const rendererMock = new Mock<THREE.WebGLRenderer>()
+    const rendererMock = new Mock<WebGLRenderer>()
       .setup(p => (p.info.autoReset = It.IsAny()))
       .callback(() => true)
       .setup(p => p.info.reset())
@@ -29,7 +29,7 @@ describe(StepPipelineExecutor.name, () => {
   });
 
   test('StepPipelineExecutor pipeline executor can succsessfully execute a render pipeline', () => {
-    const mockCamera = new Mock<THREE.PerspectiveCamera>();
+    const mockCamera = new Mock<PerspectiveCamera>();
 
     const firstRenderPassMock = new Mock<RenderPass>().setup(p => p.render(It.IsAny(), It.IsAny())).returns();
     const secondRenderPassMock = new Mock<RenderPass>().setup(p => p.render(It.IsAny(), It.IsAny())).returns();
@@ -50,7 +50,7 @@ describe(StepPipelineExecutor.name, () => {
   });
 
   test('StepPipelineExecutor pipeline executor can succsessfully partially execute a render pipeline', () => {
-    const mockCamera = new Mock<THREE.PerspectiveCamera>();
+    const mockCamera = new Mock<PerspectiveCamera>();
 
     const firstRenderPassMock = new Mock<RenderPass>().setup(p => p.render(It.IsAny(), It.IsAny())).returns();
     const secondRenderPassMock = new Mock<RenderPass>().setup(p => p.render(It.IsAny(), It.IsAny())).returns();

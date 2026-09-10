@@ -2,24 +2,26 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
-import { File3dFormat } from '../../packages/data-providers';
-import { SectorMetadata, CadModelMetadata, SectorSceneFactory } from '../../packages/cad-parsers';
+import { File3dFormat, LocalModelIdentifier } from '../../packages/data-providers';
+import type { SectorMetadata, CadModelMetadata } from '../../packages/cad-parsers';
+import { SectorSceneFactory } from '../../packages/cad-parsers';
 
 let modelIdRunningNumber = 0;
 
-export function createCadModelMetadata(sceneVersion: number, root: SectorMetadata): CadModelMetadata {
+export function createCadModelMetadata(sceneVersion: number, root: SectorMetadata, maxTreeIndex = 1): CadModelMetadata {
   const factory = new SectorSceneFactory();
-  const scene = factory.createSectorScene(sceneVersion, 1, 'Meters', root);
+  const scene = factory.createSectorScene(sceneVersion, maxTreeIndex, 'Meters', root);
   const modelId = `testModel_${modelIdRunningNumber++}`;
   const model: CadModelMetadata = {
-    modelIdentifier: modelId,
+    modelIdentifier: new LocalModelIdentifier(modelId),
     format: File3dFormat.GltfCadModel,
     formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,
-    modelMatrix: new THREE.Matrix4().identity(),
-    inverseModelMatrix: new THREE.Matrix4().identity(),
+    signedFilesBaseUrl: `https://localhost/${modelId}`,
+    modelMatrix: new Matrix4().identity(),
+    inverseModelMatrix: new Matrix4().identity(),
     scene,
     geometryClipBox: null
   };

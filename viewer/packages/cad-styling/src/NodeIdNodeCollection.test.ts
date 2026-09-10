@@ -1,14 +1,14 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
-import { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
+import type { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
 import { NodeIdNodeCollection } from './NodeIdNodeCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
-import range from 'lodash/range';
+import { range } from 'lodash-es';
 
 import { It, Mock, Times } from 'moq.ts';
 
@@ -29,8 +29,8 @@ describe(NodeIdNodeCollection.name, () => {
     mockClient.setup(x => x.revisions3D).returns(mockRevisions3DAPI.object());
 
     mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
-    mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
-    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new THREE.Matrix4());
+    mockModel.setup(x => x.getModelTransformation()).returns(new Matrix4());
+    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new Matrix4());
   });
 
   test('executeFilter with 1001 nodeIds, splits into two chunks', async () => {
@@ -49,8 +49,8 @@ describe(NodeIdNodeCollection.name, () => {
   test('executeFilter populates IndexSet and areas', async () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
-    expect(collection.getIndexSet().toIndexArray()).not.toBeEmpty();
-    expect(collection.getAreas().isEmpty).toBeFalse();
+    expect(collection.getIndexSet().toIndexArray()).not.toHaveLength(0);
+    expect(collection.getAreas().isEmpty).toBeFalsy();
   });
 
   test('executeFilter maps node bounds to ThreeJS coordinates', async () => {

@@ -7,9 +7,9 @@ import { IndexSet } from '@reveal/utilities';
 import { Mock } from 'moq.ts';
 
 import { createCadModel } from '../../../test-utilities/src/createCadModel';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 describe(NodeCollectionDeserializer.name, () => {

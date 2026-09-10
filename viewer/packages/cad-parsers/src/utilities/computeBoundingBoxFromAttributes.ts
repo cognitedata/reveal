@@ -1,13 +1,13 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3, Matrix4, Sphere, Vector3 } from 'three';
 
 const computeBoundingBoxFromCenterAndRadiusAttributesVars = {
-  centerA: new THREE.Vector3(),
-  centerB: new THREE.Vector3(),
-  sphere: new THREE.Sphere(),
-  box: new THREE.Box3()
+  centerA: new Vector3(),
+  centerB: new Vector3(),
+  sphere: new Sphere(),
+  box: new Box3()
 };
 
 type ParsePrimitiveAttribute = {
@@ -23,8 +23,8 @@ export function computeBoundingBoxFromCenterAndRadiusAttributes(
   radiusBByteOffset: number,
   elementSize: number,
   elementIndex: number,
-  out: THREE.Box3
-): THREE.Box3 {
+  out: Box3
+): Box3 {
   const { centerA, centerB, sphere, box } = computeBoundingBoxFromCenterAndRadiusAttributesVars;
 
   function readAttribute(byteOffset: number, idx: number = 0): number {
@@ -57,10 +57,10 @@ export function computeBoundingBoxFromCenterAndRadiusAttributes(
 }
 
 const computeBoundingBoxFromVertexAttributesVars = {
-  vertex1: new THREE.Vector3(),
-  vertex2: new THREE.Vector3(),
-  vertex3: new THREE.Vector3(),
-  vertex4: new THREE.Vector3()
+  vertex1: new Vector3(),
+  vertex2: new Vector3(),
+  vertex3: new Vector3(),
+  vertex4: new Vector3()
 };
 
 export function computeBoundingBoxFromVertexAttributes(
@@ -71,8 +71,8 @@ export function computeBoundingBoxFromVertexAttributes(
   attributeFloatValues: Float32Array,
   elementSize: number,
   elementIndex: number,
-  out: THREE.Box3
-): THREE.Box3 {
+  out: Box3
+): Box3 {
   const { vertex1, vertex2, vertex3, vertex4 } = computeBoundingBoxFromVertexAttributesVars;
 
   function readAttribute(attributeByteOffset: number, idx: number = 0): number {
@@ -106,7 +106,7 @@ export function computeBoundingBoxFromVertexAttributes(
 }
 
 const computeBoundingBoxFromInstanceMatrixAttributesVars = {
-  instanceMatrix: new THREE.Matrix4()
+  instanceMatrix: new Matrix4()
 };
 
 export function computeBoundingBoxFromInstanceMatrixAttributes(
@@ -114,9 +114,9 @@ export function computeBoundingBoxFromInstanceMatrixAttributes(
   byteOffset: number,
   elementSize: number,
   elementIndex: number,
-  baseBoundingBox: THREE.Box3,
-  out: THREE.Box3
-): THREE.Box3 {
+  baseBoundingBox: Box3,
+  out: Box3
+): Box3 {
   const { instanceMatrix } = computeBoundingBoxFromInstanceMatrixAttributesVars;
 
   const offset = (elementIndex * elementSize + byteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
@@ -147,17 +147,17 @@ export function computeBoundingBoxFromInstanceMatrixAttributes(
 }
 
 const computeBoundingBoxFromEllipseAttributesVars = {
-  center: new THREE.Vector3(),
-  size: new THREE.Vector3()
+  center: new Vector3(),
+  size: new Vector3()
 };
 
 export function computeBoundingBoxFromEllipseValues(
   radius1: number,
   radius2: number,
   height: number,
-  center: THREE.Vector3,
-  out: THREE.Box3
-): THREE.Box3 {
+  center: Vector3,
+  out: Box3
+): Box3 {
   const { size } = computeBoundingBoxFromEllipseAttributesVars;
 
   const extent = 2 * Math.max(radius1, radius2, height);
@@ -174,8 +174,8 @@ export function computeBoundingBoxFromEllipseAttributes(
   attributeFloatValues: Float32Array,
   elementSize: number,
   elementIndex: number,
-  out: THREE.Box3
-): THREE.Box3 {
+  out: Box3
+): Box3 {
   const { center } = computeBoundingBoxFromEllipseAttributesVars;
 
   function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {

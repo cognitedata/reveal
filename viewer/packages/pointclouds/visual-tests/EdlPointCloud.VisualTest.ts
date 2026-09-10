@@ -3,29 +3,22 @@
  */
 
 import { PointCloudNode } from '../src/PointCloudNode';
-import {
-  CadMaterialManager,
-  defaultRenderOptions,
-  DefaultRenderPipelineProvider,
-  PointCloudMaterialManager,
-  PointColorType
-} from '@reveal/rendering';
-import assert from 'assert';
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
-import { SceneHandler } from '@reveal/utilities';
+import type { CadMaterialManager, PointCloudMaterialManager } from '@reveal/rendering';
+import { defaultRenderOptions, DefaultRenderPipelineProvider, PointColorType } from '@reveal/rendering';
+import { assert } from '@reveal/utilities/assert';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { SceneHandler } from '@reveal/utilities';
 
-import * as THREE from 'three';
+import { PerspectiveCamera } from 'three';
 
 export default class EdlPointCloudVisualTest extends StreamingVisualTestFixture {
   constructor() {
     super('pointcloud-bunny');
   }
 
-  override createCamera(): THREE.PerspectiveCamera {
-    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
+  override createCamera(): PerspectiveCamera {
+    return new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
   }
 
   createDefaultRenderPipelineProvider(

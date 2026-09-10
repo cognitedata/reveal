@@ -2,22 +2,21 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-import { AutoDisposeGroup } from '@reveal/utilities';
+import type { Box3 } from 'three';
+import { Group } from 'three';
 import { LevelOfDetail } from '../cad/LevelOfDetail';
-import { Log } from '@reveal/logger';
 
-export class SectorNode extends THREE.Group {
+export class SectorNode extends Group {
   public readonly sectorPath: string;
   public readonly sectorId: number;
-  public readonly bounds: THREE.Box3;
+  public readonly bounds: Box3;
   public readonly depth: number;
 
-  private _group?: AutoDisposeGroup;
+  private _group?: Group;
   private _lod = LevelOfDetail.Discarded;
   private _updatedTimestamp: number = Date.now();
 
-  constructor(sectorId: number, sectorPath: string, bounds: THREE.Box3) {
+  constructor(sectorId: number, sectorPath: string, bounds: Box3) {
     super();
     this.name = `Sector ${sectorPath} [id=${sectorId}]`;
     this.sectorId = sectorId;
@@ -30,7 +29,7 @@ export class SectorNode extends THREE.Group {
     return this._lod;
   }
 
-  get group(): THREE.Group | undefined {
+  get group(): Group | undefined {
     return this._group;
   }
 
@@ -38,16 +37,8 @@ export class SectorNode extends THREE.Group {
     return this._updatedTimestamp;
   }
 
-  updateGeometry(geometryGroup: AutoDisposeGroup | undefined, levelOfDetail: LevelOfDetail): void {
+  updateGeometry(geometryGroup: Group | undefined, levelOfDetail: LevelOfDetail): void {
     this.resetGeometry();
-
-    if (geometryGroup) {
-      if (geometryGroup.isDisposed()) {
-        Log.warn('Tried to add an already disposed geometry group to sector:', this.sectorId);
-      } else {
-        geometryGroup.reference();
-      }
-    }
 
     this._group = geometryGroup;
     this._lod = levelOfDetail;
@@ -56,23 +47,11 @@ export class SectorNode extends THREE.Group {
     this.updateMatrixWorld(true);
   }
 
-  dereference(): void {
-    if (this._group !== undefined && !this._group.isDisposed()) {
-      this._group.dereference();
-    }
-  }
-
   resetGeometry(): void {
     if (this._group !== undefined) {
-      if (!this._group.isDisposed()) {
-        this._group.dereference();
-      } else {
-        Log.warn('Tried to dereference an already disposed geometryGroup in sector:', this.sectorId);
-      }
       this.remove(this._group);
+      this._group = undefined;
     }
-
-    this._group = undefined;
     this._lod = LevelOfDetail.Discarded;
     this._updatedTimestamp = Date.now();
   }

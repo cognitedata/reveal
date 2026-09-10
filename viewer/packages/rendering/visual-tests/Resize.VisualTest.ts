@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { BasicPipelineExecutor } from '../src/pipeline-executors/BasicPipelineExecutor';
 import { ResizeHandler } from '../src/ResizeHandler';

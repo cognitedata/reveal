@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import css from './spinnerStyles.css';
-import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
-import * as THREE from 'three';
+import css from './spinnerStyles.module.css?inline';
+import svg from './spinnerCogniteLogo.svg?raw';
+import type { Color } from 'three';
 
 import { assertNever } from '@reveal/utilities';
+import { REVEAL_VERSION } from '../version';
 
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
@@ -22,8 +23,8 @@ export class Spinner {
     dark: 'reveal-viewer-spinner--dark'
   };
   private static readonly titles = {
-    idle: process.env.VERSION!,
-    loading: `${process.env.VERSION!} Loading...`
+    idle: REVEAL_VERSION,
+    loading: `${REVEAL_VERSION} Loading...`
   };
 
   private _loading = false;
@@ -105,7 +106,7 @@ export class Spinner {
    * @param color.g 0..1 green
    * @param color.b 0..1 blue
    */
-  updateBackgroundColor(color: Pick<THREE.Color, 'getHSL'>): void {
+  updateBackgroundColor(color: Pick<Color, 'getHSL'>): void {
     const { l: lightness } = color.getHSL({ h: 0, s: 0, l: 0 });
 
     if (lightness > 0.5) {

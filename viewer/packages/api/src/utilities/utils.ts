@@ -2,17 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
-import { AddModelOptions } from '../public/migration/types';
+import type { CogniteClient } from '@cognite/sdk';
+import type { AddModelOptions } from '../public/migration/types';
+import type { DataSourceType } from '@reveal/data-providers';
 import {
-  DataSourceType,
   fetchDMModelIdFromRevisionId,
   isDMIdentifier,
   isClassicIdentifier,
   isLocalIdentifier
 } from '@reveal/data-providers';
 import { assertNever } from '@reveal/utilities';
-import { LocalAddModelOptions } from '../../../data-providers/src/utilities/internalAddModelOptions';
+import type { LocalAddModelOptions } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 export async function getModelAndRevisionId(
   options: AddModelOptions<DataSourceType> | LocalAddModelOptions,

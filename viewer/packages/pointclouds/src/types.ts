@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Object3D, Vector3 } from 'three';
-import { PointCloudNode } from './PointCloudNode';
-import { DataSourceType } from '@reveal/data-providers';
+import type { Object3D, Vector3 } from 'three';
+import type { PointCloudNode } from './PointCloudNode';
+import type { DataSourceType } from '@reveal/data-providers';
 
 /**
  * ASPRS well known point class types.

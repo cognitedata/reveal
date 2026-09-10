@@ -3,8 +3,8 @@
  */
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import { Vector3, Quaternion, PerspectiveCamera } from 'three';
-import { jest } from '@jest/globals';
-import { CameraManagerCallbackData } from '../types';
+import { vi } from 'vitest';
+import type { CameraManagerCallbackData } from '../types';
 
 describe(FlexibleCameraManager.name, () => {
   let cameraManager: FlexibleCameraManager;
@@ -25,11 +25,11 @@ describe(FlexibleCameraManager.name, () => {
   const INITIAL_POSITION = new Vector3(0, 0, 0);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockDomElement = document.createElement('div');
 
     const mockCamera = new PerspectiveCamera();
-    const mockRaycastCallback = jest.fn<() => Promise<CameraManagerCallbackData>>();
+    const mockRaycastCallback = vi.fn<() => Promise<CameraManagerCallbackData>>();
 
     cameraManager = new FlexibleCameraManager(mockDomElement, mockRaycastCallback, mockCamera, undefined, false);
   });
@@ -52,9 +52,9 @@ describe(FlexibleCameraManager.name, () => {
 
       const { position, rotation, target } = cameraManager.getCameraState();
 
-      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
-      expect(rotation.equals(ARBITRARY_TRANSFORMED_ROTATION)).toBeTrue();
-      expect(target.equals(ARBITRARY_TARGET)).toBeTrue();
+      expect(position.equals(ARBITRARY_POSITION)).toBeTruthy();
+      expect(rotation.equals(ARBITRARY_TRANSFORMED_ROTATION)).toBeTruthy();
+      expect(target.equals(ARBITRARY_TARGET)).toBeTruthy();
     });
 
     it('should set the camera state with position and target only', () => {
@@ -65,8 +65,8 @@ describe(FlexibleCameraManager.name, () => {
 
       const { position, target } = cameraManager.getCameraState();
 
-      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
-      expect(target.equals(ARBITRARY_TARGET)).toBeTrue();
+      expect(position.equals(ARBITRARY_POSITION)).toBeTruthy();
+      expect(target.equals(ARBITRARY_TARGET)).toBeTruthy();
     });
 
     it('should set the camera state with position and rotation only', () => {
@@ -77,8 +77,8 @@ describe(FlexibleCameraManager.name, () => {
 
       const { position, rotation } = cameraManager.getCameraState();
 
-      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
-      expect(rotation.equals(ARBITRARY_TRANSFORMED_ROTATION)).toBeTrue();
+      expect(position.equals(ARBITRARY_POSITION)).toBeTruthy();
+      expect(rotation.equals(ARBITRARY_TRANSFORMED_ROTATION)).toBeTruthy();
     });
 
     it('should set the camera state with position only', () => {
@@ -88,7 +88,7 @@ describe(FlexibleCameraManager.name, () => {
 
       const { position } = cameraManager.getCameraState();
 
-      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
+      expect(position.equals(ARBITRARY_POSITION)).toBeTruthy();
     });
 
     it('should set the camera state with original camera position and controls target values when nothing is set', () => {
@@ -96,8 +96,8 @@ describe(FlexibleCameraManager.name, () => {
 
       const { position, target } = cameraManager.getCameraState();
 
-      expect(position.equals(INITIAL_POSITION)).toBeTrue();
-      expect(target.equals(INITIAL_TARGET)).toBeTrue();
+      expect(position.equals(INITIAL_POSITION)).toBeTruthy();
+      expect(target.equals(INITIAL_TARGET)).toBeTruthy();
     });
   });
 });

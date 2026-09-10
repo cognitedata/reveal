@@ -4,7 +4,7 @@
 
 import { createDistinctColors } from './createDistinctColors';
 
-import * as THREE from 'three';
+import { Vector3 } from 'three';
 
 describe('createDistinctColors', () => {
   test('creates somewhat distinct colors', () => {
@@ -22,9 +22,7 @@ describe('createDistinctColors', () => {
           return;
         }
 
-        const dist = new THREE.Vector3()
-          .fromArray(c0.toArray())
-          .distanceTo(new THREE.Vector3().fromArray(c1.toArray()));
+        const dist = new Vector3().fromArray(c0.toArray()).distanceTo(new Vector3().fromArray(c1.toArray()));
 
         expect(dist).toBeGreaterThan(minDifference);
       });

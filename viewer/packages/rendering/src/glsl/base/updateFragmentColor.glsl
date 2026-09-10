@@ -1,8 +1,8 @@
-#pragma glslify: import('../color/rgb2hsv.glsl')
-#pragma glslify: import('../color/hsv2rgb.glsl')
-#pragma glslify: import('../color/packIntToColor.glsl')
-#pragma glslify: import('./geometryTypes.glsl')
-#pragma glslify: import('./renderModes.glsl')
+#include ../color/rgb2hsv.glsl;
+#include ../color/hsv2rgb.glsl;
+#include ../color/packIntToColor.glsl;
+#include geometryTypes.glsl;
+#include renderModes.glsl;
 
 #include <packing>
 

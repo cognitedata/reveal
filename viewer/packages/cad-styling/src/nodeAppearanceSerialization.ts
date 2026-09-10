@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { NodeAppearance, SerializableNodeAppearance } from './NodeAppearance';
+import type { NodeAppearance, SerializableNodeAppearance } from './NodeAppearance';
 
 import { Color } from 'three';
 

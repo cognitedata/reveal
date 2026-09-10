@@ -2,13 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
-import { SerializedNodeCollection } from './SerializedNodeCollection';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
-import range from 'lodash/range';
-import cloneDeep from 'lodash/cloneDeep';
+import { range, cloneDeep } from 'lodash-es';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
 import { NodeCollection } from './NodeCollection';
 

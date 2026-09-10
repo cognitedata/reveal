@@ -2,16 +2,18 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
-import * as THREE from 'three';
-import { CadMaterialManager } from '../CadMaterialManager';
+import type { SceneHandler } from '@reveal/utilities';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
+import type { Object3D, WebGLRenderer } from 'three';
+import { Color, Vector2 } from 'three';
+import type { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderMode } from '../rendering/RenderMode';
-import { RenderOptions } from '../rendering/types';
-import { RenderPass } from '../RenderPass';
-import { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { RenderOptions } from '../rendering/types';
+import type { RenderPass } from '../RenderPass';
+import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
-import { CadGeometryRenderTargets } from './types';
+import type { CadGeometryRenderTargets } from './types';
 
 type CadGeometryRenderPasses = {
   back: GeometryPass;
@@ -23,8 +25,8 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
   private readonly _cadGeometryRenderTargets: CadGeometryRenderTargets;
   private readonly _cadGeometryRenderPasses: CadGeometryRenderPasses;
   private readonly _cadModels: {
-    cadNode: THREE.Object3D;
-    modelIdentifier: string;
+    cadNode: Object3D;
+    modelIdentifier: symbol;
   }[];
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
@@ -42,7 +44,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this._cadGeometryRenderPasses = this.initializeRenderPasses(sceneHandler);
   }
 
-  public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
+  public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
     try {
@@ -80,17 +82,17 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this._cadGeometryRenderTargets.inFront.dispose();
   }
 
-  private pipelineSetup(renderer: THREE.WebGLRenderer) {
+  private pipelineSetup(renderer: WebGLRenderer) {
     this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
     this._rendererStateHelper.autoClear = true;
-    this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
+    this._rendererStateHelper.setClearColor(renderer.getClearColor(new Color()), 0);
 
     this.updateRenderTargetSizes(renderer);
   }
 
   private initializeRenderTargets(multisampleCount: number): CadGeometryRenderTargets {
     return {
-      currentRenderSize: new THREE.Vector2(1, 1),
+      currentRenderSize: new Vector2(1, 1),
       back: createRenderTarget(1, 1, multisampleCount),
       ghost: createRenderTarget(1, 1, multisampleCount),
       inFront: createRenderTarget(1, 1, multisampleCount)
@@ -105,8 +107,8 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     };
   }
 
-  private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
-    const renderSize = new THREE.Vector2();
+  private updateRenderTargetSizes(renderer: WebGLRenderer): void {
+    const renderSize = new Vector2();
     renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;

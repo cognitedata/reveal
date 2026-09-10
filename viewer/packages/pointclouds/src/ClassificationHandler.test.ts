@@ -5,7 +5,8 @@
 import { ClassificationHandler } from './ClassificationHandler';
 
 import { Mock } from 'moq.ts';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '@reveal/rendering';
+import type { PointCloudMaterial } from '@reveal/rendering';
+import { DEFAULT_CLASSIFICATION } from '@reveal/rendering';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 describe(ClassificationHandler.name, () => {
@@ -42,7 +43,7 @@ describe(ClassificationHandler.name, () => {
       .map(k => WellKnownAsprsPointClassCodes[k]);
 
     expect(classNames).toHaveLength(defaultClasses.length);
-    expect(classNames).toContainValues(defaultClasses);
+    expect(classNames.every(item => defaultClasses.includes(item))).to.be.true;
   });
 
   test('holds provided classification set if any', () => {
@@ -51,23 +52,23 @@ describe(ClassificationHandler.name, () => {
     const resultClasses = handler.classes;
 
     expect(resultClasses).toHaveLength(classificationSet.length);
-    expect(resultClasses.map(c => c.name)).toContainValues(classificationSet.map(c => c.name));
-    expect(resultClasses.map(c => c.code)).toContainValues(classificationSet.map(c => c.code));
+    expect(resultClasses.map(c => c.name).every(item => classificationSet.map(c => c.name).includes(item))).to.be.true;
+    expect(resultClasses.map(c => c.code).every(item => classificationSet.map(c => c.code).includes(item))).to.be.true;
   });
 
   test('has classes in custom classification set', () => {
     const handler = new ClassificationHandler(material, classificationInfo);
 
-    expect(handler.hasClass(1)).toBeTrue();
-    expect(handler.hasClass(2)).toBeTrue();
-    expect(handler.hasClass(3)).toBeFalse();
+    expect(handler.hasClass(1)).toBeTruthy();
+    expect(handler.hasClass(2)).toBeTruthy();
+    expect(handler.hasClass(3)).toBeFalsy();
   });
 
   test('reports all classes as visible by default', () => {
     const handler = new ClassificationHandler(material, { classificationSets: [] });
 
     for (const cl of handler.classes) {
-      expect(handler.isClassVisible(cl.code)).toBeTrue();
+      expect(handler.isClassVisible(cl.code)).toBeTruthy();
     }
   });
 });

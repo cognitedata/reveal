@@ -1,15 +1,15 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
-import { AreaCollection } from './prioritized/AreaCollection';
+import type { AreaCollection } from './prioritized/AreaCollection';
 import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
-import { NodeCollection } from './NodeCollection';
+import type { NodeCollection } from './NodeCollection';
 
 /**
  * Node collection that is the intersection between a set of underlying node collections.

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteInternalId, UnitDMSUniqueIdentifier } from '@cognite/sdk';
+import type { CogniteInternalId, UnitDMSUniqueIdentifier } from '@cognite/sdk';
 
 /**
  * A CAD asset mapping that is guaranteed to contain treeIndex and subtreeSize. The only CAD asset

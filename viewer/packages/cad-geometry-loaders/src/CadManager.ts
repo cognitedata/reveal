@@ -2,27 +2,31 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera, Plane } from 'three';
 
-import { Subscription, Observable, auditTime, buffer } from 'rxjs';
-
-import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { LoadingState } from '@reveal/model-base';
-import { CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
-import { MetricsLogger } from '@reveal/metrics';
-import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
-import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
+import type { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import type { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import type { LoadingState } from '@reveal/model-base';
+import type { CadMaterialManager, RenderMode } from '@reveal/rendering';
+import type { ModelIdentifier } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
+import type { CadModelBudget } from './CadModelBudget';
+import { defaultDesktopCadModelBudget } from './CadModelBudget';
+import type { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { batchedDebounce, EventTrigger } from '@reveal/utilities';
+import { assert } from '@reveal/utilities/assert';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
-  private readonly _cadModelMap: Map<string, CadNode> = new Map();
-  private readonly _subscription: Subscription = new Subscription();
+  private readonly _cadModelMap: Map<symbol, CadNode> = new Map();
+  private readonly _unsubscribeConsumedSectors: () => void;
+  private readonly _unsubscribeLoadingState: () => void;
+
   private _compatibleFileFormat:
     | {
         format: File3dFormat;
@@ -32,10 +36,16 @@ export class CadManager {
 
   private _needsRedraw: boolean = false;
 
+  private readonly _loadingStateChangedTrigger = new EventTrigger<(loadingState: LoadingState) => void>();
+
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
-  private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
   private readonly _sectorBufferTime = 350;
+
+  private readonly _compatibleGltfFormats: File3dFormat[] = [
+    File3dFormat.GltfCadModel,
+    File3dFormat.GltfPrioritizedNodes
+  ];
 
   get materialManager(): CadMaterialManager {
     return this._materialManager;
@@ -65,10 +75,11 @@ export class CadManager {
     this._materialManager = materialManger;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
-    this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
-      const cadModel = this._cadModelMap.get(sector.modelIdentifier);
+      const modelSymbol = sector.modelIdentifier.revealInternalId;
+      const cadModel = this._cadModelMap.get(modelSymbol);
+
       if (!cadModel) {
         // Model has been removed - results can come in for a period just after removal
         return;
@@ -82,6 +93,8 @@ export class CadManager {
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
+        // Also clean up any mesh groups created from parsed geometries
+        cadModel.removeSectorMeshGroupWithDereferencing(sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
@@ -89,13 +102,19 @@ export class CadManager {
       if (!sectorNode) {
         throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
       }
-      if (sector.group) {
-        sectorNode.add(sector.group);
-      }
-      sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
 
-      if (sector.group) {
-        cadModel.setModelRenderLayers(sectorNode.group);
+      const meshGroup =
+        sector.parsedMeshGeometries && sector.parsedMeshGeometries.length > 0
+          ? cadModel.createMeshesFromParsedGeometries(sector.parsedMeshGeometries, sector.metadata.id)
+          : undefined;
+
+      if (meshGroup) {
+        sectorNode.add(meshGroup);
+      }
+      sectorNode.updateGeometry(meshGroup, sector.levelOfDetail);
+
+      if (meshGroup) {
+        cadModel.setModelRenderLayers(meshGroup);
       }
 
       this.markNeedsRedraw();
@@ -103,34 +122,30 @@ export class CadManager {
       this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
-    const consumeNextSectors = (sectors: ConsumedSector[]) => {
-      for (const sector of sectors) {
-        consumeNextSector(sector);
-      }
-      this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
-    };
-
-    const consumedSectorsObservable = this._cadModelUpdateHandler.consumedSectorObservable();
-    const flushAt = consumedSectorsObservable.pipe(auditTime(this._sectorBufferTime));
-    this._subscription.add(
-      consumedSectorsObservable.pipe(buffer(flushAt)).subscribe({
-        next: consumeNextSectors,
-        error: error => {
-          MetricsLogger.trackError(error, {
-            moduleName: 'CadManager',
-            methodName: 'constructor'
-          });
+    const debouncedConsumeSectors = batchedDebounce(
+      (sectors: ConsumedSector[]) => {
+        for (const sector of sectors) {
+          consumeNextSector(sector);
         }
-      })
+        this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
+      },
+      this._sectorBufferTime,
+      { maxWait: 1000 }
     );
+
+    this._unsubscribeConsumedSectors = this._cadModelUpdateHandler.on('onNewConsumedSector', debouncedConsumeSectors);
+    this._unsubscribeLoadingState = this._cadModelUpdateHandler.on('onLoadingStateChanged', loadingState => {
+      this._loadingStateChangedTrigger.fire(loadingState);
+    });
   }
 
   dispose(): void {
     this._cadModelUpdateHandler.dispose();
     this._materialManager.dispose();
     this._cadModelFactory.dispose();
-    this._subscription.unsubscribe();
-    this._materialManager.off('materialsChanged', this._materialsChangedListener);
+    this._unsubscribeConsumedSectors();
+    this._unsubscribeLoadingState();
+    this._loadingStateChangedTrigger.unsubscribeAll();
   }
 
   requestRedraw(): void {
@@ -139,22 +154,25 @@ export class CadManager {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+    this._materialManager.resetRedraw();
     [...this._cadModelMap.values()].some(m => m.resetRedraw());
   }
 
   get needsRedraw(): boolean {
-    return this._needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw);
+    return (
+      this._needsRedraw || this._materialManager.needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw)
+    );
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+  updateCamera(camera: PerspectiveCamera, cameraInMotion: boolean): void {
     this._cadModelUpdateHandler.updateCamera(camera, cameraInMotion);
   }
 
-  get clippingPlanes(): THREE.Plane[] {
+  get clippingPlanes(): Plane[] {
     return this._materialManager.clippingPlanes;
   }
 
-  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+  set clippingPlanes(clippingPlanes: Plane[]) {
     this._materialManager.clippingPlanes = clippingPlanes;
     this._cadModelUpdateHandler.clippingPlanes = clippingPlanes;
     this._needsRedraw = true;
@@ -169,11 +187,14 @@ export class CadManager {
   }
 
   doesModelHaveCompatibleFormat(modelMetadata: CadModelMetadata): boolean {
-    return (
-      this._compatibleFileFormat === undefined ||
-      (this._compatibleFileFormat.format === modelMetadata.format &&
-        this._compatibleFileFormat.version === modelMetadata.formatVersion)
-    );
+    if (this._compatibleFileFormat === undefined) {
+      return true;
+    }
+    const isFormatCompatible =
+      this._compatibleFileFormat.format === modelMetadata.format ||
+      (this._compatibleGltfFormats.includes(this._compatibleFileFormat.format) &&
+        this._compatibleGltfFormats.includes(modelMetadata.format));
+    return isFormatCompatible && this._compatibleFileFormat.version === modelMetadata.formatVersion;
   }
 
   updateModelCompatibilityFormat(modelMetadata: CadModelMetadata): void {
@@ -183,8 +204,12 @@ export class CadManager {
     };
   }
 
-  async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier);
+  async addModel(
+    modelIdentifier: ModelIdentifier,
+    geometryFilter?: GeometryFilter,
+    outputFormat?: File3dFormat
+  ): Promise<CadNode> {
+    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier, outputFormat);
 
     if (!this.doesModelHaveCompatibleFormat(modelMetadata)) {
       throw Error(
@@ -197,8 +222,9 @@ export class CadManager {
 
     this.updateModelCompatibilityFormat(modelMetadata);
 
-    const model = await this._cadModelFactory.createModel(modelMetadata, geometryFilter);
+    const model = this._cadModelFactory.createModel(modelMetadata, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
+
     this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
     this.setCacheSizeForModel(model, this.budget);
@@ -207,14 +233,23 @@ export class CadManager {
 
   removeModel(model: CadNode): void {
     if (!this._cadModelMap.delete(model.cadModelIdentifier)) {
-      throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
+      throw new Error(`Could not remove model ${String(model.cadModelIdentifier)} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
+    this.materialManager.removeModelMaterials(model.cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
-  getLoadingStateObserver(): Observable<LoadingState> {
-    return this._cadModelUpdateHandler.getLoadingStateObserver();
+  on(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {
+    assert(event === 'loadingStateChanged', `Unsupported event '${event}'`);
+
+    this._loadingStateChangedTrigger.subscribe(listener);
+  }
+
+  off(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {
+    assert(event === 'loadingStateChanged', `Unsupported event '${event}'`);
+
+    this._loadingStateChangedTrigger.unsubscribe(listener);
   }
 
   /**
@@ -233,8 +268,8 @@ export class CadManager {
    * @param budget The budget to calculate cache size by
    */
   private setCacheSizeForModel(model: CadNode, budget: CadModelBudget) {
-    // This gives cache size of 200 on desktop on default budget
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
+    // This gives cache size of 300 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 300 / defaultDesktopCadModelBudget.maximumRenderCost;
     model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
   }
 
@@ -242,27 +277,13 @@ export class CadManager {
     this._needsRedraw = true;
   }
 
-  private handleMaterialsChanged() {
-    this.requestRedraw();
-  }
-
   private updateTreeIndexToSectorsMap(cadModel: CadNode, sector: ConsumedSector): void {
     if (cadModel.treeIndexToSectorsMap.isCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh)) {
       return;
     }
 
-    if (sector.group?.children.length !== 1) {
+    if (sector.parsedMeshGeometries?.length !== 1) {
       return;
     }
-
-    const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
-    if (!treeIndices) {
-      return;
-    }
-
-    for (const treeIndex of treeIndices.keys()) {
-      cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
-    }
-    cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }

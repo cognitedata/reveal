@@ -1,6 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-export { DMInstanceRef, DMSpace, DMExternalId } from './types';
+export type { DMInstanceRef, DMSpace, DMExternalId } from './types';
 export { isDmIdentifier } from './typeGuards';
-export { DMInstanceKey, dmInstanceRefToKey } from './toKey';
+export type { DMInstanceKey } from './toKey';
+export { dmInstanceRefToKey } from './toKey';

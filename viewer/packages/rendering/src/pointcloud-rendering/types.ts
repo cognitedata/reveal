@@ -1,7 +1,8 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
-import { Color, IUniform as IThreeUniform, Vector4, type Box3, type Vector3 } from 'three';
+import type { Color, IUniform as IThreeUniform, Vector4 } from 'three';
+import { type Box3, type Vector3 } from 'three';
 
 export type IGradient = [number, Color][];
 

@@ -1,0 +1,340 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
+
+import { vi } from 'vitest';
+import { Mock } from 'moq.ts';
+import type { AnnotationModel, InternalId, AnnotationsInstanceRef, FileInfo } from '@cognite/sdk';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import type { ClassicDataSourceType, Image360Descriptor, Image360FileDescriptor } from '@reveal/data-providers';
+import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import { createAnnotationModel, createFileInfo } from '../../../../test-utilities';
+import { Cdf360ImageAnnotationProvider } from './Cdf360ImageAnnotationProvider';
+import { assert } from '@reveal/utilities/assert';
+import type { Cdf360ImageAnnotationCache } from '@reveal/data-providers';
+
+describe(Cdf360ImageAnnotationProvider.name, () => {
+  const ARBITRARY_FILE_ID = 10;
+
+  const assetRef: InternalId = { id: 10 };
+
+  const instanceRef: AnnotationsInstanceRef = {
+    externalId: 'instance-1',
+    space: 'space-1',
+    instanceType: 'node',
+    sources: []
+  };
+
+  const matchingAnnotation = createAnnotationModel({
+    id: 1,
+    annotatedResourceId: 10,
+    annotationType: 'images.AssetLink',
+    data: {
+      text: 'a',
+      textRegion: { xMin: 0, xMax: 0.1, yMin: 0, yMax: 0.1 },
+      assetRef
+    },
+    status: 'approved'
+  });
+
+  const nonMatchingAnnotation = createAnnotationModel({
+    id: 2,
+    annotatedResourceId: 20,
+    annotationType: 'images.AssetLink',
+    data: {
+      text: 'b',
+      textRegion: { xMin: 0, xMax: 0.1, yMin: 0, yMax: 0.1 },
+      assetRef: { id: 999 }
+    },
+    status: 'approved'
+  });
+
+  const matchingHybridAnnotation = createAnnotationModel({
+    id: 3,
+    annotatedResourceId: 30,
+    annotationType: 'images.InstanceLink',
+    data: {
+      text: 'hybrid annotation for file ' + ARBITRARY_FILE_ID,
+      textRegion: { xMin: 0, xMax: 0.1, yMin: 0, yMax: 0.1 },
+      instanceRef: instanceRef
+    },
+    status: 'approved'
+  });
+
+  const annotationCache = {
+    reverseLookup: vi.fn<Cdf360ImageAnnotationCache['reverseLookup']>(() => Promise.resolve([matchingAnnotation])),
+    getFileInfosForFileIds: vi.fn<Cdf360ImageAnnotationCache['getFileInfosForFileIds']>(() => Promise.resolve([])),
+    getAnnotationsForFiles: vi.fn<Cdf360ImageAnnotationCache['getAnnotationsForFiles']>(() =>
+      Promise.resolve([matchingAnnotation])
+    )
+  } as const satisfies Cdf360ImageAnnotationCache;
+
+  function createMockRevision(
+    fileId: { fileId: number } | { externalId: string },
+    annotations: AnnotationModel[]
+  ): Image360RevisionEntity<ClassicDataSourceType> {
+    const descriptor = new Mock<Image360Descriptor<ClassicDataSourceType>>()
+      .setup(d => d.faceDescriptors)
+      .returns([{ ...fileId, face: 'front', mimeType: 'image/jpeg' }])
+      .object();
+
+    const annotationObject1 = new Mock<ImageAnnotationObject<ClassicDataSourceType>>()
+      .setup(a => a.annotation)
+      .returns(annotations[0])
+      .object();
+
+    const annotationObject2 = new Mock<ImageAnnotationObject<ClassicDataSourceType>>()
+      .setup(a => a.annotation)
+      .returns(annotations[1])
+      .object();
+
+    const revision = new Mock<Image360RevisionEntity<ClassicDataSourceType>>()
+      .setup(r => r.identifier)
+      .returns('revision-' + JSON.stringify(fileId))
+      .setup(r => r.getDescriptors())
+      .returns(descriptor)
+      .setup(r => r.getAnnotations())
+      .returns(Promise.resolve([annotationObject1, annotationObject2]))
+      .setup(r => r.createAndAddAnnotationObjects)
+      .returns(() => Promise.resolve([annotationObject1, annotationObject2]));
+
+    return revision.object();
+  }
+
+  function createMockEntity(
+    revisions: Image360RevisionEntity<ClassicDataSourceType>[]
+  ): Image360Entity<ClassicDataSourceType> {
+    const entity = new Mock<Image360Entity<ClassicDataSourceType>>()
+      .setup(e => e.getRevisions)
+      .returns(() => revisions as Image360RevisionEntity<ClassicDataSourceType>[])
+      .object();
+    return entity;
+  }
+
+  function createMockCollection(
+    entities: Image360Entity<ClassicDataSourceType>[]
+  ): DefaultImage360Collection<ClassicDataSourceType> {
+    const allFileDescriptors = entities.flatMap(entity =>
+      entity.getRevisions().flatMap(revision => revision.getDescriptors().faceDescriptors)
+    );
+
+    const collection = new Mock<DefaultImage360Collection<ClassicDataSourceType>>()
+      .setup(c => c.sourceId)
+      .returns({ site_id: 'collection-id' })
+      .setup(c => c.image360Entities)
+      .returns(entities)
+      .setup(c => c.getAllFileDescriptors)
+      .returns(() => allFileDescriptors)
+      .object();
+
+    return collection;
+  }
+
+  describe('findImageAnnotationsForInstance', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    test('returns annotations matching asset ref and image fileIds', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const revision = createMockRevision({ fileId: 10 }, [matchingAnnotation, nonMatchingAnnotation]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(assetRef, collection);
+
+      assert(results.length === 1);
+      expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
+    });
+
+    test('returns annotations matching instance ref and image fileIds', async () => {
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingHybridAnnotation, nonMatchingAnnotation]);
+      annotationCache.reverseLookup.mockResolvedValue([matchingHybridAnnotation, nonMatchingAnnotation]);
+
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const revision = createMockRevision({ fileId: 30 }, [matchingHybridAnnotation, nonMatchingAnnotation]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(instanceRef, collection);
+
+      assert(results.length === 1);
+      expect(results[0].annotation.annotation).toEqual(matchingHybridAnnotation);
+    });
+
+    test('caches results', async () => {
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingHybridAnnotation]);
+      annotationCache.reverseLookup.mockResolvedValue([matchingHybridAnnotation]);
+
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const revision = createMockRevision({ fileId: 30 }, [matchingHybridAnnotation, nonMatchingAnnotation]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(instanceRef, collection);
+      const results2 = await provider.findImageAnnotationsForInstance(instanceRef, collection);
+
+      assert(results.length === 1);
+      expect(results2).toEqual(results);
+    });
+
+    test('returns annotations for descriptors with externalId', async () => {
+      annotationCache.reverseLookup.mockResolvedValue([matchingAnnotation]);
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingAnnotation]);
+      annotationCache.getFileInfosForFileIds.mockResolvedValue([
+        createFileInfo({ id: 10, externalId: 'file-external-id', name: 'file1' })
+      ]);
+
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const revision = createMockRevision({ externalId: 'file-external-id' }, [
+        matchingAnnotation,
+        nonMatchingAnnotation
+      ]);
+      const entity = createMockEntity([revision]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.findImageAnnotationsForInstance(assetRef, collection);
+
+      assert(results.length === 1);
+      expect(results[0].annotation.annotation).toEqual(matchingAnnotation);
+    });
+  });
+
+  describe('resolveFileIdToExternalIdMapping', () => {
+    test('returns mapping from descriptors without API call when descriptors have fileId', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const descriptors: Image360FileDescriptor[] = [
+        { fileId: 100, externalId: 'file-100-ext', face: 'front', mimeType: 'image/jpeg' },
+        { fileId: 200, externalId: 'file-200-ext', face: 'back', mimeType: 'image/jpeg' }
+      ];
+
+      const annotations: AnnotationModel[] = [
+        createAnnotationModel({
+          annotatedResourceId: 100,
+          annotationType: 'images.AssetLink',
+          data: {},
+          status: 'approved'
+        }),
+        createAnnotationModel({
+          annotatedResourceId: 200,
+          annotationType: 'images.AssetLink',
+          data: {},
+          status: 'approved'
+        })
+      ];
+
+      const result = await provider.resolveFileIdToExternalIdMapping(annotations, descriptors);
+
+      expect(result.get(100)).toBe('file-100-ext');
+      expect(result.get(200)).toBe('file-200-ext');
+    });
+
+    test('fetches file info via API when descriptors only have externalId', async () => {
+      annotationCache.getFileInfosForFileIds.mockResolvedValue([
+        { id: 100, externalId: 'file-100-ext', name: 'file1' } as FileInfo,
+        { id: 200, externalId: 'file-200-ext', name: 'file2' } as FileInfo
+      ]);
+
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const descriptors: Image360FileDescriptor[] = [
+        { externalId: 'file-100-ext', face: 'front', mimeType: 'image/jpeg' },
+        { externalId: 'file-200-ext', face: 'back', mimeType: 'image/jpeg' }
+      ];
+
+      const annotations: AnnotationModel[] = [
+        createAnnotationModel({
+          annotatedResourceId: 100,
+          annotationType: 'images.AssetLink',
+          data: {},
+          status: 'approved'
+        }),
+        createAnnotationModel({
+          annotatedResourceId: 200,
+          annotationType: 'images.AssetLink',
+          data: {},
+          status: 'approved'
+        })
+      ];
+
+      const result = await provider.resolveFileIdToExternalIdMapping(annotations, descriptors);
+
+      expect(result.get(100)).toBe('file-100-ext');
+      expect(result.get(200)).toBe('file-200-ext');
+      expect(annotationCache.getFileInfosForFileIds).toHaveBeenCalledWith([{ id: 100 }, { id: 200 }]);
+    });
+
+    test('uses instanceId.externalId when descriptor has instanceId', async () => {
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const descriptors: Image360FileDescriptor[] = [
+        {
+          fileId: 100,
+          instanceId: { externalId: 'instance-ext', space: 'space1' },
+          face: 'front',
+          mimeType: 'image/jpeg'
+        }
+      ];
+
+      const annotations: AnnotationModel[] = [
+        createAnnotationModel({
+          annotatedResourceId: 100,
+          annotationType: 'images.AssetLink',
+          data: {},
+          status: 'approved'
+        })
+      ];
+
+      const result = await provider.resolveFileIdToExternalIdMapping(annotations, descriptors);
+
+      expect(result.get(100)).toBe('instance-ext');
+    });
+  });
+
+  describe('getAllImage360AnnotationInfos', () => {
+    test('maps instance link annotations to entity + revision for hybrid', async () => {
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingHybridAnnotation]);
+
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const revision1 = createMockRevision({ fileId: 30 }, [matchingHybridAnnotation]);
+      const entity = createMockEntity([revision1]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.getAllImage360AnnotationInfos('hybrid', collection, () => true);
+
+      const annotatedIds = results.map(r => r.annotationInfo.annotatedResourceId).sort();
+      expect(annotatedIds).toEqual([30]);
+      results.forEach(r => {
+        expect(r.imageEntity).toBe(entity);
+        expect(r.imageRevision).toBeDefined();
+      });
+    });
+
+    test('maps asset link annotations to entity + revision for classic', async () => {
+      annotationCache.getAnnotationsForFiles.mockResolvedValue([matchingAnnotation]);
+
+      const provider = new Cdf360ImageAnnotationProvider(annotationCache);
+
+      const revision1 = createMockRevision({ fileId: 10 }, [matchingHybridAnnotation]);
+      const entity = createMockEntity([revision1]);
+      const collection = createMockCollection([entity]);
+
+      const results = await provider.getAllImage360AnnotationInfos('assets', collection, () => true);
+
+      const annotatedIds = results.map(r => r.annotationInfo.annotatedResourceId).sort();
+      expect(annotatedIds).toEqual([10]);
+      results.forEach(r => {
+        expect(r.imageEntity).toBe(entity);
+        expect(r.imageRevision).toBeDefined();
+      });
+    });
+  });
+});

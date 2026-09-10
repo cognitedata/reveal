@@ -3,17 +3,19 @@
  */
 
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { DeferredPromise, NumericRange, SceneHandler } from '@reveal/utilities';
-import * as THREE from 'three';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider, PointCloudMaterialManager } from '..';
+import type { SceneHandler } from '@reveal/utilities';
+import { DeferredPromise, NumericRange } from '@reveal/utilities';
+import type { Box3, Object3D, PerspectiveCamera, WebGLRenderer } from 'three';
+import { BoxGeometry, Color, GridHelper, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
+import type { PointCloudMaterialManager } from '..';
+import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 
-import {
-  StreamingVisualTestFixture,
-  StreamingTestFixtureComponents
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
-import { CadMaterialManager } from '../src/CadMaterialManager';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { CadMaterialManager } from '../src/CadMaterialManager';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
+import { CadNode } from '../../cad-model';
 
 export default class RenderingVisualTestFixture extends StreamingVisualTestFixture {
   private readonly guiData = {
@@ -36,14 +38,14 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     const transformControls = this.attachTransformControlsTo(customBox, camera, renderer.domElement);
     sceneHandler.addObject3D(transformControls.getHelper());
 
-    await this.setupMockCadStyling(cadMaterialManager, model.geometryNode.type);
+    await this.setupMockCadStyling(cadMaterialManager, model);
 
     this.setupGui(stepPipelineExecutor, renderer, cadMaterialManager, pcMaterialManager, sceneHandler);
   }
 
   private setupGui(
     stepPipelineExecutor: StepPipelineExecutor,
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     cadMaterialManager: CadMaterialManager,
     pcMaterialManager: PointCloudMaterialManager,
     sceneHandler: SceneHandler
@@ -118,7 +120,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     super.render();
   }
 
-  private setupBackgroundColorGUI(renderer: THREE.WebGLRenderer) {
+  private setupBackgroundColorGUI(renderer: WebGLRenderer) {
     const backgroundGuiData: {
       canvasColor: `#${string}`;
       clearColor: `#${string}`;
@@ -129,7 +131,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
       clearAlpha: 1
     };
 
-    renderer.setClearColor(new THREE.Color(backgroundGuiData.clearColor).convertLinearToSRGB());
+    renderer.setClearColor(new Color(backgroundGuiData.clearColor).convertLinearToSRGB());
     renderer.setClearAlpha(backgroundGuiData.clearAlpha);
     renderer.domElement.style.backgroundColor = backgroundGuiData.canvasColor;
 
@@ -137,13 +139,13 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     renderOptionsGUI.open();
 
     renderOptionsGUI.addColor(backgroundGuiData, 'clearColor').onChange(async () => {
-      renderer.setClearColor(new THREE.Color(backgroundGuiData.clearColor).convertLinearToSRGB());
+      renderer.setClearColor(new Color(backgroundGuiData.clearColor).convertLinearToSRGB());
       renderer.setClearAlpha(backgroundGuiData.clearAlpha);
       this.render();
     });
 
     renderOptionsGUI.add(backgroundGuiData, 'clearAlpha', 0, 1).onChange(async () => {
-      renderer.setClearColor(new THREE.Color(backgroundGuiData.clearColor).convertLinearToSRGB());
+      renderer.setClearColor(new Color(backgroundGuiData.clearColor).convertLinearToSRGB());
       renderer.setClearAlpha(backgroundGuiData.clearAlpha);
       this.render();
     });
@@ -153,12 +155,17 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     });
   }
 
-  private setupMockCadStyling(materialManager: CadMaterialManager, modelType: string): Promise<void> {
-    if (modelType !== 'CadNode') {
+  private setupMockCadStyling(
+    materialManager: CadMaterialManager,
+    model: StreamingTestFixtureComponents['model']
+  ): Promise<void> {
+    if (!(model.geometryNode instanceof CadNode)) {
       return Promise.resolve();
     }
 
-    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider(
+      model.geometryNode.cadModelIdentifier
+    );
     nodeAppearanceProvider.assignStyledNodeCollection(
       new TreeIndexNodeCollection(new NumericRange(0, 10)),
       DefaultNodeAppearance.Ghosted
@@ -183,42 +190,38 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     }
   }
 
-  private getGridFromBoundingBox(boundingBox: THREE.Box3): THREE.GridHelper {
-    const gridSize = new THREE.Vector2(boundingBox.max.x - boundingBox.min.x, boundingBox.max.z - boundingBox.min.z);
-    const grid = new THREE.GridHelper(
+  private getGridFromBoundingBox(boundingBox: Box3): GridHelper {
+    const gridSize = new Vector2(boundingBox.max.x - boundingBox.min.x, boundingBox.max.z - boundingBox.min.z);
+    const grid = new GridHelper(
       gridSize.x,
       20,
-      new THREE.Color('#444444').convertLinearToSRGB(),
-      new THREE.Color('#888888').convertLinearToSRGB()
+      new Color('#444444').convertLinearToSRGB(),
+      new Color('#888888').convertLinearToSRGB()
     ); //THIS IS WRONG
-    grid.position.copy(boundingBox.getCenter(new THREE.Vector3()));
+    grid.position.copy(boundingBox.getCenter(new Vector3()));
     grid.position.setY(boundingBox.min.y);
 
     return grid;
   }
 
-  private getCustomBoxFromBoundingBox(boundingBox: THREE.Box3): THREE.Mesh {
-    const customBox = new THREE.Mesh(
-      new THREE.BoxGeometry(10, 10, 30),
-      new THREE.MeshBasicMaterial({
-        color: new THREE.Color(1, 0, 0),
+  private getCustomBoxFromBoundingBox(boundingBox: Box3): Mesh {
+    const customBox = new Mesh(
+      new BoxGeometry(10, 10, 30),
+      new MeshBasicMaterial({
+        color: new Color(1, 0, 0),
         transparent: true,
         opacity: 0.5,
         depthTest: false
       })
     );
 
-    const boxCenter = boundingBox.getCenter(new THREE.Vector3());
+    const boxCenter = boundingBox.getCenter(new Vector3());
     customBox.position.copy(boxCenter);
 
     return customBox;
   }
 
-  private attachTransformControlsTo(
-    object: THREE.Object3D,
-    camera: THREE.PerspectiveCamera,
-    canvas: HTMLCanvasElement
-  ) {
+  private attachTransformControlsTo(object: Object3D, camera: PerspectiveCamera, canvas: HTMLCanvasElement) {
     const transformControls = new TransformControls(camera, canvas);
     transformControls.attach(object);
     return transformControls;

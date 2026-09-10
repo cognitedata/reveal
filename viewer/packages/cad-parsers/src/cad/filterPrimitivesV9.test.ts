@@ -4,10 +4,9 @@
 
 import { filterGeometryOutsideClipBox } from './filterPrimitivesV9';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import * as THREE from 'three';
+import { Box3, Euler, Matrix4, Vector3 } from 'three';
 
-import {
-  PrimitiveName,
+import type {
   Box,
   Circle,
   Cone,
@@ -19,7 +18,10 @@ import {
   Torus,
   Trapezium,
   Nut,
-  Primitive,
+  Primitive
+} from '../../../../test-utilities/src/primitives';
+import {
+  PrimitiveName,
   getCollectionType,
   createPrimitiveInterleavedGeometriesSharingBuffer,
   createPrimitiveInterleavedGeometry,
@@ -46,7 +48,7 @@ function assertApproximateObjectEquality(obj0: any, obj1: any) {
 function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: Primitive[], primitiveType: PrimitiveName) {
   const bufferGeometry = createPrimitiveInterleavedGeometry(primitiveType, primitives);
 
-  const clipBox = new THREE.Box3(new THREE.Vector3(8, -12, -2), new THREE.Vector3(12, -8, 2));
+  const clipBox = new Box3(new Vector3(8, -12, -2), new Vector3(12, -8, 2));
 
   const collectionType = getCollectionType(primitiveType);
 
@@ -57,7 +59,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: Primitive[], pri
   const newPrimitives = parseInterleavedGeometry(primitiveType, filteredGeometry!);
 
   expect(newPrimitives).toHaveLength(1);
-  expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[0]));
+  expect(Object.keys(newPrimitives[0])).toEqual(expect.arrayContaining(Object.keys(primitives[0])));
   assertApproximateObjectEquality(primitives[0], newPrimitives[0]);
 }
 
@@ -99,7 +101,7 @@ describe(filterGeometryOutsideClipBox.name, () => {
 
     const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveName.Ellipsoid, ellipsoids);
 
-    const clipBox = new THREE.Box3();
+    const clipBox = new Box3();
     clipBox.min.set(-30, -30, -30);
     clipBox.max.set(-20, -20, -20);
 
@@ -113,12 +115,12 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two boxes: one accepted, one rejected - returns filtered', () => {
-    const mat0 = new THREE.Matrix4()
+    const mat0 = new Matrix4()
       .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
-    const mat1 = new THREE.Matrix4()
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
+    const mat1 = new Matrix4()
       .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
     const boxes: Box[] = [
       {
@@ -133,12 +135,12 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two circles: one accepted, one rejected - returns filtered', () => {
-    const mat0 = new THREE.Matrix4()
+    const mat0 = new Matrix4()
       .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
-    const mat1 = new THREE.Matrix4()
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
+    const mat1 = new Matrix4()
       .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
     const circles: Circle[] = [
       {
@@ -247,13 +249,13 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two general rings: one accepted, one rejected - returns filtered', () => {
-    const mat0 = new THREE.Matrix4()
+    const mat0 = new Matrix4()
       .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
-    const mat1 = new THREE.Matrix4()
+    const mat1 = new Matrix4()
       .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
     const normal: [number, number, number] = [0, 1, 0];
 
@@ -278,13 +280,13 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two quads: one accepted, one rejected - returns filtered', () => {
-    const mat0 = new THREE.Matrix4()
+    const mat0 = new Matrix4()
       .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
-    const mat1 = new THREE.Matrix4()
+    const mat1 = new Matrix4()
       .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
     const quads: Quad[] = [
       {
@@ -299,13 +301,13 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two tori: one accepted, one rejected - returns filtered', () => {
-    const mat0 = new THREE.Matrix4()
+    const mat0 = new Matrix4()
       .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
-    const mat1 = new THREE.Matrix4()
+    const mat1 = new Matrix4()
       .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
     const tori: Torus[] = [
       {
@@ -345,13 +347,13 @@ describe(filterGeometryOutsideClipBox.name, () => {
   });
 
   test('Two nuts: one accepted, one rejected - returns filtered', () => {
-    const mat0 = new THREE.Matrix4()
+    const mat0 = new Matrix4()
       .makeTranslation(10, -10, 0)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
-    const mat1 = new THREE.Matrix4()
+    const mat1 = new Matrix4()
       .makeTranslation(-10, 5, 10)
-      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+      .multiply(new Matrix4().makeRotationFromEuler(new Euler(0, 1, 2, 'XYZ')));
 
     const nuts: Nut[] = [
       {
@@ -410,7 +412,7 @@ describe(filterGeometryOutsideClipBox.name, () => {
 
     const geometries = createPrimitiveInterleavedGeometriesSharingBuffer(primitiveTypes, primitives);
 
-    const clipBox = new THREE.Box3(new THREE.Vector3(8, -12, -2), new THREE.Vector3(12, -8, 2));
+    const clipBox = new Box3(new Vector3(8, -12, -2), new Vector3(12, -8, 2));
 
     for (let i = 0; i < collectionTypes.length; i++) {
       const filtered = filterGeometryOutsideClipBox(geometries[i], collectionTypes[i], clipBox);
@@ -420,7 +422,7 @@ describe(filterGeometryOutsideClipBox.name, () => {
       const newPrimitives = parseInterleavedGeometry(primitiveTypes[i], filtered!);
 
       expect(newPrimitives).toHaveLength(1);
-      expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[i][0]));
+      expect(Object.keys(newPrimitives[0])).toEqual(expect.arrayContaining(Object.keys(primitives[i][0])));
 
       assertApproximateObjectEquality(primitives[i][0], newPrimitives[0]);
     }

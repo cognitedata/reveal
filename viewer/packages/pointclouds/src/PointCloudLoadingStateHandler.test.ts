@@ -2,43 +2,44 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { PointCloudLoadingStateHandler } from './PointCloudLoadingStateHandler';
-import { yieldProcessing } from '../../../test-utilities';
+import { waitUntill } from '../../../test-utilities';
 
 describe(PointCloudLoadingStateHandler.name, () => {
   const pollLoadingStatusInterval = 1;
 
-  test('getLoadingStateObserver() triggers false initially', done => {
+  test('getLoadingStateObserver() triggers false initially', async () => {
     const manager = new PointCloudLoadingStateHandler(pollLoadingStatusInterval);
-    expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
+    const isLoading = await firstValueFrom(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)));
+    expect(isLoading).toBe(false);
   });
-  test('getLoadingStateObserver() triggers true after add', done => {
-    const manager = new PointCloudLoadingStateHandler(pollLoadingStatusInterval);
 
-    expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
+  test('getLoadingStateObserver() triggers true after add', async () => {
+    const manager = new PointCloudLoadingStateHandler(pollLoadingStatusInterval);
+    const isLoadingObs = manager.getLoadingStateObserver().pipe(map(x => x.isLoading));
+
+    const receivedValues: boolean[] = [];
+    let resolveTrue!: () => void;
+    const trueReceived = new Promise<void>(resolve => {
+      resolveTrue = resolve;
+    });
+
+    // Subscribe before triggering onModelAdded so the shared observable stays active
+    const sub = isLoadingObs.subscribe(v => {
+      receivedValues.push(v);
+      if (v === true) resolveTrue();
+    });
+
+    await waitUntill(() => receivedValues.length >= 1);
+    expect(receivedValues[0]).toBe(false);
+
     manager.onModelAdded();
-    expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [true], done);
+    await trueReceived;
+    expect(receivedValues).toContain(true);
+
+    sub.unsubscribe();
   });
 });
-
-async function expectObservable<T, U>(observable: Observable<T>, expectedValues: U[], done: () => void): Promise<void> {
-  if (expectedValues.length === 0) {
-    fail('Must expect at least one value');
-  }
-
-  let index = 0;
-  const subscription = observable.subscribe(value => {
-    expect(value).toEqual(expectedValues[index++]);
-    if (index === expectedValues.length) {
-      done();
-    }
-  });
-
-  while (index < expectedValues.length) {
-    await yieldProcessing();
-  }
-  subscription.unsubscribe();
-}

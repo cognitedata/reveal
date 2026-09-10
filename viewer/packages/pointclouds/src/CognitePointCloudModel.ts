@@ -2,22 +2,20 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-import { CameraConfiguration } from '@reveal/utilities';
-import { WellKnownAsprsPointClassCodes } from './types';
-import { PointCloudNode } from './PointCloudNode';
+import type { Color, Matrix4, Plane } from 'three';
+import { Box3, Vector3 } from 'three';
 
-import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+import type { CameraConfiguration } from '@reveal/utilities';
+import type { WellKnownAsprsPointClassCodes } from './types';
+import type { PointCloudNode } from './PointCloudNode';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
+import type { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
-import {
-  applyDefaultsToPointCloudAppearance,
-  PointCloudAppearance,
-  CompletePointCloudAppearance,
-  StyledPointCloudVolumeCollection
-} from '@reveal/pointcloud-styling';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
+
+import type { PointCloudAppearance, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+import { applyDefaultsToPointCloudAppearance, StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 import { isClassicIdentifier } from '@reveal/data-providers';
 
 /**
@@ -71,13 +69,12 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    */
   dispose(): void {}
 
-  // eslint-disable-next-line jsdoc/require-description
   /**
    * @param outBoundingBox Optional. Used to write result to.
    * @returns Model's bounding box.
    * @example
    * ```js
-   * const boundingBox = new THREE.Box3()
+   * const boundingBox = new Box3()
    * model.getModelBoundingBox(boundingBox);
    * // boundingBox now has the bounding box
    *```
@@ -86,7 +83,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * const boundingBox = model.getModelBoundingBox();
    * ```
    */
-  getModelBoundingBox(outBoundingBox?: THREE.Box3): THREE.Box3 {
+  getModelBoundingBox(outBoundingBox?: Box3): Box3 {
     return this.pointCloudNode.getBoundingBox(outBoundingBox);
   }
 
@@ -103,16 +100,16 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Sets transformation matrix of the model. This overrides the current transformation.
    * @param transformationMatrix The new transformation matrix
    */
-  setModelTransformation(transformationMatrix: THREE.Matrix4): void {
+  setModelTransformation(transformationMatrix: Matrix4): void {
     this.pointCloudNode.setModelTransformation(transformationMatrix);
   }
 
   /**
    * Gets transformation matrix that has previously been
    * set with {@link CognitePointCloudModel.setModelTransformation}.
-   * @param out Preallocated `THREE.Matrix4` (optional).
+   * @param out Preallocated `Matrix4` (optional).
    */
-  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+  getModelTransformation(out?: Matrix4): Matrix4 {
     return this.pointCloudNode.getModelTransformation(out);
   }
 
@@ -120,10 +117,26 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
    * Does not include any custom transformations set by {@link CognitePointCloudModel.setModelTransformation}
-   * @param out Preallocated `THREE.Matrix4` (optional)
+   * @param out Preallocated `Matrix4` (optional)
    */
-  getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+  getCdfToDefaultModelTransformation(out?: Matrix4): Matrix4 {
     return this.pointCloudNode.getCdfToDefaultModelTransformation(out);
+  }
+
+  /**
+   * Retrieves all points from the point cloud that are contained within the specified bounding box.
+   * @param box The Box3 bounding box used to filter points, defined in local model coordinates.
+   * @returns Array of Vector3 points that are located within the provided bounding box in local model coordinates.
+   * @example
+   * ```js
+   * const boundingBox = new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10));
+   * const pointsInBox = model.getPointsByBoundingBox(boundingBox);
+   * console.log(`Found ${pointsInBox.length} points in the bounding box`);
+   * ```
+   */
+
+  getPointsByBoundingBox(box: Box3): Vector3[] {
+    return this.pointCloudNode.getSubtreePointsByBox(box);
   }
 
   /**
@@ -131,7 +144,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * @param point Point to compute transformation from
    * @param out Optional pre-allocated point
    */
-  mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out: THREE.Vector3 = new THREE.Vector3()): THREE.Vector3 {
+  mapPointFromCdfToModelCoordinates(point: Vector3, out: Vector3 = new Vector3()): Vector3 {
     const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
     return out.copy(point).applyMatrix4(cdfToModelTransformation);
   }
@@ -141,7 +154,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * @param box Box to compute transformation from
    * @param out Optional pre-allocated box
    */
-  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
+  mapBoxFromCdfToModelCoordinates(box: Box3, out: Box3 = new Box3()): Box3 {
     const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
     return out.copy(box).applyMatrix4(cdfToModelTransformation);
   }
@@ -183,7 +196,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Names will be the custom names provided by the user, or a default one if none have been provided.
    * @returns A sorted list of classification codes and names from the model.
    */
-  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes; color: THREE.Color }> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes; color: Color }> {
     return this.pointCloudNode.getClasses();
   }
 
@@ -283,14 +296,14 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Sets the clipping planes for this model. They will be combined with the
    * global clipping planes.
    */
-  setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setModelClippingPlanes(clippingPlanes: Plane[]): void {
     this.pointCloudNode.clippingPlanes = clippingPlanes;
   }
 
   /**
    * Get the clipping planes for this model.
    */
-  getModelClippingPlanes(): THREE.Plane[] {
+  getModelClippingPlanes(): Plane[] {
     return [...this.pointCloudNode.clippingPlanes];
   }
 
@@ -341,18 +354,21 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * a style previously, the previous style will be replaced by the new one.
    * @param objectCollection The object collection to assign a style to
    * @param appearance The style to assign to the object collection
+   * @param importance The importance of the styling, used for ordering styles to apply. Collections with higher importance gets applied later
    */
   assignStyledObjectCollection(
     objectCollection: T['pointCloudCollectionType'],
-    appearance: PointCloudAppearance
+    appearance: PointCloudAppearance,
+    importance: number = 0
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
-    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
-    if (index !== -1) {
-      this._styledVolumeCollections[index].style = fullAppearance;
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
+    const alreadyAddedCollection = this._styledVolumeCollections.find(x => x.volumeCollection === objectCollection);
+    if (alreadyAddedCollection !== undefined) {
+      alreadyAddedCollection.style = fullAppearance;
+      alreadyAddedCollection.importance = importance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(alreadyAddedCollection);
     } else {
-      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
+      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance, importance);
       this._styledVolumeCollections.push(newObjectCollection);
       this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
     }
@@ -363,32 +379,11 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * @param objectCollection The object collection from which to remove the style
    */
   unassignStyledObjectCollection(objectCollection: T['pointCloudCollectionType']): void {
-    const removeCollection = (
-      collections: Array<StyledPointCloudVolumeCollection<T>>,
-      objectCollection: T['pointCloudCollectionType']
-    ) => {
-      const index = collections.findIndex(x => x.objectCollection === objectCollection);
-      if (index !== -1) {
-        collections.splice(index, 1);
-      }
-      return index !== -1;
-    };
-
-    const removedVolume = removeCollection(this._styledVolumeCollections, objectCollection);
-
-    if (!removedVolume) {
-      return;
+    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
+    if (index !== -1) {
+      this.pointCloudNode.removeStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
+      this._styledVolumeCollections.splice(index, 1);
     }
-
-    this.pointCloudNode.removeAllStyledPointCloudObjects();
-
-    const reassignCollections = (collections: Array<StyledPointCloudVolumeCollection<T>>) => {
-      for (const styledObjectCollection of collections) {
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
-      }
-    };
-
-    reassignCollections(this._styledVolumeCollections);
   }
 
   /**

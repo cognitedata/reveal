@@ -2,12 +2,16 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
-import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
-import { IMock, Mock } from 'moq.ts';
-import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
+import type { ConsumedSector, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+import { DeferredPromise } from '@reveal/utilities';
+import type { IMock } from 'moq.ts';
+import { Mock } from 'moq.ts';
+import type { SectorDownloadData } from './SectorDownloadScheduler';
+import { SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { Log } from '@reveal/logger';
-import { LogLevelNumbers } from 'loglevel';
+import type { LogLevelNumbers } from 'loglevel';
+import { LocalModelIdentifier } from '@reveal/data-providers';
 
 describe(SectorDownloadScheduler.name, () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
@@ -306,7 +310,7 @@ function createMockWantedSectors(
           .object()
       )
       .setup(p => p.modelIdentifier)
-      .returns(modelIdentifier)
+      .returns(new LocalModelIdentifier(modelIdentifier))
       .setup(p => p.levelOfDetail)
       .returns(levelOfDetail)
       .object();
@@ -334,7 +338,6 @@ function createDiscardedConsumedSectorMock(sector: WantedSector): ConsumedSector
     modelIdentifier: sector.modelIdentifier,
     metadata: sector.metadata,
     levelOfDetail: LevelOfDetail.Discarded,
-    group: undefined,
     instancedMeshes: undefined
   };
 }

@@ -1,32 +1,48 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { PerspectiveCamera, Plane } from 'three';
 
 import { createRevealManager } from './createRevealManager';
-import { RevealManager, LoadingStateChangeListener } from './RevealManager';
+import { RevealManager } from './RevealManager';
+import type { LoadingStateChangeListener } from './RevealManager';
 
-import {
+import type {
   DMDataSourceType,
   ModelDataProvider,
+  ModelIdentifier,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
 } from '@reveal/data-providers';
-import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import type { CadManager, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
+import type { PointCloudManager } from '@reveal/pointclouds';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
-import { It, Mock, SetPropertyExpression } from 'moq.ts';
-import { CameraManager } from '@reveal/camera-manager';
-import { PerspectiveCamera } from 'three';
-
-import { jest } from '@jest/globals';
+import type { SetPropertyExpression } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
+import type { CameraManager } from '@reveal/camera-manager';
+import type { CadNode } from '@reveal/cad-model';
+import type {
+  RenderPipelineExecutor,
+  RenderPipelineProvider,
+  ResizeHandler,
+  SettableRenderTarget
+} from '@reveal/rendering';
+import { vi } from 'vitest';
+import { NEVER } from 'rxjs';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
   const stubDataProvider: ModelDataProvider = {} as any;
   const sectorCuller = new Mock<SectorCuller>()
+    .setup(p => p.determineSectors(It.IsAny()))
+    .returns({
+      wantedSectors: [],
+      spentBudget: {} as ReturnType<SectorCuller['determineSectors']>['spentBudget']
+    })
     .setup(p => p.dispose)
-    .returns(jest.fn())
+    .returns(vi.fn())
     .object();
 
   const annotationProvider = new Mock<PointCloudStylableObjectProvider>()
@@ -52,12 +68,12 @@ describe('RevealManager', () => {
     .returns();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     onChangeListeners = [];
     onStopListeners = [];
 
-    const rendererMock = new Mock<THREE.WebGLRenderer>()
+    const rendererMock = new Mock<WebGLRenderer>()
       .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
       .returns({})
       .setup(p => p.domElement)
@@ -80,35 +96,36 @@ describe('RevealManager', () => {
       new SceneHandler(),
       cameraManagerMock.object(),
       {
-        internal: { cad: { sectorCuller } }
+        internal: { cad: { sectorCuller } },
+        logMetrics: false
       }
     );
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('resetRedraw() resets needsRedraw', () => {
     manager.requestRedraw();
-    expect(manager.needsRedraw).toBeTrue();
+    expect(manager.needsRedraw).toBeTruthy();
     manager.resetRedraw();
-    expect(manager.needsRedraw).toBeFalse();
+    expect(manager.needsRedraw).toBeFalsy();
   });
 
   test('set clippingPlanes triggers redraw', () => {
-    expect(manager.needsRedraw).toBeFalse();
-    const planes = [new THREE.Plane(), new THREE.Plane()];
+    expect(manager.needsRedraw).toBeFalsy();
+    const planes = [new Plane(), new Plane()];
     manager.clippingPlanes = planes;
-    expect(manager.needsRedraw).toBeTrue();
+    expect(manager.needsRedraw).toBeTruthy();
   });
 
   test('updates triggers after camera move event, but not after stop event has fired', () => {
     manager.resetRedraw();
 
-    expect(manager.needsRedraw).toBeFalse();
+    expect(manager.needsRedraw).toBeFalsy();
 
     const camera = new PerspectiveCamera(70, 1, 0.1, 100);
 
@@ -116,27 +133,69 @@ describe('RevealManager', () => {
 
     manager.resetRedraw();
     manager.update(camera);
-    expect(manager.needsRedraw).toBeTrue();
+    expect(manager.needsRedraw).toBeTruthy();
 
     onStopListeners.forEach(callback => callback());
 
     manager.resetRedraw();
-    expect(manager.needsRedraw).toBeFalse();
+    expect(manager.needsRedraw).toBeFalsy();
   });
 
   test('dispose() disposes culler', () => {
     manager.dispose();
-    expect(sectorCuller.dispose).toBeCalled();
+    expect(sectorCuller.dispose).toHaveBeenCalled();
   });
 
   test('loadingStateChanged is not triggered if loading state doesnt change', () => {
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
-    const loadingStateChangedCb: LoadingStateChangeListener = jest.fn();
+    const camera = new PerspectiveCamera(60, 1, 0.5, 100);
+    const loadingStateChangedCb: LoadingStateChangeListener = vi.fn();
     manager.on('loadingStateChanged', loadingStateChangedCb);
 
     manager.update(camera);
-    jest.advanceTimersByTime(10000);
+    vi.advanceTimersByTime(10000);
 
-    expect(loadingStateChangedCb).toBeCalledTimes(0);
+    expect(loadingStateChangedCb).toHaveBeenCalledTimes(0);
+  });
+
+  test('addModel routes DM and Classic CAD models to correct identifier types', async () => {
+    let dmIdentifier: ModelIdentifier | undefined;
+    let classicIdentifier: ModelIdentifier | undefined;
+    const cadNodeStub = {} as Partial<CadNode> as CadNode;
+    const addModelMock = vi
+      .fn<CadManager['addModel']>()
+      .mockImplementationOnce(async identifier => {
+        dmIdentifier = identifier;
+        return cadNodeStub;
+      })
+      .mockImplementationOnce(async identifier => {
+        classicIdentifier = identifier;
+        return cadNodeStub;
+      });
+    const rm = new RevealManager(
+      { on: vi.fn(), off: vi.fn(), addModel: addModelMock } as Partial<CadManager> as CadManager,
+      { getLoadingStateObserver: () => NEVER } as Partial<PointCloudManager> as PointCloudManager,
+      {} as Partial<RenderPipelineExecutor> as RenderPipelineExecutor,
+      {} as Partial<RenderPipelineProvider & SettableRenderTarget> as RenderPipelineProvider & SettableRenderTarget,
+      {} as Partial<ResizeHandler> as ResizeHandler,
+      cameraManagerMock.object()
+    );
+
+    await rm.addModel('cad', {
+      revisionExternalId: 'ext',
+      revisionSpace: 'space',
+      classicModelRevisionId: { modelId: 1, revisionId: 2 }
+    });
+    await rm.addModel('cad', { modelId: 10, revisionId: 20, classicModelRevisionId: { modelId: 10, revisionId: 20 } });
+
+    expect(dmIdentifier).toMatchObject({
+      modelId: 1,
+      revisionId: 2,
+      revisionExternalId: 'ext',
+      revisionSpace: 'space'
+    });
+
+    expect(classicIdentifier).toMatchObject({ modelId: 10, revisionId: 20 });
+    expect(classicIdentifier).not.toHaveProperty('revisionExternalId');
+    expect(classicIdentifier).not.toHaveProperty('revisionSpace');
   });
 });

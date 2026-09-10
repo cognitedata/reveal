@@ -2,18 +2,19 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Plane } from 'three';
+import { Box3, Matrix4 } from 'three';
 
-import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
+import type { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
-import { SectorCuller } from './SectorCuller';
+import type { SectorCuller } from './SectorCuller';
 import { computeV9SectorCost } from './computeSectorCost';
 import { TakenV9SectorMap } from './takensectors';
 
 import { Log } from '@reveal/logger';
-import { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import type { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
-import { PrioritizedArea } from '@reveal/cad-styling';
+import type { PrioritizedArea } from '@reveal/cad-styling';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -51,6 +52,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     // Setup helpers we need
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
+    // Force-include sectors from locked models and per-model locked sector IDs
+    const lockedSectorCount = forceIncludeLockedSectors(
+      takenSectors,
+      modelsAndCandidateSectors,
+      input.lockedModelIdentifiers,
+      input.lockedSectorIdsByModel
+    );
+
     // Determine priorities of each candidate sector
     const prioritizedSectors = sortSectorsByPriority(
       modelsAndCandidateSectors,
@@ -58,7 +67,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       input.prioritizedAreas
     );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
-    Log.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
+    Log.debug(
+      'Scheduled',
+      takenSectorCount,
+      'of',
+      prioritizedSectors.length,
+      'candidates',
+      `(${lockedSectorCount} forced from locked models)`
+    );
 
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
@@ -73,6 +89,37 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   }
 
   dispose(): void {}
+}
+
+/**
+ * Force-includes sectors that must bypass the budget:
+ * 1. All sectors from fully locked models (e.g. gltf-prioritized-nodes-directory)
+ * 2. Specific sector IDs locked via tree index locking on standard models
+ */
+function forceIncludeLockedSectors(
+  takenSectors: TakenV9SectorMap,
+  modelsAndCandidateSectors: Map<CadModelMetadata, SectorMetadata[]>,
+  lockedModelIdentifiers: Set<symbol>,
+  lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>
+): number {
+  let count = 0;
+  for (const [model, sectors] of modelsAndCandidateSectors) {
+    const modelId = model.modelIdentifier.revealInternalId;
+    const isFullModelLocked = lockedModelIdentifiers.has(modelId);
+    const lockedSectorIds = lockedSectorIdsByModel.get(modelId);
+
+    if (!isFullModelLocked && !lockedSectorIds) {
+      continue;
+    }
+
+    for (const sector of sectors) {
+      if (isFullModelLocked || lockedSectorIds?.has(sector.id)) {
+        takenSectors.markSectorForced(model, sector.id);
+        count++;
+      }
+    }
+  }
+  return count;
 }
 
 function takeSectorsWithinBudget(
@@ -90,7 +137,7 @@ function takeSectorsWithinBudget(
 }
 
 const sortSectorsByPriorityVars = {
-  transformedBounds: new THREE.Box3()
+  transformedBounds: new Box3()
 };
 
 function sortSectorsByPriority(
@@ -130,8 +177,8 @@ function sortSectorsByPriority(
  */
 function determineCandidateSectorsByModel(
   cadModelsMetadata: CadModelMetadata[],
-  cameraWorldInverseMatrix: THREE.Matrix4,
-  cameraProjectionMatrix: THREE.Matrix4,
+  cameraWorldInverseMatrix: Matrix4,
+  cameraProjectionMatrix: Matrix4,
   input: DetermineSectorsInput
 ) {
   return cadModelsMetadata.reduce((result, model, i) => {
@@ -167,17 +214,17 @@ function initializeTakenSectorsAndWeightFunctions(
  * Determines candidate sectors, i.e.
  */
 function determineCandidateSectors(
-  cameraWorldInverseMatrix: THREE.Matrix4,
-  cameraProjectionMatrix: THREE.Matrix4,
-  modelMatrix: THREE.Matrix4,
+  cameraWorldInverseMatrix: Matrix4,
+  cameraProjectionMatrix: Matrix4,
+  modelMatrix: Matrix4,
   modelScene: SectorScene,
-  clippingPlanes: THREE.Plane[]
+  clippingPlanes: Plane[]
 ): SectorMetadata[] {
   if (modelScene.version !== 9) {
     throw new Error(`Expected model version 9, but got ${modelScene.version}`);
   }
 
-  const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
+  const transformedCameraMatrixWorldInverse = new Matrix4();
   transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
   const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
 
@@ -185,7 +232,7 @@ function determineCandidateSectors(
     return sectors;
   }
 
-  const bounds = new THREE.Box3();
+  const bounds = new Box3();
   return sectors.filter(sector => {
     bounds.copy(sector.subtreeBoundingBox);
     bounds.applyMatrix4(modelMatrix);
@@ -201,7 +248,7 @@ function determineCandidateSectors(
 function determineSectorPriority(
   weightFunctions: WeightFunctionsHelper,
   sector: SectorMetadata,
-  transformedBounds: THREE.Box3,
+  transformedBounds: Box3,
   prioritizedAreas: PrioritizedArea[]
 ) {
   const levelWeightImportance = 2.0;

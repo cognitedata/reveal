@@ -2,17 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-import { SectorScene } from '../utilities/types';
-import { CameraConfiguration } from '@reveal/utilities';
-import { File3dFormat } from '@reveal/data-providers';
+import type { Box3, Matrix4 } from 'three';
+import type { SectorScene } from '../utilities/types';
+import type { CameraConfiguration } from '@reveal/utilities';
+import type { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 
 export interface CadModelMetadata {
   /**
    * A unique identifier of the model.
    */
-  // TODO 2021-10-03 larsmoa: Change into a ModelIdentifier
-  readonly modelIdentifier: string;
+  readonly modelIdentifier: ModelIdentifier;
 
   /**
    * File format of the 3D model (i3d/f3d, gltf, etc.)
@@ -30,6 +29,10 @@ export interface CadModelMetadata {
    */
   readonly modelBaseUrl: string;
   /**
+   * Base URL of the signed files, if the model supports signed files.
+   */
+  readonly signedFilesBaseUrl: string | undefined;
+  /**
    * If not null, geometry outside this box might be clipped
    * away to avoid representing unused geometry. Will typically
    * be used with geometry filters where only a part of the model
@@ -39,16 +42,16 @@ export interface CadModelMetadata {
    * around the geometry, it must be transformed to "viewer space"
    * first.
    */
-  readonly geometryClipBox: THREE.Box3 | null;
+  readonly geometryClipBox: Box3 | null;
   /**
    * Matrix transforming from coordinates of the model to ThreeJS
    * coordinates.
    */
-  readonly modelMatrix: THREE.Matrix4;
+  readonly modelMatrix: Matrix4;
   /**
    * Inverse of {@see modelMatrix}.
    */
-  readonly inverseModelMatrix: THREE.Matrix4;
+  readonly inverseModelMatrix: Matrix4;
   /**
    * Description of the tree structure holding geometry.
    */

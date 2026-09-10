@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import glsl from 'glslify';
-
 import meshFrag from '../glsl/sector/mesh.frag';
 import meshVert from '../glsl/sector/mesh.vert';
 
@@ -58,96 +56,123 @@ import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert
 import depthBlendFrag from '../glsl/post-processing/depthBlendBlit.frag';
 import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
-export const sectorShaders = {
+type ShaderPair = {
+  vertex: string;
+  fragment: string;
+};
+
+type SectorShaders = {
+  detailedMesh: ShaderPair;
+  instancedMesh: ShaderPair;
+  boxPrimitive: ShaderPair;
+  circlePrimitive: ShaderPair;
+  conePrimitive: ShaderPair;
+  eccentricConePrimitive: ShaderPair;
+  ellipsoidSegmentPrimitive: ShaderPair;
+  generalCylinderPrimitive: ShaderPair;
+  generalRingPrimitive: ShaderPair;
+  nutPrimitive: ShaderPair;
+  quadPrimitive: ShaderPair;
+  torusSegmentPrimitive: ShaderPair;
+  trapeziumPrimitive: ShaderPair;
+};
+
+export const sectorShaders: SectorShaders = {
   // ----------------
   // "Regular" meshes
   // ----------------
   detailedMesh: {
-    fragment: glsl(meshFrag),
-    vertex: glsl(meshVert)
+    fragment: meshFrag,
+    vertex: meshVert
   },
   instancedMesh: {
-    fragment: glsl(instancedMeshFrag),
-    vertex: glsl(instancedMeshVert)
+    fragment: instancedMeshFrag,
+    vertex: instancedMeshVert
   },
 
   // ----------------
   // Primitives
   // ----------------
   boxPrimitive: {
-    fragment: glsl(boxFrag),
-    vertex: glsl(boxVert)
+    fragment: boxFrag,
+    vertex: boxVert
   },
   circlePrimitive: {
-    fragment: glsl(circleFrag),
-    vertex: glsl(circleVert)
+    fragment: circleFrag,
+    vertex: circleVert
   },
   conePrimitive: {
-    fragment: glsl(coneFrag),
-    vertex: glsl(coneVert)
+    fragment: coneFrag,
+    vertex: coneVert
   },
   eccentricConePrimitive: {
-    fragment: glsl(eccentricConeFrag),
-    vertex: glsl(eccentricConeVert)
+    fragment: eccentricConeFrag,
+    vertex: eccentricConeVert
   },
   ellipsoidSegmentPrimitive: {
-    fragment: glsl(ellipsoidSegmentFrag),
-    vertex: glsl(ellipsoidSegmentVert)
+    fragment: ellipsoidSegmentFrag,
+    vertex: ellipsoidSegmentVert
   },
   generalCylinderPrimitive: {
-    fragment: glsl(generalCylinderFrag),
-    vertex: glsl(generalCylinderVert)
+    fragment: generalCylinderFrag,
+    vertex: generalCylinderVert
   },
   generalRingPrimitive: {
-    fragment: glsl(generalRingFrag),
-    vertex: glsl(generalRingVert)
+    fragment: generalRingFrag,
+    vertex: generalRingVert
   },
   nutPrimitive: {
-    fragment: glsl(nutFrag),
-    vertex: glsl(nutVert)
+    fragment: nutFrag,
+    vertex: nutVert
   },
   quadPrimitive: {
-    fragment: glsl(quadFrag),
-    vertex: glsl(quadVert)
+    fragment: quadFrag,
+    vertex: quadVert
   },
   torusSegmentPrimitive: {
-    fragment: glsl(torusSegmentFrag),
-    vertex: glsl(torusSegmentVert)
+    fragment: torusSegmentFrag,
+    vertex: torusSegmentVert
   },
   trapeziumPrimitive: {
-    fragment: glsl(trapeziumFrag),
-    vertex: glsl(trapeziumVert)
+    fragment: trapeziumFrag,
+    vertex: trapeziumVert
   }
 };
 
 /**
  * Point cloud shaders.
  */
-export const pointCloudShaders = {
+
+type PointCloudShaders = {
+  normalize: ShaderPair;
+  pointcloud: ShaderPair;
+};
+
+export const pointCloudShaders: PointCloudShaders = {
   normalize: {
-    fragment: glsl(pointCloudNormalizeFrag),
-    vertex: glsl(pointCloudNormalizeVert)
+    fragment: pointCloudNormalizeFrag,
+    vertex: pointCloudNormalizeVert
   },
   pointcloud: {
-    fragment: glsl(pointCloudFrag),
-    vertex: glsl(pointCloudVert)
+    fragment: pointCloudFrag,
+    vertex: pointCloudVert
   }
 };
 
 /**
  * Screen space ambient occlusion shader
  */
-export const ssaoShaders = {
-  fragment: glsl(ssaoFrag),
-  vertex: glsl(ssaoVert)
+export const ssaoShaders: ShaderPair = {
+  fragment: ssaoFrag,
+  vertex: ssaoVert
 };
 
-export const blitShaders = {
-  fragment: glsl(blitFrag),
-  vertex: glsl(blitVert)
+export const blitShaders: ShaderPair = {
+  fragment: blitFrag,
+  vertex: blitVert
 };
 
-export const depthBlendBlitShaders = {
-  fragment: glsl(depthBlendFrag),
-  vertex: glsl(depthBlendVert)
+export const depthBlendBlitShaders: ShaderPair = {
+  fragment: depthBlendFrag,
+  vertex: depthBlendVert
 };

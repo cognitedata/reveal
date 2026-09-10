@@ -1,14 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import {
-  ClassicDataSourceType,
-  DataSourceType,
-  DMDataSourceType,
-  isClassicIdentifier,
-  isDMIdentifier
-} from '@reveal/data-providers';
-import { CognitePointCloudModel } from './CognitePointCloudModel';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import { isClassicIdentifier, isDMIdentifier } from '@reveal/data-providers';
+import type { CognitePointCloudModel } from './CognitePointCloudModel';
 
 /**
  * Type guard to check if a point cloud model is DMDataSourceType type.

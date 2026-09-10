@@ -1,47 +1,41 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
 
-import { ConsumedSector, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
-import { BinaryFileProvider } from '@reveal/data-providers';
-import { CadMaterialManager } from '@reveal/rendering';
-import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { ConsumedSector, WantedSector, ParsedMeshGeometry } from '@reveal/cad-parsers';
+import { filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
+import { DMModelIdentifier, SignedUrlRefresher } from '@reveal/data-providers';
+import type { ModelDataProvider } from '@reveal/data-providers';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';
-import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
+import { assertNever } from '@reveal/utilities';
 
-import assert from 'assert';
 import { Log } from '@reveal/logger';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
-  private readonly _sectorFileProvider: BinaryFileProvider;
-  private readonly _materialManager: CadMaterialManager;
+  private readonly _dataFileProvider: ModelDataProvider;
+  private readonly _signedUrlRefresher: SignedUrlRefresher;
 
-  constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
+  constructor(sectorFileProvider: ModelDataProvider) {
     this._gltfSectorParser = new GltfSectorParser();
-    this._sectorFileProvider = sectorFileProvider;
-    this._materialManager = materialManager;
+    this._dataFileProvider = sectorFileProvider;
+    this._signedUrlRefresher = new SignedUrlRefresher(sectorFileProvider);
   }
 
   async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const { metadata } = sector;
     try {
-      const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
-        sector.modelBaseUrl,
-        metadata.sectorFileName!,
-        abortSignal
-      );
-
-      const group = new AutoDisposeGroup();
+      const sectorByteBuffer = await this.getSectorByteBuffer(sector, abortSignal);
 
       const wholeSectorBoundingBox = sector.metadata.geometryBoundingBox;
 
       const parsedSectorGeometry = await this._gltfSectorParser.parseSector(sectorByteBuffer);
 
-      const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
-
       const geometryBatchingQueue: ParsedGeometry[] = [];
+
+      const parsedMeshGeometries: ParsedMeshGeometry[] = [];
 
       parsedSectorGeometry.forEach(parsedGeometry => {
         const type = parsedGeometry.type as RevealGeometryCollectionType;
@@ -80,15 +74,19 @@ export class GltfSectorLoader {
             });
             break;
           case RevealGeometryCollectionType.TriangleMesh:
-            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh, wholeSectorBoundingBox);
+            parsedMeshGeometries.push({
+              geometryBuffer: parsedGeometry.geometryBuffer,
+              type: RevealGeometryCollectionType.TriangleMesh,
+              wholeSectorBoundingBox
+            });
             break;
           case RevealGeometryCollectionType.TexturedTriangleMesh:
-            const material = this._materialManager.addTexturedMeshMaterial(
-              sector.modelIdentifier,
-              sector.metadata.id,
-              parsedGeometry.texture!
-            );
-            this.createMesh(group, parsedGeometry.geometryBuffer, material, wholeSectorBoundingBox);
+            parsedMeshGeometries.push({
+              geometryBuffer: parsedGeometry.geometryBuffer,
+              type: RevealGeometryCollectionType.TexturedTriangleMesh,
+              wholeSectorBoundingBox,
+              texture: parsedGeometry.texture!
+            });
             break;
           default:
             assertNever(type);
@@ -97,11 +95,11 @@ export class GltfSectorLoader {
 
       return {
         levelOfDetail: sector.levelOfDetail,
-        group: group,
         instancedMeshes: [],
         metadata: metadata,
         modelIdentifier: sector.modelIdentifier,
-        geometryBatchingQueue: geometryBatchingQueue
+        geometryBatchingQueue: geometryBatchingQueue,
+        parsedMeshGeometries: parsedMeshGeometries
       };
     } catch (e) {
       const error = e as Error;
@@ -116,39 +114,20 @@ export class GltfSectorLoader {
     }
   }
 
-  private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {
-    const treeIndexAttribute = geometry.attributes['treeIndex'];
-    assert(treeIndexAttribute !== undefined);
-
-    const treeIndexSet = new Map<number, number>();
-
-    for (let i = 0; i < treeIndexAttribute.count; i++) {
-      incrementOrInsertIndex(treeIndexSet, (treeIndexAttribute as THREE.BufferAttribute).getX(i));
+  getSectorByteBuffer(sector: WantedSector, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
+    const { metadata } = sector;
+    if (sector.modelIdentifier instanceof DMModelIdentifier && metadata.signedUrl !== undefined) {
+      return this._signedUrlRefresher.fetchWithRefresh({
+        currentSignedUrl: metadata.signedUrl,
+        signedFilesBaseUrl: sector.signedFilesBaseUrl,
+        modelIdentifier: sector.modelIdentifier,
+        fileName: metadata.sectorFileName ?? '',
+        fetchFn: url => this._dataFileProvider.getBinaryFile('', url, abortSignal)
+      });
+    } else if (sector.modelBaseUrl && metadata.sectorFileName) {
+      return this._dataFileProvider.getBinaryFile(sector.modelBaseUrl, metadata.sectorFileName, abortSignal);
+    } else {
+      throw new Error('Model must be a DM model or a CDF model with a base URL and/or signed files base URL provided');
     }
-
-    return treeIndexSet;
-  }
-
-  private createMesh(
-    group: AutoDisposeGroup,
-    geometry: THREE.BufferGeometry,
-    material: THREE.RawShaderMaterial,
-    geometryBoundingBox: THREE.Box3
-  ) {
-    // Assigns an approximate bounding-sphere to the geometry to avoid recalculating this on first render
-    geometry.boundingSphere = geometryBoundingBox.getBoundingSphere(new THREE.Sphere());
-
-    const mesh = new THREE.Mesh(geometry, material);
-    group.add(mesh);
-    mesh.frustumCulled = false; // Note: Frustum culling does not play well with node-transforms
-
-    mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
-
-    if (material.uniforms.inverseModelMatrix === undefined) return;
-
-    mesh.onBeforeRender = () => {
-      const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
-      inverseModelMatrix.copy(mesh.matrixWorld).invert();
-    };
   }
 }

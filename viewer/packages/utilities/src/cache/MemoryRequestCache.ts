@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { RequestCache } from './RequestCache';
+import type { RequestCache } from './RequestCache';
 
 class TimestampedContainer<T> {
   private _lastAccessTime: number;
@@ -35,19 +35,16 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
   private _defaultCleanupCount: number;
-  private readonly _removeCallback: ((value: Data) => void) | undefined;
+  private readonly _disposeCallback?: (data: Data) => void;
+  private readonly _referenceCounts: Map<Key, number> = new Map();
 
   private static readonly CLEANUP_COUNT_TO_CAPACITY_RATIO = 1.0 / 5.0;
 
-  constructor(
-    maxElementsInCache: number = 50,
-    removeCallback?: (value: Data) => void,
-    defaultCleanupCount: number = 10
-  ) {
+  constructor(maxElementsInCache: number, defaultCleanupCount: number, disposeCallback?: (data: Data) => void) {
     this._data = new Map();
     this._maxElementsInCache = maxElementsInCache;
     this._defaultCleanupCount = Math.max(defaultCleanupCount, 1);
-    this._removeCallback = removeCallback;
+    this._disposeCallback = disposeCallback;
   }
 
   has(id: Key): boolean {
@@ -57,7 +54,13 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   forceInsert(id: Key, data: Data): void {
     if (this.isFull()) {
       this.cleanCache(this._defaultCleanupCount);
+
+      // If cache is still full after normal cleaning (all items referenced), force-clean
+      if (this.isFull()) {
+        this.cleanCache(this._defaultCleanupCount, true);
+      }
     }
+
     this.insert(id, data);
   }
 
@@ -70,13 +73,14 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   remove(id: Key): void {
-    if (this._removeCallback !== undefined) {
-      const value = this._data.get(id);
-      if (value !== undefined) {
-        this._removeCallback(value.value);
+    const value = this._data.get(id);
+    if (value !== undefined) {
+      if (this._disposeCallback) {
+        this._disposeCallback(value.value);
       }
     }
     this._data.delete(id);
+    this._referenceCounts.delete(id);
   }
 
   get(id: Key): Data {
@@ -93,19 +97,59 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     return this._data.size >= this._maxElementsInCache;
   }
 
-  cleanCache(count: number): void {
+  cleanCache(count: number, forceRemoval: boolean = false): void {
     const allResults = Array.from(this._data.entries());
-    allResults.sort((left, right) => {
+
+    const cleanableItems = forceRemoval ? allResults : allResults.filter(([key]) => this.getReferenceCount(key) === 0);
+
+    cleanableItems.sort((left, right) => {
       return right[1].lastAccessTime - left[1].lastAccessTime;
     });
+
     for (let i = 0; i < count; i++) {
-      const entry = allResults.pop();
+      const entry = cleanableItems.pop();
       if (entry !== undefined) {
         this.remove(entry[0]);
       } else {
         return;
       }
     }
+  }
+
+  /**
+   * Adds a reference to the cached item. Items with active references will not be disposed
+   * until all references are removed.
+   * @param id The cache key to add a reference to
+   */
+  addReference(id: Key): void {
+    const currentCount = this._referenceCounts.get(id) ?? 0;
+    this._referenceCounts.set(id, currentCount + 1);
+  }
+
+  /**
+   * Removes a reference to the cached item. Items remain in cache even when
+   * reference count reaches 0, allowing for potential reuse. Disposal only
+   * happens during cache cleanup when memory pressure exists.
+   * @param id The cache key to remove a reference from
+   */
+  removeReference(id: Key): void {
+    const currentCount = this._referenceCounts.get(id) ?? 0;
+    if (currentCount <= 1) {
+      // Set count to 0 but keep item in cache for potential reuse
+      this._referenceCounts.set(id, 0);
+    } else {
+      // Decrement reference count
+      this._referenceCounts.set(id, currentCount - 1);
+    }
+  }
+
+  /**
+   * Gets the current reference count for a cached item.
+   * @param id The cache key to get reference count for
+   * @returns The number of active references, or 0 if not found
+   */
+  getReferenceCount(id: Key): number {
+    return this._referenceCounts.get(id) ?? 0;
   }
 
   resize(cacheSize: number): void {
@@ -118,11 +162,12 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   clear(): void {
-    if (this._removeCallback !== undefined) {
-      for (const value of this._data.values()) {
-        this._removeCallback(value.value);
+    if (this._disposeCallback) {
+      for (const container of this._data.values()) {
+        this._disposeCallback(container.value);
       }
     }
     this._data.clear();
+    this._referenceCounts.clear();
   }
 }

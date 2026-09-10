@@ -1,6 +1,6 @@
+// eslint-disable-line header/header
 //ported to typescript from https://github.com/playcanvas/engine/blob/main/extras/mini-stats/gpu-timer.js
 
-// eslint-disable-next-line header/header
 export class GpuTimer {
   private readonly _gl: WebGL2RenderingContext;
   private readonly _ext: any;

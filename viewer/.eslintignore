@@ -1,3 +1,0 @@
-dist/*
-packages/**/wasm/pkg/*
-target/*

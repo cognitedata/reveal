@@ -3,8 +3,8 @@
  */
 
 import { Image360 } from './Image360';
-import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import type { Image360Annotation } from '../annotation/Image360Annotation';
+import type { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
 /**
  * Interface used to manage historical revisions of {@link Image360}.

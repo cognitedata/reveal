@@ -5,14 +5,17 @@
 import { Mock } from 'moq.ts';
 import { CognitePointCloudModel, PointCloudNode } from '../../packages/pointclouds';
 
-import { Potree, PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
+import type { Potree } from '../../packages/pointclouds/src/potree-three-loader';
+import { PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
 
-import * as THREE from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 
-import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
+import type { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
+import type { PointCloudMaterial } from '../../packages/rendering';
+import { DEFAULT_CLASSIFICATION } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
-import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
+import type { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
+import type { PointCloudObject } from '../../packages/data-providers';
 
 export function createPointCloudModel<T extends DataSourceType>(
   modelId: number,
@@ -23,16 +26,18 @@ export function createPointCloudModel<T extends DataSourceType>(
   return new CognitePointCloudModel<T>({ modelId, revisionId }, pointCloudNode);
 }
 
-export function createPointCloudNode<T extends DataSourceType>(): PointCloudNode<T> {
+export function createPointCloudNode<T extends DataSourceType>(params?: {
+  annotations?: PointCloudObject<T>[];
+}): PointCloudNode<T> {
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()
       .setup(p => p.boundingBox)
-      .returns(new THREE.Box3())
+      .returns(new Box3())
       .setup(p => p.offset)
-      .returns(new THREE.Vector3())
+      .returns(new Vector3())
       .setup(p => p.tightBoundingBox)
-      .returns(new THREE.Box3())
+      .returns(new Box3())
       .object(),
     new Mock<PointCloudMaterial>()
       .setup(p => p.classification)
@@ -42,5 +47,7 @@ export function createPointCloudNode<T extends DataSourceType>(): PointCloudNode
       .object()
   );
 
-  return new PointCloudNode(Symbol(), new THREE.Matrix4(), pointCloudOctree, [], { classificationSets: [] });
+  return new PointCloudNode(Symbol(), new Matrix4(), pointCloudOctree, params?.annotations ?? [], {
+    classificationSets: []
+  });
 }

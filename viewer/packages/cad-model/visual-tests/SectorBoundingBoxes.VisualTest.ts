@@ -2,15 +2,15 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { BufferGeometry, Scene } from 'three';
+import { Box3Helper, Group, Mesh } from 'three';
 
 import { CadNode } from '..';
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 
-import { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './DebugLoadedSectorsTool';
+import type { DebugLoadedSectorsToolOptions } from './DebugLoadedSectorsTool';
+import { DebugLoadedSectorsTool } from './DebugLoadedSectorsTool';
 
 type SectorsStatistics = {
   insideSectors: number;
@@ -50,7 +50,7 @@ export default class SectorBoundingBoxes extends StreamingVisualTestFixture {
     return Promise.resolve();
   }
 
-  private async setupGui(cadNode: CadNode, scene: THREE.Scene) {
+  private async setupGui(cadNode: CadNode, scene: Scene) {
     this.guiState = {
       options: {
         showSimpleSectors: true,
@@ -108,21 +108,21 @@ export default class SectorBoundingBoxes extends StreamingVisualTestFixture {
     debugSectorsGui.add(guiState.statistics, 'downloadSizeMb').name('Download size (Mb)');
   }
 
-  showBoundsForAllGeometries(node: CadNode, scene: THREE.Scene): void {
-    const boxes = new THREE.Group();
+  showBoundsForAllGeometries(node: CadNode, scene: Scene): void {
+    const boxes = new Group();
     node.getModelTransformation(boxes.matrix);
     boxes.matrixWorldNeedsUpdate = true;
 
     node.traverse(x => {
-      if (x instanceof THREE.Mesh) {
+      if (x instanceof Mesh) {
         const mesh = x;
-        const geometry: THREE.BufferGeometry = mesh.geometry;
+        const geometry: BufferGeometry = mesh.geometry;
 
         if (geometry.boundingBox !== null) {
           const box = geometry.boundingBox.clone();
           box.applyMatrix4(mesh.matrixWorld);
 
-          const boxHelper = new THREE.Box3Helper(box);
+          const boxHelper = new Box3Helper(box);
           boxes.add(boxHelper);
         }
       }

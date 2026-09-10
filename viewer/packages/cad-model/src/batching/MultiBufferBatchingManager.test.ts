@@ -1,21 +1,23 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
-import * as THREE from 'three';
+import type { ParsedGeometry } from '@reveal/sector-parser';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { InstancedMesh } from 'three';
+import { BufferGeometry, Group, InterleavedBuffer, InterleavedBufferAttribute } from 'three';
 import { Mock } from 'moq.ts';
-import { Materials, StyledTreeIndexSets } from '@reveal/rendering';
+import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
-import sum from 'lodash/sum';
+import { sum } from 'lodash-es';
 import { IndexSet } from '@reveal/utilities';
 
 describe(MultiBufferBatchingManager.name, () => {
-  let geometryGroup: THREE.Group;
+  let geometryGroup: Group;
   let manager: MultiBufferBatchingManager;
   const numberOfInstanceBuffers = 2;
   beforeEach(() => {
-    geometryGroup = new THREE.Group();
+    geometryGroup = new Group();
     const materials = new Mock<Materials>().object();
     const styledIndexSets: StyledTreeIndexSets = {
       back: new IndexSet(),
@@ -50,7 +52,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.batchGeometries(geometries3, 3);
 
     expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
-    expect(sum(geometryGroup.children.map(mesh => (mesh as THREE.InstancedMesh).count))).toBe(60);
+    expect(sum(geometryGroup.children.map(mesh => (mesh as InstancedMesh).count))).toBe(60);
   });
 
   test('batchGeometries() adds new geometry to group for new geometry type', () => {
@@ -84,7 +86,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.removeSectorBatches(1);
 
     expect(geometryGroup.children.filter(mesh => mesh.visible).length).toBe(1);
-    expect(sum(geometryGroup.children.map(mesh => mesh as THREE.InstancedMesh).map(mesh => mesh.count))).toBe(20);
+    expect(sum(geometryGroup.children.map(mesh => mesh as InstancedMesh).map(mesh => mesh.count))).toBe(20);
   });
 
   test('removeSectorBatches() removes only relevant treeIndices', () => {
@@ -153,12 +155,12 @@ function createParsedGeometryWithTreeIndices(
   treeIndices: number[],
   instanceId: number
 ): ParsedGeometry {
-  const buffer = new THREE.InterleavedBuffer(new Float32Array(3 * treeIndices.length), 3);
-  const geometryBuffer = new THREE.BufferGeometry();
-  geometryBuffer.setAttribute('attribute1', new THREE.InterleavedBufferAttribute(buffer, 1, 0));
-  geometryBuffer.setAttribute('attribute2', new THREE.InterleavedBufferAttribute(buffer, 1, 1));
+  const buffer = new InterleavedBuffer(new Float32Array(3 * treeIndices.length), 3);
+  const geometryBuffer = new BufferGeometry();
+  geometryBuffer.setAttribute('attribute1', new InterleavedBufferAttribute(buffer, 1, 0));
+  geometryBuffer.setAttribute('attribute2', new InterleavedBufferAttribute(buffer, 1, 1));
 
-  const treeIndexAttribute = new THREE.InterleavedBufferAttribute(buffer, 1, 2);
+  const treeIndexAttribute = new InterleavedBufferAttribute(buffer, 1, 2);
 
   for (let i = 0; i < treeIndices.length; i++) {
     treeIndexAttribute.setX(i, treeIndices[i]);

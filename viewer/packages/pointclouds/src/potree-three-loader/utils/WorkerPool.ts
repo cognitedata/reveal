@@ -1,9 +1,11 @@
 import { AsyncBlockingQueue } from './async-blocking-queue';
+import * as Comlink from 'comlink';
 
 export class AutoTerminatingWorker {
   private timeoutId: number | undefined = undefined;
   private terminated: boolean = false;
   private _wrappedWorker: Worker | undefined;
+  private _comlinkProxy: Comlink.Remote<unknown> | undefined;
 
   constructor(
     wrappedWorker: Worker,
@@ -16,6 +18,16 @@ export class AutoTerminatingWorker {
     return this._wrappedWorker!;
   }
 
+  public getComlinkProxy<T>(): Comlink.Remote<T> {
+    if (this.terminated || !this._wrappedWorker) {
+      throw new Error('Cannot get Comlink proxy for a terminated worker');
+    }
+    if (!this._comlinkProxy) {
+      this._comlinkProxy = Comlink.wrap<unknown>(this._wrappedWorker);
+    }
+    return this._comlinkProxy as Comlink.Remote<T>;
+  }
+
   get isTerminated(): boolean {
     return this.terminated;
   }
@@ -23,6 +35,10 @@ export class AutoTerminatingWorker {
   markIdle(): void {
     this.timeoutId = window.setTimeout(() => {
       this.terminated = true;
+      if (this._comlinkProxy) {
+        this._comlinkProxy[Comlink.releaseProxy]();
+        this._comlinkProxy = undefined;
+      }
       this._wrappedWorker!.terminate();
       this._wrappedWorker = undefined;
     }, this.maxIdle);

@@ -4,7 +4,7 @@
 
 import TWEEN from '@tweenjs/tween.js';
 
-import { CameraManager } from '@reveal/camera-manager';
+import type { CameraManager } from '@reveal/camera-manager';
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
 export function moveCameraTo(

@@ -2,11 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities';
-import assert from 'assert';
-import remove from 'lodash/remove';
+import { assert } from '@reveal/utilities/assert';
+import { remove } from 'lodash-es';
 
 type DownloadRequest = {
   consumedSector: Promise<ConsumedSector>;
@@ -49,7 +50,10 @@ export class SectorDownloadScheduler {
   public queueSectorBatchForDownload(downloadData: SectorDownloadData[]): Promise<ConsumedSector>[] {
     return downloadData.map(sectorDownloadData => {
       const { sector, downloadSector } = sectorDownloadData;
-      const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
+      const sectorIdentifier = this.getSectorIdentifier(
+        sector.modelIdentifier.sourceModelIdentifier(),
+        sector.metadata.id
+      );
 
       if (sector.levelOfDetail === LevelOfDetail.Discarded) {
         const abortedSector = this.abortPendingDownload(sectorIdentifier);
@@ -80,7 +84,6 @@ export class SectorDownloadScheduler {
       modelIdentifier: sector.modelIdentifier,
       metadata: sector.metadata,
       levelOfDetail: LevelOfDetail.Discarded,
-      group: undefined,
       instancedMeshes: undefined
     };
   }
@@ -174,8 +177,8 @@ export class SectorDownloadScheduler {
     });
   }
 
-  private getSectorIdentifier(modelIdentifer: string, sectorId: number): string {
-    return `${sectorId}-${modelIdentifer}`;
+  private getSectorIdentifier(modelSourceIdentifer: string, sectorId: number): string {
+    return `${sectorId}-${modelSourceIdentifer}`;
   }
 
   private createAbortSignal() {

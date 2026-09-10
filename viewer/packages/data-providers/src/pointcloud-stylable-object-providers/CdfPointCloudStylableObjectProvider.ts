@@ -2,20 +2,25 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
+import type {
   CogniteClient,
   AnnotationData,
   AnnotationsBoundingVolume,
   AnnotationsTypesPrimitivesGeometry3DGeometry as AnnotationsGeometry
 } from '@cognite/sdk';
-import { IShape, Box, Cylinder } from '@reveal/utilities';
-import assert from 'assert';
-import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
-import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
+import type { IShape, DMInstanceRef } from '@reveal/utilities';
+import { Box, Cylinder } from '@reveal/utilities';
+import { assert } from '@reveal/utilities/assert';
+import type { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
+import type { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 
-import * as THREE from 'three';
-import { cdfAnnotationsToObjectInfo } from './cdfAnnotationsToObjects';
-import { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
+import { Matrix4, Vector3 } from 'three';
+import { cdfAnnotationsToObjects } from './cdfAnnotationsToObjects';
+import type { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
+
+// The SDK type is out of date with the API. This type more accurately reflects the type of annotation
+// the API provides
+type AnnotationWithInstanceRefData = AnnotationsBoundingVolume & { instanceRef?: DMInstanceRef };
 
 export class CdfPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider<ClassicDataSourceType> {
   private readonly _sdk: CogniteClient;
@@ -26,13 +31,13 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
 
   private annotationGeometryToRevealShapes(geometry: AnnotationsGeometry): IShape {
     if (geometry.box) {
-      return new Box(new THREE.Matrix4().fromArray(geometry.box.matrix).transpose());
+      return new Box(new Matrix4().fromArray(geometry.box.matrix).transpose());
     }
 
     if (geometry.cylinder) {
       return new Cylinder(
-        new THREE.Vector3().fromArray(geometry.cylinder.centerA),
-        new THREE.Vector3().fromArray(geometry.cylinder.centerB),
+        new Vector3().fromArray(geometry.cylinder.centerA),
+        new Vector3().fromArray(geometry.cylinder.centerB),
         geometry.cylinder.radius
       );
     }
@@ -40,7 +45,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     throw Error('Annotation geometry type not recognized');
   }
 
-  private is3dObjectAnnotation(annotationData: AnnotationData): annotationData is AnnotationsBoundingVolume {
+  private is3dObjectAnnotation(annotationData: AnnotationData): annotationData is AnnotationWithInstanceRefData {
     return (annotationData as AnnotationsBoundingVolume).region !== undefined;
   }
 
@@ -58,7 +63,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
       })
       .autoPagingToArray({ limit: Infinity });
 
-    const annotations = modelAnnotations.map(annotation => {
+    return modelAnnotations.map(annotation => {
       assert(this.is3dObjectAnnotation(annotation.data));
 
       const region = annotation.data.region.map(geometry => {
@@ -68,18 +73,17 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
       return {
         volumeMetadata: {
           annotationId: annotation.id,
-          asset: annotation.data.assetRef
+          asset: annotation.data.assetRef,
+          assetInstanceRef: annotation.data.instanceRef
         },
         region
       };
     });
-
-    return annotations;
   }
 
   async getPointCloudObjects(modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const annotations = await this.fetchAnnotations(modelIdentifier);
 
-    return cdfAnnotationsToObjectInfo(annotations);
+    return cdfAnnotationsToObjects(annotations);
   }
 }

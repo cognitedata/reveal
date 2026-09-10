@@ -2,11 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import { SectorNode } from './SectorNode';
-import { CadModelMetadata } from '../metadata/CadModelMetadata';
-import { SectorMetadata } from '../metadata/types';
+import type { CadModelMetadata } from '../metadata/CadModelMetadata';
+import type { SectorMetadata } from '../metadata/types';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
@@ -29,16 +29,18 @@ export class RootSectorNode extends SectorNode {
 
   dereferenceAllNodes(): void {
     for (const [_, node] of this.sectorNodeMap) {
-      node.dereference();
+      // Clear rendered meshes from each sector node
+      // Note: Shared geometry/material dereferencing is handled by CadNode.dispose()
+      node.resetGeometry();
     }
   }
 
-  setModelTransformation(matrix: THREE.Matrix4): void {
+  setModelTransformation(matrix: Matrix4): void {
     this.matrix.copy(matrix);
     this.updateMatrixWorld(true);
   }
 
-  getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
+  getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this.matrix);
   }
 }
@@ -47,7 +49,7 @@ function buildScene(
   sector: SectorMetadata,
   parent: SectorNode,
   sectorNodeMap: Map<number, SectorNode>,
-  modelMatrix: THREE.Matrix4
+  modelMatrix: Matrix4
 ) {
   const bounds = sector.subtreeBoundingBox.clone();
   bounds.applyMatrix4(modelMatrix);

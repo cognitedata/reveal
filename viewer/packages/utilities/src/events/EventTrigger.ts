@@ -3,6 +3,12 @@
  */
 
 /**
+ * Extracts the listener type from an EventTrigger in an events map
+ */
+export type EventListener<T extends Record<string, EventTrigger<(...args: any[]) => void>>, K extends keyof T> =
+  T[K] extends EventTrigger<infer U> ? U : never;
+
+/**
  * Subscribable event source.
  */
 export class EventTrigger<TListener extends (...args: any[]) => void> {

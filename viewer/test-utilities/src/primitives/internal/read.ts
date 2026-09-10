@@ -2,11 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, TypedArray } from '../../../../packages/utilities';
-import { AttributeDesc, commonAttributeTypeMap } from './attributes';
-import { Primitive, PrimitiveComponent } from './types';
+import type { TypedArray } from '../../../../packages/utilities';
+import { assertNever } from '../../../../packages/utilities';
+import type { AttributeDesc } from './attributes';
+import { commonAttributeTypeMap } from './attributes';
+import type { Primitive, PrimitiveComponent } from './types';
 
-import * as THREE from 'three';
+import type { BufferGeometry } from 'three';
+import { InterleavedBufferAttribute } from 'three';
 
 function readBufferValues(array: TypedArray, count: number): number[] {
   const resultArray: number[] = [];
@@ -17,11 +20,11 @@ function readBufferValues(array: TypedArray, count: number): number[] {
 }
 
 function readAttributeValue(
-  geometryBuffer: THREE.BufferGeometry,
+  geometryBuffer: BufferGeometry,
   attributeDescription: AttributeDesc,
   byteOffset: number
 ): PrimitiveComponent {
-  const threeAttribute = geometryBuffer.getAttribute(attributeDescription.name) as THREE.InterleavedBufferAttribute;
+  const threeAttribute = geometryBuffer.getAttribute(attributeDescription.name) as InterleavedBufferAttribute;
   const underlyingTypedArray = threeAttribute.data.array as TypedArray;
   const rawBuffer = underlyingTypedArray.buffer;
 
@@ -48,11 +51,11 @@ function readAttributeValue(
   }
 }
 
-function getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer: THREE.BufferGeometry): AttributeDesc[] {
+function getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer: BufferGeometry): AttributeDesc[] {
   const descs: AttributeDesc[] = [];
   for (const attributeName in geometryBuffer.attributes) {
     const attribute = geometryBuffer.attributes[attributeName];
-    if (!(attribute instanceof THREE.InterleavedBufferAttribute)) continue;
+    if (!(attribute instanceof InterleavedBufferAttribute)) continue;
 
     const format = commonAttributeTypeMap.get(attributeName);
 
@@ -73,7 +76,7 @@ function getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer: T
 /**
  * Reads and returns a single primitive from the provided geometry buffer, at the given byte offset
  */
-export function readPrimitiveFromBuffer(geometryBuffer: THREE.BufferGeometry, byteOffset: number): Primitive {
+export function readPrimitiveFromBuffer(geometryBuffer: BufferGeometry, byteOffset: number): Primitive {
   const attributeDescriptions = getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer);
 
   const obj: Record<string, PrimitiveComponent> = {};

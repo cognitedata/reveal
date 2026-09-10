@@ -1,14 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { NodesApiClient, NodesLocalClient } from '@reveal/nodes-api';
-import {
-  ModelDataProvider,
-  ModelMetadataProvider,
-  LocalModelDataProvider,
-  LocalModelMetadataProvider
-} from '@reveal/data-providers';
-import { DataSource } from './DataSource';
+import type { NodesApiClient } from '@reveal/nodes-api';
+import { NodesLocalClient } from '@reveal/nodes-api';
+import type { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import { LocalModelDataProvider, LocalModelMetadataProvider } from '@reveal/data-providers';
+import type { DataSource } from './DataSource';
 
 /**
  * Data source for loading models from local storage (i.e. by URL).

@@ -2,22 +2,24 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
-import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
-import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
-import { CameraManager } from '@reveal/camera-manager';
+import type { SectorCuller } from '@reveal/cad-geometry-loaders';
+import type { CadModelBudget } from '@reveal/cad-geometry-loaders';
+import type { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
+import type { CameraManager } from '@reveal/camera-manager';
 
-import { CogniteCadModel } from '@reveal/cad-model';
-import { DataSource } from '@reveal/data-source';
-import { EdlOptions } from '@reveal/rendering';
+import type { CogniteCadModel } from '@reveal/cad-model';
+import type { DataSource } from '@reveal/data-source';
+import type { EdlOptions } from '@reveal/rendering';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { DefaultCameraManager } from '@reveal/camera-manager';
-import { CdfModelIdentifier, CommonModelOptions } from '@reveal/data-providers';
-import { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
+import type { CommonModelOptions } from '@reveal/data-providers';
+import { CdfModelIdentifier } from '@reveal/data-providers';
+import type { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
-import { CustomObjectIntersection } from '@reveal/utilities';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
+import type { CustomObjectIntersection } from '@reveal/utilities';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -38,6 +40,31 @@ export type RenderParameters = {
    * Current width and height of the renderer's output canvas, in pixels.
    */
   renderSize: Vector2;
+};
+
+/**
+ * Configuration for HTML-based cluster rendering of 360 image icons.
+ * Passed via {@link Cognite3DViewerOptions.htmlClusterOptions}.
+ * Only takes effect when {@link Cognite3DViewerOptions.enableHtmlClusters} is true.
+ * @module @cognite/reveal
+ */
+export type HtmlClusterOptions = {
+  /** Camera distance (world units) at which an occluded cluster begins to fade out.
+   * @default 20
+   */
+  fadeStartDistance?: number;
+  /** Camera distance (world units) at which an occluded cluster becomes fully invisible.
+   * @default 150
+   */
+  fadeEndDistance?: number;
+  /** Maximum distance (world units) between icons for them to be grouped into a cluster.
+   * @default 11
+   */
+  clusterDistanceThreshold?: number;
+  /** Maximum octree depth for clustering. Lower values produce fewer, larger clusters.
+   * @default 2
+   */
+  maxOctreeDepth?: number;
 };
 
 /**
@@ -203,6 +230,29 @@ export interface Cognite3DViewerOptions {
    * @beta
    */
   hasEventListeners?: boolean;
+
+  /**
+   * Enable HTML-based cluster rendering for 360 image icons.
+   * When enabled, nearby icons are grouped into cluster badges that show a count.
+   * Configure appearance and thresholds via htmlClusterOptions.
+   * @default false
+   */
+  enableHtmlClusters?: boolean;
+
+  /**
+   * Fine-grained options for HTML cluster rendering.
+   * Only applies when enableHtmlClusters is true.
+   * Controls the 3D clustering distance, occlusion fade range,
+   * and advanced DOM rendering settings.
+   * See {@link HtmlClusterOptions}.
+   */
+  htmlClusterOptions?: HtmlClusterOptions;
+
+  /**
+   * Show floor disc icons for nearby 360 images when the user is inside a 360 image.
+   * @default false
+   */
+  enableFloorIcons?: boolean;
 }
 
 /**
@@ -291,8 +341,7 @@ export type ResolutionOptions = {
  * @module @cognite/reveal
  */
 export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
-  | CadIntersection
-  | PointCloudIntersection<T>;
+  CadIntersection | PointCloudIntersection<T>;
 
 /**
  * Represents the result from a 360 intersection test.
@@ -323,6 +372,38 @@ export type Image360IconIntersection<T extends DataSourceType = DataSourceType> 
 };
 
 /**
+ * Represents the result from a 360 cluster intersection test.
+ * @module @cognite/reveal
+ * @beta
+ */
+export type Image360ClusterIntersection<T extends DataSourceType = DataSourceType> = {
+  /**
+   * The intersection type.
+   */
+  type: 'image360Cluster';
+  /**
+   * The image360 collection containing the cluster.
+   */
+  image360Collection: Image360Collection<T>;
+  /**
+   * The world position of the cluster centroid.
+   */
+  clusterPosition: Vector3;
+  /**
+   * The number of icons in the cluster.
+   */
+  clusterSize: number;
+  /**
+   * The image360 entities in the cluster.
+   */
+  clusterIcons: Image360<T>[];
+  /**
+   * Distance from the camera to the cluster.
+   */
+  distanceToCamera: number;
+};
+
+/**
  * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
  * @module @cognite/reveal
  * @beta
@@ -331,11 +412,12 @@ export type AnyIntersection<T extends DataSourceType = DataSourceType> =
   | CadIntersection
   | PointCloudIntersection<T>
   | Image360IconIntersection<T>
+  | Image360ClusterIntersection<T>
   | CustomObjectIntersection;
 
 /**
  * @module @cognite/reveal
  */
-export { CameraConfiguration } from '@reveal/utilities';
+export type { CameraConfiguration } from '@reveal/utilities';
 
-export { CadModelBudget, PointCloudBudget, EdlOptions, PointCloudIntersection };
+export type { CadModelBudget, PointCloudBudget, EdlOptions, PointCloudIntersection };

@@ -1,16 +1,19 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
-import { GeometryFilter } from './types';
+import type { GeometryFilter } from './types';
 
-import { SupportedModelTypes } from '@reveal/model-base';
-import { GltfSectorRepository, SectorRepository } from '@reveal/sector-loader';
-import { CadMaterialManager } from '@reveal/rendering';
-import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import type { SupportedModelTypes } from '@reveal/model-base';
+import type { SectorRepository } from '@reveal/sector-loader';
+import { GltfSectorRepository } from '@reveal/sector-loader';
+import type { CadMaterialManager } from '@reveal/rendering';
+import type { CadModelMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
+import type { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { File3dFormat } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode } from './wrappers/CadNode';
 
@@ -30,41 +33,41 @@ export class CadModelFactory {
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
   }
 
-  loadModelMetadata(externalModelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    return this._cadModelMetadataRepository.loadData(externalModelIdentifier);
+  loadModelMetadata(externalModelIdentifier: ModelIdentifier, outputFormat?: File3dFormat): Promise<CadModelMetadata> {
+    return this._cadModelMetadataRepository.loadData(externalModelIdentifier, outputFormat);
   }
 
-  async createModel(metadata: CadModelMetadata, geometryFilter?: GeometryFilter): Promise<CadNode> {
+  createModel(metadata: CadModelMetadata, geometryFilter?: GeometryFilter): CadNode {
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const { modelIdentifier, scene, format, formatVersion } = modelMetadata;
+    const { modelIdentifier, format, formatVersion } = modelMetadata;
     const modelType: SupportedModelTypes = 'cad';
     MetricsLogger.trackLoadModel(
       {
         type: modelType
       },
-      modelIdentifier,
+      modelIdentifier.sourceModelIdentifier(),
       formatVersion
     );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
-    this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);
-    const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
+    const cadModel = new CadNode(modelMetadata, sectorRepository);
+    this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, cadModel.cadMaterial);
 
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
       const clippingPlanes = new BoundingBoxClipper(clipBox).clippingPlanes;
-      this._materialManager.setModelClippingPlanes(modelMetadata.modelIdentifier, clippingPlanes);
+      cadModel.clippingPlanes = clippingPlanes;
     }
 
     return cadModel;
   }
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
-    if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
-      this._gltfSectorRepository =
-        this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider, this._materialManager);
+    const isGltfFormat = format === File3dFormat.GltfCadModel || format === File3dFormat.GltfPrioritizedNodes;
+    if (isGltfFormat && formatVersion === 9) {
+      this._gltfSectorRepository = this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider);
 
       return this._gltfSectorRepository;
     } else {
@@ -77,16 +80,13 @@ export class CadModelFactory {
   }
 }
 
-function transformToThreeJsSpace(geometryClipBox: THREE.Box3, modelMetadata: CadModelMetadata): THREE.Box3 {
+function transformToThreeJsSpace(geometryClipBox: Box3, modelMetadata: CadModelMetadata): Box3 {
   const min = geometryClipBox.min.clone().applyMatrix4(modelMetadata.modelMatrix);
   const max = geometryClipBox.max.clone().applyMatrix4(modelMetadata.modelMatrix);
-  return new THREE.Box3().setFromPoints([min, max]);
+  return new Box3().setFromPoints([min, max]);
 }
 
-function determineGeometryClipBox(
-  geometryFilter: GeometryFilter | undefined,
-  cadModel: CadModelMetadata
-): THREE.Box3 | null {
+function determineGeometryClipBox(geometryFilter: GeometryFilter | undefined, cadModel: CadModelMetadata): Box3 | null {
   if (geometryFilter === undefined || geometryFilter.boundingBox === undefined) {
     return null;
   }
@@ -99,7 +99,7 @@ function determineGeometryClipBox(
   return bbox;
 }
 
-function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null): CadModelMetadata {
+function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: Box3 | null): CadModelMetadata {
   if (geometryClipBox === null) {
     return cadModel;
   }

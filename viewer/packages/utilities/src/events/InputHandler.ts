@@ -4,7 +4,7 @@
 import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
 import { EventTrigger } from './EventTrigger';
 import { assertNever } from '../assertNever';
-import { PointerEventDelegate } from './types';
+import type { PointerEventDelegate } from './types';
 import { PointerEvents } from './PointerEvents';
 import { PointerEventsTarget } from './PointerEventsTarget';
 

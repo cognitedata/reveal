@@ -2,11 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
 
-import { NodesApiClient } from './NodesApiClient';
+import type { NodesApiClient } from './NodesApiClient';
 
-import { CogniteInternalId } from '@cognite/sdk';
+import type { CogniteInternalId } from '@cognite/sdk';
 
 export class NodesLocalClient implements NodesApiClient {
   constructor() {}
@@ -58,7 +58,7 @@ export class NodesLocalClient implements NodesApiClient {
     _modelId: CogniteInternalId,
     _revisionId: CogniteInternalId,
     _nodeIds: CogniteInternalId[]
-  ): Promise<THREE.Box3[]> {
+  ): Promise<Box3[]> {
     throw new Error('Not supported for local models');
   }
 }

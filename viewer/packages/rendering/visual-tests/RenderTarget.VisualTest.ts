@@ -2,24 +2,35 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-
+import type { WebGLRenderer } from 'three';
 import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+  BufferAttribute,
+  BufferGeometry,
+  DepthFormat,
+  DepthTexture,
+  GLSL3,
+  Mesh,
+  OrthographicCamera,
+  RawShaderMaterial,
+  Scene,
+  UnsignedIntType,
+  WebGLRenderTarget
+} from 'three';
+
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
 import { defaultRenderOptions } from '../src/rendering/types';
 
 export default class RenderTargetVisualTest extends StreamingVisualTestFixture {
-  private readonly _orthographicCamera: THREE.OrthographicCamera;
-  private readonly _testScene: THREE.Scene;
-  private _glRenderer!: THREE.WebGLRenderer;
+  private readonly _orthographicCamera: OrthographicCamera;
+  private readonly _testScene: Scene;
+  private _glRenderer!: WebGLRenderer;
 
   constructor() {
     super();
-    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    this._testScene = new THREE.Scene();
+    this._orthographicCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this._testScene = new Scene();
   }
 
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -27,10 +38,10 @@ export default class RenderTargetVisualTest extends StreamingVisualTestFixture {
 
     this._glRenderer = renderer;
 
-    const renderTarget = new THREE.WebGLRenderTarget(300, 300);
-    renderTarget.depthTexture = new THREE.DepthTexture(300, 300);
-    renderTarget.depthTexture.format = THREE.DepthFormat;
-    renderTarget.depthTexture.type = THREE.UnsignedIntType;
+    const renderTarget = new WebGLRenderTarget(300, 300);
+    renderTarget.depthTexture = new DepthTexture(300, 300);
+    renderTarget.depthTexture.format = DepthFormat;
+    renderTarget.depthTexture.type = UnsignedIntType;
 
     this.pipelineProvider = new DefaultRenderPipelineProvider(
       cadMaterialManager,
@@ -79,25 +90,25 @@ export default class RenderTargetVisualTest extends StreamingVisualTestFixture {
       }
     `;
 
-    const geometry = new THREE.BufferGeometry();
+    const geometry = new BufferGeometry();
     const vertices = new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]);
     const uvs = new Float32Array([0, 0, 2, 0, 0, 2]);
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+    geometry.setAttribute('position', new BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new BufferAttribute(uvs, 2));
 
-    const shaderMaterial = new THREE.RawShaderMaterial({
+    const shaderMaterial = new RawShaderMaterial({
       vertexShader: vShader,
       fragmentShader: fShader,
       uniforms: {
         tDiffuse: { value: renderTarget.texture },
         tDepth: { value: renderTarget.depthTexture }
       },
-      glslVersion: THREE.GLSL3,
+      glslVersion: GLSL3,
       depthTest: true
     });
 
-    const mesh = new THREE.Mesh(geometry, shaderMaterial);
+    const mesh = new Mesh(geometry, shaderMaterial);
     this._testScene.add(mesh);
 
     return Promise.resolve();

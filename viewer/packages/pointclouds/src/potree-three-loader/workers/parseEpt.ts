@@ -1,10 +1,10 @@
-import { AABB, Vec3 } from '@reveal/utilities';
-import { SerializableStylableObject } from '@reveal/data-providers';
+import type { AABB, Vec3 } from '@reveal/utilities';
+import type { SerializableStylableObject } from '@reveal/data-providers';
 import { assignPointsToObjectsWithWasm } from './assignPointsToObjectsWithWasm';
 
-import { EptInputData, ParsedEptData, AttributeSchema } from './types';
+import { Box3, Vector3 } from 'three';
 
-import * as THREE from 'three';
+import type { EptInputData, ParsedEptData, AttributeSchema } from './types';
 
 export async function parseEpt(
   data: EptInputData,
@@ -78,7 +78,16 @@ export async function parseEpt(
   }
 
   const pointSize = schema.reduce((p: number, c) => p + c.size, 0);
-  const numPoints = buffer.byteLength / pointSize;
+
+  if (pointSize === 0 || buffer.byteLength === 0) {
+    throw new Error(`Invalid buffer: pointSize=${pointSize}, byteLength=${buffer.byteLength}`);
+  }
+
+  const numPoints = Math.floor(buffer.byteLength / pointSize);
+
+  if (numPoints === 0) {
+    throw new Error(`Buffer too small: ${buffer.byteLength} bytes for point size ${pointSize}`);
+  }
 
   let rgbBuffer: ArrayBuffer | undefined;
   let intensityBuffer: ArrayBuffer | undefined;
@@ -222,11 +231,8 @@ export async function parseEpt(
     await assignPointsToObjectsWithWasm(
       xyz,
       objects,
-      new THREE.Vector3().fromArray(pointOffset),
-      new THREE.Box3(
-        new THREE.Vector3().fromArray(sectorBoundingBox.min),
-        new THREE.Vector3().fromArray(sectorBoundingBox.max)
-      )
+      new Vector3().fromArray(pointOffset),
+      new Box3(new Vector3().fromArray(sectorBoundingBox.min), new Vector3().fromArray(sectorBoundingBox.max))
     )
   ).buffer;
 

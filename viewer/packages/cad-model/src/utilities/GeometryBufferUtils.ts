@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
-import assert from 'assert';
+import type { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
+import { assert } from '@reveal/utilities/assert';
 import {
   BufferAttribute,
   InterleavedBufferAttribute,
@@ -47,7 +47,7 @@ export class GeometryBufferUtils {
       attribute: InterleavedBufferAttribute;
     }[],
     bufferGeometry: BufferGeometry,
-    backingBuffer: ArrayBufferLike
+    backingBuffer: ArrayBuffer
   ): void {
     instanceAttributes.forEach(instanceAttribute => {
       const { name, attribute } = instanceAttribute;

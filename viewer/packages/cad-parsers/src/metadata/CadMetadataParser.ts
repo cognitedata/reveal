@@ -2,17 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorScene } from '../utilities/types';
+import type { MetadataWithSignedFiles } from '@reveal/data-providers';
+import type { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
-
-interface VersionHeader {
-  readonly version: number;
-}
+import type { CadSceneRootMetadata } from './parsers/types';
 
 export class CadMetadataParser {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public parse(parsedJson: any): SectorScene {
-    const version = (parsedJson as VersionHeader).version;
+  public parse(parsedJson: MetadataWithSignedFiles<CadSceneRootMetadata>): SectorScene {
+    const version = parsedJson.fileData.version;
     switch (version) {
       case 9:
         return parseCadMetadataGltf(parsedJson);

@@ -1,9 +1,9 @@
-#pragma glslify: import('../base/determineMatrixOverride.glsl')
-#pragma glslify: import('../treeIndex/treeIndexPacking.glsl')
-#pragma glslify: import('../base/renderModes.glsl')
-#pragma glslify: import('../base/nodeAppearance.glsl')
-#pragma glslify: import('../base/determineNodeAppearance.glsl')
-#pragma glslify: import('../base/determineVisibility.glsl')
+#include ../base/determineMatrixOverride.glsl;
+#include ../treeIndex/treeIndexPacking.glsl;
+#include ../base/renderModes.glsl;
+#include ../base/nodeAppearance.glsl;
+#include ../base/determineNodeAppearance.glsl;
+#include ../base/determineVisibility.glsl;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;

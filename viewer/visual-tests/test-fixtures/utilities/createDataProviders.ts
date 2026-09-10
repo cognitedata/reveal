@@ -3,20 +3,22 @@
  */
 
 import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
-import {
+import type {
   ModelMetadataProvider,
   ModelDataProvider,
   ModelIdentifier,
+  DataSourceType,
+  AddModelOptionsWithModelRevisionId
+} from '../../../packages/data-providers';
+import {
   LocalModelMetadataProvider,
   LocalModelDataProvider,
   CdfModelMetadataProvider,
   CdfModelDataProvider,
   LocalModelIdentifier,
-  CdfModelIdentifier,
-  DataSourceType,
-  AddModelOptionsWithModelRevisionId
+  CdfModelIdentifier
 } from '../../../packages/data-providers';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;

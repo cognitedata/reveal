@@ -1,7 +1,8 @@
-import { Box3, BufferGeometry, EventDispatcher, Points, Sphere } from 'three';
-import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
-import { IPointCloudTreeNode } from './IPointCloudTreeNode';
-import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
+import type { Box3, Points, Sphere } from 'three';
+import { BufferGeometry, EventDispatcher } from 'three';
+import type { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeNode } from './IPointCloudTreeNode';
+import type { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 
 export class PointCloudOctreeNode extends EventDispatcher implements IPointCloudTreeNode {
   geometryNode: IPointCloudTreeGeometryNode;
@@ -46,6 +47,31 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
 
   traverse(cb: (node: IPointCloudTreeNodeBase) => void, includeSelf?: boolean): void {
     this.geometryNode.traverse(cb, includeSelf);
+  }
+
+  traverseOctreeNodes(
+    callback: (node: PointCloudOctreeNode) => void,
+    includeSelf: boolean = true,
+    shouldCullSubTree: (node: PointCloudOctreeNode) => boolean = () => false
+  ): void {
+    const stack: PointCloudOctreeNode[] = includeSelf ? [this] : [];
+
+    if (includeSelf && shouldCullSubTree(this)) {
+      return;
+    }
+
+    let current: PointCloudOctreeNode | undefined;
+    while ((current = stack.pop())) {
+      callback(current);
+
+      if (shouldCullSubTree(current)) continue;
+
+      for (const child of current.children) {
+        if (child && child instanceof PointCloudOctreeNode) {
+          stack.push(child);
+        }
+      }
+    }
   }
 
   get id(): number {

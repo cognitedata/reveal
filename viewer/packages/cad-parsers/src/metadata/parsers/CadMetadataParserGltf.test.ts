@@ -2,51 +2,59 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
-import { SectorMetadata } from '../types';
+import type { SectorMetadata } from '../types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
-import { CadSceneRootMetadata } from './types';
+import type { CadSceneRootMetadata } from './types';
+import type { MetadataWithSignedFiles, SignedFileItem } from '@reveal/data-providers';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 
 import SeededRandom from 'random-seed';
 
+function wrapMetadata(
+  fileData: CadSceneRootMetadata,
+  signedFiles: SignedFileItem[] = []
+): MetadataWithSignedFiles<CadSceneRootMetadata> {
+  return { signedFiles: { items: signedFiles }, fileData };
+}
+
 describe('CadMetadataParserGltf', () => {
   test('Metadata without sectors, throws', () => {
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 103350,
       unit: 'Meters',
       sectors: []
     };
-    expect(() => parseCadMetadataGltf(metadata)).toThrow();
+    expect(() => parseCadMetadataGltf(wrapMetadata(fileData))).toThrow();
   });
 
   test('Metadata has no root sector with id 0, throws', () => {
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 103350,
       unit: 'Meters',
       sectors: [createV9SceneSectorMetadata(1)]
     };
-    expect(() => parseCadMetadataGltf(metadata)).toThrow();
+    expect(() => parseCadMetadataGltf(wrapMetadata(fileData))).toThrow();
   });
 
   test('Metadata with single root, return valid scene', () => {
     // Arrange
     const sectorRoot = createV9SceneSectorMetadata(0);
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 8000,
       unit: 'Meters',
       sectors: [sectorRoot]
     };
 
-    const subtreeBoundingBox = new THREE.Box3(
-      new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
-      new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
+    const subtreeBoundingBox = new Box3(
+      new Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
+      new Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
     );
 
     const expectedRoot: SectorMetadata = {
@@ -65,7 +73,7 @@ describe('CadMetadataParserGltf', () => {
     };
 
     // Act
-    const scene = parseCadMetadataGltf(metadata);
+    const scene = parseCadMetadataGltf(wrapMetadata(fileData));
 
     // Assert
     expect(scene.version).toBe(9);
@@ -76,7 +84,7 @@ describe('CadMetadataParserGltf', () => {
 
   test('Multiple sectors, relations are established', () => {
     // Arrange
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 8000,
       unit: 'Meters',
@@ -90,7 +98,7 @@ describe('CadMetadataParserGltf', () => {
     };
 
     // Act
-    const scene = parseCadMetadataGltf(metadata);
+    const scene = parseCadMetadataGltf(wrapMetadata(fileData));
 
     // Assert
     const sectors: number[] = [];
@@ -103,7 +111,7 @@ describe('CadMetadataParserGltf', () => {
 
   test('Children and parent relations are set', () => {
     // Arrange
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'Meters',
@@ -123,7 +131,7 @@ describe('CadMetadataParserGltf', () => {
     };
 
     // Act
-    const scene = parseCadMetadataGltf(metadata);
+    const scene = parseCadMetadataGltf(wrapMetadata(fileData));
 
     // Assert
     const sector0 = scene.getSectorById(0);
@@ -138,15 +146,15 @@ describe('CadMetadataParserGltf', () => {
     expect(sector1!.children.map(x => x.id)).toEqual([3]);
 
     expect(sector2).toBeDefined();
-    expect(sector2!.children).toBeEmpty();
+    expect(sector2!.children).toHaveLength(0);
 
     expect(sector3).toBeDefined();
-    expect(sector3!.children).toBeEmpty();
+    expect(sector3!.children).toHaveLength(0);
   });
 
   test('Unit is passed through', () => {
     // Arrange
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 9,
       maxTreeIndex: 4,
       unit: 'AU',
@@ -154,7 +162,7 @@ describe('CadMetadataParserGltf', () => {
     };
 
     // Act
-    const result = parseCadMetadataGltf(metadata);
+    const result = parseCadMetadataGltf(wrapMetadata(fileData));
 
     // Assert
     expect(result.unit).toBe('AU');
@@ -168,7 +176,7 @@ describe('CadMetadataParserGltf', () => {
     const boxSector2 = createRandomBox(10, 20, rand);
 
     // Arrange
-    const metadata: CadSceneRootMetadata = {
+    const fileData: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'Meters',
@@ -180,25 +188,43 @@ describe('CadMetadataParserGltf', () => {
     };
 
     // Act
-    const result = parseCadMetadataGltf(metadata);
+    const result = parseCadMetadataGltf(wrapMetadata(fileData));
 
     // Assert
 
-    const expectedBoundingBox = toThreeBoundingBox(metadata.sectors[0].boundingBox)
+    const expectedBoundingBox = toThreeBoundingBox(fileData.sectors[0].boundingBox)
       .clone()
-      .union(toThreeBoundingBox(metadata.sectors[2].boundingBox));
+      .union(toThreeBoundingBox(fileData.sectors[2].boundingBox));
 
     const rootBoundingBox = result.root.subtreeBoundingBox;
 
     expectBoxesEqual(rootBoundingBox, expectedBoundingBox);
   });
 
-  function expectBoxesEqual(box0: THREE.Box3, box1: THREE.Box3) {
+  test.each<[SignedFileItem[], string | undefined]>([
+    [[{ fileName: '0.glb', signedUrl: 'https://signed.url/sector.glb', subPath: '' }], 'https://signed.url/sector.glb'],
+    [[], undefined]
+  ])(
+    'resolves sector signedUrl from signedFiles entry (createV9SceneSectorMetadata(0): "0.glb")',
+    (signedFiles, expectedUrl) => {
+      const sectorRoot = createV9SceneSectorMetadata(0);
+      const fileData: CadSceneRootMetadata = {
+        version: 9,
+        maxTreeIndex: 8000,
+        unit: 'Meters',
+        sectors: [sectorRoot]
+      };
+      const scene = parseCadMetadataGltf(wrapMetadata(fileData, signedFiles));
+      expect(scene.root.signedUrl).toBe(expectedUrl);
+    }
+  );
+
+  function expectBoxesEqual(box0: Box3, box1: Box3) {
     expectVectorsEqual(box0.min, box1.min);
     expectVectorsEqual(box0.max, box1.max);
   }
 
-  function expectVectorsEqual(vec0: THREE.Vector3, vec1: THREE.Vector3) {
+  function expectVectorsEqual(vec0: Vector3, vec1: Vector3) {
     expect(vec0.x).toBe(vec1.x);
     expect(vec0.y).toBe(vec1.y);
     expect(vec0.z).toBe(vec1.z);

@@ -2,11 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferGeometry, Matrix4, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
+import type { BufferGeometry, Vector3 } from 'three';
+import { Matrix4, Shape, ShapeGeometry, Vector2 } from 'three';
 
-import { AnnotationsPolygon } from '@cognite/sdk';
+import type { AnnotationsPolygon } from '@cognite/sdk';
 
-import { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
+import type { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
 import { convertPointsTo3d } from './utils';
 
 export class PolygonAnnotationGeometryData implements ImageAnnotationObjectGeometryData {

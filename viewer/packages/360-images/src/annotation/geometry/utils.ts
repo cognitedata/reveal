@@ -1,7 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { Vector2, Vector3 } from 'three';
+import type { Vector2 } from 'three';
+import { Vector3 } from 'three';
 
 export function convertPointsTo3d(points: Vector2[]): Vector3[] {
   const e = 1e-4;

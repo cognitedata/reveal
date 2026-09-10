@@ -3,7 +3,7 @@
  */
 
 import { LevelOfDetail } from '../../packages/cad-parsers/src/cad//LevelOfDetail';
-import { WantedSector } from '../../packages/cad-parsers/src/cad/types';
+import type { WantedSector } from '../../packages/cad-parsers/src/cad/types';
 
 export function expectContainsSectorsWithLevelOfDetail(
   sectors: WantedSector[],

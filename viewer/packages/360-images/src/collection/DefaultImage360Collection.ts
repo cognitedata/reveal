@@ -2,33 +2,38 @@
  * Copyright 2023 Cognite AS
  */
 
+import type { BeforeSceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import pull from 'lodash/pull';
-import cloneDeep from 'lodash/cloneDeep';
-import {
+import { pull, cloneDeep } from 'lodash-es';
+import type {
   AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
 } from './Image360Collection';
-import { Image360Entity } from '../entity/Image360Entity';
-import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
-import { Image360AnnotationAppearance } from '../annotation/types';
+import type { Image360Entity } from '../entity/Image360Entity';
+import type { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
+import type { ClusterIntersectionData, IconCollection, IconCullingScheme } from '../icons/IconCollection';
+import type { Overlay3DIcon } from '@reveal/3d-overlays';
+import type { Image360AnnotationAppearance } from '../annotation/types';
+import type { ClusterScreenInfo } from '../icons/clustering';
+import type { HtmlClusterCollection } from '../icons/clustering/HtmlClusterCoordinator';
 
-import {
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
   Image360FileDescriptor,
-  Image360Provider
+  InstanceReference
 } from '@reveal/data-providers';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Matrix4 } from 'three';
+import type { Image360Provider } from '../providers/Image360Provider';
+import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import type { Matrix4, Ray } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
-import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
+import type { Image360AnnotationProvider } from '../providers/Image360AnnotationProvider';
 import { createCollectionIdString } from './createCollectionIdString';
-import { getInstanceIdFromAnnotation } from '../annotation/getInstanceId';
+import { getClassicInstanceRef } from '../annotation/getInstanceId';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -36,7 +41,9 @@ type Image360Events = 'image360Entered' | 'image360Exited';
  * Default implementation of {@link Image360Collection}. Used for events when entering
  * and exiting 360 image mode
  */
-export class DefaultImage360Collection<T extends DataSourceType> implements Image360Collection<T> {
+export class DefaultImage360Collection<T extends DataSourceType>
+  implements Image360Collection<T>, HtmlClusterCollection
+{
   /**
    * A list containing all the 360 images in this set.
    */
@@ -60,20 +67,29 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
+
+  /**
+   * A map containing the image360Entities by their icon.
+   */
+  private readonly _image360EntitiesMap: Map<Overlay3DIcon, Image360Entity<T>>;
+
   private _isCollectionVisible: boolean;
-  private readonly _collectionId: T['image360Identifier'];
+  private readonly _sourceId: T['image360Identifier'];
   private readonly _collectionLabel: string | undefined;
   private readonly _setNeedsRedraw: () => void;
 
-  get collectionId(): T['image360Identifier'] {
-    return this._collectionId;
+  /**
+   * returns the source ID of the collection
+   */
+  get sourceId(): T['image360Identifier'] {
+    return this._sourceId;
   }
 
   /**
    * @deprecated
    */
   get id(): string {
-    return createCollectionIdString(this._collectionId);
+    return createCollectionIdString(this._sourceId);
   }
 
   get label(): string | undefined {
@@ -111,7 +127,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     image360DataProvider: Image360Provider<T>,
     setNeedsRedraw: () => void
   ) {
-    this._collectionId = identifier;
+    this._sourceId = identifier;
     this._collectionLabel = collectionLabel;
     this.image360Entities = entities;
     this._icons = icons;
@@ -119,6 +135,12 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
     this._setNeedsRedraw = setNeedsRedraw;
+
+    // Build icon-to-entity map for O(1) lookups during cluster intersection
+    this._image360EntitiesMap = new Map();
+    for (const entity of entities) {
+      this._image360EntitiesMap.set(entity.icon, entity);
+    }
   }
 
   public getModelTransformation(out?: Matrix4): Matrix4 {
@@ -250,6 +272,95 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._icons.setCullingScheme(scheme);
   }
 
+  public setFloorMode(enabled: boolean): void {
+    this._icons.setFloorMode(enabled);
+  }
+
+  public setReferenceIcon(worldY: number | undefined): void {
+    this._icons.setReferenceIcon(worldY);
+  }
+
+  /**
+   * Get the current cluster distance threshold.
+   * @returns The current distance threshold for clustering
+   */
+  public getClusterDistanceThreshold(): number {
+    return this._icons.getClusterDistanceThreshold();
+  }
+
+  /**
+   * Set the cluster distance threshold.
+   * @param threshold - The new distance threshold (default: 100)
+   */
+  public setClusterDistanceThreshold(threshold: number): void {
+    this._icons.setClusterDistanceThreshold(threshold);
+  }
+
+  /**
+   * Get the current maximum octree depth for clustering.
+   * @returns The current max depth, or undefined if no limit
+   */
+  public getMaxOctreeDepth(): number | undefined {
+    return this._icons.getMaxOctreeDepth();
+  }
+
+  /**
+   * Set the maximum octree depth for clustering.
+   * @param depth - The new max depth
+   */
+  public setMaxOctreeDepth(depth: number | undefined): void {
+    this._icons.setMaxOctreeDepth(depth);
+  }
+
+  /**
+   * Check if HTML cluster rendering is enabled.
+   * @returns true if HTML clusters are enabled
+   */
+  public isHtmlClustersEnabled(): boolean {
+    return this._icons.isHtmlClustersEnabled();
+  }
+
+  public intersectCluster(ray: Ray): ClusterIntersectionData | undefined {
+    return this._icons.intersectCluster(ray);
+  }
+
+  /**
+   * Get entities corresponding to the given icons using map lookups.
+   * @param icons - Array of Overlay3DIcon to look up
+   * @returns Array of Image360Entity corresponding to the icons
+   */
+  public getEntitiesFromIcons(icons: Overlay3DIcon[]): Image360Entity<T>[] {
+    const entities: Image360Entity<T>[] = [];
+    for (const icon of icons) {
+      const entity = this._image360EntitiesMap.get(icon);
+      if (entity !== undefined) {
+        entities.push(entity);
+      }
+    }
+    return entities;
+  }
+
+  public clearHoveredCluster(): void {
+    this._icons.clearHoveredCluster();
+  }
+
+  public setHoveredClusterIcon(icon: Overlay3DIcon | undefined): void {
+    this._icons.setHoveredClusterIcon(icon);
+  }
+
+  public getStagedHtmlClusterScreenInfos(): ClusterScreenInfo[] {
+    return this._icons.getStagedHtmlClusterScreenInfos();
+  }
+
+  public applyHtmlClusterOcclusion(occludedIcons: Set<Overlay3DIcon>): void {
+    this._icons.applyHtmlClusterOcclusion(occludedIcons);
+  }
+
+  public updateIcons(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
+    this._icons.updateIcons(params);
+    this._icons.updateCulling(params);
+  }
+
   public remove(entity: Image360Entity<T>): void {
     pull(this.image360Entities, entity);
     entity.dispose();
@@ -292,19 +403,21 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     );
 
     return annotations
-      .map(annotationInfo => getInstanceIdFromAnnotation<T>(annotationInfo.annotationInfo))
+      .map(annotationInfo => getClassicInstanceRef<T>(annotationInfo.annotationInfo))
       .filter(result => result !== undefined);
   }
 
   getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
   getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
   getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  getAnnotationsInfo(source: 'hybrid'): Promise<AssetHybridAnnotationImage360Info[]>;
   async getAnnotationsInfo(
-    source: 'assets' | 'cdm' | 'all'
+    source: 'assets' | 'hybrid' | 'cdm' | 'all'
   ): Promise<
     | AssetAnnotationImage360Info<ClassicDataSourceType>[]
     | AssetAnnotationImage360Info<DMDataSourceType>[]
     | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
   > {
     return this._image360DataProvider.getAllImage360AnnotationInfos(source, this, annotation =>
       this._annotationFilter.filter(annotation)

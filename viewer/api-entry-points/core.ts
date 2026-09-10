@@ -8,24 +8,26 @@
 
 export * from '../packages/api/';
 
-export {
-  CAMERA_MANAGER_EVENT_TYPE_LIST,
+export type {
   CameraControlsOptions,
-  DebouncedCameraStopEventTrigger,
-  DefaultCameraManager,
-  isDefaultCameraManager,
   CameraManagerEventType,
-  CameraManagerHelper,
   CameraManager,
   CameraState,
-  ComboControls,
   ComboControlsOptions,
   ComboControlsEventType,
   CameraEventDelegate,
   CameraChangeDelegate,
   CameraStopDelegate,
   IFlexibleCameraManager,
-  FlexibleControlsTypeChangeDelegate,
+  FlexibleControlsTypeChangeDelegate
+} from '../packages/camera-manager';
+export {
+  CAMERA_MANAGER_EVENT_TYPE_LIST,
+  DebouncedCameraStopEventTrigger,
+  DefaultCameraManager,
+  isDefaultCameraManager,
+  CameraManagerHelper,
+  ComboControls,
   FlexibleControlsOptions,
   FlexibleWheelZoomType,
   FlexibleControlsType,
@@ -33,11 +35,18 @@ export {
   isFlexibleCameraManager
 } from '../packages/camera-manager';
 
-export {
+export type {
   AreaCollection,
-  ClusteredAreaCollection,
   NodeAppearance,
+  DefaultNodeAppearanceInstances,
   SerializableNodeAppearance,
+  SerializedNodeCollection,
+  PropertyFilterNodeCollectionOptions,
+  NodeCollectionSerializationContext,
+  CdfModelNodeCollectionDataProvider
+} from '../packages/cad-styling';
+export {
+  ClusteredAreaCollection,
   NodeOutlineColor,
   DefaultNodeAppearance,
   NodeCollection,
@@ -47,22 +56,16 @@ export {
   NodeIdNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
-  SerializedNodeCollection,
   PropertyFilterNodeCollection,
-  PropertyFilterNodeCollectionOptions,
   SinglePropertyFilterNodeCollection,
   AssetNodeCollection,
   InvertedNodeCollection,
-  registerNodeCollectionType,
-  NodeCollectionSerializationContext,
-  CdfModelNodeCollectionDataProvider
+  registerNodeCollectionType
 } from '../packages/cad-styling';
 
-export { SupportedModelTypes } from '../packages/model-base';
+export type { SupportedModelTypes } from '../packages/model-base';
 
-export {
-  IndexSet,
-  NumericRange,
+export type {
   BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
   PointerEventDelegate,
@@ -70,8 +73,12 @@ export {
   DisposedDelegate,
   DMInstanceRef,
   ICustomObject,
+  CustomObjectIntersection
+} from '../packages/utilities';
+export {
+  IndexSet,
+  NumericRange,
   CustomObject,
-  CustomObjectIntersection,
   CustomObjectIntersectInput,
   PointerEventsTarget,
   PointerEvents,
@@ -84,10 +91,11 @@ export {
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
-export {
+export type {
   PointCloudObjectMetadata,
   CoreDmImage360Annotation,
   ImageAssetLinkAnnotationInfo,
+  ImageInstanceLinkAnnotationInfo,
   Image360DataModelIdentifier,
   Image360BaseIdentifier,
   Image360CoreDataModelIdentifier,
@@ -99,19 +107,18 @@ export {
   DMDataSourceType,
   ClassicModelIdentifierType,
   DMModelIdentifierType,
-  isDMPointCloudVolume,
-  isClassicPointCloudVolume,
   CommonModelOptions,
   InstanceReference
 } from '../packages/data-providers';
+export { isDMPointCloudVolume, isClassicPointCloudVolume, File3dFormat } from '../packages/data-providers';
 
-export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
+export type { GeometryFilter, WellKnownUnit } from '../packages/cad-model';
+export { CogniteCadModel, BoundingBoxClipper } from '../packages/cad-model';
 
 export { CognitePointCloudModel, isDMPointCloudModel, isClassicPointCloudModel } from '../packages/pointclouds';
 
+export type { CompletePointCloudAppearance, PointCloudAppearance } from '../packages/pointcloud-styling';
 export {
-  CompletePointCloudAppearance,
-  PointCloudAppearance,
   PointCloudObjectCollection,
   PointCloudAnnotationVolumeCollection,
   AnnotationIdPointCloudObjectCollection,
@@ -121,7 +128,7 @@ export {
   StyledPointCloudVolumeCollection
 } from '../packages/pointcloud-styling';
 
-export {
+export type {
   AssetAnnotationImage360Info,
   Image360,
   Image360Revision,
@@ -136,15 +143,17 @@ export {
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360AnnotationFilterOptions,
-  Image360Action,
-  InstanceLinkable360ImageAnnotationType
+  InstanceLinkable360ImageAnnotationType,
+  Image360AnnotationInstanceReference,
+  AssetHybridAnnotationImage360Info
 } from '../packages/360-images';
+export { Image360Action } from '../packages/360-images';
 
-export {
+export type {
   OverlayCollection,
-  Overlay3DCollection,
   Overlay3DCollectionOptions,
   OverlayInfo,
   Overlay3D,
   DefaultOverlay3DContentType
 } from '../packages/3d-overlays';
+export { Overlay3DCollection } from '../packages/3d-overlays';

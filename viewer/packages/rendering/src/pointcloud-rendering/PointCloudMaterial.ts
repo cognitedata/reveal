@@ -1,19 +1,17 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
+import type { Camera, PerspectiveCamera, DataTexture, WebGLRenderer } from 'three';
 import {
   AdditiveBlending,
-  Camera,
   GLSL3,
   LessEqualDepth,
   NearestFilter,
   NoBlending,
-  PerspectiveCamera,
   RawShaderMaterial,
   Texture,
   Vector2,
-  Vector3,
-  WebGLRenderer
+  Vector3
 } from 'three';
 import {
   COLOR_WHITE,
@@ -26,10 +24,10 @@ import {
 import { DEFAULT_CLASSIFICATION } from './classification';
 import { PointColorType, PointShape, PointSizeType } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
-import { PointClassification, IUniform, OctreeMaterialParams } from './types';
+import type { PointClassification, IUniform, OctreeMaterialParams } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
+import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { pointCloudShaders } from '../rendering/shaders';
 
 export interface IPointCloudMaterialParameters {
@@ -96,8 +94,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
   useDrawingBufferSize = false;
   lights = false;
   fog = false;
-  visibleNodesTexture: Texture | undefined;
-  visibleNodeTextureOffsets = new Map<string, number>();
+  visibleNodesTexture: DataTexture | undefined;
+  visibleNodeTextureOffsets: Map<string, number> = new Map<string, number>();
 
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
@@ -136,35 +134,205 @@ export class PointCloudMaterial extends RawShaderMaterial {
     vnStart: makeUniform('f', 0.0)
   };
 
-  @uniform('fov') accessor fov!: number;
-  @uniform('heightMax') accessor heightMax!: number;
-  @uniform('heightMin') accessor heightMin!: number;
-  @uniform('intensityBrightness') accessor intensityBrightness!: number;
-  @uniform('intensityContrast') accessor intensityContrast!: number;
-  @uniform('intensityGamma') accessor intensityGamma!: number;
-  @uniform('intensityRange') accessor intensityRange!: [number, number];
-  @uniform('maxSize') accessor maxSize!: number;
-  @uniform('minSize') accessor minSize!: number;
-  @uniform('octreeSize') accessor octreeSize!: number;
-  @uniform('screenHeight') accessor screenHeight!: number;
-  @uniform('screenWidth') accessor screenWidth!: number;
-  @uniform('size') accessor size!: number;
-  @uniform('spacing') accessor spacing!: number;
+  get fov(): number {
+    return this.getUniform('fov');
+  }
+  set fov(value: number) {
+    if (value !== this.getUniform('fov')) {
+      this.setUniform('fov', value);
+    }
+  }
 
-  @requiresShaderUpdate() accessor weighted: boolean = false;
-  @requiresShaderUpdate() accessor hqDepthPass: boolean = false;
-  @requiresShaderUpdate() accessor pointColorType: PointColorType = PointColorType.Rgb;
-  @requiresShaderUpdate() accessor pointSizeType: PointSizeType = PointSizeType.Adaptive;
-  @requiresShaderUpdate() accessor useEDL: boolean = false;
-  @requiresShaderUpdate() accessor shape: PointShape = PointShape.Circle;
+  get heightMax(): number {
+    return this.getUniform('heightMax');
+  }
+  set heightMax(value: number) {
+    if (value !== this.getUniform('heightMax')) {
+      this.setUniform('heightMax', value);
+    }
+  }
+
+  get heightMin(): number {
+    return this.getUniform('heightMin');
+  }
+  set heightMin(value: number) {
+    if (value !== this.getUniform('heightMin')) {
+      this.setUniform('heightMin', value);
+    }
+  }
+
+  get intensityBrightness(): number {
+    return this.getUniform('intensityBrightness');
+  }
+  set intensityBrightness(value: number) {
+    if (value !== this.getUniform('intensityBrightness')) {
+      this.setUniform('intensityBrightness', value);
+    }
+  }
+
+  get intensityContrast(): number {
+    return this.getUniform('intensityContrast');
+  }
+  set intensityContrast(value: number) {
+    if (value !== this.getUniform('intensityContrast')) {
+      this.setUniform('intensityContrast', value);
+    }
+  }
+
+  get intensityGamma(): number {
+    return this.getUniform('intensityGamma');
+  }
+  set intensityGamma(value: number) {
+    if (value !== this.getUniform('intensityGamma')) {
+      this.setUniform('intensityGamma', value);
+    }
+  }
+
+  get intensityRange(): [number, number] {
+    return this.getUniform('intensityRange');
+  }
+  set intensityRange(value: [number, number]) {
+    if (value !== this.getUniform('intensityRange')) {
+      this.setUniform('intensityRange', value);
+    }
+  }
+
+  get maxSize(): number {
+    return this.getUniform('maxSize');
+  }
+  set maxSize(value: number) {
+    if (value !== this.getUniform('maxSize')) {
+      this.setUniform('maxSize', value);
+    }
+  }
+
+  get minSize(): number {
+    return this.getUniform('minSize');
+  }
+  set minSize(value: number) {
+    if (value !== this.getUniform('minSize')) {
+      this.setUniform('minSize', value);
+    }
+  }
+
+  get octreeSize(): number {
+    return this.getUniform('octreeSize');
+  }
+  set octreeSize(value: number) {
+    if (value !== this.getUniform('octreeSize')) {
+      this.setUniform('octreeSize', value);
+    }
+  }
+
+  get screenHeight(): number {
+    return this.getUniform('screenHeight');
+  }
+  set screenHeight(value: number) {
+    if (value !== this.getUniform('screenHeight')) {
+      this.setUniform('screenHeight', value);
+    }
+  }
+
+  get screenWidth(): number {
+    return this.getUniform('screenWidth');
+  }
+  set screenWidth(value: number) {
+    if (value !== this.getUniform('screenWidth')) {
+      this.setUniform('screenWidth', value);
+    }
+  }
+
+  get size(): number {
+    return this.getUniform('size');
+  }
+  set size(value: number) {
+    if (value !== this.getUniform('size')) {
+      this.setUniform('size', value);
+    }
+  }
+
+  get spacing(): number {
+    return this.getUniform('spacing');
+  }
+  set spacing(value: number) {
+    if (value !== this.getUniform('spacing')) {
+      this.setUniform('spacing', value);
+    }
+  }
+
+  private _weighted: boolean = false;
+  get weighted(): boolean {
+    return this._weighted;
+  }
+  set weighted(value: boolean) {
+    if (value !== this._weighted) {
+      this._weighted = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _hqDepthPass: boolean = false;
+  get hqDepthPass(): boolean {
+    return this._hqDepthPass;
+  }
+  set hqDepthPass(value: boolean) {
+    if (value !== this._hqDepthPass) {
+      this._hqDepthPass = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _pointColorType: PointColorType = PointColorType.Rgb;
+  get pointColorType(): PointColorType {
+    return this._pointColorType;
+  }
+  set pointColorType(value: PointColorType) {
+    if (value !== this._pointColorType) {
+      this._pointColorType = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _pointSizeType: PointSizeType = PointSizeType.Adaptive;
+  get pointSizeType(): PointSizeType {
+    return this._pointSizeType;
+  }
+  set pointSizeType(value: PointSizeType) {
+    if (value !== this._pointSizeType) {
+      this._pointSizeType = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _useEDL: boolean = false;
+  get useEDL(): boolean {
+    return this._useEDL;
+  }
+  set useEDL(value: boolean) {
+    if (value !== this._useEDL) {
+      this._useEDL = value;
+      this.updateShaderSource();
+    }
+  }
+
+  private _shape: PointShape = PointShape.Circle;
+  get shape(): PointShape {
+    return this._shape;
+  }
+  set shape(value: PointShape) {
+    if (value !== this._shape) {
+      this._shape = value;
+      this.updateShaderSource();
+    }
+  }
 
   attributes = {
-    position: { type: 'fv', value: [] },
-    color: { type: 'fv', value: [] },
-    intensity: { type: 'f', value: [] },
-    classification: { type: 'f', value: [] },
-    objectId: { type: 'f', value: [] },
-    indices: { type: 'fv', value: [] }
+    position: { type: 'fv', value: [] as const },
+    color: { type: 'fv', value: [] as const },
+    intensity: { type: 'f', value: [] as const },
+    classification: { type: 'f', value: [] as const },
+    objectId: { type: 'f', value: [] as const },
+    indices: { type: 'fv', value: [] as const }
   };
 
   constructor(parameters: Partial<IPointCloudMaterialParameters> = {}) {
@@ -182,9 +350,6 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.maxSize = getValid(parameters.maxSize, DEFAULT_MAX_POINT_SIZE);
 
     this.classification = DEFAULT_CLASSIFICATION;
-
-    this.defaultAttributeValues.classification = [0, 0, 0];
-    this.defaultAttributeValues.indices = [0, 0, 0, 0];
 
     this.vertexColors = true;
 
@@ -357,7 +522,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     const texture = this.visibleNodesTexture;
 
     if (texture) {
-      texture.image.data.set(textureData);
+      texture.image.data?.set(textureData);
       texture.needsUpdate = true;
     }
   }
@@ -369,39 +534,4 @@ function makeUniform<T>(type: string, value: T): IUniform<T> {
 
 function getValid<T>(a: T | undefined, b: T): T {
   return a === undefined ? b : a;
-}
-
-function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K) {
-  type UniformType = IPointCloudMaterialUniforms[K]['value'];
-  return (_target: any, _context: any) => ({
-    get(this: PointCloudMaterial) {
-      return this.getUniform(uniformName);
-    },
-    set(this: PointCloudMaterial, value: UniformType) {
-      if (value !== this.getUniform(uniformName)) {
-        this.setUniform(uniformName, value);
-      }
-    }
-  });
-}
-
-function requiresShaderUpdate() {
-  return (_target: any, context: { name: string | symbol }) => ({
-    get(this: PointCloudMaterial & Record<string, any>) {
-      const fieldName = `_${context.name.toString()}`;
-      return this[fieldName];
-    },
-    set(this: PointCloudMaterial & Record<string, any>, value: any) {
-      const fieldName = `_${context.name.toString()}`;
-      if (value !== this[fieldName]) {
-        this[fieldName] = value;
-        this.updateShaderSource();
-      }
-    },
-    init(this: PointCloudMaterial & Record<string, any>, value: any) {
-      const fieldName = `_${context.name.toString()}`;
-      this[fieldName] = value;
-      return value;
-    }
-  });
 }

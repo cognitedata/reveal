@@ -2,10 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SerializableStylableObject } from '@reveal/data-providers';
-import { assertNever, SerializableCylinder, SerializableBox, ShapeType } from '@reveal/utilities';
+import type { SerializableStylableObject } from '@reveal/data-providers';
+import { type SerializableCylinder, type SerializableBox } from '@reveal/utilities';
+import { assertNever } from '@reveal/utilities/assertNever';
+import { ShapeType } from '@reveal/utilities/ISerializableShape';
 
-import { WasmSerializedPointCloudObject, assignPoints } from '../../../wasm';
+import type { WasmSerializedPointCloudObject } from '../../../wasm';
+import { assignPoints } from '../../../wasm';
 import type { Vector3, Box3 } from 'three';
 
 function createWasmSerializedObject(obj: SerializableStylableObject): WasmSerializedPointCloudObject {
@@ -43,7 +46,7 @@ export async function assignPointsToObjectsWithWasm(
   objects: SerializableStylableObject[],
   pointOffset: Vector3,
   sectorBoundingBox: Box3
-): Promise<Uint16Array> {
+): Promise<Uint16Array<ArrayBuffer>> {
   const wasmShapes = objects.map(obj => createWasmSerializedObject(obj));
 
   try {

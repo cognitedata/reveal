@@ -2,11 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { PerspectiveCamera, Quaternion, Vector3 } from 'three';
 import { CameraManagerHelper } from '../src/CameraManagerHelper';
 
 describe(CameraManagerHelper.name, () => {
-  const camera = new THREE.PerspectiveCamera();
+  const camera = new PerspectiveCamera();
 
   beforeEach(() => {
     // Reset camera position and rotation for each test
@@ -16,9 +16,9 @@ describe(CameraManagerHelper.name, () => {
 
   test('calculateNewTargetFromRotation rotates the target 180 degrees by corresponding rotation', () => {
     // default camera target when camera has "identity" rotation
-    const target = new THREE.Vector3(0, 0, -1);
+    const target = new Vector3(0, 0, -1);
     // creates rotation around Y axis of 180 degrees.
-    const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+    const rotation = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI);
 
     const newTarget = CameraManagerHelper.calculateNewTargetFromRotation(camera, rotation, target, camera.position);
 

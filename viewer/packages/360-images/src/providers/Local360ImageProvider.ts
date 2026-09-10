@@ -1,0 +1,169 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
+import { Euler, Matrix4 } from 'three';
+import type { Image360Provider } from './Image360Provider';
+import type {
+  Historical360ImageSet,
+  Image360Face,
+  Image360FileDescriptor,
+  InstanceReference,
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType
+} from '@reveal/data-providers';
+import type { Image360AnnotationFilterDelegate, Image360AnnotationSpecifier } from './Image360AnnotationProvider';
+import type { CogniteInternalId, IdEither } from '@cognite/sdk';
+import type {
+  AssetAnnotationImage360Info,
+  AssetHybridAnnotationImage360Info,
+  Image360AnnotationAssetQueryResult
+} from '../collection/Image360Collection';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+
+type Local360ImagesDescriptor = {
+  translation: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  rotation: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  faces: [
+    {
+      face: string;
+      id: number;
+    }
+  ];
+};
+
+export class Local360ImageProvider implements Image360Provider<ClassicDataSourceType> {
+  private readonly _modelUrl: string;
+  constructor(modelUrl: string) {
+    this._modelUrl = modelUrl;
+  }
+
+  public async findImageAnnotationsForInstance(
+    _filter: InstanceReference<ClassicDataSourceType>,
+    _collection: DefaultImage360Collection<ClassicDataSourceType>
+  ): Promise<Image360AnnotationAssetQueryResult<ClassicDataSourceType>[]> {
+    return []; // Not implemented
+  }
+
+  public async get360ImageDescriptors(): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
+    const image360File = '360Images.json';
+    const response = await fetch(`${this._modelUrl}/${image360File}`).catch(_err => {
+      throw Error('Could not download Json file');
+    });
+    const local360ImagesDescriptor: Local360ImagesDescriptor[] = await response.json();
+
+    return local360ImagesDescriptor.map((localDescriptor, index) => {
+      const translation = new Matrix4().makeTranslation(
+        localDescriptor.translation.x,
+        localDescriptor.translation.y,
+        localDescriptor.translation.z
+      );
+      const rotation = new Matrix4().makeRotationFromEuler(
+        new Euler(localDescriptor.rotation.x, localDescriptor.rotation.y, localDescriptor.rotation.z)
+      );
+
+      const historicalImage360Descriptor = {
+        id: index.toString(),
+        label: index.toString(),
+        collectionId: 'local',
+        collectionLabel: 'local',
+        transform: translation.multiply(rotation),
+        imageRevisions: [
+          {
+            id: index.toString(),
+            timestamp: undefined,
+            faceDescriptors: localDescriptor.faces.map(p => {
+              return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
+            })
+          }
+        ]
+      };
+
+      return historicalImage360Descriptor;
+    });
+  }
+
+  getRelevant360ImageAnnotations(
+    _annotationSpecifier: Image360AnnotationSpecifier<ClassicDataSourceType>
+  ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
+    // Not supported for local models
+    return Promise.resolve([]);
+  }
+
+  get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    return Promise.all(
+      image360FaceDescriptors.map(async image360FaceDescriptor => {
+        // Local provider uses fileId as part of the filename
+        if (!('fileId' in image360FaceDescriptor) || image360FaceDescriptor.fileId === undefined) {
+          throw new Error('Local360ImageProvider requires fileId in file descriptors');
+        }
+        const binaryData = await (
+          await fetch(`${this._modelUrl}/${image360FaceDescriptor.fileId}.png`, { signal: abortSignal })
+        ).arrayBuffer();
+        return {
+          data: binaryData,
+          face: image360FaceDescriptor.face
+        } as Image360Face;
+      })
+    );
+  }
+
+  getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    throw new Error(
+      'Local 360 Image Provider does not support loading of low resolution images. Use get360ImageFiles instead.' +
+        image360FaceDescriptors +
+        abortSignal
+    );
+  }
+
+  getFilesByAssetRef(_assetId: IdEither): Promise<CogniteInternalId[]> {
+    return Promise.resolve([]);
+  }
+
+  getAllImage360AnnotationInfos(
+    source: 'assets',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'hybrid',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetHybridAnnotationImage360Info[]>;
+  getAllImage360AnnotationInfos(
+    source: 'cdm',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  public async getAllImage360AnnotationInfos(
+    _source: 'all' | 'assets' | 'hybrid' | 'cdm',
+    _collection: DefaultImage360Collection<ClassicDataSourceType>,
+    _annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+    | AssetHybridAnnotationImage360Info[]
+  > {
+    return Promise.resolve([]);
+  }
+}

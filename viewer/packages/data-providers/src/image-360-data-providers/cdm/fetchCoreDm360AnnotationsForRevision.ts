@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteClient, QueryRequest } from '@cognite/sdk';
+import type { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { transformAnnotations } from './transformCdmAnnotations';
 import {
   COGNITE_ASSET_VIEW_REFERENCE,
@@ -13,11 +13,16 @@ import {
   CORE_DM_IMAGE_360_ANNOTATIONS_PROPERTIES_LIST,
   CORE_DM_IMAGE_360_PROPERTIES_LIST
 } from './queryProperties';
-import { isCoreDmImage360Filter } from './queryFilters';
+import {
+  isCoreDmImage360AnnotationFilter,
+  isCoreDmImage360Filter,
+  isCoreDmObject3DFilter,
+  isCoreDmVisualizableFilter
+} from './queryFilters';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
-import { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 export async function fetchCoreDm360AnnotationsForRevision(
   revision: DMInstanceRef,
@@ -60,19 +65,14 @@ function getImage360AnnotationsByRevisionQuery(revisionReference: DMInstanceRef)
         edges: {
           from: 'images',
           direction: 'inwards',
-          filter: {
-            and: [
-              {
-                hasData: [CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE]
-              }
-            ]
-          }
+          filter: isCoreDmImage360AnnotationFilter
         },
         limit: 10000
       },
       object3d: {
         nodes: {
-          from: 'annotations'
+          from: 'annotations',
+          filter: isCoreDmObject3DFilter
         },
         limit: 10000
       },
@@ -82,7 +82,8 @@ function getImage360AnnotationsByRevisionQuery(revisionReference: DMInstanceRef)
           through: {
             view: COGNITE_ASSET_VIEW_REFERENCE,
             identifier: 'object3D'
-          }
+          },
+          filter: isCoreDmVisualizableFilter
         },
         limit: 10000
       }

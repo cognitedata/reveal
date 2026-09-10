@@ -34,12 +34,6 @@ target
 .eslintcache
 __diff_output__/
 
-# React components ignores
-react-components/storybook-static/
-react-components/test-results/
-react-components/playwright-report/
-react-components/playwright/.cache/
-
 # Examples
 
 # Public is also used for temorary local models so ignore everything
@@ -54,4 +48,3 @@ examples/public/
 documentation/.docusaurus
 documentation/generated
 documentation/docs/api
-/react-components/stories/public/cadModel

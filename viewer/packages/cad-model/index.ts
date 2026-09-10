@@ -7,4 +7,4 @@ export { CogniteCadModel } from './src/wrappers/CogniteCadModel';
 export { PickingHandler } from './src/picking/PickingHandler';
 export { CadNode } from './src/wrappers/CadNode';
 export { CadModelFactory } from './src/CadModelFactory';
-export { WellKnownUnit, GeometryFilter, CadModelSectorLoadStatistics } from './src/types';
+export type { WellKnownUnit, GeometryFilter, CadModelSectorLoadStatistics } from './src/types';

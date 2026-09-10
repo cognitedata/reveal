@@ -2,17 +2,21 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-import assert from 'assert';
+import type { Camera, Matrix4, RawShaderMaterial, Scene } from 'three';
+import { Box3, CustomBlending, Group, InstancedMesh, OneFactor, Vector3, ZeroFactor } from 'three';
+import { assert } from '@reveal/utilities/assert';
 
-import { ModelIdentifier } from '@reveal/data-providers';
-import { CadMaterialManager, Materials } from '@reveal/rendering';
-import { GltfSectorRepository, SectorRepository } from '..';
+import type { ModelIdentifier } from '@reveal/data-providers';
+import type { Materials } from '@reveal/rendering';
+import { CadMaterialManager, createCadMaterial } from '@reveal/rendering';
+import type { SectorRepository } from '..';
+import { GltfSectorRepository } from '..';
 import { assertNever } from '../../utilities';
-import { ConsumedSector } from '@reveal/cad-parsers';
+import type { ConsumedSector } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
-import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
+import type { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
+import type { SimpleTestFixtureComponents } from '../../../visual-tests';
+import { SimpleVisualTestFixture } from '../../../visual-tests';
 
 export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixture {
   async setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void> {
@@ -22,7 +26,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     const group = this.initializeGroup(scene);
 
     const cadMaterialManager = new CadMaterialManager();
-    const sectorRepository = new GltfSectorRepository(modelDataProvider, cadMaterialManager);
+    const sectorRepository = new GltfSectorRepository(modelDataProvider);
 
     const gltfOutput = (await modelMetadataProvider.getModelOutputs(modelIdentifier)).find(
       output => output.format === 'gltf-directory'
@@ -31,14 +35,14 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     const sceneJson = (await modelDataProvider.getJsonFile(modelUri, 'scene.json')) as CadSceneRootMetadata;
 
     const box = sceneJson.sectors[0].boundingBox;
-    const rootBoundingBox = new THREE.Box3(
-      new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-      new THREE.Vector3(box.max.x, box.max.y, box.max.z)
+    const rootBoundingBox = new Box3(
+      new Vector3(box.min.x, box.min.y, box.min.z),
+      new Vector3(box.max.x, box.max.y, box.max.z)
     );
 
     this.fitCameraToBoundingBox(rootBoundingBox, 1.3);
 
-    cameraControls.target.copy(rootBoundingBox.getCenter(new THREE.Vector3()));
+    cameraControls.target.copy(rootBoundingBox.getCenter(new Vector3()));
 
     const consumedSectorsGroup = await this.loadSectors(
       sceneJson,
@@ -57,28 +61,24 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     sectorRepository: SectorRepository,
     cadMaterialManager: CadMaterialManager,
     modelUri: string
-  ): Promise<THREE.Group> {
-    const internalId = modelIdentifier.revealInternalId.toString();
+  ): Promise<Group> {
+    const internalId = modelIdentifier.revealInternalId;
 
-    cadMaterialManager.addModelMaterials(internalId, sceneJson.maxTreeIndex);
-    for (const material of Object.values(
-      cadMaterialManager.getModelMaterials(internalId)
-    ) as THREE.RawShaderMaterial[]) {
-      material.blending = THREE.CustomBlending;
-      material.blendDst = THREE.ZeroFactor;
-      material.blendDstAlpha = THREE.OneFactor;
-      material.blendSrc = THREE.OneFactor;
-      material.blendSrcAlpha = THREE.ZeroFactor;
+    const cadMaterial = createCadMaterial(sceneJson.maxTreeIndex);
+    cadMaterialManager.addModelMaterials(internalId, cadMaterial);
+    for (const material of Object.values(cadMaterialManager.getModelMaterials(internalId)) as RawShaderMaterial[]) {
+      material.blending = CustomBlending;
+      material.blendDst = ZeroFactor;
+      material.blendDstAlpha = OneFactor;
+      material.blendSrc = OneFactor;
+      material.blendSrcAlpha = ZeroFactor;
       material.needsUpdate = true;
     }
 
-    const model = new THREE.Group();
+    const model = new Group();
 
     function toThreeBox(box: BoundingBox) {
-      return new THREE.Box3(
-        new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-        new THREE.Vector3(box.max.x, box.max.y, box.max.z)
-      );
+      return new Box3(new Vector3(box.min.x, box.min.y, box.min.z), new Vector3(box.max.x, box.max.y, box.max.z));
     }
 
     await Promise.all(
@@ -86,7 +86,8 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
         const threeBoundingBox = toThreeBox(sector.boundingBox);
         const consumedSector = await sectorRepository.loadSector({
           modelBaseUrl: modelUri,
-          modelIdentifier: internalId,
+          signedFilesBaseUrl: undefined,
+          modelIdentifier: modelIdentifier,
           metadata: {
             ...sector,
             subtreeBoundingBox: threeBoundingBox,
@@ -98,10 +99,6 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
           geometryClipBox: null
         });
 
-        if (consumedSector.group) {
-          model.add(consumedSector.group);
-        }
-
         const group = this.createGltfSectorGroup(consumedSector, cadMaterialManager.getModelMaterials(internalId));
         model.add(group);
       })
@@ -110,8 +107,8 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     return model;
   }
 
-  private initializeGroup(scene: THREE.Scene) {
-    const group = new THREE.Group();
+  private initializeGroup(scene: Scene) {
+    const group = new Group();
     group.frustumCulled = false;
     group.applyMatrix4(this.cadFromCdfToThreeMatrix);
     scene.add(group);
@@ -119,21 +116,21 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
   }
 
   private createGltfSectorGroup(consumedSector: ConsumedSector, materials: Materials) {
-    const geometryGroup = new THREE.Group();
+    const geometryGroup = new Group();
 
     for (const parsedGeometry of consumedSector.geometryBatchingQueue!) {
       const material = this.getShaderMaterial(parsedGeometry.type, materials);
 
       const count = parsedGeometry.geometryBuffer.getAttribute('a_treeIndex').count;
 
-      const mesh = new THREE.InstancedMesh(parsedGeometry.geometryBuffer, material, count);
+      const mesh = new InstancedMesh(parsedGeometry.geometryBuffer, material, count);
 
-      mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+      mesh.onBeforeRender = (_0, _1, camera: Camera) => {
         if (material.uniforms.renderMode) {
           material.uniforms.renderMode.value = 1;
         }
-        (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-        (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+        (material.uniforms.inverseModelMatrix?.value as Matrix4)?.copy(mesh.matrixWorld).invert();
+        (material.uniforms.cameraPosition?.value as Vector3)?.copy(camera.position);
         material.needsUpdate = true;
       };
 
@@ -145,7 +142,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     return geometryGroup;
   }
 
-  private getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): THREE.RawShaderMaterial {
+  private getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): RawShaderMaterial {
     assert(type !== RevealGeometryCollectionType.TexturedTriangleMesh);
     switch (type) {
       case RevealGeometryCollectionType.BoxCollection:

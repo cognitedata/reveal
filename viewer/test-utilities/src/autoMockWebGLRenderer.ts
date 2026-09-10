@@ -54,6 +54,7 @@ function autoMockGLRenderer(
   renderer.setup(instance => instance.setClearColor(It.IsAny(), It.IsAny())).returns();
   renderer.setup(instance => instance.getSize(It.IsAny())).returns(new Vector2());
   renderer.setup(instance => instance.getDrawingBufferSize(It.IsAny())).returns(new Vector2());
+  renderer.setup(instance => instance.setDrawingBufferSize(It.IsAny(), It.IsAny(), It.IsAny())).returns();
   renderer.setup(instance => instance.getRenderTarget()).returns(null);
   renderer.setup(instance => instance.setRenderTarget(It.IsAny())).returns();
   renderer.setup(instance => instance.clear()).returns();

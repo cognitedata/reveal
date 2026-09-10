@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
-import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
+import { AdditiveBlending } from 'three';
+import type { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterialManager } from './PointCloudMaterialManager';
 
 describe('PointCloudMaterialManager', () => {
@@ -19,14 +19,14 @@ describe('PointCloudMaterialManager', () => {
     const modelIdentifier = Symbol('model');
     materialManager.addModelMaterial(modelIdentifier, objectData);
 
-    expect(materialManager.getModelMaterial(modelIdentifier)).not.toBeEmpty();
+    expect(materialManager.getModelMaterial(modelIdentifier)).not.to.be.empty;
   });
 
   test('removeModelMaterial removes material from the map', () => {
     const modelIdentifier = Symbol('model');
     materialManager.addModelMaterial(modelIdentifier, objectData);
 
-    expect(materialManager.getModelMaterial(modelIdentifier)).not.toBeEmpty();
+    expect(materialManager.getModelMaterial(modelIdentifier)).not.to.be.empty;
 
     materialManager.removeModelMaterial(modelIdentifier);
 
@@ -43,7 +43,7 @@ describe('PointCloudMaterialManager', () => {
     const material1 = materialManager.getModelMaterial(modelIdentifier1);
     const material2 = materialManager.getModelMaterial(modelIdentifier2);
 
-    const materialParameters = { weighted: true, blending: THREE.AdditiveBlending };
+    const materialParameters = { weighted: true, blending: AdditiveBlending };
     materialManager.setModelsMaterialParameters(materialParameters);
 
     expect(material1.weighted).toBe(materialParameters.weighted);

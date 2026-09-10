@@ -2,21 +2,20 @@
  * Copyright 2024 Cognite AS
  */
 import { Matrix4, Vector3 } from 'three';
-import { DataModelsSdk } from '../../DataModelsSdk';
-import {
-  CdfDMPointCloudVolumeQuery,
-  getDMPointCloudVolumeCollectionQuery
-} from './getDMPointCloudVolumeCollectionQuery';
-import { PointCloudVolumeObject3DProperties } from './types';
-import { CdfPointCloudObjectAnnotation } from '../types';
-import { QueryNextCursors } from '../../types';
+import type { DataModelsSdk } from '../../DataModelsSdk';
+import type { CdfDMPointCloudVolumeQuery } from './getDMPointCloudVolumeCollectionQuery';
+import { getDMPointCloudVolumeCollectionQuery } from './getDMPointCloudVolumeCollectionQuery';
+import type { PointCloudVolumeObject3DProperties } from './types';
+import type { CdfPointCloudObjectAnnotation } from '../types';
+import type { QueryNextCursors } from '../../types';
 
-import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, DMInstanceRef } from '@reveal/utilities';
-import { DMModelIdentifierType } from '../../DataSourceType';
+import type { IShape, DMInstanceKey } from '@reveal/utilities';
+import { Box, Cylinder, dmInstanceRefToKey, isDmIdentifier } from '@reveal/utilities';
+import type { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
 
-type ExhaustedQueryResult = {
+export type ExhaustedQueryResult = {
   pointCloudVolumes: QueryResult['pointCloudVolumes'];
   assets: QueryResult['assets'];
 };
@@ -46,7 +45,6 @@ export async function getDMPointCloudObjects(
   };
   const query = getDMPointCloudVolumeCollectionQuery(modelIdentifier.revisionExternalId, modelIdentifier.revisionSpace);
 
-  const assetLimit = query.with.assets.limit;
   const volumeLimit = query.with.pointCloudVolumes.limit;
   let nextCursor: QueryNextCursors<CdfDMPointCloudVolumeQuery> | undefined = undefined;
   let hasNext = true;
@@ -62,46 +60,50 @@ export async function getDMPointCloudObjects(
     result.pointCloudVolumes.push(...pointCloudVolumes);
     result.assets.push(...assets);
 
-    hasNext =
-      (assets.length === assetLimit && currentCursor?.assets !== undefined) ||
-      (pointCloudVolumes.length === volumeLimit && currentCursor?.pointCloudVolumes !== undefined);
-    nextCursor = currentCursor;
+    hasNext = pointCloudVolumes.length === volumeLimit && currentCursor?.pointCloudVolumes !== undefined;
+    nextCursor = currentCursor?.pointCloudVolumes ? { pointCloudVolumes: currentCursor.pointCloudVolumes } : undefined;
   }
 
-  const object3DAndAssetPairs: [DMInstanceKey, AssetResult][] = result.assets.map(asset => [
-    dmInstanceRefToKey(asset.properties.cdf_cdm['CogniteAsset/v1'].object3D as DMInstanceRef),
-    asset
-  ]);
+  const object3DAndAssetPairs = result.assets.flatMap(asset => {
+    const object3D = asset.properties.cdf_cdm['CogniteAsset/v1'].object3D;
+    if (!isDmIdentifier(object3D)) {
+      return [];
+    }
+    return [[dmInstanceRefToKey(object3D), asset] as const];
+  });
 
   const object3DToAssetMap = new Map<DMInstanceKey, AssetResult>(object3DAndAssetPairs);
 
-  const annotations: CdfPointCloudObjectAnnotation[] = result.pointCloudVolumes
-    .map(volume => {
-      const pointCloudVolumeProperties = volume.properties.cdf_cdm[
-        'CognitePointCloudVolume/v1'
-      ] as unknown as PointCloudVolumeObject3DProperties;
-      const region = pointCloudVolumeToRevealShapes(
-        pointCloudVolumeProperties.volume,
-        pointCloudVolumeProperties.volumeType
-      );
+  const annotations: CdfPointCloudObjectAnnotation[] = result.pointCloudVolumes.flatMap(volume => {
+    const pointCloudVolumeProperties = volume.properties.cdf_cdm[
+      'CognitePointCloudVolume/v1'
+    ] as unknown as PointCloudVolumeObject3DProperties;
+    const region = pointCloudVolumeToRevealShapes(
+      pointCloudVolumeProperties.volume,
+      pointCloudVolumeProperties.volumeType
+    );
 
-      const asset = object3DToAssetMap.get(
-        dmInstanceRefToKey(volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D as DMInstanceRef)
-      );
+    const object3D = volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D;
+    if (!isDmIdentifier(object3D)) {
+      return [];
+    }
 
-      if (asset === undefined) {
-        return undefined;
-      }
+    const asset = object3DToAssetMap.get(dmInstanceRefToKey(object3D));
 
-      return {
+    if (asset === undefined) {
+      return [];
+    }
+
+    return [
+      {
         volumeMetadata: {
           instanceRef: { externalId: volume.externalId, space: volume.space },
           asset: { externalId: asset.externalId, space: asset.space }
         },
         region: [region]
-      };
-    })
-    .filter(result => result !== undefined);
+      }
+    ];
+  });
 
   return annotations;
 }

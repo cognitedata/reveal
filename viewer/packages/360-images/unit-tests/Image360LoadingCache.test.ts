@@ -5,9 +5,9 @@
 import { DeferredPromise } from '@reveal/utilities';
 import { It, Mock } from 'moq.ts';
 import { Image360LoadingCache } from '../src/cache/Image360LoadingCache';
-import { Image360Entity } from '../src/entity/Image360Entity';
-import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
-import { DataSourceType } from '@reveal/data-providers';
+import type { Image360Entity } from '../src/entity/Image360Entity';
+import type { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
+import type { DataSourceType } from '@reveal/data-providers';
 
 describe(Image360LoadingCache.name, () => {
   test('preloading entites should properly queue file loading', async () => {

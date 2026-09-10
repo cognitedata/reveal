@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import assert from 'assert';
-import { GlbHeaderData, GltfJson } from '../types';
+import { assert } from '@reveal/utilities/assert';
+import type { GlbHeaderData, GltfJson } from '../types';
 
 export class GlbMetadataParser {
   private readonly _textDecoder: TextDecoder;

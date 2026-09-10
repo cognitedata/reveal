@@ -2,9 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import { WebGLRenderer, PerspectiveCamera, Vector2 } from 'three';
+import type { WebGLRenderer, PerspectiveCamera } from 'three';
+import { Vector2 } from 'three';
 
-import { CameraManager } from '@reveal/camera-manager';
+import type { CameraManager } from '@reveal/camera-manager';
 
 export type ResizeHandlerOptions = {
   renderResolutionThreshold?: number;

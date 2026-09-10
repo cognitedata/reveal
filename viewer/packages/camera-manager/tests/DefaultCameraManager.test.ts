@@ -2,16 +2,16 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, PerspectiveCamera, Vector3 } from 'three';
 import { DefaultCameraManager } from '../src/DefaultCameraManager';
 import { InputHandler } from '@reveal/utilities';
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 describe(DefaultCameraManager.name, () => {
   const domElement = document.createElement('canvas');
   const mockRaycastFunction = async (_1: number, _2: number, _: boolean) => {
-    return { intersection: null, modelsBoundingBox: new THREE.Box3(), pickedBoundingBox: undefined };
+    return { intersection: null, modelsBoundingBox: new Box3(), pickedBoundingBox: undefined };
   };
   let cameraManager: DefaultCameraManager;
 
@@ -20,25 +20,25 @@ describe(DefaultCameraManager.name, () => {
       domElement,
       new InputHandler(domElement),
       mockRaycastFunction,
-      new THREE.PerspectiveCamera()
+      new PerspectiveCamera()
     );
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('onCameraStop triggers within 200ms after camera finished moving', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     cameraManager.on('cameraStop', callback);
 
-    cameraManager.setCameraState({ position: new THREE.Vector3(1, 0, 0), target: new THREE.Vector3(0, 0, 0) });
+    cameraManager.setCameraState({ position: new Vector3(1, 0, 0), target: new Vector3(0, 0, 0) });
 
     expect(callback).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
 
     expect(callback).toHaveBeenCalled();
   });

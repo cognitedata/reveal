@@ -2,15 +2,15 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera, Plane } from 'three';
 
-import { assertNever } from '@reveal/utilities';
-import { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import { assertNever, EventTrigger, type EventListener } from '@reveal/utilities';
+import type { ConsumedSector } from '@reveal/cad-parsers';
+import { CadModelMetadata } from '@reveal/cad-parsers';
 
-import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
+import { Subject, combineLatest, asyncScheduler, type Subscription } from 'rxjs';
 import {
   scan,
-  share,
   startWith,
   auditTime,
   filter,
@@ -20,18 +20,23 @@ import {
   distinctUntilKeyChanged,
   mergeWith
 } from 'rxjs/operators';
-import { SectorCuller } from './sector/culling/SectorCuller';
-import { CadLoadingHints } from './CadLoadingHints';
+import type { SectorCuller } from './sector/culling/SectorCuller';
+import type { CadLoadingHints } from './CadLoadingHints';
 
-import { LoadingState } from '@reveal/model-base';
+import type { LoadingState } from '@reveal/model-base';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
-import { CadModelBudget, getDefaultCadModelBudget } from './CadModelBudget';
-import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
+import type { CadModelBudget } from './CadModelBudget';
+import { getDefaultCadModelBudget } from './CadModelBudget';
+import type { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
-import { CadNode } from '@reveal/cad-model';
+import type { CadNode } from '@reveal/cad-model';
+import { File3dFormat } from '@reveal/data-providers';
 
-const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
+type CadModelUpdateHandlerEvents = {
+  onNewConsumedSector: EventTrigger<(consumedSector: ConsumedSector) => void>;
+  onLoadingStateChanged: EventTrigger<(loadingState: LoadingState) => void>;
+};
 
 export class CadModelUpdateHandler {
   private readonly _sectorCuller: SectorCuller;
@@ -41,14 +46,14 @@ export class CadModelUpdateHandler {
   private readonly _determineSectorsHandler: SectorLoader;
 
   private readonly _cameraSubject: Subject<CameraInput> = new Subject();
-  private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
+  private readonly _clippingPlaneSubject: Subject<Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
-  private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
-  private _updateObservable: Observable<ConsumedSector> | undefined;
+  private readonly _consumedSectorSubscription: Subscription;
+  private readonly _events: CadModelUpdateHandlerEvents;
 
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = true) {
     this._sectorCuller = sectorCuller;
@@ -64,6 +69,11 @@ export class CadModelUpdateHandler {
       forcedDetailedSectorCount: 0,
       totalSectorCount: 0,
       accumulatedPriority: 0
+    };
+
+    this._events = {
+      onNewConsumedSector: new EventTrigger<(consumedSector: ConsumedSector) => void>(),
+      onLoadingStateChanged: new EventTrigger<(loadingState: LoadingState) => void>()
     };
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
@@ -105,7 +115,7 @@ export class CadModelUpdateHandler {
         itemsLoaded: loaded,
         itemsCulled: culled
       };
-      this._progressSubject.next(state);
+      this._events.onLoadingStateChanged.fire(state);
     };
     this._determineSectorsHandler = new SectorLoader(
       sectorCuller,
@@ -121,26 +131,29 @@ export class CadModelUpdateHandler {
       }
     }
 
-    this._updateObservable = combinator.pipe(
-      observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
-      map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
-      filter(loadingEnabled), // should we load?
-      mergeMap(async x => loadSectors(x, this._determineSectorsHandler)),
-      mergeMap(x => x)
-    );
+    this._consumedSectorSubscription = combinator
+      .pipe(
+        observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
+        map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
+        filter(loadingEnabled), // should we load?
+        mergeMap(async x => loadSectors(x, this._determineSectorsHandler)),
+        mergeMap(x => x)
+      )
+      .subscribe(sector => this._events.onNewConsumedSector.fire(sector));
   }
 
   dispose(): void {
-    delete this._updateObservable;
+    this._consumedSectorSubscription.unsubscribe();
     this._modelSubject.unsubscribe();
     this._sectorCuller.dispose();
+    Object.values(this._events).forEach(eventTrigger => eventTrigger.unsubscribeAll());
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+  updateCamera(camera: PerspectiveCamera, cameraInMotion: boolean): void {
     this._cameraSubject.next(makeCameraInput([camera, cameraInMotion]));
   }
 
-  set clippingPlanes(value: THREE.Plane[]) {
+  set clippingPlanes(value: Plane[]) {
     this._clippingPlaneSubject.next(value);
   }
 
@@ -157,13 +170,13 @@ export class CadModelUpdateHandler {
   }
 
   addModel(model: CadNode): void {
-    this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
+    this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier.revealInternalId);
     this._modelSubject.next({ model, operation: 'add' });
     model.nodeAppearanceProvider.on('prioritizedAreasChanged', () => this.updatePrioritizedAreas());
   }
 
   removeModel(model: CadNode): void {
-    this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier);
+    this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier.revealInternalId);
     this._modelSubject.next({ model, operation: 'remove' });
   }
 
@@ -175,12 +188,12 @@ export class CadModelUpdateHandler {
     this._prioritizedLoadingHintsSubject.next();
   }
 
-  consumedSectorObservable(): Observable<ConsumedSector> {
-    return this._updateObservable!.pipe(share());
-  }
-
-  getLoadingStateObserver(): Observable<LoadingState> {
-    return this._progressSubject;
+  on<EventKey extends keyof CadModelUpdateHandlerEvents>(
+    event: EventKey,
+    listener: EventListener<CadModelUpdateHandlerEvents, EventKey>
+  ): () => void {
+    this._events[event].subscribe(listener);
+    return () => this._events[event].unsubscribe(listener);
   }
 
   reportNewSectorsLoaded(loadedCountChange: number): void {
@@ -200,7 +213,11 @@ export class CadModelUpdateHandler {
             array.push(model);
             return array;
           case 'remove':
-            return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
+            return array.filter(
+              x =>
+                x.cadModelMetadata.modelIdentifier.revealInternalId !==
+                model.cadModelMetadata.modelIdentifier.revealInternalId
+            );
           default:
             assertNever(operation);
         }
@@ -214,20 +231,20 @@ type SettingsInput = {
   budget: CadModelBudget;
 };
 type CameraInput = {
-  camera: THREE.PerspectiveCamera;
+  camera: PerspectiveCamera;
   cameraInMotion: boolean;
 };
 type ClippingInput = {
-  clippingPlanes: THREE.Plane[] | never[];
+  clippingPlanes: Plane[] | never[];
 };
 
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelBudget]): SettingsInput {
   return { loadingHints, budget };
 }
-function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boolean]): CameraInput {
+function makeCameraInput([camera, cameraInMotion]: [PerspectiveCamera, boolean]): CameraInput {
   return { camera, cameraInMotion };
 }
-function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
+function makeClippingInput([clippingPlanes]: [Plane[]]): ClippingInput {
   return { clippingPlanes };
 }
 
@@ -238,12 +255,26 @@ function createDetermineSectorsInput([settings, _, camera, clipping, models]: [
   ClippingInput,
   CadNode[]
 ]): DetermineSectorsPayload {
-  const prioritizedAreas = models.filter(model => !model.isDisposed).flatMap(model => model.prioritizedAreas);
+  const activeModels = models.filter(model => !model.isDisposed);
+  const prioritizedAreas = activeModels.flatMap(model => model.prioritizedAreas);
+  const lockedModelIdentifiers = new Set<symbol>(
+    activeModels
+      .filter(model => model.cadModelMetadata.format === File3dFormat.GltfPrioritizedNodes)
+      .map(model => model.cadModelMetadata.modelIdentifier.revealInternalId)
+  );
+  const lockedSectorIdsByModel = new Map<symbol, ReadonlySet<number>>();
+  for (const model of activeModels) {
+    if (model.lockedSectorIds.size > 0) {
+      lockedSectorIdsByModel.set(model.cadModelMetadata.modelIdentifier.revealInternalId, model.lockedSectorIds);
+    }
+  }
   return {
     ...camera,
     ...settings,
     ...clipping,
     prioritizedAreas,
+    lockedModelIdentifiers,
+    lockedSectorIdsByModel,
     models
   };
 }

@@ -1,13 +1,14 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CogniteClient, QueryRequest } from '@cognite/sdk';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { CogniteClient, QueryRequest } from '@cognite/sdk';
+import type { DMInstanceRef } from '@reveal/utilities';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
-import { Image360AnnotationViewReferenceAndProperties } from './types';
+import type { Image360AnnotationViewReferenceAndProperties } from './types';
 import { CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE, CORE_DM_IMAGE_360_VIEW_REFERENCE } from './sources';
 import { COGNITE_VISUALIZABLE_SOURCE } from '../../utilities/constants';
 import { CORE_DM_IMAGE_360_ANNOTATIONS_PROPERTIES_LIST, CORE_DM_IMAGE_360_PROPERTIES_LIST } from './queryProperties';
+import { isCoreDmImage360AnnotationFilter, isCoreDmObject3DFilter } from './queryFilters';
 
 export type Image360AnnotationsForInstanceResult = {
   annotationIds: DMInstanceRef[];
@@ -42,7 +43,6 @@ export type GetImage360AnnotationsForInstanceResponse = Awaited<
     >
   >
 >;
-
 function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef) {
   return {
     with: {
@@ -61,16 +61,15 @@ function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef) {
         nodes: {
           from: 'instance_object',
           through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' },
-          direction: 'outwards'
+          direction: 'outwards',
+          filter: isCoreDmObject3DFilter
         }
       },
       annotation_edges: {
         edges: {
           from: 'object3ds',
           direction: 'outwards',
-          filter: {
-            hasData: [CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE]
-          }
+          filter: isCoreDmImage360AnnotationFilter
         },
         limit: 10000
       },

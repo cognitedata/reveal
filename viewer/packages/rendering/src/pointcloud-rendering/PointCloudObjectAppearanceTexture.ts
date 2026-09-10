@@ -4,20 +4,18 @@
 
 import { generateDataTexture } from './texture-generation';
 
-import * as THREE from 'three';
-import {
-  PointCloudAnnotationVolumeCollection,
-  DefaultPointCloudAppearance,
-  CompletePointCloudAppearance,
-  isPointCloudObjectCollection,
-  StyledPointCloudVolumeCollection
-} from '@reveal/pointcloud-styling';
-import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
-import { DataSourceType } from '@reveal/data-providers';
-import { DMInstanceKey, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import type { DataTexture } from 'three';
+import { Color } from 'three';
+import type { CompletePointCloudAppearance, StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
+import { DefaultPointCloudAppearance, isPointCloudObjectCollection } from '@reveal/pointcloud-styling';
+import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
+import type { DataSourceType } from '@reveal/data-providers';
+import type { DMInstanceKey } from '@reveal/utilities';
+import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
+import { sortBy } from 'lodash-es';
 
 export class PointCloudObjectAppearanceTexture {
-  private readonly _objectStyleTexture: THREE.DataTexture;
+  private readonly _objectStyleTexture: DataTexture;
   private _needsReconstruction: boolean = true;
 
   private readonly _styledObjectSets: StyledPointCloudVolumeCollection<DataSourceType>[] = [];
@@ -30,7 +28,7 @@ export class PointCloudObjectAppearanceTexture {
   private _annotationIdsToObjectId: Map<number | DMInstanceKey, number> | undefined;
 
   constructor(width: number, height: number) {
-    this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x0), 0x01); // Initialize with visibility bit set
+    this._objectStyleTexture = generateDataTexture(width, height, new Color(0x0), 0x01); // Initialize with visibility bit set
 
     this._width = width;
     this._height = height;
@@ -48,7 +46,11 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   private setObjectStyle(objectId: number, appearance: CompletePointCloudAppearance): void {
-    const data = createUint8View(this._objectStyleTexture.image.data);
+    const rawData = this._objectStyleTexture.image.data;
+    if (!rawData) {
+      throw new Error('Point cloud object style texture data is not initialized');
+    }
+    const data = createUint8View(rawData);
 
     const styleData = this.appearanceToRgba(appearance);
     data.set(styleData, 4 * objectId);
@@ -81,17 +83,23 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   private resetTexture(): void {
+    const rawData = this._objectStyleTexture.image.data;
+    if (!rawData) {
+      throw new Error('Point cloud object style texture data is not initialized');
+    }
     const styleData = this.appearanceToRgba(this._defaultAppearance);
 
     for (let i = 0; i < this._width * this._height; i++) {
-      createUint8View(this._objectStyleTexture.image.data).set(styleData, 4 * i);
+      createUint8View(rawData).set(styleData, 4 * i);
     }
   }
 
   onBeforeRender(): void {
     if (this._needsReconstruction) {
       this.resetTexture();
-      for (const styledCollection of this._styledObjectSets) {
+
+      const sortedStyledCollections = sortBy(this._styledObjectSets, 'importance');
+      for (const styledCollection of sortedStyledCollections) {
         this.setObjectCollectionStyle(styledCollection);
       }
 
@@ -101,10 +109,10 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
-    const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
+    const ind = this._styledObjectSets.findIndex(s => s.volumeCollection === styledCollection.volumeCollection);
 
     if (ind !== -1) {
-      this._styledObjectSets[ind].style = styledCollection.style;
+      this._styledObjectSets[ind] = styledCollection;
     } else {
       this._styledObjectSets.push(styledCollection);
     }
@@ -112,8 +120,8 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: PointCloudAnnotationVolumeCollection): void {
-    const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
+  removeStyledObjectSet(collection: StyledPointCloudVolumeCollection<DataSourceType>['volumeCollection']): void {
+    const ind = this._styledObjectSets.findIndex(s => s.volumeCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);
     }
@@ -135,7 +143,7 @@ export class PointCloudObjectAppearanceTexture {
     return this._defaultAppearance;
   }
 
-  get objectStyleTexture(): THREE.DataTexture {
+  get objectStyleTexture(): DataTexture {
     return this._objectStyleTexture;
   }
 }

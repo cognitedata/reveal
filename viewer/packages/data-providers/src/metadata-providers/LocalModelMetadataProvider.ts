@@ -1,12 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { Vector3 } from 'three';
+import { Matrix4 } from 'three';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
-import { ModelIdentifier } from '../ModelIdentifier';
-import { ModelMetadataProvider } from '../ModelMetadataProvider';
-import { BlobOutputMetadata, File3dFormat } from '../types';
+import type { ModelIdentifier } from '../ModelIdentifier';
+import type { ModelMetadataProvider } from '../ModelMetadataProvider';
+import type { BlobOutputMetadata } from '../types';
+import { File3dFormat } from '../types';
 import { LocalModelIdentifier } from '../model-identifiers/LocalModelIdentifier';
 import { fetchWithStatusCheck } from '../utilities/fetchWithStatusCheck';
 
@@ -21,19 +23,17 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
     return Promise.resolve(`${location.origin}/${modelIdentifier.localPath}`);
   }
 
-  async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<THREE.Matrix4> {
+  async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<Matrix4> {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
 
-    const matrix = new THREE.Matrix4();
+    const matrix = new Matrix4();
     applyDefaultModelTransformation(matrix, format);
     return matrix;
   }
 
-  getModelCamera(
-    modelIdentifier: ModelIdentifier
-  ): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
+  getModelCamera(modelIdentifier: ModelIdentifier): Promise<{ position: Vector3; target: Vector3 } | undefined> {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }

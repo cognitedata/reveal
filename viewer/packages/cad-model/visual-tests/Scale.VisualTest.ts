@@ -2,13 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Vector3 } from 'three';
 
 import { CadNode } from '..';
-import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 
 export default class ScaleVisualTest extends StreamingVisualTestFixture {
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -21,7 +19,7 @@ export default class ScaleVisualTest extends StreamingVisualTestFixture {
     }
 
     const matrix = cadNode.getModelTransformation();
-    const newMatrix = matrix.scale(new THREE.Vector3(5, 5, 5));
+    const newMatrix = matrix.scale(new Vector3(5, 5, 5));
     cadNode.setModelTransformation(newMatrix);
 
     return Promise.resolve();

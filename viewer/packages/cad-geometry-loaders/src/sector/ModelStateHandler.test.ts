@@ -2,47 +2,55 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
-import { WantedSector, ConsumedSector, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import type { WantedSector, ConsumedSector, SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 import { ModelStateHandler } from './ModelStateHandler';
+import { LocalModelIdentifier } from '@reveal/data-providers';
+
+const modelSymbol0 = Symbol('modelId');
 
 describe('ModelStateHandler', () => {
   const { simple, detailed, discarded } = mockWantedSectors(1);
 
   test('addModel for already added model throws', () => {});
   const modelStateHandler = new ModelStateHandler();
-  modelStateHandler.addModel('modelId');
-  expect(() => modelStateHandler.addModel('modelId')).toThrowError();
+  modelStateHandler.addModel(modelSymbol0);
+  expect(() => modelStateHandler.addModel(modelSymbol0)).toThrow();
 
   test('removeModel for model that isnt added throws', () => {
     const modelStateHandler = new ModelStateHandler();
-    expect(() => modelStateHandler.removeModel('modelId')).toThrowError();
+    expect(() => modelStateHandler.removeModel(modelSymbol0)).toThrow();
   });
   test('hasStateChanged triggered for model that has not been added, throws', () => {
     const modelStateHandler = new ModelStateHandler();
-    expect(() => modelStateHandler.removeModel('modelId')).toThrowError();
+    expect(() => modelStateHandler.removeModel(modelSymbol0)).toThrow();
   });
 
   test('hasStateChanged for added model, updates sectors', () => {
     const modelStateHandler = new ModelStateHandler();
-    modelStateHandler.addModel(simple.modelIdentifier);
-    const consumedSimple: ConsumedSector = { ...simple, group: undefined, instancedMeshes: undefined };
+    modelStateHandler.addModel(simple.modelIdentifier.revealInternalId);
+    const consumedSimple: ConsumedSector = { ...simple, instancedMeshes: undefined };
 
     modelStateHandler.updateState(
-      consumedSimple.modelIdentifier,
+      consumedSimple.modelIdentifier.revealInternalId,
       consumedSimple.metadata.id,
       consumedSimple.levelOfDetail
     );
-    expect(modelStateHandler.hasStateChanged(simple.modelIdentifier, simple.metadata.id, simple.levelOfDetail)).toBe(
-      false
-    );
+    expect(
+      modelStateHandler.hasStateChanged(
+        simple.modelIdentifier.revealInternalId,
+        simple.metadata.id,
+        simple.levelOfDetail
+      )
+    ).toBe(false);
 
     const differentSectors: WantedSector[] = [detailed, discarded];
     differentSectors.forEach(wantedSector => {
       expect(
         modelStateHandler.hasStateChanged(
-          wantedSector.modelIdentifier,
+          wantedSector.modelIdentifier.revealInternalId,
           wantedSector.metadata.id,
           wantedSector.levelOfDetail
         )
@@ -52,18 +60,18 @@ describe('ModelStateHandler', () => {
 
   test('updateState', () => {
     const modelStateHandler = new ModelStateHandler();
-    modelStateHandler.addModel(simple.modelIdentifier);
+    modelStateHandler.addModel(simple.modelIdentifier.revealInternalId);
     const sectors = [simple, detailed, discarded];
     sectors.forEach(wantedSector => {
-      const consumedSector: ConsumedSector = { ...wantedSector, group: undefined, instancedMeshes: undefined };
+      const consumedSector: ConsumedSector = { ...wantedSector, instancedMeshes: undefined };
       modelStateHandler.updateState(
-        consumedSector.modelIdentifier,
+        consumedSector.modelIdentifier.revealInternalId,
         consumedSector.metadata.id,
         consumedSector.levelOfDetail
       );
       expect(
         modelStateHandler.hasStateChanged(
-          wantedSector.modelIdentifier,
+          wantedSector.modelIdentifier.revealInternalId,
           wantedSector.metadata.id,
           wantedSector.levelOfDetail
         )
@@ -81,8 +89,8 @@ function mockWantedSectors(id: number): {
     id,
     path: '0/',
     depth: 0,
-    subtreeBoundingBox: new THREE.Box3(),
-    geometryBoundingBox: new THREE.Box3(),
+    subtreeBoundingBox: new Box3(),
+    geometryBoundingBox: new Box3(),
     estimatedDrawCallCount: 0,
     estimatedRenderCost: 0,
     minDiagonalLength: 0.1,
@@ -92,14 +100,29 @@ function mockWantedSectors(id: number): {
     children: []
   };
 
-  const modelIdentifier = 'modelIdentifer';
+  const modelIdentifier = new LocalModelIdentifier('modelIdentifer');
   const modelBaseUrl = 'https://localhost/';
   return {
-    simple: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Simple, geometryClipBox: null },
-    detailed: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Detailed, geometryClipBox: null },
+    simple: {
+      modelIdentifier,
+      modelBaseUrl,
+      signedFilesBaseUrl: undefined,
+      metadata,
+      levelOfDetail: LevelOfDetail.Simple,
+      geometryClipBox: null
+    },
+    detailed: {
+      modelIdentifier,
+      modelBaseUrl,
+      signedFilesBaseUrl: undefined,
+      metadata,
+      levelOfDetail: LevelOfDetail.Detailed,
+      geometryClipBox: null
+    },
     discarded: {
       modelIdentifier,
       modelBaseUrl,
+      signedFilesBaseUrl: undefined,
       metadata,
       levelOfDetail: LevelOfDetail.Discarded,
       geometryClipBox: null

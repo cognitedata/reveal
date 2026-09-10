@@ -2,21 +2,21 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Plane, Vector3 } from 'three';
 
 export class BoundingBoxClipper {
-  private readonly _box: THREE.Box3;
-  private readonly _clippingPlanes: THREE.Plane[] = [
-    new THREE.Plane(),
-    new THREE.Plane(),
-    new THREE.Plane(),
-    new THREE.Plane(),
-    new THREE.Plane(),
-    new THREE.Plane()
+  private readonly _box: Box3;
+  private readonly _clippingPlanes: Plane[] = [
+    new Plane(),
+    new Plane(),
+    new Plane(),
+    new Plane(),
+    new Plane(),
+    new Plane()
   ];
 
-  constructor(box?: THREE.Box3) {
-    this._box = box || new THREE.Box3();
+  constructor(box?: Box3) {
+    this._box = box || new Box3();
     this.updatePlanes();
   }
 
@@ -75,33 +75,15 @@ export class BoundingBoxClipper {
   }
 
   private updatePlanes() {
-    this._clippingPlanes[0].setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(1, 0, 0),
-      new THREE.Vector3(this.minX, 0, 0)
-    );
-    this._clippingPlanes[1].setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(-1, 0, 0),
-      new THREE.Vector3(this.maxX, 0, 0)
-    );
-    this._clippingPlanes[2].setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(0, 1, 0),
-      new THREE.Vector3(0, this.minY, 0)
-    );
-    this._clippingPlanes[3].setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(0, -1, 0),
-      new THREE.Vector3(0, this.maxY, 0)
-    );
-    this._clippingPlanes[4].setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(0, 0, 1),
-      new THREE.Vector3(0, 0, this.minZ)
-    );
-    this._clippingPlanes[5].setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(0, 0, -1),
-      new THREE.Vector3(0, 0, this.maxZ)
-    );
+    this._clippingPlanes[0].setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), new Vector3(this.minX, 0, 0));
+    this._clippingPlanes[1].setFromNormalAndCoplanarPoint(new Vector3(-1, 0, 0), new Vector3(this.maxX, 0, 0));
+    this._clippingPlanes[2].setFromNormalAndCoplanarPoint(new Vector3(0, 1, 0), new Vector3(0, this.minY, 0));
+    this._clippingPlanes[3].setFromNormalAndCoplanarPoint(new Vector3(0, -1, 0), new Vector3(0, this.maxY, 0));
+    this._clippingPlanes[4].setFromNormalAndCoplanarPoint(new Vector3(0, 0, 1), new Vector3(0, 0, this.minZ));
+    this._clippingPlanes[5].setFromNormalAndCoplanarPoint(new Vector3(0, 0, -1), new Vector3(0, 0, this.maxZ));
   }
 
-  get clippingPlanes(): THREE.Plane[] {
+  get clippingPlanes(): Plane[] {
     return this._clippingPlanes;
   }
 }

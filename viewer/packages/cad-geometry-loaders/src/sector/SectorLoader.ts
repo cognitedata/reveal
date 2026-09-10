@@ -2,17 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import type { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
 
-import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
-import { SectorCuller } from './culling/SectorCuller';
-import { ModelStateHandler } from './ModelStateHandler';
-import chunk from 'lodash/chunk';
+import type { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
+import type { SectorCuller } from './culling/SectorCuller';
+import type { ModelStateHandler } from './ModelStateHandler';
+import { chunk } from 'lodash-es';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import { File3dFormat } from '@reveal/data-providers';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
-import { CadNode } from '@reveal/cad-model';
+import type { CadNode } from '@reveal/cad-model';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -67,7 +67,9 @@ export class SectorLoader {
     const sectorCullerInput: DetermineSectorsInput = {
       ...input,
       cadModelsMetadata: visibleCadModels.map(x => x.cadModelMetadata),
-      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes])
+      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes]),
+      lockedModelIdentifiers: input.lockedModelIdentifiers,
+      lockedSectorIdsByModel: input.lockedSectorIdsByModel
     };
 
     if (sectorCullerInput.cadModelsMetadata.length <= 0) {
@@ -83,7 +85,7 @@ export class SectorLoader {
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
 
     const changedSectors = prioritizedResult.wantedSectors.filter(sector =>
-      hasSectorChanged(sector.modelIdentifier, sector.metadata.id, sector.levelOfDetail)
+      hasSectorChanged(sector.modelIdentifier.revealInternalId, sector.metadata.id, sector.levelOfDetail)
     );
 
     this._progressHelper.reset(changedSectors.length);
@@ -103,7 +105,7 @@ export class SectorLoader {
         const resolvedSector = consumed.result;
         if (currentBatchId === this._batchId && resolvedSector !== undefined) {
           this._modelStateHandler.updateState(
-            resolvedSector.modelIdentifier,
+            resolvedSector.modelIdentifier.revealInternalId,
             resolvedSector.metadata.id,
             resolvedSector.levelOfDetail
           );
@@ -147,7 +149,17 @@ export class SectorLoader {
 
   private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(wantedSector => {
-      const model = models.filter(model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier)[0];
+      const model = models.find(
+        model =>
+          model.cadModelMetadata.modelIdentifier.revealInternalId === wantedSector.modelIdentifier.revealInternalId
+      );
+
+      if (!model) {
+        throw new Error(
+          `Model not found for sector with identifier: ${wantedSector.modelIdentifier.revealInternalId.toString()}`
+        );
+      }
+
       return { sector: wantedSector, downloadSector: model.loadSector.bind(model) };
     });
 
@@ -190,5 +202,6 @@ class ProgressReportHelper {
 
 function isGltfModelFormat(model: CadModelMetadata): boolean {
   // Add new versions here as support is added to Reveal
-  return model.format === File3dFormat.GltfCadModel && model.formatVersion === 9;
+  const isGltf = model.format === File3dFormat.GltfCadModel || model.format === File3dFormat.GltfPrioritizedNodes;
+  return isGltf && model.formatVersion === 9;
 }

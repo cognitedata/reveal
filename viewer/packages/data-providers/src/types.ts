@@ -1,27 +1,59 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { AnnotationModel, AnnotationsTypesImagesAssetLink, IdEither } from '@cognite/sdk';
-import * as THREE from 'three';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import {
-  AssetAnnotationImage360Info,
-  DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult
-} from '@reveal/360-images';
-import { DMInstanceRef } from '@reveal/utilities';
-
-export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
-  annotation: T['image360AnnotationType']
-) => boolean;
+import type {
+  AnnotationModel,
+  AnnotationsTypesImagesAssetLink,
+  AnnotationsTypesImagesInstanceLink,
+  IdEither
+} from '@cognite/sdk';
+import type { Matrix4, Texture } from 'three';
+import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import type { DMInstanceRef } from '@reveal/utilities';
+import type { ModelIdentifier } from './ModelIdentifier';
 
 export interface JsonFileProvider {
+  /**
+   * Download and parse a JSON file and return the resulting struct.
+   * @param baseUrl     Base URL of the model. Pass empty string to treat fileName as a full signed URL.
+   * @param fileName    Filename of JSON file, or a full signed URL when baseUrl is empty.
+   */
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
 export interface BinaryFileProvider {
+  /**
+   * Downloads a binary blob.
+   * @param baseUrl     Base URL of the model. Pass empty string to treat fileName as a full signed URL.
+   * @param fileName    Filename of binary file, or a full signed URL when baseUrl is empty.
+   * @param abortSignal Optional abort signal that can be used to cancel an in progress fetch.
+   */
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
+export interface SignedFileProvider {
+  /**
+   * Retrieves signed URLs for files belonging to a model revision.
+   * @param baseUrl          Base URL of the signed files endpoint.
+   * @param modelIdentifier  Identifier of the model revision to fetch URLs for.
+   * @param fileNameFilter   Optional filename to filter results to a single file.
+   */
+  getFileUrlsForModel?(
+    baseUrl: string,
+    modelIdentifier: ModelIdentifier,
+    fileNameFilter?: string
+  ): Promise<SignedFileItem[]>;
+}
+
+export type SignedFileItem = {
+  signedUrl: string;
+  fileName: string;
+  subPath: string;
+};
+
+export type SignedFilesResponseWithCursor = {
+  items: SignedFileItem[];
+  nextCursor?: string;
+};
 
 /**
  * An ID identifiying a single Image360 entity within a collection
@@ -32,50 +64,10 @@ export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
  */
 export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
 
-export type Image360AnnotationSpecifier<T extends DataSourceType> = {
-  revisionId: Image360RevisionId<T>;
-  fileDescriptors: Image360FileDescriptor[];
-};
-
 /**
  * Filter for finding linked annotations in either a classic 360 collection or a new one
  */
 export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
-
-export interface Image360AnnotationProvider<T extends DataSourceType> {
-  getRelevant360ImageAnnotations(
-    annotationSpecifier: Image360AnnotationSpecifier<T>
-  ): Promise<T['image360AnnotationType'][]>;
-  findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<T>,
-    collection: DefaultImage360Collection<T>
-  ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
-
-  getAllImage360AnnotationInfos(
-    source: 'assets',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'cdm',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'all',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'assets' | 'cdm' | 'all',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<
-    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
-    | AssetAnnotationImage360Info<DMDataSourceType>[]
-    | AssetAnnotationImage360Info<DataSourceType>[]
-  >;
-}
 
 export interface Image360DescriptorProvider<T extends DataSourceType> {
   get360ImageDescriptors(
@@ -106,6 +98,16 @@ export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
   data: AnnotationsTypesImagesAssetLink;
 };
 
+/**
+ * A CDF AnnotationModel with a narrower type representing an image instance link
+ */
+export type ImageInstanceLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
+  /**
+   * The data associated with the image instance link
+   */
+  data: AnnotationsTypesImagesInstanceLink;
+};
+
 export type Historical360ImageSet<T extends DataSourceType> = Image360RevisionDescriptor<T> & {
   imageRevisions: Image360Descriptor<T>[];
 };
@@ -121,24 +123,33 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
   label: string | undefined;
   collectionId: string;
   collectionLabel: string | undefined;
-  transform: THREE.Matrix4;
+  transform: Matrix4;
 };
 
+export type FaceName = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+
 export type Image360Face = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
+  /** Signed download URL for streaming. When present, data is empty. */
+  downloadUrl?: string;
 };
 
 export type Image360Texture = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  texture: THREE.Texture;
+  face: FaceName;
+  texture: Texture;
 };
 
 export type Image360FileDescriptor = {
-  fileId: number;
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  face: FaceName;
   mimeType: 'image/jpeg' | 'image/png';
+  /** Internal CDF file ID (numeric) */
+  fileId?: number;
+  /** External file ID (string) - for system-space/FDM collections */
+  externalId?: string;
+  /** DM instance reference - for CDM collections */
+  instanceId?: DMInstanceRef;
 };
 
 export enum File3dFormat {
@@ -147,6 +158,12 @@ export enum File3dFormat {
    * Reveal v9 and above (GLTF based output)
    */
   GltfCadModel = 'gltf-directory',
+  /**
+   * High-detail geometry for a prioritized subset of nodes.
+   * Same GLTF structure as GltfCadModel but only contains
+   * geometry for nodes specified in a PrioritizedNodes job.
+   */
+  GltfPrioritizedNodes = 'gltf-prioritized-nodes-directory',
   AnyFormat = 'all-outputs'
 }
 
@@ -206,6 +223,7 @@ export type NodeResultSetExpression = {
     from?: any;
     through?: any;
     chainTo?: any;
+    direction?: 'outwards' | 'inwards';
   };
 };
 

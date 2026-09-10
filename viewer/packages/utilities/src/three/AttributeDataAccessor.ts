@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferAttribute } from 'three';
-import { TypedArray } from '../types';
+import type { BufferAttribute } from 'three';
+import type { TypedArray } from '../types';
 
 export class AttributeDataAccessor<T extends TypedArray> {
   private readonly _dataView: T;

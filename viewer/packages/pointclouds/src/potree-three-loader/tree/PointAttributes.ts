@@ -54,13 +54,26 @@ function makePointAttribute(name: PointAttributeName, type: PointAttributeType, 
 
 const RGBA_PACKED = makePointAttribute(PointAttributeName.COLOR_PACKED, POINT_ATTRIBUTE_TYPES.DATA_TYPE_INT8, 4);
 
-export const POINT_ATTRIBUTES = {
+type PointShaderAttributes = {
+  POSITION_CARTESIAN: IPointAttribute;
+  RGBA_PACKED: IPointAttribute;
+  COLOR_PACKED: IPointAttribute;
+  RGB_PACKED: IPointAttribute;
+  NORMAL_FLOATS: IPointAttribute;
+  FILLER_1B: IPointAttribute;
+  INTENSITY: IPointAttribute;
+  CLASSIFICATION: IPointAttribute;
+  NORMAL_SPHEREMAPPED: IPointAttribute;
+  NORMAL_OCT16: IPointAttribute;
+  NORMAL: IPointAttribute;
+};
+export const POINT_ATTRIBUTES: PointShaderAttributes = {
   POSITION_CARTESIAN: makePointAttribute(
     PointAttributeName.POSITION_CARTESIAN,
     POINT_ATTRIBUTE_TYPES.DATA_TYPE_FLOAT,
     3
   ),
-  RGBA_PACKED,
+  RGBA_PACKED: RGBA_PACKED,
   COLOR_PACKED: RGBA_PACKED,
   RGB_PACKED: makePointAttribute(PointAttributeName.COLOR_PACKED, POINT_ATTRIBUTE_TYPES.DATA_TYPE_INT8, 3),
   NORMAL_FLOATS: makePointAttribute(PointAttributeName.NORMAL_FLOATS, POINT_ATTRIBUTE_TYPES.DATA_TYPE_FLOAT, 3),
@@ -76,7 +89,7 @@ export const POINT_ATTRIBUTES = {
   NORMAL: makePointAttribute(PointAttributeName.NORMAL, POINT_ATTRIBUTE_TYPES.DATA_TYPE_FLOAT, 3)
 };
 
-export type PointAttributeStringName = keyof typeof POINT_ATTRIBUTES;
+export type PointAttributeStringName = keyof PointShaderAttributes;
 
 export class PointAttributes implements IPointAttributes {
   attributes: IPointAttribute[] = [];

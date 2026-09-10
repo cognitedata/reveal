@@ -1,10 +1,10 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { DMInstanceRef } from '@reveal/utilities';
-import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
-import { CoreDmImage360Properties } from './properties';
-import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
+import type { DMInstanceRef } from '@reveal/utilities';
+import type { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
+import type { CoreDmImage360Properties } from './properties';
+import type { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
 
 export function getImage360Map(
   queryResponse: GetImage360AnnotationsFromCollectionResponse | GetImage360FromRevisionResponse

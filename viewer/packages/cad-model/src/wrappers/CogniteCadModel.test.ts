@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 import { CogniteCadModel } from './CogniteCadModel';
 
-import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { NodesApiClient } from '@reveal/nodes-api';
+import type { NodeAppearance } from '@reveal/cad-styling';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import type { NodesApiClient } from '@reveal/nodes-api';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';
@@ -38,9 +39,7 @@ describe(CogniteCadModel.name, () => {
       .setup(x => x.getBoundingBoxesByNodeIds(It.IsAny(), It.IsAny(), It.IsAny()))
       .callback(expression => {
         const nodeIds: number[] = expression.args[2];
-        const bboxes = nodeIds.map(
-          id => new THREE.Box3(new THREE.Vector3(id, id, id), new THREE.Vector3(id + 1, id + 1, id + 1))
-        );
+        const bboxes = nodeIds.map(id => new Box3(new Vector3(id, id, id), new Vector3(id + 1, id + 1, id + 1)));
         return Promise.resolve(bboxes);
       });
     model = createCadModel(1, 2, 3, 3, mockApiClient.object());
@@ -53,15 +52,15 @@ describe(CogniteCadModel.name, () => {
     model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
     model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(model.styledNodeCollections).not.toHaveLength(0);
 
     model.unassignStyledNodeCollection(collection2);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(model.styledNodeCollections).not.toHaveLength(0);
 
     model.unassignStyledNodeCollection(collection);
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(model.styledNodeCollections).toHaveLength(0);
   });
 
   test('assignStyledNodeCollection updates style if called twice with same collection', () => {
@@ -84,7 +83,7 @@ describe(CogniteCadModel.name, () => {
 
     model.removeAllStyledNodeCollections();
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(model.styledNodeCollections).toHaveLength(0);
   });
 
   test('styled node collections are kept in order of importance', () => {
@@ -107,31 +106,29 @@ describe(CogniteCadModel.name, () => {
   });
 
   test('getBoundingBoxByTreeIndex() modifies out-parameter', async () => {
-    const bbox = new THREE.Box3();
+    const bbox = new Box3();
     const result = await model.getBoundingBoxByTreeIndex(1, bbox);
     expect(result).toBe(bbox);
-    expect(result).not.toEqual(new THREE.Box3());
+    expect(result).not.toEqual(new Box3());
   });
 
   test('getBoundingBoxByNodeId() modifies out-parameter', async () => {
-    const bbox = new THREE.Box3();
+    const bbox = new Box3();
     const result = await model.getBoundingBoxByNodeId(1, bbox);
     expect(result).toBe(bbox);
-    expect(result).not.toEqual(new THREE.Box3());
+    expect(result).not.toEqual(new Box3());
   });
 
   test('getBoundingBoxByNodeIds() modifies out-parameter', async () => {
     const result = await model.getBoundingBoxesByNodeIds([1, 2]);
-    expect(result).toEqual(
-      [1, 2].map(i => new THREE.Box3(new THREE.Vector3(i, i, i), new THREE.Vector3(i + 1, i + 1, i + 1)))
-    );
+    expect(result).toEqual([1, 2].map(i => new Box3(new Vector3(i, i, i), new Vector3(i + 1, i + 1, i + 1))));
   });
 
   test('setModelTransform() changes custom transform, not source transform', () => {
     const originalCustomTransform = model.getModelTransformation();
     const originalSourceTransform = model.getCdfToDefaultModelTransformation();
 
-    const modifyingTransform = new THREE.Matrix4().setPosition(1, 2, 3);
+    const modifyingTransform = new Matrix4().setPosition(1, 2, 3);
 
     model.setModelTransformation(modifyingTransform);
 
@@ -145,7 +142,7 @@ describe(CogniteCadModel.name, () => {
 
   test('visible property hides or unhides model', () => {
     const visible = true;
-    expect(model.visible).toBeTrue();
+    expect(model.visible).toBeTruthy();
 
     model.visible = false;
 
@@ -156,5 +153,38 @@ describe(CogniteCadModel.name, () => {
 
     expect(model.cadNode.visible).toBe(visible);
     expect(model.visible).toBe(visible);
+  });
+
+  describe('tree index locking', () => {
+    test('lockTreeIndices populates lockedSectorIds for mapped tree indices', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+
+      model.lockTreeIndices([1, 2]);
+
+      expect(model.cadNode.lockedSectorIds.has(10)).toBe(true);
+      expect(model.cadNode.lockedSectorIds.has(20)).toBe(true);
+    });
+
+    test('unlockTreeIndices removes only the unlocked indices sectors', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+      model.lockTreeIndices([1, 2]);
+
+      model.unlockTreeIndices([1]);
+
+      expect(model.cadNode.lockedSectorIds.has(10)).toBe(false);
+      expect(model.cadNode.lockedSectorIds.has(20)).toBe(true);
+    });
+
+    test('unlockAllTreeIndices clears all locked sectors', () => {
+      model.cadNode.treeIndexToSectorsMap.set(1, 10);
+      model.cadNode.treeIndexToSectorsMap.set(2, 20);
+      model.lockTreeIndices([1, 2]);
+
+      model.unlockAllTreeIndices();
+
+      expect(model.cadNode.lockedSectorIds.size).toBe(0);
+    });
   });
 });

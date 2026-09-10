@@ -1,10 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import range from 'lodash/range';
+import { range } from 'lodash-es';
 
 import { HtmlOverlayTool } from './HtmlOverlayTool';
-import { Box2, MathUtils } from 'three';
+import type { Box2 } from 'three';
+import { MathUtils } from 'three';
 
 type SimpleGrid2DElement<T> = {
   bounds: Box2;

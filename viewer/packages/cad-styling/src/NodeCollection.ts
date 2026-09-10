@@ -2,12 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import assert from 'assert';
+import { assert } from '@reveal/utilities/assert';
 
-import { AreaCollection } from './prioritized/AreaCollection';
-import { SerializedNodeCollection } from './SerializedNodeCollection';
+import type { AreaCollection } from './prioritized/AreaCollection';
+import type { SerializedNodeCollection } from './SerializedNodeCollection';
 
-import { EventTrigger, IndexSet } from '@reveal/utilities';
+import type { IndexSet } from '@reveal/utilities';
+import { EventTrigger } from '@reveal/utilities';
 
 /**
  * Abstract class for implementing a set of nodes to be styled.

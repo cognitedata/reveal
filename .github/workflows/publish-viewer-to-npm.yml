@@ -1,0 +1,41 @@
+name: Publish Viewer Package to NPM
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # Required for OIDC trusted publishing
+  contents: read
+
+jobs:
+  deploy-to-npm:
+    runs-on: ubuntu-latest
+    environment: CD
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install NPM dependencies
+        working-directory: viewer
+        run: |
+          sudo apt update
+          sudo apt install libxi-dev libgl-dev libglx-dev
+          pnpm install --frozen-lockfile
+
+      - name: Build production version
+        working-directory: viewer
+        run: pnpm run build:prod
+
+      - name: Publish to NPM
+        working-directory: viewer
+        run: npm publish

@@ -1,17 +1,17 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Box3, PerspectiveCamera, Vector3 } from 'three';
+import type { Box3, PerspectiveCamera, Vector3 } from 'three';
 
-import { CameraManager } from './CameraManager';
-import {
+import type { CameraManager } from './CameraManager';
+import type {
   CameraChangeDelegate,
   CameraState,
   CameraManagerEventType,
-  CAMERA_MANAGER_EVENT_TYPE_LIST,
   CameraStopDelegate,
   CameraEventDelegate
 } from './types';
+import { CAMERA_MANAGER_EVENT_TYPE_LIST } from './types';
 
 export class ProxyCameraManager implements CameraManager {
   private readonly _cameraEventListeners: Record<CameraManagerEventType, Set<CameraEventDelegate>>;

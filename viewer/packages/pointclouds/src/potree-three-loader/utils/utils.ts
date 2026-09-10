@@ -1,7 +1,7 @@
-import { BufferGeometry, Camera, Material, Scene, WebGLRenderer } from 'three';
-import { PointCloudMaterial } from '@reveal/rendering';
-import { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import type { BufferGeometry, Camera, Material, Scene, WebGLRenderer } from 'three';
+import type { PointCloudMaterial } from '@reveal/rendering';
+import type { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
+import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export function getIndexFromName(name: string): number {
   return parseInt(name.charAt(name.length - 1), 10);

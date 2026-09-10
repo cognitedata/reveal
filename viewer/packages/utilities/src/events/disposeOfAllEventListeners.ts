@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { EventTrigger } from './EventTrigger';
+import type { EventTrigger } from './EventTrigger';
 
 export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
 

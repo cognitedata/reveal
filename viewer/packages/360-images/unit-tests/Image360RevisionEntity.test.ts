@@ -2,18 +2,18 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+import type { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 
 import { Mock, It } from 'moq.ts';
 import { ImageAnnotationObject } from '../src/annotation/ImageAnnotationObject';
 import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
-import {
+import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
-  Image360Descriptor,
-  Image360Provider
+  Image360Descriptor
 } from '@reveal/data-providers';
+import type { Image360Provider } from '../src/providers/Image360Provider';
 import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox';
 import { SceneHandler } from '@reveal/utilities';
 
@@ -21,6 +21,7 @@ import { Matrix4, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
 import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 const annotationFixture0 = {
+  id: 123,
   annotatedResourceId: 1,
   annotationType: 'images.ObjectDetection',
   status: 'approved',
@@ -36,6 +37,7 @@ const annotationFixture0 = {
 } as AnnotationModel;
 
 const annotationFixture1 = {
+  id: 234,
   annotatedResourceId: 1,
   annotationType: 'images.ObjectDetection',
   status: 'approved',

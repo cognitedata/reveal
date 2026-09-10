@@ -2,31 +2,30 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { Raycaster, Vector2 } from 'three';
 
-import { IntersectInput } from '@reveal/model-base';
-import { PointCloudNode } from './PointCloudNode';
+import type { IntersectInput } from '@reveal/model-base';
+import type { PointCloudNode } from './PointCloudNode';
+import { Mutex } from 'async-mutex';
 
-import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
+import type { PickPoint } from './potree-three-loader';
+import { PointCloudOctreePicker } from './potree-three-loader';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
-import {
-  ClassicDataSourceType,
-  DMDataSourceType,
-  isClassicPointCloudVolume,
-  isDMPointCloudVolume,
-  DataSourceType
-} from '@reveal/data-providers';
-import { IntersectPointCloudNodeResult } from './types';
+import type { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '@reveal/data-providers';
+import { isClassicPointCloudVolume, isDMPointCloudVolume } from '@reveal/data-providers';
+import type { IntersectPointCloudNodeResult } from './types';
 
 export class PointCloudPickingHandler {
-  private readonly _normalized = new THREE.Vector2();
-  private readonly _raycaster = new THREE.Raycaster();
+  private readonly _normalized = new Vector2();
+  private readonly _raycaster = new Raycaster();
   private readonly _picker: PointCloudOctreePicker;
+  private readonly _mutex = new Mutex();
 
   // To solve https://cognitedata.atlassian.net/browse/REV-523
   private static readonly PickingWindowSize = 5;
 
-  constructor(renderer: THREE.WebGLRenderer) {
+  constructor(renderer: WebGLRenderer) {
     this._picker = new PointCloudOctreePicker(renderer);
   }
 
@@ -34,89 +33,88 @@ export class PointCloudPickingHandler {
     this._picker.dispose();
   }
 
-  intersectPointClouds(
+  async intersectPointClouds(
     nodes: PointCloudNode<DataSourceType>[],
     input: IntersectInput
-  ): IntersectPointCloudNodeResult<DataSourceType>[] {
+  ): Promise<IntersectPointCloudNodeResult<DataSourceType>[]> {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
     this._raycaster.setFromCamera(normalizedCoords, camera);
 
-    const intersections: PickPoint[] = [];
+    const release = await this._mutex.acquire();
+    try {
+      // Get PointCloudNodes which are visible.
+      const visibleNodes = nodes.filter(node => node.visible);
+      if (visibleNodes.length === 0) {
+        return [];
+      }
 
-    // Get PointCloudNodes which are visible.
-    const visibleNodes = nodes.filter(node => node.visible);
-
-    visibleNodes.forEach(node => {
-      const intersection = this._picker.pick(camera, this._raycaster.ray, [node.octree], {
+      // Pass all visible octrees to a single pick() call. PointCloudOctreePickerHelper.render()
+      // renders all octrees in one GPU pass using per-node index offsets, then does a single
+      // async GPU readback — reducing cost from N × readback to 1 × readback regardless of
+      // how many point clouds are in the scene.
+      const allOctrees = visibleNodes.map(n => n.octree);
+      const pick = await this._picker.pick(camera, this._raycaster.ray, allOctrees, {
         pickWindowSize: PointCloudPickingHandler.PickingWindowSize
       });
-      if (intersection !== null) {
-        intersections.push(intersection);
+
+      if (pick === null || !isPointVisibleByPlanes(input.clippingPlanes, pick.position)) {
+        return [];
       }
-    });
 
-    return intersections
-      .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
-      .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
-      .map(x => {
-        const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
-        if (pointCloudNode === null) {
-          throw new Error(`Could not find PointCloudNode for intersected point`);
-        }
+      const pointCloudNode = visibleNodes.find(n => n.octree === pick.pointCloud);
+      if (pointCloudNode === undefined) {
+        return [];
+      }
 
-        const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
-
-        const baseObject = {
-          distance: x.position.distanceTo(camera.position),
-          point: x.position,
-          pointIndex: x.pointIndex,
-          pointCloudNode,
-          object: x.object
-        };
-
-        if (pointCloudObject !== undefined) {
-          if (isClassicPointCloudVolume(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
-              ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
-              volumeMetadata: {
-                annotationId: pointCloudObject.annotationId,
-                assetRef: pointCloudObject.assetRef
-              }
-            };
-
-            return result;
-          } else if (isDMPointCloudVolume(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
-              ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
-              volumeMetadata: {
-                volumeInstanceRef: pointCloudObject.volumeInstanceRef,
-                assetRef: pointCloudObject.assetRef
-              }
-            };
-
-            return result;
-          } else {
-            throw new Error('Unknown point cloud object type');
-          }
-        }
-
-        return baseObject;
-      });
+      return [mapPickResult(pointCloudNode, pick, camera)];
+    } finally {
+      release();
+    }
   }
 }
 
-function determinePointCloudNode(
-  node: THREE.Object3D,
-  candidates: PointCloudNode<DataSourceType>[]
-): PointCloudNode<DataSourceType> | null {
-  while (node.type === 'Points' && node.parent !== null) {
-    node = node.parent;
+function mapPickResult(
+  pointCloudNode: PointCloudNode<DataSourceType>,
+  x: PickPoint,
+  camera: IntersectInput['camera']
+): IntersectPointCloudNodeResult<DataSourceType> {
+  const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
+
+  const baseObject = {
+    distance: x.position.distanceTo(camera.position),
+    point: x.position,
+    pointIndex: x.pointIndex,
+    pointCloudNode,
+    object: x.object
+  };
+
+  if (pointCloudObject !== undefined) {
+    if (isClassicPointCloudVolume(pointCloudObject)) {
+      const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
+        ...baseObject,
+        pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
+        volumeMetadata: {
+          annotationId: pointCloudObject.annotationId,
+          assetRef: pointCloudObject.assetRef,
+          instanceRef: pointCloudObject.instanceRef
+        }
+      };
+      return result;
+    } else if (isDMPointCloudVolume(pointCloudObject)) {
+      const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
+        ...baseObject,
+        pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
+        volumeMetadata: {
+          volumeInstanceRef: pointCloudObject.volumeInstanceRef,
+          assetRef: pointCloudObject.assetRef
+        }
+      };
+      return result;
+    } else {
+      throw new Error('Unknown point cloud object type');
+    }
   }
-  if (node instanceof PointCloudOctree) {
-    return candidates.find(x => node === x.octree) || null;
-  }
-  return null;
+
+  return baseObject;
 }

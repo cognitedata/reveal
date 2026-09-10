@@ -3,7 +3,7 @@
  */
 
 import type { Box3 } from 'three';
-import { AreaCollection } from './AreaCollection';
+import type { AreaCollection } from './AreaCollection';
 import { BoxClusterer } from './BoxClusterer';
 
 /**

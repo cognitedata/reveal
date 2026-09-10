@@ -1,36 +1,38 @@
-import {
-  Camera,
-  Frustum,
-  Matrix4,
-  OrthographicCamera,
-  PerspectiveCamera,
-  Vector2,
-  Vector3,
-  WebGLRenderer
-} from 'three';
+import type { Camera, OrthographicCamera, PerspectiveCamera, WebGLRenderer } from 'three';
+import { Frustum, Matrix4, Vector2, Vector3 } from 'three';
+import type { PointCloudMaterialManager } from '@reveal/rendering';
 import {
   DEFAULT_POINT_BUDGET,
   MAX_LOADS_TO_GPU,
   MAX_NUM_NODES_LOADING,
   PERSPECTIVE_CAMERA,
-  PointCloudMaterialManager,
   UPDATE_THROTTLE_TIME_MS
 } from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { OctreeMaterialParams } from '@reveal/rendering';
+import type { OctreeMaterialParams } from '@reveal/rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
-import { IPotree } from './types/IPotree';
-import { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
-import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
-import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
-import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
+import type { IPotree } from './types/IPotree';
+import type { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
+import type { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
+import type { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
+import type { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/BinaryHeap';
 import { LRU } from './utils/lru';
-import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
-import throttle from 'lodash/throttle';
+import { DMModelIdentifier } from '@reveal/data-providers';
+import type {
+  MetadataWithSignedFiles,
+  ModelDataProvider,
+  ModelIdentifier,
+  StylableObject
+} from '@reveal/data-providers';
+import { throttle } from 'lodash-es';
 import { createVisibilityTextureData } from './utils/utils';
+import type { PointCloudEptGeometry } from './geometry/PointCloudEptGeometry';
+import type { EptJson } from './loading/EptJson';
+
+const VIEW_CENTER_BOOST_FACTOR = 0.3; // Max 30% boost for nodes directly in center of view
 
 export class QueueItem {
   constructor(
@@ -73,8 +75,14 @@ export class Potree implements IPotree {
 
   private _shouldLoad: boolean = true;
 
+  // Cascade prevention: Track update state to prevent feedback loop
+  private _updateInProgress: boolean = false;
+
+  private readonly _tempCameraForward: Vector3 = new Vector3();
+  private readonly _tempToNode: Vector3 = new Vector3();
+
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
-  lru = new LRU(this._pointBudget);
+  lru: LRU = new LRU(this._pointBudget);
 
   constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
     this._modelDataProvider = modelDataProvider;
@@ -94,10 +102,27 @@ export class Potree implements IPotree {
     baseUrl: string,
     fileName: string,
     stylableObject: StylableObject[],
-    modelIdentifier: symbol
+    modelIdentifier: ModelIdentifier,
+    signedFilesBaseUrl?: string,
+    preloadedEptData?: MetadataWithSignedFiles<EptJson>
   ): Promise<PointCloudOctree> {
-    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObject);
-    return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
+    let geometry: PointCloudEptGeometry;
+    if (modelIdentifier instanceof DMModelIdentifier && signedFilesBaseUrl && preloadedEptData) {
+      geometry = await EptLoader.dmsLoad(
+        signedFilesBaseUrl,
+        this._modelDataProvider,
+        stylableObject,
+        modelIdentifier,
+        preloadedEptData
+      );
+    } else {
+      geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, modelIdentifier, stylableObject);
+    }
+    return new PointCloudOctree(
+      this,
+      geometry,
+      this._materialManager.getModelMaterial(modelIdentifier.revealInternalId)
+    );
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {
@@ -108,48 +133,60 @@ export class Potree implements IPotree {
     this._shouldLoad = value;
   }
 
+  private createEmptyVisibilityResult(pointClouds: PointCloudOctree[]): IVisibilityUpdateResult {
+    return {
+      visibleNodes: pointClouds.flatMap(p => p.visibleNodes),
+      numVisiblePoints: pointClouds.flatMap(p => p.visibleNodes.map(n => n.numPoints)).reduce((a, b) => a + b, 0),
+      exceededMaxLoadsToGPU: false,
+      nodeLoadFailed: false,
+      nodeLoadPromises: []
+    };
+  }
+
   private innerUpdatePointClouds(
     pointClouds: PointCloudOctree[],
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
-    if (!this._shouldLoad) {
-      return {
-        visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
-        numVisiblePoints: pointClouds
-          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
-          .reduce((a, b) => a + b),
-        exceededMaxLoadsToGPU: false,
-        nodeLoadFailed: false,
-        nodeLoadPromises: []
-      };
+    if (this._updateInProgress) {
+      return this.createEmptyVisibilityResult(pointClouds);
     }
 
-    const result = this.updateVisibility(pointClouds, camera, renderer);
+    this._updateInProgress = true;
 
-    for (let i = 0; i < pointClouds.length; i++) {
-      const pointCloud = pointClouds[i];
-      if (pointCloud.disposed) {
-        continue;
+    try {
+      if (!this._shouldLoad) {
+        return this.createEmptyVisibilityResult(pointClouds);
       }
 
-      const visibilityTextureData = createVisibilityTextureData(
-        pointCloud.visibleNodes,
-        pointCloud.material.visibleNodeTextureOffsets
-      );
-      const octreeMaterialParams: OctreeMaterialParams = {
-        scale: pointCloud.scale,
-        boundingBox: pointCloud.pcoGeometry.boundingBox,
-        spacing: pointCloud.pcoGeometry.spacing
-      };
+      const result = this.updateVisibility(pointClouds, camera, renderer);
 
-      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
-      pointCloud.updateVisibleBounds();
+      for (let i = 0; i < pointClouds.length; i++) {
+        const pointCloud = pointClouds[i];
+        if (pointCloud.disposed) {
+          continue;
+        }
+
+        const visibilityTextureData = createVisibilityTextureData(
+          pointCloud.visibleNodes,
+          pointCloud.material.visibleNodeTextureOffsets
+        );
+        const octreeMaterialParams: OctreeMaterialParams = {
+          scale: pointCloud.scale,
+          boundingBox: pointCloud.pcoGeometry.boundingBox,
+          spacing: pointCloud.pcoGeometry.spacing
+        };
+
+        pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
+        pointCloud.updateVisibleBounds();
+      }
+
+      this.lru.freeMemory();
+
+      return result;
+    } finally {
+      this._updateInProgress = false;
     }
-
-    this.lru.freeMemory();
-
-    return result;
   }
 
   get pointBudget(): number {
@@ -353,8 +390,23 @@ export class Potree implements IPotree {
         continue;
       }
 
-      // Nodes which are larger will have priority in loading/displaying.
-      const weight = distance < radius ? Number.MAX_VALUE : screenPixelRadius + 1 / distance;
+      // 1. Base priority from screen size and distance
+      let weight = distance < radius ? Number.MAX_VALUE : screenPixelRadius + 1 / distance;
+
+      // 2. Boost priority for nodes in center of view (reduces pop-in at focus point)
+      if (camera.type === PERSPECTIVE_CAMERA) {
+        camera.getWorldDirection(this._tempCameraForward);
+
+        this._tempToNode.subVectors(sphere.center, cameraPosition).normalize();
+
+        // Dot product gives alignment: 1 = directly ahead, -1 = behind, 0 = perpendicular
+        const alignment = this._tempToNode.dot(this._tempCameraForward);
+
+        // Boost priority for nodes in center of view (0-30% boost)
+        // Nodes directly ahead get highest boost, edges get less
+        const viewCenterBoost = Math.max(0, alignment) * VIEW_CENTER_BOOST_FACTOR;
+        weight = weight * (1.0 + viewCenterBoost);
+      }
 
       priorityQueue.push(new QueueItem(queueItem.pointCloudIndex, weight, child, node));
     }

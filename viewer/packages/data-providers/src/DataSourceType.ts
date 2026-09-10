@@ -1,11 +1,12 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
-import { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
-import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
-import { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
-import { DMInstanceRef } from '@reveal/utilities';
+import type { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
+import type { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
+import type { PointCloudAnnotationVolumeCollection } from './point-cloud-collections/PointCloudObjectCollection';
+import type { PointCloudDMVolumeCollection } from './point-cloud-collections/PointCloudDMVolumeCollection';
+import type { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
+import type { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Model identifier for classic CDF models, referenced by modelId and revisionId
@@ -28,10 +29,11 @@ export type ClassicDataSourceType = {
    */
   modelIdentifier: ClassicModelIdentifierType;
   /**
-   * The classic point cloud volume metadata containing reference associated with the object which includes annotationId
-   * and asset reference if any.
+   * The classic point cloud volume metadata containing reference associated with the object
+   * which includes annotationId and asset reference, if any. The instanceRef field is
+   * similarily a reference to a contextualized DM instance, if any.
    */
-  pointCloudVolumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef };
+  pointCloudVolumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef; instanceRef?: DMInstanceRef };
 
   /**
    * Point cloud volume collection type
