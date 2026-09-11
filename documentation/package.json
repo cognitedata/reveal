@@ -41,7 +41,7 @@
   "devDependencies": {
     "@types/react": "19.2.18",
     "copyfiles": "2.4.1",
-    "docusaurus-plugin-typedoc": "1.4.2",
+    "docusaurus-plugin-typedoc": "1.4.3",
     "replace": "1.2.2",
     "rimraf": "6.1.3",
     "typedoc": "0.28.20",

@@ -1723,7 +1723,7 @@ __metadata:
     clsx: 2.1.1
     copyfiles: 2.4.1
     cross-env: 10.1.0
-    docusaurus-plugin-typedoc: 1.4.2
+    docusaurus-plugin-typedoc: 1.4.3
     ieee754: 1.2.1
     react: 19.2.8
     react-dom: 19.2.8
@@ -6932,14 +6932,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:1.4.2":
-  version: 1.4.2
-  resolution: "docusaurus-plugin-typedoc@npm:1.4.2"
+"docusaurus-plugin-typedoc@npm:1.4.3":
+  version: 1.4.3
+  resolution: "docusaurus-plugin-typedoc@npm:1.4.3"
   dependencies:
-    typedoc-docusaurus-theme: ^1.4.0
+    typedoc-docusaurus-theme: ^1.4.3
   peerDependencies:
-    typedoc-plugin-markdown: ">=4.8.0"
-  checksum: 1d66505021efca3546c3457619932b2ad4d754a96103f3b2685c1772cf6a54311a83f686979c0bfde68f79a0f7960bad331f6315065e42b62373b5539319477a
+    typedoc: 0.28.x
+    typedoc-plugin-markdown: ">=4.11.0"
+  checksum: 3d88d9644e28a8c168c402eaf19c0179cb7c277e572d8d1ccfba2fdbacb7c673b6ce846e1e46023f6fad7c055eaea5296ad8f022cd1ef54eed86e4a81a424336
   languageName: node
   linkType: hard
 
@@ -14225,12 +14226,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-docusaurus-theme@npm:^1.4.0":
-  version: 1.4.2
-  resolution: "typedoc-docusaurus-theme@npm:1.4.2"
+"typedoc-docusaurus-theme@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "typedoc-docusaurus-theme@npm:1.4.3"
   peerDependencies:
-    typedoc-plugin-markdown: ">=4.8.0"
-  checksum: cac9a22377e683d51552a5f4adc4c10633762646121bb51127dfd5c3c545eb0dbbd7e11d1cec7361ce272088719fa88460896253a1c298887567f50f565519f4
+    typedoc: 0.28.x
+    typedoc-plugin-markdown: ">=4.11.0"
+  checksum: a9d2b9d64526c6737028eb0fd331904fe289ed8c3668e8e1bb9349915b757a725ea3e4e2d35b5adf91cfb763c1c1361d479507421799660ba0b9a3fe6c14d877
   languageName: node
   linkType: hard
 
