@@ -9,8 +9,34 @@ import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 import { Mock, It, Times } from 'moq.ts';
 
 import { vi } from 'vitest';
+import { PointCloudMaterial, PointSizeType } from '@reveal/rendering';
 
 describe('PointCloudOctreePickerHelper', () => {
+  test('pick material follows effective size limits across models and mode changes', () => {
+    const nodeMaterial = new PointCloudMaterial();
+    const pickMaterial = new PointCloudMaterial();
+
+    for (const type of [
+      PointSizeType.Adaptive,
+      PointSizeType.Fixed,
+      PointSizeType.Attenuated,
+      PointSizeType.Adaptive
+    ]) {
+      nodeMaterial.pointSizeType = type;
+      PointCloudOctreePickerHelper['updatePickMaterial'](pickMaterial, nodeMaterial);
+      expect(pickMaterial.pointSizeType).toBe(type);
+      expect(pickMaterial.maxSize).toBe(nodeMaterial.maxSize);
+      expect(pickMaterial.uniforms.maxSize.value).toBe(nodeMaterial.maxSize);
+    }
+
+    nodeMaterial.maxSize = 15;
+    PointCloudOctreePickerHelper['updatePickMaterial'](pickMaterial, nodeMaterial);
+    expect(pickMaterial.maxSize).toBe(15);
+
+    nodeMaterial.dispose();
+    pickMaterial.dispose();
+  });
+
   test('findHit() returns point data from pixel buffer with 1 non-zero value', () => {
     const dummyNode: RenderedNode = new Mock<RenderedNode>().object();
 

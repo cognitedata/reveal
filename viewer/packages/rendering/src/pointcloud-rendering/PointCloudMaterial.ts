@@ -15,6 +15,7 @@ import {
 } from 'three';
 import {
   COLOR_WHITE,
+  DEFAULT_MAX_ADAPTIVE_POINT_SIZE,
   DEFAULT_MAX_POINT_SIZE,
   DEFAULT_MIN_POINT_SIZE,
   OBJECT_STYLING_TEXTURE_HEIGHT,
@@ -120,7 +121,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     intensityRange: makeUniform('fv', [0, 256] as [number, number]),
     isLeafNode: makeUniform('b', false),
     level: makeUniform('f', 0.0),
-    maxSize: makeUniform('f', DEFAULT_MAX_POINT_SIZE),
+    maxSize: makeUniform('f', DEFAULT_MAX_ADAPTIVE_POINT_SIZE),
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
     objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
@@ -197,10 +198,13 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
   }
 
+  private _hasExplicitMaxSize = false;
+
   get maxSize(): number {
     return this.getUniform('maxSize');
   }
   set maxSize(value: number) {
+    this._hasExplicitMaxSize = true;
     if (value !== this.getUniform('maxSize')) {
       this.setUniform('maxSize', value);
     }
@@ -300,6 +304,12 @@ export class PointCloudMaterial extends RawShaderMaterial {
   set pointSizeType(value: PointSizeType) {
     if (value !== this._pointSizeType) {
       this._pointSizeType = value;
+      if (!this._hasExplicitMaxSize) {
+        this.setUniform(
+          'maxSize',
+          value === PointSizeType.Adaptive ? DEFAULT_MAX_ADAPTIVE_POINT_SIZE : DEFAULT_MAX_POINT_SIZE
+        );
+      }
       this.updateShaderSource();
     }
   }
@@ -347,7 +357,9 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     this.size = getValid(parameters.size, 1.0);
     this.minSize = getValid(parameters.minSize, DEFAULT_MIN_POINT_SIZE);
-    this.maxSize = getValid(parameters.maxSize, DEFAULT_MAX_POINT_SIZE);
+    if (parameters.maxSize !== undefined) {
+      this.maxSize = parameters.maxSize;
+    }
 
     this.classification = DEFAULT_CLASSIFICATION;
 
