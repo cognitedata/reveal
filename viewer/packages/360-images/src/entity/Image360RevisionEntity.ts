@@ -281,6 +281,12 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     this._fullResolutionTextures.forEach(t => t.texture.dispose());
     this._previewTextures = [];
     this._fullResolutionTextures = [];
+
+    if (this._allAnnotations !== undefined) {
+      this._allAnnotations.forEach(annotation => annotation.dispose());
+      this._allAnnotations = undefined;
+    }
+    this._annotationKeyToAnnotationObject.clear();
   }
 
   /**

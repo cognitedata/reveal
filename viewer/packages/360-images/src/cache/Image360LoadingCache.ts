@@ -6,6 +6,7 @@ import type { Image360Entity } from '../entity/Image360Entity';
 import type { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import { pull, findLast, find, remove } from 'lodash-es';
 import type { DataSourceType } from '@reveal/data-providers';
+import { isWebGLContextLost } from '@reveal/utilities';
 
 export type DownloadRequest<T extends DataSourceType> = {
   entity: Image360Entity<T>;
@@ -141,6 +142,24 @@ export class Image360LoadingCache<T extends DataSourceType> {
   }
 
   private purgeRevision(entity: Image360Entity<T>, revision: Image360RevisionEntity<T>) {
+    // If the WebGL context is currently lost, calling revision.dispose() /
+    // entity.unloadImage() would tear down textures/materials on a fresh GL
+    // context using stale handles -> INVALID_OPERATION errors and stranded VRAM.
+    // Defer: we still evict from the JS cache so we don't cache stale revisions,
+    // but skip the GL-level teardown until the context is restored.
+    if (isWebGLContextLost()) {
+      const inFlight = find(
+        this._inProgressDownloads,
+        (download: { revision: Image360RevisionEntity<T> }) => download.revision === revision
+      );
+      if (inFlight) {
+        pull(this._inProgressDownloads, inFlight);
+        inFlight.abort();
+      }
+      remove(this._loaded360Images, (image: { revision: Image360RevisionEntity<T> }) => image.revision === revision);
+      return;
+    }
+
     // Remove from downloads
     const download = find(this._inProgressDownloads, download => download.revision === revision);
     if (download) {
