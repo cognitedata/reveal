@@ -30,7 +30,9 @@ import {
   SceneHandler,
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
-  CustomObjectIntersectInput
+  CustomObjectIntersectInput,
+  setWebGLContextLost,
+  isWebGLContextLost
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -281,6 +283,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // Prevents scrolling for mobile devices.
     this.canvas.style.touchAction = 'none';
 
+    // Register WebGL context loss handlers early so auto-dispose paths (Potree LRU,
+    // Image360 cache) skip work while the context is invalid, avoiding stale-handle
+    // delete errors and stranded VRAM.
+    this.registerContextLossHandlers();
+
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
@@ -400,6 +407,27 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         cameraManager: options.cameraManager ? true : false,
         customDataSource: options.customDataSource ? true : false
       }
+    });
+  }
+
+  /**
+   * Listens for WebGL context loss/restore. On loss, prevents the default (so the
+   * browser attempts recovery) and sets `isWebGLContextLost()`; on restore, clears
+   * the flag and requests a redraw.
+   */
+  private registerContextLossHandlers(): void {
+    const canvas = this.canvas;
+
+    canvas.addEventListener('webglcontextlost', event => {
+      // Without preventDefault the browser will NOT restore the context.
+      event.preventDefault();
+      setWebGLContextLost(true);
+    });
+
+    canvas.addEventListener('webglcontextrestored', () => {
+      setWebGLContextLost(false);
+      // Nudge the render pipeline to redraw with fresh GPU resources.
+      this.revealManager.requestRedraw();
     });
   }
 
@@ -1850,6 +1878,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.sessionLogger.updateCanvasVisibility(isVisible);
 
     if (!isVisible) {
+      return;
+    }
+    // Skip rendering and sub-manager updates while the context is lost, since both
+    // rely on stale handles; webglcontextrestored will requestRedraw() to resume.
+    if (isWebGLContextLost()) {
       return;
     }
     const camera = this.cameraManager.getCamera();

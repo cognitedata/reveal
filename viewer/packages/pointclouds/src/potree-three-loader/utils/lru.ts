@@ -1,6 +1,13 @@
 import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import { isWebGLContextLost } from '@reveal/utilities';
 
 export type Node = IPointCloudTreeNodeBase;
+
+/**
+ * Multiplier applied to `pointBudget` before the LRU starts freeing nodes, letting
+ * briefly-out-of-frustum nodes stay resident while still bounding VRAM growth.
+ */
+const LRU_OVERSHOOT_FACTOR = 1.2;
 
 export class LRUItem {
   next: LRUItem | null = null;
@@ -132,7 +139,14 @@ export class LRU {
       return;
     }
 
-    while (this.numPoints > this.pointBudget * 2) {
+    // Skip while the WebGL context is lost: disposing would delete stale buffer
+    // handles and strand VRAM. Safe to defer since freeMemory() runs every tick.
+    if (isWebGLContextLost()) {
+      return;
+    }
+
+    const threshold = this.pointBudget * LRU_OVERSHOOT_FACTOR;
+    while (this.numPoints > threshold) {
       const node = this.getLRUItem();
       if (node) {
         this.disposeSubtree(node);
