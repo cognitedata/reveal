@@ -34,12 +34,12 @@
     "clsx": "2.1.1",
     "cross-env": "10.1.0",
     "ieee754": "1.2.1",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "styled-components": "6.5.3"
   },
   "devDependencies": {
-    "@types/react": "19.2.18",
+    "@types/react": "19.3.0",
     "copyfiles": "2.4.1",
     "docusaurus-plugin-typedoc": "1.4.3",
     "replace": "1.2.2",
