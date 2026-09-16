@@ -6,6 +6,11 @@
 
 #include <packing>
 
+// Identifies which CAD model a fragment belongs to when multiple models are picked in a single
+// combined RenderTypeTreeIndex pass. Packed into the otherwise-unused alpha byte (0 = no hit,
+// modelIndex + 1 otherwise) alongside the RGB-packed tree index. Unused by all other render modes.
+uniform float modelIndex;
+
 out vec4 outputColor;
 
 vec3 packNormalToRgb( const in vec3 normal ) {
@@ -55,7 +60,7 @@ void updateFragmentColor(
     } else if (renderMode == RenderTypeNormal) {
         outputColor = vec4(packNormalToRgb(normal), color.a);
     } else if (renderMode == RenderTypeTreeIndex) {
-        outputColor = vec4(packIntToColor(treeIndex), color.a);
+        outputColor = vec4(packIntToColor(treeIndex), (modelIndex + 1.0) / 255.0);
     } else if (renderMode == RenderTypeDepth) {
         outputColor = packDepthToRGBA(depth);
     } else if (renderMode == RenderTypeLOD) {

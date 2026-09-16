@@ -3,29 +3,19 @@
  */
 
 import type { Box3, Object3D, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
-import { Color, Raycaster, Scene, Vector3, Vector4, WebGLRenderTarget } from 'three';
+import { Color, Raycaster, Vector3, Vector4, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
-import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
+import {
+  BasicPipelineExecutor,
+  CadGeometryRenderModePipelineProvider,
+  forEachMaterial,
+  RenderMode
+} from '@reveal/rendering';
 import type { SceneHandler } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import type { CadNode } from '../wrappers/CadNode';
 import { Mutex } from 'async-mutex';
-
-type PickingInput = {
-  normalizedCoords: {
-    x: number;
-    y: number;
-  };
-  camera: PerspectiveCamera;
-  renderer: WebGLRenderer;
-  domElement: HTMLElement;
-  cadNodes: CadNode[];
-};
-
-type TreeIndexPickingInput = PickingInput & {
-  cadNode: CadNode;
-};
 
 type IntersectCadNodesResult = {
   distance: number;
@@ -33,6 +23,11 @@ type IntersectCadNodesResult = {
   treeIndex: number;
   cadNode: CadNode;
   object: Object3D; // always CadNode
+};
+
+type CadNodeCandidate = {
+  cadNode: CadNode;
+  intersectPosition: Vector3;
 };
 
 export class PickingHandler {
@@ -61,6 +56,12 @@ export class PickingHandler {
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _treeIndexRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _mutex = new Mutex();
+
+  // Maximum number of CAD models that can be picked in a single combined GPU pass. The model
+  // a hit belongs to is encoded as `modelIndex + 1` in the pick buffer's alpha byte (0 = no hit),
+  // so at most 254 models are addressable (255 stays reserved/unused). Beyond that, picking falls
+  // back to the slower sequential per-model path rather than wrapping/aliasing onto another model.
+  private static readonly MAX_COMBINED_PICK_MODELS = 254;
 
   constructor(renderer: WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this._clearColor = new Color('black');
@@ -93,50 +94,30 @@ export class PickingHandler {
     input: IntersectInput,
     shouldRunAsync = true
   ): Promise<IntersectCadNodesResult[]> {
-    const results: IntersectCadNodesResult[] = [];
-
     // Exit when no cadNode exists
     if (cadNodes.length < 1) {
-      return results;
+      return [];
     }
     const release = await this._mutex.acquire();
-    const scene = new Scene();
-    const depthInput = { ...input, scene, cadNodes };
 
-    // Identify the treeIndex associated with the position.
     // Get CadNodes which are visible.
     const visibleCadNodes = cadNodes.filter(node => node.visible);
     // Filter nodes which cannot hit pick point.
     const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
 
     try {
-      for (const cadNodeData of filteredCadNodes) {
-        // Skip cad node when its bounds is further away than any already hit position.
-        const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
-        if (results.some(cadNodeResult => cadNodeResult.distance < minIntersectCadNodeDistance)) {
-          continue;
-        }
-
-        // Make current CadNode visible & hide others
-        visibleCadNodes.forEach(p => (p.visible = false));
-        cadNodeData.cadNode.visible = true;
-        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, shouldRunAsync);
-        if (treeIndex) {
-          // Assuming we have depth anywhere we hit a treeIndex
-          const depthResult = await this.intersectCadNodeDepth(depthInput, shouldRunAsync);
-          const result: IntersectCadNodesResult = {
-            distance: depthResult.distance,
-            point: depthResult.point,
-            treeIndex,
-            object: cadNodeData.cadNode,
-            cadNode: cadNodeData.cadNode
-          };
-          if (result) {
-            results.push(result);
-          }
-        }
+      if (filteredCadNodes.length === 0) {
+        return [];
       }
-      return results.sort((l, r) => l.distance - r.distance);
+
+      // Render all candidate models in a single combined pass, disambiguated via a per-model
+      // uniform - one tree-index readback and one depth readback regardless of model count,
+      // instead of up to two round trips per model. Falls back to the old sequential per-model
+      // path only when there are more candidates than the combined encoding can address.
+      if (filteredCadNodes.length <= PickingHandler.MAX_COMBINED_PICK_MODELS) {
+        return await this.intersectCadNodesCombined(filteredCadNodes, visibleCadNodes, input, shouldRunAsync);
+      }
+      return await this.intersectCadNodesSequential(filteredCadNodes, visibleCadNodes, input, shouldRunAsync);
     } finally {
       // Restore CadNodes back to original visibility state
       visibleCadNodes.forEach(p => (p.visible = true));
@@ -144,7 +125,89 @@ export class PickingHandler {
     }
   }
 
-  private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput) {
+  private async intersectCadNodesCombined(
+    filteredCadNodes: CadNodeCandidate[],
+    visibleCadNodes: CadNode[],
+    input: IntersectInput,
+    shouldRunAsync: boolean
+  ): Promise<IntersectCadNodesResult[]> {
+    visibleCadNodes.forEach(p => (p.visible = false));
+    filteredCadNodes.forEach((cadNodeData, index) => {
+      cadNodeData.cadNode.visible = true;
+      forEachMaterial(cadNodeData.cadNode.cadMaterial.materials, material => {
+        material.uniforms.modelIndex.value = index;
+      });
+    });
+
+    const pixelBuffer = await this.pickPixel(
+      input,
+      this._treeIndexRenderPipeline,
+      this._clearColor,
+      this._clearAlpha,
+      shouldRunAsync
+    );
+
+    if (pixelBuffer[3] === 0) {
+      return [];
+    }
+
+    const modelIndex = pixelBuffer[3] - 1;
+    const cadNodeData = filteredCadNodes[modelIndex];
+    if (cadNodeData === undefined) {
+      // Defensive: unreachable given MAX_COMBINED_PICK_MODELS, but never index out of bounds.
+      return [];
+    }
+
+    const treeIndex = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
+
+    const depthResult = await this.intersectCadNodeDepth(input, shouldRunAsync);
+
+    return [
+      {
+        distance: depthResult.distance,
+        point: depthResult.point,
+        treeIndex,
+        object: cadNodeData.cadNode,
+        cadNode: cadNodeData.cadNode
+      }
+    ];
+  }
+
+  private async intersectCadNodesSequential(
+    filteredCadNodes: CadNodeCandidate[],
+    visibleCadNodes: CadNode[],
+    input: IntersectInput,
+    shouldRunAsync: boolean
+  ): Promise<IntersectCadNodesResult[]> {
+    const results: IntersectCadNodesResult[] = [];
+
+    for (const cadNodeData of filteredCadNodes) {
+      // Skip cad node when its bounds is further away than any already hit position.
+      const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
+      if (results.some(cadNodeResult => cadNodeResult.distance < minIntersectCadNodeDistance)) {
+        continue;
+      }
+
+      // Make current CadNode visible & hide others
+      visibleCadNodes.forEach(p => (p.visible = false));
+      cadNodeData.cadNode.visible = true;
+      const treeIndex = await this.pickTreeIndex(input, shouldRunAsync);
+      if (treeIndex !== undefined) {
+        // Assuming we have depth anywhere we hit a treeIndex
+        const depthResult = await this.intersectCadNodeDepth(input, shouldRunAsync);
+        results.push({
+          distance: depthResult.distance,
+          point: depthResult.point,
+          treeIndex,
+          object: cadNodeData.cadNode,
+          cadNode: cadNodeData.cadNode
+        });
+      }
+    }
+    return results.sort((l, r) => l.distance - r.distance);
+  }
+
+  private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput): CadNodeCandidate[] {
     // Ensure the ray overlaps any point on the given models bounding box.
     this._raycaster.setFromCamera(input.normalizedCoords, input.camera);
     const ray = this._raycaster.ray;
@@ -181,12 +244,12 @@ export class PickingHandler {
       return a.distanceToSquared(cameraPosition) - b.distanceToSquared(cameraPosition);
     }
 
-    function data(cadNodeData: [CadNode, Vector3]): { cadNode: CadNode; intersectPosition: Vector3 } {
+    function data(cadNodeData: [CadNode, Vector3]): CadNodeCandidate {
       return { cadNode: cadNodeData[0], intersectPosition: cadNodeData[1] };
     }
   }
 
-  private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean) {
+  private async intersectCadNodeDepth(input: IntersectInput, shouldRunAsync: boolean) {
     const { camera } = input;
     const depth = await this.pickDepth(input, shouldRunAsync);
 
@@ -199,31 +262,7 @@ export class PickingHandler {
     };
   }
 
-  private async intersectCadNodeTreeIndex(
-    cadNode: CadNode,
-    input: IntersectInput,
-    shouldRunAsync: boolean
-  ): Promise<number | undefined> {
-    const { camera, normalizedCoords, renderer, domElement } = input;
-    const pickingScene = new Scene();
-
-    const pickInput = {
-      normalizedCoords,
-      camera,
-      renderer,
-      domElement,
-      scene: pickingScene,
-      cadNodes: [],
-      cadNode
-    };
-    const treeIndex = await this.pickTreeIndex(pickInput, shouldRunAsync);
-    if (treeIndex === undefined) {
-      return undefined;
-    }
-    return treeIndex;
-  }
-
-  private async pickTreeIndex(input: TreeIndexPickingInput, shouldRunAsync: boolean): Promise<number | undefined> {
+  private async pickTreeIndex(input: IntersectInput, shouldRunAsync: boolean): Promise<number | undefined> {
     const pixelBuffer = await this.pickPixel(
       input,
       this._treeIndexRenderPipeline,
@@ -245,7 +284,7 @@ export class PickingHandler {
     return (near * far) / ((far - near) * invClipZ - far);
   }
 
-  private async pickDepth(input: PickingInput, shouldRunAsync: boolean): Promise<number> {
+  private async pickDepth(input: IntersectInput, shouldRunAsync: boolean): Promise<number> {
     const pixelBuffer = await this.pickPixel(
       input,
       this._depthRenderPipeline,
@@ -257,7 +296,7 @@ export class PickingHandler {
     return this.unpackRGBAToDepth(pixelBuffer);
   }
 
-  private getPosition(input: PickingInput, viewZ: number): Vector3 {
+  private getPosition(input: IntersectInput, viewZ: number): Vector3 {
     const { camera, normalizedCoords } = input;
     const position = new Vector3();
     position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(camera.projectionMatrixInverse);
@@ -268,7 +307,7 @@ export class PickingHandler {
   }
 
   private async pickPixel(
-    input: PickingInput,
+    input: IntersectInput,
     renderPipeline: RenderPipelineProvider,
     clearColor: Color,
     clearAlpha: number,
