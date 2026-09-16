@@ -196,16 +196,20 @@ export class PointCloudOctreePickerHelper {
     const tempNodes: Points[] = [];
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
+      const nodeIndex = nodeIndexOffset + i + 1;
+      if (nodeIndex > maxNodeIndex) {
+        // The packed node index would overflow into the point index's bits, aliasing this node
+        // onto a different, valid node instead of failing safely - skip rendering it instead.
+        console.error(`More than ${maxNodeIndex} nodes for pick are not supported.`);
+        continue;
+      }
+
       const sceneNode = node.sceneNode;
       const tempNode = new Points(sceneNode.geometry, pickMaterial);
       tempNode.matrix = sceneNode.matrix;
       tempNode.matrixWorld = sceneNode.matrixWorld;
       tempNode.matrixAutoUpdate = false;
       tempNode.frustumCulled = false;
-      const nodeIndex = nodeIndexOffset + i + 1;
-      if (nodeIndex > maxNodeIndex) {
-        console.error(`More than ${maxNodeIndex} nodes for pick are not supported.`);
-      }
       tempNode.onBeforeRender = makeOnBeforeRender(node, nodeIndex);
 
       tempNodes.push(tempNode);

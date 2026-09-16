@@ -144,9 +144,9 @@ describe('PointCloudOctreePickerHelper', () => {
     const ibuffer = new Uint32Array(pickWindowSize * pickWindowSize);
     ibuffer[4] = pack(600, 5, nodeIndexBits);
     const pixels = new Uint8Array(ibuffer.buffer);
-    const dummyCamera = new THREE.PerspectiveCamera();
+    const dummyCamera = new PerspectiveCamera();
 
-    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new THREE.Vector3());
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
 
     expect(
       PointCloudOctreePickerHelper.findHit(pixels, pickWindowSize, [dummyNode], dummyCamera, nodeIndexBits)
@@ -163,9 +163,9 @@ describe('PointCloudOctreePickerHelper', () => {
     const ibuffer = new Uint32Array(width * height);
     ibuffer[0] = pack(2, 7, 8); // Outside the search window.
     ibuffer[10 + 5 * width] = pack(1, 3, 8);
-    const dummyCamera = new THREE.PerspectiveCamera();
+    const dummyCamera = new PerspectiveCamera();
 
-    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new THREE.Vector3());
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
 
     const hit = PointCloudOctreePickerHelper.findHitInBuffer(
       ibuffer,
@@ -188,9 +188,9 @@ describe('PointCloudOctreePickerHelper', () => {
     const height = 8;
     const ibuffer = new Uint32Array(width * height);
     ibuffer[0] = pack(1, 0, 8);
-    const dummyCamera = new THREE.PerspectiveCamera();
+    const dummyCamera = new PerspectiveCamera();
 
-    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new THREE.Vector3());
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
 
     const hit = PointCloudOctreePickerHelper.findHitInBuffer(
       ibuffer,

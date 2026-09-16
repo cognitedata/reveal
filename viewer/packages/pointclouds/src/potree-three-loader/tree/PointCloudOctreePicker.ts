@@ -85,9 +85,12 @@ export class PointCloudOctreePicker {
     // from (or stored into) the shared full-frame cache.
     const cacheEligible = params.onBeforePickRender === undefined && params.pixelPosition === undefined;
     if (cacheEligible) {
-      const cssSize = this._renderer.getSize(PointCloudOctreePicker.helperVec2);
-      const width = Math.max(1, Math.floor(cssSize.x));
-      const height = Math.max(1, Math.floor(cssSize.y));
+      // Use the drawing-buffer (device-pixel) size, matching pickWindowed and the screenWidth/
+      // screenHeight uniforms PointCloudMaterial derives point sizes from - otherwise the cache
+      // would be built and indexed at a different resolution than the point sizing assumes.
+      const drawingBufferSize = this._renderer.getDrawingBufferSize(PointCloudOctreePicker.helperVec2);
+      const width = Math.max(1, Math.floor(drawingBufferSize.x));
+      const height = Math.max(1, Math.floor(drawingBufferSize.y));
       const ndc = PointCloudOctreePicker.helperVec3.addVectors(camera.position, ray.direction).project(camera);
       const centerX = (ndc.x + 1) * width * 0.5;
       const centerY = (ndc.y + 1) * height * 0.5;
