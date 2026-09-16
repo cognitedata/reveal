@@ -6,7 +6,8 @@ import type { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import type { DisposedDelegate } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import * as THREE from 'three';
+import type { Vector3 } from 'three';
+import { Color, Group } from 'three';
 import type {
   MeasurementAddedDelegate,
   MeasurementStartedDelegate,
@@ -62,7 +63,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private _options: Required<MeasurementOptions>;
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
-  private readonly _geometryGroup = new THREE.Group();
+  private readonly _geometryGroup = new Group();
   private readonly _measurements: MeasurementManager[];
   private _activeMeasurement: MeasurementManager | undefined;
   private readonly _htmlOverlay: HtmlOverlayTool;
@@ -90,7 +91,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
     lineWidth: 0.01,
-    color: new THREE.Color(0xff8746)
+    color: new Color(0xff8746)
   };
 
   constructor(viewer: Cognite3DViewer<DataSourceType>, options?: MeasurementOptions) {
@@ -288,7 +289,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * Adds a measurement directly. E.g. to restore a previous state programatically
    */
-  addMeasurement(startPoint: THREE.Vector3, endPoint: THREE.Vector3): Measurement {
+  addMeasurement(startPoint: Vector3, endPoint: Vector3): Measurement {
     const measurementManager = new MeasurementManager(
       this._viewer.domElement,
       this._viewer.cameraManager.getCamera(),
@@ -360,7 +361,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param measurement Measurement to be updated.
    * @param color Color of the measuring line.
    */
-  updateLineColor(measurement: Measurement, color: THREE.Color): void {
+  updateLineColor(measurement: Measurement, color: Color): void {
     const index = this._measurements.findIndex(
       measurementManager => measurementManager.getMeasurement() === measurement
     );

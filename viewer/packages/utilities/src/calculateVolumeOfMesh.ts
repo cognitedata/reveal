@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Vector3 } from 'three';
 import { chunk, map } from 'lodash-es';
 import { assert } from '@reveal/utilities/assert';
 
@@ -10,7 +10,7 @@ export function calculateVolumeOfMesh(vertexBuffer: Float32Array, indexBuffer: U
   assert(vertexBuffer.length % 3 === 0);
   assert(indexBuffer.length % 3 === 0);
 
-  const vertices = chunk(vertexBuffer, 3).map(vertices => new THREE.Vector3(vertices[0], vertices[1], vertices[2]));
+  const vertices = chunk(vertexBuffer, 3).map(vertices => new Vector3(vertices[0], vertices[1], vertices[2]));
 
   const triangles = chunk(
     map(indexBuffer, index => vertices[index]),

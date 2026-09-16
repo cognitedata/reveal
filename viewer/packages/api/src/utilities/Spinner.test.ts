@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { Spinner } from './Spinner';
-import * as THREE from 'three';
+import { Color } from 'three';
 
 describe('Spinner test cases', () => {
   const styles = {
@@ -28,8 +28,8 @@ describe('Spinner test cases', () => {
   });
 
   test('.updateBackgroundColor() updates spinner color', () => {
-    const lightBackground = new THREE.Color(0.6, 0.6, 0.6);
-    const darkBackground = new THREE.Color(0.1, 0.1, 0.1);
+    const lightBackground = new Color(0.6, 0.6, 0.6);
+    const darkBackground = new Color(0.1, 0.1, 0.1);
 
     const parent = document.createElement('div');
     const spinner = new Spinner(parent);

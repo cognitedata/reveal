@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Box3 } from 'three';
 
 import type { CogniteInternalId } from '@cognite/sdk';
 
@@ -68,5 +68,5 @@ export interface NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<THREE.Box3[]>;
+  ): Promise<Box3[]>;
 }

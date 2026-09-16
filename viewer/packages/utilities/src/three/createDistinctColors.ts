@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Color } from 'three';
 
 /**
  * Expects h,s,v to be between 0 and 1.
@@ -34,14 +34,14 @@ function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
   }
 }
 
-export function createDistinctColors(count: number): THREE.Color[] {
-  const result: THREE.Color[] = [];
+export function createDistinctColors(count: number): Color[] {
+  const result: Color[] = [];
 
   const hue_partition_size = 1.0 / count;
   for (let i = 0; i < count; i++) {
     const rgb = hsvToRgb(hue_partition_size * i, 1.0 - (i % 2) * 0.5, 1.0 - (i % 3) * 0.1);
 
-    result.push(new THREE.Color(...rgb));
+    result.push(new Color(...rgb));
   }
 
   return result;

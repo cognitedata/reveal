@@ -9,16 +9,20 @@ import {
   MAX_DMS_QUERY_LIMIT
 } from '../../../../utilities/constants';
 import type { DMInstanceRef } from '@reveal/utilities';
+import {
+  isCoreDmImage360CollectionFilter,
+  isCoreDmImage360Filter,
+  isCoreDmImage360StationFilter
+} from '../../../cdm/queryFilters';
 import { CORE_DM_IMAGE_360_PROPERTIES_LIST } from '../../../cdm/queryProperties';
+import type { QueryRequest } from '@cognite/sdk';
 
 function createCollectionsQuery(instanceReferences: DMInstanceRef[]) {
   return {
     with: {
       image_collections: {
         nodes: {
-          filter: {
-            instanceReferences
-          }
+          filter: { and: [{ instanceReferences }, isCoreDmImage360CollectionFilter] }
         },
         limit: instanceReferences.length
       },
@@ -28,7 +32,8 @@ function createCollectionsQuery(instanceReferences: DMInstanceRef[]) {
           through: {
             view: COGNITE_360_IMAGE_SOURCE,
             identifier: 'collection360'
-          }
+          },
+          filter: isCoreDmImage360Filter
         },
         limit: MAX_DMS_QUERY_LIMIT
       },
@@ -39,7 +44,8 @@ function createCollectionsQuery(instanceReferences: DMInstanceRef[]) {
             view: COGNITE_360_IMAGE_SOURCE,
             identifier: 'station360'
           },
-          direction: 'outwards' as const
+          direction: 'outwards' as const,
+          filter: isCoreDmImage360StationFilter
         },
         limit: MAX_DMS_QUERY_LIMIT
       }
@@ -70,7 +76,7 @@ function createCollectionsQuery(instanceReferences: DMInstanceRef[]) {
         ]
       }
     }
-  };
+  } as const satisfies QueryRequest;
 }
 
 export type CdfImage360CollectionDmQuery = ReturnType<typeof createCollectionsQuery>;

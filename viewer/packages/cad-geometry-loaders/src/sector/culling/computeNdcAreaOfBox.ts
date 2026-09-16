@@ -1,11 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { Camera } from 'three';
+import { Box3, Vector3 } from 'three';
 import { transformBoxToNDC } from './transformBoxToNDC';
 
-const ndcSpace = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
-const ndcBox = new THREE.Box3();
+const ndcSpace = new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+const ndcBox = new Box3();
 
 /**
  * Computes area of the box after converting it to NDC space. The returned value will be a number
@@ -14,7 +15,7 @@ const ndcBox = new THREE.Box3();
  * @param box
  * @returns
  */
-export function computeNdcAreaOfBox(camera: THREE.Camera, box: THREE.Box3): number {
+export function computeNdcAreaOfBox(camera: Camera, box: Box3): number {
   transformBoxToNDC(box, camera, ndcBox);
   ndcBox.intersect(ndcSpace);
   if (ndcBox.isEmpty()) {

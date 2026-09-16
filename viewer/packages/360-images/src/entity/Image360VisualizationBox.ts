@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Matrix4, Texture } from 'three';
+import { BackSide, BoxGeometry, Group, Material, Mesh, MeshBasicMaterial, TextureLoader, Vector3 } from 'three';
 import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
 import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
@@ -14,22 +15,22 @@ import { Image360FaceTextureLoader, hasDownloadUrl, type FaceTextureLoader } fro
 type VisualizationState = {
   opacity: number;
   visible: boolean;
-  scale: THREE.Vector3;
+  scale: Vector3;
   renderOrder: number;
 };
 
 export const DEFAULT_IMAGE_360_OPACITY = 1;
 
 export class Image360VisualizationBox implements Image360Visualization {
-  private readonly _worldTransform: THREE.Matrix4;
-  private _visualizationMesh: THREE.Mesh | undefined;
-  private _faceMaterials: THREE.MeshBasicMaterial[] = [];
+  private readonly _worldTransform: Matrix4;
+  private _visualizationMesh: Mesh | undefined;
+  private _faceMaterials: MeshBasicMaterial[] = [];
   private readonly _sceneHandler: SceneHandler;
   private readonly _visualizationState: VisualizationState;
-  private readonly _textureLoader: THREE.TextureLoader;
+  private readonly _textureLoader: TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-  private readonly _annotationsGroup: THREE.Group = new THREE.Group();
-  private readonly _localTransform: THREE.Matrix4;
+  private readonly _annotationsGroup: Group = new Group();
+  private readonly _localTransform: Matrix4;
   private readonly _loader: FaceTextureLoader;
 
   get visible(): boolean {
@@ -57,7 +58,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     });
   }
 
-  set scale(value: THREE.Vector3) {
+  set scale(value: Vector3) {
     this._visualizationState.scale = value;
 
     if (this._visualizationMesh === undefined) {
@@ -88,7 +89,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   constructor(
-    worldTransform: THREE.Matrix4,
+    worldTransform: Matrix4,
     sceneHandler: SceneHandler,
     device: DeviceDescriptor,
     private readonly _requestRedraw: () => void = () => {},
@@ -97,11 +98,11 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._localTransform = worldTransform.clone();
     this._worldTransform = worldTransform.clone();
     this._sceneHandler = sceneHandler;
-    this._textureLoader = new THREE.TextureLoader();
+    this._textureLoader = new TextureLoader();
     this._visualizationState = {
       opacity: DEFAULT_IMAGE_360_OPACITY,
       renderOrder: 3,
-      scale: new THREE.Vector3(1, 1, 1),
+      scale: new Vector3(1, 1, 1),
       visible: true
     };
     this._loader =
@@ -115,7 +116,7 @@ export class Image360VisualizationBox implements Image360Visualization {
       );
   }
 
-  public setWorldTransform(matrix: THREE.Matrix4): void {
+  public setWorldTransform(matrix: Matrix4): void {
     this._worldTransform.copy(matrix).multiply(this._localTransform);
 
     if (this._visualizationMesh) {
@@ -138,8 +139,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     this.buildVisualizationMesh(
       this._faceMaterialOrder.map(
         face =>
-          new THREE.MeshBasicMaterial({
-            side: THREE.BackSide,
+          new MeshBasicMaterial({
+            side: BackSide,
             map: getFaceTexture(face),
             depthTest: false,
             depthWrite: false,
@@ -156,11 +157,11 @@ export class Image360VisualizationBox implements Image360Visualization {
     }
   }
 
-  private buildVisualizationMesh(faceMaterials: THREE.MeshBasicMaterial[]): void {
+  private buildVisualizationMesh(faceMaterials: MeshBasicMaterial[]): void {
     this._faceMaterials = faceMaterials;
 
-    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
+    const boxGeometry = new BoxGeometry(1, 1, 1);
+    const visualizationMesh = new Mesh(boxGeometry, this._faceMaterials);
     visualizationMesh.renderOrder = this._visualizationState.renderOrder;
     visualizationMesh.position.setFromMatrixPosition(this._worldTransform);
     visualizationMesh.rotation.setFromRotationMatrix(this._worldTransform);
@@ -173,7 +174,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._sceneHandler.addObject3D(this._visualizationMesh);
   }
 
-  public getTransform(): THREE.Matrix4 {
+  public getTransform(): Matrix4 {
     return this._worldTransform;
   }
 
@@ -210,8 +211,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     this.buildVisualizationMesh(
       this._faceMaterialOrder.map(
         () =>
-          new THREE.MeshBasicMaterial({
-            side: THREE.BackSide,
+          new MeshBasicMaterial({
+            side: BackSide,
             color: 0x000000,
             depthTest: false,
             depthWrite: false,
@@ -222,7 +223,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     );
   }
 
-  public updateFaceTexture(face: Image360Face['face'], texture: THREE.Texture): void {
+  public updateFaceTexture(face: Image360Face['face'], texture: Texture): void {
     if (this._visualizationMesh === undefined) return;
     const index = this._faceMaterialOrder.indexOf(face);
     if (index === -1) return;
@@ -238,11 +239,10 @@ export class Image360VisualizationBox implements Image360Visualization {
     }
     this._sceneHandler.removeObject3D(this._visualizationMesh);
     const imageContainerMaterial = this._visualizationMesh.material;
-    const materials =
-      imageContainerMaterial instanceof THREE.Material ? [imageContainerMaterial] : imageContainerMaterial;
+    const materials = imageContainerMaterial instanceof Material ? [imageContainerMaterial] : imageContainerMaterial;
 
     materials
-      .map(material => material as THREE.MeshBasicMaterial)
+      .map(material => material as MeshBasicMaterial)
       .forEach(material => {
         material.map?.dispose();
         material.dispose();

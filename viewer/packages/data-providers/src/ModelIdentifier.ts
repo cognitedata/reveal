@@ -28,9 +28,7 @@ export interface ModelIdentifier {
 
 export function createModelIdentifier(
   identifier:
-    | ClassicModelIdentifierType
-    | (DMModelIdentifierType & ClassicModelIdentifierType)
-    | LocalModelIdentifierType,
+    ClassicModelIdentifierType | (DMModelIdentifierType & ClassicModelIdentifierType) | LocalModelIdentifierType,
   outputFormat?: File3dFormat
 ): ModelIdentifier {
   if (isLocalIdentifier(identifier)) {

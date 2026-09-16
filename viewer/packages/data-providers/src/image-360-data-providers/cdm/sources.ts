@@ -1,8 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import type { ViewReference } from '@cognite/sdk';
-import { CORE_DM_SPACE } from '../../utilities/constants';
+import type { ContainerReference, ViewReference } from '@cognite/sdk';
+import { CORE_DM_3D_CONTAINER_SPACE, CORE_DM_SPACE } from '../../utilities/constants';
 
 export const COGNITE_ASSET_VIEW_REFERENCE = {
   type: 'view',
@@ -32,12 +32,24 @@ export const CORE_DM_IMAGE_360_VIEW_REFERENCE = {
   version: 'v1'
 } as const satisfies ViewReference;
 
+export const CORE_DM_IMAGE_360_CONTAINER_REFERENCE = {
+  type: 'container',
+  space: CORE_DM_3D_CONTAINER_SPACE,
+  externalId: 'Cognite360Image'
+} as const satisfies ContainerReference;
+
 export const CORE_DM_IMAGE_360_COLLECTION_VIEW_REFERENCE = {
   type: 'view',
   space: CORE_DM_SPACE,
   externalId: 'Cognite360ImageCollection',
   version: 'v1'
 } as const satisfies ViewReference;
+
+export const CORE_DM_IMAGE_360_STATION_CONTAINER_REFERENCE = {
+  type: 'container',
+  space: CORE_DM_3D_CONTAINER_SPACE,
+  externalId: 'Cognite3DGroup'
+} as const satisfies ContainerReference;
 
 export const CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE = {
   type: 'view',
@@ -46,9 +58,21 @@ export const CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE = {
   version: 'v1'
 } as const satisfies ViewReference;
 
+export const CORE_DM_IMAGE_360_ANNOTATION_CONTAINER_REFERENCE = {
+  type: 'container',
+  space: CORE_DM_3D_CONTAINER_SPACE,
+  externalId: 'Cognite360ImageAnnotation'
+} as const satisfies ContainerReference;
+
 export const CORE_DM_3D_REVISION_VIEW_REFERENCE = {
   type: 'view',
   space: CORE_DM_SPACE,
   externalId: 'Cognite3DRevision',
   version: 'v1'
 } as const satisfies ViewReference;
+
+export const CORE_DM_3D_REVISION_CONTAINER_REFERENCE = {
+  type: 'container',
+  space: CORE_DM_3D_CONTAINER_SPACE,
+  externalId: 'Cognite3DRevision'
+} as const satisfies ContainerReference;

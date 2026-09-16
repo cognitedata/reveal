@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import type { CogniteClient } from '@cognite/sdk';
 
@@ -24,8 +24,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
     mockClient.setup(x => x.getBaseUrl()).returns('https://mycdf');
 
     mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
-    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new THREE.Matrix4());
-    mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
+    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new Matrix4());
+    mockModel.setup(x => x.getModelTransformation()).returns(new Matrix4());
 
     set = new SinglePropertyFilterNodeCollection(mockClient.object(), mockModel.object());
   });

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { PerspectiveCamera, Plane } from 'three';
 
 import { assertNever, EventTrigger, type EventListener } from '@reveal/utilities';
 import type { ConsumedSector } from '@reveal/cad-parsers';
@@ -46,7 +46,7 @@ export class CadModelUpdateHandler {
   private readonly _determineSectorsHandler: SectorLoader;
 
   private readonly _cameraSubject: Subject<CameraInput> = new Subject();
-  private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
+  private readonly _clippingPlaneSubject: Subject<Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
@@ -149,11 +149,11 @@ export class CadModelUpdateHandler {
     Object.values(this._events).forEach(eventTrigger => eventTrigger.unsubscribeAll());
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+  updateCamera(camera: PerspectiveCamera, cameraInMotion: boolean): void {
     this._cameraSubject.next(makeCameraInput([camera, cameraInMotion]));
   }
 
-  set clippingPlanes(value: THREE.Plane[]) {
+  set clippingPlanes(value: Plane[]) {
     this._clippingPlaneSubject.next(value);
   }
 
@@ -231,20 +231,20 @@ type SettingsInput = {
   budget: CadModelBudget;
 };
 type CameraInput = {
-  camera: THREE.PerspectiveCamera;
+  camera: PerspectiveCamera;
   cameraInMotion: boolean;
 };
 type ClippingInput = {
-  clippingPlanes: THREE.Plane[] | never[];
+  clippingPlanes: Plane[] | never[];
 };
 
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelBudget]): SettingsInput {
   return { loadingHints, budget };
 }
-function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boolean]): CameraInput {
+function makeCameraInput([camera, cameraInMotion]: [PerspectiveCamera, boolean]): CameraInput {
   return { camera, cameraInMotion };
 }
-function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
+function makeClippingInput([clippingPlanes]: [Plane[]]): ClippingInput {
   return { clippingPlanes };
 }
 

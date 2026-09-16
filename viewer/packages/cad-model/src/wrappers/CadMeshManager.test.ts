@@ -3,7 +3,7 @@
  */
 
 import { CadMeshManager } from './CadMeshManager';
-import type { CadMaterialManager } from '@reveal/rendering';
+import { createCadMaterial } from '@reveal/rendering';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
@@ -11,16 +11,14 @@ import type { SectorRepository } from '@reveal/sector-loader';
 import type { ModelIdentifier } from '@reveal/data-providers';
 
 import type { Group } from 'three';
-import { BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, RawShaderMaterial, Matrix4 } from 'three';
+import { BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh } from 'three';
 
 import { vi } from 'vitest';
 import { Mock } from 'moq.ts';
 
 describe(CadMeshManager.name, () => {
   let meshManager: CadMeshManager;
-  let materialManager: CadMaterialManager;
   let treeIndexToSectorsMap: TreeIndexToSectorsMap;
-  let modelId: symbol;
   const mockSectorRepository = new Mock<SectorRepository>()
     .setup(instance => instance.dereferenceSector)
     .returns(() => {})
@@ -39,11 +37,9 @@ describe(CadMeshManager.name, () => {
     .object();
 
   beforeEach(() => {
-    const mocks = createMockMaterialManager();
-    materialManager = mocks.materialManager;
-    modelId = Symbol('testModel');
     treeIndexToSectorsMap = new TreeIndexToSectorsMap(1000); // Max tree index
-    meshManager = new CadMeshManager(materialManager, modelId, treeIndexToSectorsMap);
+    const cadMaterial = createCadMaterial(100);
+    meshManager = new CadMeshManager(cadMaterial, treeIndexToSectorsMap);
   });
 
   test('should create empty mesh group when no geometries provided', () => {
@@ -328,43 +324,6 @@ const createTexture = (size: number = 64) => {
   canvas.width = size;
   canvas.height = size;
   return new CanvasTexture(canvas);
-};
-
-const createMockMaterial = (): RawShaderMaterial => {
-  const material = new RawShaderMaterial({
-    vertexShader: 'void main() {}',
-    fragmentShader: 'void main() {}'
-  });
-  material.uniforms = { inverseModelMatrix: { value: new Matrix4() } };
-  return material;
-};
-
-const createMockMaterialManager = () => {
-  const triangleMaterial = createMockMaterial();
-  const texturedMaterial = createMockMaterial();
-
-  const materials = {
-    box: createMockMaterial(),
-    circle: createMockMaterial(),
-    generalRing: createMockMaterial(),
-    nut: createMockMaterial(),
-    quad: createMockMaterial(),
-    cone: createMockMaterial(),
-    eccentricCone: createMockMaterial(),
-    torusSegment: createMockMaterial(),
-    generalCylinder: createMockMaterial(),
-    trapezium: createMockMaterial(),
-    ellipsoidSegment: createMockMaterial(),
-    instancedMesh: createMockMaterial(),
-    triangleMesh: triangleMaterial,
-    texturedMaterials: {}
-  };
-
-  const materialManagerMock = new Mock<CadMaterialManager>();
-  materialManagerMock.setup(m => m.getModelMaterials).returns(() => materials);
-  materialManagerMock.setup(m => m.addTexturedMeshMaterial).returns(() => texturedMaterial);
-
-  return { materialManager: materialManagerMock.object(), triangleMaterial, texturedMaterial };
 };
 
 const expectMeshGroup = (result: Group, expectedChildCount: number) => {

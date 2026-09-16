@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { PerspectiveCamera } from 'three';
 
 import { asyncIteratorToArray, createCadModelMetadata, generateV9SectorTree } from '../../../../test-utilities';
 import type { CadModelMetadata, SectorMetadata, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
@@ -64,7 +64,7 @@ describe('SectorLoader', () => {
       .returns([]);
 
     input = {
-      camera: new THREE.PerspectiveCamera(),
+      camera: new PerspectiveCamera(),
       budget: {
         highDetailProximityThreshold: 0,
         maximumRenderCost: 0
@@ -199,6 +199,7 @@ function createWantedSector(model: CadModelMetadata, sector: SectorMetadata): Wa
     levelOfDetail: LevelOfDetail.Detailed,
     metadata: sector,
     modelBaseUrl: model.modelBaseUrl,
+    signedFilesBaseUrl: model.signedFilesBaseUrl,
     modelIdentifier: model.modelIdentifier
   };
   return wanted;

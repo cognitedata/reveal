@@ -5,7 +5,7 @@
 import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 
-import type * as THREE from 'three';
+import type { Scene, WebGLRenderer } from 'three';
 
 import type {
   DMDataSourceType,
@@ -26,8 +26,8 @@ export function createPointCloudManager(
   pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
   pointCloudMaterialManager: PointCloudMaterialManager,
   cachedProvider: CachedModelDataProvider,
-  scene: THREE.Scene,
-  renderer: THREE.WebGLRenderer
+  scene: Scene,
+  renderer: WebGLRenderer
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, cachedProvider);
 

@@ -1,7 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import * as THREE from 'three';
+import type { WebGLRenderTarget, WebGLRenderer } from 'three';
+import { BufferAttribute, BufferGeometry, PerspectiveCamera, Points, Ray, Scene, Vector2, Vector3 } from 'three';
 import { Mock, It } from 'moq.ts';
 import { vi } from 'vitest';
 
@@ -18,25 +19,23 @@ const MINIMAL_PIXEL_BUFFER_SIZE = 4;
 
 function createMockPickState(): IPickState {
   return {
-    renderTarget: new Mock<THREE.WebGLRenderTarget>().object(),
+    renderTarget: new Mock<WebGLRenderTarget>().object(),
     material: new Mock<PointCloudMaterial>().object(),
-    scene: new THREE.Scene()
+    scene: new Scene()
   };
 }
 
-function createMockRenderer(): THREE.WebGLRenderer {
-  return new Mock<THREE.WebGLRenderer>()
+function createMockRenderer(): WebGLRenderer {
+  return new Mock<WebGLRenderer>()
     .setup(r => r.getDrawingBufferSize(It.IsAny()))
-    .returns(new THREE.Vector2(RENDER_TARGET_WIDTH, RENDER_TARGET_HEIGHT))
-    .setup(r => r.getSize(It.IsAny()))
-    .returns(new THREE.Vector2(RENDER_TARGET_WIDTH, RENDER_TARGET_HEIGHT))
+    .returns(new Vector2(RENDER_TARGET_WIDTH, RENDER_TARGET_HEIGHT))
     .object();
 }
 
 function createFakeOctree(numPoints: number = 1000): PointCloudOctree {
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0, 0, 0]), 3));
-  const sceneNode = new THREE.Points(geometry);
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(new Float32Array([0, 0, 0]), 3));
+  const sceneNode = new Points(geometry);
   const node = { sceneNode, numPoints } as unknown as IPointCloudTreeNode;
   return { visibleNodes: [node] } as unknown as PointCloudOctree;
 }
@@ -62,8 +61,8 @@ describe(PointCloudOctreePicker.name, () => {
 
   test('picking returns null immediately for empty octrees array', async () => {
     const picker = new PointCloudOctreePicker(createMockRenderer());
-    const camera = new THREE.PerspectiveCamera();
-    const ray = new THREE.Ray();
+    const camera = new PerspectiveCamera();
+    const ray = new Ray();
 
     const result = await picker.pick(camera, ray, []);
 
@@ -98,8 +97,8 @@ describe(PointCloudOctreePicker.name, () => {
       .setup(o => o.visibleNodes)
       .returns([])
       .object();
-    const camera = new THREE.PerspectiveCamera();
-    const ray = new THREE.Ray();
+    const camera = new PerspectiveCamera();
+    const ray = new Ray();
 
     // pick() calls resetState() right after starting the readback and before awaiting it,
     // so GL state is restored while the readback is still in flight.
@@ -115,16 +114,16 @@ describe(PointCloudOctreePicker.name, () => {
 
   describe('full-frame pick cache', () => {
     let nowSpy: ReturnType<typeof vi.spyOn<typeof performance, 'now'>>;
-    let camera: THREE.PerspectiveCamera;
-    let ray: THREE.Ray;
+    let camera: PerspectiveCamera;
+    let ray: Ray;
     let octree: PointCloudOctree;
     let renderedNodes: RenderedNode[];
 
     beforeEach(() => {
       nowSpy = vi.spyOn(performance, 'now').mockReturnValue(10_000);
-      camera = new THREE.PerspectiveCamera();
+      camera = new PerspectiveCamera();
       camera.updateMatrixWorld();
-      ray = new THREE.Ray(new THREE.Vector3(), new THREE.Vector3(0, 0, -1));
+      ray = new Ray(new Vector3(), new Vector3(0, 0, -1));
       octree = createFakeOctree();
       renderedNodes = [{ node: octree.visibleNodes[0], octree }];
     });

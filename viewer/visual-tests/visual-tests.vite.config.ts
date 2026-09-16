@@ -4,10 +4,8 @@
 
 import { defineConfig } from 'vite';
 import glsl from 'vite-plugin-glsl';
-import wasm from 'vite-plugin-wasm';
 import fs from 'fs';
 import path from 'path';
-import { tsAccessorDecoratorPlugin } from '../vite.config';
 
 function setTestFixture(testFixture: string | undefined): string | boolean {
   if (testFixture === undefined) {
@@ -30,14 +28,14 @@ function readCdfEnv(): string {
   }
 }
 
-export default defineConfig(_ => {
+export default defineConfig(({ command }) => {
   const open = setTestFixture(process.env.testFixture);
   const cdfEnv = readCdfEnv();
 
   return {
     root: __dirname,
 
-    plugins: [tsAccessorDecoratorPlugin(), glsl()],
+    plugins: [glsl()],
 
     define: {
       CDF_ENV: cdfEnv
@@ -56,16 +54,13 @@ export default defineConfig(_ => {
     },
 
     build: {
+      assetsInlineLimit: Infinity,
       outDir: path.resolve(__dirname, 'dist'),
-      sourcemap: 'inline',
-      rollupOptions: {
-        input: path.resolve(__dirname, './VisualTest.browser.ts')
-      }
+      sourcemap: command === 'serve' ? 'inline' : false
     },
 
     worker: {
-      format: 'es',
-      plugins: () => [wasm()]
+      format: 'es'
     }
   };
 });

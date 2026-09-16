@@ -4,7 +4,7 @@
 
 import { HttpError } from '@cognite/sdk';
 
-export const supportedVersions = [8];
+export const supportedVersions: number[] = [8];
 
 export async function fetchWithStatusCheck(url: string): Promise<Response> {
   const response = await fetch(url);

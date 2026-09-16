@@ -20,12 +20,12 @@ export class FlexibleControlsOptions {
   //================================================
 
   // Main behavior
-  public controlsType = FlexibleControlsType.Orbit;
+  public controlsType: FlexibleControlsType = FlexibleControlsType.Orbit;
 
   // Mouse click, double click and wheel behavior
-  public mouseWheelAction = FlexibleWheelZoomType.Auto;
-  public mouseClickType = FlexibleMouseActionType.SetTarget;
-  public mouseDoubleClickType = FlexibleMouseActionType.SetTargetAndCameraPosition;
+  public mouseWheelAction: FlexibleWheelZoomType = FlexibleWheelZoomType.Auto;
+  public mouseClickType: FlexibleMouseActionType = FlexibleMouseActionType.SetTarget;
+  public mouseDoubleClickType: FlexibleMouseActionType = FlexibleMouseActionType.SetTargetAndCameraPosition;
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;
 
@@ -36,10 +36,10 @@ export class FlexibleControlsOptions {
   public mouseDistanceThresholdBetweenRaycasts = 5; // For mouse wheel event
 
   // Angles
-  public minPolarAngle = DEFAULT_MIN_POLAR_ANGLE;
-  public maxPolarAngle = Math.PI - DEFAULT_MIN_POLAR_ANGLE;
-  public minAzimuthAngle = -Infinity;
-  public maxAzimuthAngle = Infinity;
+  public minPolarAngle: number = DEFAULT_MIN_POLAR_ANGLE;
+  public maxPolarAngle: number = Math.PI - DEFAULT_MIN_POLAR_ANGLE;
+  public minAzimuthAngle: number = -Infinity;
+  public maxAzimuthAngle: number = Infinity;
 
   // Damping
   public enableDamping = true;
@@ -55,16 +55,16 @@ export class FlexibleControlsOptions {
   public maxSensitivity = 0.8; // Maximum sensitivity if calculated automatically
 
   // Rotation speed
-  public mouseRotationSpeedAzimuth = DEFAULT_POINTER_ROTATION_SPEED;
-  public mouseRotationSpeedPolar = DEFAULT_POINTER_ROTATION_SPEED;
-  public keyboardRotationSpeedAzimuth = DEFAULT_KEYBOARD_ROTATION_SPEED;
-  public keyboardRotationSpeedPolar = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
+  public mouseRotationSpeedAzimuth: number = DEFAULT_POINTER_ROTATION_SPEED;
+  public mouseRotationSpeedPolar: number = DEFAULT_POINTER_ROTATION_SPEED;
+  public keyboardRotationSpeedAzimuth: number = DEFAULT_KEYBOARD_ROTATION_SPEED;
+  public keyboardRotationSpeedPolar: number = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
   public keyboardFastRotationFactor = 2;
 
   // Wheel settings
   public zoomFraction = 0.05;
   public minOrthographicZoom = 0;
-  public maxOrthographicZoom = Infinity;
+  public maxOrthographicZoom: number = Infinity;
 
   // Mouse speed for dolly and pan
   public wheelDollySpeed = 0.5;

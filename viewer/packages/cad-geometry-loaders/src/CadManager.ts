@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { PerspectiveCamera, Plane } from 'three';
 
 import type { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
@@ -122,12 +122,16 @@ export class CadManager {
       this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
-    const debouncedConsumeSectors = batchedDebounce((sectors: ConsumedSector[]) => {
-      for (const sector of sectors) {
-        consumeNextSector(sector);
-      }
-      this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
-    }, this._sectorBufferTime);
+    const debouncedConsumeSectors = batchedDebounce(
+      (sectors: ConsumedSector[]) => {
+        for (const sector of sectors) {
+          consumeNextSector(sector);
+        }
+        this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
+      },
+      this._sectorBufferTime,
+      { maxWait: 1000 }
+    );
 
     this._unsubscribeConsumedSectors = this._cadModelUpdateHandler.on('onNewConsumedSector', debouncedConsumeSectors);
     this._unsubscribeLoadingState = this._cadModelUpdateHandler.on('onLoadingStateChanged', loadingState => {
@@ -160,15 +164,15 @@ export class CadManager {
     );
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+  updateCamera(camera: PerspectiveCamera, cameraInMotion: boolean): void {
     this._cadModelUpdateHandler.updateCamera(camera, cameraInMotion);
   }
 
-  get clippingPlanes(): THREE.Plane[] {
+  get clippingPlanes(): Plane[] {
     return this._materialManager.clippingPlanes;
   }
 
-  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+  set clippingPlanes(clippingPlanes: Plane[]) {
     this._materialManager.clippingPlanes = clippingPlanes;
     this._cadModelUpdateHandler.clippingPlanes = clippingPlanes;
     this._needsRedraw = true;
@@ -233,6 +237,7 @@ export class CadManager {
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
+    this.materialManager.removeModelMaterials(model.cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   on(event: 'loadingStateChanged', listener: (loadingState: LoadingState) => void): void {

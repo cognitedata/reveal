@@ -7,6 +7,10 @@
   "mainEntryPointFilePath": "<projectFolder>/dist/index.d.ts",
   "newlineKind": "lf",
 
+  "compiler": {
+    "tsconfigFilePath": "<projectFolder>/tsconfig.lib.json"
+  },
+
   "apiReport": {
     "enabled": true,
     "reportTempFolder": "<projectFolder>/api-extractor-temp",

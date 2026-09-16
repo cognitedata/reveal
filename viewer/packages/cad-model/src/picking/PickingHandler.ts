@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3, Object3D, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
+import { Color, Raycaster, Scene, Vector3, Vector4, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
 import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
@@ -16,8 +17,8 @@ type PickingInput = {
     x: number;
     y: number;
   };
-  camera: THREE.PerspectiveCamera;
-  renderer: THREE.WebGLRenderer;
+  camera: PerspectiveCamera;
+  renderer: WebGLRenderer;
   domElement: HTMLElement;
   cadNodes: CadNode[];
 };
@@ -28,29 +29,29 @@ type TreeIndexPickingInput = PickingInput & {
 
 type IntersectCadNodesResult = {
   distance: number;
-  point: THREE.Vector3;
+  point: Vector3;
   treeIndex: number;
   cadNode: CadNode;
-  object: THREE.Object3D; // always CadNode
+  object: Object3D; // always CadNode
 };
 
 export class PickingHandler {
-  private readonly _clearColor: THREE.Color;
+  private readonly _clearColor: Color;
   private readonly _clearAlpha: number;
-  private readonly _raycaster: THREE.Raycaster;
+  private readonly _raycaster: Raycaster;
 
   private readonly _pickPixelColorStorage: {
-    renderTarget: THREE.WebGLRenderTarget;
+    renderTarget: WebGLRenderTarget;
     pixelBuffer: Uint8Array;
   };
 
-  private readonly _rgbaVector = new THREE.Vector4();
+  private readonly _rgbaVector = new Vector4();
 
   /**
    * These factors are used for undoing the `packDepthToRGBA` GLSL operation defined by ThreeJS.
    * They are taken from https://github.com/WestLangley/three.js/blob/bc58fecba18150103b95fbde5aaa3cc7cddf95a7/src/renderers/shaders/ShaderChunk/packing.glsl.js#L19
    */
-  private readonly _unpackFactors = new THREE.Vector4(
+  private readonly _unpackFactors = new Vector4(
     255 / 256,
     255 / 256 / 256,
     255 / 256 / (256 * 256),
@@ -61,13 +62,13 @@ export class PickingHandler {
   private readonly _treeIndexRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _mutex = new Mutex();
 
-  constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
-    this._clearColor = new THREE.Color('black');
+  constructor(renderer: WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
+    this._clearColor = new Color('black');
     this._clearAlpha = 0;
-    this._raycaster = new THREE.Raycaster();
+    this._raycaster = new Raycaster();
 
     this._pickPixelColorStorage = {
-      renderTarget: new THREE.WebGLRenderTarget(1, 1),
+      renderTarget: new WebGLRenderTarget(1, 1),
       pixelBuffer: new Uint8Array(4)
     };
 
@@ -99,7 +100,7 @@ export class PickingHandler {
       return results;
     }
     const release = await this._mutex.acquire();
-    const scene = new THREE.Scene();
+    const scene = new Scene();
     const depthInput = { ...input, scene, cadNodes };
 
     // Identify the treeIndex associated with the position.
@@ -158,32 +159,29 @@ export class PickingHandler {
 
     return candidateCadNodes;
 
-    function getIntersection(cadNode: CadNode, ray: THREE.Ray): [CadNode, THREE.Vector3 | null] {
+    function getIntersection(cadNode: CadNode, ray: Ray): [CadNode, Vector3 | null] {
       const nodeBounds = getWorldSpaceNodeBounds(cadNode);
       // If we are inside the box, set the intersection point to the ray origin point
-      return [
-        cadNode,
-        nodeBounds.containsPoint(ray.origin) ? ray.origin : ray.intersectBox(nodeBounds, new THREE.Vector3())
-      ];
+      return [cadNode, nodeBounds.containsPoint(ray.origin) ? ray.origin : ray.intersectBox(nodeBounds, new Vector3())];
     }
 
-    function getWorldSpaceNodeBounds(node: CadNode): THREE.Box3 {
+    function getWorldSpaceNodeBounds(node: CadNode): Box3 {
       const cadNodeBoundingBox = node.cadModelMetadata.scene.root.subtreeBoundingBox.clone();
       return cadNodeBoundingBox.applyMatrix4(node.cadModelMetadata.modelMatrix);
     }
 
     function hasIntersection(
-      cadNodeIntersection: [CadNode, THREE.Vector3 | null]
-    ): cadNodeIntersection is [CadNode, THREE.Vector3] {
+      cadNodeIntersection: [CadNode, Vector3 | null]
+    ): cadNodeIntersection is [CadNode, Vector3] {
       const intersectPosition = cadNodeIntersection[1];
       return intersectPosition !== null;
     }
 
-    function byIntersectDistanceToCamera([_0, a]: [CadNode, THREE.Vector3], [_1, b]: [CadNode, THREE.Vector3]): number {
+    function byIntersectDistanceToCamera([_0, a]: [CadNode, Vector3], [_1, b]: [CadNode, Vector3]): number {
       return a.distanceToSquared(cameraPosition) - b.distanceToSquared(cameraPosition);
     }
 
-    function data(cadNodeData: [CadNode, THREE.Vector3]): { cadNode: CadNode; intersectPosition: THREE.Vector3 } {
+    function data(cadNodeData: [CadNode, Vector3]): { cadNode: CadNode; intersectPosition: Vector3 } {
       return { cadNode: cadNodeData[0], intersectPosition: cadNodeData[1] };
     }
   }
@@ -194,7 +192,7 @@ export class PickingHandler {
 
     const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
     const point = this.getPosition(input, viewZ);
-    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    const distance = new Vector3().subVectors(point, camera.position).length();
     return {
       distance,
       point
@@ -207,7 +205,7 @@ export class PickingHandler {
     shouldRunAsync: boolean
   ): Promise<number | undefined> {
     const { camera, normalizedCoords, renderer, domElement } = input;
-    const pickingScene = new THREE.Scene();
+    const pickingScene = new Scene();
 
     const pickInput = {
       normalizedCoords,
@@ -259,9 +257,9 @@ export class PickingHandler {
     return this.unpackRGBAToDepth(pixelBuffer);
   }
 
-  private getPosition(input: PickingInput, viewZ: number): THREE.Vector3 {
+  private getPosition(input: PickingInput, viewZ: number): Vector3 {
     const { camera, normalizedCoords } = input;
-    const position = new THREE.Vector3();
+    const position = new Vector3();
     position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(camera.projectionMatrixInverse);
 
     position.multiplyScalar(viewZ / position.z);
@@ -272,7 +270,7 @@ export class PickingHandler {
   private async pickPixel(
     input: PickingInput,
     renderPipeline: RenderPipelineProvider,
-    clearColor: THREE.Color,
+    clearColor: Color,
     clearAlpha: number,
     shouldRunAsync: boolean
   ) {
@@ -280,7 +278,7 @@ export class PickingHandler {
     const { camera, normalizedCoords, renderer, domElement } = input;
 
     // Prepare camera that only renders the single pixel we are interested in
-    const pickCamera = camera.clone() as THREE.PerspectiveCamera;
+    const pickCamera = camera.clone() as PerspectiveCamera;
     const absoluteCoords = {
       x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
       y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight

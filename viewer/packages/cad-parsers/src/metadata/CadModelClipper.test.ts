@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 import { CadModelClipper } from './CadModelClipper';
 import type { Mutable } from '../../../../test-utilities';
 import { generateV9SectorTree, createCadModelMetadata } from '../../../../test-utilities';
@@ -30,14 +30,14 @@ describe('CadModelClipper', () => {
   });
 
   test('createClippedModel() throws when there are no sectors inside clip box', () => {
-    const box = new THREE.Box3(new THREE.Vector3(9, 9, 9), new THREE.Vector3(10, 10, 10));
+    const box = new Box3(new Vector3(9, 9, 9), new Vector3(10, 10, 10));
     const clipper = new CadModelClipper(box);
 
     expect(() => clipper.createClippedModel(modelDepth2)).toThrow();
   });
 
   test('createClippedModel() only keeps sectors intersecting with clip box', () => {
-    const box = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(0.5, 0.5, 0.5));
+    const box = new Box3(new Vector3(-1, -1, -1), new Vector3(0.5, 0.5, 0.5));
     const clipper = new CadModelClipper(box);
 
     const result = clipper.createClippedModel(modelDepth2);
@@ -50,7 +50,7 @@ describe('CadModelClipper', () => {
   });
 
   test('createClippedModel() reduces estimated draw calls and render cost for clipped sectors', () => {
-    const box = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 0.5, 0.5));
+    const box = new Box3(new Vector3(0, 0, 0), new Vector3(0.5, 0.5, 0.5));
     const clipper = new CadModelClipper(box);
 
     const result = clipper.createClippedModel(modelDepth2);
@@ -66,5 +66,5 @@ describe('CadModelClipper', () => {
 
 function setBounds(sector: SectorMetadata, min: [number, number, number], max: [number, number, number]) {
   const mutable: Mutable<SectorMetadata> = sector;
-  mutable.subtreeBoundingBox = new THREE.Box3().setFromArray([...min, ...max]);
+  mutable.subtreeBoundingBox = new Box3().setFromArray([...min, ...max]);
 }

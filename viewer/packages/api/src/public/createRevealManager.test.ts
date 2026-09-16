@@ -14,7 +14,7 @@ import type {
 import type { SetPropertyExpression } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 
-import type * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import type { IPointClassificationsProvider } from '@reveal/pointclouds';
 import type { CameraManager } from '@reveal/camera-manager';
@@ -30,7 +30,7 @@ describe('createRevealManager', () => {
         new Mock<PointCloudStylableObjectProvider>().object(),
         new Mock<PointCloudStylableObjectProvider<DMDataSourceType>>().object(),
         new Mock<IPointClassificationsProvider>().object(),
-        new Mock<THREE.WebGLRenderer>()
+        new Mock<WebGLRenderer>()
           .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
           .returns({})
           .setup(p => p.domElement)

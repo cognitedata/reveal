@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { DataTexture } from 'three';
 
 import { IndexSet, determinePowerOfTwoDimensions, NumericRange, createUint8View } from '@reveal/utilities';
 import { DefaultNodeAppearance, type NodeAppearance } from './NodeAppearance';
@@ -16,7 +16,7 @@ export class NodeAppearanceTextureBuilder {
   private _needsUpdate = true;
   private readonly _allTreeIndices: IndexSet;
   private readonly _overrideColorDefaultAppearanceRgba: Uint8ClampedArray;
-  private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
+  private readonly _overrideColorPerTreeIndexTexture: DataTexture;
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
@@ -94,7 +94,7 @@ export class NodeAppearanceTextureBuilder {
    * Note that in-front and ghost information also is available from
    * the {@see inFrontTreeIndices} and {@see ghostedTreeIndices} collections.
    */
-  get overrideColorPerTreeIndexTexture(): THREE.DataTexture {
+  get overrideColorPerTreeIndexTexture(): DataTexture {
     return this._overrideColorPerTreeIndexTexture;
   }
 
@@ -212,12 +212,12 @@ export class NodeAppearanceTextureBuilder {
   }
 }
 
-function allocateOverrideColorPerTreeIndexTexture(treeIndexCount: number): THREE.DataTexture {
+function allocateOverrideColorPerTreeIndexTexture(treeIndexCount: number): DataTexture {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
 
   // Color and style override texture
-  const overrideColorPerTreeIndexTexture = new THREE.DataTexture(
+  const overrideColorPerTreeIndexTexture = new DataTexture(
     new Uint8ClampedArray(4 * textureElementCount),
     width,
     height

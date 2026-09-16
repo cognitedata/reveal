@@ -2,20 +2,21 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
+import { Group } from 'three';
 import { LevelOfDetail } from '../cad/LevelOfDetail';
 
-export class SectorNode extends THREE.Group {
+export class SectorNode extends Group {
   public readonly sectorPath: string;
   public readonly sectorId: number;
-  public readonly bounds: THREE.Box3;
+  public readonly bounds: Box3;
   public readonly depth: number;
 
-  private _group?: THREE.Group;
+  private _group?: Group;
   private _lod = LevelOfDetail.Discarded;
   private _updatedTimestamp: number = Date.now();
 
-  constructor(sectorId: number, sectorPath: string, bounds: THREE.Box3) {
+  constructor(sectorId: number, sectorPath: string, bounds: Box3) {
     super();
     this.name = `Sector ${sectorPath} [id=${sectorId}]`;
     this.sectorId = sectorId;
@@ -28,7 +29,7 @@ export class SectorNode extends THREE.Group {
     return this._lod;
   }
 
-  get group(): THREE.Group | undefined {
+  get group(): Group | undefined {
     return this._group;
   }
 
@@ -36,7 +37,7 @@ export class SectorNode extends THREE.Group {
     return this._updatedTimestamp;
   }
 
-  updateGeometry(geometryGroup: THREE.Group | undefined, levelOfDetail: LevelOfDetail): void {
+  updateGeometry(geometryGroup: Group | undefined, levelOfDetail: LevelOfDetail): void {
     this.resetGeometry();
 
     this._group = geometryGroup;

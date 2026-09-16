@@ -24,17 +24,15 @@ import {
 } from '../../pointcloud-styling';
 
 import { assert } from '@reveal/utilities/assert';
-import * as THREE from 'three';
+import { Color, PerspectiveCamera, Vector3 } from 'three';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 import { PointColorType } from '@reveal/rendering';
-import { Color } from 'three';
-
 class CustomAnnotationProvider implements PointCloudStylableObjectProvider<ClassicDataSourceType> {
   async getPointCloudObjects(_modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const cdfAnnotations = [
       {
         volumeMetadata: { annotationId: 123 },
-        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
+        region: [new Cylinder(new Vector3(-0.03, 0.1, -1000), new Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
 
@@ -49,7 +47,7 @@ class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceT
     const cdfAnnotations = [
       {
         volumeMetadata: { instanceRef: { externalId: '123', space: 'space' } },
-        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
+        region: [new Cylinder(new Vector3(-0.03, 0.1, -1000), new Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
 
@@ -72,8 +70,8 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     );
   }
 
-  override createCamera(): THREE.PerspectiveCamera {
-    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
+  override createCamera(): PerspectiveCamera {
+    return new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
   }
 
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {

@@ -61,9 +61,9 @@ See [our documentation](https://cognitedata.github.io/reveal-docs/docs/examples/
 
 ## Prerequisites
 
-For development, you will need to install [Node](https://nodejs.org/en/download/), [Yarn](https://yarnpkg.com/getting-started/install) and [Rust+Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html).
+For development, you will need to install [Node](https://nodejs.org/en/download/), [pnpm](https://pnpm.io/installation) and [Rust+Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 
-Run `yarn` in the viewer
+Run `pnpm install` in the viewer
 
 ## Local Packages
 The Reveal viewer is structured using local packages.
@@ -99,14 +99,14 @@ If your package depends on another local package, it must be explicitly declared
 }
 ```
 The `workspace` keyword declares that the dependency is a local package and should never be fetched from NPM.
-And the `':*'` syntax means that it should just grab any version available. See [this](https://yarnpkg.com/features/workspaces) for more documentation on yarn workspaces.
+And the `':*'` syntax means that it should just grab any version available. See [this](https://pnpm.io/workspaces) for more documentation on pnpm workspaces.
 
 If you want to add Rust/Webassembly code to a package, you can add the following script in `package.json`:
 
 ```json
 {
   "scripts": {
-    "run-wasm-pack": "yarn run ws:update-cargo-index && wasm-pack"
+    "run-wasm-pack": "pnpm -w run ws:update-cargo-index && wasm-pack"
   }
 }
 ```
@@ -115,7 +115,7 @@ Then the crate will automatically be built and tested by the `build` and `test` 
 The `ws:update-cargo-index` step ensures that the local `crates.io` index has been updated before running build.
 Otherwise, the index update will be executed in a quiet manner, and the command may appear to hang for several minutes.
 
-When writing tests in Rust, the tests must be annotated with the `#[wasm_bindgen_test]` attribute, instead of the conventional `#[test]`, and `wasm-bindgen-test` must be added as a (dev-)dependency. All tests are run as part of the normal `yarn test` script in the root folder, but can also be run manually with e.g. `wasm-pack test --chrome --headless` in the relevant `wasm` folder.
+When writing tests in Rust, the tests must be annotated with the `#[wasm_bindgen_test]` attribute, instead of the conventional `#[test]`, and `wasm-bindgen-test` must be added as a (dev-)dependency. All tests are run as part of the normal `pnpm run test` script in the root folder, but can also be run manually with e.g. `wasm-pack test --chrome --headless` in the relevant `wasm` folder.
 
 It is also possible to run and test a local package in isolation from the rest of Reveal.
 Convenience functionality has been created to make this easy.
@@ -123,44 +123,44 @@ Add the following script to your package's `package.json`:
 ```json
 {
   "scripts": {
-    "test": "yarn ws:test --config ./../../vitest.config.ts",
+    "test": "test": "vitest run --config ./../../vitest.config.ts",
   }
 }
 ```
-Running `yarn run test` will run all tests in your package that resolves the `*.test.*` regex pattern.
+Running `pnpm run test` will run all tests in your package that resolves the `*.test.*` regex pattern.
 
 To run a test app that includes your package (and any dependencies), create a `/app/` subfolder in your package that includes an `index.ts` file.
 Add the following script to your package's `package.json`:
 ```json
 {
   "scripts": {
-    "start": "yarn ws:start"
+    "start": "pnpm -w run ws:serve"
   }
 }
 ```
 
-Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
+Running the command `pnpm start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
 
 ## API Extractor
 
 The `viewer/reveal.api.md` file contains a description of the public API of Reveal. In the CI pipeline, the `reveal.api.md` file is checked to be up-to-date by API extractor.
 
-In order to update this file locally, run `yarn run update-api` *after* having run the build script. This will update the API file with any changes, which should be added and committed in the same PR.
+In order to update this file locally, run `pnpm run update-api` *after* having run the build script. This will update the API file with any changes, which should be added and committed in the same PR.
 
 ## Debugging
 
 ### Worker source maps
 
-When bundling source maps with inlined web workers, the bundle size grows huge. Therefore source maps for workers are disabled by default. In order to add source maps to workers, pass `--env workerSourceMaps=true` to the `yarn build` script.
+When bundling source maps with inlined web workers, the bundle size grows huge. Therefore source maps for workers are disabled by default. In order to add source maps to workers, pass `--env workerSourceMaps=true` to the `pnpm run build` script.
 
 ## Creating and running visual tests
 
 Visual test files must be on the format `visual-tests/SomeTest.VisualTest.ts`. See one of the existing tests
 for example on how to create a test.
 
-Visual tests can be run from `viewer/` using `yarn test:visual`. This will run all visual tests. You can also
-run a single test by using `yarn test:visual -- -t="SomeTest"` (will run all tests with "SomeTest" in the name). Note that arguments only will be passed to the client, to pass arguments to the server you will need to manually start the server and client separately.
+Visual tests can be run from `viewer/` using `pnpm run test:visual`. This will run all visual tests. You can also
+run a single test by using `pnpm run test:visual -- -t="SomeTest"` (will run all tests with "SomeTest" in the name). Note that arguments only will be passed to the client, to pass arguments to the server you will need to manually start the server and client separately.
 
 For more information about visual tests, see [visual-tests/README.md](visual-tests/README.md).
 

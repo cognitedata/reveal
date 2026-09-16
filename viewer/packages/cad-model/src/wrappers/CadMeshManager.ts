@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { CadMaterialManager } from '@reveal/rendering';
+import { RenderMode, type CadMaterial } from '@reveal/rendering';
 import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { incrementOrInsertIndex } from '@reveal/utilities';
@@ -10,27 +10,22 @@ import type { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import type { SectorRepository } from '@reveal/sector-loader';
 import type { ModelIdentifier } from '@reveal/data-providers';
 
-import type { BufferGeometry, RawShaderMaterial, BufferAttribute, Box3, Matrix4 } from 'three';
-import { Sphere, Mesh, Group } from 'three';
+import type { BufferGeometry, RawShaderMaterial, BufferAttribute, Box3, Matrix4, Texture } from 'three';
+import { Sphere, Mesh, Group, SRGBColorSpace } from 'three';
+import { initializeDefinesAndUniforms } from '@reveal/rendering';
 
 /**
  * Manages mesh data for CAD sectors.
  * This class prepares mesh data for object creation.
  */
 export class CadMeshManager {
-  private readonly _materialManager: CadMaterialManager;
-  private readonly _modelIdentifier: symbol;
+  private readonly _cadMaterial: CadMaterial;
   private readonly _treeIndexToSectorsMap: TreeIndexToSectorsMap;
 
   private readonly _sectorMeshGroups: Map<number, Group> = new Map();
 
-  constructor(
-    materialManager: CadMaterialManager,
-    modelIdentifier: symbol,
-    treeIndexToSectorsMap: TreeIndexToSectorsMap
-  ) {
-    this._materialManager = materialManager;
-    this._modelIdentifier = modelIdentifier;
+  constructor(cadMaterial: CadMaterial, treeIndexToSectorsMap: TreeIndexToSectorsMap) {
+    this._cadMaterial = cadMaterial;
     this._treeIndexToSectorsMap = treeIndexToSectorsMap;
   }
 
@@ -41,7 +36,7 @@ export class CadMeshManager {
    * @returns Group containing the created meshes
    */
   public createMeshesFromParsedGeometries(parsedMeshGeometries: ParsedMeshGeometry[], sectorId: number): Group {
-    const materials = this._materialManager.getModelMaterials(this._modelIdentifier);
+    const materials = this._cadMaterial.materials;
     const group = new Group();
     const allTreeIndices = new Set<number>();
 
@@ -53,11 +48,7 @@ export class CadMeshManager {
         let material: RawShaderMaterial;
 
         if (isTexturedTriangleMesh && geometryData.texture) {
-          material = this._materialManager.addTexturedMeshMaterial(
-            this._modelIdentifier,
-            sectorId,
-            geometryData.texture
-          );
+          material = this.addTexturedMeshMaterialForSector(this._cadMaterial, sectorId, geometryData.texture);
         } else if (isTexturedTriangleMesh && !geometryData.texture) {
           console.warn(
             `Missing texture for textured triangle mesh in sector ${sectorId} - mesh will be skipped. ` +
@@ -84,6 +75,40 @@ export class CadMeshManager {
     this.updateTreeIndexToSectorsMap(allTreeIndices, sectorId);
 
     return group;
+  }
+
+  private addTexturedMeshMaterialForSector(
+    cadMaterial: CadMaterial,
+    sectorId: number,
+    texture: Texture
+  ): RawShaderMaterial {
+    texture.colorSpace = SRGBColorSpace;
+    texture.flipY = false;
+
+    const newMaterial = cadMaterial.materials.triangleMesh.clone();
+    newMaterial.uniforms.tDiffuse = { value: texture };
+    newMaterial.defines.IS_TEXTURED = true;
+
+    initializeDefinesAndUniforms(
+      newMaterial,
+      cadMaterial.nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
+      cadMaterial.nodeTransformTextureBuilder.overrideTransformIndexTexture,
+      cadMaterial.nodeTransformTextureBuilder.transformLookupTexture,
+      cadMaterial.matCapTexture,
+      RenderMode.Color
+    );
+
+    newMaterial.needsUpdate = true;
+
+    const materialName = `texturedMaterial_${sectorId}`;
+
+    if (cadMaterial.materials.texturedMaterials[materialName] !== undefined) {
+      cadMaterial.materials.texturedMaterials[materialName].dispose();
+    }
+
+    cadMaterial.materials.texturedMaterials[materialName] = newMaterial;
+
+    return newMaterial;
   }
 
   /**

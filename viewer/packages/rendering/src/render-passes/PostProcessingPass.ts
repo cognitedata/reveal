@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -24,9 +24,9 @@ import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameter
  * triangles in a specific render order.
  */
 export class PostProcessingPass implements RenderPass {
-  private readonly _scene: THREE.Scene;
-  private readonly _postProcessingObjects: THREE.Mesh[];
-  private readonly _pointcloudBlitMaterial: THREE.ShaderMaterial;
+  private readonly _scene: Scene;
+  private readonly _postProcessingObjects: Mesh[];
+  private readonly _pointcloudBlitMaterial: ShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly setBlendFactorByBackVisibility: () => void;
 
@@ -39,7 +39,7 @@ export class PostProcessingPass implements RenderPass {
     this.setBlendFactorByBackVisibility();
   }
 
-  constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
+  constructor(scene: Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
 
@@ -113,7 +113,7 @@ export class PostProcessingPass implements RenderPass {
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
+  public render(renderer: WebGLRenderer, camera: Camera): void {
     if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
       this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
       this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
@@ -127,7 +127,7 @@ export class PostProcessingPass implements RenderPass {
   public dispose(): void {
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
-      (postProcessingObject.material as THREE.Material).dispose();
+      (postProcessingObject.material as Material).dispose();
       this._scene.remove(postProcessingObject);
     });
   }

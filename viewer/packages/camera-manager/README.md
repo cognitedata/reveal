@@ -6,7 +6,7 @@
 
 ## Development
 ```
-$ yarn run start
+$ pnpm run start
 ```
 
 ## Usage
@@ -87,4 +87,3 @@ controls.orthographicCameraDollyFactor = 0.3; // dolly factor of orthographic ca
 controls.lookAtViewTarget = false; // toggles use of view target for camera 'lookAt' method. Used for zooming and playing animations at the same time.
 controls.useScrollTarget = false; // enables usage of new controls mechanics that relies on scrollTarget that is set when user initiate wheel scroll.
 ```
-

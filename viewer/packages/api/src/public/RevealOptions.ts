@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { WebGLRenderTarget } from 'three';
 
 import type { RenderOptions } from '@reveal/rendering';
 import type { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
@@ -17,7 +17,7 @@ export type RevealOptions = {
   logMetrics?: boolean;
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
-  outputRenderTarget?: { target: THREE.WebGLRenderTarget; autoSize?: boolean };
+  outputRenderTarget?: { target: WebGLRenderTarget; autoSize?: boolean };
   rendererResolutionThreshold?: number;
   internal?: {
     cad?: InternalRevealCadOptions;

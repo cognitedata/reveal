@@ -1,7 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import type { WebGLRenderTarget, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Vector3 } from 'three';
 import type { RenderedNode } from './PointCloudOctreePickerHelper';
 import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 
@@ -16,11 +17,11 @@ describe('PointCloudOctreePickerHelper', () => {
     const pickWindowSize = 2;
     // 2x2 pixel buffer with 1 non-zero value and two "kinds" of zero values (with 0 and 1 alpha)
     const dummyPixels: Uint8Array = new Uint8Array([15, 0, 0, 2, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 0]);
-    const dummyCamera = new THREE.PerspectiveCamera();
+    const dummyCamera = new PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
     vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => {
-      return new THREE.Vector3();
+      return new Vector3();
     });
 
     expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, [dummyNode], dummyCamera)).toStrictEqual({
@@ -37,11 +38,11 @@ describe('PointCloudOctreePickerHelper', () => {
       1, 0, 0, 22, 0, 0, 0, 255, 0, 0, 0, 255, 3, 0, 0, 22, 2, 0, 0, 22, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0,
       0, 255
     ]);
-    const dummyCamera = new THREE.PerspectiveCamera();
+    const dummyCamera = new PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
     vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, pIndex) => {
-      const result = new THREE.Vector3();
+      const result = new Vector3();
       switch (pIndex) {
         case 1:
           result.set(-3, 0, 0);
@@ -68,8 +69,8 @@ describe('PointCloudOctreePickerHelper', () => {
     const pickX = 5;
     const pickY = 10;
     const pickWndSize = 3;
-    const rendererMock = new Mock<THREE.WebGLRenderer>();
-    const renderTargetMock = new Mock<THREE.WebGLRenderTarget>();
+    const rendererMock = new Mock<WebGLRenderer>();
+    const renderTargetMock = new Mock<WebGLRenderTarget>();
     const expectedPixelCount = 4 * pickWndSize * pickWndSize;
 
     rendererMock

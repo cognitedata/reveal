@@ -5,24 +5,45 @@
 import { vi } from 'vitest';
 import { CachedModelDataProvider } from './CachedModelDataProvider';
 import type { ModelDataProvider } from '../ModelDataProvider';
+import { DMModelIdentifier } from '../model-identifiers/DMModelIdentifier';
 import { createMockCacheStorage } from '../../../../test-utilities/src/createCacheMocks';
+
+type GetBinaryFileFn = (
+  baseOrSigned: string,
+  fileNameOrAbortSignal?: string | AbortSignal,
+  abortSignal?: AbortSignal
+) => Promise<ArrayBuffer>;
+type GetJsonFileFn = (baseOrSigned: string, fileName?: string) => Promise<unknown>;
 
 describe(CachedModelDataProvider.name, () => {
   let mockBaseProvider: ModelDataProvider;
   let cachedProvider: CachedModelDataProvider;
   let mockCacheStorageMap: Map<string, Map<string, Response>>;
   let mockCacheStorage: CacheStorage;
+  let getBinaryFileMock = vi.fn<GetBinaryFileFn>();
+  let getJsonFileMock = vi.fn<GetJsonFileFn>();
 
   const TEST_URL = 'https://example.com';
   const TEST_FILENAME = 'test.bin';
+
+  const dmIdentifier = new DMModelIdentifier({
+    modelId: 1,
+    revisionId: 2,
+    revisionExternalId: 'ext-id',
+    revisionSpace: 'my-space'
+  });
 
   beforeEach(() => {
     mockCacheStorageMap = new Map();
     mockCacheStorage = createMockCacheStorage(mockCacheStorageMap);
 
+    getBinaryFileMock = vi.fn<GetBinaryFileFn>(async () => new ArrayBuffer(100));
+    getJsonFileMock = vi.fn<GetJsonFileFn>(async () => ({ test: 'data' }));
+
     mockBaseProvider = {
-      getBinaryFile: vi.fn(async () => new ArrayBuffer(100)),
-      getJsonFile: vi.fn(async () => ({ test: 'data' }))
+      getBinaryFile: getBinaryFileMock,
+      getJsonFile: getJsonFileMock,
+      getFileUrlsForModel: vi.fn(async () => [])
     };
 
     cachedProvider = new CachedModelDataProvider(
@@ -133,11 +154,65 @@ describe(CachedModelDataProvider.name, () => {
   });
 
   test('should handle base provider errors', async () => {
-    mockBaseProvider.getBinaryFile = vi.fn(async () => {
+    getBinaryFileMock.mockImplementation(async () => {
       throw new Error('Network error');
     });
 
     await expect(cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME)).rejects.toThrow('Network error');
+  });
+
+  test('getFileUrlsForModel should delegate to base provider without caching', async () => {
+    await cachedProvider.getFileUrlsForModel(TEST_URL, dmIdentifier, 'scene.json');
+    await cachedProvider.getFileUrlsForModel(TEST_URL, dmIdentifier, 'scene.json');
+
+    expect(mockBaseProvider.getFileUrlsForModel).toHaveBeenCalledTimes(2);
+    expect(mockBaseProvider.getFileUrlsForModel).toHaveBeenCalledWith(TEST_URL, dmIdentifier, 'scene.json');
+  });
+
+  test('getBinaryFile with signed URL should be cached by path, hitting cache on re-issued tokens', async () => {
+    const firstIssuance = 'https://signed.url/blob/0.glb?sv=1&se=first&sig=aaa';
+    const secondIssuance = 'https://signed.url/blob/0.glb?sv=1&se=second&sig=bbb';
+
+    const first = await cachedProvider.getBinaryFile('', firstIssuance);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
+    expect(first).toBeInstanceOf(ArrayBuffer);
+
+    // Same blob path, but a freshly issued signed URL with a different token - should hit the cache.
+    const second = await cachedProvider.getBinaryFile('', secondIssuance);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
+    expect(second).toBeInstanceOf(ArrayBuffer);
+  });
+
+  test('getJsonFile with signed URL should be cached by path, hitting cache on re-issued tokens', async () => {
+    const firstIssuance = 'https://signed.url/blob/scene.json?sv=1&se=first&sig=aaa';
+    const secondIssuance = 'https://signed.url/blob/scene.json?sv=1&se=second&sig=bbb';
+
+    await cachedProvider.getJsonFile('', firstIssuance);
+    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledTimes(1);
+
+    const result = await cachedProvider.getJsonFile('', secondIssuance);
+    expect(mockBaseProvider.getJsonFile).toHaveBeenCalledTimes(1);
+    expect(result).toEqual({ test: 'data' });
+  });
+
+  test('getBinaryFile with signed URL should not collide across different blobs', async () => {
+    await cachedProvider.getBinaryFile('', 'https://signed.url/model-a/0.glb?sig=aaa');
+    await cachedProvider.getBinaryFile('', 'https://signed.url/model-b/0.glb?sig=bbb');
+
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(2);
+  });
+
+  test('getBinaryFile with a signed URL that is not a valid URL falls back to no caching', async () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const notAUrl = 'not-a-url';
+
+    await cachedProvider.getBinaryFile('', notAUrl);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(1);
+
+    await cachedProvider.getBinaryFile('', notAUrl);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(2);
+
+    consoleWarnSpy.mockRestore();
   });
 
   test('should warn on cache storage failures', async () => {

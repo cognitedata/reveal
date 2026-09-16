@@ -4,7 +4,7 @@
 
 import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
-import * as THREE from 'three';
+import { Matrix4, Texture } from 'three';
 import type { IMock } from 'moq.ts';
 import { Mock, It, Times } from 'moq.ts';
 import type { SceneHandler } from '@reveal/utilities';
@@ -15,7 +15,7 @@ import type { JpegType } from '../utils/JpegDataStreamParser';
 
 function makeSixTextures(): Image360Texture[] {
   const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-  return faceNames.map(face => ({ face, texture: new THREE.Texture() }));
+  return faceNames.map(face => ({ face, texture: new Texture() }));
 }
 
 function makeStreamingFace(face: Image360Face['face'] = 'front'): Image360Face {
@@ -45,16 +45,10 @@ describe(Image360VisualizationBox.name, () => {
     loaderMock = {
       load: vi.fn<FaceTextureLoader['load']>().mockImplementation(async (face, onFirstFaceReady) => {
         onFirstFaceReady?.();
-        return { face: face.face, texture: new THREE.Texture() };
+        return { face: face.face, texture: new Texture() };
       })
     };
-    box = new Image360VisualizationBox(
-      new THREE.Matrix4(),
-      sceneHandlerMock.object(),
-      device,
-      requestRedraw,
-      loaderMock
-    );
+    box = new Image360VisualizationBox(new Matrix4(), sceneHandlerMock.object(), device, requestRedraw, loaderMock);
   });
 
   afterEach(() => {
@@ -107,7 +101,7 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('getTransform', () => {
     test('returns a Matrix4', () => {
-      expect(box.getTransform()).toBeInstanceOf(THREE.Matrix4);
+      expect(box.getTransform()).toBeInstanceOf(Matrix4);
     });
   });
 
@@ -153,7 +147,7 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('updateFaceTexture', () => {
     test('does not throw when mesh does not exist', () => {
-      expect(() => box.updateFaceTexture('front', new THREE.Texture())).not.toThrow();
+      expect(() => box.updateFaceTexture('front', new Texture())).not.toThrow();
     });
   });
 
@@ -189,7 +183,7 @@ describe(Image360VisualizationBox.name, () => {
       loaderMock.load.mockImplementation(
         async (face: Image360Face, _onFirstFaceReady?: () => void, onJpegTypeDetected?: (type: JpegType) => void) => {
           onJpegTypeDetected?.('progressive');
-          return { face: face.face, texture: new THREE.Texture() };
+          return { face: face.face, texture: new Texture() };
         }
       );
 

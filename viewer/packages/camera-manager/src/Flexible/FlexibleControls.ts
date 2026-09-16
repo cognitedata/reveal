@@ -433,6 +433,10 @@ export class FlexibleControls {
       // Pan left, right, up or down
       if (!translator) {
         translator = new FlexibleControlsTranslator(this);
+        // Store the translator immediately before awaiting so concurrent drag events
+        // find a non-null translator and fall through to the simple-pan fallback
+        // instead of each triggering their own intersectPointClouds GPU readback.
+        this._mouseDragInfo.update(position, translator);
         await translator.initialize(position);
       }
       if (!this._mouseDragInfo) {

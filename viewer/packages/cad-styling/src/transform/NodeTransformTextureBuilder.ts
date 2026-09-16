@@ -1,7 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import type { Matrix4 } from 'three';
+import { DataTexture, FloatType, RedFormat } from 'three';
 
 import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
@@ -12,7 +13,7 @@ import type { NodeTransformProvider } from './NodeTransformProvider';
 export class NodeTransformTextureBuilder {
   private readonly _transformProvider: NodeTransformProvider;
   private readonly _transformOverrideBuffer: TransformOverrideBuffer;
-  private readonly _transformOverrideIndexTexture: THREE.DataTexture;
+  private readonly _transformOverrideIndexTexture: DataTexture;
   private _needsUpdate = false;
   private readonly _handleTransformChangedBound = this.handleTransformChanged.bind(this);
   private readonly _transformOverrideIndexBufferView: Float32Array;
@@ -37,11 +38,11 @@ export class NodeTransformTextureBuilder {
     return this._needsUpdate;
   }
 
-  get overrideTransformIndexTexture(): THREE.DataTexture {
+  get overrideTransformIndexTexture(): DataTexture {
     return this._transformOverrideIndexTexture;
   }
 
-  get transformLookupTexture(): THREE.DataTexture {
+  get transformLookupTexture(): DataTexture {
     return this._transformOverrideBuffer.dataTexture;
   }
 
@@ -49,7 +50,7 @@ export class NodeTransformTextureBuilder {
     this._needsUpdate = false;
   }
 
-  private setNodeTransform(treeIndices: NumericRange, transform: THREE.Matrix4) {
+  private setNodeTransform(treeIndices: NumericRange, transform: Matrix4) {
     const transformIndex = this._transformOverrideBuffer.addOverrideTransform(treeIndices.from, transform);
     treeIndices.forEach(treeIndex => this.setOverrideIndex(treeIndex, transformIndex));
     this._needsUpdate = true;
@@ -70,7 +71,7 @@ export class NodeTransformTextureBuilder {
     this._needsUpdate = true;
   }
 
-  private handleTransformChanged(change: 'set' | 'reset', treeIndices: NumericRange, transform: THREE.Matrix4) {
+  private handleTransformChanged(change: 'set' | 'reset', treeIndices: NumericRange, transform: Matrix4) {
     switch (change) {
       case 'set':
         this.setNodeTransform(treeIndices, transform);
@@ -85,19 +86,19 @@ export class NodeTransformTextureBuilder {
 }
 
 function allocateTransformOverrideIndexTexture(treeIndexCount: number): {
-  dataTexture: THREE.DataTexture;
+  dataTexture: DataTexture;
   bufferView: Float32Array;
 } {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
 
   const transformOverrideIndexBuffer = new Float32Array(textureElementCount);
-  const transformOverrideIndexTexture = new THREE.DataTexture(
+  const transformOverrideIndexTexture = new DataTexture(
     transformOverrideIndexBuffer,
     width,
     height,
-    THREE.RedFormat,
-    THREE.FloatType
+    RedFormat,
+    FloatType
   );
 
   return { dataTexture: transformOverrideIndexTexture, bufferView: transformOverrideIndexBuffer };

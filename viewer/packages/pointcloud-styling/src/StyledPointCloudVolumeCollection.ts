@@ -26,7 +26,11 @@ export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
     /**
      * The appearance applied by the current StyledPointCloudVolumeCollection
      */
-    public style: CompletePointCloudAppearance
+    public style: CompletePointCloudAppearance,
+    /**
+     * The importance of the styled collection - styled sets of higher importance gets applied later
+     */
+    public importance: number = 0
   ) {}
 }
 

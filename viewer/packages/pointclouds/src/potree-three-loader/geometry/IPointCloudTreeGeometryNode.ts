@@ -1,18 +1,13 @@
 import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import type * as THREE from 'three';
+import type { Box3, BufferGeometry, Vector3 } from 'three';
 
 export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
-  geometry: THREE.BufferGeometry | undefined;
+  geometry: BufferGeometry | undefined;
   failed: boolean;
   load: () => Promise<void>;
   baseUrl: () => string;
   fileName: () => string;
   oneTimeDisposeHandlers: (() => void)[];
 
-  doneLoading: (
-    bufferGeometry: THREE.BufferGeometry,
-    _tightBoundingBox: THREE.Box3,
-    np: number,
-    _mean: THREE.Vector3
-  ) => void;
+  doneLoading: (bufferGeometry: BufferGeometry, _tightBoundingBox: Box3, np: number, _mean: Vector3) => void;
 }

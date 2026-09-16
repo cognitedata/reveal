@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Vector2 } from 'three';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import type { RenderPass } from '../RenderPass';
@@ -13,29 +14,29 @@ import type { SceneHandler } from '@reveal/utilities';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
-  private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };
+  private readonly _renderTargetData: { currentRenderSize: Vector2 };
   private readonly _geometryPass: GeometryPass;
-  private _outputRenderTarget: THREE.WebGLRenderTarget | null = null;
+  private _outputRenderTarget: WebGLRenderTarget | null = null;
   private _autoSizeRenderTarget = false;
 
-  public readonly scene: THREE.Scene;
+  public readonly scene: Scene;
 
   constructor(renderMode: RenderMode, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this.scene = sceneHandler.scene;
     this._renderTargetData = {
-      currentRenderSize: new THREE.Vector2(1, 1)
+      currentRenderSize: new Vector2(1, 1)
     };
 
     const layerMask = getLayerMask(RenderLayer.InFront) | getLayerMask(RenderLayer.Back);
     this._geometryPass = new GeometryPass(sceneHandler.scene, materialManager, renderMode, layerMask);
   }
 
-  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget = true): void {
+  public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget = true): void {
     this._outputRenderTarget = target;
     this._autoSizeRenderTarget = autoSizeRenderTarget;
   }
 
-  public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
+  public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
     renderer.setRenderTarget(this._outputRenderTarget);
     yield this._geometryPass;
@@ -43,8 +44,8 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   public dispose(): void {}
 
-  private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
-    const renderSize = new THREE.Vector2();
+  private updateRenderTargetSizes(renderer: WebGLRenderer): void {
+    const renderSize = new Vector2();
     renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;

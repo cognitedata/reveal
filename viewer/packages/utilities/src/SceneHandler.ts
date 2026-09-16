@@ -2,26 +2,27 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Object3D } from 'three';
+import { Line, Mesh, Points, Scene } from 'three';
 import { remove } from 'lodash-es';
 import type { ICustomObject } from './customObject/ICustomObject';
 import { CustomObject } from './customObject/CustomObject';
 
 export class SceneHandler {
-  private readonly _scene: THREE.Scene;
-  private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: symbol }[];
-  private readonly _pointCloudModels: { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[];
+  private readonly _scene: Scene;
+  private readonly _cadModels: { cadNode: Object3D; modelIdentifier: symbol }[];
+  private readonly _pointCloudModels: { pointCloudNode: Object3D; modelIdentifier: symbol }[];
   private readonly _customObjects: ICustomObject[];
 
-  get scene(): THREE.Scene {
+  get scene(): Scene {
     return this._scene;
   }
 
-  get cadModels(): { cadNode: THREE.Object3D; modelIdentifier: symbol }[] {
+  get cadModels(): { cadNode: Object3D; modelIdentifier: symbol }[] {
     return this._cadModels;
   }
 
-  get pointCloudModels(): { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[] {
+  get pointCloudModels(): { pointCloudNode: Object3D; modelIdentifier: symbol }[] {
     return this._pointCloudModels;
   }
 
@@ -33,32 +34,32 @@ export class SceneHandler {
     this._cadModels = [];
     this._pointCloudModels = [];
     this._customObjects = [];
-    this._scene = new THREE.Scene();
+    this._scene = new Scene();
 
     this._scene.matrixWorldAutoUpdate = false;
   }
 
-  public addCadModel(cadNode: THREE.Object3D, modelIdentifier: symbol): void {
+  public addCadModel(cadNode: Object3D, modelIdentifier: symbol): void {
     this._cadModels.push({ cadNode, modelIdentifier });
     this._scene.add(cadNode);
   }
 
-  public addPointCloudModel(pointCloudNode: THREE.Object3D, modelIdentifier: symbol): void {
+  public addPointCloudModel(pointCloudNode: Object3D, modelIdentifier: symbol): void {
     this._pointCloudModels.push({ pointCloudNode, modelIdentifier });
     this._scene.add(pointCloudNode);
   }
 
-  public removePointCloudModel(pointCloudNode: THREE.Object3D): void {
+  public removePointCloudModel(pointCloudNode: Object3D): void {
     this.scene.remove(pointCloudNode);
     remove(this._pointCloudModels, { pointCloudNode });
   }
 
-  public removeCadModel(cadNode: THREE.Object3D): void {
+  public removeCadModel(cadNode: Object3D): void {
     this.scene.remove(cadNode);
     remove(this._cadModels, { cadNode });
   }
 
-  public addObject3D(object: THREE.Object3D): void {
+  public addObject3D(object: Object3D): void {
     this.addCustomObject(new CustomObject(object));
   }
 
@@ -67,7 +68,7 @@ export class SceneHandler {
     this._scene.add(customObject.object);
   }
 
-  public removeObject3D(object: THREE.Object3D): void {
+  public removeObject3D(object: Object3D): void {
     const customObject = this._customObjects.find(customObject => customObject.object === object);
     if (customObject) {
       this.removeCustomObject(customObject);
@@ -85,8 +86,7 @@ export class SceneHandler {
     this._customObjects.splice(0);
 
     this.scene.traverse(object => {
-      const hasGeometry =
-        object instanceof THREE.Mesh || object instanceof THREE.Points || object instanceof THREE.Line;
+      const hasGeometry = object instanceof Mesh || object instanceof Points || object instanceof Line;
 
       if (!hasGeometry) {
         return;

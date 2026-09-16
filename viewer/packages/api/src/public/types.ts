@@ -11,8 +11,7 @@ import type { CognitePointCloudModel } from '@reveal/pointclouds';
  * Type abstraction for CogniteCadModel or CognitePointCloudModel;.
  */
 export type CogniteModel<T extends DataSourceType = ClassicDataSourceType> =
-  | CogniteCadModel
-  | CognitePointCloudModel<T>;
+  CogniteCadModel | CognitePointCloudModel<T>;
 
 export { WellKnownAsprsPointClassCodes } from '@reveal/pointclouds';
 
@@ -26,4 +25,4 @@ export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceT
   image360: Image360<T>;
 };
 
-export * from './migration/types';
+export type * from './migration/types';

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Matrix4, Sphere, Vector3 } from 'three';
 import {
   computeBoundingBoxFromCenterAndRadiusAttributes,
   computeBoundingBoxFromEllipseAttributes,
@@ -44,19 +44,19 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
       radiusB_attribute.offset,
       elementSize,
       0,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
-    expect(result).toEqual(new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(2, 2, 2)));
+    expect(result).toEqual(new Box3(new Vector3(0, 0, 0), new Vector3(2, 2, 2)));
   });
 
   test('two spheres, result contains both sphere bounding boxes', () => {
     // Arange
     const valuesAsFloats = new Float32Array(8);
     populateValues([-1, -5, 3], 6, [5, 9, 10], 10, 0, valuesAsFloats);
-    const sphere1 = new THREE.Sphere(new THREE.Vector3(-1, -5, 3), 6);
-    const sphere2 = new THREE.Sphere(new THREE.Vector3(5, 9, 10), 10);
+    const sphere1 = new Sphere(new Vector3(-1, -5, 3), 6);
+    const sphere2 = new Sphere(new Vector3(5, 9, 10), 10);
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
@@ -67,20 +67,20 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
       radiusB_attribute.offset,
       elementSize,
       0,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
-    expect(result.containsBox(sphere1.getBoundingBox(new THREE.Box3()))).toBeTruthy();
-    expect(result.containsBox(sphere2.getBoundingBox(new THREE.Box3()))).toBeTruthy();
+    expect(result.containsBox(sphere1.getBoundingBox(new Box3()))).toBeTruthy();
+    expect(result.containsBox(sphere2.getBoundingBox(new Box3()))).toBeTruthy();
   });
 
   test('second element returns correct bounding box', () => {
     // Arange
     const valuesAsFloats = new Float32Array(16);
     populateValues([3, 3, 3], 1, [7, 7, 7], 2, 1, valuesAsFloats);
-    const sphere1 = new THREE.Sphere(new THREE.Vector3(3, 3, 3), 1);
-    const sphere2 = new THREE.Sphere(new THREE.Vector3(7, 7, 7), 2);
+    const sphere1 = new Sphere(new Vector3(3, 3, 3), 1);
+    const sphere2 = new Sphere(new Vector3(7, 7, 7), 2);
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
@@ -91,12 +91,12 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
       radiusB_attribute.offset,
       elementSize,
       1,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
-    expect(result.containsBox(sphere1.getBoundingBox(new THREE.Box3()))).toBeTruthy();
-    expect(result.containsBox(sphere2.getBoundingBox(new THREE.Box3()))).toBeTruthy();
+    expect(result.containsBox(sphere1.getBoundingBox(new Box3()))).toBeTruthy();
+    expect(result.containsBox(sphere2.getBoundingBox(new Box3()))).toBeTruthy();
   });
 
   function populateValues(
@@ -148,11 +148,11 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
       valuesAsFloats,
       elementSize,
       0,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
-    expect(result).toEqual(new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(4, 4, 4)));
+    expect(result).toEqual(new Box3(new Vector3(1, 1, 1), new Vector3(4, 4, 4)));
   });
 
   test('second element returns correct bounding box', () => {
@@ -176,11 +176,11 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
       valuesAsFloats,
       elementSize,
       1,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
-    const box = new THREE.Box3().setFromArray(values.slice(12));
+    const box = new Box3().setFromArray(values.slice(12));
     expect(result).toEqual(box);
   });
 
@@ -219,8 +219,8 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
 
   test('unit bbox with identity transform, returns unit bbox', () => {
     // Arange
-    const baseBbox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
-    const matrix = new THREE.Matrix4().identity();
+    const baseBbox = new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+    const matrix = new Matrix4().identity();
     const valuesAsFloats = new Float32Array(matrix.toArray());
     const matrixByteOffset = instanceMatrixAttribute.offset;
 
@@ -231,7 +231,7 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
       elementSize,
       0,
       baseBbox,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
@@ -240,10 +240,10 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
 
   test('complex bbox with complex transform, returns transformed bbox', () => {
     // Arange
-    const baseBbox = new THREE.Box3(new THREE.Vector3(-2, 3, -5), new THREE.Vector3(2, 7, 3));
-    const matrix = new THREE.Matrix4().multiplyMatrices(
-      new THREE.Matrix4().makeTranslation(10, 11, 12),
-      new THREE.Matrix4().makeScale(1, 2, 3)
+    const baseBbox = new Box3(new Vector3(-2, 3, -5), new Vector3(2, 7, 3));
+    const matrix = new Matrix4().multiplyMatrices(
+      new Matrix4().makeTranslation(10, 11, 12),
+      new Matrix4().makeScale(1, 2, 3)
     );
     const valuesAsFloats = new Float32Array(matrix.toArray());
     const matrixByteOffset = instanceMatrixAttribute.offset;
@@ -255,7 +255,7 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
       elementSize,
       0,
       baseBbox,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
@@ -280,7 +280,7 @@ describe('computeBoundingBoxFromEllipseAttributes', () => {
 
   test('unit ellipse, returns unit bbox', () => {
     // Arange
-    const baseBbox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
+    const baseBbox = new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
     const valuesAsFloats = new Float32Array([
       // Center
       ...[0, 0, 0],
@@ -299,7 +299,7 @@ describe('computeBoundingBoxFromEllipseAttributes', () => {
       valuesAsFloats,
       elementSize,
       0,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
@@ -320,12 +320,10 @@ describe('computeBoundingBoxFromEllipseAttributes', () => {
       valuesAsFloats,
       elementSize,
       0,
-      new THREE.Box3()
+      new Box3()
     );
 
     // Assert
-    expect(result).toEqual(
-      new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(1, 2, 3), new THREE.Vector3(8, 8, 8))
-    );
+    expect(result).toEqual(new Box3().setFromCenterAndSize(new Vector3(1, 2, 3), new Vector3(8, 8, 8)));
   });
 });

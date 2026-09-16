@@ -57,10 +57,14 @@ type QueryResult<
     [SELECT_KEY in keyof TQueryRequest[SELECT]]: Array<
       InstanceType<TQueryRequest, SELECT_KEY> & {
         properties: {
-          [SELECT_SOURCE in NonNullable<
-            NonNullable<TQueryRequest[SELECT][SELECT_KEY]>[SOURCES]
-          >[number] as SELECT_SOURCE[SOURCE][SPACE]]: {
-            [SELECT_SOURCE_VAR in SELECT_SOURCE as `${SELECT_SOURCE_VAR[SOURCE][EXTERNALID]}/${SELECT_SOURCE_VAR[SOURCE][VERSION]}`]: SELECT_SOURCE_VAR[PROPERTIES][0] extends ALLPROPERTIES
+          [
+            SELECT_SOURCE in NonNullable<
+              NonNullable<TQueryRequest[SELECT][SELECT_KEY]>[SOURCES]
+            >[number] as SELECT_SOURCE[SOURCE][SPACE]
+          ]: {
+            [
+              SELECT_SOURCE_VAR in SELECT_SOURCE as `${SELECT_SOURCE_VAR[SOURCE][EXTERNALID]}/${SELECT_SOURCE_VAR[SOURCE][VERSION]}`
+            ]: SELECT_SOURCE_VAR[PROPERTIES][0] extends ALLPROPERTIES
               ? Record<string, unknown>
               : {
                   [SELECT_SOURCE_PROPERTY in SELECT_SOURCE_VAR[PROPERTIES][number]]: TypedSourceProperty<

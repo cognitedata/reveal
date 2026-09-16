@@ -11,15 +11,15 @@ export { defaultRenderOptions, SsaoSampleQuality, AntiAliasingMode } from './src
 
 export * from './src/pointcloud-rendering/constants';
 export * from './src/pointcloud-rendering/enums';
-export * from './src/pointcloud-rendering/types';
-export * from './src/pointcloud-rendering/PointCloudObjectIdMaps';
+export type * from './src/pointcloud-rendering/types';
+export type * from './src/pointcloud-rendering/PointCloudObjectIdMaps';
 export { DEFAULT_CLASSIFICATION } from './src/pointcloud-rendering/classification';
 
 export { RenderMode } from './src/rendering/RenderMode';
 export { RenderLayer, setModelRenderLayers } from './src/utilities/renderUtilities';
 export type { StyledTreeIndexSets } from './src/utilities/types';
 
-export type { Materials } from './src/rendering/materials';
+export { type Materials, initializeDefinesAndUniforms, forEachMaterial } from './src/rendering/materials';
 export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
 

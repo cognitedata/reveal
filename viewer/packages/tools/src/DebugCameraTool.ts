@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera } from 'three';
+import { CameraHelper } from 'three';
 import type { DisposedDelegate } from '@reveal/utilities';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
@@ -12,9 +13,9 @@ import type { DataSourceType } from '@reveal/data-providers';
 export class DebugCameraTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
-  private _cameraHelper?: THREE.CameraHelper;
+  private _cameraHelper?: CameraHelper;
 
-  private get viewerCamera(): THREE.PerspectiveCamera {
+  private get viewerCamera(): PerspectiveCamera {
     return this._viewer.cameraManager.getCamera();
   }
 
@@ -37,7 +38,7 @@ export class DebugCameraTool extends Cognite3DViewerToolBase {
 
   showCameraHelper(): void {
     this.hideCameraHelper();
-    this._cameraHelper = new THREE.CameraHelper(this.viewerCamera.clone() as THREE.PerspectiveCamera);
+    this._cameraHelper = new CameraHelper(this.viewerCamera.clone() as PerspectiveCamera);
     this._viewer.addObject3D(this._cameraHelper);
   }
 

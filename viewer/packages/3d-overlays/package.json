@@ -3,9 +3,9 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:serve --env testFixture=3dOverlays.VisualTest.ts",
-    "test": "yarn ws:test --config ./../../vitest.config.ts",
-    "lint": "yarn ws:lint"
+    "start": "pnpm -w run ws:serve",
+    "test": "vitest run --config ./../../vitest.config.ts",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
     "@reveal/utilities": "workspace:*"

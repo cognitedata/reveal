@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type * as THREE from 'three';
+import type { Box3, Plane } from 'three';
 import { visitBox3CornerPoints } from './visitBox3CornerPoints';
 
 /**
@@ -9,7 +9,7 @@ import { visitBox3CornerPoints } from './visitBox3CornerPoints';
  * of the plane provided (i.e. the corner point has a non-negative signed distance to the
  * plane)
  */
-export function isBox3OnPositiveSideOfPlane(box: THREE.Box3, plane: THREE.Plane): boolean {
+export function isBox3OnPositiveSideOfPlane(box: Box3, plane: Plane): boolean {
   let planeAccepts = false;
   visitBox3CornerPoints(box, boundCorner => {
     planeAccepts = planeAccepts || plane.distanceToPoint(boundCorner) >= 0;

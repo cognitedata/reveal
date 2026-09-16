@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { PerspectiveCamera } from 'three';
+import { Box3, Frustum, Matrix4, Vector3 } from 'three';
 
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
@@ -10,23 +11,23 @@ import type { SectorMetadata } from '@reveal/cad-parsers';
 import type { PrioritizedArea } from '@reveal/cad-styling';
 
 const preallocated = {
-  transformedBounds: new THREE.Box3()
+  transformedBounds: new Box3()
 };
 
 type ModifiedFrustum = {
   near: number;
   far: number;
   weight: number;
-  frustum: THREE.Frustum;
+  frustum: Frustum;
 };
 
 export class WeightFunctionsHelper {
-  private readonly _camera: THREE.PerspectiveCamera;
+  private readonly _camera: PerspectiveCamera;
   private _minSectorDistance: number = Infinity;
   private _maxSectorDistance: number = -Infinity;
   private readonly _modifiedFrustums: ModifiedFrustum[];
 
-  constructor(camera: THREE.PerspectiveCamera) {
+  constructor(camera: PerspectiveCamera) {
     this._camera = camera;
 
     // Create modified projection matrices to add heuristic of how "deep" in the frustum sectors are located
@@ -40,8 +41,8 @@ export class WeightFunctionsHelper {
       { near: near + 0.4 * nearFarRange, far: near + 1.0 * nearFarRange, weight: 0.2 } // 40-100% of frustum
     ].map(modifiedFrustum => {
       const projectionMatrix = createModifiedProjectionMatrix(camera, modifiedFrustum.near, modifiedFrustum.far);
-      const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, this._camera.matrixWorldInverse);
-      const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
+      const frustumMatrix = new Matrix4().multiplyMatrices(projectionMatrix, this._camera.matrixWorldInverse);
+      const frustum = new Frustum().setFromProjectionMatrix(frustumMatrix);
       return {
         ...modifiedFrustum,
         frustum
@@ -54,7 +55,7 @@ export class WeightFunctionsHelper {
     this._maxSectorDistance = -Infinity;
   }
 
-  addCandidateSectors(sectors: SectorMetadata[], modelMatrix: THREE.Matrix4): void {
+  addCandidateSectors(sectors: SectorMetadata[], modelMatrix: Matrix4): void {
     // Note! We compute distance to camera, not screen (which would probably be better)
     const { minDistance, maxDistance } = sectors.reduce(
       (minMax, sector) => {
@@ -69,7 +70,7 @@ export class WeightFunctionsHelper {
     this._maxSectorDistance = maxDistance;
   }
 
-  computeTransformedSectorBounds(sectorBounds: THREE.Box3, modelMatrix: THREE.Matrix4, out: THREE.Box3): void {
+  computeTransformedSectorBounds(sectorBounds: Box3, modelMatrix: Matrix4, out: Box3): void {
     out.copy(sectorBounds);
     out.applyMatrix4(modelMatrix);
   }
@@ -77,7 +78,7 @@ export class WeightFunctionsHelper {
   /**
    * Computes a weight in range [0-1], where 1 means close to camera and 0 means far away.
    */
-  computeDistanceToCameraWeight(transformedSectorBounds: THREE.Box3): number {
+  computeDistanceToCameraWeight(transformedSectorBounds: Box3): number {
     const minSectorDistance = this._minSectorDistance;
     const maxSectorDistance = this._maxSectorDistance;
 
@@ -96,7 +97,7 @@ export class WeightFunctionsHelper {
    * @param transformedSectorBounds
    * @returns
    */
-  computeScreenAreaWeight(transformedSectorBounds: THREE.Box3): number {
+  computeScreenAreaWeight(transformedSectorBounds: Box3): number {
     const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
     return distanceToCamera > 0.0 ? computeNdcAreaOfBox(this._camera, transformedSectorBounds) : 1.0;
   }
@@ -106,7 +107,7 @@ export class WeightFunctionsHelper {
    * in the frustum the sector is placed.
    * @param transformedSectorBounds
    */
-  computeFrustumDepthWeight(transformedSectorBounds: THREE.Box3): number {
+  computeFrustumDepthWeight(transformedSectorBounds: Box3): number {
     const frustumWeight = this._modifiedFrustums.reduce((accumulatedWeight, x) => {
       const { frustum, weight } = x;
       const accepted = frustum.intersectsBox(transformedSectorBounds);
@@ -130,7 +131,7 @@ export class WeightFunctionsHelper {
    * Computes a weight based on how large the biggest node within the sector
    * will be on screen (a number in range [0-1]).
    */
-  computeMaximumNodeScreenSizeWeight(transformedSectorBounds: THREE.Box3, maxNodeDiagonalLength: number): number {
+  computeMaximumNodeScreenSizeWeight(transformedSectorBounds: Box3, maxNodeDiagonalLength: number): number {
     const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
     if (distanceToCamera === 0.0) {
       return 1.0; // Can cover the whole screen regardless of how big the node is
@@ -140,7 +141,7 @@ export class WeightFunctionsHelper {
     // the size of this line on screen. Note that using camera distance is slightly wrong,
     // a better measurement is distance to screen but in practice this works well
     const p0 = this._camera
-      .getWorldDirection(new THREE.Vector3())
+      .getWorldDirection(new Vector3())
       .multiplyScalar(distanceToCamera)
       .add(this._camera.position);
     const p1 = p0.clone().addScaledVector(this._camera.up, maxNodeDiagonalLength);
@@ -162,7 +163,7 @@ export class WeightFunctionsHelper {
    * @param transformedSectorBounds   Bounds of sectors in "Reveal coordinates".
    * @param prioritizedAreas          Zero or more areas with associated priorities.
    */
-  computePrioritizedAreaWeight(transformedSectorBounds: THREE.Box3, prioritizedAreas: PrioritizedArea[]): number {
+  computePrioritizedAreaWeight(transformedSectorBounds: Box3, prioritizedAreas: PrioritizedArea[]): number {
     const extraPriority = prioritizedAreas.reduce((maxExtraPriority, prioritizedArea) => {
       if (transformedSectorBounds.intersectsBox(prioritizedArea.area)) {
         return Math.max(prioritizedArea.extraPriority, maxExtraPriority);
@@ -172,7 +173,7 @@ export class WeightFunctionsHelper {
     return extraPriority;
   }
 
-  private distanceToCamera(sector: SectorMetadata, modelMatrix: THREE.Matrix4) {
+  private distanceToCamera(sector: SectorMetadata, modelMatrix: Matrix4) {
     const { transformedBounds } = preallocated;
     transformedBounds.copy(sector.subtreeBoundingBox);
     transformedBounds.applyMatrix4(modelMatrix);
@@ -180,7 +181,7 @@ export class WeightFunctionsHelper {
   }
 }
 
-function createModifiedProjectionMatrix(camera: THREE.PerspectiveCamera, near: number, far: number): THREE.Matrix4 {
+function createModifiedProjectionMatrix(camera: PerspectiveCamera, near: number, far: number): Matrix4 {
   const modifiedCamera = camera.clone();
   modifiedCamera.near = near;
   modifiedCamera.far = far;

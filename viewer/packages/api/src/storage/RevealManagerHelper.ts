@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
 
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import type { RevealManager } from '../public/RevealManager';
@@ -74,7 +74,7 @@ export class RevealManagerHelper {
    * @param revealOptions
    */
   static createLocalHelper(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions
@@ -92,7 +92,7 @@ export class RevealManagerHelper {
    * @param sdkClient
    */
   static createCdfHelper(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions,
@@ -103,7 +103,7 @@ export class RevealManagerHelper {
   }
 
   static createCustomDataSourceHelper(
-    renderer: THREE.WebGLRenderer,
+    renderer: WebGLRenderer,
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions,

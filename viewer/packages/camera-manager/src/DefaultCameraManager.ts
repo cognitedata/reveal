@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import TWEEN, { type Tween } from '@tweenjs/tween.js';
 import { clamp } from 'lodash-es';
 
@@ -46,10 +46,10 @@ export class DefaultCameraManager implements CameraManager {
 
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private readonly _controls: ComboControls;
-  private readonly _camera: THREE.PerspectiveCamera;
+  private readonly _camera: PerspectiveCamera;
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
-  private readonly _raycaster = new THREE.Raycaster();
+  private readonly _raycaster = new Raycaster();
 
   private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
@@ -82,7 +82,7 @@ export class DefaultCameraManager implements CameraManager {
   private _cameraControlsOptions: Required<CameraControlsOptions> = {
     ...DefaultCameraManager.DefaultCameraControlsOptions
   };
-  private readonly _currentBoundingBox: THREE.Box3 = new THREE.Box3();
+  private readonly _currentBoundingBox: Box3 = new Box3();
   /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
@@ -114,9 +114,9 @@ export class DefaultCameraManager implements CameraManager {
     domElement: HTMLElement,
     inputHandler: InputHandler,
     raycastCallback: RaycastCallback,
-    camera?: THREE.PerspectiveCamera
+    camera?: PerspectiveCamera
   ) {
-    this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+    this._camera = camera ?? new PerspectiveCamera(60, undefined, 0.1, 10000);
 
     this._domElement = domElement;
     this._inputHandler = inputHandler;
@@ -161,7 +161,7 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
+  fitCameraToBoundingBox(box: Box3, duration?: number, radiusFactor: number = 2): void {
     const { position, target } = fitCameraToBoundingBox(this._camera, box, radiusFactor);
     this.moveCameraTo(position, target, duration);
   }
@@ -195,7 +195,7 @@ export class DefaultCameraManager implements CameraManager {
     return this.getComboControlsOptions().enableKeyboardNavigation;
   }
 
-  getCamera(): THREE.PerspectiveCamera {
+  getCamera(): PerspectiveCamera {
     return this._camera;
   }
 
@@ -210,7 +210,7 @@ export class DefaultCameraManager implements CameraManager {
       throw new Error(`Rotation and target can't be set at the same time`);
     }
     const newPosition = state.position ?? this._camera.position;
-    const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
+    const newRotation = (state.target ? new Quaternion() : state.rotation) ?? new Quaternion();
     const newTarget =
       state.target ??
       (state.rotation
@@ -277,7 +277,7 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  update(deltaTime: number, boundingBox: THREE.Box3): void {
+  update(deltaTime: number, boundingBox: Box3): void {
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this.updateCameraNearAndFar(this._camera, boundingBox);
       this._nearAndFarNeedsUpdate = false;
@@ -301,12 +301,7 @@ export class DefaultCameraManager implements CameraManager {
    * @param target Desired look-at target in world space.
    * @param duration Duration of the animation in milliseconds. If omitted, a default is derived from distance.
    */
-  moveCameraTo(
-    position: THREE.Vector3,
-    target: THREE.Vector3,
-    duration?: number,
-    keyboardNavigationEnabled = true
-  ): void {
+  moveCameraTo(position: Vector3, target: Vector3, duration?: number, keyboardNavigationEnabled = true): void {
     if (this._isDisposed) {
       return;
     }
@@ -330,8 +325,8 @@ export class DefaultCameraManager implements CameraManager {
       targetZ: target.z
     };
 
-    const tempTarget = new THREE.Vector3();
-    const tempPosition = new THREE.Vector3();
+    const tempTarget = new Vector3();
+    const tempPosition = new Vector3();
 
     const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
 
@@ -363,7 +358,7 @@ export class DefaultCameraManager implements CameraManager {
     tween.update(TWEEN.now());
   }
 
-  private moveCameraTargetTo(target: THREE.Vector3, duration?: number, keyboardNavigationEnabled = true): void {
+  private moveCameraTargetTo(target: Vector3, duration?: number, keyboardNavigationEnabled = true): void {
     if (this._isDisposed) {
       return;
     }
@@ -385,7 +380,7 @@ export class DefaultCameraManager implements CameraManager {
       targetZ: target.z
     };
 
-    const tempTarget = new THREE.Vector3();
+    const tempTarget = new Vector3();
 
     const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
 
@@ -426,7 +421,7 @@ export class DefaultCameraManager implements CameraManager {
     tween.update(TWEEN.now());
   }
 
-  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera, boundingBox: THREE.Box3): void {
+  private updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this._isDisposed) {
       return;
@@ -449,8 +444,8 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
-    this._raycaster.setFromCamera(new THREE.Vector2(), this._camera);
+  private calculateAnimationStartTarget(newTarget: Vector3): Vector3 {
+    this._raycaster.setFromCamera(new Vector2(), this._camera);
     const distanceToTarget = newTarget.distanceTo(this._camera.position);
     const scaledDirection = this._raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
 
@@ -493,14 +488,14 @@ export class DefaultCameraManager implements CameraManager {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateNewTargetWithoutModel(cursorPosition: THREE.Vector2, modelsBoundingBox: THREE.Box3): THREE.Vector3 {
+  private calculateNewTargetWithoutModel(cursorPosition: Vector2, modelsBoundingBox: Box3): Vector3 {
     const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
 
     const lastScrollTargetDistance = this._controls.getScrollTarget().distanceTo(this._camera.position);
 
     const newTargetDistance =
       lastScrollTargetDistance <= this.getComboControlsOptions().minDistance
-        ? Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize) / 2
+        ? Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollTargetDistance;
 
     this._raycaster.setFromCamera(cursorPosition, this._camera);
@@ -518,7 +513,7 @@ export class DefaultCameraManager implements CameraManager {
    * Calculates new camera target based on cursor position.
    * @param event PointerEvent that contains pointer location data.
    */
-  private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
+  private async calculateNewTarget(event: PointerEventData): Promise<Vector3> {
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
     const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, false);
 
@@ -576,7 +571,7 @@ export class DefaultCameraManager implements CameraManager {
     let wasLastScrollZoomOut = false;
     let lastWheelEventTime = 0;
 
-    const lastMousePosition = new THREE.Vector2();
+    const lastMousePosition = new Vector2();
 
     const onWheel = async (event: WheelEvent) => {
       // Added because cameraControls are disabled when doing picking, so
@@ -664,7 +659,7 @@ export class DefaultCameraManager implements CameraManager {
       modelRaycastData.intersection?.point ??
       this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
 
-    const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
+    const newPosition = new Vector3().subVectors(newTarget, this._camera.position);
     newPosition.divideScalar(2);
     newPosition.add(this._camera.position);
     this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);

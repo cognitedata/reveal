@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 import { CogniteCadModel } from './CogniteCadModel';
 
 import type { NodeAppearance } from '@reveal/cad-styling';
@@ -39,9 +39,7 @@ describe(CogniteCadModel.name, () => {
       .setup(x => x.getBoundingBoxesByNodeIds(It.IsAny(), It.IsAny(), It.IsAny()))
       .callback(expression => {
         const nodeIds: number[] = expression.args[2];
-        const bboxes = nodeIds.map(
-          id => new THREE.Box3(new THREE.Vector3(id, id, id), new THREE.Vector3(id + 1, id + 1, id + 1))
-        );
+        const bboxes = nodeIds.map(id => new Box3(new Vector3(id, id, id), new Vector3(id + 1, id + 1, id + 1)));
         return Promise.resolve(bboxes);
       });
     model = createCadModel(1, 2, 3, 3, mockApiClient.object());
@@ -108,31 +106,29 @@ describe(CogniteCadModel.name, () => {
   });
 
   test('getBoundingBoxByTreeIndex() modifies out-parameter', async () => {
-    const bbox = new THREE.Box3();
+    const bbox = new Box3();
     const result = await model.getBoundingBoxByTreeIndex(1, bbox);
     expect(result).toBe(bbox);
-    expect(result).not.toEqual(new THREE.Box3());
+    expect(result).not.toEqual(new Box3());
   });
 
   test('getBoundingBoxByNodeId() modifies out-parameter', async () => {
-    const bbox = new THREE.Box3();
+    const bbox = new Box3();
     const result = await model.getBoundingBoxByNodeId(1, bbox);
     expect(result).toBe(bbox);
-    expect(result).not.toEqual(new THREE.Box3());
+    expect(result).not.toEqual(new Box3());
   });
 
   test('getBoundingBoxByNodeIds() modifies out-parameter', async () => {
     const result = await model.getBoundingBoxesByNodeIds([1, 2]);
-    expect(result).toEqual(
-      [1, 2].map(i => new THREE.Box3(new THREE.Vector3(i, i, i), new THREE.Vector3(i + 1, i + 1, i + 1)))
-    );
+    expect(result).toEqual([1, 2].map(i => new Box3(new Vector3(i, i, i), new Vector3(i + 1, i + 1, i + 1))));
   });
 
   test('setModelTransform() changes custom transform, not source transform', () => {
     const originalCustomTransform = model.getModelTransformation();
     const originalSourceTransform = model.getCdfToDefaultModelTransformation();
 
-    const modifyingTransform = new THREE.Matrix4().setPosition(1, 2, 3);
+    const modifyingTransform = new Matrix4().setPosition(1, 2, 3);
 
     model.setModelTransformation(modifyingTransform);
 

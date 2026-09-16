@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Camera, WebGLRenderer } from 'three';
 
 /**
  * The RenderPass interface describes some render pass
@@ -13,5 +13,5 @@ import type * as THREE from 'three';
  * some RenderPipelineProvider that defines the rendering job.
  */
 export interface RenderPass {
-  render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void;
+  render(renderer: WebGLRenderer, camera: Camera): void;
 }

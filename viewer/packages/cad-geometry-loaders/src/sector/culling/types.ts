@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type * as THREE from 'three';
+import type { PerspectiveCamera, Plane } from 'three';
 
 import type { PrioritizedArea } from '@reveal/cad-styling';
 import type { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
@@ -11,8 +11,8 @@ import type { CadModelBudget } from '../../CadModelBudget';
 import type { CadNode } from '@reveal/cad-model';
 
 export interface DetermineSectorsInput {
-  camera: THREE.PerspectiveCamera;
-  modelClippingPlanes: THREE.Plane[][];
+  camera: PerspectiveCamera;
+  modelClippingPlanes: Plane[][];
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
@@ -31,8 +31,8 @@ export interface DetermineSectorsInput {
 }
 
 export type DetermineSectorsPayload = {
-  camera: THREE.PerspectiveCamera;
-  clippingPlanes: THREE.Plane[];
+  camera: PerspectiveCamera;
+  clippingPlanes: Plane[];
   models: CadNode[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;

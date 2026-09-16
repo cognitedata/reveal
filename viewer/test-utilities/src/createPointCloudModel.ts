@@ -8,7 +8,7 @@ import { CognitePointCloudModel, PointCloudNode } from '../../packages/pointclou
 import type { Potree } from '../../packages/pointclouds/src/potree-three-loader';
 import { PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
 
-import * as THREE from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 
 import type { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
 import type { PointCloudMaterial } from '../../packages/rendering';
@@ -33,11 +33,11 @@ export function createPointCloudNode<T extends DataSourceType>(params?: {
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()
       .setup(p => p.boundingBox)
-      .returns(new THREE.Box3())
+      .returns(new Box3())
       .setup(p => p.offset)
-      .returns(new THREE.Vector3())
+      .returns(new Vector3())
       .setup(p => p.tightBoundingBox)
-      .returns(new THREE.Box3())
+      .returns(new Box3())
       .object(),
     new Mock<PointCloudMaterial>()
       .setup(p => p.classification)
@@ -47,7 +47,7 @@ export function createPointCloudNode<T extends DataSourceType>(params?: {
       .object()
   );
 
-  return new PointCloudNode(Symbol(), new THREE.Matrix4(), pointCloudOctree, params?.annotations ?? [], {
+  return new PointCloudNode(Symbol(), new Matrix4(), pointCloudOctree, params?.annotations ?? [], {
     classificationSets: []
   });
 }

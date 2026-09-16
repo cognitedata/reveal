@@ -2,17 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 export function filterPrimitivesOutsideClipBox(
   attributesByteValues: Uint8Array,
   elementSize: number,
-  clipBox: THREE.Box3,
+  clipBox: Box3,
   getBoundsOfElementsCallback: (
     index: number,
     elementSize: number,
     attributeFloatValues: Float32Array,
-    outBox: THREE.Box3
+    outBox: Box3
   ) => void
 ): Uint8Array<ArrayBuffer> {
   const elementCount = attributesByteValues.length / elementSize;
@@ -22,7 +22,7 @@ export function filterPrimitivesOutsideClipBox(
     attributesByteValues.byteLength / Float32Array.BYTES_PER_ELEMENT
   );
 
-  const instanceBbox = new THREE.Box3();
+  const instanceBbox = new Box3();
 
   const filteredByteValues = new Uint8Array(attributesByteValues.length);
   let filteredCount = 0;

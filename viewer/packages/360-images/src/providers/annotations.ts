@@ -1,8 +1,8 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { isCoreDmImage360Annotation } from '@reveal/360-images';
-import type { DataSourceType } from '../DataSourceType';
+import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
+import type { DataSourceType } from '@reveal/data-providers';
 import { dmInstanceRefToKey } from '@reveal/utilities';
 
 export function getAnnotationIdKey(annotation: DataSourceType['image360AnnotationType']): string {

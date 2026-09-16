@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3 } from 'three';
+import { Vector3 } from 'three';
 
 import type { CadModelMetadata } from './CadModelMetadata';
 import type { SectorMetadata } from './types';
@@ -11,9 +12,9 @@ import { SectorSceneFactory } from '../utilities/SectorSceneFactory';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 export class CadModelClipper {
-  private readonly _geometryClipBox: THREE.Box3;
+  private readonly _geometryClipBox: Box3;
 
-  constructor(geometryClipBox: THREE.Box3) {
+  constructor(geometryClipBox: Box3) {
     this._geometryClipBox = geometryClipBox;
   }
 
@@ -48,7 +49,7 @@ export class CadModelClipper {
   }
 }
 
-function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): SectorMetadata | undefined {
+function clipSector(sector: SectorMetadata, geometryClipBox: Box3): SectorMetadata | undefined {
   const originalBounds = sector.subtreeBoundingBox;
   const subtreeBoundingBox = sector.subtreeBoundingBox.clone();
   subtreeBoundingBox.intersect(geometryClipBox);
@@ -81,10 +82,10 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
 }
 
 const determineVolumeVars = {
-  size: new THREE.Vector3()
+  size: new Vector3()
 };
 
-function determineVolume(b: THREE.Box3) {
+function determineVolume(b: Box3) {
   const { size } = determineVolumeVars;
 
   b.getSize(size);

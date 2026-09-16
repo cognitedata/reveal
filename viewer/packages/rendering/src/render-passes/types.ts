@@ -3,14 +3,15 @@
  */
 
 import type { PointShape } from '../pointcloud-rendering';
-import * as THREE from 'three';
+import type { Blending, BlendingDstFactor, BlendingSrcFactor, DepthTexture, IUniform, Texture } from 'three';
+import { OneFactor, OneMinusDstAlphaFactor, OneMinusSrcAlphaFactor, SrcAlphaFactor } from 'three';
 import type { EdlOptions } from '../rendering/types';
 
 export type BlendOptions = {
-  blendDestination: THREE.BlendingDstFactor;
-  blendSource: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
-  blendDestinationAlpha?: THREE.BlendingDstFactor;
-  blendSourceAlpha?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
+  blendDestination: BlendingDstFactor;
+  blendSource: BlendingDstFactor | BlendingSrcFactor;
+  blendDestinationAlpha?: BlendingDstFactor;
+  blendSourceAlpha?: BlendingDstFactor | BlendingSrcFactor;
 };
 
 export enum BlitEffect {
@@ -20,10 +21,10 @@ export enum BlitEffect {
 }
 
 export type BlitOptions = {
-  texture: THREE.Texture;
+  texture: Texture;
   effect?: BlitEffect;
-  depthTexture: THREE.DepthTexture | null;
-  ssaoTexture?: THREE.Texture;
+  depthTexture: DepthTexture | null;
+  ssaoTexture?: Texture;
   blendOptions?: BlendOptions;
   overrideAlpha?: number;
   edges?: boolean;
@@ -31,32 +32,32 @@ export type BlitOptions = {
 };
 
 export type DepthBlendBlitOptions = {
-  texture: THREE.Texture;
-  depthTexture: THREE.DepthTexture | null;
-  blendTexture: THREE.Texture;
-  blendDepthTexture: THREE.Texture | null;
+  texture: Texture;
+  depthTexture: DepthTexture | null;
+  blendTexture: Texture;
+  blendDepthTexture: Texture | null;
   blendFactor: number;
   overrideAlpha?: number;
   outline?: boolean;
 };
 
 export type PointCloudPostProcessingOptions = {
-  logDepthTexture: THREE.Texture;
-  texture: THREE.Texture;
-  depthTexture: THREE.DepthTexture | null;
+  logDepthTexture: Texture;
+  texture: Texture;
+  depthTexture: DepthTexture | null;
   pointBlending: boolean;
   edlOptions: EdlOptions;
 };
 
 export const transparentBlendOptions: BlendOptions = {
-  blendDestination: THREE.OneMinusSrcAlphaFactor,
-  blendSource: THREE.SrcAlphaFactor,
-  blendDestinationAlpha: THREE.OneFactor,
-  blendSourceAlpha: THREE.OneMinusDstAlphaFactor
+  blendDestination: OneMinusSrcAlphaFactor,
+  blendSource: SrcAlphaFactor,
+  blendDestinationAlpha: OneFactor,
+  blendSourceAlpha: OneMinusDstAlphaFactor
 };
 
 export type ThreeUniforms = {
-  [uniform: string]: THREE.IUniform<any>;
+  [uniform: string]: IUniform<any>;
 };
 
 export type PointCloudMaterialParameters = {
@@ -65,9 +66,9 @@ export type PointCloudMaterialParameters = {
   useEDL?: boolean;
   hqDepthPass?: boolean;
   depthWrite?: boolean;
-  blending?: THREE.Blending;
-  blendSrc?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
-  blendDst?: THREE.BlendingDstFactor;
+  blending?: Blending;
+  blendSrc?: BlendingDstFactor | BlendingSrcFactor;
+  blendDst?: BlendingDstFactor;
   colorWrite?: boolean;
 };
 

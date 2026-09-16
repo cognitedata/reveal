@@ -29,6 +29,10 @@ export type Overlay3DCollectionOptions = {
    */
   maxPointSize?: number;
   /**
+   * The minimum display size of each icon in pixels
+   */
+  minPointSize?: number;
+  /**
    * The default color to apply to overlay icons without a color on their own
    */
   defaultOverlayColor?: Color;
@@ -82,7 +86,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       {
         spriteTexture: this._sharedTextures.color,
         maskTexture: this._sharedTextures.mask,
-        minPixelSize: this.MinPixelSize,
+        minPixelSize: options?.minPointSize ?? this.MinPixelSize,
         maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
         radius: this._iconRadius
       },

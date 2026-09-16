@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Camera, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Vector2, Vector3, Vector4 } from 'three';
 
 import {
   worldToNormalizedViewportCoordinates,
@@ -37,8 +38,8 @@ expect.extend({
 });
 
 describe('worldToViewport', () => {
-  let renderer: THREE.WebGLRenderer;
-  let camera: THREE.PerspectiveCamera;
+  let renderer: WebGLRenderer;
+  let camera: PerspectiveCamera;
   let canvasRect: DOMRect;
 
   beforeEach(async () => {
@@ -47,7 +48,7 @@ describe('worldToViewport', () => {
       height: 64
     } as DOMRect;
 
-    camera = new THREE.PerspectiveCamera();
+    camera = new PerspectiveCamera();
     camera.near = 1;
     camera.far = 10;
     camera.position.set(0, 0, 0);
@@ -58,12 +59,12 @@ describe('worldToViewport', () => {
     const canvas = document.createElement('canvas');
     vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
 
-    renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>(), { canvas }).object();
+    renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>(), { canvas }).object();
     renderer.setSize(64, 64);
   });
 
   test('coordinate outside viewport', () => {
-    const p = new THREE.Vector3(100, 100, 100);
+    const p = new Vector3(100, 100, 100);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -77,7 +78,7 @@ describe('worldToViewport', () => {
   });
 
   test('coordinate behind far plane', () => {
-    const p = new THREE.Vector3(0, 0, 11);
+    const p = new Vector3(0, 0, 11);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -91,7 +92,7 @@ describe('worldToViewport', () => {
   });
 
   test('coordinate in front of near plane', () => {
-    const p = new THREE.Vector3(0, 0, -2);
+    const p = new Vector3(0, 0, -2);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -105,25 +106,25 @@ describe('worldToViewport', () => {
   });
 
   test('pixel ratio is not 1', () => {
-    const p = new THREE.Vector3(0.25, 1.25, 5);
+    const p = new Vector3(0.25, 1.25, 5);
 
     renderer.setPixelRatio(1.0);
-    const absoluteWithPixelRatio1 = worldToViewportCoordinates(renderer.domElement, camera, p, new THREE.Vector3());
-    const normalizedWithPixelRatio1 = worldToNormalizedViewportCoordinates(camera, p, new THREE.Vector3());
+    const absoluteWithPixelRatio1 = worldToViewportCoordinates(renderer.domElement, camera, p, new Vector3());
+    const normalizedWithPixelRatio1 = worldToNormalizedViewportCoordinates(camera, p, new Vector3());
 
     const pixelRatio = 2.5;
     renderer.setPixelRatio(pixelRatio);
-    const scaledRenderer = renderer.getSize(new THREE.Vector2()).multiplyScalar(pixelRatio);
+    const scaledRenderer = renderer.getSize(new Vector2()).multiplyScalar(pixelRatio);
     renderer.setSize(scaledRenderer.x, scaledRenderer.y);
-    const absoluteWithPixelRatio2 = worldToViewportCoordinates(renderer.domElement, camera, p, new THREE.Vector3());
-    const normalizedWithPixelRatio2 = worldToNormalizedViewportCoordinates(camera, p, new THREE.Vector3());
+    const absoluteWithPixelRatio2 = worldToViewportCoordinates(renderer.domElement, camera, p, new Vector3());
+    const normalizedWithPixelRatio2 = worldToNormalizedViewportCoordinates(camera, p, new Vector3());
 
     expect(absoluteWithPixelRatio2).toEqual(absoluteWithPixelRatio1);
     expect(normalizedWithPixelRatio2).toEqual(normalizedWithPixelRatio1);
   });
 
   test('far top-left corner of view frustum, returns top-left corner of canvas', () => {
-    const p = ndcToWorld(new THREE.Vector3(-1, 1, 1), camera);
+    const p = ndcToWorld(new Vector3(-1, 1, 1), camera);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -137,7 +138,7 @@ describe('worldToViewport', () => {
   });
 
   test('near top-left corner of view frustum, returns top-left corner of canvas', () => {
-    const p = ndcToWorld(new THREE.Vector3(-1, 1, -1), camera);
+    const p = ndcToWorld(new Vector3(-1, 1, -1), camera);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -151,7 +152,7 @@ describe('worldToViewport', () => {
   });
 
   test('far bottom-right corner of view frustum, returns bottom-right corner of canvas', () => {
-    const p = ndcToWorld(new THREE.Vector3(1, -1, 1), camera);
+    const p = ndcToWorld(new Vector3(1, -1, 1), camera);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -165,7 +166,7 @@ describe('worldToViewport', () => {
   });
 
   test('near bottom-right corner of view frustum, returns bottom-right corner of canvas', () => {
-    const p = ndcToWorld(new THREE.Vector3(1, -1, -1), camera);
+    const p = ndcToWorld(new Vector3(1, -1, -1), camera);
     const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
@@ -179,12 +180,12 @@ describe('worldToViewport', () => {
   });
 });
 
-function ndcToWorld(ndcPoint: THREE.Vector3, camera: THREE.Camera): THREE.Vector3 {
-  const p = new THREE.Vector4(ndcPoint.x, ndcPoint.y, ndcPoint.z, 1.0);
+function ndcToWorld(ndcPoint: Vector3, camera: Camera): Vector3 {
+  const p = new Vector4(ndcPoint.x, ndcPoint.y, ndcPoint.z, 1.0);
   p.applyMatrix4(camera.projectionMatrixInverse);
   p.divideScalar(p.w);
   p.applyMatrix4(camera.matrixWorldInverse);
-  return new THREE.Vector3(p.x, p.y, p.z);
+  return new Vector3(p.x, p.y, p.z);
 }
 
 describe(getNormalizedPixelCoordinates.name, () => {

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Box3 } from 'three';
 
 import type { ListResponse } from '@cognite/sdk';
 import type { NumericRange } from '@reveal/utilities';
@@ -15,7 +15,7 @@ import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
  */
 export class PopulateIndexSetFromPagedResponseHelper<T> {
   private readonly _itemsToTreeIndexRangesCallback: (item: T[]) => NumericRange[];
-  private readonly _itemsToAreasCallback: (item: T[]) => Promise<THREE.Box3[]>;
+  private readonly _itemsToAreasCallback: (item: T[]) => Promise<Box3[]>;
   private readonly _notifyChangedCallback: () => void;
 
   private _ongoingOperations = 0;
@@ -25,7 +25,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
 
   constructor(
     itemsToTreeIndexRangesCallback: (items: T[]) => NumericRange[],
-    itemsToAreasCallback: (items: T[]) => Promise<THREE.Box3[]>,
+    itemsToAreasCallback: (items: T[]) => Promise<Box3[]>,
     notifySetChangedCallback: () => void
   ) {
     this._itemsToTreeIndexRangesCallback = itemsToTreeIndexRangesCallback;

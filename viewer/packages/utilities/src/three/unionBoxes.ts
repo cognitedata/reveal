@@ -2,10 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
-export function unionBoxes(boxes: THREE.Box3[], out?: THREE.Box3): THREE.Box3 {
-  out = out ?? new THREE.Box3();
+export function unionBoxes(boxes: Box3[], out?: Box3): Box3 {
+  out = out ?? new Box3();
   out.makeEmpty();
 
   boxes.forEach(inputBox => {

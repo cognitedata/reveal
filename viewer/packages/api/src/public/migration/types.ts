@@ -341,8 +341,7 @@ export type ResolutionOptions = {
  * @module @cognite/reveal
  */
 export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
-  | CadIntersection
-  | PointCloudIntersection<T>;
+  CadIntersection | PointCloudIntersection<T>;
 
 /**
  * Represents the result from a 360 intersection test.

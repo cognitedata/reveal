@@ -7,28 +7,53 @@ import type {
   AnnotationsTypesImagesInstanceLink,
   IdEither
 } from '@cognite/sdk';
-import type * as THREE from 'three';
+import type { Matrix4, Texture } from 'three';
 import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import type {
-  AssetAnnotationImage360Info,
-  AssetHybridAnnotationImage360Info,
-  DefaultImage360Collection,
-  Image360AnnotationAssetQueryResult,
-  Image360AnnotationInstanceReference
-} from '@reveal/360-images';
 import type { DMInstanceRef } from '@reveal/utilities';
-
-export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
-  annotation: T['image360AnnotationType']
-) => boolean;
+import type { ModelIdentifier } from './ModelIdentifier';
 
 export interface JsonFileProvider {
+  /**
+   * Download and parse a JSON file and return the resulting struct.
+   * @param baseUrl     Base URL of the model. Pass empty string to treat fileName as a full signed URL.
+   * @param fileName    Filename of JSON file, or a full signed URL when baseUrl is empty.
+   */
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
 export interface BinaryFileProvider {
+  /**
+   * Downloads a binary blob.
+   * @param baseUrl     Base URL of the model. Pass empty string to treat fileName as a full signed URL.
+   * @param fileName    Filename of binary file, or a full signed URL when baseUrl is empty.
+   * @param abortSignal Optional abort signal that can be used to cancel an in progress fetch.
+   */
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
+export interface SignedFileProvider {
+  /**
+   * Retrieves signed URLs for files belonging to a model revision.
+   * @param baseUrl          Base URL of the signed files endpoint.
+   * @param modelIdentifier  Identifier of the model revision to fetch URLs for.
+   * @param fileNameFilter   Optional filename to filter results to a single file.
+   */
+  getFileUrlsForModel?(
+    baseUrl: string,
+    modelIdentifier: ModelIdentifier,
+    fileNameFilter?: string
+  ): Promise<SignedFileItem[]>;
+}
+
+export type SignedFileItem = {
+  signedUrl: string;
+  fileName: string;
+  subPath: string;
+};
+
+export type SignedFilesResponseWithCursor = {
+  items: SignedFileItem[];
+  nextCursor?: string;
+};
 
 /**
  * An ID identifiying a single Image360 entity within a collection
@@ -39,67 +64,10 @@ export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
  */
 export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
 
-export type Image360AnnotationSpecifier<T extends DataSourceType> = {
-  revisionId: Image360RevisionId<T>;
-  fileDescriptors: Image360FileDescriptor[];
-};
-
 /**
  * Filter for finding linked annotations in either a classic 360 collection or a new one
  */
 export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
-
-export interface Image360AnnotationProvider<T extends DataSourceType> {
-  getRelevant360ImageAnnotations(
-    annotationSpecifier: Image360AnnotationSpecifier<T>
-  ): Promise<T['image360AnnotationType'][]>;
-
-  /**
-   * Resolves the mapping from internal file IDs (annotatedResourceId) to external IDs.
-   * This is needed to match annotations to face descriptors when descriptors use externalId.
-   * Optional - if not implemented, the caller should build mapping from descriptors only.
-   */
-  resolveFileIdToExternalIdMapping?(
-    annotations: T['image360AnnotationType'][],
-    descriptors: Image360FileDescriptor[]
-  ): Promise<Map<number, string>>;
-
-  findImageAnnotationsForInstance(
-    instanceFilter: Image360AnnotationInstanceReference<T>,
-    collection: DefaultImage360Collection<T>
-  ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
-
-  getAllImage360AnnotationInfos(
-    source: 'assets',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'hybrid',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetHybridAnnotationImage360Info[]>;
-  getAllImage360AnnotationInfos(
-    source: 'cdm',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'all',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
-  getAllImage360AnnotationInfos(
-    source: 'assets' | 'hybrid' | 'cdm' | 'all',
-    collection: DefaultImage360Collection<T>,
-    annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<
-    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
-    | AssetAnnotationImage360Info<DMDataSourceType>[]
-    | AssetAnnotationImage360Info<DataSourceType>[]
-    | AssetHybridAnnotationImage360Info[]
-  >;
-}
 
 export interface Image360DescriptorProvider<T extends DataSourceType> {
   get360ImageDescriptors(
@@ -155,7 +123,7 @@ export type Image360RevisionDescriptor<T extends DataSourceType> = {
   label: string | undefined;
   collectionId: string;
   collectionLabel: string | undefined;
-  transform: THREE.Matrix4;
+  transform: Matrix4;
 };
 
 export type FaceName = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
@@ -170,7 +138,7 @@ export type Image360Face = {
 
 export type Image360Texture = {
   face: FaceName;
-  texture: THREE.Texture;
+  texture: Texture;
 };
 
 export type Image360FileDescriptor = {

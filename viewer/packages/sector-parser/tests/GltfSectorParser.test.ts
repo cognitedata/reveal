@@ -14,10 +14,21 @@ describe(GltfSectorParser.name, () => {
   let parser: GltfSectorParser;
 
   beforeAll(async () => {
+    vi.stubGlobal('createImageBitmap', (source: ImageData) => {
+      return Promise.resolve({
+        width: source.width || 100,
+        height: source.height || 100,
+        close() {}
+      });
+    });
     parser = new GltfSectorParser();
     const primitivesByteBuffer = fs.readFileSync(import.meta.dirname + '/test-all-primitives.glb');
 
     parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
+  });
+
+  afterAll(() => {
+    vi.unstubAllGlobals();
   });
 
   test('Parsing test.glb should have 11 output primitive types', () => {

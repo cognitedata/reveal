@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import type { ViewReference } from '@cognite/sdk';
+import type { ContainerReference, ViewReference } from '@cognite/sdk';
 
 export const CORE_DM_SPACE = 'cdf_cdm';
 export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d';
@@ -13,6 +13,24 @@ export const COGNITE_POINT_CLOUD_VOLUME_SOURCE = {
   version: 'v1',
   type: 'view'
 } as const satisfies ViewReference;
+
+export const COGNITE_POINT_CLOUD_VOLUME_CONTAINER_SOURCE = {
+  type: 'container',
+  externalId: 'CognitePointCloudVolume',
+  space: CORE_DM_3D_CONTAINER_SPACE
+} as const satisfies ContainerReference;
+
+export const COGNITE_3D_OBJECT_CONTAINER_SOURCE = {
+  type: 'container',
+  externalId: 'Cognite3DObject',
+  space: CORE_DM_3D_CONTAINER_SPACE
+} as const satisfies ContainerReference;
+
+export const COGNITE_VISUALIZABLE_CONTAINER_SOURCE = {
+  type: 'container',
+  externalId: 'CogniteVisualizable',
+  space: CORE_DM_SPACE
+} as const satisfies ContainerReference;
 
 export const COGNITE_ASSET_SOURCE = {
   externalId: 'CogniteAsset',

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 import type { WantedSector, ConsumedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
@@ -89,8 +89,8 @@ function mockWantedSectors(id: number): {
     id,
     path: '0/',
     depth: 0,
-    subtreeBoundingBox: new THREE.Box3(),
-    geometryBoundingBox: new THREE.Box3(),
+    subtreeBoundingBox: new Box3(),
+    geometryBoundingBox: new Box3(),
     estimatedDrawCallCount: 0,
     estimatedRenderCost: 0,
     minDiagonalLength: 0.1,
@@ -103,11 +103,26 @@ function mockWantedSectors(id: number): {
   const modelIdentifier = new LocalModelIdentifier('modelIdentifer');
   const modelBaseUrl = 'https://localhost/';
   return {
-    simple: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Simple, geometryClipBox: null },
-    detailed: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Detailed, geometryClipBox: null },
+    simple: {
+      modelIdentifier,
+      modelBaseUrl,
+      signedFilesBaseUrl: undefined,
+      metadata,
+      levelOfDetail: LevelOfDetail.Simple,
+      geometryClipBox: null
+    },
+    detailed: {
+      modelIdentifier,
+      modelBaseUrl,
+      signedFilesBaseUrl: undefined,
+      metadata,
+      levelOfDetail: LevelOfDetail.Detailed,
+      geometryClipBox: null
+    },
     discarded: {
       modelIdentifier,
       modelBaseUrl,
+      signedFilesBaseUrl: undefined,
       metadata,
       levelOfDetail: LevelOfDetail.Discarded,
       geometryClipBox: null

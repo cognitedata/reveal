@@ -51,7 +51,7 @@ export class PointCloudFactory {
     modelIdentifier: ModelIdentifier,
     modelMetadata: PointCloudMetadata
   ): Promise<PointCloudNode<T>> {
-    const { modelBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
+    const { modelBaseUrl, signedFilesBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
 
     const annotationInfoPromise = isLocalIdentifier(identifier)
       ? this._pointCloudObjectProvider.getPointCloudObjects({ modelId: -1, revisionId: -1 })
@@ -70,11 +70,18 @@ export class PointCloudFactory {
       createObjectIdMaps<DataSourceType>(annotationInfo)
     );
 
+    const preloadedEptData =
+      modelMetadata.signedFiles && modelMetadata.scene
+        ? { signedFiles: modelMetadata.signedFiles, fileData: modelMetadata.scene }
+        : undefined;
+
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       stylableObject,
-      modelIdentifier.revealInternalId
+      modelIdentifier,
+      signedFilesBaseUrl,
+      preloadedEptData
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;

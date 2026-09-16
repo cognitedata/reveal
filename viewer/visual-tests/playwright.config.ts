@@ -3,6 +3,7 @@
  */
 
 import { defineConfig } from '@playwright/test';
+import path from 'path';
 
 export default defineConfig({
   testDir: '.',
@@ -23,10 +24,11 @@ export default defineConfig({
     }
   },
   webServer: {
-    command: 'yarn run test:visual:server',
+    command: 'pnpm run test:visual:server',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
     ignoreHTTPSErrors: true,
-    timeout: 60 * 1000
+    timeout: 60 * 1000,
+    cwd: path.resolve(__dirname, '..')
   }
 });

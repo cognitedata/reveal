@@ -3,11 +3,11 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:serve --env testFixture=PointCloudColorStyling.VisualTest.ts",
-    "test": "yarn ws:test --config ./../../vitest.config.ts",
-    "run-wasm-pack": "yarn run ws:update-cargo-index && wasm-pack",
-    "test:wasm": "yarn ws:test:wasm",
-    "lint": "yarn ws:lint"
+    "start": "pnpm -w run ws:serve",
+    "test": "vitest run --config ./../../vitest.config.ts",
+    "run-wasm-pack": "pnpm -w run ws:update-cargo-index && wasm-pack",
+    "test:wasm": "wasm-pack test --chrome --headless ./wasm",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
     "@reveal/data-providers": "workspace:*",

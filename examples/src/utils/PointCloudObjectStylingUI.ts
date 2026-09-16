@@ -33,6 +33,7 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
     creatingAppVersion: string;
     creatingUser: string | null;
     assetRef: number;
+    importance: number;
   } = {
     id: 0,
     createdTime: '',
@@ -41,7 +42,8 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
     creatingApp: '',
     creatingAppVersion: '',
     creatingUser: '',
-    assetRef: 0
+    assetRef: 0,
+    importance: 0
   };
   private _createAnnotationsOnClick = false;
 
@@ -261,7 +263,7 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
   }
 
   private createByObjectIndexUi(ui: dat.GUI) {
-    const state = { from: 0, count: 1, annotationId: 0 };
+    const state = { from: 0, count: 1, annotationId: 0, importance: 0 };
     const createAppearanceCb = this.createObjectAppearanceUi(ui);
     const actions = {
       apply: () => {
@@ -279,12 +281,13 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
 
         const objects = new AnnotationIdPointCloudObjectCollection(ids);
         const appearance = createAppearanceCb();
-        this._model.assignStyledObjectCollection(objects, appearance);
+        this._model.assignStyledObjectCollection(objects, appearance, state.importance);
       }
     };
     ui.add(state, 'from', 0, this._model.stylableObjectCount - 1, 1).name('First object ID');
     ui.add(state, 'count', 1, this._model.stylableObjectCount, 1).name('Object ID count');
     ui.add(state, 'annotationId', 0).name(`Object's annotationId`);
+    ui.add(state, 'importance', 0).name('Style importance');
     ui.add(actions, 'apply').name('Apply');
   }
 }

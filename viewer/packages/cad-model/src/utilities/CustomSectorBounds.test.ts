@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, Matrix4 } from 'three';
 import { CustomSectorBounds } from './CustomSectorBounds';
 import type { CadNode } from '../wrappers/CadNode';
 import { Mock } from 'moq.ts';
@@ -91,7 +91,7 @@ it much easier to reason about the expected result of any given test.
 
 type DummyNode = {
   treeIndex: number;
-  originalBoundingBox: THREE.Box3;
+  originalBoundingBox: Box3;
 };
 
 describe('CustomSectorBounds', () => {
@@ -99,7 +99,7 @@ describe('CustomSectorBounds', () => {
   let cadNodeMock: Mock<CadNode>;
   let sectorMetadataRoot: SectorMetadata;
   let sectorMetadataById: Map<number, SectorMetadata>;
-  let originalSectorBounds: Map<number, THREE.Box3>;
+  let originalSectorBounds: Map<number, Box3>;
 
   const nodeA: DummyNode = { treeIndex: 1000, originalBoundingBox: boundsFrom(0, 0, 1, 1) };
   const nodeB: DummyNode = { treeIndex: 1001, originalBoundingBox: boundsFrom(3, 1, 4, 2) };
@@ -132,7 +132,7 @@ describe('CustomSectorBounds', () => {
     });
 
     // Store copy of sector bounds
-    originalSectorBounds = new Map<number, THREE.Box3>();
+    originalSectorBounds = new Map<number, Box3>();
     for (const [sectorId, sectorMetadata] of sectorMetadataById) {
       originalSectorBounds.set(sectorId, sectorMetadata.subtreeBoundingBox.clone());
     }
@@ -375,12 +375,12 @@ describe('CustomSectorBounds', () => {
     [0, 1, 3, 4, 5].forEach(i => expectOriginalBounds(i));
   });
 
-  function translation(x: number, y: number): THREE.Matrix4 {
-    return new THREE.Matrix4().setPosition(x, y, 0);
+  function translation(x: number, y: number): Matrix4 {
+    return new Matrix4().setPosition(x, y, 0);
   }
 
-  function boundsFrom(minX: number, minY: number, maxX: number, maxY: number): THREE.Box3 {
-    return new THREE.Box3().setFromArray([minX, minY, 0, maxX, maxY, 1]);
+  function boundsFrom(minX: number, minY: number, maxX: number, maxY: number): Box3 {
+    return new Box3().setFromArray([minX, minY, 0, maxX, maxY, 1]);
   }
 
   function expectOriginalBounds(sectorId: number) {
@@ -393,7 +393,7 @@ describe('CustomSectorBounds', () => {
     expect(sectorBounds.equals(originalBounds)).toBeTruthy();
   }
 
-  function expectBoundsApproximatelyEqual(sectorId: number, expected: THREE.Box3, precision = 3) {
+  function expectBoundsApproximatelyEqual(sectorId: number, expected: Box3, precision = 3) {
     const sectorBounds = sectorMetadataById.get(sectorId)?.subtreeBoundingBox;
 
     assert(sectorBounds !== undefined);

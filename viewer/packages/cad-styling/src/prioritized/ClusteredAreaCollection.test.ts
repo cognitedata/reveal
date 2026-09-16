@@ -8,7 +8,7 @@ import { createRandomBoxes } from '../../../../test-utilities/src/createBoxes';
 
 import SeededRandom from 'random-seed';
 
-import * as THREE from 'three';
+import { Box3 } from 'three';
 
 describe('ClusteredAreaCollection', () => {
   test('empty set is empty', () => {
@@ -16,7 +16,7 @@ describe('ClusteredAreaCollection', () => {
 
     expect(areaCollection.isEmpty).toBeTruthy();
 
-    areaCollection.addAreas([new THREE.Box3().setFromArray([1, 2, 3, 4, 5, 6])]);
+    areaCollection.addAreas([new Box3().setFromArray([1, 2, 3, 4, 5, 6])]);
 
     expect(areaCollection.isEmpty).toBeFalsy();
   });

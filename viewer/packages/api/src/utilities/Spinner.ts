@@ -4,7 +4,7 @@
 
 import css from './spinnerStyles.module.css?inline';
 import svg from './spinnerCogniteLogo.svg?raw';
-import type * as THREE from 'three';
+import type { Color } from 'three';
 
 import { assertNever } from '@reveal/utilities';
 import { REVEAL_VERSION } from '../version';
@@ -106,7 +106,7 @@ export class Spinner {
    * @param color.g 0..1 green
    * @param color.b 0..1 blue
    */
-  updateBackgroundColor(color: Pick<THREE.Color, 'getHSL'>): void {
+  updateBackgroundColor(color: Pick<Color, 'getHSL'>): void {
     const { l: lightness } = color.getHSL({ h: 0, s: 0, l: 0 });
 
     if (lightness > 0.5) {

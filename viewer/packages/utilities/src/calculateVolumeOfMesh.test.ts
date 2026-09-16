@@ -2,14 +2,15 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { BufferAttribute } from 'three';
+import { BoxGeometry, ConeGeometry, CylinderGeometry, SphereGeometry } from 'three';
 import { calculateVolumeOfMesh } from './calculateVolumeOfMesh';
 
 describe(calculateVolumeOfMesh.name, () => {
   test('Volume of unit box should be 1', () => {
-    const testBox = new THREE.BoxGeometry(1, 1, 1, 1, 1, 1);
+    const testBox = new BoxGeometry(1, 1, 1, 1, 1, 1);
     const volume = calculateVolumeOfMesh(
-      Float32Array.from((testBox.getAttribute('position') as THREE.BufferAttribute).array),
+      Float32Array.from((testBox.getAttribute('position') as BufferAttribute).array),
       Uint32Array.from(testBox.getIndex()!.array)
     );
 
@@ -17,9 +18,9 @@ describe(calculateVolumeOfMesh.name, () => {
   });
 
   test('Volume of unit sphere should be (4 / 3) * PI', () => {
-    const testSphere = new THREE.SphereGeometry(1, 200, 200);
+    const testSphere = new SphereGeometry(1, 200, 200);
     const calculatedVolume = calculateVolumeOfMesh(
-      Float32Array.from((testSphere.getAttribute('position') as THREE.BufferAttribute).array),
+      Float32Array.from((testSphere.getAttribute('position') as BufferAttribute).array),
       Uint32Array.from(testSphere.getIndex()!.array)
     );
 
@@ -29,10 +30,10 @@ describe(calculateVolumeOfMesh.name, () => {
   });
 
   test('Volume of unit cylinder should be PI', () => {
-    const testCylinder = new THREE.CylinderGeometry(1, 1, 1, 200, 200);
+    const testCylinder = new CylinderGeometry(1, 1, 1, 200, 200);
 
     const calculatedVolume = calculateVolumeOfMesh(
-      Float32Array.from((testCylinder.getAttribute('position') as THREE.BufferAttribute).array),
+      Float32Array.from((testCylinder.getAttribute('position') as BufferAttribute).array),
       Uint32Array.from(testCylinder.getIndex()!.array)
     );
 
@@ -42,10 +43,10 @@ describe(calculateVolumeOfMesh.name, () => {
   });
 
   test('Volume of unit cone should be PI / 3', () => {
-    const testCylinder = new THREE.ConeGeometry(1, 1, 200, 200);
+    const testCylinder = new ConeGeometry(1, 1, 200, 200);
 
     const calculatedVolume = calculateVolumeOfMesh(
-      Float32Array.from((testCylinder.getAttribute('position') as THREE.BufferAttribute).array),
+      Float32Array.from((testCylinder.getAttribute('position') as BufferAttribute).array),
       Uint32Array.from(testCylinder.getIndex()!.array)
     );
 

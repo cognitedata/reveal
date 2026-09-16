@@ -3,7 +3,7 @@
  */
 
 import { NumericRange } from '@reveal/utilities';
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 import type { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import type { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
@@ -18,7 +18,7 @@ export default class SsaoVisualTest extends StreamingVisualTestFixture {
     )!;
 
     const transformProvider = cadMaterialManager.getModelNodeTransformProvider(modelIdentifier);
-    transformProvider.setNodeTransform(new NumericRange(1, 1), new THREE.Matrix4().makeTranslation(4, 0, 0));
+    transformProvider.setNodeTransform(new NumericRange(1, 1), new Matrix4().makeTranslation(4, 0, 0));
 
     const renderOptions = defaultRenderOptions;
     renderOptions.ssaoRenderParameters = {
@@ -29,7 +29,7 @@ export default class SsaoVisualTest extends StreamingVisualTestFixture {
 
     (this.pipelineProvider as DefaultRenderPipelineProvider).renderOptions = renderOptions;
 
-    const matrix = new THREE.Matrix4().makeTranslation(10.5, -1, 15);
+    const matrix = new Matrix4().makeTranslation(10.5, -1, 15);
 
     model.geometryNode.setModelTransformation(matrix);
 

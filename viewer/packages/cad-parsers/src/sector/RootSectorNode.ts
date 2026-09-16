@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Matrix4 } from 'three';
 
 import { SectorNode } from './SectorNode';
 import type { CadModelMetadata } from '../metadata/CadModelMetadata';
@@ -35,12 +35,12 @@ export class RootSectorNode extends SectorNode {
     }
   }
 
-  setModelTransformation(matrix: THREE.Matrix4): void {
+  setModelTransformation(matrix: Matrix4): void {
     this.matrix.copy(matrix);
     this.updateMatrixWorld(true);
   }
 
-  getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
+  getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this.matrix);
   }
 }
@@ -49,7 +49,7 @@ function buildScene(
   sector: SectorMetadata,
   parent: SectorNode,
   sectorNodeMap: Map<number, SectorNode>,
-  modelMatrix: THREE.Matrix4
+  modelMatrix: Matrix4
 ) {
   const bounds = sector.subtreeBoundingBox.clone();
   bounds.applyMatrix4(modelMatrix);

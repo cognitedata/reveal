@@ -5,29 +5,29 @@ The underlying stack leverages [playwright](https://playwright.dev/).
 
 The way it works is that we use [vite dev server](https://vite.dev/guide/cli#vite) to serve the contents of the visual tests (visual tests server) and have an instance of playwright (visual tests automation) play through the different visual tests.
 
-To run the visual tests on your local environment, simply run `yarn run test:visual` from the `/viewer` directory.
+To run the visual tests on your local environment, simply run `pnpm run test:visual` from the `/viewer` directory.
 
 This will initiate a two-step process of hosting the visual tests server and running the visual tests client.
-In case you want to run the visual tests multiple times, you can run these processes separately such that you do not have to spin up the server on each run, which will shorten the feedback cycle. To do this, simply run `yarn run test:visual:server` and `yarn run test:visual` in two separate terminals. Once the visual tests complete, the test server will still keep running, and you can run the visual test client again. If you want to only test a subset of the visual tests, you can start them in watch mode with `yarn run test:visual --ui` and then use the standard playwright GUI to filter tests. Note that tests will not auto-run when you change visual tests since the watch mode is only on the test runner, so you will have to trigger a new run manually through the watch GUI.
+In case you want to run the visual tests multiple times, you can run these processes separately such that you do not have to spin up the server on each run, which will shorten the feedback cycle. To do this, simply run `pnpm run test:visual:server` and `pnpm run test:visual` in two separate terminals. Once the visual tests complete, the test server will still keep running, and you can run the visual test client again. If you want to only test a subset of the visual tests, you can start them in watch mode with `pnpm run test:visual --ui` and then use the standard playwright GUI to filter tests. Note that tests will not auto-run when you change visual tests since the watch mode is only on the test runner, so you will have to trigger a new run manually through the watch GUI.
 
 
 ## Running visual test in browser
 Often it can be useful to locally develop against a visual test or simply inspect the result of visual tests.
 There are currently multiple ways to do this based on your need.
-The simplest way is to start the visual tests server with `yarn run test:visual:server` and navigate to the hosted location.
+The simplest way is to start the visual tests server with `pnpm run test:visual:server` and navigate to the hosted location.
 You will notice only a blank screen due to not specifying which test should be run.
 To specify the visual test to run add the `testfixture` url parameter with the value being the file name (without extension) of the test you want to run (f.ex. `https://localhost:8080/?testfixture=Rendering.VisualTest`).
 Changes made to the visual test will automatically rebuild the test server and reload the test.
 
 It is also possible to programatically start a visual test from the blank root page (`https://localhost:8080`) with `window.render` method (f.ex. `window.render('Rendering.VisualTest')`).
 
-For packages in Reveal you might want to create an visual test entrypoint in a `yarn start` command.
+For packages in Reveal you might want to create an visual test entrypoint in a `pnpm run start` command.
 This can be done by simply specifying and passing environment variable to vite in the command call.
 
 
 An example script for a package.json would be something like this:
 ```
-"start": "yarn ws:serve --env testFixture=Rendering.VisualTest.ts", 
+"start": "pnpm -w run ws:serve --env testFixture=Rendering.VisualTest.ts", 
 ```
 Where the `testFixture` variable points to whatever you would like the entrypoint to be.
 
@@ -66,7 +66,7 @@ https://localhost:8080/?testfixture=Rendering.VisualTest&modelId=123456789&revis
 Reveal requires no form of registration of visual tests and simply detects a visual test based on the filename suffix similar to how normal unit tests work.
 For the testing framework to recognize a visual test it must have the `.VisualTest.ts` suffix, so for example `Colors.VisualTest.ts` is a valid name.
 The visual test must have a default export of a class that extends the `VisualTestFixture` interface.
-Other than that there are no restrictions placed and successfully doing this will automatically register the visual test to be run using the `yarn run test:visual` command.
+Other than that there are no restrictions placed and successfully doing this will automatically register the visual test to be run using the `pnpm run test:visual` command.
 
 For convenience, there exists base classes that can be used to handle a lot of the common boilerplate code for a visual tests (model loading, instantiating common components and authentication).
 Most usecases should be covered by the following abstraction levels:

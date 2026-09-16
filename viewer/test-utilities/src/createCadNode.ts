@@ -31,7 +31,7 @@ export function createCadNode(
       .returns(() => {})
       .object();
 
-  const cadNode = new CadNode(cadMetadata, materialManager, mockSectorRepository);
+  const cadNode = new CadNode(cadMetadata, mockSectorRepository);
   materialManager.addModelMaterials(cadMetadata.modelIdentifier.revealInternalId, cadNode.cadMaterial);
 
   return cadNode;

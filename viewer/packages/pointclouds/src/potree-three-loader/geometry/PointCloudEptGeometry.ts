@@ -4,7 +4,7 @@
  * License in LICENSE.potree
  */
 
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
 
 import { EptBinaryLoader } from '../loading/EptBinaryLoader';
 import type { EptJson, EptSchemaEntry } from '../loading/EptJson';
@@ -22,15 +22,15 @@ function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {
 }
 
 export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
-  private readonly _eptScale: THREE.Vector3;
-  private readonly _eptOffset: THREE.Vector3;
+  private readonly _eptScale: Vector3;
+  private readonly _eptOffset: Vector3;
 
   private readonly _url: string;
 
-  private readonly _boundingBox: THREE.Box3;
-  private readonly _tightBoundingBox: THREE.Box3;
+  private readonly _boundingBox: Box3;
+  private readonly _tightBoundingBox: Box3;
 
-  private readonly _offset: THREE.Vector3;
+  private readonly _offset: Vector3;
 
   private readonly _loader: EptBinaryLoader;
 
@@ -53,15 +53,15 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     this._root = r;
   }
 
-  get boundingBox(): THREE.Box3 {
+  get boundingBox(): Box3 {
     return this._boundingBox;
   }
 
-  get tightBoundingBox(): THREE.Box3 {
+  get tightBoundingBox(): Box3 {
     return this._tightBoundingBox;
   }
 
-  get offset(): THREE.Vector3 {
+  get offset(): Vector3 {
     return this._offset;
   }
 
@@ -77,11 +77,11 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._schema;
   }
 
-  get eptScale(): THREE.Vector3 {
+  get eptScale(): Vector3 {
     return this._eptScale;
   }
 
-  get eptOffset(): THREE.Vector3 {
+  get eptOffset(): Vector3 {
     return this._eptOffset;
   }
 
@@ -121,10 +121,10 @@ export class EptKey {
   readonly x: number;
   readonly y: number;
   readonly z: number;
-  readonly b: THREE.Box3;
+  readonly b: Box3;
   readonly d: number;
 
-  constructor(ept: PointCloudEptGeometry, b: THREE.Box3, d: number, x?: number, y?: number, z?: number) {
+  constructor(ept: PointCloudEptGeometry, b: Box3, d: number, x?: number, y?: number, z?: number) {
     this.ept = ept;
     this.b = b;
     this.d = d;
@@ -140,7 +140,7 @@ export class EptKey {
   step(a: number, b: number, c: number): EptKey {
     const min = this.b.min.clone();
     const max = this.b.max.clone();
-    const dst = new THREE.Vector3().subVectors(max, min);
+    const dst = new Vector3().subVectors(max, min);
 
     if (a) min.x += dst.x / 2;
     else max.x -= dst.x / 2;
@@ -151,7 +151,7 @@ export class EptKey {
     if (c) min.z += dst.z / 2;
     else max.z -= dst.z / 2;
 
-    return new EptKey(this.ept, new THREE.Box3(min, max), this.d + 1, this.x * 2 + a, this.y * 2 + b, this.z * 2 + c);
+    return new EptKey(this.ept, new Box3(min, max), this.d + 1, this.x * 2 + a, this.y * 2 + b, this.z * 2 + c);
   }
 
   children(): string[] {

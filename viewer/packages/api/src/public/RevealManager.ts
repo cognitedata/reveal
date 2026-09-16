@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { PerspectiveCamera, Plane, Vector3, WebGLRenderTarget } from 'three';
 
 import { isEqual } from 'lodash-es';
 
@@ -26,13 +26,7 @@ import type {
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import type { CameraManager } from '@reveal/camera-manager';
 
-import type {
-  ClassicModelIdentifierType,
-  DataSourceType,
-  File3dFormat,
-  InternalDataSourceType,
-  LocalModelIdentifierType
-} from '@reveal/data-providers';
+import type { DataSourceType, File3dFormat, InternalDataSourceType } from '@reveal/data-providers';
 import { createModelIdentifier } from '@reveal/data-providers';
 import type { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
@@ -66,7 +60,7 @@ export class RevealManager {
 
   private readonly _cameraManager: CameraManager;
 
-  private readonly _onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void;
+  private readonly _onCameraChange: (position: Vector3, target: Vector3) => void;
   private readonly _onCameraStop: () => void;
 
   constructor(
@@ -85,7 +79,7 @@ export class RevealManager {
     this._subscriptions = this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
-    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => (this._cameraInMotion = true);
+    this._onCameraChange = (_position: Vector3, _target: Vector3) => (this._cameraInMotion = true);
     this._onCameraStop = () => (this._cameraInMotion = false);
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
@@ -118,7 +112,7 @@ export class RevealManager {
     this._resizeHandler.resetRedraw();
   }
 
-  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
+  public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
     this._renderPipeline.setOutputRenderTarget(target, autoSizeRenderTarget);
   }
 
@@ -130,7 +124,7 @@ export class RevealManager {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw || this._resizeHandler.needsRedraw;
   }
 
-  public update(camera: THREE.PerspectiveCamera): void {
+  public update(camera: PerspectiveCamera): void {
     this._cadManager.updateCamera(camera, this._cameraInMotion);
 
     if (this._cameraInMotion) {
@@ -166,12 +160,12 @@ export class RevealManager {
     this._pointCloudManager.pointBudget = budget.numberOfPoints;
   }
 
-  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+  public set clippingPlanes(clippingPlanes: Plane[]) {
     this._cadManager.clippingPlanes = clippingPlanes;
     this._pointCloudManager.clippingPlanes = clippingPlanes;
   }
 
-  public get clippingPlanes(): THREE.Plane[] {
+  public get clippingPlanes(): Plane[] {
     return this._cadManager.clippingPlanes;
   }
 
@@ -215,7 +209,7 @@ export class RevealManager {
     this.requestRedraw();
   }
 
-  public render(camera: THREE.PerspectiveCamera): void {
+  public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
@@ -239,7 +233,7 @@ export class RevealManager {
       case 'cad': {
         return this._cadManager.addModel(
           createModelIdentifier(
-            modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType,
+            { ...modelIdentifier, ...modelIdentifier.classicModelRevisionId },
             options?.outputFormat
           ),
           options?.geometryFilter,

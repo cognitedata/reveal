@@ -2,13 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Camera, WebGLRenderer } from 'three';
 import type { RenderPipelineExecutor } from '../RenderPipelineExecutor';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { GpuTimer } from '../utilities/GpuTimer';
 
 export class StepPipelineExecutor implements RenderPipelineExecutor {
-  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _renderer: WebGLRenderer;
   private _numSteps: number | undefined;
   private readonly _gpuTimer: GpuTimer;
 
@@ -20,13 +20,13 @@ export class StepPipelineExecutor implements RenderPipelineExecutor {
     return this._gpuTimer.timings;
   }
 
-  constructor(renderer: THREE.WebGLRenderer) {
+  constructor(renderer: WebGLRenderer) {
     this._renderer = renderer;
     renderer.info.autoReset = false;
     this._gpuTimer = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);
   }
 
-  public render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void {
+  public render(renderPipeline: RenderPipelineProvider, camera: Camera): void {
     this._renderer.info.reset();
     let count = 0;
 

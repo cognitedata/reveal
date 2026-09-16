@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { Box3, PerspectiveCamera } from 'three';
+import { Sphere, Vector3 } from 'three';
 
 /**
  * Calculates camera position and target that allows to see the content of provided bounding box.
@@ -12,15 +13,15 @@ import * as THREE from 'three';
  * @returns
  */
 export function fitCameraToBoundingBox(
-  camera: THREE.PerspectiveCamera,
-  boundingBox: THREE.Box3,
+  camera: PerspectiveCamera,
+  boundingBox: Box3,
   radiusFactor: number = 2
-): { position: THREE.Vector3; target: THREE.Vector3 } {
-  const boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+): { position: Vector3; target: Vector3 } {
+  const boundingSphere = boundingBox.getBoundingSphere(new Sphere());
 
   const target = boundingSphere.center;
   const distance = boundingSphere.radius * radiusFactor;
-  const direction = new THREE.Vector3(0, 0, -1);
+  const direction = new Vector3(0, 0, -1);
   direction.applyQuaternion(camera.quaternion);
 
   const position = direction.clone().multiplyScalar(-distance).add(target);

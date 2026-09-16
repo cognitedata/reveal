@@ -3,31 +3,30 @@
  */
 
 import { GltfSectorRepository } from '../src/GltfSectorRepository';
-import { createBinaryFileProviderMock, createWantedSectorMock } from './mockSectorUtils';
+import { createModelDataProviderMock, createWantedSectorMock } from './mockSectorUtils';
 
 import type { IMock } from 'moq.ts';
 import { Mock, It } from 'moq.ts';
 
-import type { BinaryFileProvider, ModelIdentifier } from '@reveal/data-providers';
-import { LocalModelIdentifier } from '@reveal/data-providers';
+import type { ModelDataProvider, ModelIdentifier } from '@reveal/data-providers';
+import { DMModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
 import type { WantedSector, SectorMetadata, ConsumedSector } from '@reveal/cad-parsers';
 import { LevelOfDetail } from '@reveal/cad-parsers';
 import { Log } from '@reveal/logger';
 
-import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 
 describe(GltfSectorRepository.name, () => {
-  let binaryFileProvider: IMock<BinaryFileProvider>;
+  let modelDataProvider: IMock<ModelDataProvider>;
   let sectorRepository: GltfSectorRepository;
   let wantedSectorMock: IMock<WantedSector>;
 
   beforeEach(() => {
-    binaryFileProvider = createBinaryFileProviderMock();
+    modelDataProvider = createModelDataProviderMock();
 
     wantedSectorMock = createWantedSectorMock();
 
-    sectorRepository = new GltfSectorRepository(binaryFileProvider.object());
+    sectorRepository = new GltfSectorRepository(modelDataProvider.object());
   });
 
   test('loadSector returns sector metadata with right id and modelidentifier', async () => {
@@ -38,10 +37,10 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('previously fetched sector is cached by GltfSectorRepository', async () => {
-    const mockGetBinaryFile: ViMock<BinaryFileProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
-    const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
+    const mockBinaryProvider = { getBinaryFile: mockGetBinaryFile } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const testRepository = new GltfSectorRepository(mockBinaryProvider);
 
@@ -57,7 +56,7 @@ describe(GltfSectorRepository.name, () => {
     const currentLogLevel = Log.getLevel();
     Log.setLevel('silent');
 
-    const binaryFileProvider = createBinaryFileProviderMock();
+    const binaryFileProvider = createModelDataProviderMock();
 
     const sectorRepository = new GltfSectorRepository(binaryFileProvider.object());
 
@@ -67,7 +66,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test.each([
-    ['sectorFileName is undefined', { id: 1, sectorFileName: undefined, downloadSize: 100 }, LevelOfDetail.Detailed],
+    ['sectorFileName is null', { id: 4, sectorFileName: null, downloadSize: 100 }, LevelOfDetail.Detailed],
     ['downloadSize is 0', { id: 2, sectorFileName: 'test.glb', downloadSize: 0 }, LevelOfDetail.Detailed],
     ['levelOfDetail is Discarded', { id: 3, sectorFileName: 'test.glb', downloadSize: 100 }, LevelOfDetail.Discarded]
   ])('should return empty sector when %s', async (_, metadata, expectedLod) => {
@@ -81,10 +80,10 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('clearCache should clear the cache', async () => {
-    const mockGetBinaryFile: ViMock<BinaryFileProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
-    const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
+    const mockBinaryProvider = { getBinaryFile: mockGetBinaryFile } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const testRepository = new GltfSectorRepository(mockBinaryProvider);
 
@@ -103,10 +102,10 @@ describe(GltfSectorRepository.name, () => {
       createWantedSectorWithMetadata(testMetadata, LevelOfDetail.Detailed, modelId)
     );
 
-    const mockGetBinaryFile: ViMock<BinaryFileProvider['getBinaryFile']> = vi.fn();
+    const mockGetBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>();
     const mockBuffer = new ArrayBuffer(100);
     mockGetBinaryFile.mockResolvedValue(mockBuffer);
-    const mockBinaryProvider: BinaryFileProvider = { getBinaryFile: mockGetBinaryFile };
+    const mockBinaryProvider = { getBinaryFile: mockGetBinaryFile } as Partial<ModelDataProvider> as ModelDataProvider;
 
     const testRepository = new GltfSectorRepository(mockBinaryProvider);
 
@@ -117,7 +116,7 @@ describe(GltfSectorRepository.name, () => {
 
   test('should pass abort signal to sector loader', async () => {
     const abortController = new AbortController();
-    const mockProvider = new Mock<BinaryFileProvider>()
+    const mockProvider = new Mock<ModelDataProvider>()
       .setup(p => p.getBinaryFile(It.IsAny(), It.IsAny(), abortController.signal))
       .returnsAsync(new ArrayBuffer(0));
 
@@ -128,7 +127,7 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('should return empty discarded sector when loader fails', async () => {
-    const failingProvider = new Mock<BinaryFileProvider>()
+    const failingProvider = new Mock<ModelDataProvider>()
       .setup(p => p.getBinaryFile(It.IsAny(), It.IsAny(), It.IsAny()))
       .throws(new Error('Network error'));
 
@@ -356,6 +355,45 @@ describe(GltfSectorRepository.name, () => {
     for (let i = 100; i < 250; i++) {
       sectorRepository.dereferenceSector(modelId, i);
     }
+  });
+
+  test('loadSector calls getBinaryFile with empty baseUrl for DM model with signedUrl', async () => {
+    const signedUrl = 'https://signed.cdn.example.com/sector.glb';
+    const getBinaryFile = vi.fn<ModelDataProvider['getBinaryFile']>().mockResolvedValue(new ArrayBuffer(0));
+
+    const provider: ModelDataProvider = {
+      getBinaryFile,
+      getJsonFile: vi.fn(),
+      getFileUrlsForModel: vi.fn(async () => [])
+    } as Partial<ModelDataProvider> as ModelDataProvider;
+
+    const dmIdentifier = new DMModelIdentifier({
+      modelId: 1,
+      revisionId: 1,
+      revisionExternalId: 'ext',
+      revisionSpace: 'space'
+    });
+    const dmMetadata = new Mock<SectorMetadata>()
+      .setup(m => m.sectorFileName)
+      .returns('sector.glb')
+      .setup(m => m.downloadSize)
+      .returns(100)
+      .setup(m => m.signedUrl)
+      .returns(signedUrl)
+      .object();
+    const dmSector = new Mock<WantedSector>()
+      .setup(s => s.modelIdentifier)
+      .returns(dmIdentifier)
+      .setup(s => s.metadata)
+      .returns(dmMetadata)
+      .setup(s => s.modelBaseUrl)
+      .returns('https://example.com')
+      .object();
+
+    const repo = new GltfSectorRepository(provider);
+    await repo.loadSector(dmSector);
+
+    expect(getBinaryFile).toHaveBeenCalledWith('', signedUrl, undefined);
   });
 
   // Helper functions

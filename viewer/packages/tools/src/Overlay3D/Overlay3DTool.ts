@@ -4,7 +4,8 @@
 import type { Cognite3DViewer } from '@reveal/api';
 import type { DisposedDelegate, PointerEventData } from '@reveal/utilities';
 import { assertNever, EventTrigger, getNormalizedPixelCoordinates } from '@reveal/utilities';
-import * as THREE from 'three';
+import type { Texture } from 'three';
+import { Color, Vector3 } from 'three';
 import type {
   Overlay3DIcon,
   OverlayInfo,
@@ -43,7 +44,7 @@ export type Overlay3DToolParameters = {
   /**
    * Sets default overlay color for newly added labels.
    */
-  defaultOverlayColor: THREE.Color;
+  defaultOverlayColor: Color;
 };
 
 /**
@@ -54,13 +55,13 @@ export type OverlayCollectionOptions = {
    * Sets default overlay color for newly added overlays.
    * Default is yellow.
    * */
-  defaultOverlayColor?: THREE.Color;
+  defaultOverlayColor?: Color;
   /**
    * Sets default texture for all overlays of this OverlayCollection.
    * Must be a square texture, recommended size is at least `maxPointSize` for
    * not pixelated overlays.
    */
-  overlayTexture?: THREE.Texture;
+  overlayTexture?: Texture;
   /**
    * Sets default mask for all overlays of this OverlayCollection,
    * denoting where overlay color should be placed compared to texture color.
@@ -68,7 +69,7 @@ export type OverlayCollectionOptions = {
    * Texture should be monochrome. Internally, R channel is used for
    * denoting pixels that should be colored by texture and not by overlay color.
    */
-  overlayTextureMask?: THREE.Texture;
+  overlayTextureMask?: Texture;
 };
 
 /**
@@ -77,7 +78,7 @@ export type OverlayCollectionOptions = {
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
 
-  private readonly _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
+  private readonly _defaultOverlayColor: Color = new Color('#fbe50b');
 
   private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
@@ -290,9 +291,9 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
       mouseCoords.offsetY
     );
     const camera = _viewer.cameraManager.getCamera();
-    const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
+    const cameraDirection = camera.getWorldDirection(new Vector3());
 
-    const intersections: [Overlay3D<ContentType>, THREE.Vector3][] = [];
+    const intersections: [Overlay3D<ContentType>, Vector3][] = [];
 
     for (const points of this._overlayCollections) {
       const intersection = points.intersectOverlays(normalizedCoordinates, camera);
@@ -302,10 +303,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     }
 
     const sortedIntersections = intersections
-      .map(
-        ([icon, intersection]) =>
-          [icon, intersection.sub(camera.position)] as [Overlay3DIcon<ContentType>, THREE.Vector3]
-      )
+      .map(([icon, intersection]) => [icon, intersection.sub(camera.position)] as [Overlay3DIcon<ContentType>, Vector3])
       .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
       .sort((a, b) => a[1].length() - b[1].length());
 

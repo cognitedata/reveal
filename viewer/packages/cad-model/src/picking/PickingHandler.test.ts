@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import type { WebGLRenderer } from 'three';
+import { PerspectiveCamera, Vector2 } from 'three';
 
 import type { CadMaterialManager } from '@reveal/rendering';
 import { RenderMode } from '@reveal/rendering';
@@ -16,12 +17,12 @@ import { createCadModel, autoMockWebGLRenderer } from '../../../../test-utilitie
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
 
-  const camera = new THREE.PerspectiveCamera();
+  const camera = new PerspectiveCamera();
 
-  const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
+  const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
 
   const input: IntersectInput = {
-    normalizedCoords: new THREE.Vector2(0.5, 0.5),
+    normalizedCoords: new Vector2(0.5, 0.5),
     renderer,
     camera,
     clippingPlanes: [],

@@ -25,6 +25,7 @@ import { getDmsPaginationCursor } from '../../../../utilities/dmsPaginationUtils
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfImage360CollectionDmQuery>>>;
 
 type ImageInstanceResult = QueryResult['images'][number];
+type ImageStationResult = QueryResult['stations'][number];
 type ImageResultProperties = ImageInstanceResult['properties']['cdf_cdm']['Cognite360Image/v1'];
 
 // Collection types - batch query uses 'image_collections' (plural)
@@ -33,7 +34,7 @@ type CollectionInstanceResult = QueryResult['image_collections'][number];
 type BatchQueryResult = {
   image_collections: CollectionInstanceResult[];
   images: ImageInstanceResult[];
-  stations: DMInstanceRef[];
+  stations: ImageStationResult[];
   nextCursor?: Record<string, string>;
 };
 
@@ -145,8 +146,22 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
     }
 
     const imagesByCollection = new Map<DMInstanceKey, ImageInstanceResult[]>();
+    const stationById = new Map<DMInstanceKey, ImageStationResult>();
+    const stationByImage = new Map<DMInstanceKey, ImageStationResult>();
+
+    result.stations.forEach(station => {
+      stationById.set(dmInstanceRefToKey(station), station);
+    });
 
     result.images.forEach(image => {
+      const stationId = image.properties?.cdf_cdm?.['Cognite360Image/v1']?.station360;
+      if (stationId !== undefined && isDmIdentifier(stationId)) {
+        const station = stationById.get(dmInstanceRefToKey(stationId));
+        if (station !== undefined) {
+          stationByImage.set(dmInstanceRefToKey(image), station);
+        }
+      }
+
       const collectionRef = image.properties?.cdf_cdm?.['Cognite360Image/v1']?.collection360;
       if (!isDmIdentifier(collectionRef)) {
         return;
@@ -174,15 +189,16 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
 
       // Create file descriptors directly from images using instance IDs
       // This eliminates the need for /files/byids API calls (~100+ requests for large collections)
-      const imagesWithFiles = collectionImages.map(image => ({
+      const imagesWithFilesAndStation = collectionImages.map(image => ({
         image,
-        fileDescriptors: this.createFileDescriptorsFromImage(image)
+        fileDescriptors: this.createFileDescriptorsFromImage(image),
+        station: stationByImage.get(dmInstanceRefToKey(image))
       }));
 
       const historicalSets = this.createHistoricalImageSets(
         collectionId,
         collectionLabel ?? collectionId,
-        imagesWithFiles
+        imagesWithFilesAndStation
       );
 
       grouped.set(collectionKey, historicalSets);
@@ -219,10 +235,14 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   private createHistoricalImageSets(
     collectionId: string,
     collectionLabel: string,
-    imagesWithFiles: Array<{ image: ImageInstanceResult; fileDescriptors: Image360FileDescriptor[] }>
+    imagesWithFilesAndStation: Array<{
+      image: ImageInstanceResult;
+      fileDescriptors: Image360FileDescriptor[];
+      station?: ImageStationResult;
+    }>
   ): Historical360ImageSet<DMDataSourceType>[] {
     // Filter out images that don't have all 6 face files
-    const imagesGroupedWithFileDescriptors = imagesWithFiles.filter(
+    const imagesGroupedWithFileDescriptors = imagesWithFilesAndStation.filter(
       ({ fileDescriptors }) => fileDescriptors.length === 6
     );
 
@@ -249,13 +269,20 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
   private getHistorical360ImageSet(
     collectionId: string,
     collectionLabel: string,
-    imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: Image360FileDescriptor[] }[]
+    imageFileDescriptors: {
+      image: ImageInstanceResult;
+      fileDescriptors: Image360FileDescriptor[];
+      station?: ImageStationResult;
+    }[]
   ): Historical360ImageSet<DMDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_cdm['Cognite360Image/v1']
     );
 
     const id = imageFileDescriptors[0].image;
+
+    const stationName = imageFileDescriptors[0].station?.properties.cdf_cdm['Cognite360ImageStation/v1'].name;
+
     return {
       collectionId,
       collectionLabel,
@@ -267,7 +294,7 @@ export class Cdf360CdmBatchCollectionLoader extends BatchLoader<
           p.fileDescriptors
         )
       ),
-      label: '',
+      label: typeof stationName === 'string' ? stationName : '',
       transform: this.getRevisionTransform(mainImagePropsArray[0])
     };
   }

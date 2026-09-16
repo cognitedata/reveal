@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type * as THREE from 'three';
+import type { Box3 } from 'three';
 
 import type { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { HttpError } from '@cognite/sdk';
@@ -84,7 +84,7 @@ export class NodesCdfClient implements NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<THREE.Box3[]> {
+  ): Promise<Box3[]> {
     const chunks = chunkInputItems(nodeIds, NodesCdfClient.MaxItemsPerRequest);
     const mappedBoundingBoxPromises = [...chunks].map(async chunk => {
       return this._client.revisions3D.retrieve3DNodes(

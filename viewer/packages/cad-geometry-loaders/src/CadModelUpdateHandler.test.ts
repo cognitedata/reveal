@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { PerspectiveCamera } from 'three';
 
 import type { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
@@ -76,7 +76,7 @@ describe(CadModelUpdateHandler.name, () => {
 
       const updateHandler = new CadModelUpdateHandler(mockCuller);
       updateHandler.addModel(cadNode);
-      updateHandler.updateCamera(new THREE.PerspectiveCamera(), false);
+      updateHandler.updateCamera(new PerspectiveCamera(), false);
 
       await flushPipeline();
 
@@ -90,7 +90,7 @@ describe(CadModelUpdateHandler.name, () => {
 
       const updateHandler = new CadModelUpdateHandler(mockCuller);
       updateHandler.addModel(cadNode);
-      updateHandler.updateCamera(new THREE.PerspectiveCamera(), false);
+      updateHandler.updateCamera(new PerspectiveCamera(), false);
 
       await flushPipeline();
 
@@ -108,7 +108,7 @@ describe(CadModelUpdateHandler.name, () => {
 
       const updateHandler = new CadModelUpdateHandler(mockCuller);
       updateHandler.addModel(cadNode);
-      updateHandler.updateCamera(new THREE.PerspectiveCamera(), false);
+      updateHandler.updateCamera(new PerspectiveCamera(), false);
 
       await flushPipeline();
 
@@ -124,7 +124,7 @@ describe(CadModelUpdateHandler.name, () => {
 
       const updateHandler = new CadModelUpdateHandler(mockCuller);
       updateHandler.addModel(cadNode);
-      updateHandler.updateCamera(new THREE.PerspectiveCamera(), false);
+      updateHandler.updateCamera(new PerspectiveCamera(), false);
 
       await flushPipeline();
 

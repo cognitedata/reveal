@@ -66,7 +66,7 @@ export class Image360Facade<T extends DataSourceType> {
   public async create<Image360CollectionSourceType extends DataSourceType>(
     collectionIdentifier: Image360CollectionSourceType['image360Identifier'],
     annotationFilter: Image360AnnotationFilterOptions = {},
-    postTransform = new Matrix4(),
+    postTransform: Matrix4 = new Matrix4(),
     preComputedRotation = true
   ): Promise<DefaultImage360Collection<T>> {
     const sequencer = this._loadSequencer.getNextSequencer();

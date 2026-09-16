@@ -7,8 +7,8 @@ import { Spherical, Vector3 } from 'three';
 const MAX_VERICAL_COMPONTENT = 0.999;
 
 export class DampedSpherical {
-  public readonly value = new Spherical();
-  public readonly end = new Spherical();
+  public readonly value: Spherical = new Spherical();
+  public readonly end: Spherical = new Spherical();
 
   // Used as a temporary variable to avoid creating new objects
   private readonly _valueVector = new Vector3();

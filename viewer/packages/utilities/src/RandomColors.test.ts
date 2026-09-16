@@ -24,10 +24,14 @@ describe(RandomColors.name, () => {
 
   test('colorCSS() returns valid color', () => {
     function isValidColor(colorString: string) {
-      // https://stackoverflow.com/a/48485007
-      const s = new Option().style;
-      s.color = colorString;
-      return s.color === colorString;
+      if (!colorString || typeof colorString !== 'string') return false;
+
+      // Create an in-memory element to parse the style
+      const element = document.createElement('div');
+      element.style.color = colorString;
+
+      // Invalid values are ignored by the browser parser, leaving the style blank
+      return element.style.color !== '';
     }
     for (let i = 0; i < 1000; i++) {
       const cssString = RandomColors.colorCSS(i);
