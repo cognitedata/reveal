@@ -125,7 +125,8 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   }
 
   /**
-   * Fits the light frustum to the CAD bounds. Called every frame because sectors stream in,
+   * Fits the light frustum to the CAD caster bounds. Receivers may lie beyond its far plane.
+   * Called every frame because sectors stream in,
    * but it only depends on geometry, never on the view camera.
    */
   public setCadBounds(bounds: Box3): void {

@@ -76,6 +76,17 @@ vec2 cadShadowKernelRotation() {
     return vec2(cos(theta), sin(theta));
 }
 
+float cadShadowVisibility(vec2 uv, float compareDepth) {
+    // Taps outside the map are lit, rather than repeating the edge texel.
+    if (any(lessThan(uv, vec2(0.0))) || any(greaterThan(uv, vec2(1.0)))) {
+        return 1.0;
+    }
+
+    // The far plane bounds casters, not receivers. Beyond it, every stored caster
+    // can block the light, but cleared depth (1.0) must remain lit with LEQUAL.
+    return texture(tCadShadowMap, vec3(uv, min(compareDepth, 1.0)));
+}
+
 /**
  * Estimates how far in front of the receiver the blocker sits, normalised to [0, 1].
  *
@@ -100,8 +111,8 @@ float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRad
         // The search has to span the widest penumbra, otherwise a receiver just outside
         // a distant shadow never learns about the blocker and the soft edge gets cut off.
         vec2 tap = shadowUv + cadShadowDiskTap(i, rotation) * searchRadius;
-        blocked += 1.0 - texture(tCadShadowMap, vec3(tap, compareDepth));
-        distant += 1.0 - texture(tCadShadowMap, vec3(tap, compareDepth - probe));
+        blocked += 1.0 - cadShadowVisibility(tap, compareDepth);
+        distant += 1.0 - cadShadowVisibility(tap, compareDepth - probe);
         probe *= CAD_SHADOW_PROBE_GROWTH;
     }
 
@@ -130,11 +141,11 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     // kernel only comes into play deep inside a shadow, where acne cannot be seen.
     vec3 offsetPos = worldPos + worldNormal * (cadShadowTexelWorld * (CAD_SHADOW_CONTACT_TEXELS + 1.0));
 
-    // The light camera is always orthographic, so the projection never scales w and the
-    // clip position is already in NDC. One test on the magnitude then covers the frustum
-    // in all three axes, and rejecting here saves the whole filter below.
+    // Orthographic light rays keep the same UV beyond the caster frustum's far plane.
+    // Receivers there still see valid caster depths. Only reject lateral misses and
+    // points in front of the near plane, where no stored caster can block the light.
     vec3 lightNdc = (cadShadowMatrix * vec4(offsetPos, 1.0)).xyz;
-    if (any(greaterThan(abs(lightNdc), vec3(1.0)))) {
+    if (any(greaterThan(abs(lightNdc.xy), vec2(1.0))) || lightNdc.z < -1.0) {
         return 0.0;
     }
 
@@ -159,7 +170,7 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     float visibility = 0.0;
     for (int i = 0; i < CAD_SHADOW_TAPS; i++) {
         vec2 tap = shadowUv + cadShadowDiskTap(i, rotation) * penumbra;
-        visibility += texture(tCadShadowMap, vec3(tap, compareDepth));
+        visibility += cadShadowVisibility(tap, compareDepth);
     }
 
     float occlusion = 1.0 - visibility / float(CAD_SHADOW_TAPS);
