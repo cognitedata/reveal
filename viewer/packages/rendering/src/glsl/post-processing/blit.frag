@@ -73,17 +73,7 @@ void main() {
   vec4 diffuse = texture(tDiffuse, vUv);
 
   if(diffuse.a == 0.0){
-    #if defined(CAD_SHADOW)
-      float lit = cadShadowLit();
-      if (lit > 0.97) {
-        discard;
-      }
-      fragColor = vec4(vec3(0.0), (1.0 - lit) * 0.60);
-      gl_FragDepth = 1.0;
-      return;
-    #else
-      discard;
-    #endif
+    discard;
   }
 
 #if defined(FXAA)

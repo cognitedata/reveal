@@ -132,10 +132,6 @@ export class PostProcessingPass implements RenderPass {
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
   }
 
-  public setShadowGroundY(y: number): void {
-    this._cadShadowPass?.setShadowGroundY(y);
-  }
-
   public setSize(width: number, height: number): void {
     this._cadShadowPass?.setSize(width, height);
   }

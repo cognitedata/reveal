@@ -2,17 +2,15 @@ uniform mat4 inverseProjectionMatrix;
 uniform mat4 cadCameraMatrixWorld;
 uniform mat4 cadShadowMatrix;
 uniform highp sampler2DShadow tCadShadowMap;
-uniform vec4 cadShadowPlane;
 uniform vec3 cadShadowLightDirection;
 uniform float cadShadowTexelWorld;
 uniform float cadShadowDepthRange;
 uniform float cadShadowStrength;
 uniform float cadShadowEnabled;
-// 0 disables the fade. Receiver meshes are unlit and their depth derivatives are too
-// noisy on large planes for this to be a stable geometric test.
+// Controls the terminator fade for depth-reconstructed CAD surfaces.
 uniform float cadShadowTerminatorFade;
 
-const float CAD_SHADOW_EMPTY_DEPTH = 0.999;
+const float CAD_SHADOW_EMPTY_DEPTH = 1.0;
 const int CAD_SHADOW_TAPS = 16;
 const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
 
@@ -178,29 +176,6 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     return clamp(occlusion * gain, 0.0, 1.0);
 }
 
-bool cadShadowGroundHit(vec2 uv, out vec3 worldPos) {
-    vec4 clip = vec4(uv * 2.0 - 1.0, -1.0, 1.0);
-    vec4 view = inverseProjectionMatrix * clip;
-    vec3 viewDir = normalize(view.xyz / view.w);
-
-    vec3 worldOrigin = cadCameraMatrixWorld[3].xyz;
-    // A camera world matrix is rigid, so rotating a unit vector keeps it unit.
-    vec3 worldDir = mat3(cadCameraMatrixWorld) * viewDir;
-
-    float denom = dot(worldDir, cadShadowPlane.xyz);
-    if (abs(denom) < 1e-4) {
-        return false;
-    }
-
-    float t = -(dot(worldOrigin, cadShadowPlane.xyz) + cadShadowPlane.w) / denom;
-    if (t < 0.0) {
-        return false;
-    }
-
-    worldPos = worldOrigin + worldDir * t;
-    return true;
-}
-
 // Returns the lit factor in [1 - strength, 1].
 float cadShadowLit(sampler2D depthTexture, vec2 uv) {
     if (cadShadowEnabled < 0.5) {
@@ -214,24 +189,17 @@ float cadShadowLit(sampler2D depthTexture, vec2 uv) {
     vec3 viewPos = cadShadowViewPosFromDepth(depth, uv);
     vec3 viewNormal = cadShadowViewNormal(viewPos);
 
-    vec3 worldPos;
-    vec3 worldNormal;
-
-    if (depth < CAD_SHADOW_EMPTY_DEPTH) {
-        worldPos = cadShadowWorldFromView(viewPos);
-        worldNormal = mat3(cadCameraMatrixWorld) * viewNormal;
-    } else if (cadShadowGroundHit(uv, worldPos)) {
-        worldNormal = cadShadowPlane.xyz;
-    } else {
+    // Cleared depth has no receiving surface. Custom meshes receive shadows in their materials.
+    if (depth >= CAD_SHADOW_EMPTY_DEPTH) {
         return 1.0;
     }
+
+    vec3 worldPos = cadShadowWorldFromView(viewPos);
+    vec3 worldNormal = mat3(cadCameraMatrixWorld) * viewNormal;
 
     // CAD materials already darken as they turn from the sun. Multiplying the shadow
     // map on top doubles that and, on curved primitives, aliases the terminator to
     // texel steps. Fading here hands the boundary back to the diffuse term.
-    // Custom receivers (ground planes) are unlit and skip this: their reconstructed
-    // normal comes from screen-space derivatives of a huge flat mesh, which is not
-    // stable enough to drive a hard cutoff.
     float facing = 1.0;
     if (cadShadowTerminatorFade > 0.0) {
         facing = smoothstep(0.0, cadShadowTerminatorFade, dot(worldNormal, cadShadowLightDirection));

@@ -13,7 +13,6 @@ import {
   RedFormat,
   Scene,
   UnsignedByteType,
-  Vector4,
   WebGLRenderTarget
 } from 'three';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from '../rendering/cadLighting';
@@ -36,7 +35,6 @@ export class CadShadowPass {
   private readonly _scene: Scene;
   private readonly _shadowMap: CadShadowMap;
   private readonly _clearColor = new Color();
-  private _groundY = 0;
 
   constructor(
     cameraDepthTexture: Texture | null,
@@ -67,7 +65,6 @@ export class CadShadowPass {
         inverseProjectionMatrix: { value: new Matrix4() },
         cadCameraMatrixWorld: { value: new Matrix4() },
         cadShadowMatrix: { value: new Matrix4() },
-        cadShadowPlane: { value: new Vector4(0, 1, 0, 0) },
         // Same world space sun the CAD materials shade with, so the shadow terminator
         // and the diffuse terminator land on the same place.
         cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
@@ -91,10 +88,6 @@ export class CadShadowPass {
     return this._renderTarget.texture;
   }
 
-  public setShadowGroundY(y: number): void {
-    this._groundY = y;
-  }
-
   public setSize(width: number, height: number): void {
     this._renderTarget.setSize(width, height);
   }
@@ -111,8 +104,6 @@ export class CadShadowPass {
     uniforms.cadShadowTexelWorld.value = this._shadowMap.texelWorldSize;
     uniforms.cadShadowDepthRange.value = this._shadowMap.depthRange;
     uniforms.cadShadowEnabled.value = this._shadowMap.enabled ? 1 : 0;
-    // World-space ground plane: normal (0, 1, 0), so plane constant is -groundY.
-    (uniforms.cadShadowPlane.value as Vector4).set(0, 1, 0, -this._groundY);
 
     renderer.setClearColor('#FFFFFF', 1.0);
     renderer.setRenderTarget(this._renderTarget);

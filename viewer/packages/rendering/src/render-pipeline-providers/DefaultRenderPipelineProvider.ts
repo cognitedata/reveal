@@ -3,7 +3,7 @@
  */
 
 import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Box3, Color, GLSL3, RawShaderMaterial, Vector2, Vector3 } from 'three';
+import { Box3, Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
@@ -50,7 +50,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private _ssaoSampleSize: number;
   private readonly _cadBounds: Box3 | undefined;
   private readonly _cadModelBounds: Box3 | undefined;
-  private readonly _cadSize: Vector3 | undefined;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -124,7 +123,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._shadowMapPass = enableShadows ? new ShadowMapPass(sceneHandler, materialManager) : undefined;
     this._cadBounds = enableShadows ? new Box3() : undefined;
     this._cadModelBounds = enableShadows ? new Box3() : undefined;
-    this._cadSize = enableShadows ? new Vector3() : undefined;
 
     const cadShadow = this._shadowMapPass !== undefined ? { map: this._shadowMapPass } : undefined;
     this._postProcessingPass = new PostProcessingPass(
@@ -273,20 +271,14 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   }
 
   /**
-   * Fits the shadow light frustum and the shadow receiver plane to the CAD geometry.
+   * Fits the shadow light frustum to the CAD geometry.
    * Deliberately independent of the view camera so shadows do not move while orbiting.
    */
   private updateShadowCasterBounds(): void {
     const cadBounds = this._cadBounds;
     const cadModelBounds = this._cadModelBounds;
-    const cadSize = this._cadSize;
     const shadowMapPass = this._shadowMapPass;
-    if (
-      cadBounds === undefined ||
-      cadModelBounds === undefined ||
-      cadSize === undefined ||
-      shadowMapPass === undefined
-    ) {
+    if (cadBounds === undefined || cadModelBounds === undefined || shadowMapPass === undefined) {
       return;
     }
 
@@ -296,9 +288,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     }
 
     shadowMapPass.setCadBounds(cadBounds);
-    this._postProcessingPass.setShadowGroundY(
-      cadBounds.isEmpty() ? 0 : cadBounds.min.y - Math.max(0.05, cadBounds.getSize(cadSize).y * 0.002)
-    );
   }
 }
 
