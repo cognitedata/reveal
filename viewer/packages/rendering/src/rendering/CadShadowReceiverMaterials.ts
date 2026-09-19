@@ -2,8 +2,8 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Camera, Material } from 'three';
-import { Matrix4, Mesh } from 'three';
+import type { Camera, Material, Object3D, Mesh } from 'three';
+import { Matrix4 } from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
@@ -24,6 +24,7 @@ const supportedMaterialTypes = new Set([
 /** Applies CAD shadows in the receiver's own draw, preserving its depth, alpha and clipping behavior. */
 export class CadShadowReceiverMaterials {
   private readonly _materials = new Map<Material, { original: MaterialHooks; installed: MaterialHooks }>();
+  private readonly _receivers = new Map<Mesh, boolean>();
   private readonly _unsupportedMaterials = new WeakSet<Material>();
   private readonly _uniforms;
 
@@ -49,9 +50,13 @@ export class CadShadowReceiverMaterials {
     this._uniforms.cadShadowEnabled.value = this._shadowMap.enabled ? 1 : 0;
 
     const activeMaterials = new Set<Material>();
+    const activeReceivers = new Set<Mesh>();
     for (const { object } of customObjects) {
       object.traverse(node => {
-        if (!(node instanceof Mesh) || !node.receiveShadow) return;
+        if (!isMesh(node)) return;
+        activeReceivers.add(node);
+        if (!this._receivers.has(node)) this._receivers.set(node, node.receiveShadow);
+        node.receiveShadow = true;
         const materials = Array.isArray(node.material) ? node.material : [node.material];
         for (const material of materials) {
           activeMaterials.add(material);
@@ -60,12 +65,21 @@ export class CadShadowReceiverMaterials {
       });
     }
 
+    for (const [mesh, receiveShadow] of this._receivers) {
+      if (!activeReceivers.has(mesh)) {
+        mesh.receiveShadow = receiveShadow;
+        this._receivers.delete(mesh);
+      }
+    }
+
     for (const material of this._materials.keys()) {
       if (!activeMaterials.has(material)) this.restore(material);
     }
   }
 
   public dispose(): void {
+    for (const [mesh, receiveShadow] of this._receivers) mesh.receiveShadow = receiveShadow;
+    this._receivers.clear();
     for (const material of this._materials.keys()) this.restore(material);
   }
 
@@ -133,4 +147,8 @@ export class CadShadowReceiverMaterials {
     material.needsUpdate = true;
     this._materials.delete(material);
   }
+}
+
+function isMesh(object: Object3D): object is Mesh {
+  return 'isMesh' in object && object.isMesh === true;
 }

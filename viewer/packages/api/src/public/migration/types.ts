@@ -181,7 +181,6 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Enables shadows cast by CAD geometry. Defaults to false.
-   *
    * Enabling shadows adds extra rendering passes. When disabled, the shadow
    * resources and passes are not created.
    */
