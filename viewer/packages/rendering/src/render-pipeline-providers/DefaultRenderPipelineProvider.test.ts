@@ -110,7 +110,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
       true
     );
 
-    expect(sceneHandler.scene.getObjectByName('CAD shadow receiver overlay')).toBeDefined();
+    expect(sceneHandler.scene.getObjectByName('CAD shadow receiver overlay')).toBeUndefined();
 
     const numberOfRenderPasses = Array.from(defaultRenderPipelineProvider.pipeline(rendererMock.object())).length;
 

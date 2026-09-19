@@ -3,7 +3,7 @@
  */
 
 import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
-import { GLSL3, RawShaderMaterial } from 'three';
+import type { ICustomObject } from '@reveal/utilities';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -17,8 +17,8 @@ import {
 } from '../utilities/renderUtilities';
 import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
-import { shadowReceiverShaders } from '../rendering/shaders';
 import { CadShadowPass } from './CadShadowPass';
+import { CadShadowReceiverMaterials } from '../rendering/CadShadowReceiverMaterials';
 
 /**
  * Single pass that applies post processing effects and
@@ -32,7 +32,7 @@ export class PostProcessingPass implements RenderPass {
   private readonly _pointcloudBlitMaterial: ShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly _cadShadowPass: CadShadowPass | undefined;
-  private readonly _shadowReceiverPass: CadShadowPass | undefined;
+  private readonly _shadowReceiverMaterials: CadShadowReceiverMaterials | undefined;
   private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
@@ -44,7 +44,11 @@ export class PostProcessingPass implements RenderPass {
     this.setBlendFactorByBackVisibility();
   }
 
-  constructor(scene: Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
+  constructor(
+    scene: Scene,
+    postProcessingPipelineOptions: PostProcessingPipelineOptions,
+    private readonly _customObjects: ICustomObject[] = []
+  ) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
 
@@ -53,8 +57,8 @@ export class PostProcessingPass implements RenderPass {
       shadowOptions === undefined
         ? undefined
         : new CadShadowPass(postProcessingPipelineOptions.back.depthTexture, shadowOptions.map);
-    this._shadowReceiverPass =
-      shadowOptions === undefined ? undefined : new CadShadowPass(shadowOptions.receiverDepth, shadowOptions.map, 0);
+    this._shadowReceiverMaterials =
+      shadowOptions === undefined ? undefined : new CadShadowReceiverMaterials(shadowOptions.map);
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -126,39 +130,14 @@ export class PostProcessingPass implements RenderPass {
     this._scene.add(inFrontBlitObject);
 
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
-
-    if (shadowOptions !== undefined && this._shadowReceiverPass !== undefined) {
-      const shadowReceiverMaterial = new RawShaderMaterial({
-        vertexShader: shadowReceiverShaders.vertex,
-        fragmentShader: shadowReceiverShaders.fragment,
-        glslVersion: GLSL3,
-        transparent: true,
-        // Receiver materials may use polygon offset, so compare depth explicitly
-        // in the shader instead of depth-testing against the final target.
-        depthTest: false,
-        depthWrite: false,
-        uniforms: {
-          tCadDepth: { value: postProcessingPipelineOptions.back.depthTexture },
-          tReceiverDepth: { value: shadowOptions.receiverDepth },
-          tReceiverShadow: { value: this._shadowReceiverPass.texture }
-        }
-      });
-      const shadowObject = createFullScreenTriangleMesh(shadowReceiverMaterial);
-      shadowObject.name = 'CAD shadow receiver overlay';
-      shadowObject.renderOrder = 0.5;
-      this._scene.add(shadowObject);
-      this._postProcessingObjects.push(shadowObject);
-    }
   }
 
   public setShadowGroundY(y: number): void {
     this._cadShadowPass?.setShadowGroundY(y);
-    this._shadowReceiverPass?.setShadowGroundY(y);
   }
 
   public setSize(width: number, height: number): void {
     this._cadShadowPass?.setSize(width, height);
-    this._shadowReceiverPass?.setSize(width, height);
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
@@ -170,13 +149,13 @@ export class PostProcessingPass implements RenderPass {
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
     this._cadShadowPass?.render(renderer, camera);
-    this._shadowReceiverPass?.render(renderer, camera);
+    this._shadowReceiverMaterials?.update(this._customObjects, camera);
     renderer.render(this._scene, camera);
   }
 
   public dispose(): void {
     this._cadShadowPass?.dispose();
-    this._shadowReceiverPass?.dispose();
+    this._shadowReceiverMaterials?.dispose();
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       (postProcessingObject.material as Material).dispose();

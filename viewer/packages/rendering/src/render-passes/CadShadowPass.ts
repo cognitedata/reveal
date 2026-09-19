@@ -16,12 +16,11 @@ import {
   Vector4,
   WebGLRenderTarget
 } from 'three';
-import { CAD_LIGHT_WORLD } from '../rendering/cadLighting';
+import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from '../rendering/cadLighting';
 import { cadShadowShaders } from '../rendering/shaders';
 import { createFullScreenTriangleMesh } from '../utilities/renderUtilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
-const SHADOW_STRENGTH = 0.4;
 const CAD_TERMINATOR_FADE = 0.35;
 
 /**
@@ -74,7 +73,7 @@ export class CadShadowPass {
         cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
         cadShadowTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
-        cadShadowStrength: { value: SHADOW_STRENGTH },
+        cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
         cadShadowEnabled: { value: 0 },
         cadShadowTerminatorFade: { value: terminatorFade }
       },
