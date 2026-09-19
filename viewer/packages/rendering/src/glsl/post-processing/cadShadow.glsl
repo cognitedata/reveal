@@ -14,13 +14,9 @@ const float CAD_SHADOW_EMPTY_DEPTH = 1.0;
 const int CAD_SHADOW_TAPS = 16;
 const float CAD_SHADOW_GOLDEN_ANGLE = 2.39996323;
 
-// Penumbra width and weight are interpolated by how far the blocker sits from the
-// receiver, so a shadow is tight and heavy where it meets its caster and turns wide
-// and thin as it stretches away.
+// Distance changes penumbra width, not the intensity of fully occluded regions.
 const float CAD_SHADOW_CONTACT_TEXELS = 1.25;
 const float CAD_SHADOW_DISTANT_TEXELS = 8.0;
-const float CAD_SHADOW_CONTACT_GAIN = 1.1;
-const float CAD_SHADOW_DISTANT_GAIN = 0.75;
 
 // Ladder of receiver to blocker distances used to classify the blocker, as a fraction
 // of the light depth range. With a plant sized model this spans roughly 1 m to 20 m.
@@ -97,8 +93,8 @@ float cadShadowVisibility(vec2 uv, float compareDepth) {
  *
  * The result must be conditional on being blocked at all, hence the division by
  * coverage. A partially covered penumbra blocks few probes for the same reason a
- * contact shadow does, and reading that as a near blocker gives the whole penumbra the
- * tight, heavy contact treatment, which draws a dark rim around every shadow.
+ * contact shadow does, and reading that as a near blocker makes the filter too narrow,
+ * which draws a dark rim around every shadow.
  */
 float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRadius, vec2 rotation) {
     float blocked = 0.0;
@@ -172,8 +168,7 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     }
 
     float occlusion = 1.0 - visibility / float(CAD_SHADOW_TAPS);
-    float gain = mix(CAD_SHADOW_CONTACT_GAIN, CAD_SHADOW_DISTANT_GAIN, blockerDistance);
-    return clamp(occlusion * gain, 0.0, 1.0);
+    return clamp(occlusion, 0.0, 1.0);
 }
 
 // Returns the lit factor in [1 - strength, 1].
