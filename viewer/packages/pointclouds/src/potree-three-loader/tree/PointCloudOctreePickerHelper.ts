@@ -47,6 +47,25 @@ export interface PickParams {
    * @param renterTarget The render target used for picking.
    */
   onBeforePickRender: (material: PointCloudMaterial, renterTarget: WebGLRenderTarget) => void;
+  /**
+   * Whether the camera is currently known to be in motion (e.g. during an interactive zoom/pan/
+   * orbit). When true, the full-frame pick cache is never rebuilt for this call, regardless of
+   * how long ago it was last invalidated. Confirmed by measurement: a full-frame rebuild's async
+   * GPU readback (tens to hundreds of ms) routinely doesn't finish before the next camera-change
+   * invalidates it again during continuous motion, so the rebuild is started, pays its full cost,
+   * gets discarded, and the caller still has to fall back to a windowed pick anyway. Falls back to
+   * the time-based holdoff when omitted.
+   */
+  cameraInMotion: boolean;
+  /**
+   * Unconditionally skips the full-frame pick cache (both serving from it and rebuilding it) for
+   * this call, regardless of camera-motion state. Intended for callers that pick on every input
+   * event of a fast, continuous interaction (e.g. wheel-driven zoom-to-cursor) where even
+   * checking/rebuilding the cache adds latency that matters more than the cache's benefit - unlike
+   * `cameraInMotion`, this doesn't depend on the camera having already started moving, which
+   * matters because some callers pick *before* moving the camera for that same input event.
+   */
+  forceWindowedPick: boolean;
 }
 
 /**

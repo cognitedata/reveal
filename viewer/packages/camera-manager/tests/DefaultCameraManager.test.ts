@@ -61,4 +61,30 @@ describe(DefaultCameraManager.name, () => {
     );
     expect(newCameraControlsOptions.mouseWheelAction).toEqual('zoomToTarget');
   });
+
+  test('wheel-driven zoom-to-cursor requests a pick with forceWindowedPick=true', async () => {
+    const raycastSpy = vi.fn(async () => ({
+      intersection: null,
+      modelsBoundingBox: new Box3(),
+      pickedBoundingBox: undefined
+    }));
+    const manager = new DefaultCameraManager(
+      domElement,
+      new InputHandler(domElement),
+      raycastSpy,
+      new PerspectiveCamera()
+    );
+    manager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor' });
+
+    // Positioned away from (0, 0) so the mouse-hasn't-moved heuristic doesn't suppress the pick.
+    // happy-dom's WheelEvent doesn't extend MouseEvent, so clientX/clientY from the init dict
+    // are dropped - set them directly instead.
+    const wheelEvent = new WheelEvent('wheel', { deltaY: -100, cancelable: true });
+    Object.assign(wheelEvent, { clientX: 50, clientY: 50 });
+    domElement.dispatchEvent(wheelEvent);
+
+    await vi.waitFor(() => expect(raycastSpy).toHaveBeenCalled());
+
+    expect(raycastSpy).toHaveBeenCalledWith(50, 50, false, true);
+  });
 });

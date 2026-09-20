@@ -83,8 +83,13 @@ export class PointCloudOctreePicker {
     const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
 
     // Custom pick parameters change what gets rendered or where, so they cannot be answered
-    // from (or stored into) the shared full-frame cache.
-    const cacheEligible = params.onBeforePickRender === undefined && params.pixelPosition === undefined;
+    // from (or stored into) the shared full-frame cache. forceWindowedPick is an explicit,
+    // caller-driven opt-out (see PickParams doc) for fast, continuous interactions where even
+    // checking/rebuilding the cache costs more than it saves.
+    const cacheEligible =
+      params.onBeforePickRender === undefined &&
+      params.pixelPosition === undefined &&
+      params.forceWindowedPick !== true;
     if (cacheEligible) {
       // Use the drawing-buffer (device-pixel) size, matching pickWindowed and the screenWidth/
       // screenHeight uniforms PointCloudMaterial derives point sizes from - otherwise the cache
@@ -100,7 +105,11 @@ export class PointCloudOctreePicker {
         return this.pickFromCache(camera, centerX, centerY, pickWndSize);
       }
 
-      if (performance.now() - this._lastInvalidatedAt >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
+      const sinceInvalidatedMs = performance.now() - this._lastInvalidatedAt;
+      if (params.cameraInMotion === true) {
+        // A known-in-motion camera is about to invalidate whatever we build anyway - never pay
+        // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
+      } else if (sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
         const built = await this.buildCache(camera, octrees, params, width, height);
         if (built) {
           return this.pickFromCache(camera, centerX, centerY, pickWndSize);

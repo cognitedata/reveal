@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 import { vi } from 'vitest';
-import { PerspectiveCamera, Vector3 } from 'three';
+import { PerspectiveCamera, Vector2, Vector3 } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -46,6 +46,23 @@ describe(FlexibleControls.name, () => {
       resolveInitialize();
 
       await expect(dragPromise).resolves.not.toThrow();
+    });
+  });
+
+  describe('onWheel', () => {
+    it('requests a pick with forceWindowedPick=true', async () => {
+      vi.spyOn(performance, 'now').mockReturnValue(10_000);
+      const pickSpy = vi.fn(async () => new Vector3());
+      controls.getPickedPointByPixelCoordinates = pickSpy;
+
+      // happy-dom's WheelEvent doesn't extend MouseEvent, so clientX/clientY from the init dict
+      // are dropped - set them directly instead.
+      const wheelEvent = new WheelEvent('wheel', { deltaY: -100, cancelable: true });
+      Object.assign(wheelEvent, { clientX: 50, clientY: 50 });
+
+      await controls.onWheel(wheelEvent, -1);
+
+      expect(pickSpy).toHaveBeenCalledWith(expect.any(Vector2), true);
     });
   });
 });

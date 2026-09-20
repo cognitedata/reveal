@@ -226,6 +226,33 @@ describe(PointCloudPickingHandler.name, () => {
     expect(executionOrder).toEqual(['pick_start_1', 'pick_end_1', 'pick_start_2', 'pick_end_2']);
   });
 
+  test('intersectPointClouds forwards cameraInMotion and forceWindowedPick to the picker', async () => {
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+    const input: IntersectInput = {
+      ...createMockIntersectInput(),
+      cameraInMotion: true,
+      forceWindowedPick: true
+    };
+
+    await handler.intersectPointClouds([node], input);
+
+    expect(pickSpy).toHaveBeenCalledOnce();
+    const [, , , paramsArg] = pickSpy.mock.calls[0];
+    expect(paramsArg).toMatchObject({ cameraInMotion: true, forceWindowedPick: true });
+  });
+
+  test('intersectPointClouds defaults cameraInMotion and forceWindowedPick to false when omitted', async () => {
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+    await handler.intersectPointClouds([node], createMockIntersectInput());
+
+    expect(pickSpy).toHaveBeenCalledOnce();
+    const [, , , paramsArg] = pickSpy.mock.calls[0];
+    expect(paramsArg).toMatchObject({ cameraInMotion: false, forceWindowedPick: false });
+  });
+
   test('invalidatePickCache delegates to the picker', () => {
     const invalidateSpy = vi
       .spyOn(PointCloudOctreePicker.prototype, 'invalidateCache')

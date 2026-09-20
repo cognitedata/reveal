@@ -33,7 +33,12 @@ import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEven
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import type { CameraControlsOptions } from './CameraControlsOptions';
 
-type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
+type RaycastCallback = (
+  x: number,
+  y: number,
+  pickBoundingBox: boolean,
+  forceWindowedPick?: boolean
+) => Promise<CameraManagerCallbackData>;
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
  * keyboard and mouse navigation possibility. Supports automatic update of camera near and far
@@ -513,9 +518,9 @@ export class DefaultCameraManager implements CameraManager {
    * Calculates new camera target based on cursor position.
    * @param event PointerEvent that contains pointer location data.
    */
-  private async calculateNewTarget(event: PointerEventData): Promise<Vector3> {
+  private async calculateNewTarget(event: PointerEventData, forceWindowedPick?: boolean): Promise<Vector3> {
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
-    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, false);
+    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, false, forceWindowedPick);
 
     const newTarget =
       raycastResult.intersection?.point ??
@@ -612,7 +617,10 @@ export class DefaultCameraManager implements CameraManager {
           button: event.button
         };
 
-        const newTarget = await this.calculateNewTarget(pointerEventData);
+        // forceWindowedPick=true: this fires on every qualifying wheel tick of a continuous zoom
+        // gesture, so a full-frame pick-cache rebuild isn't worth its cost here (see the
+        // equivalent fix in FlexibleControls.setScrollCursorByWheelEventCoords).
+        const newTarget = await this.calculateNewTarget(pointerEventData, true);
         this._controls.setScrollTarget(newTarget);
       }
     };
