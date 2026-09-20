@@ -8,6 +8,7 @@ uniform mat4 projectionMatrix;
 
 uniform float spacing;
 uniform float pcIndex;
+uniform float nodeIndexBits;
 uniform float screenWidth;
 uniform float screenHeight;
 
@@ -55,7 +56,19 @@ void main() {
 	#endif
 
 	#if defined color_type_point_index
-		outputColor = vec4(color, pcIndex / 255.0);
+		// Pack pointIndex | (nodeIndex << (32 - nodeIndexBits)) into the four RGBA8 bytes; the CPU
+		// reads them back as a little-endian uint32. With nodeIndexBits = 8 this is bit-identical to
+		// the legacy layout (RGB = 24-bit point index, A = node index). color holds the low 24 bits
+		// of the per-point index as normalized bytes.
+		uint pointIndex = uint(color.r * 255.0 + 0.5)
+			| (uint(color.g * 255.0 + 0.5) << 8u)
+			| (uint(color.b * 255.0 + 0.5) << 16u);
+		uint packedIndex = pointIndex | (uint(pcIndex + 0.5) << (32u - uint(nodeIndexBits + 0.5)));
+		outputColor = vec4(
+			float(packedIndex & 0xFFu),
+			float((packedIndex >> 8u) & 0xFFu),
+			float((packedIndex >> 16u) & 0xFFu),
+			float((packedIndex >> 24u) & 0xFFu)) / 255.0;
 	#else
 		outputColor = vec4(color, 1.0);
 	#endif
