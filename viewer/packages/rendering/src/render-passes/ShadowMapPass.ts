@@ -96,12 +96,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
 
     // DepthBufferOnly disables color writes on the CAD materials, so this is a depth-only pass.
     const layerMask = getLayerMask(RenderLayer.Back) | getLayerMask(RenderLayer.InFront);
-    this._geometryPass = new GeometryPass(
-      sceneHandler.scene,
-      materialManager,
-      RenderMode.DepthBufferOnly,
-      layerMask
-    );
+    this._geometryPass = new GeometryPass(sceneHandler.scene, materialManager, RenderMode.DepthBufferOnly, layerMask);
   }
 
   public get depthTexture(): Texture {
