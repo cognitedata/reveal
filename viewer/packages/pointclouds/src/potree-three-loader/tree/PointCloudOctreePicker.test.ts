@@ -277,7 +277,7 @@ describe(PointCloudOctreePicker.name, () => {
 
       // Simulate an LOD update unloading the node's geometry after the cache was built - hits
       // in the stale cache could then not be resolved back to a position.
-      (renderedNodes[0].node.sceneNode as unknown as { geometry: undefined }).geometry = undefined;
+      Object.defineProperty(renderedNodes[0].node.sceneNode, 'geometry', { value: undefined });
       await picker.pick(camera, ray, [octree]);
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
