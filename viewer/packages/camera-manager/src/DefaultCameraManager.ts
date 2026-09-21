@@ -617,9 +617,7 @@ export class DefaultCameraManager implements CameraManager {
           button: event.button
         };
 
-        // forceWindowedPick=true: this fires on every qualifying wheel tick of a continuous zoom
-        // gesture, so a full-frame pick-cache rebuild isn't worth its cost here (see the
-        // equivalent fix in FlexibleControls.setScrollCursorByWheelEventCoords).
+        // forceWindowedPick=true: this fires on every qualifying wheel tick of a continuous zoom gesture.
         const newTarget = await this.calculateNewTarget(pointerEventData, true);
         this._controls.setScrollTarget(newTarget);
       }

@@ -229,9 +229,10 @@ describe(PointCloudOctreePicker.name, () => {
     test('renderer resize makes the cache unusable and triggers a rebuild', async () => {
       const { renderSpy } = setupPickerHelperMocks(renderedNodes);
       let width = RENDER_TARGET_WIDTH;
-      const renderer = {
-        getDrawingBufferSize: (target: Vector2) => target.set(width, RENDER_TARGET_HEIGHT)
-      } as unknown as WebGLRenderer;
+      const renderer = new Mock<WebGLRenderer>()
+        .setup(webgl => webgl.getDrawingBufferSize)
+        .returns((target: Vector2) => target.set(width, RENDER_TARGET_HEIGHT))
+        .object();
       const picker = new PointCloudOctreePicker(renderer);
 
       await picker.pick(camera, ray, [octree]);

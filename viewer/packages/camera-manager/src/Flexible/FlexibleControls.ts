@@ -911,8 +911,7 @@ export class FlexibleControls {
     this._prevCoords.copy(currentCoords);
 
     // forceWindowedPick=true: this fires on every qualifying wheel tick of a continuous zoom
-    // gesture, before the camera has moved for that tick, so a full-frame pick-cache rebuild
-    // would neither be servable from a "camera in motion" signal nor worth its cost here.
+    // gesture, so a full-frame pick-cache rebuild.
     const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords, true);
     this.setScrollCursor(scrollCursor);
     this._prevTime = currentTime;

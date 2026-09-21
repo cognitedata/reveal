@@ -55,8 +55,7 @@ describe(FlexibleControls.name, () => {
       const pickSpy = vi.fn(async () => new Vector3());
       controls.getPickedPointByPixelCoordinates = pickSpy;
 
-      // happy-dom's WheelEvent doesn't extend MouseEvent, so clientX/clientY from the init dict
-      // are dropped - set them directly instead.
+      // happy-dom's WheelEvent doesn't extend MouseEvent
       const wheelEvent = new WheelEvent('wheel', { deltaY: -100, cancelable: true });
       Object.assign(wheelEvent, { clientX: 50, clientY: 50 });
 

@@ -10,17 +10,7 @@ export interface IntersectInput {
   clippingPlanes: Plane[];
   renderer: WebGLRenderer;
   domElement: HTMLElement;
-  /**
-   * Whether the camera is currently known to be in motion (e.g. mid interactive zoom/pan/orbit).
-   * Lets pickers skip work that would only benefit picks answered after the camera settles.
-   */
   cameraInMotion?: boolean;
-  /**
-   * Unconditionally skips point-cloud full-frame pick caching for this call. Intended for callers
-   * that pick on every input event of a fast, continuous interaction (e.g. wheel-driven
-   * zoom-to-cursor), where the pick happens before the camera has moved for that event, so
-   * `cameraInMotion` can't yet reflect it.
-   */
   forceWindowedPick?: boolean;
 }
 

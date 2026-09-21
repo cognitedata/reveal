@@ -82,18 +82,11 @@ export class PointCloudOctreePicker {
 
     const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
 
-    // Custom pick parameters change what gets rendered or where, so they cannot be answered
-    // from (or stored into) the shared full-frame cache. forceWindowedPick is an explicit,
-    // caller-driven opt-out (see PickParams doc) for fast, continuous interactions where even
-    // checking/rebuilding the cache costs more than it saves.
     const cacheEligible =
       params.onBeforePickRender === undefined &&
       params.pixelPosition === undefined &&
       params.forceWindowedPick !== true;
     if (cacheEligible) {
-      // Use the drawing-buffer (device-pixel) size, matching pickWindowed and the screenWidth/
-      // screenHeight uniforms PointCloudMaterial derives point sizes from - otherwise the cache
-      // would be built and indexed at a different resolution than the point sizing assumes.
       const drawingBufferSize = this._renderer.getDrawingBufferSize(PointCloudOctreePicker.helperVec2);
       const width = Math.max(1, Math.floor(drawingBufferSize.x));
       const height = Math.max(1, Math.floor(drawingBufferSize.y));

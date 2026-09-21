@@ -76,9 +76,6 @@ describe(DefaultCameraManager.name, () => {
     );
     manager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor' });
 
-    // Positioned away from (0, 0) so the mouse-hasn't-moved heuristic doesn't suppress the pick.
-    // happy-dom's WheelEvent doesn't extend MouseEvent, so clientX/clientY from the init dict
-    // are dropped - set them directly instead.
     const wheelEvent = new WheelEvent('wheel', { deltaY: -100, cancelable: true });
     Object.assign(wheelEvent, { clientX: 50, clientY: 50 });
     domElement.dispatchEvent(wheelEvent);
