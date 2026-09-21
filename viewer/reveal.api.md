@@ -487,7 +487,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getAnyIntersectionFromPixel(pixelCoords: Vector2, options?: {
         stopOnHitting360Icon?: boolean;
         predicate?: (customObject: ICustomObject) => boolean;
-        forceWindowedPick?: boolean;
     }): Promise<AnyIntersection<DataSourceT> | undefined>;
     // @deprecated
     getClippingPlanes(): Plane[];
