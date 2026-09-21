@@ -248,7 +248,7 @@ export class PointCloudOctreePicker {
 
     this._cache = {
       pixels,
-      ibuffer: new Uint32Array(pixels.buffer, 0, width * height),
+      ibuffer: new Uint32Array(pixels.buffer, pixels.byteOffset, width * height),
       width,
       height,
       nodeIndexBits,

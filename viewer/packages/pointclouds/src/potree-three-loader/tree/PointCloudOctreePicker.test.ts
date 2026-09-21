@@ -5,6 +5,7 @@ import type { WebGLRenderTarget, WebGLRenderer } from 'three';
 import { BufferAttribute, BufferGeometry, PerspectiveCamera, Points, Ray, Scene, Vector2, Vector3 } from 'three';
 import { Mock, It } from 'moq.ts';
 import { vi } from 'vitest';
+import type { MockInstance } from 'vitest';
 
 import { PointCloudOctreePicker } from './PointCloudOctreePicker';
 import type { PointCloudOctree } from './PointCloudOctree';
@@ -36,8 +37,16 @@ function createFakeOctree(numPoints: number = 1000): PointCloudOctree {
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new BufferAttribute(new Float32Array([0, 0, 0]), 3));
   const sceneNode = new Points(geometry);
-  const node = { sceneNode, numPoints } as unknown as IPointCloudTreeNode;
-  return { visibleNodes: [node] } as unknown as PointCloudOctree;
+  const node = new Mock<IPointCloudTreeNode>()
+    .setup(n => n.sceneNode)
+    .returns(sceneNode)
+    .setup(n => n.numPoints)
+    .returns(numPoints)
+    .object();
+  return new Mock<PointCloudOctree>()
+    .setup(o => o.visibleNodes)
+    .returns([node])
+    .object();
 }
 
 function setupPickerHelperMocks(renderedNodes: RenderedNode[] = []) {
@@ -113,7 +122,7 @@ describe(PointCloudOctreePicker.name, () => {
   });
 
   describe('full-frame pick cache', () => {
-    let nowSpy: ReturnType<typeof vi.spyOn<typeof performance, 'now'>>;
+    let nowSpy: MockInstance<() => number>;
     let camera: PerspectiveCamera;
     let ray: Ray;
     let octree: PointCloudOctree;
