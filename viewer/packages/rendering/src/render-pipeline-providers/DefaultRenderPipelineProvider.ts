@@ -41,15 +41,23 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
-  private readonly _shadowMapPass: ShadowMapPass | undefined;
+  private readonly _shadowMapPass: ShadowMapPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
   private _ssaoSampleSize: number;
-  private readonly _cadBounds: Box3 | undefined;
-  private readonly _cadModelBounds: Box3 | undefined;
+  private readonly _cadBounds: Box3;
+  private readonly _cadModelBounds: Box3;
+
+  public get shadowsEnabled(): boolean {
+    return this._shadowMapPass.userEnabled;
+  }
+
+  public set shadowsEnabled(enabled: boolean) {
+    this._shadowMapPass.setEnabled(enabled);
+  }
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -120,16 +128,15 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       pointCloudParameters
     );
 
-    this._shadowMapPass = enableShadows ? new ShadowMapPass(sceneHandler, materialManager) : undefined;
-    this._cadBounds = enableShadows ? new Box3() : undefined;
-    this._cadModelBounds = enableShadows ? new Box3() : undefined;
+    this._shadowMapPass = new ShadowMapPass(sceneHandler, materialManager, enableShadows);
+    this._cadBounds = new Box3();
+    this._cadModelBounds = new Box3();
 
-    const cadShadow = this._shadowMapPass !== undefined ? { map: this._shadowMapPass } : undefined;
     this._postProcessingPass = new PostProcessingPass(
       sceneHandler.scene,
       {
         ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-        cadShadow,
+        cadShadow: { map: this._shadowMapPass },
         edges: edges.enabled,
         pointBlending: pointCloudParameters.pointBlending,
         edlOptions: pointCloudParameters.edlOptions,
@@ -171,7 +178,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     try {
       // Light-space depth first: the CAD shadow lookup in post processing depends on it.
-      if (this._shadowMapPass !== undefined) {
+      if (this._shadowMapPass.userEnabled) {
         this.updateShadowCasterBounds();
         if (this._cadModels.length > 0) {
           yield this._shadowMapPass;
@@ -217,7 +224,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._cadGeometryRenderPipeline.dispose();
     this._pointCloudRenderPipeline.dispose();
     this._postProcessingPass.dispose();
-    this._shadowMapPass?.dispose();
+    this._shadowMapPass.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
 
@@ -277,17 +284,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private updateShadowCasterBounds(): void {
     const cadBounds = this._cadBounds;
     const cadModelBounds = this._cadModelBounds;
-    const shadowMapPass = this._shadowMapPass;
-    if (cadBounds === undefined || cadModelBounds === undefined || shadowMapPass === undefined) {
-      return;
-    }
 
     cadBounds.makeEmpty();
     for (const { cadNode } of this._cadModels) {
       cadBounds.union(getCadWorldBounds(cadNode, cadModelBounds));
     }
 
-    shadowMapPass.setCadBounds(cadBounds);
+    this._shadowMapPass.setCadBounds(cadBounds);
   }
 }
 

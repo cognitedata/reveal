@@ -231,6 +231,21 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
+   * Gets whether CAD shadows are currently enabled.
+   */
+  public get shadowsEnabled(): boolean {
+    return this.revealManager.shadowsEnabled;
+  }
+
+  /**
+   * Enables or disables CAD shadows at runtime.
+   */
+  public set shadowsEnabled(enabled: boolean) {
+    this.revealManager.shadowsEnabled = enabled;
+    this.requestRedraw();
+  }
+
+  /**
    * Returns the point cloud budget. The budget is shared between all loaded
    * point cloud models.
    */

@@ -68,9 +68,11 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   private readonly _boundingSphere = new Sphere();
   private _texelWorldSize = 1;
   private _depthRange = 1;
-  private _enabled = false;
+  private _hasValidBounds = false;
+  private _userEnabled: boolean;
 
-  constructor(sceneHandler: SceneHandler, materialManager: CadMaterialManager) {
+  constructor(sceneHandler: SceneHandler, materialManager: CadMaterialManager, userEnabled: boolean = false) {
+    this._userEnabled = userEnabled;
     this._renderTarget = new WebGLRenderTarget(SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION, {
       depthBuffer: true,
       stencilBuffer: false,
@@ -116,7 +118,15 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   }
 
   public get enabled(): boolean {
-    return this._enabled;
+    return this._userEnabled && this._hasValidBounds;
+  }
+
+  public get userEnabled(): boolean {
+    return this._userEnabled;
+  }
+
+  public setEnabled(enabled: boolean): void {
+    this._userEnabled = enabled;
   }
 
   /**
@@ -125,8 +135,8 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
    * but it only depends on geometry, never on the view camera.
    */
   public setCadBounds(bounds: Box3): void {
-    this._enabled = !bounds.isEmpty();
-    if (!this._enabled) {
+    this._hasValidBounds = !bounds.isEmpty();
+    if (!this._hasValidBounds) {
       return;
     }
 
@@ -181,7 +191,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
 
   public render(renderer: WebGLRenderer): void {
     renderer.setRenderTarget(this._renderTarget);
-    if (!this._enabled) {
+    if (!this.enabled) {
       renderer.clear();
       return;
     }
