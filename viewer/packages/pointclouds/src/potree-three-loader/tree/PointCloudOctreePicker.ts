@@ -28,7 +28,7 @@ export class PointCloudOctreePicker {
   private static readonly helperVec2 = new Vector2();
 
   // If the cache was invalidated more recently than this, the scene is most likely rendering
-  // continuously (camera movement, animation). Rebuilding the full-frame cache then costs more
+  // continuously (camera movement). Rebuilding the full-frame cache then costs more
   // than a ray-culled windowed pick, so fall back to the windowed path instead.
   private static readonly REBUILD_HOLDOFF_MS = 64;
 
@@ -82,13 +82,8 @@ export class PointCloudOctreePicker {
 
     const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
 
-    // Custom pick parameters change what gets rendered or where, so they cannot be answered
-    // from (or stored into) the shared full-frame cache.
     const cacheEligible = params.onBeforePickRender === undefined && params.pixelPosition === undefined;
     if (cacheEligible) {
-      // Use the drawing-buffer (device-pixel) size, matching pickWindowed and the screenWidth/
-      // screenHeight uniforms PointCloudMaterial derives point sizes from - otherwise the cache
-      // would be built and indexed at a different resolution than the point sizing assumes.
       const drawingBufferSize = this._renderer.getDrawingBufferSize(PointCloudOctreePicker.helperVec2);
       const width = Math.max(1, Math.floor(drawingBufferSize.x));
       const height = Math.max(1, Math.floor(drawingBufferSize.y));
@@ -183,8 +178,8 @@ export class PointCloudOctreePicker {
     if (cache.octrees.length !== octrees.length || !cache.octrees.every((octree, i) => octree === octrees[i])) {
       return false;
     }
-    // Nodes may have been unloaded by LOD updates since the cache was built (which nulls the
-    // scene node geometry) - hits could then not be resolved to positions.
+    // Nodes may have been unloaded by LOD updates since the cache was built which nulls the
+    // scene node geometry.
     if (cache.renderedNodes.some(({ node }) => node.sceneNode.geometry === undefined)) {
       cache.valid = false;
       return false;
@@ -215,8 +210,6 @@ export class PointCloudOctreePicker {
 
     const nodeIndexBits = PointCloudOctreePickerHelper.computeBitSplit(nodeCount, maxPointsPerNode);
     if (nodeIndexBits === undefined) {
-      // The visible node set cannot be represented in the packed 32-bit pick value;
-      // the ray-culled windowed path always can.
       return false;
     }
 
@@ -263,7 +256,7 @@ export class PointCloudOctreePicker {
       octrees: [...octrees],
       cameraMatrixWorld: camera.matrixWorld.clone(),
       cameraProjectionMatrix: camera.projectionMatrix.clone(),
-      // The scene may have rendered a new frame while the readback was in flight - the buffer
+      // The scene may have rendered a new frame while the readback was in flight, so the buffer
       // then describes the previous frame and must not be served.
       valid: this._invalidationCount === invalidationCountAtStart
     };

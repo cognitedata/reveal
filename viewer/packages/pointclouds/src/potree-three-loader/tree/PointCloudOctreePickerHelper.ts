@@ -110,14 +110,13 @@ export class PointCloudOctreePickerHelper {
   ): RenderedNode[] {
     const renderer = this._renderer;
 
-    // Node index 0 means "no hit" and the all-ones value is rejected by findHit, so the
-    // largest usable index is 2^nodeIndexBits - 2.
+    // Node index 0 means "no hit" and the all-ones value is rejected by findHit, so the largest usable index is 2^nodeIndexBits - 2.
     const maxNodeIndex = 2 ** nodeIndexBits - 2;
     pickMaterial.nodeIndexBits = nodeIndexBits;
 
     const renderedNodes: RenderedNode[] = [];
     for (const octree of octrees) {
-      // Get all the octree nodes which intersect the picking ray (we only need to render those),
+      // Get all the octree nodes which intersect the picking ray. We only need to render those)
       // or every visible node when no ray is given (full-frame pick).
       const nodes = ray !== undefined ? PointCloudOctreePickerHelper.nodesOnRay(octree, ray) : [...octree.visibleNodes];
       if (!nodes.length) {
@@ -197,8 +196,6 @@ export class PointCloudOctreePickerHelper {
       const node = nodes[i];
       const nodeIndex = nodeIndexOffset + i + 1;
       if (nodeIndex > maxNodeIndex) {
-        // The packed node index would overflow into the point index's bits, aliasing this node
-        // onto a different, valid node instead of failing safely - skip rendering it instead.
         console.error(`More than ${maxNodeIndex} nodes for pick are not supported.`);
         continue;
       }
@@ -251,11 +248,6 @@ export class PointCloudOctreePickerHelper {
     });
   }
 
-  /**
-   * Computes how to split the packed 32-bit pick value between node index (high bits) and
-   * point index (low bits) for a given node set. Returns undefined if the node set cannot be
-   * represented in 32 bits (caller should fall back to a smaller, e.g. ray-culled, node set).
-   */
   public static computeBitSplit(nodeCount: number, maxPointsPerNode: number): number | undefined {
     // Usable node indices are 1..2^bits - 2 (0 = background, all-ones rejected by findHit).
     const nodeIndexBits = Math.max(DEFAULT_NODE_INDEX_BITS, Math.ceil(Math.log2(nodeCount + 2)));
@@ -270,8 +262,6 @@ export class PointCloudOctreePickerHelper {
     nodeIndexBits: number
   ): { nodeIndex: number; pointIndex: number } {
     const pointIndexBits = 32 - nodeIndexBits;
-    // Arithmetic instead of bit ops: packedIndex is an unsigned 32-bit value which JS bitwise
-    // operators would coerce to signed 32-bit.
     const nodeIndex = Math.floor(packedIndex / 2 ** pointIndexBits);
     const pointIndex = packedIndex % 2 ** pointIndexBits;
     return { nodeIndex, pointIndex };
@@ -299,11 +289,6 @@ export class PointCloudOctreePickerHelper {
     );
   }
 
-  /**
-   * Finds the best hit in a window of the given size centered at (centerX, centerY) inside a
-   * pick buffer of bufferWidth x bufferHeight packed 32-bit pixels. "Best" preserves the
-   * original picker semantics: closest to the window center on screen, then closest to the camera.
-   */
   public static findHitInBuffer(
     ibuffer: Uint32Array,
     bufferWidth: number,
