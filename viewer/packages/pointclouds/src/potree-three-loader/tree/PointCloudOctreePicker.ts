@@ -249,6 +249,10 @@ export class PointCloudOctreePicker {
 
     const pixels = await readPixelsPromise;
 
+    if (this.pickState === undefined) {
+      return false;
+    }
+
     this._cache = {
       pixels,
       ibuffer: new Uint32Array(pixels.buffer, pixels.byteOffset, width * height),
