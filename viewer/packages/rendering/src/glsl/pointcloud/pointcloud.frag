@@ -57,8 +57,7 @@ void main() {
 
 	#if defined color_type_point_index
 		// Pack pointIndex | (nodeIndex << (32 - nodeIndexBits)) into the four RGBA8 bytes; the CPU
-		// reads them back as a little-endian uint32. With nodeIndexBits = 8 this is bit-identical to
-		// the legacy layout (RGB = 24-bit point index, A = node index). color holds the low 24 bits
+		// reads them back as a little-endian uint32. With nodeIndexBits = 8, color holds the low 24 bits
 		// of the per-point index as normalized bytes.
 		uint pointIndex = uint(color.r * 255.0 + 0.5)
 			| (uint(color.g * 255.0 + 0.5) << 8u)
