@@ -340,7 +340,12 @@ export class PointCloudOctreePickerHelper {
           nodeIndexBits
         );
 
-        if (nodeIndex > 0 && nodeIndex !== maxNodeIndex && screenDistance <= minScreen) {
+        if (
+          nodeIndex > 0 &&
+          nodeIndex !== maxNodeIndex &&
+          nodeIndex - 1 < nodes.length &&
+          screenDistance <= minScreen
+        ) {
           const pointPosition = PointCloudOctreePickerHelper.getPointPosition(nodes, nodeIndex - 1, pointIndex);
           const distanceToCamera = pointPosition.distanceToSquared(camera.position);
 

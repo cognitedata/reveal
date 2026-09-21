@@ -104,6 +104,9 @@ export class PointCloudOctreePicker {
         // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
       } else if (sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
         const built = await this.buildCache(camera, octrees, params, width, height);
+        if (this.pickState === undefined) {
+          return null;
+        }
         if (built) {
           return this.pickFromCache(camera, centerX, centerY, pickWndSize);
         }
@@ -252,6 +255,10 @@ export class PointCloudOctreePicker {
     this._pickerHelper.resetState();
 
     const pixels = await readPixelsPromise;
+
+    if (this.pickState === undefined) {
+      return false;
+    }
 
     this._cache = {
       pixels,

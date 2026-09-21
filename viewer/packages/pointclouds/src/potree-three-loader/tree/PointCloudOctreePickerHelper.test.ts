@@ -25,7 +25,9 @@ describe('PointCloudOctreePickerHelper', () => {
       return new Vector3();
     });
 
-    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, [dummyNode], dummyCamera)).toStrictEqual({
+    const nodes: RenderedNode[] = new Array(2).fill(dummyNode);
+
+    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, nodes, dummyCamera)).toStrictEqual({
       pIndex: 15,
       pcIndex: 1
     });
@@ -60,7 +62,9 @@ describe('PointCloudOctreePickerHelper', () => {
       return result;
     });
 
-    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, [dummyNode], dummyCamera)).toStrictEqual({
+    const nodes: RenderedNode[] = new Array(22).fill(dummyNode);
+
+    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, nodes, dummyCamera)).toStrictEqual({
       pIndex: 3,
       pcIndex: 21
     });
@@ -171,8 +175,10 @@ describe('PointCloudOctreePickerHelper', () => {
 
     vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
 
+    const nodes: RenderedNode[] = new Array(600).fill(dummyNode);
+
     expect(
-      PointCloudOctreePickerHelper.findHit(pixels, pickWindowSize, [dummyNode], dummyCamera, nodeIndexBits)
+      PointCloudOctreePickerHelper.findHit(pixels, pickWindowSize, nodes, dummyCamera, nodeIndexBits)
     ).toStrictEqual({
       pIndex: 5,
       pcIndex: 599
