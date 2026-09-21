@@ -97,6 +97,9 @@ export class PointCloudOctreePicker {
 
       if (performance.now() - this._lastInvalidatedAt >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
         const built = await this.buildCache(camera, octrees, params, width, height);
+        if (this.pickState === undefined) {
+          return null;
+        }
         if (built) {
           return this.pickFromCache(camera, centerX, centerY, pickWndSize);
         }
