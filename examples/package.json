@@ -34,7 +34,7 @@
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.5",
+    "@types/react-dom": "19.2.7",
     "@types/stats.js": "^0.17.0",
     "@types/three": "^0.185.0",
     "css-loader": "^7.0.0",
@@ -46,8 +46,7 @@
     "typescript": "^6.0.0",
     "webpack": "^5.101.0",
     "webpack-cli": "^7.0.0",
-    "webpack-dev-server": "^6.0.0",
-    "webpack-log": "^3.0.2"
+    "webpack-dev-server": "^6.0.0"
   },
   "eslintConfig": {
     "extends": "react-app"
