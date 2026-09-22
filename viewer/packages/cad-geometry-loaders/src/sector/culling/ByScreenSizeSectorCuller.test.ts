@@ -119,11 +119,32 @@ describe(ByScreenSizeSectorCuller.name, () => {
     expect(scheduled.length).toBe(model.scene.sectorCount);
   });
 
+  test('determineSectors force-includes all sectors of a locked model even when outside the camera frustum', () => {
+    const root = createV9SectorMetadata([
+      0,
+      [
+        [1, [], new Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
+        [5, [], new Box3().setFromArray([-1, -1, -20, 1, 1, -19])]
+      ],
+      new Box3().setFromArray([-1, -1, -20, 1, 1, 1])
+    ]);
+    const outOfViewModel = createCadModelMetadata(9, root);
+
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, outOfViewModel, budget);
+    input.lockedModelIdentifiers = new Set([outOfViewModel.modelIdentifier.revealInternalId]);
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.length).toBe(outOfViewModel.scene.sectorCount);
+    expect(scheduled.some(s => s.metadata.id === 5)).toBe(true);
+  });
+
   test('determineSectors force-includes specific locked sector IDs even when budget is zero', () => {
     budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
     const input = createDetermineSectorInput(camera, model, budget);
     const lockedSectorId = model.scene.root.id;
-    input.lockedModelIdentifiers = new Set<symbol>();
     input.lockedSectorIdsByModel = new Map([[model.modelIdentifier.revealInternalId, new Set([lockedSectorId])]]);
 
     const { wantedSectors } = culler.determineSectors(input);
@@ -132,15 +153,37 @@ describe(ByScreenSizeSectorCuller.name, () => {
     expect(scheduled.some(s => s.metadata.id === lockedSectorId)).toBe(true);
   });
 
-  test('determineSectors does not force sectors for models not in lockedModelIdentifiers', () => {
+  test('determineSectors does not force sectors for models not in lockedSectorIdsByModel', () => {
     budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
     const input = createDetermineSectorInput(camera, model, budget);
-    input.lockedModelIdentifiers = new Set<symbol>();
     input.lockedSectorIdsByModel = new Map();
 
     const { wantedSectors } = culler.determineSectors(input);
     const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
     expect(scheduled.length).toBe(0);
+  });
+
+  test('determineSectors force-includes locked sectors even when outside the camera frustum', () => {
+    // Sector 5 sits far behind the camera (camera looks toward +z from the origin, near=1, far=10),
+    // so it can never appear in the frustum-intersecting candidate list.
+    const root = createV9SectorMetadata([
+      0,
+      [
+        [1, [], new Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
+        [5, [], new Box3().setFromArray([-1, -1, -20, 1, 1, -19])]
+      ],
+      new Box3().setFromArray([-1, -1, -20, 1, 1, 1])
+    ]);
+    const outOfViewModel = createCadModelMetadata(9, root);
+
+    budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
+    const input = createDetermineSectorInput(camera, outOfViewModel, budget);
+    input.lockedSectorIdsByModel = new Map([[outOfViewModel.modelIdentifier.revealInternalId, new Set([5])]]);
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduled = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduled.some(s => s.metadata.id === 5)).toBe(true);
   });
 });

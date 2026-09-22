@@ -52,7 +52,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     // Setup helpers we need
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
-    // Force-include sectors from locked models and per-model locked sector IDs
+    // Force-include sectors from fully locked models and per-model locked sector IDs
     const lockedSectorCount = forceIncludeLockedSectors(
       takenSectors,
       modelsAndCandidateSectors,
@@ -93,8 +93,15 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
 /**
  * Force-includes sectors that must bypass the budget:
- * 1. All sectors from fully locked models (e.g. gltf-prioritized-nodes-directory)
- * 2. Specific sector IDs locked via tree index locking on standard models
+ * 1. All sectors of fully locked models (e.g. gltf-prioritized-nodes-directory)
+ * 2. Sectors containing specific tree indices locked via tree index locking
+ *
+ * In both cases sectors are looked up directly by id rather than filtered out of the
+ * frustum-intersecting candidate list - locking is meant to guarantee a sector loads
+ * regardless of camera position. Deriving them from the frustum-filtered candidates
+ * would mean a locked sector drops out (and its geometry gets discarded) whenever it
+ * isn't currently in view, then gets reloaded once it is - causing both visible
+ * flicker and repeated main-thread load/unload churn as the camera moves.
  */
 function forceIncludeLockedSectors(
   takenSectors: TakenV9SectorMap,
@@ -103,7 +110,7 @@ function forceIncludeLockedSectors(
   lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>
 ): number {
   let count = 0;
-  for (const [model, sectors] of modelsAndCandidateSectors) {
+  for (const [model] of modelsAndCandidateSectors) {
     const modelId = model.modelIdentifier.revealInternalId;
     const isFullModelLocked = lockedModelIdentifiers.has(modelId);
     const lockedSectorIds = lockedSectorIdsByModel.get(modelId);
@@ -112,8 +119,17 @@ function forceIncludeLockedSectors(
       continue;
     }
 
-    for (const sector of sectors) {
-      if (isFullModelLocked || lockedSectorIds?.has(sector.id)) {
+    if (isFullModelLocked) {
+      for (const sector of model.scene.getAllSectors()) {
+        takenSectors.markSectorForced(model, sector.id);
+        count++;
+      }
+      continue;
+    }
+
+    for (const sectorId of lockedSectorIds!) {
+      const sector = model.scene.getSectorById(sectorId);
+      if (sector) {
         takenSectors.markSectorForced(model, sector.id);
         count++;
       }
