@@ -182,9 +182,12 @@ export class PointCloudOctreePicker {
       return false;
     }
     // Nodes may have been unloaded by LOD updates since the cache was built which nulls the
-    // scene node geometry.
+    // scene node geometry. Mutate valid/renderedNodes directly rather than via invalidateCache():
+    // that also resets _lastInvalidatedAt, which would restart the rebuild holdoff and force this
+    // call to fall back to a windowed pick instead of rebuilding immediately.
     if (cache.renderedNodes.some(({ node }) => node.sceneNode.geometry === undefined)) {
-      this.invalidateCache();
+      cache.valid = false;
+      cache.renderedNodes = [];
       return false;
     }
     return true;
