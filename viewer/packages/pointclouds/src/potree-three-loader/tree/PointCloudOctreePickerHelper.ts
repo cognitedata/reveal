@@ -116,7 +116,7 @@ export class PointCloudOctreePickerHelper {
 
     const renderedNodes: RenderedNode[] = [];
     for (const octree of octrees) {
-      // Get all the octree nodes which intersect the picking ray. We only need to render those)
+      // Get all the octree nodes which intersect the picking ray. We only need to render those
       // or every visible node when no ray is given (full-frame pick).
       const nodes = ray !== undefined ? PointCloudOctreePickerHelper.nodesOnRay(octree, ray) : [...octree.visibleNodes];
       if (!nodes.length) {
@@ -197,7 +197,7 @@ export class PointCloudOctreePickerHelper {
       const nodeIndex = nodeIndexOffset + i + 1;
       if (nodeIndex > maxNodeIndex) {
         console.error(`More than ${maxNodeIndex} nodes for pick are not supported.`);
-        continue;
+        break;
       }
 
       const sceneNode = node.sceneNode;
