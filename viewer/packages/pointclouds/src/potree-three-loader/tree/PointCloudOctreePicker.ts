@@ -103,7 +103,7 @@ export class PointCloudOctreePicker {
         // A known-in-motion camera is about to invalidate whatever we build anyway - never pay
         // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
       } else if (sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
-        const built = await this.buildCache(camera, octrees, params, width, height);
+        const built = await this.buildCache(camera, octrees, params, width, height, pickState);
         if (this.pickState === undefined) {
           return null;
         }
@@ -191,7 +191,7 @@ export class PointCloudOctreePicker {
     // Nodes may have been unloaded by LOD updates since the cache was built which nulls the
     // scene node geometry.
     if (cache.renderedNodes.some(({ node }) => node.sceneNode.geometry === undefined)) {
-      cache.valid = false;
+      this.invalidateCache();
       return false;
     }
     return true;
@@ -202,10 +202,48 @@ export class PointCloudOctreePicker {
     octrees: PointCloudOctree[],
     params: Partial<PickParams>,
     width: number,
-    height: number
+    height: number,
+    pickState: IPickState
   ): Promise<boolean> {
-    const pickState = this.pickState!;
+    const nodeIndexBits = this.computeNodeIndexBits(octrees);
+    if (nodeIndexBits === undefined) {
+      return false;
+    }
 
+    const invalidationCountAtStart = this._invalidationCount;
+    const { renderedNodes, pixels } = await this.renderAndReadBackPixels(
+      camera,
+      octrees,
+      params,
+      pickState,
+      width,
+      height,
+      nodeIndexBits
+    );
+
+    if (this.pickState === undefined) {
+      return false;
+    }
+
+    this._cache = {
+      pixels,
+      ibuffer: new Uint32Array(pixels.buffer, pixels.byteOffset, width * height),
+      width,
+      height,
+      nodeIndexBits,
+      renderedNodes,
+      octrees: [...octrees],
+      cameraMatrixWorld: camera.matrixWorld.clone(),
+      cameraProjectionMatrix: camera.projectionMatrix.clone(),
+      // The scene may have rendered a new frame while the readback was in flight, so the buffer
+      // then describes the previous frame and must not be served.
+      valid: this._invalidationCount === invalidationCountAtStart
+    };
+    return this._cache.valid;
+  }
+
+  /** Picks the smallest node-index bit width that fits every visible node, or undefined if there are no nodes or none fits. */
+  private computeNodeIndexBits(octrees: PointCloudOctree[]): number | undefined {
     let nodeCount = 0;
     let maxPointsPerNode = 0;
     for (const octree of octrees) {
@@ -215,16 +253,20 @@ export class PointCloudOctreePicker {
       }
     }
     if (nodeCount === 0) {
-      return false;
+      return undefined;
     }
+    return PointCloudOctreePickerHelper.computeBitSplit(nodeCount, maxPointsPerNode);
+  }
 
-    const nodeIndexBits = PointCloudOctreePickerHelper.computeBitSplit(nodeCount, maxPointsPerNode);
-    if (nodeIndexBits === undefined) {
-      return false;
-    }
-
-    const invalidationCountAtStart = this._invalidationCount;
-
+  private async renderAndReadBackPixels(
+    camera: Camera,
+    octrees: PointCloudOctree[],
+    params: Partial<PickParams>,
+    pickState: IPickState,
+    width: number,
+    height: number,
+    nodeIndexBits: number
+  ): Promise<{ renderedNodes: RenderedNode[]; pixels: Uint8Array }> {
     PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, width, height);
     this._pickerHelper.prepareRender(0, 0, width, height, pickState.material, pickState);
     const renderedNodes = this._pickerHelper.render(
@@ -255,26 +297,7 @@ export class PointCloudOctreePicker {
     this._pickerHelper.resetState();
 
     const pixels = await readPixelsPromise;
-
-    if (this.pickState === undefined) {
-      return false;
-    }
-
-    this._cache = {
-      pixels,
-      ibuffer: new Uint32Array(pixels.buffer, pixels.byteOffset, width * height),
-      width,
-      height,
-      nodeIndexBits,
-      renderedNodes,
-      octrees: [...octrees],
-      cameraMatrixWorld: camera.matrixWorld.clone(),
-      cameraProjectionMatrix: camera.projectionMatrix.clone(),
-      // The scene may have rendered a new frame while the readback was in flight, so the buffer
-      // then describes the previous frame and must not be served.
-      valid: this._invalidationCount === invalidationCountAtStart
-    };
-    return this._cache.valid;
+    return { renderedNodes, pixels };
   }
 
   private pickFromCache(camera: Camera, centerX: number, centerY: number, pickWndSize: number): PickPoint | null {

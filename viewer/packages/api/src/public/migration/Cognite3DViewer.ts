@@ -1884,6 +1884,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       customObject.beforeRender(camera);
     });
     this.revealManager.render(camera);
+    this._pointCloudPickingHandler.invalidatePickCache();
     this.revealManager.resetRedraw();
     this._image360ApiHelper?.resetRedraw();
     this._clippingNeedsUpdate = false;
