@@ -82,7 +82,10 @@ export class PointCloudOctreePicker {
 
     const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
 
-    const cacheEligible = params.onBeforePickRender === undefined && params.pixelPosition === undefined;
+    const cacheEligible =
+      params.onBeforePickRender === undefined &&
+      params.pixelPosition === undefined &&
+      params.forceWindowedPick !== true;
     if (cacheEligible) {
       const drawingBufferSize = this._renderer.getDrawingBufferSize(PointCloudOctreePicker.helperVec2);
       const width = Math.max(1, Math.floor(drawingBufferSize.x));
@@ -95,7 +98,12 @@ export class PointCloudOctreePicker {
         return this.pickFromCache(camera, centerX, centerY, pickWndSize);
       }
 
-      if (performance.now() - this._lastInvalidatedAt >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
+      const sinceInvalidatedMs = performance.now() - this._lastInvalidatedAt;
+      // A known-in-motion camera is about to invalidate whatever we build anyway - never pay
+      // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
+      const shouldRebuild =
+        params.cameraInMotion !== true && sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS;
+      if (shouldRebuild) {
         const built = await this.buildCache(camera, octrees, params, width, height, pickState);
         if (this.pickState === undefined) {
           return null;

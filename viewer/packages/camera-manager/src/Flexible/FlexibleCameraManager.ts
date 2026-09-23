@@ -18,7 +18,7 @@ import {
   getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
-import type { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
+import type { CameraEventDelegate, CameraManagerEventType, CameraState, RaycastCallback } from './../types';
 import { CameraManagerHelper } from './../CameraManagerHelper';
 import type { CameraManager } from './../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
@@ -27,8 +27,6 @@ import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraPositionAndTargetTo } from './moveCamera';
 import type { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
 import type { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
-
-type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
 /**
  * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
@@ -358,8 +356,11 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   // INSTANCE METHODS: Calculations
   //================================================
 
-  private readonly getPickedPointByPixelCoordinates = async (position: Vector2): Promise<Vector3> => {
-    const raycastResult = await this._raycastCallback(position.x, position.y, false);
+  private readonly getPickedPointByPixelCoordinates = async (
+    position: Vector2,
+    forceWindowedPick?: boolean
+  ): Promise<Vector3> => {
+    const raycastResult = await this._raycastCallback(position.x, position.y, false, forceWindowedPick);
     if (raycastResult.intersection?.point) {
       return raycastResult.intersection.point;
     }
