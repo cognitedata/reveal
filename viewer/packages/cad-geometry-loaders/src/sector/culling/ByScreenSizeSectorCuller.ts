@@ -115,27 +115,33 @@ function forceIncludeLockedSectors(
     const isFullModelLocked = lockedModelIdentifiers.has(modelId);
     const lockedSectorIds = lockedSectorIdsByModel.get(modelId);
 
-    if (!isFullModelLocked && !lockedSectorIds) {
+    const relevantSectors = getLockedSectorsForModel(model, isFullModelLocked, lockedSectorIds);
+    if (!relevantSectors) {
       continue;
     }
 
-    if (isFullModelLocked) {
-      for (const sector of model.scene.getAllSectors()) {
-        takenSectors.markSectorForced(model, sector.id);
-        count++;
-      }
-      continue;
-    }
-
-    for (const sectorId of lockedSectorIds!) {
-      const sector = model.scene.getSectorById(sectorId);
-      if (sector) {
-        takenSectors.markSectorForced(model, sector.id);
-        count++;
-      }
+    for (const sector of relevantSectors) {
+      takenSectors.markSectorForced(model, sector.id);
+      count++;
     }
   }
   return count;
+}
+
+function getLockedSectorsForModel(
+  model: CadModelMetadata,
+  isFullModelLocked: boolean,
+  lockedSectorIds: ReadonlySet<number> | undefined
+): SectorMetadata[] | undefined {
+  if (isFullModelLocked) {
+    return model.scene.getAllSectors();
+  }
+  if (lockedSectorIds) {
+    return Array.from(lockedSectorIds, sectorId => model.scene.getSectorById(sectorId)).filter(
+      (sector): sector is SectorMetadata => sector !== undefined
+    );
+  }
+  return undefined;
 }
 
 function takeSectorsWithinBudget(

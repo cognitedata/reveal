@@ -16,6 +16,18 @@ import { createDetermineSectorInput } from './createDetermineSectorInput';
 import { Mock } from 'moq.ts';
 import type { DetermineSectorsInput } from './types';
 
+function createOutOfViewModel(): CadModelMetadata {
+  const root = createV9SectorMetadata([
+    0,
+    [
+      [1, [], new Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
+      [5, [], new Box3().setFromArray([-1, -1, -20, 1, 1, -19])]
+    ],
+    new Box3().setFromArray([-1, -1, -20, 1, 1, 1])
+  ]);
+  return createCadModelMetadata(9, root);
+}
+
 describe(ByScreenSizeSectorCuller.name, () => {
   let camera: PerspectiveCamera;
   let model: CadModelMetadata;
@@ -120,15 +132,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
   });
 
   test('determineSectors force-includes all sectors of a locked model even when outside the camera frustum', () => {
-    const root = createV9SectorMetadata([
-      0,
-      [
-        [1, [], new Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
-        [5, [], new Box3().setFromArray([-1, -1, -20, 1, 1, -19])]
-      ],
-      new Box3().setFromArray([-1, -1, -20, 1, 1, 1])
-    ]);
-    const outOfViewModel = createCadModelMetadata(9, root);
+    const outOfViewModel = createOutOfViewModel();
 
     budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
     const input = createDetermineSectorInput(camera, outOfViewModel, budget);
@@ -165,17 +169,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
   });
 
   test('determineSectors force-includes locked sectors even when outside the camera frustum', () => {
-    // Sector 5 sits far behind the camera (camera looks toward +z from the origin, near=1, far=10),
-    // so it can never appear in the frustum-intersecting candidate list.
-    const root = createV9SectorMetadata([
-      0,
-      [
-        [1, [], new Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
-        [5, [], new Box3().setFromArray([-1, -1, -20, 1, 1, -19])]
-      ],
-      new Box3().setFromArray([-1, -1, -20, 1, 1, 1])
-    ]);
-    const outOfViewModel = createCadModelMetadata(9, root);
+    const outOfViewModel = createOutOfViewModel();
 
     budget = { maximumRenderCost: 0, highDetailProximityThreshold: 0 };
     const input = createDetermineSectorInput(camera, outOfViewModel, budget);
