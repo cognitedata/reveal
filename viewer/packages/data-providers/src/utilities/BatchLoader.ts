@@ -77,8 +77,6 @@ export abstract class BatchLoader<TIdentifier, TResult> {
 
     try {
       await this.executeBatch(batchToProcess);
-    } catch (error) {
-      console.error('Error in excuting batch', error);
     } finally {
       this._isProcessing = false;
 
