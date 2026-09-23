@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import type { WebGLRenderer } from 'three';
-import { PerspectiveCamera, Plane, Vector2, Vector3 } from 'three';
+import { PerspectiveCamera, Plane, Ray, Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
@@ -237,20 +237,27 @@ describe(PointCloudPickingHandler.name, () => {
 
     await handler.intersectPointClouds([node], input);
 
-    expect(pickSpy).toHaveBeenCalledOnce();
-    const [, , , paramsArg] = pickSpy.mock.calls[0];
-    expect(paramsArg).toMatchObject({ cameraInMotion: true, forceWindowedPick: true });
+    expect(pickSpy).toHaveBeenCalledWith(
+      input.camera,
+      expect.any(Ray),
+      [node.octree],
+      expect.objectContaining({ cameraInMotion: true, forceWindowedPick: true })
+    );
   });
 
   test('intersectPointClouds defaults cameraInMotion and forceWindowedPick to false when omitted', async () => {
     const node = createPointCloudNode();
     const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+    const input = createMockIntersectInput();
 
-    await handler.intersectPointClouds([node], createMockIntersectInput());
+    await handler.intersectPointClouds([node], input);
 
-    expect(pickSpy).toHaveBeenCalledOnce();
-    const [, , , paramsArg] = pickSpy.mock.calls[0];
-    expect(paramsArg).toMatchObject({ cameraInMotion: false, forceWindowedPick: false });
+    expect(pickSpy).toHaveBeenCalledWith(
+      input.camera,
+      expect.any(Ray),
+      [node.octree],
+      expect.objectContaining({ cameraInMotion: false, forceWindowedPick: false })
+    );
   });
 
   test('invalidatePickCache delegates to the picker', () => {

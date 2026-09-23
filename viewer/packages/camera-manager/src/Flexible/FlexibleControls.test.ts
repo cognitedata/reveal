@@ -61,7 +61,7 @@ describe(FlexibleControls.name, () => {
 
       await controls.onWheel(wheelEvent, -1);
 
-      expect(pickSpy).toHaveBeenCalledWith(expect.any(Vector2), true);
+      expect(pickSpy).toHaveBeenCalledWith(new Vector2(50, 50), true);
     });
   });
 });

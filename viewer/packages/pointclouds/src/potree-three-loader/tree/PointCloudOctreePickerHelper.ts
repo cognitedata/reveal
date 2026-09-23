@@ -56,7 +56,7 @@ export interface PickParams {
    * gets discarded, and the caller still has to fall back to a windowed pick anyway. Falls back to
    * the time-based holdoff when omitted.
    */
-  cameraInMotion: boolean;
+  cameraInMotion?: boolean;
   /**
    * Unconditionally skips the full-frame pick cache (both serving from it and rebuilding it) for
    * this call, regardless of camera-motion state. Intended for callers that pick on every input
@@ -65,7 +65,7 @@ export interface PickParams {
    * `cameraInMotion`, this doesn't depend on the camera having already started moving, which
    * matters because some callers pick *before* moving the camera for that same input event.
    */
-  forceWindowedPick: boolean;
+  forceWindowedPick?: boolean;
 }
 
 /**

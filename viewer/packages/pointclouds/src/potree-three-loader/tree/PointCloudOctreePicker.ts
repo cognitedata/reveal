@@ -99,10 +99,11 @@ export class PointCloudOctreePicker {
       }
 
       const sinceInvalidatedMs = performance.now() - this._lastInvalidatedAt;
-      if (params.cameraInMotion === true) {
-        // A known-in-motion camera is about to invalidate whatever we build anyway - never pay
-        // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
-      } else if (sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS) {
+      // A known-in-motion camera is about to invalidate whatever we build anyway - never pay
+      // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
+      const shouldRebuild =
+        params.cameraInMotion !== true && sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS;
+      if (shouldRebuild) {
         const built = await this.buildCache(camera, octrees, params, width, height, pickState);
         if (this.pickState === undefined) {
           return null;

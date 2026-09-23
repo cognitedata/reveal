@@ -10,12 +10,12 @@ import { ComboControls } from './ComboControls';
 import type { ComboControlsOptions } from './ComboControlsOptions';
 
 import type {
-  CameraManagerCallbackData,
   CameraState,
   CameraChangeDelegate,
   CameraManagerEventType,
   CameraStopDelegate,
-  CameraEventDelegate
+  CameraEventDelegate,
+  RaycastCallback
 } from './types';
 
 import type { CameraManager } from './CameraManager';
@@ -33,12 +33,6 @@ import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEven
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import type { CameraControlsOptions } from './CameraControlsOptions';
 
-type RaycastCallback = (
-  x: number,
-  y: number,
-  pickBoundingBox: boolean,
-  forceWindowedPick?: boolean
-) => Promise<CameraManagerCallbackData>;
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
  * keyboard and mouse navigation possibility. Supports automatic update of camera near and far
