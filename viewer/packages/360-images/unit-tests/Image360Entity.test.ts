@@ -4,7 +4,8 @@
 
 import { Color, Matrix4, Vector3 } from 'three';
 
-import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
+import type { Image360Provider } from '../src/providers/Image360Provider';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { It, Mock } from 'moq.ts';
 import { Overlay3DIcon } from '@reveal/3d-overlays';

@@ -17,6 +17,7 @@ import {
   COLOR_WHITE,
   DEFAULT_MAX_POINT_SIZE,
   DEFAULT_MIN_POINT_SIZE,
+  DEFAULT_NODE_INDEX_BITS,
   OBJECT_STYLING_TEXTURE_HEIGHT,
   OBJECT_STYLING_TEXTURE_WIDTH,
   PERSPECTIVE_CAMERA
@@ -52,6 +53,7 @@ export interface IPointCloudMaterialUniforms {
   level: IUniform<number>;
   maxSize: IUniform<number>;
   minSize: IUniform<number>;
+  nodeIndexBits: IUniform<number>;
   objectIdLUT: IUniform<Texture>;
   octreeSize: IUniform<number>;
   pcIndex: IUniform<number>;
@@ -124,6 +126,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     level: makeUniform('f', 0.0),
     maxSize: makeUniform('f', DEFAULT_MAX_POINT_SIZE),
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
+    nodeIndexBits: makeUniform('f', DEFAULT_NODE_INDEX_BITS),
     objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
     pcIndex: makeUniform('f', 0),
@@ -214,6 +217,15 @@ export class PointCloudMaterial extends RawShaderMaterial {
   set minSize(value: number) {
     if (value !== this.getUniform('minSize')) {
       this.setUniform('minSize', value);
+    }
+  }
+
+  get nodeIndexBits(): number {
+    return this.getUniform('nodeIndexBits');
+  }
+  set nodeIndexBits(value: number) {
+    if (value !== this.getUniform('nodeIndexBits')) {
+      this.setUniform('nodeIndexBits', value);
     }
   }
 

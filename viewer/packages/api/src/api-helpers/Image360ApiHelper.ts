@@ -16,7 +16,8 @@ import type {
   Image360AnnotationFilterOptions,
   Image360CollectionSourceType,
   Image360IconIntersectionData,
-  Image360ClusterIntersectionData
+  Image360ClusterIntersectionData,
+  Image360Provider
 } from '@reveal/360-images';
 import {
   Image360Entity,
@@ -26,23 +27,22 @@ import {
   createCollectionIdString,
   DEFAULT_IMAGE_360_OPACITY,
   Image360Action,
-  HtmlClusterCoordinator
+  HtmlClusterCoordinator,
+  Cdf360ImageAnnotationProvider,
+  CoreDm360ImageAnnotationProvider,
+  Image360ProviderCombiner
 } from '@reveal/360-images';
 import type {
   ClassicDataSourceType,
   DataSourceType,
   DMDataSourceType,
-  Image360DataModelIdentifier,
-  Image360Provider
+  Image360DataModelIdentifier
 } from '@reveal/data-providers';
 import {
   Cdf360CdmDescriptorProvider,
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  Cdf360ImageAnnotationProvider,
   Cdf360ImageFileProvider,
-  CoreDm360ImageAnnotationProvider,
-  Image360ProviderCombiner,
   isFdm360ImageCollectionIdentifier,
   createCdf360ImageAnnotationCache
 } from '@reveal/data-providers';
@@ -110,6 +110,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
   };
   public readonly onHover = (event: PointerEvent): void => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
+  public readonly onPointerLeave = (): void => this.clearHoverIntersection();
   public readonly onClick = (event: PointerEventData): Promise<boolean> => this.enter360ImageOnIntersect(event);
 
   private readonly updateHoverStateOnRenderHandler = () => {
@@ -198,6 +199,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     if (this._hasEventListeners) {
       domElement.addEventListener('pointermove', this.onHover);
+      domElement.addEventListener('pointerleave', this.onPointerLeave);
       this._inputHandler = inputHandler;
       this._inputHandler.on('click', this.onClick);
     }
@@ -633,10 +635,12 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   }
 
   public dispose(): void {
+    this.clearHoverIntersection();
     this._onBeforeSceneRenderedEvent.unsubscribe(this.updateHoverStateOnRenderHandler);
     this._onBeforeSceneRenderedEvent.unsubscribe(this.onBeforeRender);
     if (this._hasEventListeners) {
       this._domElement.removeEventListener('pointermove', this.onHover);
+      this._domElement.removeEventListener('pointerleave', this.onPointerLeave);
       this._domElement.removeEventListener('keydown', this.onKeyPressed);
       if (this._inputHandler != undefined) {
         this._inputHandler.off('click', this.onClick);
@@ -855,6 +859,14 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     this._needsRedraw = true;
     this._interactionState.currentImage360Hovered = entity;
+  }
+
+  clearHoverIntersection(): void {
+    this._interactionState.lastMousePosition = undefined;
+    this._interactionState.currentImage360Hovered = undefined;
+    this._image360Facade.allIconsSelected = false;
+    this._image360Facade.hideAllHoverIcons();
+    this._needsRedraw = true;
   }
 
   private async exit360ImageByTween(): Promise<boolean> {

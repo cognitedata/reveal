@@ -10,7 +10,8 @@ import { DefaultImage360Collection } from './DefaultImage360Collection';
 import type { ClusterIntersectionData, IconCollection } from '../icons/IconCollection';
 import type { Image360Entity } from '../entity/Image360Entity';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
+import type { Image360Provider } from '../providers/Image360Provider';
 import type { Overlay3DIcon } from '@reveal/3d-overlays';
 
 describe(DefaultImage360Collection.name, () => {

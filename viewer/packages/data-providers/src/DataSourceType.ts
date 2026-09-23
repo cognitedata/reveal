@@ -3,7 +3,8 @@
  */
 import type { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
 import type { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
-import type { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
+import type { PointCloudAnnotationVolumeCollection } from './point-cloud-collections/PointCloudObjectCollection';
+import type { PointCloudDMVolumeCollection } from './point-cloud-collections/PointCloudDMVolumeCollection';
 import type { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
 import type { DMInstanceRef } from '@reveal/utilities';
 

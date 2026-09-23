@@ -8,7 +8,10 @@ export {
   StyledPointCloudObjectCollection,
   StyledPointCloudVolumeCollection
 } from './src/StyledPointCloudVolumeCollection';
-export { PointCloudObjectCollection, PointCloudAnnotationVolumeCollection } from './src/PointCloudObjectCollection';
+export {
+  PointCloudObjectCollection,
+  PointCloudAnnotationVolumeCollection,
+  PointCloudDMVolumeCollection
+} from '@reveal/data-providers';
 export { AnnotationIdPointCloudObjectCollection } from './src/AnnotationIdPointCloudObjectCollection';
-export { PointCloudDMVolumeCollection } from './src/PointCloudDMVolumeCollection';
 export { isPointCloudObjectCollection, isDMInstanceRefPointCloudObjectCollection } from './src/utils';

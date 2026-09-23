@@ -33,6 +33,14 @@ export class PointCloudPickingHandler {
     this._picker.dispose();
   }
 
+  /**
+   * Invalidates the picker's cached full-frame pick buffer. Must be called whenever a new
+   * frame of the scene is rendered.
+   */
+  invalidatePickCache(): void {
+    this._picker.invalidateCache();
+  }
+
   async intersectPointClouds(
     nodes: PointCloudNode<DataSourceType>[],
     input: IntersectInput

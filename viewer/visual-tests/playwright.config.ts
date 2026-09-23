@@ -3,6 +3,7 @@
  */
 
 import { defineConfig } from '@playwright/test';
+import path from 'path';
 
 export default defineConfig({
   testDir: '.',
@@ -27,6 +28,7 @@ export default defineConfig({
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
     ignoreHTTPSErrors: true,
-    timeout: 60 * 1000
+    timeout: 60 * 1000,
+    cwd: path.resolve(__dirname, '..')
   }
 });
