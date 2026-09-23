@@ -32,6 +32,7 @@ uniform float octreeSize;
 uniform float level;
 uniform float vnStart;
 uniform bool isLeafNode;
+uniform float keepFraction; // 1.0 = draw every point; < 1.0 = dithered LOD frontier
 
 uniform vec2 intensityRange;
 uniform float intensityGamma;
@@ -163,6 +164,16 @@ float getPointSizeAttenuation() {
 
 #endif
 
+// Hash of an integer to a pseudo-random float in [0, 1), used to dither the LOD frontier.
+float hashToUnitFloat(uint x) {
+	x ^= x >> 16;
+	x *= 0x7feb352du;
+	x ^= x >> 15;
+	x *= 0x846ca68bu;
+	x ^= x >> 16;
+	return float(x) / 4294967296.0;
+}
+
 // formula adapted from: http://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/image-processing-algorithms-part-5-contrast-adjustment/
 float getContrastFactor(float contrast) {
 	return (1.0158730158730156 * (contrast + 1.0)) / (1.0158730158730156 - contrast);
@@ -204,6 +215,13 @@ vec4 getClassification() {
 }
 
 void main() {
+	// Dithered LOD frontier: near the point budget, drop a stochastic subset of a node's
+	// points so the deepest visible nodes fade in instead of popping in whole.
+	if (keepFraction < 1.0 && hashToUnitFloat(uint(gl_VertexID)) >= keepFraction) {
+		gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
+		return;
+	}
+
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 		#if defined paraboloid_point_shape
 			vViewPosition = mvPosition.xyz;

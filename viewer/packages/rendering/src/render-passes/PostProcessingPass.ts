@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import type { Camera, Material, Mesh, PerspectiveCamera, Scene, ShaderMaterial, WebGLRenderer } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -15,7 +15,6 @@ import {
   RenderLayer
 } from '../utilities/renderUtilities';
 import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
-import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 /**
  * Single pass that applies post processing effects and
@@ -114,9 +113,25 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
-    if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
-      this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
-      this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
+    // Both EDL and gap filling need the current render size in the normalize shader. Updating
+    // unconditionally is harmless when neither is enabled (the uniforms are simply unused).
+    const uniforms = this._pointcloudBlitMaterial.uniforms;
+    const height = this._postProcessingOptions.pointCloud.height;
+    uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
+    uniforms.screenHeight = { value: height };
+
+    // Distance gate for the gap fill: pass the camera params it needs to turn a pixel reach
+    // into a world-space gap size at the surrounding surface's depth (see normalize.frag).
+    const perspective = camera as PerspectiveCamera;
+    if (perspective.isPerspectiveCamera) {
+      uniforms.cameraNear = { value: perspective.near };
+      uniforms.cameraFar = { value: perspective.far };
+      uniforms.worldPerPixelUnitDepth = {
+        value: (2 * Math.tan((perspective.fov * Math.PI) / 360)) / Math.max(1, height)
+      };
+    } else {
+      // Orthographic: gap size does not grow with distance, so disable the gate.
+      uniforms.worldPerPixelUnitDepth = { value: 0 };
     }
 
     renderer.sortObjects = true;
