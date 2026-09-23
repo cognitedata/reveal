@@ -225,4 +225,14 @@ describe(PointCloudPickingHandler.name, () => {
     // Verify serial execution: first pick fully completed before second started
     expect(executionOrder).toEqual(['pick_start_1', 'pick_end_1', 'pick_start_2', 'pick_end_2']);
   });
+
+  test('invalidatePickCache delegates to the picker', () => {
+    const invalidateSpy = vi
+      .spyOn(PointCloudOctreePicker.prototype, 'invalidateCache')
+      .mockImplementation(() => undefined);
+
+    handler.invalidatePickCache();
+
+    expect(invalidateSpy).toHaveBeenCalledTimes(1);
+  });
 });

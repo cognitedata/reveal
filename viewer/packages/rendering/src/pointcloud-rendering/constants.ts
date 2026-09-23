@@ -7,6 +7,9 @@ export const DEFAULT_MAX_POINT_SIZE = 10;
 export const DEFAULT_MIN_NODE_PIXEL_SIZE = 50;
 export const DEFAULT_MIN_POINT_SIZE = 1;
 export const DEFAULT_PICK_WINDOW_SIZE = 15;
+// Number of high bits of the packed 32-bit pick output holding the node index; the remaining
+// low bits hold the point index. 8 matches the legacy layout (RGB = point index, A = node index).
+export const DEFAULT_NODE_INDEX_BITS = 8;
 export const DEFAULT_POINT_BUDGET = 3_000_000;
 export const MAX_LOADS_TO_GPU = 15;
 export const MAX_NUM_NODES_LOADING = 8;
