@@ -52,7 +52,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     // Setup helpers we need
     initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
-    // Force-include sectors from locked models and per-model locked sector IDs
+    // Force-include sectors from fully locked models and per-model locked sector IDs
     const lockedSectorCount = forceIncludeLockedSectors(
       takenSectors,
       modelsAndCandidateSectors,
@@ -93,8 +93,15 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
 /**
  * Force-includes sectors that must bypass the budget:
- * 1. All sectors from fully locked models (e.g. gltf-prioritized-nodes-directory)
- * 2. Specific sector IDs locked via tree index locking on standard models
+ * 1. All sectors of fully locked models (e.g. gltf-prioritized-nodes-directory)
+ * 2. Sectors containing specific tree indices locked via tree index locking
+ *
+ * In both cases sectors are looked up directly by id rather than filtered out of the
+ * frustum-intersecting candidate list - locking is meant to guarantee a sector loads
+ * regardless of camera position. Deriving them from the frustum-filtered candidates
+ * would mean a locked sector drops out (and its geometry gets discarded) whenever it
+ * isn't currently in view, then gets reloaded once it is - causing both visible
+ * flicker and repeated main-thread load/unload churn as the camera moves.
  */
 function forceIncludeLockedSectors(
   takenSectors: TakenV9SectorMap,
@@ -103,23 +110,38 @@ function forceIncludeLockedSectors(
   lockedSectorIdsByModel: Map<symbol, ReadonlySet<number>>
 ): number {
   let count = 0;
-  for (const [model, sectors] of modelsAndCandidateSectors) {
+  for (const [model] of modelsAndCandidateSectors) {
     const modelId = model.modelIdentifier.revealInternalId;
     const isFullModelLocked = lockedModelIdentifiers.has(modelId);
     const lockedSectorIds = lockedSectorIdsByModel.get(modelId);
 
-    if (!isFullModelLocked && !lockedSectorIds) {
+    const relevantSectors = getLockedSectorsForModel(model, isFullModelLocked, lockedSectorIds);
+    if (!relevantSectors) {
       continue;
     }
 
-    for (const sector of sectors) {
-      if (isFullModelLocked || lockedSectorIds?.has(sector.id)) {
-        takenSectors.markSectorForced(model, sector.id);
-        count++;
-      }
+    for (const sector of relevantSectors) {
+      takenSectors.markSectorForced(model, sector.id);
+      count++;
     }
   }
   return count;
+}
+
+function getLockedSectorsForModel(
+  model: CadModelMetadata,
+  isFullModelLocked: boolean,
+  lockedSectorIds: ReadonlySet<number> | undefined
+): SectorMetadata[] | undefined {
+  if (isFullModelLocked) {
+    return model.scene.getAllSectors();
+  }
+  if (lockedSectorIds) {
+    return Array.from(lockedSectorIds, sectorId => model.scene.getSectorById(sectorId)).filter(
+      (sector): sector is SectorMetadata => sector !== undefined
+    );
+  }
+  return undefined;
 }
 
 function takeSectorsWithinBudget(
