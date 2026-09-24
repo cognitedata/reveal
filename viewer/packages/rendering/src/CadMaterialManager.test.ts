@@ -3,7 +3,7 @@
  */
 
 import type { RawShaderMaterial } from 'three';
-import { Matrix4, Plane, Texture } from 'three';
+import { Matrix4, PerspectiveCamera, Plane, Texture } from 'three';
 
 import { CadMaterialManager, createCadMaterial } from './CadMaterialManager';
 import type { Materials } from './rendering/materials';
@@ -187,6 +187,38 @@ describe('CadMaterialManager', () => {
         expect(texturedMaterial.uniforms[key]).toEqual(originalUniforms[key]);
       }
     });
+  });
+
+  test.each([true, false])('setCadLightingEnabled(%s) pushes the flag onto material uniforms', enabled => {
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+
+    manager.setCadLightingEnabled(enabled);
+    manager.updateViewLighting(new PerspectiveCamera());
+
+    const material = manager.getModelMaterials(modelIdentifier1).box;
+    expect(material.uniforms.cadLightingEnabled.value).toBe(enabled ? 1 : 0);
+  });
+
+  test('setCadLightingEnabled marks for redraw only on change', () => {
+    manager.setCadLightingEnabled(false);
+    expect(manager.needsRedraw).toBe(false);
+
+    manager.setCadLightingEnabled(true);
+    expect(manager.needsRedraw).toBe(true);
+  });
+
+  test('updateViewLighting transforms the world light into view space', () => {
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    const camera = new PerspectiveCamera();
+    camera.position.set(1, 2, 3);
+    camera.lookAt(0, 0, 0);
+    camera.updateMatrixWorld();
+
+    manager.updateViewLighting(camera);
+
+    const { cadLightDirection, cadUpDirection } = manager.getModelMaterials(modelIdentifier1).box.uniforms;
+    expect(cadLightDirection.value.length()).toBeCloseTo(1);
+    expect(cadUpDirection.value.length()).toBeCloseTo(1);
   });
 });
 

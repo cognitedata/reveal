@@ -35,6 +35,7 @@ export class GeometryPass implements RenderPass {
       camera.layers.mask = this._renderLayer;
       renderMode = this._materialManager.getRenderMode();
       this._materialManager.setRenderMode(this._renderMode);
+      this._materialManager.updateViewLighting(camera);
       renderer.render(this._geometryScene, camera);
     } finally {
       camera.layers.mask = currentCameraMask;
