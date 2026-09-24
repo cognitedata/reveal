@@ -57,6 +57,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
   public set shadowsEnabled(enabled: boolean) {
     this._shadowMapPass.setEnabled(enabled);
+    // Sun shading is tied to shadows so the default look stays unchanged.
+    this._materialManager.setCadLightingEnabled(enabled);
   }
 
   set renderOptions(renderOptions: RenderOptions) {
@@ -129,6 +131,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     );
 
     this._shadowMapPass = new ShadowMapPass(sceneHandler, materialManager, enableShadows);
+    materialManager.setCadLightingEnabled(enableShadows);
     this._cadBounds = new Box3();
     this._cadModelBounds = new Box3();
 
@@ -177,7 +180,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     const hasStyling = hasStyledNodes(modelIdentifiers, this._materialManager);
 
     try {
-      // Light-space depth first: the CAD shadow lookup in post processing depends on it.
       if (this._shadowMapPass.userEnabled) {
         this.updateShadowCasterBounds();
         if (this._cadModels.length > 0) {
@@ -277,10 +279,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     return this._pointCloudModels.length > 0;
   }
 
-  /**
-   * Fits the shadow light frustum to the CAD geometry.
-   * Deliberately independent of the view camera so shadows do not move while orbiting.
-   */
   private updateShadowCasterBounds(): void {
     const cadBounds = this._cadBounds;
     const cadModelBounds = this._cadModelBounds;
@@ -296,19 +294,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
 type CadNodeLike = Partial<{ sectorScene: SectorScene; rootSector: Object3D }>;
 
-/**
- * CAD primitives are drawn as instances of unit-sized template geometry, so their
- * `BufferGeometry` bounds describe the template and not where the instances end up.
- * `Box3.expandByObject` therefore collapses to a box around the origin, which is useless
- * for fitting a light frustum. Sector metadata is the only reliable source of CAD bounds.
- */
 function getCadWorldBounds(cadNode: Object3D, target: Box3): Box3 {
   const { sectorScene, rootSector } = cadNode as CadNodeLike;
   if (sectorScene === undefined || rootSector === undefined) {
     return target.makeEmpty().expandByObject(cadNode);
   }
 
-  // The metadata bounds are in model space, while rootSector carries the model transformation.
+  // Instanced primitives only carry template-sized geometry bounds, so use sector metadata instead.
   target.copy(sectorScene.getBoundsOfMostGeometry());
   return target.applyMatrix4(rootSector.matrixWorld);
 }

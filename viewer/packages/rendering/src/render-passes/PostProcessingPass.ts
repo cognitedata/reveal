@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import type { Camera, Material, Mesh, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
@@ -15,7 +15,7 @@ import {
   getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
-import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 import { CadShadowPass } from './CadShadowPass';
 import { CadShadowReceiverMaterials } from '../rendering/CadShadowReceiverMaterials';
@@ -33,6 +33,8 @@ export class PostProcessingPass implements RenderPass {
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly _cadShadowPass: CadShadowPass | undefined;
   private readonly _shadowReceiverMaterials: CadShadowReceiverMaterials | undefined;
+  private readonly _cadShadowMap: CadShadowMap | undefined;
+  private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
@@ -53,6 +55,7 @@ export class PostProcessingPass implements RenderPass {
     this._postProcessingOptions = postProcessingPipelineOptions;
 
     const shadowOptions = postProcessingPipelineOptions.cadShadow;
+    this._cadShadowMap = shadowOptions?.map;
     this._cadShadowPass =
       shadowOptions === undefined
         ? undefined
@@ -67,9 +70,9 @@ export class PostProcessingPass implements RenderPass {
       overrideAlpha: 1.0,
       edges: postProcessingPipelineOptions.edges,
       outline: true,
-      cadShadow: this._cadShadowPass !== undefined,
-      cadShadowTexture: this._cadShadowPass?.texture
+      cadShadow: this._cadShadowPass !== undefined
     });
+    this._backBlitMaterial = backBlitMaterial;
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
@@ -144,9 +147,29 @@ export class PostProcessingPass implements RenderPass {
 
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
-    this._cadShadowPass?.render(renderer, camera);
-    this._shadowReceiverMaterials?.update(this._customObjects, camera);
+    this.renderCadShadows(renderer, camera);
     renderer.render(this._scene, camera);
+  }
+
+  private renderCadShadows(renderer: WebGLRenderer, camera: Camera): void {
+    const uniforms = this._backBlitMaterial.uniforms;
+    // The shadow composition is only compiled into the blit when a depth texture exists.
+    if (this._cadShadowPass === undefined || uniforms.cadShadowEnabled === undefined) {
+      return;
+    }
+
+    // Leaving the shadow targets unbound while disabled keeps Three from allocating them.
+    if (this._cadShadowMap?.enabled !== true) {
+      uniforms.cadShadowEnabled.value = 0;
+      uniforms.tCadShadow.value = null;
+      this._shadowReceiverMaterials?.disable();
+      return;
+    }
+
+    this._cadShadowPass.render(renderer, camera);
+    this._shadowReceiverMaterials?.update(this._customObjects, camera);
+    uniforms.cadShadowEnabled.value = 1;
+    uniforms.tCadShadow.value = this._cadShadowPass.texture;
   }
 
   public dispose(): void {

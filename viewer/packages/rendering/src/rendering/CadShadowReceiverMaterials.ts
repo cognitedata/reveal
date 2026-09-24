@@ -21,7 +21,6 @@ const supportedMaterialTypes = new Set([
   'MeshMatcapMaterial'
 ]);
 
-/** Applies CAD shadows in the receiver's own draw, preserving its depth, alpha and clipping behavior. */
 export class CadShadowReceiverMaterials {
   private readonly _materials = new Map<Material, { original: MaterialHooks; installed: MaterialHooks }>();
   private readonly _receivers = new Map<Mesh, boolean>();
@@ -36,8 +35,7 @@ export class CadShadowReceiverMaterials {
       cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
       cadShadowTexelWorld: { value: 1 },
       cadShadowDepthRange: { value: 1 },
-      cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
-      cadShadowEnabled: { value: 0 }
+      cadShadowStrength: { value: CAD_SHADOW_STRENGTH }
     };
   }
 
@@ -47,7 +45,6 @@ export class CadShadowReceiverMaterials {
     this._uniforms.cadCameraMatrixWorld.value.copy(camera.matrixWorld);
     this._uniforms.cadShadowTexelWorld.value = this._shadowMap.texelWorldSize;
     this._uniforms.cadShadowDepthRange.value = this._shadowMap.depthRange;
-    this._uniforms.cadShadowEnabled.value = this._shadowMap.enabled ? 1 : 0;
 
     const activeMaterials = new Set<Material>();
     const activeReceivers = new Set<Mesh>();
@@ -77,10 +74,18 @@ export class CadShadowReceiverMaterials {
     }
   }
 
-  public dispose(): void {
+  public disable(): void {
+    if (this._materials.size === 0 && this._receivers.size === 0) {
+      return;
+    }
+
     for (const [mesh, receiveShadow] of this._receivers) mesh.receiveShadow = receiveShadow;
     this._receivers.clear();
     for (const material of this._materials.keys()) this.restore(material);
+  }
+
+  public dispose(): void {
+    this.disable();
   }
 
   private install(material: Material): void {
@@ -116,8 +121,7 @@ export class CadShadowReceiverMaterials {
             '#include <project_vertex>\nvCadReceiverWorldPosition = (cadCameraMatrixWorld * mvPosition).xyz;'
           );
 
-        // Three updates receiveShadow per draw, including when meshes share a material.
-        // Lit materials already declare it in lights_pars_begin.
+        // Lit materials already declare receiveShadow in lights_pars_begin.
         const receiveShadowUniform = shader.fragmentShader.includes('#include <lights_pars_begin>')
           ? ''
           : 'uniform bool receiveShadow;\n';

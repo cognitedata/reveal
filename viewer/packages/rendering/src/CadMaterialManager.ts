@@ -59,6 +59,7 @@ export class CadMaterialManager {
   private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
   private readonly _cadLightView = new Vector3();
   private readonly _cadUpView = new Vector3();
+  private _cadLightingEnabled = false;
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
   private _needsRedraw: boolean = false;
@@ -217,21 +218,31 @@ export class CadMaterialManager {
     return this._renderMode;
   }
 
-  /**
-   * Transforms the world-space CAD sun into view space so lighting stays fixed while the camera orbits.
-   */
+  setCadLightingEnabled(enabled: boolean): void {
+    if (this._cadLightingEnabled === enabled) {
+      return;
+    }
+    this._cadLightingEnabled = enabled;
+    this._needsRedraw = true;
+  }
+
   updateViewLighting(camera: Camera): void {
     cadLightDirectionView(camera, this._cadLightView);
     cadUpDirectionView(camera, this._cadUpView);
+    const lightingEnabled = this._cadLightingEnabled ? 1 : 0;
 
     this.applyToAllMaterials(material => {
       const lightUniform = material.uniforms.cadLightDirection;
       const upUniform = material.uniforms.cadUpDirection;
+      const enabledUniform = material.uniforms.cadLightingEnabled;
       if (lightUniform !== undefined) {
         (lightUniform.value as Vector3).copy(this._cadLightView);
       }
       if (upUniform !== undefined) {
         (upUniform.value as Vector3).copy(this._cadUpView);
+      }
+      if (enabledUniform !== undefined) {
+        enabledUniform.value = lightingEnabled;
       }
     });
   }

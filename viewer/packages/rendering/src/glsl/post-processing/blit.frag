@@ -20,6 +20,7 @@ uniform sampler2D tOutlineColors;
 
 #if defined(CAD_SHADOW)
 uniform sampler2D tCadShadow;
+uniform float cadShadowEnabled;
 #endif
 
 in vec2 vUv;
@@ -50,16 +51,12 @@ out vec4 fragColor;
 #endif
 
 #if defined(CAD_SHADOW)
-// 1 LSB triangular dither hides 8-bit posterization of a smooth gradient.
 float cadShadowDither() {
   float n = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
   return (n - 0.5) / 255.0;
 }
 
-// Four bilinear taps on the texel corners average a 3x3 neighbourhood. Three extra
-// fetches on a single-value texture is enough to remove the residual shadow-map
-// stepping without adding a separate blur pass.
-float cadShadowLit() {
+float sampleCadShadow() {
   vec2 texel = 1.0 / vec2(textureSize(tCadShadow, 0));
   float sum = texture(tCadShadow, vUv + texel * vec2(-0.5, -0.5)).r;
   sum += texture(tCadShadow, vUv + texel * vec2(0.5, -0.5)).r;
@@ -84,7 +81,10 @@ void main() {
     fragColor *= gaussianBlur(tSsao, vUv);
   #endif
   #if defined(CAD_SHADOW)
-    fragColor.rgb *= cadShadowLit();
+    // Skipped when off so the frame stays bit-exact instead of picking up the dither.
+    if (cadShadowEnabled > 0.5) {
+      fragColor.rgb *= sampleCadShadow();
+    }
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);

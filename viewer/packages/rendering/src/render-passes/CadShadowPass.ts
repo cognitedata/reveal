@@ -22,12 +22,6 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const CAD_TERMINATOR_FADE = 0.35;
 
-/**
- * Resolves the CAD shadow map into a screen-space lit factor.
- *
- * Every pixel is compared against light-space depth, so geometry receives shadows
- * from casters that are not visible to the view camera.
- */
 export class CadShadowPass {
   private readonly _renderTarget: WebGLRenderTarget;
   private readonly _material: RawShaderMaterial;
@@ -43,9 +37,6 @@ export class CadShadowPass {
   ) {
     this._shadowMap = shadowMap;
 
-    // A single 8 bit channel: the output is one lit factor in [0, 1] and the blit already
-    // dithers it against 8 bit banding. Compared to RGBA half float this is an eighth of
-    // the bandwidth, on a target that is written and then read once per pixel per frame.
     this._renderTarget = new WebGLRenderTarget(1, 1, {
       depthBuffer: false,
       stencilBuffer: false,
@@ -65,13 +56,10 @@ export class CadShadowPass {
         inverseProjectionMatrix: { value: new Matrix4() },
         cadCameraMatrixWorld: { value: new Matrix4() },
         cadShadowMatrix: { value: new Matrix4() },
-        // Same world space sun the CAD materials shade with, so the shadow terminator
-        // and the diffuse terminator land on the same place.
         cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
         cadShadowTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
-        cadShadowEnabled: { value: 0 },
         cadShadowTerminatorFade: { value: terminatorFade }
       },
       glslVersion: GLSL3,
@@ -103,7 +91,6 @@ export class CadShadowPass {
     uniforms.cadShadowMatrix.value.copy(this._shadowMap.matrix);
     uniforms.cadShadowTexelWorld.value = this._shadowMap.texelWorldSize;
     uniforms.cadShadowDepthRange.value = this._shadowMap.depthRange;
-    uniforms.cadShadowEnabled.value = this._shadowMap.enabled ? 1 : 0;
 
     renderer.setClearColor('#FFFFFF', 1.0);
     renderer.setRenderTarget(this._renderTarget);

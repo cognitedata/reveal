@@ -5,7 +5,6 @@
 import type { Camera } from 'three';
 import { Vector3 } from 'three';
 
-/** World-space CAD sun (Y-up). Shared by CAD materials and contact shadows. */
 export const CAD_LIGHT_WORLD = new Vector3(0.55, 0.58, 0.4).normalize();
 export const CAD_SHADOW_STRENGTH = 0.4;
 

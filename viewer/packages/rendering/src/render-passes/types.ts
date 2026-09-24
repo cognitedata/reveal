@@ -30,7 +30,6 @@ export type BlitOptions = {
   edges?: boolean;
   outline?: boolean;
   cadShadow?: boolean;
-  cadShadowTexture?: Texture;
 };
 
 export type DepthBlendBlitOptions = {

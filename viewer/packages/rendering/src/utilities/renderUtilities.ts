@@ -89,18 +89,8 @@ export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): RawSh
 }
 
 export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
-  const {
-    texture,
-    effect,
-    depthTexture,
-    blendOptions,
-    overrideAlpha,
-    ssaoTexture,
-    edges,
-    outline,
-    cadShadow,
-    cadShadowTexture
-  } = options;
+  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline, cadShadow } =
+    options;
 
   const uniforms: ThreeUniforms = {
     tDiffuse: { value: texture }
@@ -127,7 +117,8 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
 
   if ((cadShadow ?? false) && depthTexture !== null) {
     defines['CAD_SHADOW'] = true;
-    uniforms['tCadShadow'] = { value: cadShadowTexture ?? null };
+    uniforms['tCadShadow'] = { value: null };
+    uniforms['cadShadowEnabled'] = { value: 0 };
   }
 
   const initializedBlendOptions = initializeBlendingOptions(blendOptions); // Uses blendDst value if null

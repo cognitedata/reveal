@@ -5,10 +5,8 @@
 import type { Matrix4, Texture, Vector2, WebGLRenderTarget } from 'three';
 import type { EdlOptions } from '../rendering/types';
 
-/** Light-space CAD depth used to project view independent shadows. */
 export type CadShadowMap = {
   readonly depthTexture: Texture;
-  /** Light projection multiplied by light view, i.e. world space to light clip space. */
   readonly matrix: Matrix4;
   readonly texelWorldSize: number;
   readonly depthRange: number;

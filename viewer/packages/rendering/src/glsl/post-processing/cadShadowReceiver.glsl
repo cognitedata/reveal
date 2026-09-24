@@ -3,11 +3,10 @@
 varying vec3 vCadReceiverWorldPosition;
 
 float cadReceiverLit() {
-    vec3 worldNormal = normalize(cross(dFdx(vCadReceiverWorldPosition), dFdy(vCadReceiverWorldPosition)));
-    // Offset towards the light on either side of a double-sided receiver.
-    if (dot(worldNormal, cadShadowLightDirection) < 0.0) worldNormal = -worldNormal;
+    if (!receiveShadow) return 1.0;
 
-    if (!receiveShadow || cadShadowEnabled < 0.5) return 1.0;
+    vec3 worldNormal = normalize(cross(dFdx(vCadReceiverWorldPosition), dFdy(vCadReceiverWorldPosition)));
+    worldNormal *= 2.0 * step(0.0, dot(worldNormal, cadShadowLightDirection)) - 1.0;
 
     float occlusion = cadShadowShapeEdge(cadShadowOcclusion(vCadReceiverWorldPosition, worldNormal));
     return 1.0 - occlusion * cadShadowStrength;

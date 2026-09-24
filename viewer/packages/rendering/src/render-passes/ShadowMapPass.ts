@@ -27,36 +27,13 @@ import { getLayerMask, RenderLayer } from '../utilities/renderUtilities';
 import { GeometryPass } from './GeometryPass';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
-/**
- * The frustum is fitted to the whole model, so this is the only knob for texel density.
- * The pass is depth-only and CAD rendering here is draw-call bound rather than fill bound,
- * so raising the resolution costs far less than adding screen-space filtering passes.
- */
 const SHADOW_MAP_RESOLUTION = 4096;
 
-/**
- * How far back the light camera sits, in bounding sphere radii.
- *
- * The projection is orthographic, but the ray marched CAD primitives intersect against
- * rays that converge on the camera origin, and their vertex shaders orient the billboard
- * towards `cameraPosition`. Close to the model those rays fan out by tens of degrees, so
- * the shadow map records a point light silhouette while the lookup decodes it as a
- * parallel one, and shadows of curved primitives bend away from the light direction.
- *
- * Pulling the camera back makes the perspective assumption true to within atan(1 / this).
- * It costs nothing in depth precision: an orthographic depth range is far minus near,
- * which stays at twice the radius no matter how far back the camera goes.
- */
+// Far enough back that the converging rays of ray-marched CAD primitives approximate a directional light.
 const LIGHT_DISTANCE_IN_RADII = 200;
 const WORLD_UP = new Vector3(0, 1, 0);
 const WORLD_UP_ALTERNATIVE = new Vector3(0, 0, 1);
 
-/**
- * Renders CAD depth as seen from the CAD sun into a shadow map.
- *
- * The light camera is fitted to the CAD world bounds only, never to the view camera,
- * so the resulting shadows are view independent and stay put while the camera moves.
- */
 export class ShadowMapPass implements RenderPass, CadShadowMap {
   private readonly _renderTarget: WebGLRenderTarget;
   private readonly _depthTexture: DepthTexture;
@@ -78,17 +55,13 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
       stencilBuffer: false,
       magFilter: NearestFilter,
       minFilter: NearestFilter,
-      // Three always allocates a colour attachment, but this pass never writes colour.
-      // A single 8 bit channel keeps it from costing more memory than the depth itself.
       format: RedFormat,
       type: UnsignedByteType
     });
     this._depthTexture = new DepthTexture(SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
     this._depthTexture.format = DepthFormat;
     this._depthTexture.type = UnsignedIntType;
-    // Linear filtering plus a compare function makes the sampler a sampler2DShadow, so the
-    // texture unit does the depth comparison and returns a bilinearly filtered occlusion
-    // ratio. Every tap is then a smooth value instead of a binary one, for free.
+    // Linear filtering with a compare function enables hardware PCF through sampler2DShadow.
     this._depthTexture.magFilter = LinearFilter;
     this._depthTexture.minFilter = LinearFilter;
     this._depthTexture.compareFunction = LessEqualCompare;
@@ -96,7 +69,6 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
 
     this._lightCamera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
 
-    // DepthBufferOnly disables color writes on the CAD materials, so this is a depth-only pass.
     const layerMask = getLayerMask(RenderLayer.Back) | getLayerMask(RenderLayer.InFront);
     this._geometryPass = new GeometryPass(sceneHandler.scene, materialManager, RenderMode.DepthBufferOnly, layerMask);
   }
@@ -129,11 +101,6 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
     this._userEnabled = enabled;
   }
 
-  /**
-   * Fits the light frustum to the CAD caster bounds. Receivers may lie beyond its far plane.
-   * Called every frame because sectors stream in,
-   * but it only depends on geometry, never on the view camera.
-   */
   public setCadBounds(bounds: Box3): void {
     this._hasValidBounds = !bounds.isEmpty();
     if (!this._hasValidBounds) {
@@ -190,12 +157,12 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   }
 
   public render(renderer: WebGLRenderer): void {
-    renderer.setRenderTarget(this._renderTarget);
+    // Binding the target is what makes Three allocate it, so return before that.
     if (!this.enabled) {
-      renderer.clear();
       return;
     }
 
+    renderer.setRenderTarget(this._renderTarget);
     this._geometryPass.render(renderer, this._lightCamera);
   }
 

@@ -180,9 +180,10 @@ export interface Cognite3DViewerOptions {
   enableEdges?: boolean;
 
   /**
-   * Enables shadows cast by CAD geometry. Defaults to false.
-   * Enabling shadows adds extra rendering passes. When disabled, the shadow
-   * resources and passes are not created.
+   * Enables shadows cast by CAD geometry, and the world-space sun shading that goes with
+   * them. Defaults to false. Can also be toggled at runtime through
+   * {@link Cognite3DViewer.shadowsEnabled}.
+   * GPU resources for shadows are only allocated the first time they are enabled.
    */
   enableShadows?: boolean;
 
