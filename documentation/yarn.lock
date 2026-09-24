@@ -1723,7 +1723,7 @@ __metadata:
     clsx: 2.1.1
     copyfiles: 2.4.1
     cross-env: 10.1.0
-    docusaurus-plugin-typedoc: 1.4.2
+    docusaurus-plugin-typedoc: 1.4.3
     ieee754: 1.2.1
     react: 19.2.8
     react-dom: 19.2.8
@@ -6095,9 +6095,9 @@ __metadata:
   linkType: hard
 
 "colord@npm:^2.9.3":
-  version: 2.9.3
-  resolution: "colord@npm:2.9.3"
-  checksum: 95d909bfbcfd8d5605cbb5af56f2d1ce2b323990258fd7c0d2eb0e6d3bb177254d7fb8213758db56bb4ede708964f78c6b992b326615f81a18a6aaf11d64c650
+  version: 2.10.0
+  resolution: "colord@npm:2.10.0"
+  checksum: 7bd2fca99b61bf7a9e8b76114a4c57010a5dfabff36bd030ecfe57ff7f43e84c0038c3f96d204ae7edec918b74169401caf22999e04777fa2a3fd1ed89117fab
   languageName: node
   linkType: hard
 
@@ -6932,14 +6932,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:1.4.2":
-  version: 1.4.2
-  resolution: "docusaurus-plugin-typedoc@npm:1.4.2"
+"docusaurus-plugin-typedoc@npm:1.4.3":
+  version: 1.4.3
+  resolution: "docusaurus-plugin-typedoc@npm:1.4.3"
   dependencies:
-    typedoc-docusaurus-theme: ^1.4.0
+    typedoc-docusaurus-theme: ^1.4.3
   peerDependencies:
-    typedoc-plugin-markdown: ">=4.8.0"
-  checksum: 1d66505021efca3546c3457619932b2ad4d754a96103f3b2685c1772cf6a54311a83f686979c0bfde68f79a0f7960bad331f6315065e42b62373b5539319477a
+    typedoc: 0.28.x
+    typedoc-plugin-markdown: ">=4.11.0"
+  checksum: 3d88d9644e28a8c168c402eaf19c0179cb7c277e572d8d1ccfba2fdbacb7c673b6ce846e1e46023f6fad7c055eaea5296ad8f022cd1ef54eed86e4a81a424336
   languageName: node
   linkType: hard
 
@@ -9228,15 +9229,15 @@ __metadata:
   linkType: hard
 
 "joi@npm:^17.9.2":
-  version: 17.13.4
-  resolution: "joi@npm:17.13.4"
+  version: 17.13.7
+  resolution: "joi@npm:17.13.7"
   dependencies:
     "@hapi/hoek": ^9.3.0
     "@hapi/topo": ^5.1.0
     "@sideway/address": ^4.1.5
     "@sideway/formula": ^3.0.1
     "@sideway/pinpoint": ^2.0.0
-  checksum: 99e0a784f08cb0b6910bd42df094e4f3f047c2589c61b139b7eb25a21f814478a1d3b5c68134bbcc4153ac216cbae2710a2b7f56605974e5c66a0ebdfab08e8f
+  checksum: 2f9af4cd84c60b9c493184f8eb127454f2577faae8f868c9acb57ac6f0ca80b75f2d5baaa26c14e6a1bdca391738acec8a3e2dd3430dfb500f2f82c042a90071
   languageName: node
   linkType: hard
 
@@ -9248,13 +9249,13 @@ __metadata:
   linkType: hard
 
 "js-yaml@npm:^4.1.0":
-  version: 4.3.1
-  resolution: "js-yaml@npm:4.3.1"
+  version: 4.3.2
+  resolution: "js-yaml@npm:4.3.2"
   dependencies:
     argparse: ^2.0.1
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 482740e69a1769b355d7182234c0fa197237f02e6a5c8c0b70a763af6a712c9741de350d784a5659e00cf03cedd6ebfa506d59ca45967e3ee50dd4f4df18f2e7
+  checksum: 3c9294448ed83fec340f017f2be056dab05bcba3fc742468a80275d264e982dfd94350a93640eb810e0fdf283bef7c1c810690cc69b7b04a187f781e079d2555
   languageName: node
   linkType: hard
 
@@ -13238,9 +13239,9 @@ __metadata:
   linkType: hard
 
 "serialize-javascript@npm:^7.0.3":
-  version: 7.1.0
-  resolution: "serialize-javascript@npm:7.1.0"
-  checksum: 8275cd8d8639abac2850530b3aa1dc67b055301b5d2e740acc8f7dadef68a924d290aac96cff838f44de4c9b85dc87780ce2ce5dda5af648bab153731ca7153a
+  version: 7.1.1
+  resolution: "serialize-javascript@npm:7.1.1"
+  checksum: 52b96215601a0cd20e61bc6c0906b0a55820c6bca3eea8d6adbc68117cbbce386a77388ce116020e4d48af0d371c92e722ab80499114c987f30fe3a9ac83d05a
   languageName: node
   linkType: hard
 
@@ -13868,8 +13869,8 @@ __metadata:
   linkType: hard
 
 "svgo@npm:^3.0.2, svgo@npm:^3.2.0":
-  version: 3.3.4
-  resolution: "svgo@npm:3.3.4"
+  version: 3.3.5
+  resolution: "svgo@npm:3.3.5"
   dependencies:
     commander: ^7.2.0
     css-select: ^5.1.0
@@ -13879,8 +13880,8 @@ __metadata:
     picocolors: ^1.0.0
     sax: ^1.5.0
   bin:
-    svgo: ./bin/svgo
-  checksum: 7828e76b42bb58867703a21aa80f2cd1a8c1828df2500a5ac58a30cca483d9c7862d07c9060a4cdf24bbb8ac3d2148ed27e42dc2794738d097fae0ce05dabd81
+    svgo: bin/svgo
+  checksum: ea18071747812aed65439e1e3bdfcfd527f8c51c459c94f6aeb539653bb3f6ea4f2a75451427d2fde2fb1da578b704df8406b7de30382cca878594ec1d45be84
   languageName: node
   linkType: hard
 
@@ -14225,12 +14226,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-docusaurus-theme@npm:^1.4.0":
-  version: 1.4.2
-  resolution: "typedoc-docusaurus-theme@npm:1.4.2"
+"typedoc-docusaurus-theme@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "typedoc-docusaurus-theme@npm:1.4.3"
   peerDependencies:
-    typedoc-plugin-markdown: ">=4.8.0"
-  checksum: cac9a22377e683d51552a5f4adc4c10633762646121bb51127dfd5c3c545eb0dbbd7e11d1cec7361ce272088719fa88460896253a1c298887567f50f565519f4
+    typedoc: 0.28.x
+    typedoc-plugin-markdown: ">=4.11.0"
+  checksum: a9d2b9d64526c6737028eb0fd331904fe289ed8c3668e8e1bb9349915b757a725ea3e4e2d35b5adf91cfb763c1c1361d479507421799660ba0b9a3fe6c14d877
   languageName: node
   linkType: hard
 
@@ -14779,9 +14781,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.110.1":
-  version: 5.110.1
-  resolution: "webpack@npm:5.110.1"
+"webpack@npm:5.110.3":
+  version: 5.110.3
+  resolution: "webpack@npm:5.110.3"
   dependencies:
     "@types/estree": ^1.0.8
     "@types/json-schema": ^7.0.15
@@ -14807,7 +14809,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 21995dab240d7df9955746631f343df7094294fe53f328ea22802f7a6ef967122e8c5ac89cdbe89bdb0e5a781bb2840a5969f48342412fcff8e63c277396db95
+  checksum: 3950eeb941539ef577463004fd717f50c14c4fe76fa5dd4fa9e30950914184173fbf126094ae2d53074f55ffc8be122cbc9ab269d34aec4a843caecf88b06ada
   languageName: node
   linkType: hard
 

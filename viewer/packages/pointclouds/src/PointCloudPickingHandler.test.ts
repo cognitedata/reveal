@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import type { WebGLRenderer } from 'three';
-import { PerspectiveCamera, Plane, Vector2, Vector3 } from 'three';
+import { PerspectiveCamera, Plane, Ray, Vector2, Vector3 } from 'three';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
@@ -224,5 +224,49 @@ describe(PointCloudPickingHandler.name, () => {
 
     // Verify serial execution: first pick fully completed before second started
     expect(executionOrder).toEqual(['pick_start_1', 'pick_end_1', 'pick_start_2', 'pick_end_2']);
+  });
+
+  test('intersectPointClouds forwards cameraInMotion and forceWindowedPick to the picker', async () => {
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+    const input: IntersectInput = {
+      ...createMockIntersectInput(),
+      cameraInMotion: true,
+      forceWindowedPick: true
+    };
+
+    await handler.intersectPointClouds([node], input);
+
+    expect(pickSpy).toHaveBeenCalledWith(
+      input.camera,
+      expect.any(Ray),
+      [node.octree],
+      expect.objectContaining({ cameraInMotion: true, forceWindowedPick: true })
+    );
+  });
+
+  test('intersectPointClouds defaults cameraInMotion and forceWindowedPick to false when omitted', async () => {
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+    const input = createMockIntersectInput();
+
+    await handler.intersectPointClouds([node], input);
+
+    expect(pickSpy).toHaveBeenCalledWith(
+      input.camera,
+      expect.any(Ray),
+      [node.octree],
+      expect.objectContaining({ cameraInMotion: false, forceWindowedPick: false })
+    );
+  });
+
+  test('invalidatePickCache delegates to the picker', () => {
+    const invalidateSpy = vi
+      .spyOn(PointCloudOctreePicker.prototype, 'invalidateCache')
+      .mockImplementation(() => undefined);
+
+    handler.invalidatePickCache();
+
+    expect(invalidateSpy).toHaveBeenCalledTimes(1);
   });
 });

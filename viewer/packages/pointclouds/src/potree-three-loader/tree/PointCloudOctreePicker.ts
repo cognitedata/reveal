@@ -1,18 +1,44 @@
 import type { Camera, Ray, WebGLRenderer } from 'three';
+import type { Matrix4 } from 'three';
 import { Vector2, Vector3, MathUtils } from 'three';
 import { DEFAULT_PICK_WINDOW_SIZE } from '@reveal/rendering';
 import type { PointCloudOctree } from './PointCloudOctree';
 import type { PickPoint } from '../types/types';
 import type { IPickState, PickParams } from './PointCloudOctreePickerHelper';
 import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
+import type { RenderedNode } from './PointCloudOctreePickerHelper';
 
 export type { PickParams };
 
+type PickCache = {
+  pixels: Uint8Array;
+  ibuffer: Uint32Array;
+  width: number;
+  height: number;
+  nodeIndexBits: number;
+  renderedNodes: RenderedNode[];
+  octrees: PointCloudOctree[];
+  cameraMatrixWorld: Matrix4;
+  cameraProjectionMatrix: Matrix4;
+  valid: boolean;
+};
+
 export class PointCloudOctreePicker {
   private static readonly helperVec3 = new Vector3();
+  private static readonly helperVec2 = new Vector2();
+
+  // If the cache was invalidated more recently than this, the scene is most likely rendering
+  // continuously (camera movement). Rebuilding the full-frame cache then costs more
+  // than a ray-culled windowed pick, so fall back to the windowed path instead.
+  private static readonly REBUILD_HOLDOFF_MS = 64;
+
   private pickState: IPickState | undefined;
   private readonly _renderer: WebGLRenderer;
   private readonly _pickerHelper: PointCloudOctreePickerHelper;
+
+  private _cache: PickCache | undefined;
+  private _invalidationCount = 0;
+  private _lastInvalidatedAt = 0;
 
   constructor(renderer: WebGLRenderer) {
     this._renderer = renderer;
@@ -26,6 +52,21 @@ export class PointCloudOctreePicker {
     }
 
     this.pickState = undefined;
+    this._cache = undefined;
+  }
+
+  /**
+   * Invalidates the cached full-frame pick buffer. Must be called whenever a new frame of the
+   * scene is rendered (camera, point cloud LOD, styling or clipping changes) and on resize.
+   */
+  invalidateCache(): void {
+    if (this._cache !== undefined) {
+      this._cache.valid = false;
+      // Drop node references so geometries unloaded by LOD updates can be garbage collected.
+      this._cache.renderedNodes = [];
+    }
+    this._invalidationCount++;
+    this._lastInvalidatedAt = performance.now();
   }
 
   async pick(
@@ -38,10 +79,56 @@ export class PointCloudOctreePicker {
       return null;
     }
     const pickState = this.pickState ? this.pickState : (this.pickState = PointCloudOctreePickerHelper.getPickState());
+
+    const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
+
+    const cacheEligible =
+      params.onBeforePickRender === undefined &&
+      params.pixelPosition === undefined &&
+      params.forceWindowedPick !== true;
+    if (cacheEligible) {
+      const drawingBufferSize = this._renderer.getDrawingBufferSize(PointCloudOctreePicker.helperVec2);
+      const width = Math.max(1, Math.floor(drawingBufferSize.x));
+      const height = Math.max(1, Math.floor(drawingBufferSize.y));
+      const ndc = PointCloudOctreePicker.helperVec3.addVectors(camera.position, ray.direction).project(camera);
+      const centerX = (ndc.x + 1) * width * 0.5;
+      const centerY = (ndc.y + 1) * height * 0.5;
+
+      if (this.isCacheUsable(camera, octrees, width, height)) {
+        return this.pickFromCache(camera, centerX, centerY, pickWndSize);
+      }
+
+      const sinceInvalidatedMs = performance.now() - this._lastInvalidatedAt;
+      // A known-in-motion camera is about to invalidate whatever we build anyway - never pay
+      // for a full-frame rebuild while it's moving, regardless of the time-based holdoff below.
+      const shouldRebuild =
+        params.cameraInMotion !== true && sinceInvalidatedMs >= PointCloudOctreePicker.REBUILD_HOLDOFF_MS;
+      if (shouldRebuild) {
+        const built = await this.buildCache(camera, octrees, params, width, height, pickState);
+        if (this.pickState === undefined) {
+          return null;
+        }
+        if (built) {
+          return this.pickFromCache(camera, centerX, centerY, pickWndSize);
+        }
+      }
+    }
+
+    return this.pickWindowed(camera, ray, octrees, params, pickState, pickWndSize);
+  }
+
+  private async pickWindowed(
+    camera: Camera,
+    ray: Ray,
+    octrees: PointCloudOctree[],
+    params: Partial<PickParams>,
+    pickState: IPickState,
+    pickWndSize: number
+  ): Promise<PickPoint | null> {
     const pickMaterial = pickState.material;
 
     const renderSize = this._renderer.getDrawingBufferSize(new Vector2());
-    PointCloudOctreePickerHelper.updatePickRenderTarget(this.pickState, renderSize.x, renderSize.y);
+    PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, renderSize.x, renderSize.y);
 
     const pixelPosition = PointCloudOctreePicker.helperVec3; // Use helper vector to prevent extra allocations.
 
@@ -53,7 +140,6 @@ export class PointCloudOctreePicker {
       pixelPosition.y = (pixelPosition.y + 1) * renderSize.y * 0.5;
     }
 
-    const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
     const halfPickWndSize = (pickWndSize - 1) / 2;
     // Clamp start so the window [x, x+pickWndSize) stays within the render target.
     const x = Math.floor(
@@ -63,11 +149,17 @@ export class PointCloudOctreePicker {
       MathUtils.clamp(pixelPosition.y - halfPickWndSize, 0, Math.max(0, renderSize.y - pickWndSize))
     );
 
-    this._pickerHelper.prepareRender(x, y, pickWndSize, pickMaterial, pickState);
+    this._pickerHelper.prepareRender(x, y, pickWndSize, pickWndSize, pickMaterial, pickState);
     const renderedNodes = this._pickerHelper.render(camera, pickMaterial, octrees, ray, pickState, params);
 
     // Start async GPU readback before resetting GL state.
-    const readPixelsPromise = this._pickerHelper.readPixelsAsync(x, y, pickWndSize, pickState.renderTarget);
+    const readPixelsPromise = this._pickerHelper.readPixelsAsync(
+      x,
+      y,
+      pickWndSize,
+      pickWndSize,
+      pickState.renderTarget
+    );
 
     // Reset GL state immediately (before awaiting) so other rendering can proceed in parallel.
     this._pickerHelper.resetState();
@@ -78,5 +170,153 @@ export class PointCloudOctreePicker {
     const pickPoint = PointCloudOctreePickerHelper.getPickPoint(hit, renderedNodes);
 
     return pickPoint;
+  }
+
+  private isCacheUsable(camera: Camera, octrees: PointCloudOctree[], width: number, height: number): boolean {
+    const cache = this._cache;
+    if (cache === undefined || !cache.valid) {
+      return false;
+    }
+    if (cache.width !== width || cache.height !== height) {
+      return false;
+    }
+    if (
+      !cache.cameraMatrixWorld.equals(camera.matrixWorld) ||
+      !cache.cameraProjectionMatrix.equals(camera.projectionMatrix)
+    ) {
+      return false;
+    }
+    if (cache.octrees.length !== octrees.length || !cache.octrees.every((octree, i) => octree === octrees[i])) {
+      return false;
+    }
+    // Nodes may have been unloaded by LOD updates since the cache was built which nulls the
+    // scene node geometry. Mutate valid/renderedNodes directly rather than via invalidateCache():
+    // that also resets _lastInvalidatedAt, which would restart the rebuild holdoff and force this
+    // call to fall back to a windowed pick instead of rebuilding immediately.
+    if (cache.renderedNodes.some(({ node }) => node.sceneNode.geometry === undefined)) {
+      cache.valid = false;
+      cache.renderedNodes = [];
+      return false;
+    }
+    return true;
+  }
+
+  private async buildCache(
+    camera: Camera,
+    octrees: PointCloudOctree[],
+    params: Partial<PickParams>,
+    width: number,
+    height: number,
+    pickState: IPickState
+  ): Promise<boolean> {
+    const nodeIndexBits = this.computeNodeIndexBits(octrees);
+    if (nodeIndexBits === undefined) {
+      return false;
+    }
+
+    const invalidationCountAtStart = this._invalidationCount;
+    const { renderedNodes, pixels } = await this.renderAndReadBackPixels(
+      camera,
+      octrees,
+      params,
+      pickState,
+      width,
+      height,
+      nodeIndexBits
+    );
+
+    if (this.pickState === undefined) {
+      return false;
+    }
+
+    this._cache = {
+      pixels,
+      ibuffer: new Uint32Array(pixels.buffer, pixels.byteOffset, width * height),
+      width,
+      height,
+      nodeIndexBits,
+      renderedNodes,
+      octrees: [...octrees],
+      cameraMatrixWorld: camera.matrixWorld.clone(),
+      cameraProjectionMatrix: camera.projectionMatrix.clone(),
+      // The scene may have rendered a new frame while the readback was in flight, so the buffer
+      // then describes the previous frame and must not be served.
+      valid: this._invalidationCount === invalidationCountAtStart
+    };
+    return this._cache.valid;
+  }
+
+  /** Picks the smallest node-index bit width that fits every visible node, or undefined if there are no nodes or none fits. */
+  private computeNodeIndexBits(octrees: PointCloudOctree[]): number | undefined {
+    let nodeCount = 0;
+    let maxPointsPerNode = 0;
+    for (const octree of octrees) {
+      nodeCount += octree.visibleNodes.length;
+      for (const node of octree.visibleNodes) {
+        maxPointsPerNode = Math.max(maxPointsPerNode, node.numPoints);
+      }
+    }
+    if (nodeCount === 0) {
+      return undefined;
+    }
+    return PointCloudOctreePickerHelper.computeBitSplit(nodeCount, maxPointsPerNode);
+  }
+
+  private async renderAndReadBackPixels(
+    camera: Camera,
+    octrees: PointCloudOctree[],
+    params: Partial<PickParams>,
+    pickState: IPickState,
+    width: number,
+    height: number,
+    nodeIndexBits: number
+  ): Promise<{ renderedNodes: RenderedNode[]; pixels: Uint8Array }> {
+    PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, width, height);
+    this._pickerHelper.prepareRender(0, 0, width, height, pickState.material, pickState);
+    const renderedNodes = this._pickerHelper.render(
+      camera,
+      pickState.material,
+      octrees,
+      undefined,
+      pickState,
+      params,
+      nodeIndexBits
+    );
+
+    const byteLength = 4 * width * height;
+    const reusablePixels =
+      this._cache !== undefined && this._cache.pixels.byteLength === byteLength ? this._cache.pixels : undefined;
+
+    // Start async GPU readback before resetting GL state.
+    const readPixelsPromise = this._pickerHelper.readPixelsAsync(
+      0,
+      0,
+      width,
+      height,
+      pickState.renderTarget,
+      reusablePixels
+    );
+
+    // Reset GL state immediately (before awaiting) so other rendering can proceed in parallel.
+    this._pickerHelper.resetState();
+
+    const pixels = await readPixelsPromise;
+    return { renderedNodes, pixels };
+  }
+
+  private pickFromCache(camera: Camera, centerX: number, centerY: number, pickWndSize: number): PickPoint | null {
+    const cache = this._cache!;
+    const hit = PointCloudOctreePickerHelper.findHitInBuffer(
+      cache.ibuffer,
+      cache.width,
+      cache.height,
+      centerX,
+      centerY,
+      pickWndSize,
+      cache.renderedNodes,
+      camera,
+      cache.nodeIndexBits
+    );
+    return PointCloudOctreePickerHelper.getPickPoint(hit, cache.renderedNodes);
   }
 }

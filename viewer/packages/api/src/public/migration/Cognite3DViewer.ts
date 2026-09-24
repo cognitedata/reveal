@@ -318,8 +318,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       (useFlexibleCameraManager
         ? new FlexibleCameraManager(
             this._domElement,
-            (offsetX: number, offsetY: number, pickBoundingBox: boolean) =>
-              this.modelIntersectionCallback(offsetX, offsetY, pickBoundingBox),
+            (offsetX: number, offsetY: number, pickBoundingBox: boolean, forceWindowedPick?: boolean) =>
+              this.modelIntersectionCallback(offsetX, offsetY, pickBoundingBox, forceWindowedPick),
             undefined,
             this._sceneHandler.scene,
             options.hasEventListeners
@@ -327,8 +327,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         : new DefaultCameraManager(
             this._domElement,
             this._mouseHandler,
-            (offsetX: number, offsetY: number, pickBoundingBox: boolean) =>
-              this.modelIntersectionCallback(offsetX, offsetY, pickBoundingBox),
+            (offsetX: number, offsetY: number, pickBoundingBox: boolean, forceWindowedPick?: boolean) =>
+              this.modelIntersectionCallback(offsetX, offsetY, pickBoundingBox, forceWindowedPick),
             undefined
           ));
 
@@ -1704,6 +1704,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param options
    * @param options.stopOnHitting360Icon
    * @param options.predicate Check whether a CustomObject should be intersected.
+   * @param options.forceWindowedPick Skip point-cloud full-frame pick caching for this call.
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
@@ -1713,6 +1714,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     options?: {
       stopOnHitting360Icon?: boolean;
       predicate?: (customObject: ICustomObject) => boolean;
+      forceWindowedPick?: boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
     // Check cluster intersection first (clusters have priority)
@@ -1735,7 +1737,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return intersection;
     }
     const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
-      asyncCADIntersection: true
+      asyncCADIntersection: true,
+      forceWindowedPick: options?.forceWindowedPick
     });
     if (modelIntersection !== null) {
       intersection = modelIntersection;
@@ -1897,6 +1900,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       customObject.beforeRender(camera);
     });
     this.revealManager.render(camera);
+    this._pointCloudPickingHandler.invalidatePickCache();
     this.revealManager.resetRedraw();
     this._image360ApiHelper?.resetRedraw();
     this._clippingNeedsUpdate = false;
@@ -1909,7 +1913,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean }
+    options?: { asyncCADIntersection?: boolean; forceWindowedPick?: boolean }
   ): Promise<null | Intersection<DataSourceT>> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
@@ -1917,7 +1921,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       camera: this.cameraManager.getCamera(),
       renderer: this.renderer,
       clippingPlanes: this.getGlobalClippingPlanes(),
-      domElement: this.renderer.domElement
+      domElement: this.renderer.domElement,
+      cameraInMotion: this.revealManager.cameraInMotion,
+      forceWindowedPick: options?.forceWindowedPick ?? false
     };
 
     const intersections: Intersection<DataSourceT>[] = [];
@@ -2032,11 +2038,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private async modelIntersectionCallback(
     offsetX: number,
     offsetY: number,
-    pickBoundingBox: boolean
+    pickBoundingBox: boolean,
+    forceWindowedPick?: boolean
   ): Promise<CameraManagerCallbackData> {
     const pixelCoords = new Vector2(offsetX, offsetY);
 
-    const intersection = await this.getAnyIntersectionFromPixel(pixelCoords);
+    const intersection = await this.getAnyIntersectionFromPixel(pixelCoords, { forceWindowedPick });
     if (intersection === undefined) {
       // No intersection
       return {

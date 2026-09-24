@@ -2,24 +2,28 @@
  * Copyright 2025 Cognite AS
  */
 import type { Image360Provider } from './Image360Provider';
-import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
 import type {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
   Historical360ImageSet,
-  Image360AnnotationFilterDelegate,
-  Image360AnnotationProvider,
-  Image360AnnotationSpecifier,
   Image360DescriptorProvider,
   Image360Face,
   Image360FileDescriptor,
   Image360FileProvider
-} from './types';
+} from '@reveal/data-providers';
+import type {
+  Image360AnnotationFilterDelegate,
+  Image360AnnotationProvider,
+  Image360AnnotationSpecifier
+} from './Image360AnnotationProvider';
 import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
-  DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
-} from '@reveal/360-images';
-import type { Image360AnnotationInstanceReference } from '@reveal/360-images/src/annotation/types';
+} from '../collection/Image360Collection';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
+import type { Image360AnnotationInstanceReference } from '../annotation/types';
 
 export class Image360ProviderCombiner<T extends DataSourceType> implements Image360Provider<T> {
   private readonly _descriptorProvider: Image360DescriptorProvider<T>;

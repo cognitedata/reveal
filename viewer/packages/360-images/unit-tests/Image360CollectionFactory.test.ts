@@ -4,7 +4,8 @@
 
 import { Matrix4 } from 'three';
 
-import type { ClassicDataSourceType, Image360Provider } from '@reveal/data-providers';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
+import type { Image360Provider } from '../src/providers/Image360Provider';
 import { It, Mock } from 'moq.ts';
 import type { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';

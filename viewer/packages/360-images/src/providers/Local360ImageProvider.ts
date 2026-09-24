@@ -2,23 +2,24 @@
  * Copyright 2022 Cognite AS
  */
 import { Euler, Matrix4 } from 'three';
-import type { Image360Provider } from '../Image360Provider';
+import type { Image360Provider } from './Image360Provider';
 import type {
   Historical360ImageSet,
-  Image360AnnotationFilterDelegate,
-  Image360AnnotationSpecifier,
   Image360Face,
   Image360FileDescriptor,
-  InstanceReference
-} from '../types';
+  InstanceReference,
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType
+} from '@reveal/data-providers';
+import type { Image360AnnotationFilterDelegate, Image360AnnotationSpecifier } from './Image360AnnotationProvider';
 import type { CogniteInternalId, IdEither } from '@cognite/sdk';
-import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
 import type {
   AssetAnnotationImage360Info,
   AssetHybridAnnotationImage360Info,
-  DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
-} from '@reveal/360-images';
+} from '../collection/Image360Collection';
+import type { DefaultImage360Collection } from '../collection/DefaultImage360Collection';
 
 type Local360ImagesDescriptor = {
   translation: {

@@ -141,6 +141,16 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeFalsy();
   });
 
+  test('cameraInMotion reflects camera change/stop events', () => {
+    expect(manager.cameraInMotion).toBe(false);
+
+    onChangeListeners.forEach(callback => callback());
+    expect(manager.cameraInMotion).toBe(true);
+
+    onStopListeners.forEach(callback => callback());
+    expect(manager.cameraInMotion).toBe(false);
+  });
+
   test('dispose() disposes culler', () => {
     manager.dispose();
     expect(sectorCuller.dispose).toHaveBeenCalled();

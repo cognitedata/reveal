@@ -9,8 +9,5 @@
   },
   "dependencies": {
     "@reveal/utilities": "workspace:*"
-  },
-  "devDependencies": {
-    "@reveal/rendering": "workspace:*"
   }
 }

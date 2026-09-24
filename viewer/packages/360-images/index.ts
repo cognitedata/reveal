@@ -45,3 +45,10 @@ export { DEFAULT_IMAGE_360_OPACITY } from './src/entity/Image360VisualizationBox
 export { Image360Action } from './src/Image360Action';
 export { Image360History } from './src/Image360History';
 export { createCollectionIdString } from './src/collection/createCollectionIdString';
+export type { Image360Provider, Image360ProviderMap } from './src/providers/Image360Provider';
+export { getImage360ProviderFromMap } from './src/providers/Image360Provider';
+export { Image360ProviderCombiner } from './src/providers/Image360ProviderCombiner';
+export { Cdf360ImageAnnotationProvider } from './src/providers/Cdf360ImageAnnotationProvider';
+export { CoreDm360ImageAnnotationProvider } from './src/providers/CoreDm360ImageAnnotationProvider';
+export { Local360ImageProvider } from './src/providers/Local360ImageProvider';
+export { getAnnotationIdKey } from './src/providers/annotations';
