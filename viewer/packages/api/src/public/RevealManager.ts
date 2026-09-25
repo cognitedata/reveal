@@ -156,6 +156,14 @@ export class RevealManager {
     this._cadManager.renderMode = renderMode;
   }
 
+  public get shadowsEnabled(): boolean {
+    return this._renderPipeline.shadowsEnabled ?? false;
+  }
+
+  public set shadowsEnabled(enabled: boolean) {
+    this._renderPipeline.shadowsEnabled = enabled;
+  }
+
   public get pointCloudBudget(): PointCloudBudget {
     return { numberOfPoints: this._pointCloudManager.pointBudget };
   }
