@@ -3,7 +3,7 @@
  */
 
 import type { Camera, Material, Object3D, Mesh } from 'three';
-import { Matrix4 } from 'three';
+import { BackSide, Matrix4 } from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
@@ -55,9 +55,10 @@ export class CadShadowReceiverMaterials {
 
     const activeMaterials = new Set<Material>();
     const activeReceivers = new Set<Mesh>();
-    for (const { object } of customObjects) {
-      object.traverse(node => {
-        if (!isMesh(node)) return;
+    for (const customObject of customObjects) {
+      if (customObject.receiveShadow === false) continue;
+      customObject.object.traverse(node => {
+        if (!isMesh(node) || isSkyMesh(node)) return;
         activeReceivers.add(node);
         if (!this._receivers.has(node)) this._receivers.set(node, node.receiveShadow);
         node.receiveShadow = true;
@@ -163,4 +164,10 @@ export class CadShadowReceiverMaterials {
 
 function isMesh(object: Object3D): object is Mesh {
   return 'isMesh' in object && object.isMesh === true;
+}
+
+// A sky dome or skybox is drawn from the inside. The ground is not.
+function isSkyMesh(mesh: Mesh): boolean {
+  const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+  return materials.some(material => material.side === BackSide);
 }

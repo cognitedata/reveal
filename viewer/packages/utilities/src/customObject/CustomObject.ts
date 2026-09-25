@@ -19,6 +19,7 @@ export class CustomObject implements ICustomObject {
   private _shouldPick: boolean = false;
   private _shouldPickBoundingBox: boolean = false;
   private _useDepthTest: boolean = true;
+  private _receiveShadow: boolean = true;
 
   /**
    * Constructor
@@ -86,6 +87,19 @@ export class CustomObject implements ICustomObject {
 
   set useDepthTest(value: boolean) {
     this._useDepthTest = value;
+  }
+
+  /**
+   * Whether CAD shadows fall on this object.
+   * Default is true. Set false for a sky dome or skybox.
+   * @beta
+   */
+  get receiveShadow(): boolean {
+    return this._receiveShadow;
+  }
+
+  set receiveShadow(value: boolean) {
+    this._receiveShadow = value;
   }
 
   /**
