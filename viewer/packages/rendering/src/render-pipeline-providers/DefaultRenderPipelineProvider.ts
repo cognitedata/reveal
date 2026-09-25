@@ -3,7 +3,7 @@
  */
 
 import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
+import { Box3, Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
@@ -14,10 +14,12 @@ import type { RenderOptions } from '../rendering/types';
 import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
+import { ShadowMapPass } from '../render-passes/ShadowMapPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
+import type { SectorScene } from '@reveal/cad-parsers';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
@@ -39,12 +41,25 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
+  private readonly _shadowMapPass: ShadowMapPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
   private _ssaoSampleSize: number;
+  private readonly _cadBounds: Box3;
+  private readonly _cadModelBounds: Box3;
+
+  public get shadowsEnabled(): boolean {
+    return this._shadowMapPass.userEnabled;
+  }
+
+  public set shadowsEnabled(enabled: boolean) {
+    this._shadowMapPass.setEnabled(enabled);
+    // Sun shading is tied to shadows so the default look stays unchanged.
+    this._materialManager.setCadLightingEnabled(enabled);
+  }
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -77,7 +92,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     outputRenderTarget?: {
       target: WebGLRenderTarget;
       autoSize?: boolean;
-    }
+    },
+    enableShadows: boolean = false
   ) {
     this._materialManager = materialManager;
     this._viewerScene = sceneHandler.scene;
@@ -114,14 +130,24 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       pointCloudParameters
     );
 
-    this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
-      ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-      edges: edges.enabled,
-      pointBlending: pointCloudParameters.pointBlending,
-      edlOptions: pointCloudParameters.edlOptions,
-      ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
-      ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
-    });
+    this._shadowMapPass = new ShadowMapPass(sceneHandler, materialManager, enableShadows);
+    materialManager.setCadLightingEnabled(enableShadows);
+    this._cadBounds = new Box3();
+    this._cadModelBounds = new Box3();
+
+    this._postProcessingPass = new PostProcessingPass(
+      sceneHandler.scene,
+      {
+        ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+        cadShadow: { map: this._shadowMapPass },
+        edges: edges.enabled,
+        pointBlending: pointCloudParameters.pointBlending,
+        edlOptions: pointCloudParameters.edlOptions,
+        ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
+        ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
+      },
+      this._customObjects
+    );
 
     this._blitToScreenMaterial = new RawShaderMaterial({
       vertexShader: blitShaders.vertex,
@@ -154,6 +180,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     const hasStyling = hasStyledNodes(modelIdentifiers, this._materialManager);
 
     try {
+      if (this._shadowMapPass.userEnabled) {
+        this.updateShadowCasterBounds();
+        if (this._cadModels.length > 0) {
+          yield this._shadowMapPass;
+        }
+      }
+
       yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
       renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
@@ -193,6 +226,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._cadGeometryRenderPipeline.dispose();
     this._pointCloudRenderPipeline.dispose();
     this._postProcessingPass.dispose();
+    this._shadowMapPass.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
 
@@ -229,6 +263,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
+    this._postProcessingPass.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
@@ -243,4 +278,29 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private shouldRenderPointClouds(): boolean {
     return this._pointCloudModels.length > 0;
   }
+
+  private updateShadowCasterBounds(): void {
+    const cadBounds = this._cadBounds;
+    const cadModelBounds = this._cadModelBounds;
+
+    cadBounds.makeEmpty();
+    for (const { cadNode } of this._cadModels) {
+      cadBounds.union(getCadWorldBounds(cadNode, cadModelBounds));
+    }
+
+    this._shadowMapPass.setCadBounds(cadBounds);
+  }
+}
+
+type CadNodeLike = Partial<{ sectorScene: SectorScene; rootSector: Object3D }>;
+
+function getCadWorldBounds(cadNode: Object3D, target: Box3): Box3 {
+  const { sectorScene, rootSector } = cadNode as CadNodeLike;
+  if (sectorScene === undefined || rootSector === undefined) {
+    return target.makeEmpty().expandByObject(cadNode);
+  }
+
+  // Instanced primitives only carry template-sized geometry bounds, so use sector metadata instead.
+  target.copy(sectorScene.getBoundsOfMostGeometry());
+  return target.applyMatrix4(rootSector.matrixWorld);
 }

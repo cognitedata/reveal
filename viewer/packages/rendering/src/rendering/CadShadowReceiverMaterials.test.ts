@@ -3,7 +3,7 @@
  */
 
 import type { Material } from 'three';
-import { LineBasicMaterial, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera } from 'three';
+import { BackSide, LineBasicMaterial, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera } from 'three';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import type { ICustomObject } from '@reveal/utilities';
@@ -22,6 +22,8 @@ describe(CadShadowReceiverMaterials.name, () => {
     const customObject = new Mock<ICustomObject>()
       .setup(p => p.object)
       .returns(mesh)
+      .setup(p => p.receiveShadow)
+      .returns(true)
       .object();
     return { mesh, customObject, receivers: new CadShadowReceiverMaterials(shadowMap) };
   }
@@ -40,6 +42,24 @@ describe(CadShadowReceiverMaterials.name, () => {
     restore(receivers);
     expect(mesh.receiveShadow).toBe(false);
     expect(mesh.material.onBeforeCompile).toBe(originalHook);
+  });
+
+  test('does not install receivers on a skybox or when receiveShadow is off', () => {
+    const sky = createReceiver(new MeshBasicMaterial({ side: BackSide }));
+    const skyHook = sky.mesh.material.onBeforeCompile;
+    sky.receivers.update([sky.customObject], camera);
+    expect(sky.mesh.receiveShadow).toBe(false);
+    expect(sky.mesh.material.onBeforeCompile).toBe(skyHook);
+
+    const mesh = new Mesh(undefined, new MeshBasicMaterial());
+    const customObject = new Mock<ICustomObject>()
+      .setup(p => p.object)
+      .returns(mesh)
+      .setup(p => p.receiveShadow)
+      .returns(false)
+      .object();
+    new CadShadowReceiverMaterials(shadowMap).update([customObject], camera);
+    expect(mesh.receiveShadow).toBe(false);
   });
 
   test('leaves unsupported materials untouched', () => {
