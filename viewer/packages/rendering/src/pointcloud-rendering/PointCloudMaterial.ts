@@ -106,6 +106,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     OBJECT_STYLING_TEXTURE_WIDTH,
     OBJECT_STYLING_TEXTURE_HEIGHT
   );
+  private _ownsObjectAppearanceTexture: boolean = true;
 
   private _classification: PointClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
@@ -391,6 +392,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
       this.classificationTexture.dispose();
       this.classificationTexture = undefined;
     }
+
+    if (this._ownsObjectAppearanceTexture) {
+      this._objectAppearanceTexture.dispose();
+    }
   }
 
   clearVisibleNodeTextureOffsets(): void {
@@ -455,7 +460,14 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   set objectAppearanceTexture(texture: PointCloudObjectAppearanceTexture) {
+    // Ownership is transferred away from this material - the texture is now shared/borrowed
+    // from another material (e.g. the pick material borrows from the node material). We must
+    // not dispose it on our own dispose(), otherwise we'd tear down a texture still in use.
+    if (this._ownsObjectAppearanceTexture && this._objectAppearanceTexture !== texture) {
+      this._objectAppearanceTexture.dispose();
+    }
     this._objectAppearanceTexture = texture;
+    this._ownsObjectAppearanceTexture = false;
     this.uniforms.objectIdLUT = makeUniform('t', this._objectAppearanceTexture.objectStyleTexture);
   }
 
