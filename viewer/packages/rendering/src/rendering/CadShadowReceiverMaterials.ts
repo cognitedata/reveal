@@ -9,7 +9,14 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
 import receiverShader from '../glsl/post-processing/cadShadowReceiver.glsl';
 
-type MaterialHooks = Pick<Material, 'onBeforeCompile' | 'customProgramCacheKey'>;
+/**
+ * Material hooks as `this`-bound function properties, so they can be stored detached from the
+ * material and the compiler enforces that they are invoked with a `Material` as `this`.
+ */
+type MaterialHooks = {
+  onBeforeCompile: (this: Material, ...args: Parameters<Material['onBeforeCompile']>) => void;
+  customProgramCacheKey: (this: Material) => string;
+};
 
 const supportedMaterialTypes = new Set([
   'MeshBasicMaterial',
@@ -97,9 +104,10 @@ export class CadShadowReceiverMaterials {
       return;
     }
 
+    const hooks: MaterialHooks = material;
     const original: MaterialHooks = {
-      onBeforeCompile: material.onBeforeCompile,
-      customProgramCacheKey: material.customProgramCacheKey
+      onBeforeCompile: hooks.onBeforeCompile,
+      customProgramCacheKey: hooks.customProgramCacheKey
     };
     const uniforms = this._uniforms;
     const installed: MaterialHooks = {
