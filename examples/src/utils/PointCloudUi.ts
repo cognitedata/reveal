@@ -41,7 +41,10 @@ export class PointCloudUi {
       Adaptive: PointSizeType.Adaptive,
       Attenuated: PointSizeType.Attenuated,
       Fixed: PointSizeType.Fixed
-    }).onChange(() => this.applyToAllModels());
+    }).onChange(valueStr => {
+      this._params.pointSizeType = parseInt(valueStr, 10);
+      this.applyToAllModels();
+    });
     ui.add(this._params, 'pointColorType', {
       Rgb: PointColorType.Rgb,
       Depth: PointColorType.Depth,
