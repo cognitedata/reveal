@@ -100,7 +100,7 @@ describe(CadShadowReceiverForCustomObjectMaterial.name, () => {
     CadShadowReceiverForCustomObjectMaterial.adoptReceivers([customObject]);
 
     expect(mesh.material).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
-    const receiver = mesh.material as CadShadowReceiverForCustomObjectMaterial;
+    const receiver = mesh.material as unknown as CadShadowReceiverForCustomObjectMaterial;
     expect(receiver.uniforms.tReceiver.value).toBe(map);
     expect((receiver.uniforms.tReceiverTransform.value as Matrix3).elements).toEqual([...map.matrix.elements]);
     expect(receiver.uniforms.receiverColor.value).toEqual(source.color);

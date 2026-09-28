@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Camera, ColorRepresentation, Texture, WebGLRenderer } from 'three';
+import type { Camera, ColorRepresentation, Side, Texture, WebGLRenderer } from 'three';
 import { Color, GLSL3, Matrix3, Matrix4, RawShaderMaterial, Scene, Vector3 } from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
@@ -232,7 +232,7 @@ function mapOf(material: object): Texture | null {
 }
 
 function copyDrawState(source: object, receiver: CadShadowReceiverForCustomObjectMaterial): void {
-  const state = source as { transparent?: boolean; opacity?: number; depthTest?: boolean; depthWrite?: boolean; side?: number };
+  const state = source as { transparent?: boolean; opacity?: number; depthTest?: boolean; depthWrite?: boolean; side?: Side };
   if (typeof state.transparent === 'boolean') receiver.transparent = state.transparent;
   if (typeof state.opacity === 'number') receiver.opacity = state.opacity;
   if (typeof state.depthTest === 'boolean') receiver.depthTest = state.depthTest;
