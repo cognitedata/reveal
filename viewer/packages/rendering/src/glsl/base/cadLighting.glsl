@@ -24,16 +24,7 @@ vec3 shadeCadColorDefault(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
     return albedo * mc * 1.7;
 }
 
-float shadeCadLumaDefault(vec3 normal) {
-    float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
-    return 0.4 + 0.6 * amplitude;
-}
-
-vec3 shadeCadColor(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
-    if (cadLightingEnabled < 0.5) {
-        return shadeCadColorDefault(colorRGB, normal, matCapTexture);
-    }
-
+vec3 shadeCadColorSun(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
     vec3 N = cadFacingNormal(normal);
     float ndotl = cadWrappedDiffuse(N, cadLightDirection);
     float hemi = 0.5 + 0.5 * dot(N, cadUpDirection);
@@ -49,10 +40,32 @@ vec3 shadeCadColor(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
     return (ambient + diffuse + vec3(spec)) * mix(vec3(1.0), mc, 0.28) * 1.15;
 }
 
-float shadeCadLuma(vec3 normal) {
-    if (cadLightingEnabled < 0.5) {
-        return shadeCadLumaDefault(normal);
-    }
+float shadeCadLumaDefault(vec3 normal) {
+    float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
+    return 0.4 + 0.6 * amplitude;
+}
 
+float shadeCadLumaSun(vec3 normal) {
     return 0.28 + 0.72 * cadWrappedDiffuse(cadFacingNormal(normal), cadLightDirection);
+}
+
+vec3 shadeCadColor(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
+    // One return. An early return around texture() makes ANGLE emit an uninitialized HLSL result.
+    vec3 shaded = vec3(0.0);
+    if (cadLightingEnabled < 0.5) {
+        shaded = shadeCadColorDefault(colorRGB, normal, matCapTexture);
+    } else {
+        shaded = shadeCadColorSun(colorRGB, normal, matCapTexture);
+    }
+    return shaded;
+}
+
+float shadeCadLuma(vec3 normal) {
+    float shaded = 0.0;
+    if (cadLightingEnabled < 0.5) {
+        shaded = shadeCadLumaDefault(normal);
+    } else {
+        shaded = shadeCadLumaSun(normal);
+    }
+    return shaded;
 }

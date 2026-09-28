@@ -6,8 +6,6 @@ import type { Box3, Texture, WebGLRenderer } from 'three';
 import {
   DepthFormat,
   DepthTexture,
-  LessEqualCompare,
-  LinearFilter,
   Matrix4,
   NearestFilter,
   OrthographicCamera,
@@ -61,10 +59,8 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
     this._depthTexture = new DepthTexture(SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
     this._depthTexture.format = DepthFormat;
     this._depthTexture.type = UnsignedIntType;
-    // Linear filtering with a compare function enables hardware PCF through sampler2DShadow.
-    this._depthTexture.magFilter = LinearFilter;
-    this._depthTexture.minFilter = LinearFilter;
-    this._depthTexture.compareFunction = LessEqualCompare;
+    this._depthTexture.magFilter = NearestFilter;
+    this._depthTexture.minFilter = NearestFilter;
     this._renderTarget.depthTexture = this._depthTexture;
 
     this._lightCamera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
