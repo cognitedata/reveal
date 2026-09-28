@@ -15,6 +15,9 @@ const float CAD_SHADOW_DISTANT_TEXELS = 8.0;
 const int CAD_SHADOW_PROBES = 4;
 const float CAD_SHADOW_PROBE_BASE = 0.01;
 const float CAD_SHADOW_PROBE_GROWTH = 3.0;
+const float CAD_SHADOW_BLOCKER_EPSILON = 1.0e-3;
+const float CAD_SHADOW_MIN_DEPTH_BIAS = 2.0e-4;
+const float CAD_SHADOW_MIN_TERMINATOR_FADE = 1.0e-4;
 
 // Golden-angle spiral: radius sqrt((i + 0.5) / TAPS), angle i * 2.39996323.
 const vec2 CAD_SHADOW_DISK[CAD_SHADOW_TAPS] = vec2[](
@@ -84,7 +87,7 @@ float cadShadowBlockerDistance(vec2 shadowUv, float compareDepth, vec2 searchRad
         probe *= CAD_SHADOW_PROBE_GROWTH;
     }
 
-    return clamp(distant / max(blocked, 1.0e-3), 0.0, 1.0) * step(1.0e-3, blocked);
+    return clamp(distant / max(blocked, CAD_SHADOW_BLOCKER_EPSILON), 0.0, 1.0) * step(CAD_SHADOW_BLOCKER_EPSILON, blocked);
 }
 
 // Sharpens the soft edge while keeping 0, 0.5 and 1 fixed.
@@ -103,7 +106,7 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     }
 
     vec2 shadowUv = lightNdc.xy * 0.5 + 0.5;
-    float depthBias = max((cadShadowTexelWorld * 2.5) / cadShadowDepthRange, 2.0e-4);
+    float depthBias = max((cadShadowTexelWorld * 2.5) / cadShadowDepthRange, CAD_SHADOW_MIN_DEPTH_BIAS);
     float compareDepth = lightNdc.z * 0.5 + 0.5 - depthBias;
     vec2 texel = 1.0 / vec2(textureSize(tCadShadowMap, 0));
     mat2 rotation = cadShadowKernelRotation();
@@ -132,7 +135,7 @@ float cadShadowLit(sampler2D depthTexture, vec2 uv) {
 
     float lightFacing = dot(worldNormal, cadShadowLightDirection);
     float facing = cadShadowTerminatorFade > 0.0
-        ? smoothstep(0.0, max(cadShadowTerminatorFade, 1.0e-4), lightFacing)
+        ? smoothstep(0.0, max(cadShadowTerminatorFade, CAD_SHADOW_MIN_TERMINATOR_FADE), lightFacing)
         : 1.0;
 
     // Coherent early-out for background and faces turned away from the light.
