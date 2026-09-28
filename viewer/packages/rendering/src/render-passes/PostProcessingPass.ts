@@ -3,7 +3,6 @@
  */
 
 import type { Camera, Material, Mesh, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three';
-import type { ICustomObject } from '@reveal/utilities';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -18,7 +17,6 @@ import {
 import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 import { CadShadowPass } from './CadShadowPass';
-import { CadShadowReceiverMaterials } from '../rendering/CadShadowReceiverMaterials';
 
 /**
  * Single pass that applies post processing effects and
@@ -32,7 +30,6 @@ export class PostProcessingPass implements RenderPass {
   private readonly _pointcloudBlitMaterial: ShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly _cadShadowPass: CadShadowPass | undefined;
-  private readonly _shadowReceiverMaterials: CadShadowReceiverMaterials | undefined;
   private readonly _cadShadowMap: CadShadowMap | undefined;
   private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly setBlendFactorByBackVisibility: () => void;
@@ -46,11 +43,7 @@ export class PostProcessingPass implements RenderPass {
     this.setBlendFactorByBackVisibility();
   }
 
-  constructor(
-    scene: Scene,
-    postProcessingPipelineOptions: PostProcessingPipelineOptions,
-    private readonly _customObjects: ICustomObject[] = []
-  ) {
+  constructor(scene: Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
 
@@ -60,8 +53,6 @@ export class PostProcessingPass implements RenderPass {
       shadowOptions === undefined
         ? undefined
         : new CadShadowPass(postProcessingPipelineOptions.back.depthTexture, shadowOptions.map);
-    this._shadowReceiverMaterials =
-      shadowOptions === undefined ? undefined : new CadShadowReceiverMaterials(shadowOptions.map);
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -162,19 +153,16 @@ export class PostProcessingPass implements RenderPass {
     if (this._cadShadowMap?.enabled !== true) {
       uniforms.cadShadowEnabled.value = 0;
       uniforms.tCadShadow.value = null;
-      this._shadowReceiverMaterials?.disable();
       return;
     }
 
     this._cadShadowPass.render(renderer, camera);
-    this._shadowReceiverMaterials?.update(this._customObjects, camera);
     uniforms.cadShadowEnabled.value = 1;
     uniforms.tCadShadow.value = this._cadShadowPass.texture;
   }
 
   public dispose(): void {
     this._cadShadowPass?.dispose();
-    this._shadowReceiverMaterials?.dispose();
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       (postProcessingObject.material as Material).dispose();
