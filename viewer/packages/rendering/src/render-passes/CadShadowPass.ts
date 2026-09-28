@@ -3,6 +3,7 @@
  */
 
 import type { Camera, Texture, WebGLRenderer, Mesh } from 'three';
+import type { RenderPass } from '../RenderPass';
 import {
   Color,
   GLSL3,
@@ -22,7 +23,7 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const CAD_TERMINATOR_FADE = 0.35;
 
-export class CadShadowPass {
+export class CadShadowPass implements RenderPass {
   private readonly _renderTarget: WebGLRenderTarget;
   private readonly _material: RawShaderMaterial;
   private readonly _mesh: Mesh;
