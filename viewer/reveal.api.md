@@ -14,6 +14,7 @@ import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
+import { ColorRepresentation } from 'three';
 import { EventDispatcher } from 'three';
 import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
@@ -24,6 +25,7 @@ import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
 import { Plane } from 'three';
 import { Quaternion } from 'three';
+import { RawShaderMaterial } from 'three';
 import { Raycaster } from 'three';
 import { Texture } from 'three';
 import { Vector2 } from 'three';
@@ -273,6 +275,15 @@ export type CadModelBudget = {
     readonly highDetailProximityThreshold: number;
     readonly maximumRenderCost: number;
 };
+
+// @public
+export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial {
+    constructor(color?: ColorRepresentation, map?: Texture | null);
+    // (undocumented)
+    setColor(color: ColorRepresentation): void;
+    // (undocumented)
+    setMap(map: Texture | null): void;
+}
 
 // @public
 export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
@@ -850,6 +861,8 @@ export class CustomObject implements ICustomObject {
     get isPartOfBoundingBox(): boolean;
     set isPartOfBoundingBox(value: boolean);
     get object(): Object3D;
+    get receiveShadow(): boolean;
+    set receiveShadow(value: boolean);
     get shouldPick(): boolean;
     set shouldPick(value: boolean);
     get shouldPickBoundingBox(): boolean;
@@ -1236,6 +1249,7 @@ export interface ICustomObject {
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     get object(): Object3D;
+    get receiveShadow(): boolean;
     get shouldPick(): boolean;
     get shouldPickBoundingBox(): boolean;
     get useDepthTest(): boolean;
