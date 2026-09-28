@@ -47,6 +47,13 @@ export interface ICustomObject {
   get useDepthTest(): boolean;
 
   /**
+   * Whether CAD shadows fall on this object.
+   * Default is true. Set false for a sky dome or skybox.
+   * @beta
+   */
+  get receiveShadow(): boolean;
+
+  /**
    * Get the bounding box from the object
    * @beta
    */
