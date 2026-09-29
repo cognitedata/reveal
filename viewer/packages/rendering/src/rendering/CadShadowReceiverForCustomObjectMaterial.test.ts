@@ -2,10 +2,9 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { WebGLRenderer } from 'three';
+import type { WebGLRenderer, Matrix3 } from 'three';
 import {
   DepthTexture,
-  Matrix3,
   Matrix4,
   Mesh,
   MeshBasicMaterial,

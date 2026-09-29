@@ -136,18 +136,15 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._cadBounds = new Box3();
     this._cadModelBounds = new Box3();
 
-    this._postProcessingPass = new PostProcessingPass(
-      sceneHandler.scene,
-      {
-        ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-        cadShadow: { map: this._shadowMapPass },
-        edges: edges.enabled,
-        pointBlending: pointCloudParameters.pointBlending,
-        edlOptions: pointCloudParameters.edlOptions,
-        ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
-        ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
-      }
-    );
+    this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
+      ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+      cadShadow: { map: this._shadowMapPass },
+      edges: edges.enabled,
+      pointBlending: pointCloudParameters.pointBlending,
+      edlOptions: pointCloudParameters.edlOptions,
+      ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
+      ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
+    });
     this._postProcessingPass.setReceiversForCustomObjectsEnabled(enableShadows);
     sceneHandler.onCustomObjectAdded = customObject => this._postProcessingPass.adoptCustomObject(customObject);
 
