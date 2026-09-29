@@ -20,7 +20,7 @@ import {
 import type { IndexSet } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
-import { cadLightDirectionView, cadUpDirectionView } from './rendering/cadLighting';
+import { cadLightDirectionInViewSpace, cadUpDirectionInViewSpace } from './rendering/cadLighting';
 
 import { assert } from '@reveal/utilities/assert';
 
@@ -227,8 +227,8 @@ export class CadMaterialManager {
   }
 
   updateViewLighting(camera: Camera): void {
-    cadLightDirectionView(camera, this._cadLightView);
-    cadUpDirectionView(camera, this._cadUpView);
+    cadLightDirectionInViewSpace(camera, this._cadLightView);
+    cadUpDirectionInViewSpace(camera, this._cadUpView);
     const lightingEnabled = this._cadLightingEnabled ? 1 : 0;
 
     this.applyToAllMaterials(material => {
