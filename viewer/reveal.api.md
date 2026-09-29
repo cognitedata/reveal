@@ -1252,7 +1252,7 @@ export interface ICustomObject {
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     get object(): Object3D;
-    get receiveShadow(): boolean;
+    readonly receiveShadow?: boolean;
     get shouldPick(): boolean;
     get shouldPickBoundingBox(): boolean;
     get useDepthTest(): boolean;

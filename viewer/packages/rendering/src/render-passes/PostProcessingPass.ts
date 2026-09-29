@@ -17,7 +17,7 @@ import {
 } from '../utilities/renderUtilities';
 import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
-import { CadShadowPass } from './CadShadowPass';
+import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
 import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
 
 /**
@@ -46,7 +46,11 @@ export class PostProcessingPass implements RenderPass {
     this.setBlendFactorByBackVisibility();
   }
 
-  constructor(scene: Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
+  constructor(
+    scene: Scene,
+    postProcessingPipelineOptions: PostProcessingPipelineOptions,
+    cadShadowPassFactories?: CadShadowPassFactories
+  ) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
 
@@ -55,7 +59,12 @@ export class PostProcessingPass implements RenderPass {
     this._cadShadowPass =
       shadowOptions === undefined
         ? undefined
-        : new CadShadowPass(postProcessingPipelineOptions.back.depthTexture, shadowOptions.map);
+        : new CadShadowPass(
+            postProcessingPipelineOptions.back.depthTexture,
+            shadowOptions.map,
+            undefined,
+            cadShadowPassFactories
+          );
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
