@@ -52,10 +52,26 @@ vec3 cadShadowWorldFromView(vec3 viewPos) {
     return (cadCameraMatrixWorld * vec4(viewPos, 1.0)).xyz;
 }
 
-// Screen-space normal facing the camera; derivatives require uniform control flow.
-vec3 cadShadowViewNormal(vec3 viewPos) {
-    vec3 n = normalize(cross(dFdx(viewPos), dFdy(viewPos)));
-    return n * (2.0 * step(0.0, n.z) - 1.0);
+// Screen-space normal facing the camera. Picks the neighbor with the smaller depth
+// jump on each axis so a horizon or silhouette pixel does not tilt the normal.
+vec3 cadShadowViewNormal(sampler2D depthTexture, vec2 uv, float depth, vec3 viewPos) {
+    ivec2 size = textureSize(depthTexture, 0);
+    ivec2 coord = ivec2(uv * vec2(size));
+    ivec2 maxCoord = size - ivec2(1);
+    float depthRight = texelFetch(depthTexture, clamp(coord + ivec2(1, 0), ivec2(0), maxCoord), 0).r;
+    float depthLeft = texelFetch(depthTexture, clamp(coord + ivec2(-1, 0), ivec2(0), maxCoord), 0).r;
+    float depthUp = texelFetch(depthTexture, clamp(coord + ivec2(0, 1), ivec2(0), maxCoord), 0).r;
+    float depthDown = texelFetch(depthTexture, clamp(coord + ivec2(0, -1), ivec2(0), maxCoord), 0).r;
+    vec2 texel = 1.0 / vec2(size);
+
+    bool useRight = abs(depthRight - depth) < abs(depthLeft - depth);
+    bool useUp = abs(depthUp - depth) < abs(depthDown - depth);
+    vec3 horizontal = cadShadowViewPosFromDepth(useRight ? depthRight : depthLeft, uv + vec2(useRight ? texel.x : -texel.x, 0.0)) - viewPos;
+    vec3 vertical = cadShadowViewPosFromDepth(useUp ? depthUp : depthDown, uv + vec2(0.0, useUp ? texel.y : -texel.y)) - viewPos;
+    vec3 first = (useRight == useUp) ? horizontal : vertical;
+    vec3 second = (useRight == useUp) ? vertical : horizontal;
+    vec3 n = normalize(cross(first, second));
+    return n * (1.0 - 2.0 * step(0.0, dot(n, viewPos)));
 }
 
 // Per-pixel hashed rotation of the sample disk.
@@ -95,10 +111,15 @@ float cadShadowShapeEdge(float occlusion) {
     return occlusion * occlusion * (3.0 - 2.0 * occlusion);
 }
 
+float cadShadowDepthBias() {
+    return max((cadShadowTexelWorld * 2.5) / cadShadowDepthRange, CAD_SHADOW_MIN_DEPTH_BIAS);
+}
+
 // Occlusion of a world-space point, 0 when lit and 1 when fully blocked.
-float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
+float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal, float depthBias) {
     vec3 offsetPos = worldPos + worldNormal * (cadShadowTexelWorld * (CAD_SHADOW_CONTACT_TEXELS + 1.0));
     vec3 lightNdc = (cadShadowMatrix * vec4(offsetPos, 1.0)).xyz;
+    float receiverDepth = lightNdc.z * 0.5 + 0.5;
 
     // Coherent early-out: skips every tap for regions outside the light frustum.
     if (any(greaterThan(abs(lightNdc.xy), vec2(1.0))) || lightNdc.z < -1.0) {
@@ -106,8 +127,7 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
     }
 
     vec2 shadowUv = lightNdc.xy * 0.5 + 0.5;
-    float depthBias = max((cadShadowTexelWorld * 2.5) / cadShadowDepthRange, CAD_SHADOW_MIN_DEPTH_BIAS);
-    float compareDepth = lightNdc.z * 0.5 + 0.5 - depthBias;
+    float compareDepth = receiverDepth - depthBias;
     vec2 texel = 1.0 / vec2(textureSize(tCadShadowMap, 0));
     mat2 rotation = cadShadowKernelRotation();
 
@@ -130,19 +150,28 @@ float cadShadowOcclusion(vec3 worldPos, vec3 worldNormal) {
 // Lit factor of a CAD pixel, from 1 down to 1 - cadShadowStrength.
 float cadShadowLit(sampler2D depthTexture, vec2 uv) {
     float depth = texture(depthTexture, uv).r;
+    // Background never receives a shadow, so skip the neighbor fetches and the normal.
+    if (depth >= CAD_SHADOW_EMPTY_DEPTH) {
+        return 1.0;
+    }
+
     vec3 viewPos = cadShadowViewPosFromDepth(depth, uv);
-    vec3 worldNormal = mat3(cadCameraMatrixWorld) * cadShadowViewNormal(viewPos);
+    vec3 viewNormal = cadShadowViewNormal(depthTexture, uv, depth, viewPos);
+    vec3 worldNormal = mat3(cadCameraMatrixWorld) * viewNormal;
+    // A grazing view ray turns a small depth error into a long slide along the surface.
+    float cosView = max(abs(dot(viewNormal, normalize(viewPos))), 0.05);
+    float depthBias = cadShadowDepthBias() / cosView;
 
     float lightFacing = dot(worldNormal, cadShadowLightDirection);
     float facing = cadShadowTerminatorFade > 0.0
         ? smoothstep(0.0, max(cadShadowTerminatorFade, CAD_SHADOW_MIN_TERMINATOR_FADE), lightFacing)
         : 1.0;
 
-    // Coherent early-out for background and faces turned away from the light.
-    if (depth >= CAD_SHADOW_EMPTY_DEPTH || facing <= 0.0) {
+    // Faces turned away from the light stay fully lit.
+    if (facing <= 0.0) {
         return 1.0;
     }
 
-    float occlusion = cadShadowShapeEdge(cadShadowOcclusion(cadShadowWorldFromView(viewPos), worldNormal));
+    float occlusion = cadShadowShapeEdge(cadShadowOcclusion(cadShadowWorldFromView(viewPos), worldNormal, depthBias));
     return 1.0 - occlusion * facing * cadShadowStrength;
 }
