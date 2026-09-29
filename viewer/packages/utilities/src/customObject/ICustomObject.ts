@@ -48,10 +48,10 @@ export interface ICustomObject {
 
   /**
    * Whether CAD shadows fall on this object.
-   * Default is true. Set false for a sky dome or skybox.
+   * Optional. When omitted, the object does not receive shadows.
    * @beta
    */
-  get receiveShadow(): boolean;
+  get receiveShadow?(): boolean;
 
   /**
    * Get the bounding box from the object
