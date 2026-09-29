@@ -3,7 +3,7 @@
  */
 
 import { PerspectiveCamera, Vector3 } from 'three';
-import { CAD_LIGHT_WORLD, cadLightDirectionView, cadUpDirectionView } from './cadLighting';
+import { CAD_LIGHT_WORLD, cadLightDirectionInViewSpace, cadUpDirectionInViewSpace } from './cadLighting';
 
 describe('cadLighting', () => {
   const camera = new PerspectiveCamera();
@@ -12,8 +12,8 @@ describe('cadLighting', () => {
   camera.updateMatrixWorld();
 
   test.each([
-    ['light', cadLightDirectionView, CAD_LIGHT_WORLD],
-    ['up', cadUpDirectionView, new Vector3(0, 1, 0)]
+    ['light', cadLightDirectionInViewSpace, CAD_LIGHT_WORLD],
+    ['up', cadUpDirectionInViewSpace, new Vector3(0, 1, 0)]
   ])('transforms the %s direction into normalized view space', (_, toViewSpace, worldDirection) => {
     const viewDirection = toViewSpace(camera, new Vector3());
 
