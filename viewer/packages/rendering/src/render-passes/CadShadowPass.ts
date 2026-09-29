@@ -23,6 +23,14 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const CAD_TERMINATOR_FADE = 0.35;
 
+type CadShadowPassFactory<T> = (createDefault: () => T) => T;
+
+export type CadShadowPassFactories = {
+  renderTarget?: CadShadowPassFactory<WebGLRenderTarget>;
+  material?: CadShadowPassFactory<RawShaderMaterial>;
+  mesh?: (createDefault: (material: RawShaderMaterial) => Mesh, material: RawShaderMaterial) => Mesh;
+};
+
 export class CadShadowPass implements RenderPass {
   private readonly _renderTarget: WebGLRenderTarget;
   private readonly _material: RawShaderMaterial;
@@ -34,41 +42,50 @@ export class CadShadowPass implements RenderPass {
   constructor(
     cameraDepthTexture: Texture | null,
     shadowMap: CadShadowMap,
-    terminatorFade: number = CAD_TERMINATOR_FADE
+    terminatorFade: number = CAD_TERMINATOR_FADE,
+    factories?: CadShadowPassFactories
   ) {
     this._shadowMap = shadowMap;
 
-    this._renderTarget = new WebGLRenderTarget(1, 1, {
-      depthBuffer: false,
-      stencilBuffer: false,
-      type: UnsignedByteType,
-      format: RedFormat,
-      magFilter: LinearFilter,
-      minFilter: LinearFilter
-    });
-    this._renderTarget.texture.colorSpace = NoColorSpace;
+    const createRenderTarget = () => {
+      const renderTarget = new WebGLRenderTarget(1, 1, {
+        depthBuffer: false,
+        stencilBuffer: false,
+        type: UnsignedByteType,
+        format: RedFormat,
+        magFilter: LinearFilter,
+        minFilter: LinearFilter
+      });
+      renderTarget.texture.colorSpace = NoColorSpace;
+      return renderTarget;
+    };
+    const createMaterial = () =>
+      new RawShaderMaterial({
+        vertexShader: cadShadowShaders.vertex,
+        fragmentShader: cadShadowShaders.fragment,
+        uniforms: {
+          tDepth: { value: cameraDepthTexture },
+          tCadShadowMap: { value: shadowMap.depthTexture },
+          inverseProjectionMatrix: { value: new Matrix4() },
+          cadCameraMatrixWorld: { value: new Matrix4() },
+          cadShadowMatrix: { value: new Matrix4() },
+          cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
+          cadShadowTexelWorld: { value: 1 },
+          cadShadowDepthRange: { value: 1 },
+          cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
+          cadShadowTerminatorFade: { value: terminatorFade }
+        },
+        glslVersion: GLSL3,
+        depthTest: false,
+        depthWrite: false
+      });
 
-    this._material = new RawShaderMaterial({
-      vertexShader: cadShadowShaders.vertex,
-      fragmentShader: cadShadowShaders.fragment,
-      uniforms: {
-        tDepth: { value: cameraDepthTexture },
-        tCadShadowMap: { value: shadowMap.depthTexture },
-        inverseProjectionMatrix: { value: new Matrix4() },
-        cadCameraMatrixWorld: { value: new Matrix4() },
-        cadShadowMatrix: { value: new Matrix4() },
-        cadShadowLightDirection: { value: CAD_LIGHT_WORLD },
-        cadShadowTexelWorld: { value: 1 },
-        cadShadowDepthRange: { value: 1 },
-        cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
-        cadShadowTerminatorFade: { value: terminatorFade }
-      },
-      glslVersion: GLSL3,
-      depthTest: false,
-      depthWrite: false
-    });
-
-    this._mesh = createFullScreenTriangleMesh(this._material);
+    this._renderTarget = (factories?.renderTarget ?? (createDefault => createDefault()))(createRenderTarget);
+    this._material = (factories?.material ?? (createDefault => createDefault()))(createMaterial);
+    this._mesh = (factories?.mesh ?? ((createDefault, material) => createDefault(material)))(
+      createFullScreenTriangleMesh,
+      this._material
+    );
     this._scene = new Scene();
     this._scene.add(this._mesh);
   }
