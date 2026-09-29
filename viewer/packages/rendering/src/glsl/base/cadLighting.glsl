@@ -6,8 +6,7 @@ const vec3 CAD_LIGHT_COLOR = vec3(1.0, 0.98, 0.94);
 const vec3 CAD_VIEW_DIRECTION = vec3(0.0, 0.0, 1.0);
 
 vec3 cadFacingNormal(vec3 normal) {
-    vec3 N = normalize(normal);
-    return N * (2.0 * step(0.0, N.z) - 1.0);
+    return normalize(normal);
 }
 
 float cadWrappedDiffuse(vec3 N, vec3 L) {
