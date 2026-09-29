@@ -3,7 +3,6 @@
  */
 
 import type { Camera, Material, Mesh, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three';
-import type { ICustomObject } from '@reveal/utilities';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
