@@ -51,7 +51,7 @@ export interface ICustomObject {
    * Optional. When omitted, the object does not receive shadows.
    * @beta
    */
-  get receiveShadow?(): boolean;
+  readonly receiveShadow?: boolean;
 
   /**
    * Get the bounding box from the object
