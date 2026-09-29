@@ -2,8 +2,8 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Mesh, WebGLRenderer } from 'three';
-import { DepthTexture, Matrix4, PerspectiveCamera, RawShaderMaterial, Texture, WebGLRenderTarget } from 'three';
+import type { Mesh, WebGLRenderer, RawShaderMaterial, WebGLRenderTarget } from 'three';
+import { DepthTexture, Matrix4, PerspectiveCamera, Texture } from 'three';
 import { It, Mock, Times } from 'moq.ts';
 import { vi } from 'vitest';
 import { CadShadowPass } from './CadShadowPass';
