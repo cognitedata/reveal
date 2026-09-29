@@ -83,7 +83,9 @@ mat2 cadShadowKernelRotation() {
     return mat2(c, s, -s, c);
 }
 
-// Hardware PCF lookup: 1 when lit or outside the map, 0 when blocked.
+// Returns how visible uv is in the shadow map: 1 when lit or outside the map, 0 when blocked.
+// Percentage-closer filtering (PCF) softens the shadow edge by averaging depth comparisons,
+// not depths. The GPU compares compareDepth with the 2x2 texels around uv and returns the lit fraction.
 float cadShadowVisibility(vec2 uv, float compareDepth) {
     vec2 inside = step(vec2(0.0), uv) * step(uv, vec2(1.0));
     float visibility = textureLod(tCadShadowMap, vec3(uv, min(compareDepth, 1.0)), 0.0);
