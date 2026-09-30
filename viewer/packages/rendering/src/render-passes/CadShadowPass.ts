@@ -54,7 +54,7 @@ export class CadShadowPass implements RenderPass {
       createMaterial,
       createFullScreenTriangleMesh: createMesh
     } = { ...defaultCadShadowPassDependencies, ...factories };
-    
+
     this._shadowMap = shadowMap;
 
     this._renderTarget = createRenderTarget(1, 1, {

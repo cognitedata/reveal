@@ -39,7 +39,8 @@ describe(CadShadowPass.name, () => {
     const factories: Partial<CadShadowPassFactories> = {
       createRenderTarget: (width, height, options) =>
         (constructed.renderTarget = defaultCadShadowPassDependencies.createRenderTarget(width, height, options)),
-      createMaterial: parameters => (constructed.material = defaultCadShadowPassDependencies.createMaterial(parameters)),
+      createMaterial: parameters =>
+        (constructed.material = defaultCadShadowPassDependencies.createMaterial(parameters)),
       createFullScreenTriangleMesh: material =>
         (constructed.mesh = defaultCadShadowPassDependencies.createFullScreenTriangleMesh(material))
     };
