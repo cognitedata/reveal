@@ -18,7 +18,7 @@ import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipe
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
 import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
-import { ICustomObject } from '@reveal/utilities';
+import type { ICustomObject } from '@reveal/utilities';
 
 /**
  * Single pass that applies post processing effects and
