@@ -49,7 +49,7 @@ export class PostProcessingPass implements RenderPass {
   constructor(
     scene: Scene,
     postProcessingPipelineOptions: PostProcessingPipelineOptions,
-    cadShadowPassFactories?: CadShadowPassFactories
+    cadShadowPassDependencies?: Partial<CadShadowPassFactories>
   ) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
@@ -63,7 +63,7 @@ export class PostProcessingPass implements RenderPass {
             postProcessingPipelineOptions.back.depthTexture,
             shadowOptions.map,
             undefined,
-            cadShadowPassFactories
+            cadShadowPassDependencies
           );
 
     const backBlitMaterial = getBlitMaterial({

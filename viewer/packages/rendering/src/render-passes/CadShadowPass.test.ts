@@ -6,7 +6,7 @@ import type { Mesh, WebGLRenderer, RawShaderMaterial, WebGLRenderTarget } from '
 import { DepthTexture, Matrix4, PerspectiveCamera, Texture } from 'three';
 import { It, Mock, Times } from 'moq.ts';
 import { vi } from 'vitest';
-import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
+import { CadShadowPass, defaultCadShadowPassDependencies, type CadShadowPassFactories } from './CadShadowPass';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from '../rendering/cadLighting';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
@@ -36,10 +36,12 @@ describe(CadShadowPass.name, () => {
       mesh?: Mesh;
       renderTarget?: WebGLRenderTarget;
     } = {};
-    const factories: CadShadowPassFactories = {
-      renderTarget: createDefault => (constructed.renderTarget = createDefault()),
-      material: createDefault => (constructed.material = createDefault()),
-      mesh: (createDefault, material) => (constructed.mesh = createDefault(material))
+    const factories: Partial<CadShadowPassFactories> = {
+      createRenderTarget: (width, height, options) =>
+        (constructed.renderTarget = defaultCadShadowPassDependencies.createRenderTarget(width, height, options)),
+      createMaterial: parameters => (constructed.material = defaultCadShadowPassDependencies.createMaterial(parameters)),
+      createFullScreenTriangleMesh: material =>
+        (constructed.mesh = defaultCadShadowPassDependencies.createFullScreenTriangleMesh(material))
     };
     const pass = new CadShadowPass(cameraDepth, shadowMap, terminatorFade, factories);
     return {
