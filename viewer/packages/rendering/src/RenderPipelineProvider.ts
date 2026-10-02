@@ -15,4 +15,5 @@ import type { RenderPass } from './RenderPass';
 export interface RenderPipelineProvider {
   pipeline(renderer: WebGLRenderer): Generator<RenderPass>;
   dispose(): void;
+  shadowsEnabled?: boolean;
 }

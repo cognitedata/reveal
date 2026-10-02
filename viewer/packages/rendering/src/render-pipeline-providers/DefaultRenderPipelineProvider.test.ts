@@ -48,8 +48,8 @@ describe(DefaultRenderPipelineProvider.name, () => {
     pointCloudNodeMock = pointCloudModelMock.pointCloudNode;
   });
 
-  test('Pipeline with one cad model with back styling should return 4 passes', () => {
-    const materialManagerMock = new Mock<CadMaterialManager>()
+  test('Pipeline with one cad model with back styling should return 4 passes when shadows are disabled', () => {
+    const materialManagerMock = createCadMaterialManagerMock()
       .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
       .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
@@ -80,12 +80,45 @@ describe(DefaultRenderPipelineProvider.name, () => {
       numberOfRenderPasses++;
     }
 
-    expect(numberOfRenderPasses).toBe(4); //Back, SSAO, Post, BlitToCanvas
+    expect(numberOfRenderPasses).toBe(4); // Back, SSAO, Post, BlitToCanvas
   });
 
-  test('Pipeline with one cad model with all styling should return 6 passes', () => {
+  test('Pipeline includes the shadow map pass when shadows are enabled', () => {
+    const materialManagerMock = createCadMaterialManagerMock()
+      .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
+      .returns(new IndexSet([0]))
+      .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
+      .returns(new IndexSet([]))
+      .setup(p => p.getModelInFrontTreeIndices(modelIdentifierSymbol))
+      .returns(new IndexSet([]))
+      .setup(p => p.getModelVisibleTreeIndices(modelIdentifierSymbol))
+      .returns(new IndexSet([0]));
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
+
+    const sceneHandler = new SceneHandler();
+    sceneHandler.addCadModel(cadNodeMock, modelIdentifierSymbol);
+
+    const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
+      materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
+      sceneHandler,
+      defaultRenderOptions,
+      undefined,
+      true
+    );
+
+    expect(sceneHandler.scene.getObjectByName('CAD shadow receiver overlay')).toBeUndefined();
+
+    const numberOfRenderPasses = Array.from(defaultRenderPipelineProvider.pipeline(rendererMock.object())).length;
+
+    expect(numberOfRenderPasses).toBe(5); // Shadow map, Back, SSAO, Post, BlitToCanvas
+  });
+
+  test('Pipeline with one cad model with all styling should return 6 passes when shadows are disabled', () => {
     const modelIdentifierSymbol = cadNodeMock.cadModelIdentifier;
-    const materialManagerMock = new Mock<CadMaterialManager>()
+    const materialManagerMock = createCadMaterialManagerMock()
       .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
       .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
@@ -116,11 +149,11 @@ describe(DefaultRenderPipelineProvider.name, () => {
       numberOfRenderPasses++;
     }
 
-    expect(numberOfRenderPasses).toBe(6); //Back, Ghost, In-front SSAO, Post, BlitToCanvas
+    expect(numberOfRenderPasses).toBe(6); // Back, Ghost, In-front, SSAO, Post, BlitToCanvas
   });
 
   test('Pipeline with one custom object return two passes', () => {
-    const materialManagerMock = new Mock<CadMaterialManager>();
+    const materialManagerMock = createCadMaterialManagerMock();
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
       .returns();
@@ -147,7 +180,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
   });
 
   test('Pipeline with one cad model with back styling and no ssao samples should return 3 passes', () => {
-    const materialManagerMock = new Mock<CadMaterialManager>()
+    const materialManagerMock = createCadMaterialManagerMock()
       .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
       .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
@@ -187,7 +220,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
   });
 
   test('Pipeline with one point cloud model returns 3 passes', () => {
-    const materialManagerMock = new Mock<CadMaterialManager>();
+    const materialManagerMock = createCadMaterialManagerMock();
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
       .returns();
@@ -214,7 +247,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
   });
 
   test('Pipeline with one point cloud model and point blending enabled returns 4 passes', () => {
-    const materialManagerMock = new Mock<CadMaterialManager>();
+    const materialManagerMock = createCadMaterialManagerMock();
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
       .returns();
@@ -246,3 +279,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
     expect(numberOfRenderPasses).toBe(4); // Point cloud, Post, BlitToCanvas
   });
 });
+
+function createCadMaterialManagerMock(): IMock<CadMaterialManager> {
+  return new Mock<CadMaterialManager>().setup(p => p.setCadLightingEnabled(It.IsAny())).returns();
+}

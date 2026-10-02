@@ -22,6 +22,7 @@ export type { StyledTreeIndexSets } from './src/utilities/types';
 export { type Materials, initializeDefinesAndUniforms, forEachMaterial } from './src/rendering/materials';
 export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
+export { CadShadowReceiverForCustomObjectMaterial } from './src/rendering/CadShadowReceiverForCustomObjectMaterial';
 
 export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';
 export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';
