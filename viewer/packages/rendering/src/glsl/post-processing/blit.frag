@@ -18,6 +18,11 @@ uniform float alpha;
 uniform sampler2D tOutlineColors;
 #endif
 
+#if defined(CAD_SHADOW)
+uniform sampler2D tCadShadow;
+uniform float cadShadowEnabled;
+#endif
+
 in vec2 vUv;
 
 in float near;
@@ -45,6 +50,22 @@ out vec4 fragColor;
 #include ../math/toViewZ.glsl;
 #endif
 
+#if defined(CAD_SHADOW)
+float cadShadowDither() {
+  float n = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+  return (n - 0.5) / 255.0;
+}
+
+float sampleCadShadow() {
+  vec2 texel = 1.0 / vec2(textureSize(tCadShadow, 0));
+  float sum = texture(tCadShadow, vUv + texel * vec2(-0.5, -0.5)).r;
+  sum += texture(tCadShadow, vUv + texel * vec2(0.5, -0.5)).r;
+  sum += texture(tCadShadow, vUv + texel * vec2(-0.5, 0.5)).r;
+  sum += texture(tCadShadow, vUv + texel * vec2(0.5, 0.5)).r;
+  return clamp(sum * 0.25 + cadShadowDither(), 0.0, 1.0);
+}
+#endif
+
 void main() {
   vec4 diffuse = texture(tDiffuse, vUv);
 
@@ -58,6 +79,12 @@ void main() {
   fragColor = diffuse;
   #if defined(SSAO_BLUR)
     fragColor *= gaussianBlur(tSsao, vUv);
+  #endif
+  #if defined(CAD_SHADOW)
+    // Skipped when off so the frame stays bit-exact instead of picking up the dither.
+    if (cadShadowEnabled > 0.5) {
+      fragColor.rgb *= sampleCadShadow();
+    }
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);
