@@ -181,7 +181,8 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Enables shadows cast by CAD geometry, and the world-space sun shading that goes with
-   * them. Defaults to false. Can also be toggled at runtime through
+   * them. Turning shadows on changes the CAD look even where no shadow is cast, including
+   * ghosted nodes. Defaults to false. Can also be toggled at runtime through
    * {@link Cognite3DViewer.shadowsEnabled}.
    * GPU resources for shadows are only allocated the first time they are enabled.
    */

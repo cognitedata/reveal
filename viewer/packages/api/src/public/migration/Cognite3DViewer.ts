@@ -239,7 +239,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   /**
    * Enables or disables CAD shadows at runtime, along with the world-space sun shading
-   * that matches them. The GPU resources are allocated the first time shadows are enabled.
+   * that matches them. Turning shadows on changes the CAD look even where no shadow is
+   * cast, including ghosted nodes. The GPU resources are allocated the first time shadows
+   * are enabled.
    */
   public set shadowsEnabled(enabled: boolean) {
     this.revealManager.shadowsEnabled = enabled;
