@@ -16,7 +16,7 @@ import {
   Vector3,
   WebGLRenderTarget
 } from 'three';
-import type { SceneHandler } from '@reveal/utilities';
+import { isMobileOrTablet, type SceneHandler } from '@reveal/utilities';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
 import { RenderMode } from '../rendering/RenderMode';
@@ -26,6 +26,15 @@ import { GeometryPass } from './GeometryPass';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const SHADOW_MAP_RESOLUTION = 4096;
+const SHADOW_MAP_MOBILE_RESOLUTION = 2048;
+
+export function resolveShadowMapResolution(maxTextureSize: number, mobileOrTablet: boolean): number {
+  const desired = mobileOrTablet ? SHADOW_MAP_MOBILE_RESOLUTION : SHADOW_MAP_RESOLUTION;
+  if (!(maxTextureSize > 0)) {
+    return desired;
+  }
+  return Math.min(desired, maxTextureSize);
+}
 
 // Far enough back that the converging rays of ray-marched CAD primitives approximate a directional light.
 const LIGHT_DISTANCE_IN_RADII = 200;
@@ -41,6 +50,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   private readonly _center = new Vector3();
   private readonly _corner = new Vector3();
   private readonly _boundingSphere = new Sphere();
+  private _resolution = SHADOW_MAP_RESOLUTION;
   private _texelWorldSize = 1;
   private _depthRange = 1;
   private _hasValidBounds = false;
@@ -145,10 +155,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
     this._lightCamera.updateProjectionMatrix();
 
     this._matrix.multiplyMatrices(this._lightCamera.projectionMatrix, this._lightCamera.matrixWorldInverse);
-    this._texelWorldSize = Math.max(
-      (this._lightCamera.right - this._lightCamera.left) / SHADOW_MAP_RESOLUTION,
-      (this._lightCamera.top - this._lightCamera.bottom) / SHADOW_MAP_RESOLUTION
-    );
+    this.updateTexelWorldSize();
     this._depthRange = Math.max(this._lightCamera.far - this._lightCamera.near, 1e-4);
   }
 
@@ -158,6 +165,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
       return;
     }
 
+    this.applyShadowMapResolution(renderer);
     renderer.setRenderTarget(this._renderTarget);
     this._geometryPass.render(renderer, this._lightCamera);
   }
@@ -165,5 +173,26 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   public dispose(): void {
     this._depthTexture.dispose();
     this._renderTarget.dispose();
+  }
+
+  private applyShadowMapResolution(renderer: WebGLRenderer): void {
+    const resolution = resolveShadowMapResolution(renderer.capabilities.maxTextureSize, isMobileOrTablet());
+    if (resolution === this._resolution) {
+      return;
+    }
+
+    this._resolution = resolution;
+    // Resize before the first bind so the GPU never allocates the desktop map.
+    this._renderTarget.setSize(resolution, resolution);
+    if (this._hasValidBounds) {
+      this.updateTexelWorldSize();
+    }
+  }
+
+  private updateTexelWorldSize(): void {
+    this._texelWorldSize = Math.max(
+      (this._lightCamera.right - this._lightCamera.left) / this._resolution,
+      (this._lightCamera.top - this._lightCamera.bottom) / this._resolution
+    );
   }
 }

@@ -19,6 +19,7 @@ import {
 
 export type AutoMockOverrides = {
   canvas?: HTMLCanvasElement;
+  maxTextureSize?: number;
 };
 
 export function autoMockWebGLRenderer(
@@ -29,7 +30,7 @@ export function autoMockWebGLRenderer(
   const webglContext = autoMockGLContext();
   const renderLists = autoMockRenderLists();
   const webglState = autoMockGLState();
-  const webGLCapabilities = autoMockGLCapabilities();
+  const webGLCapabilities = autoMockGLCapabilities(overrides?.maxTextureSize);
 
   autoMockGLRenderer(renderer, overrides, webglInfo, webglContext, renderLists, webglState, webGLCapabilities);
 
@@ -76,9 +77,10 @@ function autoMockGLRenderer(
   renderer.setup(instance => instance.capabilities).returns(webGLCapabilities.object());
 }
 
-function autoMockGLCapabilities() {
+function autoMockGLCapabilities(maxTextureSize = 4096) {
   const webGLCapabilities = new Mock<WebGLCapabilities>();
   webGLCapabilities.setup(instance => instance.isWebGL2).returns(true);
+  webGLCapabilities.setup(instance => instance.maxTextureSize).returns(maxTextureSize);
   return webGLCapabilities;
 }
 
