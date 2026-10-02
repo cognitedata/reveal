@@ -4,7 +4,7 @@
 
 import type { WebGLRenderer } from 'three';
 import { Object3D, PerspectiveCamera } from 'three';
-import { It, Mock, Times } from 'moq.ts';
+import { It, Mock, Times, type IMock } from 'moq.ts';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
@@ -14,7 +14,7 @@ describe(GeometryPass.name, () => {
   const scene = new Object3D();
   const camera = new PerspectiveCamera();
 
-  function render(mode: RenderMode): Mock<CadMaterialManager> {
+  function render(mode: RenderMode): IMock<CadMaterialManager> {
     const materialManager = new Mock<CadMaterialManager>()
       .setup(p => p.getRenderMode())
       .returns(RenderMode.Color)
