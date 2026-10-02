@@ -207,6 +207,21 @@ describe('CadMaterialManager', () => {
     expect(manager.needsRedraw).toBe(true);
   });
 
+  test('updateViewLighting writes the off flag once and skips later calls', () => {
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    const material = manager.getModelMaterials(modelIdentifier1).box;
+
+    manager.setCadLightingEnabled(true);
+    manager.updateViewLighting(new PerspectiveCamera());
+    manager.setCadLightingEnabled(false);
+    manager.updateViewLighting(new PerspectiveCamera());
+    expect(material.uniforms.cadLightingEnabled.value).toBe(0);
+
+    material.uniforms.cadLightingEnabled.value = 7;
+    manager.updateViewLighting(new PerspectiveCamera());
+    expect(material.uniforms.cadLightingEnabled.value).toBe(7);
+  });
+
   test('updateViewLighting transforms the world light into view space', () => {
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
     const camera = new PerspectiveCamera();
