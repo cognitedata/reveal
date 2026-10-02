@@ -5,10 +5,6 @@ uniform float cadLightingEnabled;
 const vec3 CAD_LIGHT_COLOR = vec3(1.0, 0.98, 0.94);
 const vec3 CAD_VIEW_DIRECTION = vec3(0.0, 0.0, 1.0);
 
-vec3 cadFacingNormal(vec3 normal) {
-    return normalize(normal);
-}
-
 float cadWrappedDiffuse(vec3 N, vec3 L) {
     const float wrap = 0.18;
     return max((dot(N, L) + wrap) / (1.0 + wrap), 0.0);
@@ -24,7 +20,7 @@ vec3 shadeCadColorDefault(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
 }
 
 vec3 shadeCadColorSun(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
-    vec3 N = cadFacingNormal(normal);
+    vec3 N = normalize(normal);
     float ndotl = cadWrappedDiffuse(N, cadLightDirection);
     float hemi = 0.5 + 0.5 * dot(N, cadUpDirection);
 
@@ -45,7 +41,7 @@ float shadeCadLumaDefault(vec3 normal) {
 }
 
 float shadeCadLumaSun(vec3 normal) {
-    return 0.28 + 0.72 * cadWrappedDiffuse(cadFacingNormal(normal), cadLightDirection);
+    return 0.28 + 0.72 * cadWrappedDiffuse(normalize(normal), cadLightDirection);
 }
 
 vec3 shadeCadColor(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
