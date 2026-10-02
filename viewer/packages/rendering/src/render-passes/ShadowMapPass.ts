@@ -170,6 +170,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
 
     this.applyShadowMapResolution(renderer);
     renderer.setRenderTarget(this._renderTarget);
+    renderer.clear();
     this._geometryPass.render(renderer, this._lightCamera);
   }
 

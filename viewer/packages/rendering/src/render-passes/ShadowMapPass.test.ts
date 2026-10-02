@@ -45,12 +45,14 @@ describe(ShadowMapPass.name, () => {
 
     pass.render(rendererMock.object());
     rendererMock.verify(p => p.setRenderTarget(It.IsAny()), Times.Never());
+    rendererMock.verify(p => p.clear(), Times.Never());
 
     pass.setEnabled(true);
     pass.setCadBounds(bounds);
     pass.render(rendererMock.object());
 
     rendererMock.verify(p => p.setRenderTarget(It.IsAny()), Times.Once());
+    rendererMock.verify(p => p.clear(), Times.Once());
     rendererMock.verify(p => p.render(sceneHandler.scene, It.IsAny()), Times.Once());
   });
 
