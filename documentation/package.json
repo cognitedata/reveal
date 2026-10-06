@@ -69,6 +69,7 @@
     "@chevrotain/cst-dts-gen/lodash": "^4.18.1",
     "@chevrotain/gast/lodash": "^4.18.1",
     "chevrotain/lodash": "^4.18.1",
-    "@cognite/reveal/lodash": "^4.18.1"
+    "@cognite/reveal/lodash": "^4.18.1",
+    "tinypool": "^2.1.2"
   }
 }
