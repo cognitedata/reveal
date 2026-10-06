@@ -63,9 +63,5 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "yarn@4.18.1",
-  "resolutions": {
-    "tar": "^7.5.11",
-    "serialize-javascript": "^7.0.3"
-  }
+  "packageManager": "yarn@4.18.1"
 }
