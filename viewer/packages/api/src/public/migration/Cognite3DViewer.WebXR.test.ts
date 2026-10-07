@@ -3,6 +3,7 @@
  */
 
 import {
+  type Box3,
   EventDispatcher,
   PerspectiveCamera,
   Ray,
@@ -70,6 +71,8 @@ type ViewerInternals = {
   revealManager: { renderViews: (output: WebGLRenderTarget, views: readonly RenderView[]) => void };
   _pickingHandler: { intersectCadNodes: (...args: unknown[]) => Promise<unknown[]> };
   _pointCloudPickingHandler: { intersectPointClouds: (...args: unknown[]) => Promise<unknown[]> };
+  _boundingBoxes: { nearFarPlaneBoundingBox: Box3 };
+  _forceStopRendering: boolean;
 };
 
 describe('Cognite3DViewer WebXR', () => {
@@ -299,6 +302,70 @@ describe('Cognite3DViewer WebXR', () => {
       expect(input.camera.position.toArray()).toEqual([1, 2, 3]);
       expect(input.camera.getWorldDirection(new Vector3()).distanceTo(ray.direction)).toBeLessThan(1e-6);
       expect(input.camera.far).toBe(50);
+    });
+
+    function mockPicking() {
+      const internals = viewer as unknown as ViewerInternals;
+      const intersectCadNodes = vi.fn<ViewerInternals['_pickingHandler']['intersectCadNodes']>(async () => []);
+      const intersectPointClouds = vi.fn<ViewerInternals['_pointCloudPickingHandler']['intersectPointClouds']>(
+        async () => []
+      );
+      internals._pickingHandler.intersectCadNodes = intersectCadNodes;
+      internals._pointCloudPickingHandler.intersectPointClouds = intersectPointClouds;
+      return { internals, intersectCadNodes, intersectPointClouds };
+    }
+
+    test('limits the far plane to the scene extent, also for an infinite max distance', async () => {
+      const { internals, intersectCadNodes } = mockPicking();
+      internals._boundingBoxes.nearFarPlaneBoundingBox.set(new Vector3(-3, -4, -12), new Vector3(3, 4, 0));
+      const ray = new Ray(new Vector3(0, 0, 0), new Vector3(0, 0, -1));
+
+      await viewer.getIntersectionFromRay(ray, Infinity);
+
+      const { camera } = intersectCadNodes.mock.calls[0][1] as IntersectInput;
+      expect(camera.far).toBeCloseTo(13);
+      expect(camera.near).toBeGreaterThan(0);
+      expect(camera.near).toBeLessThan(camera.far);
+      expect(camera.projectionMatrix.elements.every(Number.isFinite)).toBe(true);
+    });
+
+    test('keeps the near plane in front of a very short max distance', async () => {
+      const { intersectCadNodes } = mockPicking();
+
+      await viewer.getIntersectionFromRay(new Ray(new Vector3(), new Vector3(0, 0, -1)), 1e-4);
+
+      const { camera } = intersectCadNodes.mock.calls[0][1] as IntersectInput;
+      expect(camera.far).toBe(1e-4);
+      expect(camera.near).toBeLessThan(camera.far);
+    });
+
+    test('returns null for an infinite max distance in an empty scene', async () => {
+      const { intersectCadNodes } = mockPicking();
+
+      const result = await viewer.getIntersectionFromRay(new Ray(new Vector3(), new Vector3(0, 0, -1)), Infinity);
+
+      expect(result).toBeNull();
+      expect(intersectCadNodes).not.toHaveBeenCalled();
+    });
+
+    test('picks point clouds without building the full-frame pick cache', async () => {
+      const { intersectPointClouds } = mockPicking();
+
+      await viewer.getIntersectionFromRay(new Ray(new Vector3(), new Vector3(0, 0, -1)), 10);
+
+      const input = intersectPointClouds.mock.calls[0][1] as IntersectInput;
+      expect(input.forceWindowedPick).toBe(true);
+    });
+
+    test('resumes rendering when CAD picking fails', async () => {
+      const { internals, intersectCadNodes } = mockPicking();
+      intersectCadNodes.mockRejectedValue(new Error('picking failed'));
+
+      await expect(viewer.getIntersectionFromRay(new Ray(new Vector3(), new Vector3(0, 0, -1)), 10)).rejects.toThrow(
+        'picking failed'
+      );
+
+      expect(internals._forceStopRendering).toBe(false);
     });
 
     test('returns null without picking when the scene is empty and no max distance is given', async () => {

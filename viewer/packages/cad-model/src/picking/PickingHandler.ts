@@ -21,6 +21,14 @@ type PickingInput = {
   renderer: WebGLRenderer;
   domElement: HTMLElement;
   cadNodes: CadNode[];
+  /** If given, only this CAD node is shown while rendering for picking. */
+  isolate?: IsolatedCadNode;
+};
+
+type IsolatedCadNode = {
+  cadNode: CadNode;
+  /** The visible CAD nodes, hidden while rendering `cadNode` and shown again afterwards. */
+  visibleCadNodes: CadNode[];
 };
 
 type TreeIndexPickingInput = PickingInput & {
@@ -117,13 +125,13 @@ export class PickingHandler {
           continue;
         }
 
-        // Make current CadNode visible & hide others
-        visibleCadNodes.forEach(p => (p.visible = false));
-        cadNodeData.cadNode.visible = true;
-        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, shouldRunAsync);
+        // Only the current CadNode is rendered for picking. Others are hidden during the picking renders only, not
+        // while waiting for the GPU readback, since the scene might be rendered meanwhile (e.g. every WebXR frame).
+        const isolate = { cadNode: cadNodeData.cadNode, visibleCadNodes };
+        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, shouldRunAsync, isolate);
         if (treeIndex) {
           // Assuming we have depth anywhere we hit a treeIndex
-          const depthResult = await this.intersectCadNodeDepth(depthInput, shouldRunAsync);
+          const depthResult = await this.intersectCadNodeDepth({ ...depthInput, isolate }, shouldRunAsync);
           const result: IntersectCadNodesResult = {
             distance: depthResult.distance,
             point: depthResult.point,
@@ -138,8 +146,6 @@ export class PickingHandler {
       }
       return results.sort((l, r) => l.distance - r.distance);
     } finally {
-      // Restore CadNodes back to original visibility state
-      visibleCadNodes.forEach(p => (p.visible = true));
       release();
     }
   }
@@ -202,7 +208,8 @@ export class PickingHandler {
   private async intersectCadNodeTreeIndex(
     cadNode: CadNode,
     input: IntersectInput,
-    shouldRunAsync: boolean
+    shouldRunAsync: boolean,
+    isolate: IsolatedCadNode
   ): Promise<number | undefined> {
     const { camera, normalizedCoords, renderer, domElement } = input;
     const pickingScene = new Scene();
@@ -214,7 +221,8 @@ export class PickingHandler {
       domElement,
       scene: pickingScene,
       cadNodes: [],
-      cadNode
+      cadNode,
+      isolate
     };
     const treeIndex = await this.pickTreeIndex(pickInput, shouldRunAsync);
     if (treeIndex === undefined) {
@@ -275,7 +283,7 @@ export class PickingHandler {
     shouldRunAsync: boolean
   ) {
     const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
-    const { camera, normalizedCoords, renderer, domElement } = input;
+    const { camera, normalizedCoords, renderer, domElement, isolate } = input;
 
     // Prepare camera that only renders the single pixel we are interested in
     const pickCamera = camera.clone() as PerspectiveCamera;
@@ -289,11 +297,16 @@ export class PickingHandler {
     let readPixelsPromise: Promise<void>;
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
+      if (isolate !== undefined) {
+        isolate.visibleCadNodes.forEach(p => (p.visible = false));
+        isolate.cadNode.visible = true;
+      }
       this._pipelineExecutor.render(renderPipeline, pickCamera);
       readPixelsPromise = shouldRunAsync
         ? renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, 1, 1, pixelBuffer).then(() => {})
         : Promise.resolve(renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer));
     } finally {
+      isolate?.visibleCadNodes.forEach(p => (p.visible = true));
       // Note! State is reset before promise is resolved as there might be rendering happening between
       // "now" and when the result from readRenderTargetPixelsAsync is ready
       stateHelper.resetState();

@@ -1991,16 +1991,20 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * {@link Cognite3DViewer.getIntersectionFromPixel}, this doesn't depend on the current view, which makes it
    * suitable for pointing with hands or controllers in WebXR.
    * @param ray Ray in world coordinates. The direction must be normalized.
-   * @param maxDistance Ignore intersections farther away than this. Defaults to the extent of the scene.
+   * @param maxDistance Ignore intersections farther away than this. Defaults to, and is limited to, the extent of the
+   * scene.
    * @returns A promise resolving to the closest intersection along the ray, or null if nothing is hit.
    */
   async getIntersectionFromRay(ray: Ray, maxDistance?: number): Promise<null | Intersection<DataSourceT>> {
-    const far = maxDistance ?? computeFarthestDistance(ray.origin, this._boundingBoxes.nearFarPlaneBoundingBox);
-    if (far <= 0) {
+    // Nothing pickable is farther away than the scene extent, so a larger far plane would only cost depth precision.
+    const sceneExtent = computeFarthestDistance(ray.origin, this._boundingBoxes.nearFarPlaneBoundingBox);
+    const far = Math.min(maxDistance ?? Infinity, sceneExtent > 0 ? sceneExtent : Infinity);
+    if (!(far > 0 && Number.isFinite(far))) {
       return null;
     }
     // Pick the center pixel of a narrow camera looking along the ray.
-    const camera = new PerspectiveCamera(1, 1, Math.max(1e-3, far * 1e-6), far);
+    const near = Math.min(Math.max(1e-3, far * 1e-6), far / 2);
+    const camera = new PerspectiveCamera(1, 1, near, far);
     camera.position.copy(ray.origin);
     // Not lookAt(), which is imprecise when the ray is parallel to the up vector.
     camera.quaternion.setFromUnitVectors(new Vector3(0, 0, -1), ray.direction.clone().normalize());
@@ -2013,7 +2017,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       renderer: this.renderer,
       clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: virtualPickArea,
-      cameraInMotion: false
+      cameraInMotion: false,
+      // The point cloud picker's full-frame cache is only reused for an unchanged camera, which a ray rarely gives.
+      forceWindowedPick: true
     });
   }
 
@@ -2079,8 +2085,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
       const cadModels = this.getModels('cad');
       const cadNodes = cadModels.map(x => x.cadNode);
-      const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input, asyncCADIntersection);
-      this._forceStopRendering = false;
+      const cadResults = await this._pickingHandler
+        .intersectCadNodes(cadNodes, input, asyncCADIntersection)
+        .finally(() => {
+          this._forceStopRendering = false;
+        });
 
       if (cadResults.length > 0) {
         const result = cadResults[0]; // Nearest intersection
