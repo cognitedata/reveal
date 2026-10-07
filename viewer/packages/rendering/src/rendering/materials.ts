@@ -311,7 +311,7 @@ export function initializeDefinesAndUniforms(
         value: new Vector3(0, 1, 0)
       },
       cadLightingEnabled: {
-        value: 0
+        value: false
       }
     }
   });

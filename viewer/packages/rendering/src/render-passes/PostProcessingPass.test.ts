@@ -3,7 +3,7 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { DepthTexture, Matrix4, PerspectiveCamera, Scene } from 'three';
+import { DepthTexture, Matrix4, PerspectiveCamera, Scene, Vector2 } from 'three';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import { PostProcessingPass } from './PostProcessingPass';
@@ -15,6 +15,7 @@ import { autoMockWebGLRenderer } from '../../../../test-utilities';
 
 function createOptions(cadShadow?: { map: CadShadowMap }): PostProcessingPipelineOptions {
   return {
+    currentRenderSize: new Vector2(),
     back: createRenderTarget(),
     ghost: createRenderTarget(),
     inFront: createRenderTarget(),
@@ -24,7 +25,7 @@ function createOptions(cadShadow?: { map: CadShadowMap }): PostProcessingPipelin
     cadShadow,
     edges: false,
     edlOptions: defaultRenderOptions.pointCloudParameters.edlOptions
-  } as PostProcessingPipelineOptions;
+  };
 }
 
 function createShadowMap(enabled: boolean): CadShadowMap {

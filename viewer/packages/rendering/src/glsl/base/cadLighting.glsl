@@ -1,6 +1,6 @@
 uniform vec3 cadLightDirection;
 uniform vec3 cadUpDirection;
-uniform float cadLightingEnabled;
+uniform bool cadLightingEnabled;
 
 const vec3 CAD_LIGHT_COLOR = vec3(1.0, 0.98, 0.94);
 const vec3 CAD_VIEW_DIRECTION = vec3(0.0, 0.0, 1.0);
@@ -47,7 +47,7 @@ float shadeCadLumaSun(vec3 normal) {
 vec3 shadeCadColor(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
     // One return. An early return around texture() makes ANGLE emit an uninitialized HLSL result.
     vec3 shaded = vec3(0.0);
-    if (cadLightingEnabled < 0.5) {
+    if (!cadLightingEnabled) {
         shaded = shadeCadColorDefault(colorRGB, normal, matCapTexture);
     } else {
         shaded = shadeCadColorSun(colorRGB, normal, matCapTexture);
@@ -57,7 +57,7 @@ vec3 shadeCadColor(vec3 colorRGB, vec3 normal, sampler2D matCapTexture) {
 
 float shadeCadLuma(vec3 normal) {
     float shaded = 0.0;
-    if (cadLightingEnabled < 0.5) {
+    if (!cadLightingEnabled) {
         shaded = shadeCadLumaDefault(normal);
     } else {
         shaded = shadeCadLumaSun(normal);

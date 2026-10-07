@@ -27,6 +27,10 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const SHADOW_MAP_RESOLUTION = 4096;
 const SHADOW_MAP_MOBILE_RESOLUTION = 2048;
+// Far enough back that the converging rays of ray-marched CAD primitives approximate a directional light.
+const LIGHT_DISTANCE_IN_RADII = 200;
+const WORLD_UP = new Vector3(0, 1, 0);
+const WORLD_UP_ALTERNATIVE = new Vector3(0, 0, 1);
 
 export function resolveShadowMapResolution(maxTextureSize: number, mobileOrTablet: boolean): number {
   const desired = mobileOrTablet ? SHADOW_MAP_MOBILE_RESOLUTION : SHADOW_MAP_RESOLUTION;
@@ -35,11 +39,6 @@ export function resolveShadowMapResolution(maxTextureSize: number, mobileOrTable
   }
   return Math.min(desired, maxTextureSize);
 }
-
-// Far enough back that the converging rays of ray-marched CAD primitives approximate a directional light.
-const LIGHT_DISTANCE_IN_RADII = 200;
-const WORLD_UP = new Vector3(0, 1, 0);
-const WORLD_UP_ALTERNATIVE = new Vector3(0, 0, 1);
 
 export class ShadowMapPass implements RenderPass, CadShadowMap {
   private readonly _renderTarget: WebGLRenderTarget;

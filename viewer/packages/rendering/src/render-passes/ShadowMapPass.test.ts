@@ -5,13 +5,14 @@
 import type { WebGLRenderer } from 'three';
 import { Box3, Vector3 } from 'three';
 import { It, Mock, Times } from 'moq.ts';
+import { SceneHandler } from '@reveal/utilities';
 import * as RevealUtilities from '@reveal/utilities';
 import { resolveShadowMapResolution, ShadowMapPass } from './ShadowMapPass';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
 
 describe(ShadowMapPass.name, () => {
-  const sceneHandler = new RevealUtilities.SceneHandler();
+  const sceneHandler = new SceneHandler();
   const materialManager = new CadMaterialManager();
   const bounds = new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 

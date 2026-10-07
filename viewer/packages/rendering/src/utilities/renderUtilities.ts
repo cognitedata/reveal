@@ -118,7 +118,7 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
   if ((cadShadow ?? false) && depthTexture !== null) {
     defines['CAD_SHADOW'] = true;
     uniforms['tCadShadow'] = { value: null };
-    uniforms['cadShadowEnabled'] = { value: 0 };
+    uniforms['cadShadowEnabled'] = { value: false };
   }
 
   const initializedBlendOptions = initializeBlendingOptions(blendOptions); // Uses blendDst value if null
