@@ -54,7 +54,8 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
         // Restricts clears to this view, so the next view doesn't wipe the previous one.
         output.scissor.copy(output.viewport);
         output.scissorTest = true;
-        setRenderSizeOverride(renderer, this._viewSize.set(output.viewport.z, output.viewport.w));
+        const renderSize = view.renderSize ?? this._viewSize.set(output.viewport.z, output.viewport.w);
+        setRenderSizeOverride(renderer, renderSize);
         this.executePipeline(renderPipeline, view.camera);
       }
     } finally {

@@ -323,6 +323,7 @@ export type ResolutionOptions = {
    * To ensure managable performance, Reveal will by default set an upper threshold to limit
    * the resolution. The `maxRenderResolution` option will
    * directly control this upper limit. It corresponds to the number of pixels in the render target.
+   * In WebXR, the limit applies to each view (eye), and the rendered image is scaled up to the headset's resolution.
    */
   maxRenderResolution?: number;
 

@@ -144,6 +144,17 @@ describe('Cognite3DViewer WebXR', () => {
     expect(views[0].camera.matrixWorld.equals(xr.eyes[0].matrixWorld)).toBe(true);
   });
 
+  test('limits each view to maxRenderResolution pixels', () => {
+    viewer.setResolutionOptions({ maxRenderResolution: 62_500 });
+    xr.startSession();
+
+    getXRFrameLoop()(16, trackedFrame);
+
+    const [, views] = renderViews.mock.calls[0] as [WebGLRenderTarget, RenderView[]];
+    expect(views[0].renderSize!.toArray()).toEqual([250, 250]);
+    expect(views[0].viewport.toArray()).toEqual([0, 0, 500, 500]);
+  });
+
   test('renders every XR frame, even when nothing changed', () => {
     xr.startSession();
     const loop = getXRFrameLoop();

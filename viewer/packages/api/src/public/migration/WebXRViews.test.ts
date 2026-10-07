@@ -86,6 +86,29 @@ describe(WebXRViews.name, () => {
     expect(camera.matrixWorld.equals(xr.eyes[0].matrixWorld)).toBe(true);
   });
 
+  test('renders views at their viewport size by default', () => {
+    const { views } = createViews();
+
+    views.update(sceneBox);
+
+    expect(views.views[0].renderSize!.toArray()).toEqual([1000, 800]);
+    expect(views.viewSize.toArray()).toEqual([1000, 800]);
+  });
+
+  test('limits the render size to maxPixelsPerView, keeping the aspect ratio', () => {
+    const { views } = createViews();
+
+    views.update(sceneBox, 200_000);
+
+    const renderSize = views.views[0].renderSize!;
+    expect(renderSize.x * renderSize.y).toBeLessThanOrEqual(200_000 * 1.01);
+    expect(renderSize.x / renderSize.y).toBeCloseTo(1000 / 800, 2);
+    expect(renderSize.toArray()).toEqual([500, 400]);
+    expect(views.viewSize.toArray()).toEqual([500, 400]);
+    // The viewport (where the result goes) is unchanged.
+    expect(views.views[0].viewport.toArray()).toEqual([0, 0, 1000, 800]);
+  });
+
   test('reuses view cameras between frames', () => {
     const { views } = createViews();
     views.update(sceneBox);

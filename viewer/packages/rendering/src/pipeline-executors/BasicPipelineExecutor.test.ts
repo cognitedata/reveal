@@ -146,6 +146,18 @@ describe(BasicPipelineExecutor.name, () => {
       expect(records).toHaveLength(1);
     });
 
+    test('renders at the view render size when given, into the full viewport', () => {
+      const records: PassRecord[] = [];
+      const output = new WebGLRenderTarget(2000, 1000);
+
+      new BasicPipelineExecutor(createRenderer()).renderViews(createPipeline(records), output, [
+        { camera: new PerspectiveCamera(), viewport: new Vector4(0, 0, 1000, 1000), renderSize: new Vector2(500, 500) }
+      ]);
+
+      expect(records[0].renderSize).toEqual(new Vector2(500, 500));
+      expect(records[0].viewport).toEqual(new Vector4(0, 0, 1000, 1000));
+    });
+
     test('restores state and rethrows when a pass throws', () => {
       const renderer = createRenderer();
       const pipeline = createPipeline([], 0);

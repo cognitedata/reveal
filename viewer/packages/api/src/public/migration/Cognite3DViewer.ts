@@ -1935,7 +1935,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       model.getModelTransformation((modelTransformations[index] ??= new Matrix4()))
     );
 
-    const xr = this._webXR.beginFrame(xrFrame, this._boundingBoxes.nearFarPlaneBoundingBox, modelTransformations);
+    const xr = this._webXR.beginFrame(
+      xrFrame,
+      this._boundingBoxes.nearFarPlaneBoundingBox,
+      modelTransformations,
+      // The resolution limit applies to each view (eye).
+      this.revealManager.getResolutionThreshold()
+    );
     if (xr === undefined) {
       return undefined;
     }

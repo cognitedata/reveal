@@ -17,7 +17,7 @@ export type WebXRFrame = {
   output: WebGLRenderTarget;
   /** One view (eye) per XR view, each with a camera and a viewport in `output`. */
   views: readonly RenderView[];
-  /** Size of each view, in pixels. */
+  /** Resolution each view is rendered at (may be lower than its viewport; the result is scaled up). */
   viewSize: Vector2;
   /** Camera to load geometry for. Covers more than the views, so turning the head doesn't reveal missing geometry. */
   loadingCamera: PerspectiveCamera;
@@ -79,12 +79,14 @@ export class WebXRFrameSource {
    * @param xrFrame The frame passed to the session's frame callback.
    * @param sceneBoundingBox Bounding box of everything rendered, used to fit the near and far planes.
    * @param modelTransformations Current model transformations, to detect when models move relative to the viewer.
+   * @param maxPixelsPerView Upper limit for the number of pixels each view is rendered at.
    * @returns What to render, or undefined if this frame can't be rendered (e.g. tracking is lost).
    */
   beginFrame(
     xrFrame: XRFrame,
     sceneBoundingBox: Box3,
-    modelTransformations: readonly Matrix4[]
+    modelTransformations: readonly Matrix4[],
+    maxPixelsPerView: number = Infinity
   ): WebXRFrame | undefined {
     const referenceSpace = this._renderer.xr.getReferenceSpace();
     // Without a viewer pose, three.js neither binds the XR framebuffer nor updates the view cameras.
@@ -97,7 +99,7 @@ export class WebXRFrameSource {
       return undefined;
     }
 
-    this._views.update(sceneBoundingBox);
+    this._views.update(sceneBoundingBox, maxPixelsPerView);
     const loading = this._views.getLoadingCamera(modelTransformations);
     return {
       camera: this._views.headCamera,

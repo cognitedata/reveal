@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, PerspectiveCamera, Vector4, WebGLRenderTarget } from 'three';
+import type { Camera, PerspectiveCamera, Vector2, Vector4, WebGLRenderTarget } from 'three';
 import type { RenderPipelineProvider } from './RenderPipelineProvider';
 import type { SettableRenderTarget } from './rendering/SettableRenderTarget';
 
@@ -13,6 +13,11 @@ export type RenderView = {
   camera: PerspectiveCamera;
   /** Region of the output render target to render into, in pixels (x, y, width, height). */
   viewport: Vector4;
+  /**
+   * Resolution to render the view at, if lower than the viewport. Intermediate passes run at this size and the
+   * result is scaled up to the viewport in the final pass.
+   */
+  renderSize?: Vector2;
 };
 
 /**

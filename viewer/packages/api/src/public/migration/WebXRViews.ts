@@ -61,7 +61,7 @@ export class WebXRViews {
     return this._views;
   }
 
-  /** Size in pixels of the first view, which all views share on current devices. */
+  /** Resolution the first view is rendered at (all views share it on current devices). */
   get viewSize(): Vector2 {
     return this._viewSize;
   }
@@ -69,8 +69,11 @@ export class WebXRViews {
   /**
    * Updates the head and view cameras from the current XR frame.
    * @param sceneBoundingBox Bounding box of everything rendered, used to fit the near and far planes.
+   * @param maxPixelsPerView Upper limit for the number of pixels each view is rendered at. Views with larger viewports
+   * are rendered at a lower resolution and scaled up. Headsets can have very high resolutions (e.g. ~4500x3600 per
+   * eye on Apple Vision Pro, which ignores WebXR's framebuffer scale factor).
    */
-  update(sceneBoundingBox: Box3): void {
+  update(sceneBoundingBox: Box3, maxPixelsPerView: number = Infinity): void {
     const head = this._headCamera;
     // Quantized so the session's depth range (which three.js updates whenever these change) rarely changes.
     head.far = computeFarPlane(head.position, sceneBoundingBox);
@@ -80,12 +83,17 @@ export class WebXRViews {
     const xrViewCameras = this._renderer.xr.getCamera().cameras;
     this._views.length = xrViewCameras.length;
     xrViewCameras.forEach((xrViewCamera, index) => {
-      const view = (this._views[index] ??= { camera: createViewCamera(), viewport: xrViewCamera.viewport! });
+      const view = (this._views[index] ??= {
+        camera: createViewCamera(),
+        viewport: xrViewCamera.viewport!,
+        renderSize: new Vector2()
+      });
       copyXRViewCamera(xrViewCamera, view.camera, head.near, head.far);
       view.viewport = xrViewCamera.viewport!;
+      computeRenderSize(view.viewport.z, view.viewport.w, maxPixelsPerView, view.renderSize!);
     });
     if (this._views.length > 0) {
-      this._viewSize.set(this._views[0].viewport.z, this._views[0].viewport.w);
+      this._viewSize.copy(this._views[0].renderSize!);
     }
   }
 
@@ -193,6 +201,19 @@ function computeSymmetricBounds(projection: Matrix4): { verticalHalfAngle: numbe
     verticalHalfAngle: Math.atan(Math.max(topTangent, bottomTangent)),
     horizontalHalfTangent: Math.max(rightTangent, leftTangent)
   };
+}
+
+/**
+ * The viewport size, scaled down (keeping the aspect ratio) to at most `maxPixels` pixels.
+ * @param width Viewport width.
+ * @param height Viewport height.
+ * @param maxPixels Upper limit for width * height.
+ * @param target Receives the size.
+ * @returns The target.
+ */
+function computeRenderSize(width: number, height: number, maxPixels: number, target: Vector2): Vector2 {
+  const scale = Math.min(1, Math.sqrt(maxPixels / Math.max(width * height, 1)));
+  return target.set(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)));
 }
 
 const cornerHelper = new Vector3();
