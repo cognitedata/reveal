@@ -12,6 +12,12 @@ const XR_MIN_NEAR = 0.01;
 const XR_MAX_DEPTH_RATIO = 1e5;
 const XR_MIN_FAR = 16;
 const XR_DEFAULT_FAR = 1024;
+/**
+ * Geometry is loaded for this much more than the visible field of view on every side, so turning the head
+ * shows already loaded geometry instead of empty space while loading catches up.
+ */
+const LOADING_FOV_MARGIN_RAD = MathUtils.degToRad(25);
+const LOADING_MAX_HALF_ANGLE_RAD = MathUtils.degToRad(80);
 /** How long the head and models must be still before geometry loading treats the camera as stopped. */
 const MOTION_SETTLE_MS = 300;
 /** Head movement below these is treated as tracking noise. */
@@ -96,10 +102,15 @@ export class WebXRViews {
     camera.position.copy(head.position);
     camera.quaternion.copy(head.quaternion);
     // Geometry loading rebuilds the projection from fov/aspect, i.e. a symmetric frustum. The union of the
-    // view frustums is off-center, so use a symmetric frustum that contains it.
+    // view frustums is off-center, so use a symmetric frustum that contains it, plus a margin.
     const { verticalHalfAngle, horizontalHalfTangent } = computeSymmetricBounds(head.projectionMatrix);
-    camera.fov = MathUtils.radToDeg(2 * verticalHalfAngle);
-    camera.aspect = horizontalHalfTangent / Math.tan(verticalHalfAngle);
+    const loadingVerticalHalfAngle = Math.min(verticalHalfAngle + LOADING_FOV_MARGIN_RAD, LOADING_MAX_HALF_ANGLE_RAD);
+    const loadingHorizontalHalfAngle = Math.min(
+      Math.atan(horizontalHalfTangent) + LOADING_FOV_MARGIN_RAD,
+      LOADING_MAX_HALF_ANGLE_RAD
+    );
+    camera.fov = MathUtils.radToDeg(2 * loadingVerticalHalfAngle);
+    camera.aspect = Math.tan(loadingHorizontalHalfAngle) / Math.tan(loadingVerticalHalfAngle);
     camera.near = head.near;
     camera.far = head.far;
     camera.updateProjectionMatrix();

@@ -32,12 +32,14 @@ class FakeXR {
     head.position.copy(this.headPosition);
     head.updateMatrixWorld(true);
     // three sets the head projection to the union of the eye frustums and derives fov from it.
-    head.projectionMatrix.makePerspective(-0.12, 0.1, 0.08, -0.08, head.near, head.far);
+    // Off-center union of the eye frustums: tangents left 1.2, right 1.0, top/bottom 0.8.
+    const n = head.near;
+    head.projectionMatrix.makePerspective(-1.2 * n, 1.0 * n, 0.8 * n, -0.8 * n, n, head.far);
     head.fov = (360 / Math.PI) * Math.atan(1 / head.projectionMatrix.elements[5]);
     for (const [index, eye] of this.eyes.entries()) {
       eye.position.set(this.headPosition.x + (index === 0 ? -0.032 : 0.032), this.headPosition.y, this.headPosition.z);
       eye.updateMatrixWorld(true);
-      eye.projectionMatrix.makePerspective(-0.1, 0.08, 0.08, -0.08, head.near, head.far);
+      eye.projectionMatrix.makePerspective(-1.0 * n, 0.8 * n, 0.8 * n, -0.8 * n, n, head.far);
       eye.projectionMatrixInverse.copy(eye.projectionMatrix).invert();
     }
   }
@@ -152,16 +154,29 @@ describe(WebXRViews.name, () => {
     expect(camera.position.toArray()).toEqual(head.position.toArray());
     expect(camera.quaternion.equals(head.quaternion)).toBe(true);
     expect(camera.matrixWorld.equals(head.matrixWorld)).toBe(true);
-    // The union frustum is off-center (FakeXR: left -0.12, right 0.1, top/bottom ±0.08 at near). Geometry loading
-    // rebuilds a symmetric projection from fov/aspect, which must contain all of it.
-    const near = head.near;
-    const symmetric = camera.clone();
-    symmetric.updateProjectionMatrix();
-    const halfHeight = near * Math.tan(MathUtils.degToRad(symmetric.fov / 2));
-    const halfWidth = halfHeight * symmetric.aspect;
-    expect(halfWidth).toBeGreaterThanOrEqual(0.12 - 1e-9);
-    expect(halfHeight).toBeGreaterThanOrEqual(0.08 - 1e-9);
-    expect(halfWidth).toBeCloseTo(0.12);
+    // The union frustum is off-center (FakeXR: tangents left 1.2, right 1.0, top/bottom 0.8). Geometry loading
+    // rebuilds a symmetric projection from fov/aspect, which must contain all of it, plus a 25 degree margin.
+    const verticalHalfAngle = MathUtils.degToRad(camera.fov / 2);
+    const horizontalHalfAngle = Math.atan(Math.tan(verticalHalfAngle) * camera.aspect);
+    const margin = MathUtils.degToRad(25);
+    expect(verticalHalfAngle).toBeCloseTo(Math.atan(0.8) + margin);
+    expect(horizontalHalfAngle).toBeCloseTo(Math.atan(1.2) + margin);
+  });
+
+  test('limits the loading frustum to less than 180 degrees', () => {
+    const { views, xr } = createViews();
+    xr.updateCamera.mockImplementation((head: PerspectiveCamera) => {
+      head.position.copy(xr.headPosition);
+      head.updateMatrixWorld(true);
+      const n = head.near;
+      head.projectionMatrix.makePerspective(-5 * n, 5 * n, 5 * n, -5 * n, n, head.far); // ~79 degree half-angles
+    });
+    views.update(sceneBox);
+
+    const { camera } = views.getLoadingCamera([]);
+
+    expect(camera.fov).toBeCloseTo(160);
+    expect(Math.atan(Math.tan(MathUtils.degToRad(camera.fov / 2)) * camera.aspect)).toBeCloseTo(MathUtils.degToRad(80));
   });
 
   describe('motion', () => {

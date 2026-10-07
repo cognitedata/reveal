@@ -106,7 +106,7 @@ import { isClassicIdentifier } from '@reveal/data-providers';
 import { assert } from '@reveal/utilities/assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
 import { REVEAL_VERSION } from '../../version';
-import { WebXRViews } from './WebXRViews';
+import { WebXRFrameSource } from './WebXRFrameSource';
 
 type Cognite3DViewerEvents =
   'click' | 'hover' | 'cameraChange' | 'cameraStop' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
@@ -173,9 +173,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _pointCloudPickingHandler: PointCloudPickingHandler;
 
   private readonly _boundAnimate = this.animate.bind(this);
-  private readonly _xrViews: WebXRViews;
-  private _xrEnabledBeforeSession = false;
-  private readonly _xrModelTransformations: Matrix4[] = [];
+  private readonly _webXR: WebXRFrameSource;
+  private readonly _modelTransformations: Matrix4[] = [];
 
   private readonly _events = {
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -391,13 +390,20 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.revealManager.on('loadingStateChanged', handleLoading);
     this._unsubsribeOnLoading = () => this.revealManager.off('loadingStateChanged', handleLoading);
 
-    this._xrViews = new WebXRViews(this._renderer);
-    this._renderer.xr.addEventListener('sessionstart', this._onXRSessionStart);
-    this._renderer.xr.addEventListener('sessionend', this._onXRSessionEnd);
-    if (this._renderer.xr.isPresenting) {
-      // The session started before the viewer was created, so 'sessionstart' won't fire.
-      this._onXRSessionStart();
-    }
+    this._webXR = new WebXRFrameSource(
+      this._renderer,
+      {
+        onSessionStart: () => cancelAnimationFrame(this.latestRequestId),
+        onSessionEnd: () => {
+          if (!this.isDisposed) {
+            this.latestRequestId = requestAnimationFrame(this._boundAnimate);
+            this.requestRedraw();
+          }
+        },
+        onFrame: (time, xrFrame) => this.animate(time, xrFrame)
+      },
+      this._ownsRenderer
+    );
 
     this.animate(0);
 
@@ -483,16 +489,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this.latestRequestId !== undefined) {
       cancelAnimationFrame(this.latestRequestId);
     }
-    this._renderer.xr.removeEventListener('sessionstart', this._onXRSessionStart);
-    this._renderer.xr.removeEventListener('sessionend', this._onXRSessionEnd);
-    if (this._renderer.xr.isPresenting) {
-      this._renderer.xr.setAnimationLoop(null);
-      this._renderer.xr.enabled = this._xrEnabledBeforeSession;
-      if (this._ownsRenderer) {
-        // Nothing would render the session anymore. With an external renderer, the app owns the session.
-        void this._renderer.xr.getSession()?.end();
-      }
-    }
+    this._webXR.dispose();
 
     // Copy list, as this._models will be mutated in below iteration
     const modelListCopy = [...this._models];
@@ -1532,7 +1529,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     height: number = this.canvas.height,
     includeUI = true
   ): Promise<string> {
-    if (this._renderer.xr.isPresenting) {
+    if (this._webXR.isPresenting) {
       throw new Error('getScreenshot() is not supported while presenting in WebXR');
     }
     if (this.isDisposed) {
@@ -1867,147 +1864,119 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * When a WebXR session starts on the renderer (`renderer.xr.setSession()`), frames must be driven by the
-   * session's requestAnimationFrame and rendered once per view (eye) into the session's framebuffer.
+   * Runs one frame: updates animations, cameras and geometry loading, and renders if needed.
+   * Called from the window's requestAnimationFrame, or from the WebXR session's frame loop with `xrFrame` while
+   * presenting.
+   * @private
    */
-  private readonly _onXRSessionStart = (): void => {
-    cancelAnimationFrame(this.latestRequestId);
-    this._xrViews.reset();
-    // Reveal renders the views itself. With xr.enabled, three.js would also replace the camera in every
-    // renderer.render() call, including picking and other offscreen renders.
-    this._xrEnabledBeforeSession = this._renderer.xr.enabled;
-    this._renderer.xr.enabled = false;
-    // Only sets the XR session's frame callback. renderer.setAnimationLoop() would also start a window loop.
-    this._renderer.xr.setAnimationLoop(this._boundAnimate);
-  };
-
-  private readonly _onXRSessionEnd = (): void => {
-    this._renderer.xr.setAnimationLoop(null);
-    this._renderer.xr.enabled = this._xrEnabledBeforeSession;
+  private animate(time: number, xrFrame?: XRFrame): void {
     if (this.isDisposed) {
       return;
     }
-    cancelAnimationFrame(this.latestRequestId);
-    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
-    this.requestRedraw();
-  };
-
-  /** @private */
-  private animate(time: number, xrFrame?: XRFrame) {
-    if (this.isDisposed) {
-      return;
-    }
-    const isPresentingXR = this._renderer.xr.isPresenting;
-    if (isPresentingXR) {
-      if (xrFrame === undefined) {
-        // A window frame that was scheduled before the XR session started
+    if (xrFrame === undefined) {
+      if (this._webXR.isPresenting) {
+        // A window frame scheduled before the XR session started. Frames now come from the session.
         return;
       }
-    } else {
       this.latestRequestId = requestAnimationFrame(this._boundAnimate);
-
-      const { display, visibility } = window.getComputedStyle(this.canvas);
-      const isVisible = visibility === 'visible' && display !== 'none';
-
-      this.sessionLogger.updateCanvasVisibility(isVisible);
-
-      if (!isVisible) {
+      if (!this.isCanvasVisible()) {
         return;
       }
     }
-    const camera = this.cameraManager.getCamera();
+
     TWEEN.update(time);
     this.recalculateBoundingBox();
-
     const innerCameraManager = this._activeCameraManager.innerCameraManager;
     if (innerCameraManager instanceof FlexibleCameraManager) {
       innerCameraManager.updateModelBoundingBox(this.getSceneBoundingBox());
     }
     this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingBox);
 
-    if (isPresentingXR) {
-      this.renderXR(xrFrame!);
-      return;
+    const frame = xrFrame === undefined ? this.prepareWindowFrame() : this.prepareXRFrame(xrFrame);
+    if (frame !== undefined) {
+      this.renderFrame(frame);
     }
-
-    this.revealManager.update(camera);
-
-    const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
-
-    const needsRedraw =
-      (this.revealManager.needsRedraw || this._clippingNeedsUpdate || image360NeedsRedraw) && !this._forceStopRendering;
-
-    this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
-
-    if (!needsRedraw) {
-      return;
-    }
-    const frameNumber = this.renderer.info.render.frame;
-    const start = Date.now();
-
-    this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
-    this._sceneHandler.customObjects.forEach(customObject => {
-      customObject.beforeRender(camera);
-    });
-    this.revealManager.render(camera);
-    this._pointCloudPickingHandler.invalidatePickCache();
-    this.revealManager.resetRedraw();
-    this._image360ApiHelper?.resetRedraw();
-    this._clippingNeedsUpdate = false;
-    const renderTime = Date.now() - start;
-
-    this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
   }
 
   /** @private */
-  private renderXR(xrFrame: XRFrame): void {
-    const renderer = this._renderer;
-    const referenceSpace = renderer.xr.getReferenceSpace();
-    // Without a viewer pose (e.g. tracking lost), three.js neither binds the XR framebuffer nor updates the views.
-    if (referenceSpace === null || !xrFrame.getViewerPose(referenceSpace)) {
-      return;
-    }
-    // three.js binds the XR session's framebuffer (wrapped in a render target) before each XR frame.
-    const xrRenderTarget = renderer.getRenderTarget();
-    if (xrRenderTarget === null) {
-      return;
-    }
+  private isCanvasVisible(): boolean {
+    const { display, visibility } = window.getComputedStyle(this.canvas);
+    const isVisible = visibility === 'visible' && display !== 'none';
+    this.sessionLogger.updateCanvasVisibility(isVisible);
+    return isVisible;
+  }
 
-    // An exception here would stop three.js from requesting the next XR frame, freezing the display.
+  /**
+   * A frame of the viewer's camera, rendered to the canvas (or custom render target) when something changed.
+   * @private
+   */
+  private prepareWindowFrame(): ViewerFrame | undefined {
+    const camera = this.cameraManager.getCamera();
+    this.revealManager.update(camera);
+
+    const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
+    const needsRedraw =
+      (this.revealManager.needsRedraw || this._clippingNeedsUpdate || image360NeedsRedraw) && !this._forceStopRendering;
+    this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
+    if (!needsRedraw) {
+      return undefined;
+    }
+    return { camera, render: () => this.revealManager.render(camera) };
+  }
+
+  /**
+   * A WebXR frame, rendered once per view (eye) into the session's framebuffer.
+   * @private
+   */
+  private prepareXRFrame(xrFrame: XRFrame): ViewerFrame | undefined {
+    const modelTransformations = this._modelTransformations;
+    modelTransformations.length = this._models.length;
+    this._models.forEach((model, index) =>
+      model.getModelTransformation((modelTransformations[index] ??= new Matrix4()))
+    );
+
+    const xr = this._webXR.beginFrame(xrFrame, this._boundingBoxes.nearFarPlaneBoundingBox, modelTransformations);
+    if (xr === undefined) {
+      return undefined;
+    }
+    this.revealManager.update(xr.loadingCamera, xr.loadingCameraInMotion);
+    // The XR framebuffer isn't preserved between frames, so every frame is rendered.
+    return {
+      camera: xr.camera,
+      renderSize: xr.viewSize,
+      render: () => this.revealManager.renderViews(xr.output, xr.views)
+    };
+  }
+
+  /**
+   * Renders a frame, with the before/after events and bookkeeping shared by all kinds of frames.
+   * @private
+   */
+  private renderFrame(frame: ViewerFrame): void {
+    const { camera, renderSize } = frame;
+    const frameNumber = this.renderer.info.render.frame;
+    const start = Date.now();
+    // So that everything sizing itself during the frame (e.g. in beforeSceneRendered) sees the rendered size.
+    if (renderSize !== undefined) {
+      setRenderSizeOverride(this._renderer, renderSize);
+    }
     try {
-      this._xrViews.update(this._boundingBoxes.nearFarPlaneBoundingBox);
-      const camera = this._xrViews.headCamera;
-
-      const modelTransformations = this._xrModelTransformations;
-      modelTransformations.length = this._models.length;
-      this._models.forEach((model, index) =>
-        model.getModelTransformation((modelTransformations[index] ??= new Matrix4()))
-      );
-      const loading = this._xrViews.getLoadingCamera(modelTransformations);
-      this.revealManager.update(loading.camera, loading.inMotion);
-
-      // So that code sizing things during the frame (e.g. in beforeSceneRendered) sees the view size.
-      setRenderSizeOverride(renderer, this._xrViews.viewSize);
-
-      // The XR framebuffer isn't preserved between frames, so render every frame.
-      const frameNumber = renderer.info.render.frame;
-      const start = Date.now();
-
-      this._events.beforeSceneRendered.fire({ frameNumber, renderer, camera });
+      this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
       this._sceneHandler.customObjects.forEach(customObject => {
         customObject.beforeRender(camera);
       });
-      this.revealManager.renderViews(xrRenderTarget, this._xrViews.views);
+      frame.render();
       this._pointCloudPickingHandler.invalidatePickCache();
+      this.revealManager.resetRedraw();
       this._image360ApiHelper?.resetRedraw();
       this._clippingNeedsUpdate = false;
       const renderTime = Date.now() - start;
 
-      this._events.sceneRendered.fire({ frameNumber, renderTime, renderer, camera });
-    } catch (error) {
-      Log.error('Failed to render WebXR frame', error);
+      this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
     } finally {
-      setRenderSizeOverride(renderer, undefined);
+      if (renderSize !== undefined) {
+        setRenderSizeOverride(this._renderer, undefined);
+      }
     }
   }
 
@@ -2380,3 +2349,14 @@ function computeFarthestDistance(point: Vector3, box: Box3): number {
   }
   return Math.sqrt(maxDistanceSquared);
 }
+
+/**
+ * What to render in a frame of {@link Cognite3DViewer}.
+ */
+type ViewerFrame = {
+  /** Camera passed to events and custom objects. In WebXR, the head camera. */
+  camera: PerspectiveCamera;
+  /** Size reported by getRenderSize() during the frame, when it differs from the renderer's size (WebXR views). */
+  renderSize?: Vector2;
+  render: () => void;
+};
