@@ -54,9 +54,16 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   private _depthRange = 1;
   private _hasValidBounds = false;
   private _userEnabled: boolean;
+  private readonly _mobileOrTablet: boolean;
 
-  constructor(sceneHandler: SceneHandler, materialManager: CadMaterialManager, userEnabled: boolean = false) {
+  constructor(
+    sceneHandler: SceneHandler,
+    materialManager: CadMaterialManager,
+    userEnabled: boolean = false,
+    mobileOrTablet: boolean = isMobileOrTablet()
+  ) {
     this._userEnabled = userEnabled;
+    this._mobileOrTablet = mobileOrTablet;
     // Three.js always allocates a color texture. DepthBufferOnly never writes it;
     // RedFormat is the smallest attachment the framebuffer allows. The targets stay
     // allocated until dispose(), so toggling shadows off does not pay for a reallocation.
@@ -179,7 +186,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   }
 
   private applyShadowMapResolution(renderer: WebGLRenderer): void {
-    const resolution = resolveShadowMapResolution(renderer.capabilities.maxTextureSize, isMobileOrTablet());
+    const resolution = resolveShadowMapResolution(renderer.capabilities.maxTextureSize, this._mobileOrTablet);
     if (resolution === this._resolution) {
       return;
     }

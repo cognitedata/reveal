@@ -6,7 +6,6 @@ import type { WebGLRenderer } from 'three';
 import { Box3, Vector3 } from 'three';
 import { It, Mock, Times } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
-import * as RevealUtilities from '@reveal/utilities';
 import { resolveShadowMapResolution, ShadowMapPass } from './ShadowMapPass';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
@@ -65,19 +64,19 @@ describe(ShadowMapPass.name, () => {
 
     pass.render(rendererMock.object());
 
-    expect(pass.texelWorldSize).toBeCloseTo(desktopTexel * (4096 / 1024));
+    expect(pass.texelWorldSize).toBeCloseTo(desktopTexel * (4096 / 1024), 6);
   });
 
   test('render uses a 2048 map on mobile when the GPU allows 4096', () => {
-    vi.spyOn(RevealUtilities, 'isMobileOrTablet').mockReturnValue(true);
     const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>(), { maxTextureSize: 4096 });
-    const pass = new ShadowMapPass(sceneHandler, materialManager, true);
+    const mobileOrTablet = true;
+    const pass = new ShadowMapPass(sceneHandler, materialManager, true, mobileOrTablet);
     pass.setCadBounds(bounds);
     const desktopTexel = pass.texelWorldSize;
 
     pass.render(rendererMock.object());
 
-    expect(pass.texelWorldSize).toBeCloseTo(desktopTexel * (4096 / 2048));
+    expect(pass.texelWorldSize).toBeCloseTo(desktopTexel * (4096 / 2048), 6);
   });
 });
 
