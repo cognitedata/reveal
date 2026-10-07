@@ -3,7 +3,16 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { DepthTexture, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene } from 'three';
+import {
+  DepthTexture,
+  Matrix4,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  Vector2
+} from 'three';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import type { ICustomObject } from '@reveal/utilities';
