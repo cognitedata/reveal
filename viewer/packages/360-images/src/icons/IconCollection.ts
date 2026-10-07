@@ -13,6 +13,7 @@ import { HtmlClusterRenderer } from './clustering/HtmlClusterRenderer';
 import type { ClusterRenderParams, ClusterScreenInfo } from './clustering';
 import { FlooredIconManager } from './FlooredIconManager';
 import type { HtmlClusterRendererOptions } from '../types';
+import { getRenderCssSize } from '@reveal/utilities';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
@@ -374,7 +375,7 @@ export class IconCollection {
       cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransformInverse);
 
       this._lastProjectionMatrixElement = camera.projectionMatrix.elements[5];
-      renderer.getSize(renderSize);
+      getRenderCssSize(renderer, renderSize);
       this._lastRenderHeight = renderSize.y;
       this._lastLODCameraPosition.copy(cameraModelSpacePosition);
 
@@ -673,7 +674,7 @@ export class IconCollection {
     this._icons.forEach(icon =>
       icon.updateAdaptiveScale({
         camera,
-        renderSize: renderer.getSize(this._adaptiveScaleRenderSize),
+        renderSize: getRenderCssSize(renderer, this._adaptiveScaleRenderSize),
         domElement: renderer.domElement
       })
     );

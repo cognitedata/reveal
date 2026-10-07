@@ -18,6 +18,7 @@ import type { NodeAppearanceProvider } from '@reveal/cad-styling';
 import type {
   RenderMode,
   RenderPipelineExecutor,
+  RenderView,
   CadMaterialManager,
   RenderPipelineProvider,
   ResizeHandler,
@@ -128,10 +129,15 @@ export class RevealManager {
     return this._cameraInMotion;
   }
 
-  public update(camera: PerspectiveCamera): void {
-    this._cadManager.updateCamera(camera, this._cameraInMotion);
+  /**
+   * Feeds the camera to geometry loading.
+   * @param camera Camera to load geometry for.
+   * @param cameraInMotion Whether the camera is moving. Defaults to the state reported by the camera manager.
+   */
+  public update(camera: PerspectiveCamera, cameraInMotion: boolean = this._cameraInMotion): void {
+    this._cadManager.updateCamera(camera, cameraInMotion);
 
-    if (this._cameraInMotion) {
+    if (cameraInMotion) {
       this._pointCloudManager.updateCamera(camera);
     }
   }
@@ -216,6 +222,17 @@ export class RevealManager {
   public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
     this._pipelineExecutor.render(this._renderPipeline, camera);
+    this.resetRedraw();
+  }
+
+  /**
+   * Renders the scene once per view into the given output target, e.g. both eyes in WebXR.
+   * Unlike {@link render}, this doesn't resize the renderer or touch the cameras' projections.
+   * @param output Render target to render into, e.g. the XR session's framebuffer.
+   * @param views The views to render, each with a camera and a viewport in `output`.
+   */
+  public renderViews(output: WebGLRenderTarget, views: readonly RenderView[]): void {
+    this._pipelineExecutor.renderViews(this._renderPipeline, output, views);
     this.resetRedraw();
   }
 

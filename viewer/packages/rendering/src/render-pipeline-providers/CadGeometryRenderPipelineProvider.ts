@@ -3,7 +3,7 @@
  */
 
 import type { SceneHandler } from '@reveal/utilities';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
+import { getRenderSize, WebGLRendererStateHelper } from '@reveal/utilities';
 import type { Object3D, WebGLRenderer } from 'three';
 import { Color, Vector2 } from 'three';
 import type { CadMaterialManager } from '../CadMaterialManager';
@@ -109,7 +109,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
 
   private updateRenderTargetSizes(renderer: WebGLRenderer): void {
     const renderSize = new Vector2();
-    renderer.getDrawingBufferSize(renderSize);
+    getRenderSize(renderer, renderSize);
 
     const { x: width, y: height } = renderSize;
 

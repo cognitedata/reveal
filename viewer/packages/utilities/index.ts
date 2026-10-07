@@ -46,6 +46,7 @@ export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
 export { createDistinctColors } from './src/three/createDistinctColors';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
+export { getRenderSize, getRenderCssSize, setRenderSizeOverride } from './src/renderSize';
 
 export type { TypedArray, TypedArrayConstructor } from './src/types';
 

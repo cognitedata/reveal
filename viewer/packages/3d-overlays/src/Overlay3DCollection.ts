@@ -11,6 +11,7 @@ import { IconOctree } from './IconOctree';
 import type { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 import { minBy } from 'lodash-es';
 import { CameraChangeThrottler } from './CameraChangeThrottler';
+import { getRenderCssSize } from '@reveal/utilities';
 
 /**
  * Constructor options for the Overlay3DCollection
@@ -227,7 +228,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._overlays.forEach(icon =>
       icon.updateAdaptiveScale({
         camera,
-        renderSize: renderer.getSize(renderSize),
+        renderSize: getRenderCssSize(renderer, renderSize),
         domElement: renderer.domElement
       })
     );

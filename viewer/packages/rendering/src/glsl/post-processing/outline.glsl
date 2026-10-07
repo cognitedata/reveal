@@ -16,7 +16,8 @@ ivec4 computeNeighborOutlineIndices(sampler2D tDiffuse, ivec2 fragCoord){
 }
 
 int fetchOutlineIndex(sampler2D tDiffuse) {
-  ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+  // Relative to the output viewport, see fxaa.glsl.
+  ivec2 fragCoord = ivec2(vUv * vec2(textureSize(tDiffuse, 0)));
   int outlineIndex = computeFloatEncodedOutlineIndex(texelFetch(tDiffuse, fragCoord, 0).a);
   ivec4 neighbours = computeNeighborOutlineIndices(tDiffuse, fragCoord);
   bvec4 isEqualToPixel = equal(neighbours, ivec4(outlineIndex));

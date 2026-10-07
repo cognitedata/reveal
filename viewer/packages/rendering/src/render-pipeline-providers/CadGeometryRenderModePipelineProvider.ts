@@ -12,6 +12,7 @@ import { getLayerMask, RenderLayer } from '../utilities/renderUtilities';
 import type { RenderMode } from '../rendering/RenderMode';
 import type { SceneHandler } from '@reveal/utilities';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
+import { getRenderSize } from '@reveal/utilities';
 
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _renderTargetData: { currentRenderSize: Vector2 };
@@ -36,6 +37,14 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
     this._autoSizeRenderTarget = autoSizeRenderTarget;
   }
 
+  public get outputRenderTarget(): WebGLRenderTarget | null {
+    return this._outputRenderTarget;
+  }
+
+  public get autoSizeOutputRenderTarget(): boolean {
+    return this._autoSizeRenderTarget;
+  }
+
   public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
     renderer.setRenderTarget(this._outputRenderTarget);
@@ -46,7 +55,7 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   private updateRenderTargetSizes(renderer: WebGLRenderer): void {
     const renderSize = new Vector2();
-    renderer.getDrawingBufferSize(renderSize);
+    getRenderSize(renderer, renderSize);
 
     const { x: width, y: height } = renderSize;
 

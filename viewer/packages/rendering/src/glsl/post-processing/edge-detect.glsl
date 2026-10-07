@@ -11,7 +11,8 @@ const mat3 g7 = mat3( -0.3333333432674408, 0.1666666716337204, -0.33333334326744
 const mat3 g8 = mat3( 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408 );
 
 float edgeDetectionFilter(sampler2D baseTexture) {
-  ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+  // Relative to the output viewport, see fxaa.glsl.
+  ivec2 fragCoord = ivec2(vUv * vec2(textureSize(baseTexture, 0)));
 
 	G[0] = g0,
 	G[1] = g1,

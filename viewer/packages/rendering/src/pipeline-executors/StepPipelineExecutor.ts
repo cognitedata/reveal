@@ -2,10 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, WebGLRenderer } from 'three';
-import type { RenderPipelineExecutor } from '../RenderPipelineExecutor';
+import type { Camera, WebGLRenderer, WebGLRenderTarget } from 'three';
+import type { RenderPipelineExecutor, RenderView } from '../RenderPipelineExecutor';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
+import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 import { GpuTimer } from '../utilities/GpuTimer';
+import { BasicPipelineExecutor } from './BasicPipelineExecutor';
 
 export class StepPipelineExecutor implements RenderPipelineExecutor {
   private readonly _renderer: WebGLRenderer;
@@ -44,6 +46,14 @@ export class StepPipelineExecutor implements RenderPipelineExecutor {
     }
 
     this._gpuTimer.end();
+  }
+
+  public renderViews(
+    renderPipeline: RenderPipelineProvider & SettableRenderTarget,
+    output: WebGLRenderTarget,
+    views: readonly RenderView[]
+  ): void {
+    new BasicPipelineExecutor(this._renderer).renderViews(renderPipeline, output, views);
   }
 
   public calcNumSteps(renderPipeline: RenderPipelineProvider): number {

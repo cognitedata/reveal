@@ -18,6 +18,7 @@ import {
 } from 'three';
 import overlay3DIconVert from './overlay3DIcon.vert';
 import overlay3DIconFrag from './overlay3DIcon.frag';
+import { getRenderSize } from '@reveal/utilities';
 
 export type OverlayPointsParameters = {
   spriteTexture: Texture;
@@ -209,7 +210,7 @@ export class OverlayPointsObject extends Group {
     }
 
     function setUniforms(renderer: WebGLRenderer, material: ShaderMaterial): void {
-      renderer.getDrawingBufferSize(material.uniforms.renderSize.value);
+      getRenderSize(renderer, material.uniforms.renderSize.value);
       material.uniforms.renderDownScale.value = material.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
     }
   }

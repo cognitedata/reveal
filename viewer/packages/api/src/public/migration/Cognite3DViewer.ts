@@ -105,6 +105,7 @@ import { isClassicIdentifier } from '@reveal/data-providers';
 import { assert } from '@reveal/utilities/assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
 import { REVEAL_VERSION } from '../../version';
+import { WebXRViews } from './WebXRViews';
 
 type Cognite3DViewerEvents =
   'click' | 'hover' | 'cameraChange' | 'cameraStop' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
@@ -171,6 +172,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _pointCloudPickingHandler: PointCloudPickingHandler;
 
   private readonly _boundAnimate = this.animate.bind(this);
+  private readonly _xrViews: WebXRViews;
 
   private readonly _events = {
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -386,6 +388,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.revealManager.on('loadingStateChanged', handleLoading);
     this._unsubsribeOnLoading = () => this.revealManager.off('loadingStateChanged', handleLoading);
 
+    this._xrViews = new WebXRViews(this._renderer);
+    // `xr` is optional only because some tests use partial renderer mocks.
+    this._renderer.xr?.addEventListener('sessionstart', this._onXRSessionStart);
+    this._renderer.xr?.addEventListener('sessionend', this._onXRSessionEnd);
+
     this.animate(0);
 
     MetricsLogger.trackEvent('construct3dViewer', {
@@ -469,6 +476,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     if (this.latestRequestId !== undefined) {
       cancelAnimationFrame(this.latestRequestId);
+    }
+    this._renderer.xr?.removeEventListener('sessionstart', this._onXRSessionStart);
+    this._renderer.xr?.removeEventListener('sessionend', this._onXRSessionEnd);
+    if (this._renderer.xr?.isPresenting) {
+      this._renderer.xr.setAnimationLoop(null);
     }
 
     // Copy list, as this._models will be mutated in below iteration
@@ -1840,20 +1852,49 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return new ViewStateHelper(this, this._cdfSdkClient);
   }
 
-  /** @private */
-  private animate(time: number) {
+  /**
+   * When a WebXR session starts on the renderer (`renderer.xr.setSession()`), frames must be driven by the
+   * session's requestAnimationFrame and rendered once per view (eye) into the session's framebuffer.
+   */
+  private readonly _onXRSessionStart = (): void => {
+    cancelAnimationFrame(this.latestRequestId);
+    this._xrViews.reset();
+    // Only sets the XR session's frame callback. renderer.setAnimationLoop() would also start a window loop.
+    this._renderer.xr.setAnimationLoop(this._boundAnimate);
+  };
+
+  private readonly _onXRSessionEnd = (): void => {
+    this._renderer.xr.setAnimationLoop(null);
     if (this.isDisposed) {
       return;
     }
+    cancelAnimationFrame(this.latestRequestId);
     this.latestRequestId = requestAnimationFrame(this._boundAnimate);
+    this.requestRedraw();
+  };
 
-    const { display, visibility } = window.getComputedStyle(this.canvas);
-    const isVisible = visibility === 'visible' && display !== 'none';
-
-    this.sessionLogger.updateCanvasVisibility(isVisible);
-
-    if (!isVisible) {
+  /** @private */
+  private animate(time: number, xrFrame?: XRFrame) {
+    if (this.isDisposed) {
       return;
+    }
+    const isPresentingXR = this._renderer.xr?.isPresenting === true;
+    if (isPresentingXR) {
+      if (xrFrame === undefined) {
+        // A window frame that was scheduled before the XR session started
+        return;
+      }
+    } else {
+      this.latestRequestId = requestAnimationFrame(this._boundAnimate);
+
+      const { display, visibility } = window.getComputedStyle(this.canvas);
+      const isVisible = visibility === 'visible' && display !== 'none';
+
+      this.sessionLogger.updateCanvasVisibility(isVisible);
+
+      if (!isVisible) {
+        return;
+      }
     }
     const camera = this.cameraManager.getCamera();
     TWEEN.update(time);
@@ -1864,6 +1905,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       innerCameraManager.updateModelBoundingBox(this.getSceneBoundingBox());
     }
     this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingBox);
+
+    if (isPresentingXR) {
+      this.renderXR();
+      return;
+    }
+
     this.revealManager.update(camera);
 
     const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
@@ -1886,6 +1933,38 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.revealManager.render(camera);
     this._pointCloudPickingHandler.invalidatePickCache();
     this.revealManager.resetRedraw();
+    this._image360ApiHelper?.resetRedraw();
+    this._clippingNeedsUpdate = false;
+    const renderTime = Date.now() - start;
+
+    this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
+  }
+
+  /** @private */
+  private renderXR(): void {
+    // three.js binds the XR session's framebuffer (wrapped in a render target) before each XR frame.
+    const xrRenderTarget = this.renderer.getRenderTarget();
+    if (xrRenderTarget === null) {
+      return;
+    }
+
+    this._xrViews.update(this._boundingBoxes.sceneBoundingBox);
+    const camera = this._xrViews.headCamera;
+
+    const modelTransformations = this._models.map(model => model.getModelTransformation());
+    const loading = this._xrViews.getLoadingCamera(modelTransformations);
+    this.revealManager.update(loading.camera, loading.inMotion);
+
+    // The XR framebuffer isn't preserved between frames, so render every frame.
+    const frameNumber = this.renderer.info.render.frame;
+    const start = Date.now();
+
+    this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
+    this._sceneHandler.customObjects.forEach(customObject => {
+      customObject.beforeRender(camera);
+    });
+    this.revealManager.renderViews(xrRenderTarget, this._xrViews.views);
+    this._pointCloudPickingHandler.invalidatePickCache();
     this._image360ApiHelper?.resetRedraw();
     this._clippingNeedsUpdate = false;
     const renderTime = Date.now() - start;

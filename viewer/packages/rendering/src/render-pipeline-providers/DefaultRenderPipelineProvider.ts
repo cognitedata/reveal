@@ -17,7 +17,7 @@ import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
+import { getRenderSize, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
@@ -144,7 +144,15 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
   public setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
     this._outputRenderTarget = target;
-    if (autoSizeRenderTarget) this._autoResizeOutputTarget = autoSizeRenderTarget;
+    if (autoSizeRenderTarget !== undefined) this._autoResizeOutputTarget = autoSizeRenderTarget;
+  }
+
+  public get outputRenderTarget(): WebGLRenderTarget | null {
+    return this._outputRenderTarget;
+  }
+
+  public get autoSizeOutputRenderTarget(): boolean {
+    return this._autoResizeOutputTarget;
   }
 
   public *pipeline(renderer: WebGLRenderer): Generator<RenderPass> {
@@ -218,7 +226,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
   private updateRenderTargetSizes(renderer: WebGLRenderer): void {
     const renderSize = new Vector2();
-    renderer.getDrawingBufferSize(renderSize);
+    getRenderSize(renderer, renderSize);
 
     const { x: width, y: height } = renderSize;
 
