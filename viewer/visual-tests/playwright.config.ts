@@ -7,7 +7,6 @@ import path from 'path';
 
 export default defineConfig({
   testDir: '.',
-  testMatch: '**/VisualTest.playwright.ts',
   fullyParallel: true,
   workers: process.env.CI ? '100%' : '50%',
   timeout: 80 * 1000,
@@ -23,6 +22,10 @@ export default defineConfig({
       args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--allow-insecure-localhost']
     }
   },
+  projects: [
+    { name: 'visual', testMatch: '**/VisualTest.playwright.ts' },
+    { name: 'perf', testMatch: '**/PerfTest.playwright.ts' }
+  ],
   webServer: {
     command: 'pnpm run test:visual:server',
     url: 'http://localhost:8080',

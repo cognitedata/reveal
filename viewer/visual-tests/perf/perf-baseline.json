@@ -1,0 +1,9 @@
+{
+  "primitives-load": {
+    "drawCalls": 14,
+    "triangles": 2559,
+    "programsCompiled": 13,
+    "sectorRequests": 1,
+    "sectorBytes": 27928
+  }
+}

@@ -48,3 +48,4 @@ examples/public/
 documentation/.docusaurus
 documentation/generated
 documentation/docs/api
+viewer/visual-tests/perf/perf-result.json

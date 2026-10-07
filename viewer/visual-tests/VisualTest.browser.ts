@@ -7,7 +7,10 @@ import type { VisualTestFixture } from './test-fixtures/VisualTestFixture';
 
 function testGenerator(): Map<string, () => Promise<{ default: new () => VisualTestFixture }>> {
   const testMap = new Map<string, () => Promise<{ default: new () => VisualTestFixture }>>();
-  const visualTestsFixtures = import.meta.glob('../packages/**/*VisualTest.ts');
+  const visualTestsFixtures = {
+    ...import.meta.glob('../packages/**/*VisualTest.ts'),
+    ...import.meta.glob('./perf/*PerfTest.ts')
+  };
 
   Object.entries(visualTestsFixtures).forEach(visualTestsFixture => {
     const filename = visualTestsFixture[0]
