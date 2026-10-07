@@ -17,6 +17,7 @@ import { autoMockWebGLRenderer } from '../../../../test-utilities';
 
 function createOptions(cadShadow?: { map: CadShadowMap }): PostProcessingPipelineOptions {
   return {
+    currentRenderSize: new Vector2(),
     back: createRenderTarget(),
     ghost: createRenderTarget(),
     inFront: createRenderTarget(),
@@ -26,7 +27,7 @@ function createOptions(cadShadow?: { map: CadShadowMap }): PostProcessingPipelin
     cadShadow,
     edges: false,
     edlOptions: defaultRenderOptions.pointCloudParameters.edlOptions
-  } as PostProcessingPipelineOptions;
+  };
 }
 
 function createShadowMap(enabled: boolean): CadShadowMap {

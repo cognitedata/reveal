@@ -27,6 +27,10 @@ import type { CadShadowMap } from '../render-pipeline-providers/types';
 
 const SHADOW_MAP_RESOLUTION = 4096;
 const SHADOW_MAP_MOBILE_RESOLUTION = 2048;
+// Far enough back that the converging rays of ray-marched CAD primitives approximate a directional light.
+const LIGHT_DISTANCE_IN_RADII = 200;
+const WORLD_UP = new Vector3(0, 1, 0);
+const WORLD_UP_ALTERNATIVE = new Vector3(0, 0, 1);
 
 export function resolveShadowMapResolution(maxTextureSize: number, mobileOrTablet: boolean): number {
   const desired = mobileOrTablet ? SHADOW_MAP_MOBILE_RESOLUTION : SHADOW_MAP_RESOLUTION;
@@ -35,11 +39,6 @@ export function resolveShadowMapResolution(maxTextureSize: number, mobileOrTable
   }
   return Math.min(desired, maxTextureSize);
 }
-
-// Far enough back that the converging rays of ray-marched CAD primitives approximate a directional light.
-const LIGHT_DISTANCE_IN_RADII = 200;
-const WORLD_UP = new Vector3(0, 1, 0);
-const WORLD_UP_ALTERNATIVE = new Vector3(0, 0, 1);
 
 export class ShadowMapPass implements RenderPass, CadShadowMap {
   private readonly _renderTarget: WebGLRenderTarget;
@@ -55,9 +54,16 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   private _depthRange = 1;
   private _hasValidBounds = false;
   private _userEnabled: boolean;
+  private readonly _mobileOrTablet: boolean;
 
-  constructor(sceneHandler: SceneHandler, materialManager: CadMaterialManager, userEnabled: boolean = false) {
+  constructor(
+    sceneHandler: SceneHandler,
+    materialManager: CadMaterialManager,
+    userEnabled: boolean = false,
+    mobileOrTablet: boolean = isMobileOrTablet()
+  ) {
     this._userEnabled = userEnabled;
+    this._mobileOrTablet = mobileOrTablet;
     // Three.js always allocates a color texture. DepthBufferOnly never writes it;
     // RedFormat is the smallest attachment the framebuffer allows. The targets stay
     // allocated until dispose(), so toggling shadows off does not pay for a reallocation.
@@ -180,7 +186,7 @@ export class ShadowMapPass implements RenderPass, CadShadowMap {
   }
 
   private applyShadowMapResolution(renderer: WebGLRenderer): void {
-    const resolution = resolveShadowMapResolution(renderer.capabilities.maxTextureSize, isMobileOrTablet());
+    const resolution = resolveShadowMapResolution(renderer.capabilities.maxTextureSize, this._mobileOrTablet);
     if (resolution === this._resolution) {
       return;
     }

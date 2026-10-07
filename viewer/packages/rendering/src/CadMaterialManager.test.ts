@@ -196,7 +196,7 @@ describe('CadMaterialManager', () => {
     manager.updateViewLighting(new PerspectiveCamera());
 
     const material = manager.getModelMaterials(modelIdentifier1).box;
-    expect(material.uniforms.cadLightingEnabled.value).toBe(enabled ? 1 : 0);
+    expect(material.uniforms.cadLightingEnabled.value).toBe(enabled);
   });
 
   test('setCadLightingEnabled marks for redraw only on change', () => {
@@ -207,19 +207,31 @@ describe('CadMaterialManager', () => {
     expect(manager.needsRedraw).toBe(true);
   });
 
-  test('updateViewLighting writes the off flag once and skips later calls', () => {
+  test('setCadLightingEnabled(false) writes the off flag and updateViewLighting then does nothing', () => {
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
     const material = manager.getModelMaterials(modelIdentifier1).box;
 
     manager.setCadLightingEnabled(true);
     manager.updateViewLighting(new PerspectiveCamera());
-    manager.setCadLightingEnabled(false);
-    manager.updateViewLighting(new PerspectiveCamera());
-    expect(material.uniforms.cadLightingEnabled.value).toBe(0);
+    expect(material.uniforms.cadLightingEnabled.value).toBe(true);
 
-    material.uniforms.cadLightingEnabled.value = 7;
+    manager.setCadLightingEnabled(false);
+    expect(material.uniforms.cadLightingEnabled.value).toBe(false);
+
+    material.uniforms.cadLightingEnabled.value = true;
     manager.updateViewLighting(new PerspectiveCamera());
-    expect(material.uniforms.cadLightingEnabled.value).toBe(7);
+    expect(material.uniforms.cadLightingEnabled.value).toBe(true);
+  });
+
+  test('updateViewLighting enables a model added after the light was turned on', () => {
+    manager.setCadLightingEnabled(true);
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    const material = manager.getModelMaterials(modelIdentifier1).box;
+    expect(material.uniforms.cadLightingEnabled.value).toBe(false);
+
+    manager.updateViewLighting(new PerspectiveCamera());
+
+    expect(material.uniforms.cadLightingEnabled.value).toBe(true);
   });
 
   test('updateViewLighting transforms the world light into view space', () => {

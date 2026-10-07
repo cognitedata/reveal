@@ -20,7 +20,7 @@ uniform sampler2D tOutlineColors;
 
 #if defined(CAD_SHADOW)
 uniform sampler2D tCadShadow;
-uniform float cadShadowEnabled;
+uniform bool cadShadowEnabled;
 #endif
 
 in vec2 vUv;
@@ -82,7 +82,7 @@ void main() {
   #endif
   #if defined(CAD_SHADOW)
     // Skipped when off so the frame stays bit-exact instead of picking up the dither.
-    if (cadShadowEnabled > 0.5) {
+    if (cadShadowEnabled) {
       fragColor.rgb *= sampleCadShadow();
     }
   #endif

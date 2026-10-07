@@ -60,8 +60,6 @@ export class CadMaterialManager {
   private readonly _cadLightView = new Vector3();
   private readonly _cadUpView = new Vector3();
   private _cadLightingEnabled = false;
-  // Materials are created with cadLightingEnabled = 0, so the off state is already on the GPU.
-  private _cadLightingUniformSynced = true;
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
   private _needsRedraw: boolean = false;
@@ -225,18 +223,24 @@ export class CadMaterialManager {
       return;
     }
     this._cadLightingEnabled = enabled;
-    this._cadLightingUniformSynced = false;
+    if (!this._cadLightingEnabled) {
+      this.applyToAllMaterials(material => {
+        const enabledUniform = material.uniforms.cadLightingEnabled;
+        if (enabledUniform !== undefined) {
+          enabledUniform.value = false;
+        }
+      });
+    }
     this._needsRedraw = true;
   }
 
   updateViewLighting(camera: Camera): void {
-    if (!this._cadLightingEnabled && this._cadLightingUniformSynced) {
+    if (!this._cadLightingEnabled) {
       return;
     }
 
     cadLightDirectionInViewSpace(camera, this._cadLightView);
     cadUpDirectionInViewSpace(camera, this._cadUpView);
-    const lightingEnabled = this._cadLightingEnabled ? 1 : 0;
 
     this.applyToAllMaterials(material => {
       const lightUniform = material.uniforms.cadLightDirection;
@@ -249,10 +253,9 @@ export class CadMaterialManager {
         (upUniform.value as Vector3).copy(this._cadUpView);
       }
       if (enabledUniform !== undefined) {
-        enabledUniform.value = lightingEnabled;
+        enabledUniform.value = this._cadLightingEnabled;
       }
     });
-    this._cadLightingUniformSynced = !this._cadLightingEnabled;
   }
 
   resetRedraw(): void {

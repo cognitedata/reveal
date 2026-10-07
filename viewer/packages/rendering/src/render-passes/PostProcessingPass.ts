@@ -175,7 +175,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Leaving the shadow targets unbound while disabled keeps Three from allocating them.
     if (this._cadShadowMap?.enabled !== true) {
-      uniforms.cadShadowEnabled.value = 0;
+      uniforms.cadShadowEnabled.value = false;
       uniforms.tCadShadow.value = null;
       CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
       return;
@@ -183,7 +183,7 @@ export class PostProcessingPass implements RenderPass {
 
     this._cadShadowPass.render(renderer, camera);
     CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(this._cadShadowMap);
-    uniforms.cadShadowEnabled.value = 1;
+    uniforms.cadShadowEnabled.value = true;
     uniforms.tCadShadow.value = this._cadShadowPass.texture;
   }
 
