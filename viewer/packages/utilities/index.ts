@@ -93,7 +93,7 @@ export { createUint8View } from './src/createUint8View';
 
 export { isDefined } from './src/isDefined';
 
-export { isWebGLContextLost, setWebGLContextLost } from './src/webglContextState';
+export { isRenderContextLost, setRenderContextLost } from './src/renderContextState';
 
 export * from './src/fdm';
 export * from './src/assetMappings';

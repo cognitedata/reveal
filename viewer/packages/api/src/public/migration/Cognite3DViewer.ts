@@ -31,8 +31,8 @@ import {
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
   CustomObjectIntersectInput,
-  setWebGLContextLost,
-  isWebGLContextLost
+  setRenderContextLost,
+  isRenderContextLost
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -125,6 +125,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _domElementResizeObserver: ResizeObserver;
   private readonly _image360ApiHelper: Image360ApiHelper<DataSourceT> | undefined;
   private readonly _unsubsribeOnLoading: () => void;
+  private _onContextLost!: (event: Event) => void;
+  private _onContextRestored!: () => void;
 
   /**
    * Returns the rendering canvas, the DOM element where the renderer draws its output.
@@ -283,9 +285,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // Prevents scrolling for mobile devices.
     this.canvas.style.touchAction = 'none';
 
-    // Register WebGL context loss handlers early so auto-dispose paths (Potree LRU,
-    // Image360 cache) skip work while the context is invalid, avoiding stale-handle
-    // delete errors and stranded VRAM.
     this.registerContextLossHandlers();
 
     this._domElement = options.domElement ?? createCanvasWrapper();
@@ -411,24 +410,23 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Listens for WebGL context loss/restore. On loss, prevents the default (so the
-   * browser attempts recovery) and sets `isWebGLContextLost()`; on restore, clears
+   * Listens for render context loss/restore. On loss, prevents the default (so the
+   * browser attempts recovery) and sets `isRenderContextLost()`; on restore, clears
    * the flag and requests a redraw.
    */
   private registerContextLossHandlers(): void {
-    const canvas = this.canvas;
-
-    canvas.addEventListener('webglcontextlost', event => {
-      // Without preventDefault the browser will NOT restore the context.
+    this._onContextLost = event => {
       event.preventDefault();
-      setWebGLContextLost(true);
-    });
+      setRenderContextLost(true);
+    };
 
-    canvas.addEventListener('webglcontextrestored', () => {
-      setWebGLContextLost(false);
-      // Nudge the render pipeline to redraw with fresh GPU resources.
+    this._onContextRestored = () => {
+      setRenderContextLost(false);
       this.revealManager.requestRedraw();
-    });
+    };
+
+    this.canvas.addEventListener('webglcontextlost', this._onContextLost);
+    this.canvas.addEventListener('webglcontextrestored', this._onContextRestored);
   }
 
   /**
@@ -521,6 +519,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
+
+    this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this._onContextRestored);
+    
+    // Clear the flag so a viewer disposed while the context is lost does not stall
+    setRenderContextLost(false);
 
     this._events.disposed.fire();
     disposeOfAllEventListeners(this._events);
@@ -1880,9 +1884,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (!isVisible) {
       return;
     }
-    // Skip rendering and sub-manager updates while the context is lost, since both
-    // rely on stale handles; webglcontextrestored will requestRedraw() to resume.
-    if (isWebGLContextLost()) {
+    if (isRenderContextLost()) {
       return;
     }
     const camera = this.cameraManager.getCamera();
