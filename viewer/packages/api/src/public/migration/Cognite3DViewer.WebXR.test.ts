@@ -16,7 +16,7 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 import type { IntersectInput } from '@reveal/model-base';
-import type { RenderView } from '@reveal/rendering';
+import type { CadMaterialManager, RenderView } from '@reveal/rendering';
 import { It, Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
@@ -260,6 +260,17 @@ describe('Cognite3DViewer WebXR', () => {
     viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
 
     expect(xr.setAnimationLoop).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  test('uses rotation invariant CAD lighting during the session', () => {
+    const materialManager = (viewer as unknown as { revealManager: { materialManager: CadMaterialManager } })
+      .revealManager.materialManager;
+
+    xr.startSession();
+    expect(materialManager.rotationInvariantLighting).toBe(true);
+
+    xr.endSession();
+    expect(materialManager.rotationInvariantLighting).toBe(false);
   });
 
   test('turns off xr.enabled during the session and restores it afterwards', () => {

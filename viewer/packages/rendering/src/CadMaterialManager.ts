@@ -55,6 +55,7 @@ export class CadMaterialManager {
   }
 
   private _renderMode: RenderMode = RenderMode.Color;
+  private _rotationInvariantLighting = false;
   private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
@@ -94,6 +95,7 @@ export class CadMaterialManager {
     const colorWrite = this._renderMode !== RenderMode.DepthBufferOnly;
     forEachMaterial(materials, material => {
       material.uniforms.renderMode.value = this._renderMode;
+      material.uniforms.rotationInvariantLighting.value = this._rotationInvariantLighting;
       material.colorWrite = colorWrite;
     });
 
@@ -214,6 +216,23 @@ export class CadMaterialManager {
     return this._renderMode;
   }
 
+  /**
+   * Orients CAD lighting by the direction from each surface to the eye instead of the camera's forward axis, so
+   * shading doesn't change when the camera rotates in place. Used in WebXR, where the camera follows the head.
+   * @param enabled Whether to use rotation invariant lighting.
+   */
+  setRotationInvariantLighting(enabled: boolean): void {
+    this._rotationInvariantLighting = enabled;
+    this.applyToAllMaterials(material => {
+      material.uniforms.rotationInvariantLighting.value = enabled;
+    });
+    this._needsRedraw = true;
+  }
+
+  get rotationInvariantLighting(): boolean {
+    return this._rotationInvariantLighting;
+  }
+
   resetRedraw(): void {
     this._needsRedraw = false;
   }
@@ -310,7 +329,8 @@ export class CadMaterialManager {
       materialData.nodeTransformTextureBuilder.overrideTransformIndexTexture,
       materialData.nodeTransformTextureBuilder.transformLookupTexture,
       materialData.matCapTexture,
-      this._renderMode
+      this._renderMode,
+      this._rotationInvariantLighting
     );
   }
 }

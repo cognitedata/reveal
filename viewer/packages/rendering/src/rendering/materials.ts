@@ -265,7 +265,8 @@ export function initializeDefinesAndUniforms(
   transformOverrideIndexTexture: DataTexture,
   transformOverrideTexture: DataTexture,
   matCapTexture: Texture,
-  renderMode: RenderMode
+  renderMode: RenderMode,
+  rotationInvariantLighting = false
 ): void {
   const treeIndexTextureSize = new Vector2(
     overrideColorPerTreeIndex.image.width,
@@ -302,6 +303,9 @@ export function initializeDefinesAndUniforms(
       },
       matCapTexture: {
         value: matCapTexture
+      },
+      rotationInvariantLighting: {
+        value: rotationInvariantLighting
       }
     }
   });

@@ -393,9 +393,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this._webXR = new WebXRFrameSource(
       this._renderer,
       {
-        onSessionStart: () => cancelAnimationFrame(this.latestRequestId),
+        onSessionStart: () => {
+          cancelAnimationFrame(this.latestRequestId);
+          // With a head-mounted camera, view-space lighting would change whenever the user turns their head.
+          this.revealManager.materialManager.setRotationInvariantLighting(true);
+        },
         onSessionEnd: () => {
           if (!this.isDisposed) {
+            this.revealManager.materialManager.setRotationInvariantLighting(false);
             this.latestRequestId = requestAnimationFrame(this._boundAnimate);
             this.requestRedraw();
           }

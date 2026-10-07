@@ -48,5 +48,5 @@ void main()
 #endif
 
     vec3 normal = derivateNormal(v_viewPosition);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, v_viewPosition, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
 }
