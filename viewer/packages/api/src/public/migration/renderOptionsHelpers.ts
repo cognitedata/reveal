@@ -4,7 +4,7 @@
 
 import { Log } from '@reveal/logger';
 import type { SsaoParameters } from '@reveal/rendering';
-import { AntiAliasingMode, defaultRenderOptions, SsaoSampleQuality } from '@reveal/rendering';
+import { AntiAliasingMode, defaultRenderOptions, getSsaoParametersForQuality } from '@reveal/rendering';
 import type { DeviceDescriptor } from '@reveal/utilities';
 import { assertNever } from '@reveal/utilities';
 import type { PropType } from '../../utilities/reflection';
@@ -57,8 +57,9 @@ export function determineAntiAliasingMode(
 }
 
 /**
- * Determines SSAO mode based on the mode requested and the device in question.
- * For mobile and tablets SSAO is disabled.
+ * Determines ambient occlusion parameters based on the mode requested and the device in question.
+ * For mobile and tablets SSAO is disabled. Each quality hint maps to a preset with different sample counts,
+ * denoising and resolution (see {@link getSsaoParametersForQuality}); 'medium' is used when no hint is given.
  * @param qualityHint Mode as provided in options to the viewer.
  * @param device    Descriptor for current device.
  * @returns Actual SSAO mode to initialize viewer with.
@@ -68,28 +69,18 @@ export function determineSsaoRenderParameters(
   device: DeviceDescriptor
 ): SsaoParameters {
   const quality = restrictSsaoOptionBasedOnDevice(qualityHint, device);
-  const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
   switch (quality) {
     case undefined:
-      break;
+      return { ...defaultRenderOptions.ssaoRenderParameters };
     case 'medium':
-      ssaoParameters.sampleSize = SsaoSampleQuality.Medium;
-      break;
     case 'high':
-      ssaoParameters.sampleSize = SsaoSampleQuality.High;
-      break;
     case 'veryhigh':
-      ssaoParameters.sampleSize = SsaoSampleQuality.VeryHigh;
-      break;
     case 'disabled':
-      ssaoParameters.sampleSize = SsaoSampleQuality.None;
-      break;
+      return getSsaoParametersForQuality(quality);
 
     default:
       assertNever(quality, `Unexpected SSAO mode: '${quality}'`);
   }
-
-  return ssaoParameters;
 }
 
 /**
