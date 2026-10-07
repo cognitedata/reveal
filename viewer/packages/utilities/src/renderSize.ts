@@ -28,6 +28,27 @@ export function getRenderCssSize(renderer: WebGLRenderer, target: Vector2): Vect
 }
 
 /**
+ * The size set with {@link setRenderSizeOverride}, or undefined when there is none.
+ */
+export function getRenderSizeOverride(renderer: WebGLRenderer): Vector2 | undefined {
+  return renderSizeOverrides.get(renderer)?.clone();
+}
+
+/**
+ * How much the rendered image is downscaled relative to the canvas on the page: `renderWidth` (in the same unit as
+ * the canvas' CSS width, or physical pixels to include the pixel ratio) divided by the canvas' CSS width.
+ * Returns 1 while a render size override is active (e.g. in WebXR, where the page canvas isn't what's displayed)
+ * or when the canvas has no size.
+ */
+export function getRenderDownScale(renderer: WebGLRenderer, renderWidth: number): number {
+  const cssWidth = renderer.domElement.clientWidth;
+  if (renderSizeOverrides.has(renderer) || cssWidth <= 0) {
+    return 1;
+  }
+  return renderWidth / cssWidth;
+}
+
+/**
  * Overrides the size reported by {@link getRenderSize} for the given renderer. Pass `undefined` to clear.
  */
 export function setRenderSizeOverride(renderer: WebGLRenderer, size: Vector2 | undefined): void {

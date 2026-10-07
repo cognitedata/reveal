@@ -11,7 +11,7 @@ import { IconOctree } from './IconOctree';
 import type { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 import { minBy } from 'lodash-es';
 import { CameraChangeThrottler } from './CameraChangeThrottler';
-import { getRenderCssSize } from '@reveal/utilities';
+import { getRenderCssSize, getRenderSizeOverride } from '@reveal/utilities';
 
 /**
  * Constructor options for the Overlay3DCollection
@@ -224,14 +224,13 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       return;
     }
 
-    const renderSize = new Vector2();
-    this._overlays.forEach(icon =>
-      icon.updateAdaptiveScale({
-        camera,
-        renderSize: getRenderCssSize(renderer, renderSize),
-        domElement: renderer.domElement
-      })
-    );
+    const renderSize = getRenderCssSize(renderer, new Vector2());
+    // While rendering at an overridden size (e.g. a WebXR view), the page canvas isn't what's displayed.
+    const domElement =
+      getRenderSizeOverride(renderer) === undefined
+        ? renderer.domElement
+        : ({ clientWidth: renderSize.x, clientHeight: renderSize.y } as HTMLElement);
+    this._overlays.forEach(icon => icon.updateAdaptiveScale({ camera, renderSize, domElement }));
   }
 
   /**

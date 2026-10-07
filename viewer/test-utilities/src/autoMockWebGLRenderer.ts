@@ -4,6 +4,7 @@
 import { It, Mock } from 'moq.ts';
 import {
   Color,
+  EventDispatcher,
   Vector2,
   Vector4,
   type WebGLCapabilities,
@@ -19,7 +20,19 @@ import {
 
 export type AutoMockOverrides = {
   canvas?: HTMLCanvasElement;
+  xr?: WebGLRenderer['xr'];
 };
+
+/** An XR manager without an active session. */
+function createInactiveXRManager(): WebGLRenderer['xr'] {
+  const xr = Object.assign(new EventDispatcher(), {
+    enabled: false,
+    isPresenting: false,
+    setAnimationLoop: () => {},
+    getSession: () => null
+  });
+  return xr as unknown as WebGLRenderer['xr'];
+}
 
 export function autoMockWebGLRenderer(
   renderer: Mock<WebGLRenderer>,
@@ -45,6 +58,7 @@ function autoMockGLRenderer(
   webGLCapabilities: Mock<WebGLCapabilities>
 ) {
   renderer.setup(instance => instance.domElement).returns(overrides?.canvas ?? document.createElement('canvas'));
+  renderer.setup(instance => instance.xr).returns(overrides?.xr ?? createInactiveXRManager());
   renderer.setup(instance => instance.getPixelRatio()).returns(1);
   renderer.setup(instance => instance.setPixelRatio(It.IsAny())).returns();
   renderer.setup(instance => instance.info).returns(webglInfo.object());

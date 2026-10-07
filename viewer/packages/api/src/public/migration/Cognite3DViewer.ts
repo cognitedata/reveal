@@ -1,8 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type { Object3D, PerspectiveCamera, Plane } from 'three';
-import { Box3, Clock, Color, Matrix4, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
+import type { Object3D, Plane, Ray } from 'three';
+import { Box3, Clock, Color, Matrix4, PerspectiveCamera, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
@@ -30,7 +30,8 @@ import {
   SceneHandler,
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
-  CustomObjectIntersectInput
+  CustomObjectIntersectInput,
+  setRenderSizeOverride
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -173,6 +174,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   private readonly _boundAnimate = this.animate.bind(this);
   private readonly _xrViews: WebXRViews;
+  private _xrEnabledBeforeSession = false;
+  private readonly _xrModelTransformations: Matrix4[] = [];
 
   private readonly _events = {
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -389,9 +392,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this._unsubsribeOnLoading = () => this.revealManager.off('loadingStateChanged', handleLoading);
 
     this._xrViews = new WebXRViews(this._renderer);
-    // `xr` is optional only because some tests use partial renderer mocks.
-    this._renderer.xr?.addEventListener('sessionstart', this._onXRSessionStart);
-    this._renderer.xr?.addEventListener('sessionend', this._onXRSessionEnd);
+    this._renderer.xr.addEventListener('sessionstart', this._onXRSessionStart);
+    this._renderer.xr.addEventListener('sessionend', this._onXRSessionEnd);
+    if (this._renderer.xr.isPresenting) {
+      // The session started before the viewer was created, so 'sessionstart' won't fire.
+      this._onXRSessionStart();
+    }
 
     this.animate(0);
 
@@ -477,10 +483,15 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this.latestRequestId !== undefined) {
       cancelAnimationFrame(this.latestRequestId);
     }
-    this._renderer.xr?.removeEventListener('sessionstart', this._onXRSessionStart);
-    this._renderer.xr?.removeEventListener('sessionend', this._onXRSessionEnd);
-    if (this._renderer.xr?.isPresenting) {
+    this._renderer.xr.removeEventListener('sessionstart', this._onXRSessionStart);
+    this._renderer.xr.removeEventListener('sessionend', this._onXRSessionEnd);
+    if (this._renderer.xr.isPresenting) {
       this._renderer.xr.setAnimationLoop(null);
+      this._renderer.xr.enabled = this._xrEnabledBeforeSession;
+      if (this._ownsRenderer) {
+        // Nothing would render the session anymore. With an external renderer, the app owns the session.
+        void this._renderer.xr.getSession()?.end();
+      }
     }
 
     // Copy list, as this._models will be mutated in below iteration
@@ -1521,6 +1532,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     height: number = this.canvas.height,
     includeUI = true
   ): Promise<string> {
+    if (this._renderer.xr.isPresenting) {
+      throw new Error('getScreenshot() is not supported while presenting in WebXR');
+    }
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
@@ -1859,12 +1873,17 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _onXRSessionStart = (): void => {
     cancelAnimationFrame(this.latestRequestId);
     this._xrViews.reset();
+    // Reveal renders the views itself. With xr.enabled, three.js would also replace the camera in every
+    // renderer.render() call, including picking and other offscreen renders.
+    this._xrEnabledBeforeSession = this._renderer.xr.enabled;
+    this._renderer.xr.enabled = false;
     // Only sets the XR session's frame callback. renderer.setAnimationLoop() would also start a window loop.
     this._renderer.xr.setAnimationLoop(this._boundAnimate);
   };
 
   private readonly _onXRSessionEnd = (): void => {
     this._renderer.xr.setAnimationLoop(null);
+    this._renderer.xr.enabled = this._xrEnabledBeforeSession;
     if (this.isDisposed) {
       return;
     }
@@ -1878,7 +1897,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this.isDisposed) {
       return;
     }
-    const isPresentingXR = this._renderer.xr?.isPresenting === true;
+    const isPresentingXR = this._renderer.xr.isPresenting;
     if (isPresentingXR) {
       if (xrFrame === undefined) {
         // A window frame that was scheduled before the XR session started
@@ -1907,7 +1926,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingBox);
 
     if (isPresentingXR) {
-      this.renderXR();
+      this.renderXR(xrFrame!);
       return;
     }
 
@@ -1941,35 +1960,86 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /** @private */
-  private renderXR(): void {
+  private renderXR(xrFrame: XRFrame): void {
+    const renderer = this._renderer;
+    const referenceSpace = renderer.xr.getReferenceSpace();
+    // Without a viewer pose (e.g. tracking lost), three.js neither binds the XR framebuffer nor updates the views.
+    if (referenceSpace === null || !xrFrame.getViewerPose(referenceSpace)) {
+      return;
+    }
     // three.js binds the XR session's framebuffer (wrapped in a render target) before each XR frame.
-    const xrRenderTarget = this.renderer.getRenderTarget();
+    const xrRenderTarget = renderer.getRenderTarget();
     if (xrRenderTarget === null) {
       return;
     }
 
-    this._xrViews.update(this._boundingBoxes.sceneBoundingBox);
-    const camera = this._xrViews.headCamera;
+    // An exception here would stop three.js from requesting the next XR frame, freezing the display.
+    try {
+      this._xrViews.update(this._boundingBoxes.nearFarPlaneBoundingBox);
+      const camera = this._xrViews.headCamera;
 
-    const modelTransformations = this._models.map(model => model.getModelTransformation());
-    const loading = this._xrViews.getLoadingCamera(modelTransformations);
-    this.revealManager.update(loading.camera, loading.inMotion);
+      const modelTransformations = this._xrModelTransformations;
+      modelTransformations.length = this._models.length;
+      this._models.forEach((model, index) =>
+        model.getModelTransformation((modelTransformations[index] ??= new Matrix4()))
+      );
+      const loading = this._xrViews.getLoadingCamera(modelTransformations);
+      this.revealManager.update(loading.camera, loading.inMotion);
 
-    // The XR framebuffer isn't preserved between frames, so render every frame.
-    const frameNumber = this.renderer.info.render.frame;
-    const start = Date.now();
+      // So that code sizing things during the frame (e.g. in beforeSceneRendered) sees the view size.
+      setRenderSizeOverride(renderer, this._xrViews.viewSize);
 
-    this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
-    this._sceneHandler.customObjects.forEach(customObject => {
-      customObject.beforeRender(camera);
+      // The XR framebuffer isn't preserved between frames, so render every frame.
+      const frameNumber = renderer.info.render.frame;
+      const start = Date.now();
+
+      this._events.beforeSceneRendered.fire({ frameNumber, renderer, camera });
+      this._sceneHandler.customObjects.forEach(customObject => {
+        customObject.beforeRender(camera);
+      });
+      this.revealManager.renderViews(xrRenderTarget, this._xrViews.views);
+      this._pointCloudPickingHandler.invalidatePickCache();
+      this._image360ApiHelper?.resetRedraw();
+      this._clippingNeedsUpdate = false;
+      const renderTime = Date.now() - start;
+
+      this._events.sceneRendered.fire({ frameNumber, renderTime, renderer, camera });
+    } catch (error) {
+      Log.error('Failed to render WebXR frame', error);
+    } finally {
+      setRenderSizeOverride(renderer, undefined);
+    }
+  }
+
+  /**
+   * Finds the closest intersection between a ray and the CAD and point cloud models. Unlike
+   * {@link Cognite3DViewer.getIntersectionFromPixel}, this doesn't depend on the current view, which makes it
+   * suitable for pointing with hands or controllers in WebXR.
+   * @param ray Ray in world coordinates. The direction must be normalized.
+   * @param maxDistance Ignore intersections farther away than this. Defaults to the extent of the scene.
+   * @returns A promise resolving to the closest intersection along the ray, or null if nothing is hit.
+   */
+  async getIntersectionFromRay(ray: Ray, maxDistance?: number): Promise<null | Intersection<DataSourceT>> {
+    const far = maxDistance ?? computeFarthestDistance(ray.origin, this._boundingBoxes.nearFarPlaneBoundingBox);
+    if (far <= 0) {
+      return null;
+    }
+    // Pick the center pixel of a narrow camera looking along the ray.
+    const camera = new PerspectiveCamera(1, 1, Math.max(1e-3, far * 1e-6), far);
+    camera.position.copy(ray.origin);
+    // Not lookAt(), which is imprecise when the ray is parallel to the up vector.
+    camera.quaternion.setFromUnitVectors(new Vector3(0, 0, -1), ray.direction.clone().normalize());
+    camera.updateMatrixWorld();
+    const virtualPickArea = { clientWidth: 512, clientHeight: 512 } as HTMLElement;
+
+    return this.intersectModelsWithInput({
+      normalizedCoords: new Vector2(0, 0),
+      camera,
+      renderer: this.renderer,
+      clippingPlanes: this.getGlobalClippingPlanes(),
+      domElement: virtualPickArea,
+      cameraInMotion: false
     });
-    this.revealManager.renderViews(xrRenderTarget, this._xrViews.views);
-    this._pointCloudPickingHandler.invalidatePickCache();
-    this._image360ApiHelper?.resetRedraw();
-    this._clippingNeedsUpdate = false;
-    const renderTime = Date.now() - start;
-
-    this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
   }
 
   /** @private */
@@ -1988,7 +2058,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       cameraInMotion: this.revealManager.cameraInMotion,
       forceWindowedPick: options?.forceWindowedPick ?? false
     };
+    return this.intersectModelsWithInput(input, options?.asyncCADIntersection ?? true);
+  }
 
+  /** @private */
+  private async intersectModelsWithInput(
+    input: IntersectInput,
+    asyncCADIntersection: boolean = true
+  ): Promise<null | Intersection<DataSourceT>> {
     const intersections: Intersection<DataSourceT>[] = [];
     {
       const pointCloudModels = this.getModels('pointcloud');
@@ -2027,11 +2104,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
       const cadModels = this.getModels('cad');
       const cadNodes = cadModels.map(x => x.cadNode);
-      const cadResults = await this._pickingHandler.intersectCadNodes(
-        cadNodes,
-        input,
-        options?.asyncCADIntersection ?? true
-      );
+      const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input, asyncCADIntersection);
       this._forceStopRendering = false;
 
       if (cadResults.length > 0) {
@@ -2293,4 +2366,17 @@ function getMaxPointSize(renderer: WebGLRenderer): number {
   const gl = renderer.getContext();
   const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
   return maxPointSize;
+}
+
+function computeFarthestDistance(point: Vector3, box: Box3): number {
+  if (box.isEmpty()) {
+    return 0;
+  }
+  const corner = new Vector3();
+  let maxDistanceSquared = 0;
+  for (let i = 0; i < 8; i++) {
+    corner.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z);
+    maxDistanceSquared = Math.max(maxDistanceSquared, corner.distanceToSquared(point));
+  }
+  return Math.sqrt(maxDistanceSquared);
 }

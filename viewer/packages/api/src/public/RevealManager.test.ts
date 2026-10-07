@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import type { WebGLRenderer } from 'three';
-import { PerspectiveCamera, Plane } from 'three';
+import { PerspectiveCamera, Plane, Vector4, WebGLRenderTarget } from 'three';
 
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
@@ -26,6 +26,7 @@ import type { CadNode } from '@reveal/cad-model';
 import type {
   RenderPipelineExecutor,
   RenderPipelineProvider,
+  RenderView,
   ResizeHandler,
   SettableRenderTarget
 } from '@reveal/rendering';
@@ -207,5 +208,61 @@ describe('RevealManager', () => {
     expect(classicIdentifier).toMatchObject({ modelId: 10, revisionId: 20 });
     expect(classicIdentifier).not.toHaveProperty('revisionExternalId');
     expect(classicIdentifier).not.toHaveProperty('revisionSpace');
+  });
+
+  describe('with stubbed managers', () => {
+    function createStubbedManager() {
+      const cadManager = { on: vi.fn(), off: vi.fn(), updateCamera: vi.fn(), resetRedraw: vi.fn() };
+      const pointCloudManager = { getLoadingStateObserver: () => NEVER, updateCamera: vi.fn(), resetRedraw: vi.fn() };
+      const pipelineExecutor = { render: vi.fn(), renderViews: vi.fn(), dispose: vi.fn() };
+      const renderPipeline = {} as RenderPipelineProvider & SettableRenderTarget;
+      const resizeHandler = { handleResize: vi.fn(), resetRedraw: vi.fn() };
+      const revealManager = new RevealManager(
+        cadManager as Partial<CadManager> as CadManager,
+        pointCloudManager as Partial<PointCloudManager> as PointCloudManager,
+        pipelineExecutor as RenderPipelineExecutor,
+        renderPipeline,
+        resizeHandler as Partial<ResizeHandler> as ResizeHandler,
+        cameraManagerMock.object()
+      );
+      return { revealManager, cadManager, pointCloudManager, pipelineExecutor, renderPipeline, resizeHandler };
+    }
+
+    test('renderViews() renders all views through the pipeline executor without resizing', () => {
+      const { revealManager, pipelineExecutor, renderPipeline, resizeHandler, cadManager } = createStubbedManager();
+      const output = new WebGLRenderTarget(2000, 1000);
+      const views: RenderView[] = [
+        { camera: new PerspectiveCamera(), viewport: new Vector4(0, 0, 1000, 1000) },
+        { camera: new PerspectiveCamera(), viewport: new Vector4(1000, 0, 1000, 1000) }
+      ];
+
+      revealManager.renderViews(output, views);
+
+      expect(pipelineExecutor.renderViews).toHaveBeenCalledWith(renderPipeline, output, views);
+      expect(pipelineExecutor.render).not.toHaveBeenCalled();
+      expect(resizeHandler.handleResize).not.toHaveBeenCalled();
+      expect(cadManager.resetRedraw).toHaveBeenCalled();
+    });
+
+    test('update() with an explicit cameraInMotion overrides the camera manager state', () => {
+      const { revealManager, cadManager, pointCloudManager } = createStubbedManager();
+      const camera = new PerspectiveCamera();
+
+      revealManager.update(camera, true);
+
+      expect(revealManager.cameraInMotion).toBe(false);
+      expect(cadManager.updateCamera).toHaveBeenCalledWith(camera, true);
+      expect(pointCloudManager.updateCamera).toHaveBeenCalledWith(camera);
+    });
+
+    test('update() without cameraInMotion uses the camera manager state', () => {
+      const { revealManager, cadManager, pointCloudManager } = createStubbedManager();
+      const camera = new PerspectiveCamera();
+
+      revealManager.update(camera);
+
+      expect(cadManager.updateCamera).toHaveBeenCalledWith(camera, false);
+      expect(pointCloudManager.updateCamera).not.toHaveBeenCalled();
+    });
   });
 });

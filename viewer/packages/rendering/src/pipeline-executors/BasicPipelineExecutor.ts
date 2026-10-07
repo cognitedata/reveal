@@ -3,13 +3,16 @@
  */
 
 import { Vector2, Vector4, type PerspectiveCamera, type WebGLRenderer, type WebGLRenderTarget } from 'three';
-import { setRenderSizeOverride } from '@reveal/utilities';
+import { getRenderSizeOverride, setRenderSizeOverride } from '@reveal/utilities';
 import type { RenderPipelineExecutor, RenderView } from '../RenderPipelineExecutor';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
 export class BasicPipelineExecutor implements RenderPipelineExecutor {
   private readonly _renderer: WebGLRenderer;
+  private readonly _previousViewport = new Vector4();
+  private readonly _previousScissor = new Vector4();
+  private readonly _viewSize = new Vector2();
 
   constructor(renderer: WebGLRenderer) {
     this._renderer = renderer;
@@ -28,15 +31,16 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     views: readonly RenderView[]
   ): void {
     const renderer = this._renderer;
-    const previousTarget = renderPipeline.outputRenderTarget;
+    const previousBoundTarget = renderer.getRenderTarget();
+    const previousOutputTarget = renderPipeline.outputRenderTarget;
     const previousAutoSize = renderPipeline.autoSizeOutputRenderTarget;
-    const previousViewport = output.viewport.clone();
-    const previousScissor = output.scissor.clone();
+    const previousRenderSizeOverride = getRenderSizeOverride(renderer);
+    const previousViewport = this._previousViewport.copy(output.viewport);
+    const previousScissor = this._previousScissor.copy(output.scissor);
     const previousScissorTest = output.scissorTest;
     // With xr.enabled, three.js replaces the camera with its own stereo camera in every
     // renderer.render() call while presenting. Reveal's passes must use the view camera as given.
     const previousXrEnabled = renderer.xr.enabled;
-    const viewSize = new Vector2();
 
     renderer.info.reset();
     try {
@@ -46,20 +50,22 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
         if (view.viewport.z < 1 || view.viewport.w < 1) {
           continue;
         }
-        output.viewport.copy(roundViewport(view.viewport));
+        roundViewport(view.viewport, output.viewport);
         // Restricts clears to this view, so the next view doesn't wipe the previous one.
         output.scissor.copy(output.viewport);
         output.scissorTest = true;
-        setRenderSizeOverride(renderer, viewSize.set(output.viewport.z, output.viewport.w));
+        setRenderSizeOverride(renderer, this._viewSize.set(output.viewport.z, output.viewport.w));
         this.executePipeline(renderPipeline, view.camera);
       }
     } finally {
-      setRenderSizeOverride(renderer, undefined);
+      setRenderSizeOverride(renderer, previousRenderSizeOverride);
       output.viewport.copy(previousViewport);
       output.scissor.copy(previousScissor);
       output.scissorTest = previousScissorTest;
-      renderPipeline.setOutputRenderTarget(previousTarget, previousAutoSize);
+      renderPipeline.setOutputRenderTarget(previousOutputTarget, previousAutoSize);
       renderer.xr.enabled = previousXrEnabled;
+      // Rebinding also resets the GL viewport/scissor state, which still has the last view's values.
+      renderer.setRenderTarget(previousBoundTarget);
     }
   }
 
@@ -72,6 +78,6 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
   }
 }
 
-function roundViewport(viewport: Vector4): Vector4 {
-  return new Vector4(Math.round(viewport.x), Math.round(viewport.y), Math.round(viewport.z), Math.round(viewport.w));
+function roundViewport(viewport: Vector4, target: Vector4): Vector4 {
+  return target.set(Math.round(viewport.x), Math.round(viewport.y), Math.round(viewport.z), Math.round(viewport.w));
 }

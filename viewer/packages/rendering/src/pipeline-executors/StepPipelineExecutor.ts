@@ -13,6 +13,7 @@ export class StepPipelineExecutor implements RenderPipelineExecutor {
   private readonly _renderer: WebGLRenderer;
   private _numSteps: number | undefined;
   private readonly _gpuTimer: GpuTimer;
+  private _viewsExecutor: BasicPipelineExecutor | undefined;
 
   set numberOfSteps(steps: number) {
     this._numSteps = steps;
@@ -53,7 +54,8 @@ export class StepPipelineExecutor implements RenderPipelineExecutor {
     output: WebGLRenderTarget,
     views: readonly RenderView[]
   ): void {
-    new BasicPipelineExecutor(this._renderer).renderViews(renderPipeline, output, views);
+    this._viewsExecutor ??= new BasicPipelineExecutor(this._renderer);
+    this._viewsExecutor.renderViews(renderPipeline, output, views);
   }
 
   public calcNumSteps(renderPipeline: RenderPipelineProvider): number {
