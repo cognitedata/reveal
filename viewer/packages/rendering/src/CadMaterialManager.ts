@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { Plane, RawShaderMaterial } from 'three';
-import { SRGBColorSpace, Texture, Vector2, Vector4 } from 'three';
+import type { Camera, Plane, RawShaderMaterial } from 'three';
+import { SRGBColorSpace, Texture, Vector2, Vector3, Vector4 } from 'three';
 
 import type { Materials } from './rendering/materials';
 import { createMaterials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
@@ -20,6 +20,7 @@ import {
 import type { IndexSet } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
+import { cadLightDirectionInViewSpace, cadUpDirectionInViewSpace } from './rendering/cadLighting';
 
 import { assert } from '@reveal/utilities/assert';
 
@@ -56,6 +57,9 @@ export class CadMaterialManager {
 
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
+  private readonly _cadLightView = new Vector3();
+  private readonly _cadUpView = new Vector3();
+  private _cadLightingEnabled = false;
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
   private _needsRedraw: boolean = false;
@@ -212,6 +216,46 @@ export class CadMaterialManager {
 
   getRenderMode(): RenderMode {
     return this._renderMode;
+  }
+
+  setCadLightingEnabled(enabled: boolean): void {
+    if (this._cadLightingEnabled === enabled) {
+      return;
+    }
+    this._cadLightingEnabled = enabled;
+    if (!this._cadLightingEnabled) {
+      this.applyToAllMaterials(material => {
+        const enabledUniform = material.uniforms.cadLightingEnabled;
+        if (enabledUniform !== undefined) {
+          enabledUniform.value = false;
+        }
+      });
+    }
+    this._needsRedraw = true;
+  }
+
+  updateViewLighting(camera: Camera): void {
+    if (!this._cadLightingEnabled) {
+      return;
+    }
+
+    cadLightDirectionInViewSpace(camera, this._cadLightView);
+    cadUpDirectionInViewSpace(camera, this._cadUpView);
+
+    this.applyToAllMaterials(material => {
+      const lightUniform = material.uniforms.cadLightDirection;
+      const upUniform = material.uniforms.cadUpDirection;
+      const enabledUniform = material.uniforms.cadLightingEnabled;
+      if (lightUniform !== undefined) {
+        (lightUniform.value as Vector3).copy(this._cadLightView);
+      }
+      if (upUniform !== undefined) {
+        (upUniform.value as Vector3).copy(this._cadUpView);
+      }
+      if (enabledUniform !== undefined) {
+        enabledUniform.value = this._cadLightingEnabled;
+      }
+    });
   }
 
   resetRedraw(): void {

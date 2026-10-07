@@ -1,7 +1,7 @@
 uniform mat4 inverseProjectionMatrix;
 uniform mat4 cadCameraMatrixWorld;
 uniform mat4 cadShadowMatrix;
-uniform highp sampler2DShadow tCadShadowMap;
+uniform highp sampler2D tCadShadowMap;
 uniform vec3 cadShadowLightDirection;
 uniform float cadShadowTexelWorld;
 uniform float cadShadowDepthRange;
@@ -88,8 +88,24 @@ mat2 cadShadowKernelRotation() {
 // not depths. The GPU compares compareDepth with the 2x2 texels around uv and returns the lit fraction.
 float cadShadowVisibility(vec2 uv, float compareDepth) {
     vec2 inside = step(vec2(0.0), uv) * step(uv, vec2(1.0));
-    float visibility = textureLod(tCadShadowMap, vec3(uv, min(compareDepth, 1.0)), 0.0);
-    return mix(1.0, visibility, inside.x * inside.y);
+    compareDepth = min(compareDepth, 1.0);
+    ivec2 size = textureSize(tCadShadowMap, 0);
+    vec2 texelPos = uv * vec2(size) - 0.5;
+    vec2 fraction = fract(texelPos);
+    ivec2 origin = ivec2(floor(texelPos));
+    ivec2 maxCoord = size - ivec2(1);
+
+    float litRow0 = mix(
+        step(compareDepth, texelFetch(tCadShadowMap, clamp(origin, ivec2(0), maxCoord), 0).r),
+        step(compareDepth, texelFetch(tCadShadowMap, clamp(origin + ivec2(1, 0), ivec2(0), maxCoord), 0).r),
+        fraction.x
+    );
+    float litRow1 = mix(
+        step(compareDepth, texelFetch(tCadShadowMap, clamp(origin + ivec2(0, 1), ivec2(0), maxCoord), 0).r),
+        step(compareDepth, texelFetch(tCadShadowMap, clamp(origin + ivec2(1, 1), ivec2(0), maxCoord), 0).r),
+        fraction.x
+    );
+    return mix(1.0, mix(litRow0, litRow1, fraction.y), inside.x * inside.y);
 }
 
 // Rough 0..1 estimate of how far the blocker is from the receiver.

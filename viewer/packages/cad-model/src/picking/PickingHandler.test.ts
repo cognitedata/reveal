@@ -35,6 +35,8 @@ describe(PickingHandler.name, () => {
       .setup(p => p.getRenderMode())
       .returns(RenderMode.Color)
       .setup(p => p.setRenderMode(It.IsAny()))
+      .returns()
+      .setup(p => p.updateViewLighting(It.IsAny()))
       .returns();
     pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new SceneHandler());
   });
