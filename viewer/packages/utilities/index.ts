@@ -93,6 +93,8 @@ export { createUint8View } from './src/createUint8View';
 
 export { isDefined } from './src/isDefined';
 
+export { isRenderContextLost, setRenderContextLost } from './src/renderContextState';
+
 export * from './src/fdm';
 export * from './src/assetMappings';
 

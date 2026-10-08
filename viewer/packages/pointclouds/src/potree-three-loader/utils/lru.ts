@@ -1,6 +1,12 @@
 import type { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
+import { isRenderContextLost } from '@reveal/utilities';
 
 export type Node = IPointCloudTreeNodeBase;
+
+/**
+ * How far `numPoints` may exceed `pointBudget` before the LRU starts evicting nodes.
+ */
+const LRU_OVERSHOOT_FACTOR = 1.2;
 
 export class LRUItem {
   next: LRUItem | null = null;
@@ -132,7 +138,12 @@ export class LRU {
       return;
     }
 
-    while (this.numPoints > this.pointBudget * 2) {
+    if (isRenderContextLost()) {
+      return;
+    }
+
+    const threshold = this.pointBudget * LRU_OVERSHOOT_FACTOR;
+    while (this.numPoints > threshold) {
       const node = this.getLRUItem();
       if (node) {
         this.disposeSubtree(node);

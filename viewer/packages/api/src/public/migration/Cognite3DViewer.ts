@@ -30,7 +30,9 @@ import {
   SceneHandler,
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
-  CustomObjectIntersectInput
+  CustomObjectIntersectInput,
+  setRenderContextLost,
+  isRenderContextLost
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -123,6 +125,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _domElementResizeObserver: ResizeObserver;
   private readonly _image360ApiHelper: Image360ApiHelper<DataSourceT> | undefined;
   private readonly _unsubsribeOnLoading: () => void;
+  private _onContextLost!: (event: Event) => void;
+  private _onContextRestored!: () => void;
 
   /**
    * Returns the rendering canvas, the DOM element where the renderer draws its output.
@@ -281,6 +285,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // Prevents scrolling for mobile devices.
     this.canvas.style.touchAction = 'none';
 
+    this.registerContextLossHandlers();
+
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
@@ -404,6 +410,26 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
+   * Listens for render context loss/restore. On loss, prevents the default (so the
+   * browser attempts recovery) and sets `isRenderContextLost()`; on restore, clears
+   * the flag and requests a redraw.
+   */
+  private registerContextLossHandlers(): void {
+    this._onContextLost = event => {
+      event.preventDefault();
+      setRenderContextLost(true);
+    };
+
+    this._onContextRestored = () => {
+      setRenderContextLost(false);
+      this.revealManager.requestRedraw();
+    };
+
+    this.canvas.addEventListener('webglcontextlost', this._onContextLost);
+    this.canvas.addEventListener('webglcontextrestored', this._onContextRestored);
+  }
+
+  /**
    * Get resolution options that are set on the viewer. This includes
    * settings for max resolution and limiting resolution when moving the camera.
    * @returns Options Options that are applied.
@@ -493,6 +519,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
+
+    this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this._onContextRestored);
+    // Reset so a viewer disposed while the context is lost does not stall other viewers.
+    setRenderContextLost(false);
 
     this._events.disposed.fire();
     disposeOfAllEventListeners(this._events);
@@ -1853,6 +1884,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.sessionLogger.updateCanvasVisibility(isVisible);
 
     if (!isVisible) {
+      return;
+    }
+    if (isRenderContextLost()) {
       return;
     }
     const camera = this.cameraManager.getCamera();
