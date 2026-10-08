@@ -522,8 +522,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
     this.canvas.removeEventListener('webglcontextrestored', this._onContextRestored);
-    
-    // Clear the flag so a viewer disposed while the context is lost does not stall
+    // Reset so a viewer disposed while the context is lost does not stall other viewers.
     setRenderContextLost(false);
 
     this._events.disposed.fire();
