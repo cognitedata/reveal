@@ -31,6 +31,8 @@ type UploadAttribute = {
 
 const gpuBuffers = new WeakMap<object, GpuBufferRecord>();
 let uploadContext: WebGL2RenderingContext | null = null;
+let releasedCpuBytes = 0;
+let loggedCpuRelease = false;
 
 export function bindGpuUploadContext(gl: WebGLRenderingContext | WebGL2RenderingContext | null): void {
   uploadContext = gl !== null && 'getBufferSubData' in gl ? gl : null;
@@ -38,6 +40,12 @@ export function bindGpuUploadContext(gl: WebGLRenderingContext | WebGL2Rendering
 
 export function resetAttributeUploadState(): void {
   uploadContext = null;
+  releasedCpuBytes = 0;
+  loggedCpuRelease = false;
+}
+
+export function releasedPointCpuBytes(): number {
+  return releasedCpuBytes;
 }
 
 export function disposeAttributeArrayOnUpload(this: UploadAttribute): void {
@@ -64,7 +72,14 @@ export function disposeAttributeArrayOnUpload(this: UploadAttribute): void {
 
   const Ctor = source.constructor as TypedArrayCtor;
   gpuBuffers.set(this, { buffer, Ctor, bytesPerElement: source.BYTES_PER_ELEMENT });
+  releasedCpuBytes += source.byteLength;
   this.array = new Ctor(0);
+  if (!loggedCpuRelease) {
+    loggedCpuRelease = true;
+    console.warn('[Reveal gpu-capacity] released point CPU buffer after upload', {
+      releasedPointCpuBytes: releasedCpuBytes
+    });
+  }
 }
 
 export function readAttributeComponents(attribute: UploadAttribute, index: number): TypedArray | undefined {

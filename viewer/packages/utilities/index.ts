@@ -59,12 +59,14 @@ export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
 export {
   disposeAttributeArrayOnUpload,
   bindGpuUploadContext,
-  readAttributeComponents
+  readAttributeComponents,
+  releasedPointCpuBytes
 } from './src/disposeAttributeArrayOnUpload';
 export {
   classifyGpu,
   readGpuCapacityProbe,
   noteGpuCapacity,
+  describeGpuCapacity,
   isGpuConstrained,
   shouldReleasePointCpuBuffers,
   activePointBudgetCap,

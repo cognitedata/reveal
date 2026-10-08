@@ -34,8 +34,10 @@ import {
   setRenderContextLost,
   isRenderContextLost,
   noteGpuCapacity,
+  describeGpuCapacity,
   readGpuCapacityProbe,
   bindGpuUploadContext,
+  releasedPointCpuBytes,
   activePointBudgetCap,
   activeResolutionCap,
   tightenGpuCapacityAfterContextLoss,
@@ -407,6 +409,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this.applyGpuPointBudgetCap();
     this.registerContextLossHandlers();
+    this.logGpuCapacity('startup', {
+      edl: revealOptions.renderOptions?.pointCloudParameters?.edlOptions,
+      ssaoSampleSize: revealOptions.renderOptions?.ssaoRenderParameters?.sampleSize,
+      antiAliasing: revealOptions.renderOptions?.antiAliasing,
+      pointBlending: revealOptions.renderOptions?.pointCloudParameters?.pointBlending,
+      modelCount: this._models.length
+    });
 
     this.animate(0);
 
@@ -432,14 +441,23 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   private registerContextLossHandlers(): void {
     this._onContextLost = event => {
+      const before = describeGpuCapacity();
+      const statusMessage = 'statusMessage' in event ? String((event as WebGLContextEvent).statusMessage) : '';
       event.preventDefault();
       setRenderContextLost(true);
-      tightenGpuCapacityAfterContextLoss();
+      const tightened = tightenGpuCapacityAfterContextLoss();
       this.applyGpuPointBudgetCap();
       this.applyGpuResolutionCap();
+      this.logGpuCapacity('webglcontextlost', {
+        statusMessage,
+        before,
+        tightened,
+        modelCount: this._models.length
+      });
     };
 
     this._onContextRestored = () => {
+      this.logGpuCapacity('webglcontextrestored');
       setRenderContextLost(false);
       this.revealManager.releasePointCloudGpuResources();
     };
@@ -472,6 +490,51 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       return;
     }
     this.setResolutionOptions({ maxRenderResolution: cap });
+  }
+
+  private logGpuCapacity(phase: string, extra?: object): void {
+    try {
+      console.warn(`[Reveal gpu-capacity] ${phase}`, {
+        ...describeGpuCapacity(),
+        pointBudget: this.pointCloudBudget.numberOfPoints,
+        resolution: this.revealManager.getResolutionThreshold(),
+        releasedPointCpuBytes: releasedPointCpuBytes(),
+        ...this.gpuDiagnostics(),
+        ...extra
+      });
+    } catch (error) {
+      console.warn(`[Reveal gpu-capacity] ${phase}`, error);
+    }
+  }
+
+  private gpuDiagnostics(): {
+    devicePixelRatio: number;
+    userAgent: string;
+    canvas: { clientWidth: number; clientHeight: number };
+    drawingBuffer?: { width: number; height: number };
+    jsHeap?: { used: number; total: number; limit: number };
+  } {
+    let drawingBuffer: { width: number; height: number } | undefined;
+    try {
+      const gl = this._renderer.getContext();
+      drawingBuffer = { width: gl.drawingBufferWidth, height: gl.drawingBufferHeight };
+    } catch {
+      drawingBuffer = undefined;
+    }
+
+    const heap = (
+      performance as Performance & {
+        memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
+      }
+    ).memory;
+
+    return {
+      devicePixelRatio: window.devicePixelRatio,
+      userAgent: navigator.userAgent,
+      canvas: { clientWidth: this.canvas.clientWidth, clientHeight: this.canvas.clientHeight },
+      drawingBuffer,
+      jsHeap: heap ? { used: heap.usedJSHeapSize, total: heap.totalJSHeapSize, limit: heap.jsHeapSizeLimit } : undefined
+    };
   }
 
   /**

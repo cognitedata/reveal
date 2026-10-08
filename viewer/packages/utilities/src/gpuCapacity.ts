@@ -26,10 +26,12 @@ export type GpuCapacityProbe = {
 
 let capacityClass: GpuCapacityClass = 'standard';
 let tightenLevel = 0;
+let lastProbe: GpuCapacityProbe = { renderer: '' };
 
 export function resetGpuCapacityState(): void {
   capacityClass = 'standard';
   tightenLevel = 0;
+  lastProbe = { renderer: '' };
   try {
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.removeItem(GPU_CAPACITY_STORAGE_KEY);
@@ -73,9 +75,32 @@ export function readGpuCapacityProbe(
 }
 
 export function noteGpuCapacity(probe: GpuCapacityProbe): GpuCapacityClass {
+  lastProbe = probe;
   capacityClass = classifyGpu(probe);
   tightenLevel = Math.max(tightenLevel, readPersistedTightenLevel());
   return capacityClass;
+}
+
+export function describeGpuCapacity(): {
+  renderer: string;
+  deviceMemoryGb?: number;
+  capacityClass: GpuCapacityClass;
+  tightenLevel: number;
+  constrained: boolean;
+  releasePointCpuBuffers: boolean;
+  pointBudgetCap: number;
+  resolutionCap: number;
+} {
+  return {
+    renderer: lastProbe.renderer,
+    deviceMemoryGb: lastProbe.deviceMemoryGb,
+    capacityClass,
+    tightenLevel,
+    constrained: isGpuConstrained(),
+    releasePointCpuBuffers: shouldReleasePointCpuBuffers(),
+    pointBudgetCap: activePointBudgetCap(),
+    resolutionCap: activeResolutionCap()
+  };
 }
 
 export function isGpuConstrained(): boolean {
