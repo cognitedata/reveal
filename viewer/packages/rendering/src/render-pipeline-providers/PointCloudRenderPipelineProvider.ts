@@ -26,6 +26,7 @@ import type { PointCloudParameters } from '../rendering/types';
 import { PointShape } from '../pointcloud-rendering';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import { shouldApplyEdl } from './pointCloudParameterUtils';
+import { getRenderSize } from '@reveal/utilities';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _renderTargetData: {
@@ -155,7 +156,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
 
   private updateRenderTargetSizes(renderer: WebGLRenderer): void {
     const renderSize = new Vector2();
-    renderer.getDrawingBufferSize(renderSize);
+    getRenderSize(renderer, renderSize);
 
     const { x: width, y: height } = renderSize;
 

@@ -3,12 +3,12 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { Color, Object3D, Vector2 } from 'three';
+import { Color, Object3D, Vector2, WebGLRenderTarget } from 'three';
 import type { IMock } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
 import type { CadMaterialManager } from '../CadMaterialManager';
-import { IndexSet, SceneHandler } from '@reveal/utilities';
+import { IndexSet, SceneHandler, setRenderSizeOverride } from '@reveal/utilities';
 import { defaultRenderOptions } from '../rendering/types';
 import { createCadModel, createPointCloudModel } from '../../../../test-utilities';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
@@ -244,5 +244,62 @@ describe(DefaultRenderPipelineProvider.name, () => {
     }
 
     expect(numberOfRenderPasses).toBe(4); // Point cloud, Post, BlitToCanvas
+  });
+
+  describe('output render target', () => {
+    function createProvider(): DefaultRenderPipelineProvider {
+      const materialManagerMock = new Mock<CadMaterialManager>();
+      const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+        .setup(p => p.setModelsMaterialParameters({}))
+        .returns();
+      return new DefaultRenderPipelineProvider(
+        materialManagerMock.object(),
+        pcMaterialManagerMock.object(),
+        new SceneHandler(),
+        defaultRenderOptions
+      );
+    }
+
+    function runPipelineSetup(provider: DefaultRenderPipelineProvider, renderer: WebGLRenderer): void {
+      // Render targets are sized when the pipeline starts.
+      provider.pipeline(renderer).next();
+    }
+
+    test('auto-sizes the output target to the render size by default', () => {
+      const provider = createProvider();
+      const renderer = rendererMock.object();
+      const target = new WebGLRenderTarget(10, 10);
+      setRenderSizeOverride(renderer, new Vector2(64, 32));
+
+      provider.setOutputRenderTarget(target);
+      runPipelineSetup(provider, renderer);
+
+      expect(provider.autoSizeOutputRenderTarget).toBe(true);
+      expect([target.width, target.height]).toEqual([64, 32]);
+    });
+
+    test('setOutputRenderTarget(target, false) turns off auto-sizing', () => {
+      const provider = createProvider();
+      const renderer = rendererMock.object();
+      const target = new WebGLRenderTarget(10, 10);
+      setRenderSizeOverride(renderer, new Vector2(64, 32));
+
+      provider.setOutputRenderTarget(target, false);
+      runPipelineSetup(provider, renderer);
+
+      expect(provider.outputRenderTarget).toBe(target);
+      expect(provider.autoSizeOutputRenderTarget).toBe(false);
+      expect([target.width, target.height]).toEqual([10, 10]);
+    });
+
+    test('setOutputRenderTarget(target) without the flag keeps the current auto-size setting', () => {
+      const provider = createProvider();
+      provider.setOutputRenderTarget(new WebGLRenderTarget(1, 1), false);
+
+      provider.setOutputRenderTarget(null);
+
+      expect(provider.outputRenderTarget).toBeNull();
+      expect(provider.autoSizeOutputRenderTarget).toBe(false);
+    });
   });
 });

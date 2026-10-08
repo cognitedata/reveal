@@ -230,7 +230,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
       return 1.0;
     }
     const pointSize = renderSize.y * camera.projectionMatrix.elements[5] * (iconRadius / _ndcPosition.w);
-    const resolutionDownSampleFactor = renderSize.x / domElement.clientWidth;
+    const resolutionDownSampleFactor = domElement.clientWidth > 0 ? renderSize.x / domElement.clientWidth : 1;
     const clampedSize = MathUtils.clamp(
       pointSize,
       minHeight * resolutionDownSampleFactor,

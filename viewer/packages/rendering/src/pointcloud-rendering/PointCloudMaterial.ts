@@ -30,6 +30,7 @@ import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import type { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { pointCloudShaders } from '../rendering/shaders';
+import { getRenderSize } from '@reveal/utilities';
 
 export interface IPointCloudMaterialParameters {
   size: number;
@@ -509,7 +510,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   onBeforeRender(renderer: WebGLRenderer): void {
     this._objectAppearanceTexture.onBeforeRender();
 
-    const renderSize = renderer.getDrawingBufferSize(new Vector2());
+    const renderSize = getRenderSize(renderer, new Vector2());
     this.screenWidth = renderSize.x;
     this.screenHeight = renderSize.y;
   }

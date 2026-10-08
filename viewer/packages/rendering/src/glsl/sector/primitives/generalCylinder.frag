@@ -115,5 +115,5 @@ void main()
     vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2])) * normalFactor;
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, p, fragDepth, matCapTexture, GeometryType.Primitive);
 }

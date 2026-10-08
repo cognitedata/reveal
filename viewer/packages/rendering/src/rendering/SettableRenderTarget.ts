@@ -9,4 +9,6 @@ import type { WebGLRenderTarget } from 'three';
  */
 export interface SettableRenderTarget {
   setOutputRenderTarget(target: WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void;
+  readonly outputRenderTarget: WebGLRenderTarget | null;
+  readonly autoSizeOutputRenderTarget: boolean;
 }

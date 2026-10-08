@@ -58,6 +58,20 @@ describe('CadMaterialManager', () => {
     expect(manager.getModelMaterials(modelIdentifier1).box.uniforms['renderMode']).not.toEqual(initialRenderMode);
   });
 
+  test('rotation invariant lighting is applied to existing and new materials', () => {
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    const existing = manager.getModelMaterials(modelIdentifier1);
+    expect(existing.box.uniforms.rotationInvariantLighting.value).toBe(false);
+
+    manager.setRotationInvariantLighting(true);
+    manager.addModelMaterials(modelIdentifier2, createCadMaterial(16));
+
+    expect(manager.rotationInvariantLighting).toBe(true);
+    expect(existing.box.uniforms.rotationInvariantLighting.value).toBe(true);
+    expect(manager.getModelMaterials(modelIdentifier2).box.uniforms.rotationInvariantLighting.value).toBe(true);
+    expect(manager.needsRedraw).toBe(true);
+  });
+
   test('setModelDefaultNodeAppearance, node collection are updated', () => {
     manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
 

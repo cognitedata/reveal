@@ -18,10 +18,11 @@
 vec4 fxaa(sampler2D tex) {
   vec4 color;
 
-  vec2 fragCoord = gl_FragCoord.xy;
-
   ivec2 textureSize = textureSize(tDiffuse, 0);
   vec2 resolution = vec2(float(textureSize.x), float(textureSize.y));
+  // Pixel coordinate relative to the output viewport (gl_FragCoord is relative to the framebuffer,
+  // which differs when rendering into a sub-viewport, e.g. the right eye in WebXR).
+  vec2 fragCoord = vUv * resolution;
   vec2 inverseResolution = vec2(1.0 / resolution.x, 1.0 / resolution.y);
 
   vec2 v_rgbNW = (fragCoord + vec2(-1.0, -1.0)) * inverseResolution;

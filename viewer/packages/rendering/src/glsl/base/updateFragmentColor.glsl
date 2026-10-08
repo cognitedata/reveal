@@ -8,14 +8,35 @@
 
 out vec4 outputColor;
 
+uniform mat4 viewMatrix;
+// When true, lighting and matcap are oriented by the direction from the surface to the eye instead of the camera's
+// forward axis, so they don't change when the camera rotates in place. Used in WebXR, where the camera is the head.
+uniform bool rotationInvariantLighting;
+
 vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
 
+// The normal expressed in the frame lighting is computed in: view space, or with rotationInvariantLighting a frame
+// whose z axis points from the surface to the eye and whose y axis is as close to world up as possible.
+vec3 lightingNormal(vec3 normal, vec3 viewPosition) {
+    if (!rotationInvariantLighting) {
+        return normal;
+    }
+    vec3 z = normalize(-viewPosition);
+    vec3 up = (viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz;
+    vec3 x = cross(up, z);
+    // Looking straight up or down: any perpendicular axis will do.
+    x = dot(x, x) > 1e-6 ? normalize(x) : normalize(cross(vec3(1.0, 0.0, 0.0), z));
+    vec3 y = cross(z, x);
+    return vec3(dot(normal, x), dot(normal, y), dot(normal, z));
+}
+
 void updateFragmentColor(
     int renderMode, vec4 color, float treeIndex,
-    vec3 normal, float depth, sampler2D matCapTexture,
+    vec3 viewNormal, vec3 viewPosition, float depth, sampler2D matCapTexture,
     int geometryType) {
+    vec3 normal = lightingNormal(viewNormal, viewPosition);
     if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
         #if defined(IS_TEXTURED)
             vec3 colorRGB = color.rgb;

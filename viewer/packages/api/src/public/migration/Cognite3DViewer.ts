@@ -1,8 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import type { Object3D, PerspectiveCamera, Plane } from 'three';
-import { Box3, Clock, Color, Matrix4, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
+import type { Object3D, Plane, Ray } from 'three';
+import { Box3, Clock, Color, Matrix4, PerspectiveCamera, REVISION, Vector2, Vector3, WebGLRenderer } from 'three';
 import viewerPackageJson from '../../../../../package.json' with { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
@@ -30,7 +30,8 @@ import {
   SceneHandler,
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
-  CustomObjectIntersectInput
+  CustomObjectIntersectInput,
+  setRenderSizeOverride
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -105,6 +106,7 @@ import { isClassicIdentifier } from '@reveal/data-providers';
 import { assert } from '@reveal/utilities/assert';
 import type { Image360Action } from '@reveal/360-images/src/Image360Action';
 import { REVEAL_VERSION } from '../../version';
+import { WebXRFrameSource } from './WebXRFrameSource';
 
 type Cognite3DViewerEvents =
   'click' | 'hover' | 'cameraChange' | 'cameraStop' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
@@ -171,6 +173,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _pointCloudPickingHandler: PointCloudPickingHandler;
 
   private readonly _boundAnimate = this.animate.bind(this);
+  private readonly _webXR: WebXRFrameSource;
+  private readonly _modelTransformations: Matrix4[] = [];
 
   private readonly _events = {
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -386,6 +390,26 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.revealManager.on('loadingStateChanged', handleLoading);
     this._unsubsribeOnLoading = () => this.revealManager.off('loadingStateChanged', handleLoading);
 
+    this._webXR = new WebXRFrameSource(
+      this._renderer,
+      {
+        onSessionStart: () => {
+          cancelAnimationFrame(this.latestRequestId);
+          // With a head-mounted camera, view-space lighting would change whenever the user turns their head.
+          this.revealManager.materialManager.setRotationInvariantLighting(true);
+        },
+        onSessionEnd: () => {
+          if (!this.isDisposed) {
+            this.revealManager.materialManager.setRotationInvariantLighting(false);
+            this.latestRequestId = requestAnimationFrame(this._boundAnimate);
+            this.requestRedraw();
+          }
+        },
+        onFrame: (time, xrFrame) => this.animate(time, xrFrame)
+      },
+      this._ownsRenderer
+    );
+
     this.animate(0);
 
     MetricsLogger.trackEvent('construct3dViewer', {
@@ -470,6 +494,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this.latestRequestId !== undefined) {
       cancelAnimationFrame(this.latestRequestId);
     }
+    this._webXR.dispose();
 
     // Copy list, as this._models will be mutated in below iteration
     const modelListCopy = [...this._models];
@@ -1509,6 +1534,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     height: number = this.canvas.height,
     includeUI = true
   ): Promise<string> {
+    if (this._webXR.isPresenting) {
+      throw new Error('getScreenshot() is not supported while presenting in WebXR');
+    }
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
@@ -1840,57 +1868,164 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return new ViewStateHelper(this, this._cdfSdkClient);
   }
 
-  /** @private */
-  private animate(time: number) {
+  /**
+   * Runs one frame: updates animations, cameras and geometry loading, and renders if needed.
+   * Called from the window's requestAnimationFrame, or from the WebXR session's frame loop with `xrFrame` while
+   * presenting.
+   * @private
+   */
+  private animate(time: number, xrFrame?: XRFrame): void {
     if (this.isDisposed) {
       return;
     }
-    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
-
-    const { display, visibility } = window.getComputedStyle(this.canvas);
-    const isVisible = visibility === 'visible' && display !== 'none';
-
-    this.sessionLogger.updateCanvasVisibility(isVisible);
-
-    if (!isVisible) {
-      return;
+    if (xrFrame === undefined) {
+      if (this._webXR.isPresenting) {
+        // A window frame scheduled before the XR session started. Frames now come from the session.
+        return;
+      }
+      this.latestRequestId = requestAnimationFrame(this._boundAnimate);
+      if (!this.isCanvasVisible()) {
+        return;
+      }
     }
-    const camera = this.cameraManager.getCamera();
+
     TWEEN.update(time);
     this.recalculateBoundingBox();
-
     const innerCameraManager = this._activeCameraManager.innerCameraManager;
     if (innerCameraManager instanceof FlexibleCameraManager) {
       innerCameraManager.updateModelBoundingBox(this.getSceneBoundingBox());
     }
     this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingBox);
+
+    const frame = xrFrame === undefined ? this.prepareWindowFrame() : this.prepareXRFrame(xrFrame);
+    if (frame !== undefined) {
+      this.renderFrame(frame);
+    }
+  }
+
+  /** @private */
+  private isCanvasVisible(): boolean {
+    const { display, visibility } = window.getComputedStyle(this.canvas);
+    const isVisible = visibility === 'visible' && display !== 'none';
+    this.sessionLogger.updateCanvasVisibility(isVisible);
+    return isVisible;
+  }
+
+  /**
+   * A frame of the viewer's camera, rendered to the canvas (or custom render target) when something changed.
+   * @private
+   */
+  private prepareWindowFrame(): ViewerFrame | undefined {
+    const camera = this.cameraManager.getCamera();
     this.revealManager.update(camera);
 
     const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
-
     const needsRedraw =
       (this.revealManager.needsRedraw || this._clippingNeedsUpdate || image360NeedsRedraw) && !this._forceStopRendering;
-
     this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
-
     if (!needsRedraw) {
-      return;
+      return undefined;
     }
+    return { camera, render: () => this.revealManager.render(camera) };
+  }
+
+  /**
+   * A WebXR frame, rendered once per view (eye) into the session's framebuffer.
+   * @private
+   */
+  private prepareXRFrame(xrFrame: XRFrame): ViewerFrame | undefined {
+    const modelTransformations = this._modelTransformations;
+    modelTransformations.length = this._models.length;
+    this._models.forEach((model, index) =>
+      model.getModelTransformation((modelTransformations[index] ??= new Matrix4()))
+    );
+
+    const xr = this._webXR.beginFrame(
+      xrFrame,
+      this._boundingBoxes.nearFarPlaneBoundingBox,
+      modelTransformations,
+      // The resolution limit applies to each view (eye).
+      this.revealManager.getResolutionThreshold()
+    );
+    if (xr === undefined) {
+      return undefined;
+    }
+    this.revealManager.update(xr.loadingCamera, xr.loadingCameraInMotion);
+    // The XR framebuffer isn't preserved between frames, so every frame is rendered.
+    return {
+      camera: xr.camera,
+      renderSize: xr.viewSize,
+      render: () => this.revealManager.renderViews(xr.output, xr.views)
+    };
+  }
+
+  /**
+   * Renders a frame, with the before/after events and bookkeeping shared by all kinds of frames.
+   * @private
+   */
+  private renderFrame(frame: ViewerFrame): void {
+    const { camera, renderSize } = frame;
     const frameNumber = this.renderer.info.render.frame;
     const start = Date.now();
+    // So that everything sizing itself during the frame (e.g. in beforeSceneRendered) sees the rendered size.
+    if (renderSize !== undefined) {
+      setRenderSizeOverride(this._renderer, renderSize);
+    }
+    try {
+      this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
+      this._sceneHandler.customObjects.forEach(customObject => {
+        customObject.beforeRender(camera);
+      });
+      frame.render();
+      this._pointCloudPickingHandler.invalidatePickCache();
+      this.revealManager.resetRedraw();
+      this._image360ApiHelper?.resetRedraw();
+      this._clippingNeedsUpdate = false;
+      const renderTime = Date.now() - start;
 
-    this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
-    this._sceneHandler.customObjects.forEach(customObject => {
-      customObject.beforeRender(camera);
+      this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
+    } finally {
+      if (renderSize !== undefined) {
+        setRenderSizeOverride(this._renderer, undefined);
+      }
+    }
+  }
+
+  /**
+   * Finds the closest intersection between a ray and the CAD and point cloud models. Unlike
+   * {@link Cognite3DViewer.getIntersectionFromPixel}, this doesn't depend on the current view, which makes it
+   * suitable for pointing with hands or controllers in WebXR.
+   * @param ray Ray in world coordinates. The direction must be normalized.
+   * @param maxDistance Ignore intersections farther away than this. Defaults to, and is limited to, the extent of the
+   * scene.
+   * @returns A promise resolving to the closest intersection along the ray, or null if nothing is hit.
+   */
+  async getIntersectionFromRay(ray: Ray, maxDistance?: number): Promise<null | Intersection<DataSourceT>> {
+    // Nothing pickable is farther away than the scene extent, so a larger far plane would only cost depth precision.
+    const sceneExtent = computeFarthestDistance(ray.origin, this._boundingBoxes.nearFarPlaneBoundingBox);
+    const far = Math.min(maxDistance ?? Infinity, sceneExtent > 0 ? sceneExtent : Infinity);
+    if (!(far > 0 && Number.isFinite(far))) {
+      return null;
+    }
+    // Pick the center pixel of a narrow camera looking along the ray.
+    const near = Math.min(Math.max(1e-3, far * 1e-6), far / 2);
+    const camera = new PerspectiveCamera(1, 1, near, far);
+    camera.position.copy(ray.origin);
+    // Not lookAt(), which is imprecise when the ray is parallel to the up vector.
+    camera.quaternion.setFromUnitVectors(new Vector3(0, 0, -1), ray.direction.clone().normalize());
+    camera.updateMatrixWorld();
+    const virtualPickArea = { clientWidth: 512, clientHeight: 512 } as HTMLElement;
+
+    return this.intersectModelsWithInput({
+      normalizedCoords: new Vector2(0, 0),
+      camera,
+      renderer: this.renderer,
+      clippingPlanes: this.getGlobalClippingPlanes(),
+      domElement: virtualPickArea,
+      cameraInMotion: false,
+      // The point cloud picker's full-frame cache is only reused for an unchanged camera, which a ray rarely gives.
+      forceWindowedPick: true
     });
-    this.revealManager.render(camera);
-    this._pointCloudPickingHandler.invalidatePickCache();
-    this.revealManager.resetRedraw();
-    this._image360ApiHelper?.resetRedraw();
-    this._clippingNeedsUpdate = false;
-    const renderTime = Date.now() - start;
-
-    this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
   }
 
   /** @private */
@@ -1909,7 +2044,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       cameraInMotion: this.revealManager.cameraInMotion,
       forceWindowedPick: options?.forceWindowedPick ?? false
     };
+    return this.intersectModelsWithInput(input, options?.asyncCADIntersection ?? true);
+  }
 
+  /** @private */
+  private async intersectModelsWithInput(
+    input: IntersectInput,
+    asyncCADIntersection: boolean = true
+  ): Promise<null | Intersection<DataSourceT>> {
     const intersections: Intersection<DataSourceT>[] = [];
     {
       const pointCloudModels = this.getModels('pointcloud');
@@ -1948,12 +2090,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
       const cadModels = this.getModels('cad');
       const cadNodes = cadModels.map(x => x.cadNode);
-      const cadResults = await this._pickingHandler.intersectCadNodes(
-        cadNodes,
-        input,
-        options?.asyncCADIntersection ?? true
-      );
-      this._forceStopRendering = false;
+      const cadResults = await this._pickingHandler
+        .intersectCadNodes(cadNodes, input, asyncCADIntersection)
+        .finally(() => {
+          this._forceStopRendering = false;
+        });
 
       if (cadResults.length > 0) {
         const result = cadResults[0]; // Nearest intersection
@@ -2215,3 +2356,27 @@ function getMaxPointSize(renderer: WebGLRenderer): number {
   const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
   return maxPointSize;
 }
+
+function computeFarthestDistance(point: Vector3, box: Box3): number {
+  if (box.isEmpty()) {
+    return 0;
+  }
+  const corner = new Vector3();
+  let maxDistanceSquared = 0;
+  for (let i = 0; i < 8; i++) {
+    corner.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z);
+    maxDistanceSquared = Math.max(maxDistanceSquared, corner.distanceToSquared(point));
+  }
+  return Math.sqrt(maxDistanceSquared);
+}
+
+/**
+ * What to render in a frame of {@link Cognite3DViewer}.
+ */
+type ViewerFrame = {
+  /** Camera passed to events and custom objects. In WebXR, the head camera. */
+  camera: PerspectiveCamera;
+  /** Size reported by getRenderSize() during the frame, when it differs from the renderer's size (WebXR views). */
+  renderSize?: Vector2;
+  render: () => void;
+};

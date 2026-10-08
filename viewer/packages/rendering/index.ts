@@ -27,7 +27,7 @@ export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/D
 export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';
 
 export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
-export type { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
+export type { RenderPipelineExecutor, RenderView } from './src/RenderPipelineExecutor';
 export type { RenderPipelineProvider } from './src/RenderPipelineProvider';
 export { ResizeHandler } from './src/ResizeHandler';
 export type { SettableRenderTarget } from './src/rendering/SettableRenderTarget';

@@ -24,6 +24,7 @@ import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
 import { Plane } from 'three';
 import { Quaternion } from 'three';
+import { Ray } from 'three';
 import { Raycaster } from 'three';
 import { Texture } from 'three';
 import { Vector2 } from 'three';
@@ -493,6 +494,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getClippingPlanes(): Plane[];
     getGlobalClippingPlanes(): Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>>;
+    getIntersectionFromRay(ray: Ray, maxDistance?: number): Promise<null | Intersection<DataSourceT>>;
     getNormalizedPixelCoordinates(pixelCoords: Vector2): Vector2;
     getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): Vector2;
     getResolutionOptions(): ResolutionOptions;
