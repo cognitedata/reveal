@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { Plane, RawShaderMaterial } from 'three';
+import type { Plane, RawShaderMaterial, Vector3 } from 'three';
 import { SRGBColorSpace, Texture, Vector2, Vector4 } from 'three';
 
 import type { Materials } from './rendering/materials';
 import { createMaterials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
+import type { RealisticShadows, RealisticTextures } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import type { NodeAppearance } from '@reveal/cad-styling';
@@ -56,6 +57,13 @@ export class CadMaterialManager {
 
   private _renderMode: RenderMode = RenderMode.Color;
   private _rotationInvariantLighting = false;
+  private _realisticShading = false;
+  private _realisticTextures: RealisticTextures | undefined;
+  private _realisticShadows: RealisticShadows | undefined;
+  private _realisticSky: Texture | undefined;
+  private _realisticSplashZone = false;
+  private _realisticWeather = { overcast: 0, time: 0 };
+  private _realisticSun: { direction: Vector3; color: Vector3 } | undefined;
   private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
@@ -96,6 +104,18 @@ export class CadMaterialManager {
     forEachMaterial(materials, material => {
       material.uniforms.renderMode.value = this._renderMode;
       material.uniforms.rotationInvariantLighting.value = this._rotationInvariantLighting;
+      material.uniforms.realisticShading.value = this._realisticShading;
+      applyRealisticTextures(material, this._realisticTextures);
+      applyRealisticShadows(material, this._realisticShadows);
+      material.uniforms.realisticSkyEnabled.value = this._realisticSky !== undefined;
+      material.uniforms.realisticSkyTexture.value = this._realisticSky ?? null;
+      material.uniforms.realisticSplashZone.value = this._realisticSplashZone;
+      material.uniforms.realisticOvercast.value = this._realisticWeather.overcast;
+      material.uniforms.realisticTime.value = this._realisticWeather.time;
+      if (this._realisticSun) {
+        material.uniforms.realisticSunDirection.value.copy(this._realisticSun.direction);
+        material.uniforms.realisticSunColor.value.copy(this._realisticSun.color);
+      }
       material.colorWrite = colorWrite;
     });
 
@@ -233,6 +253,97 @@ export class CadMaterialManager {
     return this._rotationInvariantLighting;
   }
 
+  /**
+   * PROTOTYPE: physically based lighting with procedural industrial surface detail instead of the CAD matcap look.
+   * @param enabled Whether to use realistic shading.
+   */
+  setRealisticShading(enabled: boolean): void {
+    this._realisticShading = enabled;
+    this.applyToAllMaterials(material => {
+      material.uniforms.realisticShading.value = enabled;
+    });
+    this._needsRedraw = true;
+  }
+
+  get realisticShading(): boolean {
+    return this._realisticShading;
+  }
+
+  /**
+   * PROTOTYPE: sky texture (equirectangular upper hemisphere) for realistic reflections and ambient light.
+   * @param sky The sky texture, or undefined for the analytic sky.
+   */
+  setRealisticSky(sky: Texture | undefined): void {
+    this._realisticSky = sky;
+    this.applyToAllMaterials(material => {
+      material.uniforms.realisticSkyEnabled.value = sky !== undefined;
+      material.uniforms.realisticSkyTexture.value = sky ?? null;
+    });
+    this._needsRedraw = true;
+  }
+
+  /**
+   * PROTOTYPE: wet steel and marine growth just above sea level (CDF z = 0), for offshore models shown with an ocean.
+   */
+  setRealisticSplashZone(enabled: boolean): void {
+    this._realisticSplashZone = enabled;
+    this.applyToAllMaterials(material => {
+      material.uniforms.realisticSplashZone.value = enabled;
+    });
+    this._needsRedraw = true;
+  }
+
+  /**
+   * PROTOTYPE: weather for realistic shading.
+   * @param overcast 0 = sunny with a few clouds, 1 = heavy rain: dim, grey light and wet surfaces.
+   * @param time Seconds, for drifting clouds and cloud shadows.
+   */
+  setRealisticWeather(overcast: number, time: number): void {
+    if (overcast === this._realisticWeather.overcast && time === this._realisticWeather.time) return;
+    this._realisticWeather = { overcast, time };
+    this.applyToAllMaterials(material => {
+      material.uniforms.realisticOvercast.value = overcast;
+      material.uniforms.realisticTime.value = time;
+    });
+    this._needsRedraw = true;
+  }
+
+  /**
+   * PROTOTYPE: the sun for realistic shading.
+   * @param direction World space direction toward the sun.
+   * @param color Sun color and intensity, before clouds dim it.
+   */
+  setRealisticSun(direction: Vector3, color: Vector3): void {
+    this._realisticSun = { direction: direction.clone(), color: color.clone() };
+    this.applyToAllMaterials(material => {
+      material.uniforms.realisticSunDirection.value.copy(direction);
+      material.uniforms.realisticSunColor.value.copy(color);
+    });
+    this._needsRedraw = true;
+  }
+
+  /**
+   * PROTOTYPE: sun shadow map for realistic shading, rendered by the caller. The map must not be bound while it's being
+   * rendered (a WebGL feedback loop), and once one has been set, the materials always need some depth texture: render
+   * the map with a placeholder map set rather than undefined.
+   * @param shadows The shadow map (a depth texture with compareFunction set), or undefined to turn shadows off.
+   */
+  setRealisticShadows(shadows: RealisticShadows | undefined): void {
+    this._realisticShadows = shadows;
+    this.applyToAllMaterials(material => applyRealisticShadows(material, shadows));
+    this._needsRedraw = true;
+  }
+
+  /**
+   * PROTOTYPE: detail textures for realistic shading; without them, procedural detail is used.
+   * @param textures Paint, rain streak, deck plate and metal detail textures, or undefined for procedural detail.
+   */
+  setRealisticTextures(textures: RealisticTextures | undefined): void {
+    this._realisticTextures = textures;
+    this.applyToAllMaterials(material => applyRealisticTextures(material, textures));
+    this._needsRedraw = true;
+  }
+
   resetRedraw(): void {
     this._needsRedraw = false;
   }
@@ -330,7 +441,9 @@ export class CadMaterialManager {
       materialData.nodeTransformTextureBuilder.transformLookupTexture,
       materialData.matCapTexture,
       this._renderMode,
-      this._rotationInvariantLighting
+      this._rotationInvariantLighting,
+      this._realisticShading,
+      this._realisticTextures
     );
   }
 }
@@ -369,4 +482,28 @@ export function createCadMaterial(maxTreeIndex: number): CadMaterial {
     matCapTexture,
     clippingPlanesProvider
   };
+}
+
+function applyRealisticTextures(material: RawShaderMaterial, textures: RealisticTextures | undefined): void {
+  material.uniforms.realisticTexturesEnabled.value = textures !== undefined;
+  material.uniforms.realisticPaintTexture.value = textures?.paint ?? null;
+  material.uniforms.realisticStreaksTexture.value = textures?.streaks ?? null;
+  material.uniforms.realisticDeckTexture.value = textures?.deck ?? null;
+  material.uniforms.realisticMetalTexture.value = textures?.metal ?? null;
+}
+
+function applyRealisticShadows(material: RawShaderMaterial, shadows: RealisticShadows | undefined): void {
+  material.uniforms.realisticShadowsEnabled.value = shadows !== undefined;
+  if (!shadows) {
+    // Keep the last map bound: once declared, the shadow sampler must always have a valid depth texture.
+    return;
+  }
+  if (material.defines.REALISTIC_SHADOWS === undefined) {
+    material.defines.REALISTIC_SHADOWS = true;
+    material.needsUpdate = true;
+  }
+  material.uniforms.realisticShadowMap.value = shadows.texture;
+  material.uniforms.realisticShadowMatrix.value.copy(shadows.matrix);
+  material.uniforms.realisticShadowTexelSize.value = shadows.texelSize;
+  material.uniforms.realisticShadowWorldTexel.value = shadows.worldTexel;
 }

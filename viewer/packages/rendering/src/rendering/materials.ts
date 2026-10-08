@@ -259,6 +259,20 @@ export function createMaterials(
   };
 }
 
+/** PROTOTYPE: detail textures for realistic shading (0.5 = no change). */
+export type RealisticTextures = { paint: Texture; streaks: Texture; deck: Texture; metal: Texture };
+
+/** PROTOTYPE: sun shadow map for realistic shading. */
+export type RealisticShadows = {
+  texture: Texture;
+  /** World to shadow camera clip space. */
+  matrix: Matrix4;
+  /** One texel in shadow map uv. */
+  texelSize: number;
+  /** World units per texel. */
+  worldTexel: number;
+};
+
 export function initializeDefinesAndUniforms(
   material: RawShaderMaterial,
   overrideColorPerTreeIndex: DataTexture,
@@ -266,7 +280,9 @@ export function initializeDefinesAndUniforms(
   transformOverrideTexture: DataTexture,
   matCapTexture: Texture,
   renderMode: RenderMode,
-  rotationInvariantLighting = false
+  rotationInvariantLighting = false,
+  realisticShading = false,
+  realisticTextures: RealisticTextures | undefined = undefined
 ): void {
   const treeIndexTextureSize = new Vector2(
     overrideColorPerTreeIndex.image.width,
@@ -306,7 +322,27 @@ export function initializeDefinesAndUniforms(
       },
       rotationInvariantLighting: {
         value: rotationInvariantLighting
-      }
+      },
+      realisticShading: {
+        value: realisticShading
+      },
+      realisticTexturesEnabled: { value: realisticTextures !== undefined },
+      realisticPaintTexture: { value: realisticTextures?.paint ?? null },
+      realisticStreaksTexture: { value: realisticTextures?.streaks ?? null },
+      realisticDeckTexture: { value: realisticTextures?.deck ?? null },
+      realisticMetalTexture: { value: realisticTextures?.metal ?? null },
+      realisticSkyEnabled: { value: false },
+      realisticSkyTexture: { value: null },
+      realisticSplashZone: { value: false },
+      realisticOvercast: { value: 0 },
+      realisticSunDirection: { value: new Vector3(0.55, 0.6, 0.58).normalize() },
+      realisticSunColor: { value: new Vector3(1.0, 0.93, 0.82).multiplyScalar(6.5) },
+      realisticTime: { value: 0 },
+      realisticShadowsEnabled: { value: false },
+      realisticShadowMap: { value: null },
+      realisticShadowMatrix: { value: new Matrix4() },
+      realisticShadowTexelSize: { value: 1 },
+      realisticShadowWorldTexel: { value: 0 }
     }
   });
 
