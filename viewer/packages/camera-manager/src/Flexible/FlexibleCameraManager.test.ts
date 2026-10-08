@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { FlexibleCameraManager } from './FlexibleCameraManager';
-import { Vector3, Quaternion, PerspectiveCamera } from 'three';
+import { Box3, Vector3, Quaternion, PerspectiveCamera } from 'three';
 import { vi } from 'vitest';
 import type { CameraManagerCallbackData } from '../types';
 
@@ -98,6 +98,37 @@ describe(FlexibleCameraManager.name, () => {
 
       expect(position.equals(INITIAL_POSITION)).toBeTruthy();
       expect(target.equals(INITIAL_TARGET)).toBeTruthy();
+    });
+  });
+
+  describe('getPickedPointByPixelCoordinates', () => {
+    it('forwards forceWindowedPick=true to the raycast callback on wheel-driven zoom-to-cursor', async () => {
+      vi.useFakeTimers();
+      try {
+        const domElement = document.createElement('div');
+        const raycastSpy = vi.fn<() => Promise<CameraManagerCallbackData>>(async () => ({
+          intersection: null,
+          modelsBoundingBox: new Box3(),
+          pickedBoundingBox: undefined
+        }));
+        const manager = new FlexibleCameraManager(domElement, raycastSpy, new PerspectiveCamera(), undefined, true);
+
+        // Advance past the wheel-pick's own minimum/maximum-time-between-raycasts thresholds,
+        // which are measured from _prevTime=0.
+        vi.advanceTimersByTime(2000);
+
+        const wheelEvent = new WheelEvent('wheel', { deltaY: -100, cancelable: true });
+        Object.assign(wheelEvent, { clientX: 50, clientY: 50 });
+        domElement.dispatchEvent(wheelEvent);
+
+        await vi.waitFor(() => expect(raycastSpy).toHaveBeenCalled());
+
+        expect(raycastSpy).toHaveBeenCalledWith(50, 50, false, true);
+
+        manager.dispose();
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

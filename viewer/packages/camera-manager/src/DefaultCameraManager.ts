@@ -10,12 +10,12 @@ import { ComboControls } from './ComboControls';
 import type { ComboControlsOptions } from './ComboControlsOptions';
 
 import type {
-  CameraManagerCallbackData,
   CameraState,
   CameraChangeDelegate,
   CameraManagerEventType,
   CameraStopDelegate,
-  CameraEventDelegate
+  CameraEventDelegate,
+  RaycastCallback
 } from './types';
 
 import type { CameraManager } from './CameraManager';
@@ -33,7 +33,6 @@ import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEven
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import type { CameraControlsOptions } from './CameraControlsOptions';
 
-type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
  * keyboard and mouse navigation possibility. Supports automatic update of camera near and far
@@ -513,9 +512,9 @@ export class DefaultCameraManager implements CameraManager {
    * Calculates new camera target based on cursor position.
    * @param event PointerEvent that contains pointer location data.
    */
-  private async calculateNewTarget(event: PointerEventData): Promise<Vector3> {
+  private async calculateNewTarget(event: PointerEventData, forceWindowedPick?: boolean): Promise<Vector3> {
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
-    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, false);
+    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, false, forceWindowedPick);
 
     const newTarget =
       raycastResult.intersection?.point ??
@@ -612,7 +611,8 @@ export class DefaultCameraManager implements CameraManager {
           button: event.button
         };
 
-        const newTarget = await this.calculateNewTarget(pointerEventData);
+        // forceWindowedPick=true: this fires on every qualifying wheel tick of a continuous zoom gesture.
+        const newTarget = await this.calculateNewTarget(pointerEventData, true);
         this._controls.setScrollTarget(newTarget);
       }
     };

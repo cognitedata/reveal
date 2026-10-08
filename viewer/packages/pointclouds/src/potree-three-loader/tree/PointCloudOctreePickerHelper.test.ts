@@ -1,10 +1,11 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import type { WebGLRenderTarget, WebGLRenderer } from 'three';
-import { PerspectiveCamera, Vector3 } from 'three';
-import type { RenderedNode } from './PointCloudOctreePickerHelper';
+import type { WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, Vector3, WebGLRenderTarget } from 'three';
+import type { IPickState, RenderedNode } from './PointCloudOctreePickerHelper';
 import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
+import type { PointCloudMaterial } from '@reveal/rendering';
 
 import { Mock, It, Times } from 'moq.ts';
 
@@ -24,7 +25,9 @@ describe('PointCloudOctreePickerHelper', () => {
       return new Vector3();
     });
 
-    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, [dummyNode], dummyCamera)).toStrictEqual({
+    const nodes: RenderedNode[] = new Array(2).fill(dummyNode);
+
+    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, nodes, dummyCamera)).toStrictEqual({
       pIndex: 15,
       pcIndex: 1
     });
@@ -59,7 +62,9 @@ describe('PointCloudOctreePickerHelper', () => {
       return result;
     });
 
-    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, [dummyNode], dummyCamera)).toStrictEqual({
+    const nodes: RenderedNode[] = new Array(22).fill(dummyNode);
+
+    expect(PointCloudOctreePickerHelper.findHit(dummyPixels, pickWindowSize, nodes, dummyCamera)).toStrictEqual({
       pIndex: 3,
       pcIndex: 21
     });
@@ -87,7 +92,7 @@ describe('PointCloudOctreePickerHelper', () => {
       .returns(Promise.resolve(new Uint8Array(expectedPixelCount)));
 
     const helper = new PointCloudOctreePickerHelper(rendererMock.object());
-    const result = await helper.readPixelsAsync(pickX, pickY, pickWndSize, renderTargetMock.object());
+    const result = await helper.readPixelsAsync(pickX, pickY, pickWndSize, pickWndSize, renderTargetMock.object());
 
     expect(result).toBeInstanceOf(Uint8Array);
     expect(result.length).toBe(expectedPixelCount);
@@ -104,4 +109,134 @@ describe('PointCloudOctreePickerHelper', () => {
       Times.Once()
     );
   });
+
+  test('updatePickRenderTarget replaces the render target only when its size changes', () => {
+    const pickState: IPickState = {
+      renderTarget: new WebGLRenderTarget(4, 4),
+      material: new Mock<PointCloudMaterial>().object(),
+      scene: new Scene()
+    };
+    const original = pickState.renderTarget;
+    const disposeSpy = vi.spyOn(original, 'dispose');
+
+    PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, 4, 4);
+
+    expect(pickState.renderTarget).toBe(original);
+    expect(disposeSpy).not.toHaveBeenCalled();
+
+    PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, 8, 16);
+
+    expect(pickState.renderTarget).not.toBe(original);
+    expect(disposeSpy).toHaveBeenCalledOnce();
+    expect(pickState.renderTarget.width).toBe(8);
+    expect(pickState.renderTarget.height).toBe(16);
+  });
+
+  test('computeBitSplit() returns the legacy 8 bits for small node sets', () => {
+    expect(PointCloudOctreePickerHelper.computeBitSplit(10, 1000)).toBe(8);
+    expect(PointCloudOctreePickerHelper.computeBitSplit(254, 16_000_000)).toBe(8);
+  });
+
+  test('computeBitSplit() grows the node bits when the node set exceeds the legacy capacity', () => {
+    expect(PointCloudOctreePickerHelper.computeBitSplit(255, 1000)).toBe(9);
+    expect(PointCloudOctreePickerHelper.computeBitSplit(1000, 4_000_000)).toBe(10);
+  });
+
+  test('computeBitSplit() returns undefined when node and point counts cannot share 32 bits', () => {
+    // 1000 nodes need 10 node bits, leaving 22 bits = 4_194_304 points per node.
+    expect(PointCloudOctreePickerHelper.computeBitSplit(1000, 4_194_304)).toBe(10);
+    expect(PointCloudOctreePickerHelper.computeBitSplit(1000, 4_194_305)).toBeUndefined();
+  });
+
+  test('decodePackedPixel() roundtrips, including values with the sign bit set', () => {
+    expect(PointCloudOctreePickerHelper.decodePackedPixel(pack(1, 2, 8), 8)).toEqual({ nodeIndex: 1, pointIndex: 2 });
+    expect(PointCloudOctreePickerHelper.decodePackedPixel(pack(200, 12345, 8), 8)).toEqual({
+      nodeIndex: 200,
+      pointIndex: 12345
+    });
+    expect(PointCloudOctreePickerHelper.decodePackedPixel(pack(600, 5, 10), 10)).toEqual({
+      nodeIndex: 600,
+      pointIndex: 5
+    });
+    expect(PointCloudOctreePickerHelper.decodePackedPixel(pack(4000, 1_000_000, 12), 12)).toEqual({
+      nodeIndex: 4000,
+      pointIndex: 1_000_000
+    });
+  });
+
+  test('findHit() decodes node indices wider than 8 bits', () => {
+    const dummyNode: RenderedNode = new Mock<RenderedNode>().object();
+    const nodeIndexBits = 10;
+    const pickWindowSize = 3;
+    const ibuffer = new Uint32Array(pickWindowSize * pickWindowSize);
+    ibuffer[4] = pack(600, 5, nodeIndexBits);
+    const pixels = new Uint8Array(ibuffer.buffer);
+    const dummyCamera = new PerspectiveCamera();
+
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
+
+    const nodes: RenderedNode[] = new Array(600).fill(dummyNode);
+
+    expect(
+      PointCloudOctreePickerHelper.findHit(pixels, pickWindowSize, nodes, dummyCamera, nodeIndexBits)
+    ).toStrictEqual({
+      pIndex: 5,
+      pcIndex: 599
+    });
+  });
+
+  test('findHitInBuffer() finds hits in a window of a larger buffer and ignores hits outside it', () => {
+    const dummyNode: RenderedNode = new Mock<RenderedNode>().object();
+    const width = 16;
+    const height = 8;
+    const ibuffer = new Uint32Array(width * height);
+    ibuffer[0] = pack(2, 7, 8); // Outside the search window.
+    ibuffer[10 + 5 * width] = pack(1, 3, 8);
+    const dummyCamera = new PerspectiveCamera();
+
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
+
+    const hit = PointCloudOctreePickerHelper.findHitInBuffer(
+      ibuffer,
+      width,
+      height,
+      10,
+      5,
+      5,
+      [dummyNode],
+      dummyCamera,
+      8
+    );
+
+    expect(hit).toStrictEqual({ pIndex: 3, pcIndex: 0 });
+  });
+
+  test('findHitInBuffer() clamps the search window to the buffer bounds', () => {
+    const dummyNode: RenderedNode = new Mock<RenderedNode>().object();
+    const width = 16;
+    const height = 8;
+    const ibuffer = new Uint32Array(width * height);
+    ibuffer[0] = pack(1, 0, 8);
+    const dummyCamera = new PerspectiveCamera();
+
+    vi.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => new Vector3());
+
+    const hit = PointCloudOctreePickerHelper.findHitInBuffer(
+      ibuffer,
+      width,
+      height,
+      0,
+      0,
+      5,
+      [dummyNode],
+      dummyCamera,
+      8
+    );
+
+    expect(hit).toStrictEqual({ pIndex: 0, pcIndex: 0 });
+  });
 });
+
+function pack(nodeIndex: number, pointIndex: number, nodeIndexBits: number): number {
+  return nodeIndex * 2 ** (32 - nodeIndexBits) + pointIndex;
+}

@@ -12,7 +12,7 @@ import {
   WebGLRenderTarget
 } from 'three';
 import type { OctreeMaterialParams } from '@reveal/rendering';
-import { PointCloudMaterial, PointColorType, COLOR_BLACK } from '@reveal/rendering';
+import { PointCloudMaterial, PointColorType, COLOR_BLACK, DEFAULT_NODE_INDEX_BITS } from '@reveal/rendering';
 import type { PointCloudOctree } from './PointCloudOctree';
 import type { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import type { PickPoint, PointCloudHit } from '../types/types';
@@ -47,6 +47,25 @@ export interface PickParams {
    * @param renterTarget The render target used for picking.
    */
   onBeforePickRender: (material: PointCloudMaterial, renterTarget: WebGLRenderTarget) => void;
+  /**
+   * Whether the camera is currently known to be in motion (e.g. during an interactive zoom/pan/
+   * orbit). When true, the full-frame pick cache is never rebuilt for this call, regardless of
+   * how long ago it was last invalidated. Confirmed by measurement: a full-frame rebuild's async
+   * GPU readback (tens to hundreds of ms) routinely doesn't finish before the next camera-change
+   * invalidates it again during continuous motion, so the rebuild is started, pays its full cost,
+   * gets discarded, and the caller still has to fall back to a windowed pick anyway. Falls back to
+   * the time-based holdoff when omitted.
+   */
+  cameraInMotion?: boolean;
+  /**
+   * Unconditionally skips the full-frame pick cache (both serving from it and rebuilding it) for
+   * this call, regardless of camera-motion state. Intended for callers that pick on every input
+   * event of a fast, continuous interaction (e.g. wheel-driven zoom-to-cursor) where even
+   * checking/rebuilding the cache adds latency that matters more than the cache's benefit - unlike
+   * `cameraInMotion`, this doesn't depend on the camera having already started moving, which
+   * matters because some callers pick *before* moving the camera for that same input event.
+   */
+  forceWindowedPick?: boolean;
 }
 
 /**
@@ -71,15 +90,17 @@ export class PointCloudOctreePickerHelper {
   public prepareRender(
     x: number,
     y: number,
-    pickWndSize: number,
+    width: number,
+    height: number,
     pickMaterial: PointCloudMaterial,
     pickState: IPickState
   ): void {
     const renderer = this._renderer;
     const stateHelper = this._rendererStateHelper;
 
-    // Render the intersected nodes onto the pick render target, clipping to a small pick window.
-    stateHelper.setScissor(x, y, pickWndSize, pickWndSize);
+    // Render the intersected nodes onto the pick render target, clipping to the pick window
+    // (a small window around the pick position, or the full frame when building the pick cache).
+    stateHelper.setScissor(x, y, width, height);
     stateHelper.setScissorTest(true);
     stateHelper.setWebGLState({
       buffers: {
@@ -101,16 +122,22 @@ export class PointCloudOctreePickerHelper {
     camera: Camera,
     pickMaterial: PointCloudMaterial,
     octrees: PointCloudOctree[],
-    ray: Ray,
+    ray: Ray | undefined,
     pickState: IPickState,
-    params: Partial<PickParams>
+    params: Partial<PickParams>,
+    nodeIndexBits: number = DEFAULT_NODE_INDEX_BITS
   ): RenderedNode[] {
     const renderer = this._renderer;
 
+    // Node index 0 means "no hit" and the all-ones value is rejected by findHit, so the largest usable index is 2^nodeIndexBits - 2.
+    const maxNodeIndex = 2 ** nodeIndexBits - 2;
+    pickMaterial.nodeIndexBits = nodeIndexBits;
+
     const renderedNodes: RenderedNode[] = [];
     for (const octree of octrees) {
-      // Get all the octree nodes which intersect the picking ray. We only need to render those.
-      const nodes = PointCloudOctreePickerHelper.nodesOnRay(octree, ray);
+      // Get all the octree nodes which intersect the picking ray. We only need to render those
+      // or every visible node when no ray is given (full-frame pick).
+      const nodes = ray !== undefined ? PointCloudOctreePickerHelper.nodesOnRay(octree, ray) : [...octree.visibleNodes];
       if (!nodes.length) {
         continue;
       }
@@ -136,7 +163,8 @@ export class PointCloudOctreePickerHelper {
       pickState.scene.children = PointCloudOctreePickerHelper.createTempNodes(
         nodes,
         pickMaterial,
-        renderedNodes.length
+        renderedNodes.length,
+        maxNodeIndex
       );
 
       renderer.render(pickState.scene, camera);
@@ -168,33 +196,35 @@ export class PointCloudOctreePickerHelper {
   public readPixelsAsync(
     x: number,
     y: number,
-    pickWndSize: number,
-    renderTarget: WebGLRenderTarget
+    width: number,
+    height: number,
+    renderTarget: WebGLRenderTarget,
+    pixels: Uint8Array = new Uint8Array(4 * width * height)
   ): Promise<Uint8Array> {
-    const pixels = new Uint8Array(4 * pickWndSize * pickWndSize);
-    return this._renderer
-      .readRenderTargetPixelsAsync(renderTarget, x, y, pickWndSize, pickWndSize, pixels)
-      .then(() => pixels);
+    return this._renderer.readRenderTargetPixelsAsync(renderTarget, x, y, width, height, pixels).then(() => pixels);
   }
 
   private static createTempNodes(
     nodes: IPointCloudTreeNode[],
     pickMaterial: PointCloudMaterial,
-    nodeIndexOffset: number
+    nodeIndexOffset: number,
+    maxNodeIndex: number
   ): Points[] {
     const tempNodes: Points[] = [];
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
+      const nodeIndex = nodeIndexOffset + i + 1;
+      if (nodeIndex > maxNodeIndex) {
+        console.error(`More than ${maxNodeIndex} nodes for pick are not supported.`);
+        break;
+      }
+
       const sceneNode = node.sceneNode;
       const tempNode = new Points(sceneNode.geometry, pickMaterial);
       tempNode.matrix = sceneNode.matrix;
       tempNode.matrixWorld = sceneNode.matrixWorld;
       tempNode.matrixAutoUpdate = false;
       tempNode.frustumCulled = false;
-      const nodeIndex = nodeIndexOffset + i + 1;
-      if (nodeIndex > 255) {
-        console.error('More than 255 nodes for pick are not supported.');
-      }
       tempNode.onBeforeRender = makeOnBeforeRender(node, nodeIndex);
 
       tempNodes.push(tempNode);
@@ -237,37 +267,92 @@ export class PointCloudOctreePickerHelper {
     });
   }
 
+  public static computeBitSplit(nodeCount: number, maxPointsPerNode: number): number | undefined {
+    // Usable node indices are 1..2^bits - 2 (0 = background, all-ones rejected by findHit).
+    const nodeIndexBits = Math.max(DEFAULT_NODE_INDEX_BITS, Math.ceil(Math.log2(nodeCount + 2)));
+    if (nodeIndexBits >= 32 || maxPointsPerNode > 2 ** (32 - nodeIndexBits)) {
+      return undefined;
+    }
+    return nodeIndexBits;
+  }
+
+  public static decodePackedPixel(
+    packedIndex: number,
+    nodeIndexBits: number
+  ): { nodeIndex: number; pointIndex: number } {
+    const pointIndexBits = 32 - nodeIndexBits;
+    const nodeIndex = Math.floor(packedIndex / 2 ** pointIndexBits);
+    const pointIndex = packedIndex % 2 ** pointIndexBits;
+    return { nodeIndex, pointIndex };
+  }
+
   public static findHit(
     pixels: Uint8Array,
     pickWndSize: number,
     nodes: RenderedNode[],
-    camera: Camera
+    camera: Camera,
+    nodeIndexBits: number = DEFAULT_NODE_INDEX_BITS
   ): PointCloudHit | null {
-    const ibuffer = new Uint32Array(pixels.buffer);
+    const ibuffer = new Uint32Array(pixels.buffer, pixels.byteOffset, pixels.byteLength / 4);
+    const center = (pickWndSize - 1) / 2;
+    return PointCloudOctreePickerHelper.findHitInBuffer(
+      ibuffer,
+      pickWndSize,
+      pickWndSize,
+      center,
+      center,
+      pickWndSize,
+      nodes,
+      camera,
+      nodeIndexBits
+    );
+  }
+
+  public static findHitInBuffer(
+    ibuffer: Uint32Array,
+    bufferWidth: number,
+    bufferHeight: number,
+    centerX: number,
+    centerY: number,
+    windowSize: number,
+    nodes: RenderedNode[],
+    camera: Camera,
+    nodeIndexBits: number
+  ): PointCloudHit | null {
+    const maxNodeIndex = 2 ** nodeIndexBits - 1;
+    const half = (windowSize - 1) / 2;
+    const xMin = Math.max(0, Math.round(centerX - half));
+    const xMax = Math.min(bufferWidth - 1, Math.round(centerX + half));
+    const yMin = Math.max(0, Math.round(centerY - half));
+    const yMax = Math.min(bufferHeight - 1, Math.round(centerY + half));
 
     // Find closest hit inside pixelWindow boundaries and closest to the camera.
     let minScreen = Number.MAX_VALUE;
     let minCameraDistance = Number.MAX_VALUE;
     let hit: PointCloudHit | null = null;
-    for (let u = 0; u < pickWndSize; u++) {
-      for (let v = 0; v < pickWndSize; v++) {
-        const offset = u + v * pickWndSize;
-        const screenDistance = Math.pow(u - (pickWndSize - 1) / 2, 2) + Math.pow(v - (pickWndSize - 1) / 2, 2);
+    for (let x = xMin; x <= xMax; x++) {
+      for (let y = yMin; y <= yMax; y++) {
+        const offset = x + y * bufferWidth;
+        const screenDistance = Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2);
 
-        const pcIndex = pixels[4 * offset + 3];
+        const { nodeIndex, pointIndex } = PointCloudOctreePickerHelper.decodePackedPixel(
+          ibuffer[offset],
+          nodeIndexBits
+        );
 
-        // Set pcIndex bit to 0 for proper conversion to pointIndex afterwards.
-        pixels[4 * offset + 3] = 0;
-        const pIndex = ibuffer[offset];
-
-        if (pcIndex > 0 && pcIndex !== 255 && screenDistance <= minScreen) {
-          const pointPosition = PointCloudOctreePickerHelper.getPointPosition(nodes, pcIndex - 1, pIndex);
+        if (
+          nodeIndex > 0 &&
+          nodeIndex !== maxNodeIndex &&
+          nodeIndex - 1 < nodes.length &&
+          screenDistance <= minScreen
+        ) {
+          const pointPosition = PointCloudOctreePickerHelper.getPointPosition(nodes, nodeIndex - 1, pointIndex);
           const distanceToCamera = pointPosition.distanceToSquared(camera.position);
 
           if (distanceToCamera < minCameraDistance) {
             hit = {
-              pIndex: pIndex,
-              pcIndex: pcIndex - 1
+              pIndex: pointIndex,
+              pcIndex: nodeIndex - 1
             };
 
             minScreen = screenDistance;

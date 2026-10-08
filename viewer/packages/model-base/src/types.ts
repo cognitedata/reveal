@@ -10,6 +10,8 @@ export interface IntersectInput {
   clippingPlanes: Plane[];
   renderer: WebGLRenderer;
   domElement: HTMLElement;
+  cameraInMotion?: boolean;
+  forceWindowedPick?: boolean;
 }
 
 /**

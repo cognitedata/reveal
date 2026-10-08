@@ -98,6 +98,17 @@ export type CameraManagerCallbackData = {
 };
 
 /**
+ * Callback used by camera managers to request a raycast/pick against the scene.
+ * @beta
+ */
+export type RaycastCallback = (
+  x: number,
+  y: number,
+  pickBoundingBox: boolean,
+  forceWindowedPick?: boolean
+) => Promise<CameraManagerCallbackData>;
+
+/**
  * List of supported event types (adapted from https://stackoverflow.com/questions/44480644/string-union-to-string-array)
  */
 export const CAMERA_MANAGER_EVENT_TYPE_LIST = ['cameraChange', 'cameraStop'] as const;

@@ -4,4 +4,4 @@
 
 import type { Vector2, Vector3 } from 'three';
 
-export type GetPickedPointByPixelCoordinates = (position: Vector2) => Promise<Vector3>;
+export type GetPickedPointByPixelCoordinates = (position: Vector2, forceWindowedPick?: boolean) => Promise<Vector3>;
