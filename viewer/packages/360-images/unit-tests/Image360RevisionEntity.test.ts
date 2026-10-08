@@ -18,6 +18,7 @@ import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox
 import { SceneHandler } from '@reveal/utilities';
 
 import { Matrix4, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
+import { vi } from 'vitest';
 import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 const annotationFixture0 = {
@@ -120,6 +121,26 @@ describe(Image360RevisionEntity.name, () => {
 
     annotationObjects.forEach(a => a.dispose());
     reverseAnnotationObjects.forEach(a => a.dispose());
+  });
+
+  test('dispose disposes loaded annotations and allows them to load again', async () => {
+    const revision = createRevisionWithAnnotations([annotationFixture0]);
+    const annotations = await revision.getAnnotations();
+    const disposeSpies = annotations.map(annotation => vi.spyOn(annotation, 'dispose'));
+
+    revision.dispose();
+
+    disposeSpies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1));
+
+    const reloaded = await revision.getAnnotations();
+    expect(reloaded).toHaveLength(1);
+    expect(reloaded[0]).not.toBe(annotations[0]);
+    reloaded.forEach(annotation => annotation.dispose());
+  });
+
+  test('dispose is safe when annotations were never loaded', () => {
+    const revision = createRevisionWithAnnotations([annotationFixture0]);
+    expect(() => revision.dispose()).not.toThrow();
   });
 
   test('Intersect intersects DM mesh annotation', async () => {

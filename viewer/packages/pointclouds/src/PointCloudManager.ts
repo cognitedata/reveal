@@ -13,6 +13,9 @@ import type { PointCloudNode } from './PointCloudNode';
 import type { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PointCloudLoadingStateHandler } from './PointCloudLoadingStateHandler';
 import type { Potree } from './potree-three-loader';
+import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry/IPointCloudTreeGeometryNode';
+import type { IPointCloudTreeNodeBase } from './potree-three-loader/tree/IPointCloudTreeNodeBase';
+import { isGeometryNode, isTreeNode } from './potree-three-loader/types/type-predicates';
 
 import type { Observable } from 'rxjs';
 import { asyncScheduler, combineLatest, scan, Subject, throttleTime } from 'rxjs';
@@ -142,6 +145,38 @@ export class PointCloudManager {
     );
 
     return pointCloudNode;
+  }
+
+  releaseGpuResidentGeometry(): void {
+    const pending: IPointCloudTreeGeometryNode[] = [];
+    const seen = new Set<IPointCloudTreeGeometryNode>();
+
+    const visit = (root: IPointCloudTreeNodeBase | undefined): void => {
+      root?.traverse(node => {
+        const geometryNode = isTreeNode(node) ? node.geometryNode : node;
+        if (!isGeometryNode(geometryNode) || !geometryNode.loaded || seen.has(geometryNode)) {
+          return;
+        }
+        seen.add(geometryNode);
+        pending.push(geometryNode);
+      });
+    };
+
+    for (const model of this._pointCloudNodes) {
+      visit(model.octree.root);
+      visit(model.octree.pcoGeometry.root);
+    }
+
+    for (const model of this._pointCloudNodes) {
+      model.octree.visibleNodes = [];
+    }
+
+    for (const geometryNode of pending) {
+      geometryNode.releaseResidentGeometry();
+    }
+
+    this._potreeInstance.lru.forgetUnloaded();
+    this.requestRedraw();
   }
 
   removeModel<T extends DataSourceType>(node: PointCloudNode<T>): void {

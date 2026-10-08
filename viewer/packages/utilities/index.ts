@@ -56,7 +56,28 @@ export { DataFileCacheManager } from './src/cache/DataFileCacheManager';
 export type { CacheConfig } from './src/cache/types';
 export { BINARY_FILES_CACHE_NAME } from './src/cache/constants';
 
-export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
+export {
+  disposeAttributeArrayOnUpload,
+  bindGpuUploadContext,
+  readAttributeComponents
+} from './src/disposeAttributeArrayOnUpload';
+export {
+  classifyGpu,
+  readGpuCapacityProbe,
+  noteGpuCapacity,
+  isGpuConstrained,
+  shouldReleasePointCpuBuffers,
+  activePointBudgetCap,
+  activeResolutionCap,
+  tightenGpuCapacityAfterContextLoss,
+  resetGpuCapacityState,
+  CONSTRAINED_POINT_BUDGET,
+  CONSTRAINED_RESOLUTION_CAP,
+  TIGHTER_POINT_BUDGET,
+  TIGHTER_RESOLUTION_CAP,
+  GPU_CAPACITY_STORAGE_KEY
+} from './src/gpuCapacity';
+export type { GpuCapacityClass, GpuCapacityProbe } from './src/gpuCapacity';
 
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';

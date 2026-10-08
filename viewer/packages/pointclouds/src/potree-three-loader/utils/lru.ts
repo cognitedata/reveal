@@ -129,6 +129,18 @@ export class LRU {
     this.numPoints -= node.numPoints;
   }
 
+  forgetUnloaded(): void {
+    const stale: Node[] = [];
+    for (const item of this.items.values()) {
+      if (!item.node.loaded) {
+        stale.push(item.node);
+      }
+    }
+    for (const node of stale) {
+      this.remove(node);
+    }
+  }
+
   getLRUItem(): Node | undefined {
     return this.first ? this.first.node : undefined;
   }

@@ -32,7 +32,14 @@ import {
   getNormalizedPixelCoordinates,
   CustomObjectIntersectInput,
   setRenderContextLost,
-  isRenderContextLost
+  isRenderContextLost,
+  noteGpuCapacity,
+  readGpuCapacityProbe,
+  bindGpuUploadContext,
+  activePointBudgetCap,
+  activeResolutionCap,
+  tightenGpuCapacityAfterContextLoss,
+  isGpuConstrained
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -193,6 +200,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly cameraManagerClock = new Clock();
   private _clippingNeedsUpdate: boolean = false;
   private _forceStopRendering: boolean = false;
+  private _gpuBudgetCapLogged = false;
 
   private readonly spinner: Spinner;
 
@@ -247,7 +255,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * point cloud models.
    */
   public set pointCloudBudget(budget: PointCloudBudget) {
-    this.revealManager.pointCloudBudget = budget;
+    const cap = activePointBudgetCap();
+    const numberOfPoints = Math.min(budget.numberOfPoints, cap);
+    if (numberOfPoints < budget.numberOfPoints && !this._gpuBudgetCapLogged) {
+      this._gpuBudgetCapLogged = true;
+      Log.warn(`Point cloud budget reduced to ${numberOfPoints} points so this GPU can keep the WebGL context.`);
+    }
+    this.revealManager.pointCloudBudget = { numberOfPoints };
   }
 
   /**
@@ -275,6 +289,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this._renderer = options.renderer ?? createRenderer();
     this._renderer.localClippingEnabled = true;
     this._ownsRenderer = options.renderer === undefined;
+    this.initializeGpuCapacity();
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -284,8 +299,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.canvas.style.maxHeight = '100%';
     // Prevents scrolling for mobile devices.
     this.canvas.style.touchAction = 'none';
-
-    this.registerContextLossHandlers();
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
@@ -392,6 +405,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.revealManager.on('loadingStateChanged', handleLoading);
     this._unsubsribeOnLoading = () => this.revealManager.off('loadingStateChanged', handleLoading);
 
+    this.applyGpuPointBudgetCap();
+    this.registerContextLossHandlers();
+
     this.animate(0);
 
     MetricsLogger.trackEvent('construct3dViewer', {
@@ -418,15 +434,44 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this._onContextLost = event => {
       event.preventDefault();
       setRenderContextLost(true);
+      tightenGpuCapacityAfterContextLoss();
+      this.applyGpuPointBudgetCap();
+      this.applyGpuResolutionCap();
     };
 
     this._onContextRestored = () => {
       setRenderContextLost(false);
-      this.revealManager.requestRedraw();
+      this.revealManager.releasePointCloudGpuResources();
     };
 
     this.canvas.addEventListener('webglcontextlost', this._onContextLost);
     this.canvas.addEventListener('webglcontextrestored', this._onContextRestored);
+  }
+
+  private initializeGpuCapacity(): void {
+    let gl: WebGLRenderingContext | WebGL2RenderingContext | null = null;
+    try {
+      gl = this._renderer.getContext();
+    } catch {
+      gl = null;
+    }
+    noteGpuCapacity(readGpuCapacityProbe(gl));
+    bindGpuUploadContext(gl);
+  }
+
+  private applyGpuPointBudgetCap(): void {
+    const cap = activePointBudgetCap();
+    if (this.pointCloudBudget.numberOfPoints > cap) {
+      this.pointCloudBudget = { numberOfPoints: cap };
+    }
+  }
+
+  private applyGpuResolutionCap(): void {
+    const cap = activeResolutionCap();
+    if (!Number.isFinite(cap) || this.revealManager.getResolutionThreshold() <= cap) {
+      return;
+    }
+    this.setResolutionOptions({ maxRenderResolution: cap });
   }
 
   /**
@@ -2187,8 +2232,13 @@ function createRenderer(): WebGLRenderer {
 /**
  * Create EDL options from input options.
  * @param inputOptions
+ * @param constrained
  */
-function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled'): EdlOptions {
+function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled', constrained = false): EdlOptions {
+  if (inputOptions === undefined && constrained) {
+    return { radius: 0.0, strength: 0.0 };
+  }
+
   if (inputOptions === undefined) {
     return defaultRenderOptions.pointCloudParameters.edlOptions;
   }
@@ -2210,7 +2260,19 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     : undefined;
 
   const device = determineCurrentDevice();
-  const resolutionCap = determineResolutionCap(viewerOptions.rendererResolutionThreshold, device, devicePixelRatio);
+  const gpuConstrained = isGpuConstrained();
+  let resolutionCap = determineResolutionCap(
+    viewerOptions.rendererResolutionThreshold,
+    device,
+    devicePixelRatio,
+    gpuConstrained
+  );
+  if (!viewerOptions.rendererResolutionThreshold) {
+    const tightenedCap = activeResolutionCap();
+    if (Number.isFinite(tightenedCap)) {
+      resolutionCap = Math.min(resolutionCap, tightenedCap);
+    }
+  }
 
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
@@ -2221,14 +2283,14 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
 
   revealOptions.internal!.cad = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
-  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);
+  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device, gpuConstrained);
   const edgeDetectionParameters = {
     enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
   };
 
   revealOptions.logMetrics = viewerOptions.logMetrics;
 
-  const edlOptions = createCompleteEdlOptions(viewerOptions.pointCloudEffects?.edlOptions);
+  const edlOptions = createCompleteEdlOptions(viewerOptions.pointCloudEffects?.edlOptions, gpuConstrained);
 
   revealOptions.renderOptions = {
     antiAliasing,

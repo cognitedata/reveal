@@ -6,7 +6,7 @@ import { Log } from '@reveal/logger';
 import type { SsaoParameters } from '@reveal/rendering';
 import { AntiAliasingMode, defaultRenderOptions, SsaoSampleQuality } from '@reveal/rendering';
 import type { DeviceDescriptor } from '@reveal/utilities';
-import { assertNever } from '@reveal/utilities';
+import { assertNever, CONSTRAINED_RESOLUTION_CAP } from '@reveal/utilities';
 import type { PropType } from '../../utilities/reflection';
 import type { Cognite3DViewerOptions } from './types';
 
@@ -61,12 +61,18 @@ export function determineAntiAliasingMode(
  * For mobile and tablets SSAO is disabled.
  * @param qualityHint Mode as provided in options to the viewer.
  * @param device    Descriptor for current device.
+ * @param constrained
  * @returns Actual SSAO mode to initialize viewer with.
  */
 export function determineSsaoRenderParameters(
   qualityHint: SsaoQualityHintOption,
-  device: DeviceDescriptor
+  device: DeviceDescriptor,
+  constrained = false
 ): SsaoParameters {
+  if (constrained && qualityHint === undefined) {
+    return { ...defaultRenderOptions.ssaoRenderParameters, sampleSize: SsaoSampleQuality.None };
+  }
+
   const quality = restrictSsaoOptionBasedOnDevice(qualityHint, device);
   const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
   switch (quality) {
@@ -97,17 +103,19 @@ export function determineSsaoRenderParameters(
  * @param rendererResolutionThreshold User provided resolution cap.
  * @param device Device type (mobile, tablet, desktop, etc.).
  * @param devicePixelRatio Device pixel ratio set on the renderer.
+ * @param constrained
  */
 export function determineResolutionCap(
   rendererResolutionThreshold: number | undefined,
   device: DeviceDescriptor,
-  devicePixelRatio: number
+  devicePixelRatio: number,
+  constrained = false
 ): number {
   if (rendererResolutionThreshold) {
     return rendererResolutionThreshold;
   }
 
-  const resolutionThreshold = 1.4e6;
+  const resolutionThreshold = constrained ? CONSTRAINED_RESOLUTION_CAP : 1.4e6;
 
   // This is an attempt at increasing performance for high-resolution mobile devices
   // by mapping resolution to physical pixel size

@@ -25,7 +25,7 @@ import type { ParsedEptData, EptInputData } from '../workers/types';
 
 import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 
-import { fromThreeVector3 } from '@reveal/utilities';
+import { disposeAttributeArrayOnUpload, fromThreeVector3, shouldReleasePointCpuBuffers } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import type { EptBinaryDecoderWorker } from '../workers/eptBinaryDecoder.worker';
 
@@ -196,7 +196,11 @@ function createGeometryFromEptData(data: ParsedEptData): BufferGeometry {
   ): void {
     if (data) {
       const typedArray = new typedArrayConstructor(data);
-      geometry.setAttribute(name, new BufferAttribute(typedArray, componentCount, normalized));
+      const attribute = new BufferAttribute(typedArray, componentCount, normalized);
+      if (shouldReleasePointCpuBuffers()) {
+        attribute.onUpload(() => disposeAttributeArrayOnUpload.call(attribute));
+      }
+      geometry.setAttribute(name, attribute);
     }
   }
 

@@ -10,11 +10,18 @@ import { CdfModelMetadataProvider, CdfModelDataProvider, File3dFormat } from '@r
 import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
+import { RevealManager } from '../RevealManager';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
 import { It, Mock } from 'moq.ts';
 import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
-import { CustomObject } from '@reveal/utilities';
+import {
+  CustomObject,
+  GPU_CAPACITY_STORAGE_KEY,
+  isRenderContextLost,
+  resetGpuCapacityState,
+  setRenderContextLost
+} from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
@@ -58,12 +65,21 @@ describe('Cognite3DViewer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    resetGpuCapacityState();
   });
 
   afterEach(() => {
     vi.clearAllTimers();
     vi.useRealTimers();
+    setRenderContextLost(false);
+    resetGpuCapacityState();
   });
+
+  function createViewerWithOwnCanvas(): Cognite3DViewer {
+    const localRenderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
+    localRenderer.render = vi.fn();
+    return new Cognite3DViewer({ sdk, renderer: localRenderer, _sectorCuller, logMetrics: false });
+  }
 
   test('dispose does not dispose of externally supplied renderer', () => {
     const disposeSpy = vi.spyOn(renderer, 'dispose');
@@ -291,6 +307,57 @@ describe('Cognite3DViewer', () => {
     expect(result).toEqual({ type: 'image360Cluster', ...mockClusterData });
 
     spyIntersectClusters.mockRestore();
+  });
+
+  test('keeps the desktop point budget when the GPU is not identified as constrained', () => {
+    const viewer = createViewerWithOwnCanvas();
+    expect(viewer.pointCloudBudget.numberOfPoints).toBe(3_000_000);
+    expect(viewer.getResolutionOptions().maxRenderResolution).toBe(1.4e6);
+    viewer.dispose();
+  });
+
+  test('a previous context loss lowers the point budget and resolution on the next viewer', () => {
+    sessionStorage.setItem(GPU_CAPACITY_STORAGE_KEY, '1');
+    const viewer = createViewerWithOwnCanvas();
+    expect(viewer.pointCloudBudget.numberOfPoints).toBe(1_000_000);
+    expect(viewer.getResolutionOptions().maxRenderResolution).toBe(700_000);
+    viewer.dispose();
+  });
+
+  test('context loss sets the shared flag, and restore clears it and redraws', () => {
+    const viewer = createViewerWithOwnCanvas();
+    const redrawSpy = vi.spyOn(RevealManager.prototype, 'requestRedraw');
+
+    const lostEvent = new Event('webglcontextlost', { cancelable: true });
+    viewer.canvas.dispatchEvent(lostEvent);
+
+    expect(lostEvent.defaultPrevented).toBe(true);
+    expect(isRenderContextLost()).toBe(true);
+
+    viewer.canvas.style.visibility = 'visible';
+    viewer.canvas.style.display = 'block';
+    vi.advanceTimersByTime(32);
+    expect(isRenderContextLost()).toBe(true);
+
+    viewer.canvas.dispatchEvent(new Event('webglcontextrestored'));
+
+    expect(isRenderContextLost()).toBe(false);
+    expect(redrawSpy).toHaveBeenCalled();
+
+    viewer.dispose();
+  });
+
+  test('dispose during context loss clears the flag and detaches the listeners', () => {
+    const viewer = createViewerWithOwnCanvas();
+    const canvas = viewer.canvas;
+    viewer.canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true }));
+    expect(isRenderContextLost()).toBe(true);
+
+    viewer.dispose();
+
+    expect(isRenderContextLost()).toBe(false);
+    canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true }));
+    expect(isRenderContextLost()).toBe(false);
   });
 
   describe('htmlClusterOptions', () => {

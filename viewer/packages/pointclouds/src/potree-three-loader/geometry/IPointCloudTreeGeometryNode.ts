@@ -9,5 +9,7 @@ export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
   fileName: () => string;
   oneTimeDisposeHandlers: (() => void)[];
 
+  releaseResidentGeometry(): void;
+
   doneLoading: (bufferGeometry: BufferGeometry, _tightBoundingBox: Box3, np: number, _mean: Vector3) => void;
 }

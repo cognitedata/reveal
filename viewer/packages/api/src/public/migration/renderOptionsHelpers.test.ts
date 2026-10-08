@@ -70,6 +70,16 @@ describe(determineSsaoRenderParameters.name, () => {
     const result = determineSsaoRenderParameters(modeHint, device);
     expect(result).toEqual(expectedResult);
   });
+
+  test('disables SSAO on a constrained desktop when the caller did not choose a quality', () => {
+    const result = determineSsaoRenderParameters(undefined, desktopDevice, true);
+    expect(result.sampleSize).toBe(0);
+  });
+
+  test('keeps an explicit SSAO quality on a constrained desktop', () => {
+    const result = determineSsaoRenderParameters('medium', desktopDevice, true);
+    expect(result.sampleSize).toBe(32);
+  });
 });
 
 describe(determineResolutionCap.name, () => {
@@ -85,5 +95,11 @@ describe(determineResolutionCap.name, () => {
     expect(resolutionCap).toEqual(
       deviceDescriptor.deviceType !== 'desktop' ? defaultResolutionThreshold / mockDPR : defaultResolutionThreshold
     );
+  });
+
+  test('uses a lower cap on a constrained desktop unless the caller set one', () => {
+    const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
+    expect(determineResolutionCap(undefined, desktopDevice, 2, true)).toBe(700_000);
+    expect(determineResolutionCap(2_000_000, desktopDevice, 2, true)).toBe(2_000_000);
   });
 });

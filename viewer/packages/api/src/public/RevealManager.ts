@@ -204,6 +204,10 @@ export class RevealManager {
     this.requestRedraw();
   }
 
+  public releasePointCloudGpuResources(): void {
+    this._pointCloudManager.releaseGpuResidentGeometry();
+  }
+
   public getMovingCameraResolutionFactor(): number {
     return this._resizeHandler.getMovingCameraResolutionFactor();
   }

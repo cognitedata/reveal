@@ -16,7 +16,7 @@ import { PointCloudMaterial, PointColorType, COLOR_BLACK, DEFAULT_NODE_INDEX_BIT
 import type { PointCloudOctree } from './PointCloudOctree';
 import type { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import type { PickPoint, PointCloudHit } from '../types/types';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
+import { readAttributeComponents, WebGLRendererStateHelper } from '@reveal/utilities';
 import { createVisibilityTextureData, makeOnBeforeRender } from '../utils/utils';
 
 export interface RenderedNode {
@@ -394,6 +394,12 @@ export class PointCloudOctreePickerHelper {
         PointCloudOctreePickerHelper.addNormalToPickPoint(point, hit, values, points);
       } else if (property === 'indices') {
         // TODO
+      } else if (!values.array || values.array.length === 0) {
+        const item = readAttributeComponents(values, hit.pIndex);
+        if (!item) {
+          continue;
+        }
+        point[property] = values.itemSize === 1 ? item[0] : Array.from(item);
       } else {
         if (values.itemSize === 1) {
           point[property] = values.array[hit.pIndex];
@@ -415,9 +421,16 @@ export class PointCloudOctreePickerHelper {
 
     if (!points) throw new Error('Point cloud not found');
 
-    return this.helperVec3
-      .fromBufferAttribute(points.geometry.attributes['position'] as BufferAttribute, pIndex)
-      .applyMatrix4(points.matrixWorld);
+    const position = points.geometry.attributes['position'] as BufferAttribute;
+    if (!position.array || position.array.length === 0) {
+      const item = readAttributeComponents(position, pIndex);
+      if (!item) {
+        throw new Error('Point cloud not found');
+      }
+      return this.helperVec3.set(item[0], item[1], item[2]).applyMatrix4(points.matrixWorld);
+    }
+
+    return this.helperVec3.fromBufferAttribute(position, pIndex).applyMatrix4(points.matrixWorld);
   }
 
   private static addPositionToPickPoint(
@@ -426,6 +439,14 @@ export class PointCloudOctreePickerHelper {
     values: BufferAttribute,
     points: Points
   ): void {
+    if (!values.array || values.array.length === 0) {
+      const item = readAttributeComponents(values, hit.pIndex);
+      if (!item) {
+        return;
+      }
+      point.position = new Vector3(item[0], item[1], item[2]).applyMatrix4(points.matrixWorld);
+      return;
+    }
     point.position = new Vector3().fromBufferAttribute(values, hit.pIndex).applyMatrix4(points.matrixWorld);
   }
 
@@ -435,11 +456,25 @@ export class PointCloudOctreePickerHelper {
     values: BufferAttribute,
     points: Points
   ): void {
-    const normal = new Vector3().fromBufferAttribute(values, hit.pIndex);
+    const normal =
+      !values.array || values.array.length === 0
+        ? PointCloudOctreePickerHelper.normalFromUploadedBuffer(values, hit.pIndex)
+        : new Vector3().fromBufferAttribute(values, hit.pIndex);
+    if (!normal) {
+      return;
+    }
     const normal4 = new Vector4(normal.x, normal.y, normal.z, 0).applyMatrix4(points.matrixWorld);
     normal.set(normal4.x, normal4.y, normal4.z);
 
     point.normal = normal;
+  }
+
+  private static normalFromUploadedBuffer(values: BufferAttribute, index: number): Vector3 | undefined {
+    const item = readAttributeComponents(values, index);
+    if (!item) {
+      return undefined;
+    }
+    return new Vector3(item[0], item[1], item[2]);
   }
 
   public static getPickState(): IPickState {

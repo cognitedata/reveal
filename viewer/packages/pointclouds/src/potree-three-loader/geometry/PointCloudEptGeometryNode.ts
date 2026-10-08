@@ -450,4 +450,25 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
       this._oneTimeDisposeHandlers = [];
     }
   }
+
+  releaseResidentGeometry(): void {
+    if (!this._geometry && !this._loaded) {
+      return;
+    }
+
+    const handlers = this._oneTimeDisposeHandlers.splice(0, this._oneTimeDisposeHandlers.length);
+    for (const handler of handlers) {
+      handler();
+    }
+
+    if (this._geometry) {
+      this._geometry.dispose();
+      this._geometry = undefined;
+    }
+
+    this._loaded = false;
+    if (this._loading) {
+      this.markAsNotLoading();
+    }
+  }
 }

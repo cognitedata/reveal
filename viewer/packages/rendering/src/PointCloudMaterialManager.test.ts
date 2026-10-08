@@ -2,8 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
+import { vi } from 'vitest';
 import { AdditiveBlending } from 'three';
 import type { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
+import { PointCloudObjectAppearanceTexture } from './pointcloud-rendering';
 import { PointCloudMaterialManager } from './PointCloudMaterialManager';
 
 describe('PointCloudMaterialManager', () => {
@@ -51,5 +53,30 @@ describe('PointCloudMaterialManager', () => {
 
     expect(material1.blending).toBe(materialParameters.blending);
     expect(material2.blending).toBe(materialParameters.blending);
+  });
+
+  test('dispose releases an owned appearance texture and keeps a borrowed one', () => {
+    const modelIdentifier = Symbol('model');
+    materialManager.addModelMaterial(modelIdentifier, objectData);
+    const material = materialManager.getModelMaterial(modelIdentifier);
+
+    const owned = material.objectAppearanceTexture;
+    const ownedDispose = vi.spyOn(owned, 'dispose');
+    material.dispose();
+    expect(ownedDispose).toHaveBeenCalledTimes(1);
+
+    materialManager.addModelMaterial(modelIdentifier, objectData);
+    const borrowingMaterial = materialManager.getModelMaterial(modelIdentifier);
+    const replaced = borrowingMaterial.objectAppearanceTexture;
+    const replacedDispose = vi.spyOn(replaced, 'dispose');
+    const borrowed = new PointCloudObjectAppearanceTexture(4, 4);
+    const borrowedDispose = vi.spyOn(borrowed, 'dispose');
+
+    borrowingMaterial.objectAppearanceTexture = borrowed;
+
+    expect(replacedDispose).toHaveBeenCalledTimes(1);
+    borrowingMaterial.dispose();
+    expect(borrowedDispose).not.toHaveBeenCalled();
+    borrowed.dispose();
   });
 });

@@ -130,6 +130,13 @@ export class PointCloudOctree extends PointCloudTree {
     } else {
       this.root = node;
       this.add(points);
+      geometryNode.oneTimeDisposeHandlers.push(() => {
+        node.disposeSceneNode();
+        this.remove(node.sceneNode);
+        if (this.root === node) {
+          this.root = geometryNode;
+        }
+      });
     }
 
     return node;
