@@ -3,7 +3,7 @@
  */
 
 import type { RawShaderMaterial } from 'three';
-import { Matrix4, Plane, Texture } from 'three';
+import { DepthTexture, Matrix4, Plane, Texture, Vector3 } from 'three';
 
 import { CadMaterialManager, createCadMaterial } from './CadMaterialManager';
 import type { Materials } from './rendering/materials';
@@ -70,6 +70,58 @@ describe('CadMaterialManager', () => {
     expect(existing.box.uniforms.rotationInvariantLighting.value).toBe(true);
     expect(manager.getModelMaterials(modelIdentifier2).box.uniforms.rotationInvariantLighting.value).toBe(true);
     expect(manager.needsRedraw).toBe(true);
+  });
+
+  test('realistic shading is off by default and applied to existing and new materials', () => {
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    const existing = manager.getModelMaterials(modelIdentifier1);
+    expect(existing.box.uniforms.realisticShading.value).toBe(false);
+
+    manager.setRealisticShading(true);
+    manager.addModelMaterials(modelIdentifier2, createCadMaterial(16));
+
+    expect(manager.realisticShading).toBe(true);
+    expect(existing.box.uniforms.realisticShading.value).toBe(true);
+    expect(manager.getModelMaterials(modelIdentifier2).triangleMesh.uniforms.realisticShading.value).toBe(true);
+    expect(manager.needsRedraw).toBe(true);
+  });
+
+  test('realistic sky, sun, weather and textures reach new materials', () => {
+    const sky = new Texture();
+    const textures = { paint: new Texture(), streaks: new Texture(), deck: new Texture(), metal: new Texture() };
+    manager.setRealisticSky(sky);
+    manager.setRealisticSun(new Vector3(0, 1, 0), new Vector3(2, 2, 2));
+    manager.setRealisticWeather(0.5, 12);
+    manager.setRealisticTextures(textures);
+
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+
+    const uniforms = manager.getModelMaterials(modelIdentifier1).box.uniforms;
+    expect(uniforms.realisticSkyEnabled.value).toBe(true);
+    expect(uniforms.realisticSkyTexture.value).toBe(sky);
+    expect(uniforms.realisticSunDirection.value.toArray()).toEqual([0, 1, 0]);
+    expect(uniforms.realisticSunColor.value.toArray()).toEqual([2, 2, 2]);
+    expect(uniforms.realisticOvercast.value).toBe(0.5);
+    expect(uniforms.realisticTime.value).toBe(12);
+    expect(uniforms.realisticTexturesEnabled.value).toBe(true);
+    expect(uniforms.realisticDeckTexture.value).toBe(textures.deck);
+  });
+
+  test('the shadow sampler is only declared once a shadow map is set, and keeps its map when shadows are off', () => {
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    const material = manager.getModelMaterials(modelIdentifier1).box;
+    expect(material.defines.REALISTIC_SHADOWS).toBeUndefined();
+
+    const map = new DepthTexture(4, 4);
+    manager.setRealisticShadows({ texture: map, matrix: new Matrix4(), texelSize: 0.25, worldTexel: 1 });
+    expect(material.defines.REALISTIC_SHADOWS).toBe(true);
+    expect(material.uniforms.realisticShadowsEnabled.value).toBe(true);
+    expect(material.uniforms.realisticShadowMap.value).toBe(map);
+
+    manager.setRealisticShadows(undefined);
+    expect(material.uniforms.realisticShadowsEnabled.value).toBe(false);
+    expect(material.uniforms.realisticShadowMap.value).toBe(map);
+    expect(material.defines.REALISTIC_SHADOWS).toBe(true);
   });
 
   test('setModelDefaultNodeAppearance, node collection are updated', () => {

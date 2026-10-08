@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
+import type { Material, Mesh, Object3D, Scene, WebGLRenderer } from 'three';
+import { Color, GLSL3, RawShaderMaterial, Vector2, WebGLRenderTarget } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
@@ -14,7 +14,7 @@ import type { RenderOptions } from '../rendering/types';
 import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
-import { SSAOPass } from '../render-passes/SSAOPass';
+import { AmbientOcclusionPass } from '../render-passes/AmbientOcclusionPass';
 import { blitShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
 import { getRenderSize, WebGLRendererStateHelper } from '@reveal/utilities';
@@ -39,18 +39,16 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
-  private readonly _ssaoPass: SSAOPass;
+  private readonly _ssaoPass: AmbientOcclusionPass;
   private readonly _blitToScreenMaterial: RawShaderMaterial;
   private readonly _blitToScreenMesh: Mesh;
   private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper | undefined;
-  private _ssaoSampleSize: number;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
     const resolvedSsaoParams = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
-    this._ssaoSampleSize = resolvedSsaoParams.sampleSize;
-    this._ssaoPass.ssaoParameters = resolvedSsaoParams;
+    this._ssaoPass.parameters = resolvedSsaoParams;
 
     const shouldAddFxaa =
       AntiAliasingMode[renderOptions.antiAliasing ?? AntiAliasingMode.NoAA] === AntiAliasingMode[AntiAliasingMode.FXAA];
@@ -86,7 +84,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._renderTargetData = {
       currentRenderSize: new Vector2(1, 1),
-      ssaoRenderTarget: createRenderTarget(),
+      ssaoRenderTarget: new WebGLRenderTarget(1, 1, { depthBuffer: false }),
       postProcessingRenderTarget: createRenderTarget()
     };
     this._cadModels = sceneHandler.cadModels;
@@ -94,7 +92,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._customObjects = sceneHandler.customObjects;
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
-    this._ssaoSampleSize = ssaoParameters.sampleSize;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
     const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
@@ -103,7 +100,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       materialManager,
       renderOptions
     );
-    this._ssaoPass = new SSAOPass(
+    this._ssaoPass = new AmbientOcclusionPass(
       this._cadGeometryRenderPipeline.cadGeometryRenderTargets.back.depthTexture,
       ssaoParameters
     );
@@ -201,8 +198,10 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._cadGeometryRenderPipeline.dispose();
     this._pointCloudRenderPipeline.dispose();
     this._postProcessingPass.dispose();
+    this._ssaoPass.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
+    this._renderTargetData.ssaoRenderTarget.dispose();
 
     this._blitToScreenMesh.geometry.dispose();
     (this._blitToScreenMesh.material as Material).dispose();
@@ -237,6 +236,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
+    this._ssaoPass.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
@@ -245,7 +245,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   }
 
   private shouldRenderSsao(hasBackStyling: boolean): boolean {
-    return this._ssaoSampleSize > 0 && hasBackStyling;
+    return this._ssaoPass.enabled && hasBackStyling;
   }
 
   private shouldRenderPointClouds(): boolean {

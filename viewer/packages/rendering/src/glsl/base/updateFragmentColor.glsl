@@ -13,6 +13,8 @@ uniform mat4 viewMatrix;
 // forward axis, so they don't change when the camera rotates in place. Used in WebXR, where the camera is the head.
 uniform bool rotationInvariantLighting;
 
+#include realisticShading.glsl;
+
 vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
@@ -37,7 +39,9 @@ void updateFragmentColor(
     vec3 viewNormal, vec3 viewPosition, float depth, sampler2D matCapTexture,
     int geometryType) {
     vec3 normal = lightingNormal(viewNormal, viewPosition);
-    if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
+    if ((renderMode == RenderTypeColor || renderMode == RenderTypeEffects) && realisticShading) {
+        outputColor = vec4(shadeRealistic(color.rgb, viewNormal, viewPosition), color.a);
+    } else if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
         #if defined(IS_TEXTURED)
             vec3 colorRGB = color.rgb;
         #else
