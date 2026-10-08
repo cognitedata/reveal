@@ -29,9 +29,8 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     const node = this.sceneNode;
 
     if (node.geometry instanceof BufferGeometry) {
-      // Dispose the geometry FIRST so three.js can free each attribute's WebGLBuffer;
-      // deleting attributes before dispose() would silently orphan VBOs, leaking VRAM
-      // on every LRU eviction.
+      // three.js frees the attribute buffers by iterating geometry.attributes, so
+      // dispose before clearing them.
       node.geometry.dispose();
 
       const attributes = node.geometry.attributes;

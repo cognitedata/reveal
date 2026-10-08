@@ -4,10 +4,9 @@ import { isRenderContextLost } from '@reveal/utilities';
 export type Node = IPointCloudTreeNodeBase;
 
 /**
- * Multiplier applied to `pointBudget` before the LRU starts freeing nodes, letting
- * briefly-out-of-frustum nodes stay resident while still bounding VRAM growth.
+ * How far `numPoints` may exceed `pointBudget` before the LRU starts evicting nodes.
  */
-const LRU_OVERSHOOT_FACTOR = 2;
+const LRU_OVERSHOOT_FACTOR = 1.2;
 
 export class LRUItem {
   next: LRUItem | null = null;
